@@ -756,26 +756,77 @@ a.fxa-header-logo:hover { opacity: .8; }
   line-height: 1.4;
 }
 
-/* Section head with action button */
-.fxa-section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-.fxa-section-head h2 { margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
-.fxa-section-count {
-  background: rgba(225,48,108,.18);
-  color: #E1306C;
-  border-radius: 999px;
-  font-size: .75rem;
-  font-weight: 700;
-  padding: 2px 8px;
-  margin-left: 6px;
-}
+/* Section head action button (Modifier etc.) already has .fxa-btn-sm */
 
 /* Mobile: stack onboarding CTA vertically on small screens */
 @media (max-width: 380px) {
   .fxa-onboarding-cta { flex-wrap: wrap; }
   .fxa-avail-row { flex-wrap: wrap; }
+}
+
+/* ── v2f product-complete additions ─────────────────────── */
+
+/* Prominent error state */
+.fxa-error-banner--prominent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+}
+
+/* No-profile state */
+.fxa-no-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 16px;
+  gap: 10px;
+}
+.fxa-no-profile-icon  { font-size: 2.5rem; }
+.fxa-no-profile-title { font-size: 1rem; font-weight: 700; }
+.fxa-no-profile-sub   { font-size: .84rem; opacity: .65; line-height: 1.5; max-width: 300px; }
+
+/* Onboarding CTA full-card mode */
+.fxa-onboarding-cta--full {
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+}
+.fxa-onboarding-cta--full .fxa-onboarding-cta-body p {
+  font-size: .84rem;
+}
+
+/* Availability banner at top of dashboard */
+.fxa-avail-row--banner {
+  margin-bottom: 12px;
+  background: rgba(255,255,255,.03);
+  border-color: rgba(255,255,255,.06);
+}
+
+/* Priority mission card list (active missions on home) */
+.fxa-card-list--priority .fxa-card {
+  border-color: rgba(252,175,69,.25);
+  background: rgba(252,175,69,.04);
+}
+
+/* Inline empty state (compact, not full-page) */
+.fxa-empty--inline {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.07);
+}
+.fxa-empty--inline .fxa-empty-title { font-size: .9rem; font-weight: 600; margin: 0; }
+.fxa-empty--inline .fxa-empty-sub   { font-size: .78rem; opacity: .55; margin: 3px 0 0; }
+
+/* Mobile: ensure fxa-actions wrap properly on narrow screens */
+@media (max-width: 360px) {
+  .fxa-actions { flex-direction: column; }
+  .fxa-actions .fxa-btn { width: 100%; justify-content: center; }
+  .fxa-onboarding-cta--full .fxa-actions { flex-direction: column; }
 }

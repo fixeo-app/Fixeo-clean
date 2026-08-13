@@ -28,8 +28,9 @@
    * RLS: artisan_read_own_linked_requests + artisan_update_assigned_requests on service_requests
    * Identity: artisans WHERE owner_user_id=auth.uid() (7C.12A.1: phone_public fallback removed)
    * ─────────────────────────────────────────────────────────────────────────── */
-  var VERSION = 'v2e'; /* 7C.12A.3 functional pass: availability RPC, onboarding CTA,
-                         agreed_price=null, profile edit, mission status sync */
+  var VERSION = 'v2f'; /* product-complete pass: in-flight guard, modal ×, sidebar logout,
+                         session-expiry recovery, dashboard error state, dead claim_requests
+                         query removed, revenue truthfulness, home-screen dominance, debounce */
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -38,8 +39,12 @@
     artisanProfile: null,   /* artisans row (owner_user_id = auth.uid()) */
     openRequests:   [],     /* matching new requests (city + category filtered) */
     myMissions:     [],     /* service_requests assigned to this artisan */
-    section:        'dashboard'
+    section:        'dashboard',
+    fetchError:     null    /* last _fetch error message, or null */
   };
+
+  /* Global action in-flight guard — prevents double-submission while a btn is busy */
+  var _actionInFlight = false;
 
   /* ── HELPERS ──────────────────────────────────────────────── */
   function el(id)  { return document.getElementById(id); }
@@ -76,13 +81,16 @@
     if (!btn) return;
     btn.disabled = true;
     btn._origText = btn.textContent;
-    btn.textContent = label;
+    btn.textContent = label || '…';
+    _actionInFlight = true;
   }
   function _btnReset(btn) {
     if (!btn) return;
     btn.disabled = false;
     btn.textContent = btn._origText || '';
+    _actionInFlight = false;
   }
+  function _actionDone() { _actionInFlight = false; }
 
   /* ── MATCHING LOGIC ───────────────────────────────────────── */
   function _cityMatch(reqCity, artisan) {
@@ -204,10 +212,23 @@
   async function _fetch() {
     var FS = window.FixeoSupabase;
     var uid = _state.session.user.id;
+    _state.fetchError = null;
 
-    /* Load artisan profile if not yet loaded */
-    if (!_state.artisanProfile) {
+    /* Verify session still valid — catches silent expiry */
+    try {
+      var freshSession = await FS.getSession();
+      if (!freshSession || !freshSession.user) {
+        _showLoginGate(null);
+        return;
+      }
+    } catch(e) { /* non-fatal — continue with cached session */ }
+
+    /* Load artisan profile (always reload on explicit refresh to pick up edits) */
+    try {
       _state.artisanProfile = await _loadArtisanProfile(uid);
+    } catch(e) {
+      _state.fetchError = 'Erreur de chargement du profil artisan.';
+      console.warn('[fxav2] _loadArtisanProfile error:', e && e.message);
     }
 
     /* Fetch open requests in parallel; missions queried separately below
@@ -294,14 +315,10 @@
 
     var available  = _state.openRequests.length;
 
-    var revenue    = _state.myMissions.reduce(function(sum, m) {
-      var price = m._request && Number(m._request.final_price || 0);
-      var st    = m._request && m._request.status;
-      if ((st === 'validated') && price > 0) {
-        return sum + Math.round(price * 0.85); /* artisan net */
-      }
-      return sum;
-    }, 0);
+    /* Revenue: final_price is not in SR_COLS (only fetched for mission enrich).
+     * Do not fabricate a 0 revenue. Return null to trigger '—' display.
+     * If final_price were fetched, it would be: validated missions * 0.85 artisan net. */
+    var revenue = null;
 
     return { assigned: assigned, completed: completed, available: available, revenue: revenue };
   }
@@ -533,108 +550,126 @@
     var ap = _state.artisanProfile;
     var profHtml = _renderProfileHeader();
 
-    /* No profile linked gate — but still show missions if any exist */
-    if (!ap) {
-      var activeFallback = _state.myMissions.filter(function(m) {
-        var st = (m._request && m._request.status) || m.status || '';
-        return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'en_cours' || st === 'completed';
-      });
-      var missionFallbackHtml = activeFallback.length
-        ? '<div class="fxa-section-head" style="margin-top:20px"><h2>⚡ Mes missions</h2>'
-          + '<span class="fxa-section-count">' + activeFallback.length + '</span></div>'
-          + '<div class="fxa-card-list">' + activeFallback.map(_renderMissionCard).join('') + '</div>'
-        : '';
-      /* Check Supabase claim_requests for a pending claim from this user */
-      var uid = _state.session && _state.session.user && _state.session.user.id;
-      (async function _renderNoProfile() {
-        var claimHtml = '';
-        try {
-          if (uid && window.FixeoSupabase) {
-            var sbC = await window.FixeoSupabase.getClient();
-            var cr = await sbC.from('claim_requests')
-              .select('id,artisan_legacy_id,requester_name,status,created_at,onboarding_data')
-              .eq('requester_user_id', uid)
-              .order('created_at', { ascending: false })
-              .limit(1)
-              .maybeSingle();
-            if (!cr.error && cr.data) {
-              var crRow = cr.data;
-              var ob = {};
-              try { ob = typeof crRow.onboarding_data === 'string' ? JSON.parse(crRow.onboarding_data) : (crRow.onboarding_data || {}); } catch(e) {}
-              var artisanName = ob.artisan_name || crRow.artisan_legacy_id || '';
-              if (crRow.status === 'pending') {
-                claimHtml = '<div class="fxa-claim-pending">'
-                  + '<div class="fxa-claim-pending-icon">⏳</div>'
-                  + '<div class="fxa-claim-pending-body">'
-                  + '<div class="fxa-claim-pending-title">Revendication en cours de validation</div>'
-                  + '<div class="fxa-claim-pending-sub">Votre demande pour <strong>' + esc(artisanName) + '</strong> est en attente de validation par l\'équipe Fixeo. Vous serez contacté sous 24h par WhatsApp.</div>'
-                  + '</div></div>';
-              } else if (crRow.status === 'rejected') {
-                claimHtml = '<div class="fxa-claim-rejected">'
-                  + '<div class="fxa-claim-rejected-icon">❌</div>'
-                  + '<div class="fxa-claim-rejected-body">'
-                  + '<div class="fxa-claim-rejected-title">Demande de revendication refusée</div>'
-                  + '<div class="fxa-claim-rejected-sub">Votre demande n\'a pas pu être validée. Contactez le support Fixeo pour plus d\'informations.</div>'
-                  + '<a href="https://wa.me/212660484415" target="_blank" class="fxa-btn fxa-btn-wa" style="margin-top:10px;display:inline-block">📲 Contacter le support</a>'
-                  + '</div></div>';
-              }
-            }
-          }
-        } catch(e) {
-          console.warn('[fxav2] claim check failed:', e && e.message);
-        }
-
-        if (!claimHtml) {
-          claimHtml = '<div class="fxa-no-profile">'
-            + '<div class="fxa-no-profile-icon">🏷️</div>'
-            + '<div class="fxa-no-profile-title">Aucun profil artisan associé</div>'
-            + '<div class="fxa-no-profile-sub">Votre compte n\'est pas encore lié à un profil artisan. Rendez-vous sur la fiche d\'un artisan pour revendiquer votre profil, ou contactez le support.</div>'
-            + '<a href="https://wa.me/212660484415" target="_blank" class="fxa-btn fxa-btn-wa" style="margin-top:12px;display:inline-block">📲 Contacter le support</a>'
-            + '</div>';
-        }
-
-        sec.innerHTML = profHtml + claimHtml + missionFallbackHtml;
-      })();
+    /* ── FETCH ERROR STATE ────────────────────────────────────── */
+    if (_state.fetchError) {
+      sec.innerHTML = profHtml
+        + '<div class="fxa-error-banner fxa-error-banner--prominent">'
+        + '⚠️ ' + esc(_state.fetchError)
+        + ' <button class="fxa-btn fxa-btn-ghost fxa-btn-sm" style="margin-left:10px" '
+        + 'onclick="window.location.reload()">Réessayer</button>'
+        + '</div>';
       return;
     }
 
-    /* Profile incomplete warning */
+    /* ── NO PROFILE STATE — dead claim_requests query removed (7C.12A.3) ──
+     * New artisans always have an artisans row (register_new_artisan).
+     * If artisanProfile is null after a successful load it means this
+     * authenticated user never completed registration. Show clear guidance. */
+    if (!ap) {
+      sec.innerHTML = profHtml
+        + '<div class="fxa-no-profile">'
+        + '<div class="fxa-no-profile-icon">🔧</div>'
+        + '<div class="fxa-no-profile-title">Compte artisan non trouvé</div>'
+        + '<div class="fxa-no-profile-sub">'
+        + 'Ce compte n\'est pas associé à un profil artisan. '
+        + 'Si vous venez de vous inscrire, complétez d\'abord votre inscription sur la page d\'enregistrement.'
+        + '</div>'
+        + '<a href="onboarding-artisan.html" class="fxa-btn fxa-btn-primary" style="margin-top:16px;display:inline-flex;text-decoration:none">Compléter l\'inscription</a>'
+        + '<a href="https://wa.me/212660484415" target="_blank" class="fxa-btn fxa-btn-wa" style="margin-top:10px;display:inline-flex">📲 Contacter le support</a>'
+        + '</div>';
+      return;
+    }
+
+    /* ── ONBOARDING DOMINANT CTA — takes over home screen when incomplete ── */
+    if (!ap.onboarding_completed) {
+      var missingItems = [];
+      if (!ap.full_name || (ap.full_name || '').length < 3) missingItems.push('Nom complet');
+      if (!(ap.service_category || ap.category))            missingItems.push('Métier');
+      if (!ap.city)                                          missingItems.push('Ville');
+
+      var missingHtml = missingItems.length
+        ? '<ul style="margin:8px 0 0;padding-left:18px;font-size:.84rem;opacity:.8">'
+          + missingItems.map(function(m) { return '<li>' + esc(m) + '</li>'; }).join('')
+          + '</ul>'
+        : '';
+
+      sec.innerHTML = profHtml
+        + '<div class="fxa-onboarding-cta fxa-onboarding-cta--full">'
+        + '<div class="fxa-onboarding-cta-icon" style="font-size:2.2rem">🚀</div>'
+        + '<div class="fxa-onboarding-cta-body">'
+        + '<strong style="font-size:1rem">Activez votre profil pour commencer</strong>'
+        + '<p>Une fois activé, vous pourrez recevoir des missions et gérer votre disponibilité.</p>'
+        + missingHtml
+        + '</div>'
+        + '<div class="fxa-actions" style="margin-top:14px">'
+        + (missingItems.length
+            ? '<button class="fxa-btn fxa-btn-ghost" data-action="edit-profile">Compléter le profil</button>'
+            : '')
+        + '<button class="fxa-btn fxa-btn-primary" data-action="complete-onboarding" style="flex:2">Activer mon profil</button>'
+        + '</div></div>';
+      return;
+    }
+
+    /* ── NORMAL OPERATIONAL DASHBOARD ──────────────────────────── */
+
+    /* Availability state banner */
+    var avail = ap.availability || 'unavailable';
+    var availBanner = '';
+    if (avail !== 'available') {
+      availBanner = '<div class="fxa-avail-row fxa-avail-row--banner">'
+        + '<span class="fxa-avail-label fxa-avail-off">○ Vous êtes indisponible</span>'
+        + '<button class="fxa-btn fxa-btn-primary fxa-btn-sm" data-action="set-available">Me rendre disponible</button>'
+        + '</div>';
+    }
+
+    /* Profile completeness warning */
     var warn = '';
     if (!ap.city || !(ap.service_category || ap.category)) {
-      warn = '<div class="fxa-error-banner">⚠️ Configurez votre ville et votre métier pour recevoir des demandes.</div>';
+      warn = '<div class="fxa-error-banner">⚠️ '
+        + '<span>Complétez votre ville et métier pour recevoir des demandes. </span>'
+        + '<button class="fxa-btn fxa-btn-ghost fxa-btn-sm" style="margin-left:8px" data-action="edit-profile">Compléter</button>'
+        + '</div>';
+    }
+
+    /* Active missions — DOMINANT: show first, max 2 */
+    var activeMissions = _state.myMissions.filter(function(m) {
+      var st = (m._request && m._request.status) || m.status || '';
+      return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'en_cours';
+    }).slice(0, 2);
+
+    var missionHtml = '';
+    if (activeMissions.length) {
+      missionHtml = '<div class="fxa-section-head" style="margin-top:0"><h2>⚡ Mission en cours</h2>'
+        + '<span class="fxa-section-count">' + activeMissions.length + '</span>'
+        + '</div>'
+        + '<div class="fxa-card-list fxa-card-list--priority">'
+        + activeMissions.map(_renderMissionCard).join('') + '</div>';
     }
 
     /* Recent open requests (max 3) */
     var recentOpen = _state.openRequests.slice(0, 3);
     var openHtml = '';
     if (recentOpen.length) {
-      openHtml = '<div class="fxa-section-head"><h2>📬 Disponibles</h2>'
+      openHtml = '<div class="fxa-section-head" style="margin-top:' + (activeMissions.length ? '20px' : '0') + '">'
+        + '<h2>📬 Nouvelles demandes</h2>'
         + '<span class="fxa-section-count">' + _state.openRequests.length + '</span>'
         + '</div>'
         + '<div class="fxa-card-list">' + recentOpen.map(_renderRequestCard).join('') + '</div>';
       if (_state.openRequests.length > 3) {
-        openHtml += '<button class="fxa-btn fxa-btn-ghost fxa-btn-full" style="margin-top:10px" data-action="go-available">Voir toutes (' + _state.openRequests.length + ')</button>';
+        openHtml += '<button class="fxa-btn fxa-btn-ghost fxa-btn-full" style="margin-top:10px" data-action="go-available">'
+          + 'Voir toutes (' + _state.openRequests.length + ')</button>';
       }
-    } else if (ap.city && (ap.service_category || ap.category)) {
-      openHtml = '<div class="fxa-empty">'
-        + '<div class="fxa-empty-icon">📬</div>'
-        + '<div class="fxa-empty-title">Aucune demande disponible</div>'
-        + '<div class="fxa-empty-sub">Aucune demande dans votre zone pour le moment. Vous serez notifié à chaque nouvelle demande.</div>'
-        + '</div>';
+    } else if (!activeMissions.length && ap.city && (ap.service_category || ap.category)) {
+      /* Only show empty state if also no active mission — otherwise it reads as noise */
+      openHtml = '<div class="fxa-empty fxa-empty--inline">'
+        + '<div class="fxa-empty-icon" style="font-size:1.8rem">📬</div>'
+        + '<div>'
+        + '<div class="fxa-empty-title" style="font-size:.95rem">Aucune demande pour le moment</div>'
+        + '<div class="fxa-empty-sub" style="font-size:.8rem">Vous serez notifié dès qu\'une demande correspond à votre zone.</div>'
+        + '</div></div>';
     }
 
-    /* Active missions (max 2) */
-    var activeMissions = _state.myMissions.filter(function(m) {
-      var st = (m._request && m._request.status) || m.status || '';
-      return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'en_cours' || st === 'completed';
-    }).slice(0, 2);
-    var missionHtml = '';
-    if (activeMissions.length) {
-      missionHtml = '<div class="fxa-section-head" style="margin-top:20px"><h2>⚡ Mes missions</h2></div>'
-        + '<div class="fxa-card-list">' + activeMissions.map(_renderMissionCard).join('') + '</div>';
-    }
-
-    sec.innerHTML = profHtml + warn + openHtml + missionHtml;
+    sec.innerHTML = profHtml + availBanner + warn + missionHtml + openHtml;
   }
 
   /* ── RENDER: SECTION — AVAILABLE ─────────────────────────── */
@@ -982,6 +1017,10 @@
       if (!btn) return;
       var action = btn.dataset.action;
       var reqId  = btn.dataset.reqId || '';
+      /* Navigation/UI actions are exempt from in-flight guard */
+      var navAction = action === 'go-available' || action === 'close-modal'
+        || action === 'edit-profile' || action === 'logout';
+      if (_actionInFlight && !navAction) return; /* drop duplicate tap */
       switch (action) {
         case 'accept-mission':      _doAcceptMission(reqId, btn); return;
         case 'start-mission':       _doStartMission(reqId, btn); return;

@@ -215,14 +215,14 @@ test('S8.3 main addEventListener with _handleAction', () => {
 /* ══════════════════════════════════════════════════════════ */
 /* S9: Version bump                                          */
 /* ══════════════════════════════════════════════════════════ */
-test('S9.1 JS version is v2e', () => {
-  assertMatch(js, /VERSION\s*=\s*'v2e'/);
+test('S9.1 JS version is v2f', () => {
+  assertMatch(js, /VERSION\s*=\s*'v2f'/);
 });
-test('S9.2 HTML script tag points to v2e', () => {
-  assertMatch(html, /fixeo-artisan-dashboard-v2\.js\?v=v2e/);
+test('S9.2 HTML script tag points to v2f', () => {
+  assertMatch(html, /fixeo-artisan-dashboard-v2\.js\?v=v2f/);
 });
-test('S9.3 CSS version is v1d', () => {
-  assertMatch(html, /fixeo-artisan-dashboard-v2\.css\?v=v1d/);
+test('S9.3 CSS version is v1e', () => {
+  assertMatch(html, /fixeo-artisan-dashboard-v2\.css\?v=v1e/);
 });
 
 /* ══════════════════════════════════════════════════════════ */
@@ -252,6 +252,91 @@ test('S10.6 CSS has onboarding CTA styles', () => {
 });
 test('S10.7 CSS has small button variant', () => {
   assertIncludes(css, '.fxa-btn-sm');
+});
+
+
+/* ══════════════════════════════════════════════════════════ */
+/* S11: v2f product-complete additions                       */
+/* ══════════════════════════════════════════════════════════ */
+
+// const js2 (reuse js from top scope)  = js;
+// const jsExec (reuse jsExec from top scope) = jsExec;
+
+test('S11.1 dead claim_requests query removed from executable JS', () => {
+  // The async _renderNoProfile function used to query claim_requests — removed
+  assertNotIncludes(jsExec, "from('claim_requests')");
+});
+test('S11.2 _actionInFlight guard defined', () => {
+  assertMatch(jsExec, /var _actionInFlight/);
+});
+test('S11.3 _actionInFlight checked in _handleAction', () => {
+  assertMatch(jsExec, /if \(_actionInFlight && !navAction\)/);
+});
+test('S11.4 _actionInFlight set to true in _btnBusy', () => {
+  const busyFn = jsExec.match(/function _btnBusy[\s\S]*?\}/)?.[0] || '';
+  assertIncludes(busyFn, '_actionInFlight = true');
+});
+test('S11.5 _actionInFlight cleared in _btnReset', () => {
+  const resetFn = jsExec.match(/function _btnReset[\s\S]*?\}/)?.[0] || '';
+  assertIncludes(resetFn, '_actionInFlight = false');
+});
+test('S11.6 fetchError state tracked in _state', () => {
+  assertMatch(jsExec, /fetchError\s*:/);
+});
+test('S11.7 _fetch clears fetchError at start', () => {
+  assertMatch(jsExec, /_state\.fetchError\s*=\s*null/);
+});
+test('S11.8 session validity check inside _fetch', () => {
+  assertMatch(jsExec, /getSession[\s\S]{0,200}?freshSession/i);
+});
+test('S11.9 _renderDashboard shows fetchError state when set', () => {
+  assertIncludes(jsExec, 'fetchError');
+  assertMatch(jsExec, /window\.location\.reload/);
+});
+test('S11.10 no-profile state shows registration link, not dead claim query', () => {
+  assertMatch(jsExec, /onboarding-artisan\.html/);
+  assertNotIncludes(jsExec, "from('claim_requests')");
+});
+test('S11.11 onboarding not-yet-complete shows dominant CTA on dashboard', () => {
+  assertMatch(jsExec, /onboarding_completed.*dominant|dominant.*onboarding|fxa-onboarding-cta--full/);
+});
+test('S11.12 revenue KPI is null (not fabricated 0)', () => {
+  assertMatch(jsExec, /var revenue\s*=\s*null/);
+});
+test('S11.13 revenue display uses — not 0', () => {
+  assertMatch(jsExec, /revenue.*'—'|'—'.*revenue/);
+  assertNoMatch(jsExec, /revenue.*' MAD'.*0|0.*' MAD'.*revenue/);
+});
+test('S11.14 availability banner on dashboard when not available', () => {
+  assertMatch(jsExec, /avail !== 'available'/);
+  assertIncludes(jsExec, 'fxa-avail-row--banner');
+});
+test('S11.15 active missions shown BEFORE new requests on dashboard (priority)', () => {
+  const dashFn = jsExec.match(/function _renderDashboard[\s\S]*?(?=\n  function )/)?.[0] || '';
+  const posMission = dashFn.indexOf('Mission en cours');
+  const posOpen    = dashFn.indexOf('Nouvelles demandes');
+  assert(posMission > 0 && posOpen > 0 && posMission < posOpen,
+    'Active missions must be rendered before new requests');
+});
+test('S11.16 CSS has no-profile styles', () => {
+  assertIncludes(css, '.fxa-no-profile');
+  assertIncludes(css, '.fxa-no-profile-title');
+});
+test('S11.17 CSS has onboarding-cta--full variant', () => {
+  const css2 = fs.readFileSync(path.join(ROOT, 'css/fixeo-artisan-dashboard-v2.css'), 'utf8');  // reused
+  assertIncludes(css2, '.fxa-onboarding-cta--full');
+});
+test('S11.18 CSS has avail-row--banner variant', () => {
+  const css2 = fs.readFileSync(path.join(ROOT, 'css/fixeo-artisan-dashboard-v2.css'), 'utf8');  // reused
+  assertIncludes(css2, '.fxa-avail-row--banner');
+});
+test('S11.19 HTML points to v2f JS and v1e CSS', () => {
+  assertMatch(html, /v2f/);
+  assertMatch(html, /v1e/);
+});
+test('S11.20 in-flight guard exempts navigation actions', () => {
+  assertMatch(jsExec, /navAction.*go-available|go-available.*navAction/);
+  assertMatch(jsExec, /navAction.*close-modal|close-modal.*navAction/);
 });
 
 /* ── Summary ─────────────────────────────────────────────── */
