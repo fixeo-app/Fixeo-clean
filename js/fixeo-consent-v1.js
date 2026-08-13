@@ -60,6 +60,7 @@
 
    CHANGELOG
    ─────────
+   fcv-v1d  2026-08-13  Phase UI-HF-01 — modal CTA hierarchy: accept-all primary orange, personalize secondary; icon+title in header
    fcv-v1c  2026-07-11  Phase 6.2.5A.3 — M-01: _denyAnalytics consent update; M-02: footer link; M-03: <head> init
    fcv-v1b  2026-07-11  Phase 6.2.5A.1 — blog+SSR coverage, versioned storage, GA cookie deletion, open() fix
    fcv-v1a  2026-07-11  Initial consent manager (Phase 6.2.5A)
@@ -72,7 +73,7 @@
   if (window._fxConsentLoaded) return;
   window._fxConsentLoaded = true;
 
-  var VERSION   = 'fcv-v1c';
+  var VERSION   = 'fcv-v1d';
   var STORAGE_KEY = 'fixeo_consent_analytics';
 
   /* ── Consent Mode v2 stub ────────────────────────────────── */
@@ -270,8 +271,9 @@
 
         '<!-- Modal header -->',
         '<div class="fcb-modal-header">',
-          '<h2 class="fcb-modal-title" id="fcb-modal-title">Paramètres des cookies</h2>',
-          '<button class="fcb-modal-close" id="fcb-modal-close" type="button" aria-label="Fermer">✕</button>',
+          '<span aria-hidden="true" style="font-size:1.25rem;flex-shrink:0;line-height:1;">🍪</span>',
+          '<h2 class="fcb-modal-title" id="fcb-modal-title">Vos préférences de cookies</h2>',
+          '<button class="fcb-modal-close" id="fcb-modal-close" type="button" aria-label="Fermer la fenêtre">✕</button>',
         '</div>',
 
         '<!-- Modal body -->',
@@ -314,11 +316,13 @@
 
         '<!-- Modal footer -->',
         '<div class="fcb-modal-footer">',
+          /* PRIMARY — accept-all: orange, full-width, prominent */
           '<button class="fcb-btn fcb-btn--accept-all" id="fcb-modal-accept-all" type="button">',
-            'Tout accepter',
+            '✓ Accepter tous les cookies',
           '</button>',
+          /* SECONDARY — personalize: outlined */
           '<button class="fcb-btn fcb-btn--save" id="fcb-modal-save" type="button">',
-            'Enregistrer mes choix',
+            'Personnaliser mes choix',
           '</button>',
         '</div>',
 

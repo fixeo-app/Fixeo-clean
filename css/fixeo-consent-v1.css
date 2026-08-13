@@ -1,6 +1,6 @@
 /* ============================================================
    FIXEO COOKIE CONSENT BANNER
-   css/fixeo-consent-v1.css   Version: fcc-v1b
+   css/fixeo-consent-v1.css   Version: fcc-v1c
 
    PURPOSE
    ───────
@@ -17,6 +17,7 @@
 
    CHANGELOG
    ─────────
+   fcc-v1c  2026-08-13  Phase UI-HF-01 — mobile CTA hierarchy, safe-area, overflow fix
    fcc-v1b  2026-07-11  Phase 6.2.5A.1 — button visual parity, prefers-reduced-motion
    fcc-v1a  2026-07-11  Initial consent banner CSS (Phase 6.2.5A)
    ============================================================ */
@@ -34,7 +35,10 @@
   right: 0;
   bottom: 0;
   z-index: 99900;
-  padding: 0 20px 20px;
+  /* safe-area: respect iPhone home bar and Safari bottom chrome */
+  padding: 0 20px calc(20px + env(safe-area-inset-bottom, 0px));
+  padding-left:  calc(20px + env(safe-area-inset-left,   0px));
+  padding-right: calc(20px + env(safe-area-inset-right,  0px));
   pointer-events: none;
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
               opacity  0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -64,6 +68,8 @@
               0 0 0 1px rgba(255, 255, 255, 0.04) inset;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+  /* clip children — prevents any child escaping border-radius */
+  overflow: hidden;
 }
 
 /* ── Banner layout ──────────────────────────────────────────── */
@@ -186,16 +192,25 @@
 /* ── Mobile responsive ──────────────────────────────────────── */
 @media (max-width: 640px) {
   .fcb-banner {
-    padding: 0 10px 12px;
+    /* tighter horizontal margins; bottom safe-area applied globally */
+    padding: 0 12px calc(14px + env(safe-area-inset-bottom, 0px));
+    padding-left:  calc(12px + env(safe-area-inset-left,   0px));
+    padding-right: calc(12px + env(safe-area-inset-right,  0px));
   }
 
   .fcb-inner {
-    padding: 18px 18px;
-    border-radius: 16px;
+    padding: 20px 20px 18px;
+    border-radius: 22px;
+    /* prevent any child from leaking out right edge */
+    overflow: hidden;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .fcb-row {
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
     gap: 14px;
   }
 
@@ -204,22 +219,46 @@
   }
 
   .fcb-text {
-    min-width: 100%;
+    min-width: 0;
+    width: 100%;
   }
 
   .fcb-actions {
     width: 100%;
-    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .fcb-btn {
-    flex: 1;
+    width: 100%;
+    flex: unset;
     justify-content: center;
   }
 
   .fcb-btn--settings {
-    flex: 0 0 auto;
+    flex: unset;
     width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .fcb-inner {
+    padding: 16px 16px 14px;
+    border-radius: 20px;
+  }
+
+  .fcb-text h3 {
+    font-size: 0.88rem;
+  }
+
+  .fcb-text p {
+    font-size: 0.78rem;
+  }
+
+  .fcb-btn {
+    font-size: 0.82rem;
+    padding: 13px 16px;
   }
 }
 
@@ -234,7 +273,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  /* horizontal safe-area so modal never bleeds under notch/bars */
+  padding: calc(20px + env(safe-area-inset-top,    0px))
+           calc(16px + env(safe-area-inset-right,  0px))
+           calc(20px + env(safe-area-inset-bottom, 0px))
+           calc(16px + env(safe-area-inset-left,   0px));
   transition: opacity 0.25s;
 }
 
@@ -245,21 +288,28 @@
 .fcb-modal {
   background: #0e0e1c;
   border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 20px;
+  border-radius: 24px;
   max-width: 520px;
   width: 100%;
-  max-height: 90vh;
+  max-height: min(90vh, 680px);
   overflow-y: auto;
+  overflow-x: hidden; /* prevent right-edge escape */
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
   position: relative;
+  /* clip any child that escapes (close button, toggle, etc.) */
+  isolation: isolate;
 }
 
 .fcb-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 28px 0;
+  padding: 24px 24px 0;
   gap: 12px;
+  /* ensure header doesn't overflow modal width */
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .fcb-modal-title {
@@ -267,6 +317,13 @@
   font-size: 1.05rem;
   font-weight: 800;
   color: #fff;
+  /* prevent title from pushing X off-screen */
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 8px; /* breathing room between icon and X */
 }
 
 .fcb-modal-close {
@@ -408,27 +465,68 @@
 /* ── Modal footer ────────────────────────────────────────────── */
 .fcb-modal-footer {
   display: flex;
+  flex-direction: column;  /* stacked: accept-all on top, personalize below */
   gap: 10px;
-  padding: 0 28px 24px;
-  flex-wrap: wrap;
+  padding: 4px 24px 28px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.fcb-btn--save {
-  background: linear-gradient(135deg, #E1306C, #833AB4);
-  color: #fff;
-  flex: 1;
-  min-width: 140px;
-}
-
+/* PRIMARY: full-width FIXEO orange "Accepter tous les cookies" */
 .fcb-btn--accept-all {
-  background: rgba(255, 255, 255, 0.07);
-  color: rgba(232, 234, 240, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #FF6B2C, #E8521A);
+  color: #fff;
+  width: 100%;
+  min-height: 50px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  border: none;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(255, 107, 44, 0.35);
+  order: 1; /* visually first */
 }
 
 .fcb-btn--accept-all:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, #ff7d44, #f0601e);
+  box-shadow: 0 6px 20px rgba(255, 107, 44, 0.45);
+  opacity: 1; /* override default .fcb-btn:hover opacity */
+}
+
+/* SECONDARY: outlined "Personnaliser mes choix" */
+.fcb-btn--save {
+  background: transparent;
+  color: rgba(232, 234, 240, 0.8);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  width: 100%;
+  min-height: 46px;
+  font-size: 0.87rem;
+  font-weight: 700;
+  border-radius: 14px;
+  flex: unset;
+  order: 2; /* visually second */
+}
+
+.fcb-btn--save:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.38);
   color: #fff;
+  opacity: 1;
+}
+
+/* Mobile modal adjustments */
+@media (max-width: 640px) {
+  .fcb-modal-backdrop {
+    align-items: flex-end; /* sheet rises from bottom on mobile */
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .fcb-modal {
+    border-radius: 26px 26px 18px 18px;
+    max-height: min(92vh, 680px);
+    /* sheet never clips off right edge */
+    width: calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 480px) {
@@ -437,18 +535,44 @@
   }
 
   .fcb-modal-body {
-    padding: 16px 20px;
+    padding: 14px 20px;
   }
 
   .fcb-modal-footer {
-    padding: 0 20px 20px;
-    flex-direction: column;
+    padding: 4px 20px calc(20px + env(safe-area-inset-bottom, 0px));
   }
 
-  .fcb-btn--save,
   .fcb-btn--accept-all {
-    width: 100%;
-    flex: unset;
+    min-height: 48px;
+    font-size: 0.9rem;
+  }
+
+  .fcb-btn--save {
+    min-height: 44px;
+    font-size: 0.84rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .fcb-modal {
+    width: calc(100vw - 16px);
+  }
+
+  .fcb-modal-header {
+    padding: 18px 16px 0;
+  }
+
+  .fcb-modal-body {
+    padding: 12px 16px;
+  }
+
+  .fcb-modal-footer {
+    padding: 4px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    gap: 8px;
+  }
+
+  .fcb-modal-title {
+    font-size: 0.96rem;
   }
 }
 
