@@ -1,0 +1,223 @@
+/* ============================================================
+   FIXEO Admin — Canonical Sync CSS
+   css/admin-canonical-sync-v1.css   v1a
+   Additive over admin.css — zero overrides of existing rules.
+   ============================================================ */
+
+/* ── Home Panel ────────────────────────────────────────────── */
+.fxacs-home-panel {
+  margin-bottom: 20px;
+  border-left: 3px solid #E1306C;
+}
+
+/* ── Alert rows (priority queue) ─────────────────────────── */
+.fxacs-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-size: .84rem;
+}
+.fxacs-alert:last-child { margin-bottom: 0; }
+.fxacs-alert-icon  { font-size: 1.1rem; flex-shrink: 0; }
+.fxacs-alert-text  { flex: 1; line-height: 1.45; }
+.fxacs-alert-btn {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: .76rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  background: rgba(255,255,255,.12);
+  color: inherit;
+  transition: background .15s;
+}
+.fxacs-alert-btn:hover { background: rgba(255,255,255,.22); }
+
+.fxacs-alert-warn    { background: rgba(252,175,69,.10); border: 1px solid rgba(252,175,69,.25); color: #FCAF45; }
+.fxacs-alert-info    { background: rgba(13,202,240,.08);  border: 1px solid rgba(13,202,240,.22);  color: #0dcaf0; }
+.fxacs-alert-success { background: rgba(32,201,151,.08); border: 1px solid rgba(32,201,151,.20); color: #20c997; }
+.fxacs-alert-muted   { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.09); color: rgba(255,255,255,.55); }
+.fxacs-alert-ok      { background: rgba(32,201,151,.06); border: 1px solid rgba(32,201,151,.15); color: #20c997; }
+
+/* ── Lifecycle Pill ─────────────────────────────────────── */
+.fxacs-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+.fxacs-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  font-size: .66rem;
+  font-weight: 800;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.fxacs-pill-claim-ok    { background: rgba(32,201,151,.14); border-color: rgba(32,201,151,.30); color: #20c997; }
+.fxacs-pill-claim-pend  { background: rgba(252,175,69,.14); border-color: rgba(252,175,69,.30); color: #FCAF45; }
+.fxacs-pill-claim-rej   { background: rgba(225,48,108,.12); border-color: rgba(225,48,108,.25); color: #E1306C; }
+.fxacs-pill-unlinked    { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.10); color: rgba(255,255,255,.40); }
+.fxacs-pill-onboard     { background: rgba(13,202,240,.12); border-color: rgba(13,202,240,.28); color: #0dcaf0; }
+.fxacs-pill-onboard-no  { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.09); color: rgba(255,255,255,.35); }
+.fxacs-pill-avail       { background: rgba(32,201,151,.12); border-color: rgba(32,201,151,.25); color: #20c997; }
+.fxacs-pill-avail-no    { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.09); color: rgba(255,255,255,.35); }
+.fxacs-pill-verified    { background: rgba(32,201,151,.18); border-color: rgba(32,201,151,.35); color: #20c997; }
+.fxacs-pill-unverified  { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.09); color: rgba(255,255,255,.35); }
+
+.fxacs-pill-new      { background: rgba(13,202,240,.12);  border-color: rgba(13,202,240,.28);  color: #0dcaf0; }
+.fxacs-pill-assigned { background: rgba(252,175,69,.12);  border-color: rgba(252,175,69,.28);  color: #FCAF45; }
+.fxacs-pill-progress { background: rgba(225,48,108,.12);  border-color: rgba(225,48,108,.28);  color: #E1306C; }
+.fxacs-pill-done     { background: rgba(32,201,151,.15);  border-color: rgba(32,201,151,.30);  color: #20c997; }
+.fxacs-pill-cancel   { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.10); color: rgba(255,255,255,.38); }
+.fxacs-pill-urgent   { background: rgba(252,175,69,.18);  border-color: rgba(252,175,69,.35);  color: #FCAF45; }
+
+/* ── Table ───────────────────────────────────────────────── */
+.fxacs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .82rem;
+}
+.fxacs-table thead th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: .70rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: rgba(255,255,255,.45);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  white-space: nowrap;
+}
+.fxacs-table tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  transition: background .12s;
+}
+.fxacs-table tbody tr:hover { background: rgba(255,255,255,.03); }
+.fxacs-table tbody td {
+  padding: 10px 12px;
+  vertical-align: middle;
+}
+.fxacs-row-highlight { background: rgba(252,175,69,.04); }
+
+/* ── Avatar ───────────────────────────────────────────────── */
+.fxacs-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+.fxacs-avatar-init {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  color: #fff;
+  font-weight: 800;
+  font-size: .78rem;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+/* ── Profile completeness bar ─────────────────────────────── */
+.fxacs-completeness-bar-bg {
+  height: 4px;
+  background: rgba(255,255,255,.08);
+  border-radius: 99px;
+  overflow: hidden;
+  width: 72px;
+  margin-bottom: 3px;
+}
+.fxacs-completeness-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #E1306C, #833AB4);
+  transition: width .3s ease;
+}
+
+/* ── Utility ──────────────────────────────────────────────── */
+.fxacs-mono  { font-family: 'SF Mono', 'Fira Mono', monospace; font-size: .76rem; opacity: .7; }
+.fxacs-muted { color: rgba(255,255,255,.38); font-size: .78rem; }
+.fxacs-empty, .fxacs-loading {
+  text-align: center;
+  padding: 32px 20px;
+  color: rgba(255,255,255,.35);
+  font-size: .84rem;
+}
+
+/* ── Action buttons ───────────────────────────────────────── */
+.fxacs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 7px;
+  font-size: .78rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: opacity .15s, transform .1s;
+}
+.fxacs-btn:active    { transform: scale(0.97); }
+.fxacs-btn:disabled  { opacity: .4; cursor: not-allowed; }
+.fxacs-btn-approve   { background: rgba(32,201,151,.15); border: 1px solid rgba(32,201,151,.32); color: #20c997; }
+.fxacs-btn-approve:hover { background: rgba(32,201,151,.25); }
+.fxacs-btn-reject    { background: rgba(225,48,108,.10); border: 1px solid rgba(225,48,108,.28); color: #E1306C; }
+.fxacs-btn-reject:hover  { background: rgba(225,48,108,.18); }
+
+/* ── Section body scrollable on mobile ────────────────────── */
+.fxacs-section-body { overflow-x: auto; }
+
+/* ── Toast ────────────────────────────────────────────────── */
+.fxacs-toast-wrap {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  max-width: 320px;
+}
+.fxacs-toast {
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-size: .84rem;
+  font-weight: 700;
+  pointer-events: none;
+  animation: fxacs-toast-in .22s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,.40);
+}
+.fxacs-toast-success { background: rgba(32,201,151,.96); color: #fff; }
+.fxacs-toast-error   { background: rgba(225,48,108,.96); color: #fff; }
+.fxacs-toast-info    { background: rgba(13,202,240,.92); color: #fff; }
+
+@keyframes fxacs-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Mobile ───────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .fxacs-table thead { display: none; }
+  .fxacs-table tbody td {
+    display: block;
+    padding: 4px 12px;
+    border-bottom: none;
+  }
+  .fxacs-table tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    padding: 8px 0;
+  }
+  .fxacs-toast-wrap { right: 12px; left: 12px; max-width: none; }
+}
