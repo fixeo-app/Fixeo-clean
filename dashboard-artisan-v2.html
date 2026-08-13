@@ -17,6 +17,7 @@
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
   <!-- V2 CSS — single file, no V1 CSS -->
   <link rel="stylesheet" href="css/fixeo-artisan-dashboard-v2.css?v=v1e">
+  <!-- Notification CSS kept — real notifications table exists -->
   <link rel="stylesheet" href="css/fixeo-notifications-real-v1.css?v=1">
   <link rel="stylesheet" href="css/fixeo-notification-center-v1.css?v=fnc-v1b">
   <!-- Supabase + auth guard — synchronous, must be in head -->
@@ -36,7 +37,15 @@
     <span></span><span></span><span></span>
   </button>
   <a class="fxa-header-logo" href="/" aria-label="Retour à l'accueil Fixeo">Fixeo</a>
-  <div><!-- notification bell placeholder --></div>
+  <!-- Notification bell — wired to FixeoNotificationsV1 if present; otherwise inert -->
+  <button class="fxav2-bell-btn" id="fxav2-bell" aria-label="Notifications"
+          style="background:none;border:none;color:rgba(255,255,255,.65);font-size:1.25rem;cursor:pointer;padding:8px;line-height:1;position:relative"
+          onclick="var c=document.getElementById('fxav2-notif-center');if(c)c.classList.toggle('open')">
+    🔔<span class="fxav2-bell-badge" id="fxav2-bell-badge"
+            style="display:none;position:absolute;top:4px;right:4px;background:#e1306c;color:#fff;border-radius:50%;font-size:.6rem;font-weight:700;min-width:16px;height:16px;line-height:16px;text-align:center;padding:0 3px"></span>
+  </button>
+  <!-- Notification center panel (real, from fixeo-notification-center-v1) -->
+  <div id="fxav2-notif-center" class="notif-center-panel" aria-label="Centre de notifications"></div>
 </header>
 
 <!-- ══════════════════════════════════════════════════════════
@@ -179,16 +188,25 @@
 ════════════════════════════════════════════════════════════ -->
 <script src="js/fixeo-supabase-core.js?v=sc-v3b"></script>
 <script src="js/fixeo-logout-global.js?v=v2c4a"></script>
-<script src="js/fixeo-claim-system.js?v=ce2a" defer></script>
+<!-- fixeo-claim-system.js REMOVED: localStorage identity authority; no V2 dependency -->
 <script src="js/fixeo-artisan-dashboard-v2.js?v=v2f" defer></script>
+<!-- Real notification stack (notifications table exists in Supabase) -->
 <script src="js/fixeo-notifications-real-v1.js?v=1" defer></script>
 <script src="js/fixeo-notification-engine.js?v=v1b" defer></script>
 <script src="js/fixeo-notification-center-v1.js?v=fnc-v1b" defer></script>
 
-<link rel="stylesheet" href="css/fixeo-artisan-dashboard-v3.css?v=fxadv3-v1a">
-<script src="js/fixeo-artisan-dashboard-v3.js?v=fxadv3-v1a" defer></script>
-<!-- 7C.11E.1: Dispatch bridge — mission offers via canonical RPCs -->
-<link rel="stylesheet" href="css/fixeo-artisan-dispatch-v1.css?v=fxdispatch-v1a">
-<script src="js/fixeo-artisan-dispatch-v1.js?v=fxdispatch-v1a" defer></script>
+<!-- Bell badge wired to FixeoNotificationsV1 (no v3 dependency) -->
+<script defer>
+  window.addEventListener('fixeo:notifications:updated', function() {
+    try {
+      var badge = document.getElementById('fxav2-bell-badge');
+      if (!badge) return;
+      var cnt = window.FixeoNotificationsV1 && typeof window.FixeoNotificationsV1.getUnreadCount === 'function'
+        ? window.FixeoNotificationsV1.getUnreadCount() : 0;
+      badge.textContent = cnt > 99 ? '99+' : (cnt > 0 ? String(cnt) : '');
+      badge.style.display = cnt > 0 ? '' : 'none';
+    } catch(e) {}
+  });
+</script>
 </body>
 </html>

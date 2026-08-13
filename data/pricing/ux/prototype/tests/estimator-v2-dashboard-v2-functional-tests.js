@@ -339,6 +339,67 @@ test('S11.20 in-flight guard exempts navigation actions', () => {
   assertMatch(jsExec, /navAction.*close-modal|close-modal.*navAction/);
 });
 
+
+/* ══════════════════════════════════════════════════════════ */
+/* S12: P2 cleanup — legacy removal + bell + revenue         */
+/* ══════════════════════════════════════════════════════════ */
+
+test('S12.1 fixeo-claim-system.js not in active script tag in dashboard HTML', () => {
+  // Comment mentions it as removed — ensure no <script src=...> tag
+  assertNoMatch(html, /<script[^>]*fixeo-claim-system\.js/);
+});
+test('S12.2 fixeo-artisan-dashboard-v3.js not loaded in dashboard HTML', () => {
+  assertNotIncludes(html, 'fixeo-artisan-dashboard-v3.js');
+});
+test('S12.3 fixeo-artisan-dispatch-v1.js not loaded in dashboard HTML', () => {
+  assertNotIncludes(html, 'fixeo-artisan-dispatch-v1.js');
+});
+test('S12.4 price range chips not injected by V2 JS', () => {
+  assertNotIncludes(jsExec, 'priceRange');
+  assertNotIncludes(jsExec, 'fxadv3-price-chip');
+});
+test('S12.5 commission estimates not injected by V2 JS', () => {
+  assertNotIncludes(jsExec, 'commission-chip');
+  assertNotIncludes(jsExec, 'commStr');
+});
+test('S12.6 bell button present in HTML with ID fxav2-bell', () => {
+  assertMatch(html, /id="fxav2-bell"/);
+});
+test('S12.7 bell badge present with ID fxav2-bell-badge', () => {
+  assertMatch(html, /id="fxav2-bell-badge"/);
+});
+test('S12.8 bell badge wired via fixeo:notifications:updated event', () => {
+  assertMatch(html, /fixeo:notifications:updated/);
+  assertMatch(html, /fxav2-bell-badge/);
+});
+test('S12.9 notification backend scripts retained (real notifications table)', () => {
+  assertMatch(html, /fixeo-notifications-real-v1\.js/);
+  assertMatch(html, /fixeo-notification-engine\.js/);
+  assertMatch(html, /fixeo-notification-center-v1\.js/);
+});
+test('S12.10 revenue stays null (agreed_price not used for earnings)', () => {
+  assertMatch(jsExec, /var revenue\s*=\s*null/);
+  assertNoMatch(jsExec, /agreed_price.*revenue|revenue.*agreed_price/);
+});
+test('S12.11 no href="#" dead links in dashboard HTML', () => {
+  assertNoMatch(html, /href="#(?!")/);
+});
+test('S12.12 no javascript:void in dashboard HTML', () => {
+  assertNotIncludes(html, 'javascript:void');
+});
+test('S12.13 localStorage in V2 JS is logout-only (no identity/role authority)', () => {
+  const lsLines = jsExec.split('\n').filter(l => l.includes('localStorage') && !l.includes('Clear') && !l.includes('clear'));
+  // Any remaining localStorage usage should only be the clear calls in logout
+  assert(lsLines.length === 0, 'Unexpected localStorage usage in V2 JS: ' + lsLines.join(' | '));
+});
+test('S12.14 no direct privileged artisan writes in V2 JS', () => {
+  // update({ owner_user_id / verified / claim_status / claimed / onboarding_completed
+  assertNoMatch(jsExec, /\.update\s*\(\s*\{[^}]*owner_user_id/);
+  assertNoMatch(jsExec, /\.update\s*\(\s*\{[^}]*verified/);
+  assertNoMatch(jsExec, /\.update\s*\(\s*\{[^}]*claim_status/);
+  assertNoMatch(jsExec, /\.update\s*\(\s*\{[^}]*onboarding_completed/);
+});
+
 /* ── Summary ─────────────────────────────────────────────── */
 console.log('\n══ Dashboard V2 Functional Pass Tests ══');
 results.forEach(r => {
