@@ -2,9 +2,12 @@
 -- FIXEO Phase 7C.11F.6 — Financial Settlement Migration
 -- supabase/7c11f6-financial-settlement.sql  (v2 — trigger-aware)
 --
--- ⚠️  PREREQUISITE: 7c11f6-missions-privilege-hardening.sql
---     MUST have been applied and verified (all 12 checks PASS)
---     before running this file.
+-- ⚠️  PREREQUISITE (1): 7c11f6-missions-privilege-hardening.sql
+--     MUST have been applied and verified (all 12 checks PASS).
+-- ⚠️  PREREQUISITE (2): 7c11f6-missions-insert-column-hardening.sql
+--     MUST have been applied and verified (all 16 checks PASS).
+--     This replaces authenticated table-level INSERT with column-level
+--     INSERT grants, ensuring final_price cannot be supplied by browser.
 --
 -- PURPOSE
 -- ───────
@@ -165,26 +168,14 @@ END $$;
 
 DO $$
 BEGIN
-  EXECUTE 'REVOKE INSERT (final_price) ON TABLE public.missions FROM anon';
-  RAISE NOTICE 'Step 4c: anon INSERT(final_price) revoked.';
-EXCEPTION WHEN undefined_object OR invalid_grant_operation THEN
-  RAISE NOTICE 'Step 4c: anon INSERT(final_price) — no grant found.';
-END $$;
-
-DO $$
-BEGIN
-  EXECUTE 'REVOKE INSERT (final_price) ON TABLE public.missions FROM authenticated';
-  RAISE NOTICE 'Step 4d: authenticated INSERT(final_price) revoked.';
-EXCEPTION WHEN undefined_object OR invalid_grant_operation THEN
-  RAISE NOTICE 'Step 4d: authenticated INSERT(final_price) — no grant found.';
-END $$;
-
-DO $$
-BEGIN
   RAISE NOTICE '---';
   RAISE NOTICE 'Step 4 complete. final_price is WRITE-RESTRICTED.';
   RAISE NOTICE '  Write authority: service_role (settlement endpoint) only.';
-  RAISE NOTICE '  Browser roles (anon, authenticated): READ ONLY on final_price.';
+  RAISE NOTICE '  Browser INSERT is column-restricted (insert-column-hardening applied).';
+  RAISE NOTICE '  anon: no DML. authenticated: UPDATE(status) + column INSERT only.';
+  RAISE NOTICE '  final_price: not in authenticated column INSERT grants.';
+  RAISE NOTICE '  Column-level REVOKE INSERT(final_price) omitted — superseded by';
+  RAISE NOTICE '  7c11f6-missions-insert-column-hardening.sql table-level REVOKE.';
 END $$;
 
 COMMIT;
