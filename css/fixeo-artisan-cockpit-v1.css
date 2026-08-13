@@ -414,3 +414,74 @@
   .fxck-photo-img,
   .fxck-photo-avatar { width: 88px; height: 88px; }
 }
+
+/* ── QUOTE CREATION FLOW ─────────────────────────────────── */
+.fxck-quote-eligible-head {
+  font-size: .75rem;
+  font-weight: 700;
+  opacity: .5;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin: 4px 0 8px;
+}
+.fxck-quote-eligible-card {
+  border-color: rgba(252,175,69,.18);
+  background: rgba(252,175,69,.03);
+}
+.fxck-quote-eligible-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.fxck-quote-city {
+  font-size: .75rem;
+  opacity: .55;
+}
+.fxck-quote-modal-req {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: .8rem;
+  opacity: .7;
+  line-height: 1.5;
+}
+
+/* Modal form inputs */
+.fxck-modal-field { margin-bottom: 14px; }
+.fxck-modal-label {
+  display: block;
+  font-size: .78rem;
+  font-weight: 700;
+  opacity: .65;
+  margin-bottom: 5px;
+}
+.fxck-modal-input {
+  width: 100%;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 10px;
+  color: #fff;
+  font-size: .95rem;
+  padding: 11px 13px;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.fxck-modal-input:focus {
+  border-color: rgba(252,175,69,.6);
+  background: rgba(252,175,69,.07);
+}
+/* Remove number input arrows on mobile */
+.fxck-modal-input[type=number]::-webkit-inner-spin-button,
+.fxck-modal-input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.fxck-modal-input[type=number] { -moz-appearance: textfield; }
+.fxck-modal-textarea {
+  resize: vertical;
+  min-height: 72px;
+  max-height: 160px;
+}

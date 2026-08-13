@@ -23,7 +23,8 @@
   if (window._fxCockpitLoaded) return;
   window._fxCockpitLoaded = true;
 
-  var VERSION = 'v1a';
+  var VERSION = 'v1b'; /* quote creation flow: _openQuoteModal, _doSubmitQuote,
+                         eligible request CTAs, form submit delegation, cancel/error/success */
 
   /* ── HELPERS ──────────────────────────────────────────────── */
   function el(id)   { return document.getElementById(id); }
@@ -263,18 +264,50 @@
       return;
     }
 
+    /* Open requests eligible for quoting — from V2 state */
+    var v2 = getV2State();
+    var eligibleRequests = (v2 && v2.openRequests && v2.openRequests.length)
+      ? v2.openRequests.filter(function(r) {
+          /* Eligible: status=new — no existing accepted quote (server enforces; we show button) */
+          return r.status === 'new';
+        }).slice(0, 5)
+      : [];
+
     var html = '<div class="fxa-section-head"><h2>📋 Mes devis</h2>'
       + '<span class="fxa-section-count">' + quotes.length + '</span>'
       + '</div>';
 
+    /* Eligible requests CTA */
+    if (eligibleRequests.length) {
+      html += '<div class="fxck-quote-eligible-head">Demandes disponibles — Envoyer un devis</div>'
+        + '<div class="fxa-card-list">'
+        + eligibleRequests.map(function(r) {
+          return '<div class="fxa-card fxck-quote-eligible-card">'
+            + '<div class="fxck-quote-eligible-top">'
+            + '<span class="fxa-card-service">' + esc(r.service_category || r.category || '—') + '</span>'
+            + '<span class="fxck-quote-city">📍 ' + esc(r.city || '') + '</span>'
+            + '</div>'
+            + (r.description ? '<div class="fxa-card-desc" style="margin-top:4px">' + esc(r.description.slice(0, 80)) + (r.description.length > 80 ? '…' : '') + '</div>' : '')
+            + '<div class="fxa-actions" style="margin-top:10px">'
+            + '<button class="fxa-btn fxa-btn-primary fxa-btn-sm" '
+            + 'data-action="quote-new" data-request-id="' + esc(r.id) + '" '
+            + 'data-request-desc="' + esc(r.description || r.service_category || '') + '">'
+            + '📋 Envoyer un devis</button>'
+            + '</div>'
+            + '</div>';
+        }).join('')
+        + '</div>';
+    }
+
     if (err) {
       html += '<div class="fxa-error-banner">⚠️ ' + esc(err) + '</div>';
     } else if (!quotes.length) {
-      html += '<div class="fxa-empty">'
-        + '<div class="fxa-empty-icon">📋</div>'
-        + '<div class="fxa-empty-title">Aucun devis envoyé</div>'
-        + '<div class="fxa-empty-sub">Vos devis envoyés aux clients apparaîtront ici.</div>'
-        + '</div>';
+      html += '<div class="fxa-empty fxa-empty--inline" style="margin-top:14px">'
+        + '<div class="fxa-empty-icon" style="font-size:1.8rem">📋</div>'
+        + '<div>'
+        + '<div class="fxa-empty-title" style="font-size:.92rem">Aucun devis envoyé</div>'
+        + '<div class="fxa-empty-sub" style="font-size:.78rem">Vos devis apparaîtront ici après envoi.</div>'
+        + '</div></div>';
     } else {
       /* Group by status */
       var pending  = quotes.filter(function(q){return q.status==='pending';});
@@ -750,11 +783,141 @@
   }
 
   /* ── EVENTS ───────────────────────────────────────────────── */
+  /* ── QUOTE CREATION FLOW ─────────────────────────────────────
+     Uses canonical FixeoSupabase.submitQuote() exclusively.
+     Fields: request_id (canonical), proposed_price (MAD, >0),
+             message (optional description, max 500 chars).
+     Eligibility guard: request must be status='new', no accepted quote,
+             no existing mission — all enforced by submitQuote() server-side.
+     No fake statuses. No invented acceptance states.
+  ──────────────────────────────────────────────────────────── */
+
+  var _quoteSubmitting = false;
+
+  function _openQuoteModal(requestId, requestDesc) {
+    /* Find V2 modal machinery */
+    var overlay = el('fxav2-modal-overlay');
+    var body    = el('fxav2-modal-body');
+    if (!overlay || !body) { toast('Interface non disponible', 'error'); return; }
+
+    var shortId = (requestId || '').slice(0, 8);
+    body.innerHTML = '<h3 style="margin:0 0 16px;font-size:1rem;font-weight:800">📋 Envoyer un devis</h3>'
+      + (requestDesc ? '<div class="fxck-quote-modal-req">Demande : ' + esc(requestDesc.slice(0, 80)) + (requestDesc.length > 80 ? '…' : '') + '</div>' : '')
+      + '<form id="fxck-quote-form" autocomplete="off" style="margin-top:12px">'
+      + '<div class="fxck-modal-field">'
+      + '<label for="fxck-q-price" class="fxck-modal-label">Prix proposé (MAD) <span style="color:#e1306c">*</span></label>'
+      + '<input type="number" id="fxck-q-price" name="price" min="1" max="999999" step="1" required '
+      + 'class="fxck-modal-input" placeholder="Ex: 350" inputmode="numeric">'
+      + '</div>'
+      + '<div class="fxck-modal-field">'
+      + '<label for="fxck-q-msg" class="fxck-modal-label">Description / détails (optionnel)</label>'
+      + '<textarea id="fxck-q-msg" name="message" maxlength="500" rows="3" '
+      + 'class="fxck-modal-input fxck-modal-textarea" placeholder="Décrivez brièvement votre intervention…"></textarea>'
+      + '</div>'
+      + '<div id="fxck-quote-err" class="fxa-error-banner" style="display:none;margin-bottom:10px"></div>'
+      + '<div class="fxa-actions" style="margin-top:14px">'
+      + '<button type="button" class="fxa-btn fxa-btn-ghost" data-action="close-modal">Annuler</button>'
+      + '<button type="submit" id="fxck-quote-submit" class="fxa-btn fxa-btn-primary" style="flex:2">Envoyer le devis</button>'
+      + '</div>'
+      + '</form>';
+
+    /* Store request_id on form for submit handler */
+    var form = document.getElementById('fxck-quote-form');
+    if (form) form.dataset.requestId = requestId;
+
+    /* Show modal */
+    overlay.classList.remove('hidden');
+    overlay.removeAttribute('aria-hidden');
+
+    /* Focus price input */
+    setTimeout(function() {
+      var inp = document.getElementById('fxck-q-price');
+      if (inp) inp.focus();
+    }, 80);
+  }
+
+  async function _doSubmitQuote(form) {
+    if (_quoteSubmitting) return;
+
+    var requestId = form.dataset.requestId || '';
+    var priceInp  = document.getElementById('fxck-q-price');
+    var msgInp    = document.getElementById('fxck-q-msg');
+    var errEl     = document.getElementById('fxck-quote-err');
+    var submitBtn = document.getElementById('fxck-quote-submit');
+    var errDiv    = errEl;
+
+    function showErr(msg) {
+      if (errDiv) { errDiv.textContent = msg; errDiv.style.display = ''; }
+      else toast(msg, 'error');
+    }
+    function clearErr() { if (errDiv) errDiv.style.display = 'none'; }
+
+    clearErr();
+
+    if (!requestId) { showErr('Demande introuvable. Ferme et réessaie.'); return; }
+
+    var price = Number(priceInp && priceInp.value);
+    if (!price || price <= 0 || !Number.isInteger(price)) {
+      showErr('Prix invalide. Entrez un montant entier en MAD (ex: 350).');
+      if (priceInp) priceInp.focus();
+      return;
+    }
+    if (price > 999999) { showErr('Prix trop élevé (max 999 999 MAD).'); return; }
+
+    var message = (msgInp && msgInp.value.trim()) || '';
+
+    /* Check FixeoSupabase.submitQuote is available */
+    if (!window.FixeoSupabase || typeof window.FixeoSupabase.submitQuote !== 'function') {
+      showErr('Service non disponible. Actualisez la page.');
+      return;
+    }
+
+    _quoteSubmitting = true;
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Envoi…'; }
+
+    try {
+      await window.FixeoSupabase.submitQuote({
+        request_id:     requestId,
+        proposed_price: price,
+        message:        message
+      });
+
+      /* Close modal */
+      var overlay = el('fxav2-modal-overlay');
+      if (overlay) { overlay.classList.add('hidden'); overlay.setAttribute('aria-hidden', 'true'); }
+
+      toast('✅ Devis envoyé avec succès.');
+
+      /* Refresh quotes section */
+      var v2 = getV2State();
+      var artisanId = v2 && v2.artisanProfile && v2.artisanProfile.id;
+      if (artisanId) {
+        _ck.quotes = await _fetchQuotes(artisanId);
+        if ((v2 && v2.section) === 'quotes') _renderAll('quotes');
+      }
+    } catch(e) {
+      var msg = (e && e.message) || 'Erreur lors de l\'envoi.';
+      showErr(msg);
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Envoyer le devis'; }
+    } finally {
+      _quoteSubmitting = false;
+    }
+  }
+
   function _bindCockpitEvents() {
     document.addEventListener('change', function(e) {
       var t = e.target;
       if (t && t.dataset.action === 'photo-change')   _handlePhotoChange(t);
       if (t && t.dataset.action === 'gallery-upload') _handleGalleryUpload(t);
+    });
+
+    /* Quote form submit (delegated — form is rendered inside V2 modal) */
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      if (form && form.id === 'fxck-quote-form') {
+        e.preventDefault();
+        _doSubmitQuote(form);
+      }
     });
 
     document.addEventListener('click', function(e) {
@@ -764,6 +927,10 @@
 
       if (action === 'gallery-delete') {
         _handleGalleryDelete(btn.dataset.itemId, btn.dataset.uid);
+      }
+
+      if (action === 'quote-new') {
+        _openQuoteModal(btn.dataset.requestId, btn.dataset.requestDesc);
       }
 
       if (action === 'notif-read') {

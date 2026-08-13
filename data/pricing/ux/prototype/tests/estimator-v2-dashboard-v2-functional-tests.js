@@ -414,8 +414,8 @@ const ckSql  = fs.readFileSync(path.join(ROOT, 'supabase/7c-cockpit-gallery-phot
 test('S13.1 cockpit JS has load guard', () => {
   assertMatch(ckExec, /_fxCockpitLoaded/);
 });
-test('S13.2 cockpit loaded in HTML', () => {
-  assertMatch(html, /fixeo-artisan-cockpit-v1\.js\?v=v1a/);
+test('S13.2 cockpit loaded in HTML (any v1x version)', () => {
+  assertMatch(html, /fixeo-artisan-cockpit-v1\.js\?v=v1/);
 });
 test('S13.3 cockpit CSS loaded in HTML', () => {
   assertMatch(html, /fixeo-artisan-cockpit-v1\.css\?v=v1a/);
@@ -556,6 +556,150 @@ test('S13.35 cockpit JS contains no hardcoded price ranges', () => {
 });
 test('S13.36 cockpit JS contains no fake review count', () => {
   assertNoMatch(ckExec, /review_count\s*=\s*[1-9]/);
+});
+
+
+/* ══════════════════════════════════════════════════════════ */
+/* S14: Post-apply verify + Quote creation flow              */
+/* ══════════════════════════════════════════════════════════ */
+
+const ck2Js   = fs.readFileSync(path.join(ROOT, 'js/fixeo-artisan-cockpit-v1.js'), 'utf8');
+const ck2Exec = stripComments(ck2Js);
+const verifySql = fs.readFileSync(path.join(ROOT, 'supabase/7c-cockpit-gallery-photo-verify.sql'), 'utf8');
+const html2 = fs.readFileSync(path.join(ROOT, 'dashboard-artisan-v2.html'), 'utf8');
+
+/* Verify SQL */
+test('S14.1 verify SQL is read-only (no CREATE TABLE / ALTER / INSERT / UPDATE / DELETE statements)', () => {
+  const stmts = verifySql.split('\n').filter(l => !l.trim().startsWith('--') && !l.trim().startsWith('/*') && l.trim() !== '*/');
+  const writes = stmts.filter(l => /^\s*(CREATE TABLE|ALTER TABLE|INSERT|UPDATE|DELETE|DROP)/i.test(l));
+  assert(writes.length === 0, 'Unexpected write statements in verify SQL: ' + writes.join(' | '));
+});
+test('S14.2 verify SQL checks portfolio_items RLS', () => {
+  assertMatch(verifySql, /portfolio_items/);
+  assertMatch(verifySql, /rowsecurity/);
+});
+test('S14.3 verify SQL checks artisan-media bucket', () => {
+  assertMatch(verifySql, /artisan-media/);
+  assertMatch(verifySql, /storage\.buckets/);
+});
+test('S14.4 verify SQL checks storage policies ownership', () => {
+  assertMatch(verifySql, /foldername/);
+  assertMatch(verifySql, /auth\.uid\(\)/);
+});
+test('S14.5 verify SQL checks artisans.photo_url column grant', () => {
+  assertMatch(verifySql, /photo_url/);
+  assertMatch(verifySql, /column_privileges/);
+});
+test('S14.6 verify SQL checks cross-artisan write prevention', () => {
+  assertMatch(verifySql, /anon/);
+  assertMatch(verifySql, /privilege_type/);
+});
+
+/* Quote creation — JS structure */
+test('S14.7 cockpit has _openQuoteModal function', () => {
+  assertMatch(ck2Exec, /function _openQuoteModal/);
+});
+test('S14.8 cockpit has _doSubmitQuote function', () => {
+  assertMatch(ck2Exec, /function _doSubmitQuote\b|async function _doSubmitQuote/);
+});
+test('S14.9 quote submission uses FixeoSupabase.submitQuote (canonical)', () => {
+  assertMatch(ck2Exec, /FixeoSupabase\.submitQuote/);
+});
+test('S14.10 quote submit sends request_id, proposed_price, message', () => {
+  assertMatch(ck2Exec, /request_id\s*:\s*requestId/);
+  assertMatch(ck2Exec, /proposed_price\s*:\s*price/);
+  assertMatch(ck2Exec, /message\s*:\s*message/);
+});
+test('S14.11 price validated > 0 before submit', () => {
+  assertMatch(ck2Exec, /price.*<=.*0|!price.*price.*<.*0/);
+});
+test('S14.12 price validated as integer (no decimal MAD)', () => {
+  assertMatch(ck2Exec, /isInteger.*price|price.*isInteger/);
+});
+test('S14.13 price validated max 999999', () => {
+  assertMatch(ck2Exec, /999999/);
+});
+test('S14.14 _quoteSubmitting guard prevents double submission', () => {
+  assertMatch(ck2Exec, /_quoteSubmitting/);
+  assertMatch(ck2Exec, /if \(_quoteSubmitting\)/);
+});
+test('S14.15 submit button disabled during submission', () => {
+  assertMatch(ck2Exec, /submitBtn.*disabled.*=.*true/);
+});
+test('S14.16 submit button reset on error', () => {
+  assertMatch(ck2Exec, /submitBtn.*disabled.*false/);
+});
+test('S14.17 modal closed on success', () => {
+  assertMatch(ck2Exec, /classList\.add\('hidden'\)/);
+});
+test('S14.18 quotes section refreshed after successful submit', () => {
+  assertMatch(ck2Exec, /_fetchQuotes.*artisanId|artisanId.*_fetchQuotes/);
+  assertMatch(ck2Exec, /_renderAll\('quotes'\)/);
+});
+test('S14.19 error displayed inside modal (not just toast)', () => {
+  assertMatch(ck2Exec, /fxck-quote-err/);
+  assertMatch(ck2Exec, /errDiv\.textContent/);
+});
+test('S14.20 eligible requests shown in quotes section CTA', () => {
+  assertMatch(ck2Exec, /fxck-quote-eligible-card/);
+  assertMatch(ck2Exec, /data-action="quote-new"/);
+});
+test('S14.21 CTA only shows requests with status=new', () => {
+  assertMatch(ck2Exec, /r\.status.*===.*'new'/);
+});
+test('S14.22 quote form has mobile-safe number input', () => {
+  assertMatch(ck2Exec, /inputmode.*numeric|type.*number/);
+});
+test('S14.23 quote modal uses V2 modal overlay (not custom modal)', () => {
+  assertMatch(ck2Exec, /fxav2-modal-overlay/);
+  assertMatch(ck2Exec, /fxav2-modal-body/);
+});
+test('S14.24 form submit handled via document submit listener (delegated)', () => {
+  assertMatch(ck2Exec, /addEventListener\('submit'/);
+  assertMatch(ck2Exec, /fxck-quote-form/);
+});
+test('S14.25 no fake quote statuses — quote status map only has canonical values', () => {
+  /* _quoteStatusLabel maps only: pending, accepted, rejected, draft, expired */
+  const fn = ck2Exec.match(/function _quoteStatusLabel[\s\S]*?\}/)?.[0] || '';
+  assertNotIncludes(fn, "'approved'");
+  assertNotIncludes(fn, "'confirmed'");
+  assertNotIncludes(fn, "'assigned'");
+});
+test('S14.26 cancel button uses close-modal action (V2 handler)', () => {
+  assertMatch(ck2Exec, /data-action.*close-modal|close-modal.*data-action/);
+});
+
+/* Version checks */
+test('S14.27 cockpit JS version is v1b', () => {
+  assertMatch(ck2Exec, /VERSION\s*=\s*'v1b'/);
+});
+test('S14.28 HTML cockpit script tag points to v1b', () => {
+  assertMatch(html2, /fixeo-artisan-cockpit-v1\.js\?v=v1b/);
+});
+
+/* CSS additions */
+test('S14.29 CSS has quote modal input styles', () => {
+  const css2 = fs.readFileSync(path.join(ROOT, 'css/fixeo-artisan-cockpit-v1.css'), 'utf8');
+  assertIncludes(css2, '.fxck-modal-input');
+  assertIncludes(css2, '.fxck-modal-textarea');
+});
+test('S14.30 CSS has eligible card style', () => {
+  const css2 = fs.readFileSync(path.join(ROOT, 'css/fixeo-artisan-cockpit-v1.css'), 'utf8');
+  assertIncludes(css2, '.fxck-quote-eligible-card');
+});
+
+/* Preserved: gallery/photo contract */
+test('S14.31 gallery SQL artisan_id constraint still TEXT', () => {
+  assertMatch(ckSql, /artisan_id\s+text/i);
+});
+test('S14.32 cockpit photo path still uses profiles/{uid}', () => {
+  assertMatch(ck2Exec, /profiles.*uid.*avatar|_profilePath/);
+});
+test('S14.33 no direct privileged artisan write in cockpit v1b', () => {
+  assertNoMatch(ck2Exec, /\.update\s*\(\s*\{[^}]*onboarding_completed/);
+  assertNoMatch(ck2Exec, /\.update\s*\(\s*\{[^}]*verified\b/);
+  assertNoMatch(ck2Exec, /\.update\s*\(\s*\{[^}]*claim_status/);
+  assertNoMatch(ck2Exec, /\.update\s*\(\s*\{[^}]*availability/);
 });
 
 /* ── Summary ─────────────────────────────────────────────── */
