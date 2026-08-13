@@ -28,7 +28,8 @@
    * RLS: artisan_read_own_linked_requests + artisan_update_assigned_requests on service_requests
    * Identity: artisans WHERE owner_user_id=auth.uid() (7C.12A.1: phone_public fallback removed)
    * ─────────────────────────────────────────────────────────────────────────── */
-  var VERSION = 'v2d'; /* fxadv3-v1b: SELECT fix — trust_score (col DNE) removed */
+  var VERSION = 'v2e'; /* 7C.12A.3 functional pass: availability RPC, onboarding CTA,
+                         agreed_price=null, profile edit, mission status sync */
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -182,10 +183,11 @@
     /* Canonical: owner_user_id = auth.uid() — only safe identity gate */
     var r1 = await sb.from('artisans')
       .select('id,name,full_name,city,service_category,category,' +
-              'verified,is_verified,availability,rating,review_count,completed_missions,' +
+              'verified,is_verified,availability,onboarding_completed,' +
+              'rating,review_count,completed_missions,' +
               'owner_user_id,claimed,claim_status,badge_label,avatar_color,work_zone,' +
               'response_time_min,description')
-      /* phone_public intentionally excluded from SELECT — see 7C.12A.1 security note */
+      /* phone_public intentionally excluded — see 7C.12A.1 security note */
       .eq('owner_user_id', userId)
       .maybeSingle();
 
@@ -327,13 +329,47 @@
     var svc  = ap && (ap.service_category || ap.category) || '';
     var avail= ap && ap.availability || '';
     var verified = ap && (ap.verified || ap.is_verified);
+    var onboarded = ap && ap.onboarding_completed;
     var ini  = initials(name);
 
     var tags = '';
-    if (verified) tags += '<span class="fxa-tag verified">✓ Vérifié</span>';
-    if (city)     tags += '<span class="fxa-tag city">📍 ' + esc(city) + '</span>';
-    if (svc)      tags += '<span class="fxa-tag service">🔧 ' + esc(svc) + '</span>';
-    if (avail === 'available') tags += '<span class="fxa-tag avail">● Disponible</span>';
+    if (verified)               tags += '<span class="fxa-tag verified">✓ Vérifié</span>';
+    if (city)                   tags += '<span class="fxa-tag city">📍 ' + esc(city) + '</span>';
+    if (svc)                    tags += '<span class="fxa-tag service">🔧 ' + esc(svc) + '</span>';
+    if (avail === 'available')  tags += '<span class="fxa-tag avail">● Disponible</span>';
+    if (avail === 'busy')       tags += '<span class="fxa-tag busy">🔶 Occupé</span>';
+
+    /* Onboarding CTA — shown when artisan exists but hasn't completed onboarding.
+     * Calls complete_artisan_onboarding() RPC (7C.12A.3) — never direct write. */
+    var onboardingCta = '';
+    if (ap && !onboarded) {
+      onboardingCta = '<div class="fxa-onboarding-cta">'
+        + '<div class="fxa-onboarding-cta-icon">🚀</div>'
+        + '<div class="fxa-onboarding-cta-body">'
+        + '<strong>Activez votre profil</strong>'
+        + '<p>Complétez votre inscription pour commencer à recevoir des missions.</p>'
+        + '</div>'
+        + '<button class="fxa-btn fxa-btn-primary" data-action="complete-onboarding" style="white-space:nowrap">'
+        + 'Activer mon profil'
+        + '</button>'
+        + '</div>';
+    }
+
+    /* Availability toggle — shown only when onboarded */
+    var availToggle = '';
+    if (ap && onboarded) {
+      if (avail === 'available') {
+        availToggle = '<div class="fxa-avail-row">'
+          + '<span class="fxa-avail-label fxa-avail-on">● Disponible</span>'
+          + '<button class="fxa-btn fxa-btn-ghost fxa-btn-sm" data-action="set-unavailable">Pause</button>'
+          + '</div>';
+      } else {
+        availToggle = '<div class="fxa-avail-row">'
+          + '<span class="fxa-avail-label fxa-avail-off">○ Indisponible</span>'
+          + '<button class="fxa-btn fxa-btn-primary fxa-btn-sm" data-action="set-available">Me rendre disponible</button>'
+          + '</div>';
+      }
+    }
 
     return '<div class="fxa-profile-header">'
       + '<div class="fxa-profile-avatar-lg">' + esc(ini) + '</div>'
@@ -341,7 +377,8 @@
       + '<div class="fxa-profile-name">' + esc(name) + '</div>'
       + '<div class="fxa-profile-meta">Artisan Fixeo</div>'
       + (tags ? '<div class="fxa-profile-tags">' + tags + '</div>' : '')
-      + '</div></div>';
+      + '</div></div>'
+      + (onboardingCta || availToggle);
   }
 
   /* ── RENDER: REQUEST CARD (available/open) ────────────────── */
@@ -689,28 +726,92 @@
     var u  = (_state.session && _state.session.user) || {};
     var name  = ap.full_name || ap.name || p.full_name || u.email || 'Artisan';
     var email = p.email || u.email || '';
-    var phone = ap.phone_public || p.phone || '';
+    /* phone: use profiles.phone (canonical). Never ap.phone_public — that's
+     * the public-facing field exposed to clients, not the auth-context phone. */
+    var phone = p.phone || '';
     var city  = ap.city || p.city || '';
     var svc   = ap.service_category || ap.category || '';
-    var rating = Number(ap.rating || 0);
-    var done   = Number(ap.completed_missions || 0);
-    var verified = ap.verified || ap.is_verified || false;
+    var rating    = Number(ap.rating || 0);
+    var done      = Number(ap.completed_missions || 0);
+    var verified  = ap.verified || ap.is_verified || false;
+    var onboarded = !!ap.onboarding_completed;
+    var avail     = ap.availability || 'unavailable';
 
-    sec.innerHTML = '<div class="fxa-section-head"><h2>👤 Mon profil</h2></div>'
+    /* Availability controls — use update_artisan_availability() RPC (7C.12A.2) */
+    var availHtml = '';
+    if (onboarded) {
+      if (avail === 'available') {
+        availHtml = '<div class="fxa-avail-row" style="margin:12px 0">'
+          + '<span class="fxa-avail-label fxa-avail-on">● Disponible</span>'
+          + '<button class="fxa-btn fxa-btn-ghost fxa-btn-sm" data-action="set-unavailable">Mettre en pause</button>'
+          + '</div>';
+      } else {
+        availHtml = '<div class="fxa-avail-row" style="margin:12px 0">'
+          + '<span class="fxa-avail-label fxa-avail-off">○ Indisponible</span>'
+          + '<button class="fxa-btn fxa-btn-primary fxa-btn-sm" data-action="set-available">Me rendre disponible</button>'
+          + '</div>';
+      }
+    } else {
+      availHtml = '<div class="fxa-onboarding-cta" style="margin:12px 0">'
+        + '<div class="fxa-onboarding-cta-body" style="flex:1">'
+        + '<strong>Profil non activé</strong>'
+        + '<p style="margin:4px 0 0;font-size:.82rem;opacity:.7">Activez votre profil pour recevoir des missions.</p>'
+        + '</div>'
+        + '<button class="fxa-btn fxa-btn-primary fxa-btn-sm" data-action="complete-onboarding">Activer</button>'
+        + '</div>';
+    }
+
+    sec.innerHTML = '<div class="fxa-section-head"><h2>👤 Mon profil</h2>'
+      + '<button class="fxa-btn fxa-btn-ghost fxa-btn-sm" data-action="edit-profile">Modifier</button>'
+      + '</div>'
       + '<div class="fxa-profile-card">'
       + '<div class="fxa-profile-avatar-lg">' + esc(initials(name)) + '</div>'
       + '<div>'
       + '<div class="fxa-profile-name-lg">' + esc(name) + '</div>'
       + (email ? '<div class="fxa-profile-email">' + esc(email) + '</div>' : '')
       + '</div></div>'
+      + availHtml
       + _infoRow('Ville', city || '—')
       + _infoRow('Métier', svc || '—')
-      + _infoRow('Téléphone', phone || '—')
+      + (phone ? _infoRow('Téléphone', phone) : '')
       + _infoRow('Missions terminées', String(done))
       + _infoRow('Évaluation', rating >= 1 ? rating.toFixed(1) + ' / 5' : '—')
-      + _infoRow('Statut', verified ? '✓ Vérifié' : 'En cours de vérification')
+      + _infoRow('Statut', verified ? '✓ Vérifié par Fixeo' : 'En cours de vérification')
       + '<div class="fxa-divider"></div>'
       + '<button class="fxa-btn fxa-btn-ghost fxa-btn-full" style="justify-content:center" data-action="logout">Se déconnecter</button>';
+  }
+
+  /* ── PROFILE EDIT MODAL ────────────────────────────────────── */
+  function _openProfileEditModal() {
+    var ap = _state.artisanProfile || {};
+    /* Only show allowed editable fields (7C.12A.2 column grants):
+       full_name, service_category, city, description, work_zone */
+    var html = '<div style="padding:4px 0">'
+      + '<h3 style="margin:0 0 16px;font-size:1rem">Modifier mon profil</h3>'
+      + '<form id="fxav2-profile-form" autocomplete="off">'
+      + _formField('Nom complet', 'full_name', ap.full_name || '', 'text', true)
+      + _formField('Métier / Spécialité', 'service_category', ap.service_category || ap.category || '', 'text', true)
+      + _formField('Ville principale', 'city', ap.city || '', 'text', true)
+      + _formField('Zone d\'intervention (optionnel)', 'work_zone', ap.work_zone || '', 'text', false)
+      + _formField('Description (optionnel)', 'description', ap.description || '', 'textarea', false)
+      + '</form>'
+      + '<div style="display:flex;gap:10px;margin-top:16px">'
+      + '<button class="fxa-btn fxa-btn-ghost" style="flex:1" data-action="close-modal">Annuler</button>'
+      + '<button class="fxa-btn fxa-btn-primary" style="flex:2" data-action="save-profile">Enregistrer</button>'
+      + '</div></div>';
+    _openModal(html);
+  }
+
+  function _formField(label, name, value, type, required) {
+    var rl = required ? ' <span style="color:#ef4444">*</span>' : '';
+    var inp = type === 'textarea'
+      ? '<textarea name="' + name + '" rows="3" style="width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.06);color:inherit;padding:8px 10px;font-size:.86rem;resize:vertical">' + esc(value) + '</textarea>'
+      : '<input type="text" name="' + name + '" value="' + esc(value) + '"'
+          + (required ? ' required' : '')
+          + ' style="width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.06);color:inherit;padding:8px 10px;font-size:.86rem">';
+    return '<div style="margin-bottom:12px">'
+      + '<label style="display:block;font-size:.8rem;opacity:.65;margin-bottom:4px">' + label + rl + '</label>'
+      + inp + '</div>';
   }
 
   function _infoRow(label, value) {
@@ -874,16 +975,35 @@
   function _bindActions() {
     var main = el('fxav2-main');
     if (!main) return;
-    main.addEventListener('click', function(e) {
+
+    /* Handler shared by main and modal (modal lives outside main in the DOM) */
+    function _handleAction(e) {
       var btn = e.target.closest('[data-action]');
       if (!btn) return;
       var action = btn.dataset.action;
       var reqId  = btn.dataset.reqId || '';
       switch (action) {
-        case 'accept-mission':   _doAcceptMission(reqId, btn); return;
-        case 'start-mission':    _doStartMission(reqId, btn); return;
-        case 'complete-mission': _doCompleteMission(reqId, btn); return;
-        case 'go-available':     return _showSection('available');
+        case 'accept-mission':      _doAcceptMission(reqId, btn); return;
+        case 'start-mission':       _doStartMission(reqId, btn); return;
+        case 'complete-mission':    _doCompleteMission(reqId, btn); return;
+        case 'go-available':        return _showSection('available');
+        case 'set-available':       _doSetAvailability('available', btn); return;
+        case 'set-unavailable':     _doSetAvailability('unavailable', btn); return;
+        case 'complete-onboarding': _doCompleteOnboarding(btn); return;
+        case 'edit-profile':        _openProfileEditModal(); return;
+        case 'close-modal':         _closeModal(); return;
+        case 'save-profile':
+          (function() {
+            var form = document.getElementById('fxav2-profile-form');
+            if (!form) return;
+            var fd = {};
+            ['full_name','service_category','city','description','work_zone'].forEach(function(k) {
+              var inp = form.elements[k];
+              if (inp) fd[k] = inp.value;
+            });
+            _doSaveProfile(fd, btn);
+          })();
+          return;
         case 'logout':
           if (window.FixeoLogout && typeof window.FixeoLogout.logout === 'function') {
             window.FixeoLogout.logout();
@@ -893,7 +1013,15 @@
           }
           break;
       }
-    });
+    }
+
+    /* Attach to main section (request cards, mission actions, nav actions) */
+    main.addEventListener('click', _handleAction);
+
+    /* Attach to modal overlay so save-profile / close-modal work.
+     * The modal lives outside #fxav2-main in the DOM. */
+    var overlay = el('fxav2-modal-overlay');
+    if (overlay) overlay.addEventListener('click', _handleAction);
   }
 
   /* ── ACTIONS ──────────────────────────────────────────────── */
@@ -944,12 +1072,14 @@
       }
 
       /* ── Step 1: INSERT mission row ───────────────────── */
+      /* agreed_price=NULL is truthful at offer time (7C.11F.1B contract).
+       * agreed_price=0 is a falsehood — the price is unknown, not zero.
+       * commission_amount omitted — DB default handles it. */
       var missionInsert = await sb.from('missions').insert({
         request_id:         requestId,
         artisan_profile_id: artisanProfileId,
         client_profile_id:  reqCheck.data.client_profile_id || null,
-        agreed_price:       0,
-        commission_amount:  0,
+        agreed_price:       null,
         status:             'pending'   /* missions CHECK: pending|done|cancelled|validated */
       }).select('id').maybeSingle();
       if (missionInsert.error) throw missionInsert.error;
@@ -982,16 +1112,21 @@
     try {
       var FS = window.FixeoSupabase;
       var sb = await FS.getClient();
+      /* Update service_request status */
       var res = await sb.from('service_requests')
-        .update({ status: 'in_progress' })   /* DB CHECK: new|assigned|in_progress|completed|validated|cancelled */
+        .update({ status: 'in_progress' })
         .eq('id', requestId)
         .select('id, status')
         .maybeSingle();
       if (res.error) throw res.error;
       if (!res.data) throw new Error('Mise à jour bloquée (droits insuffisants ou demande introuvable).');
+      /* Mirror status on missions row so dashboard renders correctly */
+      var mission = _state.myMissions.find(function(m) { return m.request_id === requestId; });
+      if (mission && mission.id) {
+        await sb.from('missions').update({ status: 'done' }).eq('id', mission.id);
+      }
       _toast('▶ Intervention démarrée !', 'success');
-      var _sm = _state.myMissions.find(function(m) { return m.request_id === requestId; });
-      _dispatchMissionEvent('mission-started', requestId, _sm && _sm.client_profile_id || null);
+      _dispatchMissionEvent('mission-started', requestId, mission && mission.client_profile_id || null);
       await _refresh();
     } catch(e) {
       console.warn('[fxav2] startMission error:', e && e.message);
@@ -1013,14 +1148,121 @@
         .maybeSingle();
       if (res.error) throw res.error;
       if (!res.data) throw new Error('Mise à jour bloquée (droits insuffisants ou demande introuvable).');
+      /* Mirror completed status on missions row */
+      var mission = _state.myMissions.find(function(m) { return m.request_id === requestId; });
+      if (mission && mission.id) {
+        await sb.from('missions').update({ status: 'done' }).eq('id', mission.id);
+      }
       _toast('✅ Intervention marquée terminée. En attente de confirmation client.', 'success');
-      var _cm = _state.myMissions.find(function(m) { return m.request_id === requestId; });
-      _dispatchMissionEvent('mission-completed', requestId, _cm && _cm.client_profile_id || null);
+      _dispatchMissionEvent('mission-completed', requestId, mission && mission.client_profile_id || null);
       await _refresh();
     } catch(e) {
       console.warn('[fxav2] completeMission error:', e && e.message);
       _toast('❌ ' + (e && e.message ? e.message : 'Erreur.'), 'error');
       _btnReset(btn);
+    }
+  }
+
+  /* ── AVAILABILITY TOGGLE (uses update_artisan_availability RPC — 7C.12A.2) ── */
+  async function _doSetAvailability(newStatus, btn) {
+    if (btn) _btnBusy(btn, newStatus === 'available' ? 'Activation…' : 'Désactivation…');
+    try {
+      var FS = window.FixeoSupabase;
+      var sb = await FS.getClient();
+      var res = await sb.rpc('update_artisan_availability', { p_status: newStatus });
+      if (res.error) throw res.error;
+      var data = res.data;
+      if (data && data.ok === false) {
+        if (data.reason === 'onboarding_required') {
+          _toast('⚠️ Complétez votre profil avant de vous rendre disponible.', 'error');
+        } else {
+          _toast('❌ ' + (data.message || 'Erreur de disponibilité.'), 'error');
+        }
+        if (btn) _btnReset(btn);
+        return;
+      }
+      /* Optimistically update local state so UI reflects immediately */
+      if (_state.artisanProfile) _state.artisanProfile.availability = newStatus;
+      _toast(newStatus === 'available'
+        ? '✅ Vous êtes maintenant disponible.'
+        : '⏸ Vous êtes maintenant indisponible.', 'success');
+      await _refresh();
+    } catch(e) {
+      console.warn('[fxav2] setAvailability error:', e && e.message);
+      _toast('❌ ' + (e && e.message ? e.message : 'Erreur.'), 'error');
+      if (btn) _btnReset(btn);
+    }
+  }
+
+  /* ── ONBOARDING COMPLETION (calls complete_artisan_onboarding RPC — 7C.12A.3) ── */
+  async function _doCompleteOnboarding(btn) {
+    if (btn) _btnBusy(btn, 'Activation…');
+    try {
+      var FS = window.FixeoSupabase;
+      var sb = await FS.getClient();
+      var res = await sb.rpc('complete_artisan_onboarding');
+      if (res.error) throw res.error;
+      var data = res.data;
+      if (data && data.ok === false) {
+        var msg = data.message || 'Profil incomplet.';
+        if (data.reason === 'profile_incomplete' && data.missing_fields) {
+          msg = 'Champs manquants: ' + (Array.isArray(data.missing_fields)
+            ? data.missing_fields.join(', ')
+            : String(data.missing_fields));
+        }
+        _toast('⚠️ ' + msg, 'error');
+        if (btn) _btnReset(btn);
+        return;
+      }
+      _toast('🎉 Profil activé ! Vous êtes maintenant disponible pour des missions.', 'success');
+      await _refresh();
+    } catch(e) {
+      console.warn('[fxav2] completeOnboarding error:', e && e.message);
+      _toast('❌ ' + (e && e.message ? e.message : 'Erreur.'), 'error');
+      if (btn) _btnReset(btn);
+    }
+  }
+
+  /* ── PROFILE EDIT (allowed fields only — 7C.12A.2 column grants) ── */
+  async function _doSaveProfile(formData, btn) {
+    if (btn) _btnBusy(btn, 'Enregistrement…');
+    try {
+      var FS = window.FixeoSupabase;
+      var sb = await FS.getClient();
+      var ap = _state.artisanProfile;
+      if (!ap || !ap.id) throw new Error('Profil non chargé.');
+
+      /* Only allowed column-granted fields per 7C.12A.2:
+         full_name, service_category, city, description, work_zone.
+         Never: owner_user_id, claimed, claim_status, onboarding_completed,
+                verified, availability (use RPC for availability). */
+      var patch = {};
+      if (formData.full_name        !== undefined) patch.full_name        = String(formData.full_name).trim();
+      if (formData.service_category !== undefined) patch.service_category = String(formData.service_category).trim();
+      if (formData.city             !== undefined) patch.city             = String(formData.city).trim();
+      if (formData.description      !== undefined) patch.description      = String(formData.description).trim();
+      if (formData.work_zone        !== undefined) patch.work_zone        = String(formData.work_zone).trim();
+
+      if (!patch.full_name || patch.full_name.length < 3) throw new Error('Le nom doit faire au moins 3 caractères.');
+
+      var res = await sb.from('artisans')
+        .update(patch)
+        .eq('id', ap.id)
+        .eq('owner_user_id', _state.session.user.id)  /* RLS double-check */
+        .select('id')
+        .maybeSingle();
+      if (res.error) throw res.error;
+      if (!res.data) throw new Error('Mise à jour bloquée (vérifiez vos droits ou rechargez la page).');
+
+      /* Update local state optimistically */
+      Object.assign(_state.artisanProfile, patch);
+      _toast('✅ Profil mis à jour.', 'success');
+      _closeModal();
+      _render();
+    } catch(e) {
+      console.warn('[fxav2] saveProfile error:', e && e.message);
+      _toast('❌ ' + (e && e.message ? e.message : 'Erreur.'), 'error');
+      if (btn) _btnReset(btn);
     }
   }
 
