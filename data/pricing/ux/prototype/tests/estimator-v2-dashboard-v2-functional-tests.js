@@ -215,11 +215,11 @@ test('S8.3 main addEventListener with _handleAction', () => {
 /* ══════════════════════════════════════════════════════════ */
 /* S9: Version bump                                          */
 /* ══════════════════════════════════════════════════════════ */
-test('S9.1 JS version is v2f', () => {
-  assertMatch(js, /VERSION\s*=\s*'v2f'/);
+test('S9.1 JS version is v2g', () => {
+  assertMatch(js, /VERSION\s*=\s*'v2g'/);
 });
-test('S9.2 HTML script tag points to v2f', () => {
-  assertMatch(html, /fixeo-artisan-dashboard-v2\.js\?v=v2f/);
+test('S9.2 HTML script tag points to v2g', () => {
+  assertMatch(html, /fixeo-artisan-dashboard-v2\.js\?v=v2g/);
 });
 test('S9.3 CSS version is v1e', () => {
   assertMatch(html, /fixeo-artisan-dashboard-v2\.css\?v=v1e/);
@@ -330,8 +330,8 @@ test('S11.18 CSS has avail-row--banner variant', () => {
   const css2 = fs.readFileSync(path.join(ROOT, 'css/fixeo-artisan-dashboard-v2.css'), 'utf8');  // reused
   assertIncludes(css2, '.fxa-avail-row--banner');
 });
-test('S11.19 HTML points to v2f JS and v1e CSS', () => {
-  assertMatch(html, /v2f/);
+test('S11.19 HTML points to v2g JS and v1e CSS', () => {
+  assertMatch(html, /v2g/);
   assertMatch(html, /v1e/);
 });
 test('S11.20 in-flight guard exempts navigation actions', () => {
@@ -398,6 +398,164 @@ test('S12.14 no direct privileged artisan writes in V2 JS', () => {
   assertNoMatch(jsExec, /\.update\s*\(\s*\{[^}]*verified/);
   assertNoMatch(jsExec, /\.update\s*\(\s*\{[^}]*claim_status/);
   assertNoMatch(jsExec, /\.update\s*\(\s*\{[^}]*onboarding_completed/);
+});
+
+
+/* ══════════════════════════════════════════════════════════ */
+/* S13: Cockpit V1 — capability + security tests             */
+/* ══════════════════════════════════════════════════════════ */
+
+const ckJs  = fs.readFileSync(path.join(ROOT, 'js/fixeo-artisan-cockpit-v1.js'), 'utf8');
+const ckExec = stripComments(ckJs);
+const ckCss  = fs.readFileSync(path.join(ROOT, 'css/fixeo-artisan-cockpit-v1.css'), 'utf8');
+const ckSql  = fs.readFileSync(path.join(ROOT, 'supabase/7c-cockpit-gallery-photo.sql'), 'utf8');
+
+/* Version / load guard */
+test('S13.1 cockpit JS has load guard', () => {
+  assertMatch(ckExec, /_fxCockpitLoaded/);
+});
+test('S13.2 cockpit loaded in HTML', () => {
+  assertMatch(html, /fixeo-artisan-cockpit-v1\.js\?v=v1a/);
+});
+test('S13.3 cockpit CSS loaded in HTML', () => {
+  assertMatch(html, /fixeo-artisan-cockpit-v1\.css\?v=v1a/);
+});
+
+/* Security: no privileged artisan writes */
+test('S13.4 cockpit does not directly write owner_user_id', () => {
+  assertNoMatch(ckExec, /\.update\s*\(\s*\{[^}]*owner_user_id/);
+});
+test('S13.5 cockpit does not directly write onboarding_completed', () => {
+  assertNoMatch(ckExec, /\.update\s*\(\s*\{[^}]*onboarding_completed/);
+});
+test('S13.6 cockpit does not directly write verified', () => {
+  assertNoMatch(ckExec, /\.update\s*\(\s*\{[^}]*verified\b/);
+});
+test('S13.7 cockpit does not directly write claim_status', () => {
+  assertNoMatch(ckExec, /\.update\s*\(\s*\{[^}]*claim_status/);
+});
+test('S13.8 cockpit does not directly write availability', () => {
+  assertNoMatch(ckExec, /\.update\s*\(\s*\{[^}]*availability/);
+});
+test('S13.9 photo_url update scoped to owner_user_id eq uid', () => {
+  /* Must eq owner_user_id to prevent cross-artisan photo_url write */
+  assertMatch(ckExec, /update\s*\(\s*\{\s*photo_url[\s\S]{0,80}?owner_user_id/);
+});
+
+/* Gallery security */
+test('S13.10 gallery upload uses auth.uid path', () => {
+  assertMatch(ckExec, /_galleryPath\(uid/);
+});
+test('S13.11 gallery delete filters by artisan_id eq uid', () => {
+  assertMatch(ckExec, /\.delete\(\)[\s\S]{0,60}?artisan_id[\s\S]{0,30}?uid/);
+});
+test('S13.12 gallery insert includes artisan_id = uid', () => {
+  assertMatch(ckExec, /artisan_id\s*:\s*uid/);
+});
+
+/* SQL migration */
+test('S13.13 gallery SQL creates portfolio_items with artisan_id TEXT', () => {
+  assertMatch(ckSql, /CREATE TABLE IF NOT EXISTS public\.portfolio_items/);
+  assertMatch(ckSql, /artisan_id\s+text/i);
+});
+test('S13.14 gallery SQL RLS insert policy uses auth.uid()::text', () => {
+  assertMatch(ckSql, /artisan_id\s*=\s*auth\.uid\(\)::text/);
+});
+test('S13.15 storage policies scope to bucket artisan-media', () => {
+  assertMatch(ckSql, /bucket_id\s*=\s*'artisan-media'/);
+});
+test('S13.16 storage upload policy checks owner path component', () => {
+  assertMatch(ckSql, /auth\.uid\(\)::text/);
+  assertMatch(ckSql, /foldername\(name\)/);
+});
+
+/* Feature presence */
+test('S13.17 profile photo section rendered', () => {
+  assertMatch(ckExec, /fxck-photo-section/);
+  assertMatch(ckExec, /fxck-photo-img/);
+});
+test('S13.18 gallery section rendered', () => {
+  assertMatch(ckExec, /fxck-gallery-grid/);
+  assertMatch(ckExec, /fxck-gallery-upload-tile/);
+});
+test('S13.19 quotes section rendered with status grouping', () => {
+  assertMatch(ckExec, /fxck-quote-group-label/);
+  assertIncludes(ckExec, 'accepted');
+  assertIncludes(ckExec, 'pending');
+});
+test('S13.20 public profile rendered with conditional verified badge', () => {
+  assertMatch(ckExec, /fxck-verified-badge/);
+  assertMatch(ckExec, /verified.*true|if.*verified/i);
+});
+test('S13.21 reviews shown only if review_count > 0 (stars conditional)', () => {
+  assertMatch(ckExec, /revCount.*>.*0|if.*revCount/);
+});
+test('S13.22 financial center uses null not 0 for unknown revenue', () => {
+  assertMatch(ckExec, /knownRevenue\s*:\s*null/);
+  assertMatch(ckExec, /pendingRevenue\s*:\s*null/);
+});
+test('S13.23 financial center never uses agreed_price=0 as earnings', () => {
+  /* agreed_price used only when > 0 */
+  assertMatch(ckExec, /Number\(m\.agreed_price\)\s*>\s*0/);
+});
+test('S13.24 notifications fetch from notifications table', () => {
+  assertMatch(ckExec, /from\('notifications'\)/);
+  assertMatch(ckExec, /recipient_user_id.*uid|uid.*recipient_user_id/);
+});
+test('S13.25 mark-read updates read=true only on own notification', () => {
+  assertMatch(ckExec, /update\s*\(\s*\{\s*read\s*:\s*true/);
+  assertMatch(ckExec, /\.eq\('id'/);
+});
+
+/* Profile completeness */
+test('S13.26 completeness score derived from real fields only', () => {
+  assertMatch(ckExec, /photo.*full_name.*service_category.*city|_computeCompleteness/);
+  assertNotIncludes(ckExec, 'completeness = 100'); /* no hardcoded 100% */
+});
+test('S13.27 completeness does NOT conflate with onboarding_completed', () => {
+  /* completeness computation uses hasPhoto/name/trade/city — not onboarding_completed */
+  const compFn = ckExec.match(/function _computeCompleteness[\s\S]*?\n  \}/)?.[0] || '';
+  assertNotIncludes(compFn, 'onboarding_completed');
+});
+test('S13.28 completeness does NOT conflate with verified', () => {
+  const compFn = ckExec.match(/function _computeCompleteness[\s\S]*?\n  \}/)?.[0] || '';
+  assertNotIncludes(compFn, 'verified');
+});
+
+/* Section routing */
+test('S13.29 V2 JS dispatches fixeo:section:changed on section change', () => {
+  assertMatch(jsExec, /fixeo:section:changed/);
+});
+test('S13.30 V2 JS routes COCKPIT_SECS to fxck-sec-* elements', () => {
+  assertMatch(jsExec, /COCKPIT_SECS/);
+  assertMatch(jsExec, /fxck-sec-/);
+});
+test('S13.31 HTML has all 5 cockpit section containers', () => {
+  assertMatch(html, /id="fxck-sec-gallery"/);
+  assertMatch(html, /id="fxck-sec-quotes"/);
+  assertMatch(html, /id="fxck-sec-public-profile"/);
+  assertMatch(html, /id="fxck-sec-revenus"/);
+  assertMatch(html, /id="fxck-sec-notifications"/);
+});
+test('S13.32 HTML has photo and completeness inject containers', () => {
+  assertMatch(html, /id="fxck-photo-inject"/);
+  assertMatch(html, /id="fxck-complete-inject"/);
+});
+
+/* Mobile */
+test('S13.33 CSS has gallery del always visible on narrow mobile', () => {
+  assertMatch(ckCss, /@media.*430px[\s\S]*?gallery-del[\s\S]*?opacity\s*:\s*1/);
+});
+test('S13.34 photo section has mobile sizing', () => {
+  assertMatch(ckCss, /@media.*430px[\s\S]*?fxck-photo-wrap/);
+});
+
+/* No fake data */
+test('S13.35 cockpit JS contains no hardcoded price ranges', () => {
+  assertNoMatch(ckExec, /150.*350|250.*500|200.*400/);
+});
+test('S13.36 cockpit JS contains no fake review count', () => {
+  assertNoMatch(ckExec, /review_count\s*=\s*[1-9]/);
 });
 
 /* ── Summary ─────────────────────────────────────────────── */

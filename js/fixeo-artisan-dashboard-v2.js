@@ -28,9 +28,8 @@
    * RLS: artisan_read_own_linked_requests + artisan_update_assigned_requests on service_requests
    * Identity: artisans WHERE owner_user_id=auth.uid() (7C.12A.1: phone_public fallback removed)
    * ─────────────────────────────────────────────────────────────────────────── */
-  var VERSION = 'v2f'; /* product-complete pass: in-flight guard, modal ×, sidebar logout,
-                         session-expiry recovery, dashboard error state, dead claim_requests
-                         query removed, revenue truthfulness, home-screen dominance, debounce */
+  var VERSION = 'v2g'; /* cockpit integration: COCKPIT_SECS routing, fixeo:section:changed
+                         dispatch, toast API exposure, cockpit section activation */
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -921,16 +920,27 @@
   }
 
   /* ── NAVIGATION ───────────────────────────────────────────── */
-  var SECTIONS = ['dashboard', 'available', 'missions', 'history', 'profile', 'support'];
+  /* Cockpit sections live in fxck-sec-* IDs; V2 handles fxav2-sec-* only.
+   * Navigation entries for cockpit sections are still dispatched via fixeo:section:changed. */
+  var SECTIONS     = ['dashboard', 'available', 'missions', 'history', 'profile', 'support'];
+  var COCKPIT_SECS = ['gallery', 'quotes', 'public-profile', 'revenus', 'notifications'];
 
   function _showSection(name) {
-    if (SECTIONS.indexOf(name) === -1) name = 'dashboard';
+    var isCockpit = COCKPIT_SECS.indexOf(name) !== -1;
+    if (!isCockpit && SECTIONS.indexOf(name) === -1) name = 'dashboard';
     _state.section = name;
 
+    /* V2 sections */
     SECTIONS.forEach(function(s) {
       var sec = el('fxav2-sec-' + s);
       if (sec) sec.classList.toggle('active', s === name);
     });
+    /* Cockpit sections */
+    COCKPIT_SECS.forEach(function(s) {
+      var sec = el('fxck-sec-' + s);
+      if (sec) sec.classList.toggle('active', s === name);
+    });
+
     document.querySelectorAll('.fxa-nav-link').forEach(function(a) {
       a.classList.toggle('active', a.dataset.section === name);
     });
@@ -943,6 +953,11 @@
     if (kpiBar) {
       kpiBar.style.display = (name === 'dashboard' || name === 'available') ? '' : 'none';
     }
+
+    /* Notify cockpit of section change so it can render */
+    try {
+      window.dispatchEvent(new CustomEvent('fixeo:section:changed', { detail: { section: name } }));
+    } catch(e) {}
 
     _closeSidebar();
   }
@@ -1455,7 +1470,10 @@
     completeMission: async function(requestId, btn) {
       await _doCompleteMission(requestId, btn);
       _dispatchMissionEvent('mission-completed', requestId);
-    }
+    },
+
+    /* Toast helper — cockpit extension can call this */
+    toast: function(msg, type) { _toast(msg, type); }
   };
 
   /* Also alias as FixeoArtisanDashboard for dispatch bridge compat */
