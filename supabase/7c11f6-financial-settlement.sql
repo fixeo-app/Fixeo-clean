@@ -93,18 +93,41 @@ BEGIN
   END IF;
 END $$;
 
--- ── STEP 4: RLS column-level guard ──────────────────────────
--- Authenticated artisans and clients cannot UPDATE financial settlement columns.
--- Enforced at the row level via existing RLS (service_role bypasses RLS on server).
--- No additional column-level privilege revoke needed: RLS UPDATE policies
--- on missions should already restrict artisan/client UPDATE scope.
--- Document existing policy state — no mutation here.
+-- ── STEP 4: Explicit privilege guard for final_price ────────
+-- PREREQUISITE: 7c11f6-missions-privilege-hardening.sql MUST have been
+-- applied before this migration. That file revoked broad UPDATE from
+-- authenticated and column UPDATE on agreed_price/commission_amount.
+--
+-- This step ensures final_price also cannot be directly updated by
+-- anon or authenticated browsers. It is belt-and-suspenders: if hardening
+-- was applied correctly, these REVOKE statements are no-ops (idempotent).
+-- If hardening was NOT applied, this prevents the new column from being
+-- silently writable.
+
 DO $$
 BEGIN
-  RAISE NOTICE 'Step 4: RLS policy audit — no mutations made here.';
-  RAISE NOTICE 'Step 4: Confirm existing missions RLS UPDATE policies exclude artisan/client';
-  RAISE NOTICE 'Step 4: from setting final_price / commission_amount.';
-  RAISE NOTICE 'Step 4: Server settlement endpoint uses service_role — bypasses RLS safely.';
+  -- Revoke any inherited/default UPDATE on final_price for anon
+  EXECUTE 'REVOKE UPDATE (final_price) ON TABLE public.missions FROM anon';
+  RAISE NOTICE 'Step 4a: anon UPDATE(final_price) revoked.';
+EXCEPTION WHEN undefined_object THEN
+  RAISE NOTICE 'Step 4a: anon UPDATE(final_price) — no grant found (expected after hardening).';
+END $$;
+
+DO $$
+BEGIN
+  -- Revoke any inherited/default UPDATE on final_price for authenticated
+  EXECUTE 'REVOKE UPDATE (final_price) ON TABLE public.missions FROM authenticated';
+  RAISE NOTICE 'Step 4b: authenticated UPDATE(final_price) revoked.';
+EXCEPTION WHEN undefined_object THEN
+  RAISE NOTICE 'Step 4b: authenticated UPDATE(final_price) — no grant found (expected after hardening).';
+END $$;
+
+DO $$
+BEGIN
+  RAISE NOTICE 'Step 4c: final_price is WRITE-RESTRICTED.';
+  RAISE NOTICE '         Only service_role (settlement endpoint server-side) can write it.';
+  RAISE NOTICE '         Commission rate: 15%% (canonical FIXEO rate).';
+  RAISE NOTICE '         artisan_net: derived server-side only, not stored.';
 END $$;
 
 COMMIT;
