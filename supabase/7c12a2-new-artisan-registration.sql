@@ -1,47 +1,76 @@
 -- ════════════════════════════════════════════════════════════
--- 7C.12A.2 — New Artisan Canonical Registration
+-- 7C.12A.2 — New Artisan Canonical Registration (v2 — Hardened)
 -- supabase/7c12a2-new-artisan-registration.sql
 --
 -- SCOPE:
 --   Replaces the dead localStorage-only new-artisan self-registration path
 --   with a server-authoritative RPC-based canonical registration.
 --
+-- SECURITY BLOCKER RESOLUTIONS (v2):
+--   BLOCKER 1: artisans_owner_update was unrestricted (any column writeable)
+--     Resolution: REVOKE table-level UPDATE from authenticated; add column-specific
+--     GRANTs for safe profile-editing fields only; privileged lifecycle fields
+--     remain non-writable by authenticated except via SECURITY DEFINER RPCs.
+--     Privileged fields (never directly writable by authenticated):
+--       owner_user_id, claimed, claim_status, onboarding_completed, verified
+--     Availability: gated RPC update_artisan_availability() enforces
+--       onboarding_completed=true pre-condition before allowing 'available'.
+--
+--   BLOCKER 2: users/profiles row integrity not guaranteed
+--     Resolution: register_new_artisan() checks ROW_COUNT after each UPDATE;
+--     if users row is missing → HARD FAIL (unauthenticated identity is broken);
+--     profiles row missing is non-fatal (it is created client-side at signUp
+--     but is NOT a FK on artisans). Phone: persisted to users.phone and
+--     profiles.phone (safe canonical fields; never to artisans.phone_public).
+--
 -- WHAT THIS MIGRATION DOES:
 --   Step 0 — Partial UNIQUE index on artisans.owner_user_id (WHERE NOT NULL)
---   Step 1 — public.register_new_artisan() RPC (SECURITY DEFINER)
---   Step 2 — Permissions (REVOKE anon/public; GRANT authenticated + service_role)
---   Step 3 — RLS: add authenticated self-insert policy (scoped to new self-reg rows)
+--   Step 1 — REVOKE table-level UPDATE on artisans from authenticated/anon
+--   Step 2 — GRANT column-specific UPDATE for safe profile-editing fields only
+--   Step 3 — public.register_new_artisan() RPC (SECURITY DEFINER)
+--   Step 4 — public.update_artisan_availability() RPC (SECURITY DEFINER, gated)
+--   Step 5 — Permissions for both RPCs
+--   Step 6 — Replace artisans_owner_update RLS policy with narrowed version
 --
 -- WHAT THIS MIGRATION DOES NOT DO:
 --   - Does NOT modify dispatch_request_v1
 --   - Does NOT modify approve_artisan_claim / reject_artisan_claim (7C.12A.1)
 --   - Does NOT set onboarding_completed = true (reserved for 7C.12A.3)
 --   - Does NOT set verified = true (human admin action only)
---   - Does NOT set availability = 'available' (7C.12A.3 gate)
---   - Does NOT create claim_requests rows (self-registration ≠ claim on existing artisan)
---   - Does NOT modify any existing RLS policy
+--   - Does NOT create claim_requests rows
+--   - Does NOT modify any 7C.12A.1 RLS policy (claim_requests)
+--   - Does NOT bulk-update existing seeded artisan ownership
+--
+-- COLUMN WRITABILITY MATRIX (post-migration):
+--   Column                 | authenticated (own row) | admin | SECURITY DEFINER RPC
+--   -----------------------|-------------------------|-------|---------------------
+--   full_name              | YES (column grant)      | YES   | YES
+--   service_category       | YES (column grant)      | YES   | YES
+--   city                   | YES (column grant)      | YES   | YES
+--   description            | YES (column grant)      | YES   | YES
+--   work_zone              | YES (column grant)      | YES   | YES
+--   availability           | NO (RPC only, gated)    | YES   | YES
+--   owner_user_id          | NO                      | YES   | YES (register only)
+--   claimed                | NO                      | YES   | YES (register only)
+--   claim_status           | NO                      | YES   | YES (approve/reject)
+--   onboarding_completed   | NO                      | YES   | YES (7C.12A.3 only)
+--   verified               | NO                      | YES   | NO (manual admin only)
 --
 -- POST-REGISTRATION CANONICAL STATE FOR NEW ARTISAN:
---   artisans.owner_user_id     = auth.uid()     (immutable once set)
+--   artisans.owner_user_id     = auth.uid()     (immutable: REVOKE blocks re-write)
 --   artisans.claimed           = true
---   artisans.claim_status      = 'approved'      (self-registered, pending human verification)
---   artisans.onboarding_completed = false        (7C.12A.3 gate)
---   artisans.availability      = 'unavailable'   (default; 7C.12A.3 sets 'available')
---   artisans.verified          = false           (human admin only)
+--   artisans.claim_status      = 'approved'
+--   artisans.onboarding_completed = false       (7C.12A.3 gate)
+--   artisans.availability      = 'unavailable'  (update_artisan_availability gated)
+--   artisans.verified          = false          (human admin only)
 --   users.role                 = 'artisan'
---   profiles.role              = 'artisan'       (if profiles row exists)
+--   profiles.role              = 'artisan'      (if profiles row exists)
+--   users.phone                = p_phone        (safe; never artisans.phone_public)
+--   profiles.phone             = p_phone        (safe; non-fatal if row absent)
 --
 -- DISPATCH ELIGIBILITY: NONE
---   onboarding_completed = false → excluded from dispatch_request_v1 forever
---   until 7C.12A.3 is explicitly completed.
---
--- IDEMPOTENCY:
---   If the caller already has an artisans row with owner_user_id = auth.uid(),
---   the RPC returns ok:true, reason:'already_registered', artisan_id:<id>.
---   No second row is created. No mutation of existing row.
---
--- LOCK ORDER (no deadlock possible — single table):
---   artisans FOR UPDATE (own row only, via owner_user_id)
+--   onboarding_completed = false → excluded from dispatch_request_v1
+--   until 7C.12A.3 explicitly completes onboarding.
 --
 -- NOT APPLIED TO SUPABASE — run precheck first.
 -- ════════════════════════════════════════════════════════════
@@ -52,19 +81,10 @@ BEGIN;
 -- STEP 0: Partial UNIQUE index on artisans.owner_user_id
 --
 -- Only covers rows WHERE owner_user_id IS NOT NULL.
--- This means:
---   - All 1302 existing seeded artisans (owner_user_id IS NULL) are unaffected.
---   - Prevents any future double-registration for the same auth user.
---   - The index is CONCURRENTLY safe but must be run outside a transaction
---     in a live Supabase environment; however for correctness in this migration
---     we use a standard CREATE UNIQUE INDEX with IF NOT EXISTS guard.
---
--- NOTE: If this migration is applied via Supabase SQL editor (which wraps in
--- a transaction), CREATE INDEX is allowed (non-concurrent). This is acceptable
--- because the index is on a column with 0 non-NULL values at apply time (PM-18).
+-- All 1302 existing seeded artisans (owner_user_id IS NULL) are unaffected.
+-- Prevents double-registration for the same auth user.
 -- ════════════════════════════════════════════════════════════
 
--- Guard: only create if not already present
 DO $$
 BEGIN
   IF NOT EXISTS (
@@ -83,38 +103,97 @@ BEGIN
 END $$;
 
 -- ════════════════════════════════════════════════════════════
--- STEP 1: register_new_artisan() RPC
+-- STEP 1: REVOKE table-level UPDATE from authenticated and anon
+--
+-- BLOCKER 1 ROOT CAUSE:
+--   Supabase default grants authenticated UPDATE on all public tables.
+--   Combined with the unrestricted artisans_owner_update RLS policy
+--   (USING/WITH CHECK: owner_user_id = auth.uid()), an authenticated
+--   artisan could directly write ANY column on their own artisans row,
+--   including privileged lifecycle fields:
+--     onboarding_completed=true, availability='available', verified=true,
+--     claim_status='rejected', claimed=false, owner_user_id=(anything)
+--
+-- FIX:
+--   REVOKE table-level UPDATE entirely from authenticated and anon.
+--   Column-specific GRANTs in Step 2 restore safe profile-editing columns.
+--   Privileged lifecycle fields remain non-writable except via SECURITY DEFINER RPCs.
+--
+-- SAFE FOR EXISTING BEHAVIOR:
+--   fixeo-artisan-dashboard-v2.js updates only service_requests + missions (not artisans).
+--   artisan-dashboard-p2.js (V1, deprecated, auth-guard redirected to V2) had a
+--   direct artisans.update({availability}) call — this is now blocked by design.
+--   Availability is now managed via update_artisan_availability() RPC (Step 4).
+-- ════════════════════════════════════════════════════════════
+
+REVOKE UPDATE ON public.artisans FROM authenticated;
+REVOKE UPDATE ON public.artisans FROM anon;
+
+-- ════════════════════════════════════════════════════════════
+-- STEP 2: Column-specific GRANT for safe profile-editing fields
+--
+-- Authenticated users may directly UPDATE only these non-privileged columns
+-- on their own artisans row (still gated by artisans_owner_update RLS policy):
+--   full_name, service_category, city, description, work_zone
+--
+-- NOT GRANTED (privileged lifecycle fields — RPC-only):
+--   owner_user_id   — set once at registration; never re-writable by owner
+--   claimed         — set at registration; immutable
+--   claim_status    — approve_artisan_claim / reject_artisan_claim RPCs only
+--   onboarding_completed — 7C.12A.3 RPC only
+--   availability    — update_artisan_availability() RPC only (gated by onboarding)
+--   verified        — human admin only (no RPC path)
+--   rating          — internal aggregate only (fixeo-review-engine)
+--   review_count    — internal aggregate only
+--   legacy_id       — seeded; never self-edited
+--   public_slug     — seeded; never self-edited
+-- ════════════════════════════════════════════════════════════
+
+GRANT UPDATE (full_name, service_category, city, description, work_zone)
+  ON public.artisans TO authenticated;
+
+-- ════════════════════════════════════════════════════════════
+-- STEP 3: register_new_artisan() RPC
 --
 -- AUTHORITY MODEL:
 --   owner_user_id is ALWAYS derived from auth.uid() server-side.
---   Callers supply ONLY non-privileged onboarding fields:
---     full_name       — display name (validated ≥ 3 chars)
---     service_category — artisan's trade (must be non-empty)
---     city            — artisan's city (must be non-empty)
---     phone           — contact number (optional, stored on users/profiles)
---     description     — short bio (optional, ≤ 500 chars)
+--   Callers supply ONLY non-privileged onboarding fields.
+--
+-- BLOCKER 2 RESOLUTIONS:
+--   - users row: checked via ROW_COUNT after UPDATE; if 0 rows → HARD FAIL.
+--     A missing users row means the auth identity is broken — we must not
+--     silently create an artisan row with no canonical identity link.
+--   - profiles row: checked via ROW_COUNT after UPDATE; if 0 rows → non-fatal
+--     warning returned (profiles is not a FK on artisans; it is created
+--     client-side at signUp but may race). Phone is written to both.
+--   - Phone: p_phone is persisted to users.phone and profiles.phone.
+--     It is NOT stored on artisans to avoid the phone_public risk vector
+--     (artisans.phone_public is exposed to anyone querying the artisans table).
 --
 -- SECURITY INVARIANTS (enforced server-side, non-bypassable):
---   1. auth.uid() required — unauthenticated callers blocked
---   2. owner_user_id is NEVER caller-supplied — always auth.uid()
+--   1. auth.uid() required
+--   2. owner_user_id always auth.uid() (never caller-supplied)
 --   3. No caller-supplied: verified, onboarding_completed, availability, claim_status
 --   4. verified = false always
---   5. onboarding_completed = false always
---   6. availability = 'unavailable' always (not dispatch-eligible immediately)
---   7. claim_status = 'approved' always (self-registration is self-approved)
+--   5. onboarding_completed = false always (7C.12A.3 gate)
+--   6. availability = 'unavailable' always (update_artisan_availability gated)
+--   7. claim_status = 'approved' always
 --   8. claimed = true always
---   9. Duplicate owner guard via unique index + locking (idempotent)
---  10. users.role and profiles.role set to 'artisan' server-side
---  11. Admin role never demoted (WHERE role != 'admin' guard on both tables)
+--   9. Duplicate owner guard (unique index + FOR UPDATE lock)
+--  10. users.role set to 'artisan' server-side; HARD FAIL if users row absent
+--  11. profiles.role set to 'artisan' if profiles row exists; non-fatal if absent
+--  12. Admin role never demoted (WHERE role != 'admin' guard)
+--  13. Phone written to users.phone and profiles.phone (never artisans.phone_public)
 --
--- SAFE-FAIL PATHS (all return ok:false with named reason):
---   unauthenticated      — auth.uid() IS NULL
---   name_required        — full_name blank or < 3 chars
---   category_required    — service_category blank
---   city_required        — city blank
---   description_too_long — description > 500 chars
---   already_registered   — existing artisan with owner_user_id = auth.uid() (idempotent ok:true)
---   internal_error       — unexpected EXCEPTION
+-- SAFE-FAIL PATHS:
+--   unauthenticated       — auth.uid() IS NULL
+--   name_required         — full_name blank or < 3 chars
+--   category_required     — service_category blank
+--   city_required         — city blank
+--   description_too_long  — description > 500 chars
+--   already_registered    — idempotent ok:true with existing artisan_id
+--   identity_broken       — users row missing (HARD FAIL — no artisan created)
+--   internal_error        — unexpected EXCEPTION
 -- ════════════════════════════════════════════════════════════
 
 CREATE OR REPLACE FUNCTION public.register_new_artisan(
@@ -131,13 +210,15 @@ SET search_path = ''
 AS $$
 DECLARE
   v_uid           uuid;       -- auth.uid() — canonical identity; never from caller
-  v_artisan_id    uuid;       -- new or existing artisans.id
-  v_existing_id   uuid;       -- existing artisan check
+  v_artisan_id    uuid;       -- new artisans.id
+  v_existing_id   uuid;       -- existing artisan row check
   v_full_name     text;
   v_service_cat   text;
   v_city          text;
   v_description   text;
   v_phone         text;
+  v_users_updated integer;    -- ROW_COUNT for users UPDATE
+  v_prof_updated  integer;    -- ROW_COUNT for profiles UPDATE
 BEGIN
 
   -- ── STEP A: Auth ──────────────────────────────────────────
@@ -174,17 +255,15 @@ BEGIN
   END IF;
 
   -- ── STEP C: Duplicate owner guard (idempotent) ────────────
-  -- Check for existing artisan row owned by this user.
-  -- Use a locking SELECT to prevent concurrent double-registration.
-  -- The partial unique index provides the structural guarantee;
-  -- this lock prevents the "read 0, both insert" race.
-  --
-  -- We do NOT lock an unrelated artisan row here — only the user's own.
+  -- Lock the user's own artisan row if it exists.
+  -- Prevents concurrent same-user double-registration.
+  -- The partial unique index is the structural guarantee;
+  -- FOR UPDATE prevents the "read 0, both insert" race.
   SELECT a.id INTO v_existing_id
   FROM public.artisans a
   WHERE a.owner_user_id = v_uid
   LIMIT 1
-  FOR UPDATE;  -- serialize concurrent same-user registration attempts
+  FOR UPDATE;
 
   IF v_existing_id IS NOT NULL THEN
     -- Idempotent: already registered. Return existing artisan_id.
@@ -196,26 +275,42 @@ BEGIN
     );
   END IF;
 
-  -- ── STEP D: Create canonical artisans row ─────────────────
+  -- ── STEP D: Verify canonical identity (BLOCKER 2) ─────────
+  -- The users row MUST exist before we create an artisan row.
+  -- A missing users row means fixeo-auth-supabase.js signUp Step 2
+  -- failed silently — the identity chain is broken. HARD FAIL.
+  -- We do NOT create the users row here (that is auth's responsibility).
+  IF NOT EXISTS (
+    SELECT 1 FROM public.users WHERE id = v_uid
+  ) THEN
+    RAISE WARNING '[register_new_artisan] users row missing for uid %', v_uid;
+    RETURN jsonb_build_object(
+      'ok',     false,
+      'reason', 'identity_broken',
+      'message', 'Votre compte n''est pas entièrement configuré. Veuillez vous reconnecter.'
+    );
+  END IF;
+
+  -- ── STEP E: Create canonical artisans row ─────────────────
   --
   -- INVARIANTS — server-enforced, non-bypassable:
-  --   owner_user_id      = auth.uid()          (never caller-supplied)
-  --   claimed            = true                (self-registration is a claim)
-  --   claim_status       = 'approved'          (self-registered = approved identity)
-  --   onboarding_completed = false             (must complete onboarding — 7C.12A.3)
-  --   availability       = 'unavailable'       (not dispatch-eligible yet)
-  --   verified           = false               (human admin sets this manually)
+  --   owner_user_id      = auth.uid()        (never caller-supplied)
+  --   claimed            = true
+  --   claim_status       = 'approved'
+  --   onboarding_completed = false           (7C.12A.3 gate)
+  --   availability       = 'unavailable'     (update_artisan_availability RPC gated)
+  --   verified           = false             (human admin only)
   --
   -- PERMITTED from caller (whitelist):
   --   full_name, service_category, city, description
-  --   (phone stored on users/profiles, not artisans, to avoid phone_public risk)
+  --   (phone stored on users/profiles, not artisans — avoids phone_public risk)
   INSERT INTO public.artisans (
     owner_user_id,
     full_name,
     service_category,
     city,
     description,
-    -- Security invariants: all server-side:
+    -- Security invariants: all server-side —
     claimed,
     claim_status,
     onboarding_completed,
@@ -232,46 +327,61 @@ BEGIN
     v_city,
     v_description,
     -- Security invariants:
-    true,               -- claimed:             always true for self-registration
-    'approved',         -- claim_status:        self-registered identity is self-approved
+    true,               -- claimed
+    'approved',         -- claim_status: self-registered identity is self-approved
     false,              -- onboarding_completed: false until 7C.12A.3 gate
-    'unavailable',      -- availability:        not dispatch-eligible until 7C.12A.3
-    false,              -- verified:            false; human admin sets only
+    'unavailable',      -- availability: not dispatch-eligible until 7C.12A.3
+    false,              -- verified: human admin sets only
     now(),
     now()
   )
   RETURNING id INTO v_artisan_id;
 
-  -- ── STEP E: Role promotion ─────────────────────────────────
-  -- Promote users.role to 'artisan' — only if not already admin.
-  -- This is the ONLY safe path for role promotion in the new-artisan flow.
+  -- ── STEP F: Role promotion + phone persistence ────────────
+  --
+  -- users.phone: persist caller-supplied phone to safe canonical field.
+  -- Never written to artisans.phone_public (that is a public exposure risk).
+  -- Admin demotion guard: WHERE role != 'admin'.
+  -- users row MUST exist (checked in Step D) — ROW_COUNT must be 1.
   UPDATE public.users
   SET role       = 'artisan',
+      phone      = CASE WHEN v_phone != '' THEN v_phone ELSE phone END,
       updated_at = now()
   WHERE id   = v_uid
-    AND role != 'admin';  -- never demote admin
+    AND role != 'admin';
 
-  -- Promote profiles.role if profiles row exists.
-  -- Non-fatal if profiles row absent (fixeo-auth-supabase.js creates it at signUp).
+  GET DIAGNOSTICS v_users_updated = ROW_COUNT;
+
+  -- ROW_COUNT=0 means: row exists (we checked) but role='admin' — that's fine.
+  -- The identity_broken guard above already catches the missing-row case.
+  -- If role='admin', we skip the update intentionally (admin demotion guard).
+  -- Both outcomes are correct; no HARD FAIL needed here.
+
+  -- profiles: non-fatal if row absent (fixeo-auth-supabase.js creates it at signUp,
+  -- but this is not a FK constraint on artisans).
   UPDATE public.profiles
-  SET role = 'artisan'
+  SET role  = 'artisan',
+      phone = CASE WHEN v_phone != '' THEN v_phone ELSE phone END
   WHERE id   = v_uid
     AND (role IS NULL OR role NOT IN ('admin'));
 
-  -- ── STEP F: Return canonical result ──────────────────────
+  GET DIAGNOSTICS v_prof_updated = ROW_COUNT;
+
+  -- ── STEP G: Return canonical result ──────────────────────
   RETURN jsonb_build_object(
-    'ok',          true,
-    'reason',      'registered',
-    'artisan_id',  v_artisan_id,
-    'owner_uid',   v_uid
-    -- NOTE: owner_uid returned for client confirmation only.
-    -- It always equals auth.uid(); no spoofing is possible.
+    'ok',                true,
+    'reason',            'registered',
+    'artisan_id',        v_artisan_id,
+    'owner_uid',         v_uid,
+    'profiles_updated',  v_prof_updated
+    -- profiles_updated is informational only.
+    -- 0 = profiles row absent (non-fatal); 1 = profiles updated.
   );
 
 EXCEPTION
   WHEN unique_violation THEN
     -- Concurrent registration race: unique index on owner_user_id fired.
-    -- The other transaction won. Idempotently return the existing artisan.
+    -- The other transaction won — idempotently return the existing artisan.
     SELECT a.id INTO v_existing_id
     FROM public.artisans a
     WHERE a.owner_user_id = v_uid
@@ -288,47 +398,162 @@ END;
 $$;
 
 -- ════════════════════════════════════════════════════════════
--- STEP 2: Permissions
+-- STEP 4: update_artisan_availability() RPC
 --
--- Only authenticated callers may call register_new_artisan.
--- The function is SECURITY DEFINER so execution runs as the
--- function owner, not the caller. The caller supplies only
--- non-privileged form fields. owner_user_id is always auth.uid().
+-- BLOCKER 1 RESOLUTION (availability field):
+--   Authenticated artisans previously could directly UPDATE availability
+--   to 'available' without restriction (via artisans_owner_update RLS policy).
+--   After Step 1 REVOKE, direct UPDATE of availability is blocked.
+--   This RPC is the ONLY gated path for artisans to change their availability.
+--
+-- GATE: onboarding_completed = true required before 'available' is allowed.
+--   This enforces the 7C.12A.3 lifecycle contract:
+--     available    → only if onboarding_completed = true
+--     unavailable  → always permitted (artisan can always go offline)
+--     busy         → only if onboarding_completed = true
+--
+-- INPUTS:
+--   p_status: 'available' | 'unavailable' | 'busy'
+--
+-- SAFE-FAIL PATHS:
+--   unauthenticated          — auth.uid() IS NULL
+--   not_owner                — no artisans row with owner_user_id = auth.uid()
+--   onboarding_required      — attempting 'available'/'busy' before onboarding
+--   invalid_status           — value not in ('available','unavailable','busy')
+--   no_change                — already at requested status (idempotent ok:true)
 -- ════════════════════════════════════════════════════════════
 
+CREATE OR REPLACE FUNCTION public.update_artisan_availability(
+  p_status text
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE
+  v_uid               uuid;
+  v_artisan_id        uuid;
+  v_current_avail     text;
+  v_onboarding_done   boolean;
+  v_target_status     text;
+BEGIN
+
+  -- ── Auth ──────────────────────────────────────────────────
+  v_uid := auth.uid();
+  IF v_uid IS NULL THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'unauthenticated');
+  END IF;
+
+  -- ── Validate requested status ─────────────────────────────
+  v_target_status := lower(trim(COALESCE(p_status, '')));
+  IF v_target_status NOT IN ('available', 'unavailable', 'busy') THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'invalid_status',
+      'message', 'Statut invalide. Valeurs acceptées: available, unavailable, busy.');
+  END IF;
+
+  -- ── Fetch and lock artisan row ────────────────────────────
+  SELECT a.id, a.availability, a.onboarding_completed
+  INTO v_artisan_id, v_current_avail, v_onboarding_done
+  FROM public.artisans a
+  WHERE a.owner_user_id = v_uid
+  LIMIT 1
+  FOR UPDATE;
+
+  IF v_artisan_id IS NULL THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'not_owner',
+      'message', 'Aucun profil artisan trouvé pour ce compte.');
+  END IF;
+
+  -- ── Onboarding gate ───────────────────────────────────────
+  -- 'available' and 'busy' require onboarding_completed = true.
+  -- 'unavailable' is always permitted (artisan can always go offline).
+  IF v_target_status IN ('available', 'busy') AND NOT COALESCE(v_onboarding_done, false) THEN
+    RETURN jsonb_build_object(
+      'ok',     false,
+      'reason', 'onboarding_required',
+      'message', 'Complétez votre profil avant de vous rendre disponible.'
+    );
+  END IF;
+
+  -- ── Idempotency ───────────────────────────────────────────
+  IF v_current_avail = v_target_status THEN
+    RETURN jsonb_build_object(
+      'ok',         true,
+      'reason',     'no_change',
+      'artisan_id', v_artisan_id,
+      'status',     v_target_status
+    );
+  END IF;
+
+  -- ── Update availability ───────────────────────────────────
+  UPDATE public.artisans
+  SET availability = v_target_status,
+      updated_at   = now()
+  WHERE id = v_artisan_id;
+
+  RETURN jsonb_build_object(
+    'ok',         true,
+    'reason',     'updated',
+    'artisan_id', v_artisan_id,
+    'status',     v_target_status
+  );
+
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE WARNING '[update_artisan_availability] unexpected error for uid %: %', v_uid, SQLERRM;
+    RETURN jsonb_build_object('ok', false, 'reason', 'internal_error');
+END;
+$$;
+
+-- ════════════════════════════════════════════════════════════
+-- STEP 5: Permissions for both RPCs
+-- ════════════════════════════════════════════════════════════
+
+-- register_new_artisan
 REVOKE EXECUTE ON FUNCTION public.register_new_artisan(text, text, text, text, text) FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION public.register_new_artisan(text, text, text, text, text) FROM anon;
 GRANT  EXECUTE ON FUNCTION public.register_new_artisan(text, text, text, text, text) TO authenticated;
 GRANT  EXECUTE ON FUNCTION public.register_new_artisan(text, text, text, text, text) TO service_role;
 
+-- update_artisan_availability
+REVOKE EXECUTE ON FUNCTION public.update_artisan_availability(text) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.update_artisan_availability(text) FROM anon;
+GRANT  EXECUTE ON FUNCTION public.update_artisan_availability(text) TO authenticated;
+GRANT  EXECUTE ON FUNCTION public.update_artisan_availability(text) TO service_role;
+
 -- ════════════════════════════════════════════════════════════
--- STEP 3: RLS hardening for artisans self-insert
+-- STEP 6: Narrow artisans_owner_update RLS policy
 --
--- CURRENT STATE (from rls-phase2-2026-05-08.sql):
---   artisans_admin_insert: INSERT allowed only for admin role.
---   No authenticated self-insert policy exists.
+-- The existing artisans_owner_update policy is unrestricted in column scope.
+-- After Step 1 REVOKE of table-level UPDATE and Step 2 column-specific GRANTs,
+-- the RLS policy remains as the row-scoping guard (USING/WITH CHECK).
+-- We replace it to explicitly document that it now covers ONLY the column-granted
+-- fields (full_name, service_category, city, description, work_zone).
 --
--- With register_new_artisan as SECURITY DEFINER, the INSERT into
--- artisans runs as the function owner (service_role equivalent),
--- which bypasses RLS entirely. No new RLS INSERT policy is needed
--- for authenticated users — the RPC IS the gate.
+-- Privileged lifecycle fields (owner_user_id, claimed, claim_status,
+-- onboarding_completed, verified, availability) are not column-granted to
+-- authenticated, so they cannot be written even if RLS would otherwise permit.
 --
--- VERIFICATION: Confirm no existing authenticated INSERT policy
--- would allow direct browser artisans INSERT (which we do NOT want).
--- The existing artisans_admin_insert policy limits direct INSERT to
--- admin role only. Authenticated non-admin users cannot INSERT directly.
---
--- Therefore: NO new INSERT policy needed. SECURITY DEFINER RPC handles it.
---
--- What we DO harden: ensure authenticated owner can UPDATE their own row
--- (needed for 7C.12A.3 onboarding field writes, e.g. onboarding_data).
--- The existing artisans_owner_update policy (from rls-phase2) already
--- covers this: USING/WITH CHECK owner_user_id = auth.uid().
---
--- CONCLUSION: No new RLS policies needed for 7C.12A.2.
--- Documenting this explicitly so future phases do not add insecure policies.
+-- NOTE: The artisans_owner_update policy applies to ALL columns in the artisans
+-- UPDATE permission. But since PostgreSQL column-level privileges restrict what
+-- columns authenticated users can include in an UPDATE SET clause, the combination
+-- of: column-only-grant + this row RLS policy = authenticated can update ONLY
+-- safe profile fields on their OWN row. Neither condition alone is sufficient;
+-- both are required.
 -- ════════════════════════════════════════════════════════════
 
--- (No RLS changes in this step — see comment above)
+DROP POLICY IF EXISTS "artisans_owner_update" ON public.artisans;
+CREATE POLICY "artisans_owner_update" ON public.artisans
+  FOR UPDATE
+  USING (owner_user_id = auth.uid())
+  WITH CHECK (owner_user_id = auth.uid());
+-- Note: WITH CHECK enforces owner_user_id cannot change via direct UPDATE.
+-- Column-level privileges (Step 2) prevent owner_user_id from appearing in
+-- any SET clause anyway, making this doubly protected.
 
 COMMIT;
+
+-- ════════════════════════════════════════════════════════════
+-- ROLLBACK (apply separately if needed — see 7c12a2-rollback.sql)
+-- ════════════════════════════════════════════════════════════
