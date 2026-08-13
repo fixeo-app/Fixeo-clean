@@ -1168,64 +1168,22 @@
 
   /* NEW REQUEST MODAL ────────────────────────────────────────── */
   function _openNewRequest() {
-    /* ── Prefer global request-form.js if available ── */
-    if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
-      window.FixeoClientRequest.open(null);
+    /* ── Canonical V4 request flow (fxrf4-v5e) ── */
+    if (window.FixeoRequestFlowV4 && typeof window.FixeoRequestFlowV4.open === 'function') {
+      window.FixeoRequestFlowV4.open({ mode: 'default', source: 'dashboard' });
       return;
     }
-
-    /* ── Fallback: fxv2-modal-overlay (own form, Supabase direct) ── */
-    var body = '<div class="fxv2-modal-drag-handle"></div>'
-      + '<div class="fxv2-modal-title">\uD83D\uDD28 Nouvelle demande</div>'
-      + '<form id="fxv2-req-form">'
-      + '<div class="fxv2-form-group"><label class="fxv2-label">Service *</label>'
-      + '<select class="fxv2-select" name="service_category" required>'
-      + '<option value="">Choisir un service</option>'
-      + SERVICES.map(function (s) { return '<option value="' + esc(s) + '">' + esc(s) + '</option>'; }).join('')
-      + '</select></div>'
-      + '<div class="fxv2-form-group"><label class="fxv2-label">Ville *</label>'
-      + '<select class="fxv2-select" name="city" required>'
-      + '<option value="">Choisir une ville</option>'
-      + CITIES.map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + '</option>'; }).join('')
-      + '</select></div>'
-      + '<div class="fxv2-form-group"><label class="fxv2-label">Description *</label>'
-      + '<textarea class="fxv2-textarea" name="description" placeholder="D\u00e9crivez votre probl\u00e8me ou ce dont vous avez besoin\u2026" required minlength="10" maxlength="500"></textarea></div>'
-      + '<button type="submit" class="fxv2-btn fxv2-btn-primary" style="width:100%;justify-content:center">Envoyer la demande</button>'
-      + '</form>';
-    _openModal(body);
-
-    /* Bind form */
-    var form = el('fxv2-req-form');
-    if (!form) return;
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
-      var sub = form.querySelector('[type=submit]');
-      _btnBusy(sub, 'Envoi\u2026');
-      try {
-        var data = new FormData(form);
-        await window.FixeoSupabase.submitServiceRequest({
-          service_category: data.get('service_category'),
-          city:             data.get('city'),
-          description:      data.get('description')
-        });
-        _closeModal();
-        _toast('\u2705 Demande envoy\u00e9e\u00a0! Nous cherchons un artisan disponible.', 'success');
-        await _refresh();
-      } catch (err) {
-        console.warn('[fxv2] submitServiceRequest error:', err && err.message);
-        _toast('\u274C ' + (err && err.message ? err.message : 'Erreur lors de l\u2019envoi.'), 'error');
-        _btnReset(sub, 'Envoyer la demande');
-      }
-    });
+    /* ── Hard fallback: FixeoSupabase.submitServiceRequest direct (no legacy modal) ── */
+    console.warn('[fxv2] FixeoRequestFlowV4 not available — canonical V4 engine not loaded');
   }
 
-  function _openUrgentRequest(trigger) {
-    /* ── Prefer global V3 urgent modal if available ── */
-    if (window.FixeoClientRequest && typeof window.FixeoClientRequest.openExpress === 'function') {
-      window.FixeoClientRequest.openExpress(trigger || null);
+  function _openUrgentRequest() {
+    /* ── Canonical V4 emergency mode (fxrf4-v5e) ── */
+    if (window.FixeoRequestFlowV4 && typeof window.FixeoRequestFlowV4.open === 'function') {
+      window.FixeoRequestFlowV4.open({ mode: 'emergency', source: 'dashboard' });
       return;
     }
-    /* ── Fallback: open standard modal ── */
+    /* ── Hard fallback: standard mode if V4 not loaded ── */
     _openNewRequest();
   }
 
@@ -1350,6 +1308,17 @@
 
   /* ── BOOT ─────────────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', init);
+
+  /* ── V4 REQUEST FLOW LISTENER ─────────────────────────────────
+     Refresh dashboard after canonical V4 submission so the new
+     service_request row appears in "Mes demandes" without reload.
+     Fired by fx-request-flow-v4.js _fireAnalytics() on success.  */
+  window.addEventListener('fixeo:client-request-submit-success', function () {
+    /* Small delay to let Supabase propagate before re-fetch */
+    setTimeout(function () {
+      if (typeof _refresh === 'function') _refresh();
+    }, 1200);
+  });
 
   /* ── PUBLIC API — minimal surface for companion scripts ────────
      Expose read-only access to _state and _refresh so external
