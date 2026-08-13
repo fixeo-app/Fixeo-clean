@@ -6,16 +6,33 @@
 -- All V-checks must RAISE NOTICE V-xx PASS.
 -- Any RAISE EXCEPTION = HARD STOP.
 -- READ ONLY — no DDL, no DML.
+--
+-- COMMENT-STRIPPING (7C.12A.1 v4 post-apply fix):
+--   pg_get_functiondef() returns source including SQL -- line comments.
+--   Pattern checks for SET target fields (onboarding_completed, verified,
+--   availability, owner_user_id) MUST be performed against comment-stripped
+--   source only.  Checks that look for structural keywords (LOCK A/B, v_pre,
+--   FOR UPDATE, etc.) are deliberately kept on the FULL source so the
+--   narrative/comment structure itself is also verified as documentation.
+--
+--   v_def      = full pg_get_functiondef() output (comments intact)
+--   v_def_exec = v_def with all -- line comments stripped via regexp_replace
+--
+--   V-6 / V-6b — onboarding_completed not in executable SET target
+--   V-13        — verified not set to true in executable code
+--   V-14        — availability not assigned in executable code
+--   V-17        — reject does not write owner_user_id as a SET target
 -- ════════════════════════════════════════════════════════════
 
 DO $$
 DECLARE
-  v_count   integer;
-  v_def     text;
-  v_secdef  boolean;
-  v_type    text;
-  v_policy  text;
-  v_con_def text;
+  v_count    integer;
+  v_def      text;    -- full pg_get_functiondef() output (comments intact)
+  v_def_exec text;    -- v_def with -- line comments stripped (for SET-target checks)
+  v_secdef   boolean;
+  v_type     text;
+  v_policy   text;
+  v_con_def  text;
 BEGIN
 
   -- ─── RPC EXISTENCE + PROPERTIES ────────────────────────────
@@ -38,6 +55,9 @@ BEGIN
   SELECT pg_get_functiondef(p.oid) INTO v_def FROM pg_proc p
   JOIN pg_namespace n ON n.oid=p.pronamespace
   WHERE n.nspname='public' AND p.proname='approve_artisan_claim' LIMIT 1;
+  -- Strip -- line comments for use in V-6/V-6b, V-13, V-14 SET-target checks.
+  -- Structural/keyword checks (V-4 through V-5, V-7 onward) use the full v_def.
+  v_def_exec := regexp_replace(v_def, '--[^\n]*', '', 'g');
   IF v_def NOT ILIKE '%search_path%' THEN
     RAISE EXCEPTION 'V-3 FAIL: approve_artisan_claim missing SET search_path';
   END IF;
@@ -56,13 +76,28 @@ BEGIN
   RAISE NOTICE 'V-5 PASS: artisan identity read from claim_requests row';
 
   -- V-6: approve_artisan_claim does NOT set onboarding_completed
-  IF v_def ~* 'onboarding_completed\s*=\s*true' THEN
-    RAISE EXCEPTION 'V-6 FAIL: approve_artisan_claim sets onboarding_completed=true';
+  --
+  -- WHY v_def_exec (comment-stripped):
+  --   pg_get_functiondef() preserves SQL line comments. The migration intentionally
+  --   documents non-mutations in comments such as:
+  --     -- onboarding_completed: intentionally NOT SET (7C.12A.1)
+  --   A pattern applied to the full source would match the field name inside the
+  --   comment and produce a false positive. v_def_exec strips all -- comments first.
+  --
+  -- PATTERN: 'onboarding_completed\s*=' detects any executable assignment:
+  --   onboarding_completed = true        → FAIL (actual mutation)
+  --   onboarding_completed = false       → FAIL (actual mutation)
+  --   onboarding_completed = <expr>      → FAIL (actual mutation)
+  --   -- onboarding_completed: NOT SET   → stripped; PASS
+  --   WHERE onboarding_completed = ...   → no '=' after field but still caught
+  --     (acceptable: this would be unusual in an UPDATE SET path)
+  --
+  IF v_def_exec ~* 'onboarding_completed\s*=' THEN
+    RAISE EXCEPTION 'V-6 FAIL: approve_artisan_claim contains executable assignment to onboarding_completed — contract violation (7C.12A.1: claim approval must not set onboarding_completed)';
   END IF;
-  IF v_def ~* 'SET\s[^;]*onboarding_completed' THEN
-    RAISE EXCEPTION 'V-6b FAIL: approve_artisan_claim includes onboarding_completed in UPDATE SET';
-  END IF;
-  RAISE NOTICE 'V-6 PASS: approve_artisan_claim does not set onboarding_completed';
+  -- V-6b: legacy form — ensure the check above covers the full contract
+  -- (V-6b is now subsumed by V-6 via the comment-stripped source; kept as alias)
+  RAISE NOTICE 'V-6 PASS: approve_artisan_claim does not contain executable assignment to onboarding_completed';
 
   -- V-7: LOCK ORDER — ARTISAN before TARGET CLAIM (deadlock-free ordering)
   -- The function body must contain a non-locking pre-read section followed by
@@ -149,17 +184,24 @@ BEGIN
   END IF;
   RAISE NOTICE 'V-12 PASS: artisan_has_owner conflict guard present';
 
-  -- V-13: approve_artisan_claim does NOT set verified=true
-  IF v_def ~* 'verified\s*=\s*true' THEN
-    RAISE EXCEPTION 'V-13 FAIL: approve_artisan_claim sets verified=true — premature verification';
+  -- V-13: approve_artisan_claim does NOT set verified (any value)
+  --
+  -- Uses v_def_exec (comment-stripped) for the same reason as V-6:
+  -- the migration documents "-- verified: intentionally NOT SET" in a comment.
+  -- Pattern 'verified\s*=' catches any executable assignment to verified.
+  IF v_def_exec ~* 'verified\s*=' THEN
+    RAISE EXCEPTION 'V-13 FAIL: approve_artisan_claim contains executable assignment to verified — premature verification (7C.12A.1 invariant)';
   END IF;
-  RAISE NOTICE 'V-13 PASS: approve_artisan_claim does not set verified=true';
+  RAISE NOTICE 'V-13 PASS: approve_artisan_claim does not contain executable assignment to verified';
 
-  -- V-14: approve_artisan_claim does NOT set availability
-  IF v_def ~* 'availability\s*=' THEN
-    RAISE EXCEPTION 'V-14 FAIL: approve_artisan_claim sets availability';
+  -- V-14: approve_artisan_claim does NOT set availability (any value)
+  --
+  -- Uses v_def_exec (comment-stripped). Pattern 'availability\s*=' catches any
+  -- executable assignment. Comment "-- availability: intentionally NOT SET" is stripped.
+  IF v_def_exec ~* 'availability\s*=' THEN
+    RAISE EXCEPTION 'V-14 FAIL: approve_artisan_claim contains executable assignment to availability (7C.12A.1 invariant)';
   END IF;
-  RAISE NOTICE 'V-14 PASS: approve_artisan_claim does not set availability';
+  RAISE NOTICE 'V-14 PASS: approve_artisan_claim does not contain executable assignment to availability';
 
   -- V-15: reject_artisan_claim exists
   SELECT COUNT(*) INTO v_count FROM pg_proc p
@@ -175,14 +217,31 @@ BEGIN
   IF NOT v_secdef THEN RAISE EXCEPTION 'V-16 FAIL: reject_artisan_claim not SECURITY DEFINER'; END IF;
   RAISE NOTICE 'V-16 PASS: reject_artisan_claim SECURITY DEFINER';
 
-  -- V-17: reject_artisan_claim does NOT write owner_user_id in UPDATE SET
+  -- V-17: reject_artisan_claim does NOT write owner_user_id as a SET target
+  --
+  -- WHY v_def_exec:
+  --   The reject function body contains:
+  --     -- artisans.owner_user_id is NEVER touched by rejection.
+  --     -- WHERE owner_user_id IS NULL: never reset a claimed artisan.
+  --     WHERE id = v_artisan_id AND owner_user_id IS NULL;
+  --   The old pattern 'SET\s[^;]*owner_user_id' was comment-sensitive:
+  --   [^;]* crosses newlines, so it matched from a comment-line "SET" (within the
+  --   word "reset") through multiple comment lines until reaching "owner_user_id".
+  --   In addition, the WHERE-clause reference was crossing into the match window.
+  --
+  -- PATTERN: 'owner_user_id\s*=' (after comment-stripping)
+  --   Detects only executable assignments:  owner_user_id = <expr>  → FAIL
+  --   WHERE owner_user_id IS NULL uses IS, not =  → no match  → PASS
+  --   Comment references stripped before check   → no false positive
   SELECT pg_get_functiondef(p.oid) INTO v_def FROM pg_proc p
   JOIN pg_namespace n ON n.oid=p.pronamespace
   WHERE n.nspname='public' AND p.proname='reject_artisan_claim' LIMIT 1;
-  IF v_def ~* 'SET\s[^;]*owner_user_id' THEN
-    RAISE EXCEPTION 'V-17 FAIL: reject_artisan_claim writes owner_user_id';
+  -- Strip line comments for this check
+  v_def_exec := regexp_replace(v_def, '--[^\n]*', '', 'g');
+  IF v_def_exec ~* 'owner_user_id\s*=' THEN
+    RAISE EXCEPTION 'V-17 FAIL: reject_artisan_claim contains executable assignment to owner_user_id — rejection must never alter artisan ownership';
   END IF;
-  RAISE NOTICE 'V-17 PASS: reject_artisan_claim does not alter artisan owner_user_id';
+  RAISE NOTICE 'V-17 PASS: reject_artisan_claim does not contain executable assignment to owner_user_id';
 
   -- V-18: reject_artisan_claim resets artisan claim_status (trigger absorption)
   IF v_def NOT ILIKE '%claim_status%' THEN
