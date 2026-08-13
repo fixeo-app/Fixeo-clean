@@ -120,7 +120,7 @@
         <div class="fixeo-gh-drawer-label">Pour les artisans</div>
         <a class="fixeo-gh-drawer-link${_activeClass('rejoindre-fixeo.html')}" href="rejoindre-fixeo.html"><span class="fixeo-gh-di" aria-hidden="true">🧰</span> Je suis artisan</a>
         <a class="fixeo-gh-drawer-link" href="rejoindre-fixeo.html#revendiquer"><span class="fixeo-gh-di" aria-hidden="true">👤</span> Revendiquer mon profil</a>
-        <a class="fixeo-gh-drawer-link${_activeClass('dashboard-artisan.html')}" href="dashboard-artisan.html"><span class="fixeo-gh-di" aria-hidden="true">📊</span> Espace artisan</a>
+        <a class="fixeo-gh-drawer-link${_activeClass('dashboard-artisan-v2.html')}" href="dashboard-artisan-v2.html"><span class="fixeo-gh-di" aria-hidden="true">📊</span> Espace artisan</a>
       </div>`;
 
     /* ── Section 4 — Compte (auth-aware) ─────────────────────── */

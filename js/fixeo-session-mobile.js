@@ -135,7 +135,7 @@
 
   function dashboardHref(user) {
     if (!user) return 'auth.html';
-    if (user.role === 'artisan') return 'dashboard-artisan.html';
+    if (user.role === 'artisan') return 'dashboard-artisan-v2.html';
     if (user.role === 'admin') return 'admin.html';
     return 'dashboard-client.html';
   }

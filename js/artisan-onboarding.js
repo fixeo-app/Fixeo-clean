@@ -79,7 +79,7 @@
   }
 
   function redirectAfterOnboarding() {
-    const target = 'dashboard-artisan.html';
+    const target = 'dashboard-artisan-v2.html';
     setTimeout(() => {
       window.location.href = target;
     }, 650);

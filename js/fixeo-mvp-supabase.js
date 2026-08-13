@@ -71,7 +71,7 @@
 
   function redirectAfterRole(role) {
     if (role === 'artisan') {
-      window.location.href = 'dashboard-artisan.html';
+      window.location.href = 'dashboard-artisan-v2.html';
       return;
     }
     if (role === 'admin') {
@@ -1147,7 +1147,7 @@
   }
 
   async function renderArtisanDashboard() {
-    if (currentPage() !== 'dashboard-artisan.html') return;
+    if (currentPage() !== 'dashboard-artisan.html') return; /* V1-only: exits on V2 page (auth guard redirected V1→V2 before this runs) */
 
     var FixeoSupabase = ensureSupabase();
     await FixeoSupabase.init();

@@ -200,7 +200,7 @@
   function updateDashboardLinks(user) {
     var dashLink = resolveCoreHref('auth.html');
     if (user) {
-      dashLink = user.role === 'artisan' ? resolveCoreHref('dashboard-artisan.html') : (user.role === 'admin' ? resolveCoreHref('admin.html') : resolveCoreHref('dashboard-client.html'));
+      dashLink = user.role === 'artisan' ? resolveCoreHref('dashboard-artisan-v2.html') : (user.role === 'admin' ? resolveCoreHref('admin.html') : resolveCoreHref('dashboard-client.html'));
     }
     Array.prototype.forEach.call(document.querySelectorAll('a[data-role="dashboard"]'), function (link) {
       link.setAttribute('href', dashLink);
