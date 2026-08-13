@@ -509,6 +509,11 @@
             ? '<span class="fxacs-pill fxacs-pill-claim-ok" style="font-size:.62rem">\uD83D\uDD17 Li\u00e9</span>'
             : '<span class="fxacs-muted" style="font-size:.72rem">Non li\u00e9</span>')
         + '</td>'
+        + '<td>'
+          + (a.verified
+            ? '<span class="fxacs-pill fxacs-pill-verified" style="font-size:.68rem">\u2705 V\u00e9rifi\u00e9</span>'
+            : '<button class="fxacs-btn fxacs-btn-verify" data-fxacs-action="verify-artisan" data-artisan-id="' + esc(a.id) + '" style="font-size:.72rem;padding:3px 10px" title="V\u00e9rifier cet artisan">\uD83D\uDD0D V\u00e9rifier</button>')
+        + '</td>'
         + '</tr>';
     });
 
@@ -692,20 +697,102 @@
     }
   }
 
-  /* ── ACTION HANDLER (claims) ─────────────────────────────── */
+  /* ── ACTION HANDLER (claims + artisan verify) ────────────── */
   /* No browser confirm() or prompt() — all confirmation is inline. */
   function _handleAction(e) {
     var btn = e.target.closest('[data-fxacs-action]');
     if (!btn) return;
-    var action  = btn.dataset.fxacsAction;
-    var claimId = btn.dataset.claimId;
+    var action     = btn.dataset.fxacsAction;
+    var claimId    = btn.dataset.claimId;
+    var artisanId  = btn.dataset.artisanId;
 
-    if (action === 'approve-claim' && claimId)         { _showApproveConfirm(claimId, btn); }
+    if (action === 'approve-claim' && claimId)              { _showApproveConfirm(claimId, btn); }
     else if (action === 'approve-claim-confirm' && claimId) { _doApprove(claimId, btn); }
-    else if (action === 'reject-claim' && claimId)     { _showRejectConfirm(claimId, btn); }
+    else if (action === 'reject-claim' && claimId)          { _showRejectConfirm(claimId, btn); }
     else if (action === 'reject-claim-confirm' && claimId)  { _doReject(claimId, btn); }
     else if (action === 'claim-action-cancel' && claimId)   { _hideClaimConfirm(claimId); }
-    else if (action === 'fxacs-refresh')                { _syncAll(); }
+    else if (action === 'verify-artisan' && artisanId)      { _showVerifyConfirm(artisanId, btn); }
+    else if (action === 'verify-artisan-confirm' && artisanId) { _doVerify(artisanId, btn); }
+    else if (action === 'verify-artisan-cancel' && artisanId)  { _hideVerifyConfirm(artisanId, btn); }
+    else if (action === 'fxacs-refresh')                    { _syncAll(); }
+  }
+
+  /* ── VERIFY ARTISAN — Inline confirm flow ────────────────── */
+  function _showVerifyConfirm(artisanId, btn) {
+    /* Inject an inline confirmation sibling to the button */
+    var container = btn.parentNode;
+    if (!container) return;
+    btn.disabled = true;
+    btn.dataset.verifyPending = '1';
+    var confirmId = 'fxacs-verify-confirm-' + artisanId;
+    var existing = el(confirmId);
+    if (existing) { existing.remove(); }
+    var div = document.createElement('div');
+    div.id = confirmId;
+    div.className = 'fxacs-confirm-row';
+    div.style.cssText = 'display:inline-flex;gap:6px;align-items:center;margin-top:4px';
+    div.innerHTML = '<span style="font-size:.72rem;color:#FCAF45">\u26A0\uFE0F Confirmer la v\u00e9rification\u00a0?</span>'
+      + '<button class="fxacs-btn fxacs-btn-approve fxacs-btn-confirm" data-fxacs-action="verify-artisan-confirm" data-artisan-id="' + esc(artisanId) + '" style="font-size:.68rem;padding:2px 9px">\u2714 Oui</button>'
+      + '<button class="fxacs-btn fxacs-btn-ghost" data-fxacs-action="verify-artisan-cancel" data-artisan-id="' + esc(artisanId) + '" style="font-size:.68rem;padding:2px 9px">Annuler</button>';
+    container.appendChild(div);
+  }
+
+  function _hideVerifyConfirm(artisanId, btn) {
+    var confirmDiv = el('fxacs-verify-confirm-' + artisanId);
+    if (confirmDiv) confirmDiv.remove();
+    /* Re-enable the original verify button */
+    var verifyBtn = document.querySelector('[data-fxacs-action="verify-artisan"][data-artisan-id="' + artisanId + '"]');
+    if (verifyBtn) { verifyBtn.disabled = false; delete verifyBtn.dataset.verifyPending; }
+  }
+
+  async function _doVerify(artisanId, btn) {
+    /* Disable confirm button during request */
+    if (btn) btn.disabled = true;
+
+    /* Obtain Supabase session Bearer token */
+    var token = null;
+    try {
+      var sb = await getSb();
+      var sessionResult = sb ? await sb.auth.getSession() : null;
+      token = sessionResult && sessionResult.data && sessionResult.data.session
+        ? sessionResult.data.session.access_token : null;
+    } catch (_e) { token = null; }
+
+    if (!token) {
+      _showToast('\u26A0\uFE0F Session expir\u00e9e \u2014 veuillez vous reconnecter.', 'error');
+      _hideVerifyConfirm(artisanId, btn);
+      return;
+    }
+
+    try {
+      var res = await fetch('/api/admin/artisans/verify', {
+        method:  'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': 'Bearer ' + token,
+        },
+        /* Only send artisan_id — server decides verified=true */
+        body: JSON.stringify({ artisan_id: artisanId }),
+      });
+
+      var body = await res.json();
+
+      if (body.ok) {
+        var msg = body.idempotent
+          ? '\u2139\uFE0F D\u00e9j\u00e0 v\u00e9rifi\u00e9.'
+          : '\u2705 Artisan v\u00e9rifi\u00e9 avec succ\u00e8s !';
+        _showToast(msg, 'success');
+        /* Canonical refresh — server is now authoritative */
+        setTimeout(function () { _syncAll(); }, 600);
+      } else {
+        _showToast('\u274C ' + (body.detail || body.reason || 'Erreur de v\u00e9rification'), 'error');
+        _hideVerifyConfirm(artisanId, btn);
+      }
+    } catch (err) {
+      warn('_doVerify network error:', err.message);
+      _showToast('\u26A0\uFE0F Service indisponible \u2014 r\u00e9essayez.', 'error');
+      _hideVerifyConfirm(artisanId, btn);
+    }
   }
 
   function _showApproveConfirm(claimId, btn) {
