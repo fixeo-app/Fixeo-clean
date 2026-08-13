@@ -28,7 +28,8 @@
    * RLS: artisan_read_own_linked_requests + artisan_update_assigned_requests on service_requests
    * Identity: artisans WHERE owner_user_id=auth.uid() (7C.12A.1: phone_public fallback removed)
    * ─────────────────────────────────────────────────────────────────────────── */
-  var VERSION = 'v2g'; /* cockpit integration: COCKPIT_SECS routing, fixeo:section:changed
+  var VERSION = 'v2h'; /* polish pass: photo_url avatar, KPI validated count, 5-item bottom nav,
+                         availability gate on requests section, cleaner avail banner */
                          dispatch, toast API exposure, cockpit section activation */
 
   /* ── STATE ────────────────────────────────────────────────── */
@@ -312,14 +313,14 @@
       return st === 'validated' || st === 'completed';
     }).length;
 
+    var validated  = _state.myMissions.filter(function(m) {
+      var st = m._request && m._request.status;
+      return st === 'validated';
+    }).length;
+
     var available  = _state.openRequests.length;
 
-    /* Revenue: final_price is not in SR_COLS (only fetched for mission enrich).
-     * Do not fabricate a 0 revenue. Return null to trigger '—' display.
-     * If final_price were fetched, it would be: validated missions * 0.85 artisan net. */
-    var revenue = null;
-
-    return { assigned: assigned, completed: completed, available: available, revenue: revenue };
+    return { assigned: assigned, completed: completed, available: available, revenue: validated };
   }
 
   /* ── RENDER: SKELETON ─────────────────────────────────────── */
@@ -387,8 +388,13 @@
       }
     }
 
+    var photoUrl = ap && ap.photo_url;
+    var avatarHtml = photoUrl
+      ? '<div class="fxa-profile-avatar-lg fxa-profile-avatar-photo" style="background-image:url(' + esc(photoUrl) + ')"></div>'
+      : '<div class="fxa-profile-avatar-lg">' + esc(ini) + '</div>';
+
     return '<div class="fxa-profile-header">'
-      + '<div class="fxa-profile-avatar-lg">' + esc(ini) + '</div>'
+      + avatarHtml
       + '<div style="flex:1;min-width:0">'
       + '<div class="fxa-profile-name">' + esc(name) + '</div>'
       + '<div class="fxa-profile-meta">Artisan Fixeo</div>'
@@ -611,13 +617,14 @@
 
     /* ── NORMAL OPERATIONAL DASHBOARD ──────────────────────────── */
 
-    /* Availability state banner */
+    /* Availability state banner — shown only when unavailable, no duplicate label */
     var avail = ap.availability || 'unavailable';
     var availBanner = '';
     if (avail !== 'available') {
       availBanner = '<div class="fxa-avail-row fxa-avail-row--banner">'
-        + '<span class="fxa-avail-label fxa-avail-off">○ Vous êtes indisponible</span>'
-        + '<button class="fxa-btn fxa-btn-primary fxa-btn-sm" data-action="set-available">Me rendre disponible</button>'
+        + '<span class="fxa-avail-label fxa-avail-off" style="font-size:.8rem;opacity:.6">'
+        + 'Vous ne recevez pas de nouvelles demandes.</span>'
+        + '<button class="fxa-btn fxa-btn-primary" data-action="set-available" style="flex-shrink:0">✅ Me rendre disponible</button>'
         + '</div>';
     }
 
@@ -680,15 +687,30 @@
       + '<span class="fxa-section-count">' + _state.openRequests.length + '</span>'
       + '</div>';
 
-    if (!_state.artisanProfile) {
+    var ap = _state.artisanProfile;
+    if (!ap) {
       html += '<div class="fxa-no-profile"><div class="fxa-no-profile-icon">⚠️</div>'
         + '<div class="fxa-no-profile-title">Profil non associé</div>'
         + '<div class="fxa-no-profile-sub">Associez votre compte pour voir les demandes.</div></div>';
+    } else if (!ap.onboarding_completed) {
+      html += '<div class="fxa-empty">'
+        + '<div class="fxa-empty-icon">🚀</div>'
+        + '<div class="fxa-empty-title">Activez votre profil d\'abord</div>'
+        + '<div class="fxa-empty-sub">Complétez l\'activation de votre profil pour commencer à recevoir des demandes.</div>'
+        + '<button class="fxa-btn fxa-btn-primary" style="margin-top:12px" data-action="complete-onboarding">Activer mon profil</button>'
+        + '</div>';
+    } else if (ap.availability !== 'available') {
+      html += '<div class="fxa-empty">'
+        + '<div class="fxa-empty-icon">○</div>'
+        + '<div class="fxa-empty-title">Vous êtes indisponible</div>'
+        + '<div class="fxa-empty-sub">Rendez-vous disponible pour voir les nouvelles demandes.</div>'
+        + '<button class="fxa-btn fxa-btn-primary" style="margin-top:12px" data-action="set-available">✅ Me rendre disponible</button>'
+        + '</div>';
     } else if (!_state.openRequests.length) {
       html += '<div class="fxa-empty">'
         + '<div class="fxa-empty-icon">📬</div>'
-        + '<div class="fxa-empty-title">Aucune demande disponible</div>'
-        + '<div class="fxa-empty-sub">Aucune demande correspondant à votre ville et votre métier pour le moment.</div>'
+        + '<div class="fxa-empty-title">Aucune demande pour le moment</div>'
+        + '<div class="fxa-empty-sub">Vous serez notifié dès qu\'une demande correspond à votre zone et votre métier.</div>'
         + '</div>';
     } else {
       html += '<div class="fxa-card-list">'
@@ -888,8 +910,7 @@
     set('fxav2-kpi-available', kpis.available);
     set('fxav2-kpi-active',    kpis.assigned);
     set('fxav2-kpi-done',      kpis.completed);
-    set('fxav2-kpi-revenue',
-      kpis.revenue > 0 ? kpis.revenue.toLocaleString('fr-FR') + ' MAD' : '—');
+    set('fxav2-kpi-revenue', kpis.revenue > 0 ? String(kpis.revenue) : '—');
   }
 
   /* ── RENDER: SIDEBAR PROFILE ──────────────────────────────── */

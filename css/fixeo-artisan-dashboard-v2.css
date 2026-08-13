@@ -830,3 +830,24 @@ a.fxa-header-logo:hover { opacity: .8; }
   .fxa-actions .fxa-btn { width: 100%; justify-content: center; }
   .fxa-onboarding-cta--full .fxa-actions { flex-direction: column; }
 }
+
+/* ── POLISH PASS (v1f) ───────────────────────────────────── */
+/* Profile photo avatar in header */
+.fxa-profile-avatar-photo {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* text (initials) hidden when photo loaded */
+  color: transparent;
+  font-size: 0;
+}
+
+/* Bottom nav: 5-item layout */
+@media (max-width: 767px) {
+  .fxa-bottom-nav {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .fxa-bottom-btn span:not(.bicon) {
+    font-size: .58rem;
+  }
+}

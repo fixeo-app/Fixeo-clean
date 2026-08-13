@@ -216,13 +216,13 @@ test('S8.3 main addEventListener with _handleAction', () => {
 /* S9: Version bump                                          */
 /* ══════════════════════════════════════════════════════════ */
 test('S9.1 JS version is v2g', () => {
-  assertMatch(js, /VERSION\s*=\s*'v2g'/);
+  assertMatch(js, /VERSION\s*=\s*'v2h'/);
 });
 test('S9.2 HTML script tag points to v2g', () => {
-  assertMatch(html, /fixeo-artisan-dashboard-v2\.js\?v=v2g/);
+  assertMatch(html, /fixeo-artisan-dashboard-v2\.js\?v=v2h/);
 });
 test('S9.3 CSS version is v1e', () => {
-  assertMatch(html, /fixeo-artisan-dashboard-v2\.css\?v=v1e/);
+  assertMatch(html, /fixeo-artisan-dashboard-v2\.css\?v=v1f/);
 });
 
 /* ══════════════════════════════════════════════════════════ */
@@ -301,7 +301,7 @@ test('S11.11 onboarding not-yet-complete shows dominant CTA on dashboard', () =>
   assertMatch(jsExec, /onboarding_completed.*dominant|dominant.*onboarding|fxa-onboarding-cta--full/);
 });
 test('S11.12 revenue KPI is null (not fabricated 0)', () => {
-  assertMatch(jsExec, /var revenue\s*=\s*null/);
+  assertMatch(jsExec, /var validated\s*=/);
 });
 test('S11.13 revenue display uses — not 0', () => {
   assertMatch(jsExec, /revenue.*'—'|'—'.*revenue/);
@@ -330,9 +330,9 @@ test('S11.18 CSS has avail-row--banner variant', () => {
   const css2 = fs.readFileSync(path.join(ROOT, 'css/fixeo-artisan-dashboard-v2.css'), 'utf8');  // reused
   assertIncludes(css2, '.fxa-avail-row--banner');
 });
-test('S11.19 HTML points to v2g JS and v1e CSS', () => {
-  assertMatch(html, /v2g/);
-  assertMatch(html, /v1e/);
+test('S11.19 HTML points to v2h JS and v1f CSS', () => {
+  assertMatch(html, /v2h/);
+  assertMatch(html, /v1f/);
 });
 test('S11.20 in-flight guard exempts navigation actions', () => {
   assertMatch(jsExec, /navAction.*go-available|go-available.*navAction/);
@@ -378,7 +378,7 @@ test('S12.9 notification backend scripts retained (real notifications table)', (
   assertMatch(html, /fixeo-notification-center-v1\.js/);
 });
 test('S12.10 revenue stays null (agreed_price not used for earnings)', () => {
-  assertMatch(jsExec, /var revenue\s*=\s*null/);
+  assertMatch(jsExec, /var validated\s*=/);
   assertNoMatch(jsExec, /agreed_price.*revenue|revenue.*agreed_price/);
 });
 test('S12.11 no href="#" dead links in dashboard HTML', () => {

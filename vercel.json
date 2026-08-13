@@ -466,6 +466,14 @@
       "status": 301
     },
     {
+      "src": "^/espace-artisan$",
+      "dest": "/dashboard-artisan-v2.html"
+    },
+    {
+      "src": "^/mon-espace$",
+      "dest": "/dashboard-artisan-v2.html"
+    },
+    {
       "src": "^/artisan/([a-z0-9][a-z0-9-]{3,118}[a-z0-9])$",
       "dest": "/api/artisan-profile-fn?slug=$1"
     },
