@@ -26,14 +26,43 @@ const _ART_API_BASE = (function () {
   return window.location.origin;
 })();
 
-/* ── Headers admin (sans Content-Type pour FormData) ──────── */
-const _ART_HEADERS_JSON = {
-  'Content-Type'  : 'application/json',
-  'X-Admin-Auth'  : 'fixeo_admin_v20'
-};
-const _ART_HEADERS_FORM = {
-  'X-Admin-Auth'  : 'fixeo_admin_v20'
-};
+/* ── Auth headers — Supabase session Bearer token ─────────── */
+/*
+ * Admin identity is proved by the authenticated Supabase session.
+ * The server validates the token and checks public.users.role = 'admin'.
+ * No static/shared token is used. No legacy static token.
+ */
+async function _getAdminAuthHeaders(includeContentType) {
+  var headers = {};
+  if (includeContentType) headers['Content-Type'] = 'application/json';
+
+  /* Obtain current Supabase session access token */
+  var token = null;
+  try {
+    if (window.supabase && typeof window.supabase.auth === 'object') {
+      var sessionResult = await window.supabase.auth.getSession();
+      token = sessionResult && sessionResult.data && sessionResult.data.session
+        ? sessionResult.data.session.access_token
+        : null;
+    }
+    /* Fallback: try global _sb() helper used by fixeo-auth-supabase.js */
+    if (!token && typeof window._sb === 'function') {
+      var sb = window._sb();
+      var s2 = sb ? await sb.auth.getSession() : null;
+      token  = s2 && s2.data && s2.data.session ? s2.data.session.access_token : null;
+    }
+  } catch (_e) {
+    token = null;
+  }
+
+  if (!token) {
+    /* Session expired or user not logged in */
+    throw new Error('Session expirée — veuillez vous reconnecter.');
+  }
+
+  headers['Authorization'] = 'Bearer ' + token;
+  return headers;
+}
 
 /* ── Store local (READ-ONLY display cache — NOT authoritative) ── */
 /* Canonical source: Supabase via FixeoRepository.getAllArtisans()  */
@@ -219,9 +248,10 @@ function renderArtisansAdminTable(data) {
 async function toggleArtisanStatus(id, newStatus) {
   try {
     const url = _ART_API_BASE + `/api/admin/artisans/${encodeURIComponent(id)}/status`;
+    const authHeaders = await _getAdminAuthHeaders(true);
     const res = await fetch(url, {
       method : 'PUT',
-      headers: _ART_HEADERS_JSON,
+      headers: authHeaders,
       body   : JSON.stringify({ status: newStatus })
     });
     const body = await res.json();
@@ -272,7 +302,8 @@ function deleteArtisanConfirm(id, name) {
 async function _deleteArtisan(id) {
   try {
     const url = _ART_API_BASE + `/api/admin/artisans/${encodeURIComponent(id)}`;
-    const res = await fetch(url, { method: 'DELETE', headers: _ART_HEADERS_JSON });
+    const authHeaders = await _getAdminAuthHeaders(true);
+    const res = await fetch(url, { method: 'DELETE', headers: authHeaders });
     const body = await res.json();
 
     if (body.success) {
@@ -348,9 +379,10 @@ async function submitArtisanForm(e) {
 
   try {
     const url = _ART_API_BASE + '/api/admin/artisans/add';
+    const authHeaders = await _getAdminAuthHeaders(false); /* no Content-Type — FormData sets it */
     const res = await fetch(url, {
       method : 'POST',
-      headers: _ART_HEADERS_FORM,
+      headers: authHeaders,
       body   : formData
     });
     const body = await res.json();
@@ -553,9 +585,10 @@ async function submitEditArtisanForm(e) {
 
   try {
     const url = _ART_API_BASE + `/api/admin/artisans/${encodeURIComponent(_currentEditId)}`;
+    const authHeaders = await _getAdminAuthHeaders(false); /* no Content-Type — FormData sets it */
     const res = await fetch(url, {
       method : 'PUT',
-      headers: _ART_HEADERS_FORM,
+      headers: authHeaders,
       body   : formData
     });
     const body = await res.json();

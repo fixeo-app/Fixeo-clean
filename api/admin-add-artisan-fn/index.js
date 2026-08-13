@@ -8,10 +8,10 @@
  *
  * SECURITY MODEL
  * ─────────────
- * • Admin identity: caller must supply X-Admin-Auth header.
- *   Server validates it against process.env.ADMIN_TOKEN (env-only, never
- *   in source). Falls back to the legacy static token if env not set so
- *   existing callers keep working. Neither value is exposed in the bundle.
+ * • Admin identity: caller must supply Authorization: Bearer <access_token>
+ *   Server validates the token against Supabase auth (getUser), then
+ *   verifies the authenticated user has role='admin' in public.users.
+ *   NO shared/static token fallback. NO X-Admin-Auth. NO legacy token.
  * • Supabase: SUPABASE_SERVICE_ROLE_KEY used server-side only.
  *   Never sent to or logged for the client.
  * • Privileged lifecycle fields are NOT caller-controlled:
@@ -23,6 +23,14 @@
  *     verified         = false  (forced)
  * • Caller-supplied fields that map to lifecycle states are
  *   silently ignored even if sent.
+ *
+ * AUTH FLOW
+ * ─────────
+ * 1. Extract Bearer token from Authorization header.
+ * 2. POST /auth/v1/user with the token → Supabase resolves authenticated user.
+ * 3. SELECT role FROM public.users WHERE id = <user_id> (service-role query).
+ * 4. If role != 'admin' → 403 Forbidden.
+ * 5. Perform service-role artisan INSERT.
  *
  * ALLOWED INPUT FIELDS
  * ────────────────────
@@ -36,7 +44,6 @@
  * phone_public uniqueness: Supabase will return 23505 if the
  * artisans table has a UNIQUE constraint on phone_public.
  * We surface that truthfully as a 409 conflict.
- * No heuristic matching beyond what the DB enforces.
  *
  * RESPONSE
  * ────────
@@ -47,8 +54,8 @@
  * ───────────
  * 200  — created successfully
  * 400  — validation failure
- * 401  — missing auth
- * 403  — wrong auth token
+ * 401  — missing or invalid token
+ * 403  — authenticated but not admin
  * 405  — non-POST method
  * 409  — conflict (phone_public duplicate)
  * 500  — internal / Supabase error
@@ -57,15 +64,11 @@
  * ─────────────────────────────────────────
  *   SUPABASE_URL              — project URL
  *   SUPABASE_SERVICE_ROLE_KEY — service_role JWT (secret, server-side only)
- *   ADMIN_TOKEN               — admin auth token (optional; falls back to
- *                               legacy 'fixeo_admin_v20' if unset — both
- *                               are accepted for backward compat)
  */
 
 'use strict';
 
 /* ── Constants ─────────────────────────────────────────────── */
-var LEGACY_ADMIN_TOKEN = 'fixeo_admin_v20'; /* kept for backward compat */
 var MAX_FIELD_LEN = 500;
 
 /* ── Field trim helper ─────────────────────────────────────── */
@@ -74,23 +77,91 @@ function trim(v, maxLen) {
   return s.slice(0, maxLen || MAX_FIELD_LEN);
 }
 
-/* ── Admin auth check ──────────────────────────────────────── */
+/* ── Verify Bearer token + admin role ──────────────────────── */
 /*
- * Validates the X-Admin-Auth header against:
- *   1. process.env.ADMIN_TOKEN (preferred — set in Vercel dashboard)
- *   2. LEGACY_ADMIN_TOKEN      (fallback for backward compat with existing callers)
+ * Extracts Bearer token from Authorization header, validates it server-side
+ * via Supabase auth, then checks public.users for role='admin'.
  *
- * The actual token value is NEVER in source; env-only.
- * Returns: 'ok' | 'missing' | 'forbidden'
+ * Returns:
+ *   { status: 'ok', userId: string }
+ *   { status: 'missing' }
+ *   { status: 'invalid', detail: string }
+ *   { status: 'not_admin' }
+ *   { status: 'error', detail: string }
  */
-function _checkAdminAuth(req) {
-  var supplied = req.headers['x-admin-auth'] || '';
-  if (!supplied) return 'missing';
-  /* Accept env-configured token or legacy static token */
-  var envToken = process.env.ADMIN_TOKEN || '';
-  if (envToken && supplied === envToken) return 'ok';
-  if (supplied === LEGACY_ADMIN_TOKEN) return 'ok';
-  return 'forbidden';
+async function _verifyAdminSession(req) {
+  var authHeader = req.headers['authorization'] || '';
+  if (!authHeader.startsWith('Bearer ')) {
+    return { status: 'missing' };
+  }
+
+  var token = authHeader.slice(7).trim();
+  if (!token) {
+    return { status: 'missing' };
+  }
+
+  var url        = process.env.SUPABASE_URL;
+  var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceKey) {
+    return { status: 'error', detail: 'Server configuration error: missing env vars' };
+  }
+
+  /* Step 1: Validate token — resolve authenticated user */
+  var userRes;
+  try {
+    userRes = await fetch(url + '/auth/v1/user', {
+      headers: {
+        'apikey':        serviceKey,
+        'Authorization': 'Bearer ' + token,
+      }
+    });
+  } catch (e) {
+    return { status: 'error', detail: 'Network error validating token: ' + e.message };
+  }
+
+  if (!userRes.ok) {
+    /* 401 from Supabase = invalid/expired token */
+    return { status: 'invalid', detail: 'Token invalid or expired' };
+  }
+
+  var userData;
+  try { userData = await userRes.json(); } catch (_) {
+    return { status: 'invalid', detail: 'Malformed auth response' };
+  }
+
+  var userId = userData && userData.id;
+  if (!userId) {
+    return { status: 'invalid', detail: 'Could not resolve user id from token' };
+  }
+
+  /* Step 2: Verify admin role in public.users (server-side, service-role) */
+  var roleRes;
+  try {
+    roleRes = await fetch(
+      url + '/rest/v1/users?select=role&id=eq.' + encodeURIComponent(userId) + '&limit=1',
+      {
+        headers: {
+          'apikey':        serviceKey,
+          'Authorization': 'Bearer ' + serviceKey,
+        }
+      }
+    );
+  } catch (e) {
+    return { status: 'error', detail: 'Network error checking role: ' + e.message };
+  }
+
+  var roleBody;
+  try { roleBody = await roleRes.json(); } catch (_) { roleBody = []; }
+
+  var row = Array.isArray(roleBody) ? roleBody[0] : null;
+  var role = row && row.role ? String(row.role) : '';
+
+  if (role !== 'admin') {
+    return { status: 'not_admin' };
+  }
+
+  return { status: 'ok', userId: userId };
 }
 
 /* ── Supabase REST INSERT ───────────────────────────────────── */
@@ -99,8 +170,7 @@ async function _insertArtisan(row) {
   var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !serviceKey) {
-    var missing = !url ? 'SUPABASE_URL' : 'SUPABASE_SERVICE_ROLE_KEY';
-    var err = new Error('ENV_MISSING: ' + missing);
+    var err = new Error('ENV_MISSING: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
     err.code = 'ENV_MISSING';
     throw err;
   }
@@ -127,7 +197,6 @@ async function _insertArtisan(row) {
   try { body = await res.json(); } catch (_) { /* ignore parse error */ }
 
   if (!res.ok) {
-    /* 23505 = unique_violation (phone_public duplicate) */
     var pgCode = body && body.code ? String(body.code) : '';
     if (pgCode === '23505' || res.status === 409) {
       var dupErr = new Error('DUPLICATE: ' + (body && body.message ? body.message : 'unique constraint violation'));
@@ -139,7 +208,6 @@ async function _insertArtisan(row) {
     throw sbErr;
   }
 
-  /* Supabase returns array with Prefer: return=representation */
   var inserted = Array.isArray(body) ? body[0] : body;
   if (!inserted || !inserted.id) {
     var noIdErr = new Error('SUPABASE_NO_ID: inserted row has no id');
@@ -156,18 +224,25 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ ok: false, reason: 'method_not_allowed' });
   }
 
-  /* Admin auth */
-  var authResult = _checkAdminAuth(req);
-  if (authResult === 'missing') {
-    return res.status(401).json({ ok: false, reason: 'unauthorized', detail: 'X-Admin-Auth header required' });
-  }
-  if (authResult === 'forbidden') {
-    return res.status(403).json({ ok: false, reason: 'forbidden', detail: 'Invalid admin token' });
-  }
+  /* Admin auth — Supabase session + server-side role check */
+  var auth = await _verifyAdminSession(req);
 
-  /* Parse body — Vercel passes multipart as req.body when using formidable,
-   * but for simplicity the admin form sends FormData which Vercel auto-parses
-   * as req.body (with bodyParser disabled). Handle both JSON and FormData. */
+  if (auth.status === 'missing') {
+    return res.status(401).json({ ok: false, reason: 'unauthorized', detail: 'Authorization: Bearer <token> required' });
+  }
+  if (auth.status === 'invalid') {
+    return res.status(401).json({ ok: false, reason: 'unauthorized', detail: auth.detail || 'Invalid or expired token' });
+  }
+  if (auth.status === 'not_admin') {
+    return res.status(403).json({ ok: false, reason: 'forbidden', detail: 'Admin role required' });
+  }
+  if (auth.status === 'error') {
+    console.error('[admin-add-artisan] Auth error:', auth.detail);
+    return res.status(500).json({ ok: false, reason: 'server_error', detail: auth.detail });
+  }
+  /* auth.status === 'ok' — proceed */
+
+  /* Parse body */
   var body = req.body || {};
 
   /* ── Extract allowed fields only ─────────────────────────── */
@@ -186,21 +261,11 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ ok: false, reason: 'validation', detail: 'service_category is required' });
   }
 
-  /* phone_public format sanity (not blank but not matching minimum digit count) */
   if (phonePublic && phonePublic.replace(/\D/g, '').length < 8) {
     return res.status(400).json({ ok: false, reason: 'validation', detail: 'phone_public invalid — must have at least 8 digits' });
   }
 
   /* ── Build canonical row — ALL lifecycle fields forced server-side ── */
-  /*
-   * SECURITY: caller cannot set any of these regardless of what they send:
-   *   owner_user_id       → NULL   (no account linked at creation)
-   *   claimed             → false  (unclaimed/seeded state)
-   *   claim_status        → NULL   (no pending claim; DB default)
-   *   onboarding_completed→ false  (not started)
-   *   availability        → 'unavailable' (not dispatch-eligible)
-   *   verified            → false  (admin must verify separately)
-   */
   var artisanRow = {
     full_name:            fullName,
     service_category:     serviceCategory,
@@ -233,19 +298,16 @@ module.exports = async function handler(req, res) {
       console.error('[admin-add-artisan] NETWORK error:', e.message);
       return res.status(500).json({ ok: false, reason: 'network_error', detail: 'Could not reach database' });
     }
-    /* All other Supabase errors */
     console.error('[admin-add-artisan] INSERT error:', e.code, e.message);
     return res.status(500).json({ ok: false, reason: 'insert_error', detail: e.message });
   }
 
-  console.info('[admin-add-artisan] Created artisan:', inserted.id, '—', inserted.full_name);
+  console.info('[admin-add-artisan] Created artisan:', inserted.id, '—', inserted.full_name, '(by admin:', auth.userId + ')');
 
   /* ── Success response ────────────────────────────────────── */
-  /* Return minimal public fields only — no lifecycle internals,
-   * no service_role details, no sensitive DB internals */
   return res.status(200).json({
     ok:      true,
-    success: true,           /* backward compat: admin-artisans.js checks body.success */
+    success: true,
     id:      inserted.id,
     artisan: {
       id:               inserted.id,
@@ -257,7 +319,7 @@ module.exports = async function handler(req, res) {
       work_zone:        inserted.work_zone || '',
       description:      inserted.description || '',
       phone_public:     inserted.phone_public || '',
-      phone:            inserted.phone_public || '', /* form compat alias */
+      phone:            inserted.phone_public || '',
       verified:         false,
       availability:     'unavailable',
       claimed:          false,

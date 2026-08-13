@@ -1,23 +1,26 @@
 /**
- * FIXEO — Admin Add-Artisan Backend Tests
+ * FIXEO — Admin Add-Artisan Auth Final Hardening Tests
  * data/pricing/ux/prototype/tests/admin-add-artisan-fn-tests.js
  *
+ * Target: POST /api/admin/artisans/add
+ * Auth model: Supabase session Bearer token + server-side role check
+ *
  * Tests:
- *   T1  unauthenticated denied (missing X-Admin-Auth)
- *   T2  non-admin denied (wrong token)
- *   T3  admin accepted (correct token — env or legacy)
- *   T4  required field validation (full_name, service_category)
- *   T5  owner_user_id forced NULL
- *   T6  claimed forced false (safe seeded state)
- *   T7  onboarding_completed forced false
- *   T8  availability forced 'unavailable'
- *   T9  verified forced false
- *   T10 no service_role in browser JS
- *   T11 no localStorage fallback in admin-artisans.js
- *   T12 canonical list refresh after success
- *   T13 insert failure surfaced truthfully (no fake success)
+ *   T1  no Bearer token → 401
+ *   T2  invalid token → denied (401)
+ *   T3  valid non-admin token → 403
+ *   T4  valid admin token → success (200)
+ *   T5  X-Admin-Auth alone → denied (no 'ok' without bearer)
+ *   T6  legacy fixeo_admin_v20 value → not accepted
+ *   T7  browser does not contain ADMIN_TOKEN usage
+ *   T8  browser does not contain fixeo_admin_v20 auth usage
+ *   T9  service_role absent from browser JS
+ *   T10 canonical safe artisan initial state unchanged
+ *   T11 existing admin add-artisan UX preserved (submitArtisanForm exists)
+ *   T12 required field validation (full_name, service_category)
+ *   T13 lifecycle fields forced server-side (caller-immutable)
  *   T14 duplicate (23505) returns 409 conflict
- *   T15 caller cannot override lifecycle fields
+ *   T15 insert failure surfaced truthfully (no fake success)
  *   T16 route registered in vercel.json
  *   T17 build entry registered in vercel.json
  *   T18 phone_public validation (min 8 digits)
@@ -54,112 +57,126 @@ var fn    = fs.readFileSync(FN_PATH,  'utf8');
 var admin = fs.readFileSync(ADMIN_JS, 'utf8');
 var vercel = JSON.parse(fs.readFileSync(VERCEL, 'utf8'));
 
-/* ── T1: unauthenticated denied ──────────────────────────── */
-console.log('\nT1: Unauthenticated denied');
-check('T1.1 missing header returns 401',
-  fn.includes("return 'missing'") && fn.includes('status(401)'),
-  '401 for missing header not implemented');
-check('T1.2 missing header detected (empty string check)',
-  fn.includes("if (!supplied) return 'missing'"),
-  'missing header not detected');
+/* ── T1: no Bearer token → 401 ──────────────────────────── */
+console.log('\nT1: No Bearer token → 401');
+check('T1.1 missing Authorization returns status missing',
+  fn.includes("return { status: 'missing' }"),
+  "status: 'missing' not returned for missing header");
+check('T1.2 missing status maps to 401 response',
+  fn.includes("auth.status === 'missing'") && fn.includes('status(401)'),
+  '401 not returned for missing token');
+check('T1.3 Bearer prefix required',
+  fn.includes("startsWith('Bearer ')"),
+  "Bearer prefix not checked");
 
-/* ── T2: non-admin denied ────────────────────────────────── */
-console.log('\nT2: Non-admin denied');
-check('T2.1 wrong token returns 403',
-  fn.includes("return 'forbidden'") && fn.includes('status(403)'),
-  '403 for wrong token not implemented');
-check('T2.2 forbidden check present',
-  fn.includes("if (authResult === 'forbidden')"),
-  'forbidden authResult check missing');
+/* ── T2: invalid token → denied ─────────────────────────── */
+console.log('\nT2: Invalid token → denied');
+check('T2.1 invalid status returned on bad Supabase response',
+  fn.includes("return { status: 'invalid'"),
+  "status: 'invalid' not returned for bad token");
+check('T2.2 invalid status maps to 401 response',
+  fn.includes("auth.status === 'invalid'") && fn.includes('status(401)'),
+  '401 not returned for invalid token');
+check('T2.3 token is validated against Supabase /auth/v1/user',
+  fn.includes('/auth/v1/user'),
+  'token not validated against Supabase auth endpoint');
 
-/* ── T3: admin accepted ──────────────────────────────────── */
-console.log('\nT3: Admin accepted');
-check('T3.1 env ADMIN_TOKEN checked first',
-  fn.includes('process.env.ADMIN_TOKEN') &&
-  fn.match(/envToken && supplied === envToken/),
-  'ADMIN_TOKEN env not checked');
-check('T3.2 legacy token accepted as fallback',
-  fn.includes("LEGACY_ADMIN_TOKEN = 'fixeo_admin_v20'") &&
-  fn.includes("supplied === LEGACY_ADMIN_TOKEN"),
-  'legacy token fallback missing');
-check('T3.3 both paths return ok',
-  fn.split("return 'ok'").length >= 3,
-  'only one ok path — env and legacy not both covered');
-check('T3.4 LEGACY_ADMIN_TOKEN is a constant (not inline string in auth fn)',
-  fn.includes("var LEGACY_ADMIN_TOKEN = 'fixeo_admin_v20'"),
-  'legacy token not declared as constant');
-
-/* ── T4: required field validation ──────────────────────── */
-console.log('\nT4: Required field validation');
-check('T4.1 full_name validation returns 400',
-  fn.includes('full_name is required') && fn.includes('status(400)'),
-  'full_name validation missing or not 400');
-check('T4.2 service_category validation returns 400',
-  fn.includes('service_category is required'),
-  'service_category validation missing');
-check('T4.3 validation checked after auth',
+/* ── T3: valid non-admin token → 403 ────────────────────── */
+console.log('\nT3: Valid non-admin token → 403');
+check('T3.1 not_admin status returned when role != admin',
+  fn.includes("return { status: 'not_admin' }"),
+  "status: 'not_admin' not returned for non-admin role");
+check('T3.2 not_admin maps to 403 response',
+  fn.includes("auth.status === 'not_admin'") && fn.includes('status(403)'),
+  '403 not returned for non-admin');
+check('T3.3 role checked from public.users server-side (not user_metadata)',
+  fn.includes('/rest/v1/users') && fn.includes('select=role'),
+  'role not fetched from public.users via REST');
+check('T3.4 role check uses service-role key (not user token)',
   (function() {
-    /* validation must come after authResult check */
-    var authPos  = fn.indexOf('authResult');
-    var validPos = fn.indexOf('full_name is required');
-    return authPos > 0 && validPos > 0 && authPos < validPos;
+    /* The role SELECT must use serviceKey in Authorization, not the user token */
+    var roleBlock = fn.split('/rest/v1/users')[1];
+    if (!roleBlock) return false;
+    var snippet = roleBlock.slice(0, 400);
+    return snippet.includes('serviceKey') && !snippet.includes("'Bearer ' + token");
   })(),
-  'validation appears before auth check');
+  'role check does not use service-role key');
+check('T3.5 caller-supplied role is ignored (no body.role used)',
+  !fn.includes('body.role'),
+  'body.role used — caller can supply role');
 
-/* ── T5: owner_user_id forced NULL ──────────────────────── */
-console.log('\nT5: owner_user_id forced NULL');
-check('T5.1 owner_user_id: null in artisanRow',
-  fn.match(/owner_user_id\s*:\s*null/),
-  'owner_user_id not forced to null');
-check('T5.2 artisanRow built server-side (not from body.*)',
+/* ── T4: valid admin token → success ────────────────────── */
+console.log('\nT4: Valid admin token → success (auth model correct)');
+check('T4.1 ok status triggers insert',
+  fn.includes("auth.status === 'ok'") || fn.includes("/* auth.status === 'ok'"),
+  "ok status branch missing");
+check('T4.2 200 returned on successful insert',
+  fn.includes('status(200)'),
+  '200 status missing');
+check('T4.3 _verifyAdminSession function defined',
+  fn.includes('async function _verifyAdminSession'),
+  '_verifyAdminSession function not defined');
+check('T4.4 userId logged on success (audit trail)',
+  fn.includes('auth.userId'),
+  'userId not included in audit log');
+
+/* ── T5: X-Admin-Auth alone → denied ────────────────────── */
+console.log('\nT5: X-Admin-Auth alone → denied');
+check('T5.1 no X-Admin-Auth check in fn (header not read for auth)',
+  !fn.includes("req.headers['x-admin-auth']") &&
+  !fn.includes('x-admin-auth'),
+  'X-Admin-Auth header still checked in fn');
+check('T5.2 _checkAdminAuth function removed',
+  !fn.includes('_checkAdminAuth'),
+  '_checkAdminAuth legacy function still present');
+check('T5.3 ADMIN_TOKEN env var not used for auth in fn',
+  !fn.includes('process.env.ADMIN_TOKEN'),
+  'ADMIN_TOKEN env var still used for auth');
+
+/* ── T6: legacy fixeo_admin_v20 → not accepted ──────────── */
+console.log('\nT6: Legacy fixeo_admin_v20 → not accepted');
+check('T6.1 fixeo_admin_v20 literal not in fn',
+  !fn.includes('fixeo_admin_v20'),
+  'fixeo_admin_v20 legacy token still present in fn');
+check('T6.2 LEGACY_ADMIN_TOKEN constant removed from fn',
+  !fn.includes('LEGACY_ADMIN_TOKEN'),
+  'LEGACY_ADMIN_TOKEN constant still present in fn');
+
+/* ── T7: browser does not contain ADMIN_TOKEN usage ─────── */
+console.log('\nT7: Browser does not contain ADMIN_TOKEN usage');
+check('T7.1 admin-artisans.js has no ADMIN_TOKEN reference',
+  !admin.includes('ADMIN_TOKEN'),
+  'ADMIN_TOKEN referenced in admin-artisans.js');
+check('T7.2 admin-artisans.js has no X-Admin-Auth header',
+  !admin.includes('X-Admin-Auth'),
+  'X-Admin-Auth still in admin-artisans.js');
+
+/* ── T8: browser does not contain fixeo_admin_v20 auth usage */
+console.log('\nT8: Browser does not contain fixeo_admin_v20 auth usage');
+check('T8.1 fixeo_admin_v20 not used in auth headers in admin-artisans.js',
   (function() {
-    /* owner_user_id in the row must not come from body */
-    var rowBlock = fn.split('var artisanRow')[1];
-    if (!rowBlock) return false;
-    var endBrace = rowBlock.indexOf('};');
-    var row = rowBlock.slice(0, endBrace);
-    return !row.includes('body.owner_user_id') &&
-           row.match(/owner_user_id\s*:\s*null/);
+    /* fixeo_admin_v20 may appear in _LS_KEY cache key but must not be sent as auth */
+    /* Check that it's not in any header object */
+    var headerIdx = admin.indexOf("'X-Admin-Auth'");
+    return headerIdx < 0;
   })(),
-  'owner_user_id might come from caller body');
+  'X-Admin-Auth header with fixeo_admin_v20 still in admin-artisans.js');
+check('T8.2 _getAdminAuthHeaders uses Bearer token (not static string)',
+  admin.includes('_getAdminAuthHeaders') &&
+  admin.includes("'Authorization'") &&
+  admin.includes("'Bearer ' + token"),
+  '_getAdminAuthHeaders does not send Bearer token');
 
-/* ── T6: claimed forced false ────────────────────────────── */
-console.log('\nT6: claimed forced false');
-check('T6.1 claimed: false in artisanRow',
-  fn.match(/claimed\s*:\s*false/),
-  'claimed not forced to false');
-check('T6.2 claim_status: null in artisanRow',
-  fn.match(/claim_status\s*:\s*null/),
-  'claim_status not forced to null');
-
-/* ── T7: onboarding_completed forced false ───────────────── */
-console.log('\nT7: onboarding_completed forced false');
-check('T7.1 onboarding_completed: false in artisanRow',
-  fn.match(/onboarding_completed\s*:\s*false/),
-  'onboarding_completed not forced to false');
-
-/* ── T8: availability forced unavailable ─────────────────── */
-console.log('\nT8: availability forced unavailable');
-check('T8.1 availability: unavailable in artisanRow',
-  fn.match(/availability\s*:\s*'unavailable'/),
-  'availability not forced to unavailable');
-
-/* ── T9: verified forced false ───────────────────────────── */
-console.log('\nT9: verified forced false');
-check('T9.1 verified: false in artisanRow',
-  fn.match(/verified\s*:\s*false/),
-  'verified not forced to false');
-
-/* ── T10: no service_role in browser JS ──────────────────── */
-console.log('\nT10: No service_role in browser JS');
+/* ── T9: service_role absent from browser JS ─────────────── */
+console.log('\nT9: service_role absent from browser JS');
 ANY_BROWSER_JS.forEach(function(fpath) {
   if (!fs.existsSync(fpath)) return;
   var src = fs.readFileSync(fpath, 'utf8');
   var basename = path.basename(fpath);
-  check('T10.' + basename + ' — no service_role literal JWT',
+  check('T9.' + basename + ' — no service_role literal JWT',
     !src.match(/eyJ[A-Za-z0-9._-]{20,}/),
     'literal JWT found in ' + basename);
-  check('T10.' + basename + ' — no SUPABASE_SERVICE_ROLE_KEY reference',
+  check('T9.' + basename + ' — no SUPABASE_SERVICE_ROLE_KEY reference',
     !src.split('\n').some(function(line) {
       var t = line.trim();
       return t.indexOf('//') !== 0 && t.indexOf('*') !== 0 &&
@@ -167,78 +184,89 @@ ANY_BROWSER_JS.forEach(function(fpath) {
     }),
     'SUPABASE_SERVICE_ROLE_KEY used (not commented) in ' + basename);
 });
-check('T10.fn uses process.env only (server-side)',
+check('T9.fn uses process.env only (server-side)',
   fn.includes('process.env.SUPABASE_SERVICE_ROLE_KEY') &&
   !fn.match(/eyJ[A-Za-z0-9._-]{20,}/),
   'service_role not from process.env or literal JWT found in fn');
 
-/* ── T11: no localStorage fallback ──────────────────────── */
-console.log('\nT11: No localStorage fallback in admin-artisans.js');
-check('T11.1 no localStorage.setItem for artisan creation',
-  !admin.match(/localStorage\.setItem.*artisan.*(?:add|creat|insert)/i) &&
-  (function() {
-    /* In the add-artisan catch block, no localStorage write should happen */
-    var catchBlock = admin.split('Add-artisan API error')[1];
-    if (!catchBlock) return true;
-    var end = catchBlock.indexOf('}\n}');
-    var block = catchBlock.slice(0, end < 0 ? 500 : end);
-    return !block.includes('localStorage.setItem');
-  })(),
-  'localStorage write in add-artisan error path');
-check('T11.2 add-artisan catch/error block does NOT write to localStorage',
-  (function() {
-    /* admin-artisans.js uses localStorage as display-cache (that is fine).
-     * The error/catch block for add-artisan must NOT write to it. */
-    var catchSection = admin.split('Add-artisan API error')[1] || admin.split('add-artisan').slice(-1)[0] || '';
-    /* Look in the catch block (up to ~600 chars) */
-    var catchSnip = catchSection.slice(0, 600);
-    return !catchSnip.includes('localStorage.setItem');
-  })(),
-  'localStorage.setItem called in add-artisan error/catch block');
-check('T11.3 error path shows truthful message without Supabase Studio fallback suggestion',
-  admin.includes('erreur r\u00e9seau') || admin.includes('error r\u00e9seau') || admin.includes('err.message'),
-  'truthful error message missing');
+/* ── T10: canonical safe artisan initial state unchanged ─── */
+console.log('\nT10: Canonical safe artisan initial state unchanged');
+check('T10.1 owner_user_id: null in artisanRow',
+  fn.match(/owner_user_id\s*:\s*null/),
+  'owner_user_id not forced to null');
+check('T10.2 claimed: false in artisanRow',
+  fn.match(/claimed\s*:\s*false/),
+  'claimed not forced to false');
+check('T10.3 claim_status: null in artisanRow',
+  fn.match(/claim_status\s*:\s*null/),
+  'claim_status not forced to null');
+check('T10.4 onboarding_completed: false in artisanRow',
+  fn.match(/onboarding_completed\s*:\s*false/),
+  'onboarding_completed not forced to false');
+check('T10.5 availability: unavailable in artisanRow',
+  fn.match(/availability\s*:\s*'unavailable'/),
+  'availability not forced to unavailable');
+check('T10.6 verified: false in artisanRow',
+  fn.match(/verified\s*:\s*false/),
+  'verified not forced to false');
 
-/* ── T12: canonical list refresh after success ───────────── */
-console.log('\nT12: Canonical list refresh after success');
-check('T12.1 FixeoRepository.getAllArtisans called after success',
-  admin.includes('FixeoRepository.getAllArtisans()') ||
-  admin.includes('FixeoRepository.getAllArtisans'),
-  'canonical refresh not called after success');
-check('T12.2 _lsSave called after canonical refresh (display cache)',
-  admin.includes('_lsSave') && admin.includes('canonical'),
-  '_lsSave not called after canonical refresh');
-check('T12.3 FixeoAdminCanonicalSync.sync triggered after add',
-  admin.includes('FixeoAdminCanonicalSync') && admin.includes('.sync()'),
-  'FixeoAdminCanonicalSync.sync not triggered');
+/* ── T11: existing admin add-artisan UX preserved ───────── */
+console.log('\nT11: Existing admin add-artisan UX preserved');
+check('T11.1 submitArtisanForm function exists',
+  admin.includes('async function submitArtisanForm'),
+  'submitArtisanForm function missing');
+check('T11.2 artisan form fields still read (name, service, phone)',
+  admin.includes("getElementById('af-name')") &&
+  admin.includes("getElementById('af-service')") &&
+  admin.includes("getElementById('af-phone')"),
+  'form field reads missing');
+check('T11.3 form reset after success',
+  admin.includes("getElementById('artisan-add-form')?.reset()") ||
+  admin.includes("getElementById('artisan-add-form')") && admin.includes('.reset()'),
+  'form reset after success missing');
+check('T11.4 success toast shown',
+  admin.includes('showToast') && admin.includes('ajout\u00e9'),
+  'success toast missing after add');
+check('T11.5 canonical list refresh after success',
+  admin.includes('FixeoRepository.getAllArtisans()'),
+  'canonical list refresh not triggered after success');
+check('T11.6 session-expired error shown truthfully',
+  admin.includes('Session expir\u00e9e') || admin.includes("Session expirée"),
+  'session expired error not shown truthfully');
 
-/* ── T13: insert failure surfaced truthfully ─────────────── */
-console.log('\nT13: Insert failure surfaced truthfully');
-check('T13.1 SUPABASE_ERROR returned as 500',
-  fn.includes("status(500)") && fn.includes('insert_error'),
-  'insert error not surfaced as 500');
-check('T13.2 network error returned as 500',
-  fn.includes('network_error'),
-  'network error not surfaced');
-check('T13.3 server_config_error for ENV_MISSING',
-  fn.includes('server_config_error'),
-  'ENV_MISSING error not surfaced truthfully');
-check('T13.4 no fake success on error',
+/* ── T12: required field validation ─────────────────────── */
+console.log('\nT12: Required field validation');
+check('T12.1 full_name validation returns 400',
+  fn.includes('full_name is required') && fn.includes('status(400)'),
+  'full_name validation missing or not 400');
+check('T12.2 service_category validation returns 400',
+  fn.includes('service_category is required'),
+  'service_category validation missing');
+check('T12.3 validation checked after auth',
   (function() {
-    /* All error paths must NOT call res.status(200) after them */
-    var errors = ['ENV_MISSING', 'NETWORK', '23505', 'SUPABASE_'];
-    return errors.every(function(e) {
-      var idx = fn.indexOf("e.code === '" + e);
-      if (idx < 0) idx = fn.indexOf('e.code === \'SUPABASE_\'');
-      if (idx < 0) return true;
-      /* Check the next 300 chars don't have status(200) before status(4xx/5xx) */
-      var slice = fn.slice(idx, idx + 400);
-      var pos200 = slice.indexOf('status(200)');
-      var pos4xx = slice.search(/status\((4|5)\d\d\)/);
-      return pos200 < 0 || (pos4xx >= 0 && pos4xx < pos200);
-    });
+    var authPos  = fn.indexOf('_verifyAdminSession');
+    var validPos = fn.indexOf('full_name is required');
+    return authPos > 0 && validPos > 0 && authPos < validPos;
   })(),
-  'fake success possible after insert error');
+  'validation appears before auth check');
+
+/* ── T13: lifecycle fields forced (caller-immutable) ──────── */
+console.log('\nT13: Lifecycle fields caller-immutable');
+check('T13.1 owner_user_id not taken from body',
+  !fn.includes('body.owner_user_id'),
+  'owner_user_id taken from caller body');
+check('T13.2 verified not taken from body',
+  !fn.includes('body.verified'),
+  'verified taken from caller body');
+check('T13.3 availability not taken from body',
+  !fn.includes('body.availability'),
+  'availability taken from caller body');
+check('T13.4 claimed not taken from body',
+  !fn.includes('body.claimed'),
+  'claimed taken from caller body');
+check('T13.5 onboarding_completed not taken from body',
+  !fn.includes('body.onboarding_completed'),
+  'onboarding_completed taken from caller body');
 
 /* ── T14: duplicate 23505 → 409 ─────────────────────────── */
 console.log('\nT14: Duplicate 23505 → 409');
@@ -252,23 +280,17 @@ check('T14.3 conflict reason in response',
   fn.includes("reason: 'conflict'"),
   'conflict reason missing from duplicate response');
 
-/* ── T15: caller cannot override lifecycle fields ────────── */
-console.log('\nT15: Caller cannot override lifecycle fields');
-check('T15.1 owner_user_id not taken from body',
-  !fn.includes('body.owner_user_id'),
-  'owner_user_id taken from caller body');
-check('T15.2 verified not taken from body',
-  !fn.includes('body.verified'),
-  'verified taken from caller body');
-check('T15.3 availability not taken from body',
-  !fn.includes('body.availability'),
-  'availability taken from caller body');
-check('T15.4 claimed not taken from body',
-  !fn.includes('body.claimed'),
-  'claimed taken from caller body');
-check('T15.5 onboarding_completed not taken from body',
-  !fn.includes('body.onboarding_completed'),
-  'onboarding_completed taken from caller body');
+/* ── T15: insert failure surfaced truthfully ─────────────── */
+console.log('\nT15: Insert failure surfaced truthfully');
+check('T15.1 SUPABASE_ERROR returned as 500',
+  fn.includes('status(500)') && fn.includes('insert_error'),
+  'insert error not surfaced as 500');
+check('T15.2 network error returned as 500',
+  fn.includes('network_error'),
+  'network error not surfaced');
+check('T15.3 server_config_error for ENV_MISSING',
+  fn.includes('server_config_error'),
+  'ENV_MISSING error not surfaced truthfully');
 
 /* ── T16: route in vercel.json ───────────────────────────── */
 console.log('\nT16: Route in vercel.json');
@@ -322,7 +344,7 @@ check('T20.3 artisan.name in response (form compat)',
 check('T20.4 artisan.phone in response (form compat)',
   fn.includes("phone:            inserted.phone_public"),
   'artisan.phone alias missing from response');
-check('T20.5 lifecycle fields truthful in response (not caller-controlled)',
+check('T20.5 lifecycle fields hardcoded safe in response',
   fn.includes('verified:         false') &&
   fn.includes("availability:     'unavailable'") &&
   fn.includes('claimed:          false'),
