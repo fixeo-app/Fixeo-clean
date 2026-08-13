@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2k1'; /* v2k + verified badge (artisan.verified===true only) */
+  var VERSION = 'v2k3'; /* v2k3: P1 authenticated persistence bridge + V4 convergence */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -1309,15 +1309,103 @@
   /* ── BOOT ─────────────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', init);
 
-  /* ── V4 REQUEST FLOW LISTENER ─────────────────────────────────
-     Refresh dashboard after canonical V4 submission so the new
-     service_request row appears in "Mes demandes" without reload.
-     Fired by fx-request-flow-v4.js _fireAnalytics() on success.  */
-  window.addEventListener('fixeo:client-request-submit-success', function () {
-    /* Small delay to let Supabase propagate before re-fetch */
-    setTimeout(function () {
-      if (typeof _refresh === 'function') _refresh();
-    }, 1200);
+  /* ── P1 AUTHENTICATED PERSISTENCE BRIDGE ─────────────────────
+     Canonical V4 submit → FixeoClientRequestsStore → localStorage
+     → 'fixeo:client-request-created' → THIS BRIDGE →
+     FixeoSupabase.submitServiceRequest() → service_requests (Supabase)
+     → _refresh() to surface new row in dashboard.
+
+     Design:
+     - Uses 'fixeo:client-request-created' (authoritative non-duplicate
+       event — store dispatches this ONLY on new, non-duplicate appends)
+     - _fxv2PersistedIds guards against double-fire within the same
+       page session (Set keyed on store-generated request id)
+     - submitServiceRequest() sources client_profile_id server-side
+       from requireAuth('client') — never from caller-supplied data
+     - On Supabase failure: logs clearly, does NOT retry automatically,
+       does NOT block V4 UI (bridge is fire-and-async)
+     - _refresh() called after successful persist so row is visible
+       immediately without manual reload
+
+     Field mapping (store buildRequest → submitServiceRequest):
+       req.service   → service_category  (slug, e.g. 'plomberie')
+       req.city      → city
+       req.description → description
+       req.mode (from source='fxrf4-v5c' marker) — not mapped (no column)
+       req.phone     — not mapped (submitServiceRequest has no phone param)
+
+     IMPORTANT: submitServiceRequest() INSERT has no idempotency_key.
+     DB-level dedup: partial UNIQUE INDEX on idempotency_key only applies
+     when the key is set (NOT NULL). Rows inserted via submitServiceRequest
+     do not carry this key — dedup is in-session only via _fxv2PersistedIds.
+     This is safe for single-tab usage. Cross-tab / cross-session dedup
+     would require a schema change (out of scope). ─────────────────────── */
+
+  var _fxv2PersistedIds = new Set();
+
+  window.addEventListener('fixeo:client-request-created', function (e) {
+    var req = e && e.detail;
+    if (!req) return;
+
+    /* Guard: skip if this store id was already submitted this session */
+    var storeId = String(req.id || '');
+    if (!storeId || _fxv2PersistedIds.has(storeId)) {
+      console.warn('[fxv2-bridge] duplicate fixeo:client-request-created for id=' + storeId + ' — skipped');
+      return;
+    }
+    _fxv2PersistedIds.add(storeId);
+
+    /* Map store fields → submitServiceRequest contract */
+    var serviceCategory = String(req.service || '').trim();
+    var city            = String(req.city    || '').trim();
+    var description     = String(req.description || '').trim();
+
+    if (!serviceCategory || !city) {
+      console.warn('[fxv2-bridge] missing service_category or city — cannot persist', req);
+      return;
+    }
+
+    /* Async — does not block V4 UI flow */
+    (async function () {
+      try {
+        if (!window.FixeoSupabase || typeof window.FixeoSupabase.submitServiceRequest !== 'function') {
+          console.warn('[fxv2-bridge] FixeoSupabase.submitServiceRequest not available');
+          return;
+        }
+        await window.FixeoSupabase.submitServiceRequest({
+          service_category: serviceCategory,
+          city:             city,
+          description:      description
+        });
+        console.info('[fxv2-bridge] service_request persisted for store id=' + storeId);
+        /* Refresh after short propagation delay */
+        setTimeout(function () {
+          if (typeof _refresh === 'function') _refresh();
+        }, 1200);
+      } catch (err) {
+        /* Log clearly — do NOT retry automatically to avoid storm */
+        console.error('[fxv2-bridge] Supabase persist failed for store id=' + storeId, err && err.message);
+        /* Keep storeId in set — do not retry on same id */
+      }
+    })();
+  });
+
+  /* ── V4 ANALYTICS EVENT — refresh only (post-persist) ────────
+     'fixeo:client-request-submit-success' fires AFTER the store write.
+     The persistence bridge above handles the Supabase write.
+     This listener handles emergency mode (which goes through Vercel
+     and already has server-side persistence) — refresh after Vercel ok.
+     For standard mode: bridge already triggers _refresh via the
+     fixeo:client-request-created path above. ──────────────────── */
+  window.addEventListener('fixeo:client-request-submit-success', function (e) {
+    var detail = e && e.detail;
+    /* Emergency mode: Vercel already persisted — just refresh */
+    if (detail && detail.mode === 'emergency') {
+      setTimeout(function () {
+        if (typeof _refresh === 'function') _refresh();
+      }, 1200);
+    }
+    /* Standard mode: _refresh already scheduled by bridge above — no-op */
   });
 
   /* ── PUBLIC API — minimal surface for companion scripts ────────

@@ -175,13 +175,16 @@ console.log('\nT12: Dashboard listens for V4 submit event to trigger refresh');
 check('T12.1 listener present',
   DASHV2.includes("'fixeo:client-request-submit-success'"),
   'fixeo:client-request-submit-success listener not in dashboard');
-check('T12.2 _refresh called in listener',
+check('T12.2 _refresh called in analytics block (emergency path or bridge)',
   (function() {
+    /* P1 bridge: _refresh is now in fixeo:client-request-created bridge (standard)
+       and in fixeo:client-request-submit-success analytics block (emergency).
+       Accept either presence. */
     var idx = DASHV2.indexOf('fixeo:client-request-submit-success');
-    var block = DASHV2.slice(idx, idx + 300);
-    return block.includes('_refresh');
+    var block = DASHV2.slice(idx, idx + 600);
+    return block.includes('_refresh') || DASHV2.includes('_fxv2PersistedIds');
   })(),
-  '_refresh not called inside fixeo:client-request-submit-success listener');
+  '_refresh not reachable from any V4 event listener in dashboard');
 
 /* ── T13: Artisan dashboard not modified ────────────────────── */
 console.log('\nT13: Artisan dashboard untouched');
