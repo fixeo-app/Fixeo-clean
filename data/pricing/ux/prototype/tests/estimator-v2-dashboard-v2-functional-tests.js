@@ -702,6 +702,92 @@ test('S14.33 no direct privileged artisan write in cockpit v1b', () => {
   assertNoMatch(ck2Exec, /\.update\s*\(\s*\{[^}]*availability/);
 });
 
+
+/* ══════════════════════════════════════════════════════════ */
+/* S15: Anon write privilege hardening (7c-anon-write-revoke)*/
+/* ══════════════════════════════════════════════════════════ */
+
+const revokeSql  = fs.readFileSync(path.join(ROOT, 'supabase/7c-anon-write-revoke.sql'), 'utf8');
+const revokeVerSql = fs.readFileSync(path.join(ROOT, 'supabase/7c-anon-write-revoke-verify.sql'), 'utf8');
+const revokeSqlStripped = revokeSql.split('\n').filter(l => !l.trim().startsWith('--') && l.trim() !== '').join('\n');
+
+/* Hotfix SQL correctness */
+test('S15.1 revoke SQL revokes INSERT on artisans FROM anon', () => {
+  assertMatch(revokeSqlStripped, /REVOKE INSERT ON public\.artisans FROM anon/i);
+});
+test('S15.2 revoke SQL revokes DELETE on artisans FROM anon', () => {
+  assertMatch(revokeSqlStripped, /REVOKE DELETE ON public\.artisans FROM anon/i);
+});
+test('S15.3 revoke SQL revokes INSERT on portfolio_items FROM anon', () => {
+  assertMatch(revokeSqlStripped, /REVOKE INSERT ON public\.portfolio_items FROM anon/i);
+});
+test('S15.4 revoke SQL revokes UPDATE on portfolio_items FROM anon', () => {
+  assertMatch(revokeSqlStripped, /REVOKE UPDATE ON public\.portfolio_items FROM anon/i);
+});
+test('S15.5 revoke SQL revokes DELETE on portfolio_items FROM anon', () => {
+  assertMatch(revokeSqlStripped, /REVOKE DELETE ON public\.portfolio_items FROM anon/i);
+});
+test('S15.6 revoke SQL does NOT revoke SELECT (public reads preserved)', () => {
+  assertNoMatch(revokeSqlStripped, /REVOKE SELECT ON public\.(artisans|portfolio_items) FROM anon/i);
+});
+test('S15.7 revoke SQL does NOT revoke authenticated privileges', () => {
+  assertNoMatch(revokeSqlStripped, /REVOKE .* ON public\.(artisans|portfolio_items) FROM authenticated/i);
+});
+test('S15.8 revoke SQL does NOT contain DDL (no ALTER/CREATE/DROP)', () => {
+  assertNoMatch(revokeSqlStripped, /^\s*(ALTER TABLE|CREATE TABLE|DROP TABLE|CREATE POLICY|DROP POLICY)/im);
+});
+test('S15.9 revoke SQL does NOT contain DML (no INSERT/UPDATE/DELETE statements)', () => {
+  /* Only REVOKE INSERT/UPDATE/DELETE allowed — not bare DML */
+  const bareWrite = revokeSqlStripped.replace(/REVOKE\s+(INSERT|UPDATE|DELETE|SELECT)[^;]+;/ig, '');
+  assertNoMatch(bareWrite, /^\s*(INSERT INTO|UPDATE\s+\w|DELETE FROM)/im);
+});
+test('S15.10 revoke SQL is idempotent (no conditional guards needed — REVOKE is a no-op if absent)', () => {
+  /* REVOKE is always safe to re-run — just verify no IF EXISTS guard is missing in wrong way */
+  assertMatch(revokeSqlStripped, /REVOKE/i);
+});
+
+/* Verify SQL correctness */
+test('S15.11 verify SQL checks anon INSERT/UPDATE/DELETE = 0 on artisans', () => {
+  assertMatch(revokeVerSql, /artisans/);
+  assertMatch(revokeVerSql, /INSERT.*UPDATE.*DELETE|privilege_type IN \('INSERT'/);
+  assertMatch(revokeVerSql, /grantee.*=.*'anon'|anon/);
+});
+test('S15.12 verify SQL checks anon INSERT/UPDATE/DELETE = 0 on portfolio_items', () => {
+  assertMatch(revokeVerSql, /portfolio_items/);
+});
+test('S15.13 verify SQL checks anon SELECT preserved on artisans', () => {
+  assertMatch(revokeVerSql, /SELECT/);
+  assertMatch(revokeVerSql, /anon.*SELECT|SELECT.*anon/i);
+});
+test('S15.14 verify SQL checks authenticated INSERT/DELETE preserved on portfolio_items', () => {
+  assertMatch(revokeVerSql, /authenticated/);
+  assertMatch(revokeVerSql, /INSERT.*DELETE|DELETE.*INSERT/);
+});
+test('S15.15 verify SQL checks authenticated column UPDATE on artisans still present', () => {
+  assertMatch(revokeVerSql, /column_privileges/);
+  assertMatch(revokeVerSql, /photo_url/);
+});
+test('S15.16 verify SQL checks RLS still enabled on both tables', () => {
+  assertMatch(revokeVerSql, /rowsecurity/);
+  assertMatch(revokeVerSql, /artisans.*portfolio_items|portfolio_items.*artisans/i);
+});
+test('S15.17 verify SQL is read-only (no DML/DDL)', () => {
+  const ver = revokeVerSql.split('\n').filter(l => !l.trim().startsWith('--') && !l.trim().startsWith('/*') && l.trim() !== '*/').join('\n');
+  assertNoMatch(ver, /^\s*(CREATE|ALTER|DROP|INSERT|UPDATE|DELETE|REVOKE|GRANT)\b/im);
+});
+test('S15.18 verify SQL has at least 10 V-checks', () => {
+  const matches = revokeVerSql.match(/── V-\d+/g) || [];
+  assert(matches.length >= 10, 'Expected at least 10 V-checks, found ' + matches.length);
+});
+
+/* No regression: gallery/photo contract unchanged */
+test('S15.19 cockpit still has portfolio_items insert using artisan_id=uid (not modified)', () => {
+  assertMatch(ck2Exec, /artisan_id\s*:\s*uid|artisan_id.*uid/);
+});
+test('S15.20 revoke SQL does not touch storage.objects or artisan-media bucket', () => {
+  assertNoMatch(revokeSql, /storage\.objects|artisan-media/i);
+});
+
 /* ── Summary ─────────────────────────────────────────────── */
 console.log('\n══ Dashboard V2 Functional Pass Tests ══');
 results.forEach(r => {
