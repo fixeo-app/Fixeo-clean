@@ -97,6 +97,10 @@
     {
       "src": "api/admin-settle-mission-fn/index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/dispatch-whatsapp-worker-fn/index.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -131,6 +135,10 @@
     {
       "src": "^/api/admin/missions/settle$",
       "dest": "/api/admin-settle-mission-fn/index.js"
+    },
+    {
+      "src": "^/api/dispatch-whatsapp-worker$",
+      "dest": "/api/dispatch-whatsapp-worker-fn/index.js"
     },
     {
       "src": "^/(plombier|electricien|serrurier|climatisation)-([a-z][a-z-]*)\\.html$",
@@ -538,7 +546,7 @@
       "dest": "/problem-climatisation-en-panne-$1.html"
     },
     {
-      "src": "^/prix/([a-z][a-z-]*)/([a-z][a-z-]*)$",
+      "src": "^/prix/([a-z][a-z-])/([a-z][a-z-])$",
       "dest": "/prix-$1-$2.html"
     },
     {
@@ -570,15 +578,15 @@
       "dest": "/engagement-fixeo.html"
     },
     {
-      "src": "^/plombier/([a-z][a-z-]*)/([a-z][a-z-]*)$",
+      "src": "^/plombier/([a-z][a-z-])/([a-z][a-z-])$",
       "dest": "/quartier-plombier-$1-$2.html"
     },
     {
-      "src": "^/electricien/([a-z][a-z-]*)/([a-z][a-z-]*)$",
+      "src": "^/electricien/([a-z][a-z-])/([a-z][a-z-])$",
       "dest": "/quartier-electricite-$1-$2.html"
     },
     {
-      "src": "^/serrurier/([a-z][a-z-]*)/([a-z][a-z-]*)$",
+      "src": "^/serrurier/([a-z][a-z-])/([a-z][a-z-])$",
       "dest": "/quartier-serrurerie-$1-$2.html"
     },
     {
