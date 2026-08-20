@@ -22,21 +22,21 @@ module.exports = async function handler(req, res) {
 
   try {
     // Call the validated Supabase RPC.
-    const rpcResponse = await fetch(
-      ${supabaseUrl}/rest/v1/rpc/dispatch_notification_worker_next_v1,
-      {
-        method: "POST",
-        headers: {
-          apikey: serviceRoleKey,
-          Authorization: Bearer ${serviceRoleKey},
-          "Content-Type": "application/json",
-          Accept: "application/json"
-        },
-        body: JSON.stringify({
-          p_channel: "WHATSAPP"
-        })
-      }
-    );
+   const rpcResponse = await fetch(
+  supabaseUrl + "/rest/v1/rpc/dispatch_notification_worker_next_v1",
+  {
+    method: "POST",
+    headers: {
+      apikey: serviceRoleKey,
+      Authorization: "Bearer " + serviceRoleKey,
+      "Content-Type": "application/json",
+      Accept: "application/json"
+    },
+    body: JSON.stringify({
+      p_channel: "WHATSAPP"
+    })
+  }
+);
 
     const rpcText = await rpcResponse.text();
 
