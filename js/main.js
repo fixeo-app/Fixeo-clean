@@ -865,7 +865,107 @@ function getInitialMatchSortedArtisansSafe() {
   if (Array.isArray(ARTISANS)) return ARTISANS;
   return [];
 }
+let marketplaceServerMatchSeq = 0;
 
+async function marketplaceApplyServerRanking(results, state) {
+  const seq = ++marketplaceServerMatchSeq;
+
+  if (!Array.isArray(results) || !results.length) return;
+
+  const service = String(state.category || '').trim();
+  const city = String(state.city || '').trim();
+
+  // No matching context: invalidate older requests and keep normal rendering.
+  if (!service && !city) return;
+
+  if (
+    !window.FixeoSupabaseClient ||
+    !window.FixeoSupabaseClient.CONFIGURED
+  ) {
+    return;
+  }
+
+  try {
+    await window.FixeoSupabaseClient.ready();
+
+    const client = window.FixeoSupabaseClient.client;
+    if (!client) return;
+
+    const { data, error } = await client.rpc(
+      'match_artisans_v1',
+      {
+        p_service: service,
+        p_city: city,
+        p_limit: 50
+      }
+    );
+
+    // Ignore an old response if filters changed meanwhile.
+    if (seq !== marketplaceServerMatchSeq) return;
+
+    if (error) throw error;
+    if (!Array.isArray(data) || !data.length) return;
+
+    // Important:
+    // frontend id may be legacy_id while RPC returns the Supabase UUID.
+    const bySupabaseId = new Map();
+
+    results.forEach(function (artisan) {
+      const key = String(
+        (artisan && (artisan._supabase_id || artisan.id)) || ''
+      );
+
+      if (key) bySupabaseId.set(key, artisan);
+    });
+
+    const ranked = [];
+    const used = new Set();
+
+    data.forEach(function (match) {
+      const key = String(match.artisan_id || '');
+      const artisan = bySupabaseId.get(key);
+
+      if (!artisan || used.has(key)) return;
+
+      artisan._matchRank = Number(match.match_rank || 0);
+      artisan._matchScore = Number(match.final_score || 0);
+
+      ranked.push(artisan);
+      used.add(key);
+    });
+
+    // Preserve every locally filtered artisan.
+    // RPC ranking comes first; remaining valid results follow.
+    results.forEach(function (artisan) {
+      const key = String(
+        (artisan && (artisan._supabase_id || artisan.id)) || ''
+      );
+
+      if (!used.has(key)) {
+        ranked.push(artisan);
+      }
+    });
+
+    renderArtisans(ranked, { forceAll: true });
+    marketplaceSyncCardsVisibility(results, state);
+
+    console.info(
+      '[Fixeo Matching] ✅ Supabase ranking applied',
+      {
+        service: service,
+        city: city,
+        ranked: ranked.length,
+        topScore: data[0] ? data[0].final_score : null
+      }
+    );
+
+  } catch (error) {
+    console.warn(
+      '[Fixeo Matching] Supabase ranking fallback:',
+      error
+    );
+  }
+}
 function applyMarketplaceFilters(options = {}) {
   if (!window.searchEngine) return [];
   const state = marketplaceReadFilterState();
@@ -906,6 +1006,7 @@ try {
   } else {
      renderArtisans(getInitialMatchSortedArtisansSafe());
   }
+   marketplaceApplyServerRanking(results, state);
   marketplaceSyncCardsVisibility(results, state);
 
   // Refresh homepage vedette grid with filtered+sorted results
