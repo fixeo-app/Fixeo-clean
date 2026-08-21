@@ -99,9 +99,13 @@
       "use": "@vercel/node"
     },
     {
-      "src": "api/dispatch-whatsapp-worker-fn/index.js",
-      "use": "@vercel/node"
-    }
+  "src": "api/dispatch-whatsapp-worker-fn/index.js",
+  "use": "@vercel/node"
+},
+{
+  "src": "api/whatsapp-webhook-fn/index.js",
+  "use": "@vercel/node"
+}
   ],
   "routes": [
     {
@@ -140,6 +144,10 @@
       "src": "^/api/dispatch-whatsapp-worker$",
       "dest": "/api/dispatch-whatsapp-worker-fn/index.js"
     },
+    {
+  "src": "^/api/whatsapp-webhook$",
+  "dest": "/api/whatsapp-webhook-fn/index.js"
+},
     {
       "src": "^/(plombier|electricien|serrurier|climatisation)-([a-z][a-z-]*)\\.html$",
       "headers": {
