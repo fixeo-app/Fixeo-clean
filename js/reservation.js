@@ -203,11 +203,54 @@
     // If it's already an object
     if (typeof input === 'object') {
       return {
-        id: input.id || 0,
-        name: input.name || input.artisanName || 'Artisan',
-        initials: input.initials || (input.name ? input.name.split(' ').map(w => w[0]).join('').substring(0,2) : 'AR'),
-        category: input.category || input.specialty?.toLowerCase() || 'bricolage',
-        city: input.city || 'Maroc',
+        id: input.id || input._supabase_id || input.legacy_id || 0,
+
+_supabase_id:
+  input._supabase_id ||
+  input.id ||
+  '',
+
+_artisan_id_canonical:
+  input._artisan_id_canonical ||
+  input._supabase_id ||
+  input.id ||
+  '',
+
+legacy_id:
+  input.legacy_id ||
+  '',
+
+name:
+  input.name ||
+  input.full_name ||
+  input.artisanName ||
+  'Artisan',
+
+initials:
+  input.initials ||
+  ((input.name || input.full_name)
+    ? String(input.name || input.full_name)
+        .split(' ')
+        .map(function(w) { return w[0] || ''; })
+        .join('')
+        .substring(0, 2)
+    : 'AR'),
+
+category:
+  input.category ||
+  input.service_category ||
+  input.specialty ||
+  'bricolage',
+
+service_category:
+  input.service_category ||
+  input.category ||
+  input.specialty ||
+  '',
+
+city:
+  input.city ||
+  'Maroc',
         /* V1-JC: Do NOT fabricate rating/review defaults.
          * rating=0 and reviewCount=0 must stay 0 so _resModalTrust() gates correctly.
          * Supabase artisans arrive here from artisan-profile.html findCurrentArtisan()
