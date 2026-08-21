@@ -1794,9 +1794,17 @@
      
     var _artisanCat  = state && state.artisan ? (state.artisan.category || '') : '';
     var _serviceSlug = _toServiceSlug(_artisanCat);
-    var _targetArtisanId = state && state.artisan
-  ? String(state.artisan._supabase_id || state.artisan.id || '').trim()
-  : ''; 
+    var _targetArtisanId = String(
+  (state && state.artisan && (
+    state.artisan._artisan_id_canonical ||
+    state.artisan._supabase_id ||
+    state.artisan.id ||
+    state.artisan.legacy_id ||
+    state.artisan.owner_account_id
+  )) ||
+  bookingData.artisanId ||
+  ''
+).trim();
     var _city        = String(artisanCity || bookingData.artisanCity || '').trim() || 'Casablanca';
     var _desc        = String(bookingData.description || '').trim() ||
                        'Réservation ' + (bookingData.service || 'service');
@@ -1810,10 +1818,7 @@
       urgency:          _urgency,
       idempotency_key:  idemKey,
     };
-     if (
-  _targetArtisanId &&
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_targetArtisanId)
-) {
+ if (_targetArtisanId) {
   serverPayload.target_artisan_id = _targetArtisanId;
 }
     if (_phone) serverPayload.client_phone = _phone;
