@@ -1685,6 +1685,8 @@
       })) return null; /* already bridged */
 
       var payload = {
+         source          : 'reservation_cod',
+        reservation_ref : String(orderID || '').trim(),
         service     : String(bookingData.service     || '').trim() || 'Réservation Fixeo',
         city        : String(artisanCity             || bookingData.artisanCity || '').trim() || 'Ville à préciser',
         description : String(bookingData.description || '').trim() ||
