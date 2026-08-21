@@ -1390,6 +1390,12 @@
   window.addEventListener('fixeo:client-request-created', function (e) {
     var req = e && e.detail;
     if (!req) return;
+     /* Reservation COD: /api/create-request owns the canonical row.
+   Do not create a second service_requests row via submitServiceRequest(). */
+if (req.source === 'reservation_cod') {
+  console.info('[fxv2-bridge] reservation_cod — canonical row owned by /api/create-request, bridge suppressed');
+  return;
+}
 
     /* Emergency mode: urgent-request-fn owns the canonical row (with auth
        profile injected via fetch interceptor). Bridge must not create a
