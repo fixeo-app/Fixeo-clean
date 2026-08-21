@@ -1792,7 +1792,9 @@
  *           commission, status, estimator_price, mission fields.
  */
      
-    var _artisanCat  = state && state.artisan ? (state.artisan.category || '') : '';
+    var _artisanCat = state && state.artisan
+  ? (state.artisan.category || state.artisan.service_category || '')
+  : '';
     var _serviceSlug = _toServiceSlug(_artisanCat);
     var _targetArtisanId = String(
   (state && state.artisan && (
