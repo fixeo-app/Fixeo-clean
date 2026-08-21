@@ -1,10 +1,7 @@
 module.exports = async function handler(req, res) {
-  // Meta webhook verification
   if (req.method === 'GET') {
-    const url = new URL(
-      req.url,
-      https://${req.headers.host || 'www.fixeo.ma'}
-    );
+    const baseUrl = 'https://' + (req.headers.host || 'www.fixeo.ma');
+    const url = new URL(req.url, baseUrl);
 
     const mode = url.searchParams.get('hub.mode');
     const token = url.searchParams.get('hub.verify_token');
@@ -24,8 +21,6 @@ module.exports = async function handler(req, res) {
     return res.status(403).send('Forbidden');
   }
 
-  // Receive WhatsApp webhook events.
-  // No business processing yet: acknowledge only.
   if (req.method === 'POST') {
     return res.status(200).send('EVENT_RECEIVED');
   }
