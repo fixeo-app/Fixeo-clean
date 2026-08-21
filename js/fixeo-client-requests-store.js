@@ -225,6 +225,8 @@
     const now = Date.now();
     return {
       id: now,
+      source: String(payload?.source || '').trim(),
+      reservation_ref: String(payload?.reservation_ref || '').trim(),
       service: String(payload?.service || '').trim() || 'Service à préciser',
       description: String(payload?.description || '').trim() || 'Description à préciser',
       city: String(payload?.city || '').trim() || 'Ville à préciser',
