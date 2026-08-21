@@ -293,6 +293,7 @@ module.exports = async function handler(req, res) {
   var clientPhoneRaw  = _str(body.client_phone,     32);
   var urgency         = _str(body.urgency,          16) || 'normale';
   var idempotencyKey  = _str(body.idempotency_key,  64);
+  var targetArtisanId = _str(body.target_artisan_id, 36);
 
   /* Validate service_category */
   if (!serviceCategory || VALID_SLUGS.indexOf(serviceCategory) < 0) {
@@ -324,6 +325,17 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  /* Validate target_artisan_id if provided */
+if (
+  targetArtisanId &&
+  !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(targetArtisanId)
+) {
+  res.status(400).json({
+    ok: false,
+    reason: 'invalid_target_artisan_id'
+  });
+  return;
+}
   /* Validate phone if provided */
   var clientPhone = null;
   if (clientPhoneRaw) {
@@ -334,11 +346,12 @@ module.exports = async function handler(req, res) {
     clientPhone = _normalizePhone(clientPhoneRaw);
   }
 
-  /* Security: reject any caller-supplied identity fields.
-   * client_profile_id is NEVER accepted from caller.
-   * artisan identity is NEVER accepted from caller.
-   * Price fields are NEVER accepted or written.
-   */
+  /* Security:
+ * client_profile_id is NEVER accepted from caller.
+ * target_artisan_id is accepted only as an explicit routing choice.
+ * Dispatch remains authoritative and re-validates artisan eligibility.
+ * Price fields are NEVER accepted or written.
+ */
 
   /* Build canonical service_requests row */
   var row = {
@@ -348,11 +361,12 @@ module.exports = async function handler(req, res) {
     urgency:          urgency,        /* 7C.11C dedicated column */
     status:           'new',          /* server-authoritative — never caller-controlled */
     idempotency_key:  idempotencyKey, /* 7C.11C partial unique index enforces uniqueness */
+    target_artisan_id: targetArtisanId || null,
     created_at:       new Date().toISOString(),
     /* client_phone: written only when provided */
     /* client_profile_id: intentionally omitted (NULL) */
     /* No amount_mad / agreed_price / price fields */
-    /* No artisan identity */
+    /* Optional target_artisan_id only; dispatch re-validates eligibility */
     /* No missions fields */
   };
 
