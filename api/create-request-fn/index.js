@@ -175,6 +175,78 @@ async function _selectByKey(idemKey) {
   return (rows[0] && rows[0].id) ? rows[0].id : null;
 }
 
+/* ── Resolve artisan routing id → canonical Supabase UUID ──
+ * Accepts either:
+ *   - canonical artisans.id UUID
+ *   - legacy artisans.legacy_id (ex: FB-20260622-029)
+ * Returns canonical artisans.id UUID or null.
+ */
+async function _resolveTargetArtisanId(rawTargetId) {
+  if (!rawTargetId) return null;
+
+  var url        = process.env.SUPABASE_URL;
+  var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceKey) {
+    var envErr = new Error('Supabase env missing');
+    envErr.code = 'ENV_MISSING';
+    throw envErr;
+  }
+
+  var target = String(rawTargetId).trim();
+
+  var uuidRe =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  var params = new URLSearchParams({
+    select: 'id,legacy_id',
+    limit: '1'
+  });
+
+  if (uuidRe.test(target)) {
+    params.set('id', 'eq.' + target);
+  } else {
+    params.set('legacy_id', 'eq.' + target);
+  }
+
+  var res;
+
+  try {
+    res = await fetch(
+      url + '/rest/v1/artisans?' + params.toString(),
+      {
+        method: 'GET',
+        headers: {
+          'apikey': serviceKey,
+          'Authorization': 'Bearer ' + serviceKey
+        }
+      }
+    );
+  } catch (fetchErr) {
+    var netErr = new Error(
+      'Artisan resolve network error: ' + fetchErr.message
+    );
+    netErr.code = 'NETWORK';
+    throw netErr;
+  }
+
+  if (!res.ok) {
+    var sbErr = new Error(
+      'Artisan resolve HTTP ' + res.status
+    );
+    sbErr.code = 'SUPABASE_4xx';
+    throw sbErr;
+  }
+
+  var rows = await res.json().catch(function() {
+    return [];
+  });
+
+  return rows[0] && rows[0].id
+    ? String(rows[0].id)
+    : null;
+}
+
 /* ── dispatch_request_v1 — server-side only, service_role ── */
 /*
  * Calls public.dispatch_request_v1(p_request_id) via Supabase REST RPC.
@@ -187,6 +259,7 @@ async function _selectByKey(idemKey) {
  *   - Fire-and-forget semantics: dispatch failure does NOT fail the request
  *   - idempotent: dispatch_request_v1 has its own 23505 guard (no duplicate missions)
  */
+
 async function _callDispatch(requestId) {
   var url        = process.env.SUPABASE_URL;
   var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -293,8 +366,8 @@ module.exports = async function handler(req, res) {
   var clientPhoneRaw  = _str(body.client_phone,     32);
   var urgency         = _str(body.urgency,          16) || 'normale';
   var idempotencyKey  = _str(body.idempotency_key,  64);
-  var targetArtisanId = _str(body.target_artisan_id, 36);
-
+  var targetArtisanId = _str(body.target_artisan_id, 64);
+  
   /* Validate service_category */
   if (!serviceCategory || VALID_SLUGS.indexOf(serviceCategory) < 0) {
     res.status(400).json({ ok: false, reason: 'invalid_service_category' });
@@ -325,10 +398,23 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  /* Validate target_artisan_id if provided */
+ /* Validate target_artisan_id if provided.
+ * Accept either:
+ * - canonical Supabase UUID
+ * - trusted legacy artisan ref such as FB-20260622-029
+ * The legacy ref will be resolved server-side to the canonical UUID
+ * before writing service_requests.
+ */
+var TARGET_UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+var TARGET_LEGACY_RE =
+  /^[A-Za-z0-9._:-]{1,64}$/;
+
 if (
   targetArtisanId &&
-  !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(targetArtisanId)
+  !TARGET_UUID_RE.test(targetArtisanId) &&
+  !TARGET_LEGACY_RE.test(targetArtisanId)
 ) {
   res.status(400).json({
     ok: false,
@@ -352,7 +438,30 @@ if (
  * Dispatch remains authoritative and re-validates artisan eligibility.
  * Price fields are NEVER accepted or written.
  */
+  
+/* Resolve optional artisan routing ref → canonical Supabase UUID */
+var resolvedTargetArtisanId = null;
 
+if (targetArtisanId) {
+  try {
+    resolvedTargetArtisanId = await _resolveTargetArtisanId(targetArtisanId);
+  } catch (resolveErr) {
+    console.error('[create-request-v1a] target artisan resolve failed:', resolveErr.message);
+    res.status(502).json({
+      ok: false,
+      reason: 'target_artisan_resolution_failed'
+    });
+    return;
+  }
+
+  if (!resolvedTargetArtisanId) {
+    res.status(400).json({
+      ok: false,
+      reason: 'target_artisan_not_found'
+    });
+    return;
+  }
+}
   /* Build canonical service_requests row */
   var row = {
     service_category: serviceCategory,
@@ -361,7 +470,7 @@ if (
     urgency:          urgency,        /* 7C.11C dedicated column */
     status:           'new',          /* server-authoritative — never caller-controlled */
     idempotency_key:  idempotencyKey, /* 7C.11C partial unique index enforces uniqueness */
-    target_artisan_id: targetArtisanId || null,
+    target_artisan_id: resolvedTargetArtisanId || null,
     created_at:       new Date().toISOString(),
     /* client_phone: written only when provided */
     /* client_profile_id: intentionally omitted (NULL) */
