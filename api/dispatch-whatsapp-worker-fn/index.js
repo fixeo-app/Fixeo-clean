@@ -23,7 +23,7 @@ module.exports = async function handler(req, res) {
   try {
     // Call the validated Supabase RPC.
    const rpcResponse = await fetch(
-  supabaseUrl + "/rest/v1/rpc/dispatch_notification_worker_next_v1",
+  supabaseUrl + "/rest/v1/rpc/dispatch_notification_worker_peek_v1",
   {
     method: "POST",
     headers: {
