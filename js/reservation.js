@@ -1785,11 +1785,16 @@
     }
 
     /* Step 5: Build canonical server payload.
-     * NOT sent: artisan_id, client_profile_id, amount_mad, agreed_price,
-     *           commission, status, estimator_price, mission fields.
-     */
+ * Optional target_artisan_id is sent as a routing choice.
+ * NOT sent: client_profile_id, amount_mad, agreed_price,
+ *           commission, status, estimator_price, mission fields.
+ */
+     
     var _artisanCat  = state && state.artisan ? (state.artisan.category || '') : '';
     var _serviceSlug = _toServiceSlug(_artisanCat);
+    var _targetArtisanId = state && state.artisan
+  ? String(state.artisan._supabase_id || state.artisan.id || '').trim()
+  : ''; 
     var _city        = String(artisanCity || bookingData.artisanCity || '').trim() || 'Casablanca';
     var _desc        = String(bookingData.description || '').trim() ||
                        'Réservation ' + (bookingData.service || 'service');
@@ -1803,6 +1808,12 @@
       urgency:          _urgency,
       idempotency_key:  idemKey,
     };
+     if (
+  _targetArtisanId &&
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_targetArtisanId)
+) {
+  serverPayload.target_artisan_id = _targetArtisanId;
+}
     if (_phone) serverPayload.client_phone = _phone;
 
     /* Step 6: POST — AWAIT canonical ACK */
