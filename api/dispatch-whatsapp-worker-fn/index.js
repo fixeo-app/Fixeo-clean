@@ -9,7 +9,23 @@ module.exports = async function handler(req, res) {
       error: "METHOD_NOT_ALLOWED"
     });
   }
+const workerSecret = process.env.DISPATCH_WHATSAPP_WORKER_SECRET;
 
+if (!workerSecret) {
+  return res.status(500).json({
+    ok: false,
+    error: "WORKER_SECRET_MISSING"
+  });
+}
+
+const authHeader = String(req.headers.authorization || "");
+
+if (authHeader !== "Bearer " + workerSecret) {
+  return res.status(401).json({
+    ok: false,
+    error: "UNAUTHORIZED"
+  });
+}
   const supabaseUrl = process.env.SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
