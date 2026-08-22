@@ -120,6 +120,21 @@
    * Returns the new Supabase row id, or null on failure.
    */
   async function _insertOne(sb, req, clientProfileId) {
+    /* Canonical reservation flow is already persisted server-side by
+       reservation.js -> POST /api/create-request.
+       Never let this legacy confirmation sync create a second row. */
+    if (
+      safeStr(req.source) === 'reservation_cod' ||
+      safeStr(req.canonical_request_id) ||
+      safeStr(req.idempotency_key).indexOf('reservation:') === 0
+    ) {
+      console.info(
+        LOG,
+        'Canonical reservation already persisted by /api/create-request — legacy insert skipped for',
+        req.id
+      );
+      return safeStr(req.canonical_request_id) || null;
+    }
     var payload = {
       service_category : safeStr(req.service) || 'Service',
       city             : safeStr(req.city)    || 'Maroc',
