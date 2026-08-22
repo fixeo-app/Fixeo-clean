@@ -165,6 +165,7 @@ DECLARE
   v_sr_category       text;
   v_sr_city           text;
   v_sr_urgency        text;
+  v_sr_target_artisan_id uuid;
 
   -- Existing offer/winner check
   v_existing_mission  uuid;
@@ -228,11 +229,21 @@ BEGIN
   -- v_sr_status is read UNDER the lock — this is the authoritative
   -- post-lock state. Any concurrent transaction that modified the row
   -- before us will have committed; we see the final state.
-  SELECT sr.status, sr.service_category, sr.city, sr.urgency
-  INTO   v_sr_status, v_sr_category, v_sr_city, v_sr_urgency
-  FROM   public.service_requests sr
-  WHERE  sr.id = p_request_id
-  FOR UPDATE;
+  SELECT
+  sr.status,
+  sr.service_category,
+  sr.city,
+  sr.urgency,
+  sr.target_artisan_id
+INTO
+  v_sr_status,
+  v_sr_category,
+  v_sr_city,
+  v_sr_urgency,
+  v_sr_target_artisan_id
+FROM public.service_requests sr
+WHERE sr.id = p_request_id
+FOR UPDATE;
 
   IF NOT FOUND THEN
     RETURN jsonb_build_object('ok', false, 'reason', 'request_not_found');
@@ -315,6 +326,10 @@ BEGIN
       a.updated_at
     FROM   public.artisans a
     WHERE a.availability = 'available'
+    AND (
+    v_sr_target_artisan_id IS NULL
+    OR a.id = v_sr_target_artisan_id
+  )
       AND  NOT EXISTS (                           -- no prior mission for this request
         SELECT 1
         FROM   public.missions m
