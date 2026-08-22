@@ -26,10 +26,17 @@ if (authHeader !== "Bearer " + workerSecret) {
     error: "UNAUTHORIZED"
   });
 }
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+ const supabaseUrl = process.env.SUPABASE_URL;
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const whatsappPhoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+const whatsappAccessToken = process.env.WHATSAPP_ACCESS_TOKEN;
 
-  if (!supabaseUrl || !serviceRoleKey) {
+if (
+  !supabaseUrl ||
+  !serviceRoleKey ||
+  !whatsappPhoneNumberId ||
+  !whatsappAccessToken
+) {
     return res.status(500).json({
       ok: false,
       error: "SERVER_CONFIGURATION_MISSING"
