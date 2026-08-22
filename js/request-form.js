@@ -70,18 +70,135 @@
      Never throws — returns original text as fallback.
   ────────────────────────────────────────────────────────────── */
   var _SERVICE_NORM_MAP = [
-    { slug: 'plomberie',     words: ['fuite','plomberie','plombier','robinet','tuyau','eau','chauffe','chauffe-eau','sanitaire','canalisation','wc','debouchage','débouchage','évier','evier','bain','douche','toilette'] },
-    { slug: 'serrurerie',    words: ['serrure','serrurier','serrurerie','porte bloqu','porte bloq','bloquée','bloquee','cle','clé','clef','clef','effraction','barillet','cylindre','portail'] },
-    { slug: 'electricite',   words: ['panne elec','panne élec','electricit','électricité','electricien','électricien','disjoncteur','court-circuit','courant','coupure','tableau','prise','lumiere','lumière','câble','cable','interrupteur'] },
-    { slug: 'climatisation', words: ['clim','climatisation','climatiseur','froid','ventilation','reversible','réversible','pompe','chaleur'] },
-    { slug: 'peinture',      words: ['peinture','peintre','facade','façade','mur','enduit','ravalement'] },
-    { slug: 'menuiserie',    words: ['menuiserie','menuisier','bois','porte','placard','volet','parquet','paroi','fenetre','fenêtre'] },
-    { slug: 'maconnerie',    words: ['maçonnerie','maconnerie','macon','maçon','béton','beton','carrelage','dallage','mur porteur','chape','crépi','crêpi'] },
-    { slug: 'nettoyage',     words: ['nettoyage','menage','ménage','nettoyer','desinfection','désinfection','vitres'] },
-    { slug: 'jardinage',     words: ['jardinage','jardinier','pelouse','haie','arrosage','jardin','taille'] },
-    { slug: 'demenagement',  words: ['demenagement','déménagement','demenager','déménager','transport meuble','carton','déménage'] },
-    { slug: 'plomberie',     words: ['gaz','chauffe gaz','gaz','odeur gaz'] }  /* gaz = plomberie urgence */
-  ];
+
+  /* ── PLOMBERIE / CHAUFFAGE ─────────────────────────────── */
+  {
+    slug: 'plomberie',
+    words: [
+      'fuite','plomberie','plombier','robinet','tuyau','eau',
+      'chauffe eau','chauffe-eau','chauffage','radiateur',
+      'sanitaire','canalisation','wc','debouchage','débouchage',
+      'evier','évier','bain','douche','toilette',
+      'gaz','chauffe gaz','odeur gaz',
+      'plomberie chauffage'
+    ]
+  },
+
+  /* ── SERRURERIE / FERRONNERIE / FER FORGÉ ─────────────── */
+  {
+    slug: 'serrurerie',
+    words: [
+      'serrure','serrurier','serrurerie',
+      'porte bloqu','porte bloq','bloquee','bloquée',
+      'cle','clé','clef','effraction','barillet','cylindre',
+      'portail','ferronnerie','ferronnier','fer forge','fer forgé'
+    ]
+  },
+
+  /* ── ÉLECTRICITÉ / TECHNIQUE ───────────────────────────── */
+  {
+    slug: 'electricite',
+    words: [
+      'panne elec','panne élec','electricit','électricité',
+      'electricien','électricien','disjoncteur','court circuit',
+      'court-circuit','courant','coupure','tableau','prise',
+      'lumiere','lumière','cable','câble','interrupteur',
+      'technique'
+    ]
+  },
+
+  /* ── CLIMATISATION ─────────────────────────────────────── */
+  {
+    slug: 'climatisation',
+    words: [
+      'clim','climatisation','climatiseur',
+      'air conditionne','air conditionné',
+      'froid','ventilation','reversible','réversible',
+      'pompe chaleur'
+    ]
+  },
+
+  /* ── PEINTURE / DÉCORATION / FINITIONS ────────────────── */
+  {
+    slug: 'peinture',
+    words: [
+      'peinture','peintre','facade','façade',
+      'enduit','ravalement','decoration','décoration',
+      'tadelakt','vernis','finition'
+    ]
+  },
+
+  /* ── MENUISERIE / ALUMINIUM / AGENCEMENT ──────────────── */
+  {
+    slug: 'menuiserie',
+    words: [
+      'menuiserie','menuisier','menuiserie bois',
+      'menuiserie artisanale','menuiserie inox',
+      'menuiserie mdf','menuiserie mobilier',
+      'bois','placard','volet','parquet','paroi',
+      'fenetre','fenêtre','mobilier',
+      'aluminium','alu','inox','mdf',
+      'amenagement','aménagement',
+      'agencement','decoration agencement','décoration agencement'
+    ]
+  },
+
+  /* ── MAÇONNERIE / CONSTRUCTION / CARRELAGE ────────────── */
+  {
+    slug: 'maconnerie',
+    words: [
+      'maconnerie','maçonnerie','macon','maçon',
+      'beton','béton','construction','renovation','rénovation',
+      'carrelage','carreleur','dallage','chape',
+      'mur porteur','crepi','crépi',
+      'marbre','marbrier',
+      'zellige',
+      'platre','plâtre','placo',
+      'etancheite','étanchéité'
+    ]
+  },
+
+  /* ── NETTOYAGE ─────────────────────────────────────────── */
+  {
+    slug: 'nettoyage',
+    words: [
+      'nettoyage','menage','ménage','nettoyer',
+      'desinfection','désinfection','vitres'
+    ]
+  },
+
+  /* ── JARDINAGE ─────────────────────────────────────────── */
+  {
+    slug: 'jardinage',
+    words: [
+      'jardinage','jardinier','pelouse',
+      'haie','arrosage','jardin','taille'
+    ]
+  },
+
+  /* ── DÉMÉNAGEMENT / TRANSPORT ──────────────────────────── */
+  {
+    slug: 'demenagement',
+    words: [
+      'demenagement','déménagement',
+      'demenager','déménager',
+      'transport meuble','transport',
+      'carton','déménage'
+    ]
+  },
+
+  /* ── MULTI-SERVICE / BRICOLAGE / MAINTENANCE ──────────── */
+  {
+    slug: 'autre',
+    words: [
+      'bricolage','bricoleur',
+      'maintenance','multi service','multi-service',
+      'multiservice',
+      'piscine'
+    ]
+  }
+
+];
 
   function _normalizeServiceCategory(raw) {
     if (!raw) return '';
