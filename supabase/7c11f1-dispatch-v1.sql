@@ -351,21 +351,120 @@ BEGIN
     --   mismatch    → CONTINUE (elimination)
 
     IF v_req_cat_norm = '' THEN
-      v_svc_score := 18;                          -- request uncategorized — neutral
+  v_svc_score := 18;
 
-    ELSIF v_art_cat_norm = '' THEN
-      CONTINUE;                                   -- artisan blank vs categorized request
+ELSIF v_art_cat_norm = '' THEN
+  CONTINUE;
 
-    ELSIF v_art_cat_norm = v_req_cat_norm THEN
-      v_svc_score := 35;                          -- exact match
+ELSIF v_art_cat_norm = v_req_cat_norm THEN
+  v_svc_score := 35;
 
-    ELSIF position(v_req_cat_norm IN v_art_cat_norm) > 0
-       OR position(v_art_cat_norm IN v_req_cat_norm) > 0 THEN
-      v_svc_score := 25;                          -- substring (both sides non-empty)
+ELSIF position(v_req_cat_norm IN v_art_cat_norm) > 0
+   OR position(v_art_cat_norm IN v_req_cat_norm) > 0 THEN
+  v_svc_score := 25;
 
-    ELSE
-      CONTINUE;                                   -- explicit mismatch — elimination
-    END IF;
+-- ── FAMILY MATCHES ─────────────────────────────────────────────
+-- Allows real artisan specialities to match their canonical family.
+
+ELSIF v_req_cat_norm = 'plomberie'
+  AND (
+    v_art_cat_norm LIKE '%plomberie%'
+    OR v_art_cat_norm LIKE '%chauffage%'
+    OR v_art_cat_norm LIKE '%sanitaire%'
+  ) THEN
+  v_svc_score := 24;
+
+ELSIF v_req_cat_norm = 'electricite'
+  AND (
+    v_art_cat_norm LIKE '%electric%'
+    OR v_art_cat_norm LIKE '%technique%'
+  ) THEN
+  v_svc_score := 24;
+
+ELSIF v_req_cat_norm = 'serrurerie'
+  AND (
+    v_art_cat_norm LIKE '%serrur%'
+    OR v_art_cat_norm LIKE '%ferronner%'
+    OR v_art_cat_norm LIKE '%fer forge%'
+  ) THEN
+  v_svc_score := 24;
+
+ELSIF v_req_cat_norm = 'climatisation'
+  AND (
+    v_art_cat_norm LIKE '%clim%'
+    OR v_art_cat_norm LIKE '%froid%'
+  ) THEN
+  v_svc_score := 24;
+
+ELSIF v_req_cat_norm = 'menuiserie'
+  AND (
+    v_art_cat_norm LIKE '%menuiser%'
+    OR v_art_cat_norm LIKE '%bois%'
+    OR v_art_cat_norm LIKE '%mdf%'
+    OR v_art_cat_norm LIKE '%mobilier%'
+    OR v_art_cat_norm LIKE '%inox%'
+    OR v_art_cat_norm LIKE '%aluminium%'
+    OR v_art_cat_norm LIKE '%agencement%'
+    OR v_art_cat_norm LIKE '%amenagement%'
+  ) THEN
+  v_svc_score := 24;
+
+ELSIF v_req_cat_norm = 'peinture'
+  AND (
+    v_art_cat_norm LIKE '%peint%'
+    OR v_art_cat_norm LIKE '%decoration%'
+    OR v_art_cat_norm LIKE '%tadelakt%'
+    OR v_art_cat_norm LIKE '%vernis%'
+    OR v_art_cat_norm LIKE '%finition%'
+    OR v_art_cat_norm LIKE '%facade%'
+  ) THEN
+  v_svc_score := 24;
+
+ELSIF v_req_cat_norm = 'maconnerie'
+  AND (
+    v_art_cat_norm LIKE '%maconner%'
+    OR v_art_cat_norm LIKE '%construction%'
+    OR v_art_cat_norm LIKE '%carrelage%'
+    OR v_art_cat_norm LIKE '%marbre%'
+    OR v_art_cat_norm LIKE '%platre%'
+    OR v_art_cat_norm LIKE '%placo%'
+    OR v_art_cat_norm LIKE '%zellige%'
+    OR v_art_cat_norm LIKE '%etancheite%'
+    OR v_art_cat_norm LIKE '%renovation%'
+    OR v_art_cat_norm LIKE '%facade%'
+  ) THEN
+  v_svc_score := 24;
+
+ELSIF v_req_cat_norm = 'nettoyage'
+  AND v_art_cat_norm LIKE '%nettoy%' THEN
+  v_svc_score := 24;
+
+ELSIF v_req_cat_norm = 'jardinage'
+  AND v_art_cat_norm LIKE '%jardin%' THEN
+  v_svc_score := 24;
+
+ELSIF v_req_cat_norm = 'demenagement'
+  AND (
+    v_art_cat_norm LIKE '%demenag%'
+    OR v_art_cat_norm LIKE '%transport%'
+  ) THEN
+  v_svc_score := 24;
+
+ELSIF v_req_cat_norm = 'autre'
+  AND (
+    v_art_cat_norm LIKE '%bricolage%'
+    OR v_art_cat_norm LIKE '%maintenance%'
+    OR v_art_cat_norm LIKE '%multi service%'
+    OR v_art_cat_norm LIKE '%multiservice%'
+    OR v_art_cat_norm LIKE '%piscine%'
+    OR v_art_cat_norm LIKE '%amenagement%'
+    OR v_art_cat_norm LIKE '%renovation%'
+  ) THEN
+  v_svc_score := 20;
+
+ELSE
+  CONTINUE;
+END IF;
 
     -- ── CITY MATCH (weight 30) ──────────────────────────────
     -- Empty-string safety: artisan city blank must never produce a false
