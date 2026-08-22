@@ -314,10 +314,7 @@ BEGIN
       COALESCE(a.rating, 0.0),
       a.updated_at
     FROM   public.artisans a
-    WHERE  a.owner_user_id       IS NOT NULL      -- must be able to log in
-      AND  a.claim_status         = 'approved'    -- verified artisan
-      AND  a.onboarding_completed = true          -- fully onboarded
-      AND  a.availability         = 'available'   -- not busy/unavailable
+    WHERE a.availability = 'available'
       AND  NOT EXISTS (                           -- no prior mission for this request
         SELECT 1
         FROM   public.missions m
