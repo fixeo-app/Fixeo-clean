@@ -251,11 +251,25 @@
      dashboard-client requests — any flow without navigation.
      ═══════════════════════════════════════════════════════════ */
   window.addEventListener('fixeo:client-request-created', function (e) {
-    var req = e && e.detail;
-    if (!req || !req.id) return;
-    _mirrorToSupabase(req).catch(function (err) {
-      console.warn(LOG, 'Unhandled async error:', err && err.message);
-    });
+  var req = e && e.detail;
+  if (!req || !req.id) return;
+
+  /* Reservation COD:
+   * /api/create-request owns the canonical service_requests row.
+   * Never mirror it here or a duplicate row is created.
+   */
+  if (String(req.source || '').trim() === 'reservation_cod') {
+    console.info(
+      LOG,
+      'reservation_cod — canonical row owned by /api/create-request; mirror suppressed',
+      req.id
+    );
+    return;
+  }
+
+  _mirrorToSupabase(req).catch(function (err) {
+    console.warn(LOG, 'Unhandled async error:', err && err.message);
   });
+});
 
 })(window);
