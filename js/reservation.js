@@ -1675,17 +1675,127 @@ city:
       .replace(/ô/g,'o').replace(/ç/g,'c')
       .replace(/[^a-z0-9]/g,'');
     if (_SLUG_ALLOWLIST.indexOf(s) !== -1) return s;
-    if (s.indexOf('plomb') !== -1)    return 'plomberie';
-    if (s.indexOf('elect') !== -1)    return 'electricite';
-    if (s.indexOf('serru') !== -1)    return 'serrurerie';
-    if (s.indexOf('clim') !== -1)     return 'climatisation';
-    if (s.indexOf('menuis') !== -1)   return 'menuiserie';
-    if (s.indexOf('peint') !== -1)    return 'peinture';
-    if (s.indexOf('macon') !== -1 || s.indexOf('maconn') !== -1) return 'maconnerie';
-    if (s.indexOf('nettoy') !== -1)   return 'nettoyage';
-    if (s.indexOf('jardin') !== -1)   return 'jardinage';
-    if (s.indexOf('demena') !== -1)   return 'demenagement';
-    return 'autre';
+    /* Plomberie */
+if (
+  s.indexOf('plomb') !== -1 ||
+  s.indexOf('fuite') !== -1 ||
+  s.indexOf('robinet') !== -1 ||
+  s.indexOf('canalis') !== -1 ||
+  s.indexOf('evier') !== -1 ||
+  s.indexOf('lavabo') !== -1 ||
+  s.indexOf('wc') !== -1 ||
+  s.indexOf('debouch') !== -1 ||
+  s.indexOf('chauffeeau') !== -1
+) return 'plomberie';
+
+/* Électricité */
+if (
+  s.indexOf('elect') !== -1 ||
+  s.indexOf('prise') !== -1 ||
+  s.indexOf('disjonct') !== -1 ||
+  s.indexOf('tableauelect') !== -1
+) return 'electricite';
+
+/* Serrurerie */
+if (
+  s.indexOf('serr') !== -1 ||
+  s.indexOf('cle') !== -1 ||
+  s.indexOf('portefermee') !== -1 ||
+  s.indexOf('verrou') !== -1
+) return 'serrurerie';
+
+/* Climatisation */
+if (
+  s.indexOf('clim') !== -1 ||
+  s.indexOf('aircondition') !== -1
+) return 'climatisation';
+
+/* Menuiserie */
+if (
+  s.indexOf('menuis') !== -1 ||
+  s.indexOf('bois') !== -1
+) return 'menuiserie';
+
+/* Peinture */
+if (
+  s.indexOf('peint') !== -1
+) return 'peinture';
+
+/* Maçonnerie */
+if (
+  s.indexOf('macon') !== -1 ||
+  s.indexOf('beton') !== -1
+) return 'maconnerie';
+
+/* Carrelage */
+if (
+  s.indexOf('carrel') !== -1 ||
+  s.indexOf('faience') !== -1
+) return 'carrelage';
+
+/* Nettoyage */
+if (
+  s.indexOf('nettoy') !== -1 ||
+  s.indexOf('menage') !== -1
+) return 'nettoyage';
+
+/* Jardinage */
+if (
+  s.indexOf('jardin') !== -1 ||
+  s.indexOf('pelouse') !== -1
+) return 'jardinage';
+
+/* Bricolage */
+if (
+  s.indexOf('bricol') !== -1 ||
+  s.indexOf('montagemeuble') !== -1
+) return 'bricolage';
+
+/* Chauffage */
+if (
+  s.indexOf('chauffage') !== -1 ||
+  s.indexOf('radiateur') !== -1
+) return 'chauffage';
+
+/* Toiture */
+if (
+  s.indexOf('toitur') !== -1 ||
+  s.indexOf('etancheite') !== -1
+) return 'toiture';
+
+/* Vitrerie */
+if (
+  s.indexOf('vitr') !== -1 ||
+  s.indexOf('verre') !== -1
+) return 'vitrerie';
+
+/* Déménagement */
+if (
+  s.indexOf('demenag') !== -1
+) return 'demenagement';
+
+/* Sécurité / surveillance */
+if (
+  s.indexOf('secur') !== -1 ||
+  s.indexOf('surveill') !== -1 ||
+  s.indexOf('camera') !== -1 ||
+  s.indexOf('alarme') !== -1
+) return 'securite';
+
+/* Énergie solaire */
+if (
+  s.indexOf('solair') !== -1 ||
+  s.indexOf('photovolt') !== -1 ||
+  s.indexOf('panneausolaire') !== -1
+) return 'energie_solaire';
+
+/* Corporate */
+if (
+  s.indexOf('corporate') !== -1 ||
+  s.indexOf('entreprise') !== -1
+) return 'corporate';
+
+return 'autre';
   }
 
   /* Generate a reservation-namespaced idempotency key (once per logical reservation). */
@@ -1835,10 +1945,16 @@ city:
  *           commission, status, estimator_price, mission fields.
  */
      
-    var _artisanCat = state && state.artisan
-  ? (state.artisan.category || state.artisan.service_category || '')
-  : '';
-    var _serviceSlug = _toServiceSlug(_artisanCat);
+   var _serviceSource =
+  bookingData.service ||
+  (state && state.selectedService) ||
+  (state && state.artisan && (
+    state.artisan.service_category ||
+    state.artisan.category
+  )) ||
+  '';
+
+var _serviceSlug = _toServiceSlug(_serviceSource);
     var _targetArtisanId = String(
   (state && state.artisan && (
     state.artisan._artisan_id_canonical ||
