@@ -1,165 +1,203 @@
 /* ================================================================
-   FIXEO V14 — AUTH GUARD (js/fixeo-auth-guard.js) — ULTIMATE FIX
-   ─────────────────────────────────────────────────────────────────
-   CORRECTIONS V14 :
-     FIX-GUARD-1 : Normalisation des rôles (admin/client/artisan)
-                   → default "client" si rôle manquant ou invalide
-     FIX-GUARD-2 : Protection admin renforcée : vérifier user + role
-                   + sessionStorage.fixeo_admin_auth (Phase 1B/1C — localStorage flag removed)
-     FIX-GUARD-3 : Redirection dashboard selon rôle :
-                   admin    → admin.html
-                   artisan  → dashboard-artisan-v2.html  (V2 — V1 frozen)
-                   client   → dashboard-client.html
-     FIX-GUARD-4 : Éviter les boucles de redirection
+   FIXEO V15 — CANONICAL AUTH GUARD
+   public.users.role = single source of truth
    ================================================================ */
 (function () {
   'use strict';
 
-  function normalizeRole(value) {
-    value = String(value || '').toLowerCase();
-    return ['admin', 'artisan', 'client'].indexOf(value) !== -1 ? value : 'client';
+  var ROLE_HOME = {
+    admin:   'admin.html',
+    artisan: 'dashboard-artisan-v2.html',
+    client:  'dashboard-client.html'
+  };
+
+  var PROTECTED = [
+    'admin.html',
+    'dashboard-client.html',
+    'dashboard-artisan.html',
+    'dashboard-artisan-v2.html'
+  ];
+
+  function pageName() {
+    return window.location.pathname.split('/').pop() || 'index.html';
   }
 
-  function hydrateFromSupabaseStorage() {
+  function validRole(role) {
+    role = String(role || '').toLowerCase();
+    return ['admin', 'artisan', 'client'].indexOf(role) !== -1
+      ? role
+      : '';
+  }
+
+  function clearLocalIdentity() {
+    [
+      'user_id',
+      'fixeo_user',
+      'fixeo_role',
+      'fixeo_user_name',
+      'user_name',
+      'role',
+      'user'
+    ].forEach(function (key) {
+      try { localStorage.removeItem(key); } catch (_) {}
+    });
+
     try {
-      if (localStorage.getItem('fixeo_user') && localStorage.getItem('fixeo_role')) return;
-      var env = window.FIXEO_ENV || {};
-      var refMatch = String(env.SUPABASE_URL || '').match(/^https:\/\/([^.]+)\.supabase\.co/i);
-      var keys = [];
-      if (refMatch) keys.push('sb-' + refMatch[1] + '-auth-token');
-      Object.keys(localStorage).forEach(function (key) {
-        if (/^sb-.*-auth-token$/.test(key) && keys.indexOf(key) === -1) keys.push(key);
-      });
-      for (var i = 0; i < keys.length; i++) {
-        var raw = localStorage.getItem(keys[i]);
-        if (!raw) continue;
-        var parsed = null;
-        try { parsed = JSON.parse(raw); } catch (e) { continue; }
-        var session = null;
-        if (parsed && parsed.user) session = parsed;
-        if (!session && parsed && parsed.currentSession && parsed.currentSession.user) session = parsed.currentSession;
-        if (!session && Array.isArray(parsed)) {
-          for (var j = 0; j < parsed.length; j++) {
-            if (parsed[j] && parsed[j].user) { session = parsed[j]; break; }
-          }
-        }
-        if (session && session.user) {
-          var rawEmail = session.user.email || session.user.id || '';
-          var roleValue = normalizeRole((session.user.user_metadata && session.user.user_metadata.role) || 'client');
-          /* Guard: if Supabase session email is a synthetic phone-email, store phone instead */
-          var _pu = window.FixeoPhoneUtils || window._fxPhone;
-          var storedId = (_pu && _pu.isSyntheticEmail(rawEmail))
-            ? (_pu.syntheticEmailToPhone(rawEmail) || rawEmail)
-            : rawEmail;
-          /* Name: prefer user_metadata.full_name; never derive from synthetic email */
-          var name = (session.user.user_metadata && session.user.user_metadata.full_name) || '';
-          if (!name && !(_pu && _pu.isSyntheticEmail(rawEmail)) && rawEmail.indexOf('@') > -1) {
-            name = rawEmail.split('@')[0];
-          }
-          if (!name) name = 'Utilisateur';
-          localStorage.setItem('fixeo_user', storedId);
-          localStorage.setItem('fixeo_user_name', name);
-          localStorage.setItem('fixeo_role', roleValue);
-          localStorage.setItem('role', roleValue);
-          localStorage.setItem('user', JSON.stringify({ id: session.user.id, name: name, role: roleValue, email: storedId }));
-          break;
-        }
-      }
-    } catch (e) {}
+      sessionStorage.removeItem('fixeo_admin_auth');
+    } catch (_) {}
   }
 
-  hydrateFromSupabaseStorage();
+  function persistCanonicalUser(authUser, row) {
+    var role = validRole(row.role);
+    var name = row.full_name || 'Utilisateur';
 
-  var user  = localStorage.getItem('fixeo_user')  || '';
-  var role  = localStorage.getItem('fixeo_role')  || localStorage.getItem('role') || '';
-  /* PHASE 1B: fixeo_admin localStorage no longer trusted for gate decisions.
-     Admin access requires sessionStorage.fixeo_admin_auth=1 (session-scoped only). */
-  var sess  = sessionStorage.getItem('fixeo_admin_auth') === '1';
+    var rawEmail = authUser.email || '';
+    var pu = window.FixeoPhoneUtils || window._fxPhone;
 
-  /* ── FIX-GUARD-0 : Lire aussi l'objet normalisé 'user' (JSON) si clés fixeo_* absentes ── */
-  if (!user) {
-    try {
-      var userJSON = localStorage.getItem('user');
-      if (userJSON) {
-        var userObj = JSON.parse(userJSON);
-        if (userObj && userObj.id) {
-          user = userObj.id;
-          if (!role && userObj.role) {
-            role = userObj.role;
-            localStorage.setItem('fixeo_role', role);
-            localStorage.setItem('role', role);
-          }
-        }
-      }
-    } catch(e) {}
-  }
+    var identifier = rawEmail;
 
-  var page  = window.location.pathname.split('/').pop() || 'index.html';
+    if (pu && pu.isSyntheticEmail && pu.isSyntheticEmail(rawEmail)) {
+      identifier =
+        row.phone ||
+        (pu.syntheticEmailToPhone
+          ? pu.syntheticEmailToPhone(rawEmail)
+          : rawEmail);
+    }
 
-  /* ── FIX-GUARD-1 : Normalisation du rôle ──────────────────── */
-  var VALID_ROLES = ['admin', 'artisan', 'client'];
+    localStorage.setItem('user_id', authUser.id);
+    localStorage.setItem('fixeo_user', identifier || authUser.id);
+    localStorage.setItem('fixeo_user_name', name);
+    localStorage.setItem('user_name', name);
 
-  if (user && !VALID_ROLES.includes(role)) {
-    /* Rôle manquant ou invalide → default 'client'.
-       PHASE 1B: email-based admin auto-bootstrap REMOVED.
-       No email address can escalate to admin automatically. */
-    role = 'client';
     localStorage.setItem('fixeo_role', role);
     localStorage.setItem('role', role);
+
+    localStorage.setItem('user', JSON.stringify({
+      id: authUser.id,
+      name: name,
+      role: role
+    }));
+
+    if (row.phone) {
+      localStorage.setItem('user_phone', row.phone);
+    }
+
+    if (role === 'admin') {
+      sessionStorage.setItem('fixeo_admin_auth', '1');
+    } else {
+      sessionStorage.removeItem('fixeo_admin_auth');
+    }
+
+    localStorage.removeItem('fixeo_admin');
+
+    return role;
   }
 
-  /* ── Pages nécessitant une connexion quelconque ─────────────── */
-  /* V2 guard: both V1 (frozen) and V2 artisan dashboard require login.
-     V1 kept in list so bookmarks/direct links still redirect to auth. */
-  var requiresLogin = ['dashboard-client.html', 'dashboard-artisan.html', 'dashboard-artisan-v2.html'];
-  /* Pages nécessitant un rôle admin */
-  var requiresAdmin = ['admin.html'];
-  /* Pages nécessitant un rôle artisan — V2 is the active URL */
-  var requiresArtisan = ['dashboard-artisan.html', 'dashboard-artisan-v2.html'];
-  /* Pages nécessitant un rôle client */
-  var requiresClient = ['dashboard-client.html'];
+  async function runGuard() {
+    var page = pageName();
 
-  /* ── FIX-GUARD-4 : Éviter les boucles ───────────────────────── */
-  var REDIRECT_PAGES = ['auth.html', 'index.html'];
-  if (REDIRECT_PAGES.indexOf(page) !== -1) return; // déjà sur une page de sortie
+    /* Public pages do not need dashboard routing */
+    if (PROTECTED.indexOf(page) === -1) return;
 
-  /* ── Redirection si non connecté ─────────────────────────── */
-  if (requiresLogin.indexOf(page) !== -1 && !user) {
-    window.location.replace('auth.html');
-    return;
-  }
+    var clientWrapper = window.FixeoSupabaseClient;
 
-  /* ── FIX-GUARD-2 : Protection admin renforcée ──────────────── */
-  /* PHASE 1B: admin access requires BOTH fixeo_role=admin AND sessionStorage token.
-     localStorage.fixeo_admin alone is never sufficient. */
-  if (requiresAdmin.indexOf(page) !== -1) {
-    var isAdmin = (role === 'admin') && sess;
-    if (!isAdmin) {
-      window.location.replace('index.html');
+    if (
+      !clientWrapper ||
+      !clientWrapper.client ||
+      typeof clientWrapper.ready !== 'function'
+    ) {
+      window.location.replace('auth.html');
       return;
+    }
+
+    try {
+      await clientWrapper.ready();
+
+      var sb = clientWrapper.client;
+
+      /* 1. Supabase session is the authentication authority */
+      var sessionResult = await sb.auth.getSession();
+      var session =
+        sessionResult &&
+        sessionResult.data &&
+        sessionResult.data.session;
+
+      if (!session || !session.user) {
+        clearLocalIdentity();
+        window.location.replace('auth.html');
+        return;
+      }
+
+      /* 2. public.users.role is the ROLE authority */
+      var profileResult = await sb
+        .from('users')
+        .select('role, full_name, email, phone')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
+      if (
+        profileResult.error ||
+        !profileResult.data
+      ) {
+        console.error(
+          '[FixeoGuard V15] canonical user lookup failed',
+          profileResult.error
+        );
+        window.location.replace('auth.html');
+        return;
+      }
+
+      var canonicalRole = validRole(profileResult.data.role);
+
+      /*
+       * Never silently convert an invalid/missing role to client.
+       * Database integrity must decide the role.
+       */
+      if (!canonicalRole) {
+        console.error(
+          '[FixeoGuard V15] invalid canonical role',
+          profileResult.data.role
+        );
+        window.location.replace('auth.html');
+        return;
+      }
+
+      /* 3. Replace any stale localStorage identity */
+      persistCanonicalUser(
+        session.user,
+        profileResult.data
+      );
+
+      /* 4. V1 artisan URL always upgrades to V2 */
+      if (page === 'dashboard-artisan.html') {
+        window.location.replace(
+          canonicalRole === 'artisan'
+            ? 'dashboard-artisan-v2.html'
+            : ROLE_HOME[canonicalRole]
+        );
+        return;
+      }
+
+      /* 5. Every authenticated role has exactly ONE canonical dashboard */
+      var expectedPage = ROLE_HOME[canonicalRole];
+
+      if (page !== expectedPage) {
+        window.location.replace(expectedPage);
+        return;
+      }
+
+      console.info(
+        '[FixeoGuard V15] authorized:',
+        canonicalRole,
+        session.user.id
+      );
+
+    } catch (err) {
+      console.error('[FixeoGuard V15] fatal:', err);
+      window.location.replace('auth.html');
     }
   }
 
-  /* ── FIX-GUARD-3 : Redirection dashboard selon rôle ─────────── */
-  /* V1 artisan page: non-artisan sent to client; artisan sent to V2 */
-  if (page === 'dashboard-artisan.html' && user) {
-    if (role !== 'artisan' && role !== 'admin') {
-      window.location.replace('dashboard-client.html');
-      return;
-    }
-    /* Artisan landed on V1 (frozen) — silently upgrade to V2 */
-    window.location.replace('dashboard-artisan-v2.html');
-    return;
-  }
-  /* V2 artisan page: non-artisan sent to client dashboard */
-  if (page === 'dashboard-artisan-v2.html' && user && role !== 'artisan' && role !== 'admin') {
-    window.location.replace('dashboard-client.html');
-    return;
-  }
-  /* Client page: artisan redirected to V2 */
-  if (page === 'dashboard-client.html' && user && role === 'artisan') {
-    window.location.replace('dashboard-artisan-v2.html');
-    return;
-  }
+  runGuard();
 
 })();
