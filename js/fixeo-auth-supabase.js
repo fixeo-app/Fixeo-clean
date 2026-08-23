@@ -353,10 +353,40 @@ if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
     try { sessionStorage.removeItem('fixeo_admin_auth'); } catch (_) {}
   }
 
-  function _syncRoleFromMeta(user) {
-    var meta = user.user_metadata || {};
-    if (meta.role) localStorage.setItem('fixeo_role', meta.role);
+  async function _syncRoleFromMeta(user) {
+  if (!user || !isSB()) return;
+
+  try {
+    var result = await sb()
+      .from('users')
+      .select('role, full_name, phone')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (result.error || !result.data) {
+      console.error('[FixeoAuth] canonical role sync failed', result.error);
+      return;
+    }
+
+    var role = String(result.data.role || '').toLowerCase();
+
+    if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
+      console.error('[FixeoAuth] invalid canonical role', role);
+      return;
+    }
+
+    _setLocalSession({
+      id: user.id,
+      email: user.email || '',
+      role: role,
+      name: result.data.full_name || '',
+      phone: result.data.phone || ''
+    });
+
+  } catch (e) {
+    console.error('[FixeoAuth] canonical role sync error', e);
   }
+}
 
   /* ── Wire auth.html form handlers (secondary wiring path) ─── */
   /* Note: auth.html inline JS now calls FixeoAuth directly.
