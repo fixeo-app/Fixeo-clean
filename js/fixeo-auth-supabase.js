@@ -181,19 +181,40 @@ if (!user) {
       if (error) return { user: null, error: error };
       if (!user) return { user: null, error: { message: 'Connexion échouée.' } };
 
-      /* Fetch role + name from public.users (authenticated — RLS satisfied) */
-      var role     = 'client';
-      var fullName = '';
-      var _ref2 = await sb().from('users').select('role, full_name').eq('id', user.id).maybeSingle();
-      if (_ref2.data) {
-        role     = _ref2.data.role     || role;
-        fullName = _ref2.data.full_name || fullName;
-      } else {
-        /* Fallback: user_metadata set at signup */
-        var meta = user.user_metadata || {};
-        role     = meta.role      || role;
-        fullName = meta.full_name  || '';
-      }
+      /* Canonical role authority: public.users only */
+var role = '';
+var fullName = '';
+
+var _ref2 = await sb()
+  .from('users')
+  .select('role, full_name')
+  .eq('id', user.id)
+  .maybeSingle();
+
+if (_ref2.error || !_ref2.data) {
+  await sb().auth.signOut();
+
+  return {
+    user: null,
+    error: {
+      message: 'Impossible de vérifier votre profil FIXEO. Réessayez.'
+    }
+  };
+}
+
+role = String(_ref2.data.role || '').toLowerCase();
+fullName = _ref2.data.full_name || '';
+
+if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
+  await sb().auth.signOut();
+
+  return {
+    user: null,
+    error: {
+      message: 'Rôle utilisateur invalide. Contactez FIXEO.'
+    }
+  };
+}
 
       /* Store normalized phone (not synthetic email) when phone-first login */
       var storedId = resolved.isPhone ? (resolved.normalized || rawId) : email;
