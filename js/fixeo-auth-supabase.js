@@ -105,46 +105,41 @@
     if (isSB()) {
       await window.FixeoSupabaseClient.ready();
 
-      /* Step 1: Create auth user */
-      var _ref = await sb().auth.signUp({
-        email:    email,
-        password: password,
-        options: {
-          data: { full_name: fullName, phone: phone, role: role }
-        }
-      });
-      var user  = _ref.data && _ref.data.user;
-      var error = _ref.error;
-      if (error) return { user: null, error: error };
-      if (!user) return { user: null, error: { message: 'Inscription \u00e9chou\u00e9e. V\u00e9rifiez votre num\u00e9ro WhatsApp.' } };
+  /* Step 1: Create auth user.
+   public.users + public.profiles are created server-side
+   by public.handle_new_user(). */
+var _ref = await sb().auth.signUp({
+  email:    email,
+  password: password,
+  options: {
+    data: {
+      full_name: fullName,
+      phone:     phone,
+      role:      role,
+      city:      city
+    }
+  }
+});
 
-      /* Step 2: Insert into public.users (authenticated JWT auto-used by client) */
-      var _ref2 = await sb().from('users').insert([{
-        id:         user.id,
-        email:      email,
-        full_name:  fullName,
-        phone:      phone,
-        role:       role,
-        city:       city,
-        created_at: new Date().toISOString()
-      }]);
-      if (_ref2.error) {
-        /* Non-fatal: log and continue — user is created in auth.users */
-        log('signUp: public.users insert error: ' + _ref2.error.message, 'error');
-      }
+var user  = _ref.data && _ref.data.user;
+var error = _ref.error;
 
-      /* Step 3: Insert into public.profiles (requires public.users FK satisfied) */
-      var _ref3 = await sb().from('profiles').insert([{
-        id:         user.id,
-        role:       role,
-        full_name:  fullName,
-        phone:      phone,
-        city:       city,
-        created_at: new Date().toISOString()
-      }]);
-      if (_ref3.error) {
-        log('signUp: public.profiles insert error: ' + _ref3.error.message, 'error');
-      }
+if (error) return { user: null, error: error };
+
+if (!user) {
+  return {
+    user: null,
+    error: {
+      message: 'Inscription échouée. Vérifiez votre numéro WhatsApp.'
+    }
+  };
+}
+
+/*
+ * IMPORTANT:
+ * Never INSERT public.users or public.profiles from the browser here.
+ * public.handle_new_user() owns creation of both rows.
+ */
 
       /* Store phone (not synthetic email) as the user-facing identifier */
       var storedId = isPhoneSignup ? phone : email;
