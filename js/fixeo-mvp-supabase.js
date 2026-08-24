@@ -121,7 +121,13 @@
 
       try {
         var result = await FixeoSupabase.login(emailEl.value.trim().toLowerCase(), passEl.value);
-        var role = (result && result.profile && result.profile.role) || (result && result.user && result.user.user_metadata && result.user.user_metadata.role) || 'client';
+        var role = result && result.profile
+  ? String(result.profile.role || '').toLowerCase()
+  : '';
+
+if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
+  throw new Error('Rôle utilisateur canonique introuvable ou invalide.');
+}
         notify('success', 'Connexion réussie', 'Bienvenue sur votre espace Fixeo.');
         setTimeout(function () { redirectAfterRole(role); }, 900);
       } catch (error) {
