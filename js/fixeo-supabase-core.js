@@ -52,7 +52,12 @@
   function persistAuth(user, profile, session) {
     if (!user) return null;
 
-    var role = normalizeRole((profile && profile.role) || (user.user_metadata && user.user_metadata.role) || 'client');
+    var role = profile ? String(profile.role || '').toLowerCase() : '';
+
+if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
+  console.error('[FixeoSupabase] canonical role missing or invalid');
+  return null;
+}
     var name = getDisplayName(user, profile);
     var normalizedUser = {
       id: user.id,
@@ -277,31 +282,64 @@
   }
 
   async function syncUserFromSession(session) {
-    if (!session || !session.user) return null;
-    var user = session.user;
-    var profile = null;
+  if (!session || !session.user) return null;
 
-    try {
-      profile = await getProfile(user.id);
-      if (profile) {
-        var desiredRole = normalizeRole((user.user_metadata && user.user_metadata.role) || profile.role || 'client');
-        var desiredName = (user.user_metadata && user.user_metadata.full_name) || profile.full_name || '';
-        var desiredCity = (user.user_metadata && user.user_metadata.city) || profile.city || '';
-        var desiredPhone = (user.user_metadata && user.user_metadata.phone) || profile.phone || '';
-        if ((desiredRole && desiredRole !== profile.role) || (desiredName && desiredName !== profile.full_name) || (desiredCity && desiredCity !== profile.city) || (desiredPhone && desiredPhone !== profile.phone)) {
-          profile = await patchProfile(user.id, {
-            role: desiredRole,
-            full_name: desiredName,
-            city: desiredCity,
-            phone: desiredPhone
-          });
-        }
-      }
-    } catch (error) {}
+  var user = session.user;
+  var profile = null;
+  var canonicalUser = null;
+
+  try {
+    var sb = await getClient();
+
+    var canonicalResult = await sb
+      .from('users')
+      .select('id, role, full_name, email, phone, city')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (canonicalResult.error || !canonicalResult.data) {
+      throw canonicalResult.error || new Error('Canonical user missing');
+    }
+
+    canonicalUser = canonicalResult.data;
+
+    var canonicalRole = String(canonicalUser.role || '').toLowerCase();
+
+    if (['admin', 'artisan', 'client'].indexOf(canonicalRole) === -1) {
+      throw new Error('Invalid canonical role');
+    }
+
+    profile = await getProfile(user.id);
+
+    /*
+     * public.users.role is authoritative.
+     * Never restore role from auth.user_metadata.
+     */
+    if (profile) {
+      profile.role = canonicalRole;
+    } else {
+      profile = {
+        id: user.id,
+        role: canonicalRole,
+        full_name: canonicalUser.full_name || '',
+        city: canonicalUser.city || '',
+        phone: canonicalUser.phone || ''
+      };
+    }
 
     persistAuth(user, profile, session);
-    return { user: user, profile: profile };
+
+    return {
+      user: user,
+      profile: profile,
+      canonicalUser: canonicalUser
+    };
+
+  } catch (error) {
+    console.error('[FixeoSupabase] canonical session sync failed', error);
+    return null;
   }
+}
 
   async function requireAuth(expectedRole) {
     await init();
@@ -312,7 +350,11 @@
     var synced = await syncUserFromSession(session);
     var profile = synced ? synced.profile : null;
     var user = synced ? synced.user : session.user;
-    var role = normalizeRole((profile && profile.role) || (user.user_metadata && user.user_metadata.role) || 'client');
+   var role = profile ? String(profile.role || '').toLowerCase() : '';
+
+if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
+  throw new Error('Rôle utilisateur canonique introuvable ou invalide.');
+}
     if (expectedRole && role !== normalizeRole(expectedRole)) {
       throw new Error('Accès refusé pour ce rôle.');
     }
