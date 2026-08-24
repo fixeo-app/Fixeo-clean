@@ -102,18 +102,25 @@
     var clientWrapper = window.FixeoSupabaseClient;
 
     if (
-      !clientWrapper ||
-      !clientWrapper.client ||
-      typeof clientWrapper.ready !== 'function'
-    ) {
-      window.location.replace('auth.html');
-      return;
-    }
+  !clientWrapper ||
+  typeof clientWrapper.ready !== 'function'
+) {
+  window.location.replace('auth.html');
+  return;
+}
 
-    try {
-      await clientWrapper.ready();
+try {
+  var readyResult = await clientWrapper.ready();
 
-      var sb = clientWrapper.client;
+  var sb =
+    (readyResult && readyResult.client) ||
+    clientWrapper.client;
+
+  if (!sb) {
+    console.error('[FixeoGuard V15] Supabase client unavailable after ready()');
+    window.location.replace('auth.html');
+    return;
+  }
 
       /* 1. Supabase session is the authentication authority */
       var sessionResult = await sb.auth.getSession();
