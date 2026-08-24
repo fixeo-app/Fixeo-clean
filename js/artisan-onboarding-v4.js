@@ -1,4 +1,4 @@
-/**
+fixeo auth/**
  * artisan-onboarding-v4.js
  * 7C.12A.2 — Canonical Server-Authoritative New Artisan Registration
  *
