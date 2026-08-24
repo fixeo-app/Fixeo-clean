@@ -924,33 +924,7 @@
       overview.insertBefore(panel, overview.firstChild);
     }
 
-    /* Sidebar — add canonical nav links if not present */
-    var sidebarNav = document.querySelector('.sidebar-nav');
-    if (sidebarNav && !el('fxacs-sidebar-link-claims')) {
-      var section = document.createElement('div');
-      section.className = 'sidebar-section-label';
-      section.textContent = 'Canonical';
-      sidebarNav.appendChild(section);
-
-      var links = [
-        { id: 'fxacs-sidebar-link-claims',    section: 'fxacs-claims',   icon: '⏳', label: 'Claims artisans',  badge: 'fxacs-claims-badge' },
-        { id: 'fxacs-sidebar-link-artisans',  section: 'fxacs-artisans', icon: '👷', label: 'Lifecycle artisans', badge: null },
-        { id: 'fxacs-sidebar-link-requests',  section: 'fxacs-requests', icon: '📋', label: 'Demandes clients',   badge: null },
-        { id: 'fxacs-sidebar-link-missions',  section: 'fxacs-missions', icon: '🔧', label: 'Missions',           badge: null },
-        { id: 'fxacs-sidebar-link-quotes',    section: 'fxacs-quotes',   icon: '💬', label: 'Devis',              badge: null }
-      ];
-
-      links.forEach(function(lnk) {
-        var a = document.createElement('a');
-        a.className = 'sidebar-link';
-        a.id = lnk.id;
-        a.setAttribute('onclick', 'adminSection("' + lnk.section + '")');
-        a.innerHTML = '<span class="icon">' + lnk.icon + '</span><span>' + lnk.label + '</span>'
-          + (lnk.badge ? '<span class="sidebar-count pending" id="' + lnk.badge + '" style="display:none">0</span>' : '');
-        sidebarNav.appendChild(a);
-      });
-    }
-
+   
     /* Inject canonical sections into main content */
     var main = el('main-content');
     if (main) {
