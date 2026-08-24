@@ -33,7 +33,11 @@
     } catch (error) {}
 
     const name = safeTrim(localStorage.getItem('user_name') || localStorage.getItem('fixeo_user_name') || jsonUser?.name);
-    const role = safeTrim(localStorage.getItem('user_role') || localStorage.getItem('fixeo_role') || jsonUser?.role || 'client');
+    const role = safeTrim(localStorage.getItem('fixeo_role')).toLowerCase();
+
+if (!['admin', 'artisan', 'client'].includes(role)) {
+  return null;
+}
     const job = safeTrim(localStorage.getItem('user_job') || jsonUser?.job);
     const city = safeTrim(localStorage.getItem('user_city') || jsonUser?.city);
     const phone = safeTrim(localStorage.getItem('user_phone') || jsonUser?.phone || localStorage.getItem('fixeo_user'));
