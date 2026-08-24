@@ -12,11 +12,12 @@
   };
 
   var PROTECTED = [
-    'admin.html',
-    'dashboard-client.html',
-    'dashboard-artisan.html',
-    'dashboard-artisan-v2.html'
-  ];
+  'admin.html',
+  'dashboard-client.html',
+  'dashboard-artisan.html',
+  'dashboard-artisan-v2.html',
+  'onboarding-artisan.html'
+];
 
   function pageName() {
     return window.location.pathname.split('/').pop() || 'index.html';
@@ -195,13 +196,23 @@ try {
         }
 
         if (!artisanResult.data) {
-          console.info(
-            '[FixeoGuard V15] artisan onboarding required',
-            session.user.id
-          );
-          window.location.replace('onboarding-artisan.html');
-          return;
-        }
+  console.info(
+    '[FixeoGuard V15] artisan onboarding required',
+    session.user.id
+  );
+
+  if (page === 'onboarding-artisan.html') {
+    return;
+  }
+
+  window.location.replace('onboarding-artisan.html');
+  return;
+}
+
+if (page === 'onboarding-artisan.html') {
+  window.location.replace('dashboard-artisan-v2.html');
+  return;
+}
       }
 
       /* 4. V1 artisan URL always upgrades to V2 */
