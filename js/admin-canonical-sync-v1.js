@@ -1048,8 +1048,6 @@
     /* Initial sync */
     _syncAll();
 
-    /* Auto-refresh every 60s */
-    setInterval(_syncAll, 60000);
 
     log('Canonical Sync V1 initialized (' + VERSION + ')');
   }
