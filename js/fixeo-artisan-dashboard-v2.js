@@ -29,9 +29,7 @@
    * Identity: artisans WHERE owner_user_id=auth.uid() (7C.12A.1: phone_public fallback removed)
    * ─────────────────────────────────────────────────────────────────────────── */
   var VERSION = 'v2i';
-                         availability gate on requests section, cleaner avail banner */
-                         dispatch, toast API exposure, cockpit section activation */
-
+                        
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
     session:        null,   /* Supabase session */
