@@ -954,7 +954,7 @@
     });
 
     /* Section change hook — render appropriate cockpit section */
-    document.addEventListener('fixeo:section:changed', function(e) {
+    window.addEventListener('fixeo:section:changed', function(e) {
       var section = e && e.detail && e.detail.section;
       if (section) {
         /* Loading state first */
