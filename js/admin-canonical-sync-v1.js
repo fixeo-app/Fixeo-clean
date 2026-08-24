@@ -92,17 +92,49 @@
   }
 
   /* ── Supabase client resolver ───────────────────────────── */
-  function getSb() {
-    if (window.FixeoSupabaseClient && typeof window.FixeoSupabaseClient.getClient === 'function') {
-      return window.FixeoSupabaseClient.getClient();
-    }
-    if (window.FixeoSupabaseCore && typeof window.FixeoSupabaseCore.getClient === 'function') {
-      return window.FixeoSupabaseCore.getClient();
-    }
-    /* Fallback: raw client from supabase-client.js */
-    if (window._fixeoSupabaseClient) return Promise.resolve(window._fixeoSupabaseClient);
-    return Promise.reject(new Error('No Supabase client available'));
+ async function getSb() {
+  var wrapper = window.FixeoSupabaseClient;
+
+  /* Canonical FIXEO Supabase contract */
+  if (wrapper && typeof wrapper.ready === 'function') {
+    var readyResult = await wrapper.ready();
+
+    var client =
+      (readyResult && readyResult.client) ||
+      wrapper.client;
+
+    if (client) return client;
   }
+
+  /* Legacy compatibility only */
+  if (wrapper && typeof wrapper.getClient === 'function') {
+    var legacyClient = await wrapper.getClient();
+    if (legacyClient) return legacyClient;
+  }
+
+  if (window.FixeoSupabaseCore) {
+    if (typeof window.FixeoSupabaseCore.ready === 'function') {
+      var coreReady = await window.FixeoSupabaseCore.ready();
+      var coreClient =
+        (coreReady && coreReady.client) ||
+        window.FixeoSupabaseCore.client;
+
+      if (coreClient) return coreClient;
+    }
+
+    if (typeof window.FixeoSupabaseCore.getClient === 'function') {
+      var legacyCoreClient = await window.FixeoSupabaseCore.getClient();
+      if (legacyCoreClient) return legacyCoreClient;
+    }
+  }
+
+  /* Last-resort legacy raw client */
+  if (window._fixeoSupabaseClient) {
+    return await Promise.resolve(window._fixeoSupabaseClient);
+  }
+
+  throw new Error('No Supabase client available');
+}
 
   /* ── State ───────────────────────────────────────────────── */
   var _state = {
