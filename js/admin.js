@@ -329,10 +329,7 @@ function adminSection(name) {
   });
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
   event?.target?.closest('.sidebar-link')?.classList.add('active');
-  /* ── V20 : charger le module artisans à la demande ── */
-  if (name === 'artisans' && typeof initArtisansAdmin === 'function') {
-    setTimeout(initArtisansAdmin, 50);
-  }
+ 
 }
 
 /* ── DATA STORES ─────────────────────────────────────────────── */
@@ -1551,10 +1548,7 @@ function adminSection(section) {
     }
   }
 
-  /* ── V20 : charger le module artisans à la demande ── */
-  if (section === 'artisans' && typeof initArtisansAdmin === 'function') {
-    setTimeout(initArtisansAdmin, 50);
-  }
+ 
   /* ── P2 : modération artisans (additive, safe no-op if not loaded) ── */
   if (section === 'artisans' && typeof window._fxAmp2Refresh === 'function') {
     setTimeout(window._fxAmp2Refresh, 300);
