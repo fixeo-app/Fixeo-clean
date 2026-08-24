@@ -39,11 +39,13 @@ const _ADMIN_DISPLAY   = 'Admin Fixeo';
     /* Cas 4 (preserved): any user with role=admin but no active sessionStorage
        admin session → force role back to client.
        This prevents a stale fixeo_role=admin from surviving logout. */
-    const hasSessAdminAuth = sessionStorage.getItem('fixeo_admin_auth') === '1';
-    if (storedUser && storedRole === 'admin' && !hasSessAdminAuth) {
-      localStorage.setItem('fixeo_role', 'client');
-      localStorage.setItem('role',       'client');
-    }
+   const hasSessAdminAuth = sessionStorage.getItem('fixeo_admin_auth') === '1';
+
+if (storedUser && storedRole === 'admin' && !hasSessAdminAuth) {
+  console.warn(
+    '[Fixeo Admin] admin role present without session flag; waiting for canonical guard.'
+  );
+}
   } catch (e) {
     console.warn('[Fixeo Admin] Startup guard error:', e.message);
   }
@@ -119,13 +121,26 @@ async function _fxAdminValidateSession() {
     if (!session.user)          { _fxAdminRevoke('no-user');        return false; }
     if (!session.user.email)    { _fxAdminRevoke('no-email');       return false; }
 
-    /* Step 4: email must match exactly */
-    if (session.user.email !== _ADMIN_EMAIL) {
-      _fxAdminRevoke('wrong-email:' + session.user.email);
-      return false;
-    }
+    /* Step 4: canonical admin role must come from public.users */
+const { data: canonicalUser, error: roleError } = await client
+  .from('users')
+  .select('role')
+  .eq('id', session.user.id)
+  .maybeSingle();
 
-    return true; /* ALL CHECKS PASS */
+if (roleError || !canonicalUser) {
+  _fxAdminRevoke('canonical-user-missing');
+  return false;
+}
+
+const canonicalRole = String(canonicalUser.role || '').toLowerCase();
+
+if (canonicalRole !== 'admin') {
+  _fxAdminRevoke('canonical-role-not-admin:' + canonicalRole);
+  return false;
+}
+
+return true; /* ALL CHECKS PASS */
   } catch (e) {
     _fxAdminRevoke('exception:' + (e.message || e));
     return false;
@@ -203,14 +218,10 @@ async function checkAdminAccess() {
        Step C: Validate live session via _fxAdminValidateSession().
        Step D: Open admin app only after all checks pass.
     ─────────────────────────────────────────────────────────────────── */
-    /* Step A: set Phase 1B sessionStorage token */
-    sessionStorage.setItem('fixeo_admin_auth', '1');
-    localStorage.setItem('fixeo_user',      _ADMIN_EMAIL);
-    localStorage.setItem('fixeo_user_name', _ADMIN_DISPLAY);
-    localStorage.setItem('fixeo_role',      'admin');
-    localStorage.setItem('role',            'admin');
-    localStorage.setItem('fixeo_logged',    '1');
-    localStorage.removeItem('fixeo_admin');
+    /* Step A: temporary gate only.
+ * Role authority comes from public.users after Supabase validation. */
+sessionStorage.setItem('fixeo_admin_auth', '1');
+localStorage.removeItem('fixeo_admin');
 
     /* Step B: sign in to Supabase so a real JWT is written to fixeo_supabase_session */
     let _supabaseSignInOk = false;
