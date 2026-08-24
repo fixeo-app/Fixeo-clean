@@ -174,6 +174,35 @@ try {
         session.user,
         profileResult.data
       );
+    /*
+       * 3B. Artisan account must own a canonical public.artisans row
+       * before accessing the artisan dashboard.
+       */
+      if (canonicalRole === 'artisan') {
+        var artisanResult = await sb
+          .from('artisans')
+          .select('id')
+          .eq('owner_user_id', session.user.id)
+          .maybeSingle();
+
+        if (artisanResult.error) {
+          console.error(
+            '[FixeoGuard V15] artisan ownership lookup failed',
+            artisanResult.error
+          );
+          window.location.replace('auth.html');
+          return;
+        }
+
+        if (!artisanResult.data) {
+          console.info(
+            '[FixeoGuard V15] artisan onboarding required',
+            session.user.id
+          );
+          window.location.replace('onboarding-artisan.html');
+          return;
+        }
+      }
 
       /* 4. V1 artisan URL always upgrades to V2 */
       if (page === 'dashboard-artisan.html') {
