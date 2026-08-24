@@ -849,13 +849,19 @@ async function handleLogin(e) {
   /* Phase 1C routing fix: admin@fixeo.ma must always route to admin.html
      regardless of what public.users returns (account may lack a row or have role=client).
      Also write sessionStorage.fixeo_admin_auth='1' so Phase 1C DCL on admin.html passes. */
-  const role      = email === _ADMIN_EMAIL ? 'admin' : ((user && user.role) || 'client');
-  if (role === 'admin') {
-    sessionStorage.setItem('fixeo_admin_auth', '1');
-    localStorage.setItem('fixeo_role',  'admin');
-    localStorage.setItem('role',        'admin');
-    localStorage.removeItem('fixeo_admin'); /* Phase 1B: never persist to localStorage */
-  }
+
+  const role = user
+  ? String(user.role || '').toLowerCase()
+  : '';
+
+if (!['admin', 'artisan', 'client'].includes(role)) {
+  _resetLoginBtn();
+  _showLoginError('Impossible de vérifier votre rôle FIXEO.');
+  return;
+}
+  
+    /* Phase 1B: never persist to localStorage */
+  
   const name      = (user && user.full_name) || (email.indexOf('@') > -1 && !(_fxPhone && _fxPhone.isSyntheticEmail(email)) ? email.split('@')[0] : rawId);
   const roleLabel = role === 'artisan' ? 'Artisan' : (role === 'admin' ? 'Admin' : 'Client');
   notifications.success('Bienvenue\u00A0' + name + '\u00A0!', '\u2705 Connexion r\u00E9ussie en tant que ' + roleLabel + '. Redirection\u2026');
