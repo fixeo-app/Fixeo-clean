@@ -905,7 +905,7 @@
   }
 
   function _bindCockpitEvents() {
-    document.addEventListener('change', function(e) {
+    window.addEventListener('fixeo:section:changed', function(e) {
       var t = e.target;
       if (t && t.dataset.action === 'photo-change')   _handlePhotoChange(t);
       if (t && t.dataset.action === 'gallery-upload') _handleGalleryUpload(t);
