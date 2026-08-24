@@ -224,34 +224,57 @@
 
   /* ── FETCH — Service Requests ───────────────────────────── */
   async function _fetchRequests(sb) {
-    var res = await sb.from('service_requests')
-      .select('id,service_slug,city,status,description,created_at,updated_at,is_urgent,client_name,amount_mad')
-      .neq('status', 'cancelled')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    if (res.error) { warn('fetchRequests error', res.error.message); return []; }
-    return res.data || [];
+  var res = await sb
+    .from('service_requests')
+    .select(
+      'id,client_profile_id,service_category,city,description,budget_range,status,created_at,client_phone,urgency,target_artisan_id,commission_amount,commission_paid,commission_status'
+    )
+    .neq('status', 'cancelled')
+    .order('created_at', { ascending: false })
+    .limit(100);
+
+  if (res.error) {
+    warn('fetchRequests error', res.error.message);
+    return [];
   }
 
-  /* ── FETCH — Missions ───────────────────────────────────── */
-  async function _fetchMissions(sb) {
-    var res = await sb.from('missions')
-      .select('id,request_id,artisan_id,status,agreed_price,final_price,created_at,updated_at,started_at,completed_at')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    if (res.error) { warn('fetchMissions error', res.error.message); return []; }
-    return res.data || [];
+  return res.data || [];
+}
+ /* ── FETCH — Missions ─────────────────────────────────────── */
+async function _fetchMissions(sb) {
+  var res = await sb
+    .from('missions')
+    .select(
+      'id,request_id,client_profile_id,artisan_profile_id,agreed_price,commission_amount,status,created_at,accepted_at,final_price'
+    )
+    .order('created_at', { ascending: false })
+    .limit(100);
+
+  if (res.error) {
+    warn('fetchMissions error', res.error.message);
+    return [];
   }
 
-  /* ── FETCH — Quotes ─────────────────────────────────────── */
-  async function _fetchQuotes(sb) {
-    var res = await sb.from('quotes')
-      .select('id,request_id,artisan_id,status,price,message,created_at')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    if (res.error) { warn('fetchQuotes error', res.error.message); return []; }
-    return res.data || [];
+  return res.data || [];
+}
+
+ /* ── FETCH — Quotes ───────────────────────────────────────── */
+async function _fetchQuotes(sb) {
+  var res = await sb
+    .from('quotes')
+    .select(
+      'id,request_id,artisan_profile_id,proposed_price,message,status,created_at'
+    )
+    .order('created_at', { ascending: false })
+    .limit(100);
+
+  if (res.error) {
+    warn('fetchQuotes error', res.error.message);
+    return [];
   }
+
+  return res.data || [];
+}
 
   /* ── MASTER FETCH ────────────────────────────────────────── */
   async function _syncAll() {
