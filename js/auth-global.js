@@ -279,7 +279,12 @@
 
   function setActiveUser(payload) {
     payload = payload || {};
-    var role = normalizeRole(payload.role || payload.user_role || payload.userRole || 'client');
+    var role = safeTrim(localStorage.getItem('fixeo_role')).toLowerCase();
+
+if (VALID_ROLES.indexOf(role) === -1) {
+  console.error('[FixeoAuthSession] canonical role missing or invalid');
+  return null;
+}
     var name = safeTrim(payload.name || payload.full_name || payload.display_name);
     var email = safeTrim(payload.email || payload.phone || payload.user || payload.id);
     var avatar = safeTrim(payload.avatar);
