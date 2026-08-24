@@ -137,6 +137,10 @@
       "dest": "/api/admin-verify-artisan-fn/index.js"
     },
     {
+  "src": "^/api/admin/requests/assign$",
+  "dest": "/api/admin-targeted-dispatch-fn/index.js"
+},
+    {
       "src": "^/api/admin/missions/settle$",
       "dest": "/api/admin-settle-mission-fn/index.js"
     },
