@@ -138,7 +138,12 @@
 
   function persistRequiredProfile(profile) {
     const existingLogged = localStorage.getItem('user_logged');
-    const roleToKeep = safeTrim(localStorage.getItem('user_role')) || profile.role || 'artisan';
+    const roleToKeep = safeTrim(localStorage.getItem('fixeo_role')).toLowerCase();
+
+if (!['admin', 'artisan', 'client'].includes(roleToKeep)) {
+  console.error('[Fixeo Artisan Existing] canonical role missing or invalid');
+  return;
+}
 
     localStorage.setItem('user_name', profile.name);
     localStorage.setItem('user_job', profile.job);
@@ -150,7 +155,6 @@
 
     if (existingLogged === 'true') {
       localStorage.setItem('fixeo_user_name', profile.name);
-      localStorage.setItem('fixeo_role', roleToKeep);
       localStorage.setItem('fixeo_avatar', profile.avatar);
       if (profile.phone) {
         localStorage.setItem('fixeo_user', profile.phone);
