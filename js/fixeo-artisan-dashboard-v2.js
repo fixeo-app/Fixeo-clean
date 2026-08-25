@@ -300,26 +300,107 @@
   }
 
   /* ── KPI COMPUTATION ──────────────────────────────────────── */
-  function _computeKPIs() {
-    var assigned   = _state.myMissions.filter(function(m) {
-      var st = (m._request && m._request.status) || m.status || '';
-      return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'en_cours';
-    }).length;
+function _computeKPIs() {
+  var missions = _state.myMissions || [];
 
-    var completed  = _state.myMissions.filter(function(m) {
-      var st = m._request && m._request.status;
-      return st === 'validated' || st === 'completed';
-    }).length;
+  /*
+   * Active:
+   * - service_request carries the detailed operational state
+   * - mission='pending' remains the canonical accepted mission state
+   *   while the intervention is active
+   */
+  var assigned = missions.filter(function(m) {
+    var reqSt = String(
+      (m._request && m._request.status) || ''
+    ).toLowerCase().trim();
 
-    var validated  = _state.myMissions.filter(function(m) {
-      var st = m._request && m._request.status;
-      return st === 'validated';
-    }).length;
+    var missionSt = String(
+      m.status || ''
+    ).toLowerCase().trim();
 
-    var available  = _state.openRequests.length;
+    return (
+      reqSt === 'pending' ||
+      reqSt === 'assigned' ||
+      reqSt === 'in_progress' ||
+      reqSt === 'en_cours' ||
+      missionSt === 'pending'
+    );
+  }).length;
 
-    return { assigned: assigned, completed: completed, available: available, revenue: validated };
-  }
+  /*
+   * Completed:
+   * service_requests.completed is canonical when readable.
+   * missions.done is the durable fallback once the artisan
+   * has marked the intervention completed.
+   */
+  var completed = missions.filter(function(m) {
+    var reqSt = String(
+      (m._request && m._request.status) || ''
+    ).toLowerCase().trim();
+
+    var missionSt = String(
+      m.status || ''
+    ).toLowerCase().trim();
+
+    return (
+      reqSt === 'completed' ||
+      reqSt === 'validated' ||
+      missionSt === 'done' ||
+      missionSt === 'validated'
+    );
+  }).length;
+
+  /*
+   * Validated:
+   * Count only genuinely validated missions/requests.
+   */
+  var validated = missions.filter(function(m) {
+    var reqSt = String(
+      (m._request && m._request.status) || ''
+    ).toLowerCase().trim();
+
+    var missionSt = String(
+      m.status || ''
+    ).toLowerCase().trim();
+
+    return (
+      reqSt === 'validated' ||
+      missionSt === 'validated'
+    );
+  }).length;
+
+  /*
+   * Available:
+   * generic open requests + targeted offered missions,
+   * without counting the same request twice.
+   */
+  var offered = missions.filter(function(m) {
+    return String(m.status || '').toLowerCase().trim() === 'offered';
+  });
+
+  var offeredRequestIds = new Set(
+    offered
+      .map(function(m) {
+        return String(m.request_id || '');
+      })
+      .filter(Boolean)
+  );
+
+  var genericAvailable = (_state.openRequests || []).filter(function(req) {
+    return !offeredRequestIds.has(String(req.id || ''));
+  });
+
+  var available =
+    offered.length +
+    genericAvailable.length;
+
+  return {
+    assigned: assigned,
+    completed: completed,
+    available: available,
+    revenue: validated
+  };
+}
 
   /* ── RENDER: SKELETON ─────────────────────────────────────── */
   function _renderSkeleton() {
@@ -905,9 +986,23 @@ function _renderAvailable() {
     if (!sec) return;
 
     var hist = _state.myMissions.filter(function(m) {
-      var st = m._request && m._request.status;
-      return st === 'validated' || st === 'cancelled';
-    });
+  var reqSt = String(
+    (m._request && m._request.status) || ''
+  ).toLowerCase().trim();
+
+  var missionSt = String(
+    m.status || ''
+  ).toLowerCase().trim();
+
+  return (
+    reqSt === 'completed' ||
+    reqSt === 'validated' ||
+    reqSt === 'cancelled' ||
+    missionSt === 'done' ||
+    missionSt === 'validated' ||
+    missionSt === 'cancelled'
+  );
+});
 
     var html = '<div class="fxa-section-head"><h2>📁 Historique</h2>'
       + '<span class="fxa-section-count">' + hist.length + '</span>'
