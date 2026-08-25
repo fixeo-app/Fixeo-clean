@@ -200,12 +200,35 @@
     if (!Array.isArray(raw) || raw.length === 0) return;
 
     var tenMinAgo = Date.now() - 10 * 60 * 1000;
-    var unsynced  = raw.filter(function (r) {
-      if (r.supabase_request_id) return false; /* already synced */
-      /* Check created_at timestamp */
-      var ts = r.created_at ? new Date(r.created_at).getTime() : 0;
-      return ts >= tenMinAgo;
-    });
+    var unsynced = raw.filter(function (r) {
+  if (r.supabase_request_id) {
+    return false; /* already synced */
+  }
+
+  /*
+   * RAFI emergency requests are already persisted canonically
+   * server-side through POST /api/urgent-request.
+   *
+   * Never let confirmation.html create a second service_requests row
+   * from the local compatibility record written by fx-request-flow-v4.
+   *
+   * Standard RAFI and reservation flows are NOT affected.
+   */
+  if (
+    safeStr(r.source) === 'fxrf4-v5c' &&
+    safeStr(r.mode) === 'emergency'
+  ) {
+    return false;
+  }
+
+  /* Check created_at timestamp */
+  var ts =
+    r.created_at
+      ? new Date(r.created_at).getTime()
+      : 0;
+
+  return ts >= tenMinAgo;
+});
 
     if (unsynced.length === 0) {
       return; /* nothing to sync */
