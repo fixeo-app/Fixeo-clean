@@ -1341,7 +1341,7 @@
       description:  st.description  || '',
       city:         st.city         || '',
       phone:        st.phone        || '',
-      tracking_ref: (saved && saved.tracking_ref) || '',
+      tracking_ref: (saved && saved.tracking_ref) || st.ref || '',
       urgency:      'now',
       mode:         'emergency',
       source:       'fxrf4-v5c',
