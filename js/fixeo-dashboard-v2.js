@@ -951,27 +951,41 @@
        * .maybeSingle() returns {data: null, error: null} on 0 rows instead of throwing.
        * We then detect the null and surface a safe error message without a JS exception.
        */
-      var res = await sb.from('service_requests')
-        .update({ status: 'validated' })
-        .eq('id', requestId)
-        .select('id, status')
-        .maybeSingle();
+      var rpcRes = await sb.rpc('confirm_completed_mission', {
+  p_request_id: requestId
+});
 
-      if (res.error) throw res.error;
+if (rpcRes.error) throw rpcRes.error;
 
-      /* 0 rows updated — RLS blocking the write or UUID mismatch */
-      if (res.data === null) {
-        throw new Error(
-          'La mise \u00e0 jour a \u00e9t\u00e9 bloqu\u00e9e (droits insuffisants ou demande introuvable). ' +
-          'Veuillez contacter le support Fixeo.'
-        );
-      }
+var result = rpcRes.data || {};
 
-      /* Verify the DB actually committed the correct value */
-      if (res.data.status !== 'validated') {
-        throw new Error('La mise \u00e0 jour n\u2019a pas \u00e9t\u00e9 persist\u00e9e. Veuillez r\u00e9essayer.');
-      }
+if (!result.ok) {
+  var reason = String(result.reason || '');
 
+  if (reason === 'unauthenticated') {
+    throw new Error('Votre session a expiré. Reconnectez-vous.');
+  }
+
+  if (reason === 'request_not_found_or_not_owned') {
+    throw new Error('Cette demande est introuvable ou ne vous appartient pas.');
+  }
+
+  if (reason === 'request_not_completed') {
+    throw new Error('Cette intervention ne peut pas encore être confirmée.');
+  }
+
+  if (reason === 'completed_mission_not_found' || reason === 'mission_not_found') {
+    throw new Error('La mission associée est introuvable.');
+  }
+
+  if (reason === 'atomicity_error') {
+    throw new Error('La validation n’a pas pu être enregistrée complètement. Veuillez réessayer.');
+  }
+
+  throw new Error('Impossible de confirmer cette intervention.');
+}
+
+      
       _toast('\u2705 Intervention confirm\u00e9e\u00a0! Merci pour votre confiance.', 'success');
       await _refresh();    /* re-fetch → computePipeline maps 'validated' → COMPLETED → CTA gone */
     } catch (e) {
