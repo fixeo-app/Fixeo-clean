@@ -226,6 +226,7 @@
     return {
       id: now,
       source: String(payload?.source || '').trim(),
+      mode: String(payload?.mode || '').trim(),
       reservation_ref: String(payload?.reservation_ref || '').trim(),
       service: String(payload?.service || '').trim() || 'Service à préciser',
       description: String(payload?.description || '').trim() || 'Description à préciser',
