@@ -47,6 +47,7 @@
  *   SUPABASE_SERVICE_ROLE_KEY — service_role JWT (secret, server-side only)
  */
 'use strict';
+var crypto = require('crypto');
 
 /* ── In-memory rate limiter (per Vercel instance) ── */
 var _rateMap = {};
@@ -212,6 +213,16 @@ function _str(v, max) {
 function _normalizePhone(raw) {
   return raw.replace(/\s+/g, ' ').trim();
 }
+function _generateGuestToken() {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+function _hashGuestToken(token) {
+  return crypto
+    .createHash('sha256')
+    .update(String(token || ''), 'utf8')
+    .digest('hex');
+}
 
 /* ── Main handler ── */
 module.exports = async function handler(req, res) {
@@ -293,6 +304,13 @@ module.exports = async function handler(req, res) {
       console.warn('[urgent-request-v2b] X-Fxauth-Token present but resolution failed — inserting with NULL');
     }
   }
+  var guestToken = null;
+var guestTokenHash = null;
+
+if (!clientProfileId) {
+  guestToken = _generateGuestToken();
+  guestTokenHash = _hashGuestToken(guestToken);
+}
 
   /* Build service_requests row.
    * All 7C.11C columns used:
@@ -310,6 +328,9 @@ module.exports = async function handler(req, res) {
     urgency:           urgency,                   /* 7C.11C column — always 'now' for emergency */
     status:            'new',                     /* server-authoritative */
     created_at:        new Date().toISOString(),
+    tracking_ref:      trackingRef || null,
+     guest_token_hash:  guestTokenHash,
+    
     /* idempotency_key intentionally omitted — urgent V1 (trackingRef is client-only) */
   };
 
@@ -379,6 +400,7 @@ module.exports = async function handler(req, res) {
     ok:              true,
     ref:             trackingRef || null,
     id:              serverId    || null,
+    guest_token: guestToken,
     dispatch_attempted: !!serverId,
     dispatch_ok:     !!(dispatchOutcome && dispatchOutcome.ok),
     dispatch_reason: (dispatchOutcome && dispatchOutcome.dispatch_result && dispatchOutcome.dispatch_result.reason) || null,
