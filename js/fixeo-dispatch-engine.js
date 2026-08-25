@@ -622,89 +622,306 @@
   /* ── PHASE 3: ONE-CLICK ASSIGNMENT ──────────────────────────────────── */
 
   /**
-   * assignArtisan(reqId, artisanId, artisanName, artisanPhone, artisanCat)
-   * 1. UPDATE service_requests.status = 'assigned'
-   * 2. INSERT missions row
-   * 3. Refresh admin UI
-   */
+ * assignArtisan(reqId, artisanId, artisanName, artisanPhone, artisanCat)
+ *
+ * Canonical Admin targeted dispatch:
+ * 1. Resolve authenticated Admin session
+ * 2. POST request_id + artisan_id to /api/admin/requests/assign
+ * 3. Server validates Admin role and calls admin_targeted_dispatch_v1()
+ * 4. Canonical mission remains 'offered' until artisan accepts
+ * 5. Refresh Admin UI
+ *
+ * No direct browser writes to service_requests or missions.
+ */
   async function assignArtisan(reqId, artisanId, artisanName, artisanPhone, artisanCat) {
-    if (!reqId || !artisanId || !artisanName) {
-      _toast('Données manquantes pour l\'assignation', 'error');
-      return { ok: false, reason: 'missing_params' };
-    }
-
-    var fsc = window.FixeoSupabaseClient;
-    if (!fsc || !fsc.CONFIGURED) {
-      _toast('Supabase non configuré — assignation impossible', 'error');
-      return { ok: false, reason: 'no_supabase' };
-    }
-
-    _toast('Assignation en cours…', 'info');
-
-    try {
-      await fsc.ready();
-      var sb = fsc.client;
-      if (!sb) throw new Error('Supabase client unavailable');
-
-      // Step 1: UPDATE service_requests status → assigned
-      var _r1 = await sb.from('service_requests')
-        .update({ status: 'assigned' })
-        .eq('id', reqId);
-      if (_r1.error) {
-        console.warn('[FixeoDispatch] service_requests update error:', _r1.error.message);
-        // Non-blocking — continue with missions insert
-      }
-
-      // Step 2: INSERT into missions
-      // Note: client_profile_id fetched from the request row
-      var _r2 = await sb.from('service_requests')
-        .select('client_profile_id')
-        .eq('id', reqId)
-        .maybeSingle();
-      var clientProfileId = (_r2.data && _r2.data.client_profile_id) || null;
-
-      var missionRow = {
-        request_id:         reqId,
-        artisan_profile_id: artisanId,
-        client_profile_id:  clientProfileId,
-        status:             'pending',
-        agreed_price:       0
-      };
-      var _r3 = await sb.from('missions').insert([missionRow]);
-      if (_r3.error) {
-        console.warn('[FixeoDispatch] missions INSERT error:', _r3.error.message);
-        // Non-blocking — assignment still recorded on service_requests
-      }
-
-      // Step 3: Sync to localStorage via existing bridge
-      _patchLocalRequest(reqId, {
-        status:              'acceptée',
-        assigned_artisan:    artisanName,
-        assigned_artisan_id: artisanId,
-        artisan_phone:       artisanPhone || '',
-        artisan_category:    artisanCat   || '',
-        accepted_at:         new Date().toISOString()
-      });
-
-      // Step 4: Refresh all admin sections
-      try {
-        window.dispatchEvent(new CustomEvent('fixeo:admin:refresh', { detail: { source: 'dispatch' } }));
-        window.dispatchEvent(new CustomEvent('fixeo:client-request-updated', { detail: { id: reqId } }));
-      } catch(e) {}
-
-      // Step 5: Re-render suggestions after short delay
-      setTimeout(refreshSuggestions, 600);
-
-      _toast('✅ ' + artisanName + ' assigné avec succès', 'success');
-      return { ok: true };
-
-    } catch(err) {
-      console.warn('[FixeoDispatch] assignArtisan error:', err && err.message);
-      _toast('Erreur lors de l\'assignation — voir console', 'error');
-      return { ok: false, reason: err && err.message };
-    }
+  if (!reqId || !artisanId || !artisanName) {
+    _toast('Données manquantes pour l\'assignation', 'error');
+    return { ok: false, reason: 'missing_params' };
   }
 
+  var fsc = window.FixeoSupabaseClient;
+
+  if (!fsc || !fsc.CONFIGURED) {
+    _toast('Supabase non configuré — assignation impossible', 'error');
+    return { ok: false, reason: 'no_supabase' };
+  }
+
+  _toast('Envoi de l\'offre à ' + artisanName + '…', 'info');
+
+  try {
+    await fsc.ready();
+
+    var sb = fsc.client;
+
+    if (!sb) {
+      throw new Error('Supabase client unavailable');
+    }
+
+    /* Resolve authenticated Admin session */
+    var sessionRes = await sb.auth.getSession();
+
+    if (sessionRes.error) {
+      throw new Error(
+        sessionRes.error.message || 'Session unavailable'
+      );
+    }
+
+    var session =
+      sessionRes &&
+      sessionRes.data &&
+      sessionRes.data.session;
+
+    var token =
+      session &&
+      session.access_token;
+
+    if (!token) {
+      _toast(
+        'Session Admin expirée — reconnectez-vous',
+        'error'
+      );
+
+      return {
+        ok: false,
+        reason: 'unauthorized'
+      };
+    }
+
+    /*
+     * Canonical Admin targeted dispatch.
+     *
+     * Browser performs NO direct write to:
+     *   service_requests
+     *   missions
+     *
+     * Server API:
+     *   - validates Admin identity
+     *   - uses service_role server-side
+     *   - calls admin_targeted_dispatch_v1()
+     */
+    var res = await fetch(
+      '/api/admin/requests/assign',
+      {
+        method: 'POST',
+
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+
+        body: JSON.stringify({
+          request_id: reqId,
+          artisan_id: artisanId
+        })
+      }
+    );
+
+    var result = null;
+
+    try {
+      result = await res.json();
+    } catch (_) {
+      result = null;
+    }
+
+    if (
+      !res.ok ||
+      !result ||
+      result.ok !== true
+    ) {
+      var reason =
+        result && result.reason
+          ? String(result.reason)
+          : 'dispatch_failed';
+
+      console.warn(
+        '[FixeoDispatch] targeted assignment rejected:',
+        reason,
+        result
+      );
+
+      var message =
+        'Assignation impossible';
+
+      if (reason === 'already_claimed') {
+        message =
+          'Cette demande a déjà été acceptée';
+
+      } else if (
+        reason === 'request_not_dispatchable'
+      ) {
+        message =
+          'Cette demande n’est plus assignable';
+
+      } else if (
+        reason === 'artisan_not_found'
+      ) {
+        message =
+          'Artisan introuvable';
+
+      } else if (
+        reason === 'no_candidate'
+      ) {
+        message =
+          'Cet artisan n’est pas éligible pour cette demande';
+
+      } else if (
+        reason === 'unauthorized' ||
+        reason === 'forbidden'
+      ) {
+        message =
+          'Session Admin non autorisée';
+      }
+
+      _toast(message, 'error');
+
+      return {
+        ok: false,
+        reason: reason,
+        detail: result
+      };
+    }
+
+    /*
+     * Local state is cache/UI only.
+     * Canonical service_request remains status='new'
+     * until the artisan accepts via claim_mission().
+     */
+    _patchLocalRequest(
+      reqId,
+      {
+        target_artisan_id: artisanId
+      }
+    );
+
+    try {
+      window.dispatchEvent(
+        new CustomEvent(
+          'fixeo:admin:refresh',
+          {
+            detail: {
+              source: 'dispatch',
+              id: reqId
+            }
+          }
+        )
+      );
+
+      window.dispatchEvent(
+        new CustomEvent(
+          'fixeo:client-request-updated',
+          {
+            detail: {
+              id: reqId
+            }
+          }
+        )
+      );
+    } catch (e) {}
+
+    _toast(
+      '✅ Offre envoyée à ' + artisanName,
+      'success'
+    );
+
+    return result;
+
+  } catch (err) {
+    console.warn(
+      '[FixeoDispatch] assignArtisan error:',
+      err && err.message
+    );
+
+    _toast(
+      'Erreur lors de l\'assignation — voir console',
+      'error'
+    );
+
+    return {
+      ok: false,
+      reason:
+        err && err.message
+          ? err.message
+          : 'internal_error'
+    };
+  }
+}
+  /* ── EVENT DELEGATION: one-click assign button ─────────────────────── */
+
+  function _bindEvents() {
+    document.addEventListener('click', function(e) {
+      var btn = e.target.closest('.fxdisp-assign-btn');
+      if (!btn) return;
+
+      // Confirm before assigning
+      var artName = btn.dataset.artisanName;
+      if (!confirm('Assigner ' + artName + ' à cette demande ?')) return;
+
+      btn.disabled = true;
+      btn.textContent = '⏳ En cours…';
+
+      assignArtisan(
+        btn.dataset.reqId,
+        btn.dataset.artisanId,
+        btn.dataset.artisanName,
+        btn.dataset.artisanPhone,
+        btn.dataset.artisanCat
+      ).then(function(result) {
+        if (!result.ok) {
+          btn.disabled = false;
+          btn.textContent = '⚡ Assigner';
+        }
+        // On success, refreshSuggestions() re-renders the whole grid (btn removed)
+      });
+    });
+  }
+
+  /* ── INTEGRATION: hook into adminSection() ──────────────────────────── */
+
+  function _hookAdminSection() {
+    var origAdminSection = window.adminSection;
+    if (typeof origAdminSection !== 'function') return;
+
+    window.adminSection = function(section) {
+      origAdminSection(section);
+      if (section === 'dispatch') {
+        _ensureSuggestionsSection();
+        setTimeout(refreshSuggestions, 100);
+      }
+    };
+  }
+
+  /* ── INIT ────────────────────────────────────────────────────────────── */
+
+  function _init() {
+    _bindEvents();
+    _hookAdminSection();
+
+    /* v1b FIX: inject sidebar link + section container immediately on load.
+     * Previously called only from refreshSuggestions() / adminSection('dispatch'),
+     * creating a chicken-and-egg: the link never appeared because it was only
+     * injected when the user clicked it — which they couldn't since it didn't exist.
+     * Defer by one tick to ensure admin.js has already populated the sidebar DOM. */
+    setTimeout(_ensureSuggestionsSection, 0);
+
+    // Refresh when admin data changes
+    window.addEventListener('fixeo:admin:refresh', function(e) {
+      var detail = (e && e.detail) || {};
+      if (detail.source === 'dispatch') return; // prevent self-loop
+      // Update KPIs if dispatch section is visible
+      if (document.getElementById('admin-section-dispatch') &&
+          document.getElementById('admin-section-dispatch').style.display !== 'none') {
+        refreshSuggestions();
+      }
+    });
+
+    // Auto-refresh badge on load (after _ensureSuggestionsSection has run)
+    setTimeout(function() {
+      var pending = _getPendingRequests().length;
+      var badge = document.getElementById('sc-dispatch');
+      if (badge) badge.textContent = pending;
+    }, 2000);
+  }
   /* ── PHASE 4: OPERATIONS KPI ENGINE ────────────────────────────────── */
 
   /**
