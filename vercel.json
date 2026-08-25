@@ -79,10 +79,6 @@
       "use": "@vercel/node"
     },
     {
-  "src": "api/guest-request-fn/index.js",
-  "use": "@vercel/node"
-    },
-    {
       "src": "api/create-request-fn/index.js",
       "use": "@vercel/node"
     },
@@ -134,7 +130,7 @@
     },
     {
   "src": "^/api/guest-request$",
-  "dest": "/api/guest-request-fn/index.js"
+  "dest": "/api/urgent-request-fn/index.js"
     },
     {
       "src": "^/api/create-request$",
