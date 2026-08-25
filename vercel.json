@@ -95,6 +95,10 @@
       "use": "@vercel/node"
     },
     {
+  "src": "api/admin-targeted-dispatch-fn/index.js",
+  "use": "@vercel/node"
+},
+    {
       "src": "api/admin-settle-mission-fn/index.js",
       "use": "@vercel/node"
     },
