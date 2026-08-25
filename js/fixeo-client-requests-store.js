@@ -179,6 +179,10 @@
 
     return {
       id: hasOwnValue(raw?.id) ? String(raw.id).trim() : buildLegacyFallbackId(raw, index || 0),
+      source: String(raw?.source || '').trim(),
+      mode: String(raw?.mode || '').trim(),
+      reservation_ref: String(raw?.reservation_ref || '').trim(),
+      tracking_ref: String(raw?.tracking_ref || '').trim(),
       service: String(raw?.service || raw?.probleme || raw?.problem || '').trim() || 'Service à préciser',
       city: String(raw?.city || raw?.ville || '').trim() || 'Ville à préciser',
       description: String(raw?.description || raw?.probleme || raw?.problem || '').trim() || 'Description à préciser',
@@ -228,6 +232,7 @@
       source: String(payload?.source || '').trim(),
       mode: String(payload?.mode || '').trim(),
       reservation_ref: String(payload?.reservation_ref || '').trim(),
+      tracking_ref: String(payload?.tracking_ref || '').trim(),
       service: String(payload?.service || '').trim() || 'Service à préciser',
       description: String(payload?.description || '').trim() || 'Description à préciser',
       city: String(payload?.city || '').trim() || 'Ville à préciser',
