@@ -676,48 +676,203 @@
     sec.innerHTML = profHtml + availBanner + warn + missionHtml + openHtml;
   }
 
-  /* ── RENDER: SECTION — AVAILABLE ─────────────────────────── */
-  function _renderAvailable() {
-    var sec = el('fxav2-sec-available');
-    if (!sec) return;
+   /* ── RENDER: TARGETED OFFER CARD ─────────────────────────────
+ * Admin-targeted canonical offer.
+ *
+ * mission.status = 'offered'
+ * service_request.status remains 'new' until claim_mission().
+ *
+ * Acceptance MUST use mission.id through claim_mission().
+ */
+function _renderOfferedMissionCard(mission) {
+  var req = mission._request || null;
 
-    var html = '<div class="fxa-section-head"><h2>📬 Demandes disponibles</h2>'
-      + '<span class="fxa-section-count">' + _state.openRequests.length + '</span>'
+  var reqId = (req && req.id) || mission.request_id || '';
+  var missionId = mission.id || '';
+
+  var service =
+    (req && req.service_category)
+    || mission.service_category
+    || 'Service';
+
+  var city =
+    (req && req.city)
+    || '';
+
+  var description =
+    (req && req.description)
+    || '';
+
+  var createdAt =
+    (req && req.created_at)
+    || mission.created_at
+    || '';
+
+  return '<div class="fxa-card" data-req-id="' + esc(reqId) + '">'
+    + '<div class="fxa-card-head">'
+    + '<span class="fxa-card-service">' + esc(service) + '</span>'
+    + '<span class="fxa-badge fxa-badge-new">Offre Fixeo</span>'
+    + '</div>'
+
+    + '<div class="fxa-card-meta">'
+    + (city
+        ? '<span class="fxa-card-meta-item">📍 ' + esc(city) + '</span>'
+        : '')
+    + (createdAt
+        ? '<span class="fxa-card-meta-item">🕐 ' + esc(timeAgo(createdAt)) + '</span>'
+        : '')
+    + '</div>'
+
+    + (description
+        ? '<div class="fxa-card-desc">'
+          + esc(description.slice(0, 180))
+          + (description.length > 180 ? '…' : '')
+          + '</div>'
+        : '')
+
+    + (!req
+        ? '<div class="fxa-info-row" style="opacity:.7">'
+          + '<span class="fxa-info-label">Réf. demande</span>'
+          + '<span class="fxa-info-value fxa-muted">#'
+          + esc(String(reqId).slice(0, 8))
+          + '</span>'
+          + '</div>'
+        : '')
+
+    + '<div class="fxa-actions">'
+    + '<button class="fxa-btn fxa-btn-primary" '
+    + 'data-action="claim-offer" '
+    + 'data-mission-id="' + esc(missionId) + '">'
+    + '✅ Accepter la mission'
+    + '</button>'
+    + '</div>'
+
+    + '</div>';
+}
+ /* ── RENDER: SECTION — AVAILABLE ─────────────────────────── */
+function _renderAvailable() {
+  var sec = el('fxav2-sec-available');
+  if (!sec) return;
+
+  /*
+   * Canonical targeted offers:
+   * mission.status='offered' and artisan_profile_id=current artisan.
+   *
+   * IMPORTANT:
+   * use mission.status directly here.
+   * service_requests.status intentionally remains 'new'
+   * until claim_mission() succeeds.
+   */
+  var targetedOffers = (_state.myMissions || []).filter(function(m) {
+    return String(m.status || '').toLowerCase().trim() === 'offered';
+  });
+
+  /*
+   * A targeted service_request may also be returned by listOpenRequests().
+   * Never render the same request twice.
+   */
+  var targetedRequestIds = new Set(
+    targetedOffers
+      .map(function(m) { return String(m.request_id || ''); })
+      .filter(Boolean)
+  );
+
+  var genericOpenRequests = (_state.openRequests || []).filter(function(req) {
+    return !targetedRequestIds.has(String(req.id || ''));
+  });
+
+  var availableCount =
+    targetedOffers.length + genericOpenRequests.length;
+
+  var html =
+    '<div class="fxa-section-head">'
+    + '<h2>📬 Demandes disponibles</h2>'
+    + '<span class="fxa-section-count">'
+    + availableCount
+    + '</span>'
+    + '</div>';
+
+  var ap = _state.artisanProfile;
+
+  if (!ap) {
+
+    html +=
+      '<div class="fxa-no-profile">'
+      + '<div class="fxa-no-profile-icon">⚠️</div>'
+      + '<div class="fxa-no-profile-title">Profil non associé</div>'
+      + '<div class="fxa-no-profile-sub">'
+      + 'Associez votre compte pour voir les demandes.'
+      + '</div>'
       + '</div>';
 
-    var ap = _state.artisanProfile;
-    if (!ap) {
-      html += '<div class="fxa-no-profile"><div class="fxa-no-profile-icon">⚠️</div>'
-        + '<div class="fxa-no-profile-title">Profil non associé</div>'
-        + '<div class="fxa-no-profile-sub">Associez votre compte pour voir les demandes.</div></div>';
-    } else if (!ap.onboarding_completed) {
-      html += '<div class="fxa-empty">'
-        + '<div class="fxa-empty-icon">🚀</div>'
-        + '<div class="fxa-empty-title">Activez votre profil d\'abord</div>'
-        + '<div class="fxa-empty-sub">Complétez l\'activation de votre profil pour commencer à recevoir des demandes.</div>'
-        + '<button class="fxa-btn fxa-btn-primary" style="margin-top:12px" data-action="complete-onboarding">Activer mon profil</button>'
-        + '</div>';
-    } else if (ap.availability !== 'available') {
-      html += '<div class="fxa-empty">'
-        + '<div class="fxa-empty-icon">○</div>'
-        + '<div class="fxa-empty-title">Vous êtes indisponible</div>'
-        + '<div class="fxa-empty-sub">Rendez-vous disponible pour voir les nouvelles demandes.</div>'
-        + '<button class="fxa-btn fxa-btn-primary" style="margin-top:12px" data-action="set-available">✅ Me rendre disponible</button>'
-        + '</div>';
-    } else if (!_state.openRequests.length) {
-      html += '<div class="fxa-empty">'
-        + '<div class="fxa-empty-icon">📬</div>'
-        + '<div class="fxa-empty-title">Aucune demande pour le moment</div>'
-        + '<div class="fxa-empty-sub">Vous serez notifié dès qu\'une demande correspond à votre zone et votre métier.</div>'
-        + '</div>';
-    } else {
-      html += '<div class="fxa-card-list">'
-        + _state.openRequests.map(_renderRequestCard).join('')
-        + '</div>';
-    }
-    sec.innerHTML = html;
+  } else if (!ap.onboarding_completed) {
+
+    html +=
+      '<div class="fxa-empty">'
+      + '<div class="fxa-empty-icon">🚀</div>'
+      + '<div class="fxa-empty-title">Activez votre profil d\'abord</div>'
+      + '<div class="fxa-empty-sub">'
+      + 'Complétez l\'activation de votre profil pour commencer à recevoir des demandes.'
+      + '</div>'
+      + '<button class="fxa-btn fxa-btn-primary" '
+      + 'style="margin-top:12px" '
+      + 'data-action="complete-onboarding">'
+      + 'Activer mon profil'
+      + '</button>'
+      + '</div>';
+
+  } else if (ap.availability !== 'available') {
+
+    html +=
+      '<div class="fxa-empty">'
+      + '<div class="fxa-empty-icon">○</div>'
+      + '<div class="fxa-empty-title">Vous êtes indisponible</div>'
+      + '<div class="fxa-empty-sub">'
+      + 'Rendez-vous disponible pour voir les nouvelles demandes.'
+      + '</div>'
+      + '<button class="fxa-btn fxa-btn-primary" '
+      + 'style="margin-top:12px" '
+      + 'data-action="set-available">'
+      + '✅ Me rendre disponible'
+      + '</button>'
+      + '</div>';
+
+  } else if (!availableCount) {
+
+    html +=
+      '<div class="fxa-empty">'
+      + '<div class="fxa-empty-icon">📬</div>'
+      + '<div class="fxa-empty-title">Aucune demande pour le moment</div>'
+      + '<div class="fxa-empty-sub">'
+      + 'Vous serez notifié dès qu\'une demande correspond à votre zone et votre métier.'
+      + '</div>'
+      + '</div>';
+
+  } else {
+
+    html += '<div class="fxa-card-list">';
+
+    /*
+     * Explicit Admin offers first.
+     * These use mission.id → claim_mission().
+     */
+    html += targetedOffers
+      .map(_renderOfferedMissionCard)
+      .join('');
+
+    /*
+     * Legacy/open marketplace requests remain unchanged.
+     * These keep using the existing _doAcceptMission(requestId).
+     */
+    html += genericOpenRequests
+      .map(_renderRequestCard)
+      .join('');
+
+    html += '</div>';
   }
 
+  sec.innerHTML = html;
+}
   /* ── RENDER: SECTION — MY MISSIONS ───────────────────────── */
   function _renderMyMissions() {
     var sec = el('fxav2-sec-missions');
@@ -1051,14 +1206,16 @@
     function _handleAction(e) {
       var btn = e.target.closest('[data-action]');
       if (!btn) return;
-      var action = btn.dataset.action;
-      var reqId  = btn.dataset.reqId || '';
+      var action    = btn.dataset.action;
+var reqId     = btn.dataset.reqId || '';
+var missionId = btn.dataset.missionId || '';
       /* Navigation/UI actions are exempt from in-flight guard */
       var navAction = action === 'go-available' || action === 'close-modal'
         || action === 'edit-profile' || action === 'logout';
       if (_actionInFlight && !navAction) return; /* drop duplicate tap */
       switch (action) {
         case 'accept-mission':      _doAcceptMission(reqId, btn); return;
+       case 'claim-offer':         _doClaimOfferedMission(missionId, btn); return;     
         case 'start-mission':       _doStartMission(reqId, btn); return;
         case 'complete-mission':    _doCompleteMission(reqId, btn); return;
         case 'go-available':        return _showSection('available');
@@ -1107,7 +1264,95 @@
    *    agreed_price=0, commission_amount=0, status='assigned'
    * 4. UPDATE service_requests SET status='assigned'
    * 5. Refresh state (_fetch + _render) — removes from available, adds to missions
-   * All guards use .maybeSingle() — no PGRST116.                              */
+   * All guards use .maybeSingle() — no PGRST116.  
+   /* ── CLAIM TARGETED OFFER ────────────────────────────────────
+ * Canonical Admin-targeted flow:
+ *
+ * missions.status: offered -> pending
+ * service_requests.status: new -> assigned
+ *
+ * claim_mission() is the ONLY authority for this transition.
+ * No browser INSERT into missions.
+ * No browser UPDATE of service_requests.
+ */
+async function _doClaimOfferedMission(missionId, btn) {
+  if (!missionId) return;
+
+  _btnBusy(btn, 'Acceptation…');
+
+  try {
+    var FS = window.FixeoSupabase;
+
+    if (!FS) {
+      throw new Error('Supabase indisponible.');
+    }
+
+    await FS.requireAuth('artisan');
+
+    var sb = await FS.getClient();
+
+    var res = await sb.rpc('claim_mission', {
+      p_mission_id: missionId
+    });
+
+    if (res.error) {
+      throw res.error;
+    }
+
+    var result = res.data;
+
+    if (!result || result.ok !== true) {
+      var reason = result && result.reason
+        ? String(result.reason)
+        : 'claim_failed';
+
+      var message = 'Impossible d’accepter cette mission.';
+
+      if (reason === 'already_claimed') {
+        message = 'Cette mission a déjà été prise en charge.';
+      } else if (reason === 'not_offered') {
+        message = 'Cette offre n’est plus disponible.';
+      } else if (reason === 'not_offered_to_you') {
+        message = 'Cette mission n’est pas destinée à votre profil.';
+      } else if (reason === 'unauthenticated') {
+        message = 'Votre session a expiré. Reconnectez-vous.';
+      } else if (reason === 'artisan_not_found') {
+        message = 'Profil artisan introuvable.';
+      }
+
+      throw new Error(message);
+    }
+
+    _toast(
+      '🎉 Mission acceptée ! Elle apparaît dans "Mes missions".',
+      'success'
+    );
+
+    _dispatchMissionEvent(
+      'mission-accepted',
+      missionId
+    );
+
+    await _refresh();
+
+  } catch (e) {
+    console.warn(
+      '[fxav2] claimOfferedMission error:',
+      e && e.message
+    );
+
+    _toast(
+      '❌ ' + (
+        e && e.message
+          ? e.message
+          : 'Erreur lors de l’acceptation.'
+      ),
+      'error'
+    );
+
+    _btnReset(btn);
+  }
+}
   async function _doAcceptMission(requestId, btn) {
     if (!requestId) return;
     var ap = _state.artisanProfile;
