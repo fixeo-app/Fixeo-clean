@@ -266,7 +266,25 @@
     );
     return;
   }
-
+/*
+   * RAFI emergency:
+   * POST /api/urgent-request owns the canonical service_requests row
+   * and starts the canonical dispatch lifecycle.
+   *
+   * The local FixeoClientRequestsStore record is compatibility/UI state
+   * only and must never be mirrored into service_requests a second time.
+   */
+  if (
+    String(req.source || '').trim() === 'fxrf4-v5c' &&
+    String(req.mode || '').trim() === 'emergency'
+  ) {
+    console.info(
+      LOG,
+      'RAFI emergency — canonical row owned by /api/urgent-request; mirror suppressed',
+      req.id
+    );
+    return;
+  }
   _mirrorToSupabase(req).catch(function (err) {
     console.warn(LOG, 'Unhandled async error:', err && err.message);
   });
