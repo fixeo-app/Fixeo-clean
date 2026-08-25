@@ -1440,11 +1440,18 @@ async function _doClaimOfferedMission(missionId, btn) {
         .maybeSingle();
       if (res.error) throw res.error;
       if (!res.data) throw new Error('Mise à jour bloquée (droits insuffisants ou demande introuvable).');
-      /* Mirror status on missions row so dashboard renders correctly */
-      var mission = _state.myMissions.find(function(m) { return m.request_id === requestId; });
-      if (mission && mission.id) {
-        await sb.from('missions').update({ status: 'done' }).eq('id', mission.id);
-      }
+      /*
+ * Mission remains status='pending' while intervention is active.
+ *
+ * Canonical lifecycle:
+ *   missions:         offered -> pending -> done
+ *   service_requests: new -> assigned -> in_progress -> completed
+ *
+ * Do NOT set mission='done' when the intervention merely starts.
+ */
+var mission = _state.myMissions.find(function(m) {
+  return m.request_id === requestId;
+});
       _toast('▶ Intervention démarrée !', 'success');
       _dispatchMissionEvent('mission-started', requestId, mission && mission.client_profile_id || null);
       await _refresh();
