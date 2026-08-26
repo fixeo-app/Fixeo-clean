@@ -658,6 +658,7 @@ function saveGuestAccess(trackingRef, serverRequestId, guestToken) {
   window.FixeoClientRequestsStore = {
     storageKey: STORAGE_KEY,
     appendRequest,
+    saveGuestAccess,
     acceptRequest,
     updateMissionStatus,
     confirmClientCompletion,
