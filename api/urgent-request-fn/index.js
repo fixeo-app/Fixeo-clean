@@ -217,13 +217,24 @@ function _generateGuestToken() {
   return crypto.randomBytes(32).toString('hex');
 }
 
-function _hashGuestToken(token) {
+(token) {
   return crypto
     .createHash('sha256')
     .update(String(token || ''), 'utf8')
     .digest('hex');
 }
+function _safeEqualHex(a, b) {
+  try {
+    var ba = Buffer.from(String(a || ''), 'hex');
+    var bb = Buffer.from(String(b || ''), 'hex');
 
+    if (ba.length !== 32 || bb.length !== 32) return false;
+
+    return crypto.timingSafeEqual(ba, bb);
+  } catch (_) {
+    return false;
+  }
+}
 /* ── Main handler ── */
 module.exports = async function handler(req, res) {
   /* Preflight */
@@ -250,7 +261,115 @@ module.exports = async function handler(req, res) {
   if (typeof body === 'string') {
     try { body = JSON.parse(body); } catch (_) { body = {}; }
   }
+  /* ── Secure anonymous guest lookup ── */
+if (body.action === 'guest_lookup') {
+  var lookupTrackingRef = _str(body.tracking_ref, 32).toUpperCase();
+  var lookupGuestToken = _str(body.guest_token, 128);
 
+  if (
+    !REF_RE.test(lookupTrackingRef) ||
+    !/^[a-f0-9]{64}$/i.test(lookupGuestToken)
+  ) {
+    res.status(400).json({
+      ok: false,
+      error: 'Invalid credentials',
+      code: 'INVALID_INPUT'
+    });
+    return;
+  }
+
+  try {
+    var lookupUrl = process.env.SUPABASE_URL;
+    var lookupServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!lookupUrl || !lookupServiceKey) {
+      res.status(503).json({
+        ok: false,
+        error: 'Service temporarily unavailable',
+        code: 'SERVICE_UNAVAILABLE'
+      });
+      return;
+    }
+
+    var lookupRes = await fetch(
+      lookupUrl +
+        '/rest/v1/service_requests' +
+        '?tracking_ref=eq.' + encodeURIComponent(lookupTrackingRef) +
+        '&select=id,tracking_ref,guest_token_hash,service_category,city,description,status,created_at' +
+        '&limit=1',
+      {
+        method: 'GET',
+        headers: {
+          'apikey': lookupServiceKey,
+          'Authorization': 'Bearer ' + lookupServiceKey
+        }
+      }
+    );
+
+    if (!lookupRes.ok) {
+      res.status(500).json({
+        ok: false,
+        error: 'Service temporarily unavailable',
+        code: 'INTERNAL_ERROR'
+      });
+      return;
+    }
+
+    var lookupRows = await lookupRes.json().catch(function() {
+      return [];
+    });
+
+    var lookupRequest =
+      lookupRows && lookupRows.length ? lookupRows[0] : null;
+
+    if (!lookupRequest || !lookupRequest.guest_token_hash) {
+      res.status(404).json({
+        ok: false,
+        error: 'Request not found',
+        code: 'NOT_FOUND'
+      });
+      return;
+    }
+
+    var suppliedHash = _hashGuestToken(lookupGuestToken);
+
+    if (!_safeEqualHex(suppliedHash, lookupRequest.guest_token_hash)) {
+      res.status(404).json({
+        ok: false,
+        error: 'Request not found',
+        code: 'NOT_FOUND'
+      });
+      return;
+    }
+
+    res.status(200).json({
+      ok: true,
+      request: {
+        id: lookupRequest.id,
+        tracking_ref: lookupRequest.tracking_ref,
+        service_category: lookupRequest.service_category || null,
+        city: lookupRequest.city || null,
+        description: lookupRequest.description || null,
+        status: lookupRequest.status || null,
+        created_at: lookupRequest.created_at || null
+      }
+    });
+    return;
+
+  } catch (err) {
+    console.error(
+      '[urgent-request-v2b] guest_lookup error:',
+      err && err.message
+    );
+
+    res.status(500).json({
+      ok: false,
+      error: 'Service temporarily unavailable',
+      code: 'INTERNAL_ERROR'
+    });
+    return;
+  }
+}
   /* Extract and sanitize fields */
   var service     = _str(body.service,     64);
   var problem     = _str(body.problem,     128);
