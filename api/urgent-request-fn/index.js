@@ -217,12 +217,13 @@ function _generateGuestToken() {
   return crypto.randomBytes(32).toString('hex');
 }
 
-(token) {
+function _hashGuestToken(token) {
   return crypto
     .createHash('sha256')
     .update(String(token || ''), 'utf8')
     .digest('hex');
 }
+
 function _safeEqualHex(a, b) {
   try {
     var ba = Buffer.from(String(a || ''), 'hex');
