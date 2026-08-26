@@ -1352,10 +1352,29 @@
       body:    JSON.stringify(payload),
     }).then(function(res) {
       return res.json().then(function(data) {
-        /* Attach server id to local record if returned */
-        if (data.ok && data.id && saved) saved._server_id = data.id;
-        return data;
-      });
+        
+  /* Attach server id to local record if returned */
+  if (data && data.ok && data.id && saved) {
+    saved._server_id = data.id;
+  }
+
+  /* Anonymous access credential:
+   * keep the raw guest token outside the normal request record.
+   */
+  if (data && data.ok && data.guest_token) {
+    var store = window.FixeoClientRequestsStore;
+
+    if (store && typeof store.saveGuestAccess === 'function') {
+      store.saveGuestAccess(
+        data.ref || (saved && saved.tracking_ref) || st.ref || '',
+        data.id || '',
+        data.guest_token
+      );
+    }
+  }
+
+  return data;
+});
     }).catch(function(err) {
       return { ok: false, error: err.message || 'network_error', code: 'NETWORK' };
     });
