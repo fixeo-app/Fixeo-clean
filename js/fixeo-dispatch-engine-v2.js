@@ -541,6 +541,10 @@
       ? '<div class="fxdv2-top-indicator">⭐ #1</div>' : '';
 
     var rank_label = '#' + (rankIndex + 1) + ' · ' + _esc(lbl.split('—')[0].trim());
+    var isCurrentTarget =
+  req &&
+  req.target_artisan_id &&
+  String(req.target_artisan_id) === String(artId);
 
     return [
       '<div class="fxdv2-artisan-card" style="',
@@ -587,14 +591,19 @@
 
         /* Actions */
         '<div class="fxdv2-actions">',
-          '<button class="fxdisp-assign-btn fxdv2-assign-btn"',
-            ' data-req-id="' + _esc(String(req.id || '')) + '"',
-            ' data-artisan-id="' + artId + '"',
-            ' data-artisan-name="' + artName + '"',
-            ' data-artisan-phone="' + artPhone + '"',
-            ' data-artisan-cat="' + artCat + '">',
-            '⚡ Assigner',
-          '</button>',
+         isCurrentTarget
+  ? '<button class="fxdv2-assign-btn" type="button" disabled aria-disabled="true">✓ Offre envoyée</button>'
+  : [
+      '<button class="fxdisp-assign-btn fxdv2-assign-btn"',
+        ' data-req-id="' + _esc(String(req.id || '')) + '"',
+        ' data-artisan-id="' + artId + '"',
+        ' data-artisan-name="' + artName + '"',
+        ' data-artisan-phone="' + artPhone + '"',
+        ' data-artisan-cat="' + artCat + '">',
+        '⚡ Assigner',
+      '</button>'
+    ].join(''),
+      
           artPhone ? [
             '<a class="fxdv2-wa-btn" ',
               'href="https://wa.me/' + artPhone.replace(/\D/g, '') + '?text=',
