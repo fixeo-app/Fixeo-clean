@@ -188,4 +188,9 @@ var description = _el(
   }
 
   _load();
+
+/* Refresh guest request statuses while this page remains open. */
+setInterval(function () {
+  _load();
+}, 60000);
 })();
