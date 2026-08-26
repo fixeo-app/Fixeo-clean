@@ -126,10 +126,17 @@
         String(req.city || '')
       );
 
-      var description = _el(
-        'p',
-        String(req.description || '')
-      );
+      var publicDescription = String(req.description || '')
+  .replace(
+    /\s*\|\s*Ref:\s*FX-[A-Z0-9]+\s*\|\s*Source:\s*[^|]+$/i,
+    ''
+  )
+  .trim();
+
+var description = _el(
+  'p',
+  publicDescription
+);
 
       card.appendChild(title);
       card.appendChild(status);
