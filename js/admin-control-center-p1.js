@@ -125,7 +125,7 @@
         /* Read all service_requests ordered newest-first, cap at 200 */
         return sb
           .from('service_requests')
-          .select('id, client_profile_id, service_category, city, description, status, created_at')
+          .select('id,client_profile_id,service_category,city,description,status,created_at,target_artisan_id')
           .order('created_at', { ascending: false })
           .limit(200)
           .then(function(result) {
@@ -190,6 +190,7 @@
                 status           : st,
                 assigned_artisan : artisanName,
                 assigned_artisan_id: '',
+                 target_artisan_id : String(r.target_artisan_id || ''),
                 phone            : phone,
                 budget           : budget,
                 date             : date,
