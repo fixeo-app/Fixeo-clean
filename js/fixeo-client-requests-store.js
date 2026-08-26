@@ -29,7 +29,42 @@
       return fallback;
     }
   }
+function saveGuestAccess(trackingRef, serverRequestId, guestToken) {
+  try {
+    const ref = String(trackingRef || '').trim();
+    const token = String(guestToken || '').trim().toLowerCase();
+    const serverId = String(serverRequestId || '').trim();
 
+    if (!ref || !/^[a-f0-9]{64}$/.test(token)) return false;
+
+    const current = safeJSONParse(
+      localStorage.getItem(GUEST_ACCESS_KEY),
+      {}
+    );
+
+    const registry =
+      current && typeof current === 'object' && !Array.isArray(current)
+        ? current
+        : {};
+
+    registry[ref] = {
+      tracking_ref: ref,
+      server_request_id: serverId,
+      guest_token: token,
+      saved_at: new Date().toISOString()
+    };
+
+    localStorage.setItem(
+      GUEST_ACCESS_KEY,
+      JSON.stringify(registry)
+    );
+
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+  
   function normalizeText(value) {
     return String(value || '')
       .toLowerCase()
