@@ -1667,11 +1667,33 @@
     /* Actions in footer */
     var actions = _h('div', { cls: 'fxrf4-success-actions' });
 
-    var dashLink = _h('a', {
-      cls: 'fxrf4-btn-success-primary',
-      href: '/dashboard-client.html#requests',
-      txt: 'Voir mes demandes'
-    });
+    var requestsHref = '/dashboard-client.html#requests';
+
+if (isEmergency && saved && saved.tracking_ref) {
+  try {
+    var guestRegistry = JSON.parse(
+      localStorage.getItem('fixeo_guest_access_v1') || '{}'
+    );
+
+    var guestAccess = guestRegistry &&
+      guestRegistry[saved.tracking_ref];
+
+    if (
+      guestAccess &&
+      /^[a-f0-9]{64}$/i.test(
+        String(guestAccess.guest_token || '')
+      )
+    ) {
+      requestsHref = '/suivi-demande.html';
+    }
+  } catch (_) {}
+}
+
+var dashLink = _h('a', {
+  cls: 'fxrf4-btn-success-primary',
+  href: requestsHref,
+  txt: 'Voir mes demandes'
+});
     dashLink.setAttribute('role', 'button');
 
     var homeLink = _h('a', {
