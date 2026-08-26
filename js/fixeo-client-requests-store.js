@@ -2,6 +2,7 @@
   'use strict';
 
   const STORAGE_KEY = 'fixeo_client_requests';
+  const GUEST_ACCESS_KEY = 'fixeo_guest_access_v1';
   const DEDUPE_WINDOW_MS = 2500;
   const COMMISSION_RATE = 0.15;
   const COMPLETED_STATUSES = ['terminée', 'validée', 'intervention_confirmée'];
