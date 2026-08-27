@@ -867,6 +867,71 @@ function _renderOfferedMissionCard(mission) {
 
     + '</div>';
 }
+/* ── RENDER: DISPATCH V2 OFFER CARD ─────────────────────────
+ *
+ * Canonical queue-backed opportunity returned by
+ * get_my_dispatch_offers_v1().
+ *
+ * No client PII is exposed here.
+ * Acceptance will be wired separately through
+ * accept_my_dispatch_offer_v1(request_id).
+ */
+function _renderDispatchOfferCard(offer) {
+  var reqId = String(offer.request_id || '');
+  var service = offer.service_category || 'Service';
+  var city = offer.city || '';
+  var urgency = String(offer.urgency || '').trim();
+  var createdAt = offer.request_created_at || '';
+  var queueStatus = String(offer.queue_status || '').toUpperCase();
+
+  var urgencyHtml = urgency
+    ? '<span class="fxa-badge fxa-badge-new">⚡ ' + esc(urgency) + '</span>'
+    : '<span class="fxa-badge fxa-badge-new">Offre Fixeo</span>';
+
+  return '<div class="fxa-card" data-req-id="' + esc(reqId) + '">'
+    + '<div class="fxa-card-head">'
+    + '<span class="fxa-card-service">' + esc(service) + '</span>'
+    + urgencyHtml
+    + '</div>'
+
+    + '<div class="fxa-card-meta">'
+    + (city
+        ? '<span class="fxa-card-meta-item">📍 ' + esc(city) + '</span>'
+        : '')
+    + (createdAt
+        ? '<span class="fxa-card-meta-item">🕐 ' + esc(timeAgo(createdAt)) + '</span>'
+        : '')
+    + '</div>'
+
+    + '<div class="fxa-info-row">'
+    + '<span class="fxa-info-label">Réf. demande</span>'
+    + '<span class="fxa-info-value fxa-muted">#'
+    + esc(reqId.slice(0, 8))
+    + '</span>'
+    + '</div>'
+
+    + '<div class="fxa-info-row">'
+    + '<span class="fxa-info-label">Position Fixeo</span>'
+    + '<span class="fxa-info-value">'
+    + esc(String(offer.match_rank || '—'))
+    + '</span>'
+    + '</div>'
+
+    + '<div class="fxa-actions">'
+    + '<button class="fxa-btn fxa-btn-primary" '
+    + 'data-action="accept-dispatch-offer" '
+    + 'data-req-id="' + esc(reqId) + '" '
+    + (queueStatus !== 'QUEUED' && queueStatus !== 'CONTACTED'
+        ? 'disabled '
+        : '')
+    + '>'
+    + '✅ Accepter la mission'
+    + '</button>'
+    + '</div>'
+
+    + '</div>';
+}
+   
  /* ── RENDER: SECTION — AVAILABLE ─────────────────────────── */
 function _renderAvailable() {
   var sec = el('fxav2-sec-available');
