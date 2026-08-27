@@ -233,17 +233,17 @@
      * using artisanProfile.id (artisans PK) — NOT auth.profile.id (auth uid).
      * listArtisanMissions() uses auth.profile.id which may differ from
      * artisans.id when owner_user_id ≠ profiles.id in the current session. */
-    var results = await Promise.allSettled([
-      FS.listOpenRequests()
-    ]);
-
-    /* Open requests — filter to matching only */
-    if (results[0].status === 'fulfilled') {
-      _state.openRequests = _filterMatching(results[0].value || []);
-    } else {
-      console.warn('[fxav2] listOpenRequests error:', results[0].reason && results[0].reason.message);
-      _state.openRequests = [];
-    }
+    /*
+ * Canonical dispatch only.
+ *
+ * Generic service_requests.status='new' rows are not artisan offers.
+ * Artisan action is allowed only through missions.status='offered'
+ * created by the server-side dispatch engine.
+ *
+ * Targeted offers are loaded below through _state.myMissions.
+ * Keep openRequests empty so the legacy direct-accept path cannot render.
+ */
+_state.openRequests = [];
 
     /* My missions — query by artisans.id (the artisan table PK stored in
      * _state.artisanProfile.id) so the link is always artisan-identity-based,
