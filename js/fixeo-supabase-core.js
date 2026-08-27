@@ -529,13 +529,51 @@ if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
       throw new Error('Cette demande a déjà été attribuée à un artisan.');
     }
 
-    var missionResponse = await sb.from('missions').select('id').eq('request_id', payload.request_id).limit(1);
-    if (missionResponse.error) throw missionResponse.error;
-    if ((missionResponse.data || []).length) {
-      throw new Error('Une mission existe déjà pour cette demande.');
-    }
+  /*
+ * Canonical quote eligibility.
+ *
+ * A dispatch-created mission with status='offered' does NOT block quoting
+ * when that offer belongs to the currently authenticated artisan.
+ *
+ * Any other existing mission state remains exclusive and blocks quoting.
+ *
+ * Mission ownership uses artisans.id, not profiles.id/auth.uid().
+ */
+var artisanIdentityRes = await sb.from('artisans')
+  .select('id')
+  .eq('owner_user_id', auth.user.id)
+  .maybeSingle();
 
-    var existingQuoteResponse = await sb.from('quotes').select('*').eq('request_id', payload.request_id).eq('artisan_profile_id', auth.profile.id).maybeSingle();
+if (artisanIdentityRes.error) throw artisanIdentityRes.error;
+if (!artisanIdentityRes.data || !artisanIdentityRes.data.id) {
+  throw new Error('Profil artisan introuvable.');
+}
+
+var artisanProfileId = artisanIdentityRes.data.id;
+
+var missionResponse = await sb.from('missions')
+  .select('id,artisan_profile_id,status')
+  .eq('request_id', payload.request_id);
+
+if (missionResponse.error) throw missionResponse.error;
+
+var existingMissions = missionResponse.data || [];
+
+var blockingMission = existingMissions.find(function(mission) {
+  var status = String(mission.status || '').toLowerCase().trim();
+
+  var isOwnOfferedMission =
+    status === 'offered' &&
+    String(mission.artisan_profile_id || '') === String(artisanProfileId);
+
+  return !isOwnOfferedMission;
+});
+
+if (blockingMission) {
+  throw new Error('Une mission existe déjà pour cette demande.');
+}
+
+    var existingQuoteResponse = await sb.from('quotes').select('*').eq('request_id', payload.request_id).eq('artisan_profile_id', artisanProfileId).maybeSingle();
     if (existingQuoteResponse.error && String(existingQuoteResponse.error.code || '') !== 'PGRST116') {
       throw existingQuoteResponse.error;
     }
@@ -550,7 +588,7 @@ if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
     } else {
       response = await sb.from('quotes').insert({
         request_id: payload.request_id,
-        artisan_profile_id: auth.profile.id,
+        artisan_profile_id: artisanProfileId,
         proposed_price: Number(payload.proposed_price),
         message: payload.message,
         status: 'pending'
@@ -571,12 +609,27 @@ if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
   }
 
   async function listArtisanMissions() {
-    var auth = await requireAuth('artisan');
-    var sb = await getClient();
-    var response = await sb.from('missions').select('*').eq('artisan_profile_id', auth.profile.id).order('created_at', { ascending: false });
-    if (response.error) throw response.error;
-    return response.data || [];
+  var auth = await requireAuth('artisan');
+  var sb = await getClient();
+
+  var artisanRes = await sb.from('artisans')
+    .select('id')
+    .eq('owner_user_id', auth.user.id)
+    .maybeSingle();
+
+  if (artisanRes.error) throw artisanRes.error;
+  if (!artisanRes.data || !artisanRes.data.id) {
+    throw new Error('Profil artisan introuvable.');
   }
+
+  var response = await sb.from('missions')
+    .select('*')
+    .eq('artisan_profile_id', artisanRes.data.id)
+    .order('created_at', { ascending: false });
+
+  if (response.error) throw response.error;
+  return response.data || [];
+}
 
   async function fetchMissionByRequestId(requestId) {
     var sb = await getClient();
