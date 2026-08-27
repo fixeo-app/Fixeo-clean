@@ -1414,6 +1414,9 @@ var missionId = btn.dataset.missionId || '';
         || action === 'edit-profile' || action === 'logout';
       if (_actionInFlight && !navAction) return; /* drop duplicate tap */
       switch (action) {
+            case 'accept-dispatch-offer':
+  _doAcceptDispatchOffer(reqId, btn);
+  return;
        case 'claim-offer':         _doClaimOfferedMission(missionId, btn); return;     
         case 'start-mission':       _doStartMission(reqId, btn); return;
         case 'complete-mission':    _doCompleteMission(reqId, btn); return;
@@ -1466,6 +1469,94 @@ var missionId = btn.dataset.missionId || '';
  * No browser INSERT into missions.
  * No browser UPDATE of service_requests.
  */
+
+   /* ── ACCEPT DISPATCH V2 OFFER ────────────────────────────────
+ *
+ * Canonical queue-backed acceptance:
+ * dispatch_execution_queue QUEUED/CONTACTED -> ACCEPTED
+ * service_requests new -> assigned
+ * canonical mission is created/accepted server-side.
+ *
+ * Browser authority is limited to this RPC call.
+ */
+async function _doAcceptDispatchOffer(requestId, btn) {
+  if (!requestId) return;
+
+  _btnBusy(btn, 'Acceptation…');
+
+  try {
+    var FS = window.FixeoSupabase;
+
+    if (!FS) {
+      throw new Error('Supabase indisponible.');
+    }
+
+    await FS.requireAuth('artisan');
+
+    var sb = await FS.getClient();
+
+    var res = await sb.rpc('accept_my_dispatch_offer_v1', {
+      p_request_id: requestId
+    });
+
+    if (res.error) {
+      throw res.error;
+    }
+
+    var data = res.data;
+
+    if (!data || data.ok !== true) {
+      var reason = data && data.reason
+        ? String(data.reason)
+        : 'accept_failed';
+
+      var messages = {
+        unauthenticated:       'Votre session a expiré. Reconnectez-vous.',
+        artisan_not_found:     'Profil artisan introuvable.',
+        request_not_found:     'Cette demande n’existe plus.',
+        offer_not_found:       'Cette offre n’est plus disponible.',
+        already_claimed:       'Cette demande a déjà été prise en charge.',
+        not_dispatchable:      'Cette demande n’est plus disponible.',
+        invalid_queue_state:   'Cette offre n’est plus active.',
+        internal_error:        'Erreur interne lors de l’acceptation.'
+      };
+
+      throw new Error(
+        messages[reason] ||
+        ('Impossible d’accepter cette mission : ' + reason)
+      );
+    }
+
+    _toast(
+      '🎉 Mission acceptée ! Elle apparaît dans "Mes missions".',
+      'success'
+    );
+
+    _dispatchMissionEvent(
+      'mission-accepted',
+      requestId
+    );
+
+    await _refresh();
+
+  } catch (e) {
+    console.warn(
+      '[fxav2] acceptDispatchOffer error:',
+      e && e.message
+    );
+
+    _toast(
+      '❌ ' + (
+        e && e.message
+          ? e.message
+          : 'Erreur lors de l’acceptation.'
+      ),
+      'error'
+    );
+
+    _btnReset(btn);
+  }
+}
 async function _doClaimOfferedMission(missionId, btn) {
   if (!missionId) return;
 
