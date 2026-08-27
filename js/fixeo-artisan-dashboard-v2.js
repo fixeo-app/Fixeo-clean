@@ -266,7 +266,8 @@ try {
      * inserted with artisan_profile_id = session uid ≠ artisanProfile.id.
      *
      * Mission linkage uses artisans.id as the canonical artisan identity.
-    var sb = await FS.getClient();
+*/
+var sb = await FS.getClient();
     var artisanId = _state.artisanProfile && _state.artisanProfile.id;
     var mRes = artisanId
       ? await sb.from('missions').select('*')
