@@ -1609,32 +1609,93 @@ async function _doClaimOfferedMission(missionId, btn) {
   }
 }
   async function _doCompleteMission(requestId, btn) {
-    if (!requestId) return;
-    _btnBusy(btn, 'Enregistrement…');
-    try {
-      var FS = window.FixeoSupabase;
-      var sb = await FS.getClient();
-      var res = await sb.from('service_requests')
-        .update({ status: 'completed' })
-        .eq('id', requestId)
-        .select('id, status')
-        .maybeSingle();
-      if (res.error) throw res.error;
-      if (!res.data) throw new Error('Mise à jour bloquée (droits insuffisants ou demande introuvable).');
-      /* Mirror completed status on missions row */
-      var mission = _state.myMissions.find(function(m) { return m.request_id === requestId; });
-      if (mission && mission.id) {
-        await sb.from('missions').update({ status: 'done' }).eq('id', mission.id);
-      }
-      _toast('✅ Intervention marquée terminée. En attente de confirmation client.', 'success');
-      _dispatchMissionEvent('mission-completed', requestId, mission && mission.client_profile_id || null);
-      await _refresh();
-    } catch(e) {
-      console.warn('[fxav2] completeMission error:', e && e.message);
-      _toast('❌ ' + (e && e.message ? e.message : 'Erreur.'), 'error');
-      _btnReset(btn);
+  if (!requestId) return;
+
+  _btnBusy(btn, 'Enregistrement…');
+
+  try {
+    var FS = window.FixeoSupabase;
+    var sb = await FS.getClient();
+
+    /*
+     * Canonical lifecycle:
+     * UI identifies the request by requestId,
+     * but lifecycle mutation is performed by mission UUID.
+     *
+     * complete_mission() owns the atomic transition:
+     *   missions:         pending     -> done
+     *   service_requests: in_progress -> completed
+     *
+     * Artisan authority stops at completed.
+     * This path NEVER sets validated.
+     */
+    var mission = _state.myMissions.find(function(m) {
+      return String(m.request_id || '') === String(requestId);
+    });
+
+    if (!mission || !mission.id) {
+      throw new Error('Mission associée introuvable.');
     }
+
+    var res = await sb.rpc('complete_mission', {
+      p_mission_id: mission.id
+    });
+
+    if (res.error) throw res.error;
+
+    var data = res.data;
+
+    if (!data || data.ok !== true) {
+      var reason = data && data.reason ? data.reason : 'unknown';
+
+      var messages = {
+        unauthenticated:      'Session artisan requise.',
+        artisan_not_found:    'Profil artisan introuvable.',
+        mission_not_found:    'Mission introuvable.',
+        not_your_mission:     'Cette mission ne vous appartient pas.',
+        not_started:          'Cette intervention n’est pas encore démarrée.',
+        invalid_request_state:'Cette intervention ne peut pas être terminée dans son état actuel.',
+        inconsistent_state:   'État de mission incohérent. Une vérification est nécessaire.',
+        atomicity_error:      'La finalisation n’a pas pu être enregistrée intégralement.',
+        internal_error:       'Erreur interne lors de la finalisation.'
+      };
+
+      throw new Error(
+        messages[reason] ||
+        ('Impossible de terminer la mission : ' + reason)
+      );
+    }
+
+    _toast(
+      data.already_completed
+        ? '✅ Intervention déjà enregistrée comme terminée.'
+        : '✅ Intervention marquée terminée. En attente de confirmation client.',
+      'success'
+    );
+
+    _dispatchMissionEvent(
+      'mission-completed',
+      requestId,
+      mission.client_profile_id || null
+    );
+
+    await _refresh();
+
+  } catch(e) {
+    console.warn('[fxav2] completeMission error:', e && e.message);
+
+    _toast(
+      '❌ ' + (
+        e && e.message
+          ? e.message
+          : 'Erreur lors de la finalisation.'
+      ),
+      'error'
+    );
+
+    _btnReset(btn);
   }
+}
 
   /* ── AVAILABILITY TOGGLE (uses update_artisan_availability RPC — 7C.12A.2) ── */
   async function _doSetAvailability(newStatus, btn) {
