@@ -957,15 +957,29 @@ function _renderAvailable() {
    * A targeted service_request may also be returned by listOpenRequests().
    * Never render the same request twice.
    */
-  var targetedRequestIds = new Set(
-    targetedOffers
-      .map(function(m) { return String(m.request_id || ''); })
-      .filter(Boolean)
-  );
+  var reservedRequestIds = new Set();
 
-  var genericOpenRequests = (_state.openRequests || []).filter(function(req) {
-    return !targetedRequestIds.has(String(req.id || ''));
-  });
+/*
+ * Exclude mission-backed targeted offers.
+ */
+targetedOffers.forEach(function(m) {
+  var id = String(m.request_id || '');
+  if (id) reservedRequestIds.add(id);
+});
+
+/*
+ * Exclude Dispatch V2 queue-backed offers too.
+ * A V2 request intentionally remains service_requests.status='new'
+ * until acceptance, so listOpenRequests() may return the same request.
+ */
+dispatchOffers.forEach(function(o) {
+  var id = String(o.request_id || '');
+  if (id) reservedRequestIds.add(id);
+});
+
+var genericOpenRequests = (_state.openRequests || []).filter(function(req) {
+  return !reservedRequestIds.has(String(req.id || ''));
+});
 
   var availableCount =
   dispatchOffers.length +
