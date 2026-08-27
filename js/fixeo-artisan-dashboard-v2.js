@@ -36,6 +36,7 @@
     profile:        null,   /* profiles row (auth.uid()) */
     artisanProfile: null,   /* artisans row (owner_user_id = auth.uid()) */
     openRequests:   [],     /* matching new requests (city + category filtered) */
+      dispatchOffers: [],     /* canonical Dispatch V2 offers for authenticated artisan */
     myMissions:     [],     /* service_requests assigned to this artisan */
     section:        'dashboard',
     fetchError:     null    /* last _fetch error message, or null */
@@ -268,9 +269,52 @@ try {
      * Mission linkage uses artisans.id as the canonical artisan identity.
 */
 var sb = await FS.getClient();
-    var artisanId = _state.artisanProfile && _state.artisanProfile.id;
-    var mRes = artisanId
-      ? await sb.from('missions').select('*')
+var artisanId = _state.artisanProfile && _state.artisanProfile.id;
+
+/*
+ * Canonical Dispatch V2 offers.
+ *
+ * Security/ownership is enforced server-side by
+ * get_my_dispatch_offers_v1() using auth.uid()
+ * -> artisans.owner_user_id.
+ *
+ * Do NOT read dispatch_execution_queue directly from the browser.
+ */
+try {
+  var dispatchRes = await sb.rpc('get_my_dispatch_offers_v1');
+
+  if (dispatchRes.error) {
+    throw dispatchRes.error;
+  }
+
+  var dispatchData = dispatchRes.data;
+
+  if (dispatchData && dispatchData.ok === true) {
+    _state.dispatchOffers = Array.isArray(dispatchData.offers)
+      ? dispatchData.offers
+      : [];
+  } else {
+    _state.dispatchOffers = [];
+
+    if (dispatchData && dispatchData.reason) {
+      console.warn(
+        '[fxav2] get_my_dispatch_offers_v1:',
+        dispatchData.reason
+      );
+    }
+  }
+
+} catch (e) {
+  console.warn(
+    '[fxav2] get_my_dispatch_offers_v1 error:',
+    e && e.message
+  );
+
+  _state.dispatchOffers = [];
+}
+
+var mRes = artisanId
+  ? await sb.from('missions').select('*')
           .eq('artisan_profile_id', artisanId)
           .order('created_at', { ascending: false })
       : { data: [], error: null };
