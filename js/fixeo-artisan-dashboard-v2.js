@@ -1521,42 +1521,93 @@ async function _doClaimOfferedMission(missionId, btn) {
     }
   }
 
-  async function _doStartMission(requestId, btn) {
-    if (!requestId) return;
-    _btnBusy(btn, 'Démarrage…');
-    try {
-      var FS = window.FixeoSupabase;
-      var sb = await FS.getClient();
-      /* Update service_request status */
-      var res = await sb.from('service_requests')
-        .update({ status: 'in_progress' })
-        .eq('id', requestId)
-        .select('id, status')
-        .maybeSingle();
-      if (res.error) throw res.error;
-      if (!res.data) throw new Error('Mise à jour bloquée (droits insuffisants ou demande introuvable).');
-      /*
- * Mission remains status='pending' while intervention is active.
- *
- * Canonical lifecycle:
- *   missions:         offered -> pending -> done
- *   service_requests: new -> assigned -> in_progress -> completed
- *
- * Do NOT set mission='done' when the intervention merely starts.
- */
-var mission = _state.myMissions.find(function(m) {
-  return m.request_id === requestId;
-});
-      _toast('▶ Intervention démarrée !', 'success');
-      _dispatchMissionEvent('mission-started', requestId, mission && mission.client_profile_id || null);
-      await _refresh();
-    } catch(e) {
-      console.warn('[fxav2] startMission error:', e && e.message);
-      _toast('❌ ' + (e && e.message ? e.message : 'Erreur lors du démarrage.'), 'error');
-      _btnReset(btn);
-    }
-  }
+ async function _doStartMission(requestId, btn) {
+  if (!requestId) return;
 
+  _btnBusy(btn, 'Démarrage…');
+
+  try {
+    var FS = window.FixeoSupabase;
+    var sb = await FS.getClient();
+
+    /*
+     * Canonical lifecycle:
+     * UI still identifies the request by requestId,
+     * but lifecycle mutation is performed by mission UUID.
+     *
+     * start_mission() owns:
+     *   - authenticated artisan identity
+     *   - mission ownership
+     *   - mission.status = pending
+     *   - service_request.status = assigned
+     *   - assigned → in_progress transition
+     *   - idempotency / race handling
+     */
+    var mission = _state.myMissions.find(function(m) {
+      return String(m.request_id || '') === String(requestId);
+    });
+
+    if (!mission || !mission.id) {
+      throw new Error('Mission associée introuvable.');
+    }
+
+    var res = await sb.rpc('start_mission', {
+      p_mission_id: mission.id
+    });
+
+    if (res.error) throw res.error;
+
+    var data = res.data;
+
+    if (!data || data.ok !== true) {
+      var reason = data && data.reason ? data.reason : 'unknown';
+
+      var messages = {
+        unauthenticated:       'Session artisan requise.',
+        artisan_not_found:     'Profil artisan introuvable.',
+        mission_not_found:     'Mission introuvable.',
+        not_your_mission:      'Cette mission ne vous appartient pas.',
+        not_accepted:          'Cette mission n’est pas encore acceptée.',
+        invalid_request_state: 'Cette intervention ne peut pas être démarrée dans son état actuel.',
+        internal_error:        'Erreur interne lors du démarrage.'
+      };
+
+      throw new Error(
+        messages[reason] ||
+        ('Impossible de démarrer la mission : ' + reason)
+      );
+    }
+
+    _toast(
+      data.already_started
+        ? '▶️ Intervention déjà démarrée.'
+        : '▶️ Intervention démarrée !',
+      'success'
+    );
+
+    _dispatchMissionEvent(
+      'mission-started',
+      requestId,
+      mission.client_profile_id || null
+    );
+
+    await _refresh();
+
+  } catch(e) {
+    console.warn('[fxav2] startMission error:', e && e.message);
+
+    _toast(
+      '❌ ' + (
+        e && e.message
+          ? e.message
+          : 'Erreur lors du démarrage.'
+      ),
+      'error'
+    );
+
+    _btnReset(btn);
+  }
+}
   async function _doCompleteMission(requestId, btn) {
     if (!requestId) return;
     _btnBusy(btn, 'Enregistrement…');
