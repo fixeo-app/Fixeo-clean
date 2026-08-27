@@ -949,6 +949,9 @@ function _renderAvailable() {
   var targetedOffers = (_state.myMissions || []).filter(function(m) {
     return String(m.status || '').toLowerCase().trim() === 'offered';
   });
+   var dispatchOffers = Array.isArray(_state.dispatchOffers)
+  ? _state.dispatchOffers
+  : [];
 
   /*
    * A targeted service_request may also be returned by listOpenRequests().
@@ -965,7 +968,9 @@ function _renderAvailable() {
   });
 
   var availableCount =
-    targetedOffers.length + genericOpenRequests.length;
+  dispatchOffers.length +
+  targetedOffers.length +
+  genericOpenRequests.length;
 
   var html =
     '<div class="fxa-section-head">'
@@ -1035,15 +1040,20 @@ function _renderAvailable() {
 
     html += '<div class="fxa-card-list">';
 
-    /*
-     * Explicit Admin offers first.
-     * These use mission.id → claim_mission().
-     */
-    html += targetedOffers
-      .map(_renderOfferedMissionCard)
-      .join('');
+/*
+ * Canonical Dispatch V2 queue-backed offers first.
+ */
+html += dispatchOffers
+  .map(_renderDispatchOfferCard)
+  .join('');
 
-    
+/*
+ * Legacy/canonical mission-backed targeted offers.
+ */
+html += targetedOffers
+  .map(_renderOfferedMissionCard)
+  .join('');
+
     html += '</div>';
   }
 
