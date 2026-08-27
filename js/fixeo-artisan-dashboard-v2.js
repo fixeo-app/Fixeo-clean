@@ -234,24 +234,38 @@
      * listArtisanMissions() uses auth.profile.id which may differ from
      * artisans.id when owner_user_id ≠ profiles.id in the current session. */
     /*
- * Canonical dispatch only.
+ * Canonical dispatch + quotes separation.
  *
- * Generic service_requests.status='new' rows are not artisan offers.
- * Artisan action is allowed only through missions.status='offered'
- * created by the server-side dispatch engine.
+ * Generic service_requests.status='new' rows are retained only as
+ * quote opportunities for the Devis module.
  *
- * Targeted offers are loaded below through _state.myMissions.
- * Keep openRequests empty so the legacy direct-accept path cannot render.
+ * They are NOT directly acceptable missions.
+ *
+ * Canonical mission acceptance is restricted to:
+ * missions.status='offered' -> claim_mission().
  */
-_state.openRequests = [];
+/* Load matching open requests for the Quotes/Devis module only.
+ * These rows are NOT direct mission offers.
+ * Mission acceptance remains restricted to missions.status='offered'
+ * via claim_mission().
+ */
+try {
+  var openReqs = await FS.listOpenRequests();
+  _state.openRequests = _filterMatching(openReqs || []);
+} catch (e) {
+  console.warn(
+    '[fxav2] listOpenRequests error:',
+    e && e.message
+  );
+  _state.openRequests = [];
+}
 
     /* My missions — query by artisans.id (the artisan table PK stored in
      * _state.artisanProfile.id) so the link is always artisan-identity-based,
      * not session-uid-based.  This fixes the mismatch where missions were
      * inserted with artisan_profile_id = session uid ≠ artisanProfile.id.
      *
-     * Going forward _doAcceptMission also writes artisanProfile.id so
-     * both sides of the link use the same UUID. */
+     * Mission linkage uses artisans.id as the canonical artisan identity.
     var sb = await FS.getClient();
     var artisanId = _state.artisanProfile && _state.artisanProfile.id;
     var mRes = artisanId
@@ -482,28 +496,6 @@ function _computeKPIs() {
       + (onboardingCta || availToggle);
   }
 
-  /* ── RENDER: REQUEST CARD (available/open) ────────────────── */
-  function _renderRequestCard(req) {
-    var age = timeAgo(req.created_at);
-    return '<div class="fxa-card" data-req-id="' + esc(req.id) + '">'
-      + '<div class="fxa-card-head">'
-      + '<span class="fxa-card-service">' + esc(req.service_category || 'Service') + '</span>'
-      + '<span class="fxa-badge fxa-badge-new">Disponible</span>'
-      + '</div>'
-      + '<div class="fxa-card-meta">'
-      + (req.city ? '<span class="fxa-card-meta-item">📍 ' + esc(req.city) + '</span>' : '')
-      + (age      ? '<span class="fxa-card-meta-item">🕐 ' + esc(age)      + '</span>' : '')
-      + '</div>'
-      + (req.description
-          ? '<div class="fxa-card-desc">' + esc(req.description) + '</div>'
-          : '')
-      + '<div class="fxa-actions">'
-      + '<button class="fxa-btn fxa-btn-primary" data-action="accept-mission" data-req-id="' + esc(req.id) + '">'
-      + '✅ Accepter la mission'
-      + '</button>'
-      + '</div>'
-      + '</div>';
-  }
 
   /* ── RENDER: MISSION CARD ────────────────────────────────── */
   function _renderMissionCard(mission) {
@@ -941,14 +933,7 @@ function _renderAvailable() {
       .map(_renderOfferedMissionCard)
       .join('');
 
-    /*
-     * Legacy/open marketplace requests remain unchanged.
-     * These keep using the existing _doAcceptMission(requestId).
-     */
-    html += genericOpenRequests
-      .map(_renderRequestCard)
-      .join('');
-
+    
     html += '</div>';
   }
 
@@ -1309,7 +1294,6 @@ var missionId = btn.dataset.missionId || '';
         || action === 'edit-profile' || action === 'logout';
       if (_actionInFlight && !navAction) return; /* drop duplicate tap */
       switch (action) {
-        case 'accept-mission':      _doAcceptMission(reqId, btn); return;
        case 'claim-offer':         _doClaimOfferedMission(missionId, btn); return;     
         case 'start-mission':       _doStartMission(reqId, btn); return;
         case 'complete-mission':    _doCompleteMission(reqId, btn); return;
@@ -1352,14 +1336,6 @@ var missionId = btn.dataset.missionId || '';
   }
 
   /* ── ACTIONS ──────────────────────────────────────────────── */
-  /* ── ACCEPT MISSION ──────────────────────────────────────────
-   * 1. Guard: verify request still status='new' (race-condition check)
-   * 2. Guard: verify no mission row exists yet for this request_id
-   * 3. INSERT missions row: request_id, artisan_profile_id, client_profile_id,
-   *    agreed_price=0, commission_amount=0, status='assigned'
-   * 4. UPDATE service_requests SET status='assigned'
-   * 5. Refresh state (_fetch + _render) — removes from available, adds to missions
-   * All guards use .maybeSingle() — no PGRST116.  
    /* ── CLAIM TARGETED OFFER ────────────────────────────────────
  * Canonical Admin-targeted flow:
  *
@@ -1448,79 +1424,6 @@ async function _doClaimOfferedMission(missionId, btn) {
     _btnReset(btn);
   }
 }
-  async function _doAcceptMission(requestId, btn) {
-    if (!requestId) return;
-    var ap = _state.artisanProfile;
-    if (!ap) { _toast('❌ Profil artisan non chargé.', 'error'); return; }
-
-    _btnBusy(btn, 'Acceptation…');
-    try {
-      var FS = window.FixeoSupabase;
-      var sb = await FS.getClient();
-      await FS.requireAuth('artisan');
-      /* Use artisans.id (artisan table PK), NOT auth.profile.id (session uid).
-       * auth.uid may differ from artisans.id; missions must reference the
-       * artisan record so listMissions can find them by artisanProfile.id. */
-      var artisanProfileId = _state.artisanProfile.id;
-
-      /* ── Guard 1: request must still be status='new' ──── */
-      var reqCheck = await sb.from('service_requests')
-        .select('id, status, client_profile_id')
-        .eq('id', requestId)
-        .maybeSingle();
-      if (reqCheck.error) throw reqCheck.error;
-      if (!reqCheck.data) throw new Error('Demande introuvable.');
-      if (reqCheck.data.status !== 'new') {
-        throw new Error('Cette demande a déjà été prise en charge.');
-      }
-
-      /* ── Guard 2: no mission row yet for this request ─── */
-      var missionCheck = await sb.from('missions')
-        .select('id')
-        .eq('request_id', requestId)
-        .maybeSingle();
-      if (missionCheck.error && String(missionCheck.error.code || '') !== 'PGRST116') {
-        throw missionCheck.error;
-      }
-      if (missionCheck.data) {
-        throw new Error('Une mission existe déjà pour cette demande.');
-      }
-
-      /* ── Step 1: INSERT mission row ───────────────────── */
-      /* agreed_price=NULL is truthful at offer time (7C.11F.1B contract).
-       * agreed_price=0 is a falsehood — the price is unknown, not zero.
-       * commission_amount omitted — DB default handles it. */
-      var missionInsert = await sb.from('missions').insert({
-        request_id:         requestId,
-        artisan_profile_id: artisanProfileId,
-        client_profile_id:  reqCheck.data.client_profile_id || null,
-        agreed_price:       null,
-        status:             'pending'   /* missions CHECK: pending|done|cancelled|validated */
-      }).select('id').maybeSingle();
-      if (missionInsert.error) throw missionInsert.error;
-      if (!missionInsert.data) throw new Error('Création de mission bloquée (vérifiez les droits RLS).');
-
-      /* ── Step 2: UPDATE service_requests status ───────── */
-      var srUpdate = await sb.from('service_requests')
-        .update({ status: 'assigned' })
-        .eq('id', requestId)
-        .eq('status', 'new')        /* optimistic lock — fails silently if raced */
-        .select('id, status')
-        .maybeSingle();
-      if (srUpdate.error) throw srUpdate.error;
-      /* srUpdate.data may be null if status was already changed — mission still created */
-
-      _toast('🎉 Mission acceptée ! Elle apparaît dans "Mes missions".', 'success');
-      _dispatchMissionEvent('mission-accepted', requestId, reqCheck.data.client_profile_id || null);
-      await _refresh();  /* re-fetches open requests + missions, re-renders */
-
-    } catch(e) {
-      console.warn('[fxav2] acceptMission error:', e && e.message);
-      _toast('❌ ' + (e && e.message ? e.message : 'Erreur lors de l\'acceptation.'), 'error');
-      _btnReset(btn);
-    }
-  }
-
  async function _doStartMission(requestId, btn) {
   if (!requestId) return;
 
@@ -1937,10 +1840,6 @@ async function _doClaimOfferedMission(missionId, btn) {
     },
 
     /* Thin wrappers: identical to internal handlers but dispatch notification events */
-    acceptMission: async function(requestId, btn) {
-      await _doAcceptMission(requestId, btn);
-      _dispatchMissionEvent('mission-accepted', requestId);
-    },
 
     startMission: async function(requestId, btn) {
       await _doStartMission(requestId, btn);
