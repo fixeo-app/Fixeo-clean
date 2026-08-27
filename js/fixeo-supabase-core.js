@@ -471,35 +471,90 @@ if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
     return response.data || [];
   }
 
-  async function listOpenRequests() {
-    await requireAuth('artisan');
-    var sb = await getClient();
-    var response = await sb.from('service_requests').select('*').eq('status', 'new').order('created_at', { ascending: false });
-    if (response.error) throw response.error;
+async function listOpenRequests() {
+  var auth = await requireAuth('artisan');
+  var sb = await getClient();
 
-    var requests = response.data || [];
-    if (!requests.length) return [];
+  /*
+   * Canonical quote eligibility.
+   *
+   * service_requests.status='new' rows may be quote opportunities.
+   *
+   * A dispatch-created mission with status='offered' does NOT block
+   * quoting when that offer belongs to the current artisan.
+   *
+   * Any other mission state remains exclusive and blocks quoting.
+   *
+   * Mission ownership uses artisans.id, not profiles.id/auth.uid().
+   */
 
-    var requestIds = requests.map(function (item) { return item.id; });
-    var quotesResponse = await sb.from('quotes').select('request_id,status').in('request_id', requestIds);
-    if (quotesResponse.error) throw quotesResponse.error;
+  var artisanRes = await sb.from('artisans')
+    .select('id')
+    .eq('owner_user_id', auth.user.id)
+    .maybeSingle();
 
-    var missionsResponse = await sb.from('missions').select('request_id').in('request_id', requestIds);
-    if (missionsResponse.error) throw missionsResponse.error;
+  if (artisanRes.error) throw artisanRes.error;
 
-    var quotes = quotesResponse.data || [];
-    var missions = missionsResponse.data || [];
-
-    return requests.filter(function (requestRow) {
-      var hasAcceptedQuote = quotes.some(function (quote) {
-        return quote.request_id === requestRow.id && quote.status === 'accepted';
-      });
-      var hasMission = missions.some(function (mission) {
-        return mission.request_id === requestRow.id;
-      });
-      return !hasAcceptedQuote && !hasMission;
-    });
+  if (!artisanRes.data || !artisanRes.data.id) {
+    throw new Error('Profil artisan introuvable.');
   }
+
+  var artisanProfileId = artisanRes.data.id;
+
+  var response = await sb.from('service_requests')
+    .select('*')
+    .eq('status', 'new')
+    .order('created_at', { ascending: false });
+
+  if (response.error) throw response.error;
+
+  var requests = response.data || [];
+  if (!requests.length) return [];
+
+  var requestIds = requests.map(function (item) {
+    return item.id;
+  });
+
+  var quotesResponse = await sb.from('quotes')
+    .select('request_id,status')
+    .in('request_id', requestIds);
+
+  if (quotesResponse.error) throw quotesResponse.error;
+
+  var missionsResponse = await sb.from('missions')
+    .select('request_id,artisan_profile_id,status')
+    .in('request_id', requestIds);
+
+  if (missionsResponse.error) throw missionsResponse.error;
+
+  var quotes = quotesResponse.data || [];
+  var missions = missionsResponse.data || [];
+
+  return requests.filter(function (requestRow) {
+    var hasAcceptedQuote = quotes.some(function (quote) {
+      return String(quote.request_id) === String(requestRow.id)
+        && String(quote.status || '').toLowerCase().trim() === 'accepted';
+    });
+
+    if (hasAcceptedQuote) return false;
+
+    var requestMissions = missions.filter(function (mission) {
+      return String(mission.request_id) === String(requestRow.id);
+    });
+
+    var blockingMission = requestMissions.some(function (mission) {
+      var status = String(mission.status || '').toLowerCase().trim();
+
+      var isOwnOfferedMission =
+        status === 'offered'
+        && String(mission.artisan_profile_id || '') === String(artisanProfileId);
+
+      return !isOwnOfferedMission;
+    });
+
+    return !blockingMission;
+  });
+}
 
   async function listQuotesForRequestIds(requestIds) {
     if (!requestIds || !requestIds.length) return [];
