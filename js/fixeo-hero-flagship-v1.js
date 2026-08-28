@@ -242,9 +242,10 @@
   }
   
   /* ── Init ──────────────────────────────────────────────────── */
-  function _init() {
-    mount();
-  }
+ function _init() {
+  if (!mount()) return;
+  renderNeed();
+}
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _init, { once: true });
