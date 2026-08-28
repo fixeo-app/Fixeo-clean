@@ -374,6 +374,79 @@ if (dispatchRes.ok) {
     return [];
   });
 }
+    var safeCandidates = [];
+
+if (dispatchRows.length) {
+  var artisanIds = dispatchRows
+    .map(function(row) {
+      return row.artisan_id;
+    })
+    .filter(Boolean);
+
+  if (artisanIds.length) {
+    var artisanFilter =
+      'in.(' +
+      artisanIds
+        .map(function(id) {
+          return '"' + String(id).replace(/"/g, '') + '"';
+        })
+        .join(',') +
+      ')';
+
+    var artisansRes = await fetch(
+      lookupUrl +
+        '/rest/v1/artisans' +
+        '?id=' + encodeURIComponent(artisanFilter) +
+        '&select=id,full_name,name,service_category,city,photo_url,is_public',
+      {
+        method: 'GET',
+        headers: {
+          'apikey': lookupServiceKey,
+          'Authorization': 'Bearer ' + lookupServiceKey
+        }
+      }
+    );
+
+    var artisanRows = [];
+
+    if (artisansRes.ok) {
+      artisanRows = await artisansRes.json().catch(function() {
+        return [];
+      });
+    }
+
+    var artisansById = {};
+
+    artisanRows.forEach(function(artisan) {
+      if (artisan && artisan.id && artisan.is_public === true) {
+        artisansById[String(artisan.id)] = artisan;
+      }
+    });
+
+    safeCandidates = dispatchRows
+      .map(function(dispatchRow) {
+        var artisan =
+          artisansById[String(dispatchRow.artisan_id)];
+
+        if (!artisan) return null;
+
+        return {
+          display_name:
+            artisan.full_name ||
+            artisan.name ||
+            'Artisan FIXEO',
+          service_category:
+            artisan.service_category || null,
+          city:
+            artisan.city || null,
+          photo_url:
+            artisan.photo_url || null,
+          status: 'waiting'
+        };
+      })
+      .filter(Boolean);
+  }
+}
     res.status(200).json({
       ok: true,
       request: {
@@ -391,9 +464,10 @@ if (dispatchRes.ok) {
   status: lookupRequest.status || null,
   created_at: lookupRequest.created_at || null
 },
-      dispatch: {
+     dispatch: {
   active: dispatchRows.length > 0,
-  contacted_count: dispatchRows.length
+  contacted_count: dispatchRows.length,
+  candidates: safeCandidates
 }
     });
     return;
