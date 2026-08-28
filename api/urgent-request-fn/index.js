@@ -168,7 +168,8 @@ return {
   dispatched: dispatchOk,
   dispatch_result: result
 };
-
+}
+  
 /* ── Supabase insert (service role — server-side only) ── */
 async function _insertRequest(payload) {
   var url        = process.env.SUPABASE_URL;
