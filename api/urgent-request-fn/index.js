@@ -452,13 +452,14 @@ var mission = null;
 
 if (
   lookupRequest.status === 'assigned' ||
-  lookupRequest.status === 'in_progress'
+  lookupRequest.status === 'in_progress' ||
+  lookupRequest.status === 'completed'
 ) {
   var missionRes = await fetch(
     lookupUrl +
       '/rest/v1/missions' +
       '?request_id=eq.' + encodeURIComponent(String(lookupRequest.id)) +
-      '&status=eq.pending' +
+      '&status=in.(pending,done)' +
       '&select=id,artisan_profile_id,status' +
       '&limit=1',
     {
