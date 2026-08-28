@@ -96,6 +96,17 @@
   function isMounted() {
     return _mounted;
   }
+  /* ── State 1 renderer — NEED ───────────────────────────────── */
+  function renderNeed() {
+    if (!_mounted || !_root) return false;
+
+    _state = STATES.NEED;
+    _root.setAttribute('data-fxhf-state', STATES.NEED);
+
+    /* Passive for now:
+       State is prepared, but no visible markup is injected yet. */
+    return true;
+  }
 
   /* ── Init ──────────────────────────────────────────────────── */
   function _init() {
