@@ -351,7 +351,29 @@ if (body.action === 'guest_lookup') {
       });
       return;
     }
+   var dispatchRes = await fetch(
+  lookupUrl +
+    '/rest/v1/dispatch_execution_queue' +
+    '?request_id=eq.' + encodeURIComponent(lookupRequest.id) +
+    '&execution_status=eq.QUEUED' +
+    '&select=artisan_id,execution_status' +
+    '&order=created_at.asc',
+  {
+    method: 'GET',
+    headers: {
+      'apikey': lookupServiceKey,
+      'Authorization': 'Bearer ' + lookupServiceKey
+    }
+  }
+);
 
+var dispatchRows = [];
+
+if (dispatchRes.ok) {
+  dispatchRows = await dispatchRes.json().catch(function() {
+    return [];
+  });
+}
     res.status(200).json({
       ok: true,
       request: {
@@ -368,6 +390,10 @@ if (body.action === 'guest_lookup') {
     .trim(),
   status: lookupRequest.status || null,
   created_at: lookupRequest.created_at || null
+},
+      dispatch: {
+  active: dispatchRows.length > 0,
+  contacted_count: dispatchRows.length
 }
     });
     return;
