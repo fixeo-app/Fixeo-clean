@@ -144,14 +144,17 @@ async function _callDispatch(requestId) {
   if (!url || !serviceKey) return { ok: false, dispatch_error: 'ENV_MISSING' };
   var res;
   try {
-    res = await fetch(url + '/rest/v1/rpc/dispatch_request_v1', {
+    res = await fetch(url + '/rest/v1/rpc/dispatch_execute_v1', {
       method:  'POST',
       headers: {
         'Content-Type':  'application/json',
         'apikey':        serviceKey,
         'Authorization': 'Bearer ' + serviceKey,
       },
-      body: JSON.stringify({ p_request_id: requestId }),
+      body: JSON.stringify({
+  p_request_id: requestId,
+  p_primary_batch_size: 3
+}),
     });
   } catch (fetchErr) { return { ok: false, dispatch_error: 'NETWORK: ' + fetchErr.message }; }
   var dispatchBody = null;
