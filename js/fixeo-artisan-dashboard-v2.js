@@ -449,9 +449,24 @@ function _computeKPIs() {
     return !offeredRequestIds.has(String(req.id || ''));
   });
 
-  var available =
-    offered.length +
-    genericAvailable.length;
+  var dispatchOffers = _state.dispatchOffers || [];
+
+var dispatchRequestIds = new Set(
+  dispatchOffers
+    .map(function(o) {
+      return String(o.request_id || '');
+    })
+    .filter(Boolean)
+);
+
+var genericAvailableNoDispatch = genericAvailable.filter(function(req) {
+  return !dispatchRequestIds.has(String(req.id || ''));
+});
+
+var available =
+  dispatchOffers.length +
+  offered.length +
+  genericAvailableNoDispatch.length;
 
   return {
     assigned: assigned,
