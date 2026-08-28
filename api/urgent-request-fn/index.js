@@ -450,7 +450,10 @@ if (dispatchRows.length) {
     var winner = null;
 var mission = null;
 
-if (lookupRequest.status === 'assigned') {
+if (
+  lookupRequest.status === 'assigned' ||
+  lookupRequest.status === 'in_progress'
+) {
   var missionRes = await fetch(
     lookupUrl +
       '/rest/v1/missions' +
@@ -527,11 +530,20 @@ if (lookupRequest.status === 'assigned') {
 }
     var uiState = 'analysis';
 
+var uiState = 'analysis';
+
 if (
   lookupRequest.status === 'completed' ||
   (mission && mission.status === 'done')
 ) {
   uiState = 'completed';
+} else if (
+  lookupRequest.status === 'in_progress' &&
+  mission &&
+  mission.status === 'pending' &&
+  winner
+) {
+  uiState = 'in_progress';
 } else if (
   lookupRequest.status === 'assigned' &&
   mission &&
