@@ -1,0 +1,22 @@
+/*
+ * css/fixeo-hero-flagship-v1.css
+ * FIXEO Hero Flagship V1
+ *
+ * Namespace: fxhf-* only
+ * Passive foundation — no visual takeover yet.
+ */
+
+:root {
+  --fxhf-bg: #070816;
+  --fxhf-text: rgba(255, 255, 255, 0.96);
+  --fxhf-muted: rgba(255, 255, 255, 0.58);
+  --fxhf-border: rgba(255, 255, 255, 0.08);
+  --fxhf-cyan: #6fdcff;
+  --fxhf-indigo: #4864ff;
+  --fxhf-pink: #e1306c;
+  --fxhf-green: #20c997;
+}
+
+.fxhf-root {
+  display: none;
+}
