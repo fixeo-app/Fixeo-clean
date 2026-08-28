@@ -160,9 +160,14 @@ async function _callDispatch(requestId) {
   var dispatchBody = null;
   try { dispatchBody = await res.json(); } catch (_) { return { ok: false, dispatch_error: 'PARSE_ERROR' }; }
   if (!res.ok) return { ok: false, dispatch_error: 'HTTP_' + res.status, dispatch_result: dispatchBody };
-  var result = dispatchBody;
-  return { ok: !!(result && result.ok), dispatched: !!(result && result.ok), dispatch_result: result };
-}
+ var result = dispatchBody;
+var dispatchOk = Array.isArray(result) && result.length > 0;
+
+return {
+  ok: dispatchOk,
+  dispatched: dispatchOk,
+  dispatch_result: result
+};
 
 /* ── Supabase insert (service role — server-side only) ── */
 async function _insertRequest(payload) {
