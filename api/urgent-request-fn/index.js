@@ -305,7 +305,7 @@ if (body.action === 'guest_lookup') {
       lookupUrl +
         '/rest/v1/service_requests' +
         '?tracking_ref=eq.' + encodeURIComponent(lookupTrackingRef) +
-        '&select=id,tracking_ref,guest_token_hash,service_category,city,description,status,created_at' +
+        '&select=id,tracking_ref,guest_token_hash,service_category,city,description,urgency,status,created_at' +
         '&limit=1',
       {
         method: 'GET',
@@ -355,14 +355,20 @@ if (body.action === 'guest_lookup') {
     res.status(200).json({
       ok: true,
       request: {
-        id: lookupRequest.id,
-        tracking_ref: lookupRequest.tracking_ref,
-        service_category: lookupRequest.service_category || null,
-        city: lookupRequest.city || null,
-        description: lookupRequest.description || null,
-        status: lookupRequest.status || null,
-        created_at: lookupRequest.created_at || null
-      }
+  id: lookupRequest.id,
+  tracking_ref: lookupRequest.tracking_ref,
+  service_category: lookupRequest.service_category || null,
+  city: lookupRequest.city || null,
+  urgency: lookupRequest.urgency || null,
+  public_description: String(lookupRequest.description || '')
+    .replace(
+      /\s*\|\s*Ref:\s*FX-[A-Z0-9]+\s*\|\s*Source:\s*[^|]+$/i,
+      ''
+    )
+    .trim(),
+  status: lookupRequest.status || null,
+  created_at: lookupRequest.created_at || null
+}
     });
     return;
 
