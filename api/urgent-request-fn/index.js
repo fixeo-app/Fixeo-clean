@@ -525,8 +525,26 @@ if (lookupRequest.status === 'assigned') {
     }
   }
 }
+    var uiState = 'analysis';
+
+if (
+  lookupRequest.status === 'completed' ||
+  (mission && mission.status === 'done')
+) {
+  uiState = 'completed';
+} else if (
+  lookupRequest.status === 'assigned' &&
+  mission &&
+  mission.status === 'pending' &&
+  winner
+) {
+  uiState = 'mission_active';
+} else if (dispatchRows.length > 0) {
+  uiState = 'dispatching';
+}
     res.status(200).json({
       ok: true,
+      ui_state: uiState,
       request: {
   id: lookupRequest.id,
   tracking_ref: lookupRequest.tracking_ref,
