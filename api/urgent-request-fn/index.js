@@ -447,6 +447,84 @@ if (dispatchRows.length) {
       .filter(Boolean);
   }
 }
+    var winner = null;
+var mission = null;
+
+if (lookupRequest.status === 'assigned') {
+  var missionRes = await fetch(
+    lookupUrl +
+      '/rest/v1/missions' +
+      '?request_id=eq.' + encodeURIComponent(String(lookupRequest.id)) +
+      '&status=eq.pending' +
+      '&select=id,artisan_profile_id,status' +
+      '&limit=1',
+    {
+      method: 'GET',
+      headers: {
+        'apikey': lookupServiceKey,
+        'Authorization': 'Bearer ' + lookupServiceKey
+      }
+    }
+  );
+
+  var missionRows = [];
+
+  if (missionRes.ok) {
+    missionRows = await missionRes.json().catch(function() {
+      return [];
+    });
+  }
+
+  var missionRow =
+    missionRows && missionRows.length ? missionRows[0] : null;
+
+  if (missionRow) {
+    mission = {
+      status: missionRow.status || null
+    };
+
+    var winnerRes = await fetch(
+      lookupUrl +
+        '/rest/v1/artisans' +
+        '?id=eq.' + encodeURIComponent(missionRow.artisan_profile_id) +
+        '&select=full_name,name,service_category,city,photo_url,is_public' +
+        '&limit=1',
+      {
+        method: 'GET',
+        headers: {
+          'apikey': lookupServiceKey,
+          'Authorization': 'Bearer ' + lookupServiceKey
+        }
+      }
+    );
+
+    var winnerRows = [];
+
+    if (winnerRes.ok) {
+      winnerRows = await winnerRes.json().catch(function() {
+        return [];
+      });
+    }
+
+    var winnerRow =
+      winnerRows && winnerRows.length ? winnerRows[0] : null;
+
+    if (winnerRow && winnerRow.is_public === true) {
+      winner = {
+        display_name:
+          winnerRow.full_name ||
+          winnerRow.name ||
+          'Artisan FIXEO',
+        service_category:
+          winnerRow.service_category || null,
+        city:
+          winnerRow.city || null,
+        photo_url:
+          winnerRow.photo_url || null
+      };
+    }
+  }
+}
     res.status(200).json({
       ok: true,
       request: {
@@ -464,11 +542,15 @@ if (dispatchRows.length) {
   status: lookupRequest.status || null,
   created_at: lookupRequest.created_at || null
 },
-     dispatch: {
+    dispatch: {
   active: dispatchRows.length > 0,
   contacted_count: dispatchRows.length,
   candidates: safeCandidates
-}
+},
+
+winner: winner,
+
+mission: mission
     });
     return;
 
