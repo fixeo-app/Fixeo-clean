@@ -55,7 +55,10 @@
   var _root = null;
   var _mounted = false;
   var _state = STATES.NEED;
-
+  var _activeTrackingRef = null;
+  var _activeGuestToken = null;
+  var _pollTimer = null;
+  
   /* ── Helpers ───────────────────────────────────────────────── */
   function _el(id) {
     return document.getElementById(id);
