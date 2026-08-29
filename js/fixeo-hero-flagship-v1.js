@@ -402,7 +402,8 @@ populateFlagshipCities(0);
       trackingRef: data.ref,
       serverRequestId: data.id
     });
-
+   _startGuestPolling();
+    
   } catch (err) {
     console.error(
       '[FXHF] Flagship request creation failed:',
