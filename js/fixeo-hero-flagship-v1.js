@@ -67,7 +67,46 @@
   function _isValidState(state) {
     return VALID_STATES.indexOf(state) !== -1;
   }
+async function _fetchGuestState() {
+  if (!_activeTrackingRef || !_activeGuestToken) {
+    return null;
+  }
 
+  try {
+    var response = await fetch('/api/guest-request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        action: 'guest_lookup',
+        tracking_ref: _activeTrackingRef,
+        guest_token: _activeGuestToken
+      })
+    });
+
+    var data = await response.json().catch(function () {
+      return null;
+    });
+
+    if (!response.ok || !data || data.ok !== true) {
+      console.warn(
+        '[FXHF] guest lookup failed',
+        data && (data.code || data.error)
+      );
+      return null;
+    }
+
+    return data;
+  } catch (err) {
+    console.warn(
+      '[FXHF] guest lookup error:',
+      err && err.message
+    );
+    return null;
+  }
+}
+  
   /* ── Mount ───────────────────────────────────────────────────
    * Passive in this first implementation.
    * It only binds the JS controller to #fxhf-root.
