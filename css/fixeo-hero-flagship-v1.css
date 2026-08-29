@@ -2112,10 +2112,15 @@
   /* ── STATE 1 / NEED ───────────────────────────────────── */
 
   .fxhf-shell--need {
-    gap: 32px;
-    padding: 18px 24px 22px;
-  }
+  gap: 32px;
+  padding: 4px 24px 16px;
+  transform: translateY(-10px);
+}
 
+  .fxhf-root[data-fxhf-state="need"] {
+  margin-top: -12px;
+}
+  
   .fxhf-shell--need .fxhf-eyebrow {
     margin-bottom: 10px;
   }
