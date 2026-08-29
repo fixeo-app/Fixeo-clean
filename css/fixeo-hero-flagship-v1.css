@@ -1265,4 +1265,10 @@
     animation: none;
   }
 }
+/* Hide legacy RAFI hero while Flagship is active */
+.fxhf-root:not([data-fxhf-state="need"]) ~ .rfos-stage-wrap,
+.fxhf-root:not([data-fxhf-state="need"]) ~ #hero-quick-search,
+.fxhf-root:not([data-fxhf-state="need"]) ~ .hero-content .rfos-stage-wrap {
+  display: none !important;
+}
 
