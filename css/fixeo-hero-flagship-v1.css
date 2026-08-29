@@ -2257,3 +2257,40 @@
     margin-bottom: -24px;
   }
 }
+
+.fxhf-location-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.fxhf-location-row .fxhf-location {
+  width: auto;
+  flex: 0 1 auto;
+}
+
+.fxhf-location-detected-badge {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 28px;
+  padding: 5px 9px;
+
+  border: 1px solid rgba(111, 220, 255, 0.16);
+  border-radius: 999px;
+
+  background: rgba(111, 220, 255, 0.055);
+
+  color: rgba(200, 245, 255, 0.82);
+
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+
+  white-space: nowrap;
+}
+
+.fxhf-location-detected-badge[hidden] {
+  display: none;
+}
