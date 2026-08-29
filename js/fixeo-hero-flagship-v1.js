@@ -164,11 +164,31 @@
 
     /* Location */
     var location = document.createElement('button');
-    location.type = 'button';
-    location.id = 'fxhf-location';
-    location.className = 'fxhf-location';
-    location.setAttribute('aria-label', 'Choisir ou modifier la ville');
-    location.textContent = '📍 Choisir la ville';
+location.type = 'button';
+location.id = 'fxhf-location';
+location.className = 'fxhf-location';
+location.setAttribute('aria-label', 'Choisir ou modifier la ville');
+location.textContent = '📍 Choisir la ville';
+
+location.addEventListener('click', function () {
+  var citySelect = document.getElementById('qsm-select-city');
+
+  if (!citySelect) return;
+
+  try {
+    citySelect.focus();
+
+    if (typeof citySelect.showPicker === 'function') {
+      citySelect.showPicker();
+    } else {
+      citySelect.click();
+    }
+  } catch (_) {
+    try {
+      citySelect.click();
+    } catch (_) {}
+  }
+});
 
     /* Main CTA */
     var cta = document.createElement('button');
