@@ -632,12 +632,13 @@ rafiMessage.textContent = rafiMessages[rafiMessageIndex];
 
 var rafiMessageTimer = setInterval(function () {
   /* Ambient conversation only belongs to NEED state. */
+  
   if (
-    !root ||
-    root.getAttribute('data-fxhf-state') !== 'need'
-  ) {
-    return;
-  }
+  !_root ||
+  _root.getAttribute('data-fxhf-state') !== 'need'
+) {
+  return;
+}
 
   rafiMessageIndex =
     (rafiMessageIndex + 1) % rafiMessages.length;
