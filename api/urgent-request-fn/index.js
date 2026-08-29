@@ -88,8 +88,8 @@ var VALID_SLUGS = [
   'demenagement','autre'
 ];
 
-var VALID_MODES   = ['emergency'];
-var VALID_URGENCY = ['now'];
+var VALID_MODES   = ['emergency', 'flagship'];
+var VALID_URGENCY = ['normal', 'urgent', 'now'];
 
 var PHONE_RE = /^[+\d\s\-().]{6,20}$/;
 var REF_RE   = /^[A-Z0-9\-]{3,32}$/;
@@ -615,7 +615,20 @@ mission: mission
   if (!service || VALID_SLUGS.indexOf(service) < 0) errors.push('service: invalid slug');
   if (!problem)  errors.push('problem: required');
   if (!city || ALL_CITIES.indexOf(city) < 0)        errors.push('city: not in allowlist');
-  if (!phone || !PHONE_RE.test(phone))               errors.push('phone: invalid format');
+  if (
+  mode === 'emergency' &&
+  (!phone || !PHONE_RE.test(phone))
+) {
+  errors.push('phone: invalid format');
+}
+
+if (
+  mode === 'flagship' &&
+  phone &&
+  !PHONE_RE.test(phone)
+) {
+  errors.push('phone: invalid format');
+}
   if (VALID_MODES.indexOf(mode) < 0)                 errors.push('mode: must be emergency');
   if (VALID_URGENCY.indexOf(urgency) < 0)            errors.push('urgency: must be now');
   if (trackingRef && !REF_RE.test(trackingRef))      errors.push('tracking_ref: invalid format');
