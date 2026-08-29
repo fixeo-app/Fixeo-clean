@@ -606,8 +606,8 @@ mission: mission
   var phone       = _str(body.phone,       32);
   var trackingRef = _str(body.tracking_ref, 32);
   var freeText    = _str(body.description, 500); /* optional Autre urgence free text */
-  var urgency     = _str(body.urgency,     16) || 'now';
   var mode        = _str(body.mode,        32) || 'emergency';
+  var urgency     = _str(body.urgency,     16) || (mode === 'flagship' ? 'normal' : 'now');
   var source      = _str(body.source,      64) || 'fxrf4';
 
   /* Field validation */
