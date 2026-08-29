@@ -360,6 +360,8 @@ populateFlagshipCities(0);
     if (!guestSaved) {
       throw new Error('GUEST_ACCESS_SAVE_FAILED');
     }
+    _activeTrackingRef = data.ref;
+    _activeGuestToken = data.guest_token;
 
     /* State 2 begins only after canonical server creation succeeded. */
     renderAnalysis({
