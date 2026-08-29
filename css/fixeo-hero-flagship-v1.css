@@ -2102,6 +2102,30 @@
     margin-top: 6px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   RAFI — AMBIENT MESSAGE TRANSITION
+══════════════════════════════════════════════════════════════ */
+
+.fxhf-rafi-message {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.fxhf-rafi-message.is-changing {
+  opacity: 0;
+  transform: translateY(5px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fxhf-rafi-message {
+    transition: none;
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════
    FLAGSHIP — COMPACT DESKTOP / LOW HEIGHT VIEWPORT
    Keeps NEED, ANALYSIS and DISPATCHING visible on laptop screens
