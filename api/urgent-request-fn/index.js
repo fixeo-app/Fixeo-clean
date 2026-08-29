@@ -687,7 +687,7 @@ if (!clientProfileId) {
     service_category:  service,
     city:              city,
     description:       operationalDescription,
-    client_phone:      _normalizePhone(phone),   /* 7C.11C column — phone isolated here */
+    client_phone:      phone ? _normalizePhone(phone) : null,   /* 7C.11C column — phone isolated here */
     urgency:           urgency,                   /* 7C.11C column — always 'now' for emergency */
     status:            'new',                     /* server-authoritative */
     created_at:        new Date().toISOString(),
