@@ -277,7 +277,7 @@ populateFlagshipCities(0);
         description: '',
         city: city,
         phone: '',
-        urgency: isUrgent ? 'urgent' : 'normal',
+        urgency: isUrgent ? 'urgent' : 'normale',
         mode: 'flagship',
         source: 'hero-flagship-v1'
       })
