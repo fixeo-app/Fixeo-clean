@@ -309,6 +309,120 @@ populateFlagshipCities(0);
 
     return true;
   }
+/* ── State 2 renderer — ANALYSIS ───────────────────────────── */
+  function renderAnalysis(data) {
+    if (!_mounted || !_root) return false;
+
+    data = data || {};
+
+    _state = STATES.ANALYSIS;
+    _root.setAttribute('data-fxhf-state', STATES.ANALYSIS);
+
+    _root.replaceChildren();
+
+    var shell = document.createElement('div');
+    shell.className = 'fxhf-shell fxhf-shell--analysis';
+
+    var content = document.createElement('div');
+    content.className = 'fxhf-content';
+
+    var eyebrow = document.createElement('div');
+    eyebrow.className = 'fxhf-eyebrow';
+    eyebrow.textContent = 'RAFI · Assistant FIXEO';
+
+    var title = document.createElement('h2');
+    title.className = 'fxhf-title';
+    title.textContent = 'RAFI analyse votre demande';
+
+    var subtitle = document.createElement('p');
+    subtitle.className = 'fxhf-subtitle';
+    subtitle.textContent =
+      'Je prépare le matching avec les artisans les plus adaptés.';
+
+    var summary = document.createElement('div');
+    summary.className = 'fxhf-analysis-summary';
+
+    if (data.need) {
+      var quote = document.createElement('p');
+      quote.className = 'fxhf-analysis-quote';
+      quote.textContent = '“' + String(data.need) + '”';
+      summary.appendChild(quote);
+    }
+
+    var facts = document.createElement('div');
+    facts.className = 'fxhf-analysis-facts';
+
+    if (data.categoryLabel) {
+      var category = document.createElement('div');
+      category.className = 'fxhf-analysis-fact';
+      category.textContent =
+        'Besoin identifié · ' + String(data.categoryLabel) + ' ✓';
+      facts.appendChild(category);
+    }
+
+    if (data.city) {
+      var city = document.createElement('div');
+      city.className = 'fxhf-analysis-fact';
+      city.textContent =
+        'Zone · ' + String(data.city) + ' ✓';
+      facts.appendChild(city);
+    }
+
+    if (data.urgencyLabel) {
+      var urgency = document.createElement('div');
+      urgency.className = 'fxhf-analysis-fact';
+      urgency.textContent =
+        'Urgence · ' + String(data.urgencyLabel) + ' ✓';
+      facts.appendChild(urgency);
+    }
+
+    summary.appendChild(facts);
+
+    var status = document.createElement('div');
+    status.className = 'fxhf-analysis-status';
+    status.textContent = 'Préparation du matching…';
+
+    content.appendChild(eyebrow);
+    content.appendChild(title);
+    content.appendChild(subtitle);
+    content.appendChild(summary);
+    content.appendChild(status);
+
+    /* RAFI visual — active analysis state */
+    var visual = document.createElement('div');
+    visual.className = 'fxhf-visual fxhf-visual--analysis';
+    visual.setAttribute('aria-hidden', 'true');
+
+    var sphere = document.createElement('div');
+    sphere.className =
+      'fxhf-rafi-sphere fxhf-rafi-sphere--analysis';
+
+    var halo = document.createElement('div');
+    halo.className = 'fxhf-rafi-halo';
+
+    var core = document.createElement('div');
+    core.className = 'fxhf-rafi-core';
+
+    var rafiImg = document.createElement('img');
+    rafiImg.className = 'fxhf-rafi-image';
+    rafiImg.src = 'rafi/RAFI_V2_HeadCollar_Core.webp';
+    rafiImg.alt = '';
+    rafiImg.width = 150;
+    rafiImg.height = 150;
+    rafiImg.loading = 'eager';
+
+    core.appendChild(rafiImg);
+    sphere.appendChild(halo);
+    sphere.appendChild(core);
+    visual.appendChild(sphere);
+
+    shell.appendChild(content);
+    shell.appendChild(visual);
+
+    _root.appendChild(shell);
+
+    return true;
+  }
   
   /* ── Init ──────────────────────────────────────────────────── */
  function _init() {
