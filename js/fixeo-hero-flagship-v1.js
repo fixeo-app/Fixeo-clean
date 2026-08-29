@@ -113,7 +113,7 @@ function _startGuestPolling() {
   }
 
   var analysisStartedAt = Date.now();
-  var MIN_ANALYSIS_MS = 3000;
+  var MIN_ANALYSIS_MS = 5000;
 
   async function poll() {
     if (!_activeTrackingRef || !_activeGuestToken) {
