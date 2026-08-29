@@ -263,18 +263,35 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  /* Rate limit */
-  var ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+  /* Parse body first so read-only guest lookup does not consume
+ * the request-creation rate limit.
+ */
+var body = req.body || {};
+if (typeof body === 'string') {
+  try { body = JSON.parse(body); } catch (_) { body = {}; }
+}
+
+/* Rate-limit request creation only.
+ * guest_lookup is an authenticated read using tracking_ref + guest_token
+ * and is polled by the Flagship client.
+ */
+if (body.action !== 'guest_lookup') {
+  var ip = String(
+    req.headers['x-forwarded-for'] ||
+    req.socket.remoteAddress ||
+    ''
+  ).split(',')[0].trim();
+
   if (!_rateCheck(ip)) {
-    res.status(429).json({ ok: false, error: 'Trop de demandes. Réessayez dans quelques minutes.', code: 'RATE_LIMITED' });
+    res.status(429).json({
+      ok: false,
+      error: 'Trop de demandes. Réessayez dans quelques minutes.',
+      code: 'RATE_LIMITED'
+    });
     return;
   }
-
-  /* Parse body */
-  var body = req.body || {};
-  if (typeof body === 'string') {
-    try { body = JSON.parse(body); } catch (_) { body = {}; }
-  }
+}
+  
   /* ── Secure anonymous guest lookup ── */
 if (body.action === 'guest_lookup') {
   var lookupTrackingRef = _str(body.tracking_ref, 32).toUpperCase();
