@@ -217,9 +217,11 @@ populateFlagshipCities(0);
     cta.id = 'fxhf-submit';
     cta.className = 'fxhf-submit';
     cta.textContent = 'Trouver une solution →';
-    cta.addEventListener('click', function () {
+  cta.addEventListener('click', async function () {
   var need = (textarea.value || '').trim();
   var city = location.value || '';
+
+  textarea.setCustomValidity('');
 
   if (need.length < 3) {
     textarea.focus();
@@ -231,19 +233,111 @@ populateFlagshipCities(0);
     return;
   }
 
+  /* RAFI must understand the need before starting matching. */
   if (
-    !window.FixeoRequestFlowV4 ||
-    typeof window.FixeoRequestFlowV4.open !== 'function'
+    !window.FixeoAIRE ||
+    typeof window.FixeoAIRE.detect !== 'function'
   ) {
+    console.warn('[FXHF] RAFI detection engine unavailable');
     return;
   }
 
-  window.FixeoRequestFlowV4.open({
-    mode: 'marketplace',
-    source: 'hero-flagship',
-    prefillService: need,
-    prefillCity: city
-  });
+  var detected = window.FixeoAIRE.detect(need);
+
+  if (!detected || !detected.cat) {
+    textarea.setCustomValidity(
+      'Pouvez-vous préciser un peu votre besoin pour que RAFI identifie le bon métier ?'
+    );
+    textarea.reportValidity();
+    textarea.focus();
+    return;
+  }
+
+  var isUrgent = false;
+
+  if (typeof window.FixeoAIRE.detectUrgency === 'function') {
+    isUrgent = !!window.FixeoAIRE.detectUrgency(
+      need,
+      detected
+    );
+  }
+
+  cta.disabled = true;
+  cta.textContent = 'RAFI prépare votre demande…';
+
+  try {
+    var response = await fetch('/api/urgent-request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        service: detected.cat,
+        problem: need,
+        description: '',
+        city: city,
+        phone: '',
+        urgency: isUrgent ? 'urgent' : 'normal',
+        mode: 'flagship',
+        source: 'hero-flagship-v1'
+      })
+    });
+
+    var data = await response.json().catch(function () {
+      return null;
+    });
+
+    if (
+      !response.ok ||
+      !data ||
+      data.ok !== true ||
+      !data.ref ||
+      !data.id ||
+      !data.guest_token
+    ) {
+      throw new Error(
+        (data && (data.error || data.code)) ||
+        'FLAGSHIP_CREATE_FAILED'
+      );
+    }
+
+    if (
+      !window.FixeoClientRequestsStore ||
+      typeof window.FixeoClientRequestsStore.saveGuestAccess !== 'function'
+    ) {
+      throw new Error('GUEST_ACCESS_STORE_UNAVAILABLE');
+    }
+
+    var guestSaved =
+      window.FixeoClientRequestsStore.saveGuestAccess(
+        data.ref,
+        data.id,
+        data.guest_token
+      );
+
+    if (!guestSaved) {
+      throw new Error('GUEST_ACCESS_SAVE_FAILED');
+    }
+
+    /* State 2 begins only after canonical server creation succeeded. */
+    renderAnalysis({
+      need: need,
+      categoryLabel: detected.label || detected.cat,
+      city: city,
+      urgencyLabel: isUrgent ? 'Urgent' : null,
+      trackingRef: data.ref,
+      serverRequestId: data.id
+    });
+
+  } catch (err) {
+    console.error(
+      '[FXHF] Flagship request creation failed:',
+      err && err.message
+    );
+
+    cta.disabled = false;
+    cta.textContent = 'Trouver une solution →';
+  }
 });
 
     /* Truthful reassurance */
