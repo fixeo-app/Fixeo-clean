@@ -2155,8 +2155,8 @@
   }
 
   .fxhf-shell--need .fxhf-directory-link {
-    margin-top: 10px;
-  }
+  display: none;
+}
 
   .fxhf-shell--need .fxhf-visual {
     min-height: 320px;
