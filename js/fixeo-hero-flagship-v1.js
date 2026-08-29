@@ -640,11 +640,17 @@ var rafiMessageTimer = setInterval(function () {
   return;
 }
 
+ rafiMessage.classList.add('is-changing');
+
+setTimeout(function () {
   rafiMessageIndex =
     (rafiMessageIndex + 1) % rafiMessages.length;
 
   rafiMessage.textContent =
     rafiMessages[rafiMessageIndex];
+
+  rafiMessage.classList.remove('is-changing');
+}, 180);
 }, 2500);
 
     visual.appendChild(sphere);
