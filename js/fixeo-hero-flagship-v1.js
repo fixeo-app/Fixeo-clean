@@ -217,6 +217,34 @@ populateFlagshipCities(0);
     cta.id = 'fxhf-submit';
     cta.className = 'fxhf-submit';
     cta.textContent = 'Trouver une solution →';
+    cta.addEventListener('click', function () {
+  var need = (textarea.value || '').trim();
+  var city = location.value || '';
+
+  if (need.length < 3) {
+    textarea.focus();
+    return;
+  }
+
+  if (!city) {
+    location.focus();
+    return;
+  }
+
+  if (
+    !window.FixeoRequestFlowV4 ||
+    typeof window.FixeoRequestFlowV4.open !== 'function'
+  ) {
+    return;
+  }
+
+  window.FixeoRequestFlowV4.open({
+    mode: 'marketplace',
+    source: 'hero-flagship',
+    prefillService: need,
+    prefillCity: city
+  });
+});
 
     /* Truthful reassurance */
     var trust = document.createElement('p');
