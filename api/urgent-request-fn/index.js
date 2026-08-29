@@ -84,8 +84,8 @@ var ALL_CITIES = [
 
 var VALID_SLUGS = [
   'plomberie','electricite','serrurerie','climatisation',
-  'menuiserie','peinture','maconnerie','nettoyage','jardinage',
-  'demenagement','autre'
+  'menuiserie','peinture','maconnerie','nettoyage','carrelage',
+  'jardinage','bricolage','demenagement','autre'
 ];
 
 var VALID_MODES   = ['emergency', 'flagship'];
