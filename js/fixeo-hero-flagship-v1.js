@@ -283,6 +283,17 @@ defaultCity.value = '';
 defaultCity.textContent = '📍 Choisir la ville';
 location.appendChild(defaultCity);
 
+    var locationRow = document.createElement('div');
+locationRow.className = 'fxhf-location-row';
+
+var detectedBadge = document.createElement('span');
+detectedBadge.className = 'fxhf-location-detected-badge';
+detectedBadge.textContent = 'Détectée';
+detectedBadge.hidden = true;
+
+locationRow.appendChild(location);
+locationRow.appendChild(detectedBadge);
+    
 function populateFlagshipCities(attempt) {
   var legacyCitySelect = document.getElementById('qsm-select-city');
 
@@ -347,8 +358,10 @@ function syncFlagshipDetectedCity(attempt) {
 
 /* Mark city as geo-detected without adding vertical space. */
 location.classList.add('fxhf-location--detected');
+detectedBadge.hidden = false;
 
 return;
+        
       }
     }
   }
@@ -513,7 +526,7 @@ syncFlagshipDetectedCity(0);
     content.appendChild(title);
     content.appendChild(subtitle);
     content.appendChild(field);
-    content.appendChild(location);
+   content.appendChild(locationRow);
     content.appendChild(cta);
     content.appendChild(trust);
     content.appendChild(directory);
