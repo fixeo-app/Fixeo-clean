@@ -829,3 +829,440 @@
     min-height: 220px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   STATE 2 — RAFI ANALYSIS
+══════════════════════════════════════════════════════════════ */
+
+.fxhf-root[data-fxhf-state="analysis"] {
+  width: 100%;
+}
+
+.fxhf-shell--analysis {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
+  align-items: center;
+
+  width: min(1180px, 100%);
+  min-height: 620px;
+
+  gap: clamp(48px, 7vw, 96px);
+
+  padding:
+    clamp(56px, 7vw, 92px)
+    24px
+    clamp(64px, 8vw, 104px);
+}
+
+/* subtle RAFI intelligence atmosphere */
+.fxhf-shell--analysis::before {
+  content: '';
+
+  position: absolute;
+  inset: 8% 34% 10% 42%;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at 58% 45%,
+      rgba(111, 220, 255, 0.075),
+      rgba(72, 100, 255, 0.035) 42%,
+      transparent 72%
+    );
+
+  filter: blur(36px);
+}
+
+/* ── Request understood card ─────────────────────────────── */
+
+.fxhf-analysis-summary {
+  position: relative;
+
+  width: min(100%, 580px);
+
+  margin-top: 4px;
+  padding: 20px 22px;
+
+  border: 1px solid rgba(111, 220, 255, 0.13);
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.024)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 24px 70px rgba(0, 0, 0, 0.16);
+
+  overflow: hidden;
+}
+
+.fxhf-analysis-summary::before {
+  content: '';
+
+  position: absolute;
+  top: 0;
+  left: -45%;
+
+  width: 36%;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(111, 220, 255, 0.88),
+      transparent
+    );
+
+  box-shadow:
+    0 0 16px rgba(111, 220, 255, 0.45);
+
+  animation: fxhf-analysis-scan 3.4s ease-in-out infinite;
+}
+
+.fxhf-analysis-quote {
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.88);
+
+  font-size: clamp(1rem, 1.4vw, 1.12rem);
+  line-height: 1.55;
+  font-weight: 600;
+}
+
+.fxhf-analysis-facts {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 9px;
+
+  margin-top: 17px;
+}
+
+.fxhf-analysis-fact {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 34px;
+
+  padding: 7px 11px;
+
+  border: 1px solid rgba(111, 220, 255, 0.12);
+  border-radius: 999px;
+
+  background: rgba(111, 220, 255, 0.045);
+
+  color: rgba(218, 248, 255, 0.83);
+
+  font-size: 0.76rem;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+/* ── Real analysis progression ───────────────────────────── */
+
+.fxhf-analysis-status {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-top: 22px;
+
+  color: rgba(255, 255, 255, 0.66);
+
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.fxhf-analysis-status::before {
+  content: '';
+
+  width: 9px;
+  height: 9px;
+
+  flex: 0 0 9px;
+
+  border-radius: 50%;
+
+  background: var(--fxhf-cyan);
+
+  box-shadow:
+    0 0 0 5px rgba(111, 220, 255, 0.055),
+    0 0 18px rgba(111, 220, 255, 0.55);
+
+  animation: fxhf-analysis-dot 1.7s ease-in-out infinite;
+}
+
+.fxhf-analysis-status::after {
+  content: '';
+
+  position: absolute;
+
+  left: 4px;
+  top: 22px;
+
+  width: 1px;
+  height: 48px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(111, 220, 255, 0.34),
+      transparent
+    );
+}
+
+/* ── RAFI active analysis visual ─────────────────────────── */
+
+.fxhf-visual--analysis {
+  position: relative;
+
+  min-height: 500px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fxhf-visual--analysis::before,
+.fxhf-visual--analysis::after {
+  content: '';
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  border-radius: 50%;
+
+  transform: translate(-50%, -50%);
+
+  pointer-events: none;
+}
+
+.fxhf-visual--analysis::before {
+  width: min(420px, 88%);
+  aspect-ratio: 1;
+
+  border: 1px solid rgba(111, 220, 255, 0.075);
+
+  box-shadow:
+    0 0 60px rgba(72, 100, 255, 0.08);
+
+  animation: fxhf-analysis-orbit 7s linear infinite;
+}
+
+.fxhf-visual--analysis::after {
+  width: min(330px, 70%);
+  aspect-ratio: 1;
+
+  border: 1px dashed rgba(111, 220, 255, 0.07);
+
+  animation: fxhf-analysis-orbit-reverse 11s linear infinite;
+}
+
+.fxhf-rafi-sphere--analysis {
+  width: clamp(290px, 32vw, 390px);
+
+  filter:
+    drop-shadow(0 0 36px rgba(111, 220, 255, 0.10));
+}
+
+.fxhf-rafi-sphere--analysis .fxhf-rafi-halo {
+  opacity: 1;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(111, 220, 255, 0.24) 0%,
+      rgba(72, 100, 255, 0.14) 34%,
+      rgba(72, 100, 255, 0.045) 56%,
+      transparent 73%
+    );
+
+  animation:
+    fxhf-analysis-breathe 2.6s ease-in-out infinite;
+}
+
+.fxhf-rafi-sphere--analysis .fxhf-rafi-core {
+  border-color: rgba(111, 220, 255, 0.30);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 0 0 12px rgba(72, 100, 255, 0.028),
+    0 0 54px rgba(111, 220, 255, 0.12),
+    0 24px 70px rgba(72, 100, 255, 0.17);
+}
+
+/* ── State 2 motion ──────────────────────────────────────── */
+
+@keyframes fxhf-analysis-scan {
+  0% {
+    left: -45%;
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  78% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 110%;
+    opacity: 0;
+  }
+}
+
+@keyframes fxhf-analysis-dot {
+  0%,
+  100% {
+    transform: scale(0.82);
+    opacity: 0.58;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+@keyframes fxhf-analysis-breathe {
+  0%,
+  100% {
+    transform: scale(0.985);
+    opacity: 0.72;
+  }
+
+  50% {
+    transform: scale(1.055);
+    opacity: 1;
+  }
+}
+
+@keyframes fxhf-analysis-orbit {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes fxhf-analysis-orbit-reverse {
+  from {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+/* ── State 2 responsive ──────────────────────────────────── */
+
+@media (max-width: 960px) {
+  .fxhf-shell--analysis {
+    grid-template-columns: 1fr;
+
+    min-height: auto;
+
+    gap: 18px;
+
+    padding:
+      32px
+      18px
+      52px;
+  }
+
+  .fxhf-shell--analysis .fxhf-content {
+    order: 2;
+
+    width: 100%;
+    max-width: 680px;
+
+    margin: 0 auto;
+  }
+
+  .fxhf-visual--analysis {
+    order: 1;
+
+    min-height: 245px;
+  }
+
+  .fxhf-rafi-sphere--analysis {
+    width: min(230px, 58vw);
+  }
+
+  .fxhf-analysis-summary {
+    width: 100%;
+  }
+
+  .fxhf-analysis-status {
+    align-self: center;
+  }
+
+  .fxhf-analysis-status::after {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .fxhf-shell--analysis {
+    padding:
+      22px
+      14px
+      44px;
+  }
+
+  .fxhf-visual--analysis {
+    min-height: 205px;
+  }
+
+  .fxhf-rafi-sphere--analysis {
+    width: min(190px, 54vw);
+  }
+
+  .fxhf-analysis-summary {
+    padding: 16px;
+
+    border-radius: 17px;
+  }
+
+  .fxhf-analysis-facts {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .fxhf-analysis-fact {
+    justify-content: center;
+  }
+
+  .fxhf-analysis-status {
+    margin-top: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fxhf-analysis-summary::before,
+  .fxhf-analysis-status::before,
+  .fxhf-visual--analysis::before,
+  .fxhf-visual--analysis::after,
+  .fxhf-rafi-sphere--analysis .fxhf-rafi-halo {
+    animation: none;
+  }
+}
+
