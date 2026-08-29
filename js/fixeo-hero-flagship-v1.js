@@ -112,6 +112,9 @@ function _startGuestPolling() {
     _pollTimer = null;
   }
 
+  var analysisStartedAt = Date.now();
+  var MIN_ANALYSIS_MS = 3000;
+
   async function poll() {
     if (!_activeTrackingRef || !_activeGuestToken) {
       return;
@@ -121,6 +124,16 @@ function _startGuestPolling() {
 
     if (data && data.ui_state) {
       if (data.ui_state === STATES.DISPATCHING) {
+        var elapsed = Date.now() - analysisStartedAt;
+
+        if (elapsed < MIN_ANALYSIS_MS) {
+          _pollTimer = setTimeout(
+            poll,
+            MIN_ANALYSIS_MS - elapsed
+          );
+          return;
+        }
+
         renderDispatching(data);
       }
 
