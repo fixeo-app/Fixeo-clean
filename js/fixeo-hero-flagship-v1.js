@@ -561,6 +561,145 @@ populateFlagshipCities(0);
 
     return true;
   }
+/* ── State 3 renderer — DISPATCHING ───────────────────────── */
+function renderDispatching(data) {
+  if (!_mounted || !_root) return false;
+
+  data = data || {};
+
+  _state = STATES.DISPATCHING;
+  _root.setAttribute('data-fxhf-state', STATES.DISPATCHING);
+  _root.replaceChildren();
+
+  var shell = document.createElement('div');
+  shell.className = 'fxhf-shell fxhf-shell--dispatching';
+
+  var content = document.createElement('div');
+  content.className = 'fxhf-content';
+
+  var eyebrow = document.createElement('div');
+  eyebrow.className = 'fxhf-eyebrow';
+  eyebrow.textContent = 'RAFI · Assistant FIXEO';
+
+  var title = document.createElement('h2');
+  title.className = 'fxhf-title';
+  title.textContent =
+    'RAFI a trouvé les artisans les plus adaptés.';
+
+  var subtitle = document.createElement('p');
+  subtitle.className = 'fxhf-subtitle';
+  subtitle.textContent =
+    'FIXEO contacte le premier groupe pour vous.';
+
+  var progress = document.createElement('div');
+  progress.className = 'fxhf-dispatch-progress';
+  progress.textContent =
+    'Besoin ✓  →  Matching ✓  →  Dispatch ⚡';
+
+  var count = document.createElement('div');
+  count.className = 'fxhf-dispatch-count';
+
+  var contactedCount =
+    data.dispatch &&
+    Number.isFinite(Number(data.dispatch.contacted_count))
+      ? Number(data.dispatch.contacted_count)
+      : 0;
+
+  count.textContent =
+    contactedCount +
+    ' artisan' +
+    (contactedCount > 1 ? 's' : '') +
+    ' contacté' +
+    (contactedCount > 1 ? 's' : '');
+
+  var candidates = document.createElement('div');
+  candidates.className = 'fxhf-dispatch-candidates';
+
+  var rows =
+    data.dispatch &&
+    Array.isArray(data.dispatch.candidates)
+      ? data.dispatch.candidates
+      : [];
+
+  rows.forEach(function (candidate) {
+    if (!candidate) return;
+
+    var card = document.createElement('div');
+    card.className = 'fxhf-dispatch-candidate';
+
+    if (candidate.photo_url) {
+      var img = document.createElement('img');
+      img.className = 'fxhf-dispatch-candidate-photo';
+      img.src = candidate.photo_url;
+      img.alt = '';
+      card.appendChild(img);
+    }
+
+    var identity = document.createElement('div');
+    identity.className = 'fxhf-dispatch-candidate-identity';
+
+    var name = document.createElement('strong');
+    name.className = 'fxhf-dispatch-candidate-name';
+    name.textContent =
+      candidate.display_name || 'Artisan FIXEO';
+
+    var waiting = document.createElement('span');
+    waiting.className = 'fxhf-dispatch-candidate-status';
+    waiting.textContent = 'En attente';
+
+    identity.appendChild(name);
+    identity.appendChild(waiting);
+    card.appendChild(identity);
+
+    candidates.appendChild(card);
+  });
+
+  var continuation = document.createElement('p');
+  continuation.className = 'fxhf-dispatch-continuation';
+  continuation.textContent =
+    'Si aucun artisan n’accepte, FIXEO poursuit automatiquement la recherche.';
+
+  content.appendChild(eyebrow);
+  content.appendChild(title);
+  content.appendChild(subtitle);
+  content.appendChild(progress);
+  content.appendChild(count);
+  content.appendChild(candidates);
+  content.appendChild(continuation);
+
+  var visual = document.createElement('div');
+  visual.className = 'fxhf-visual fxhf-visual--dispatching';
+  visual.setAttribute('aria-hidden', 'true');
+
+  var sphere = document.createElement('div');
+  sphere.className =
+    'fxhf-rafi-sphere fxhf-rafi-sphere--dispatching';
+
+  var halo = document.createElement('div');
+  halo.className = 'fxhf-rafi-halo';
+
+  var core = document.createElement('div');
+  core.className = 'fxhf-rafi-core';
+
+  var rafiImg = document.createElement('img');
+  rafiImg.className = 'fxhf-rafi-image';
+  rafiImg.src = 'rafi/RAFI_V2_HeadCollar_Core.webp';
+  rafiImg.alt = '';
+  rafiImg.width = 150;
+  rafiImg.height = 150;
+  rafiImg.loading = 'eager';
+
+  core.appendChild(rafiImg);
+  sphere.appendChild(halo);
+  sphere.appendChild(core);
+  visual.appendChild(sphere);
+
+  shell.appendChild(content);
+  shell.appendChild(visual);
+  _root.appendChild(shell);
+
+  return true;
+}
   
   /* ── Init ──────────────────────────────────────────────────── */
  function _init() {
