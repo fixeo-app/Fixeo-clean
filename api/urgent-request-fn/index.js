@@ -226,6 +226,10 @@ function _generateGuestToken() {
   return crypto.randomBytes(32).toString('hex');
 }
 
+function _generateTrackingRef() {
+  return 'FX-' + crypto.randomBytes(5).toString('hex').toUpperCase();
+}
+
 function _hashGuestToken(token) {
   return crypto
     .createHash('sha256')
@@ -604,7 +608,7 @@ mission: mission
   var problem     = _str(body.problem,     128);
   var city        = _str(body.city,        128);
   var phone       = _str(body.phone,       32);
-  var trackingRef = _str(body.tracking_ref, 32);
+  var trackingRef = _str(body.tracking_ref, 32) || _generateTrackingRef();
   var freeText    = _str(body.description, 500); /* optional Autre urgence free text */
   var mode        = _str(body.mode,        32) || 'emergency';
   var urgency     = _str(body.urgency,     16) || (mode === 'flagship' ? 'normal' : 'now');
