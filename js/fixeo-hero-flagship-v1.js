@@ -175,20 +175,41 @@ defaultCity.value = '';
 defaultCity.textContent = '📍 Choisir la ville';
 location.appendChild(defaultCity);
 
-var legacyCitySelect = document.getElementById('qsm-select-city');
+function populateFlagshipCities(attempt) {
+  var legacyCitySelect = document.getElementById('qsm-select-city');
 
-if (legacyCitySelect) {
-  Array.from(legacyCitySelect.options).forEach(function (option) {
-    if (!option.value) return;
+  if (
+    legacyCitySelect &&
+    legacyCitySelect.options &&
+    legacyCitySelect.options.length > 1
+  ) {
+    /* Keep only the Flagship placeholder before rebuilding. */
+    while (location.options.length > 1) {
+      location.remove(1);
+    }
 
-    var cityOption = document.createElement('option');
-    cityOption.value = option.value;
-    cityOption.textContent = option.textContent.trim();
+    Array.from(legacyCitySelect.options).forEach(function (option) {
+      if (!option.value) return;
 
-    location.appendChild(cityOption);
-  });
+      var cityOption = document.createElement('option');
+      cityOption.value = option.value;
+      cityOption.textContent = option.textContent.trim();
+
+      location.appendChild(cityOption);
+    });
+
+    return;
+  }
+
+  /* QSM may populate asynchronously after Flagship renders. */
+  if (attempt < 20) {
+    setTimeout(function () {
+      populateFlagshipCities(attempt + 1);
+    }, 150);
+  }
 }
 
+populateFlagshipCities(0);
 
     /* Main CTA */
     var cta = document.createElement('button');
