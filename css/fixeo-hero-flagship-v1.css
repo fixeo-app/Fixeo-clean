@@ -2318,3 +2318,104 @@
 .fxhf-location-detected-badge[hidden] {
   display: none;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FLAGSHIP — NEED / COMPACT MOBILE FIRST SCREEN
+   Goal: keep the useful State 1 flow visible without scrolling
+══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="need"] {
+    margin-top: 0;
+  }
+
+  .fxhf-shell--need {
+    gap: 10px;
+    padding: 6px 12px 14px;
+  }
+
+  .fxhf-shell--need .fxhf-visual {
+    min-height: 128px;
+  }
+
+  .fxhf-shell--need .fxhf-rafi-sphere {
+    width: min(148px, 40vw);
+  }
+
+  .fxhf-shell--need .fxhf-visual-label {
+    margin-top: 2px;
+    font-size: 0.58rem;
+  }
+
+  .fxhf-shell--need .fxhf-rafi-message {
+    margin: 4px 0 0;
+    min-height: 18px;
+    font-size: 0.78rem;
+    line-height: 1.25;
+    text-align: center;
+  }
+
+  .fxhf-shell--need .fxhf-eyebrow {
+    margin-bottom: 7px;
+  }
+
+  .fxhf-shell--need .fxhf-title {
+    font-size: clamp(2rem, 9.5vw, 2.7rem);
+    line-height: 0.96;
+  }
+
+  .fxhf-shell--need .fxhf-subtitle {
+    margin-top: 9px;
+    margin-bottom: 12px;
+    font-size: 0.86rem;
+    line-height: 1.4;
+  }
+
+  .fxhf-shell--need .fxhf-need-input {
+    min-height: 86px;
+    padding: 14px 14px 8px;
+  }
+
+  .fxhf-shell--need .fxhf-field-footer {
+    gap: 8px;
+    padding: 8px 10px 10px 14px;
+  }
+
+  .fxhf-shell--need .fxhf-mic {
+    min-height: 44px;
+    padding: 9px 12px;
+  }
+
+  .fxhf-shell--need .fxhf-location-row {
+    margin-top: 2px;
+    gap: 8px;
+  }
+
+  .fxhf-shell--need .fxhf-location {
+    min-height: 42px;
+    margin-top: 0;
+    padding: 8px 12px;
+  }
+
+  .fxhf-shell--need .fxhf-location-detected-badge {
+    min-height: 26px;
+    padding: 4px 8px;
+    font-size: 0.64rem;
+  }
+
+  .fxhf-shell--need .fxhf-submit {
+    min-height: 48px;
+    margin-top: 10px;
+    padding: 12px 16px;
+  }
+
+  .fxhf-shell--need .fxhf-trust {
+    margin-top: 7px;
+    font-size: 0.68rem;
+  }
+
+  .fxhf-shell--need .fxhf-directory-link {
+    display: none;
+  }
+}
