@@ -724,3 +724,108 @@
   }
 }
 
+/* ══════════════════════════════════════════════════════════════
+   STATE 3 — DISPATCHING
+══════════════════════════════════════════════════════════════ */
+
+.fxhf-shell--dispatching {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+  align-items: center;
+  gap: clamp(44px, 7vw, 96px);
+  padding: clamp(42px, 6vw, 84px) 24px clamp(52px, 7vw, 96px);
+}
+
+.fxhf-dispatch-progress {
+  margin-top: 18px;
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0.92;
+}
+
+.fxhf-dispatch-count {
+  margin-top: 16px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.fxhf-dispatch-candidates {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+  max-width: 440px;
+}
+
+.fxhf-dispatch-candidate {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 58px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(12px);
+}
+
+.fxhf-dispatch-candidate-photo {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.fxhf-dispatch-candidate-identity {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.fxhf-dispatch-candidate-name {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.fxhf-dispatch-candidate-status {
+  margin-top: 3px;
+  font-size: 12px;
+  opacity: 0.68;
+}
+
+.fxhf-dispatch-continuation {
+  margin-top: 16px;
+  max-width: 520px;
+  font-size: 13px;
+  line-height: 1.55;
+  opacity: 0.72;
+}
+
+.fxhf-visual--dispatching {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fxhf-rafi-sphere--dispatching {
+  transform: scale(1.02);
+}
+
+@media (max-width: 820px) {
+  .fxhf-shell--dispatching {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 34px 18px 48px;
+  }
+
+  .fxhf-dispatch-candidates {
+    max-width: none;
+  }
+
+  .fxhf-visual--dispatching {
+    min-height: 220px;
+  }
+}
