@@ -106,6 +106,36 @@ async function _fetchGuestState() {
     return null;
   }
 }
+function _startGuestPolling() {
+  if (_pollTimer) {
+    clearTimeout(_pollTimer);
+    _pollTimer = null;
+  }
+
+  async function poll() {
+    if (!_activeTrackingRef || !_activeGuestToken) {
+      return;
+    }
+
+    var data = await _fetchGuestState();
+
+    if (data && data.ui_state) {
+      if (data.ui_state === STATES.DISPATCHING) {
+        renderDispatching(data);
+      }
+
+      /*
+       * States mission_active / in_progress / completed
+       * will be connected only after their dedicated renderers exist.
+       * Until then, keep polling the real backend state.
+       */
+    }
+
+    _pollTimer = setTimeout(poll, 2500);
+  }
+
+  poll();
+}
   
   /* ── Mount ───────────────────────────────────────────────────
    * Passive in this first implementation.
