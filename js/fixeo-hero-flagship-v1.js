@@ -344,7 +344,11 @@ function syncFlagshipDetectedCity(attempt) {
         location.options[i].value.toLowerCase().trim() === normalized
       ) {
         location.value = location.options[i].value;
-        return;
+
+/* Mark city as geo-detected without adding vertical space. */
+location.classList.add('fxhf-location--detected');
+
+return;
       }
     }
   }
