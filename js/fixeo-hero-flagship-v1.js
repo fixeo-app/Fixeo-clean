@@ -610,9 +610,45 @@ syncFlagshipDetectedCity(0);
     var visualLabel = document.createElement('div');
     visualLabel.className = 'fxhf-visual-label';
     visualLabel.textContent = 'RAFI';
+    /* RAFI ambient conversation — NEED state */
+var rafiMessage = document.createElement('p');
+rafiMessage.className = 'fxhf-rafi-message';
+rafiMessage.setAttribute('aria-live', 'polite');
+
+var rafiMessages = [
+  'Décrivez-moi ce qui se passe.',
+  'Même quelques mots me suffisent.',
+  'Je peux identifier le bon métier.',
+  'Vous pouvez aussi simplement me parler.',
+  'Je tiens compte de votre ville.',
+  'Je cherche les artisans les plus adaptés.',
+  'Besoin urgent ? Dites-le-moi.',
+  'Prêt ? Je m’occupe de la suite.'
+];
+
+var rafiMessageIndex = 0;
+
+rafiMessage.textContent = rafiMessages[rafiMessageIndex];
+
+var rafiMessageTimer = setInterval(function () {
+  /* Ambient conversation only belongs to NEED state. */
+  if (
+    !root ||
+    root.getAttribute('data-fxhf-state') !== 'need'
+  ) {
+    return;
+  }
+
+  rafiMessageIndex =
+    (rafiMessageIndex + 1) % rafiMessages.length;
+
+  rafiMessage.textContent =
+    rafiMessages[rafiMessageIndex];
+}, 2500);
 
     visual.appendChild(sphere);
     visual.appendChild(visualLabel);
+    visual.appendChild(rafiMessage);
 
     shell.appendChild(content);
     shell.appendChild(visual);
