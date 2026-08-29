@@ -159,6 +159,29 @@ function _startGuestPolling() {
     _mounted = true;
     return true;
   }
+  
+  /* ── Mount ───────────────────────────────────────────────────
+   * Passive in this first implementation.
+   * It only binds the JS controller to #fxhf-root.
+   * No visual takeover yet.
+   */
+  function mount() {
+    if (_mounted) return true;
+
+    _root = _el(ROOT_ID);
+    if (!_root) return false;
+
+    var initialState = _root.getAttribute('data-fxhf-state');
+
+    if (_isValidState(initialState)) {
+      _state = initialState;
+    } else {
+      _state = STATES.NEED;
+    }
+
+    _mounted = true;
+    return true;
+  }
 
   /* ── Read-only state API for now ───────────────────────────── */
   function getState() {
