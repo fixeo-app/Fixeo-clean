@@ -1992,6 +1992,25 @@ var dashLink = _h('a', {
 
     _st = _fresh(mode, source);
     _readContext(_st);
+
+    /* Hero Flagship explicit prefill.
+       Additive only: legacy context remains the fallback authority. */
+    if (opts && typeof opts.prefillService === 'string') {
+      var flagshipService = opts.prefillService.trim();
+
+      if (flagshipService.length > 2) {
+        _st.prefillService = flagshipService;
+      }
+    }
+
+    if (
+      opts &&
+      typeof opts.prefillCity === 'string' &&
+      ALL_CITIES.indexOf(opts.prefillCity) >= 0
+    ) {
+      _st.prefillCity = opts.prefillCity;
+    }
+    
     // 7C.9K.2: reset estimator guard on each fxrf4 session open
     _fxrf4EstimatorLaunched = false;
 
