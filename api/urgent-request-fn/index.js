@@ -89,7 +89,7 @@ var VALID_SLUGS = [
 ];
 
 var VALID_MODES   = ['emergency', 'flagship'];
-var VALID_URGENCY = ['normal', 'urgent', 'now'];
+var VALID_URGENCY = ['normale', 'urgent', 'now'];
 
 var PHONE_RE = /^[+\d\s\-().]{6,20}$/;
 var REF_RE   = /^[A-Z0-9\-]{3,32}$/;
@@ -611,7 +611,7 @@ mission: mission
   var trackingRef = _str(body.tracking_ref, 32) || _generateTrackingRef();
   var freeText    = _str(body.description, 500); /* optional Autre urgence free text */
   var mode        = _str(body.mode,        32) || 'emergency';
-  var urgency     = _str(body.urgency,     16) || (mode === 'flagship' ? 'normal' : 'now');
+  var urgency = _str(body.urgency, 16) || (mode === 'flagship' ? 'normale' : 'now');
   var source      = _str(body.source,      64) || 'fxrf4';
 
   /* Field validation */
