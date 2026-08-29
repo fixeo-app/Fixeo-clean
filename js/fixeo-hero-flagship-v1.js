@@ -629,6 +629,7 @@ populateFlagshipCities(0);
     return true;
   }
 /* ── State 3 renderer — DISPATCHING ───────────────────────── */
+/* ── State 3 renderer — DISPATCHING ───────────────────────── */
 function renderDispatching(data) {
   if (!_mounted || !_root) return false;
 
@@ -641,8 +642,10 @@ function renderDispatching(data) {
   var shell = document.createElement('div');
   shell.className = 'fxhf-shell fxhf-shell--dispatching';
 
+  /* ── LEFT — live dispatch narrative ─────────────────────── */
+
   var content = document.createElement('div');
-  content.className = 'fxhf-content';
+  content.className = 'fxhf-content fxhf-content--dispatching';
 
   var eyebrow = document.createElement('div');
   eyebrow.className = 'fxhf-eyebrow';
@@ -660,11 +663,41 @@ function renderDispatching(data) {
 
   var progress = document.createElement('div');
   progress.className = 'fxhf-dispatch-progress';
-  progress.textContent =
-    'Besoin ✓  →  Matching ✓  →  Dispatch ⚡';
 
-  var count = document.createElement('div');
-  count.className = 'fxhf-dispatch-count';
+  var stepNeed = document.createElement('span');
+  stepNeed.className =
+    'fxhf-dispatch-step fxhf-dispatch-step--done';
+  stepNeed.textContent = 'Besoin ✓';
+
+  var arrow1 = document.createElement('span');
+  arrow1.className = 'fxhf-dispatch-arrow';
+  arrow1.textContent = '→';
+
+  var stepMatching = document.createElement('span');
+  stepMatching.className =
+    'fxhf-dispatch-step fxhf-dispatch-step--done';
+  stepMatching.textContent = 'Matching ✓';
+
+  var arrow2 = document.createElement('span');
+  arrow2.className = 'fxhf-dispatch-arrow';
+  arrow2.textContent = '→';
+
+  var stepDispatch = document.createElement('span');
+  stepDispatch.className =
+    'fxhf-dispatch-step fxhf-dispatch-step--active';
+  stepDispatch.textContent = 'Dispatch';
+
+  var dispatchPulse = document.createElement('span');
+  dispatchPulse.className = 'fxhf-dispatch-live-dot';
+  dispatchPulse.setAttribute('aria-hidden', 'true');
+
+  stepDispatch.appendChild(dispatchPulse);
+
+  progress.appendChild(stepNeed);
+  progress.appendChild(arrow1);
+  progress.appendChild(stepMatching);
+  progress.appendChild(arrow2);
+  progress.appendChild(stepDispatch);
 
   var contactedCount =
     data.dispatch &&
@@ -672,54 +705,23 @@ function renderDispatching(data) {
       ? Number(data.dispatch.contacted_count)
       : 0;
 
-  count.textContent =
-    contactedCount +
+  var count = document.createElement('div');
+  count.className = 'fxhf-dispatch-count';
+
+  var countNumber = document.createElement('strong');
+  countNumber.className = 'fxhf-dispatch-count-number';
+  countNumber.textContent = String(contactedCount);
+
+  var countLabel = document.createElement('span');
+  countLabel.className = 'fxhf-dispatch-count-label';
+  countLabel.textContent =
     ' artisan' +
     (contactedCount > 1 ? 's' : '') +
     ' contacté' +
     (contactedCount > 1 ? 's' : '');
 
-  var candidates = document.createElement('div');
-  candidates.className = 'fxhf-dispatch-candidates';
-
-  var rows =
-    data.dispatch &&
-    Array.isArray(data.dispatch.candidates)
-      ? data.dispatch.candidates
-      : [];
-
-  rows.forEach(function (candidate) {
-    if (!candidate) return;
-
-    var card = document.createElement('div');
-    card.className = 'fxhf-dispatch-candidate';
-
-    if (candidate.photo_url) {
-      var img = document.createElement('img');
-      img.className = 'fxhf-dispatch-candidate-photo';
-      img.src = candidate.photo_url;
-      img.alt = '';
-      card.appendChild(img);
-    }
-
-    var identity = document.createElement('div');
-    identity.className = 'fxhf-dispatch-candidate-identity';
-
-    var name = document.createElement('strong');
-    name.className = 'fxhf-dispatch-candidate-name';
-    name.textContent =
-      candidate.display_name || 'Artisan FIXEO';
-
-    var waiting = document.createElement('span');
-    waiting.className = 'fxhf-dispatch-candidate-status';
-    waiting.textContent = 'En attente';
-
-    identity.appendChild(name);
-    identity.appendChild(waiting);
-    card.appendChild(identity);
-
-    candidates.appendChild(card);
-  });
+  count.appendChild(countNumber);
+  count.appendChild(countLabel);
 
   var continuation = document.createElement('p');
   continuation.className = 'fxhf-dispatch-continuation';
@@ -731,12 +733,15 @@ function renderDispatching(data) {
   content.appendChild(subtitle);
   content.appendChild(progress);
   content.appendChild(count);
-  content.appendChild(candidates);
   content.appendChild(continuation);
+
+  /* ── RIGHT — RAFI + REAL CANDIDATE NETWORK ──────────────── */
 
   var visual = document.createElement('div');
   visual.className = 'fxhf-visual fxhf-visual--dispatching';
-  visual.setAttribute('aria-hidden', 'true');
+
+  var network = document.createElement('div');
+  network.className = 'fxhf-dispatch-network';
 
   var sphere = document.createElement('div');
   sphere.className =
@@ -751,7 +756,7 @@ function renderDispatching(data) {
   var rafiImg = document.createElement('img');
   rafiImg.className = 'fxhf-rafi-image';
   rafiImg.src = 'rafi/RAFI_V2_HeadCollar_Core.webp';
-  rafiImg.alt = '';
+  rafiImg.alt = 'RAFI';
   rafiImg.width = 150;
   rafiImg.height = 150;
   rafiImg.loading = 'eager';
@@ -759,10 +764,105 @@ function renderDispatching(data) {
   core.appendChild(rafiImg);
   sphere.appendChild(halo);
   sphere.appendChild(core);
-  visual.appendChild(sphere);
+
+  network.appendChild(sphere);
+
+  var rows =
+    data.dispatch &&
+    Array.isArray(data.dispatch.candidates)
+      ? data.dispatch.candidates.slice(0, 3)
+      : [];
+
+  rows.forEach(function(candidate, index) {
+    if (!candidate) return;
+
+    var position = index + 1;
+
+    /*
+     * Connection exists only because this artisan is really present
+     * in the backend dispatch candidate response.
+     */
+    var connection = document.createElement('div');
+    connection.className =
+      'fxhf-dispatch-connection ' +
+      'fxhf-dispatch-connection--' + position;
+    connection.setAttribute('aria-hidden', 'true');
+
+    var connectionFlow = document.createElement('span');
+    connectionFlow.className = 'fxhf-dispatch-connection-flow';
+
+    connection.appendChild(connectionFlow);
+    network.appendChild(connection);
+
+    var node = document.createElement('div');
+    node.className =
+      'fxhf-dispatch-node ' +
+      'fxhf-dispatch-node--' + position;
+
+    var avatar = document.createElement('div');
+    avatar.className = 'fxhf-dispatch-node-avatar';
+
+    if (candidate.photo_url) {
+      var img = document.createElement('img');
+      img.className = 'fxhf-dispatch-node-photo';
+      img.src = candidate.photo_url;
+      img.alt = '';
+      img.loading = 'eager';
+
+      avatar.appendChild(img);
+    } else {
+      var fallback = document.createElement('span');
+      fallback.className = 'fxhf-dispatch-node-fallback';
+
+      var displayName =
+        candidate.display_name || 'Artisan FIXEO';
+
+      fallback.textContent =
+        displayName.trim().charAt(0).toUpperCase() || 'F';
+
+      avatar.appendChild(fallback);
+    }
+
+    var identity = document.createElement('div');
+    identity.className = 'fxhf-dispatch-node-identity';
+
+    var name = document.createElement('strong');
+    name.className = 'fxhf-dispatch-node-name';
+    name.textContent =
+      candidate.display_name || 'Artisan FIXEO';
+
+    var waiting = document.createElement('span');
+    waiting.className = 'fxhf-dispatch-node-status';
+
+    var waitingDot = document.createElement('span');
+    waitingDot.className = 'fxhf-dispatch-node-status-dot';
+    waitingDot.setAttribute('aria-hidden', 'true');
+
+    var waitingText = document.createElement('span');
+    waitingText.textContent = 'En attente';
+
+    waiting.appendChild(waitingDot);
+    waiting.appendChild(waitingText);
+
+    identity.appendChild(name);
+    identity.appendChild(waiting);
+
+    node.appendChild(avatar);
+    node.appendChild(identity);
+
+    network.appendChild(node);
+  });
+
+  var networkLabel = document.createElement('div');
+  networkLabel.className = 'fxhf-dispatch-network-label';
+  networkLabel.textContent = 'DISPATCH EN COURS';
+
+  network.appendChild(networkLabel);
+  visual.appendChild(network);
 
   shell.appendChild(content);
   shell.appendChild(visual);
+
   _root.appendChild(shell);
 
   return true;
