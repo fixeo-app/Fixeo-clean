@@ -2330,31 +2330,34 @@
     margin-top: 0;
   }
 
-  .fxhf-shell--need {
-    gap: 10px;
-    padding: 6px 12px 14px;
-  }
+fxhf-shell--need {
+  gap: 4px;
+  padding: 0 12px 10px;
+}
 
-  .fxhf-shell--need .fxhf-visual {
-    min-height: 128px;
-  }
+.fxhf-shell--need .fxhf-visual {
+  min-height: 105px;
+  margin-top: -14px;
+  margin-bottom: -8px;
+}
 
-  .fxhf-shell--need .fxhf-rafi-sphere {
-    width: min(148px, 40vw);
-  }
+.fxhf-shell--need .fxhf-rafi-sphere {
+  width: min(118px, 32vw);
+}
 
-  .fxhf-shell--need .fxhf-visual-label {
-    margin-top: 2px;
-    font-size: 0.58rem;
-  }
+.fxhf-shell--need .fxhf-visual-label {
+  margin-top: 0;
+  font-size: 0.56rem;
+}
 
-  .fxhf-shell--need .fxhf-rafi-message {
-    margin: 4px 0 0;
-    min-height: 18px;
-    font-size: 0.78rem;
-    line-height: 1.25;
-    text-align: center;
-  }
+.fxhf-shell--need .fxhf-rafi-message {
+  margin: 2px 0 0;
+  min-height: 16px;
+  font-size: 0.74rem;
+  line-height: 1.2;
+  text-align: center;
+
+}
 
   .fxhf-shell--need .fxhf-eyebrow {
     margin-bottom: 7px;
