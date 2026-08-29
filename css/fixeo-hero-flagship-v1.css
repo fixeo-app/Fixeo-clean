@@ -2063,3 +2063,42 @@
     animation: none;
   }
 }
+
+@media (min-width: 1024px) {
+  .fxhf-root[data-fxhf-state="dispatching"] {
+    padding-top: 8px;
+    padding-bottom: 12px;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-shell--dispatching {
+    min-height: auto;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-content--dispatching {
+    align-items: center;
+    gap: 32px;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-network {
+    transform: scale(0.92);
+    transform-origin: center center;
+    margin-top: -18px;
+    margin-bottom: -18px;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-progress {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-count {
+    margin-top: 10px;
+    margin-bottom: 6px;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-network-label {
+    margin-top: 6px;
+  }
+}
