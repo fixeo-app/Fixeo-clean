@@ -263,6 +263,56 @@ function _startGuestPolling() {
     mic.className = 'fxhf-mic';
     mic.setAttribute('aria-label', 'Parler à RAFI');
     mic.textContent = '🎙️ Parler à RAFI';
+    var SpeechRecognition =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+  var recognition = new SpeechRecognition();
+
+  recognition.lang = 'fr-FR';
+  recognition.interimResults = false;
+  recognition.continuous = false;
+
+  mic.addEventListener('click', function () {
+    try {
+      mic.disabled = true;
+      mic.textContent = '🎙️ Écoute…';
+      recognition.start();
+    } catch (_) {
+      mic.disabled = false;
+      mic.textContent = '🎙️ Parler à RAFI';
+    }
+  });
+
+  recognition.addEventListener('result', function (event) {
+    var transcript =
+      event.results &&
+      event.results[0] &&
+      event.results[0][0] &&
+      event.results[0][0].transcript
+        ? event.results[0][0].transcript.trim()
+        : '';
+
+    if (transcript) {
+      textarea.value = transcript;
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  });
+
+  recognition.addEventListener('end', function () {
+    mic.disabled = false;
+    mic.textContent = '🎙️ Parler à RAFI';
+  });
+
+  recognition.addEventListener('error', function () {
+    mic.disabled = false;
+    mic.textContent = '🎙️ Parler à RAFI';
+  });
+} else {
+  mic.disabled = true;
+  mic.textContent = '🎙️ Micro non disponible';
+}
 
     fieldFooter.appendChild(example);
     fieldFooter.appendChild(mic);
