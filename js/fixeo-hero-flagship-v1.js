@@ -162,33 +162,33 @@
     field.appendChild(textarea);
     field.appendChild(fieldFooter);
 
-    /* Location */
-    var location = document.createElement('button');
-location.type = 'button';
+   /* Location — Flagship-owned picker.
+   Reads existing city options as data only.
+   Never focuses/clicks/changes the legacy QSM select. */
+var location = document.createElement('select');
 location.id = 'fxhf-location';
 location.className = 'fxhf-location';
 location.setAttribute('aria-label', 'Choisir ou modifier la ville');
-location.textContent = '📍 Choisir la ville';
 
-location.addEventListener('click', function () {
-  var citySelect = document.getElementById('qsm-select-city');
+var defaultCity = document.createElement('option');
+defaultCity.value = '';
+defaultCity.textContent = '📍 Choisir la ville';
+location.appendChild(defaultCity);
 
-  if (!citySelect) return;
+var legacyCitySelect = document.getElementById('qsm-select-city');
 
-  try {
-    citySelect.focus();
+if (legacyCitySelect) {
+  Array.from(legacyCitySelect.options).forEach(function (option) {
+    if (!option.value) return;
 
-    if (typeof citySelect.showPicker === 'function') {
-      citySelect.showPicker();
-    } else {
-      citySelect.click();
-    }
-  } catch (_) {
-    try {
-      citySelect.click();
-    } catch (_) {}
-  }
-});
+    var cityOption = document.createElement('option');
+    cityOption.value = option.value;
+    cityOption.textContent = option.textContent.trim();
+
+    location.appendChild(cityOption);
+  });
+}
+
 
     /* Main CTA */
     var cta = document.createElement('button');
