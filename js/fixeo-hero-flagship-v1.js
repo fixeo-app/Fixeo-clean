@@ -318,6 +318,46 @@ function populateFlagshipCities(attempt) {
 }
 
 populateFlagshipCities(0);
+    /* Sync trusted city detected by the existing FIXEO geo flow.
+   No new geolocation request is made here. */
+function syncFlagshipDetectedCity(attempt) {
+  var detectedCity = '';
+
+  try {
+    detectedCity = window.FIXEO_DETECTED_CITY || '';
+  } catch (_) {}
+
+  if (!detectedCity) {
+    var legacyCitySelect = document.getElementById('qsm-select-city');
+
+    if (legacyCitySelect && legacyCitySelect.value) {
+      detectedCity = legacyCitySelect.value;
+    }
+  }
+
+  if (detectedCity && location.options.length > 1) {
+    var normalized = detectedCity.toLowerCase().trim();
+
+    for (var i = 0; i < location.options.length; i++) {
+      if (
+        location.options[i].value &&
+        location.options[i].value.toLowerCase().trim() === normalized
+      ) {
+        location.value = location.options[i].value;
+        return;
+      }
+    }
+  }
+
+  /* Existing geo flow can resolve asynchronously (timeout up to 5s). */
+  if (attempt < 40) {
+    setTimeout(function () {
+      syncFlagshipDetectedCity(attempt + 1);
+    }, 150);
+  }
+}
+
+syncFlagshipDetectedCity(0);
 
     /* Main CTA */
     var cta = document.createElement('button');
