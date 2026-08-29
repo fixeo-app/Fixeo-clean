@@ -643,7 +643,9 @@ if (
    * client_phone goes to its dedicated column below.
    */
   var descParts = [
-    'URGENCE ' + problem.toUpperCase(),
+    mode === 'emergency'
+  ? 'URGENCE ' + problem.toUpperCase()
+  : problem,
     freeText   ? freeText : '',
     trackingRef ? 'Ref: ' + trackingRef : '',
     'Source: ' + source,
