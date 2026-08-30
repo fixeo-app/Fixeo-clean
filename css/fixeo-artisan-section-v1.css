@@ -215,8 +215,8 @@
 
 /* Old .fhp-see-all wraps counter — adapt for new design */
 #artisans-section .fhp-see-all {
-  display: flex !important;
-  flex-direction: column !important;
+ display: none !important;
+ flex-direction: column !important;
   align-items: flex-start !important;
   text-decoration: none !important;
   align-self: start !important;
