@@ -2406,7 +2406,78 @@ section#home.hero.hero-section {
   html body #recommended-artisan-section {
     display: none !important;
   }
+/* ARTISAN GATEWAY — homepage */
+.fxag-section {
+  padding: 34px 20px;
+}
 
+.fxag-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,77,141,0.10),
+      rgba(124,58,237,0.12),
+      rgba(45,212,191,0.06)
+    ),
+    rgba(10,14,28,0.72);
+  text-align: left;
+}
+
+.fxag-eyebrow {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #ff4d8d;
+}
+
+.fxag-title {
+  margin: 0;
+  font-size: clamp(2rem, 7vw, 3rem);
+  line-height: 1;
+  color: #fff;
+}
+
+.fxag-copy {
+  margin: 12px 0 20px;
+  color: rgba(255,255,255,0.72);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.fxag-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .fxag-section {
+    padding: 28px 14px;
+  }
+
+  .fxag-inner {
+    padding: 24px 20px;
+  }
+
+  .fxag-cta {
+    width: 100%;
+    justify-content: center;
+  }
+}
 </style>
   <link rel="stylesheet" href="css/services-uber-premium.css?v=sup12">
   <link rel="stylesheet" href="css/testimonials-cta-premium.css?v=tcp2">
@@ -5506,6 +5577,31 @@ html #services.fc3-chapter {
 
 <div class="section-divider" aria-hidden="true"></div>
 
+  <!-- ══════════════════════════════════════════════════════════
+     ARTISAN GATEWAY - Homepage
+══════════════════════════════════════════════════════════ -->
+<section class="fxag-section" id="artisan-gateway" aria-labelledby="fxag-title">
+  <div class="container">
+    <div class="fxag-inner">
+
+      <span class="fxag-eyebrow">POUR LES ARTISANS</span>
+
+      <h2 class="fxag-title" id="fxag-title">
+        Vous êtes artisan ?
+      </h2>
+
+      <p class="fxag-copy">
+        Développez votre activité avec FIXEO.
+      </p>
+
+      <a href="rejoindre-fixeo.html" class="fxag-cta">
+        Rejoindre le réseau FIXEO
+        <span aria-hidden="true">→</span>
+      </a>
+
+    </div>
+  </div>
+</section>
 <!-- ══════════════════════════════════════════════════════════
      FIXEO ENTREPRISES - Homepage teaser block (fxet-v1a)
      Insert: after #services, before #service-artisans-section
