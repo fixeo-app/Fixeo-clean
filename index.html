@@ -4427,7 +4427,7 @@ html #services.fc3-chapter {
 
     <!-- ── City context bar ── -->
     <!-- ── Compact city row (fxhome-situations-v2.2) ── -->
-    <div class="fxsit-city-row" id="fxsit-city-row" aria-live="polite">
+    <div class="fxsit-city-row" id="fxsit-city-row" aria-live="polite" hidden>
 
       <!-- STATE A: city known - shown when #services[data-fc3-city-known] is set -->
       <div class="fxsit-city-known" id="fxsit-city-known" aria-hidden="true">
@@ -4461,8 +4461,8 @@ html #services.fc3-chapter {
 
     <!-- ── Reset control - "Tous les artisans" ── -->
     <!-- Preserved: data-category="all", .chip, .service-chip for initCategoryChips() -->
-    <div class="fxsit-reset-wrap">
-      <button class="fxsit-reset-btn chip service-chip active" type="button"
+<div class="fxsit-reset-wrap" hidden>
+    <button class="fxsit-reset-btn chip service-chip active" type="button"
               role="button" data-category="all" aria-pressed="true"
               aria-label="Afficher tous les artisans">
         <span class="fxsit-reset-icon" aria-hidden="true">✦</span>
