@@ -132,7 +132,14 @@
   align-items: center;
   gap: 10px;
   padding: 14px 28px;
-  background: var(--fxet-indigo);
+  background:
+  linear-gradient(
+    135deg,
+    rgba(255, 77, 141, 0.18) 0%,
+    rgba(124, 58, 237, 0.24) 48%,
+    rgba(45, 212, 191, 0.16) 100%
+  ),
+  rgba(10, 14, 28, 0.96);
   color: #ffffff;
   font-size: 15px;
   font-weight: 600;
