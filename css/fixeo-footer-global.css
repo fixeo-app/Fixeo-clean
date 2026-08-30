@@ -36,6 +36,9 @@ footer.fixeo-footer-v1,
   padding-bottom: 28px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
+body.fixeo-homepage-mode .fxf-trust-row {
+  display: none !important;
+}
 
 .fxf-trust-badge {
   display: inline-flex;
