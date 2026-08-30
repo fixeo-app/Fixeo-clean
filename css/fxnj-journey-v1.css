@@ -28,7 +28,8 @@
   max-width: 900px;
   margin: 0 auto;
 }
-#fxnj-spine > .fxnj-stage {
+
+fxnj-spine .fxnj-label {
   display: none !important;
 }
 
