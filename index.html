@@ -2809,7 +2809,7 @@ section#home.hero.hero-section {
   <div class="hero-content">
 
     <!-- H1 (SEO) - RAFI OS JS moves this below the hero on mount -->
-    <h1 class="hero-title">
+    <h1 class="hero-title" hidden>
       <span data-i18n="hero_title_1">Un artisan chez vous</span><br/>
       <span data-i18n="hero_title_2">en quelques minutes</span>
     </h1>
@@ -2823,14 +2823,14 @@ section#home.hero.hero-section {
     <!-- RAFI context status line - fxhcs-v1
          Reserved min-height prevents CLS. JS fills text after RAFI OS mounts.
          Sits between .rfos-stage-wrap (injected before this) and #hero-quick-search. -->
-    <div id="fxhcs-line" aria-live="polite" aria-label="Contexte de localisation"></div>
+    <div id="fxhcs-line" hidden aria-live="polite" aria-label="Contexte de localisation"></div>
 
     <!-- Reply field -->
-    <div id="hero-quick-search" class="search-box" role="search" aria-label="Recherche rapide d'artisans"></div>
-
+<div id="hero-quick-search" class="search-box" hidden role="search" aria-label="Recherche rapide d'artisans"></div>
+    
     <!-- Fallback path - RAFI OS JS moves this below the hero on mount.
          fxjb-context narrative travels with the wrapper into .rfos-fallback-band. -->
-    <div class="hero-secondary-link-wrap">
+    <div class="hero-secondary-link-wrap" hidden>
       <!-- Journey B narrative - fxjb-* - rendered outside hero by RAFI OS -->
       <div class="fxjb-context" aria-hidden="true">
         <p class="fxjb-headline">Vous ne savez pas quel artisan choisir&nbsp;?</p>
@@ -3261,7 +3261,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
    ════════════════════════════════════════════════════════════════════ */
 
 .fxsit-reset-wrap {
-  display: flex;
+  display: none !important;
   justify-content: center;
   margin: 0 auto clamp(16px, 2.5vw, 24px);
   max-width: 900px;
