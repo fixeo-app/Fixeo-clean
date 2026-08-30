@@ -54,9 +54,9 @@ section#home.rfos-hero-recomposed #hero-quick-search {
   width: 100% !important;
 }
 
-/* Trust whisper — third */
+/* Legacy trust whisper — superseded by Flagship trust line */
 section#home.rfos-hero-recomposed .rfos-trust-whisper {
-  order: 3 !important;
+  display: none !important;
 }
 
 /* Everything that was in the hero — gone */
