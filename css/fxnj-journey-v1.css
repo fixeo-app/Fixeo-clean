@@ -24,6 +24,11 @@
    The wrapper adds the relative context for the spine line.
 ───────────────────────────────────────────────────────────────────────── */
 #fxnj-spine {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+#fxnj-spine > .fxnj-stage {
   display: none !important;
 }
 
