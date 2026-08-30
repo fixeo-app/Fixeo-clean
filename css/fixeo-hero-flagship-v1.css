@@ -2345,8 +2345,9 @@ fxhf-shell--need {
   width: min(118px, 32vw);
 }
 .fxhf-shell--need .fxhf-rafi-image {
-  width: 96%;
-  height: 96%;
+  width: 118%;
+  height: 118%;
+  transform: scale(1.08);
 }
 .fxhf-shell--need .fxhf-visual-label {
   margin-top: 0;
