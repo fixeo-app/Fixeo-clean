@@ -2020,11 +2020,11 @@
     gap: 12px !important;
   }
 
-  .hero-content > #hero-quick-search,
-  .hero-content > #hero-quick-search.qsm-inline-host,
-  .hero-content > .search-box {
-    display: block !important;
-  }
+.hero-content > #hero-quick-search:not([hidden]),
+.hero-content > #hero-quick-search.qsm-inline-host:not([hidden]),
+.hero-content > .search-box:not([hidden]) {
+  display: block !important;
+}
 
   .qsm-inline-host,
   .qsm-inline-host .qsm-search-section,
