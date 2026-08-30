@@ -37,7 +37,9 @@
   opacity: 0;
   transition: opacity 0.30s ease;
 }
-
+#fxhcs-line[hidden] {
+  display: none !important;
+}
 #fxhcs-line.fxhcs-ready {
   opacity: 1;
 }
