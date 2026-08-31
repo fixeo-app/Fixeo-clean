@@ -2315,11 +2315,13 @@
   white-space: nowrap;
 }
 
-.fxhf-location-detected-badge[hidden] {
+.fxhf-location-detected-badge[hidden] 
+  {
   display: none;
 }
-
-/* ══════════════════════════════════════════════════════════════
+}
+/* 
+  ══════════════════════════════════════════════════════════════
    FLAGSHIP — NEED / COMPACT MOBILE FIRST SCREEN
    Goal: keep the useful State 1 flow visible without scrolling
 ══════════════════════════════════════════════════════════════ */
