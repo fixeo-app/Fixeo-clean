@@ -2380,8 +2380,8 @@
   }
 
   .fxhf-shell--need .fxhf-need-input {
-  min-height: 58px;
-  padding: 8px 14px 4px;
+  min-height: 50px;
+  padding: 6px 14px 3px;
 }
 
  .fxhf-shell--need .fxhf-field-footer {
