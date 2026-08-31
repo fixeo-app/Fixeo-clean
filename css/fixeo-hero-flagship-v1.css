@@ -2446,3 +2446,15 @@
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.05);
 }
+.fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
