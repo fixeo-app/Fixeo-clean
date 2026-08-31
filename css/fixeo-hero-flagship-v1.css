@@ -2384,15 +2384,15 @@
   padding: 8px 14px 4px;
 }
 
-  .fxhf-shell--need .fxhf-field-footer {
-    gap: 8px;
-    padding: 8px 10px 10px 14px;
-  }
+ .fxhf-shell--need .fxhf-field-footer {
+  gap: 6px;
+  padding: 5px 10px 6px 14px;
+}
 
-  .fxhf-shell--need .fxhf-mic {
-    min-height: 44px;
-    padding: 9px 12px;
-  }
+.fxhf-shell--need .fxhf-mic {
+  min-height: 38px;
+  padding: 7px 12px;
+}
 
   .fxhf-shell--need .fxhf-location-row {
     margin-top: 2px;
