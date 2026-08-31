@@ -926,21 +926,63 @@
     });
   }
 
-  /* ── Render premium grid ── */
-  function _getOrCreateGrid() {
-    var pg = _$(GRID_ID);
-    if (pg) return pg;
-    pg = document.createElement('div');
-    pg.id = GRID_ID;
-    pg.className = 'ssb2-vedette-grid fhp-grid';
-    pg.setAttribute('aria-label','Profils artisans référencés sur FIXEO');
-    var mainCol = _q('#'+SECTION_ID+' .results-main-column');
-    var shell   = _q('#'+SECTION_ID+' .results-page-shell');
-    var anchor  = mainCol || shell;
-    if (anchor) anchor.insertBefore(pg, anchor.firstChild);
-    _bindGridDelegation(pg);
-    return pg;
+  
+ /* ── Render premium grid ── */
+function _getOrCreateGrid() {
+  var mainCol = _q('#'+SECTION_ID+' .results-main-column');
+  var shell   = _q('#'+SECTION_ID+' .results-page-shell');
+  var anchor  = mainCol || shell;
+
+  /* Homepage network trade filter */
+  var filterWrap = document.getElementById('fhp-network-trade-wrap');
+
+  if (!filterWrap && anchor) {
+    filterWrap = document.createElement('div');
+    filterWrap.id = 'fhp-network-trade-wrap';
+    filterWrap.className = 'fhp-network-filter';
+
+    filterWrap.innerHTML = `
+      <label for="fhp-network-trade" class="fhp-network-filter-label">
+        Métier
+      </label>
+
+      <select id="fhp-network-trade" class="fhp-network-trade">
+        <option value="">Tous les métiers</option>
+        <option value="plomberie">Plomberie</option>
+        <option value="electricite">Électricité</option>
+        <option value="peinture">Peinture</option>
+        <option value="menuiserie">Menuiserie</option>
+        <option value="climatisation">Climatisation</option>
+        <option value="maconnerie">Maçonnerie</option>
+        <option value="serrurerie">Serrurerie</option>
+        <option value="nettoyage">Nettoyage</option>
+        <option value="jardinage">Jardinage</option>
+        <option value="bricolage">Bricolage</option>
+      </select>
+    `;
+
+    anchor.insertBefore(filterWrap, anchor.firstChild);
   }
+
+  var pg = _$(GRID_ID);
+  if (pg) return pg;
+
+  pg = document.createElement('div');
+  pg.id = GRID_ID;
+  pg.className = 'ssb2-vedette-grid fhp-grid';
+  pg.setAttribute('aria-label','Profils artisans référencés sur FIXEO');
+
+  if (anchor) {
+    if (filterWrap) {
+      anchor.insertBefore(pg, filterWrap.nextSibling);
+    } else {
+      anchor.insertBefore(pg, anchor.firstChild);
+    }
+  }
+
+  _bindGridDelegation(pg);
+  return pg;
+}
 
   function _renderPremiumGrid() {
     var fullList = window.ARTISANS || [];
