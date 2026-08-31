@@ -729,11 +729,12 @@
 ══════════════════════════════════════════════════════════════ */
 
 .fxhf-shell--dispatching {
-  display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: clamp(44px, 7vw, 96px);
-  padding: clamp(42px, 6vw, 84px) 24px clamp(52px, 7vw, 96px);
+  width: min(1180px, 100%);
+  gap: 18px;
+  padding: clamp(28px, 4vw, 48px) 24px clamp(44px, 6vw, 72px);
 }
 
 .fxhf-dispatch-progress {
