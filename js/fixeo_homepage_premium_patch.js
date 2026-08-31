@@ -960,7 +960,17 @@ function _getOrCreateGrid() {
         <option value="bricolage">Bricolage</option>
       </select>
     `;
+var tradeSelect = filterWrap.querySelector('#fhp-network-trade');
 
+if (tradeSelect) {
+  tradeSelect.addEventListener('change', function () {
+    var hiddenCategory = document.getElementById('filter-category');
+    if (!hiddenCategory) return;
+
+    hiddenCategory.value = tradeSelect.value || '';
+    hiddenCategory.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+}
     anchor.insertBefore(filterWrap, anchor.firstChild);
   }
 
