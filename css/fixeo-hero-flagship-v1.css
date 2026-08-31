@@ -2522,3 +2522,20 @@
     margin-bottom: 0;
   }
 }
+/* =========================================================
+   FLAGSHIP — ANALYSIS / COMPACT MOBILE FIRST SCREEN
+   Goal: keep the complete State 2 flow inside the viewport
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="analysis"] .fxhf-shell--analysis {
+    min-height: calc(100svh - var(--navbar-h, 70px));
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 10px 12px 12px;
+  }
+
+}
