@@ -2542,3 +2542,45 @@
   margin-bottom: -12px;
 }
 }
+/* =========================================================
+   FLAGSHIP — DISPATCH / COMPACT MOBILE CANDIDATE CARDS
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-card {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr);
+    grid-template-rows: auto;
+    column-gap: 10px;
+    padding: 10px 12px;
+    width: 100%;
+    min-height: 0;
+    text-align: left;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-card-avatar {
+    width: 58px;
+    height: 58px;
+    align-self: center;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-card-photo {
+    width: 58px;
+    height: 58px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-card-fallback {
+    width: 58px;
+    height: 58px;
+  }
+}
