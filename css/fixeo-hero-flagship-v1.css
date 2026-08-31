@@ -615,15 +615,10 @@
   }
 }
 
-@media (max-width: 640px) {
-  .fxhf-shell--need {
-    gap: 24px;
-
-    padding:
-      24px
-      14px
-      48px;
-  }
+.fxhf-shell--need {
+  gap: 4px;
+  padding: 0 12px 10px;
+}
 
   .fxhf-visual {
     min-height: 190px;
