@@ -2280,7 +2280,25 @@
   margin: 0;
   gap: 18px;
 }
+.fxhf-dispatch-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  margin-top: 16px;
+}
 
+.fxhf-dispatch-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+}
+  
 .fxhf-location-row {
   display: flex;
   align-items: center;
