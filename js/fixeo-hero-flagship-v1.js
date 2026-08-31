@@ -921,7 +921,8 @@ function renderDispatching(data) {
     Array.isArray(data.dispatch.candidates)
       ? data.dispatch.candidates.slice(0, 3)
       : [];
-
+  console.table(rows);
+  
   rows.forEach(function(candidate, index) {
     if (!candidate) return;
 
