@@ -914,8 +914,7 @@ function renderDispatching(data) {
   sphere.appendChild(halo);
   sphere.appendChild(core);
 
-  network.appendChild(sphere);
-
+visual.appendChild(sphere);
   var rows =
     data.dispatch &&
     Array.isArray(data.dispatch.candidates)
@@ -1081,14 +1080,16 @@ rows.forEach(function(candidate) {
   cardsRail.appendChild(card);
 });
 
-network.appendChild(cardsRail);
-  
-  visual.appendChild(network);
+/* Cards belong to the dispatch narrative, after the explanation
+   and before the live dispatch progress. */
+content.insertBefore(cardsRail, progress);
 
-  shell.appendChild(content);
-  shell.appendChild(visual);
+/* Mobile-safe natural document flow:
+   RAFI → dispatch content → candidate cards → progress/status */
+shell.appendChild(visual);
+shell.appendChild(content);
 
-  _root.appendChild(shell);
+_root.appendChild(shell);
 
   return true;
 }
