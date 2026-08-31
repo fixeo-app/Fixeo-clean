@@ -2460,3 +2460,15 @@
   flex-direction: column;
   min-width: 0;
 }
+
+@media (max-width: 640px) {
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-card {
+    width: 100%;
+  }
+}
