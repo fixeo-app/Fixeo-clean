@@ -2684,14 +2684,26 @@
   }
 
   .fxhf-dispatch-card-name {
-    font-size: .72rem;
-    line-height: 1.15;
-  }
+  font-size: 0.68rem;
+  line-height: 1.15;
+  min-height: 2.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .fxhf-dispatch-card-meta {
-    font-size: .62rem;
-    line-height: 1.2;
-  }
+.fxhf-dispatch-card-meta {
+  font-size: 0.56rem;
+  line-height: 1.18;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.fxhf-dispatch-card-status {
+  font-size: 0.58rem;
+  line-height: 1.15;
+  white-space: nowrap;
+}
 
   .fxhf-dispatch-card-services,
   .fxhf-dispatch-card-price {
