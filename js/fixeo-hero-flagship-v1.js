@@ -921,93 +921,168 @@ function renderDispatching(data) {
     Array.isArray(data.dispatch.candidates)
       ? data.dispatch.candidates.slice(0, 3)
       : [];
-  console.table(rows);
+ 
   
-  rows.forEach(function(candidate, index) {
-    if (!candidate) return;
+var cardsRail = document.createElement('div');
+cardsRail.className = 'fxhf-dispatch-cards';
 
-    var position = index + 1;
+rows.forEach(function(candidate) {
+  if (!candidate) return;
 
-    /*
-     * Connection exists only because this artisan is really present
-     * in the backend dispatch candidate response.
-     */
-    var connection = document.createElement('div');
-    connection.className =
-      'fxhf-dispatch-connection ' +
-      'fxhf-dispatch-connection--' + position;
-    connection.setAttribute('aria-hidden', 'true');
+  var displayName =
+    candidate.display_name || 'Artisan FIXEO';
 
-    var connectionFlow = document.createElement('span');
-    connectionFlow.className = 'fxhf-dispatch-connection-flow';
+  /*
+   * Dispatch candidates intentionally contain a minimal payload.
+   * Enrich presentation only from the artisan dataset already
+   * loaded on the page. Matching / dispatch remain untouched.
+   */
+  var artisan = (window.ARTISANS || []).find(function(item) {
+    if (!item) return false;
 
-    connection.appendChild(connectionFlow);
-    network.appendChild(connection);
+    return (
+      item.name === displayName ||
+      item.full_name === displayName
+    );
+  }) || null;
 
-    var node = document.createElement('div');
-    node.className =
-      'fxhf-dispatch-node ' +
-      'fxhf-dispatch-node--' + position;
+  var card = document.createElement('article');
+  card.className = 'fxhf-dispatch-card';
 
-    var avatar = document.createElement('div');
-    avatar.className = 'fxhf-dispatch-node-avatar';
+  /* ── Avatar ─────────────────────────────────────────── */
 
-    if (candidate.photo_url) {
-      var img = document.createElement('img');
-      img.className = 'fxhf-dispatch-node-photo';
-      img.src = candidate.photo_url;
-      img.alt = '';
-      img.loading = 'eager';
+  var avatar = document.createElement('div');
+  avatar.className = 'fxhf-dispatch-card-avatar';
 
-      avatar.appendChild(img);
-    } else {
-      var fallback = document.createElement('span');
-      fallback.className = 'fxhf-dispatch-node-fallback';
+  var photoUrl =
+    candidate.photo_url ||
+    (artisan && artisan.photo_url) ||
+    (artisan && artisan.photo) ||
+    '';
 
-      var displayName =
-        candidate.display_name || 'Artisan FIXEO';
+  if (photoUrl) {
+    var img = document.createElement('img');
+    img.className = 'fxhf-dispatch-card-photo';
+    img.src = photoUrl;
+    img.alt = '';
+    img.loading = 'eager';
 
-      fallback.textContent =
-        displayName.trim().charAt(0).toUpperCase() || 'F';
+    avatar.appendChild(img);
+  } else {
+    var fallback = document.createElement('span');
+    fallback.className = 'fxhf-dispatch-card-fallback';
+    fallback.textContent =
+      displayName.trim().charAt(0).toUpperCase() || 'F';
 
-      avatar.appendChild(fallback);
-    }
+    avatar.appendChild(fallback);
+  }
 
-    var identity = document.createElement('div');
-    identity.className = 'fxhf-dispatch-node-identity';
+  /* ── Name ───────────────────────────────────────────── */
 
-    var name = document.createElement('strong');
-    name.className = 'fxhf-dispatch-node-name';
-    name.textContent =
-      candidate.display_name || 'Artisan FIXEO';
+  var name = document.createElement('strong');
+  name.className = 'fxhf-dispatch-card-name';
+  name.textContent = displayName;
 
-    var waiting = document.createElement('span');
-    waiting.className = 'fxhf-dispatch-node-status';
+  /* ── Métier + ville ─────────────────────────────────── */
 
-    var waitingDot = document.createElement('span');
-    waitingDot.className = 'fxhf-dispatch-node-status-dot';
-    waitingDot.setAttribute('aria-hidden', 'true');
+  var meta = document.createElement('div');
+  meta.className = 'fxhf-dispatch-card-meta';
 
-    var waitingText = document.createElement('span');
-    waitingText.textContent = 'En attente';
+  var service =
+    artisan &&
+    (artisan.service || artisan.category);
 
-    waiting.appendChild(waitingDot);
-    waiting.appendChild(waitingText);
+  var city =
+    artisan &&
+    (artisan.city || artisan.ville);
 
-    identity.appendChild(name);
-    identity.appendChild(waiting);
+  var metaParts = [];
 
-    node.appendChild(avatar);
-    node.appendChild(identity);
+  if (service) {
+    metaParts.push(
+      String(service).charAt(0).toUpperCase() +
+      String(service).slice(1)
+    );
+  }
 
-    network.appendChild(node);
-  });
+  if (city) {
+    metaParts.push(city);
+  }
 
-  var networkLabel = document.createElement('div');
-  networkLabel.className = 'fxhf-dispatch-network-label';
-  networkLabel.textContent = 'DISPATCH EN COURS';
+  meta.textContent = metaParts.join(' · ');
 
-  network.appendChild(networkLabel);
+  /* ── Services ───────────────────────────────────────── */
+
+  var services = document.createElement('div');
+  services.className = 'fxhf-dispatch-card-services';
+
+  if (
+    artisan &&
+    Array.isArray(artisan.services)
+  ) {
+    services.textContent = artisan.services
+      .filter(function(label) {
+        return (
+          label &&
+          String(label).toLowerCase() !==
+            String(service || '').toLowerCase()
+        );
+      })
+      .slice(0, 3)
+      .join(' · ');
+  }
+
+  /* ── Prix indicatif ─────────────────────────────────── */
+
+  var price = document.createElement('div');
+  price.className = 'fxhf-dispatch-card-price';
+
+  if (artisan) {
+    price.textContent =
+      artisan.priceLabel ||
+      artisan.marketPriceLabel ||
+      '';
+  }
+
+  /* ── Dispatch status ────────────────────────────────── */
+
+  var waiting = document.createElement('div');
+  waiting.className = 'fxhf-dispatch-card-status';
+
+  var waitingDot = document.createElement('span');
+  waitingDot.className = 'fxhf-dispatch-card-status-dot';
+  waitingDot.setAttribute('aria-hidden', 'true');
+
+  var waitingText = document.createElement('span');
+  waitingText.textContent = 'En attente';
+
+  waiting.appendChild(waitingDot);
+  waiting.appendChild(waitingText);
+
+  /* ── Assemble card ──────────────────────────────────── */
+
+  card.appendChild(avatar);
+  card.appendChild(name);
+
+  if (meta.textContent) {
+    card.appendChild(meta);
+  }
+
+  if (services.textContent) {
+    card.appendChild(services);
+  }
+
+  if (price.textContent) {
+    card.appendChild(price);
+  }
+
+  card.appendChild(waiting);
+
+  cardsRail.appendChild(card);
+});
+
+network.appendChild(cardsRail);
+  
   visual.appendChild(network);
 
   shell.appendChild(content);
