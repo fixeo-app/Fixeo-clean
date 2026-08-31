@@ -572,15 +572,14 @@ syncFlagshipDetectedCity(0);
     directory.textContent =
       'Vous préférez choisir vous-même ? Voir les artisans';
 
-    content.appendChild(eyebrow);
-    content.appendChild(title);
-    content.appendChild(subtitle);
-    content.appendChild(field);
-   content.appendChild(locationRow);
-    content.appendChild(cta);
-    content.appendChild(trust);
-    content.appendChild(directory);
-
+    content.appendChild(locationRow);
+content.appendChild(title);
+content.appendChild(subtitle);
+content.appendChild(field);
+content.appendChild(cta);
+content.appendChild(trust);
+content.appendChild(directory);
+    
     /* ── RAFI visual side ────────────────────────────────────── */
     var visual = document.createElement('div');
     visual.className = 'fxhf-visual';
@@ -609,7 +608,7 @@ syncFlagshipDetectedCity(0);
 
     var visualLabel = document.createElement('div');
     visualLabel.className = 'fxhf-visual-label';
-    visualLabel.textContent = 'RAFI';
+    visualLabel.textContent = 'RAFI · ASSISTANT FIXEO';
     /* RAFI ambient conversation — NEED state */
 var rafiMessage = document.createElement('p');
 rafiMessage.className = 'fxhf-rafi-message';
