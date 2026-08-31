@@ -768,6 +768,11 @@
         '</span>' +
         '<span class="fhp-see-all-arrow" aria-hidden="true">\u2192</span>' +
       '</a>';
+    var networkFilter = document.getElementById('fhp-network-trade-wrap');
+
+if (networkFilter && el.parentNode) {
+  el.parentNode.insertBefore(networkFilter, el.nextSibling);
+
   }
 
   /* ── K-2: City explore strip ──────────────────────────────────────────
