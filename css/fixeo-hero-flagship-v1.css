@@ -2336,13 +2336,13 @@
 }
 
 .fxhf-shell--need .fxhf-visual {
-  min-height: 72px;
-  margin-top: -50px;
-  margin-bottom: -22px;
+  min-height: 64px;
+  margin-top: -56px;
+  margin-bottom: -24px;
 }
 
 .fxhf-shell--need .fxhf-rafi-sphere {
-  width: min(102px, 28vw);
+  width: min(96px, 26vw);
 }
   
 .fxhf-shell--need .fxhf-rafi-image {
