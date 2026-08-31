@@ -2537,5 +2537,8 @@
     gap: 8px;
     padding: 10px 12px 12px;
   }
-
+.fxhf-root[data-fxhf-state="analysis"] .fxhf-visual {
+  min-height: 150px;
+  margin-bottom: -12px;
+}
 }
