@@ -772,7 +772,7 @@
 
 if (networkFilter && el.parentNode) {
   el.parentNode.insertBefore(networkFilter, el.nextSibling);
-
+ }
   }
 
   /* ── K-2: City explore strip ──────────────────────────────────────────
