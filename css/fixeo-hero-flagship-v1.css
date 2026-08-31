@@ -2484,7 +2484,7 @@
     min-height: calc(100svh - var(--navbar-h, 70px));
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 6px;
     padding: 8px 12px 12px;
   }
