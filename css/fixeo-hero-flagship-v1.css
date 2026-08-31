@@ -2472,3 +2472,53 @@
     width: 100%;
   }
 }
+
+@media (max-width: 640px) {
+  .fxhf-root[data-fxhf-state="need"] {
+    min-height: calc(100svh - var(--navbar-h, 70px));
+    display: flex;
+    align-items: stretch;
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-shell--need {
+    min-height: calc(100svh - var(--navbar-h, 70px));
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 8px 12px 12px;
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-visual {
+    min-height: 108px;
+    margin: 0;
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-rafi-sphere {
+    width: min(112px, 30vw);
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-location-row {
+    margin-top: 0;
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-subtitle {
+    margin-top: 4px;
+    margin-bottom: 6px;
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-submit {
+    margin-top: 6px;
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-trust {
+    margin-top: 4px;
+    margin-bottom: 0;
+  }
+}
