@@ -2756,3 +2756,90 @@
     text-align: center;
   }
 }
+
+/* =========================================================
+   FLAGSHIP — STATE 3 / COMPLETE MOBILE HERO
+   Goal: keep the complete dispatch experience in viewport
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="dispatching"] {
+    min-height: calc(100svh - var(--navbar-h, 70px));
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-shell--dispatching {
+    min-height: calc(100svh - var(--navbar-h, 70px));
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 6px 10px 10px;
+  }
+
+  /* RAFI compact at top */
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-visual--dispatching {
+    min-height: 108px;
+    height: 108px;
+    margin: 0;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-network {
+    gap: 0;
+    margin: 0;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-rafi-sphere--dispatching {
+    width: 92px;
+    height: 92px;
+  }
+
+  /* Narrative */
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-content--dispatching {
+    gap: 6px;
+    width: 100%;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-eyebrow {
+    margin: 0;
+    font-size: 0.62rem;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-title {
+    margin: 0;
+    font-size: clamp(1.9rem, 8vw, 2.35rem);
+    line-height: 0.96;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-subtitle {
+    margin: 2px 0 6px;
+    font-size: 0.72rem;
+    line-height: 1.25;
+  }
+
+  /* Candidate rail */
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-cards {
+    margin-top: 4px;
+    gap: 6px;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-card {
+    padding: 7px 3px;
+  }
+
+  /* Dispatch progress */
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-progress {
+    margin: 2px 0;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-count {
+    margin: 3px 0 0;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-continuation {
+    margin: 2px auto 0;
+    max-width: 330px;
+    font-size: 0.66rem;
+    line-height: 1.3;
+  }
+}
