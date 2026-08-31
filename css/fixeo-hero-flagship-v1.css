@@ -2275,12 +2275,15 @@
   }
 
   .fxhf-root[data-fxhf-state="dispatching"] .fxhf-dispatch-network {
-    width: min(470px, 100%);
-    transform: scale(0.88);
-    transform-origin: center center;
-    margin-top: -24px;
-    margin-bottom: -24px;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: auto;
+  transform: none;
+  margin: 0;
+  gap: 18px;
 }
 
 .fxhf-location-row {
