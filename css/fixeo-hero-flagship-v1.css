@@ -3726,3 +3726,49 @@
     opacity: 0.95;
   }
 }
+
+/* RAFI Voice Bar — premium compact layout */
+.fxhf-voice-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.fxhf-voice-bar .fxhf-mic {
+  width: 100%;
+  margin: 0;
+  padding-left: 76px;
+  padding-right: 76px;
+}
+
+.fxhf-voice-bar .fxhf-speech-lang {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+
+  width: auto;
+  min-width: 54px;
+  max-width: 92px;
+  height: 36px;
+  margin: 0;
+  padding: 0 24px 0 12px;
+
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+
+  background: rgba(8, 18, 40, 0.58);
+  color: #fff;
+
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  cursor: pointer;
+}
