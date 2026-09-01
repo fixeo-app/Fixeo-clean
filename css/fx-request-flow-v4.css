@@ -1476,6 +1476,43 @@
   position: relative;
 }
 
+
+
+/* RAFI V5a2 — Emergency Step 1 compact situation grid */
+.fxrf4-situation-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.fxrf4-situation-item {
+  min-width: 0;
+  min-height: 96px;
+  padding: 14px 13px;
+
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+}
+
+.fxrf4-situation-icon {
+  width: auto;
+  font-size: 1.45rem;
+  text-align: left;
+}
+
+.fxrf4-situation-label {
+  font-size: 0.82rem;
+  line-height: 1.22;
+  font-weight: 650;
+}
+
+/* 8th situation participates in entrance sequence */
+.fxrf4-situation-list .fxrf4-situation-item:nth-child(8) {
+  animation-delay: 280ms;
+}
+
 @media (hover: hover) {
   .fxrf4-situation-item:hover {
     border-color: rgba(234, 137, 54, 0.28);
