@@ -2998,3 +2998,122 @@
     line-height: 1.32;
   }
 }
+@media (max-width: 640px) {
+
+  /* =========================================================
+     STATE 3 — RAFI SOLUTION MODE
+     Bigger sphere + stronger internal RAFI + success halo
+     ========================================================= */
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-visual--dispatching {
+    min-height: 158px;
+    height: 158px;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-rafi-sphere--dispatching {
+    width: 142px;
+    height: 142px;
+    position: relative;
+    filter:
+      drop-shadow(0 0 18px rgba(108, 92, 255, 0.40))
+      drop-shadow(0 0 34px rgba(49, 214, 255, 0.22));
+  }
+
+  /* RAFI itself becomes more visible inside the sphere */
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-rafi-sphere--dispatching .fxhf-rafi-image {
+    width: 132%;
+    height: 132%;
+    transform: scale(1.12);
+  }
+
+  /* Main halo — solution found */
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-rafi-sphere--dispatching .fxhf-rafi-halo {
+    opacity: 1;
+    transform: scale(1.14);
+    background:
+      radial-gradient(
+        circle,
+        rgba(72, 255, 214, 0.28) 0%,
+        rgba(87, 188, 255, 0.20) 34%,
+        rgba(121, 92, 255, 0.16) 56%,
+        rgba(121, 92, 255, 0) 76%
+      );
+    box-shadow:
+      0 0 22px rgba(72, 255, 214, 0.55),
+      0 0 42px rgba(87, 188, 255, 0.38),
+      0 0 70px rgba(121, 92, 255, 0.24);
+    animation: fxhf-rafi-solution-pulse 2.4s ease-in-out infinite;
+  }
+
+  /* Extra luminous ring */
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-rafi-sphere--dispatching::before {
+    content: "";
+    position: absolute;
+    inset: -9px;
+    border-radius: 50%;
+    border: 1px solid rgba(88, 255, 218, 0.55);
+    box-shadow:
+      0 0 16px rgba(88, 255, 218, 0.38),
+      inset 0 0 14px rgba(88, 255, 218, 0.14);
+    pointer-events: none;
+    animation: fxhf-rafi-solution-ring 2.4s ease-in-out infinite;
+  }
+
+  /* Outer atmospheric glow */
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-rafi-sphere--dispatching::after {
+    content: "";
+    position: absolute;
+    inset: -24px;
+    border-radius: 50%;
+    background:
+      radial-gradient(
+        circle,
+        rgba(70, 255, 215, 0.15) 0%,
+        rgba(62, 190, 255, 0.10) 42%,
+        rgba(98, 76, 255, 0.06) 58%,
+        transparent 74%
+      );
+    filter: blur(7px);
+    pointer-events: none;
+    animation: fxhf-rafi-solution-breathe 3s ease-in-out infinite;
+  }
+}
+
+@keyframes fxhf-rafi-solution-pulse {
+  0%,
+  100% {
+    opacity: 0.78;
+    transform: scale(1.08);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
+}
+
+@keyframes fxhf-rafi-solution-ring {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.98);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fxhf-rafi-solution-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.96);
+  }
+
+  50% {
+    opacity: 0.95;
+    transform: scale(1.08);
+  }
+}
