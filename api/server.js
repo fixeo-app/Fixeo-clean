@@ -30,6 +30,7 @@ const cors       = require('cors');
 const bodyParser = require('body-parser');
 const fetch      = require('node-fetch');
 const multer     = require('multer');
+const FormData = require('form-data');
 
 /* FIX-V14-D : Serveur statique pour les tests locaux (frontend) */
 const fs         = require('fs');
