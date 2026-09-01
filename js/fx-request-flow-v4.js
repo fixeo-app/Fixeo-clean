@@ -169,8 +169,8 @@
     step1Other:    'D\u00e9crivez-le en quelques mots, je m\u2019en occupe.',
 
     /* ── Emergency mode ── */
-    step1Emergency:     'Que se passe-t-il\u00a0?',
-    step1EmergencySub:  'Transmettez votre situation prioritaire \u00e0 FIXEO en quelques secondes.',
+    step1Emergency:     'Quelle est votre urgence\u00a0?',
+    step1EmergencySub:  'Choisissez une situation ou décrivez-la à RAFI.',
     step1EmergencyAutre: 'D\u00e9crivez-moi rapidement ce qu\u2019il se passe.',
     step2Emergency:  'O\u00f9 faut-il intervenir\u00a0?',
     step2EmergencyCity: function(city) { return 'Intervention \u00e0\u00a0' + city + '\u00a0?'; },
