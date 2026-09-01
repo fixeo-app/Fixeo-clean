@@ -444,13 +444,9 @@ phone.autocomplete = 'tel';
 phone.inputMode = 'tel';
 phone.setAttribute('aria-label', 'Votre numéro de téléphone');
 
-var phoneHint = document.createElement('span');
-phoneHint.className = 'fxhf-phone-hint';
-phoneHint.textContent = 'Pour organiser cette intervention.';
 
 phoneWrap.appendChild(phoneLabel);
 phoneWrap.appendChild(phone);
-phoneWrap.appendChild(phoneHint);
     
     /* Main CTA */
     var cta = document.createElement('button');
