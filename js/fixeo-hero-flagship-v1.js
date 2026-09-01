@@ -270,7 +270,7 @@ function _startGuestPolling() {
 if (SpeechRecognition) {
   var recognition = new SpeechRecognition();
 
-  recognition.lang = 'fr-FR';
+  recognition.lang = 'ar-MA';
   recognition.interimResults = false;
   recognition.continuous = false;
 
