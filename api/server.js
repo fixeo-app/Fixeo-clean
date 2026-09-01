@@ -164,6 +164,32 @@ app.options('/api/admin/artisans/*', cors());
 
 app.use(bodyParser.json());
 
+/* ============================================================
+   RAFI VOICE — Upload audio en mémoire
+   ============================================================ */
+const rafiVoiceUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 4 * 1024 * 1024
+  },
+  fileFilter: function (req, file, cb) {
+    const allowed = [
+      'audio/webm',
+      'audio/mp4',
+      'audio/mpeg',
+      'audio/wav',
+      'audio/x-wav',
+      'audio/ogg'
+    ];
+
+    if (!allowed.includes(file.mimetype)) {
+      return cb(new Error('Format audio non supporté.'));
+    }
+
+    cb(null, true);
+  }
+}).single('audio');
+
 /* ── Exposer les variables frontend publiques ─────────────── */
 app.get('/api/env.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
