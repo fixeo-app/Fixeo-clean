@@ -3181,3 +3181,14 @@
     margin-right: auto;
   }
 }
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="dispatching"]
+  .fxhf-rafi-sphere--dispatching
+  .fxhf-rafi-core
+  .fxhf-rafi-image {
+    width: 145%;
+    height: 145%;
+    transform: scale(1.12);
+  }
+}
