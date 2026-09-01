@@ -280,7 +280,6 @@ form.append('model', 'gpt-transcribe');
     signal: controller.signal
   }
 );
-        );
       } finally {
         clearTimeout(timeout);
       }
