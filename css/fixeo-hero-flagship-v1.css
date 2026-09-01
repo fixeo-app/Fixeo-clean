@@ -3258,3 +3258,39 @@
       0 0 52px rgba(121, 92, 255, 0.18);
   }
 }
+/* =========================================================
+   STATE 1 — RAFI HALO ENHANCEMENT
+   Stronger presence without touching geometry
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="need"]
+  .fxhf-rafi-sphere
+  .fxhf-rafi-halo {
+    inset: 5%;
+
+    background:
+      radial-gradient(
+        circle at 50% 50%,
+        rgba(111, 220, 255, 0.24) 0%,
+        rgba(87, 188, 255, 0.18) 32%,
+        rgba(104, 88, 255, 0.12) 54%,
+        rgba(104, 88, 255, 0) 72%
+      );
+
+    filter: blur(10px);
+
+    box-shadow:
+      0 0 16px rgba(111, 220, 255, 0.34),
+      0 0 30px rgba(87, 188, 255, 0.22),
+      0 0 46px rgba(104, 88, 255, 0.14);
+  }
+
+  .fxhf-root[data-fxhf-state="need"]
+  .fxhf-rafi-sphere {
+    filter:
+      drop-shadow(0 0 12px rgba(111, 220, 255, 0.22))
+      drop-shadow(0 0 24px rgba(87, 188, 255, 0.12));
+  }
+}
