@@ -128,6 +128,11 @@
       "src": "^/api/urgent-request$",
       "dest": "/api/urgent-request-fn/index.js"
     },
+   {
+  "src": "^/api/rafi-transcribe$",
+  "dest": "/api/server.js"
+},
+    
     {
   "src": "^/api/guest-request$",
   "dest": "/api/urgent-request-fn/index.js"
