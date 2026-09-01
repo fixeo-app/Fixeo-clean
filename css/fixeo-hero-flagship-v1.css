@@ -3294,3 +3294,68 @@
       drop-shadow(0 0 24px rgba(87, 188, 255, 0.12));
   }
 }
+
+/* =========================================================
+   STATE 1 — RAFI DYNAMIC HALO
+   Animated idle / ready energy
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="need"]
+  .fxhf-rafi-sphere
+  .fxhf-rafi-halo {
+    animation:
+      fxhf-state1-halo-pulse 2.8s ease-in-out infinite;
+    transform-origin: center center;
+  }
+
+  .fxhf-root[data-fxhf-state="need"]
+  .fxhf-rafi-sphere::after {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+
+    background:
+      radial-gradient(
+        circle,
+        rgba(111, 220, 255, 0.12) 0%,
+        rgba(87, 188, 255, 0.08) 42%,
+        rgba(104, 88, 255, 0.04) 60%,
+        transparent 74%
+      );
+
+    filter: blur(6px);
+    pointer-events: none;
+
+    animation:
+      fxhf-state1-atmosphere 3.4s ease-in-out infinite;
+  }
+}
+
+@keyframes fxhf-state1-halo-pulse {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scale(1.00);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes fxhf-state1-atmosphere {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.96);
+  }
+
+  50% {
+    opacity: 0.85;
+    transform: scale(1.06);
+  }
+}
