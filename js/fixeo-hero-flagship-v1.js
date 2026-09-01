@@ -617,6 +617,7 @@ phone.setCustomValidity('');
 content.appendChild(title);
 content.appendChild(subtitle);
 content.appendChild(field);
+ content.appendChild(phoneWrap);  
 content.appendChild(cta);
 content.appendChild(trust);
 content.appendChild(directory);
