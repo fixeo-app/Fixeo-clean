@@ -750,6 +750,23 @@
     /* Helper sentence — low visual priority, appears below the RAFI question */
     var sub = _h('p', { cls: 'fxrf4-step1-sub', txt: MSG.step1EmergencySub });
 
+    /* RAFI voice entry — universal emergency fallback */
+var voiceBtn = _h('button', {
+  cls: 'fxrf4-emergency-voice',
+  type: 'button',
+  'aria-label': 'Décrire mon urgence à RAFI'
+});
+
+voiceBtn.appendChild(_h('span', {
+  cls: 'fxrf4-emergency-voice-icon',
+  txt: '🎙️'
+}));
+
+voiceBtn.appendChild(_h('span', {
+  cls: 'fxrf4-emergency-voice-label',
+  txt: 'Décrire mon urgence à RAFI'
+}));
+    
     var list = _h('div', { cls: 'fxrf4-situation-list', role: 'list' });
     var chips = [];
 
@@ -875,7 +892,7 @@
     });
 
     var body = _q('#fxrf4-body');
-    if (body) body.appendChild(_screen([sub, list]));
+    if (body) body.appendChild(_screen([sub, voiceBtn, list]));
   }
 
   /* ── Standard step 1 — 2-col service grid ──────────────── */
