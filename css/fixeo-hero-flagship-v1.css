@@ -3380,3 +3380,32 @@
     transform-origin: center center;
   }
 }
+
+/* =========================================================
+   STATE 1 — RAFI SPHERE TRUE CIRCLE
+   Lock mobile geometry without touching halo animation
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="need"]
+  .fxhf-rafi-sphere {
+    width: 118px;
+    height: 118px;
+    aspect-ratio: 1 / 1 !important;
+    flex: 0 0 118px !important;
+    border-radius: 50% !important;
+  }
+
+  .fxhf-root[data-fxhf-state="need"]
+  .fxhf-rafi-sphere::before,
+
+  .fxhf-root[data-fxhf-state="need"]
+  .fxhf-rafi-sphere::after,
+
+  .fxhf-root[data-fxhf-state="need"]
+  .fxhf-rafi-sphere
+  .fxhf-rafi-halo {
+    border-radius: 50% !important;
+  }
+}
