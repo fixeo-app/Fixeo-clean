@@ -446,7 +446,7 @@ phone.setAttribute('aria-label', 'Votre numéro de téléphone');
 
 var phoneHint = document.createElement('span');
 phoneHint.className = 'fxhf-phone-hint';
-phoneHint.textContent = 'Utilisé uniquement pour cette demande.';
+phoneHint.textContent = 'Pour organiser cette intervention.';
 
 phoneWrap.appendChild(phoneLabel);
 phoneWrap.appendChild(phone);
