@@ -265,7 +265,7 @@ app.post('/api/rafi-transcribe', function (req, res) {
           {
             method: 'POST',
             headers: {
-              Authorization: 'Bearer ' + process.env.OPENAI_API_KEY,
+              Authorization: 'Bearer ' + process.env.OPENAI_API_KEY, 
               ...form.getHeaders()
             },
             body: form,
