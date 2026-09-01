@@ -747,6 +747,10 @@
     var nameEl = _q('.fxrf4-rafi-name');
     if (nameEl) nameEl.classList.add('is-emergency');
 
+    /* Emergency visual state on the canonical dialog */
+var dialogEl = _q('#fxrf4-dialog');
+if (dialogEl) dialogEl.classList.add('is-emergency');
+
     /* Helper sentence — low visual priority, appears below the RAFI question */
     var sub = _h('p', { cls: 'fxrf4-step1-sub', txt: MSG.step1EmergencySub });
 
@@ -2127,6 +2131,9 @@ var dashLink = _h('a', {
     /* Reset emergency label on RAFI name (persists across opens) */
     var nameEl = _root ? _root.querySelector('.fxrf4-rafi-name') : null;
     if (nameEl) nameEl.classList.remove('is-emergency');
+
+    var dialogEl = _root ? _root.querySelector('#fxrf4-dialog') : null;
+if (dialogEl) dialogEl.classList.remove('is-emergency');
 
     _unlock();
     _st = null;
