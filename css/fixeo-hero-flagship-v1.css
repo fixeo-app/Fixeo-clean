@@ -3133,3 +3133,39 @@
     border-radius: 50%;
   }
 }
+/* =========================================================
+   STATE 3 — RAFI CORE FINAL GEOMETRY
+   Perfect circular core + stronger RAFI presence
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="dispatching"]
+  .fxhf-rafi-sphere--dispatching
+  .fxhf-rafi-core {
+    width: 64%;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50% !important;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"]
+  .fxhf-rafi-sphere--dispatching
+  .fxhf-rafi-core
+  .fxhf-rafi-image {
+    width: 175%;
+    height: 175%;
+    max-width: none;
+    max-height: none;
+
+    object-fit: contain;
+    transform: scale(1.32);
+    transform-origin: center center;
+  }
+}
