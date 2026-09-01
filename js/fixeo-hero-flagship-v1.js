@@ -969,11 +969,51 @@ rows.forEach(function(candidate) {
     avatar.appendChild(img);
   } else {
     var fallback = document.createElement('span');
-    fallback.className = 'fxhf-dispatch-card-fallback';
-    fallback.textContent =
-      displayName.trim().charAt(0).toUpperCase() || 'F';
+fallback.className = 'fxhf-dispatch-card-fallback fxhf-dispatch-card-trade-avatar';
 
-    avatar.appendChild(fallback);
+var tradeRaw =
+  (artisan && (
+    artisan.service_category ||
+    artisan.category ||
+    artisan.metier ||
+    artisan.trade
+  )) ||
+  candidate.service_category ||
+  candidate.category ||
+  '';
+
+var trade = String(tradeRaw).toLowerCase();
+
+var tradeIcons = {
+  plomberie: '🔧',
+  electricite: '⚡',
+  électricité: '⚡',
+  serrurerie: '🔑',
+  climatisation: '❄️',
+  menuiserie: '🪚',
+  peinture: '🖌️',
+  maconnerie: '🧱',
+  maçonnerie: '🧱',
+  carrelage: '◈',
+  jardinage: '🌿',
+  bricolage: '🛠️'
+};
+
+var tradeIcon = '🛠️';
+
+Object.keys(tradeIcons).some(function(key) {
+  if (trade.indexOf(key) !== -1) {
+    tradeIcon = tradeIcons[key];
+    return true;
+  }
+  return false;
+});
+
+fallback.textContent = tradeIcon;
+fallback.setAttribute('aria-hidden', 'true');
+
+avatar.appendChild(fallback);
+    
   }
 
   /* ── Name ───────────────────────────────────────────── */
