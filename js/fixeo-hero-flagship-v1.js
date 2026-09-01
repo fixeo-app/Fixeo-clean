@@ -271,14 +271,45 @@ if (SpeechRecognition) {
   var recognition = new SpeechRecognition();
   var recognitionTimer = null;
 
-  recognition.lang = 'ar-MA';
+  var speechLang = 'fr-FR';
+
+recognition.lang = speechLang;
   recognition.interimResults = false;
   recognition.continuous = false;
 
+  var speechLanguageToggle = document.createElement('button');
+
+speechLanguageToggle.type = 'button';
+speechLanguageToggle.className = 'fxhf-speech-lang';
+speechLanguageToggle.textContent = 'FR';
+
+speechLanguageToggle.setAttribute(
+  'aria-label',
+  'Changer la langue de reconnaissance vocale'
+);
+
+mic.parentNode.insertBefore(
+  speechLanguageToggle,
+  mic
+);
+
+speechLanguageToggle.addEventListener('click', function () {
+  if (speechLang === 'fr-FR') {
+    speechLang = 'ar-MA';
+    speechLanguageToggle.textContent = 'الدارجة';
+  } else {
+    speechLang = 'fr-FR';
+    speechLanguageToggle.textContent = 'FR';
+  }
+
+  recognition.lang = speechLang;
+});
+  
   mic.addEventListener('click', function () {
     try {
       mic.disabled = true;
       mic.textContent = '🎙️ Écoute…';
+      recognition.lang = speechLang;
       recognition.start();
       clearTimeout(recognitionTimer);
 
