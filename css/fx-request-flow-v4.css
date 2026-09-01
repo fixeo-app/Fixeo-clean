@@ -3100,3 +3100,61 @@
   color: rgba(32, 201, 151, 0.70) !important;
   font-weight: 700;
 }
+
+/* RAFI V5a2 — Emergency voice entry */
+.fxrf4-emergency-voice {
+  width: 100%;
+  min-height: 46px;
+  margin: 8px 0 12px;
+  padding: 0 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  border: 1px solid rgba(234, 137, 54, 0.38);
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(234, 137, 54, 0.12),
+      rgba(72, 100, 255, 0.10)
+    );
+
+  color: rgba(255, 255, 255, 0.96);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 18px rgba(234, 137, 54, 0.08);
+
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fxrf4-emergency-voice-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.fxrf4-emergency-voice-label {
+  line-height: 1.15;
+}
+
+@media (hover: hover) {
+  .fxrf4-emergency-voice:hover {
+    border-color: rgba(234, 137, 54, 0.58);
+    background:
+      linear-gradient(
+        135deg,
+        rgba(234, 137, 54, 0.18),
+        rgba(72, 100, 255, 0.13)
+      );
+  }
+}
