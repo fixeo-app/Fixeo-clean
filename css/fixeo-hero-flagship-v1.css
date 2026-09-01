@@ -3560,3 +3560,94 @@
     animation: none !important;
   }
 }
+
+/* =========================================================
+   STATE 1 — PREMIUM PHONE FIELD
+   Compact, mobile-first, CTA-safe
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-phone-wrap {
+    width: 100%;
+    margin: 6px 0 2px;
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-phone-label {
+    display: block;
+    margin: 0 0 5px 2px;
+
+    font-size: 0.66rem;
+    font-weight: 700;
+    line-height: 1.2;
+
+    color: rgba(226, 238, 255, 0.88);
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-phone {
+    width: 100%;
+    min-height: 42px;
+    padding: 9px 13px;
+
+    border-radius: 13px;
+    border: 1px solid rgba(125, 184, 255, 0.26);
+
+    background:
+      linear-gradient(
+        135deg,
+        rgba(37, 45, 86, 0.72),
+        rgba(52, 60, 112, 0.56)
+      );
+
+    color: #ffffff;
+
+    font-size: 0.84rem;
+    font-weight: 600;
+    line-height: 1;
+
+    outline: none;
+
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.02),
+      0 0 14px rgba(73, 155, 255, 0.08);
+
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      background 160ms ease;
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-phone::placeholder {
+    color: rgba(218, 229, 255, 0.52);
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-phone:focus {
+    border-color: rgba(102, 211, 255, 0.58);
+
+    background:
+      linear-gradient(
+        135deg,
+        rgba(40, 50, 95, 0.88),
+        rgba(59, 67, 127, 0.70)
+      );
+
+    box-shadow:
+      0 0 0 2px rgba(91, 195, 255, 0.08),
+      0 0 18px rgba(91, 195, 255, 0.14);
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-phone-hint {
+    display: block;
+    margin: 4px 0 0 2px;
+
+    font-size: 0.58rem;
+    line-height: 1.2;
+
+    color: rgba(189, 204, 228, 0.62);
+  }
+
+  /* Preserve CTA visibility */
+  .fxhf-root[data-fxhf-state="need"] .fxhf-submit {
+    margin-top: 8px;
+  }
+}
