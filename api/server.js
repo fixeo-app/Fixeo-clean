@@ -755,8 +755,12 @@ if (fs.existsSync(path.join(frontendPath, 'index.html'))) {
   });
 
   /* Fallback SPA : toute URL non-API → index.html */
-  app.get('*', function(req, res) {
-    if (!req.path.startsWith('/api')) {
+  app.get('*', function(req, res, next) {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+
+  if (!req.path.startsWith('/api')) {
       const filePath = path.join(frontendPath, req.path);
       const htmlPath = path.join(frontendPath, req.path + '.html');
       if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
