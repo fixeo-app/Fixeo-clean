@@ -494,7 +494,13 @@ phone.setCustomValidity('');
     return;
   }
 
-  var detected = window.FixeoAIRE.detect(need);
+  var needForDetection =
+  window.FixeoRafiLanguage &&
+  typeof window.FixeoRafiLanguage.normalize === 'function'
+    ? window.FixeoRafiLanguage.normalize(need)
+    : need;
+
+var detected = window.FixeoAIRE.detect(needForDetection);
 
   if (!detected || !detected.cat) {
     textarea.setCustomValidity(
@@ -509,9 +515,9 @@ phone.setCustomValidity('');
 
   if (typeof window.FixeoAIRE.detectUrgency === 'function') {
     isUrgent = !!window.FixeoAIRE.detectUrgency(
-      need,
-      detected
-    );
+  needForDetection,
+  detected
+);
   }
 
   cta.disabled = true;
