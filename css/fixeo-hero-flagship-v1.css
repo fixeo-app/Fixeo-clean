@@ -3169,3 +3169,15 @@
     transform-origin: center center;
   }
 }
+
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-title {
+    font-size: clamp(1.75rem, 7.3vw, 2.15rem);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
