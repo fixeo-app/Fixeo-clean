@@ -476,8 +476,19 @@ mic.addEventListener('click', function () {
 });    
 
 fieldFooter.appendChild(example);
-fieldFooter.appendChild(speechLangSelect);
-fieldFooter.appendChild(mic);
+
+/*
+ * RAFI Voice Bar
+ * Mic and language selector share one visual row
+ * while remaining independent interactive controls.
+ */
+var voiceBar = document.createElement('div');
+voiceBar.className = 'fxhf-voice-bar';
+
+voiceBar.appendChild(mic);
+voiceBar.appendChild(speechLangSelect);
+
+fieldFooter.appendChild(voiceBar);
 
     field.appendChild(textarea);
     field.appendChild(fieldFooter);
