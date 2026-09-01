@@ -93,15 +93,56 @@
      EMERGENCY SITUATIONS — situation labels → service slug map
      Used only in emergency mode step 1.
   ══════════════════════════════════════════════════════════ */
-  var EMERGENCY_SITUATIONS = [
-    { icon: '💧', label: "J\u2019ai une fuite d\u2019eau",              slug: 'plomberie',     serviceLabel: 'Plomberie'    },
-    { icon: '⚡', label: 'Plus de courant chez moi',                    slug: 'electricite',   serviceLabel: '\u00c9lectricit\u00e9' },
-    { icon: '🔐', label: 'Je suis bloqu\u00e9 dehors',                  slug: 'serrurerie',    serviceLabel: 'Serrurerie'   },
-    { icon: '🚿', label: 'Mon WC ou \u00e9vier est bouch\u00e9',         slug: 'plomberie',     serviceLabel: 'Plomberie'    },
-    { icon: '❄️', label: 'Climatiseur en panne',                          slug: 'climatisation', serviceLabel: 'Climatisation'},
-    { icon: '🚪', label: 'Porte ou fen\u00eatre bloqu\u00e9e',           slug: 'menuiserie',    serviceLabel: 'Menuiserie'   },
-    { icon: '⚠️', label: 'Autre urgence',                                slug: 'autre',         serviceLabel: 'Autre urgence'},
-  ];
+ var EMERGENCY_SITUATIONS = [
+  {
+    icon: '💧',
+    label: 'Fuite d’eau importante',
+    slug: 'plomberie',
+    serviceLabel: 'Plomberie'
+  },
+  {
+    icon: '🚿',
+    label: 'WC ou évier complètement bouché',
+    slug: 'plomberie',
+    serviceLabel: 'Plomberie'
+  },
+  {
+    icon: '⚡',
+    label: 'Plus de courant chez moi',
+    slug: 'electricite',
+    serviceLabel: 'Électricité'
+  },
+  {
+    icon: '🔌',
+    label: 'Panne électrique urgente',
+    slug: 'electricite',
+    serviceLabel: 'Électricité'
+  },
+  {
+    icon: '🔐',
+    label: 'Je suis bloqué dehors',
+    slug: 'serrurerie',
+    serviceLabel: 'Serrurerie'
+  },
+  {
+    icon: '🚪',
+    label: 'Porte ou fenêtre bloquée',
+    slug: 'menuiserie',
+    serviceLabel: 'Menuiserie'
+  },
+  {
+    icon: '❄️',
+    label: 'Climatiseur en panne',
+    slug: 'climatisation',
+    serviceLabel: 'Climatisation'
+  },
+  {
+    icon: '⚠️',
+    label: 'Autre urgence',
+    slug: 'autre',
+    serviceLabel: 'Autre urgence'
+  }
+];
 
   /* ── Emergency lane constants (7C.10D.2) ── */
   var URGENT_BADGE_TEXT = '\u26a1 URGENCE FIXEO';
