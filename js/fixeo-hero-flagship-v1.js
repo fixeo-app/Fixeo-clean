@@ -269,6 +269,7 @@ function _startGuestPolling() {
 
 if (SpeechRecognition) {
   var recognition = new SpeechRecognition();
+  var recognitionTimer = null;
 
   recognition.lang = 'ar-MA';
   recognition.interimResults = false;
@@ -279,6 +280,13 @@ if (SpeechRecognition) {
       mic.disabled = true;
       mic.textContent = '🎙️ Écoute…';
       recognition.start();
+      clearTimeout(recognitionTimer);
+
+recognitionTimer = setTimeout(function () {
+  try {
+    recognition.stop();
+  } catch (_) {}
+}, 7000);
     } catch (_) {
       mic.disabled = false;
       mic.textContent = '🎙️ Parler à RAFI';
@@ -286,6 +294,9 @@ if (SpeechRecognition) {
   });
 
   recognition.addEventListener('result', function (event) {
+    clearTimeout(recognitionTimer);
+recognitionTimer = null;
+    
     var transcript =
       event.results &&
       event.results[0] &&
@@ -301,11 +312,17 @@ if (SpeechRecognition) {
   });
 
   recognition.addEventListener('end', function () {
+      clearTimeout(recognitionTimer);
+recognitionTimer = null;
+
     mic.disabled = false;
     mic.textContent = '🎙️ Parler à RAFI';
   });
 
+
   recognition.addEventListener('error', function () {
+    clearTimeout(recognitionTimer);
+recognitionTimer = null;
     mic.disabled = false;
     mic.textContent = '🎙️ Parler à RAFI';
   });
