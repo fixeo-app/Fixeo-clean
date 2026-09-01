@@ -136,12 +136,14 @@
     slug: 'climatisation',
     serviceLabel: 'Climatisation'
   },
-  {
-    icon: '⚠️',
-    label: 'Autre urgence',
-    slug: 'autre',
-    serviceLabel: 'Autre urgence'
-  }
+
+   {
+  icon: '🔥',
+  label: 'Chauffe-eau en panne',
+  slug: 'plomberie',
+  serviceLabel: 'Plomberie'
+}
+   
 ];
 
   /* ── Emergency lane constants (7C.10D.2) ── */
