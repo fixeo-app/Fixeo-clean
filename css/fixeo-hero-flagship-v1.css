@@ -3409,3 +3409,41 @@
     border-radius: 50% !important;
   }
 }
+
+/* =========================================================
+   STATE 1 — RAFI CORE TRUE CIRCLE
+   Explicit dimensions for Safari mobile
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="need"]
+  .fxhf-rafi-sphere
+  .fxhf-rafi-core {
+    width: 64% !important;
+    height: 64% !important;
+
+    aspect-ratio: 1 / 1 !important;
+    flex: 0 0 auto !important;
+
+    border-radius: 50% !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fxhf-root[data-fxhf-state="need"]
+  .fxhf-rafi-sphere
+  .fxhf-rafi-core
+  .fxhf-rafi-image {
+    width: 150%;
+    height: 150%;
+    max-width: none;
+    max-height: none;
+
+    object-fit: contain;
+    transform: scale(1.18);
+    transform-origin: center center;
+  }
+}
