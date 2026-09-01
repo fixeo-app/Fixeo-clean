@@ -1,23 +1,23 @@
 /**
- * FIXEO RAFI LANGUAGE LAYER — v1b
- * =============================================
- * Darija / Moroccan Arabic / Arabic / Arabizi / French
- * comprehension bridge for RAFI.
+ * FIXEO RAFI LANGUAGE LAYER — v1c
+ * ============================================================
+ * Moroccan Darija / Arabic / Arabizi / French comprehension
+ * bridge for RAFI.
  *
- * PURPOSE
- * -------
- * Convert noisy Moroccan user language into canonical French hints
- * understood by the existing FixeoAIRE engine.
+ * ROLE
+ * ----
+ * Converts noisy Moroccan user language into canonical French
+ * hints understood by the existing FixeoAIRE engine.
  *
  * IMPORTANT
  * ---------
  * - Does NOT implement matching
  * - Does NOT implement dispatch
  * - Does NOT modify FixeoAIRE
- * - Does NOT modify the client's original text
- * - Does NOT translate or rewrite the submitted request
- * - Adds canonical detection hints only
- * - Designed to tolerate imperfect browser speech transcription
+ * - Does NOT modify the client's original request
+ * - Does NOT send canonical hints as the client's real text
+ * - Adds hints only to the local RAFI detection copy
+ * - Tolerates common Safari / browser speech-recognition errors
  *
  * Supported canonical categories:
  *   plomberie
@@ -39,13 +39,13 @@
  *
  * Example:
  *
- *   "الباب ست علي دابا"
+ *   "الباب ست عليا دابا"
  *
- * becomes internally:
+ * -> detection copy:
  *
- *   "الباب ست علي دابا serrurerie porte bloquee cle serrure urgent maintenant"
+ *   "الباب ست عليا دابا serrurerie porte bloquee cle serrure urgent maintenant"
  *
- * The original client text is still preserved separately by the Flagship.
+ * The original client request remains unchanged elsewhere.
  */
 
 (function () {
@@ -53,24 +53,24 @@
 
   if (window.FixeoRafiLanguage) return;
 
-  var VERSION = 'frl-v1b';
+  var VERSION = 'frl-v1c';
 
   /* =========================================================
-     TEXT NORMALIZATION
+     NORMALIZATION
      ========================================================= */
 
   function norm(value) {
     return String(value || '')
       .toLowerCase()
 
-      /* French / latin accents */
+      /* Latin accents */
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
 
       /* Arabic tashkeel */
       .replace(/[\u064B-\u065F\u0670]/g, '')
 
-      /* Arabic tatweel */
+      /* Tatweel */
       .replace(/\u0640/g, '')
 
       /* Arabic letter variants */
@@ -79,30 +79,54 @@
       .replace(/ؤ/g, 'و')
       .replace(/ئ/g, 'ي')
 
-      /* Apostrophe variants */
+      /* Apostrophes */
       .replace(/[’‘`´]/g, "'")
 
-      /* Common separators */
-      .replace(/[،؛,:;!?؟()[\]{}]/g, ' ')
+      /* Separators / punctuation */
+      .replace(/[،؛,:;!?؟()[\]{}"«»]/g, ' ')
+
+      /* Dashes */
+      .replace(/[-–—]/g, ' ')
 
       .replace(/\s+/g, ' ')
       .trim();
   }
 
   /* =========================================================
-     BASIC MATCH HELPERS
+     TERM MATCHING
      ========================================================= */
+
+  /*
+   * Short Latin fragments such as "ma", "do", "sd", "wc"
+   * must be matched as tokens.
+   *
+   * Otherwise "ma" could accidentally match "maison".
+   */
+  function isShortLatinTerm(value) {
+    return /^[a-z0-9]+$/.test(value) && value.length <= 3;
+  }
+
+  function hasTerm(text, term) {
+    var candidate = norm(term);
+
+    if (!text || !candidate) return false;
+
+    if (isShortLatinTerm(candidate)) {
+      return (
+        (' ' + text + ' ').indexOf(
+          ' ' + candidate + ' '
+        ) !== -1
+      );
+    }
+
+    return text.indexOf(candidate) !== -1;
+  }
 
   function containsAny(text, terms) {
     if (!text || !terms || !terms.length) return false;
 
     for (var i = 0; i < terms.length; i++) {
-      var candidate = norm(terms[i]);
-
-      if (
-        candidate &&
-        text.indexOf(candidate) !== -1
-      ) {
+      if (hasTerm(text, terms[i])) {
         return true;
       }
     }
@@ -111,18 +135,17 @@
   }
 
   /*
-   * A group represents several concepts that must all be present.
+   * Each element inside a group is a concept family.
+   * At least one term from EVERY concept family must match.
    *
    * Example:
    *
    * [
    *   ['باب', 'الباب', 'bab'],
-   *   ['سد', 'تسد', 'ست', 'tsed', 'sed']
+   *   ['تسد', 'سد', 'ست', 'tsed']
    * ]
    *
-   * means:
-   *
-   *   (door concept) AND (closed/blocked concept)
+   * = DOOR + CLOSED/BLOCKED
    */
   function containsGroup(text, group) {
     if (!group || !group.length) return false;
@@ -139,15 +162,10 @@
   function countTermMatches(text, terms) {
     var count = 0;
 
-    if (!terms) return count;
+    if (!terms) return 0;
 
     for (var i = 0; i < terms.length; i++) {
-      var candidate = norm(terms[i]);
-
-      if (
-        candidate &&
-        text.indexOf(candidate) !== -1
-      ) {
+      if (hasTerm(text, terms[i])) {
         count++;
       }
     }
@@ -156,7 +174,7 @@
   }
 
   /* =========================================================
-     RAFI MOROCCAN KNOWLEDGE BASE
+     MOROCCAN KNOWLEDGE BASE
      ========================================================= */
 
   var RULES = [
@@ -168,7 +186,7 @@
       cat: 'plomberie',
 
       hints:
-        'plomberie fuite eau robinet tuyau canalisation sanitaire',
+        'plomberie fuite eau robinet tuyau canalisation sanitaire lavabo wc',
 
       strong: [
         'plomberie',
@@ -176,101 +194,174 @@
 
         'تسرب الماء',
         'تسرب الما',
+        'تسرب لما',
+
         'الماء كيسيل',
         'الما كيسيل',
+        'لما كيسيل',
+
         'الماء سايل',
         'الما سايل',
+        'لما سايل',
+
+        'الماء كيدوز',
+        'الما كيدوز',
 
         'fuite eau',
         'fuite d eau',
         'fuite lavabo',
+        'fuite robinet',
 
-        'wc bouché',
         'wc bouche',
         'toilette bouchee',
-        'toilette bouchée',
 
         'chauffe eau',
-        'chauffe-eau'
+        'chauffe-eau',
+
+        'lavabo bouche',
+        'evier bouche',
+        'évier bouché'
       ],
 
       terms: [
         /* Water */
         'الماء',
         'الما',
+        'لما',
         'ماء',
-        'ma',
         'lma',
+        'lmaa',
+        'ma',
         'eau',
 
         /* Leak */
         'تسرب',
         'تسريب',
+        'يسرب',
+        'كيسرب',
+        'كيهرب الماء',
+
         'كيسيل',
         'يسيل',
         'سايل',
         'سيل',
-        'kayسيل',
-        'kaysil',
-        'kaytsreb',
-        'tsreb',
-        'fuite',
 
-        /* Fixtures */
-        'لافابو',
-        'lavabo',
+        'kaysil',
+        'kayسيل',
+        'kayssel',
+        'kysil',
+
+        'kaytsreb',
+        'kaytsrab',
+        'tsreb',
+        'tsrab',
+
+        'fuite',
+        'fuit',
+        'coule',
+
+        /* Robinet */
         'روبيني',
+        'روبينة',
         'روبين',
+        'الروبين',
         'robinet',
         'robinetterie',
 
+        /* Lavabo / sink */
+        'لافابو',
+        'لابافو',
+        'lavabo',
+
+        'ليفي',
+        'اليفي',
+        'evier',
+        'évier',
+
+        /* WC */
         'تواليت',
         'طواليط',
+        'الطواليط',
         'toilette',
         'toilettes',
         'wc',
 
+        /* Siphon */
         'سيفون',
+        'السيفون',
         'sيفون',
         'siphon',
 
+        /* Pipes */
+        'تيو',
+        'تويو',
         'tuyau',
+        'tuyaux',
         'canalisation',
         'evacuation',
         'évacuation',
 
+        /* Shower */
         'دوش',
+        'الدوش',
         'douche',
 
+        /* Bathroom */
+        'حمام',
+        'الحمام',
+        'salle de bain',
+
+        /* Bath */
         'بانيو',
+        'البانيو',
         'baignoire',
 
+        /* Water heater */
+        'سخان',
+        'السخان',
+        'سخان الماء',
         'chauffe eau',
         'chauffe-eau',
-        'سخان',
-        'سخان الماء',
 
-        /* blockage */
+        /* Blockage */
         'مسدود',
+        'مسدودة',
+        'مبلوكي',
         'بوشي',
-        'bouché',
         'bouche',
+        'bouchee',
         'debouchage',
-        'débouchage'
+        'deboucher',
+
+        /* Plumbing verbs */
+        'يفرغ',
+        'ما كيفرغش',
+        'ما كيدوزش'
       ],
 
       groups: [
         [
-          ['الماء', 'الما', 'ماء', 'ma', 'lma', 'eau'],
+          [
+            'الماء',
+            'الما',
+            'لما',
+            'ماء',
+            'lma',
+            'eau'
+          ],
           [
             'كيسيل',
             'يسيل',
             'سايل',
             'تسرب',
             'تسريب',
+            'يسرب',
+            'كيسرب',
             'kaysil',
+            'kaytsreb',
             'tsreb',
-            'fuite'
+            'fuite',
+            'coule'
           ]
         ],
 
@@ -278,7 +369,10 @@
           [
             'لافابو',
             'lavabo',
+            'ليفي',
+            'evier',
             'روبيني',
+            'روبين',
             'robinet',
             'siphon',
             'سيفون',
@@ -291,19 +385,47 @@
             'تسرب',
             'fuite',
             'مسدود',
+            'مسدودة',
+            'بوشي',
             'bouche',
-            'bouché'
+            'bouchee'
           ]
         ],
 
         [
-          ['wc', 'toilette', 'طواليط', 'تواليت'],
-          ['مسدود', 'bouche', 'bouché', 'debouchage']
+          [
+            'wc',
+            'toilette',
+            'toilettes',
+            'طواليط',
+            'تواليت'
+          ],
+          [
+            'مسدود',
+            'مسدودة',
+            'بوشي',
+            'bouche',
+            'bouchee',
+            'debouchage',
+            'ما كيفرغش'
+          ]
         ],
 
         [
-          ['سخان', 'chauffe eau', 'chauffe-eau'],
-          ['خاسر', 'ما خدامش', 'panne', 'marche pas']
+          [
+            'سخان',
+            'السخان',
+            'chauffe eau',
+            'chauffe-eau'
+          ],
+          [
+            'خاسر',
+            'واقف',
+            'ما خدامش',
+            'ماكيخدمش',
+            'panne',
+            'marche pas'
+          ]
         ]
       ]
     },
@@ -315,17 +437,27 @@
       cat: 'electricite',
 
       hints:
-        'electricite courant coupure disjoncteur prise eclairage',
+        'electricite courant coupure disjoncteur prise eclairage panne electrique',
 
       strong: [
         'electricite',
         'electricien',
+
         'الكهرباء مقطوعة',
+        'الكهربا مقطوعة',
+
         'الضو تقطع',
         'تقطع الضو',
+        'الضو طفا',
+        'الضو طافي',
+
+        'ما عنديش الضو',
+        'ماعنديش الضو',
+
         'plus de courant',
+        'pas de courant',
+
         'panne electrique',
-        'panne électrique',
         'court circuit',
         'court-circuit'
       ],
@@ -334,51 +466,63 @@
         'الكهرباء',
         'الكهربا',
         'كهرباء',
+        'كهربة',
 
         'الضو',
         'ضو',
         'daw',
+        'dow',
         'do',
 
         'courant',
         'electricite',
-        'électricité',
         'electricien',
-        'électricien',
 
         'تقطع',
-        'تقطع',
+        'قطع',
         'مقطوع',
         'مقطوعة',
+
+        'طفا',
         'طافي',
+        'طافية',
         'طاف',
+
         't9ta3',
+        'tqta3',
         '9ta3',
 
         'coupure',
         'panne',
 
         'disjoncteur',
+        'disjoncte',
         'ديجونكتور',
 
         'prise',
+        'prises',
         'بريز',
+        'البريز',
 
         'interrupteur',
         'fusible',
+
         'compteur',
+        'كونطور',
+        'الكونطور',
 
         'court circuit',
         'court-circuit',
 
         'شرارة',
-        'étincelle',
+        'شرار',
         'etincelle',
 
         'حريق',
         'محروق',
+        'محروقة',
         'brule',
-        'brûlé'
+        'grille'
       ],
 
       groups: [
@@ -387,6 +531,7 @@
             'الضو',
             'ضو',
             'daw',
+            'dow',
             'do',
             'الكهرباء',
             'الكهربا',
@@ -394,8 +539,10 @@
           ],
           [
             'تقطع',
+            'قطع',
             'مقطوع',
             'مقطوعة',
+            'طفا',
             'طافي',
             'طاف',
             't9ta3',
@@ -406,8 +553,31 @@
         ],
 
         [
-          ['prise', 'بريز'],
-          ['محروق', 'brule', 'brûlé', 'شرارة']
+          [
+            'prise',
+            'بريز'
+          ],
+          [
+            'محروق',
+            'محروقة',
+            'brule',
+            'grille',
+            'شرارة',
+            'etincelle'
+          ]
+        ],
+
+        [
+          [
+            'disjoncteur',
+            'ديجونكتور'
+          ],
+          [
+            'كيطيح',
+            'كيقطع',
+            'saute',
+            'disjoncte'
+          ]
         ]
       ]
     },
@@ -419,77 +589,144 @@
       cat: 'serrurerie',
 
       hints:
-        'serrurerie porte bloquee cle serrure ouverture',
+        'serrurerie porte bloquee cle serrure ouverture verrou',
 
       strong: [
         'serrurerie',
         'serrurier',
+
         'porte bloquee',
-        'porte bloquée',
+        'porte coincee',
 
         'الباب مسدود',
+        'باب مسدود',
+
         'الباب تسد',
         'باب تسد',
 
+        'الباب سد',
+        'باب سد',
+
+        'الباب ست',
+        'باب ست',
+
+        'لباب تسد',
+        'لباب سد',
+        'لباب ست',
+
         'bab tsed',
+        'bab sed',
         'bab msdoud',
 
-        'clé cassée',
-        'cle cassee'
+        'cle cassee',
+        'cle perdue'
       ],
 
       terms: [
+        /* Door */
         'باب',
         'الباب',
+        'لباب',
         'bab',
+        'lbab',
 
+        /* Closed / blocked — including ASR noise */
         'سد',
         'تسد',
         'تسد',
         'ست',
+        'تست',
+        'تسدات',
+        'سدات',
         'مسدود',
+        'مسدودة',
         'مبلوك',
+        'مبلوكي',
+
         'tsed',
+        'tsedd',
+        'tsad',
+        'tssed',
         'sed',
+        'sedd',
         'sd',
         'msdoud',
+        'msdod',
 
+        /* Key */
         'مفتاح',
         'المفتاح',
-        'mftah',
-        'meftah',
+        'لمفتاح',
+        'مفاتيح',
 
+        'mftah',
+        'mfta7',
+        'meftah',
+        'mefta7',
+
+        'cle',
+
+        /* Lock */
+        'قفل',
+        'القفل',
+        'لقفل',
         'serrure',
         'serrurier',
         'serrurerie',
-
-        'cle',
-        'clé',
-
-        'قفل',
-        'القفل',
         'verrou',
 
+        /* Locked */
         'bloque',
         'bloquee',
-        'bloquée',
-
         'coince',
-        'coincé',
+        'coincee',
+        'fermee',
+        'ferme',
 
-        'ouverture'
+        /* Opening */
+        'ouverture',
+        'ouvrir',
+        'حل الباب',
+        'نحل الباب',
+
+        /* Broken/lost key */
+        'تكسر',
+        'تكسرت',
+        'مكسور',
+        'مكسورة',
+        'ضاع',
+        'ضايع',
+        'ضاعت',
+        'نسيته',
+        'نسيث',
+
+        'casse',
+        'cassee',
+        'perdu',
+        'perdue'
       ],
 
       groups: [
         [
-          ['الباب', 'باب', 'bab'],
+          [
+            'الباب',
+            'باب',
+            'لباب',
+            'bab',
+            'lbab'
+          ],
           [
             'تسد',
             'سد',
             'ست',
+            'تست',
+            'تسدات',
+            'سدات',
             'مسدود',
             'مبلوك',
             'tsed',
+            'tsedd',
+            'tsad',
             'sed',
             'sd',
             'msdoud',
@@ -500,16 +737,43 @@
         ],
 
         [
-          ['مفتاح', 'المفتاح', 'mftah', 'meftah', 'cle', 'clé'],
+          [
+            'مفتاح',
+            'المفتاح',
+            'لمفتاح',
+            'mftah',
+            'mfta7',
+            'meftah',
+            'mefta7',
+            'cle'
+          ],
           [
             'تكسر',
+            'تكسرت',
             'مكسور',
             'ضاع',
             'ضايع',
+            'ضاعت',
             'casse',
             'cassee',
-            'cassée',
-            'perdu'
+            'perdu',
+            'perdue'
+          ]
+        ],
+
+        [
+          [
+            'قفل',
+            'القفل',
+            'serrure',
+            'verrou'
+          ],
+          [
+            'خاسر',
+            'مكسور',
+            'bloque',
+            'coince',
+            'casse'
           ]
         ]
       ]
@@ -522,13 +786,20 @@
       cat: 'climatisation',
 
       hints:
-        'climatisation climatiseur clim split froid chauffage',
+        'climatisation climatiseur clim split froid chauffage ventilation',
 
       strong: [
         'climatisation',
         'climatiseur',
+
         'المكيف ما خدامش',
+        'المكيف ماكيخدمش',
+
+        'الكليم ما خدامش',
+        'كليم ما خدامش',
+
         'clim en panne',
+        'clim ne marche pas',
         'clim ne refroidit plus'
       ],
 
@@ -537,7 +808,9 @@
         'المكيف',
 
         'كليم',
+        'الكليم',
         'كليما',
+        'كليمة',
 
         'klima',
         'clima',
@@ -547,20 +820,36 @@
         'climatisation',
 
         'split',
+        'سبليت',
 
         'تبريد',
+        'يبرد',
+        'كيبرد',
+        'ما كيبردش',
+        'ماكيبردش',
+
         'بارد',
         'برد',
+        'سخون',
 
         'chaud',
         'froid',
+        'refroidit',
 
         'chauffage',
         'radiateur',
         'thermostat',
 
         'ventilation',
-        'vmc'
+        'vmc',
+
+        'غاز',
+        'freon',
+        'fréon',
+
+        'كيقطر',
+        'goutte',
+        'coule'
       ],
 
       groups: [
@@ -569,6 +858,7 @@
             'مكيف',
             'المكيف',
             'كليم',
+            'الكليم',
             'كليما',
             'clim',
             'clima',
@@ -589,15 +879,29 @@
         [
           [
             'مكيف',
+            'كليم',
             'clim',
             'climatiseur'
           ],
           [
             'ما كيبردش',
             'ماكيبردش',
+            'سخون',
             'chaud',
-            'refroidit plus',
-            'froid'
+            'refroidit plus'
+          ]
+        ],
+
+        [
+          [
+            'مكيف',
+            'كليم',
+            'clim'
+          ],
+          [
+            'كيقطر',
+            'goutte',
+            'coule'
           ]
         ]
       ]
@@ -610,66 +914,108 @@
       cat: 'menuiserie',
 
       hints:
-        'menuiserie bois menuisier porte fenetre meuble',
+        'menuiserie bois menuisier porte fenetre placard meuble parquet',
 
       strong: [
         'menuiserie',
         'menuisier',
+
         'نجار',
-        'النجار'
+        'النجار',
+
+        'njar',
+        'nejjar'
       ],
 
       terms: [
         'نجار',
         'النجار',
+        'نجر',
         'njar',
+        'nejjar',
 
         'خشب',
         'الخشب',
+        'khashab',
         'khchb',
         'khochb',
+
+        'bois',
 
         'menuisier',
         'menuiserie',
 
         'porte bois',
         'fenetre bois',
-        'fenêtre bois',
 
         'placard',
         'خزانة',
         'خزانه',
+        'خزانات',
 
         'meuble',
+        'meubles',
         'اثاث',
 
         'parquet',
 
         'volet',
+        'شباك',
+        'نافذة',
 
         'charniere',
-        'charnière'
+        'مفصلة',
+
+        'كيحك',
+        'يحك',
+        'frotte'
       ],
 
       groups: [
         [
-          ['خشب', 'الخشب', 'khchb', 'bois'],
+          [
+            'خشب',
+            'الخشب',
+            'khchb',
+            'khochb',
+            'bois'
+          ],
           [
             'باب',
             'porte',
             'fenetre',
-            'fenêtre',
+            'شباك',
             'placard',
+            'خزانة',
             'meuble'
           ]
         ],
 
         [
-          ['باب', 'porte'],
+          [
+            'باب',
+            'porte'
+          ],
           [
             'كيحك',
             'يحك',
             'frotte',
+            'خشب',
+            'bois',
+            'charniere',
+            'مفصلة'
+          ]
+        ],
+
+        [
+          [
+            'placard',
+            'خزانة',
+            'meuble'
+          ],
+          [
+            'نجار',
+            'njar',
             'خشب',
             'bois'
           ]
@@ -684,21 +1030,28 @@
       cat: 'peinture',
 
       hints:
-        'peinture peintre mur facade enduit',
+        'peinture peintre mur facade enduit couleur vernis',
 
       strong: [
         'peinture',
         'peintre',
-        'صباغ',
-        'صباغة'
-      ],
 
-      terms: [
         'صباغ',
         'صباغة',
         'الصباغة',
 
         'sbagh',
+        'sbagha'
+      ],
+
+      terms: [
+        'صباغ',
+        'الصباغ',
+        'صباغة',
+        'الصباغة',
+
+        'sbagh',
+        'sbagha',
         'sbagha',
 
         'peinture',
@@ -706,28 +1059,61 @@
 
         'حايط',
         'حيط',
+        'الحايط',
         'الحائط',
         'mur',
+        'murs',
 
         'facade',
-        'façade',
 
         'لون',
+        'اللون',
         'couleur',
 
         'دهان',
+        'الدهان',
 
         'enduit',
         'crepi',
-        'crépi',
 
-        'vernis'
+        'vernis',
+        'vernir',
+
+        'تقشر',
+        'مقشر',
+        'ecaille',
+        'ecaillée'
       ],
 
       groups: [
         [
-          ['حايط', 'حيط', 'mur', 'facade', 'façade'],
-          ['صباغ', 'صباغة', 'peinture', 'دهان', 'لون']
+          [
+            'حايط',
+            'حيط',
+            'mur',
+            'facade'
+          ],
+          [
+            'صباغ',
+            'صباغة',
+            'peinture',
+            'دهان',
+            'لون',
+            'couleur'
+          ]
+        ],
+
+        [
+          [
+            'mur',
+            'حايط',
+            'حيط'
+          ],
+          [
+            'تقشر',
+            'مقشر',
+            'ecaille'
+          ]
         ]
       ]
     },
@@ -739,39 +1125,43 @@
       cat: 'maconnerie',
 
       hints:
-        'maconnerie macon beton ciment mur construction',
+        'maconnerie macon beton ciment mur construction dalle fissure',
 
       strong: [
         'maconnerie',
-        'maçonnerie',
         'macon',
-        'maçon',
+
         'بناي',
-        'بناء'
+        'بناء',
+        'البناء',
+
+        'bnay',
+        'bennay'
       ],
 
       terms: [
         'بناء',
         'البناء',
+
         'بناي',
-        'بناي',
+        'البناي',
 
         'bnay',
         'bennay',
+        'bnaay',
 
         'macon',
-        'maçon',
         'maconnerie',
-        'maçonnerie',
 
         'beton',
-        'béton',
 
         'ciment',
-        'السيمان',
         'سيمان',
+        'السيمان',
+        'سيمون',
 
         'دالة',
+        'الدالة',
         'dalle',
 
         'حيط',
@@ -780,13 +1170,23 @@
 
         'fissure',
         'شق',
+        'تشقق',
+        'مشقوق',
 
         'هدم',
+        'يهدم',
         'demolition',
-        'démolition',
 
         'fondation',
-        'terrasse'
+        'اساس',
+        'الاساس',
+
+        'terrasse',
+        'سطح',
+
+        'construction',
+        'بني',
+        'نبني'
       ],
 
       groups: [
@@ -796,17 +1196,30 @@
             'بناي',
             'bnay',
             'bennay',
-            'macon',
-            'maçon'
+            'macon'
           ],
           [
             'حيط',
             'mur',
             'beton',
-            'béton',
             'ciment',
+            'دالة',
             'dalle',
-            'fondation'
+            'fondation',
+            'construction'
+          ]
+        ],
+
+        [
+          [
+            'حيط',
+            'حايط',
+            'mur'
+          ],
+          [
+            'شق',
+            'تشقق',
+            'fissure'
           ]
         ]
       ]
@@ -819,14 +1232,17 @@
       cat: 'nettoyage',
 
       hints:
-        'nettoyage menage entretien proprete',
+        'nettoyage menage entretien proprete vitres desinfection',
 
       strong: [
         'nettoyage',
-        'ménage',
         'menage',
+
         'نظافة',
-        'تنقية'
+        'النظافة',
+
+        'تنقية',
+        'تنظيف'
       ],
 
       terms: [
@@ -835,27 +1251,36 @@
 
         'تنقية',
         'تنظيف',
+        'نقي',
+        'نقاوة',
 
         'tn9iya',
+        'tn9ia',
         'tndif',
 
         'nettoyage',
         'menage',
-        'ménage',
         'cleaning',
 
         'vitres',
         'زاج',
+        'الزاج',
 
         'poussiere',
-        'poussière',
+        'غبرة',
+        'الغبرة',
 
         'salete',
-        'saleté',
+        'وسخ',
+        'موسخ',
+        'موسخة',
 
         'تعقيم',
         'desinfection',
-        'désinfection'
+
+        'بعد الاشغال',
+        'apres travaux',
+        'fin de chantier'
       ],
 
       groups: [
@@ -877,6 +1302,22 @@
             'vitres',
             'travaux'
           ]
+        ],
+
+        [
+          [
+            'دار',
+            'بيت',
+            'appartement',
+            'maison'
+          ],
+          [
+            'وسخ',
+            'موسخ',
+            'غبرة',
+            'poussiere',
+            'salete'
+          ]
         ]
       ]
     },
@@ -888,18 +1329,24 @@
       cat: 'carrelage',
 
       hints:
-        'carrelage carreaux faience zellij joints',
+        'carrelage carreaux faience zellij joints sol pose',
 
       strong: [
         'carrelage',
+        'carreaux',
+
         'زليج',
+        'الزليج',
+
         'zellij',
-        'zelij'
+        'zelij',
+        'zellige'
       ],
 
       terms: [
         'زليج',
         'الزليج',
+        'زلاج',
 
         'zellij',
         'zelij',
@@ -909,7 +1356,6 @@
         'carreaux',
 
         'faience',
-        'faïence',
 
         'mosaïque',
         'mosaique',
@@ -919,7 +1365,16 @@
 
         'sol',
         'ارضية',
-        'الأرضية'
+        'الأرضية',
+
+        'pose',
+        'تركيب',
+
+        'مكسور',
+        'مكسورة',
+        'تكسر',
+        'casse',
+        'cassee'
       ],
 
       groups: [
@@ -933,11 +1388,24 @@
           ],
           [
             'مكسور',
+            'مكسورة',
             'تكسر',
             'casse',
-            'cassé',
+            'cassee',
             'pose',
             'joints'
+          ]
+        ],
+
+        [
+          [
+            'ارضية',
+            'sol'
+          ],
+          [
+            'زليج',
+            'carrelage',
+            'carreaux'
           ]
         ]
       ]
@@ -950,41 +1418,61 @@
       cat: 'jardinage',
 
       hints:
-        'jardinage jardin pelouse gazon taille tonte',
+        'jardinage jardin jardinier pelouse gazon taille tonte arrosage',
 
       strong: [
         'jardinage',
         'jardinier',
+
         'جنينة',
-        'حديقة'
+        'حديقة',
+
+        'jnina'
       ],
 
       terms: [
         'جنينة',
+        'الجنينة',
         'الجنان',
+
         'حديقة',
         'الحديقة',
 
         'jnina',
+        'jnan',
+
         'jardin',
         'jardinage',
         'jardinier',
 
         'حشيش',
+        'الحشيش',
+
         'عشب',
+        'العشب',
 
         'gazon',
         'pelouse',
 
         'tonte',
+        'tondre',
+
         'taille',
+        'tailler',
 
         'haie',
+
         'شجر',
+        'الشجر',
+        'شجرة',
         'شجرة',
 
+        'arbre',
+        'arbres',
+
         'arrosage',
-        'سقي'
+        'سقي',
+        'نسقي'
       ],
 
       groups: [
@@ -1003,7 +1491,8 @@
             'taille',
             'tonte',
             'شجر',
-            'arrosage'
+            'arrosage',
+            'سقي'
           ]
         ]
       ]
@@ -1016,12 +1505,15 @@
       cat: 'bricolage',
 
       hints:
-        'bricolage petits travaux montage fixation percer meuble',
+        'bricolage petits travaux montage fixation percer meuble etagere',
 
       strong: [
         'bricolage',
         'petits travaux',
-        'montage meuble'
+        'montage meuble',
+
+        'ركب لي',
+        'بغيت نركب'
       ],
 
       terms: [
@@ -1031,6 +1523,8 @@
         'petit travaux',
 
         'montage',
+        'monter',
+
         'montage meuble',
 
         'fixation',
@@ -1040,14 +1534,29 @@
         'trou',
 
         'meuble a monter',
-        'meuble à monter',
 
         'ركب',
         'يركب',
+        'نركب',
         'تركيب',
 
         'علق',
-        'تعليق'
+        'يعلق',
+        'تعليق',
+
+        'رف',
+        'رفوف',
+
+        'etagere',
+
+        'تلفاز',
+        'tv',
+
+        'rideau',
+        'tringle',
+
+        'miroir',
+        'مراية'
       ],
 
       groups: [
@@ -1055,15 +1564,20 @@
           [
             'meuble',
             'رف',
-            'étagère',
             'etagere',
             'تلفاز',
-            'tv'
+            'tv',
+            'rideau',
+            'miroir',
+            'مراية'
           ],
           [
             'ركب',
+            'يركب',
+            'نركب',
             'تركيب',
             'montage',
+            'monter',
             'fixer',
             'fixation',
             'علق'
@@ -1079,58 +1593,79 @@
       cat: 'demenagement',
 
       hints:
-        'demenagement transport meubles camion cartons',
+        'demenagement transport meubles camion cartons chargement',
 
       strong: [
         'demenagement',
-        'déménagement',
+
         'نقل الاثاث',
-        'نقل الأثاث'
+        'نقل الأثاث',
+
+        'نقل العفش',
+
+        'بغيت نرحل',
+        'بغيت ننتقل'
       ],
 
       terms: [
         'رحيل',
         'الرحيل',
+        'نرحل',
 
         'نقل',
+        'ننقل',
+
+        'انتقال',
+        'ننتقل',
+
         'نقل الاثاث',
         'نقل الأثاث',
 
+        'نقل العفش',
+        'عفش',
+
         'n9el',
         'n9l',
+        'n9al',
 
         'demenagement',
-        'déménagement',
         'demenager',
-        'déménager',
 
         'transport',
 
         'اثاث',
         'الأثاث',
+
         'meuble',
         'meubles',
 
         'camion',
+        'شاحنة',
 
         'carton',
-        'cartons'
+        'cartons',
+
+        'chargement',
+        'dechargement'
       ],
 
       groups: [
         [
           [
             'رحيل',
+            'نرحل',
             'نقل',
+            'ننقل',
+            'ننتقل',
             'n9el',
             'n9l',
             'demenagement',
-            'déménagement',
             'transport'
           ],
           [
             'اثاث',
             'الأثاث',
+            'عفش',
             'meuble',
             'meubles',
             'carton',
@@ -1145,79 +1680,129 @@
   ];
 
   /* =========================================================
-     URGENCY — MOROCCAN EXPRESSIONS
+     URGENCY
      ========================================================= */
 
+  /*
+   * These expressions mean actual immediacy.
+   *
+   * "Aujourd'hui" is intentionally NOT enough by itself
+   * to classify a request as urgent.
+   */
   var URGENCY_TERMS = [
-    /* Arabic */
+    /* Arabic / Darija */
     'دابا',
+    'دبا',
+    'دابة',
+    'دابه',
+
     'دابا دابا',
-    'دابا حالا',
+
     'حالا',
     'حالاً',
+
+    'دالحين',
+    'دالحين',
     'فالحين',
+
     'ضروري',
     'بالضرورة',
+
     'مستعجل',
     'مستعجلة',
+
     'عاجل',
+    'عاجلة',
+
     'بسرعة',
-    'سريع',
-    'اليوم',
+    'بالزربة',
+    'بالزربه',
+
     'هاد الساعة',
+    'هاد ساعه',
+    'في اقرب وقت',
 
     /* Arabizi */
     'daba',
+    'db',
     'daba daba',
-    'daba7',
-    'daba hna',
+
     'darori',
     'darouri',
+
     'mest3jel',
     'mosta3jil',
     'msta3jel',
+
     '3ajel',
+
     'bzerba',
     'bzrba',
+    'b zrb',
 
     /* French */
     'urgent',
     'urgente',
     'urgence',
+
     'maintenant',
+
     'tout de suite',
+
     'immediatement',
-    'immédiatement',
-    'au plus vite'
+
+    'au plus vite',
+
+    'des que possible'
   ];
 
-  /* Higher-risk emergency concepts. */
+  /*
+   * Situations which normally carry an immediate-risk signal.
+   * This is still only an urgency hint for FixeoAIRE.
+   * No dispatch logic is implemented here.
+   */
   var EMERGENCY_TERMS = [
+    /* Water */
     'eau partout',
+    'inonde',
+    'inondation',
+
     'الماء في الدار',
     'الما فالدار',
+    'لما فالدار',
+
     'غرق',
     'غارقة',
+    'غارق',
 
-    'odeur de gaz',
-    'ريحة الغاز',
-    'الغاز كيسرب',
-
+    /* Electricity */
     'court circuit',
     'court-circuit',
+
     'شرارة',
+    'شرار',
+
     'دخان',
     'fumee',
-    'fumée',
 
-    'porte bloquee',
-    'porte bloquée',
-    'الباب تسد',
-    'الباب مسدود',
+    'ريحة الحريق',
+    'odeur de brule',
 
     'plus de courant',
     'الضو تقطع',
-    'تقطع الضو'
+    'تقطع الضو',
+
+    /* Locked out */
+    'porte bloquee',
+    'الباب تسد',
+    'باب تسد',
+    'الباب مسدود',
+    'باب مسدود',
+
+    /* Gas — urgency only, not métier classification */
+    'odeur de gaz',
+    'ريحة الغاز',
+    'الغاز كيسرب'
   ];
 
   /* =========================================================
@@ -1235,9 +1820,8 @@
     }
 
     /*
-     * Individual vocabulary contributes weaker evidence.
-     * Cap this contribution to avoid giant synonym lists
-     * overwhelming contextual signals.
+     * Individual vocabulary gives weaker evidence.
+     * Cap it so a long synonym list cannot dominate context.
      */
     var termHits = countTermMatches(text, rule.terms);
 
@@ -1246,8 +1830,9 @@
     }
 
     /*
-     * Concept groups are especially valuable because Safari
-     * may alter one exact phrase but preserve the core concepts.
+     * Concept combinations are valuable because speech
+     * recognition may alter one word while retaining the
+     * semantic structure.
      */
     if (rule.groups) {
       for (var i = 0; i < rule.groups.length; i++) {
@@ -1275,11 +1860,11 @@
     }
 
     /*
-     * Minimum threshold.
+     * One isolated ambiguous word should normally not be enough.
      *
-     * A single vague word should not force a métier.
-     * But one reliable strong phrase or several contextual
-     * terms can classify the request.
+     * Score >= 2 means:
+     * - multiple vocabulary clues, or
+     * - one strong/contextual signal.
      */
     if (bestScore < 2) {
       return null;
@@ -1301,7 +1886,6 @@
     if (!original) return original;
 
     var normalized = norm(original);
-
     var additions = [];
 
     var best = findBestRule(normalized);
@@ -1318,16 +1902,16 @@
     }
 
     /*
-     * Nothing detected:
-     * preserve input exactly.
+     * Nothing understood:
+     * return the client's wording unchanged.
      */
     if (!additions.length) {
       return original;
     }
 
     /*
-     * The canonical hints are appended only to the analysis copy.
-     * Flagship still submits the original need value to backend.
+     * Canonical hints are appended only to the local
+     * detection copy consumed by FixeoAIRE.
      */
     return original + ' ' + additions.join(' ');
   }
