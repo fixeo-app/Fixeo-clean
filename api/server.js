@@ -190,6 +190,168 @@ const rafiVoiceUpload = multer({
   }
 }).single('audio');
 
+
+/* ============================================================
+   RAFI VOICE — POST /api/rafi-transcribe
+   Transcription serveur Darija / arabe / français
+   ============================================================ */
+app.post('/api/rafi-transcribe', function (req, res) {
+  rafiVoiceUpload(req, res, async function (uploadErr) {
+    if (uploadErr) {
+      console.warn('[RAFI Voice] Upload refusé:', uploadErr.message);
+
+      return res.status(400).json({
+        ok: false,
+        error: 'audio_upload_invalid'
+      });
+    }
+
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('[RAFI Voice] OPENAI_API_KEY manquante');
+
+      return res.status(503).json({
+        ok: false,
+        error: 'transcription_unavailable'
+      });
+    }
+
+    if (!req.file || !req.file.buffer || !req.file.size) {
+      return res.status(400).json({
+        ok: false,
+        error: 'audio_required'
+      });
+    }
+
+    try {
+      const form = new FormData();
+
+      form.append('file', req.file.buffer, {
+        filename: req.file.originalname || 'rafi-voice.webm',
+        contentType: req.file.mimetype || 'audio/webm'
+      });
+
+      form.append('model', 'gpt-transcribe');
+
+      /*
+       * Contexte uniquement pour améliorer la transcription.
+       * RAFI/AIRE restent responsables de la compréhension métier.
+       */
+      form.append(
+        'prompt',
+        [
+          'Le locuteur est au Maroc.',
+          'Il peut parler en darija marocaine, arabe ou français,',
+          'et peut mélanger plusieurs langues dans la même phrase.',
+          'Le contexte concerne des interventions à domicile :',
+          'plomberie, électricité, serrurerie, climatisation,',
+          'menuiserie, peinture, maçonnerie, nettoyage,',
+          'carrelage, jardinage, bricolage ou déménagement.',
+          'Transcrire fidèlement ce qui est prononcé.',
+          'Ne pas traduire et ne pas reformuler.'
+        ].join(' ')
+      );
+
+      const controller = new AbortController();
+
+      const timeout = setTimeout(function () {
+        controller.abort();
+      }, 15000);
+
+      let response;
+
+      try {
+        response = await fetch(
+          'https://api.openai.com/v1/audio/transcriptions',
+          {
+            method: 'POST',
+            headers: {
+              Authorization: Bearer ${process.env.OPENAI_API_KEY},
+              ...form.getHeaders()
+            },
+            body: form,
+            signal: controller.signal
+          }
+        );
+      } finally {
+        clearTimeout(timeout);
+      }
+
+      const rawText = await response.text();
+
+      if (!response.ok) {
+        console.error(
+          '[RAFI Voice] OpenAI transcription failed:',
+          response.status,
+          rawText.substring(0, 500)
+        );
+
+        return res.status(502).json({
+          ok: false,
+          error: 'transcription_failed'
+        });
+      }
+
+      let data;
+
+      try {
+        data = JSON.parse(rawText);
+      } catch (_) {
+        console.error('[RAFI Voice] Réponse OpenAI JSON invalide');
+
+        return res.status(502).json({
+          ok: false,
+          error: 'transcription_invalid_response'
+        });
+      }
+
+      const text =
+        typeof data.text === 'string'
+          ? data.text.trim()
+          : '';
+
+      if (!text) {
+        return res.status(422).json({
+          ok: false,
+          error: 'transcription_empty'
+        });
+      }
+
+      console.log(
+        '[RAFI Voice] ✅ transcription réussie',
+        '| bytes:',
+        req.file.size,
+        '| mime:',
+        req.file.mimetype
+      );
+
+      return res.json({
+        ok: true,
+        text: text
+      });
+
+    } catch (err) {
+      if (err && err.name === 'AbortError') {
+        console.warn('[RAFI Voice] Timeout transcription');
+
+        return res.status(504).json({
+          ok: false,
+          error: 'transcription_timeout'
+        });
+      }
+
+      console.error(
+        '[RAFI Voice] Exception:',
+        err && err.message ? err.message : err
+      );
+
+      return res.status(500).json({
+        ok: false,
+        error: 'transcription_internal_error'
+      });
+    }
+  });
+});
+
 /* ── Exposer les variables frontend publiques ─────────────── */
 app.get('/api/env.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
