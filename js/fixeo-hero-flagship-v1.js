@@ -426,6 +426,32 @@ return;
 
 syncFlagshipDetectedCity(0);
 
+    /* Phone — required before request creation / dispatch */
+var phoneWrap = document.createElement('div');
+phoneWrap.className = 'fxhf-phone-wrap';
+
+var phoneLabel = document.createElement('label');
+phoneLabel.className = 'fxhf-phone-label';
+phoneLabel.setAttribute('for', 'fxhf-phone');
+phoneLabel.textContent = 'Votre numéro pour organiser l’intervention';
+
+var phone = document.createElement('input');
+phone.type = 'tel';
+phone.id = 'fxhf-phone';
+phone.className = 'fxhf-phone';
+phone.placeholder = '06 XX XX XX XX';
+phone.autocomplete = 'tel';
+phone.inputMode = 'tel';
+phone.setAttribute('aria-label', 'Votre numéro de téléphone');
+
+var phoneHint = document.createElement('span');
+phoneHint.className = 'fxhf-phone-hint';
+phoneHint.textContent = 'Utilisé uniquement pour cette demande.';
+
+phoneWrap.appendChild(phoneLabel);
+phoneWrap.appendChild(phone);
+phoneWrap.appendChild(phoneHint);
+    
     /* Main CTA */
     var cta = document.createElement('button');
     cta.type = 'button';
@@ -435,6 +461,7 @@ syncFlagshipDetectedCity(0);
   cta.addEventListener('click', async function () {
   var need = (textarea.value || '').trim();
   var city = location.value || '';
+  var phoneValue = (phone.value || '').trim();
 
   textarea.setCustomValidity('');
 
@@ -447,6 +474,20 @@ syncFlagshipDetectedCity(0);
     location.focus();
     return;
   }
+    var normalizedPhone = phoneValue.replace(/\s+/g, '');
+
+if (
+  !/^(\+212|0)[5-7][0-9]{8}$/.test(normalizedPhone)
+) {
+  phone.setCustomValidity(
+    'Veuillez saisir un numéro marocain valide.'
+  );
+  phone.reportValidity();
+  phone.focus();
+  return;
+}
+
+phone.setCustomValidity('');
 
   /* RAFI must understand the need before starting matching. */
   if (
@@ -491,7 +532,7 @@ syncFlagshipDetectedCity(0);
         problem: need,
         description: '',
         city: city,
-        phone: '',
+        phone: normalizedPhone,
         urgency: isUrgent ? 'urgent' : 'normale',
         mode: 'flagship',
         source: 'hero-flagship-v1'
