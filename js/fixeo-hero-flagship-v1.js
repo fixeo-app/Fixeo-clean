@@ -286,96 +286,194 @@ mic.className = 'fxhf-mic';
 mic.setAttribute('aria-label', 'Parler à RAFI');
 mic.textContent = '🎙️ Parler à RAFI';
 
-var SpeechRecognition =
-  window.SpeechRecognition ||
-  window.webkitSpeechRecognition;
+/*
+ * RAFI Voice V2
+ * Records the user's real voice and delegates transcription
+ * to the FIXEO server endpoint.
+ *
+ * Safari / Web Speech is intentionally no longer responsible
+ * for transcription quality.
+ */
+var mediaRecorder = null;
+var mediaStream = null;
+var audioChunks = [];
+var recordingTimer = null;
+var isRecording = false;
 
-if (SpeechRecognition) {
-  var recognition = new SpeechRecognition();
-  var recognitionTimer = null;
+function resetRafiMic() {
+  clearTimeout(recordingTimer);
+  recordingTimer = null;
+  isRecording = false;
 
-  var speechLang = 'fr-FR';
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(function (track) {
+      track.stop();
+    });
+    mediaStream = null;
+  }
 
-  recognition.lang = speechLang;
-  recognition.interimResults = false;
-  recognition.continuous = false;
-
-  speechLangSelect.addEventListener('change', function () {
-    speechLang =
-      speechLangSelect.value === 'ar-MA'
-        ? 'ar-MA'
-        : 'fr-FR';
-
-    recognition.lang = speechLang;
-  });
-
-  mic.addEventListener('click', function () {
-    try {
-      mic.disabled = true;
-      mic.textContent = '🎙️ Écoute…';
-
-      /*
-       * Apply the selected language immediately before start().
-       * FR keeps the validated French recognition.
-       * Darija uses Safari's Moroccan Arabic recognition.
-       */
-      recognition.lang = speechLang;
-
-      recognition.start();
-
-      clearTimeout(recognitionTimer);
-
-      recognitionTimer = setTimeout(function () {
-        try {
-          recognition.stop();
-        } catch (_) {}
-      }, 7000);
-    } catch (_) {
-      mic.disabled = false;
-      mic.textContent = '🎙️ Parler à RAFI';
-    }
-  });
-
-  recognition.addEventListener('result', function (event) {
-    clearTimeout(recognitionTimer);
-    recognitionTimer = null;
-
-    var transcript =
-      event.results &&
-      event.results[0] &&
-      event.results[0][0] &&
-      event.results[0][0].transcript
-        ? event.results[0][0].transcript.trim()
-        : '';
-
-    if (transcript) {
-      textarea.value = transcript;
-      textarea.dispatchEvent(
-        new Event('input', { bubbles: true })
-      );
-    }
-  });
-
-  recognition.addEventListener('end', function () {
-    clearTimeout(recognitionTimer);
-    recognitionTimer = null;
-
-    mic.disabled = false;
-    mic.textContent = '🎙️ Parler à RAFI';
-  });
-
-  recognition.addEventListener('error', function () {
-    clearTimeout(recognitionTimer);
-    recognitionTimer = null;
-
-    mic.disabled = false;
-    mic.textContent = '🎙️ Parler à RAFI';
-  });
-} else {
-  speechLangSelect.disabled = true;
-  mic.disabled = true;
-  mic.textContent = '🎙️ Micro non disponible';
+  mic.disabled = false;
+  mic.textContent = '🎙️ Parler à RAFI';
 }
+
+async function transcribeRafiAudio(audioBlob) {
+  var form = new FormData();
+
+  var extension =
+    audioBlob.type &&
+    audioBlob.type.indexOf('mp4') !== -1
+      ? 'm4a'
+      : 'webm';
+
+  form.append(
+    'audio',
+    audioBlob,
+    'rafi-voice.' + extension
+  );
+
+  form.append(
+    'language',
+    speechLangSelect.value === 'ar-MA'
+      ? 'ar-MA'
+      : 'fr-FR'
+  );
+
+  var response = await fetch('/api/rafi-transcribe', {
+    method: 'POST',
+    body: form
+  });
+
+  var data = await response.json();
+
+  if (
+    !response.ok ||
+    !data ||
+    !data.ok ||
+    !data.text
+  ) {
+    throw new Error(
+      (data && data.error) ||
+      'transcription_failed'
+    );
+  }
+
+  return String(data.text).trim();
+}
+
+async function startRafiRecording() {
+  if (
+    !navigator.mediaDevices ||
+    typeof navigator.mediaDevices.getUserMedia !== 'function' ||
+    typeof window.MediaRecorder !== 'function'
+  ) {
+    mic.textContent = '🎙️ Micro non disponible';
+    return;
+  }
+
+  try {
+    mediaStream =
+      await navigator.mediaDevices.getUserMedia({
+        audio: true
+      });
+
+    audioChunks = [];
+
+    mediaRecorder = new MediaRecorder(mediaStream);
+
+    mediaRecorder.addEventListener(
+      'dataavailable',
+      function (event) {
+        if (event.data && event.data.size > 0) {
+          audioChunks.push(event.data);
+        }
+      }
+    );
+
+    mediaRecorder.addEventListener(
+      'stop',
+      async function () {
+        try {
+          mic.disabled = true;
+          mic.textContent = 'RAFI transcrit…';
+
+          var audioBlob = new Blob(
+            audioChunks,
+            {
+              type:
+                mediaRecorder.mimeType ||
+                'audio/webm'
+            }
+          );
+
+          var transcript =
+            await transcribeRafiAudio(audioBlob);
+
+          if (transcript) {
+            textarea.value = transcript;
+
+            textarea.dispatchEvent(
+              new Event('input', {
+                bubbles: true
+              })
+            );
+          }
+        } catch (error) {
+          console.error(
+            '[FXHF] RAFI transcription failed',
+            error
+          );
+
+          mic.textContent =
+            '🎙️ Réessayer';
+        } finally {
+          resetRafiMic();
+        }
+      }
+    );
+
+    mediaRecorder.start();
+
+    isRecording = true;
+    mic.textContent = '⏹️ Terminer';
+
+    /*
+     * Safety limit:
+     * short service requests do not need long recordings.
+     */
+    recordingTimer = setTimeout(function () {
+      if (
+        mediaRecorder &&
+        mediaRecorder.state === 'recording'
+      ) {
+        mediaRecorder.stop();
+      }
+    }, 12000);
+  } catch (error) {
+    console.error(
+      '[FXHF] microphone unavailable',
+      error
+    );
+
+    resetRafiMic();
+  }
+}
+
+mic.addEventListener('click', function () {
+  if (
+    isRecording &&
+    mediaRecorder &&
+    mediaRecorder.state === 'recording'
+  ) {
+    clearTimeout(recordingTimer);
+    recordingTimer = null;
+
+    isRecording = false;
+    mediaRecorder.stop();
+    return;
+  }
+
+  startRafiRecording();
+});    
 
 fieldFooter.appendChild(example);
 fieldFooter.appendChild(speechLangSelect);
