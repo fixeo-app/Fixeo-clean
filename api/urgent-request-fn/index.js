@@ -92,6 +92,7 @@ var VALID_MODES   = ['emergency', 'flagship'];
 var VALID_URGENCY = ['normale', 'urgent', 'now'];
 
 var PHONE_RE = /^[+\d\s\-().]{6,20}$/;
+var FLAGSHIP_PHONE_RE = /^(\+212|0)[5-7][0-9]{8}$/;
 var REF_RE   = /^[A-Z0-9\-]{3,32}$/;
 
 /* ── _resolveClientProfileId — optional authenticated client resolution ──
@@ -625,6 +626,8 @@ mission: mission
   var problem     = _str(body.problem,     128);
   var city        = _str(body.city,        128);
   var phone       = _str(body.phone,       32);
+  var normalizedFlagshipPhone =
+  phone.replace(/\s+/g, '');
   var trackingRef = _str(body.tracking_ref, 32) || _generateTrackingRef();
   var freeText    = _str(body.description, 500); /* optional Autre urgence free text */
   var mode        = _str(body.mode,        32) || 'emergency';
@@ -645,11 +648,14 @@ mission: mission
 
 if (
   mode === 'flagship' &&
-  phone &&
-  !PHONE_RE.test(phone)
+  (
+    !normalizedFlagshipPhone ||
+    !FLAGSHIP_PHONE_RE.test(normalizedFlagshipPhone)
+  )
 ) {
-  errors.push('phone: invalid format');
+  errors.push('phone: required valid Moroccan number');
 }
+  
   if (VALID_MODES.indexOf(mode) < 0)                 errors.push('mode: must be emergency');
   if (VALID_URGENCY.indexOf(urgency) < 0)            errors.push('urgency: must be now');
   if (trackingRef && !REF_RE.test(trackingRef))      errors.push('tracking_ref: invalid format');
@@ -708,7 +714,10 @@ if (!clientProfileId) {
     service_category:  service,
     city:              city,
     description:       operationalDescription,
-    client_phone:      phone ? _normalizePhone(phone) : null,   /* 7C.11C column — phone isolated here */
+    client_phone:
+  mode === 'flagship'
+    ? normalizedFlagshipPhone
+    : (phone ? _normalizePhone(phone) : null),  /* 7C.11C column — phone isolated here */
     urgency:           urgency,                   /* 7C.11C column — always 'now' for emergency */
     status:            'new',                     /* server-authoritative */
     created_at:        new Date().toISOString(),
