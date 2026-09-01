@@ -3158,3 +3158,49 @@
       );
   }
 }
+
+/* RAFI V5a3 — Emergency dialog atmosphere */
+#fxrf4-dialog.is-emergency {
+  background:
+    radial-gradient(
+      circle at 50% 12%,
+      rgba(234, 137, 54, 0.10) 0%,
+      rgba(234, 137, 54, 0.035) 28%,
+      rgba(9, 11, 22, 0) 52%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(18, 13, 18, 0.98) 0%,
+      rgba(9, 11, 22, 1) 42%,
+      rgba(9, 11, 22, 1) 100%
+    );
+
+  border-color: rgba(234, 137, 54, 0.20);
+
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.32),
+    0 20px 60px rgba(0, 0, 0, 0.44),
+    0 0 34px rgba(234, 137, 54, 0.10),
+    0 0 0 0.5px rgba(234, 137, 54, 0.12) inset;
+}
+
+/* RAFI V5a3 — Emergency presence: RAFI avatar */
+#fxrf4-dialog.is-emergency #fxrf4-avatar {
+  width: 44px;
+  height: 44px;
+
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(72, 100, 255, 0.24) 0%,
+      rgba(72, 100, 255, 0.12) 48%,
+      rgba(234, 137, 54, 0.08) 100%
+    );
+
+  border-color: rgba(234, 137, 54, 0.48);
+
+  box-shadow:
+    0 0 0 4px rgba(234, 137, 54, 0.06),
+    0 0 18px rgba(234, 137, 54, 0.20),
+    0 0 28px rgba(72, 100, 255, 0.16);
+}
