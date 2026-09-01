@@ -3229,3 +3229,32 @@
     transform-origin: center center;
   }
 }
+
+/* =========================================================
+   STATE 3 — RAFI HALO TIGHTENING
+   Bring solution halo closer to RAFI sphere
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="dispatching"]
+  .fxhf-rafi-sphere--dispatching
+  .fxhf-rafi-halo {
+    inset: 9% !important;
+    transform: scale(1.04);
+
+    background:
+      radial-gradient(
+        circle at 50% 50%,
+        rgba(72, 255, 214, 0.30) 0%,
+        rgba(87, 188, 255, 0.22) 34%,
+        rgba(121, 92, 255, 0.14) 55%,
+        rgba(121, 92, 255, 0) 72%
+      );
+
+    box-shadow:
+      0 0 18px rgba(72, 255, 214, 0.50),
+      0 0 34px rgba(87, 188, 255, 0.30),
+      0 0 52px rgba(121, 92, 255, 0.18);
+  }
+}
