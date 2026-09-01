@@ -257,13 +257,36 @@ function _startGuestPolling() {
     example.textContent =
       'Ex. : J’ai une fuite sous l’évier depuis ce matin';
 
-    var mic = document.createElement('button');
-    mic.type = 'button';
-    mic.id = 'fxhf-mic';
-    mic.className = 'fxhf-mic';
-    mic.setAttribute('aria-label', 'Parler à RAFI');
-    mic.textContent = '🎙️ Parler à RAFI';
-    var SpeechRecognition =
+  var speechLangSelect = document.createElement('select');
+speechLangSelect.id = 'fxhf-speech-lang';
+speechLangSelect.className = 'fxhf-speech-lang';
+speechLangSelect.setAttribute(
+  'aria-label',
+  'Langue de reconnaissance vocale'
+);
+
+var speechLangFr = document.createElement('option');
+speechLangFr.value = 'fr-FR';
+speechLangFr.textContent = 'FR';
+
+var speechLangDarija = document.createElement('option');
+speechLangDarija.value = 'ar-MA';
+speechLangDarija.textContent = 'الدارجة';
+
+speechLangSelect.appendChild(speechLangFr);
+speechLangSelect.appendChild(speechLangDarija);
+
+/* French remains the default validated speech mode. */
+speechLangSelect.value = 'fr-FR';
+
+var mic = document.createElement('button');
+mic.type = 'button';
+mic.id = 'fxhf-mic';
+mic.className = 'fxhf-mic';
+mic.setAttribute('aria-label', 'Parler à RAFI');
+mic.textContent = '🎙️ Parler à RAFI';
+
+var SpeechRecognition =
   window.SpeechRecognition ||
   window.webkitSpeechRecognition;
 
@@ -273,23 +296,40 @@ if (SpeechRecognition) {
 
   var speechLang = 'fr-FR';
 
-recognition.lang = speechLang;
+  recognition.lang = speechLang;
   recognition.interimResults = false;
   recognition.continuous = false;
-  
+
+  speechLangSelect.addEventListener('change', function () {
+    speechLang =
+      speechLangSelect.value === 'ar-MA'
+        ? 'ar-MA'
+        : 'fr-FR';
+
+    recognition.lang = speechLang;
+  });
+
   mic.addEventListener('click', function () {
     try {
       mic.disabled = true;
       mic.textContent = '🎙️ Écoute…';
+
+      /*
+       * Apply the selected language immediately before start().
+       * FR keeps the validated French recognition.
+       * Darija uses Safari's Moroccan Arabic recognition.
+       */
       recognition.lang = speechLang;
+
       recognition.start();
+
       clearTimeout(recognitionTimer);
 
-recognitionTimer = setTimeout(function () {
-  try {
-    recognition.stop();
-  } catch (_) {}
-}, 7000);
+      recognitionTimer = setTimeout(function () {
+        try {
+          recognition.stop();
+        } catch (_) {}
+      }, 7000);
     } catch (_) {
       mic.disabled = false;
       mic.textContent = '🎙️ Parler à RAFI';
@@ -298,8 +338,8 @@ recognitionTimer = setTimeout(function () {
 
   recognition.addEventListener('result', function (event) {
     clearTimeout(recognitionTimer);
-recognitionTimer = null;
-    
+    recognitionTimer = null;
+
     var transcript =
       event.results &&
       event.results[0] &&
@@ -310,32 +350,36 @@ recognitionTimer = null;
 
     if (transcript) {
       textarea.value = transcript;
-      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      textarea.dispatchEvent(
+        new Event('input', { bubbles: true })
+      );
     }
   });
 
   recognition.addEventListener('end', function () {
-      clearTimeout(recognitionTimer);
-recognitionTimer = null;
+    clearTimeout(recognitionTimer);
+    recognitionTimer = null;
 
     mic.disabled = false;
     mic.textContent = '🎙️ Parler à RAFI';
   });
 
-
   recognition.addEventListener('error', function () {
     clearTimeout(recognitionTimer);
-recognitionTimer = null;
+    recognitionTimer = null;
+
     mic.disabled = false;
     mic.textContent = '🎙️ Parler à RAFI';
   });
 } else {
+  speechLangSelect.disabled = true;
   mic.disabled = true;
   mic.textContent = '🎙️ Micro non disponible';
 }
 
-    fieldFooter.appendChild(example);
-    fieldFooter.appendChild(mic);
+fieldFooter.appendChild(example);
+fieldFooter.appendChild(speechLangSelect);
+fieldFooter.appendChild(mic);
 
     field.appendChild(textarea);
     field.appendChild(fieldFooter);
