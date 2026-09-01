@@ -223,14 +223,23 @@ app.post('/api/rafi-transcribe', function (req, res) {
     }
 
     try {
-      const form = new FormData();
 
-      form.append('file', req.file.buffer, {
-        filename: req.file.originalname || 'rafi-voice.webm',
-        contentType: req.file.mimetype || 'audio/webm'
-      });
+       const form = new globalThis.FormData();
 
-      form.append('model', 'gpt-transcribe');
+const audioBlob = new globalThis.Blob(
+  [req.file.buffer],
+  {
+    type: req.file.mimetype || 'audio/webm'
+  }
+);
+
+form.append(
+  'file',
+  audioBlob,
+  req.file.originalname || 'rafi-voice.webm'
+);
+
+form.append('model', 'gpt-transcribe');
 
       /*
        * Contexte uniquement pour améliorer la transcription.
@@ -260,17 +269,17 @@ app.post('/api/rafi-transcribe', function (req, res) {
       let response;
 
       try {
-        response = await fetch(
-          'https://api.openai.com/v1/audio/transcriptions',
-          {
-            method: 'POST',
-            headers: {
-              Authorization: 'Bearer ' + process.env.OPENAI_API_KEY, 
-              ...form.getHeaders()
-            },
-            body: form,
-            signal: controller.signal
-          }
+        response = await globalThis.fetch(
+  'https://api.openai.com/v1/audio/transcriptions',
+  {
+    method: 'POST',
+    headers: {
+      Authorization: 'Bearer ' + process.env.OPENAI_API_KEY
+    },
+    body: form,
+    signal: controller.signal
+  }
+);
         );
       } finally {
         clearTimeout(timeout);
