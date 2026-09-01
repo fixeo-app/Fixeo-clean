@@ -3117,3 +3117,19 @@
     transform: scale(1.08);
   }
 }
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-rafi-sphere--dispatching {
+    width: 142px;
+    height: 142px;
+    aspect-ratio: 1 / 1;
+    flex: 0 0 142px;
+    border-radius: 50%;
+  }
+
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-rafi-sphere--dispatching::before,
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-rafi-sphere--dispatching::after,
+  .fxhf-root[data-fxhf-state="dispatching"] .fxhf-rafi-sphere--dispatching .fxhf-rafi-halo {
+    border-radius: 50%;
+  }
+}
