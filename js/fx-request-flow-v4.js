@@ -784,16 +784,38 @@ voiceBtn.appendChild(_h('span', {
   try {
     var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-   var recorder = new MediaRecorder(stream);
+ var recorder = new MediaRecorder(stream);
+var chunks = [];
 
-alert(
-  'Microphone autorisé ✅\nFormat : ' +
-  (recorder.mimeType || 'non indiqué')
-);
-
-stream.getTracks().forEach(function (track) {
-  track.stop();
+recorder.addEventListener('dataavailable', function (e) {
+  if (e.data && e.data.size > 0) {
+    chunks.push(e.data);
+  }
 });
+
+recorder.addEventListener('stop', function () {
+  var audioBlob = new Blob(chunks, {
+    type: recorder.mimeType || (chunks[0] && chunks[0].type) || ''
+  });
+
+  stream.getTracks().forEach(function (track) {
+    track.stop();
+  });
+
+  alert(
+    'Enregistrement OK ✅\nFormat réel : ' +
+    (audioBlob.type || 'non indiqué') +
+    '\nTaille : ' + audioBlob.size + ' octets'
+  );
+});
+
+recorder.start();
+
+setTimeout(function () {
+  if (recorder.state === 'recording') {
+    recorder.stop();
+  }
+}, 2000);
 
   } catch (err) {
     alert('Accès au microphone refusé.');
