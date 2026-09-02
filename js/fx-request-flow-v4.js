@@ -824,33 +824,45 @@ fetch('/api/rafi-transcribe', {
       };
     });
   })
-  .then(function (result) {
 
-var transcript = result.data && result.data.text
-  ? result.data.text.trim()
-  : '';
 
-var normalized =
-  window.FixeoRafiLanguage &&
-  typeof window.FixeoRafiLanguage.normalize === 'function'
-    ? window.FixeoRafiLanguage.normalize(transcript)
-    : transcript;
+.then(function (result) {
+  var transcript = result.data && result.data.text
+    ? result.data.text.trim()
+    : '';
 
-var detected =
-  transcript &&
-  window.FixeoAIRE &&
-  typeof window.FixeoAIRE.detect === 'function'
-    ? window.FixeoAIRE.detect(normalized)
-    : null;
+  if (!result.data || result.data.ok !== true || !transcript) {
+    alert('RAFI n’a pas compris. Réessayez.');
+    return;
+  }
 
-alert(
-  'Transcription : ' + (transcript || '—') +
-  '\nCatégorie : ' + (detected ? detected.cat : 'non détectée') +
-  '\nLabel : ' + (detected ? detected.label : '—')
-);
-    
-    
-  })
+  var normalized =
+    window.FixeoRafiLanguage &&
+    typeof window.FixeoRafiLanguage.normalize === 'function'
+      ? window.FixeoRafiLanguage.normalize(transcript)
+      : transcript;
+
+  var detected =
+    window.FixeoAIRE &&
+    typeof window.FixeoAIRE.detect === 'function'
+      ? window.FixeoAIRE.detect(normalized)
+      : null;
+
+  /* Toujours conserver les mots exacts du client */
+  st.description = transcript;
+
+  if (detected) {
+    st.serviceSlug  = detected.cat;
+    st.serviceLabel = detected.label;
+  } else {
+    /* Aucun blocage si RAFI ne reconnaît pas le métier */
+    st.serviceSlug  = 'autre';
+    st.serviceLabel = transcript;
+  }
+
+  _transitionFwd(_renderStep2);
+})
+  
   .catch(function (err) {
     alert(
       'Erreur réseau : ' +
