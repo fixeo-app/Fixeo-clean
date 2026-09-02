@@ -241,6 +241,18 @@ form.append(
 
 form.append('model', 'gpt-transcribe');
 
+       /* Optional speech-language hint from the RAFI UI */
+const requestedLanguage =
+  req.body && typeof req.body.language === 'string'
+    ? req.body.language
+    : '';
+
+if (requestedLanguage === 'fr-FR') {
+  form.append('language', 'fr');
+} else if (requestedLanguage === 'ar-MA') {
+  form.append('language', 'ar');
+}
+
       /*
        * Contexte uniquement pour améliorer la transcription.
        * RAFI/AIRE restent responsables de la compréhension métier.
