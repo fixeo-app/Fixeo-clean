@@ -1463,7 +1463,8 @@
 
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 18px;
   gap: 6px;
 
   text-align: center;
@@ -1520,7 +1521,8 @@ box-shadow:
 
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 18px;
   gap: 7px;
 
   text-align: center;
