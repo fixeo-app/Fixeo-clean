@@ -826,7 +826,54 @@ transcriptWrap.appendChild(transcriptConfirm);
   _transitionFwd(_renderStep2);
 });
     
-   voiceBtn.addEventListener('click', async function () {
+/* RAFI voice recorder state — scoped to emergency step 1 */
+var voiceRecorder = null;
+var voiceStream = null;
+var voiceChunks = [];
+var voiceStopTimer = null;
+var voiceProcessing = false;
+
+var voiceLabel = voiceBtn.querySelector('.fxrf4-emergency-voice-label');
+
+function _resetVoiceButton() {
+  voiceProcessing = false;
+
+  if (voiceLabel) {
+    voiceLabel.textContent = 'Décrire mon urgence à RAFI';
+  }
+
+  voiceBtn.removeAttribute('disabled');
+}
+
+function _stopVoiceRecording() {
+  if (
+    voiceRecorder &&
+    voiceRecorder.state === 'recording'
+  ) {
+    voiceRecorder.stop();
+  }
+}
+
+voiceBtn.addEventListener('click', async function () {
+
+  /* Second tap = stop */
+  if (
+    voiceRecorder &&
+    voiceRecorder.state === 'recording'
+  ) {
+    if (voiceLabel) {
+      voiceLabel.textContent = 'RAFI analyse…';
+    }
+
+    voiceProcessing = true;
+    voiceBtn.setAttribute('disabled', 'disabled');
+
+    _stopVoiceRecording();
+    return;
+  }
+
+  if (voiceProcessing) return;
+
   if (
     !navigator.mediaDevices ||
     !navigator.mediaDevices.getUserMedia ||
@@ -837,112 +884,157 @@ transcriptWrap.appendChild(transcriptConfirm);
   }
 
   try {
-    var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
- var recorder = new MediaRecorder(stream);
-var chunks = [];
-
-recorder.addEventListener('dataavailable', function (e) {
-  if (e.data && e.data.size > 0) {
-    chunks.push(e.data);
-  }
-});
-
-recorder.addEventListener('stop', function () {
-  var audioBlob = new Blob(chunks, {
-    type: recorder.mimeType || (chunks[0] && chunks[0].type) || ''
-  });
-
-  stream.getTracks().forEach(function (track) {
-    track.stop();
-  });
-
-  var form = new FormData();
-
-form.append(
-  'audio',
-  audioBlob,
-  audioBlob.type.indexOf('mp4') !== -1
-    ? 'rafi-voice.mp4'
-    : 'rafi-voice.webm'
-);
-
-fetch('/api/rafi-transcribe', {
-  method: 'POST',
-  body: form
-})
-  .then(function (response) {
-    return response.json().then(function (data) {
-      return {
-        status: response.status,
-        data: data
-      };
+    voiceStream = await navigator.mediaDevices.getUserMedia({
+      audio: true
     });
-  })
 
+    voiceChunks = [];
+    voiceRecorder = new MediaRecorder(voiceStream);
 
-.then(function (result) {
-  var transcript = result.data && result.data.text
-    ? result.data.text.trim()
-    : '';
+    voiceRecorder.addEventListener('dataavailable', function (e) {
+      if (e.data && e.data.size > 0) {
+        voiceChunks.push(e.data);
+      }
+    });
 
-  if (!result.data || result.data.ok !== true || !transcript) {
-    alert('RAFI n’a pas compris. Réessayez.');
-    return;
-  }
+    voiceRecorder.addEventListener('stop', function () {
+      if (voiceStopTimer) {
+        clearTimeout(voiceStopTimer);
+        voiceStopTimer = null;
+      }
 
-  var normalized =
-    window.FixeoRafiLanguage &&
-    typeof window.FixeoRafiLanguage.normalize === 'function'
-      ? window.FixeoRafiLanguage.normalize(transcript)
-      : transcript;
+      var audioBlob = new Blob(voiceChunks, {
+        type:
+          voiceRecorder.mimeType ||
+          (voiceChunks[0] && voiceChunks[0].type) ||
+          ''
+      });
 
-  var detected =
-    window.FixeoAIRE &&
-    typeof window.FixeoAIRE.detect === 'function'
-      ? window.FixeoAIRE.detect(normalized)
-      : null;
+      if (voiceStream) {
+        voiceStream.getTracks().forEach(function (track) {
+          track.stop();
+        });
+      }
 
-  /* Toujours conserver les mots exacts du client */
-  st.description = transcript;
+      voiceStream = null;
 
-  if (detected) {
-    st.serviceSlug  = detected.cat;
-    st.serviceLabel = detected.label;
-  } else {
-    /* Aucun blocage si RAFI ne reconnaît pas le métier */
-    st.serviceSlug  = 'autre';
-    st.serviceLabel = transcript;
-  }
+      var form = new FormData();
 
-  /* Afficher la transcription avant de continuer */
-transcriptInput.value = transcript;
-transcriptWrap.hidden = false;
-transcriptInput.focus()
-})
-  
-  .catch(function (err) {
-    alert(
-      'Erreur réseau : ' +
-      (err && err.message ? err.message : String(err))
-    );
-  });
-});
+      form.append(
+        'audio',
+        audioBlob,
+        audioBlob.type.indexOf('mp4') !== -1
+          ? 'rafi-voice.mp4'
+          : 'rafi-voice.webm'
+      );
 
-recorder.start();
+      fetch('/api/rafi-transcribe', {
+        method: 'POST',
+        body: form
+      })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            return {
+              status: response.status,
+              data: data
+            };
+          });
+        })
 
-setTimeout(function () {
-  if (recorder.state === 'recording') {
-    recorder.stop();
-  }
-}, 2000);
+        .then(function (result) {
+          var transcript =
+            result.data && result.data.text
+              ? result.data.text.trim()
+              : '';
+
+          if (
+            !result.data ||
+            result.data.ok !== true ||
+            !transcript
+          ) {
+            _resetVoiceButton();
+            alert('RAFI n’a pas compris. Réessayez.');
+            return;
+          }
+
+          var normalized =
+            window.FixeoRafiLanguage &&
+            typeof window.FixeoRafiLanguage.normalize === 'function'
+              ? window.FixeoRafiLanguage.normalize(transcript)
+              : transcript;
+
+          var detected =
+            window.FixeoAIRE &&
+            typeof window.FixeoAIRE.detect === 'function'
+              ? window.FixeoAIRE.detect(normalized)
+              : null;
+
+          st.description = transcript;
+
+          if (detected) {
+            st.serviceSlug = detected.cat;
+            st.serviceLabel = detected.label;
+          } else {
+            st.serviceSlug = 'autre';
+            st.serviceLabel = transcript;
+          }
+
+          /* Show editable transcription */
+          transcriptInput.value = transcript;
+          transcriptWrap.hidden = false;
+
+          _resetVoiceButton();
+          transcriptInput.focus();
+        })
+
+        .catch(function (err) {
+          _resetVoiceButton();
+
+          alert(
+            'Erreur réseau : ' +
+            (err && err.message
+              ? err.message
+              : String(err))
+          );
+        });
+    });
+
+    voiceRecorder.start();
+
+    if (voiceLabel) {
+      voiceLabel.textContent = '⏹️ Arrêter l’enregistrement';
+    }
+
+    /*
+     * Safety limit only.
+     * User normally stops with second tap.
+     */
+    voiceStopTimer = setTimeout(function () {
+      if (
+        voiceRecorder &&
+        voiceRecorder.state === 'recording'
+      ) {
+        if (voiceLabel) {
+          voiceLabel.textContent = 'RAFI analyse…';
+        }
+
+        voiceProcessing = true;
+        voiceBtn.setAttribute('disabled', 'disabled');
+
+        _stopVoiceRecording();
+      }
+    }, 12000);
 
   } catch (err) {
+    _resetVoiceButton();
     alert('Accès au microphone refusé.');
   }
 });
-    
-    var list = _h('div', { cls: 'fxrf4-situation-list', role: 'list' });
+
+    var list = _h('div', {
+  cls: 'fxrf4-situation-list',
+  role: 'list'
+}); 
     var chips = [];
 
     EMERGENCY_SITUATIONS.forEach(function(sit) {
