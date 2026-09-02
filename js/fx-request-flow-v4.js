@@ -771,8 +771,8 @@ voiceBtn.appendChild(_h('span', {
   txt: 'Décrire mon urgence à RAFI'
 }));
 
-    voiceBtn.addEventListener('click', function () {
-  console.log('[RAFI Voice] click detected');
+   voiceBtn.addEventListener('click', function () {
+  alert('RAFI Voice OK');
 });
     
     var list = _h('div', { cls: 'fxrf4-situation-list', role: 'list' });
