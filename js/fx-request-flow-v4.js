@@ -771,6 +771,30 @@ voiceBtn.appendChild(_h('span', {
   txt: 'Décrire mon urgence à RAFI'
 }));
 
+    /* RAFI voice transcript — shown after transcription */
+var transcriptWrap = _h('div', {
+  cls: 'fxrf4-voice-transcript'
+});
+
+transcriptWrap.hidden = true;
+
+var transcriptInput = _h('textarea', {
+  cls: 'fxrf4-voice-transcript-input',
+  rows: '3',
+  maxlength: '300',
+  placeholder: 'RAFI affichera ici ce qu’il a compris…',
+  'aria-label': 'Transcription de votre urgence'
+});
+
+var transcriptConfirm = _h('button', {
+  cls: 'fxrf4-btn fxrf4-btn-primary fxrf4-voice-transcript-confirm',
+  type: 'button',
+  txt: 'Continuer →'
+});
+
+transcriptWrap.appendChild(transcriptInput);
+transcriptWrap.appendChild(transcriptConfirm);
+
    voiceBtn.addEventListener('click', async function () {
   if (
     !navigator.mediaDevices ||
@@ -1009,7 +1033,9 @@ setTimeout(function () {
     });
 
     var body = _q('#fxrf4-body');
-    if (body) body.appendChild(_screen([sub, voiceBtn, list]));
+    if (body) body.appendChild(
+  _screen([sub, voiceBtn, transcriptWrap, list])
+);
   }
 
   /* ── Standard step 1 — 2-col service grid ──────────────── */
