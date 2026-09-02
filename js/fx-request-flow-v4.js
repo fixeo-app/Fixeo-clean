@@ -784,11 +784,16 @@ voiceBtn.appendChild(_h('span', {
   try {
     var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-    alert('Microphone autorisé ✅');
+   var recorder = new MediaRecorder(stream);
 
-    stream.getTracks().forEach(function (track) {
-      track.stop();
-    });
+alert(
+  'Microphone autorisé ✅\nFormat : ' +
+  (recorder.mimeType || 'non indiqué')
+);
+
+stream.getTracks().forEach(function (track) {
+  track.stop();
+});
 
   } catch (err) {
     alert('Accès au microphone refusé.');
