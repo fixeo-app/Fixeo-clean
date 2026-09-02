@@ -3181,7 +3181,7 @@ font-size: 1.18rem;
       rgba(234, 137, 54, 0.12),
       rgba(72, 100, 255, 0.10)
     );
-
+  
   color: rgba(255, 255, 255, 0.96);
 
   box-shadow:
@@ -3195,6 +3195,9 @@ font-size: 1.18rem;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+}
+#fxrf4-root .fxrf4-emergency-voice {
+  margin: 0 0 28px;
 }
 
 .fxrf4-emergency-voice-icon {
@@ -3217,6 +3220,7 @@ font-size: 1.18rem;
       );
   }
 }
+
 
 /* RAFI V5a3 — Emergency dialog atmosphere */
 #fxrf4-dialog.is-emergency {
