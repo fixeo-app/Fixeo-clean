@@ -957,6 +957,8 @@ voiceBtn.addEventListener('click', async function () {
           : 'rafi-voice.webm'
       );
 
+      form.append('language', speechLangSelect.value);
+
       fetch('/api/rafi-transcribe', {
         method: 'POST',
         body: form
