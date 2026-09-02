@@ -1456,33 +1456,63 @@
 
 .fxrf4-situation-item {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px 18px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1.5px solid rgba(255, 255, 255, 0.07);
-  border-radius: 16px;
+  align-items: flex-start;
+  gap: 10px;
+
+  padding: 12px 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(72, 100, 255, 0.025)
+    );
+
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 15px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 0 18px rgba(72, 100, 255, 0.025),
+    0 0 0 1px rgba(234, 137, 54, 0.018),
+    0 6px 18px rgba(0, 0, 0, 0.18);
+
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
-  min-height: 60px;
+
+  min-height: 82px;
+
   transition:
     border-color 0.15s ease,
     background 0.15s ease,
+    box-shadow 0.15s ease,
     transform 0.12s ease,
     opacity 0.18s ease;
+
   position: relative;
 }
 
 
 
 /* RAFI V5a2 — Emergency Step 1 compact situation grid */
+
 .fxrf4-situation-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+}
+
+#fxrf4-dialog.is-emergency .fxrf4-situation-item {
+  border-color: rgba(234, 137, 54, 0.12);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 0 18px rgba(234, 137, 54, 0.025),
+    0 0 12px rgba(234, 137, 54, 0.035),
+    0 6px 18px rgba(0, 0, 0, 0.20);
 }
 
 .fxrf4-situation-item {
@@ -1538,19 +1568,32 @@
 }
 
 .fxrf4-situation-icon {
-  font-size: 1.40rem;
+  width: 24px;
+  flex: 0 0 24px;
+
+  font-size: 1.28rem;
   line-height: 1;
-  flex-shrink: 0;
-  width: 28px;
+
   text-align: center;
+
+  filter:
+    drop-shadow(0 0 6px rgba(234, 137, 54, 0.18));
 }
 
 .fxrf4-situation-label {
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.84);
-  line-height: 1.25;
+  font-size: 0.80rem;
+  line-height: 1.20;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+
+  color: rgba(255, 255, 255, 0.92);
+
   flex: 1;
+  min-width: 0;
+
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .fxrf4-situation-item.is-selected .fxrf4-situation-label {
