@@ -789,7 +789,7 @@ var transcriptInput = _h('textarea', {
 var transcriptConfirm = _h('button', {
   cls: 'fxrf4-btn fxrf4-btn-primary fxrf4-voice-transcript-confirm',
   type: 'button',
-  txt: 'Continuer →'
+  txt: 'C’est correct →'
 });
 
 transcriptWrap.appendChild(transcriptInput);
