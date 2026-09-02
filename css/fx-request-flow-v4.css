@@ -3325,3 +3325,32 @@ font-size: 1.18rem;
   font-size: 0.84rem;
   font-weight: 700;
 }
+
+#fxrf4-root .fxrf4-emergency-voice-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 10px;
+  width: 100%;
+  margin: 0 0 28px;
+}
+
+#fxrf4-root .fxrf4-emergency-voice-row .fxrf4-emergency-voice {
+  margin: 0;
+}
+
+#fxrf4-root .fxrf4-emergency-speech-lang {
+  min-width: 88px;
+  height: 46px;
+  padding: 0 12px;
+
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 14px;
+
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.95);
+
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
