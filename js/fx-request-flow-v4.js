@@ -795,6 +795,37 @@ var transcriptConfirm = _h('button', {
 transcriptWrap.appendChild(transcriptInput);
 transcriptWrap.appendChild(transcriptConfirm);
 
+    transcriptConfirm.addEventListener('click', function () {
+  var finalText = transcriptInput.value.trim();
+
+  if (finalText.length < 3) return;
+
+  var normalized =
+    window.FixeoRafiLanguage &&
+    typeof window.FixeoRafiLanguage.normalize === 'function'
+      ? window.FixeoRafiLanguage.normalize(finalText)
+      : finalText;
+
+  var detected =
+    window.FixeoAIRE &&
+    typeof window.FixeoAIRE.detect === 'function'
+      ? window.FixeoAIRE.detect(normalized)
+      : null;
+
+  /* La version validée/corrigée par le client devient la référence */
+  st.description = finalText;
+
+  if (detected) {
+    st.serviceSlug  = detected.cat;
+    st.serviceLabel = detected.label;
+  } else {
+    st.serviceSlug  = 'autre';
+    st.serviceLabel = finalText;
+  }
+
+  _transitionFwd(_renderStep2);
+});
+    
    voiceBtn.addEventListener('click', async function () {
   if (
     !navigator.mediaDevices ||
@@ -884,7 +915,10 @@ fetch('/api/rafi-transcribe', {
     st.serviceLabel = transcript;
   }
 
-  _transitionFwd(_renderStep2);
+  /* Afficher la transcription avant de continuer */
+transcriptInput.value = transcript;
+transcriptWrap.hidden = false;
+transcriptInput.focus()
 })
   
   .catch(function (err) {
