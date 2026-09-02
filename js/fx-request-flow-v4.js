@@ -755,11 +755,33 @@ if (dialogEl) dialogEl.classList.add('is-emergency');
     var sub = _h('p', { cls: 'fxrf4-step1-sub', txt: MSG.step1EmergencySub });
 
     /* RAFI voice entry — universal emergency fallback */
+    
 var voiceBtn = _h('button', {
   cls: 'fxrf4-emergency-voice',
   type: 'button',
   'aria-label': 'Décrire mon urgence à RAFI'
 });
+
+    var speechLangSelect = _h('select', {
+  cls: 'fxrf4-emergency-speech-lang',
+  'aria-label': 'Langue de reconnaissance vocale'
+});
+
+var speechLangFr = _h('option', {
+  value: 'fr-FR',
+  txt: 'FR'
+});
+
+var speechLangDarija = _h('option', {
+  value: 'ar-MA',
+  txt: 'الدارجة'
+});
+
+speechLangSelect.appendChild(speechLangFr);
+speechLangSelect.appendChild(speechLangDarija);
+
+/* Même défaut que le Hero */
+speechLangSelect.value = 'fr-FR';
 
 voiceBtn.appendChild(_h('span', {
   cls: 'fxrf4-emergency-voice-icon',
@@ -770,6 +792,13 @@ voiceBtn.appendChild(_h('span', {
   cls: 'fxrf4-emergency-voice-label',
   txt: 'Décrire mon urgence à RAFI'
 }));
+
+    var voiceRow = _h('div', {
+  cls: 'fxrf4-emergency-voice-row'
+});
+
+voiceRow.appendChild(voiceBtn);
+voiceRow.appendChild(speechLangSelect);
 
     /* RAFI voice transcript — shown after transcription */
 var transcriptWrap = _h('div', {
@@ -1160,7 +1189,7 @@ voiceBtn.addEventListener('click', async function () {
 
     var body = _q('#fxrf4-body');
     if (body) body.appendChild(
-  _screen([sub, voiceBtn, transcriptWrap, list])
+  _screen([sub, voiceRow, transcriptWrap, list])
 );
   }
 
