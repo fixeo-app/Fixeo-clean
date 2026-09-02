@@ -771,8 +771,28 @@ voiceBtn.appendChild(_h('span', {
   txt: 'Décrire mon urgence à RAFI'
 }));
 
-   voiceBtn.addEventListener('click', function () {
-  alert('RAFI Voice OK');
+   voiceBtn.addEventListener('click', async function () {
+  if (
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia ||
+    typeof MediaRecorder === 'undefined'
+  ) {
+    alert('Microphone non disponible sur cet appareil.');
+    return;
+  }
+
+  try {
+    var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    alert('Microphone autorisé ✅');
+
+    stream.getTracks().forEach(function (track) {
+      track.stop();
+    });
+
+  } catch (err) {
+    alert('Accès au microphone refusé.');
+  }
 });
     
     var list = _h('div', { cls: 'fxrf4-situation-list', role: 'list' });
