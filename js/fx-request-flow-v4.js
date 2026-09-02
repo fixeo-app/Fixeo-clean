@@ -825,12 +825,31 @@ fetch('/api/rafi-transcribe', {
     });
   })
   .then(function (result) {
-    alert(
-      'HTTP : ' + result.status +
-      '\nOK : ' + String(result.data.ok) +
-      '\nTexte : ' + (result.data.text || '—') +
-      '\nErreur : ' + (result.data.error || '—')
-    );
+
+var transcript = result.data && result.data.text
+  ? result.data.text.trim()
+  : '';
+
+var normalized =
+  window.FixeoRafiLanguage &&
+  typeof window.FixeoRafiLanguage.normalize === 'function'
+    ? window.FixeoRafiLanguage.normalize(transcript)
+    : transcript;
+
+var detected =
+  transcript &&
+  window.FixeoAIRE &&
+  typeof window.FixeoAIRE.detect === 'function'
+    ? window.FixeoAIRE.detect(normalized)
+    : null;
+
+alert(
+  'Transcription : ' + (transcript || '—') +
+  '\nCatégorie : ' + (detected ? detected.cat : 'non détectée') +
+  '\nLabel : ' + (detected ? detected.label : '—')
+);
+    
+    
   })
   .catch(function (err) {
     alert(
