@@ -1517,13 +1517,12 @@ box-shadow:
 .fxrf4-situation-item {
   min-width: 0;
   min-height: 78px;
-  padding: 10px 10px;
 
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding-top: 18px;
-  gap: 7px;
+  justify-content: center;
+padding: 15px 10px 9px;
+gap: 6px;
 
   text-align: center;
 }
