@@ -802,11 +802,42 @@ recorder.addEventListener('stop', function () {
     track.stop();
   });
 
-  alert(
-    'Enregistrement OK ✅\nFormat réel : ' +
-    (audioBlob.type || 'non indiqué') +
-    '\nTaille : ' + audioBlob.size + ' octets'
-  );
+  var form = new FormData();
+
+form.append(
+  'audio',
+  audioBlob,
+  audioBlob.type.indexOf('mp4') !== -1
+    ? 'rafi-voice.mp4'
+    : 'rafi-voice.webm'
+);
+
+fetch('/api/rafi-transcribe', {
+  method: 'POST',
+  body: form
+})
+  .then(function (response) {
+    return response.json().then(function (data) {
+      return {
+        status: response.status,
+        data: data
+      };
+    });
+  })
+  .then(function (result) {
+    alert(
+      'HTTP : ' + result.status +
+      '\nOK : ' + String(result.data.ok) +
+      '\nTexte : ' + (result.data.text || '—') +
+      '\nErreur : ' + (result.data.error || '—')
+    );
+  })
+  .catch(function (err) {
+    alert(
+      'Erreur réseau : ' +
+      (err && err.message ? err.message : String(err))
+    );
+  });
 });
 
 recorder.start();
