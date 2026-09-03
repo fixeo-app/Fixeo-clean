@@ -2832,7 +2832,9 @@ font-size: 1.18rem;
 ═══════════════════════════════════════════════════════════════════ */
 
 /* ── Urgent badge row ───────────────────────────────────────────── */
-#fxrf4-urgent-badge-row {
+
+ #fxrf4-urgent-badge-row {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2842,17 +2844,34 @@ font-size: 1.18rem;
 #fxrf4-urgent-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  gap: 6px;
+
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.10em;
   text-transform: uppercase;
-  color: #ff9a1f;
-  background: rgba(255, 154, 31, 0.10);
-  border: 1px solid rgba(255, 154, 31, 0.28);
+
+  color: #ffad42;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 173, 66, 0.13),
+      rgba(255, 154, 31, 0.07)
+    );
+
+  border: 1px solid rgba(255, 173, 66, 0.52);
   border-radius: 100px;
   padding: 4px 12px;
+
+  box-shadow:
+    0 0 0 3px rgba(255, 154, 31, 0.035),
+    0 0 18px rgba(255, 154, 31, 0.22),
+    0 0 38px rgba(255, 154, 31, 0.10),
+    inset 0 1px 0 rgba(255, 225, 175, 0.12);
 }
+
 
 /* ── Compact lane step indicator ─────────────────────────────────── */
 #fxrf4-lane-steps {
