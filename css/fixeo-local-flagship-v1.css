@@ -537,7 +537,12 @@ main#main-content {
   font-size: .84rem; font-weight: 700;
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
-  background: linear-gradient(135deg, #ff6b3d 0%, #f553a6 100%) !important;
+  background: linear-gradient(
+  110deg,
+  #f05a2a 0%,
+  #e1306c 48%,
+  #8a3ffc 100%
+) !important;
   font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-appearance: none;
   transition: opacity .18s, transform .18s;
