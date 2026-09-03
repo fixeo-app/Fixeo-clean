@@ -2578,6 +2578,9 @@ font-size: 1.18rem;
 .fxrf4-success-tag {
   margin-bottom: 10px;
 }
+#fxrf4-root .fxrf4-success-tag {
+  margin: 10px 0 14px;
+}
 
 /* Title → body: was 12px — the headline needs more silence after it */
 .fxrf4-success-title {
