@@ -3057,6 +3057,28 @@ font-size: 1.18rem;
 
 .fxrf4-bridge-skip:hover { color: rgba(255, 255, 255, 0.55); }
 
+#fxrf4-root .fxrf4-estimator-bridge {
+  width: min(100%, 350px);
+  margin: 18px auto 0;
+  padding: 16px 18px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(72, 100, 255, 0.055) 0%,
+      rgba(255, 255, 255, 0.018) 100%
+    );
+
+  border: 1px solid rgba(110, 132, 255, 0.16);
+  border-radius: 18px;
+
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+  gap: 10px;
+}
+
 /* ── iOS font-size fix: inputs below 16px trigger auto-zoom ─────── */
 /* 7C.10D.2: Fix fxrf4-autre-input (was 0.90rem = 14.4px) and fxrf4-select */
 .fxrf4-autre-input { font-size: 1rem !important; }   /* 16px at 16px root */
