@@ -2955,6 +2955,10 @@ font-size: 1.18rem;
   color: rgba(255, 255, 255, 0.70);
 }
 
+#fxrf4-root .fxrf4-success-recap {
+  margin: 14px 0 28px;
+}
+
 .fxrf4-recap-line {
   margin: 0;
   display: flex;
