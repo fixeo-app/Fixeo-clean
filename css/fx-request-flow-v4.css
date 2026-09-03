@@ -2834,7 +2834,9 @@ font-size: 1.18rem;
 /* ── Urgent badge row ───────────────────────────────────────────── */
 
  #fxrf4-urgent-badge-row {
-  width: 100%;
+  width: auto;
+margin-left: -22px;
+margin-right: -62px;
   display: flex;
   align-items: center;
   justify-content: center;
