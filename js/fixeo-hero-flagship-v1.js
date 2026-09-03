@@ -115,6 +115,9 @@ function _startGuestPolling() {
   var analysisStartedAt = Date.now();
   var MIN_ANALYSIS_MS = 5000;
 
+  var dispatchStartedAt = null;
+  var coordinationShown = false;
+  
   async function poll() {
     if (!_activeTrackingRef || !_activeGuestToken) {
       return;
@@ -123,19 +126,41 @@ function _startGuestPolling() {
     var data = await _fetchGuestState();
 
     if (data && data.ui_state) {
-      if (data.ui_state === STATES.DISPATCHING) {
-        var elapsed = Date.now() - analysisStartedAt;
+     if (data.ui_state === STATES.DISPATCHING) {
+  var elapsed = Date.now() - analysisStartedAt;
 
-        if (elapsed < MIN_ANALYSIS_MS) {
-          _pollTimer = setTimeout(
-            poll,
-            MIN_ANALYSIS_MS - elapsed
-          );
-          return;
-        }
+  /*
+   * Preserve the existing minimum RAFI analysis duration.
+   */
+  if (elapsed < MIN_ANALYSIS_MS) {
+    _pollTimer = setTimeout(
+      poll,
+      MIN_ANALYSIS_MS - elapsed
+    );
+    return;
+  }
 
-        renderDispatching(data);
-      }
+  /*
+   * Start the 10-second coordination window only when
+   * DISPATCHING is actually shown to the client.
+   */
+  if (dispatchStartedAt === null) {
+    dispatchStartedAt = Date.now();
+    renderDispatching(data);
+  } else if (
+    !coordinationShown &&
+    Date.now() - dispatchStartedAt >= 10000
+  ) {
+    coordinationShown = true;
+    renderCoordination(data);
+  } else if (!coordinationShown) {
+    /*
+     * Keep State 3 live while candidates / contacted count
+     * may still evolve during the first 10 seconds.
+     */
+    renderDispatching(data);
+  }
+}
 
       /*
        * States mission_active / in_progress / completed
