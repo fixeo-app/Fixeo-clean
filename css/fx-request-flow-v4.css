@@ -2414,11 +2414,34 @@ font-size: 1.18rem;
 
 /* Emergency ring — amber ambient glow */
 .fxrf4-check-ring-inner.is-emergency {
-  background: rgba(234, 137, 54, 0.12);
-  border-color: rgba(234, 137, 54, 0.38);
+  width: 104px;
+  height: 104px;
+
+  background:
+    radial-gradient(
+      circle at 38% 30%,
+      rgba(255, 218, 150, 0.24) 0%,
+      rgba(234, 137, 54, 0.16) 36%,
+      rgba(234, 137, 54, 0.08) 68%,
+      rgba(234, 137, 54, 0.04) 100%
+    );
+
+  border: 1.5px solid rgba(255, 181, 73, 0.88);
+  border-radius: 50%;
+
   box-shadow:
-    0 0 0 6px rgba(234, 137, 54, 0.05),
-    0 4px 18px rgba(234, 137, 54, 0.10);
+    0 0 0 7px rgba(234, 137, 54, 0.045),
+    0 0 30px rgba(234, 137, 54, 0.24),
+    0 0 65px rgba(234, 137, 54, 0.12),
+    inset 0 1px 10px rgba(255, 222, 171, 0.12);
+
+  font-size: 2.7rem;
+  font-weight: 500;
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ── 3. RAFI TAG — authorship, not stamp ───────────────────── */
@@ -2989,8 +3012,8 @@ font-size: 1.18rem;
   justify-content: center;
   width: 100%;
   min-height: 48px;
-  background: rgba(72, 100, 255, 0.14);
-  border: 1px solid rgba(72, 100, 255, 0.30);
+  background: rgba(72, 100, 255, 0.08);
+  border: 1px solid rgba(72, 100, 255, 0.20);
   border-radius: 12px;
   color: rgba(255, 255, 255, 0.92);
   font-size: 0.92rem;
