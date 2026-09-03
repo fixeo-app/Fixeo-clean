@@ -188,7 +188,12 @@ body.fixeo-gh-enabled .navbar-toggle {
     align-items: center;
     justify-content: center;
     border-radius: inherit;
-    background: linear-gradient(135deg, #E1306C, #833AB4);
+    background: linear-gradient(
+  110deg,
+  #f05a2a 0%,
+  #e1306c 48%,
+  #8a3ffc 100%
+);
     color: #fff;
     font-size: 0.92rem;
     font-weight: 800;
