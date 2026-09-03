@@ -2956,6 +2956,8 @@ font-size: 1.18rem;
 }
 
 #fxrf4-root .fxrf4-success-recap {
+  width: min(100%, 350px);
+  padding: 14px 18px;
   margin: 14px 0 28px;
 }
 
