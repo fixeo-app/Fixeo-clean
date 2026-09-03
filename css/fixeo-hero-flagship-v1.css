@@ -3979,3 +3979,23 @@
     font-size: 0.74rem;
   }
 }
+
+/* ── Coordination spacing + premium badge halo ─────────── */
+
+.fxhf-root[data-fxhf-state="dispatching"]
+.fxhf-shell--coordination
+.fxhf-eyebrow {
+  margin-top: 10px;
+  margin-bottom: 18px;
+
+  box-shadow:
+    inset 0 0 18px rgba(104, 240, 201, 0.06),
+    0 0 18px rgba(91, 226, 189, 0.16),
+    0 0 34px rgba(83, 163, 255, 0.11);
+}
+
+.fxhf-root[data-fxhf-state="dispatching"]
+.fxhf-shell--coordination
+.fxhf-title {
+  margin-top: 0;
+}
