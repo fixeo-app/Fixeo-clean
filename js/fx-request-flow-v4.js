@@ -2082,15 +2082,25 @@ var dashLink = _h('a', {
     if (isEstimatorEligible) {
       var bridgeWrap = _h('div', { cls: 'fxrf4-estimator-bridge', 'aria-label': 'Option prix FIXEO', role: 'region' });
 
-      var bridgeEyebrow = _h('p', { cls: 'fxrf4-bridge-eyebrow', txt: 'POUR GAGNER DU TEMPS' });
-      var bridgeTitle   = _h('p', { cls: 'fxrf4-bridge-title', txt: 'Voir si un Prix FIXEO peut \u00eatre \u00e9tabli' });
-      var bridgeCopy    = _h('p', { cls: 'fxrf4-bridge-copy',
-        txt: 'Votre demande urgente est d\u00e9j\u00e0 enregistr\u00e9e. Vous pouvez maintenant v\u00e9rifier si cette intervention est \u00e9ligible \u00e0 un Prix FIXEO.' });
+      var bridgeEyebrow = _h('p', {
+  cls: 'fxrf4-bridge-eyebrow',
+  txt: 'OPTION'
+});
+
+var bridgeTitle = _h('p', {
+  cls: 'fxrf4-bridge-title',
+  txt: 'Estimer le prix de l\u2019intervention'
+});
+
+var bridgeCopy = _h('p', {
+  cls: 'fxrf4-bridge-copy',
+  txt: 'RAFI peut v\u00e9rifier si une estimation FIXEO est disponible.'
+});
 
       var bridgeCTA = _h('button', {
         cls: 'fxrf4-bridge-cta',
         type: 'button',
-        txt: 'V\u00e9rifier un Prix FIXEO'
+        txt: 'V\u00e9rifier le prix \u2192'
       });
       var bridgeSkip = _h('button', {
         cls: 'fxrf4-bridge-skip',
