@@ -1433,7 +1433,7 @@ function renderCoordination(data) {
 
   var eyebrow = document.createElement('div');
   eyebrow.className = 'fxhf-eyebrow';
-  eyebrow.textContent = 'FIXEO · PRISE EN CHARGE';
+ eyebrow.textContent = '✓ DEMANDE CONFIRMÉE';
 
   var title = document.createElement('h2');
   title.className = 'fxhf-title';
@@ -1465,7 +1465,7 @@ function renderCoordination(data) {
   var followUp = document.createElement('p');
   followUp.className = 'fxhf-coordination-follow-up';
   followUp.textContent =
-    'Vous serez contacté dans les plus brefs délais par l’artisan retenu pour votre intervention.';
+  'Aucune action n’est nécessaire de votre côté. Vous serez contacté dans les plus brefs délais par l’artisan retenu pour votre intervention.';
 
   content.appendChild(eyebrow);
   content.appendChild(title);
