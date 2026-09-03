@@ -1100,11 +1100,13 @@
 .fxrf4-success-tag {
   font-size: 0.56rem;
   font-weight: 800;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.20em;
   text-transform: uppercase;
-  color: rgba(72, 100, 255, 0.60);
-  margin-bottom: 8px;
-  /* Tighter cascade — elements arrive as a cohesive group, not a parade */
+  color: rgba(92, 120, 255, 0.78);
+
+  margin-top: 6px;
+  margin-bottom: 12px;
+
   animation: fxrf4-fade-up 240ms ease 300ms both;
 }
 
