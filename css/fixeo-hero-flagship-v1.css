@@ -3999,3 +3999,10 @@
 .fxhf-title {
   margin-top: 0;
 }
+
+/* Confirmation — remove generic eyebrow dot */
+.fxhf-root[data-fxhf-state="dispatching"]
+.fxhf-shell--coordination
+.fxhf-eyebrow::before {
+  display: none;
+}
