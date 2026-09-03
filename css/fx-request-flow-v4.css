@@ -191,7 +191,7 @@
   position: absolute;
   top: 50%;
   right: 14px;
-  transform: translateY(-62%);
+  transform: translateY(-76%);
   width: 44px;
   height: 44px;
   display: inline-flex;
@@ -220,7 +220,7 @@
 }
 
 #fxrf4-close:active {
-  transform: translateY(-62%) scale(0.90);
+  transform: translateY(-76%) scale(0.90);
   transition: transform 0.08s ease;
 }
 
