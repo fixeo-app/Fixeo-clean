@@ -28,10 +28,11 @@
 
   /* Orange/pink gradient — clearly urgent */
   background: linear-gradient(
-    135deg,
-    rgba(255, 75, 30, 0.82) 0%,
-    rgba(225, 48, 108, 0.70) 100%
-  ) !important;
+  110deg,
+  #f05a2a 0%,
+  #e1306c 48%,
+  #8a3ffc 100%
+) !important;
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
   border: 1px solid rgba(255, 100, 50, 0.40) !important;
@@ -144,11 +145,12 @@ body.fx-estimator-tunnel-active #fixeo-urgent-fab {
     bottom: calc(22px + env(safe-area-inset-bottom, 0px)) !important;
     left: calc(14px + env(safe-area-inset-left, 0px)) !important;
     /* Slightly stronger gradient on mobile */
-    background: linear-gradient(
-      135deg,
-      rgba(255, 70, 20, 0.92) 0%,
-      rgba(225, 48, 108, 0.82) 100%
-    ) !important;
+   background: linear-gradient(
+  110deg,
+  #f05a2a 0%,
+  #e1306c 48%,
+  #8a3ffc 100%
+) !important;
     box-shadow:
       0 0 0 1px rgba(255, 80, 40, 0.30),
       0 8px 28px rgba(225, 48, 108, 0.40),
