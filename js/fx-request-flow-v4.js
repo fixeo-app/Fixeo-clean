@@ -1943,7 +1943,7 @@ voiceBtn.addEventListener('click', async function () {
     succ.appendChild(_h('p', {
       cls: 'fxrf4-success-title',
       txt: isEmergency
-        ? "Votre demande est enregistr\u00e9e."
+  ? "Demande transmise avec succès."
         : "Votre demande est d\u00e9j\u00e0 entre de bonnes mains."
     }));
 
@@ -1953,7 +1953,7 @@ voiceBtn.addEventListener('click', async function () {
     succ.appendChild(_h('p', {
       cls: 'fxrf4-success-body',
       txt: isEmergency
-        ? "Num\u00e9ro enregistr\u00e9 pour la coordination FIXEO."
+  ? "FIXEO recherche maintenant un artisan disponible pour votre intervention."
         : "RAFI s\u00e9lectionne d\u00e9j\u00e0 les artisans disponibles pour vous.\nVous recevrez une confirmation d\u00e8s les premi\u00e8res r\u00e9ponses."
     }));
 
