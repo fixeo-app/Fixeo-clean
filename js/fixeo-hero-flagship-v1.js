@@ -1350,6 +1350,112 @@ _root.appendChild(shell);
 
   return true;
 }
+
+/* ── State 3B — FIXEO coordination / request taken in charge ─ */
+function renderCoordination(data) {
+  if (!_mounted || !_root) return false;
+
+  data = data || {};
+
+  /*
+   * IMPORTANT:
+   * This is intentionally still the real DISPATCHING state.
+   * No backend state is invented here.
+   * Guest polling / winner / mission lifecycle remain authoritative.
+   */
+  _state = STATES.DISPATCHING;
+  _root.setAttribute('data-fxhf-state', STATES.DISPATCHING);
+  _root.replaceChildren();
+
+  var shell = document.createElement('div');
+  shell.className =
+    'fxhf-shell fxhf-shell--dispatching fxhf-shell--coordination';
+
+  /* ── RAFI visual ─────────────────────────────────────── */
+
+  var visual = document.createElement('div');
+  visual.className =
+    'fxhf-visual fxhf-visual--dispatching fxhf-visual--coordination';
+
+  var sphere = document.createElement('div');
+  sphere.className =
+    'fxhf-rafi-sphere fxhf-rafi-sphere--dispatching';
+
+  var halo = document.createElement('div');
+  halo.className = 'fxhf-rafi-halo';
+
+  var core = document.createElement('div');
+  core.className = 'fxhf-rafi-core';
+
+  var rafiImg = document.createElement('img');
+  rafiImg.className = 'fxhf-rafi-image';
+  rafiImg.src = 'rafi/RAFI_V2_HeadCollar_Core.webp';
+  rafiImg.alt = 'RAFI';
+  rafiImg.width = 150;
+  rafiImg.height = 150;
+  rafiImg.loading = 'eager';
+
+  core.appendChild(rafiImg);
+  sphere.appendChild(halo);
+  sphere.appendChild(core);
+  visual.appendChild(sphere);
+
+  /* ── Confirmation content ────────────────────────────── */
+
+  var content = document.createElement('div');
+  content.className =
+    'fxhf-content fxhf-content--dispatching fxhf-content--coordination';
+
+  var eyebrow = document.createElement('div');
+  eyebrow.className = 'fxhf-eyebrow';
+  eyebrow.textContent = 'FIXEO · PRISE EN CHARGE';
+
+  var title = document.createElement('h2');
+  title.className = 'fxhf-title';
+  title.textContent =
+    'Votre demande est prise en charge par FIXEO.';
+
+  var subtitle = document.createElement('p');
+  subtitle.className = 'fxhf-subtitle';
+  subtitle.textContent =
+    'Nous coordonnons actuellement avec les artisans disponibles afin de confirmer la meilleure prise en charge.';
+
+  var reference = document.createElement('div');
+  reference.className = 'fxhf-coordination-reference';
+
+  var referenceLabel = document.createElement('span');
+  referenceLabel.className = 'fxhf-coordination-reference-label';
+  referenceLabel.textContent = 'Référence de votre demande';
+
+  var referenceValue = document.createElement('strong');
+  referenceValue.className = 'fxhf-coordination-reference-value';
+  referenceValue.textContent =
+    data.request && data.request.tracking_ref
+      ? data.request.tracking_ref
+      : '—';
+
+  reference.appendChild(referenceLabel);
+  reference.appendChild(referenceValue);
+
+  var followUp = document.createElement('p');
+  followUp.className = 'fxhf-coordination-follow-up';
+  followUp.textContent =
+    'Vous serez contacté dans les plus brefs délais par l’artisan retenu pour votre intervention.';
+
+  content.appendChild(eyebrow);
+  content.appendChild(title);
+  content.appendChild(subtitle);
+  content.appendChild(reference);
+  content.appendChild(followUp);
+
+  /* Mobile-first natural flow */
+  shell.appendChild(visual);
+  shell.appendChild(content);
+
+  _root.appendChild(shell);
+
+  return true;
+}
   
   /* ── Init ──────────────────────────────────────────────────── */
  function _init() {
