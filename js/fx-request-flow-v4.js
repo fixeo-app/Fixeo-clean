@@ -456,7 +456,7 @@
     var rafiRow = _h('div', { id: 'fxrf4-rafi-row' });
 
     var avatar = _h('div', { id: 'fxrf4-avatar' });
-    var rafiImgSrc = window.RAFI_MICRO || '/rafi/RAFI_V2_MicroGlyph.webp';
+    style(rafi): use head portrait in emergency avatar
     var avImg = _h('img', { src: rafiImgSrc, alt: '', width: '36', height: '36',
                              loading: 'eager', decoding: 'async' });
     var avFallback = _h('span', { id: 'fxrf4-avatar-fallback', txt: 'R', 'aria-hidden': 'true' });
