@@ -4672,7 +4672,7 @@ html #services.fc3-chapter {
       <button class="fxsit-disclosure-btn" type="button"
               id="fxsit-disclosure-btn"
               aria-expanded="false" aria-controls="fxsit-additional">
-        Voir toutes les situations
+        Voir tous les métiers
         <span class="fxsit-disclosure-chevron" aria-hidden="true">▾</span>
       </button>
       <!-- Shown only when a disclosed card is active and the panel is collapsed -->
@@ -5111,14 +5111,14 @@ html #services.fc3-chapter {
           discPanel.classList.remove('fxsit-expanded');
           setAdditionalPanelState(false);
           this.setAttribute('aria-expanded', 'false');
-          this.innerHTML = 'Voir toutes les situations <span class="fxsit-disclosure-chevron" aria-hidden="true">▾</span>';
+           this.innerHTML = 'Voir tous les métiers <span class="fxsit-disclosure-chevron" aria-hidden="true">▾</span>';
           if (focusInPanel) { this.focus(); }
           updateSelectedHint();
         } else {
           setAdditionalPanelState(true);
           discPanel.classList.add('fxsit-expanded');
           this.setAttribute('aria-expanded', 'true');
-          this.innerHTML = 'Réduire les situations <span class="fxsit-disclosure-chevron" aria-hidden="true">▾</span>';
+          this.innerHTML = 'Réduire les métiers <span class="fxsit-disclosure-chevron" aria-hidden="true">▴</span>';
           var hint = document.getElementById('fxsit-selected-hint');
           if (hint) { hint.textContent = ''; hint.classList.remove('fxsit-hint-visible'); }
         }
