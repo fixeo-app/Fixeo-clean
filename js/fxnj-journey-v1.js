@@ -114,7 +114,7 @@
        Order MUST be: resetWrap → primaryGrid → additionalGrid → disclosureWrap → servicesLink
        so that "Réduire les situations" appears AFTER all 12 cards (Phase 3D requirement).
        disclosureWrap intentionally appended after additionalGrid. */
-    var stageS = _makeStage('situation', 'SITUATION');
+    var stageS = _makeStage('situation', 'MÉTIER');
     stageS.classList.add('fxnj-stage-situation');
     spine.appendChild(stageS);
     stageS.appendChild(resetWrap);
