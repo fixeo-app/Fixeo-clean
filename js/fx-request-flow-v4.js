@@ -1994,9 +1994,9 @@ voiceBtn.addEventListener('click', async function () {
      * Removed: "Artisans disponibles contactés" (not proven true). */
     var stepData = isEmergency
       ? [
-          { dot: '\u2705', lbl: 'Enregistr\u00e9e', state: 'done' },
-          { dot: '\u2705', lbl: 'Transmise\n\u00e0 FIXEO',           state: 'done' },
-          { dot: '\ud83d\udcac', lbl: '\u00c0 venir', state: 'waiting' }
+          { dot: '\u2705', lbl: 'Demande\nre\u00e7ue', state: 'done' },
+          { dot: '\u2705', lbl: 'Transmise\n\u00e0 FIXEO', state: 'done' },
+          { dot: '\ud83d\udd0e', lbl: 'Recherche\nartisan', state: 'waiting' }
         ]
       : [
           { dot: '\u2705', lbl: 'Demande\nenregistr\u00e9e', state: 'done' },
