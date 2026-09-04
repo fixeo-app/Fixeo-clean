@@ -967,6 +967,21 @@ function _getOrCreateGrid() {
     `;
 var tradeSelect = filterWrap.querySelector('#fhp-network-trade');
 
+/* Sync initial visible métier with the canonical hidden marketplace filter.
+   RAFI may have selected the category before this control was created. */
+if (tradeSelect) {
+  var initialCategory = document.getElementById('filter-category');
+  var initialTradeValue = initialCategory ? (initialCategory.value || '') : '';
+
+  if (
+    Array.from(tradeSelect.options).some(function (option) {
+      return option.value === initialTradeValue;
+    })
+  ) {
+    tradeSelect.value = initialTradeValue;
+  }
+}
+    
 if (tradeSelect) {
   tradeSelect.addEventListener('change', function () {
     var hiddenCategory = document.getElementById('filter-category');
