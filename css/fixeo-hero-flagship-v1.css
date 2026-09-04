@@ -2392,7 +2392,34 @@
   gap: 6px;
   padding: 5px 10px 6px 14px;
 }
+  
+/* RAFI live understanding — compact feedback inside need field */
+.fxhf-shell--need .fxhf-rafi-understanding {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  padding: 2px 14px 0;
+  font-size: 0.68rem;
+  line-height: 1.2;
+}
 
+.fxhf-shell--need .fxhf-rafi-understanding[hidden] {
+  display: none;
+}
+
+.fxhf-shell--need .fxhf-rafi-understanding-status {
+  flex-shrink: 0;
+  color: #8fe3a0;
+  font-weight: 700;
+}
+
+.fxhf-shell--need .fxhf-rafi-understanding-trade {
+  min-width: 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 700;
+}
+  
 .fxhf-shell--need .fxhf-mic {
   min-height: 38px;
   padding: 7px 12px;
