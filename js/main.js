@@ -2248,6 +2248,23 @@ function selectServiceCategory(cat) {
     catFilter.value = cat === 'all' ? '' : cat;
   }
 
+/* Keep the visible homepage métier selector in sync.
+   Visual sync only — do not dispatch change here because
+   applyMarketplaceFilters() below already owns the filtering pass. */
+const homepageTradeSelect = document.getElementById('fphp-network-trade');
+
+if (homepageTradeSelect) {
+  const nextTradeValue = cat === 'all' ? '' : cat;
+
+  if (
+    Array.from(homepageTradeSelect.options).some(
+      option => option.value === nextTradeValue
+    )
+  ) {
+    homepageTradeSelect.value = nextTradeValue;
+  }
+}
+   
   if (cityFilter) {
     cityFilter.value = selectedCity;
   }
