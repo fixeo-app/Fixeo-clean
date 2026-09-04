@@ -563,7 +563,13 @@
 
 /* ── T5: CTA — "Réserver maintenant" — always dominant ── */
 .pvc-btn-reserve-v2 {
-  background: linear-gradient(135deg, #e1306c 0%, #833ab4 100%) !important;
+  background: linear-gradient(
+  135deg,
+  #ff8a3d 0%,
+  #ff4f9a 50%,
+  #8b5cff 100%
+) !important;
+   
   color: #fff !important;
   font-weight: 700 !important;
   font-size: 0.84rem !important;
@@ -574,9 +580,12 @@
   letter-spacing: 0.01em !important;
 }
 .pvc-btn-reserve-v2:hover {
-  background: linear-gradient(135deg, #f0206c 0%, #9b4dca 100%) !important;
-  transform: scale(1.03) translateY(-1px) !important;
-  box-shadow: 0 12px 28px rgba(225, 48, 108, 0.42) !important;
+  background: linear-gradient(
+  135deg,
+  #ff8a3d 0%,
+  #ff4f9a 50%,
+  #8b5cff 100%
+) !important;
 }
 
 /* Mobile ── */
