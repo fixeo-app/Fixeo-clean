@@ -433,11 +433,12 @@
           var h1Band = _buildH1Band(h1El);
           heroSection.insertAdjacentElement('afterend', h1Band);
 
-          if (fallbackBtn) {
-            var fallBand = _buildFallbackBand(fallbackBtn.closest('.hero-secondary-link-wrap') || fallbackBtn);
-            h1Band.insertAdjacentElement('afterend', fallBand);
+          /*
+          * Flagship V1:
+          * legacy "Publier une demande" fallback remains dormant in its
+          * original hidden wrapper. The Flagship RAFI journey is now canonical.
+          */
           }
-        }
 
         /* 3. Insert trust whisper after #hero-quick-search */
         heroSearch.insertAdjacentElement('afterend', _buildTrustWhisper());
