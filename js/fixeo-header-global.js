@@ -185,8 +185,8 @@
             <img src="/img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="26" loading="eager">
           </a>
           <div class="fixeo-gh-actions">
-            <button class="fixeo-gh-icon-btn fixeo-gh-search" type="button" aria-label="Recherche">
-              <span class="fixeo-gh-icon">🔍</span>
+            <button class="fixeo-gh-icon-btn fixeo-gh-search" type="button" aria-label="Parler à RAFI">
+              <span class="fixeo-gh-icon">🎙️</span>
             </button>
             <button class="fixeo-gh-icon-btn fixeo-gh-notif notif-btn" type="button" aria-label="Notifications">
               <span class="fixeo-gh-icon">🔔</span>
@@ -444,9 +444,14 @@
     updateAvatar(root);
 
     root.querySelector('.fixeo-gh-search')?.addEventListener('click', function (event) {
-      event.preventDefault();
-      openSearch();
-    });
+  event.preventDefault();
+
+  var heroMic = document.querySelector('.fxhf-mic');
+
+  if (heroMic) {
+    heroMic.click();
+  }
+});
 
     root.querySelector('.fixeo-gh-notif')?.addEventListener('click', function (event) {
       event.preventDefault();
