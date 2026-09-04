@@ -538,10 +538,10 @@ main#main-content {
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
   background: linear-gradient(
-  110deg,
-  #f05a2a 0%,
-  #e1306c 48%,
-  #8a3ffc 100%
+  135deg,
+  #ff8a3d 0%,
+  #ff4f9a 50%,
+  #8b5cff 100%
 ) !important;
   font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-appearance: none;
