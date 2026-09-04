@@ -132,14 +132,12 @@
   align-items: center;
   gap: 10px;
   padding: 14px 28px;
-  background:
-  linear-gradient(
-    135deg,
-    rgba(255, 77, 141, 0.18) 0%,
-    rgba(124, 58, 237, 0.24) 48%,
-    rgba(45, 212, 191, 0.16) 100%
-  ),
-  rgba(10, 14, 28, 0.96);
+  background: linear-gradient(
+  135deg,
+  #ff8a3d 0%,
+  #ff4f9a 50%,
+  #8b5cff 100%
+);
   color: #ffffff;
   font-size: 15px;
   font-weight: 600;
@@ -149,7 +147,10 @@
   cursor: pointer;
   transition: opacity 0.2s ease, transform 0.2s ease;
   align-self: flex-start;
-  box-shadow: 0 4px 20px rgba(72,100,255,0.35);
+ box-shadow:
+  0 3px 10px rgba(225,48,108,0.14),
+  0 1px 3px rgba(0,0,0,0.30),
+  inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 .fxet-cta:hover {
