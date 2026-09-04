@@ -273,7 +273,22 @@ function _startGuestPolling() {
       'aria-label',
       'Décrivez votre problème ou votre besoin'
     );
+    
+ /* RAFI live understanding — visual feedback only */
+var rafiUnderstanding = document.createElement('div');
+rafiUnderstanding.className = 'fxhf-rafi-understanding';
+rafiUnderstanding.hidden = true;
 
+var rafiUnderstandingStatus = document.createElement('span');
+rafiUnderstandingStatus.className = 'fxhf-rafi-understanding-status';
+rafiUnderstandingStatus.textContent = '● Besoin identifié';
+
+var rafiUnderstandingTrade = document.createElement('span');
+rafiUnderstandingTrade.className = 'fxhf-rafi-understanding-trade';
+
+rafiUnderstanding.appendChild(rafiUnderstandingStatus);
+rafiUnderstanding.appendChild(rafiUnderstandingTrade);
+    
     var fieldFooter = document.createElement('div');
     fieldFooter.className = 'fxhf-field-footer';
 
@@ -478,13 +493,38 @@ function syncRafiUnderstanding() {
 
   var detected = window.FixeoAIRE.detect(needForDetection);
 
-  if (!detected || !detected.cat) return;
 
-  if (
-    typeof window.FixeoSelectServiceCategory === 'function'
-  ) {
-    window.FixeoSelectServiceCategory(detected.cat);
-  }
+  if (!detected || !detected.cat) {
+  rafiUnderstanding.hidden = true;
+  rafiUnderstandingTrade.textContent = '';
+  return;
+}
+
+var tradeLabels = {
+  plomberie: '🔧 Plomberie',
+  peinture: '🎨 Peinture',
+  electricite: '⚡ Électricité',
+  serrurerie: '🔑 Serrurerie',
+  climatisation: '❄️ Climatisation',
+  menuiserie: '🪚 Menuiserie',
+  bricolage: '🛠️ Bricolage',
+  maconnerie: '🧱 Maçonnerie',
+  nettoyage: '🧹 Nettoyage',
+  carrelage: '◻️ Carrelage',
+  jardinage: '🌿 Jardinage',
+  demenagement: '📦 Déménagement'
+};
+
+rafiUnderstandingTrade.textContent =
+  tradeLabels[detected.cat] || detected.cat;
+
+rafiUnderstanding.hidden = false;
+
+if (
+  typeof window.FixeoSelectServiceCategory === 'function'
+) {
+  window.FixeoSelectServiceCategory(detected.cat);
+}
 }
 
 textarea.addEventListener('input', function () {
@@ -556,6 +596,7 @@ voiceBar.appendChild(speechLangSelect);
 fieldFooter.appendChild(voiceBar);
 
     field.appendChild(textarea);
+    field.appendChild(rafiUnderstanding);
     field.appendChild(fieldFooter);
 
    /* Location — Flagship-owned picker.
