@@ -456,6 +456,46 @@ async function startRafiRecording() {
       }
     );
 
+    var rafiUnderstandingTimer = null;
+
+function syncRafiUnderstanding() {
+  var need = (textarea.value || '').trim();
+
+  if (need.length < 3) return;
+
+  var needForDetection =
+    window.FixeoRafiLanguage &&
+    typeof window.FixeoRafiLanguage.normalize === 'function'
+      ? window.FixeoRafiLanguage.normalize(need)
+      : need;
+
+  if (
+    !window.FixeoAIRE ||
+    typeof window.FixeoAIRE.detect !== 'function'
+  ) {
+    return;
+  }
+
+  var detected = window.FixeoAIRE.detect(needForDetection);
+
+  if (!detected || !detected.cat) return;
+
+  if (
+    typeof window.FixeoSelectServiceCategory === 'function'
+  ) {
+    window.FixeoSelectServiceCategory(detected.cat);
+  }
+}
+
+textarea.addEventListener('input', function () {
+  clearTimeout(rafiUnderstandingTimer);
+
+  rafiUnderstandingTimer = setTimeout(
+    syncRafiUnderstanding,
+    350
+  );
+});
+
     mediaRecorder.start();
 
     isRecording = true;
