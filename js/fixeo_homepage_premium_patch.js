@@ -857,11 +857,7 @@ if (networkFilter && el.parentNode) {
         moreLabel +
       '</a>' +
       '<p class="fxas-secondary-action">' +
-        'Vous ne trouvez pas le bon profil\u00a0?<br>' +
-        '<button type="button" data-open-request-form="true"' +
-          ' aria-label="Publier une demande via RAFI">' +
-          'Publier une demande \u2192' +
-        '</button>' +
+      'Vous ne trouvez pas le bon profil\u00a0?' +
       '</p>';
 
     /* Create or reuse element — appended after the grid's parent node children */
