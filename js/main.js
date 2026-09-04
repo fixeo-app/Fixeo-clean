@@ -2220,22 +2220,53 @@ function initAnimations() {
 }
 
 // ── CATEGORY CHIPS ─────────────────────────────────────────────
+
+function selectServiceCategory(cat) {
+  if (!cat) return false;
+
+  const chip = document.querySelector(
+    '.chip[data-category="' + cat + '"]'
+  );
+
+  if (!chip) return false;
+
+  document.querySelectorAll('.chip[data-category]').forEach(c => {
+    c.classList.remove('active');
+    c.setAttribute('aria-pressed', 'false');
+  });
+
+  chip.classList.add('active');
+  chip.setAttribute('aria-pressed', 'true');
+
+  const servicesCityFilter = document.getElementById('services-city-filter');
+  const selectedCity = servicesCityFilter?.value || '';
+
+  const catFilter = document.getElementById('filter-category');
+  const cityFilter = document.getElementById('filter-city');
+
+  if (catFilter) {
+    catFilter.value = cat === 'all' ? '' : cat;
+  }
+
+  if (cityFilter) {
+    cityFilter.value = selectedCity;
+  }
+
+  applyMarketplaceFilters({ syncServiceCategory: true });
+
+  if (typeof window.renderServiceArtisans === 'function') {
+    window.renderServiceArtisans(cat);
+  }
+
+  return true;
+}
+
+window.FixeoSelectServiceCategory = selectServiceCategory;
+
 function initCategoryChips() {
   document.querySelectorAll('.chip[data-category]').forEach(chip => {
     chip.addEventListener('click', () => {
-      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      const cat = chip.dataset.category;
-      const servicesCityFilter = document.getElementById('services-city-filter');
-      const selectedCity = servicesCityFilter?.value || '';
-      const catFilter = document.getElementById('filter-category');
-      const cityFilter = document.getElementById('filter-city');
-      if (catFilter) { catFilter.value = cat === 'all' ? '' : cat; }
-      if (cityFilter) { cityFilter.value = selectedCity; }
-      applyMarketplaceFilters({ syncServiceCategory: true });
-      if (typeof window.renderServiceArtisans === 'function') {
-        window.renderServiceArtisans(cat);
-      }
+      selectServiceCategory(chip.dataset.category);
     });
   });
 }
