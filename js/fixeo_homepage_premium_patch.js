@@ -854,11 +854,8 @@ if (networkFilter && el.parentNode) {
       '<a class="fxas-btn-more" href="' + _dirHref + '" aria-label="' +
         (cityName ? 'Voir plus d\u2019artisans \u00e0 ' + _esc(cityName) : 'Voir plus d\u2019artisans') +
       '">' +
-        moreLabel +
-      '</a>' +
-      '<p class="fxas-secondary-action">' +
-      'Vous ne trouvez pas le bon profil\u00a0?' +
-      '</p>';
+     moreLabel +
+'</a>';
 
     /* Create or reuse element — appended after the grid's parent node children */
     var el = _$(ACTIONS_ID);
