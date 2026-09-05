@@ -546,23 +546,99 @@
 </div>
 
       <div class="fxe2-coverage-inner">
+        
         <!-- Map -->
-        <div class="fxe2-coverage-map" role="img" aria-label="Carte de couverture FIXEO — principales villes du Maroc">
-          <div style="width:100%;max-width:460px;position:relative;">
-            <svg viewBox="0 0 400 380" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;opacity:0.45;" aria-hidden="true">
-              <path d="M 60 40 L 200 20 L 320 30 L 350 80 L 340 140 L 320 200 L 300 280 L 250 340 L 200 360 L 150 340 L 80 280 L 40 200 L 30 130 L 60 40 Z"
-                    stroke="rgba(72,100,255,0.4)" stroke-width="2" fill="rgba(72,100,255,0.04)"/>
-            </svg>
-            <div class="fxe2-city-dot" style="top:38%;left:42%"><div class="fxe2-city-name">Casablanca</div></div>
-            <div class="fxe2-city-dot" style="top:28%;left:38%"><div class="fxe2-city-name">Rabat</div></div>
-            <div class="fxe2-city-dot" style="top:55%;left:40%"><div class="fxe2-city-name">Marrakech</div></div>
-            <div class="fxe2-city-dot" style="top:18%;left:60%"><div class="fxe2-city-name">Fès</div></div>
-            <div class="fxe2-city-dot" style="top:13%;left:44%"><div class="fxe2-city-name">Tanger</div></div>
-            <div class="fxe2-city-dot" style="top:22%;left:65%"><div class="fxe2-city-name">Meknès</div></div>
-            <div class="fxe2-city-dot" style="top:32%;left:65%"><div class="fxe2-city-name">Kénitra</div></div>
-            <div class="fxe2-city-dot" style="top:42%;left:55%"><div class="fxe2-city-name">Béni Mellal</div></div>
-          </div>
-        </div>
+        
+        <div
+  class="fxe2-coverage-map"
+  role="img"
+  aria-label="Schéma illustratif du réseau opérationnel FIXEO au Maroc"
+>
+  <div style="width:100%;max-width:460px;position:relative;">
+
+    <svg
+      viewBox="0 0 400 380"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style="width:100%;opacity:0.72;"
+      aria-hidden="true"
+    >
+      <!-- Contour territorial stylisé -->
+      <path
+        d="M92 34
+           C145 18 225 18 296 39
+           C326 72 334 112 323 153
+           C313 196 295 244 268 292
+           C247 327 221 350 194 360
+           C165 346 132 321 105 286
+           C76 246 57 202 50 157
+           C44 111 58 67 92 34Z"
+        stroke="rgba(116,138,255,0.50)"
+        stroke-width="2"
+        fill="rgba(72,100,255,0.035)"
+      />
+
+      <!-- Réseau -->
+      <g stroke="rgba(92,122,255,0.28)" stroke-width="1.5">
+        <line x1="168" y1="142" x2="154" y2="104"/>
+        <line x1="168" y1="142" x2="237" y2="72"/>
+        <line x1="168" y1="142" x2="255" y2="92"/>
+        <line x1="168" y1="142" x2="252" y2="124"/>
+        <line x1="168" y1="142" x2="244" y2="160"/>
+        <line x1="168" y1="142" x2="218" y2="198"/>
+        <line x1="168" y1="142" x2="160" y2="238"/>
+      </g>
+
+      <!-- Hub central -->
+      <circle
+        cx="168"
+        cy="142"
+        r="20"
+        fill="rgba(72,100,255,0.08)"
+        stroke="rgba(72,100,255,0.30)"
+      />
+      <circle
+        cx="168"
+        cy="142"
+        r="6"
+        fill="rgba(116,138,255,0.95)"
+      />
+    </svg>
+
+    <div class="fxe2-city-dot" style="top:38%;left:42%">
+      <div class="fxe2-city-name">Casablanca</div>
+    </div>
+
+    <div class="fxe2-city-dot" style="top:28%;left:38%">
+      <div class="fxe2-city-name">Rabat</div>
+    </div>
+
+    <div class="fxe2-city-dot" style="top:55%;left:40%">
+      <div class="fxe2-city-name">Marrakech</div>
+    </div>
+
+    <div class="fxe2-city-dot" style="top:18%;left:60%">
+      <div class="fxe2-city-name">Fès</div>
+    </div>
+
+    <div class="fxe2-city-dot" style="top:13%;left:44%">
+      <div class="fxe2-city-name">Tanger</div>
+    </div>
+
+    <div class="fxe2-city-dot" style="top:22%;left:65%">
+      <div class="fxe2-city-name">Meknès</div>
+    </div>
+
+    <div class="fxe2-city-dot" style="top:32%;left:65%">
+      <div class="fxe2-city-name">Kénitra</div>
+    </div>
+
+    <div class="fxe2-city-dot" style="top:42%;left:55%">
+      <div class="fxe2-city-name">Béni Mellal</div>
+    </div>
+
+  </div>
+</div>
 
         <!-- Stats -->
         <div class="fxe2-coverage-stats">
