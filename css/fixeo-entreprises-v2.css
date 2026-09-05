@@ -1386,6 +1386,357 @@
 }
 
 /* ══════════════════════════════════════════════════════════════
+   SECTION 10 — KNOWLEDGE CONSOLE
+══════════════════════════════════════════════════════════════ */
+
+#faq .fxe2-faq-list {
+  max-width: 820px;
+  margin: 0 auto;
+
+  gap: 8px;
+
+  counter-reset: fxe2-faq;
+}
+
+
+/* ── Knowledge row ────────────────────────────────────────── */
+
+#faq .fxe2-faq-item {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  counter-increment: fxe2-faq;
+
+  border:
+    1px solid rgba(255,255,255,0.075);
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.032),
+      rgba(72,100,255,0.018)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.035);
+
+  transition:
+    border-color 0.22s ease,
+    background 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+
+/* subtle light edge */
+
+#faq .fxe2-faq-item::after {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+
+  height: 1px;
+
+  opacity: 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(112,132,255,0.75),
+      rgba(255,79,154,0.55),
+      transparent
+    );
+
+  transition: opacity 0.22s ease;
+
+  pointer-events: none;
+}
+
+
+/* ── Question ─────────────────────────────────────────────── */
+
+#faq .fxe2-faq-q {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+
+  min-height: 62px;
+
+  padding: 13px 14px;
+
+  gap: 12px;
+
+  background: transparent;
+
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 720;
+  letter-spacing: -0.01em;
+
+  transition: background 0.18s ease;
+}
+
+
+/* automatic 01 → 07 */
+
+#faq .fxe2-faq-q::before {
+  content:
+    counter(fxe2-faq, decimal-leading-zero);
+
+  width: 30px;
+  height: 30px;
+
+  flex: 0 0 30px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  border:
+    1px solid rgba(108,128,255,0.25);
+
+  background:
+    rgba(72,100,255,0.08);
+
+  color:
+    rgba(172,185,255,0.94);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 0 12px rgba(72,100,255,0.06);
+
+  font-size: 7px;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+}
+
+
+/* Chevron becomes system control */
+
+#faq .fxe2-faq-chevron {
+  width: 28px;
+  height: 28px;
+
+  flex: 0 0 28px;
+
+  margin-left: auto;
+
+  border-radius: 9px;
+
+  border:
+    1px solid rgba(255,255,255,0.075);
+
+  background:
+    rgba(255,255,255,0.035);
+
+  color:
+    var(--fxe2-text-3);
+
+  font-size: 9px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04);
+
+  transition:
+    transform 0.22s ease,
+    background 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+
+/* ── Open state ───────────────────────────────────────────── */
+
+#faq .fxe2-faq-item.open {
+  border-color:
+    rgba(109,128,255,0.30);
+
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(72,100,255,0.09),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(72,100,255,0.055),
+      rgba(255,255,255,0.025)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.055),
+    0 12px 32px rgba(0,0,0,0.13);
+}
+
+#faq .fxe2-faq-item.open::after {
+  opacity: 1;
+}
+
+#faq .fxe2-faq-item.open .fxe2-faq-q::before {
+  border-color:
+    rgba(93,218,165,0.28);
+
+  background:
+    rgba(81,216,159,0.075);
+
+  color:
+    rgba(171,239,211,0.96);
+
+  box-shadow:
+    0 0 12px rgba(81,216,159,0.10);
+}
+
+#faq .fxe2-faq-item.open .fxe2-faq-chevron {
+  transform: rotate(180deg);
+
+  border-color:
+    rgba(109,128,255,0.24);
+
+  background:
+    rgba(72,100,255,0.10);
+
+  color:
+    rgba(183,194,255,0.96);
+
+  box-shadow:
+    0 0 12px rgba(72,100,255,0.08);
+}
+
+
+/* ── Answer ───────────────────────────────────────────────── */
+
+#faq .fxe2-faq-a {
+  position: relative;
+
+  padding:
+    0 54px 0 56px;
+
+  max-height: 0;
+
+  overflow: hidden;
+
+  color:
+    var(--fxe2-text-2);
+
+  font-size: 12px;
+  line-height: 1.62;
+
+  opacity: 0;
+
+  transition:
+    max-height 0.34s ease,
+    padding 0.34s ease,
+    opacity 0.22s ease;
+}
+
+#faq .fxe2-faq-item.open .fxe2-faq-a {
+  max-height: 360px;
+
+  padding:
+    0 54px 16px 56px;
+
+  opacity: 1;
+}
+
+
+/* small operational rail */
+
+#faq .fxe2-faq-item.open .fxe2-faq-a::before {
+  content: "";
+
+  position: absolute;
+  left: 28px;
+  top: 2px;
+  bottom: 18px;
+
+  width: 1px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(108,128,255,0.45),
+      rgba(139,92,255,0.08)
+    );
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE — KNOWLEDGE CONSOLE
+══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  #faq .fxe2-faq-list {
+    gap: 7px;
+  }
+
+  #faq .fxe2-faq-item {
+    border-radius: 14px;
+  }
+
+  #faq .fxe2-faq-q {
+    min-height: 58px;
+
+    padding: 11px 10px;
+
+    gap: 9px;
+
+    font-size: 11.5px;
+    line-height: 1.32;
+  }
+
+  #faq .fxe2-faq-q::before {
+    width: 27px;
+    height: 27px;
+
+    flex-basis: 27px;
+
+    border-radius: 8px;
+
+    font-size: 6.5px;
+  }
+
+  #faq .fxe2-faq-chevron {
+    width: 25px;
+    height: 25px;
+
+    flex-basis: 25px;
+
+    border-radius: 8px;
+  }
+
+  #faq .fxe2-faq-a {
+    padding:
+      0 38px 0 46px;
+
+    font-size: 10.5px;
+    line-height: 1.55;
+  }
+
+  #faq .fxe2-faq-item.open .fxe2-faq-a {
+    padding:
+      0 38px 14px 46px;
+  }
+
+  #faq .fxe2-faq-item.open .fxe2-faq-a::before {
+    left: 23px;
+    bottom: 15px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
    LEAD FLOW — SHARED ENGINE
 ══════════════════════════════════════════════════════════════ */
 
