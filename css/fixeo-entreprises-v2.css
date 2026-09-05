@@ -3591,3 +3591,63 @@
     font-size: 7.5px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   ENTERPRISE — SECTOR MATRIX MOBILE COMPACTION
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+
+  #secteurs .fxe2-sector-lane {
+    grid-template-columns: 40px minmax(0, 1fr);
+    grid-template-areas:
+      "icon content"
+      ". signal";
+
+    align-items: start;
+
+    gap: 6px 11px;
+
+    padding: 12px 13px;
+  }
+
+  #secteurs .fxe2-sector-lane .fxe2-sector-icon {
+    grid-area: icon;
+  }
+
+  #secteurs .fxe2-sector-content {
+    grid-area: content;
+  }
+
+  #secteurs .fxe2-sector-signal {
+    grid-area: signal;
+
+    justify-self: start;
+
+    margin-top: 1px;
+
+    padding: 4px 7px;
+
+    border-radius: 999px;
+
+    font-size: 7px;
+    line-height: 1;
+
+    white-space: nowrap;
+  }
+
+  #secteurs .fxe2-sector-meta {
+    font-size: 7.5px;
+    line-height: 1.15;
+  }
+
+  #secteurs .fxe2-sector-lane .fxe2-sector-name {
+    font-size: 13.5px;
+    line-height: 1.18;
+  }
+
+  #secteurs .fxe2-sector-lane .fxe2-sector-desc {
+    font-size: 11.2px;
+    line-height: 1.38;
+  }
+}
