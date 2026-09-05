@@ -1480,6 +1480,9 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
   }
+   .fxe2-hero-inner {
+  gap: 28px;
+}
   .fxe2-steps-grid::before { display: none; }
   .fxlf-row-2 { grid-template-columns: 1fr; }
   .fxlf-needs-grid { grid-template-columns: 1fr; }
