@@ -1632,3 +1632,221 @@
     line-height: 1.52;
   }
 }
+/* ── Enterprise V2 — FIXEO system signature bento ───────────── */
+
+.fxe2-system-bento {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.fxe2-system-card {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  border: 1px solid rgba(255,255,255,0.085);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.055) 0%,
+      rgba(255,255,255,0.020) 52%,
+      rgba(72,100,255,0.045) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.055),
+    0 20px 52px rgba(0,0,0,0.20);
+}
+
+.fxe2-system-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 10% 0%,
+      rgba(88,108,255,0.14),
+      transparent 36%
+    );
+}
+
+.fxe2-system-card--rafi {
+  grid-column: span 7;
+  min-height: 310px;
+  padding: 34px;
+
+  background:
+    radial-gradient(
+      circle at 12% 5%,
+      rgba(113,86,255,0.24),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(50,48,105,0.72),
+      rgba(19,22,42,0.94)
+    );
+
+  border-color: rgba(121,105,255,0.34);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.09),
+    0 26px 70px rgba(50,40,150,0.20);
+}
+
+.fxe2-system-card--matching {
+  grid-column: span 5;
+}
+
+.fxe2-system-card--tracking,
+.fxe2-system-card--memory,
+.fxe2-system-card--command {
+  grid-column: span 4;
+}
+
+.fxe2-system-content {
+  position: relative;
+  z-index: 1;
+}
+
+.fxe2-system-kicker {
+  margin-bottom: 10px;
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: rgba(160,175,255,0.76);
+}
+
+.fxe2-system-card--rafi .fxe2-system-kicker {
+  color: rgba(185,172,255,0.94);
+}
+
+.fxe2-system-icon {
+  position: relative;
+  z-index: 1;
+}
+
+.fxe2-system-card--rafi .fxe2-system-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(92,107,255,0.30),
+      rgba(194,92,255,0.18)
+    );
+
+  border: 1px solid rgba(171,146,255,0.38);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 0 34px rgba(102,83,255,0.18);
+
+  font-size: 24px;
+}
+
+
+/* ── Mobile: flagship + compact product rows ────────────────── */
+
+@media (max-width: 768px) {
+
+  .fxe2-system-bento {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .fxe2-system-card,
+  .fxe2-system-card--rafi,
+  .fxe2-system-card--matching,
+  .fxe2-system-card--tracking,
+  .fxe2-system-card--memory,
+  .fxe2-system-card--command {
+    grid-column: auto;
+    min-height: 0;
+  }
+
+  .fxe2-system-card--rafi {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 16px;
+
+    padding: 22px;
+    border-radius: 22px;
+  }
+
+  .fxe2-system-card--rafi .fxe2-system-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0;
+    border-radius: 16px;
+    font-size: 21px;
+  }
+
+  .fxe2-system-card:not(.fxe2-system-card--rafi) {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 13px;
+    align-items: start;
+
+    padding: 17px 18px;
+    border-radius: 18px;
+  }
+
+  .fxe2-system-card:not(.fxe2-system-card--rafi) .fxe2-system-icon {
+    width: 44px;
+    height: 44px;
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background:
+      linear-gradient(
+        145deg,
+        rgba(72,100,255,0.17),
+        rgba(255,255,255,0.035)
+      );
+
+    border: 1px solid rgba(110,130,255,0.24);
+
+    font-size: 18px;
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.08),
+      0 8px 22px rgba(72,100,255,0.10);
+  }
+
+  .fxe2-system-kicker {
+    margin: 0 0 5px;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+  }
+
+  .fxe2-system-card .fxe2-centralise-title {
+    margin: 0 0 5px;
+    font-size: 15px;
+    line-height: 1.28;
+  }
+
+  .fxe2-system-card .fxe2-centralise-desc {
+    margin: 0 0 9px;
+    font-size: 12.5px;
+    line-height: 1.48;
+  }
+
+  .fxe2-system-card .fxe2-centralise-tag {
+    margin-top: 0;
+    font-size: 9px;
+  }
+}
