@@ -2165,3 +2165,155 @@
     font-size: 8px;
   }
 }
+/* ══════════════════════════════════════════════════════════════
+   ENTERPRISE V2 — MOBILE OPERATIONAL TIMELINE
+   SECTION 4 — PARCOURS D'UNE INTERVENTION
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  #fonctionnement .fxe2-steps-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+
+    position: relative;
+    padding: 2px 0;
+  }
+
+  /* Desktop horizontal connector → mobile vertical spine */
+  #fonctionnement .fxe2-steps-grid::before {
+    top: 22px;
+    bottom: 22px;
+    left: 22px;
+    right: auto;
+
+    width: 1px;
+    height: auto;
+
+    background: linear-gradient(
+      180deg,
+      rgba(72,100,255,0.18) 0%,
+      rgba(91,116,255,0.72) 34%,
+      rgba(255,79,154,0.52) 62%,
+      rgba(139,92,255,0.14) 100%
+    );
+
+    box-shadow: 0 0 12px rgba(72,100,255,0.15);
+  }
+
+  #fonctionnement .fxe2-step {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-areas:
+      "icon title"
+      "icon desc";
+
+    column-gap: 15px;
+    row-gap: 5px;
+
+    align-items: start;
+    text-align: left;
+
+    padding: 15px 0;
+
+    position: relative;
+    z-index: 1;
+  }
+
+  #fonctionnement .fxe2-step-num {
+    grid-area: icon;
+
+    width: 44px;
+    height: 44px;
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background:
+      linear-gradient(
+        145deg,
+        rgba(72,100,255,0.16),
+        rgba(255,255,255,0.035)
+      );
+
+    border: 1px solid rgba(112,132,255,0.28);
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.09),
+      0 8px 22px rgba(72,100,255,0.10);
+
+    font-size: 18px;
+  }
+
+  /* RAFI / orchestration = moment signature */
+  #fonctionnement .fxe2-step:nth-child(2) {
+    margin: 4px -10px;
+    padding: 17px 10px;
+
+    border: 1px solid rgba(113,116,255,0.25);
+    border-radius: 18px;
+
+    background:
+      radial-gradient(
+        circle at 5% 15%,
+        rgba(72,100,255,0.14),
+        transparent 38%
+      ),
+      linear-gradient(
+        145deg,
+        rgba(72,100,255,0.065),
+        rgba(139,92,255,0.025)
+      );
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      0 14px 34px rgba(0,0,0,0.16);
+  }
+
+  #fonctionnement .fxe2-step-num.highlight {
+    width: 44px;
+    height: 44px;
+
+    background: linear-gradient(
+      135deg,
+      #ff8a3d 0%,
+      #ff4f9a 50%,
+      #8b5cff 100%
+    );
+
+    border-color: transparent;
+
+    box-shadow:
+      0 0 0 4px rgba(139,92,255,0.08),
+      0 0 24px rgba(255,79,154,0.22);
+  }
+
+  #fonctionnement .fxe2-step-title {
+    grid-area: title;
+
+    margin: 1px 0 0;
+
+    font-size: 15px;
+    line-height: 1.3;
+    font-weight: 750;
+    letter-spacing: -0.012em;
+  }
+
+  #fonctionnement .fxe2-step-desc {
+    grid-area: desc;
+
+    margin: 0;
+
+    font-size: 12.5px;
+    line-height: 1.5;
+
+    color: var(--fxe2-text-3);
+  }
+}
+
+
