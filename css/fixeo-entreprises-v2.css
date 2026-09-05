@@ -1447,7 +1447,11 @@
 /* — 1024px tablet — */
 @media (max-width: 1024px) {
   .fxe2-hero-inner { grid-template-columns: 1fr; gap: 52px; }
-  .fxe2-hero-visual { order: -1; max-width: 580px; margin: 0 auto; }
+  .fxe2-hero-visual {
+  order: 0;
+  max-width: 580px;
+  margin: 0 auto;
+}
   .fxe2-hero-lead { max-width: 100%; }
   .fxe2-hero-float-badge { display: none; } /* avoid overflow on tablet */
   .fxe2-problems-grid { grid-template-columns: repeat(2, 1fr); }
