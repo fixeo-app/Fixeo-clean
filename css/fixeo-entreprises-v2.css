@@ -1850,3 +1850,318 @@
     font-size: 9px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FIXEO ENTERPRISE — SYSTEM SIGNATURE BENTO
+   RAFI → MATCHING → EXECUTION → MEMORY → PILOTAGE
+   ══════════════════════════════════════════════════════════════ */
+
+#centralisation .fxe2-system-bento {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    "rafi rafi"
+    "matching tracking"
+    "memory command";
+  gap: 14px;
+}
+
+#centralisation .fxe2-system-card {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 15px;
+  align-items: start;
+
+  padding: 22px;
+
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.055) 0%,
+      rgba(255,255,255,0.018) 48%,
+      rgba(72,100,255,0.045) 100%
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.055),
+    0 18px 44px rgba(0,0,0,0.18);
+}
+
+#centralisation .fxe2-system-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(91,116,255,0.13),
+      transparent 42%
+    );
+
+  opacity: 0.85;
+}
+
+#centralisation .fxe2-system-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* ── Placement Bento ───────────────────────────────────────── */
+
+#centralisation .fxe2-system-card--rafi {
+  grid-area: rafi;
+}
+
+#centralisation .fxe2-system-card--matching {
+  grid-area: matching;
+}
+
+#centralisation .fxe2-system-card--tracking {
+  grid-area: tracking;
+}
+
+#centralisation .fxe2-system-card--memory {
+  grid-area: memory;
+}
+
+#centralisation .fxe2-system-card--command {
+  grid-area: command;
+}
+
+
+/* ── RAFI — carte signature ────────────────────────────────── */
+
+#centralisation .fxe2-system-card--rafi {
+  grid-template-columns: 66px minmax(0, 1fr);
+  padding: 28px;
+
+  border-color: rgba(112,124,255,0.32);
+
+  background:
+    radial-gradient(
+      circle at 8% 16%,
+      rgba(91,116,255,0.20),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 92% 12%,
+      rgba(255,79,154,0.10),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(72,100,255,0.12),
+      rgba(255,255,255,0.025) 52%,
+      rgba(139,92,255,0.08)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.09),
+    0 22px 60px rgba(42,52,150,0.18);
+}
+
+#centralisation .fxe2-system-card--rafi::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 9%;
+  right: 9%;
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(95,155,255,0.80),
+    rgba(255,79,154,0.75),
+    transparent
+  );
+
+  opacity: 0.9;
+}
+
+
+/* ── Icônes ────────────────────────────────────────────────── */
+
+#centralisation .fxe2-system-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(96,119,255,0.20),
+      rgba(255,255,255,0.035)
+    );
+
+  border: 1px solid rgba(118,137,255,0.28);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.09),
+    0 10px 26px rgba(72,100,255,0.12);
+
+  font-size: 21px;
+}
+
+#centralisation .fxe2-system-card--rafi .fxe2-system-icon {
+  width: 66px;
+  height: 66px;
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(72,100,255,0.30),
+      rgba(255,79,154,0.13),
+      rgba(139,92,255,0.22)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.14),
+    0 0 34px rgba(91,116,255,0.18);
+}
+
+
+/* ── Typographie produit ───────────────────────────────────── */
+
+#centralisation .fxe2-system-content {
+  min-width: 0;
+}
+
+#centralisation .fxe2-system-kicker {
+  margin: 1px 0 7px;
+
+  color: rgba(145,160,255,0.88);
+
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+#centralisation .fxe2-system-card .fxe2-centralise-title {
+  margin: 0 0 7px;
+
+  font-size: 17px;
+  line-height: 1.28;
+  letter-spacing: -0.015em;
+}
+
+#centralisation .fxe2-system-card .fxe2-centralise-desc {
+  margin: 0 0 12px;
+
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+#centralisation .fxe2-system-card--rafi .fxe2-centralise-title {
+  max-width: 620px;
+  font-size: 22px;
+}
+
+#centralisation .fxe2-system-card--rafi .fxe2-centralise-desc {
+  max-width: 700px;
+}
+
+
+/* ── Micro-tags ────────────────────────────────────────────── */
+
+#centralisation .fxe2-system-card .fxe2-centralise-tag {
+  display: inline-flex;
+  width: auto;
+  margin-top: 2px;
+
+  padding: 5px 9px;
+  border-radius: 7px;
+
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE — Bento devient cockpit compact
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  #centralisation .fxe2-system-bento {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "rafi"
+      "matching"
+      "tracking"
+      "memory"
+      "command";
+    gap: 12px;
+  }
+
+  #centralisation .fxe2-system-card,
+  #centralisation .fxe2-system-card--rafi {
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 13px;
+
+    padding: 17px;
+    border-radius: 18px;
+  }
+
+  #centralisation .fxe2-system-card--rafi {
+    padding: 19px 17px;
+  }
+
+  #centralisation .fxe2-system-icon,
+  #centralisation .fxe2-system-card--rafi .fxe2-system-icon {
+    width: 46px;
+    height: 46px;
+
+    border-radius: 14px;
+    font-size: 19px;
+  }
+
+  #centralisation .fxe2-system-kicker {
+    margin-bottom: 5px;
+    font-size: 9px;
+  }
+
+  #centralisation .fxe2-system-card .fxe2-centralise-title,
+  #centralisation .fxe2-system-card--rafi .fxe2-centralise-title {
+    margin-bottom: 5px;
+
+    font-size: 15px;
+    line-height: 1.3;
+  }
+
+  #centralisation .fxe2-system-card .fxe2-centralise-desc,
+  #centralisation .fxe2-system-card--rafi .fxe2-centralise-desc {
+    margin-bottom: 9px;
+
+    font-size: 12.5px;
+    line-height: 1.48;
+  }
+
+  #centralisation .fxe2-system-card .fxe2-centralise-tag {
+    padding: 5px 8px;
+    font-size: 8px;
+  }
+}
