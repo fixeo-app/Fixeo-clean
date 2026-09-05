@@ -2976,12 +2976,24 @@
 
     padding: 10px 12px;
 
-    grid-template-columns: auto minmax(0,1fr);
+   grid-template-columns: auto minmax(0,1fr) auto;
   }
 
   #hero .fxe2-hd-status {
-    display: none;
-  }
+  display: inline-flex;
+
+  padding: 4px 6px;
+  gap: 4px;
+
+  font-size: 6px;
+  letter-spacing: 0.045em;
+}
+
+#hero .fxe2-hd-status-dot {
+  width: 5px;
+  height: 5px;
+  flex-basis: 5px;
+}
 
   #hero .fxe2-hero-cockpit .fxe2-hd-title {
     font-size: 10px;
