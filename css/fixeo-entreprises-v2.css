@@ -2450,3 +2450,610 @@
   }
 }
 
+/* ══════════════════════════════════════════════════════════════
+   FIXEO ENTERPRISE — HERO OPERATIONS COCKPIT
+   RAFI → MATCHING → PILOTAGE → INTERVENTIONS
+   ══════════════════════════════════════════════════════════════ */
+
+#hero .fxe2-hero-cockpit {
+  position: relative;
+  isolation: isolate;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(117,132,255,0.30);
+  border-radius: 24px;
+
+  background:
+    radial-gradient(
+      circle at 12% 0%,
+      rgba(72,100,255,0.20),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 92% 12%,
+      rgba(255,79,154,0.10),
+      transparent 28%
+    ),
+    linear-gradient(
+      155deg,
+      rgba(25,31,62,0.98) 0%,
+      rgba(15,19,42,0.98) 48%,
+      rgba(17,20,45,0.98) 100%
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.09),
+    inset 0 0 42px rgba(72,100,255,0.035),
+    0 24px 70px rgba(0,0,0,0.34),
+    0 0 54px rgba(72,100,255,0.10);
+}
+
+
+/* Fine technological grid */
+
+#hero .fxe2-hero-cockpit::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(
+      rgba(114,130,255,0.035) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(114,130,255,0.035) 1px,
+      transparent 1px
+    );
+
+  background-size: 26px 26px;
+
+  mask-image:
+    linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.75),
+      rgba(0,0,0,0.12)
+    );
+
+  opacity: 0.60;
+}
+
+
+/* Signature top light */
+
+#hero .fxe2-hero-cockpit::after {
+  content: "";
+  position: absolute;
+
+  top: 0;
+  left: 8%;
+  right: 8%;
+
+  height: 1px;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #4864ff,
+      #ff4f9a,
+      #8b5cff,
+      transparent
+    );
+
+  box-shadow:
+    0 0 18px rgba(108,114,255,0.38);
+
+  opacity: 0.95;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   TOPBAR
+   ───────────────────────────────────────────────────────────── */
+
+#hero .fxe2-hero-cockpit .fxe2-hd-topbar {
+  min-height: 46px;
+
+  padding: 11px 15px;
+
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
+  gap: 10px;
+  align-items: center;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,0.040),
+      rgba(72,100,255,0.025)
+    );
+
+  border-bottom:
+    1px solid rgba(255,255,255,0.075);
+}
+
+#hero .fxe2-hero-cockpit .fxe2-hd-title {
+  min-width: 0;
+
+  margin: 0;
+
+  color: rgba(255,255,255,0.86);
+
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+}
+
+#hero .fxe2-hd-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  white-space: nowrap;
+
+  padding: 5px 8px;
+
+  border: 1px solid rgba(92,226,168,0.18);
+  border-radius: 999px;
+
+  background: rgba(92,226,168,0.055);
+
+  color: rgba(190,255,226,0.82);
+
+  font-size: 8px;
+  line-height: 1;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+#hero .fxe2-hd-status-dot {
+  width: 6px;
+  height: 6px;
+
+  flex: 0 0 6px;
+
+  border-radius: 50%;
+
+  background: var(--fxe2-green);
+
+  box-shadow:
+    0 0 0 3px rgba(92,226,168,0.08),
+    0 0 9px rgba(92,226,168,0.52);
+
+  animation: fxe2-cockpit-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes fxe2-cockpit-pulse {
+  0%, 100% {
+    opacity: 0.65;
+    transform: scale(0.92);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   BODY / PRODUCT LABEL
+   ───────────────────────────────────────────────────────────── */
+
+#hero .fxe2-hero-cockpit .fxe2-hd-body {
+  padding: 17px;
+}
+
+#hero .fxe2-hd-product-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin: 0 0 11px;
+
+  color: rgba(148,162,255,0.80);
+
+  font-size: 8px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+#hero .fxe2-hd-product-label::before {
+  content: "";
+
+  width: 18px;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #4864ff,
+      #8b5cff
+    );
+
+  box-shadow:
+    0 0 8px rgba(72,100,255,0.60);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   SYSTEM MODULES
+   ───────────────────────────────────────────────────────────── */
+
+#hero .fxe2-hero-cockpit .fxe2-hd-kpi-row {
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+#hero .fxe2-hero-cockpit .fxe2-hd-kpi {
+  position: relative;
+  overflow: hidden;
+
+  min-width: 0;
+
+  padding: 11px 10px;
+
+  border:
+    1px solid rgba(255,255,255,0.085);
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.055),
+      rgba(72,100,255,0.025)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.055),
+    0 8px 24px rgba(0,0,0,0.12);
+}
+
+#hero .fxe2-hero-cockpit .fxe2-hd-kpi::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(89,111,255,0.11),
+      transparent 50%
+    );
+}
+
+#hero .fxe2-hd-kpi--rafi {
+  border-color: rgba(121,132,255,0.28);
+}
+
+#hero .fxe2-hd-kpi--matching {
+  border-color: rgba(255,79,154,0.18);
+}
+
+#hero .fxe2-hd-kpi--pilotage {
+  border-color: rgba(92,226,168,0.16);
+}
+
+#hero .fxe2-hero-cockpit .fxe2-hd-kpi-label {
+  position: relative;
+  z-index: 1;
+
+  margin-bottom: 5px;
+
+  font-size: 8px;
+  letter-spacing: 0.11em;
+}
+
+#hero .fxe2-hero-cockpit .fxe2-hd-kpi-value {
+  position: relative;
+  z-index: 1;
+
+  margin-bottom: 5px;
+
+  font-size: 13px;
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+}
+
+#hero .fxe2-hd-kpi-meta {
+  position: relative;
+  z-index: 1;
+
+  color: rgba(255,255,255,0.43);
+
+  font-size: 7.5px;
+  line-height: 1.3;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   OPERATIONAL FLOW
+   ───────────────────────────────────────────────────────────── */
+
+#hero .fxe2-hd-flow {
+  display: flex;
+  align-items: flex-start;
+
+  width: 100%;
+
+  margin: 2px 0 16px;
+  padding: 12px 9px 9px;
+
+  border:
+    1px solid rgba(104,123,255,0.12);
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(72,100,255,0.035),
+      rgba(139,92,255,0.025)
+    );
+}
+
+#hero .fxe2-hd-flow-step {
+  flex: 0 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+
+  min-width: 38px;
+}
+
+#hero .fxe2-hd-flow-node {
+  width: 25px;
+  height: 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  border:
+    1px solid rgba(118,133,255,0.22);
+
+  background:
+    rgba(72,100,255,0.07);
+
+  color: rgba(255,255,255,0.70);
+
+  font-size: 10px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+#hero .fxe2-hd-flow-step.is-done
+.fxe2-hd-flow-node {
+  color: var(--fxe2-green);
+
+  border-color: rgba(92,226,168,0.25);
+
+  background: rgba(92,226,168,0.08);
+}
+
+#hero .fxe2-hd-flow-step.is-active
+.fxe2-hd-flow-node {
+  color: #fff;
+
+  border-color: rgba(255,255,255,0.18);
+
+  background:
+    linear-gradient(
+      135deg,
+      #ff8a3d 0%,
+      #ff4f9a 50%,
+      #8b5cff 100%
+    );
+
+  box-shadow:
+    0 0 0 3px rgba(139,92,255,0.07),
+    0 0 17px rgba(255,79,154,0.20);
+}
+
+#hero .fxe2-hd-flow-label {
+  color: rgba(255,255,255,0.54);
+
+  font-size: 7px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+#hero .fxe2-hd-flow-step.is-active
+.fxe2-hd-flow-label {
+  color: rgba(255,255,255,0.88);
+}
+
+#hero .fxe2-hd-flow-line {
+  flex: 1 1 auto;
+
+  min-width: 8px;
+  height: 1px;
+
+  margin: 12px 3px 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(72,100,255,0.22),
+      rgba(139,92,255,0.40)
+    );
+
+  box-shadow:
+    0 0 7px rgba(72,100,255,0.15);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ACTIVITY STREAM
+   ───────────────────────────────────────────────────────────── */
+
+#hero .fxe2-hd-activity {
+  gap: 6px;
+}
+
+#hero .fxe2-hd-activity-head {
+  margin: 0 0 2px;
+
+  color: rgba(255,255,255,0.45);
+
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+#hero .fxe2-hero-cockpit .fxe2-hd-activity-row {
+  display: grid;
+  grid-template-columns: 7px minmax(0,1fr) auto;
+
+  gap: 8px;
+  align-items: center;
+
+  padding: 7px 9px;
+
+  border:
+    1px solid rgba(255,255,255,0.075);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,0.035),
+      rgba(72,100,255,0.018)
+    );
+}
+
+#hero .fxe2-hero-cockpit .fxe2-hd-activity-row span {
+  min-width: 0;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  color: rgba(255,255,255,0.72);
+}
+
+#hero .fxe2-hero-cockpit .fxe2-hd-activity-row strong {
+  color: rgba(255,255,255,0.46);
+
+  font-size: 8px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE — HERO COCKPIT
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  #hero .fxe2-hero-cockpit {
+    border-radius: 20px;
+
+    animation:
+      fxe2-hero-float 6s ease-in-out infinite;
+  }
+
+  #hero .fxe2-hero-cockpit .fxe2-hd-topbar {
+    min-height: 42px;
+
+    padding: 10px 12px;
+
+    grid-template-columns: auto minmax(0,1fr);
+  }
+
+  #hero .fxe2-hd-status {
+    display: none;
+  }
+
+  #hero .fxe2-hero-cockpit .fxe2-hd-title {
+    font-size: 10px;
+  }
+
+  #hero .fxe2-hero-cockpit .fxe2-hd-body {
+    padding: 13px;
+  }
+
+  #hero .fxe2-hd-product-label {
+    margin-bottom: 9px;
+    font-size: 7px;
+  }
+
+  #hero .fxe2-hero-cockpit .fxe2-hd-kpi-row {
+    gap: 6px;
+    margin-bottom: 11px;
+  }
+
+  #hero .fxe2-hero-cockpit .fxe2-hd-kpi {
+    padding: 9px 8px;
+    border-radius: 10px;
+  }
+
+  #hero .fxe2-hero-cockpit .fxe2-hd-kpi-label {
+    font-size: 7px;
+  }
+
+  #hero .fxe2-hero-cockpit .fxe2-hd-kpi-value {
+    font-size: 11px;
+  }
+
+  #hero .fxe2-hd-kpi-meta {
+    font-size: 6.5px;
+  }
+
+  #hero .fxe2-hd-flow {
+    margin-bottom: 11px;
+    padding: 9px 6px 7px;
+  }
+
+  #hero .fxe2-hd-flow-step {
+    min-width: 31px;
+  }
+
+  #hero .fxe2-hd-flow-node {
+    width: 22px;
+    height: 22px;
+
+    border-radius: 7px;
+
+    font-size: 9px;
+  }
+
+  #hero .fxe2-hd-flow-label {
+    font-size: 6px;
+  }
+
+  #hero .fxe2-hd-flow-line {
+    min-width: 4px;
+    margin: 10px 2px 0;
+  }
+
+  #hero .fxe2-hero-cockpit
+  .fxe2-hd-activity-row {
+    padding: 6px 7px;
+
+    font-size: 9px;
+  }
+
+  #hero .fxe2-hero-cockpit
+  .fxe2-hd-activity-row strong {
+    font-size: 7px;
+  }
+}
