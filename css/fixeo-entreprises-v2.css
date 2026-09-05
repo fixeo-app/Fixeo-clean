@@ -1524,3 +1524,43 @@
 .fxe2-page::-webkit-scrollbar { width: 6px; }
 .fxe2-page::-webkit-scrollbar-track { background: var(--fxe2-bg); }
 .fxe2-page::-webkit-scrollbar-thumb { background: rgba(72,100,255,0.28); border-radius: 3px; }
+
+/* ── Enterprise V2 — premium card depth ─────────────────────── */
+.fxe2-problem-card,
+.fxe2-centralise-item,
+.fxe2-sector-card,
+.fxe2-why-card,
+.fxe2-conversion-card {
+  position: relative;
+  isolation: isolate;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.055) 0%,
+      rgba(255,255,255,0.022) 48%,
+      rgba(72,100,255,0.035) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.045),
+    0 18px 48px rgba(0,0,0,0.18);
+}
+
+.fxe2-problem-card::after,
+.fxe2-centralise-item::after,
+.fxe2-sector-card::after,
+.fxe2-why-card::after,
+.fxe2-conversion-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 12% 0%,
+      rgba(72,100,255,0.10),
+      transparent 38%
+    );
+  opacity: 0.75;
+}
