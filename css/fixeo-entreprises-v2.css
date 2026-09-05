@@ -2316,4 +2316,78 @@
   }
 }
 
+/* ══════════════════════════════════════════════════════════════
+   ENTERPRISE V2 — COMPACT NETWORK METRICS
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  #couverture .fxe2-coverage-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+
+    margin-top: 14px;
+  }
+
+  #couverture .fxe2-coverage-stat {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    padding: 13px 10px;
+    border-radius: 16px;
+
+    background:
+      linear-gradient(
+        145deg,
+        rgba(255,255,255,0.055),
+        rgba(72,100,255,0.035)
+      );
+
+    border: 1px solid rgba(255,255,255,0.09);
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.055),
+      0 10px 26px rgba(0,0,0,0.14);
+  }
+
+  #couverture .fxe2-coverage-stat-icon {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 0 8px;
+
+    border-radius: 10px;
+
+    background: rgba(72,100,255,0.11);
+    border: 1px solid rgba(108,128,255,0.20);
+
+    font-size: 15px;
+  }
+
+  #couverture .fxe2-coverage-stat-value {
+    margin: 0 0 3px;
+
+    font-size: 18px;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+
+  #couverture .fxe2-coverage-stat-label {
+    font-size: 9.5px;
+    line-height: 1.3;
+
+    color: var(--fxe2-text-3);
+  }
+}
+
 
