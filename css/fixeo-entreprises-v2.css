@@ -811,6 +811,519 @@
 .fxe2-conversion-cta { margin-top: auto; }
 
 /* ══════════════════════════════════════════════════════════════
+   SECTION 9 — ENTERPRISE SCOPING CONSOLE
+══════════════════════════════════════════════════════════════ */
+
+#conversion .fxe2-conversion-console {
+  display: block;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+#conversion .fxe2-conversion-primary {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  padding: 28px;
+
+  gap: 0;
+
+  border-radius: 22px;
+
+  border:
+    1px solid rgba(116,132,255,0.34);
+
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(255,79,154,0.12),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 0% 100%,
+      rgba(72,100,255,0.14),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(72,100,255,0.105),
+      rgba(255,255,255,0.024) 48%,
+      rgba(139,92,255,0.055)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.075),
+    0 24px 70px rgba(0,0,0,0.28),
+    0 0 40px rgba(72,100,255,0.08);
+}
+
+
+/* Premium top light */
+
+#conversion .fxe2-conversion-primary::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 9%;
+  right: 9%;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #7f91ff 22%,
+      #ff6ca8 58%,
+      #9d7aff 78%,
+      transparent
+    );
+
+  box-shadow:
+    0 0 18px rgba(130,106,255,0.34);
+
+  pointer-events: none;
+}
+
+
+/* ── Console header ───────────────────────────────────────── */
+
+#conversion .fxe2-conversion-console-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: start;
+
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+
+  border-bottom:
+    1px solid rgba(255,255,255,0.07);
+}
+
+#conversion .fxe2-conversion-card-eyebrow {
+  margin: 0 0 7px;
+
+  color: rgba(145,159,255,0.88);
+
+  font-size: 9px;
+  line-height: 1.2;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+}
+
+#conversion .fxe2-conversion-card-title {
+  max-width: 570px;
+
+  margin: 0;
+
+  font-size: 24px;
+  line-height: 1.15;
+  font-weight: 820;
+  letter-spacing: -0.025em;
+}
+
+
+/* Live status */
+
+#conversion .fxe2-conversion-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 7px 10px;
+
+  border:
+    1px solid rgba(79,220,165,0.22);
+
+  border-radius: 999px;
+
+  background:
+    rgba(79,220,165,0.055);
+
+  color:
+    rgba(177,239,214,0.92);
+
+  font-size: 8px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.055em;
+
+  white-space: nowrap;
+}
+
+#conversion .fxe2-conversion-status-dot {
+  width: 6px;
+  height: 6px;
+
+  flex: 0 0 6px;
+
+  border-radius: 50%;
+
+  background: #51d89f;
+
+  box-shadow:
+    0 0 0 3px rgba(81,216,159,0.08),
+    0 0 9px rgba(81,216,159,0.65);
+}
+
+
+/* Intro */
+
+#conversion .fxe2-conversion-primary .fxe2-conversion-card-desc {
+  max-width: 690px;
+
+  margin: 0 0 22px;
+
+  color: var(--fxe2-text-2);
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+
+/* ── Guided flow ──────────────────────────────────────────── */
+
+#conversion .fxe2-conversion-flow {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  border:
+    1px solid rgba(255,255,255,0.075);
+
+  border-radius: 16px;
+
+  overflow: hidden;
+
+  background:
+    rgba(8,13,29,0.38);
+}
+
+#conversion .fxe2-conversion-flow-step {
+  position: relative;
+
+  min-width: 0;
+
+  padding: 17px 15px 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.026),
+      rgba(255,255,255,0.006)
+    );
+}
+
+#conversion .fxe2-conversion-flow-step + .fxe2-conversion-flow-step {
+  border-left:
+    1px solid rgba(255,255,255,0.065);
+}
+
+
+/* subtle system line */
+
+#conversion .fxe2-conversion-flow-step::after {
+  content: "";
+
+  position: absolute;
+  top: 29px;
+  left: 42px;
+  right: -8px;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(103,122,255,0.52),
+      rgba(153,105,255,0.18)
+    );
+
+  pointer-events: none;
+}
+
+#conversion .fxe2-conversion-flow-step:last-child::after {
+  display: none;
+}
+
+
+/* Step number */
+
+#conversion .fxe2-conversion-flow-index {
+  position: relative;
+  z-index: 1;
+
+  width: 25px;
+  height: 25px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 13px;
+
+  border-radius: 8px;
+
+  border:
+    1px solid rgba(117,135,255,0.28);
+
+  background:
+    rgba(72,100,255,0.12);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 0 13px rgba(72,100,255,0.10);
+
+  color:
+    rgba(185,195,255,0.96);
+
+  font-size: 7px;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+}
+
+#conversion .fxe2-conversion-flow-step strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: var(--fxe2-text-1);
+
+  font-size: 12px;
+  line-height: 1.25;
+  font-weight: 780;
+}
+
+#conversion .fxe2-conversion-flow-step div > span {
+  display: block;
+
+  color: var(--fxe2-text-3);
+
+  font-size: 9.5px;
+  line-height: 1.42;
+}
+
+
+/* Different signal for final step */
+
+#conversion .fxe2-conversion-flow-step:last-child
+.fxe2-conversion-flow-index {
+  border-color:
+    rgba(81,216,159,0.28);
+
+  background:
+    rgba(81,216,159,0.09);
+
+  color:
+    rgba(167,240,210,0.96);
+
+  box-shadow:
+    0 0 13px rgba(81,216,159,0.10);
+}
+
+
+/* ── Footer / action zone ─────────────────────────────────── */
+
+#conversion .fxe2-conversion-footer {
+  display: grid;
+  grid-template-columns: auto minmax(260px, 360px);
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-top: 22px;
+}
+
+#conversion .fxe2-conversion-footer-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  color:
+    var(--fxe2-text-3);
+
+  font-size: 10px;
+  font-weight: 650;
+}
+
+#conversion .fxe2-conversion-footer-note span {
+  width: 18px;
+  height: 18px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  border:
+    1px solid rgba(81,216,159,0.22);
+
+  background:
+    rgba(81,216,159,0.07);
+
+  color: #51d89f;
+
+  font-size: 10px;
+}
+
+#conversion .fxe2-conversion-footer .fxe2-btn {
+  width: 100%;
+
+  min-height: 52px;
+
+  box-shadow:
+    0 10px 30px rgba(72,100,255,0.18),
+    0 0 24px rgba(139,92,255,0.12);
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE — SCOPING CONSOLE
+══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  #conversion .fxe2-conversion-primary {
+    padding: 16px 14px;
+
+    border-radius: 18px;
+  }
+
+  #conversion .fxe2-conversion-console-head {
+    grid-template-columns: 1fr;
+
+    gap: 11px;
+
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+  }
+
+  #conversion .fxe2-conversion-card-eyebrow {
+    margin-bottom: 5px;
+
+    font-size: 7.5px;
+  }
+
+  #conversion .fxe2-conversion-card-title {
+    font-size: 19px;
+    line-height: 1.18;
+  }
+
+  #conversion .fxe2-conversion-status {
+    justify-self: start;
+
+    padding: 6px 8px;
+
+    font-size: 7px;
+  }
+
+  #conversion .fxe2-conversion-primary
+  .fxe2-conversion-card-desc {
+    margin-bottom: 15px;
+
+    font-size: 11px;
+    line-height: 1.48;
+  }
+
+
+  /* vertical operational path */
+
+  #conversion .fxe2-conversion-flow {
+    display: grid;
+    grid-template-columns: 1fr;
+
+    border-radius: 14px;
+  }
+
+  #conversion .fxe2-conversion-flow-step {
+    display: grid;
+    grid-template-columns: 27px minmax(0, 1fr);
+    gap: 10px;
+
+    padding: 11px 12px;
+
+    align-items: start;
+  }
+
+  #conversion
+  .fxe2-conversion-flow-step
+  + .fxe2-conversion-flow-step {
+    border-left: 0;
+
+    border-top:
+      1px solid rgba(255,255,255,0.06);
+  }
+
+  #conversion .fxe2-conversion-flow-step::after {
+    top: 36px;
+    bottom: -8px;
+    left: 25px;
+    right: auto;
+
+    width: 1px;
+    height: auto;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(105,123,255,0.48),
+        rgba(139,92,255,0.14)
+      );
+  }
+
+  #conversion .fxe2-conversion-flow-index {
+    width: 27px;
+    height: 27px;
+
+    margin: 0;
+
+    border-radius: 9px;
+
+    font-size: 7px;
+  }
+
+  #conversion .fxe2-conversion-flow-step strong {
+    margin: 1px 0 3px;
+
+    font-size: 11.5px;
+  }
+
+  #conversion .fxe2-conversion-flow-step div > span {
+    font-size: 9.5px;
+    line-height: 1.38;
+  }
+
+
+  /* footer becomes one clear conversion action */
+
+  #conversion .fxe2-conversion-footer {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+
+    padding-top: 15px;
+  }
+
+  #conversion .fxe2-conversion-footer-note {
+    justify-content: center;
+
+    font-size: 9px;
+  }
+
+  #conversion .fxe2-conversion-footer .fxe2-btn {
+    min-height: 50px;
+
+    font-size: 13px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
    SECTION 10 — FAQ
 ══════════════════════════════════════════════════════════════ */
 .fxe2-faq-list {
