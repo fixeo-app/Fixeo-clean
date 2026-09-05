@@ -3069,3 +3069,237 @@
     font-size: 7px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   ENTERPRISE — OPERATIONAL DIAGNOSTIC
+   Compact premium signal cards
+   ══════════════════════════════════════════════════════════════ */
+
+#problemes .fxe2-diagnostic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+
+/* Card shell */
+
+#problemes .fxe2-diagnostic-card {
+  position: relative;
+  isolation: isolate;
+
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+
+  min-width: 0;
+
+  padding: 17px 18px;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255,255,255,0.09);
+  border-radius: 17px;
+
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(72,100,255,0.13),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.052),
+      rgba(255,255,255,0.018)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.055),
+    0 16px 34px rgba(0,0,0,0.14);
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* Premium signal line */
+
+#problemes .fxe2-diagnostic-card::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+
+  height: 1px;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(72,100,255,0.65),
+      rgba(255,79,154,0.38),
+      transparent
+    );
+
+  opacity: 0.72;
+}
+
+
+/* Very restrained depth — no red marketing hover */
+
+#problemes .fxe2-diagnostic-card:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(111,126,255,0.20);
+
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(72,100,255,0.15),
+      transparent 40%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.058),
+      rgba(255,255,255,0.020)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 18px 38px rgba(0,0,0,0.18);
+}
+
+
+/* Icon module */
+
+#problemes .fxe2-diagnostic-card .fxe2-problem-icon {
+  width: 46px;
+  height: 46px;
+
+  margin: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  border:
+    1px solid rgba(111,128,255,0.24);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(89,106,255,0.17),
+      rgba(72,100,255,0.07)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    0 0 18px rgba(72,100,255,0.08);
+
+  font-size: 18px;
+  line-height: 1;
+}
+
+
+/* Content */
+
+#problemes .fxe2-diagnostic-content {
+  min-width: 0;
+}
+
+#problemes .fxe2-diagnostic-kicker {
+  margin: 1px 0 5px;
+
+  color: rgba(137,151,255,0.78);
+
+  font-size: 9px;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+#problemes .fxe2-diagnostic-card .fxe2-problem-title {
+  margin: 0 0 5px;
+
+  color: var(--fxe2-text-1);
+
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 780;
+  letter-spacing: -0.012em;
+}
+
+#problemes .fxe2-diagnostic-card .fxe2-problem-desc {
+  margin: 0;
+
+  color: var(--fxe2-text-3);
+
+  font-size: 12.5px;
+  line-height: 1.48;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  #problemes .fxe2-diagnostic-grid {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  #problemes .fxe2-diagnostic-card {
+    grid-template-columns: 40px minmax(0, 1fr);
+
+    gap: 11px;
+
+    padding: 13px 14px;
+
+    border-radius: 15px;
+  }
+
+  #problemes .fxe2-diagnostic-card::before {
+    left: 14px;
+    right: 14px;
+  }
+
+  #problemes .fxe2-diagnostic-card .fxe2-problem-icon {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 11px;
+
+    font-size: 16px;
+  }
+
+  #problemes .fxe2-diagnostic-kicker {
+    margin-bottom: 4px;
+
+    font-size: 8px;
+    letter-spacing: 0.105em;
+  }
+
+  #problemes .fxe2-diagnostic-card .fxe2-problem-title {
+    margin-bottom: 4px;
+
+    font-size: 14px;
+    line-height: 1.22;
+  }
+
+  #problemes .fxe2-diagnostic-card .fxe2-problem-desc {
+    font-size: 11.8px;
+    line-height: 1.43;
+  }
+}
