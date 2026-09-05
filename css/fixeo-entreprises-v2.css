@@ -1564,3 +1564,71 @@
     );
   opacity: 0.75;
 }
+
+/* ── Enterprise V2 — compact problem cards / mobile ─────────── */
+@media (max-width: 768px) {
+
+  .fxe2-problems-grid {
+    gap: 12px;
+  }
+
+  .fxe2-problem-card {
+    display: grid;
+    grid-template-columns: 46px minmax(0, 1fr);
+    grid-template-areas:
+      "icon title"
+      "icon desc";
+    column-gap: 14px;
+    row-gap: 5px;
+    align-items: start;
+
+    padding: 18px;
+    border-radius: 18px;
+
+    border-color: rgba(255,255,255,0.10);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.055),
+      0 12px 32px rgba(0,0,0,0.20);
+  }
+
+  .fxe2-problem-icon {
+    grid-area: icon;
+
+    width: 46px;
+    height: 46px;
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+    background:
+      linear-gradient(
+        145deg,
+        rgba(72,100,255,0.16),
+        rgba(255,255,255,0.035)
+      );
+    border: 1px solid rgba(110,130,255,0.24);
+
+    font-size: 20px;
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.08),
+      0 8px 22px rgba(72,100,255,0.10);
+  }
+
+  .fxe2-problem-title {
+    grid-area: title;
+    margin: 1px 0 0;
+    font-size: 15px;
+    line-height: 1.3;
+  }
+
+  .fxe2-problem-desc {
+    grid-area: desc;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.52;
+  }
+}
