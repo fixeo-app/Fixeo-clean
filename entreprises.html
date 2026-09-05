@@ -179,66 +179,139 @@
           </div>
         </div>
 
-        <!-- Dashboard visual -->
-        <div class="fxe2-hero-visual" aria-hidden="true">
-          <!-- Floating stat badges -->
-          <div class="fxe2-hero-float-badge fxe2-hero-float-badge-1">
-  <div class="fxe2-fb-label">Suivi centralisé</div>
-  <div class="fxe2-fb-value green">Multi-sites</div>
-</div>
-<div class="fxe2-hero-float-badge fxe2-hero-float-badge-2">
-  <div class="fxe2-fb-label">Coordination</div>
-  <div class="fxe2-fb-value">Temps réel</div>
-</div>
+       <!-- Dashboard visual -->
+<div class="fxe2-hero-visual" aria-hidden="true">
 
-          <!-- Mini dashboard -->
-          <div class="fxe2-hero-dashboard" role="img" aria-label="Aperçu illustratif du tableau de bord FIXEO Entreprise">
-            <div class="fxe2-hd-topbar">
-              <div class="fxe2-hd-dots">
-                <div class="fxe2-hd-dot fxe2-hd-dot-r"></div>
-                <div class="fxe2-hd-dot fxe2-hd-dot-y"></div>
-                <div class="fxe2-hd-dot fxe2-hd-dot-g"></div>
-              </div>
-              <div class="fxe2-hd-title">FIXEO Entreprise — Dashboard</div>
-            </div>
-            <div class="fxe2-hd-body">
-<div class="fxe2-hd-kpi-row">
-  <div class="fxe2-hd-kpi">
-    <div class="fxe2-hd-kpi-label">Interventions</div>
-    <div class="fxe2-hd-kpi-value green">En cours</div>
-  </div>
-  <div class="fxe2-hd-kpi">
-    <div class="fxe2-hd-kpi-label">Priorité</div>
-    <div class="fxe2-hd-kpi-value pink">Urgente</div>
-  </div>
-  <div class="fxe2-hd-kpi">
-    <div class="fxe2-hd-kpi-label">Pilotage</div>
-    <div class="fxe2-hd-kpi-value indigo">Multi-sites</div>
-  </div>
-</div>
+  <div class="fxe2-hero-dashboard fxe2-hero-cockpit">
 
-<div class="fxe2-hd-activity">
-  <div class="fxe2-hd-activity-row">
-    <div class="fxe2-hd-act-dot active"></div>
-    <span>Plomberie · Casablanca · Artisan assigné</span>
-  </div>
-  <div class="fxe2-hd-activity-row">
-    <div class="fxe2-hd-act-dot pending"></div>
-    <span>Climatisation · Rabat · Qualification en cours</span>
-  </div>
-  <div class="fxe2-hd-activity-row">
-    <div class="fxe2-hd-act-dot done"></div>
-    <span>Électricité · Marrakech · Intervention terminée</span>
-  </div>
-  <div class="fxe2-hd-activity-row">
-    <div class="fxe2-hd-act-dot active"></div>
-    <span>Serrurerie · Tanger · Intervention suivie</span>
-  </div>
-         </div>
-              </div>
-            </div>
+    <div class="fxe2-hd-topbar">
+      <div class="fxe2-hd-dots">
+        <div class="fxe2-hd-dot fxe2-hd-dot-r"></div>
+        <div class="fxe2-hd-dot fxe2-hd-dot-y"></div>
+        <div class="fxe2-hd-dot fxe2-hd-dot-g"></div>
+      </div>
+
+      <div class="fxe2-hd-title">
+        FIXEO Operations
+      </div>
+
+      <div class="fxe2-hd-status">
+        <span class="fxe2-hd-status-dot"></span>
+        Système FIXEO
+      </div>
+    </div>
+
+
+    <div class="fxe2-hd-body">
+
+      <div class="fxe2-hd-product-label">
+        APERÇU OPÉRATIONNEL
+      </div>
+
+
+      <div class="fxe2-hd-kpi-row">
+
+        <div class="fxe2-hd-kpi fxe2-hd-kpi--rafi">
+          <div class="fxe2-hd-kpi-label">RAFI</div>
+          <div class="fxe2-hd-kpi-value indigo">
+            Besoin structuré
           </div>
+          <div class="fxe2-hd-kpi-meta">
+            Contexte · métier · site
+          </div>
+        </div>
 
+        <div class="fxe2-hd-kpi fxe2-hd-kpi--matching">
+          <div class="fxe2-hd-kpi-label">MATCHING</div>
+          <div class="fxe2-hd-kpi-value pink">
+            Profils adaptés
+          </div>
+          <div class="fxe2-hd-kpi-meta">
+            Métier · zone · contexte
+          </div>
+        </div>
+
+        <div class="fxe2-hd-kpi fxe2-hd-kpi--pilotage">
+          <div class="fxe2-hd-kpi-label">PILOTAGE</div>
+          <div class="fxe2-hd-kpi-value green">
+            Multi-sites
+          </div>
+          <div class="fxe2-hd-kpi-meta">
+            Vue consolidée
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="fxe2-hd-flow">
+
+        <div class="fxe2-hd-flow-step is-done">
+          <span class="fxe2-hd-flow-node">✓</span>
+          <span class="fxe2-hd-flow-label">Signalement</span>
+        </div>
+
+        <div class="fxe2-hd-flow-line"></div>
+
+        <div class="fxe2-hd-flow-step is-active">
+          <span class="fxe2-hd-flow-node">✦</span>
+          <span class="fxe2-hd-flow-label">RAFI</span>
+        </div>
+
+        <div class="fxe2-hd-flow-line"></div>
+
+        <div class="fxe2-hd-flow-step">
+          <span class="fxe2-hd-flow-node">⚡</span>
+          <span class="fxe2-hd-flow-label">Matching</span>
+        </div>
+
+        <div class="fxe2-hd-flow-line"></div>
+
+        <div class="fxe2-hd-flow-step">
+          <span class="fxe2-hd-flow-node">📍</span>
+          <span class="fxe2-hd-flow-label">Suivi</span>
+        </div>
+
+      </div>
+
+
+      <div class="fxe2-hd-activity">
+
+        <div class="fxe2-hd-activity-head">
+          Flux d’interventions
+        </div>
+
+        <div class="fxe2-hd-activity-row">
+          <div class="fxe2-hd-act-dot active"></div>
+          <span>
+            Plomberie · Casablanca
+          </span>
+          <strong>Assignée</strong>
+        </div>
+
+        <div class="fxe2-hd-activity-row">
+          <div class="fxe2-hd-act-dot pending"></div>
+          <span>
+            Climatisation · Rabat
+          </span>
+          <strong>Qualification</strong>
+        </div>
+
+        <div class="fxe2-hd-activity-row">
+          <div class="fxe2-hd-act-dot done"></div>
+          <span>
+            Électricité · Marrakech
+          </span>
+          <strong>Terminée</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
       </div>
     </div>
   </section>
