@@ -4625,6 +4625,47 @@ html #services.fc3-chapter {
   }
 }
 
+ /* ── LES MÉTIERS FIXEO — gateway badge ───────────────────── */
+#services .fc3-eyebrow.fxnb-section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  gap: 8px;
+
+  padding: 7px 14px;
+
+  border: 1px solid rgba(72, 100, 255, 0.38);
+  border-radius: 999px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(72, 100, 255, 0.16),
+    rgba(139, 92, 255, 0.08)
+  );
+
+  color: #8fdcff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+
+  box-shadow:
+    0 0 18px rgba(72, 100, 255, 0.16),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+#services .fc3-eyebrow.fxnb-section-eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+
+  border-radius: 50%;
+  background: #68e4ff;
+
+  box-shadow:
+    0 0 6px rgba(104, 228, 255, 0.95),
+    0 0 12px rgba(72, 100, 255, 0.55);
+} 
 </style>
 
 <section class="section fc3-chapter" id="services" aria-labelledby="services-title" data-fxsit-version="v2.3">
