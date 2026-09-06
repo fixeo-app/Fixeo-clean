@@ -1,47 +1,73 @@
 /* ============================================================
    FIXEO ANALYTICS BOOTSTRAP
-   js/fixeo-analytics-bootstrap.js   Version: fab-v1b
+   js/fixeo-analytics-bootstrap.js   Version: fab-v1d
    Guard: window._fxAnalyticsBootstrapLoaded
 
    PURPOSE
    ───────
-   Bridges the existing fixeo:* CustomEvent system to GA4.
-   All event listeners are pre-wired to the canonical event
-   names defined in fixeo-analytics-config.js.
+   Analytics bootstrap for FIXEO public production surfaces.
 
-   PRODUCTION STATE: COMPLETELY DORMANT
-   ─────────────────────────────────────
-   When FixeoAnalyticsConfig.analyticsEnabled === false (the
-   default), this module:
-     • Registers zero event listeners
-     • Makes zero network requests
-     • Writes zero cookies
-     • Calls gtag() zero times
-     • Outputs zero console messages
-     • Has zero effect on Core Web Vitals
-     • Has zero effect on UX or behaviour
+   Responsibilities:
+     1. Bridges the existing fixeo:* CustomEvent system to GA4.
+     2. Loads GA4 only after explicit analytics consent.
+     3. Loads Vercel Web Analytics only after explicit consent.
+     4. Keeps FIXEO business/conversion events GA4-only.
+     5. Prevents analytics on previews, localhost and excluded
+        authenticated/internal surfaces.
+
+   PRODUCTION MODEL
+   ────────────────
+   Master switch:
+     FixeoAnalyticsConfig.analyticsEnabled
+
+   GA4 switch:
+     FixeoAnalyticsConfig.ga4Enabled
+     + valid measurementId
+
+   Vercel Web Analytics switch:
+     FixeoAnalyticsConfig.vercelAnalyticsEnabled
+
+   PRIVACY MODEL
+   ─────────────
+   analytics consent DENIED:
+     • GA4 script is not loaded
+     • Vercel Analytics script is not loaded
+     • no FIXEO analytics listeners transmit data
+
+   analytics consent GRANTED:
+     • GA4 loads
+     • Vercel Web Analytics loads if its feature flag is enabled
+     • FIXEO business events continue to be sent only to GA4
+
+   Vercel Analytics:
+     • receives automatic traffic/page-view analytics only
+     • receives no FIXEO CustomEvent payload
+     • beforeSend re-checks persisted consent before transmission
+     • automatically stops sending if consent is later revoked
 
    DEPENDENCY
    ──────────
    Requires fixeo-analytics-config.js to be loaded first.
    If the config is absent, this module exits silently.
 
-   ACTIVATION
-   ──────────
-   Activated exclusively by Phase 6.2.5 — GA4 Activation:
-     1. Real GA4 G-XXXXXXXX measurementId in config
-     2. analyticsEnabled: true in config
-     3. ga4Enabled: true in config
-     4. Cookie consent banner live and verified
-     5. Consent Mode v2 initialised before this module loads
-
-   DO NOT MODIFY to enable tracking ahead of Phase 6.2.5.
-
    CHANGELOG
    ─────────
-   fab-v1c  2026-07-12  Phase 6.2.5B — GA4 Activation: dynamic gtag.js loader,
-              consent-gated loading, returning visitor auto-load,
-              page_view + Enhanced Measurement, grantConsent() wired
+   fab-v1d  2026-09-06  Vercel Web Analytics integration:
+              VA-01 consent-gated dynamic loader
+              VA-02 dedicated config kill-switch
+              VA-03 beforeSend consent defence-in-depth
+              VA-04 production hostname + surface guards inherited
+              VA-05 business events remain GA4-only
+              VA-06 returning-consent auto-load
+              VA-07 revocation-safe event suppression
+
+   fab-v1c  2026-07-12  Phase 6.2.5B — GA4 Activation:
+              dynamic gtag.js loader,
+              consent-gated loading,
+              returning visitor auto-load,
+              page_view + Enhanced Measurement,
+              grantConsent() wired
+
    fab-v1b  2026-07-11  Instrumentation repair (Phase 6.2.4):
               R-01  contact_form_submit: req.service field correction
               R-02  urgent_request_submit: type guard + Option B schema
@@ -53,7 +79,7 @@
               R-08  phone_click: tel: link interaction event (PII-safe)
               R-09  whatsapp_click: sanitised destination only (no href)
               R-11  dedup: removed Date.now() fallback from cfs_ key
-              R-12  fixeo:auth:updated: redefined as Phase 6.2.5 stub
+              R-12  fixeo:auth:updated: Phase 6.2.5 stub
    ============================================================ */
 
 (function () {
@@ -63,495 +89,968 @@
   if (window._fxAnalyticsBootstrapLoaded) return;
   window._fxAnalyticsBootstrapLoaded = true;
 
-  var VERSION = 'fab-v1c';
+  var VERSION = 'fab-v1d';
   var LOG     = '[fab]';
 
   /* ── Config dependency check ────────────────────────────── */
   var cfg = window.FixeoAnalyticsConfig;
   if (!cfg) {
-    /* Config not loaded — exit silently. Zero side effects.   */
     return;
   }
 
   /* ── Master kill-switch ─────────────────────────────────── */
-  /* When analyticsEnabled is false, register nothing, do      */
-  /* nothing, return immediately. This is the production path. */
+  /*
+   * Controls ALL optional analytics managed by this bootstrap.
+   * If false:
+   *   - no listeners
+   *   - no GA4
+   *   - no Vercel Analytics
+   */
   if (!cfg.analyticsEnabled) {
     return;
   }
 
-  /* ══════════════════════════════════════════════════════════
-     Everything below this line is UNREACHABLE in production.
-     It only executes when analyticsEnabled === true,
-     which requires an explicit authorised deployment commit
-     (Phase 6.2.5 — GA4 Activation).
-     ══════════════════════════════════════════════════════════ */
+  /* ── Debug logger ───────────────────────────────────────── */
+  function _log() {
+    if (!cfg.debugAnalytics) return;
+
+    var args = Array.prototype.slice.call(arguments);
+    args.unshift(LOG + ' [v' + VERSION + ']');
+
+    /* eslint-disable no-console */
+    console.log.apply(console, args);
+    /* eslint-enable no-console */
+  }
 
   /* ── Hostname guard ─────────────────────────────────────── */
-  /* Never fire on Vercel preview deployments or localhost.    */
+  /*
+   * Never fire analytics on:
+   *   - Vercel previews
+   *   - localhost
+   *   - alternate domains
+   *
+   * Only the canonical production hostname is accepted.
+   */
   if (window.location.hostname !== cfg.productionHostname) {
-    _log('Hostname mismatch — analytics suppressed on ' + window.location.hostname);
+    _log(
+      'Hostname mismatch — analytics suppressed on ' +
+      window.location.hostname
+    );
     return;
   }
 
   /* ── Surface exclusion guard ────────────────────────────── */
   var _path = window.location.pathname;
   var _excluded = cfg.excludedPaths || [];
+
   for (var i = 0; i < _excluded.length; i++) {
-    if (_path === _excluded[i] || _path.indexOf(_excluded[i]) === 0) {
+    if (
+      _path === _excluded[i] ||
+      _path.indexOf(_excluded[i]) === 0
+    ) {
       _log('Excluded surface — analytics suppressed on ' + _path);
       return;
     }
   }
 
+  /* ══════════════════════════════════════════════════════════
+     ANALYTICS PROVIDER GUARDS
+     ══════════════════════════════════════════════════════════ */
+
   /* ── GA4 guard ──────────────────────────────────────────── */
-  /* ga4Enabled must be true AND a real measurementId must     */
-  /* be present for any gtag() calls to be made.              */
-  var _ga4Active = cfg.ga4Enabled && !!cfg.measurementId;
+  var _ga4Active =
+    cfg.ga4Enabled === true &&
+    !!cfg.measurementId;
+
+  /* ── Vercel Web Analytics guard ─────────────────────────── */
+  /*
+   * Explicit opt-in feature flag.
+   *
+   * IMPORTANT:
+   * Until vercelAnalyticsEnabled: true exists in
+   * fixeo-analytics-config.js, this remains false.
+   */
+  var _vercelAnalyticsActive =
+    cfg.vercelAnalyticsEnabled === true;
+
+  /* ══════════════════════════════════════════════════════════
+     CONSENT HELPERS
+     ══════════════════════════════════════════════════════════ */
+
+  /*
+   * Reads the canonical FIXEO analytics consent record.
+   *
+   * Supported formats:
+   *
+   * v0:
+   *   "granted"
+   *   "denied"
+   *
+   * v1:
+   *   {
+   *     v: 1,
+   *     analytics: "granted" | "denied",
+   *     ...
+   *   }
+   *
+   * Fail closed:
+   *   malformed / unavailable localStorage => false.
+   */
+  function _analyticsConsentGranted() {
+    try {
+      var raw = localStorage.getItem(cfg.consentStorageKey);
+
+      if (!raw) return false;
+
+      /* Legacy v0 */
+      if (raw === 'granted') return true;
+      if (raw === 'denied') return false;
+
+      /* Current JSON record */
+      var rec = JSON.parse(raw);
+
+      return !!(
+        rec &&
+        rec.analytics === 'granted'
+      );
+
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     GA4
+     ══════════════════════════════════════════════════════════ */
 
   /* ── Dynamic GA4 loader ──────────────────────────────────── */
-  /* Injects gtag.js ONLY when analytics consent is granted.   */
-  /* Never called when consent is denied.                      */
-  /* Guard prevents double-load on repeated calls.             */
-  /* After load: calls gtag('js', new Date()) + config.        */
-  /* GA4 Enhanced Measurement fires automatically after config. */
+  /*
+   * Injects gtag.js ONLY after analytics consent.
+   */
   function _loadGa4() {
     if (!_ga4Active) return;
+    if (!_analyticsConsentGranted()) return;
     if (window._fxGa4Loaded) return;
+
     window._fxGa4Loaded = true;
 
     var mid = cfg.measurementId;
     var s = document.createElement('script');
+
     s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + mid;
+    s.src =
+      'https://www.googletagmanager.com/gtag/js?id=' +
+      encodeURIComponent(mid);
+
     s.onload = function () {
-      /* dataLayer already has consent default + update queued. */
-      /* gtag.js processes queued commands on load.             */
-      /* Now register the gtag function and fire initial config. */
-      window.gtag = function () { window.dataLayer.push(arguments); };
+
+      /*
+       * dataLayer already contains the Consent Mode default
+       * and consent update queued by fixeo-consent-v1.js.
+       */
+      window.gtag = function () {
+        window.dataLayer.push(arguments);
+      };
+
       window.gtag('js', new Date());
+
       window.gtag('config', mid, {
-        /* page_view fires automatically via Enhanced Measurement */
-        /* send_page_view: true is the default — leave as-is.    */
-        /* anonymize_ip: deprecated in GA4 (always anonymized).  */
-        /* ads_data_redaction: enabled as defence-in-depth.      */
         ads_data_redaction: true,
-        url_passthrough:    false
+        url_passthrough: false
       });
+
       _log('GA4 loaded and configured —', mid);
     };
+
     s.onerror = function () {
-      /* Reset guard on load failure so retry is possible.      */
       window._fxGa4Loaded = false;
       _log('GA4 script load error');
     };
-    /* Insert as first child of <head> to avoid render-blocking */
+
     var head = document.getElementsByTagName('head')[0];
-    if (head) head.insertBefore(s, head.firstChild);
+
+    if (!head) {
+      window._fxGa4Loaded = false;
+      return;
+    }
+
+    head.insertBefore(s, head.firstChild);
+
     _log('Injecting gtag.js for', mid);
   }
 
-  /* ── Debug logger ───────────────────────────────────────── */
-  function _log() {
-    if (!cfg.debugAnalytics) return;
-    var args = Array.prototype.slice.call(arguments);
-    args.unshift(LOG + ' [v' + VERSION + ']');
-    /* eslint-disable no-console */
-    console.log.apply(console, args);
-    /* eslint-enable no-console */
-  }
-
   /* ── Safe gtag wrapper ──────────────────────────────────── */
-  /* Calls gtag() only when GA4 is active and gtag is loaded.  */
-  /* Fails silently when gtag is not yet available.            */
   function _gtag() {
     if (!_ga4Active) return;
+    if (!_analyticsConsentGranted()) return;
     if (typeof window.gtag !== 'function') return;
+
     window.gtag.apply(window, arguments);
   }
 
+  /* ══════════════════════════════════════════════════════════
+     VERCEL WEB ANALYTICS
+     ══════════════════════════════════════════════════════════ */
+
+  /*
+   * Called by the Vercel Analytics runtime before an event is
+   * transmitted.
+   *
+   * Returning null cancels the transmission.
+   *
+   * This gives FIXEO a second consent gate even after the
+   * Vercel script has already been loaded.
+   *
+   * Example:
+   *   User accepts → Vercel loads.
+   *   User later revokes → localStorage becomes denied.
+   *   beforeSend sees denied → further events are discarded.
+   */
+  function _vercelBeforeSend(event) {
+    if (!_analyticsConsentGranted()) {
+      return null;
+    }
+
+    return event;
+  }
+
+  /* ── Dynamic Vercel Analytics loader ────────────────────── */
+  function _loadVercelAnalytics() {
+    if (!_vercelAnalyticsActive) return;
+    if (!_analyticsConsentGranted()) return;
+
+    /*
+     * Official queue-compatible Vercel Analytics API stub.
+     *
+     * Commands queued here are processed when
+     * /_vercel/insights/script.js finishes loading.
+     */
+    window.va = window.va || function () {
+      (window.vaq = window.vaq || []).push(arguments);
+    };
+
+    /*
+     * Queue beforeSend BEFORE script loading.
+     *
+     * Vercel processes the queue before its initial automatic
+     * page-view event, ensuring the consent gate is active from
+     * the first possible transmission.
+     */
+    window.va('beforeSend', _vercelBeforeSend);
+
+    /*
+     * Do not inject the script twice.
+     */
+    if (window._fxVercelAnalyticsLoaded) {
+      return;
+    }
+
+    /*
+     * Defensive duplicate-script detection in case Vercel
+     * Analytics is later integrated elsewhere.
+     */
+    var existingScript =
+      document.querySelector(
+        'script[src="/_vercel/insights/script.js"],' +
+        'script[src^="/_vercel/insights/script.js?"],' +
+        'script[src*="/_vercel/insights/script.js"]'
+      );
+
+    if (existingScript) {
+      window._fxVercelAnalyticsLoaded = true;
+
+      _log(
+        'Vercel Analytics script already present — duplicate load suppressed'
+      );
+
+      return;
+    }
+
+    var head = document.getElementsByTagName('head')[0];
+
+    if (!head) {
+      return;
+    }
+
+    var s = document.createElement('script');
+
+    s.defer = true;
+    s.src = '/_vercel/insights/script.js';
+
+    s.onload = function () {
+      _log('Vercel Web Analytics loaded');
+    };
+
+    s.onerror = function () {
+      window._fxVercelAnalyticsLoaded = false;
+      _log('Vercel Analytics script load error');
+    };
+
+    window._fxVercelAnalyticsLoaded = true;
+
+    head.appendChild(s);
+
+    _log('Vercel Web Analytics loader triggered');
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     COMMON HELPERS
+     ══════════════════════════════════════════════════════════ */
+
   /* ── Deduplication helper ───────────────────────────────── */
-  /* GA4 deduplicates key events with matching transaction_id  */
-  /* within 24h, but we also guard at the JS level to prevent  */
-  /* duplicate fires on browser back+refresh cycles.           */
   var _firedKeys = {};
+
   function _dedup(key) {
     if (_firedKeys[key]) return false;
+
     _firedKeys[key] = true;
     return true;
   }
 
   /* ── Event parameter sanitiser ──────────────────────────── */
-  /* Trims strings, coerces null/undefined to empty string.    */
   function _str(v) {
-    return v != null ? String(v).trim() : '';
+    return v != null
+      ? String(v).trim()
+      : '';
   }
 
   /* ══════════════════════════════════════════════════════════
-     EVENT LISTENERS
-     Each listener bridges one fixeo:* CustomEvent to one GA4
-     event via _gtag(). Listeners are registered only when
-     analyticsEnabled === true (unreachable in production).
+     GA4 BUSINESS EVENT LISTENERS
+
+     IMPORTANT:
+     These FIXEO business events remain GA4-only.
+
+     They are NOT forwarded to Vercel Web Analytics.
      ══════════════════════════════════════════════════════════ */
 
   /* ── C1: contact_form_submit ────────────────────────────── */
-  /* Source: js/request-form.js → fixeo:client-request-submit-success */
-  /* Fires: after confirmed Supabase INSERT on service_requests */
-  /*                                                            */
-  /* R-01 fix: service field was req.service_type (undefined).  */
-  /* Correct primary field is req.service. Fallback chain added */
-  /* for defensive resilience. Date.now() dedup fallback        */
-  /* removed — tracking_ref is always generated before dispatch.*/
-  window.addEventListener('fixeo:client-request-submit-success', function (e) {
-    var d = (e && e.detail) || {};
-    var req = d.request || {};
+  window.addEventListener(
+    'fixeo:client-request-submit-success',
+    function (e) {
 
-    /* R-11: stable dedup key — tracking_ref always present;    */
-    /* Date.now() fallback removed (non-deterministic).         */
-    var dedupKey = 'cfs_' + (_str(req.id) || _str(req.tracking_ref));
-    if (!dedupKey || dedupKey === 'cfs_') return; /* no stable key — drop safely */
+      var d = (e && e.detail) || {};
+      var req = d.request || {};
 
-    if (!_dedup(dedupKey)) {
-      _log('Dedup suppressed', cfg.events.CONTACT_FORM_SUBMIT, dedupKey);
-      return;
+      var dedupKey =
+        'cfs_' +
+        (
+          _str(req.id) ||
+          _str(req.tracking_ref)
+        );
+
+      if (!dedupKey || dedupKey === 'cfs_') {
+        return;
+      }
+
+      if (!_dedup(dedupKey)) {
+        _log(
+          'Dedup suppressed',
+          cfg.events.CONTACT_FORM_SUBMIT,
+          dedupKey
+        );
+
+        return;
+      }
+
+      var artisanService = _str(
+        req.service ||
+        req.service_type ||
+        req.service_category
+      );
+
+      _log(
+        'Event',
+        cfg.events.CONTACT_FORM_SUBMIT,
+        d
+      );
+
+      _gtag(
+        'event',
+        cfg.events.CONTACT_FORM_SUBMIT,
+        {
+          transaction_id:
+            _str(req.id || req.tracking_ref),
+
+          artisan_service:
+            artisanService,
+
+          artisan_city:
+            _str(req.city),
+
+          request_mode:
+            _str(d.mode),
+
+          was_duplicate:
+            !!d.duplicated,
+
+          page_path:
+            _path
+        }
+      );
     }
-
-    /* R-01: primary field = req.service (normalized service slug). */
-    /* Fallback: req.service_type, req.service_category.           */
-    var artisanService = _str(req.service || req.service_type || req.service_category);
-
-    _log('Event', cfg.events.CONTACT_FORM_SUBMIT, d);
-    _gtag('event', cfg.events.CONTACT_FORM_SUBMIT, {
-      transaction_id:   _str(req.id || req.tracking_ref),
-      artisan_service:  artisanService,
-      artisan_city:     _str(req.city),
-      request_mode:     _str(d.mode),
-      was_duplicate:    !!d.duplicated,
-      page_path:        _path
-    });
-  });
+  );
 
   /* ── C1b: urgent_request_submit ─────────────────────────── */
-  /* Source: js/request-form.js → fixeo:urgent-event           */
-  /* Fires: after urgent modal form submission only             */
-  /*                                                            */
-  /* R-02 fix (Option B — Final Design Freeze):                 */
-  /* • Type guard: process ONLY type === 'urgent_submit'.       */
-  /*   Ignores: urgent_open, artisan_click, conversion, others. */
-  /* • City: read from d.payload.city (controlled <select>).    */
-  /* • artisan_service: OMITTED — no canonical service slug     */
-  /*   exists in the payload at submission time. inferring from */
-  /*   raw problem text is prohibited (PII risk + no global fn).*/
-  /* • problem_query: OMITTED — raw free text, PII-unsafe.      */
-  /* • source: included as low-cardinality attribution signal.  */
-  /* • Dedup key: 'urs_' + d.id (generated by FixeoUrgentAnalytics). */
-  window.addEventListener('fixeo:urgent-event', function (e) {
-    var d = (e && e.detail) || {};
+  window.addEventListener(
+    'fixeo:urgent-event',
+    function (e) {
 
-    /* R-02: strict type guard — only urgent_submit qualifies.   */
-    if (d.type !== 'urgent_submit') return;
+      var d = (e && e.detail) || {};
 
-    var payload = d.payload || {};
+      if (d.type !== 'urgent_submit') {
+        return;
+      }
 
-    var dedupKey = 'urs_' + _str(d.id);
-    if (!_dedup(dedupKey)) {
-      _log('Dedup suppressed', cfg.events.URGENT_REQUEST_SUBMIT, dedupKey);
-      return;
+      var payload = d.payload || {};
+
+      var dedupKey =
+        'urs_' +
+        _str(d.id);
+
+      if (!_dedup(dedupKey)) {
+        _log(
+          'Dedup suppressed',
+          cfg.events.URGENT_REQUEST_SUBMIT,
+          dedupKey
+        );
+
+        return;
+      }
+
+      _log(
+        'Event',
+        cfg.events.URGENT_REQUEST_SUBMIT,
+        d
+      );
+
+      _gtag(
+        'event',
+        cfg.events.URGENT_REQUEST_SUBMIT,
+        {
+          artisan_city:
+            _str(payload.city),
+
+          source:
+            _str(payload.source),
+
+          page_path:
+            _path
+        }
+      );
     }
-
-    /* PII gate: city comes from a controlled <select> list.     */
-    /* source is a constant string ('urgent_modal_form').        */
-    /* Neither the problem query nor any free text is sent.      */
-    _log('Event', cfg.events.URGENT_REQUEST_SUBMIT, d);
-    _gtag('event', cfg.events.URGENT_REQUEST_SUBMIT, {
-      artisan_city: _str(payload.city),
-      source:       _str(payload.source),
-      page_path:    _path
-    });
-  });
+  );
 
   /* ── C2: mission_created ────────────────────────────────── */
-  /* Source: js/fixeo-supabase-core.js → fixeo:data:changed   */
-  /* type: 'service_request_created' (Supabase-confirmed)      */
-  /*                                                            */
-  /* R-03 fix: service field was req.service_type (undefined).  */
-  /* Correct primary field is req.service_category (the actual  */
-  /* Supabase column name in service_requests table).           */
-  window.addEventListener('fixeo:data:changed', function (e) {
-    var d = (e && e.detail) || {};
-    if (d.type !== 'service_request_created') return;
+  window.addEventListener(
+    'fixeo:data:changed',
+    function (e) {
 
-    var req = d.request || {};
-    var dedupKey = 'mcr_' + _str(req.id);
-    if (!_dedup(dedupKey)) return;
+      var d = (e && e.detail) || {};
 
-    /* R-03: primary = req.service_category (Supabase column).   */
-    /* Fallback: req.service_type, req.service.                  */
-    var artisanService = _str(req.service_category || req.service_type || req.service);
+      if (d.type !== 'service_request_created') {
+        return;
+      }
 
-    _log('Event', cfg.events.MISSION_CREATED, d);
-    _gtag('event', cfg.events.MISSION_CREATED, {
-      transaction_id:  _str(req.id),
-      artisan_service: artisanService,
-      artisan_city:    _str(req.city),
-      page_path:       _path
-    });
-  });
+      var req = d.request || {};
+
+      var dedupKey =
+        'mcr_' +
+        _str(req.id);
+
+      if (!_dedup(dedupKey)) {
+        return;
+      }
+
+      var artisanService = _str(
+        req.service_category ||
+        req.service_type ||
+        req.service
+      );
+
+      _log(
+        'Event',
+        cfg.events.MISSION_CREATED,
+        d
+      );
+
+      _gtag(
+        'event',
+        cfg.events.MISSION_CREATED,
+        {
+          transaction_id:
+            _str(req.id),
+
+          artisan_service:
+            artisanService,
+
+          artisan_city:
+            _str(req.city),
+
+          page_path:
+            _path
+        }
+      );
+    }
+  );
 
   /* ── C3: mission_assigned / mission_completed ───────────── */
-  /* Source: js/fixeo-mission-system.js → fixeo:missions:updated */
-  /*                                                            */
-  /* R-04 fix: trigger was 'assigned'|'pending' — both wrong.   */
-  /* 'assigned' does not exist in the mission lifecycle.        */
-  /* 'pending' = just submitted, no artisan yet.                */
-  /* Correct trigger: 'accepted' (set by chooseArtisan()).      */
-  /* artisan_service added (m.service) — authorized additive     */
-  /* schema change per Phase 6.2.4 Final Design Freeze.         */
-  /* Dedup 'ma_' + m.id: suppresses re-assignment correctly     */
-  /* (first assignment tracked only).                           */
-  /*                                                            */
-  /* R-05 fix: artisan_service was m.service_type (undefined).   */
-  /* Correct primary field: m.service (mission system field).   */
-  /* Policy: 'completed' OR 'validated' qualifies — intentional  */
-  /* (validated = client confirmed). Dedup 'mco_' + m.id        */
-  /* guarantees one mission_completed per mission lifetime.     */
-  window.addEventListener('fixeo:missions:updated', function (e) {
-    var d = (e && e.detail) || {};
-    var missions = d.missions || (Array.isArray(d) ? d : null);
-    if (!missions) return;
+  window.addEventListener(
+    'fixeo:missions:updated',
+    function (e) {
 
-    for (var j = 0; j < missions.length; j++) {
-      var m = missions[j];
-      if (!m || !m.id) continue;
+      var d = (e && e.detail) || {};
 
-      /* R-04: mission_assigned — trigger on 'accepted' only.    */
-      if (m.status === 'accepted') {
-        var ak = 'ma_' + _str(m.id);
-        if (_dedup(ak)) {
-          _log('Event', cfg.events.MISSION_ASSIGNED, m);
-          _gtag('event', cfg.events.MISSION_ASSIGNED, {
-            transaction_id:  _str(m.id),
-            artisan_id:      _str(m.artisan_id),
-            artisan_service: _str(m.service),       /* R-04: additive schema field */
-            page_path:       _path
-          });
-        }
+      var missions =
+        d.missions ||
+        (
+          Array.isArray(d)
+            ? d
+            : null
+        );
+
+      if (!missions) {
+        return;
       }
 
-      /* R-05: mission_completed — artisan_service from m.service. */
-      if (m.status === 'completed' || m.status === 'validated') {
-        var ck = 'mco_' + _str(m.id);
-        if (_dedup(ck)) {
-          _log('Event', cfg.events.MISSION_COMPLETED, m);
-          _gtag('event', cfg.events.MISSION_COMPLETED, {
-            transaction_id:  _str(m.id),
-            artisan_id:      _str(m.artisan_id),
-            artisan_service: _str(m.service || m.service_type), /* R-05 */
-            page_path:       _path
-          });
+      for (var j = 0; j < missions.length; j++) {
+
+        var m = missions[j];
+
+        if (!m || !m.id) {
+          continue;
+        }
+
+        /* mission_assigned */
+        if (m.status === 'accepted') {
+
+          var ak =
+            'ma_' +
+            _str(m.id);
+
+          if (_dedup(ak)) {
+
+            _log(
+              'Event',
+              cfg.events.MISSION_ASSIGNED,
+              m
+            );
+
+            _gtag(
+              'event',
+              cfg.events.MISSION_ASSIGNED,
+              {
+                transaction_id:
+                  _str(m.id),
+
+                artisan_id:
+                  _str(m.artisan_id),
+
+                artisan_service:
+                  _str(m.service),
+
+                page_path:
+                  _path
+              }
+            );
+          }
+        }
+
+        /* mission_completed */
+        if (
+          m.status === 'completed' ||
+          m.status === 'validated'
+        ) {
+
+          var ck =
+            'mco_' +
+            _str(m.id);
+
+          if (_dedup(ck)) {
+
+            _log(
+              'Event',
+              cfg.events.MISSION_COMPLETED,
+              m
+            );
+
+            _gtag(
+              'event',
+              cfg.events.MISSION_COMPLETED,
+              {
+                transaction_id:
+                  _str(m.id),
+
+                artisan_id:
+                  _str(m.artisan_id),
+
+                artisan_service:
+                  _str(
+                    m.service ||
+                    m.service_type
+                  ),
+
+                page_path:
+                  _path
+              }
+            );
+          }
         }
       }
     }
-  });
+  );
 
   /* ── C4: whatsapp_click ─────────────────────────────────── */
-  /* Source: wa.me links across public pages                    */
-  /* Registered via document-level click delegation.            */
-  /*                                                            */
-  /* R-09 fix: full anchor.href may contain encoded phone       */
-  /* numbers or user-entered text (PII). The ?text= query        */
-  /* parameter on auth.html contains the user's phone number.  */
-  /* Only a sanitised destination classification is sent.       */
-  /* destination_type: 'whatsapp' (constant, zero PII).         */
-  /* page_path already identifies which page triggered the      */
-  /* click — full URL provides no additional analytical value.  */
-  document.addEventListener('click', function (e) {
-    var target = e && e.target;
-    if (!target) return;
-    var anchor = target.closest ? target.closest('a[href*="wa.me"]') : null;
-    if (!anchor) return;
+  document.addEventListener(
+    'click',
+    function (e) {
 
-    /* R-09: send only sanitised classification — never the URL. */
-    _log('Event', cfg.events.WHATSAPP_CLICK, { destination_type: 'whatsapp' });
-    _gtag('event', cfg.events.WHATSAPP_CLICK, {
-      destination_type: 'whatsapp',
-      page_path:        _path
-    });
-  });
+      var target = e && e.target;
+
+      if (!target) {
+        return;
+      }
+
+      var anchor =
+        target.closest
+          ? target.closest('a[href*="wa.me"]')
+          : null;
+
+      if (!anchor) {
+        return;
+      }
+
+      _log(
+        'Event',
+        cfg.events.WHATSAPP_CLICK,
+        {
+          destination_type: 'whatsapp'
+        }
+      );
+
+      _gtag(
+        'event',
+        cfg.events.WHATSAPP_CLICK,
+        {
+          destination_type: 'whatsapp',
+          page_path: _path
+        }
+      );
+    }
+  );
 
   /* ── C5: phone_click ─────────────────────────────────────── */
-  /* Source: tel: links across public pages                     */
-  /* Registered via document-level click delegation.            */
-  /*                                                            */
-  /* R-08: interaction event only. Raw telephone number is       */
-  /* never sent. destination_type 'phone' is a constant string. */
-  /* Not a GA4 Key Event in this phase.                         */
-  document.addEventListener('click', function (e) {
-    var target = e && e.target;
-    if (!target) return;
-    var anchor = target.closest ? target.closest('a[href^="tel:"]') : null;
-    if (!anchor) return;
+  document.addEventListener(
+    'click',
+    function (e) {
 
-    /* PII gate: never send the raw tel: href or phone number.  */
-    _log('Event', cfg.events.PHONE_CLICK || 'phone_click', { destination_type: 'phone' });
-    _gtag('event', cfg.events.PHONE_CLICK || 'phone_click', {
-      destination_type: 'phone',
-      page_path:        _path
-    });
-  });
+      var target = e && e.target;
+
+      if (!target) {
+        return;
+      }
+
+      var anchor =
+        target.closest
+          ? target.closest('a[href^="tel:"]')
+          : null;
+
+      if (!anchor) {
+        return;
+      }
+
+      var eventName =
+        cfg.events.PHONE_CLICK ||
+        'phone_click';
+
+      _log(
+        'Event',
+        eventName,
+        {
+          destination_type: 'phone'
+        }
+      );
+
+      _gtag(
+        'event',
+        eventName,
+        {
+          destination_type: 'phone',
+          page_path: _path
+        }
+      );
+    }
+  );
 
   /* ── C6: artisan_card_click ─────────────────────────────── */
-  /* Source: LP pages — .lp-card-link anchors in SSR output    */
-  /* Registered via document-level click delegation.            */
-  /*                                                            */
-  /* R-07 fix: card.dataset.artisanId was always '' because LP  */
-  /* card anchors carry no data-* attributes. Strategy A:       */
-  /* extract public_slug from the canonical /artisan/{slug} URL.*/
-  /* URL pattern is locked: https://www.fixeo.ma/artisan/{slug} */
-  /* Split on '/artisan/' → index [1] = slug (single segment,   */
-  /* never contains '/'. No query strings or fragments sent.    */
-  document.addEventListener('click', function (e) {
-    var target = e && e.target;
-    if (!target) return;
-    var card = target.closest ? target.closest('.lp-card-link') : null;
-    if (!card) return;
+  document.addEventListener(
+    'click',
+    function (e) {
 
-    /* R-07: prefer explicit data attributes; fallback to href.  */
-    var artisanId = _str(card.dataset.artisanId || card.dataset.id);
-    if (!artisanId && card.href) {
-      var parts = card.href.split('/artisan/');
-      if (parts.length > 1) {
-        artisanId = _str(parts[1].split('?')[0].split('#')[0]);
+      var target = e && e.target;
+
+      if (!target) {
+        return;
       }
+
+      var card =
+        target.closest
+          ? target.closest('.lp-card-link')
+          : null;
+
+      if (!card) {
+        return;
+      }
+
+      var artisanId =
+        _str(
+          card.dataset.artisanId ||
+          card.dataset.id
+        );
+
+      if (!artisanId && card.href) {
+
+        var parts =
+          card.href.split('/artisan/');
+
+        if (parts.length > 1) {
+
+          artisanId =
+            _str(
+              parts[1]
+                .split('?')[0]
+                .split('#')[0]
+            );
+        }
+      }
+
+      _log(
+        'Event',
+        cfg.events.ARTISAN_CARD_CLICK,
+        {
+          artisanId: artisanId
+        }
+      );
+
+      _gtag(
+        'event',
+        cfg.events.ARTISAN_CARD_CLICK,
+        {
+          artisan_id: artisanId,
+          page_path: _path
+        }
+      );
     }
+  );
 
-    _log('Event', cfg.events.ARTISAN_CARD_CLICK, { artisanId: artisanId });
-    _gtag('event', cfg.events.ARTISAN_CARD_CLICK, {
-      artisan_id: artisanId,
-      page_path:  _path
-    });
-  });
+  /* ── C7: signup completion ──────────────────────────────── */
+  window.addEventListener(
+    'fixeo:signup:complete',
+    function (e) {
 
-  /* ── C7: signup completion ───────────────────────────────── */
-  /* Source: auth.html → fixeo:signup:complete CustomEvent      */
-  /* Dispatched immediately before showConfirmScreen() only     */
-  /* after FixeoAuth.signUp() returns without error.            */
-  /*                                                            */
-  /* R-06 fix: previous approach used fixeo:auth:updated and    */
-  /* inferred signup from user.created_at (always undefined in  */
-  /* normalizedUser — heuristic never fired). New approach:     */
-  /* dedicated CustomEvent dispatched at the confirmed success  */
-  /* point in auth.html. role, city, user_id in scope there.   */
-  /*                                                            */
-  /* user_id used ONLY as local dedup key — not sent to GA4.   */
-  /* email, phone, name, password: never dispatched or read.   */
-  window.addEventListener('fixeo:signup:complete', function (e) {
-    var d = (e && e.detail) || {};
-    var userId = _str(d.user_id);
+      var d = (e && e.detail) || {};
+      var userId = _str(d.user_id);
 
-    if (!userId) return; /* guard: no valid signup without a user ID */
+      if (!userId) {
+        return;
+      }
 
-    var dedupKey = 'su_' + userId;
-    if (!_dedup(dedupKey)) return;
+      var dedupKey =
+        'su_' +
+        userId;
 
-    var role = _str(d.role) || 'client';
-    var eventName = role === 'artisan'
-      ? cfg.events.ARTISAN_SIGNUP_COMPLETE
-      : cfg.events.CLIENT_SIGNUP_COMPLETE;
+      if (!_dedup(dedupKey)) {
+        return;
+      }
 
-    _log('Event', eventName, { role: role });
-    _gtag('event', eventName, {
-      user_role:    role,
-      artisan_city: _str(d.city),
-      page_path:    _path
-      /* user_id intentionally NOT sent as GA4 parameter        */
-      /* pending Phase 6.2.5 user-property schema authorization */
-    });
-  });
+      var role =
+        _str(d.role) ||
+        'client';
 
-  /* ── Phase 6.2.5 hook: fixeo:auth:updated ────────────────── */
-  /* R-12: signup detection removed (broken heuristic).         */
-  /* This listener is retained as the documented hook point     */
-  /* for Phase 6.2.5 user-property instrumentation.            */
-  /*                                                            */
-  /* PHASE 6.2.5 TODO (requires separate authorization):        */
-  /*   On login / session restore (d.user non-null):           */
-  /*     _gtag('set', {                                         */
-  /*       user_id:   _str(d.user.id),   // Supabase UUID only  */
-  /*       user_role: _str(d.user.role)  // 'client'|'artisan' */
-  /*     });                                                     */
-  /*   On logout (d.user null):                                 */
-  /*     _gtag('set', { user_id: null });                       */
-  /*                                                            */
-  /* FORBIDDEN in this listener at any phase:                   */
-  /*   d.user.email — may be synthetic phone-derived address    */
-  /*   d.profile.phone — phone number (PII)                    */
-  /*   d.profile.full_name — personal name (PII)               */
-  /*                                                            */
-  /* DO NOT activate this listener body before Phase 6.2.5     */
-  /* authorization is granted.                                  */
-  window.addEventListener('fixeo:auth:updated', function (e) { /* eslint-disable-line no-unused-vars */
-    /* Phase 6.2.5 user-property wiring goes here.              */
-    /* This body is intentionally empty in Phase 6.2.4.         */
-  });
+      var eventName =
+        role === 'artisan'
+          ? cfg.events.ARTISAN_SIGNUP_COMPLETE
+          : cfg.events.CLIENT_SIGNUP_COMPLETE;
 
-  /* ── Consent update helper ──────────────────────────────── */
-  /* Called by fixeo-consent-v1.js (Phase 6.2.5) when the user */
-  /* accepts or refuses cookie consent.                         */
+      _log(
+        'Event',
+        eventName,
+        {
+          role: role
+        }
+      );
+
+      _gtag(
+        'event',
+        eventName,
+        {
+          user_role:
+            role,
+
+          artisan_city:
+            _str(d.city),
+
+          page_path:
+            _path
+        }
+      );
+    }
+  );
+
+  /* ── Auth update hook ───────────────────────────────────── */
+  /*
+   * Reserved for future user-property instrumentation.
+   *
+   * PII remains forbidden here.
+   */
+  window.addEventListener(
+    'fixeo:auth:updated',
+    function (e) { /* eslint-disable-line no-unused-vars */
+
+      /*
+       * Intentionally empty.
+       */
+    }
+  );
+
+  /* ══════════════════════════════════════════════════════════
+     PUBLIC CONSENT BRIDGE
+     ══════════════════════════════════════════════════════════ */
+
   window.FixeoAnalyticsBootstrap = {
+
     version: VERSION,
 
-    /* Called by fixeo-consent-v1.js _grantAnalytics() on Accept */
-    /* or when a returning visitor's stored state is 'granted'. */
-    /* Loads gtag.js dynamically — only ever called after user   */
-    /* explicitly grants analytics_storage consent.              */
+    /*
+     * Called AFTER fixeo-consent-v1.js persisted:
+     *
+     *   analytics = granted
+     *
+     * and queued the Consent Mode update.
+     */
     grantConsent: function () {
-      if (!_ga4Active) return;
-      /* gtag consent update was already queued by consent JS.  */
-      /* Load gtag.js now — it will process the queued grant.   */
-      _loadGa4();
-      _log('Consent granted — GA4 loader triggered');
+
+      if (_ga4Active) {
+        _loadGa4();
+      }
+
+      if (_vercelAnalyticsActive) {
+        _loadVercelAnalytics();
+      }
+
+      _log(
+        'Consent granted — analytics loaders triggered'
+      );
     },
 
-    /* Called by fixeo-consent-v1.js _denyAnalytics() on Refuse */
-    /* or Revoke. gtag.js will not be loaded.                    */
+    /*
+     * Called after consent is denied or revoked.
+     *
+     * GA4 receives its Consent Mode denial from
+     * fixeo-consent-v1.js.
+     *
+     * Vercel Web Analytics remains physically loaded during
+     * the current document if it had already loaded, but
+     * _vercelBeforeSend() now rejects every transmission
+     * because persisted consent is denied.
+     */
     denyConsent: function () {
-      _log('Consent denied — GA4 will not load');
+
+      _log(
+        'Consent denied — analytics transmission suppressed'
+      );
     },
 
-    /* Returns the persisted consent state, or null if unknown  */
+    /*
+     * Raw persisted state.
+     *
+     * Kept backward-compatible with the existing public API.
+     */
     getConsentState: function () {
+
       try {
-        return localStorage.getItem(cfg.consentStorageKey);
+        return localStorage.getItem(
+          cfg.consentStorageKey
+        );
+
       } catch (err) {
         return null;
       }
     }
   };
 
-  /* ── Returning visitor: auto-load GA4 if already granted ─── */
-  /* consent JS runs before bootstrap (both in <head>).         */
-  /* consent JS already called _grantAnalytics() for returning  */
-  /* visitors, but FixeoAnalyticsBootstrap wasn't defined yet.  */
-  /* We re-check here at bootstrap init time and load if needed.*/
+  /* ══════════════════════════════════════════════════════════
+     RETURNING VISITOR
+     ══════════════════════════════════════════════════════════ */
+
+  /*
+   * fixeo-consent-v1.js executes before this bootstrap.
+   *
+   * For returning users it may already have restored the
+   * consent state before FixeoAnalyticsBootstrap exists.
+   *
+   * Re-check persisted consent here and load providers when
+   * appropriate.
+   */
   try {
-    var _storedConsent = localStorage.getItem(cfg.consentStorageKey);
+
+    var _storedConsent =
+      localStorage.getItem(
+        cfg.consentStorageKey
+      );
+
     var _consentRecord = null;
-    try { _consentRecord = JSON.parse(_storedConsent); } catch (_) {}
-    /* Handle v1 JSON record or v0 raw string */
-    var _analyticsValue = (_consentRecord && _consentRecord.analytics)
-      ? _consentRecord.analytics
-      : _storedConsent;
-    if (_analyticsValue === 'granted') {
-      _log('Returning visitor — stored consent granted — auto-loading GA4');
-      _loadGa4();
-    } else {
-      _log('Returning visitor — stored consent denied or absent — GA4 suppressed');
+
+    try {
+      _consentRecord =
+        JSON.parse(_storedConsent);
+    } catch (_) {
+      /* legacy raw value */
     }
+
+    var _analyticsValue =
+      (
+        _consentRecord &&
+        _consentRecord.analytics
+      )
+        ? _consentRecord.analytics
+        : _storedConsent;
+
+    if (_analyticsValue === 'granted') {
+
+      _log(
+        'Returning visitor — stored consent granted — auto-loading analytics'
+      );
+
+      if (_ga4Active) {
+        _loadGa4();
+      }
+
+      if (_vercelAnalyticsActive) {
+        _loadVercelAnalytics();
+      }
+
+    } else {
+
+      _log(
+        'Returning visitor — stored consent denied or absent — analytics suppressed'
+      );
+    }
+
   } catch (_e) {
-    _log('localStorage read error at init — GA4 suppressed');
+
+    _log(
+      'localStorage read error at init — analytics suppressed'
+    );
   }
 
-  _log('Bootstrap initialised — v' + VERSION + ' | GA4 active:', _ga4Active);
+  /* ── Final debug state ──────────────────────────────────── */
+  _log(
+    'Bootstrap initialised — v' +
+    VERSION +
+    ' | GA4 active:',
+    _ga4Active,
+    '| Vercel Analytics active:',
+    _vercelAnalyticsActive
+  );
 
 })();
