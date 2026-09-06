@@ -1117,3 +1117,47 @@ html body #artisans-section[data-results-state="discovery"] #loading-artisans {
   }
 
 }
+
+/* Homepage artisan network — luminous gateway badge */
+#service-artisans-section .fhp-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+
+  margin: 0 auto 16px;
+  padding: 7px 14px;
+  gap: 8px;
+
+  border: 1px solid rgba(72, 100, 255, 0.38);
+  border-radius: 999px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(72, 100, 255, 0.16),
+    rgba(139, 92, 255, 0.08)
+  );
+
+  color: #dfe7ff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+
+  box-shadow:
+    0 0 18px rgba(72, 100, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+#service-artisans-section .fhp-eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+
+  background: #68e4ff;
+
+  box-shadow:
+    0 0 6px rgba(104, 228, 255, 0.95),
+    0 0 12px rgba(72, 100, 255, 0.55);
+}
