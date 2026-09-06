@@ -91,7 +91,10 @@
   width: fit-content;
   gap: 8px;
 
-  padding: 6px 12px;
+padding: 7px 14px;
+font-size: 12px;
+font-weight: 800;
+letter-spacing: 0.13em;
 
   border: 1px solid rgba(72, 100, 255, 0.38);
   border-radius: 999px;
