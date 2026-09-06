@@ -84,6 +84,46 @@
   gap: 8px;
 }
 
+/* Enterprise gateway badge */
+#enterprise-teaser .fxet-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  gap: 8px;
+
+  padding: 6px 12px;
+
+  border: 1px solid rgba(72, 100, 255, 0.38);
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(72, 100, 255, 0.16),
+      rgba(139, 92, 255, 0.08)
+    );
+
+  color: #8fdcff;
+
+  box-shadow:
+    0 0 18px rgba(72, 100, 255, 0.16),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+#enterprise-teaser .fxet-eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+
+  border-radius: 50%;
+  background: #68e4ff;
+
+  box-shadow:
+    0 0 6px rgba(104, 228, 255, 0.95),
+    0 0 12px rgba(72, 100, 255, 0.55);
+}
+
 .fxet-title {
   font-size: clamp(26px, 3vw, 40px);
   font-weight: 700;
