@@ -424,63 +424,95 @@
 
 /* ── Mobile (<= 768px): stack vertically ──────────────────────────────── */
 @media (max-width: 768px) {
+
   .fxet-section {
-    padding: 56px 0 64px;
+    padding: 48px 0 54px;
   }
 
+  /*
+   * Mobile narrative:
+   * titre → preuve produit → CTA
+   *
+   * display: contents permet aux éléments de .fxet-content
+   * de participer directement au flux de .fxet-container,
+   * sans modifier le HTML ni le desktop.
+   */
   .fxet-container {
     grid-template-columns: 1fr;
-    gap: 36px;
+    gap: 14px;
   }
 
   .fxet-content {
-    gap: 20px;
+    display: contents;
+  }
+
+  .fxet-eyebrow {
+    order: 1;
   }
 
   .fxet-title {
+    order: 2;
     font-size: clamp(22px, 6vw, 30px);
   }
 
   .fxet-subtitle {
+    order: 3;
     font-size: 15px;
     max-width: none;
-  }
-
-  .fxet-tags {
-    gap: 6px;
-  }
-
-  .fxet-tag {
-    font-size: 12px;
-    padding: 5px 10px;
-  }
-
-  .fxet-cta {
-    align-self: stretch;
-    justify-content: center;
-    padding: 16px 24px;
-    font-size: 16px;
+    margin-bottom: 8px;
   }
 
   .fxet-visual {
-    order: -1; /* illustration above text on mobile */
+    order: 4;
+    margin-top: 6px;
+  }
+
+  .fxet-cta {
+    order: 5;
+    align-self: stretch;
+    justify-content: center;
+    margin-top: 4px;
+    padding: 15px 22px;
+    font-size: 15px;
   }
 
   .fxet-dash {
     max-width: 100%;
   }
 
+  .fxet-dash-bar {
+    padding: 11px 14px;
+  }
+
   .fxet-orch-flow {
-    padding: 16px 16px 4px;
+    padding: 12px 12px 2px;
+  }
+
+  .fxet-orch-step {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .fxet-orch-arrow-line {
+    height: 8px;
+  }
+
+  .fxet-orch-engine {
+    padding: 9px 0 7px;
+    gap: 6px;
   }
 
   .fxet-orch-engine-ring {
-    width: 52px;
-    height: 52px;
+    width: 46px;
+    height: 46px;
   }
 
   .fxet-orch-engine-icon {
-    font-size: 18px;
+    font-size: 16px;
+  }
+
+  .fxet-dash-label {
+    padding: 7px 12px 10px;
   }
 }
 
