@@ -224,18 +224,18 @@
   display: none !important;
 }
 
-/* ── 5. ENTERPRISE VISUAL ORDER — mobile ─────────────────────────────────
-   At ≤768px, fixeo-enterprise-teaser-v1.css sets .fxet-visual { order:-1 }
-   which places the dashboard ABOVE the intro copy.
-   Override: restore natural DOM order (text first, visual second).
-   ─────────────────────────────────────────────────────────────────────── */
+/* ── 5. ENTERPRISE VISUAL ORDER — mobile ──────────────────────────────
+   Current homepage narrative:
+   title → copy → product preview → CTA.
+   Keep this late stylesheet aligned with the canonical teaser ordering.
+────────────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .fxet-visual {
-    order: 0 !important;
+    order: 4 !important;
   }
-  /* Reduce visual top margin so dashboard doesn't feel detached after intro */
+
   #enterprise-teaser .fxet-visual {
-    margin-top: 24px;
+    margin-top: 6px;
   }
 }
 
