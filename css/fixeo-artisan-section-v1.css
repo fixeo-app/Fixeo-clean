@@ -1113,7 +1113,7 @@ html body #artisans-section[data-results-state="discovery"] #loading-artisans {
      Same spec as existing 52px rule at fixeo-artisan-section-v1.css:461;
      this block loads later → wins. */
   #artisans-section.section {
-    padding-top: 40px !important;
+    padding-top: 20px !important;
   }
 
 }
