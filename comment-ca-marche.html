@@ -615,36 +615,71 @@
   </button>
 </nav>
 
-<!-- ── Hero ── -->
-<section class="cp-hero" aria-labelledby="ccm-hero-title">
+
+
+<!-- ── Hero — FIXEO orchestration ── -->
+<section class="cp-hero cp-hero--orchestration" aria-labelledby="ccm-hero-title">
   <div class="cp-container">
+
     <span class="cp-hero-label">Comment ça marche</span>
-    <!-- Canonical RAFI sphere — visual identity only (fxhow-v2b).
-         rfos-avatar-wrap/rfos-halo/rfos-avatar from fixeo-rafi-os-v1.css.
-         rafi/RAFI_V2_HeadCollar_Core.webp — served from rafi/ static dir.
-         No click, no modal, no event listener. aria-hidden=true throughout. -->
+
     <div class="ccm-sphere-wrap" aria-hidden="true">
       <div class="rfos-avatar-wrap">
         <div class="rfos-halo" aria-hidden="true"></div>
         <div class="rfos-avatar">
-          <img src="rafi/RAFI_V2_HeadCollar_Core.webp"
-               alt=""
-               width="72"
-               height="72"
-               loading="eager"
-               decoding="async"
-               aria-hidden="true">
+          <img
+            src="rafi/RAFI_V2_HeadCollar_Core.webp"
+            alt=""
+            width="72"
+            height="72"
+            loading="eager"
+            decoding="async"
+            aria-hidden="true">
         </div>
       </div>
     </div>
-    <h1 id="ccm-hero-title">Décrivez votre besoin.<br><span class="hl">RAFI organise votre demande.</span></h1>
-    <p>Choisissez votre besoin, indiquez votre ville et laissez votre numéro.<br>Votre demande est enregistrée en quelques étapes.</p>
-    <div class="cp-btn-row">
-      <button type="button" class="cp-btn cp-btn-primary" data-open-request-form="true" aria-label="Décrire mon besoin à RAFI">✨ Décrire mon besoin à RAFI</button>
-      <a href="index.html#artisans-section" class="cp-btn cp-btn-secondary">👷 Voir les artisans</a>
+
+    <h1 id="ccm-hero-title">
+      Décrivez votre besoin.<br>
+      <span class="hl">FIXEO organise la suite.</span>
+    </h1>
+
+    <p class="cp-hero-lead">
+      RAFI structure votre demande, identifie la zone d’intervention
+      et prépare le matching avec les profils adaptés.
+    </p>
+
+    <div class="cp-hero-system" aria-label="Parcours technologique Fixeo">
+      <span>RAFI</span>
+      <i aria-hidden="true"></i>
+      <span>Zone</span>
+      <i aria-hidden="true"></i>
+      <span>Matching</span>
+      <i aria-hidden="true"></i>
+      <span>Dispatch</span>
+      <i aria-hidden="true"></i>
+      <span>Mission</span>
     </div>
+
+    <div class="cp-btn-row">
+      <button
+        type="button"
+        class="cp-btn cp-btn-primary"
+        data-open-request-form="true"
+        aria-label="Décrire mon besoin à RAFI">
+        ✨ Décrire mon besoin à RAFI
+      </button>
+
+      <a
+        href="index.html#artisans-section"
+        class="cp-btn cp-btn-secondary">
+        👷 Voir les artisans
+      </a>
+    </div>
+
   </div>
 </section>
+  
 
 <!-- ── Les 5 étapes ── -->
 <section class="cp-section cp-container" aria-labelledby="steps-title">
