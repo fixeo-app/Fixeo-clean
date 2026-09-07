@@ -2169,57 +2169,7 @@ a{text-decoration:none}
   </style>
 
   <!-- Phase 4B — fxsvc-ctx-v1: context bar + card highlight styles -->
-  <style id="fxsvc-ctx-v1">
-/* ════════════════════════════════════════════════════════════
-   fxsvc-ctx-v1 — Services Explorer Context Bar
-   Shown only when ?from=journey via JS class toggle.
-   Namespace: fxsvc-ctx-*
-   Scoped to: #fxsvc-ctx-bar
-   ════════════════════════════════════════════════════════════ */
 
-/* Container — hidden by default; shown by JS */
-#fxsvc-ctx-bar {
-  padding: clamp(12px, 2vw, 18px) 0;
-  border-bottom: 1px solid rgba(72,100,255,0.10);
-  margin-bottom: clamp(20px, 3vw, 32px);
-}
-
-/* fxsvc-ctx-v1 — styles now consolidated in fxsvc-wow-v1 above.
-   Only card match state remains here as Phase 4B anchor. */
-
-/* ── Matching card highlight — Phase 4C.1 refined ── */
-.cp-svc-card.fxsvc-match {
-  border-color: rgba(255,255,255,0.16);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.10) inset,
-    0 0 0 1px rgba(255,255,255,0.08),
-    0 12px 36px rgba(0,0,0,0.30);
-}
-
-.cp-svc-card.fxsvc-match .cp-svc-name {
-  color: rgba(248,250,255,1.0);
-}
-
-/* Match badge */
-.fxsvc-match-badge {
-  display: inline-block;
-  font-size: 0.58rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(160,185,255,0.82);
-  background: rgba(100,130,255,0.08);
-  border: 1px solid rgba(100,130,255,0.18);
-  border-radius: 5px;
-  padding: 2px 7px;
-  margin: 4px 0 6px;
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .cp-svc-card.fxsvc-match { transition: none !important; }
-}
-  </style>
 <style id="fxsvh-v1">
 /* ════════════════════════════════════════════════════════════
    SERVICES FLAGSHIP HERO — fxsvh-v1
