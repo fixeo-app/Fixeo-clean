@@ -1627,7 +1627,362 @@
     padding:18px 16px;
   }
 }
-    
+   /* ═══════════════════════════════════════════════
+   ECOSYSTEM — TWO-SIDED VALUE CREATION
+══════════════════════════════════════════════ */
+
+.pp-ecosystem{
+  position:relative;
+  overflow:hidden;
+}
+
+.pp-ecosystem::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 15% 35%,rgba(131,58,180,.07),transparent 30%),
+    radial-gradient(circle at 85% 45%,rgba(225,48,108,.06),transparent 30%);
+}
+
+.pp-ecosystem-head{
+  position:relative;
+  z-index:1;
+  max-width:720px;
+  margin-bottom:38px;
+}
+
+.pp-ecosystem-grid{
+  position:relative;
+  z-index:1;
+
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:22px;
+}
+
+.pp-ecosystem-card{
+  position:relative;
+
+  display:flex;
+  flex-direction:column;
+
+  padding:30px 28px;
+
+  border-radius:24px;
+  overflow:hidden;
+}
+
+.pp-ecosystem-card::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.9;
+}
+
+.pp-ecosystem-card--artisan{
+  background:
+    linear-gradient(
+      145deg,
+      rgba(131,58,180,.105),
+      rgba(64,93,230,.055)
+    );
+
+  border:1px solid rgba(145,105,235,.18);
+}
+
+.pp-ecosystem-card--artisan::before{
+  background:
+    radial-gradient(circle at 85% 5%,rgba(135,90,255,.08),transparent 30%);
+}
+
+.pp-ecosystem-card--client{
+  background:
+    linear-gradient(
+      145deg,
+      rgba(225,48,108,.09),
+      rgba(247,119,55,.045)
+    );
+
+  border:1px solid rgba(225,80,125,.17);
+}
+
+.pp-ecosystem-card--client::before{
+  background:
+    radial-gradient(circle at 85% 5%,rgba(255,105,155,.07),transparent 30%);
+}
+
+.pp-ecosystem-card-top{
+  position:relative;
+  z-index:1;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+
+  margin-bottom:22px;
+}
+
+.pp-ecosystem-label{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+
+  padding:6px 13px;
+
+  border-radius:999px;
+
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.pp-ecosystem-label--artisan{
+  color:rgba(205,175,255,.95);
+  background:rgba(131,58,180,.12);
+  border:1px solid rgba(150,100,245,.20);
+}
+
+.pp-ecosystem-label--client{
+  color:rgba(255,170,195,.95);
+  background:rgba(225,48,108,.105);
+  border:1px solid rgba(235,90,135,.19);
+}
+
+.pp-ecosystem-index{
+  font-size:2.15rem;
+  font-weight:900;
+  line-height:1;
+
+  color:rgba(255,255,255,.055);
+}
+
+.pp-ecosystem-title{
+  position:relative;
+  z-index:1;
+
+  margin:0 0 14px;
+
+  font-size:clamp(1.15rem,2vw,1.55rem);
+  line-height:1.25;
+  letter-spacing:-.015em;
+
+  color:#fff;
+}
+
+.pp-ecosystem-intro{
+  position:relative;
+  z-index:1;
+
+  margin:0 0 24px;
+
+  font-size:.86rem;
+  line-height:1.7;
+
+  color:rgba(255,255,255,.48);
+}
+
+.pp-ecosystem-points{
+  position:relative;
+  z-index:1;
+
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+
+  flex:1;
+}
+
+.pp-ecosystem-point{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:12px;
+
+  padding:14px 14px;
+
+  border-radius:14px;
+
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.055);
+}
+
+.pp-ecosystem-point-icon{
+  width:32px;
+  height:32px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:9px;
+
+  font-size:.8rem;
+
+  color:rgba(160,200,255,.9);
+
+  background:rgba(70,100,220,.08);
+  border:1px solid rgba(95,140,245,.14);
+}
+
+.pp-ecosystem-card--client .pp-ecosystem-point-icon{
+  color:rgba(255,170,195,.95);
+
+  background:rgba(225,48,108,.07);
+  border-color:rgba(225,80,125,.13);
+}
+
+.pp-ecosystem-point strong{
+  display:block;
+
+  margin-bottom:3px;
+
+  font-size:.84rem;
+  line-height:1.35;
+
+  color:rgba(255,255,255,.88);
+}
+
+.pp-ecosystem-point p{
+  margin:0;
+
+  font-size:.77rem;
+  line-height:1.55;
+
+  color:rgba(255,255,255,.40);
+}
+
+.pp-ecosystem-outcome{
+  position:relative;
+  z-index:1;
+
+  margin-top:20px;
+  padding-top:18px;
+
+  border-top:1px solid rgba(255,255,255,.065);
+}
+
+.pp-ecosystem-outcome span{
+  display:block;
+
+  margin-bottom:5px;
+
+  font-size:.59rem;
+  font-weight:800;
+  letter-spacing:.11em;
+
+  color:rgba(120,220,200,.75);
+}
+
+.pp-ecosystem-outcome strong{
+  display:block;
+
+  font-size:.82rem;
+  line-height:1.5;
+
+  color:rgba(255,255,255,.66);
+}
+
+.pp-ecosystem-bridge{
+  position:relative;
+  z-index:1;
+
+  max-width:820px;
+
+  margin:24px auto 0;
+  padding:22px 24px;
+
+  text-align:center;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(131,58,180,.055),
+      rgba(72,100,255,.045),
+      rgba(225,48,108,.05)
+    );
+
+  border:1px solid rgba(255,255,255,.07);
+}
+
+.pp-ecosystem-bridge-label{
+  display:block;
+
+  margin-bottom:7px;
+
+  font-size:.61rem;
+  font-weight:800;
+  letter-spacing:.12em;
+
+  color:rgba(130,210,220,.75);
+}
+
+.pp-ecosystem-bridge p{
+  margin:0;
+
+  font-size:.88rem;
+  line-height:1.65;
+
+  color:rgba(255,255,255,.48);
+}
+
+.pp-ecosystem-bridge strong{
+  color:rgba(255,255,255,.76);
+  font-weight:600;
+}
+
+@media(max-width:760px){
+
+  .pp-ecosystem-head{
+    margin-bottom:28px;
+  }
+
+  .pp-ecosystem-grid{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+
+  .pp-ecosystem-card{
+    padding:24px 18px;
+    border-radius:20px;
+  }
+
+  .pp-ecosystem-title{
+    font-size:1.08rem;
+  }
+
+  .pp-ecosystem-intro{
+    font-size:.83rem;
+    margin-bottom:20px;
+  }
+
+  .pp-ecosystem-point{
+    padding:13px 12px;
+  }
+
+  .pp-ecosystem-point strong{
+    font-size:.82rem;
+  }
+
+  .pp-ecosystem-point p{
+    font-size:.75rem;
+  }
+
+  .pp-ecosystem-bridge{
+    margin-top:18px;
+    padding:18px 16px;
+    text-align:left;
+  }
+
+  .pp-ecosystem-bridge p{
+    font-size:.82rem;
+  }
+} 
     
   </style>
   
@@ -2031,58 +2386,173 @@
   
 
 <!-- ══════════════════════════════════════════════
-     FOR ARTISANS / FOR CLIENTS
+     ECOSYSTEM — TWO-SIDED VALUE CREATION
 ══════════════════════════════════════════════ -->
-<section class="pp-section" aria-labelledby="ecosystem-heading">
+<section class="pp-section pp-ecosystem" aria-labelledby="ecosystem-heading">
   <div class="pp-container">
-    <div class="pp-section-header">
+
+    <div class="pp-ecosystem-head">
       <span class="pp-section-tag pp-tag-teal">L'écosystème</span>
-      <h2 class="pp-section-h2" id="ecosystem-heading">Deux bénéficiaires.<br>Un seul écosystème.</h2>
+
+      <h2 class="pp-section-h2" id="ecosystem-heading">
+        Structurer les deux côtés<br>
+        d’un même marché.
+      </h2>
+
       <p class="pp-section-lead">
-        Fixeo crée de la valeur simultanément pour les artisans et pour leurs clients.
-        Ce double bénéfice est au cœur de notre modèle.
+        FIXEO agit à la fois sur la visibilité des professionnels
+        et sur la manière dont les clients formulent, orientent
+        et suivent leurs besoins de service.
       </p>
     </div>
 
-    <div class="pp-dual-grid">
-      <!-- Artisans -->
-      <div class="pp-dual-card pp-dual-card-artisan">
-        <div>
-          <span class="pp-dual-label pp-dual-label-artisan">🛠️ Pour les artisans</span>
-        </div>
-        <h3 class="pp-dual-h3">Une identité digitale.<br>Des opportunités réelles.</h3>
-        <ul class="pp-dual-list">
-          <li>Un profil professionnel public, visible sur tout le web</li>
-          <li>Des demandes entrantes sans prospection ni démarchage</li>
-          <li>Une réputation mesurable qui s'accumule dans le temps</li>
-          <li>Une visibilité dans leur ville et les zones adjacentes</li>
-          <li>Un outil de gestion des missions et de leur disponibilité</li>
-          <li>La possibilité de publier leurs réalisations en galerie photo</li>
-          <li>Un positionnement face aux clients qui cherchent la qualité</li>
-          <li>Une infrastructure technologique gratuite d'accès</li>
-        </ul>
-      </div>
+    <div class="pp-ecosystem-grid">
 
-      <!-- Clients -->
-      <div class="pp-dual-card pp-dual-card-client">
-        <div>
-          <span class="pp-dual-label pp-dual-label-client">🏠 Pour les clients</span>
+      <!-- ARTISANS -->
+      <article class="pp-ecosystem-card pp-ecosystem-card--artisan">
+
+        <div class="pp-ecosystem-card-top">
+          <span class="pp-ecosystem-label pp-ecosystem-label--artisan">
+            🛠️ Côté artisan
+          </span>
+
+          <span class="pp-ecosystem-index" aria-hidden="true">01</span>
         </div>
-        <h3 class="pp-dual-h3">La fin du flou.<br>Un accès structuré.</h3>
-        <ul class="pp-dual-list">
-          <li>Trouver un artisan disponible dans sa ville en quelques secondes</li>
-          <li>Comparer les profils, spécialités et zones d'intervention</li>
-          <li>Estimer le coût avant même de contacter</li>
-          <li>Payer uniquement après satisfaction — aucun risque financier</li>
-          <li>Un canal de coordination traçable via WhatsApp Fixeo</li>
-          <li>Un historique des demandes et missions passées</li>
-          <li>Une expérience de service qui ressemble au 21ème siècle</li>
-          <li>Un recours structuré en cas de problème</li>
-        </ul>
-      </div>
+
+        <h3 class="pp-ecosystem-title">
+          Transformer un savoir-faire local<br>
+          en identité professionnelle numérique.
+        </h3>
+
+        <p class="pp-ecosystem-intro">
+          FIXEO donne aux artisans un cadre numérique pour présenter leur activité,
+          être découverts plus facilement et participer à des missions structurées.
+        </p>
+
+        <div class="pp-ecosystem-points">
+
+          <div class="pp-ecosystem-point">
+            <span class="pp-ecosystem-point-icon" aria-hidden="true">▣</span>
+            <div>
+              <strong>Profil professionnel public</strong>
+              <p>Métier, ville, spécialités et informations utiles réunis dans un même espace.</p>
+            </div>
+          </div>
+
+          <div class="pp-ecosystem-point">
+            <span class="pp-ecosystem-point-icon" aria-hidden="true">◎</span>
+            <div>
+              <strong>Visibilité locale structurée</strong>
+              <p>Une présence numérique organisée autour des zones réellement couvertes.</p>
+            </div>
+          </div>
+
+          <div class="pp-ecosystem-point">
+            <span class="pp-ecosystem-point-icon" aria-hidden="true">↗️</span>
+            <div>
+              <strong>Accès à des demandes qualifiées</strong>
+              <p>Les besoins structurés peuvent être orientés vers les profils correspondant au contexte.</p>
+            </div>
+          </div>
+
+          <div class="pp-ecosystem-point">
+            <span class="pp-ecosystem-point-icon" aria-hidden="true">✓</span>
+            <div>
+              <strong>Historique professionnel progressif</strong>
+              <p>Les missions et informations disponibles contribuent à construire une identité plus lisible dans le temps.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="pp-ecosystem-outcome">
+          <span>ENJEU</span>
+          <strong>Rendre les professionnels sérieux plus visibles et plus identifiables.</strong>
+        </div>
+
+      </article>
+
+
+      <!-- CLIENTS -->
+      <article class="pp-ecosystem-card pp-ecosystem-card--client">
+
+        <div class="pp-ecosystem-card-top">
+          <span class="pp-ecosystem-label pp-ecosystem-label--client">
+            🏠 Côté client
+          </span>
+
+          <span class="pp-ecosystem-index" aria-hidden="true">02</span>
+        </div>
+
+        <h3 class="pp-ecosystem-title">
+          Transformer une recherche informelle<br>
+          en parcours de service structuré.
+        </h3>
+
+        <p class="pp-ecosystem-intro">
+          Le client n’a plus seulement à chercher un numéro :
+          sa demande est structurée, contextualisée et rapprochée
+          des profils correspondant au besoin exprimé.
+        </p>
+
+        <div class="pp-ecosystem-points">
+
+          <div class="pp-ecosystem-point">
+            <span class="pp-ecosystem-point-icon" aria-hidden="true">✦</span>
+            <div>
+              <strong>Besoin mieux défini</strong>
+              <p>RAFI organise les premières informations utiles avant le matching.</p>
+            </div>
+          </div>
+
+          <div class="pp-ecosystem-point">
+            <span class="pp-ecosystem-point-icon" aria-hidden="true">⌖</span>
+            <div>
+              <strong>Contexte géographique intégré</strong>
+              <p>Ville et zone d’intervention deviennent des critères du parcours.</p>
+            </div>
+          </div>
+
+          <div class="pp-ecosystem-point">
+            <span class="pp-ecosystem-point-icon" aria-hidden="true">●</span>
+            <div>
+              <strong>Profils plus lisibles</strong>
+              <p>Les informations professionnelles disponibles sont regroupées avant la mise en relation.</p>
+            </div>
+          </div>
+
+          <div class="pp-ecosystem-point">
+            <span class="pp-ecosystem-point-icon" aria-hidden="true">▰</span>
+            <div>
+              <strong>Pas de prépaiement FIXEO</strong>
+              <p>L’enregistrement de la demande ne nécessite pas de paiement préalable à la plateforme.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="pp-ecosystem-outcome">
+          <span>ENJEU</span>
+          <strong>Réduire le flou entre l’expression du besoin et l’organisation de l’intervention.</strong>
+        </div>
+
+      </article>
+
     </div>
+
+    <div class="pp-ecosystem-bridge">
+      <span class="pp-ecosystem-bridge-label">VALEUR CRÉÉE</span>
+
+      <p>
+        FIXEO ne cherche pas simplement à rapprocher une offre et une demande.
+        La plateforme structure progressivement <strong>la confiance, le contexte
+        et la continuité de la relation</strong> entre les deux.
+      </p>
+    </div>
+
   </div>
 </section>
+  
 
 <!-- ══════════════════════════════════════════════
      QUOTE BAR
