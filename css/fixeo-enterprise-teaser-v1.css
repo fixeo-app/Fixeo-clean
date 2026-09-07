@@ -719,27 +719,28 @@ letter-spacing: 0.13em;
   #enterprise-teaser .fxet-eyebrow {
     width: fit-content;
     margin: 0 auto 24px;
-    padding: 8px 16px;
+    padding: 9px 18px;
 
-    font-size: 12.5px;
+    font-size: 13.5px;
     font-weight: 800;
     letter-spacing: 0.14em;
     text-align: center;
 
-    color: #dff7ff;
+    color: #e8fbff;
 
-    border: 1px solid rgba(104, 228, 255, 0.34);
+    border: 1px solid rgba(104, 228, 255, 0.42);
     border-radius: 999px;
 
     background: linear-gradient(
       135deg,
-      rgba(72, 100, 255, 0.10),
-      rgba(104, 228, 255, 0.05)
+      rgba(72, 100, 255, 0.14),
+      rgba(104, 228, 255, 0.08)
     );
 
     box-shadow:
-      0 0 20px rgba(104, 228, 255, 0.18),
-      0 0 42px rgba(72, 100, 255, 0.14),
-      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      0 0 24px rgba(104, 228, 255, 0.28),
+      0 0 52px rgba(72, 100, 255, 0.20),
+      0 0 72px rgba(104, 228, 255, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 }
