@@ -2654,64 +2654,323 @@
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     PARTNERSHIP SECTORS
-══════════════════════════════════════════════ -->
-<section class="pp-section" aria-labelledby="partners-heading">
-  <div class="pp-container">
-    <div class="pp-section-header">
-      <span class="pp-section-tag pp-tag-pink">Partenariats</span>
-      <h2 class="pp-section-h2" id="partners-heading">Secteurs ouverts<br>à la collaboration</h2>
-      <p class="pp-section-lead">
-        Fixeo cherche à s'intégrer dans les écosystèmes qui ont besoin de services
-        artisanaux fiables et bien coordonnés.
-      </p>
-    </div>
+/* ═══════════════════════════════════════════════
+   PARTNERSHIPS — ECOSYSTEM INTEGRATION
+══════════════════════════════════════════════ */
 
-    <div class="pp-sectors-grid">
-      <div class="pp-sector-card">
-        <span class="pp-sector-emoji">🏗️</span>
-        <h3 class="pp-sector-name">Immobilier &amp; Promotion</h3>
-        <p class="pp-sector-desc">Promoteurs, agences, syndics de copropriété qui ont besoin d'interventions régulières et fiables.</p>
-      </div>
-      <div class="pp-sector-card">
-        <span class="pp-sector-emoji">🏦</span>
-        <h3 class="pp-sector-name">Assurances</h3>
-        <p class="pp-sector-desc">Compagnies d'assurance cherchant des réseaux d'artisans vérifiés pour la gestion des sinistres.</p>
-      </div>
-      <div class="pp-sector-card">
-        <span class="pp-sector-emoji">🏢</span>
-        <h3 class="pp-sector-name">Facility Management</h3>
-        <p class="pp-sector-desc">Entreprises gérant des immeubles, bureaux, commerces nécessitant des services de maintenance.</p>
-      </div>
-      <div class="pp-sector-card">
-        <span class="pp-sector-emoji">🔧</span>
-        <h3 class="pp-sector-name">Grande Distribution</h3>
-        <p class="pp-sector-desc">Enseignes vendant des appareils et équipements qui nécessitent installation ou après-vente.</p>
-      </div>
-      <div class="pp-sector-card">
-        <span class="pp-sector-emoji">🌐</span>
-        <h3 class="pp-sector-name">Télécoms &amp; Digital</h3>
-        <p class="pp-sector-desc">Opérateurs et plateformes cherchant à enrichir leur offre de services aux abonnés.</p>
-      </div>
-      <div class="pp-sector-card">
-        <span class="pp-sector-emoji">🏛️</span>
-        <h3 class="pp-sector-name">Institutions &amp; Collectivités</h3>
-        <p class="pp-sector-desc">Programmes de soutien à l'artisanat, d'insertion professionnelle, de modernisation des PME.</p>
-      </div>
-      <div class="pp-sector-card">
-        <span class="pp-sector-emoji">🚚</span>
-        <h3 class="pp-sector-name">Logistique &amp; Livraison</h3>
-        <p class="pp-sector-desc">Plateformes combinant livraison et installation — une extension naturelle des services à domicile.</p>
-      </div>
-      <div class="pp-sector-card">
-        <span class="pp-sector-emoji">📱</span>
-        <h3 class="pp-sector-name">Super-Apps &amp; Fintech</h3>
-        <p class="pp-sector-desc">Intégration en marque blanche ou en API dans des applications de gestion du quotidien.</p>
-      </div>
-    </div>
-  </div>
-</section>
+.pp-partners{
+  position:relative;
+  overflow:hidden;
+}
+
+.pp-partners::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      circle at 80% 15%,
+      rgba(225,48,108,.055),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 10% 70%,
+      rgba(72,100,255,.05),
+      transparent 28%
+    );
+}
+
+.pp-partners-head{
+  position:relative;
+  z-index:1;
+
+  max-width:760px;
+  margin-bottom:38px;
+}
+
+.pp-partners-grid{
+  position:relative;
+  z-index:1;
+
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+}
+
+.pp-partner-card{
+  position:relative;
+
+  display:flex;
+  flex-direction:column;
+
+  min-height:300px;
+
+  padding:24px 22px;
+
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.038),
+      rgba(255,255,255,.018)
+    );
+
+  border:1px solid rgba(255,255,255,.07);
+
+  overflow:hidden;
+
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    background .2s ease;
+}
+
+.pp-partner-card:hover{
+  transform:translateY(-2px);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.052),
+      rgba(255,255,255,.024)
+    );
+
+  border-color:rgba(150,165,255,.15);
+}
+
+.pp-partner-card::before{
+  content:'';
+
+  position:absolute;
+  left:0;
+  top:22px;
+  bottom:22px;
+
+  width:2px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(225,90,155,.78),
+      rgba(85,120,255,.12)
+    );
+}
+
+.pp-partner-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  margin-bottom:18px;
+}
+
+.pp-partner-icon{
+  width:40px;
+  height:40px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:12px;
+
+  font-size:.95rem;
+  font-weight:800;
+
+  color:rgba(180,195,255,.95);
+
+  background:rgba(72,100,255,.08);
+
+  border:1px solid rgba(105,140,255,.16);
+}
+
+.pp-partner-index{
+  font-size:1.8rem;
+  font-weight:900;
+  line-height:1;
+
+  color:rgba(255,255,255,.045);
+}
+
+.pp-partner-kicker{
+  display:block;
+
+  margin-bottom:7px;
+
+  font-size:.63rem;
+  font-weight:800;
+  letter-spacing:.11em;
+
+  color:rgba(225,125,175,.88);
+}
+
+.pp-partner-card h3{
+  margin:0 0 11px;
+
+  font-size:1rem;
+  line-height:1.35;
+  font-weight:800;
+
+  color:#fff;
+}
+
+.pp-partner-card > p{
+  margin:0 0 20px;
+
+  font-size:.8rem;
+  line-height:1.65;
+
+  color:rgba(255,255,255,.44);
+}
+
+.pp-partner-use{
+  margin-top:auto;
+  padding-top:15px;
+
+  border-top:1px solid rgba(255,255,255,.055);
+}
+
+.pp-partner-use span{
+  display:block;
+
+  margin-bottom:5px;
+
+  font-size:.56rem;
+  font-weight:800;
+  letter-spacing:.11em;
+
+  color:rgba(115,215,200,.72);
+}
+
+.pp-partner-use strong{
+  display:block;
+
+  font-size:.72rem;
+  line-height:1.5;
+  font-weight:600;
+
+  color:rgba(255,255,255,.58);
+}
+
+.pp-partners-callout{
+  position:relative;
+  z-index:1;
+
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:16px;
+  align-items:center;
+
+  max-width:900px;
+
+  margin:24px auto 0;
+  padding:22px 24px;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(131,58,180,.06),
+      rgba(72,100,255,.045),
+      rgba(225,48,108,.05)
+    );
+
+  border:1px solid rgba(145,130,255,.10);
+}
+
+.pp-partners-callout-mark{
+  width:42px;
+  height:42px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:12px;
+
+  font-size:1rem;
+  font-weight:800;
+
+  color:rgba(155,190,255,.95);
+
+  background:rgba(72,100,255,.08);
+
+  border:1px solid rgba(100,145,255,.16);
+}
+
+.pp-partners-callout-label{
+  display:block;
+
+  margin-bottom:6px;
+
+  font-size:.6rem;
+  font-weight:800;
+  letter-spacing:.11em;
+
+  color:rgba(120,215,200,.78);
+}
+
+.pp-partners-callout p{
+  margin:0;
+
+  font-size:.84rem;
+  line-height:1.65;
+
+  color:rgba(255,255,255,.48);
+}
+
+.pp-partners-callout strong{
+  color:rgba(255,255,255,.76);
+  font-weight:600;
+}
+
+@media(max-width:900px){
+
+  .pp-partners-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:640px){
+
+  .pp-partners-head{
+    margin-bottom:28px;
+  }
+
+  .pp-partners-grid{
+    grid-template-columns:1fr;
+    gap:13px;
+  }
+
+  .pp-partner-card{
+    min-height:0;
+    padding:21px 18px;
+  }
+
+  .pp-partner-card h3{
+    font-size:.96rem;
+  }
+
+  .pp-partners-callout{
+    grid-template-columns:auto 1fr;
+
+    margin-top:18px;
+    padding:18px 16px;
+  }
+
+  .pp-partners-callout-mark{
+    width:38px;
+    height:38px;
+  }
+
+  .pp-partners-callout p{
+    font-size:.8rem;
+  }
+}
 
 <!-- ══════════════════════════════════════════════
      CONTACT
