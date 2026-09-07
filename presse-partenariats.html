@@ -1983,7 +1983,413 @@
     font-size:.82rem;
   }
 } 
-    
+
+    /* ═══════════════════════════════════════════════
+   IMPACT & VISION — NATIONAL INFRASTRUCTURE
+══════════════════════════════════════════════ */
+
+.pp-vision{
+  position:relative;
+  overflow:hidden;
+}
+
+.pp-vision::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      circle at 18% 25%,
+      rgba(64,93,230,.08),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 85% 75%,
+      rgba(32,201,151,.045),
+      transparent 28%
+    );
+}
+
+.pp-vision-layout{
+  position:relative;
+  z-index:1;
+
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);
+  gap:54px;
+  align-items:start;
+}
+
+.pp-vision-main .pp-section-h2{
+  margin:14px 0 20px;
+}
+
+.pp-vision-lead{
+  max-width:660px;
+
+  margin:0 0 16px;
+
+  font-size:.95rem;
+  line-height:1.75;
+
+  color:rgba(255,255,255,.62);
+}
+
+.pp-vision-text{
+  max-width:660px;
+
+  margin:0;
+
+  font-size:.86rem;
+  line-height:1.72;
+
+  color:rgba(255,255,255,.44);
+}
+
+.pp-vision-statement{
+  position:relative;
+
+  margin-top:28px;
+  padding:21px 22px;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(64,93,230,.085),
+      rgba(131,58,180,.045)
+    );
+
+  border:1px solid rgba(105,135,255,.13);
+}
+
+.pp-vision-statement::before{
+  content:'';
+
+  position:absolute;
+
+  top:18px;
+  bottom:18px;
+  left:0;
+
+  width:2px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(100,165,255,.9),
+      rgba(100,165,255,.08)
+    );
+}
+
+.pp-vision-statement-label{
+  display:block;
+
+  margin-bottom:7px;
+
+  font-size:.6rem;
+  font-weight:800;
+  letter-spacing:.12em;
+
+  color:rgba(115,220,205,.82);
+}
+
+.pp-vision-statement p{
+  margin:0;
+
+  font-size:.84rem;
+  line-height:1.65;
+
+  color:rgba(255,255,255,.54);
+}
+
+.pp-vision-statement strong{
+  color:rgba(255,255,255,.82);
+  font-weight:600;
+}
+
+.pp-vision-roadmap{
+  position:relative;
+}
+
+.pp-vision-stage{
+  padding:21px 20px;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.038),
+      rgba(255,255,255,.018)
+    );
+
+  border:1px solid rgba(255,255,255,.07);
+}
+
+.pp-vision-stage--current{
+  border-color:rgba(85,135,255,.17);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(64,93,230,.09),
+      rgba(255,255,255,.02)
+    );
+}
+
+.pp-vision-stage-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+
+  margin-bottom:12px;
+}
+
+.pp-vision-stage-num{
+  font-size:1.6rem;
+  line-height:1;
+  font-weight:900;
+
+  color:rgba(255,255,255,.07);
+}
+
+.pp-vision-stage-status{
+  padding:5px 9px;
+
+  border-radius:999px;
+
+  font-size:.57rem;
+  font-weight:800;
+  letter-spacing:.10em;
+
+  color:rgba(125,210,225,.80);
+
+  background:rgba(70,120,220,.07);
+
+  border:1px solid rgba(100,150,245,.11);
+}
+
+.pp-vision-stage h3{
+  margin:0 0 7px;
+
+  font-size:.94rem;
+
+  color:#fff;
+}
+
+.pp-vision-stage p{
+  margin:0;
+
+  font-size:.79rem;
+  line-height:1.62;
+
+  color:rgba(255,255,255,.43);
+}
+
+.pp-vision-connector{
+  width:1px;
+  height:16px;
+
+  margin-left:28px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(95,145,255,.45),
+      rgba(95,145,255,.10)
+    );
+}
+
+.pp-vision-pillars-new{
+  position:relative;
+  z-index:1;
+
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+
+  margin-top:28px;
+}
+
+.pp-vision-pillar{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:13px;
+
+  padding:20px;
+
+  border-radius:18px;
+
+  background:rgba(255,255,255,.026);
+
+  border:1px solid rgba(255,255,255,.065);
+}
+
+.pp-vision-pillar-icon{
+  width:38px;
+  height:38px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:11px;
+
+  color:rgba(145,190,255,.93);
+
+  background:rgba(64,93,230,.075);
+
+  border:1px solid rgba(100,145,255,.14);
+}
+
+.pp-vision-pillar-kicker{
+  display:block;
+
+  margin-bottom:5px;
+
+  font-size:.59rem;
+  font-weight:800;
+  letter-spacing:.11em;
+
+  color:rgba(110,215,200,.78);
+}
+
+.pp-vision-pillar h3{
+  margin:0 0 6px;
+
+  font-size:.85rem;
+  line-height:1.4;
+
+  color:rgba(255,255,255,.9);
+}
+
+.pp-vision-pillar p{
+  margin:0;
+
+  font-size:.75rem;
+  line-height:1.58;
+
+  color:rgba(255,255,255,.40);
+}
+
+.pp-vision-horizon{
+  position:relative;
+  z-index:1;
+
+  max-width:900px;
+
+  margin:24px auto 0;
+  padding:21px 24px;
+
+  text-align:center;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(64,93,230,.045),
+      rgba(32,201,151,.04),
+      rgba(131,58,180,.04)
+    );
+
+  border:1px solid rgba(120,155,230,.09);
+}
+
+.pp-vision-horizon-label{
+  display:block;
+
+  margin-bottom:7px;
+
+  font-size:.59rem;
+  font-weight:800;
+  letter-spacing:.12em;
+
+  color:rgba(120,215,205,.75);
+}
+
+.pp-vision-horizon p{
+  margin:0 auto;
+
+  max-width:760px;
+
+  font-size:.84rem;
+  line-height:1.65;
+
+  color:rgba(255,255,255,.48);
+}
+
+@media(max-width:900px){
+
+  .pp-vision-layout{
+    grid-template-columns:1fr;
+    gap:30px;
+  }
+
+  .pp-vision-roadmap{
+    max-width:680px;
+  }
+
+  .pp-vision-pillars-new{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:640px){
+
+  .pp-vision-layout{
+    gap:26px;
+  }
+
+  .pp-vision-lead{
+    font-size:.88rem;
+  }
+
+  .pp-vision-text{
+    font-size:.82rem;
+  }
+
+  .pp-vision-statement{
+    margin-top:22px;
+    padding:18px 17px;
+  }
+
+  .pp-vision-stage{
+    padding:18px 16px;
+  }
+
+  .pp-vision-stage h3{
+    font-size:.9rem;
+  }
+
+  .pp-vision-stage p{
+    font-size:.77rem;
+  }
+
+  .pp-vision-pillars-new{
+    margin-top:22px;
+    gap:12px;
+  }
+
+  .pp-vision-pillar{
+    padding:17px 15px;
+  }
+
+  .pp-vision-horizon{
+    margin-top:18px;
+    padding:18px 16px;
+    text-align:left;
+  }
+
+  .pp-vision-horizon p{
+    font-size:.8rem;
+  }
+}
   </style>
   
   <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
@@ -2577,82 +2983,187 @@
   
 
 <!-- ══════════════════════════════════════════════
-     IMPACT & VISION
+     IMPACT & VISION — NATIONAL INFRASTRUCTURE
 ══════════════════════════════════════════════ -->
-<section class="pp-section pp-section-alt" aria-labelledby="impact-heading">
+<section class="pp-section pp-section-alt pp-vision" aria-labelledby="impact-heading">
   <div class="pp-container">
-    <div class="pp-vision-grid">
 
-      <div class="pp-vision-left">
-        <span class="pp-section-tag pp-tag-blue">Impact &amp; Vision</span>
-        <h2 class="pp-section-h2" id="impact-heading" style="margin:14px 0 20px">
-          Construire une infrastructure<br>nationale
+    <div class="pp-vision-layout">
+
+      <div class="pp-vision-main">
+
+        <span class="pp-section-tag pp-tag-blue">
+          Impact &amp; Vision
+        </span>
+
+        <h2 class="pp-section-h2" id="impact-heading">
+          Construire progressivement<br>
+          une infrastructure nationale.
         </h2>
-        <p>
-          Le marché des services à domicile au Maroc représente des millions
-          d'interactions par an. Il fonctionne aujourd'hui <strong>sans plateforme structurée</strong>,
-          sans données publiques, sans traçabilité.
+
+        <p class="pp-vision-lead">
+          FIXEO part d’un problème très local — trouver le bon professionnel
+          pour un besoin précis — avec l’ambition de construire une infrastructure
+          capable de fonctionner à l’échelle de plusieurs villes.
         </p>
-        <p>
-          Fixeo se positionne comme <strong>l'infrastructure qui manquait</strong> —
-          un système qui connecte, documente, et améliore chaque interaction
-          entre un besoin de service et une compétence artisanale.
+
+        <p class="pp-vision-text">
+          À mesure que le réseau se développe, chaque nouvelle zone couverte,
+          chaque profil structuré et chaque demande mieux qualifiée peut renforcer
+          la capacité du système à organiser la mise en relation.
         </p>
-        <p>
-          Notre ambition à long terme : <strong>couvrir tout le Maroc</strong>,
-          puis contribuer à structurer des marchés similaires dans d'autres économies
-          à forte densité artisanale.
-        </p>
+
+        <div class="pp-vision-statement">
+
+          <span class="pp-vision-statement-label">
+            NOTRE THÈSE
+          </span>
+
+          <p>
+            La valeur de FIXEO ne repose pas uniquement sur le nombre
+            d’artisans présents sur la plateforme, mais sur la capacité
+            à construire <strong>une infrastructure locale suffisamment dense,
+            structurée et exploitable pour coordonner les services.</strong>
+          </p>
+
+        </div>
+
       </div>
 
-      <div class="pp-vision-pillars">
-        <div class="pp-pillar">
-          <span class="pp-pillar-num">01</span>
-          <div class="pp-pillar-text">
-            <strong>Digitalisation de la confiance</strong>
-            <span>Chaque profil artisan devient une identité digitale vérifiable</span>
+      <div class="pp-vision-roadmap">
+
+        <article class="pp-vision-stage pp-vision-stage--current">
+
+          <div class="pp-vision-stage-head">
+            <span class="pp-vision-stage-num">01</span>
+            <span class="pp-vision-stage-status">
+              AUJOURD’HUI
+            </span>
           </div>
-        </div>
-        <div class="pp-pillar">
-          <span class="pp-pillar-num">02</span>
-          <div class="pp-pillar-text">
-            <strong>Création d'opportunités</strong>
-            <span>Des artisans invisibles accèdent à un marché qui les ignorait</span>
+
+          <h3>
+            Structurer les fondations
+          </h3>
+
+          <p>
+            Organiser les profils professionnels, les besoins clients,
+            les zones d’intervention et les mécanismes de matching
+            autour d’un même système.
+          </p>
+
+        </article>
+
+        <div class="pp-vision-connector" aria-hidden="true"></div>
+
+        <article class="pp-vision-stage">
+
+          <div class="pp-vision-stage-head">
+            <span class="pp-vision-stage-num">02</span>
+            <span class="pp-vision-stage-status">
+              DENSIFICATION
+            </span>
           </div>
-        </div>
-        <div class="pp-pillar">
-          <span class="pp-pillar-num">03</span>
-          <div class="pp-pillar-text">
-            <strong>Formalisation progressive</strong>
-            <span>Un écosystème qui pousse naturellement vers plus de traçabilité</span>
+
+          <h3>
+            Renforcer ville par ville
+          </h3>
+
+          <p>
+            Augmenter progressivement la densité de professionnels
+            et la qualité de la couverture dans les zones où les besoins
+            et les capacités d’intervention se rencontrent.
+          </p>
+
+        </article>
+
+        <div class="pp-vision-connector" aria-hidden="true"></div>
+
+        <article class="pp-vision-stage">
+
+          <div class="pp-vision-stage-head">
+            <span class="pp-vision-stage-num">03</span>
+            <span class="pp-vision-stage-status">
+              ÉCHELLE
+            </span>
           </div>
-        </div>
-        <div class="pp-pillar">
-          <span class="pp-pillar-num">04</span>
-          <div class="pp-pillar-text">
-            <strong>Infrastructure scalable</strong>
-            <span>Une architecture conçue pour couvrir des centaines de villes</span>
-          </div>
-        </div>
-        <div class="pp-pillar">
-          <span class="pp-pillar-num">05</span>
-          <div class="pp-pillar-text">
-            <strong>Économie de l'auto-entrepreneur</strong>
-            <span>Fixeo renforce l'écosystème des travailleurs indépendants</span>
-          </div>
-        </div>
-        <div class="pp-pillar">
-          <span class="pp-pillar-num">06</span>
-          <div class="pp-pillar-text">
-            <strong>Ambition nationale &amp; internationale</strong>
-            <span>Un modèle exportable vers d'autres marchés comparables</span>
-          </div>
-        </div>
+
+          <h3>
+            Étendre l’infrastructure
+          </h3>
+
+          <p>
+            Reproduire progressivement le modèle dans de nouvelles villes
+            tout en conservant une logique locale de qualification,
+            de couverture et de coordination.
+          </p>
+
+        </article>
+
       </div>
 
     </div>
+
+    <div class="pp-vision-pillars-new">
+
+      <article class="pp-vision-pillar">
+        <span class="pp-vision-pillar-icon" aria-hidden="true">◎</span>
+
+        <div>
+          <span class="pp-vision-pillar-kicker">COUVERTURE</span>
+          <h3>Un réseau construit localement</h3>
+          <p>
+            La pertinence du service dépend d’une présence suffisante
+            de professionnels dans chaque zone.
+          </p>
+        </div>
+      </article>
+
+      <article class="pp-vision-pillar">
+        <span class="pp-vision-pillar-icon" aria-hidden="true">▦</span>
+
+        <div>
+          <span class="pp-vision-pillar-kicker">STRUCTURATION</span>
+          <h3>Des informations exploitables</h3>
+          <p>
+            Profils, métiers, zones et demandes sont organisés afin
+            de rendre la mise en relation progressivement plus lisible.
+          </p>
+        </div>
+      </article>
+
+      <article class="pp-vision-pillar">
+        <span class="pp-vision-pillar-icon" aria-hidden="true">↗️</span>
+
+        <div>
+          <span class="pp-vision-pillar-kicker">EFFET RÉSEAU</span>
+          <h3>Une infrastructure qui gagne en valeur avec la densité</h3>
+          <p>
+            Davantage de couverture et de contexte peuvent améliorer
+            la capacité du système à répondre aux besoins locaux.
+          </p>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="pp-vision-horizon">
+
+      <span class="pp-vision-horizon-label">
+        HORIZON
+      </span>
+
+      <p>
+        Notre ambition est de faire de FIXEO une infrastructure de référence
+        pour l’accès aux services artisanaux au Maroc. À plus long terme,
+        le modèle pourra être évalué dans d’autres marchés présentant
+        des dynamiques comparables.
+      </p>
+
+    </div>
+
   </div>
 </section>
+  
 
 /* ═══════════════════════════════════════════════
    PARTNERSHIPS — ECOSYSTEM INTEGRATION
