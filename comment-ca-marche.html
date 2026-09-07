@@ -1450,6 +1450,217 @@
     min-width: 0;
   }
 }
+  /* ════════════════════════════════════════════════════════════════════
+   FIXEO FAQ — premium system cards
+   ════════════════════════════════════════════════════════════════════ */
+
+/* FAQ heading */
+#faq-title {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+#faq-title::before {
+  content: "FAQ FIXEO";
+
+  display: block;
+  width: fit-content;
+
+  margin: 0 auto 16px;
+  padding: 7px 15px;
+
+  border-radius: 999px;
+  border: 1px solid rgba(104,228,255,0.30);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(72,100,255,0.11),
+      rgba(104,228,255,0.05)
+    );
+
+  color: rgba(220,248,255,0.90);
+
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+
+  box-shadow:
+    0 0 18px rgba(104,228,255,0.10);
+}
+
+#faq-title + .cp-section-sub {
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+/* FAQ stack */
+.cp-faq {
+  gap: 10px;
+}
+
+/* Individual premium cards */
+.cp-faq-item {
+  margin-bottom: 10px;
+
+  border: 1px solid rgba(104,228,255,0.10);
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.038),
+      rgba(72,100,255,0.028)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.025);
+
+  overflow: hidden;
+}
+
+/* Question */
+.cp-faq-q {
+  padding: 17px 18px;
+
+  border-radius: 16px;
+
+  background: transparent;
+
+  color: rgba(255,255,255,0.90);
+
+  font-size: 0.93rem;
+  font-weight: 750;
+}
+
+/* Open card */
+.cp-faq-item:has(.cp-faq-q[aria-expanded="true"]) {
+  border-color: rgba(104,228,255,0.30);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(72,100,255,0.10),
+      rgba(104,228,255,0.035)
+    );
+
+  box-shadow:
+    0 0 20px rgba(72,100,255,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.cp-faq-q[aria-expanded="true"] {
+  background: transparent;
+  color: #fff;
+}
+
+/* Chevron becomes a small system control */
+.cp-faq-chevron {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+
+  position: relative;
+
+  border: 1px solid rgba(104,228,255,0.16);
+  border-radius: 50%;
+
+  background: rgba(72,100,255,0.07);
+
+  transform: none;
+
+  margin-right: 0;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.035);
+}
+
+/* Draw the arrow inside the circle */
+.cp-faq-chevron::after {
+  content: '';
+
+  position: absolute;
+  left: 9px;
+  top: 8px;
+
+  width: 7px;
+  height: 7px;
+
+  border-right: 2px solid rgba(190,225,255,0.65);
+  border-bottom: 2px solid rgba(190,225,255,0.65);
+
+  transform: rotate(45deg);
+
+  transition: transform 0.22s ease;
+}
+
+.cp-faq-q[aria-expanded="true"] .cp-faq-chevron {
+  border-color: rgba(104,228,255,0.34);
+
+  background: rgba(72,100,255,0.13);
+
+  box-shadow:
+    0 0 12px rgba(104,228,255,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+
+  transform: none;
+}
+
+.cp-faq-q[aria-expanded="true"] .cp-faq-chevron::after {
+  transform: rotate(225deg);
+}
+
+/* Answer */
+.cp-faq-a {
+  padding: 0 18px 18px;
+
+  color: rgba(220,230,245,0.66);
+
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+
+  #faq-title::before {
+    margin-bottom: 14px;
+  }
+
+  .cp-faq {
+    gap: 8px;
+  }
+
+  .cp-faq-item {
+    margin-bottom: 8px;
+    border-radius: 15px;
+  }
+
+  .cp-faq-q {
+    padding: 15px 14px;
+    font-size: 0.90rem;
+    line-height: 1.35;
+  }
+
+  .cp-faq-a {
+    padding: 0 14px 15px;
+    font-size: 0.83rem;
+  }
+
+  .cp-faq-chevron {
+    width: 26px;
+    height: 26px;
+    flex-basis: 26px;
+  }
+
+  .cp-faq-chevron::after {
+    left: 8px;
+    top: 7px;
+  }
+}
   
 </style>
 
