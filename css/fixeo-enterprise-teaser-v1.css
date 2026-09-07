@@ -744,3 +744,13 @@ letter-spacing: 0.13em;
       inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 }
+
+/* Homepage enterprise teaser — center heading copy on mobile */
+@media (max-width: 640px) {
+  #enterprise-teaser .fxet-title,
+  #enterprise-teaser .fxet-subtitle {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
