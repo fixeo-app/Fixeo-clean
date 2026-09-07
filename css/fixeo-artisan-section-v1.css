@@ -1177,3 +1177,25 @@ html body #artisans-section[data-results-state="discovery"] #loading-artisans {
       inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 }
+
+/* Homepage artisan network — mobile editorial header alignment */
+@media (max-width: 640px) {
+
+  #artisans-section .fhp-header-copy {
+    text-align: center;
+    width: 100%;
+  }
+
+  #artisans-section .fhp-title {
+    max-width: 360px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  #artisans-section .fhp-subtitle {
+    max-width: 340px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
+  }
+}
