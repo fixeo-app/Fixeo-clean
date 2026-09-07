@@ -462,7 +462,7 @@ section#home.hero,
 /* ─────────────────────────────────────────────────────────────────────
    2. SERVICES SECTION V13
 ───────────────────────────────────────────────────────────────────── */
-#services { padding: 68px 0 !important; }
+#services { padding: 68px 0 24px !important; }
 
 .services-filter-bar {
   display: flex !important;
