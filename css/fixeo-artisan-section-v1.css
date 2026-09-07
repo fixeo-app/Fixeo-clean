@@ -1199,3 +1199,11 @@ html body #artisans-section[data-results-state="discovery"] #loading-artisans {
     text-align: center !important;
   }
 }
+
+/* Homepage artisan network — lift continuation CTA from section edge */
+@media (max-width: 640px) {
+  #artisans-section .fxas-actions {
+    margin-top: 12px !important;
+    margin-bottom: 22px !important;
+  }
+}
