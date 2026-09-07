@@ -511,6 +511,83 @@
     .cp-steps::before { animation: none; }
   }
 
+/* HOW IT WORKS — FIXEO orchestration pipeline */
+.cp-hero-system {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 auto 28px;
+
+  color: rgba(220,244,255,0.82);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.cp-hero-system span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 28px;
+  padding: 5px 10px;
+
+  border: 1px solid rgba(104,228,255,0.18);
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(72,100,255,0.10),
+      rgba(104,228,255,0.05)
+    );
+
+  box-shadow:
+    0 0 14px rgba(104,228,255,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.cp-hero-system i {
+  display: block;
+  flex: 0 0 12px;
+
+  width: 12px;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(104,228,255,0.12),
+      rgba(104,228,255,0.60),
+      rgba(104,228,255,0.12)
+    );
+
+  box-shadow:
+    0 0 8px rgba(104,228,255,0.24);
+}
+
+@media (max-width: 640px) {
+  .cp-hero-system {
+    max-width: 330px;
+    gap: 7px;
+    margin-bottom: 26px;
+  }
+
+  .cp-hero-system span {
+    min-height: 27px;
+    padding: 5px 9px;
+    font-size: 0.66rem;
+  }
+
+  .cp-hero-system i {
+    flex-basis: 9px;
+    width: 9px;
+  }
+}
+  
 </style>
 
 <!-- SEO-1A -->
