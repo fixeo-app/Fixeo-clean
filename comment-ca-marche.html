@@ -1428,6 +1428,29 @@
     width: 9px;
   }
 }
+
+  /* FIXEO Hero pipeline — prevent horizontal page overflow */
+@media (max-width: 640px) {
+  .cp-hero--orchestration .cp-hero-system {
+    width: 100%;
+    max-width: 100%;
+    gap: 2px;
+  }
+
+  .cp-hero--orchestration .cp-hero-system span {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .cp-hero--orchestration .cp-hero-system i {
+    flex: 0 1 3px;
+    width: 3px;
+    min-width: 0;
+  }
+}
+  
 </style>
 
 <!-- SEO-1A -->
