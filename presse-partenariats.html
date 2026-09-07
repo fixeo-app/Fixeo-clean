@@ -1215,6 +1215,419 @@
     text-align:left;
   }
 }
+
+    /* ═══════════════════════════════════════════════
+   TECHNOLOGY — FIXEO OPERATING LAYER
+══════════════════════════════════════════════ */
+
+.pp-tech-system{
+  position:relative;
+  overflow:hidden;
+}
+
+.pp-tech-system::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 10%,rgba(72,100,255,.08),transparent 32%),
+    radial-gradient(circle at 85% 60%,rgba(131,58,180,.06),transparent 28%);
+}
+
+.pp-tech-head{
+  position:relative;
+  z-index:1;
+  max-width:720px;
+  margin-bottom:38px;
+}
+
+.pp-tech-console{
+  position:relative;
+  z-index:1;
+  overflow:hidden;
+
+  border-radius:26px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(19,25,48,.96),
+      rgba(12,16,31,.98)
+    );
+
+  border:1px solid rgba(110,145,255,.16);
+
+  box-shadow:
+    0 28px 70px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.pp-tech-console-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+
+  padding:20px 24px;
+
+  border-bottom:1px solid rgba(255,255,255,.07);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(72,100,255,.06),
+      rgba(131,58,180,.04)
+    );
+}
+
+.pp-tech-console-label{
+  display:block;
+  margin-bottom:3px;
+
+  font-size:.67rem;
+  font-weight:800;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+
+  color:rgba(125,225,210,.88);
+}
+
+.pp-tech-console-title{
+  display:block;
+
+  font-size:.95rem;
+  color:#fff;
+}
+
+.pp-tech-live{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+
+  padding:6px 11px;
+
+  border-radius:999px;
+
+  font-size:.67rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+
+  color:rgba(130,235,185,.9);
+
+  background:rgba(70,210,145,.06);
+  border:1px solid rgba(70,210,145,.16);
+}
+
+.pp-tech-live i{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+
+  background:rgba(105,245,175,.95);
+
+  box-shadow:0 0 12px rgba(105,245,175,.7);
+}
+
+.pp-tech-flow{
+  padding:26px 24px 10px;
+}
+
+.pp-tech-node{
+  position:relative;
+
+  display:grid;
+  grid-template-columns:auto auto 1fr;
+  align-items:start;
+  gap:14px;
+
+  padding:20px 20px;
+
+  border-radius:18px;
+
+  background:rgba(255,255,255,.028);
+  border:1px solid rgba(255,255,255,.065);
+}
+
+.pp-tech-node-num{
+  padding-top:12px;
+
+  font-size:.63rem;
+  font-weight:800;
+  letter-spacing:.09em;
+
+  color:rgba(255,255,255,.28);
+}
+
+.pp-tech-node-icon{
+  width:44px;
+  height:44px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:50%;
+
+  font-size:1rem;
+  font-weight:900;
+
+  background:rgba(72,100,255,.10);
+
+  border:1px solid rgba(115,165,255,.28);
+
+  box-shadow:
+    0 0 18px rgba(72,100,255,.12),
+    inset 0 0 10px rgba(255,255,255,.035);
+}
+
+.pp-tech-node--rafi .pp-tech-node-icon{
+  color:#fff;
+  border-color:rgba(130,180,255,.32);
+}
+
+.pp-tech-node--zone .pp-tech-node-icon{
+  color:rgba(190,150,255,.95);
+  border-color:rgba(170,130,255,.30);
+}
+
+.pp-tech-node--matching .pp-tech-node-icon{
+  color:rgba(105,225,255,.95);
+  border-color:rgba(80,210,255,.30);
+}
+
+.pp-tech-node--dispatch .pp-tech-node-icon{
+  color:rgba(115,225,255,.95);
+  border-color:rgba(90,210,255,.30);
+}
+
+.pp-tech-node--mission .pp-tech-node-icon{
+  color:rgba(120,245,175,.95);
+  border-color:rgba(90,225,150,.30);
+}
+
+.pp-tech-node-body{
+  min-width:0;
+}
+
+.pp-tech-node-kicker{
+  display:block;
+
+  margin-bottom:5px;
+
+  font-size:.67rem;
+  font-weight:800;
+  letter-spacing:.10em;
+
+  color:rgba(115,225,205,.9);
+}
+
+.pp-tech-node-body h3{
+  margin:0 0 7px;
+
+  font-size:.98rem;
+  line-height:1.35;
+
+  color:#fff;
+}
+
+.pp-tech-node-body p{
+  margin:0;
+
+  max-width:720px;
+
+  font-size:.83rem;
+  line-height:1.62;
+
+  color:rgba(255,255,255,.46);
+}
+
+.pp-tech-link{
+  width:1px;
+  height:18px;
+
+  margin-left:56px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(90,140,255,.55),
+      rgba(90,140,255,.12)
+    );
+}
+
+.pp-tech-console-foot{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:9px;
+
+  padding:15px 18px;
+
+  background:rgba(0,0,0,.26);
+
+  border-top:1px solid rgba(255,255,255,.05);
+}
+
+.pp-tech-console-foot span{
+  font-size:.64rem;
+  font-weight:800;
+  letter-spacing:.06em;
+
+  color:rgba(255,255,255,.50);
+}
+
+.pp-tech-console-foot i{
+  width:14px;
+  height:1px;
+
+  background:rgba(105,210,255,.22);
+}
+
+.pp-tech-pillars{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+
+  margin-top:22px;
+}
+
+.pp-tech-pillar{
+  display:flex;
+  gap:14px;
+
+  min-height:170px;
+
+  padding:20px;
+
+  border-radius:18px;
+
+  background:rgba(255,255,255,.027);
+  border:1px solid rgba(255,255,255,.065);
+}
+
+.pp-tech-pillar-icon{
+  flex:0 0 40px;
+  width:40px;
+  height:40px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:12px;
+
+  color:rgba(145,195,255,.92);
+
+  background:rgba(72,100,255,.08);
+  border:1px solid rgba(90,145,255,.18);
+}
+
+.pp-tech-pillar-kicker{
+  display:block;
+
+  margin-bottom:6px;
+
+  font-size:.63rem;
+  font-weight:800;
+  letter-spacing:.10em;
+
+  color:rgba(125,220,205,.85);
+}
+
+.pp-tech-pillar h3{
+  margin:0 0 7px;
+
+  font-size:.9rem;
+  line-height:1.35;
+
+  color:#fff;
+}
+
+.pp-tech-pillar p{
+  margin:0;
+
+  font-size:.79rem;
+  line-height:1.6;
+
+  color:rgba(255,255,255,.43);
+}
+
+@media(max-width:760px){
+
+  .pp-tech-head{
+    margin-bottom:28px;
+  }
+
+  .pp-tech-console-head{
+    align-items:flex-start;
+    padding:18px 16px;
+  }
+
+  .pp-tech-live{
+    font-size:.58rem;
+    padding:5px 8px;
+  }
+
+  .pp-tech-flow{
+    padding:18px 14px 8px;
+  }
+
+  .pp-tech-node{
+    grid-template-columns:auto 1fr;
+    gap:12px;
+
+    padding:17px 14px;
+  }
+
+  .pp-tech-node-num{
+    display:none;
+  }
+
+  .pp-tech-node-icon{
+    width:40px;
+    height:40px;
+  }
+
+  .pp-tech-link{
+    height:14px;
+    margin-left:34px;
+  }
+
+  .pp-tech-node-body h3{
+    font-size:.94rem;
+  }
+
+  .pp-tech-node-body p{
+    font-size:.81rem;
+  }
+
+  .pp-tech-console-foot{
+    gap:6px;
+    padding:13px 8px;
+  }
+
+  .pp-tech-console-foot span{
+    font-size:.55rem;
+  }
+
+  .pp-tech-console-foot i{
+    width:7px;
+  }
+
+  .pp-tech-pillars{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+
+  .pp-tech-pillar{
+    min-height:0;
+    padding:18px 16px;
+  }
+}
+    
     
   </style>
   
@@ -1440,53 +1853,182 @@
   
 
 <!-- ══════════════════════════════════════════════
-     TECHNOLOGY
+     TECHNOLOGY — FIXEO OPERATING LAYER
 ══════════════════════════════════════════════ -->
-<section class="pp-section pp-section-alt" id="technologie" aria-labelledby="tech-heading">
+<section class="pp-section pp-section-alt pp-tech-system" id="technologie" aria-labelledby="tech-heading">
   <div class="pp-container">
-    <div class="pp-section-header">
+
+    <div class="pp-tech-head">
       <span class="pp-section-tag pp-tag-purple">L'infrastructure Fixeo</span>
-      <h2 class="pp-section-h2" id="tech-heading">Une technologie pensée<br>pour la confiance</h2>
+
+      <h2 class="pp-section-h2" id="tech-heading">
+        Une couche d’orchestration<br>
+        entre le besoin et la mission.
+      </h2>
+
       <p class="pp-section-lead">
-        Fixeo n'est pas un annuaire. C'est une infrastructure de services qui structure la relation artisan–client
-        à chaque étape — de la découverte à la coordination.
+        FIXEO organise les informations essentielles d’une demande,
+        les rapproche des profils adaptés et prépare leur mobilisation
+        jusqu’à l’organisation de la mission.
       </p>
     </div>
 
-    <div class="pp-tech-grid">
-      <div class="pp-tech-card">
-        <div class="pp-tech-icon pp-tech-icon-purple">🧭</div>
-        <h3 class="pp-tech-title">Matching intelligent</h3>
-        <p class="pp-tech-text">Chaque demande est redirigée vers les artisans disponibles dans la zone exacte du client, filtrés par spécialité et disponibilité réelle.</p>
+    <!-- Operating flow -->
+    <div class="pp-tech-console" aria-label="Chaîne d'orchestration Fixeo">
+
+      <div class="pp-tech-console-head">
+        <div>
+          <span class="pp-tech-console-label">FIXEO Engine</span>
+          <strong class="pp-tech-console-title">Orchestration de la demande</strong>
+        </div>
+
+        <span class="pp-tech-live">
+          <i aria-hidden="true"></i>
+          Infrastructure
+        </span>
       </div>
-      <div class="pp-tech-card">
-        <div class="pp-tech-icon pp-tech-icon-pink">🪪</div>
-        <h3 class="pp-tech-title">Profils structurés</h3>
-        <p class="pp-tech-text">Chaque artisan dispose d'un profil public — spécialités, zone d'intervention, galerie de réalisations, disponibilité, et identité professionnelle.</p>
+
+      <div class="pp-tech-flow">
+
+        <article class="pp-tech-node pp-tech-node--rafi">
+          <span class="pp-tech-node-num">01</span>
+          <div class="pp-tech-node-icon" aria-hidden="true">✦</div>
+
+          <div class="pp-tech-node-body">
+            <span class="pp-tech-node-kicker">RAFI</span>
+            <h3>Structurer le besoin</h3>
+            <p>
+              Le métier, le contexte, le délai souhaité et les informations
+              exprimées sont organisés pour rendre la demande exploitable.
+            </p>
+          </div>
+        </article>
+
+        <div class="pp-tech-link" aria-hidden="true"></div>
+
+        <article class="pp-tech-node pp-tech-node--zone">
+          <span class="pp-tech-node-num">02</span>
+          <div class="pp-tech-node-icon" aria-hidden="true">◎</div>
+
+          <div class="pp-tech-node-body">
+            <span class="pp-tech-node-kicker">ZONE</span>
+            <h3>Contextualiser l’intervention</h3>
+            <p>
+              La ville et la zone d’intervention permettent de rapprocher
+              la demande des professionnels correspondant au territoire concerné.
+            </p>
+          </div>
+        </article>
+
+        <div class="pp-tech-link" aria-hidden="true"></div>
+
+        <article class="pp-tech-node pp-tech-node--matching">
+          <span class="pp-tech-node-num">03</span>
+          <div class="pp-tech-node-icon" aria-hidden="true">●</div>
+
+          <div class="pp-tech-node-body">
+            <span class="pp-tech-node-kicker">MATCHING</span>
+            <h3>Identifier les profils pertinents</h3>
+            <p>
+              Les critères disponibles sont utilisés pour orienter la demande
+              vers les artisans correspondant le mieux au besoin exprimé.
+            </p>
+          </div>
+        </article>
+
+        <div class="pp-tech-link" aria-hidden="true"></div>
+
+        <article class="pp-tech-node pp-tech-node--dispatch">
+          <span class="pp-tech-node-num">04</span>
+          <div class="pp-tech-node-icon" aria-hidden="true">➤</div>
+
+          <div class="pp-tech-node-body">
+            <span class="pp-tech-node-kicker">DISPATCH</span>
+            <h3>Préparer la mobilisation</h3>
+            <p>
+              FIXEO organise la distribution de la demande vers les profils
+              éligibles jusqu’à l’identification d’un professionnel disponible.
+            </p>
+          </div>
+        </article>
+
+        <div class="pp-tech-link" aria-hidden="true"></div>
+
+        <article class="pp-tech-node pp-tech-node--mission">
+          <span class="pp-tech-node-num">05</span>
+          <div class="pp-tech-node-icon" aria-hidden="true">✓</div>
+
+          <div class="pp-tech-node-body">
+            <span class="pp-tech-node-kicker">MISSION</span>
+            <h3>Organiser l’intervention</h3>
+            <p>
+              Lorsque la mise en relation est confirmée, la demande devient
+              une mission suivie dans l’écosystème FIXEO.
+            </p>
+          </div>
+        </article>
+
       </div>
-      <div class="pp-tech-card">
-        <div class="pp-tech-icon pp-tech-icon-blue">📍</div>
-        <h3 class="pp-tech-title">Géolocalisation précise</h3>
-        <p class="pp-tech-text">Indexation par ville et quartier. Matching villes adjacentes. Densification progressive des zones couvertes selon la demande réelle.</p>
+
+      <div class="pp-tech-console-foot" aria-hidden="true">
+        <span>RAFI</span>
+        <i></i>
+        <span>ZONE</span>
+        <i></i>
+        <span>MATCHING</span>
+        <i></i>
+        <span>DISPATCH</span>
+        <i></i>
+        <span>MISSION</span>
       </div>
-      <div class="pp-tech-card">
-        <div class="pp-tech-icon pp-tech-icon-teal">💳</div>
-        <h3 class="pp-tech-title">Paiement après satisfaction</h3>
-        <p class="pp-tech-text">Aucun prépaiement. Le client règle uniquement après l'intervention réalisée. Cette règle est structurelle, pas optionnelle.</p>
-      </div>
-      <div class="pp-tech-card">
-        <div class="pp-tech-icon pp-tech-icon-amber">⚖️</div>
-        <h3 class="pp-tech-title">Estimation marché encadrée</h3>
-        <p class="pp-tech-text">Des fourchettes de prix basées sur les tarifs observés localement, affichées dès le profil pour établir une référence claire avant toute négociation.</p>
-      </div>
-      <div class="pp-tech-card">
-        <div class="pp-tech-icon pp-tech-icon-gold">🔗</div>
-        <h3 class="pp-tech-title">Coordination WhatsApp Fixeo</h3>
-        <p class="pp-tech-text">La coordination entre client et artisan passe par un canal Fixeo tracé, garantissant un contexte de mission clair et une réponse rapide.</p>
-      </div>
+
     </div>
+
+    <!-- Infrastructure pillars -->
+    <div class="pp-tech-pillars">
+
+      <article class="pp-tech-pillar">
+        <span class="pp-tech-pillar-icon" aria-hidden="true">▣</span>
+        <div>
+          <span class="pp-tech-pillar-kicker">PROFILS</span>
+          <h3>Une identité professionnelle structurée</h3>
+          <p>
+            Métier, ville, spécialités et informations disponibles sont réunis
+            dans des profils publics conçus pour rendre l’offre plus lisible.
+          </p>
+        </div>
+      </article>
+
+      <article class="pp-tech-pillar">
+        <span class="pp-tech-pillar-icon" aria-hidden="true">⌁</span>
+        <div>
+          <span class="pp-tech-pillar-kicker">TRAÇABILITÉ</span>
+          <h3>Une continuité entre les étapes</h3>
+          <p>
+            La demande conserve son contexte au fil du parcours afin de limiter
+            les ruptures d’information entre qualification, matching et mission.
+          </p>
+        </div>
+      </article>
+
+      <article class="pp-tech-pillar">
+        <span class="pp-tech-pillar-icon" aria-hidden="true">▰</span>
+        <div>
+          <span class="pp-tech-pillar-kicker">PAIEMENT</span>
+          <h3>Pas de prépaiement FIXEO</h3>
+          <p>
+            L’enregistrement de la demande ne nécessite aucun prépaiement.
+            Le règlement de l’intervention se fait directement avec l’artisan
+            une fois le travail réalisé.
+          </p>
+        </div>
+      </article>
+
+    </div>
+
   </div>
 </section>
+  
 
 <!-- ══════════════════════════════════════════════
      FOR ARTISANS / FOR CLIENTS
