@@ -2220,7 +2220,661 @@ a{text-decoration:none}
   .cp-svc-card.fxsvc-match { transition: none !important; }
 }
   </style>
+<style id="fxsvh-v1">
+/* ════════════════════════════════════════════════════════════
+   SERVICES FLAGSHIP HERO — fxsvh-v1
+   Independent namespace.
+   No RAFI / modal dependency.
+════════════════════════════════════════════════════════════ */
 
+.fxsvh-hero{
+  position:relative;
+  overflow:hidden;
+
+  padding:
+    clamp(58px,7vw,92px)
+    24px
+    clamp(54px,6vw,82px);
+
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
+
+.fxsvh-hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+
+  pointer-events:none;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.012),
+      transparent 38%
+    );
+}
+
+.fxsvh-glow{
+  position:absolute;
+
+  width:520px;
+  height:520px;
+
+  border-radius:50%;
+
+  pointer-events:none;
+
+  filter:blur(2px);
+}
+
+.fxsvh-glow--left{
+  top:-280px;
+  left:-180px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(225,48,108,.14),
+      rgba(131,58,180,.05) 45%,
+      transparent 70%
+    );
+}
+
+.fxsvh-glow--right{
+  top:-210px;
+  right:-230px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(72,100,255,.11),
+      rgba(56,189,248,.035) 46%,
+      transparent 70%
+    );
+}
+
+
+.fxsvh-layout{
+  position:relative;
+  z-index:1;
+
+  display:grid;
+
+  grid-template-columns:
+    minmax(0,1.05fr)
+    minmax(390px,.95fr);
+
+  gap:clamp(42px,6vw,78px);
+
+  align-items:center;
+}
+
+
+/* COPY */
+
+.fxsvh-copy{
+  max-width:640px;
+}
+
+.fxsvh-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+
+  margin-bottom:21px;
+
+  padding:6px 13px;
+
+  border-radius:999px;
+
+  font-size:.64rem;
+  font-weight:800;
+
+  letter-spacing:.13em;
+
+  color:rgba(245,125,175,.88);
+
+  background:rgba(225,48,108,.055);
+
+  border:1px solid rgba(225,48,108,.18);
+}
+
+.fxsvh-eyebrow-dot{
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:#E1306C;
+
+  box-shadow:
+    0 0 12px rgba(225,48,108,.65);
+}
+
+
+.fxsvh-title{
+  margin:0;
+
+  max-width:690px;
+
+  font-size:
+    clamp(2.15rem,4.7vw,4rem);
+
+  line-height:1.06;
+
+  letter-spacing:-.038em;
+
+  font-weight:900;
+
+  color:#fff;
+}
+
+.fxsvh-title span{
+  background:
+    linear-gradient(
+      115deg,
+      #f05b93 0%,
+      #d34fb0 48%,
+      #8e63df 100%
+    );
+
+  -webkit-background-clip:text;
+  background-clip:text;
+
+  -webkit-text-fill-color:transparent;
+}
+
+
+.fxsvh-lead{
+  max-width:570px;
+
+  margin:23px 0 0;
+
+  font-size:clamp(.94rem,1.5vw,1.06rem);
+
+  line-height:1.72;
+
+  color:rgba(225,230,242,.55);
+}
+
+
+/* ACTIONS */
+
+.fxsvh-actions{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+
+  gap:11px;
+
+  margin-top:29px;
+}
+
+.fxsvh-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  gap:9px;
+
+  min-height:50px;
+
+  padding:0 22px;
+
+  border-radius:14px;
+
+  font-size:.86rem;
+  font-weight:800;
+
+  text-decoration:none;
+
+  transition:
+    transform .16s ease,
+    border-color .16s ease,
+    background .16s ease,
+    box-shadow .16s ease;
+}
+
+.fxsvh-btn--primary{
+  color:#fff;
+
+  background:
+    linear-gradient(
+      145deg,
+      #e93d79,
+      #b73988 56%,
+      #743ca7
+    );
+
+  border:1px solid rgba(255,155,205,.16);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.13),
+    0 8px 24px rgba(180,45,115,.16);
+}
+
+.fxsvh-btn--primary:hover{
+  transform:translateY(-2px);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 12px 29px rgba(180,45,115,.23);
+}
+
+
+.fxsvh-btn--secondary{
+  color:rgba(240,244,255,.72);
+
+  background:rgba(255,255,255,.025);
+
+  border:1px solid rgba(255,255,255,.105);
+}
+
+.fxsvh-btn--secondary:hover{
+  transform:translateY(-1px);
+
+  color:#fff;
+
+  background:rgba(255,255,255,.045);
+
+  border-color:rgba(255,255,255,.17);
+}
+
+
+/* PROOF */
+
+.fxsvh-proof{
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:9px 18px;
+
+  margin-top:25px;
+}
+
+.fxsvh-proof span{
+  display:inline-flex;
+  align-items:center;
+
+  gap:7px;
+
+  font-size:.71rem;
+  font-weight:600;
+
+  color:rgba(210,220,240,.43);
+}
+
+.fxsvh-proof i{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  width:16px;
+  height:16px;
+
+  border-radius:50%;
+
+  font-style:normal;
+
+  font-size:.56rem;
+
+  color:rgba(100,225,190,.92);
+
+  background:rgba(32,201,151,.10);
+
+  border:1px solid rgba(32,201,151,.15);
+}
+
+
+/* SYSTEM PANEL */
+
+.fxsvh-system{
+  position:relative;
+
+  padding:19px;
+
+  border-radius:24px;
+
+  background:
+    linear-gradient(
+      155deg,
+      rgba(255,255,255,.06),
+      rgba(255,255,255,.018)
+    );
+
+  border:1px solid rgba(135,155,255,.11);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.065),
+    0 26px 70px rgba(0,0,0,.26);
+}
+
+.fxsvh-system::before{
+  content:'';
+
+  position:absolute;
+  inset:-1px;
+
+  border-radius:inherit;
+
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      circle at 80% 0%,
+      rgba(100,120,255,.10),
+      transparent 36%
+    );
+}
+
+
+.fxsvh-system-head{
+  position:relative;
+  z-index:1;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  gap:14px;
+
+  padding:4px 3px 16px;
+
+  border-bottom:1px solid rgba(255,255,255,.065);
+}
+
+.fxsvh-system-head > div{
+  display:flex;
+  flex-direction:column;
+
+  gap:4px;
+}
+
+.fxsvh-system-kicker{
+  font-size:.57rem;
+  font-weight:800;
+
+  letter-spacing:.13em;
+
+  color:rgba(120,220,205,.72);
+}
+
+.fxsvh-system-head strong{
+  font-size:.9rem;
+  font-weight:800;
+
+  color:rgba(245,247,255,.92);
+}
+
+
+.fxsvh-system-status{
+  display:inline-flex;
+  align-items:center;
+
+  gap:6px;
+
+  padding:5px 9px;
+
+  border-radius:999px;
+
+  font-size:.55rem;
+  font-weight:800;
+
+  letter-spacing:.10em;
+
+  color:rgba(120,225,195,.78);
+
+  background:rgba(32,201,151,.055);
+
+  border:1px solid rgba(32,201,151,.11);
+}
+
+.fxsvh-system-status i{
+  width:5px;
+  height:5px;
+
+  border-radius:50%;
+
+  background:rgba(80,225,180,.85);
+
+  box-shadow:
+    0 0 9px rgba(80,225,180,.45);
+}
+
+
+/* FLOW */
+
+.fxsvh-flow{
+  position:relative;
+  z-index:1;
+
+  padding-top:15px;
+}
+
+.fxsvh-flow-item{
+  display:grid;
+
+  grid-template-columns:35px 1fr;
+
+  gap:13px;
+
+  padding:14px;
+
+  border-radius:15px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.03),
+      rgba(255,255,255,.015)
+    );
+
+  border:1px solid rgba(255,255,255,.06);
+}
+
+
+.fxsvh-flow-index{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  width:35px;
+  height:35px;
+
+  border-radius:11px;
+
+  font-size:.62rem;
+  font-weight:900;
+
+  color:rgba(165,190,255,.78);
+
+  background:rgba(72,100,255,.065);
+
+  border:1px solid rgba(100,130,255,.11);
+}
+
+
+.fxsvh-flow-item small{
+  display:block;
+
+  margin-bottom:3px;
+
+  font-size:.54rem;
+  font-weight:800;
+
+  letter-spacing:.11em;
+
+  color:rgba(115,215,200,.72);
+}
+
+.fxsvh-flow-item strong{
+  display:block;
+
+  margin-bottom:4px;
+
+  font-size:.82rem;
+
+  color:rgba(245,247,255,.89);
+}
+
+.fxsvh-flow-item p{
+  margin:0;
+
+  font-size:.69rem;
+
+  line-height:1.52;
+
+  color:rgba(195,205,230,.38);
+}
+
+
+.fxsvh-flow-line{
+  width:1px;
+  height:11px;
+
+  margin-left:31px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(100,140,255,.34),
+      rgba(100,140,255,.06)
+    );
+}
+
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+  .fxsvh-layout{
+    grid-template-columns:1fr;
+
+    gap:40px;
+  }
+
+  .fxsvh-copy{
+    max-width:690px;
+  }
+
+  .fxsvh-system{
+    max-width:650px;
+  }
+}
+
+
+@media(max-width:600px){
+
+  .fxsvh-hero{
+    padding:
+      42px
+      16px
+      44px;
+  }
+
+  .fxsvh-layout{
+    gap:32px;
+  }
+
+  .fxsvh-title{
+    font-size:
+      clamp(2rem,10.5vw,2.75rem);
+  }
+
+  .fxsvh-lead{
+    margin-top:18px;
+
+    font-size:.88rem;
+  }
+
+  .fxsvh-actions{
+    margin-top:24px;
+
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .fxsvh-btn{
+    width:100%;
+
+    min-height:48px;
+  }
+
+  .fxsvh-btn--secondary{
+    width:calc(100% - 26px);
+
+    margin:0 auto;
+  }
+
+  .fxsvh-proof{
+    margin-top:21px;
+
+    gap:8px 14px;
+  }
+
+  .fxsvh-proof span{
+    font-size:.67rem;
+  }
+
+  .fxsvh-system{
+    padding:15px;
+
+    border-radius:20px;
+  }
+
+  .fxsvh-system-head{
+    padding-bottom:13px;
+  }
+
+  .fxsvh-system-head strong{
+    font-size:.82rem;
+  }
+
+  .fxsvh-system-status{
+    padding:4px 7px;
+
+    font-size:.50rem;
+  }
+
+  .fxsvh-flow-item{
+    padding:12px;
+
+    grid-template-columns:32px 1fr;
+
+    gap:11px;
+  }
+
+  .fxsvh-flow-index{
+    width:32px;
+    height:32px;
+  }
+
+  .fxsvh-flow-item strong{
+    font-size:.78rem;
+  }
+
+  .fxsvh-flow-item p{
+    font-size:.66rem;
+  }
+
+  .fxsvh-flow-line{
+    margin-left:28px;
+  }
+}
+
+
+@media(prefers-reduced-motion:reduce){
+
+  .fxsvh-btn{
+    transition:none;
+  }
+
+  .fxsvh-btn:hover{
+    transform:none;
+  }
+}
+</style>
+  
 <!-- SEO -->
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.fixeo.ma/services.html">
@@ -2312,51 +2966,186 @@ a{text-decoration:none}
 </nav>
 
 <!-- ══════════════════════════════════════════════════════════
-     HERO
+     SERVICES FLAGSHIP HERO — fxsvh-v1
 ════════════════════════════════════════════════════════════ -->
-<section class="cp-hero" aria-labelledby="svc-hero-title">
+<section class="fxsvh-hero" aria-labelledby="svc-hero-title">
+
+  <div class="fxsvh-glow fxsvh-glow--left" aria-hidden="true"></div>
+  <div class="fxsvh-glow fxsvh-glow--right" aria-hidden="true"></div>
+
   <div class="cp-container">
-    <div class="cp-hero-eyebrow" aria-hidden="true">
-      <span style="width:6px;height:6px;border-radius:50%;background:rgba(225,48,108,0.9);flex-shrink:0;display:inline-block"></span>
-      FIXEO SERVICES
-    </div>
-    <h1 id="svc-hero-title">
-      Décrivez votre besoin.<br>
-      <span class="hl">Fixeo trouve le bon artisan.</span>
-    </h1>
-    <p class="cp-hero-sub">Trouvez le service adapté et avancez simplement jusqu'à l'intervention.</p>
 
-    <!-- Trust strip -->
-    <div class="cp-hero-trust" role="list" aria-label="Garanties Fixeo">
-      <span class="cp-trust-item" role="listitem">
-        <span class="cp-trust-check" aria-hidden="true">✓</span>
-        +1 300 profils référencés
-      </span>
-      <span class="cp-trust-dot" aria-hidden="true"></span>
-      <span class="cp-trust-item" role="listitem">
-        <span class="cp-trust-check" aria-hidden="true">✓</span>
-        Paiement après intervention
-      </span>
-      <span class="cp-trust-dot" aria-hidden="true"></span>
-      <span class="cp-trust-item" role="listitem">
-        <span class="cp-trust-check" aria-hidden="true">✓</span>
-        20 villes au Maroc
-      </span>
-      <span class="cp-trust-dot" aria-hidden="true"></span>
-      <span class="cp-trust-item" role="listitem">
-        <span class="cp-trust-check" aria-hidden="true">✓</span>
-        Réponse rapide
-      </span>
+    <div class="fxsvh-layout">
+
+      <!-- COPY -->
+      <div class="fxsvh-copy">
+
+        <div class="fxsvh-eyebrow">
+          <span class="fxsvh-eyebrow-dot" aria-hidden="true"></span>
+          SERVICES FIXEO
+        </div>
+
+        <h1 id="svc-hero-title" class="fxsvh-title">
+          Votre besoin commence ici.<br>
+          <span>FIXEO vous aide à trouver le bon professionnel.</span>
+        </h1>
+
+        <p class="fxsvh-lead">
+          Plomberie, électricité, climatisation, serrurerie,
+          travaux ou entretien : identifiez le métier adapté
+          et avancez dans un parcours plus structuré.
+        </p>
+
+        <div class="fxsvh-actions">
+
+          <a
+            href="#svc-grid-title"
+            class="fxsvh-btn fxsvh-btn--primary"
+          >
+            Explorer les services
+
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 14 14"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 7h8M8 4l3 3-3 3"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </a>
+
+          <a
+            href="artisans.html"
+            class="fxsvh-btn fxsvh-btn--secondary"
+          >
+            Parcourir les artisans
+          </a>
+
+        </div>
+
+        <div
+          class="fxsvh-proof"
+          role="list"
+          aria-label="Repères FIXEO"
+        >
+
+          <span role="listitem">
+            <i aria-hidden="true">✓</i>
+            +1 300 profils référencés
+          </span>
+
+          <span role="listitem">
+            <i aria-hidden="true">✓</i>
+            20 villes au Maroc
+          </span>
+
+          <span role="listitem">
+            <i aria-hidden="true">✓</i>
+            Paiement après intervention
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- PRODUCT VISUAL -->
+      <div class="fxsvh-system" aria-label="Parcours de service FIXEO">
+
+        <div class="fxsvh-system-head">
+
+          <div>
+            <span class="fxsvh-system-kicker">
+              PARCOURS FIXEO
+            </span>
+
+            <strong>
+              Du besoin à l’intervention
+            </strong>
+          </div>
+
+          <span class="fxsvh-system-status">
+            <i aria-hidden="true"></i>
+            STRUCTURÉ
+          </span>
+
+        </div>
+
+
+        <div class="fxsvh-flow">
+
+          <div class="fxsvh-flow-item">
+
+            <span class="fxsvh-flow-index">
+              01
+            </span>
+
+            <div>
+              <small>BESOIN</small>
+              <strong>Identifier la situation</strong>
+              <p>
+                Le métier et le contexte commencent par
+                ce que vous devez réellement résoudre.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="fxsvh-flow-line" aria-hidden="true"></div>
+
+
+          <div class="fxsvh-flow-item">
+
+            <span class="fxsvh-flow-index">
+              02
+            </span>
+
+            <div>
+              <small>SERVICE</small>
+              <strong>Choisir le bon métier</strong>
+              <p>
+                Explorez les spécialités correspondant
+                à votre besoin.
+              </p>
+            </div>
+
+          </div>
+
+          <div class="fxsvh-flow-line" aria-hidden="true"></div>
+
+
+          <div class="fxsvh-flow-item">
+
+            <span class="fxsvh-flow-index">
+              03
+            </span>
+
+            <div>
+              <small>INTERVENTION</small>
+              <strong>Organiser la suite</strong>
+              <p>
+                Urgence ou demande planifiée selon
+                votre situation.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
 
-    <div class="cp-btn-row">
-      <button type="button" class="cp-btn cp-btn-primary" data-open-request-form="true" aria-label="Décrire mon besoin sur Fixeo">
-        Décrire mon besoin
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <a href="artisans.html" class="cp-btn cp-btn-outline">Voir les artisans</a>
-    </div>
   </div>
+
 </section>
 
 <!-- ══════════════════════════════════════════════════════════
