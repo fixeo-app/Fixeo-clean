@@ -678,6 +678,88 @@
     width: 3px;
   }
 }
+
+/* ── FIXEO pipeline — icons + premium glow ───────────────────── */
+
+.cp-hero-system span {
+  position: relative;
+  gap: 5px;
+
+  box-shadow:
+    0 0 14px rgba(56,189,248,0.16),
+    0 0 26px rgba(72,100,255,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* Shared icon slot */
+.cp-hero-system span::before {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 0.72rem;
+  line-height: 1;
+
+  filter:
+    drop-shadow(0 0 5px rgba(104,228,255,0.42));
+}
+
+/* RAFI */
+.cp-hero-system span:nth-of-type(1)::before {
+  content: "▤";
+  color: #72e8ff;
+}
+
+/* Zone */
+.cp-hero-system span:nth-of-type(2)::before {
+  content: "●";
+  color: #a878ff;
+}
+
+/* Matching */
+.cp-hero-system span:nth-of-type(3)::before {
+  content: "◉";
+  color: #5ee7ff;
+}
+
+/* Dispatch */
+.cp-hero-system span:nth-of-type(4)::before {
+  content: "➤";
+  color: #58b9ff;
+}
+
+/* Mission */
+.cp-hero-system span:nth-of-type(5)::before {
+  content: "✓";
+  color: #68f0c8;
+}
+
+/* Slight identity tint per stage */
+.cp-hero-system span:nth-of-type(2) {
+  border-color: rgba(139,92,255,0.48);
+  box-shadow:
+    0 0 16px rgba(139,92,255,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.cp-hero-system span:nth-of-type(5) {
+  border-color: rgba(104,240,200,0.48);
+  box-shadow:
+    0 0 16px rgba(104,240,200,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+@media (max-width: 380px) {
+  .cp-hero-system span {
+    gap: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .cp-hero-system span::before {
+    font-size: 0.62rem;
+  }
+}
   
 </style>
 
