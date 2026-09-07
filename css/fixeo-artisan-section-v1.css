@@ -1161,3 +1161,19 @@ html body #artisans-section[data-results-state="discovery"] #loading-artisans {
     0 0 6px rgba(104, 228, 255, 0.95),
     0 0 12px rgba(72, 100, 255, 0.55);
 }
+
+/* Homepage artisan network — mobile badge alignment & breathing */
+@media (max-width: 640px) {
+  #artisans-section .fhp-section-header .fhp-eyebrow {
+    align-self: center !important;
+    margin: 10px auto 22px !important;
+    padding: 8px 16px;
+
+    border-color: rgba(72, 100, 255, 0.48);
+
+    box-shadow:
+      0 0 22px rgba(72, 100, 255, 0.28),
+      0 0 42px rgba(104, 228, 255, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+}
