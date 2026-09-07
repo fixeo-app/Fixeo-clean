@@ -587,6 +587,97 @@
     width: 9px;
   }
 }
+/* ── FXHOW-V4: orchestration pipeline — single-row mobile ───────── */
+
+.cp-hero-system {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  gap: 7px;
+}
+
+.cp-hero-system span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 6px 13px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(86, 205, 255, 0.42);
+  background:
+    linear-gradient(180deg,
+      rgba(45, 101, 145, 0.16),
+      rgba(18, 34, 64, 0.22));
+
+  box-shadow:
+    inset 0 0 14px rgba(72, 174, 255, 0.05),
+    0 0 12px rgba(72, 174, 255, 0.08);
+
+  color: rgba(255,255,255,0.92);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.cp-hero-system i {
+  display: block;
+  flex: 0 0 9px;
+  width: 9px;
+  height: 1px;
+  background: rgba(104, 210, 255, 0.58);
+  border-radius: 999px;
+  box-shadow: 0 0 6px rgba(80, 190, 255, 0.28);
+}
+
+/* Mobile: force the complete Fixeo chain onto one line */
+@media (max-width: 640px) {
+
+  .cp-hero-system {
+    max-width: 100%;
+    gap: 4px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cp-hero-system span {
+    min-height: 30px;
+    padding: 5px 8px;
+    font-size: 0.60rem;
+    letter-spacing: 0;
+  }
+
+  .cp-hero-system i {
+    flex-basis: 5px;
+    width: 5px;
+  }
+}
+
+/* Very narrow phones */
+@media (max-width: 380px) {
+
+  .cp-hero-system {
+    gap: 3px;
+  }
+
+  .cp-hero-system span {
+    min-height: 28px;
+    padding: 4px 6px;
+    font-size: 0.55rem;
+  }
+
+  .cp-hero-system i {
+    flex-basis: 3px;
+    width: 3px;
+  }
+}
   
 </style>
 
