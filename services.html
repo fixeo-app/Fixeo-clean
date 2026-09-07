@@ -3148,388 +3148,476 @@ a{text-decoration:none}
 
 </section>
 
-<!-- ══════════════════════════════════════════════════════════
-     CONTEXT BAR — Phase 4B — fxsvc-ctx-v1
-     Shown ONLY when ?from=journey. Hidden by default (display:none).
-     Injected content is textContent-only — no innerHTML from URL.
-     Fully inert and invisible when Entry B (direct / menu).
-════════════════════════════════════════════════════════════ -->
-<div id="fxsvc-ctx-bar" aria-hidden="true" style="display:none" role="region" aria-label="Contexte de votre recherche">
-  <div class="cp-container">
-    <div class="fxsvc-ctx-inner">
-      <span class="fxsvc-ctx-eyebrow" aria-hidden="true">VOTRE RECHERCHE</span>
-      <!-- Status row: dot + "Besoin identifié" + inline métier · city -->
-      <div class="fxsvc-ctx-status-row">
-        <span class="fxsvc-ctx-dot" aria-hidden="true"></span>
-        <span class="fxsvc-ctx-label">Besoin identifié</span>
-        <!-- Inline detail: rendered by JS — textContent only -->
-        <span class="fxsvc-ctx-detail" id="fxsvc-ctx-detail" aria-hidden="true"></span>
-      </div>
-      <p class="fxsvc-ctx-hint" id="fxsvc-ctx-hint"></p>
-    </div>
-  </div>
-</div>
+
+
 
 <!-- ══════════════════════════════════════════════════════════
-     SERVICES GRID
+     SERVICES CATALOGUE — DISCOVERY ONLY
 ════════════════════════════════════════════════════════════ -->
 <section class="cp-section" aria-labelledby="svc-grid-title">
   <div class="cp-container">
+
     <div class="cp-section-header">
       <span class="cp-section-eyebrow">Catalogue</span>
-      <h2 class="cp-section-title" id="svc-grid-title">Tous les services disponibles</h2>
-      <p class="cp-section-sub">12 spécialités pour tous vos besoins à domicile et en entreprise.</p>
+      <h2 class="cp-section-title" id="svc-grid-title">Explorez les métiers disponibles</h2>
+      <p class="cp-section-sub">
+        12 spécialités pour les besoins du quotidien, les interventions techniques
+        et les travaux à domicile ou en entreprise.
+      </p>
     </div>
+
     <div class="cp-service-grid" role="list">
 
       <article class="cp-svc-card" role="listitem">
-        <div class="cp-svc-icon-box" aria-hidden="true" style="font-size:1.4rem">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 18.5S4 16 4 10a8 8 0 0116 0c0 6-1.5 8.5-1.5 8.5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42"/></svg>
+        <div class="cp-svc-icon-box" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5.5 18.5S4 16 4 10a8 8 0 0116 0c0 6-1.5 8.5-1.5 8.5"/>
+            <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42"/>
+          </svg>
         </div>
         <p class="cp-svc-name">Plomberie</p>
         <p class="cp-svc-desc">Fuites, canalisations, robinetterie, chauffe-eau, WC bloqué.</p>
-        <p class="cp-svc-example">"J'ai une fuite sous l'évier"</p>
-        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Plomberie" aria-label="Demander un plombier">
-          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </button>
+        <p class="cp-svc-example">« J’ai une fuite sous l’évier »</p>
       </article>
 
       <article class="cp-svc-card" role="listitem">
         <div class="cp-svc-icon-box" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(245,158,11,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(245,158,11,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
         </div>
         <p class="cp-svc-name">Électricité</p>
-        <p class="cp-svc-desc">Panne de courant, tableau électrique, installation de prises, éclairage.</p>
-        <p class="cp-svc-example">"Un disjoncteur saute souvent"</p>
-        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Électricité" aria-label="Demander un électricien">
-          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </button>
+        <p class="cp-svc-desc">Panne de courant, tableau électrique, prises, éclairage.</p>
+        <p class="cp-svc-example">« Un disjoncteur saute souvent »</p>
       </article>
 
       <article class="cp-svc-card" role="listitem">
         <div class="cp-svc-icon-box" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1010 10"/><path d="M12 6v6l4 2"/><circle cx="19" cy="5" r="3"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a10 10 0 1010 10"/>
+            <path d="M12 6v6l4 2"/>
+            <circle cx="19" cy="5" r="3"/>
+          </svg>
         </div>
         <p class="cp-svc-name">Climatisation</p>
-        <p class="cp-svc-desc">Installation, maintenance, nettoyage, recharge de gaz.</p>
-        <p class="cp-svc-example">"Mon clim ne refroidit plus"</p>
-        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Climatisation" aria-label="Demander un technicien climatisation">
-          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </button>
+        <p class="cp-svc-desc">Installation, entretien, nettoyage, diagnostic et maintenance.</p>
+        <p class="cp-svc-example">« Mon climatiseur ne refroidit plus »</p>
       </article>
 
       <article class="cp-svc-card" role="listitem">
         <div class="cp-svc-icon-box" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(225,48,108,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(225,48,108,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+          </svg>
         </div>
         <p class="cp-svc-name">Peinture</p>
-        <p class="cp-svc-desc">Peinture intérieure / extérieure, préparation des murs, ravalement.</p>
-        <p class="cp-svc-example">"Je veux repeindre mon salon"</p>
-        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Peinture" aria-label="Demander un peintre">
-          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </button>
+        <p class="cp-svc-desc">Peinture intérieure ou extérieure, préparation des murs et finitions.</p>
+        <p class="cp-svc-example">« Je veux repeindre mon salon »</p>
       </article>
 
       <article class="cp-svc-card" role="listitem">
         <div class="cp-svc-icon-box" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(32,201,151,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(32,201,151,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18M3 12h18M3 18h18"/>
+          </svg>
         </div>
         <p class="cp-svc-name">Nettoyage</p>
-        <p class="cp-svc-desc">Grand ménage, fin de chantier, vitres, moquettes, canapés.</p>
-        <p class="cp-svc-example">"Nettoyage complet après travaux"</p>
-        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Nettoyage" aria-label="Demander un service de nettoyage">
-          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </button>
+        <p class="cp-svc-desc">Grand ménage, fin de chantier, vitres, moquettes et canapés.</p>
+        <p class="cp-svc-example">« Nettoyage complet après travaux »</p>
       </article>
 
       <article class="cp-svc-card" role="listitem">
         <div class="cp-svc-icon-box" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(131,58,180,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(131,58,180,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4"/>
+          </svg>
         </div>
         <p class="cp-svc-name">Menuiserie</p>
-        <p class="cp-svc-desc">Portes, fenêtres, parquet, placards sur mesure, meubles.</p>
-        <p class="cp-svc-example">"Installer une porte de chambre"</p>
-        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Menuiserie" aria-label="Demander un menuisier">
-          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </button>
+        <p class="cp-svc-desc">Portes, fenêtres, parquet, placards sur mesure et meubles.</p>
+        <p class="cp-svc-example">« Installer une porte de chambre »</p>
       </article>
 
       <article class="cp-svc-card" role="listitem">
         <div class="cp-svc-icon-box" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(225,48,108,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 11V21"/><path d="M16 3l-4 5 4 5"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(225,48,108,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="8" r="3"/>
+            <path d="M8 11V21"/>
+            <path d="M16 3l-4 5 4 5"/>
+          </svg>
         </div>
         <p class="cp-svc-name">Serrurerie</p>
-        <p class="cp-svc-desc">Ouverture de porte, changement de serrure, blindage, dépannage urgent.</p>
-        <p class="cp-svc-example">"Porte claquée, je suis bloqué"</p>
-        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Serrurerie" aria-label="Demander un serrurier">
-          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </button>
+        <p class="cp-svc-desc">Ouverture de porte, changement de serrure, blindage et dépannage.</p>
+        <p class="cp-svc-example">« Porte claquée, je suis bloqué »</p>
       </article>
 
       <article class="cp-svc-card" role="listitem">
         <div class="cp-svc-icon-box" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(245,158,11,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(245,158,11,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13" rx="2"/>
+            <path d="M16 8h4l3 3v5h-7V8z"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
         </div>
         <p class="cp-svc-name">Déménagement</p>
-        <p class="cp-svc-desc">Transport de meubles, emballage, manutention, camion avec chauffeur.</p>
-        <p class="cp-svc-example">"Déménager un appartement 3 pièces"</p>
-        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Déménagement" aria-label="Demander un déménageur">
-          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </button>
+        <p class="cp-svc-desc">Transport de meubles, emballage, manutention et camion avec chauffeur.</p>
+        <p class="cp-svc-example">« Déménager un appartement 3 pièces »</p>
       </article>
 
       <article class="cp-svc-card" role="listitem">
         <div class="cp-svc-icon-box" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(245,158,11,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(245,158,11,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
         </div>
         <p class="cp-svc-name">Carrelage</p>
         <p class="cp-svc-desc">Pose de carrelage, remplacement de carreaux, joints, sols et murs.</p>
-        <p class="cp-svc-example">"Je dois remplacer plusieurs carreaux cassés"</p>
-        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Carrelage" aria-label="Demander un carreleur">
-          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </button>
+        <p class="cp-svc-example">« Remplacer plusieurs carreaux cassés »</p>
       </article>
 
       <article class="cp-svc-card" role="listitem">
         <div class="cp-svc-icon-box" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(131,58,180,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M4 20V8l8-6 8 6v12"/><path d="M10 14v6M14 14v6"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(131,58,180,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 20h20"/>
+            <path d="M4 20V8l8-6 8 6v12"/>
+            <path d="M10 14v6M14 14v6"/>
+          </svg>
         </div>
         <p class="cp-svc-name">Maçonnerie</p>
-        <p class="cp-svc-desc">Petites réparations, murs, fissures, enduits et travaux de maçonnerie générale.</p>
-        <p class="cp-svc-example">"J'ai un mur fissuré à réparer"</p>
-        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Maçonnerie" aria-label="Demander un maçon">
-          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </button>
+        <p class="cp-svc-desc">Réparations, murs, fissures, enduits et travaux de maçonnerie générale.</p>
+        <p class="cp-svc-example">« J’ai un mur fissuré à réparer »</p>
       </article>
 
       <article class="cp-svc-card" role="listitem">
         <div class="cp-svc-icon-box" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(32,201,151,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M12 11v10"/><path d="M8 17c1.5 1 4.5 1 6 0"/><path d="M5 21c2-3 10-3 14 0" opacity=".4"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(32,201,151,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="7" r="4"/>
+            <path d="M12 11v10"/>
+            <path d="M8 17c1.5 1 4.5 1 6 0"/>
+            <path d="M5 21c2-3 10-3 14 0" opacity=".4"/>
+          </svg>
         </div>
         <p class="cp-svc-name">Jardinage</p>
-        <p class="cp-svc-desc">Entretien de jardin, taille de haies, tonte, nettoyage extérieur et plantation.</p>
-        <p class="cp-svc-example">"Mon jardin a besoin d'un entretien complet"</p>
-        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Jardinage" aria-label="Demander un jardinier">
-          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </button>
+        <p class="cp-svc-desc">Entretien de jardin, taille, tonte, nettoyage extérieur et plantation.</p>
+        <p class="cp-svc-example">« Mon jardin a besoin d’un entretien complet »</p>
       </article>
 
       <article class="cp-svc-card" role="listitem">
         <div class="cp-svc-icon-box" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2.5l7 7-10 10-7-7 10-10z"/><path d="M7 7l-5 5 7 7"/><path d="M12 22h6"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.5 2.5l7 7-10 10-7-7 10-10z"/>
+            <path d="M7 7l-5 5 7 7"/>
+            <path d="M12 22h6"/>
+          </svg>
         </div>
         <p class="cp-svc-name">Bricolage</p>
-        <p class="cp-svc-desc">Montage de meubles, fixations, petites réparations et installations du quotidien.</p>
-        <p class="cp-svc-example">"J'ai plusieurs petites réparations à faire"</p>
-        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Bricolage" aria-label="Demander un bricoleur">
-          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </button>
+        <p class="cp-svc-desc">Montage de meubles, fixations, petites réparations et installations.</p>
+        <p class="cp-svc-example">« J’ai plusieurs petites réparations à faire »</p>
       </article>
 
     </div>
   </div>
 </section>
 
+
 <!-- ══════════════════════════════════════════════════════════
-     URGENCE / PLANIFIÉ
+     MODES D’INTERVENTION
 ════════════════════════════════════════════════════════════ -->
-<div class="cp-section-alt" role="region" aria-label="Type de demande">
+<section class="cp-section-alt" id="service-modes" aria-labelledby="service-modes-title">
   <div class="cp-container">
+
     <div class="cp-section-header">
-      <span class="cp-section-eyebrow">Mode d'intervention</span>
-      <h2 class="cp-section-title">Urgence ou demande planifiée ?</h2>
-      <p class="cp-section-sub">Fixeo gère les deux. Vous choisissez le mode adapté à votre situation.</p>
+      <span class="cp-section-eyebrow">Mode d’intervention</span>
+      <h2 class="cp-section-title" id="service-modes-title">Urgence ou intervention planifiée ?</h2>
+      <p class="cp-section-sub">
+        Le même réseau peut répondre à des besoins immédiats comme à des travaux
+        à organiser dans le temps.
+      </p>
     </div>
+
     <div class="cp-split">
 
-      <!-- Urgence -->
-      <div class="cp-split-card cp-split-card--urgent">
-        <span class="cp-split-badge cp-split-badge-urgent" aria-label="Mode urgence">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <article class="cp-split-card cp-split-card--urgent">
+        <span class="cp-split-badge cp-split-badge-urgent">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
           URGENCE
         </span>
-        <p class="cp-split-title">Besoin immédiat</p>
-        <p class="cp-split-text">Fixeo oriente votre demande vers un artisan disponible dans votre zone.</p>
-        <ul class="cp-split-bullets" aria-label="Exemples d'urgences">
-          <li>Fuite d'eau active</li>
-          <li>Porte claquée ou serrure bloquée</li>
-        </ul>
-        <button type="button" class="cp-btn cp-btn-primary cp-split-btn-urgent" data-open-request-form="true" data-request-mode="express" aria-label="Envoyer une demande urgente">
-          Demande urgente
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        </button>
-      </div>
 
-      <!-- Planifié -->
-      <div class="cp-split-card cp-split-card--planned">
-        <span class="cp-split-badge cp-split-badge-planned" aria-label="Mode planifié">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <p class="cp-split-title">Un problème à traiter rapidement</p>
+
+        <p class="cp-split-text">
+          Pour les situations qui nécessitent une intervention dans un délai court,
+          FIXEO aide à rapprocher la demande des professionnels correspondant au besoin
+          et à la zone.
+        </p>
+
+        <ul class="cp-split-bullets">
+          <li>Fuite d’eau active</li>
+          <li>Serrure bloquée ou porte claquée</li>
+          <li>Panne nécessitant un diagnostic rapide</li>
+        </ul>
+      </article>
+
+      <article class="cp-split-card cp-split-card--planned">
+        <span class="cp-split-badge cp-split-badge-planned">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18"/>
+          </svg>
           PLANIFIÉ
         </span>
-        <p class="cp-split-title">Travaux à programmer</p>
-        <p class="cp-split-text">Publiez votre demande et choisissez selon les propositions reçues.</p>
-        <ul class="cp-split-bullets" aria-label="Exemples de travaux planifiés">
-          <li>Rénovation d'appartement</li>
-          <li>Installation de climatiseur</li>
+
+        <p class="cp-split-title">Des travaux à organiser</p>
+
+        <p class="cp-split-text">
+          Pour une installation, un entretien ou des travaux plus importants,
+          la demande peut être organisée avec davantage de contexte avant intervention.
+        </p>
+
+        <ul class="cp-split-bullets">
+          <li>Installation ou entretien de climatiseur</li>
+          <li>Peinture et rénovation</li>
+          <li>Travaux programmés</li>
         </ul>
-        <button type="button" class="cp-btn cp-split-btn-planned" data-open-request-form="true" aria-label="Publier une demande planifiée">
-          Publier une demande
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </button>
-      </div>
+      </article>
 
     </div>
+
   </div>
-</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     HOW FIXEO ORGANISES A REQUEST
+════════════════════════════════════════════════════════════ -->
+<section class="cp-section fxsvc-process" aria-labelledby="fxsvc-process-title">
+  <div class="cp-container">
+
+    <div class="cp-section-header">
+      <span class="cp-section-eyebrow">Parcours</span>
+      <h2 class="cp-section-title" id="fxsvc-process-title">Comment FIXEO organise une demande</h2>
+      <p class="cp-section-sub">
+        L’objectif est de réduire le flou entre le besoin exprimé et l’organisation
+        de l’intervention.
+      </p>
+    </div>
+
+    <div class="fxsvc-process-grid">
+
+      <article class="fxsvc-process-card">
+        <span class="fxsvc-process-num">01</span>
+        <span class="fxsvc-process-kicker">BESOIN</span>
+        <h3>Comprendre la situation</h3>
+        <p>
+          Le métier recherché, le contexte et les informations utiles permettent
+          de mieux qualifier la demande.
+        </p>
+      </article>
+
+      <article class="fxsvc-process-card">
+        <span class="fxsvc-process-num">02</span>
+        <span class="fxsvc-process-kicker">ZONE</span>
+        <h3>Contextualiser l’intervention</h3>
+        <p>
+          La ville et la zone d’intervention permettent de rapprocher la demande
+          de professionnels correspondant au territoire concerné.
+        </p>
+      </article>
+
+      <article class="fxsvc-process-card">
+        <span class="fxsvc-process-num">03</span>
+        <span class="fxsvc-process-kicker">PROFIL</span>
+        <h3>Identifier les profils pertinents</h3>
+        <p>
+          Les informations disponibles servent à orienter la demande vers des
+          professionnels correspondant au besoin exprimé.
+        </p>
+      </article>
+
+      <article class="fxsvc-process-card">
+        <span class="fxsvc-process-num">04</span>
+        <span class="fxsvc-process-kicker">MISSION</span>
+        <h3>Organiser la suite</h3>
+        <p>
+          Une fois le contexte suffisamment clair, l’intervention peut être
+          coordonnée selon la disponibilité et la nature du besoin.
+        </p>
+      </article>
+
+    </div>
+
+  </div>
+</section>
+
 
 <!-- ══════════════════════════════════════════════════════════
      PRICE ESTIMATES
 ════════════════════════════════════════════════════════════ -->
-<section class="cp-section" aria-labelledby="price-title">
+<section class="cp-section-alt" aria-labelledby="price-title">
   <div class="cp-container">
+
     <div class="cp-section-header">
       <span class="cp-section-eyebrow">Budget indicatif</span>
-      <h2 class="cp-section-title" id="price-title">Estimation des prix</h2>
-      <p class="cp-section-sub">Fourchettes indicatives pour les interventions courantes. Le devis final est communiqué par l'artisan avant intervention.</p>
+      <h2 class="cp-section-title" id="price-title">Quelques repères de prix</h2>
+      <p class="cp-section-sub">
+        Des fourchettes indicatives pour certaines interventions courantes.
+        Le montant réel dépend du diagnostic, du matériel et de la nature des travaux.
+      </p>
     </div>
+
     <div class="cp-price-grid">
+
       <div class="cp-price-card">
-        <p class="cp-price-service">
-          <span class="cp-price-icon" aria-hidden="true" style="color:rgba(56,189,248,0.8)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5.5 18.5S4 16 4 10a8 8 0 0116 0c0 6-1.5 8.5-1.5 8.5"/></svg>
-          </span>
-          Plomberie
-        </p>
+        <p class="cp-price-service">Plomberie</p>
         <p class="cp-price-range">150 – 600 <span class="cp-price-unit">MAD</span></p>
         <p class="cp-price-note">Dépannage courant</p>
       </div>
+
       <div class="cp-price-card">
-        <p class="cp-price-service">
-          <span class="cp-price-icon" aria-hidden="true" style="color:rgba(245,158,11,0.8)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          </span>
-          Électricité
-        </p>
+        <p class="cp-price-service">Électricité</p>
         <p class="cp-price-range">200 – 800 <span class="cp-price-unit">MAD</span></p>
         <p class="cp-price-note">Diagnostic + intervention</p>
       </div>
+
       <div class="cp-price-card">
-        <p class="cp-price-service">
-          <span class="cp-price-icon" aria-hidden="true" style="color:rgba(56,189,248,0.8)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-          </span>
-          Climatisation
-        </p>
+        <p class="cp-price-service">Climatisation</p>
         <p class="cp-price-range">300 – 1 200 <span class="cp-price-unit">MAD</span></p>
-        <p class="cp-price-note">Maintenance / installation</p>
+        <p class="cp-price-note">Selon intervention</p>
       </div>
+
       <div class="cp-price-card">
-        <p class="cp-price-service">
-          <span class="cp-price-icon" aria-hidden="true" style="color:rgba(225,48,108,0.8)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83"/></svg>
-          </span>
-          Peinture
-        </p>
+        <p class="cp-price-service">Peinture</p>
         <p class="cp-price-range">40 – 80 <span class="cp-price-unit">MAD/m²</span></p>
         <p class="cp-price-note">Selon surface et préparation</p>
       </div>
+
       <div class="cp-price-card">
-        <p class="cp-price-service">
-          <span class="cp-price-icon" aria-hidden="true" style="color:rgba(32,201,151,0.8)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-          </span>
-          Nettoyage
-        </p>
+        <p class="cp-price-service">Nettoyage</p>
         <p class="cp-price-range">200 – 700 <span class="cp-price-unit">MAD</span></p>
-        <p class="cp-price-note">Selon surface</p>
+        <p class="cp-price-note">Selon surface et prestation</p>
       </div>
+
       <div class="cp-price-card">
-        <p class="cp-price-service">
-          <span class="cp-price-icon" aria-hidden="true" style="color:rgba(225,48,108,0.8)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><path d="M8 11V21"/></svg>
-          </span>
-          Serrurerie
-        </p>
+        <p class="cp-price-service">Serrurerie</p>
         <p class="cp-price-range">150 – 500 <span class="cp-price-unit">MAD</span></p>
         <p class="cp-price-note">Ouverture / remplacement</p>
       </div>
+
     </div>
+
     <div class="cp-price-disclaimer" role="note">
-      <strong>Paiement uniquement après intervention confirmée.</strong>
-      Aucun acompte exigé. Les tarifs ci-dessus sont indicatifs — le devis exact est fourni par l'artisan avant tout engagement.
+      <strong>Les montants affichés sont indicatifs.</strong>
+      Le prix réel est confirmé selon le besoin et les conditions de l’intervention.
     </div>
+
   </div>
 </section>
 
+
 <!-- ══════════════════════════════════════════════════════════
-     POURQUOI FIXEO — Phase 4D compact trust rail
+     FIXEO FRAMEWORK
 ════════════════════════════════════════════════════════════ -->
-<div class="cp-section-alt" role="region" aria-labelledby="why-title">
+<section class="cp-section fxsvc-framework" aria-labelledby="why-title">
   <div class="cp-container">
+
     <div class="cp-section-header">
-      <span class="cp-section-eyebrow">Notre promesse</span>
-      <h2 class="cp-section-title" id="why-title">Pourquoi choisir Fixeo</h2>
-      <p class="cp-section-sub">Un parcours conçu pour réduire les frictions.</p>
+      <span class="cp-section-eyebrow">Cadre FIXEO</span>
+      <h2 class="cp-section-title" id="why-title">Un parcours plus lisible</h2>
+      <p class="cp-section-sub">
+        FIXEO structure les éléments essentiels autour du besoin, du professionnel
+        et de l’intervention.
+      </p>
     </div>
+
     <div class="cp-feat-grid" role="list">
 
-      <div class="cp-feat-card" role="listitem">
-        <div class="cp-feat-icon-box cp-feat-icon-box--green" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(32,201,151,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-        </div>
+      <article class="cp-feat-card" role="listitem">
+        <div class="cp-feat-icon-box cp-feat-icon-box--green" aria-hidden="true">✓</div>
         <p class="cp-feat-title">Profils référencés</p>
-        <p class="cp-feat-text">Spécialité et évaluations visibles avant de choisir — transparence complète.</p>
-      </div>
+        <p class="cp-feat-text">
+          Les informations disponibles sur les professionnels facilitent
+          l’identification du métier et de la zone d’intervention.
+        </p>
+      </article>
 
-      <div class="cp-feat-card" role="listitem">
-        <div class="cp-feat-icon-box cp-feat-icon-box--blue" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
-        </div>
-        <p class="cp-feat-title">Paiement après intervention</p>
-        <p class="cp-feat-text">Aucun acompte exigé. Règlement uniquement après réalisation du service.</p>
-      </div>
+      <article class="cp-feat-card" role="listitem">
+        <div class="cp-feat-icon-box cp-feat-icon-box--purple" aria-hidden="true">◎</div>
+        <p class="cp-feat-title">Contexte géographique</p>
+        <p class="cp-feat-text">
+          La localisation fait partie des critères utilisés pour rapprocher
+          le besoin des professionnels correspondants.
+        </p>
+      </article>
 
-      <div class="cp-feat-card" role="listitem">
-        <div class="cp-feat-icon-box cp-feat-icon-box--purple" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(131,58,180,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        </div>
-        <p class="cp-feat-title">Couverture multi-villes</p>
-        <p class="cp-feat-text">Artisans disponibles dans plusieurs villes du Maroc — Casablanca, Rabat, Fès, Marrakech, Agadir et plus.</p>
-      </div>
+      <article class="cp-feat-card" role="listitem">
+        <div class="cp-feat-icon-box cp-feat-icon-box--pink" aria-hidden="true">↗️</div>
+        <p class="cp-feat-title">Demande structurée</p>
+        <p class="cp-feat-text">
+          Le besoin est organisé autour d’informations utiles avant
+          l’organisation de l’intervention.
+        </p>
+      </article>
 
-      <div class="cp-feat-card" role="listitem">
-        <div class="cp-feat-icon-box cp-feat-icon-box--pink" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(225,48,108,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        </div>
-        <p class="cp-feat-title">Réponse rapide</p>
-        <p class="cp-feat-text">Le besoin est orienté vers les profils correspondants — sans démarche inutile.</p>
-      </div>
+      <article class="cp-feat-card" role="listitem">
+        <div class="cp-feat-icon-box cp-feat-icon-box--blue" aria-hidden="true">▤</div>
+        <p class="cp-feat-title">Cadre clair</p>
+        <p class="cp-feat-text">
+          Le prix et les conditions de l’intervention doivent être clarifiés
+          avant l’engagement sur les travaux.
+        </p>
+      </article>
 
     </div>
-  </div>
-</div>
 
-<!-- ══════════════════════════════════════════════════════════
-     FINAL CTA — Phase 4D: calm conclusion, not repeated hero
-════════════════════════════════════════════════════════════ -->
-<section class="cp-cta-band" aria-labelledby="cta-title">
-  <div class="cp-container">
-    <span class="cp-cta-band-eyebrow" aria-hidden="true">Prêt à continuer ?</span>
-    <h2 id="cta-title">Décrivez votre besoin.</h2>
-    <p>Fixeo organise la suite.</p>
-    <div class="cp-btn-row">
-      <button type="button" class="cp-btn cp-btn-primary" data-open-request-form="true" aria-label="Décrire mon besoin sur Fixeo">
-        Décrire mon besoin
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <a href="artisans.html" class="cp-btn cp-btn-outline">Parcourir les artisans</a>
-    </div>
-    <p class="cp-cta-band-guarantee" aria-label="Garanties Fixeo">
-      Devis communiqué avant intervention · Paiement après intervention
-    </p>
   </div>
 </section>
 
+
+<!-- ══════════════════════════════════════════════════════════
+     FINAL CTA — DISCOVERY
+════════════════════════════════════════════════════════════ -->
+<section class="cp-cta-band fxsvc-discovery-final" aria-labelledby="cta-title">
+  <div class="cp-container">
+
+    <span class="cp-cta-band-eyebrow">Explorer FIXEO</span>
+
+    <h2 id="cta-title">
+      Besoin d’un professionnel ?
+    </h2>
+
+    <p>
+      Parcourez les profils disponibles sur FIXEO ou revenez à l’accueil
+      pour commencer votre recherche.
+    </p>
+
+    <div class="cp-btn-row">
+
+      <a href="artisans.html" class="cp-btn cp-btn-primary">
+        Parcourir les artisans
+        <span aria-hidden="true">→</span>
+      </a>
+
+      <a href="index.html" class="cp-btn cp-btn-outline">
+        Retour à l’accueil
+      </a>
+
+    </div>
+
+    <p class="cp-cta-band-guarantee">
+      Un seul parcours de demande · Une page Services dédiée à la découverte
+    </p>
+
+  </div>
+</section>
+
+  
 <!-- RAFI V5 context bridge — services.html only.
      Capture-phase listener: sets #qsm-input-nlp.value before RAFI V5 handles
      the same click. Never calls open(), never calls preventDefault(),
