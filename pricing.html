@@ -795,6 +795,272 @@
 }
 
 </style>
+
+  <style id="fixeo-pricing-truth-v2">
+
+/* ════════════════════════════════════════════════════════════════
+   FIXEO PRICING V2 — TRUTH, FAQ & FINAL GATEWAY
+════════════════════════════════════════════════════════════════ */
+
+.fxp2-truth-section{
+  position:relative;
+  padding:clamp(66px,8vw,96px) 22px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.012),
+      rgba(131,58,180,.045)
+    );
+  border-top:1px solid rgba(255,255,255,.055);
+}
+
+.fxp2-truth-wrap{
+  max-width:960px;
+  margin:0 auto;
+}
+
+.fxp2-truth-head{
+  max-width:700px;
+  margin:0 auto 38px;
+  text-align:center;
+}
+
+.fxp2-truth-label{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:14px;
+  color:rgba(255,145,185,.78);
+  font-size:.64rem;
+  font-weight:850;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+
+.fxp2-truth-label::before{
+  content:'';
+  width:18px;
+  height:1px;
+  background:linear-gradient(90deg,#E1306C,#833AB4);
+}
+
+.fxp2-truth-head h2{
+  margin:0 0 12px;
+  color:#fff;
+  font-size:clamp(1.65rem,3.5vw,2.45rem);
+  line-height:1.13;
+  font-weight:900;
+  letter-spacing:-.028em;
+}
+
+.fxp2-truth-head p{
+  max-width:620px;
+  margin:0 auto;
+  color:rgba(205,215,235,.55);
+  font-size:.90rem;
+  line-height:1.68;
+}
+
+
+/* ── Principles ─────────────────────────────────────── */
+
+.fxp2-principles{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:42px;
+}
+
+.fxp2-principle{
+  padding:20px 18px;
+  border-radius:19px;
+  background:rgba(255,255,255,.028);
+  border:1px solid rgba(255,255,255,.07);
+}
+
+.fxp2-principle span{
+  display:block;
+  margin-bottom:6px;
+  color:rgba(255,135,180,.62);
+  font-size:.55rem;
+  font-weight:850;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+}
+
+.fxp2-principle strong{
+  display:block;
+  margin-bottom:6px;
+  color:rgba(248,250,255,.92);
+  font-size:.88rem;
+}
+
+.fxp2-principle p{
+  margin:0;
+  color:rgba(190,203,226,.48);
+  font-size:.73rem;
+  line-height:1.58;
+}
+
+
+/* ── FAQ ────────────────────────────────────────────── */
+
+.fxp2-faq{
+  max-width:820px;
+  margin:0 auto 52px;
+  display:grid;
+  gap:9px;
+}
+
+.fxp2-faq details{
+  border-radius:16px;
+  background:rgba(255,255,255,.028);
+  border:1px solid rgba(255,255,255,.07);
+  overflow:hidden;
+}
+
+.fxp2-faq summary{
+  cursor:pointer;
+  list-style:none;
+  padding:17px 18px;
+  color:rgba(245,248,255,.88);
+  font-size:.80rem;
+  font-weight:800;
+}
+
+.fxp2-faq summary::-webkit-details-marker{
+  display:none;
+}
+
+.fxp2-faq details p{
+  margin:0;
+  padding:0 18px 18px;
+  color:rgba(195,207,229,.50);
+  font-size:.75rem;
+  line-height:1.62;
+}
+
+
+/* ── Final gateway ──────────────────────────────────── */
+
+.fxp2-final{
+  position:relative;
+  overflow:hidden;
+  max-width:860px;
+  margin:0 auto;
+  padding:clamp(30px,5vw,48px) clamp(20px,5vw,44px);
+  text-align:center;
+  border-radius:28px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(225,48,108,.07),
+      rgba(131,58,180,.065)
+    );
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    0 28px 74px rgba(0,0,0,.22);
+}
+
+.fxp2-final::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(
+      ellipse 65% 55% at 50% 0%,
+      rgba(225,48,108,.11),
+      transparent 72%
+    );
+}
+
+.fxp2-final-content{
+  position:relative;
+  z-index:1;
+}
+
+.fxp2-final-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:16px;
+  color:rgba(251,142,181,.86);
+  font-size:.61rem;
+  font-weight:850;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.fxp2-final h2{
+  max-width:650px;
+  margin:0 auto 13px;
+  color:#fff;
+  font-size:clamp(1.55rem,3.6vw,2.25rem);
+  line-height:1.14;
+  font-weight:900;
+}
+
+.fxp2-final p{
+  max-width:590px;
+  margin:0 auto 24px;
+  color:rgba(205,215,235,.55);
+  font-size:.83rem;
+  line-height:1.65;
+}
+
+.fxp2-final-btn{
+  min-height:50px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:13px 25px;
+  border-radius:14px;
+  color:#fff;
+  background:linear-gradient(135deg,#E1306C,#833AB4);
+  border:1px solid rgba(255,255,255,.10);
+  font-size:.84rem;
+  font-weight:850;
+}
+
+.fxp2-final-meta{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:7px 16px;
+  margin-top:19px;
+  color:rgba(255,255,255,.34);
+  font-size:.65rem;
+}
+
+@media(max-width:720px){
+  .fxp2-principles{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:560px){
+  .fxp2-truth-section{
+    padding:58px 15px;
+  }
+
+  .fxp2-final{
+    border-radius:22px;
+  }
+
+  .fxp2-final-btn{
+    width:100%;
+  }
+
+  .fxp2-final-meta{
+    flex-direction:column;
+    align-items:center;
+  }
+}
+
+</style>
   
 <!-- SEO-4 -->
 <meta name="robots" content="index, follow">
@@ -1406,222 +1672,183 @@
 </section>
 
 
-    <!-- COMPARISON TABLE -->
-    <div class="comparison-wrap">
-      <h2 style="text-align:center;margin-bottom:8px">Tout comparer <span class="text-gradient">en un coup d'œil</span></h2>
-      <p style="text-align:center;color:var(--text-muted);margin-bottom:32px;font-size:.9rem">Choisissez le plan adapté à votre étape de développement</p>
-      <div class="comparison-table-wrap">
-        <table class="comparison-table">
-          <thead>
-            <tr>
-              <th class="ct-col-feat">Ce que vous obtenez</th>
-              <th class="ct-col-free"><span class="th-badge free">Free</span><div class="ct-price-hint">0 MAD</div></th>
-              <th class="ct-col-pro"><span class="th-badge pro">Pro ★</span><div class="ct-price-hint ct-price-hint--pro">99 MAD/mois</div></th>
-              <th class="ct-col-premium"><span class="th-badge premium">Premium ♛</span><div class="ct-price-hint ct-price-hint--premium">199 MAD/mois</div></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td class="feat-name">Visibilité du profil</td><td>Basique</td><td class="ct-pro-col">Enrichi + mis en avant</td><td class="ct-prem-col">Position numéro 1</td></tr>
-            <tr><td class="feat-name">Demandes reçues/mois</td><td>3 maximum</td><td class="ct-pro-col ct-key-diff">Illimitées</td><td class="ct-prem-col ct-key-diff">Illimitées prioritaires</td></tr>
-            <tr><td class="feat-name">Photos de portfolio</td><td>1</td><td class="ct-pro-col">10</td><td class="ct-prem-col">Illimitées</td></tr>
-            <tr><td class="feat-name">Vidéos portfolio</td><td class="ct-no">—</td><td class="ct-no ct-pro-col">—</td><td class="ct-prem-col ct-yes">Oui</td></tr>
-            <tr><td class="feat-name">Badge de confiance</td><td class="ct-no">—</td><td class="ct-pro-col ct-key-diff">★ Pro Vérifié</td><td class="ct-prem-col ct-key-diff">♛ Premium Elite</td></tr>
-            <tr><td class="feat-name">Missions urgentes</td><td class="ct-no">—</td><td class="ct-pro-col ct-yes">Oui</td><td class="ct-prem-col ct-yes">Oui — prioritaire</td></tr>
-            <tr><td class="feat-name">Statistiques</td><td>Basiques</td><td class="ct-pro-col">Avancées</td><td class="ct-prem-col">IA + rapports mensuels</td></tr>
-            <tr><td class="feat-name">Devis automatiques IA</td><td class="ct-no">—</td><td class="ct-no ct-pro-col">—</td><td class="ct-prem-col ct-yes">Oui</td></tr>
-            <tr><td class="feat-name">Support client</td><td>Email (72h)</td><td class="ct-pro-col">Prioritaire (24h)</td><td class="ct-prem-col ct-key-diff">VIP (2h max)</td></tr>
-            <tr><td class="feat-name">Garantie remboursement</td><td class="ct-no">—</td><td class="ct-pro-col ct-yes">14 jours</td><td class="ct-prem-col ct-yes">14 jours</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
 
-    <!-- FAQ -->
-    <div class="faq-section">
-      <h2 style="text-align:center;margin-bottom:8px">Questions <span class="text-gradient">fréquentes</span></h2>
-      <p style="text-align:center;color:var(--text-muted);margin-bottom:32px;font-size:.9rem">Tout ce que vous devez savoir avant de vous lancer</p>
-      <div class="faq-grid">
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Est-ce que le plan Pro vaut vraiment l'investissement ?</span>
-            <span class="faq-arrow">▼</span>
-          </div>
-          <div class="faq-a">Oui — et voici pourquoi : avec le plan Pro, vos demandes sont illimitées et votre profil est mis en avant dans les résultats. Un seul client supplémentaire par mois couvre largement l'abonnement. La plupart des artisans Pro constatent un retour positif dès la première semaine.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Y a-t-il un engagement ? Puis-je annuler ?</span>
-            <span class="faq-arrow">▼</span>
-          </div>
-          <div class="faq-a">Aucun engagement. Vous êtes libre d'annuler à tout moment depuis votre dashboard en deux clics. L'annulation prend effet à la fin de la période en cours — vous gardez tous vos avantages jusqu'au bout.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Le plan Free est-il vraiment gratuit ? Pour toujours ?</span>
-            <span class="faq-arrow">▼</span>
-          </div>
-          <div class="faq-a">Oui, le plan Free est 100% gratuit — sans carte bancaire, sans limite de durée. Il vous permet de créer votre profil, de recevoir jusqu'à 3 demandes par mois et de découvrir la plateforme sans aucun risque. Vous pouvez upgrader quand vous êtes prêt.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Quels moyens de paiement acceptez-vous ?</span>
-            <span class="faq-arrow">▼</span>
-          </div>
-          <div class="faq-a">Nous acceptons les cartes bancaires marocaines via CMI (Visa, Mastercard — CIH, Attijariwafa, BMCE…) ainsi que les cartes internationales via Stripe. Tous les paiements sont sécurisés et chiffrés (SSL 256-bit).</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Puis-je être remboursé si je ne suis pas satisfait ?</span>
-            <span class="faq-arrow">▼</span>
-          </div>
-          <div class="faq-a">Oui. Les abonnements Pro et Premium bénéficient d'une garantie de remboursement de 14 jours — sans questions posées. Si Fixeo ne vous apporte pas de valeur, nous vous remboursons intégralement. C'est notre engagement.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Comment fonctionne la facturation annuelle ?</span>
-            <span class="faq-arrow">▼</span>
-          </div>
-          <div class="faq-a">En choisissant la facturation annuelle, vous économisez 20% — soit 240 MAD/an sur le Pro et 480 MAD/an sur le Premium. Vous êtes facturé une fois, recevez une facture PDF par email, et profitez de tous vos avantages sans interruption.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Puis-je changer de plan après m'être inscrit ?</span>
-            <span class="faq-arrow">▼</span>
-          </div>
-          <div class="faq-a">Oui, vous pouvez upgrader ou downgrader à tout moment. L'upgrade est immédiat — vous accédez tout de suite à vos nouveaux avantages. Le downgrade prend effet à la prochaine période de facturation.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Quelle est la différence entre Pro et Premium ?</span>
-            <span class="faq-arrow">▼</span>
-          </div>
-          <div class="faq-a">Pro vous donne les demandes illimitées, le badge vérifié et la mise en avant dans les résultats — idéal pour la majorité des artisans actifs. Premium vous place en 1ère position, ajoute les devis IA automatiques, un support VIP 2h, et les rapports mensuels de performance. Premium est fait pour dominer votre zone.</div>
-        </div>
-      </div>
-    </div>
+<!-- ═════════════════════════════════════════════════════════════
+     FIXEO PRICING V2 — TRUTH & FINAL GATEWAY
+═════════════════════════════════════════════════════════════ -->
+<section
+  class="fxp2-truth-section"
+  aria-labelledby="fxp2-truth-title">
 
-    <!-- FINAL CTA ANCHOR -->
-    <div class="pricing-final-cta">
-      <p class="pricing-final-cta-text">Prêt à développer votre activité ?</p>
-      <p class="pricing-final-cta-sub">Rejoignez des centaines d'artisans qui font confiance à Fixeo au Maroc.</p>
-      <div class="pricing-final-cta-btns">
-        <button class="btn btn-secondary" onclick="selectPlan('free')">Commencer gratuitement</button>
-        <button class="btn btn-primary" onclick="selectPlan('pro')">Passer au Pro — 99 MAD/mois →</button>
-      </div>
-      <p class="pricing-final-cta-guarantee">Garantie 14 jours · Sans engagement · Annulable à tout moment</p>
+  <div class="fxp2-truth-wrap">
+
+    <div class="fxp2-truth-head">
+
+      <span class="fxp2-truth-label">
+        MODÈLE TRANSPARENT
+      </span>
+
+      <h2 id="fxp2-truth-title">
+        Ce que vous payez doit toujours correspondre
+        à un service réellement disponible.
+      </h2>
+
+      <p>
+        FIXEO préfère distinguer clairement ce qui existe aujourd’hui
+        de ce qui sera proposé demain.
+      </p>
+
     </div>
 
 
-<!-- PAYMENT MODAL -->
-<div class="modal" id="payment-modal" role="dialog" aria-modal="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-header">
-      <h3 id="payment-modal-title">💳 Paiement sécurisé</h3>
-      <button class="modal-close" onclick="closePaymentModal()">✕</button>
+    <div class="fxp2-principles">
+
+      <article class="fxp2-principle">
+
+        <span>PROFIL</span>
+
+        <strong>
+          Inscription gratuite
+        </strong>
+
+        <p>
+          La création de votre présence artisan FIXEO
+          ne nécessite actuellement aucun paiement.
+        </p>
+
+      </article>
+
+
+      <article class="fxp2-principle">
+
+        <span>MISSION</span>
+
+        <strong>
+          Commission après intervention
+        </strong>
+
+        <p>
+          La rémunération FIXEO est principalement
+          liée aux missions réellement réalisées via le réseau.
+        </p>
+
+      </article>
+
+
+      <article class="fxp2-principle">
+
+        <span>PAIEMENT EN LIGNE</span>
+
+        <strong>
+          Pas encore disponible
+        </strong>
+
+        <p>
+          Le paiement par carte et l’intégration CMI
+          ne sont pas encore activés sur FIXEO.
+        </p>
+
+      </article>
+
     </div>
-    <div class="modal-body">
-      <!-- Plan summary -->
-      <div class="payment-plan-summary" id="payment-plan-summary"></div>
 
-      <!-- Payment method tabs -->
-      <div class="payment-methods">
-        <div class="payment-tabs">
-          <button class="pay-tab active" onclick="switchPayMethod('stripe', this)">
-            <span>💳</span> Carte bancaire
-          </button>
-          <button class="pay-tab" onclick="switchPayMethod('cmi', this)">
-            <span>🇲🇦</span> CMI (Maroc)
-          </button>
+
+    <div class="fxp2-faq">
+
+      <details>
+        <summary>
+          Le profil artisan FIXEO est-il gratuit ?
+        </summary>
+
+        <p>
+          Oui. La création du profil artisan et l’entrée dans le réseau
+          sont actuellement accessibles sans abonnement initial.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>
+          Comment FIXEO se rémunère-t-il aujourd’hui ?
+        </summary>
+
+        <p>
+          Le modèle actuel repose principalement sur une commission
+          liée aux missions organisées via FIXEO et effectivement réalisées.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>
+          Peut-on souscrire à Pro ou Premium maintenant ?
+        </summary>
+
+        <p>
+          Non. Ces niveaux de services sont encore en préparation.
+          Leurs fonctionnalités, tarifs et conditions seront présentés
+          avant leur activation.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>
+          Peut-on payer par carte ou via CMI ?
+        </summary>
+
+        <p>
+          Pas encore. L’intégration du paiement en ligne et du CMI Maroc
+          n’est pas actuellement active sur FIXEO.
+        </p>
+      </details>
+
+    </div>
+
+
+    <div class="fxp2-final">
+
+      <div class="fxp2-final-content">
+
+        <span class="fxp2-final-eyebrow">
+          REJOINDRE LE RÉSEAU
+        </span>
+
+        <h2>
+          Commencez par construire votre présence professionnelle.
+        </h2>
+
+        <p>
+          Créez votre profil artisan, renseignez votre métier
+          et votre zone d’intervention, puis entrez progressivement
+          dans le réseau FIXEO.
+        </p>
+
+        <a
+          href="onboarding-artisan.html"
+          class="fxp2-final-btn">
+
+          Créer mon profil artisan
+          <span aria-hidden="true">→</span>
+
+        </a>
+
+        <div class="fxp2-final-meta">
+
+          <span>Inscription gratuite</span>
+          <span>Sans carte bancaire</span>
+          <span>Offres avancées bientôt disponibles</span>
+
         </div>
 
-        <!-- STRIPE FORM -->
-        <div id="pay-stripe" class="pay-form active">
-          <div class="secure-badge">🔒 Paiement sécurisé via Stripe • SSL 256-bit</div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Nom sur la carte</label>
-              <input type="text" id="stripe-name" placeholder="Mohamed Alami" autocomplete="cc-name"/>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Numéro de carte</label>
-            <div class="card-input-wrap">
-              <input type="text" id="stripe-card" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number" oninput="formatCardNumber(this)"/>
-              <div class="card-type-icons">
-                <span id="card-brand-icon">💳</span>
-              </div>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Date d'expiration</label>
-              <input type="text" id="stripe-expiry" placeholder="MM/AA" maxlength="5" oninput="formatExpiry(this)" autocomplete="cc-exp"/>
-            </div>
-            <div class="form-group">
-              <label>CVV</label>
-              <input type="text" id="stripe-cvv" placeholder="123" maxlength="4" autocomplete="cc-csc"/>
-            </div>
-          </div>
-          <button class="btn btn-primary btn-lg w-100" onclick="processPayment('stripe')" id="stripe-pay-btn">
-            🔒 Payer maintenant
-          </button>
-        </div>
-
-        <!-- CMI FORM -->
-        <div id="pay-cmi" class="pay-form" style="display:none">
-          <div class="secure-badge">🔒 Paiement sécurisé via CMI (Centre Monétique Interbancaire)</div>
-          <div class="cmi-info">
-            <div class="cmi-badges">
-              <span class="cmi-badge">VISA</span>
-              <span class="cmi-badge">Mastercard</span>
-              <span class="cmi-badge">CIH</span>
-              <span class="cmi-badge">Attijariwafa</span>
-              <span class="cmi-badge">BMCE</span>
-            </div>
-            <p>Paiement par carte bancaire marocaine via le réseau CMI sécurisé.</p>
-          </div>
-          <div class="form-group">
-            <label>Numéro de carte CMI</label>
-            <input type="text" id="cmi-card" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNumber(this)"/>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Date d'expiration</label>
-              <input type="text" id="cmi-expiry" placeholder="MM/AA" maxlength="5" oninput="formatExpiry(this)"/>
-            </div>
-            <div class="form-group">
-              <label>Code de sécurité</label>
-              <input type="text" id="cmi-cvv" placeholder="123" maxlength="4"/>
-            </div>
-          </div>
-          <button class="btn btn-primary btn-lg w-100" onclick="processPayment('cmi')">
-            🔒 Payer via CMI
-          </button>
-        </div>
       </div>
 
-      <!-- Error / Success messages -->
-      <div id="payment-msg" class="payment-message" style="display:none"></div>
     </div>
+
   </div>
-</div>
 
-<!-- SUCCESS MODAL -->
-<div class="modal" id="success-modal" role="dialog" aria-modal="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-body" style="text-align:center;padding:40px 32px">
-      <div class="success-animation">✅</div>
-      <h2 style="margin:16px 0 8px">Paiement confirmé !</h2>
-      <p style="color:var(--text-muted);margin-bottom:8px" id="success-plan-msg"></p>
-      <p style="font-size:.82rem;color:var(--text-muted)">Une confirmation a été envoyée à votre email.</p>
-      <div class="success-confetti" id="success-confetti"></div>
-      <a href="dashboard-artisan-v2.html" class="btn btn-primary btn-lg" style="margin-top:24px">
-        🚀 Accéder au Dashboard
-      </a>
-    </div>
-  </div>
-</div>
-
+</section>
+  
 <!-- FOOTER: replaced by fixeo-footer-global.js injection (gf2) -->
 
 <script>
