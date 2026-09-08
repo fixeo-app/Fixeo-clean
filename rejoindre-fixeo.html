@@ -2683,124 +2683,472 @@
     .rj-market-list li{display:flex;align-items:flex-start;gap:9px;font-size:.87rem;color:var(--muted);line-height:1.5}
     .rj-market-list li::before{content:'';flex:0 0 6px;height:6px;border-radius:50%;background:var(--grad);margin-top:6px}
 
-    /* ════════════════════════════
-       7. FINAL CTA BAND
-    ════════════════════════════ */
-    .rj-final-band{
-      padding:84px 22px;text-align:center;
-      background:linear-gradient(135deg,rgba(225,48,108,.11),rgba(131,58,180,.11));
-      border-top:1px solid rgba(255,255,255,.07);
-      position:relative;overflow:hidden;
-    }
-    .rj-final-band::before{
-      content:'';position:absolute;inset:0;pointer-events:none;
-      background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(225,48,108,.09),transparent);
-    }
-    .rj-final-band h2{
-      font-size:clamp(1.5rem,3.5vw,2.4rem);font-weight:900;color:#fff;
-      margin:0 0 14px;letter-spacing:-.02em;position:relative;z-index:1;
-    }
-    .rj-final-band p{
-      font-size:.97rem;color:var(--muted);max-width:480px;margin:0 auto 34px;
-      line-height:1.65;position:relative;z-index:1;
-    }
-    .rj-final-band .rj-cta-row{position:relative;z-index:1}
+/* ════════════════════════════════════════════════════════════════
+   7. ARTISAN UNIVERSE — FINAL GATEWAY
+════════════════════════════════════════════════════════════════ */
 
-    /* ─── Responsive ─── */
-    @media(max-width:800px){
-      .rj-tech-grid{grid-template-columns:repeat(2,1fr)}
-      .rj-market-wrap{grid-template-columns:1fr}
-    }
-    @media(max-width:560px){
-      .rj-hero{min-height:unset;padding:72px 16px 60px}
-      .rj-section{padding:52px 16px}
-      .rj-section-alt{padding:52px 16px}
-      .rj-final-band{padding:60px 16px}
-      .rj-tech-grid{grid-template-columns:1fr 1fr}
-      .rj-val-grid{grid-template-columns:1fr 1fr}
-      .rj-claim-band{padding:32px 20px;border-radius:20px}
-      .rj-btn{padding:14px 22px;font-size:.91rem;width:100%;justify-content:center}
-      .rj-cta-row{flex-direction:column;align-items:stretch}
-      .rj-steps-wrap::before{left:19px}
-      .rj-step-num{flex:0 0 40px;height:40px;border-radius:12px;font-size:.95rem}
-    }
-    @media(max-width:380px){
-      .rj-val-grid{grid-template-columns:1fr}
-      .rj-tech-grid{grid-template-columns:1fr}
-    }
-  </style>
-<!-- SEO-1A -->
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://www.fixeo.ma/rejoindre-fixeo.html">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Rejoindre Fixeo — Développez votre activité d'artisan au Maroc">
-<meta property="og:description" content="Rejoignez Fixeo — la plateforme qui connecte artisans vérifiés et clients au Maroc. Recevez plus de demandes, gérez votre profil, développez votre activité locale.">
-<meta property="og:url" content="https://www.fixeo.ma/rejoindre-fixeo.html">
-<meta property="og:image" content="https://www.fixeo.ma/img/logo.png">
-<meta property="og:site_name" content="Fixeo">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Rejoindre Fixeo — Artisans vérifiés au Maroc">
-<meta name="twitter:description" content="Développez votre activité artisanale avec Fixeo. Recevez des demandes dans votre ville.">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Rejoindre Fixeo en tant qu'artisan",
-  "url": "https://www.fixeo.ma/rejoindre-fixeo.html",
-  "description": "Page d'inscription et de revendication de profil pour artisans souhaitant rejoindre la plateforme Fixeo au Maroc.",
-  "breadcrumb": {
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {"@type":"ListItem","position":1,"name":"Fixeo","item":"https://www.fixeo.ma/"},
-      {"@type":"ListItem","position":2,"name":"Rejoindre Fixeo","item":"https://www.fixeo.ma/rejoindre-fixeo.html"}
-    ]
+.rj-final-band{
+  position:relative;
+  overflow:hidden;
+
+  padding:
+    clamp(72px,9vw,118px)
+    22px
+    clamp(74px,9vw,112px);
+
+  border-top:1px solid rgba(255,255,255,.065);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.012),
+      rgba(131,58,180,.055)
+    );
+}
+
+.rj-final-band::before{
+  content:'';
+
+  position:absolute;
+  inset:0;
+
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      ellipse 70% 60% at 50% 48%,
+      rgba(225,48,108,.105),
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 50% 55% at 75% 60%,
+      rgba(131,58,180,.10),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 42% 48% at 18% 35%,
+      rgba(56,189,248,.055),
+      transparent 70%
+    );
+}
+
+.rj-final-band::after{
+  content:'';
+
+  position:absolute;
+  inset:0;
+
+  pointer-events:none;
+  opacity:.025;
+
+  background-image:
+    linear-gradient(
+      rgba(255,255,255,.22) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.22) 1px,
+      transparent 1px
+    );
+
+  background-size:52px 52px;
+}
+
+
+/* ── Main gateway ───────────────────────────────────── */
+
+.rj-final-gateway{
+  position:relative;
+  z-index:1;
+
+  max-width:900px;
+  margin:0 auto;
+
+  padding:
+    clamp(34px,5vw,58px)
+    clamp(24px,5vw,56px);
+
+  text-align:center;
+
+  border-radius:32px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.068),
+      rgba(255,255,255,.025)
+    );
+
+  border:1px solid rgba(255,255,255,.11);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.065),
+    0 34px 100px rgba(0,0,0,.30);
+
+  overflow:hidden;
+}
+
+.rj-final-gateway::before{
+  content:'';
+
+  position:absolute;
+  inset:0;
+
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      ellipse 62% 48% at 50% 0%,
+      rgba(225,48,108,.11),
+      transparent 72%
+    );
+}
+
+
+/* ── Content ────────────────────────────────────────── */
+
+.rj-final-content{
+  position:relative;
+  z-index:1;
+
+  max-width:690px;
+  margin:0 auto;
+}
+
+.rj-final-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+
+  margin-bottom:20px;
+
+  padding:7px 13px;
+
+  border-radius:999px;
+
+  background:rgba(225,48,108,.075);
+  border:1px solid rgba(225,48,108,.20);
+
+  color:rgba(251,142,181,.88);
+
+  font-size:.63rem;
+  font-weight:850;
+
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+
+.rj-final-eyebrow::before{
+  content:'';
+
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:#E1306C;
+
+  box-shadow:0 0 13px rgba(225,48,108,.65);
+}
+
+
+.rj-final-band h2{
+  margin:0 auto 16px;
+
+  max-width:720px;
+
+  color:#fff;
+
+  font-size:
+    clamp(1.65rem,4.2vw,2.75rem);
+
+  line-height:1.12;
+
+  letter-spacing:-.026em;
+
+  font-weight:900;
+}
+
+.rj-final-highlight{
+  display:block;
+
+  margin-top:4px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ff78aa,
+      #d28cff
+    );
+
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.rj-final-lead{
+  max-width:590px;
+
+  margin:0 auto 30px;
+
+  color:rgba(232,234,240,.57);
+
+  font-size:.92rem;
+  line-height:1.72;
+}
+
+
+/* ── Identity statement ─────────────────────────────── */
+
+.rj-final-statement{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+
+  margin:0 auto 30px;
+
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:18px;
+
+  overflow:hidden;
+
+  background:rgba(255,255,255,.025);
+}
+
+.rj-final-statement-item{
+  padding:15px 12px;
+
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.rj-final-statement-item + .rj-final-statement-item{
+  border-left:1px solid rgba(255,255,255,.065);
+}
+
+.rj-final-statement-item span{
+  font-size:.56rem;
+  font-weight:850;
+
+  letter-spacing:.10em;
+  text-transform:uppercase;
+
+  color:rgba(255,255,255,.30);
+}
+
+.rj-final-statement-item strong{
+  font-size:.79rem;
+  font-weight:800;
+
+  color:rgba(255,255,255,.80);
+}
+
+
+/* ── CTA actions ────────────────────────────────────── */
+
+.rj-final-actions{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+
+  gap:12px;
+
+  margin-bottom:25px;
+}
+
+.rj-final-btn{
+  min-height:52px;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  gap:8px;
+
+  padding:14px 27px;
+
+  border-radius:15px;
+
+  font-size:.88rem;
+  font-weight:850;
+
+  transition:
+    transform .16s ease,
+    box-shadow .16s ease,
+    border-color .16s ease,
+    background .16s ease;
+}
+
+.rj-final-btn:hover{
+  transform:translateY(-2px);
+}
+
+.rj-final-btn-primary{
+  color:#fff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #E1306C,
+      #833AB4
+    );
+
+  border:1px solid rgba(255,255,255,.08);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.13),
+    0 10px 32px rgba(225,48,108,.25);
+}
+
+.rj-final-btn-primary:hover{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.15),
+    0 14px 40px rgba(225,48,108,.34);
+}
+
+.rj-final-btn-secondary{
+  color:rgba(255,255,255,.82);
+
+  background:rgba(255,255,255,.045);
+
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.rj-final-btn-secondary:hover{
+  background:rgba(255,255,255,.075);
+  border-color:rgba(255,255,255,.18);
+}
+
+
+/* ── Commercial truth line ──────────────────────────── */
+
+.rj-final-meta{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+
+  gap:8px 18px;
+
+  margin:0;
+
+  color:rgba(255,255,255,.37);
+
+  font-size:.69rem;
+  line-height:1.5;
+}
+
+.rj-final-meta span{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+
+.rj-final-meta i{
+  width:5px;
+  height:5px;
+
+  display:inline-block;
+
+  border-radius:50%;
+
+  background:#6ee7b7;
+
+  box-shadow:0 0 9px rgba(110,231,183,.42);
+}
+
+
+/* ── Signature ──────────────────────────────────────── */
+
+.rj-final-signature{
+  position:relative;
+  z-index:1;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  gap:8px;
+
+  margin-top:25px;
+
+  color:rgba(255,255,255,.24);
+
+  font-size:.58rem;
+  font-weight:850;
+
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+
+
+/* ── Mobile ─────────────────────────────────────────── */
+
+@media(max-width:620px){
+
+  .rj-final-band{
+    padding:
+      58px
+      14px
+      64px;
+  }
+
+  .rj-final-gateway{
+    padding:
+      34px
+      18px;
+
+    border-radius:24px;
+  }
+
+  .rj-final-band h2{
+    font-size:
+      clamp(1.55rem,8vw,2.15rem);
+  }
+
+  .rj-final-lead{
+    font-size:.84rem;
+    margin-bottom:24px;
+  }
+
+  .rj-final-statement{
+    grid-template-columns:1fr;
+  }
+
+  .rj-final-statement-item{
+    padding:12px 14px;
+  }
+
+  .rj-final-statement-item + .rj-final-statement-item{
+    border-left:none;
+    border-top:1px solid rgba(255,255,255,.065);
+  }
+
+  .rj-final-actions{
+    flex-direction:column;
+  }
+
+  .rj-final-btn{
+    width:100%;
+  }
+
+  .rj-final-meta{
+    flex-direction:column;
+    align-items:center;
+
+    gap:7px;
   }
 }
-</script>
-  <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
-  <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
-  <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
-  <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
-</head>
 
-<body class="fixeo-gh-enabled">
+@media(prefers-reduced-motion:reduce){
 
-<!-- ── Navbar ── -->
-<nav class="navbar" role="navigation" aria-label="Navigation principale">
-  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo - Accueil">
-    <img src="img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager"
-         onerror="this.onerror=null;this.alt='Fixeo';this.style.display='none'">
-  </a>
-  <nav class="navbar-nav" aria-label="Menu principal">
-    <a href="services.html" class="nav-link">Services</a>
-    <a href="artisans.html" class="nav-link">Artisans</a>
-    <a href="comment-ca-marche.html" class="nav-link">Comment ça marche</a>
-    <a href="pricing.html" class="nav-link">Tarifs</a>
-    <a href="presse-partenariats.html" class="nav-link">Presse</a>
-    <a href="dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">📊 Dashboard</a>
-    <a href="admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
-  </nav>
-  <div class="nav-actions">
-    <a href="auth.html" id="login-btn" class="btn-nav btn-nav-outline" data-auth="guest">Connexion</a>
-    <a href="auth.html#signup" id="register-btn" class="btn-nav btn-nav-primary" data-auth="guest">Inscription</a>
-    <div class="nav-has-dropdown" data-auth="logged-in" style="display:none">
-      <div class="nav-user-chip" tabindex="0" aria-haspopup="true" aria-label="Mon compte">
-        <div class="nav-user-avatar" id="global-avatar">U</div>
-        <span class="nav-user-name" id="global-username">Mon Compte</span>
-        <span class="nav-arrow" style="font-size:0.6rem;opacity:0.5">▾</span>
-      </div>
-      <div class="nav-dropdown" role="menu" style="min-width:200px;right:0;left:auto">
-        <a href="dashboard-client.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">📊</span>Mon Dashboard</a>
-        <a href="dashboard-artisan-v2.html" class="nav-dropdown-item" role="menuitem" data-role-show="artisan" style="display:none"><span class="dd-icon">👷</span>Espace Artisan</a>
-        <div class="nav-dropdown-divider"></div>
-        <a href="#" id="logout-btn" class="nav-dropdown-item" role="menuitem" onclick="window.fixeoLogout?.();return false;"><span class="dd-icon">🚪</span>Déconnexion</a>
-      </div>
-    </div>
-  </div>
-  <button class="hamburger" aria-label="Ouvrir le menu" aria-expanded="false">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
+  .rj-final-btn,
+  .rj-final-btn:hover{
+    transition:none;
+    transform:none;
+  }
+}
+    
 
 <!-- ══════════════════════════════════════════════════════════
      ARTISAN UNIVERSE HERO
@@ -3729,20 +4077,116 @@
 
 </section>
 
-<!-- ════════════════════
-     7. FINAL CTA
-════════════════════ -->
-<div class="rj-final-band" aria-labelledby="rj-final-title">
+<!-- ═════════════════════════════════════════════════════════════
+     7. ARTISAN UNIVERSE — FINAL GATEWAY
+═════════════════════════════════════════════════════════════ -->
+<section
+  class="rj-final-band"
+  aria-labelledby="rj-final-title">
+
   <div class="rj-wrap">
-    <p class="rj-fade-in" style="font-size:.82rem;color:rgba(255,255,255,.35);letter-spacing:.05em;text-transform:uppercase;margin:0 0 18px;position:relative;z-index:1">Aucune commission au départ.  Aucun engagement.</p>
-    <h2 id="rj-final-title" class="rj-fade-in">Rejoignez Fixeo dès aujourd'hui</h2>
-    <p class="rj-fade-in">Créez votre profil gratuitement. Les premières demandes arrivent dès que vous êtes référencé.</p>
-    <div class="rj-cta-row rj-fade-in">
-      <a href="onboarding-artisan.html" class="rj-btn rj-btn-primary">🧰 Créer mon profil artisan</a>
-      <a href="onboarding-artisan.html" class="rj-btn rj-btn-outline">👤 Revendiquer mon profil</a>
+
+    <div class="rj-final-gateway rj-fade-in">
+
+      <div class="rj-final-content">
+
+        <span class="rj-final-eyebrow">
+          ENTRER DANS LE RÉSEAU
+        </span>
+
+        <h2 id="rj-final-title">
+          Votre métier existe déjà.
+          <span class="rj-final-highlight">
+            Construisez maintenant votre place dans FIXEO.
+          </span>
+        </h2>
+
+        <p class="rj-final-lead">
+          Créez votre identité professionnelle ou revendiquez un profil
+          déjà référencé. FIXEO vous donne un point d’entrée unique pour
+          structurer votre présence, votre zone et votre activité dans le réseau.
+        </p>
+
+
+        <div
+          class="rj-final-statement"
+          aria-label="Principes du réseau artisan FIXEO">
+
+          <div class="rj-final-statement-item">
+            <span>IDENTITÉ</span>
+            <strong>Un profil professionnel</strong>
+          </div>
+
+          <div class="rj-final-statement-item">
+            <span>TERRITOIRE</span>
+            <strong>Une zone d’intervention</strong>
+          </div>
+
+          <div class="rj-final-statement-item">
+            <span>ACTIVITÉ</span>
+            <strong>Un historique qui se construit</strong>
+          </div>
+
+        </div>
+
+
+        <div class="rj-final-actions">
+
+          <a
+            href="onboarding-artisan.html"
+            class="rj-final-btn rj-final-btn-primary">
+            Créer mon profil artisan
+            <span aria-hidden="true">→</span>
+          </a>
+
+          <a
+            href="onboarding-artisan.html"
+            class="rj-final-btn rj-final-btn-secondary">
+            Revendiquer un profil existant
+          </a>
+
+        </div>
+
+
+        <p class="rj-final-meta">
+
+          <span>
+            <i aria-hidden="true"></i>
+            Inscription gratuite
+          </span>
+
+          <span>
+            <i aria-hidden="true"></i>
+            Profil professionnel FIXEO
+          </span>
+
+          <span>
+            <i aria-hidden="true"></i>
+            Commission liée aux missions réalisées
+          </span>
+
+        </p>
+
+      </div>
+
     </div>
+
+
+    <div
+      class="rj-final-signature"
+      aria-hidden="true">
+
+      FIXEO
+      <span>·</span>
+      ARTISAN NETWORK
+      <span>·</span>
+      MAROC
+
+    </div>
+
   </div>
-</div>
+
+</section>
 
 <!-- ════════════════════
      8. FOOTER
