@@ -21,6 +21,9 @@
   <link rel="stylesheet" href="css/fixeo-artisan-card-premium-v1.css?v=facp-v1b" />
   <!-- Page public skin -->
   <link rel="stylesheet" href="css/fixeo-estimation-page-v1.css?v=fxestpage-v2a-gateway" />
+  <!-- FIXEO Global Header V5A -->
+<link rel="stylesheet" href="css/fixeo-header-global.css?v=fxgh-v5a" />
+<script src="js/fixeo-header-global.js?v=fxgh-v5a" defer></script>
   <!-- Estimator V2 CSS (continuation form) -->
   <link rel="stylesheet" href="css/fixeo-estimator-v2.css" />
   <style>
@@ -65,6 +68,21 @@
     #page-footer-slot { padding: 12px 20px 20px; border-top: 1px solid var(--modal-border); }
     #page-ctx-slot { border-bottom: 1px solid var(--modal-border-soft); }
     #page-summary-slot .understanding-panel { background: transparent; border: none; padding: 0; }
+
+    /* ══════════════════════════════════════════════════════════════
+   ESTIMATION × FIXEO GLOBAL HEADER V5A
+   Public estimation header is replaced by the canonical
+   FIXEO mobile header once the global header is active.
+   Desktop remains unchanged.
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  body.fixeo-gh-enabled .fxep-header {
+    display: none !important;
+  }
+
+}
   </style>
 </head>
 <body>
