@@ -2526,3 +2526,90 @@ body.fixeo-gh-enabled .fixeo-gh-drawer-link--enterprise.fixeo-gh-drawer-link--ac
     z-index: 1360 !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FIXEO GLOBAL MOBILE HEADER V5B.2
+   FINAL FIXED LAYER CONTRACT
+   Header always remains ABOVE scrolling page content.
+   Page content can never paint over the canonical mobile header.
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ── Canonical header becomes a true viewport layer ─────── */
+  body.fixeo-gh-enabled .navbar.fixeo-gh-host,
+  body.fixeo-gh-enabled .site-header.fixeo-gh-shell,
+  body.fixeo-gh-enabled .fixeo-gh-shell--synthetic {
+    position: fixed !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+
+    width: 100% !important;
+
+    z-index: 2147483000 !important;
+
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+
+    overflow: visible !important;
+    isolation: isolate !important;
+
+    margin: 0 !important;
+  }
+
+
+  /* ── Keep page below the fixed header ───────────────────── */
+  body.fixeo-gh-enabled {
+    padding-top:
+      calc(
+        60px +
+        env(safe-area-inset-top, 0px)
+      ) !important;
+  }
+
+
+  /* ── Mobile bar always paints above page content ────────── */
+  body.fixeo-gh-enabled .fixeo-gh-mobile {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-mobile-bar {
+    position: relative !important;
+    z-index: 3 !important;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(11, 15, 29, .985) 0%,
+        rgba(11, 15, 29, .965) 100%
+      ) !important;
+
+    backdrop-filter: blur(20px) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(145%) !important;
+
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.06),
+      0 14px 34px rgba(0,0,0,.22) !important;
+  }
+
+
+  /* ── Menu portal remains above the header/page when opened ─ */
+  #fixeo-gh-menu-portal {
+    position: relative !important;
+    z-index: 2147483600 !important;
+  }
+
+
+  /* ── Drawer remains the absolute highest interactive layer ─ */
+  body.fixeo-gh-enabled .fixeo-gh-drawer {
+    z-index: 2147483640 !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-backdrop {
+    z-index: 2147483500 !important;
+  }
+}
