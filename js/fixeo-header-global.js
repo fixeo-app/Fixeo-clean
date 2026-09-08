@@ -612,26 +612,102 @@
       </div>`;
   }
 
-  function findHost() {
-    const navbar = document.querySelector('nav.navbar');
-    if (navbar) {
-      return { host: navbar, type: 'navbar', shell: navbar };
-    }
-    const siteHeader = document.querySelector('.site-header');
-    if (siteHeader) {
-      const inner = siteHeader.querySelector('.container') || siteHeader;
-      return { host: inner, type: 'site', shell: siteHeader };
-    }
-    return null;
+  /* ══════════════════════════════════════════════════════════════
+   FIXEO GLOBAL HEADER V5A — UNIVERSAL MOBILE HOST
+   One mobile shell for every FIXEO page.
+   Legacy page headers remain untouched for desktop.
+   ══════════════════════════════════════════════════════════════ */
+
+function ensureUniversalMobileHost() {
+
+  /* Reuse if already mounted */
+  const existing =
+    document.querySelector(
+      '.fixeo-gh-universal-shell[data-fixeo-gh-universal="1"]'
+    );
+
+  if (existing) {
+    return {
+      host:
+        existing.querySelector('.fixeo-gh-shell-inner') ||
+        existing,
+      type: 'universal',
+      shell: existing
+    };
   }
 
-  function ensureSyntheticHost() {
-    const shell = document.createElement('header');
-    shell.className = 'site-header fixeo-gh-shell fixeo-gh-shell--synthetic';
-    shell.innerHTML = '<div class="container fixeo-gh-shell-inner"></div>';
-    document.body.insertAdjacentElement('afterbegin', shell);
-    return { host: shell.querySelector('.fixeo-gh-shell-inner'), type: 'synthetic', shell };
-  }
+
+  /*
+   * Mark historical page headers as mobile sources.
+   * They stay in DOM and remain available on desktop,
+   * but V5A will hide them on mobile.
+   */
+  document
+    .querySelectorAll(
+      'nav.navbar, header.site-header'
+    )
+    .forEach(function (node) {
+
+      if (
+        !node.classList.contains(
+          'fixeo-gh-universal-shell'
+        )
+      ) {
+        node.classList.add(
+          'fixeo-gh-source-shell'
+        );
+      }
+
+    });
+
+
+  /*
+   * Dedicated FIXEO mobile shell.
+   *
+   * IMPORTANT:
+   * Do NOT add .site-header or .navbar here.
+   * This prevents page-specific legacy CSS from
+   * influencing the global mobile header.
+   */
+  const shell =
+    document.createElement('header');
+
+  shell.className =
+    'fixeo-gh-shell ' +
+    'fixeo-gh-shell--synthetic ' +
+    'fixeo-gh-universal-shell';
+
+  shell.setAttribute(
+    'data-fixeo-gh-universal',
+    '1'
+  );
+
+  shell.innerHTML =
+    '<div class="' +
+      'fixeo-gh-shell-inner ' +
+      'fixeo-gh-universal-inner' +
+    '"></div>';
+
+
+  /*
+   * Always first interface element in body.
+   * Same DOM position on every FIXEO page.
+   */
+  document.body.insertAdjacentElement(
+    'afterbegin',
+    shell
+  );
+
+
+  return {
+    host:
+      shell.querySelector(
+        '.fixeo-gh-shell-inner'
+      ),
+    type: 'universal',
+    shell: shell
+  };
+}
 
   function ensureDrawerPortal(root) {
     if (!root || isDashboard) return;
@@ -662,7 +738,7 @@
 
   function mount() {
     document.body.classList.add('fixeo-gh-enabled');
-    const found = findHost() || ensureSyntheticHost();
+    const found = ensureUniversalMobileHost();
     const host = found.host;
     const shell = found.shell;
     if (!host || host.querySelector('.fixeo-gh-mobile')) return;
