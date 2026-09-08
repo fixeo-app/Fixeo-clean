@@ -112,9 +112,10 @@
   animation-play-state: paused !important;
 }
 
-/* ── Hide when modal/search is open ── */
+/* ── Hide when modal/search/mobile menu is open ── */
 body.fixeo-search-mode #fixeo-urgent-fab,
-body.modal-open #fixeo-urgent-fab {
+body.modal-open #fixeo-urgent-fab,
+body.fixeo-gh-menu-open #fixeo-urgent-fab {
   opacity: 0 !important;
   pointer-events: none !important;
   transform: translateY(14px) scale(0.88) !important;
