@@ -1878,3 +1878,63 @@ body.fixeo-gh-enabled .fixeo-gh-drawer-link--enterprise.fixeo-gh-drawer-link--ac
     gap:3px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FIXEO GLOBAL HEADER V5A — UNIVERSAL MOBILE SHELL
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /*
+   * Historical headers remain available for desktop
+   * but never compete with the canonical mobile shell.
+   */
+  body.fixeo-gh-enabled
+  .fixeo-gh-source-shell {
+    display:none !important;
+  }
+
+
+  /*
+   * Canonical mobile header.
+   * Independent from .navbar / .site-header page CSS.
+   */
+  body.fixeo-gh-enabled
+  .fixeo-gh-universal-shell {
+    display:block !important;
+
+    position:sticky !important;
+    top:0 !important;
+
+    width:100% !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    z-index:1200 !important;
+
+    background:transparent !important;
+
+    isolation:isolate;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-universal-inner {
+    width:100% !important;
+    max-width:none !important;
+
+    margin:0 !important;
+    padding:0 !important;
+  }
+}
+
+
+@media (min-width:769px) {
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-universal-shell {
+    display:none !important;
+  }
+
+}
