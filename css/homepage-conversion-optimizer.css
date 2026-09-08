@@ -6550,9 +6550,9 @@
   /* 1. Hero padding — near-flush under navbar */
   #home.hero.hero-section,
   section#home.hero.hero-section {
-    padding-top: calc(var(--navbar-h, 70px) + 0px) !important;
-    padding-bottom: 14px !important;
-  }
+  padding-top: 0 !important;
+  padding-bottom: 14px !important;
+}
 
   /* 2. Headline — smaller, tighter */
   #home .hero-title,
