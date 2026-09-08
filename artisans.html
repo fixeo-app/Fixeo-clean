@@ -794,6 +794,92 @@
     transition:none;
   }
 }
+
+    /* ════════════════════════════════════════════════════════════════
+   ARTISAN DIRECTORY V3 — MOBILE SEARCH DENSITY
+   Visual-only: no JS / no IDs / no data contract changes
+════════════════════════════════════════════════════════════════ */
+
+@media(max-width:720px){
+
+  /* Reduce space before results */
+  .artdir-v3-search{
+    margin-bottom:24px;
+    border-radius:23px;
+  }
+
+  .artdir-v3-search-inner{
+    padding:18px 16px;
+    border-radius:22px;
+  }
+
+  /* Compact console heading */
+  .artdir-v3-search-top{
+    gap:12px;
+    margin-bottom:16px;
+    padding-bottom:14px;
+  }
+
+  .artdir-v3-search-copy{
+    gap:2px;
+  }
+
+  .artdir-v3-search-kicker{
+    font-size:.55rem;
+  }
+
+  .artdir-v3-search-copy strong{
+    font-size:.88rem;
+    line-height:1.35;
+  }
+
+  .artdir-v3-search-status{
+    padding:5px 8px;
+    font-size:.52rem;
+  }
+
+  /* Controls remain stacked on mobile but become denser */
+  .artdir-v3 .artdir-controls{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .artdir-v3 .artdir-control-label{
+    margin-bottom:5px;
+    font-size:.58rem;
+  }
+
+  .artdir-v3 .artdir-select{
+    min-height:46px;
+    padding:
+      0
+      40px
+      0
+      14px;
+
+    border-radius:13px;
+    font-size:.82rem;
+  }
+
+  .artdir-v3 .artdir-controls-reset{
+    width:100%;
+    min-height:44px;
+    padding:0 16px;
+    border-radius:13px;
+  }
+
+  /* Active context + result count closer to controls */
+  .artdir-v3 .artdir-context{
+    margin-top:12px;
+    gap:6px;
+  }
+
+  .artdir-v3 .artdir-summary{
+    margin-top:10px;
+    font-size:.73rem;
+  }
+}
+    
 </style>
   
   <!-- Data pipeline: heroes → cities → supabase client → loader → matching engine → directory -->
