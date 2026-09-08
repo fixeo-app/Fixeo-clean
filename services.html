@@ -2965,9 +2965,8 @@ a{text-decoration:none}
 
   <style id="fxsvc-process-v1">
 /* ════════════════════════════════════════════════════════════
-   FIXEO SERVICES — REQUEST PROCESS
-   fxsvc-process-v1
-   Presentation only. No CTA / RAFI / request-flow dependency.
+   FIXEO SERVICES — REQUEST FRAMEWORK
+   fxsvc-process-v3
    ════════════════════════════════════════════════════════════ */
 
 .fxsvc-process {
@@ -2976,19 +2975,19 @@ a{text-decoration:none}
 }
 
 .fxsvc-process::before {
-  content: "";
+  content: '';
   position: absolute;
-  width: 620px;
-  height: 620px;
+  width: 520px;
+  height: 520px;
   left: 50%;
-  top: 48%;
+  top: 45%;
   transform: translate(-50%, -50%);
   background:
     radial-gradient(
       circle,
-      rgba(72,100,255,0.075) 0%,
-      rgba(131,58,180,0.035) 38%,
-      transparent 70%
+      rgba(72,100,255,0.055) 0%,
+      rgba(131,58,180,0.025) 42%,
+      transparent 72%
     );
   pointer-events: none;
 }
@@ -2999,59 +2998,81 @@ a{text-decoration:none}
 }
 
 
-/* ── Process system ───────────────────────────────────────── */
+/* ── Header ─────────────────────────────────────────────── */
+
+.fxsvc-process-header {
+  max-width: 660px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fxsvc-process-header .cp-section-sub {
+  max-width: 590px;
+}
+
+
+/* ── Intro statement ────────────────────────────────────── */
+
+.fxsvc-process-intro {
+  max-width: 820px;
+  margin: 0 auto 22px;
+  padding: 0 2px;
+}
+
+.fxsvc-process-intro-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(205,215,240,0.46);
+}
+
+.fxsvc-process-intro p {
+  margin: 0;
+  max-width: 720px;
+  font-size: clamp(0.96rem, 1.7vw, 1.08rem);
+  line-height: 1.55;
+  font-weight: 600;
+  color: rgba(235,240,250,0.82);
+}
+
+
+/* ── Grid ──────────────────────────────────────────────── */
 
 .fxsvc-process-grid {
-  position: relative;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
-  max-width: 880px;
-  margin: 0 auto;
-}
-
-/* subtle system line */
-.fxsvc-process-grid::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 12%;
-  bottom: 12%;
-  width: 1px;
-  transform: translateX(-50%);
-  background:
-    linear-gradient(
-      180deg,
-      transparent,
-      rgba(110,135,255,0.18) 20%,
-      rgba(225,48,108,0.15) 80%,
-      transparent
-    );
-  pointer-events: none;
 }
 
 
-/* ── Card ─────────────────────────────────────────────────── */
+/* ── Card ──────────────────────────────────────────────── */
 
 .fxsvc-process-card {
-  position: relative;
-  min-width: 0;
-  padding: 22px 22px 21px;
+  --fxsvc-step: 110,130,255;
 
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.085);
+  position: relative;
+  overflow: hidden;
+
+  padding: 22px 22px 20px;
+
+  border-radius: 20px;
 
   background:
     linear-gradient(
       155deg,
-      rgba(255,255,255,0.055) 0%,
-      rgba(255,255,255,0.028) 55%,
-      rgba(255,255,255,0.017) 100%
+      rgba(var(--fxsvc-step),0.055) 0%,
+      rgba(255,255,255,0.038) 35%,
+      rgba(255,255,255,0.018) 100%
     );
 
+  border: 1px solid rgba(255,255,255,0.085);
+
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.065),
-    0 12px 32px rgba(0,0,0,0.20);
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 10px 30px rgba(0,0,0,0.18);
 
   transition:
     transform 0.16s ease,
@@ -3059,218 +3080,300 @@ a{text-decoration:none}
     box-shadow 0.16s ease;
 }
 
+.fxsvc-process-card:nth-child(1) {
+  --fxsvc-step: 108,123,255;
+}
+
+.fxsvc-process-card:nth-child(2) {
+  --fxsvc-step: 56,189,248;
+}
+
+.fxsvc-process-card:nth-child(3) {
+  --fxsvc-step: 168,85,247;
+}
+
+.fxsvc-process-card:nth-child(4) {
+  --fxsvc-step: 225,48,108;
+}
+
 .fxsvc-process-card::before {
-  content: "";
+  content: '';
   position: absolute;
-  left: 18px;
-  right: 18px;
-  top: 0;
-  height: 1px;
+  inset: 0;
+  pointer-events: none;
 
   background:
-    linear-gradient(
-      90deg,
-      transparent,
-      rgba(120,150,255,0.34),
-      rgba(225,48,108,0.22),
-      transparent
+    radial-gradient(
+      ellipse 75% 48% at 10% 0%,
+      rgba(var(--fxsvc-step),0.085) 0%,
+      transparent 72%
     );
-
-  opacity: 0.8;
 }
 
 .fxsvc-process-card:hover {
   transform: translateY(-2px);
 
-  border-color: rgba(255,255,255,0.14);
+  border-color: rgba(var(--fxsvc-step),0.20);
 
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.085),
-    0 18px 42px rgba(0,0,0,0.27);
+    inset 0 1px 0 rgba(255,255,255,0.075),
+    0 15px 38px rgba(0,0,0,0.24);
 }
 
 
-/* ── Number + system label ────────────────────────────────── */
+/* ── Card header ───────────────────────────────────────── */
+
+.fxsvc-process-card-head {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  margin-bottom: 16px;
+}
 
 .fxsvc-process-num {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
 
-  margin: 0 10px 16px 0;
+  border-radius: 12px;
 
-  border-radius: 11px;
+  border: 1px solid rgba(var(--fxsvc-step),0.35);
 
   background:
     linear-gradient(
       145deg,
-      rgba(91,116,255,0.18),
-      rgba(131,58,180,0.10)
+      rgba(var(--fxsvc-step),0.20),
+      rgba(var(--fxsvc-step),0.08)
     );
 
-  border: 1px solid rgba(105,135,255,0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 4px 14px rgba(var(--fxsvc-step),0.08);
 
-  color: rgba(215,225,255,0.92);
+  color: rgba(245,248,255,0.96);
 
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: 0.03em;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.07);
 }
 
 .fxsvc-process-kicker {
-  display: inline-block;
-
-  color: rgba(120,225,195,0.82);
-
-  font-size: 0.62rem;
+  font-size: 0.68rem;
+  line-height: 1;
   font-weight: 800;
   letter-spacing: 0.13em;
-  text-transform: uppercase;
-  vertical-align: middle;
+  color: rgba(170,255,210,0.90);
 }
 
 
-/* ── Typography ───────────────────────────────────────────── */
+/* ── Card content ──────────────────────────────────────── */
 
 .fxsvc-process-card h3 {
-  margin: 0 0 8px;
+  position: relative;
+  z-index: 1;
 
-  color: rgba(247,249,255,0.96);
+  margin: 0 0 7px;
+
+  color: rgba(248,250,255,0.96);
 
   font-size: 1.02rem;
+  line-height: 1.3;
   font-weight: 800;
-  line-height: 1.28;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.018em;
 }
 
-.fxsvc-process-card p {
-  margin: 0;
+.fxsvc-process-desc {
+  position: relative;
+  z-index: 1;
 
-  color: rgba(202,212,235,0.52);
+  margin: 0 0 15px;
 
   font-size: 0.80rem;
-  line-height: 1.65;
+  line-height: 1.55;
+
+  color: rgba(205,215,235,0.52);
 }
 
 
-/* ── Progressive hierarchy ────────────────────────────────── */
+/* ── Structured points ─────────────────────────────────── */
 
-.fxsvc-process-card:nth-child(2) .fxsvc-process-num {
-  background:
-    linear-gradient(
-      145deg,
-      rgba(56,189,248,0.14),
-      rgba(72,100,255,0.09)
-    );
+.fxsvc-process-points {
+  position: relative;
+  z-index: 1;
 
-  border-color: rgba(56,189,248,0.20);
+  list-style: none;
+
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
 
-.fxsvc-process-card:nth-child(3) .fxsvc-process-num {
-  background:
-    linear-gradient(
-      145deg,
-      rgba(131,58,180,0.16),
-      rgba(225,48,108,0.07)
-    );
+.fxsvc-process-points li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
 
-  border-color: rgba(167,139,250,0.20);
+  font-size: 0.79rem;
+  line-height: 1.4;
+  font-weight: 600;
+
+  color: rgba(232,238,248,0.76);
 }
 
-.fxsvc-process-card:nth-child(4) .fxsvc-process-num {
-  background:
-    linear-gradient(
-      145deg,
-      rgba(225,48,108,0.14),
-      rgba(131,58,180,0.09)
-    );
+.fxsvc-process-points li::before {
+  content: '';
 
-  border-color: rgba(225,48,108,0.20);
+  width: 5px;
+  height: 5px;
+
+  flex: 0 0 5px;
+
+  border-radius: 50%;
+
+  background: rgba(var(--fxsvc-step),0.85);
+
+  box-shadow:
+    0 0 0 3px rgba(var(--fxsvc-step),0.08);
 }
 
 
-/* ── Mobile ───────────────────────────────────────────────── */
+/* ── Outcome ───────────────────────────────────────────── */
+
+.fxsvc-process-outcome {
+  max-width: 820px;
+
+  margin: 18px auto 0;
+  padding: 12px 15px;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  border-radius: 12px;
+
+  background: rgba(255,255,255,0.025);
+
+  border: 1px solid rgba(255,255,255,0.065);
+}
+
+.fxsvc-process-outcome-dot {
+  width: 7px;
+  height: 7px;
+
+  margin-top: 6px;
+
+  flex: 0 0 7px;
+
+  border-radius: 50%;
+
+  background: rgba(32,201,151,0.82);
+
+  box-shadow: 0 0 0 4px rgba(32,201,151,0.08);
+}
+
+.fxsvc-process-outcome p {
+  margin: 0;
+
+  font-size: 0.76rem;
+  line-height: 1.55;
+
+  color: rgba(195,207,230,0.50);
+}
+
+.fxsvc-process-outcome strong {
+  color: rgba(226,235,248,0.76);
+  font-weight: 700;
+}
+
+
+/* ── Mobile ────────────────────────────────────────────── */
 
 @media (max-width: 639px) {
+
+  .fxsvc-process-header {
+    margin-bottom: 26px;
+  }
+
+  .fxsvc-process-intro {
+    margin-bottom: 16px;
+  }
+
+  .fxsvc-process-intro-label {
+    font-size: 0.62rem;
+  }
+
+  .fxsvc-process-intro p {
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
 
   .fxsvc-process-grid {
     grid-template-columns: 1fr;
     gap: 10px;
-    max-width: 100%;
-  }
-
-  .fxsvc-process-grid::before {
-    left: 18px;
-    top: 26px;
-    bottom: 26px;
-
-    transform: none;
-
-    background:
-      linear-gradient(
-        180deg,
-        transparent,
-        rgba(100,135,255,0.16) 12%,
-        rgba(225,48,108,0.12) 88%,
-        transparent
-      );
   }
 
   .fxsvc-process-card {
-    padding: 17px 17px 16px;
-    border-radius: 15px;
+    padding: 17px 16px 16px;
+    border-radius: 17px;
+  }
+
+  .fxsvc-process-card-head {
+    gap: 9px;
+    margin-bottom: 12px;
   }
 
   .fxsvc-process-num {
-    width: 32px;
-    height: 32px;
-
-    margin-right: 8px;
-    margin-bottom: 12px;
-
-    border-radius: 9px;
-
-    font-size: 0.67rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 0.68rem;
   }
 
   .fxsvc-process-kicker {
-    font-size: 0.58rem;
+    font-size: 0.63rem;
   }
 
   .fxsvc-process-card h3 {
-    font-size: 0.94rem;
-    margin-bottom: 6px;
+    font-size: 0.92rem;
+    margin-bottom: 5px;
   }
 
-  .fxsvc-process-card p {
-    font-size: 0.76rem;
-    line-height: 1.58;
-  }
-}
-
-
-/* ── Small phones ─────────────────────────────────────────── */
-
-@media (max-width: 380px) {
-
-  .fxsvc-process-card {
-    padding: 15px 14px 14px;
+  .fxsvc-process-desc {
+    font-size: 0.75rem;
+    margin-bottom: 12px;
   }
 
-  .fxsvc-process-card p {
+  .fxsvc-process-points {
+    gap: 5px;
+  }
+
+  .fxsvc-process-points li {
     font-size: 0.74rem;
+    gap: 8px;
   }
 
+  .fxsvc-process-outcome {
+    margin-top: 12px;
+    padding: 10px 12px;
+  }
+
+  .fxsvc-process-outcome p {
+    font-size: 0.71rem;
+  }
 }
 
 
-/* ── Reduced motion ───────────────────────────────────────── */
+/* ── Reduced motion ────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
 
@@ -3281,7 +3384,6 @@ a{text-decoration:none}
   }
 
 }
-</style>
   
 <!-- SEO -->
 <meta name="robots" content="index, follow">
@@ -3818,108 +3920,126 @@ a{text-decoration:none}
 </section>
 
 <!-- ══════════════════════════════════════════════════════════
-     HOW FIXEO ORGANISES A REQUEST
+     FIXEO REQUEST FRAMEWORK — fxsvc-process-v3
 ════════════════════════════════════════════════════════════ -->
 <section class="cp-section fxsvc-process" aria-labelledby="fxsvc-process-title">
   <div class="cp-container">
 
-    <div class="cp-section-header">
+    <div class="cp-section-header fxsvc-process-header">
       <span class="cp-section-eyebrow">Parcours</span>
-      <h2 class="cp-section-title" id="fxsvc-process-title">Comment FIXEO organise une demande</h2>
+
+      <h2 class="cp-section-title" id="fxsvc-process-title">
+        Comment FIXEO organise une demande
+      </h2>
+
       <p class="cp-section-sub">
         Un cadre simple en 4 étapes pour passer d’un besoin exprimé
         à une intervention mieux préparée.
       </p>
     </div>
 
-    <div class="fxsvc-process-shell">
+    <div class="fxsvc-process-intro" aria-label="Résumé du parcours">
+      <span class="fxsvc-process-intro-label">4 étapes</span>
+      <p>
+        Le besoin est clarifié, localisé, rapproché de profils pertinents,
+        puis préparé pour l’intervention.
+      </p>
+    </div>
 
-      <div class="fxsvc-process-intro" role="note" aria-label="Résumé du parcours">
-        <span class="fxsvc-process-intro-badge">4 étapes</span>
-        <p class="fxsvc-process-intro-text">
-          Le besoin est clarifié, localisé, rapproché de profils pertinents,
-          puis préparé pour l’intervention.
+    <div class="fxsvc-process-grid">
+
+      <!-- 01 — BESOIN -->
+      <article class="fxsvc-process-card">
+        <div class="fxsvc-process-card-head">
+          <span class="fxsvc-process-num">01</span>
+          <span class="fxsvc-process-kicker">BESOIN</span>
+        </div>
+
+        <h3>Comprendre la situation</h3>
+
+        <p class="fxsvc-process-desc">
+          Le besoin est mieux qualifié dès le départ.
         </p>
-      </div>
 
-      <div class="fxsvc-process-grid" role="list">
+        <ul class="fxsvc-process-points">
+          <li>Métier recherché</li>
+          <li>Contexte du problème</li>
+          <li>Niveau d’urgence</li>
+        </ul>
+      </article>
 
-        <article class="fxsvc-process-card" role="listitem">
-          <div class="fxsvc-process-card-top">
-            <span class="fxsvc-process-num">01</span>
-            <span class="fxsvc-process-kicker">BESOIN</span>
-          </div>
-          <h3>Comprendre la situation</h3>
-          <p class="fxsvc-process-lead">
-            Le besoin est mieux qualifié dès le départ.
-          </p>
-          <ul class="fxsvc-process-points" aria-label="Éléments du besoin">
-            <li>Métier recherché</li>
-            <li>Contexte du problème</li>
-            <li>Niveau d’urgence</li>
-          </ul>
-        </article>
+      <!-- 02 — ZONE -->
+      <article class="fxsvc-process-card">
+        <div class="fxsvc-process-card-head">
+          <span class="fxsvc-process-num">02</span>
+          <span class="fxsvc-process-kicker">ZONE</span>
+        </div>
 
-        <article class="fxsvc-process-card" role="listitem">
-          <div class="fxsvc-process-card-top">
-            <span class="fxsvc-process-num">02</span>
-            <span class="fxsvc-process-kicker">ZONE</span>
-          </div>
-          <h3>Contextualiser l’intervention</h3>
-          <p class="fxsvc-process-lead">
-            La localisation aide à rapprocher la demande du bon territoire.
-          </p>
-          <ul class="fxsvc-process-points" aria-label="Éléments de zone">
-            <li>Ville concernée</li>
-            <li>Zone d’intervention</li>
-            <li>Accès et déplacement</li>
-          </ul>
-        </article>
+        <h3>Contextualiser l’intervention</h3>
 
-        <article class="fxsvc-process-card" role="listitem">
-          <div class="fxsvc-process-card-top">
-            <span class="fxsvc-process-num">03</span>
-            <span class="fxsvc-process-kicker">PROFIL</span>
-          </div>
-          <h3>Identifier les profils pertinents</h3>
-          <p class="fxsvc-process-lead">
-            Les informations disponibles orientent vers des professionnels adaptés.
-          </p>
-          <ul class="fxsvc-process-points" aria-label="Éléments de profil">
-            <li>Spécialité correspondante</li>
-            <li>Zone couverte</li>
-            <li>Informations consultables</li>
-          </ul>
-        </article>
+        <p class="fxsvc-process-desc">
+          La localisation permet de rapprocher la demande du territoire pertinent.
+        </p>
 
-        <article class="fxsvc-process-card" role="listitem">
-          <div class="fxsvc-process-card-top">
-            <span class="fxsvc-process-num">04</span>
-            <span class="fxsvc-process-kicker">MISSION</span>
-          </div>
-          <h3>Organiser la suite</h3>
-          <p class="fxsvc-process-lead">
-            Quand le contexte est suffisamment clair, l’intervention peut être préparée.
-          </p>
-          <ul class="fxsvc-process-points" aria-label="Éléments de mission">
-            <li>Besoin mieux structuré</li>
-            <li>Intervention à organiser</li>
-            <li>Suite plus lisible</li>
-          </ul>
-        </article>
+        <ul class="fxsvc-process-points">
+          <li>Ville concernée</li>
+          <li>Zone d’intervention</li>
+          <li>Accès et déplacement</li>
+        </ul>
+      </article>
 
-      </div>
+      <!-- 03 — PROFIL -->
+      <article class="fxsvc-process-card">
+        <div class="fxsvc-process-card-head">
+          <span class="fxsvc-process-num">03</span>
+          <span class="fxsvc-process-kicker">PROFIL</span>
+        </div>
 
-      <div class="fxsvc-process-summary" role="note">
+        <h3>Identifier les profils pertinents</h3>
+
+        <p class="fxsvc-process-desc">
+          Les informations disponibles orientent la demande vers des professionnels adaptés.
+        </p>
+
+        <ul class="fxsvc-process-points">
+          <li>Spécialité correspondante</li>
+          <li>Zone couverte</li>
+          <li>Informations consultables</li>
+        </ul>
+      </article>
+
+      <!-- 04 — MISSION -->
+      <article class="fxsvc-process-card">
+        <div class="fxsvc-process-card-head">
+          <span class="fxsvc-process-num">04</span>
+          <span class="fxsvc-process-kicker">MISSION</span>
+        </div>
+
+        <h3>Organiser la suite</h3>
+
+        <p class="fxsvc-process-desc">
+          Une fois le contexte clarifié, l’intervention peut être préparée.
+        </p>
+
+        <ul class="fxsvc-process-points">
+          <li>Besoin structuré</li>
+          <li>Disponibilité à confirmer</li>
+          <li>Intervention à organiser</li>
+        </ul>
+      </article>
+
+    </div>
+
+    <div class="fxsvc-process-outcome">
+      <span class="fxsvc-process-outcome-dot" aria-hidden="true"></span>
+      <p>
         <strong>Objectif du parcours :</strong>
         réduire le flou entre le besoin exprimé et l’organisation de l’intervention.
-      </div>
-
+      </p>
     </div>
 
   </div>
 </section>
-
 
   <!-- ══════════════════════════════════════════════════════════
      BUDGET — INFORMATION ONLY
