@@ -2117,3 +2117,281 @@ body.fixeo-gh-enabled .fixeo-gh-drawer-link--enterprise.fixeo-gh-drawer-link--ac
   }
 
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FIXEO GLOBAL HEADER V5B.3
+   PREMIUM MOBILE COMMAND BAR
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ── Canonical command bar ───────────────────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-mobile-bar {
+    min-height: 62px !important;
+
+    padding-left:
+      calc(14px + env(safe-area-inset-left, 0px)) !important;
+
+    padding-right:
+      calc(14px + env(safe-area-inset-right, 0px)) !important;
+
+    gap: 12px !important;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(11,14,26,.975) 0%,
+        rgba(10,13,24,.955) 100%
+      ) !important;
+
+    border-bottom:
+      1px solid rgba(255,255,255,.065) !important;
+
+    box-shadow:
+      0 10px 34px rgba(0,0,0,.20),
+      inset 0 1px 0 rgba(255,255,255,.025) !important;
+
+    backdrop-filter:
+      saturate(135%) blur(18px) !important;
+
+    -webkit-backdrop-filter:
+      saturate(135%) blur(18px) !important;
+  }
+
+
+  /* ── FIXEO identity ──────────────────────────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-brand {
+    gap: 8px !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-logo-img {
+    display: block;
+
+    width: auto !important;
+    height: 27px !important;
+    max-width: 112px;
+
+    object-fit: contain;
+
+    filter:
+      drop-shadow(0 2px 8px rgba(225,48,108,.10));
+  }
+
+
+  /* ── Actions rail ────────────────────────────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-actions {
+    gap: 6px !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-icon-btn,
+  body.fixeo-gh-enabled .fixeo-gh-avatar-link {
+    width: 39px !important;
+    height: 39px !important;
+
+    border-radius: 13px !important;
+
+    border:
+      1px solid rgba(255,255,255,.075) !important;
+
+    background:
+      rgba(255,255,255,.035) !important;
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.035),
+      0 5px 14px rgba(0,0,0,.12) !important;
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    transition:
+      background .15s ease,
+      border-color .15s ease,
+      transform .15s ease,
+      box-shadow .15s ease !important;
+  }
+
+
+  /* ── RAFI — product intelligence control ─────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-search {
+    background:
+      linear-gradient(
+        145deg,
+        rgba(75,120,255,.095),
+        rgba(75,120,255,.035)
+      ) !important;
+
+    border-color:
+      rgba(105,145,255,.20) !important;
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.045),
+      0 0 18px rgba(72,100,255,.055) !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-search .fixeo-gh-icon {
+    opacity: .90;
+    filter:
+      drop-shadow(0 0 5px rgba(110,155,255,.20));
+  }
+
+
+  /* ── Notifications — quiet by default ────────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-notif {
+    background:
+      rgba(255,255,255,.032) !important;
+
+    border-color:
+      rgba(255,255,255,.07) !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-notif .fixeo-gh-icon {
+    opacity: .78;
+    filter: none !important;
+  }
+
+  /*
+   * Notification importance comes from the badge,
+   * not from permanently glowing the bell.
+   */
+  body.fixeo-gh-enabled .fixeo-gh-badge:not(:empty) {
+    box-shadow:
+      0 0 0 2px rgba(11,14,26,.96),
+      0 3px 10px rgba(225,48,108,.28) !important;
+  }
+
+
+  /* ── Account — premium but no longer dominant ────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-avatar {
+    background:
+      linear-gradient(
+        145deg,
+        rgba(225,48,108,.88),
+        rgba(131,58,180,.82)
+      ) !important;
+
+    color: rgba(255,255,255,.96) !important;
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.13) !important;
+
+    font-size: .84rem !important;
+    font-weight: 800 !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-avatar--espace {
+    background:
+      linear-gradient(
+        145deg,
+        rgba(225,48,108,.90),
+        rgba(131,58,180,.86)
+      ) !important;
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.14),
+      0 5px 15px rgba(131,58,180,.12) !important;
+
+    font-size: .92rem !important;
+  }
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-avatar-link:hover
+  .fixeo-gh-avatar--espace,
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-avatar-link:active
+  .fixeo-gh-avatar--espace {
+    transform: none !important;
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.16),
+      0 6px 18px rgba(131,58,180,.17) !important;
+  }
+
+
+  /* ── Menu — structural control ───────────────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-menu {
+    background:
+      rgba(255,255,255,.040) !important;
+
+    border-color:
+      rgba(255,255,255,.085) !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-menu-line {
+    width: 15px !important;
+    height: 1.6px !important;
+
+    background:
+      rgba(255,255,255,.88) !important;
+  }
+
+  /*
+   * Open state: subtle FIXEO signal.
+   * The control remains structural, not a large glowing CTA.
+   */
+  body.fixeo-gh-enabled .fixeo-gh-menu.is-open {
+    background:
+      rgba(225,48,108,.075) !important;
+
+    border-color:
+      rgba(225,48,108,.18) !important;
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.04),
+      0 0 18px rgba(225,48,108,.055) !important;
+  }
+
+
+  /* ── Unified interaction ─────────────────────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-icon-btn:hover,
+  body.fixeo-gh-enabled .fixeo-gh-avatar-link:hover {
+    background:
+      rgba(255,255,255,.065) !important;
+
+    border-color:
+      rgba(255,255,255,.12) !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-icon-btn:active,
+  body.fixeo-gh-enabled .fixeo-gh-avatar-link:active {
+    transform: scale(.96);
+  }
+
+}
+
+
+@media (max-width: 380px) {
+
+  body.fixeo-gh-enabled .fixeo-gh-mobile-bar {
+    padding-left:
+      calc(11px + env(safe-area-inset-left, 0px)) !important;
+
+    padding-right:
+      calc(11px + env(safe-area-inset-right, 0px)) !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-actions {
+    gap: 5px !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-icon-btn,
+  body.fixeo-gh-enabled .fixeo-gh-avatar-link {
+    width: 37px !important;
+    height: 37px !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-logo-img {
+    height: 25px !important;
+  }
+
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+  body.fixeo-gh-enabled .fixeo-gh-icon-btn,
+  body.fixeo-gh-enabled .fixeo-gh-avatar-link {
+    transition: none !important;
+  }
+
+}
