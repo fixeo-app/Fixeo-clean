@@ -2461,3 +2461,68 @@ body.fixeo-gh-enabled .fixeo-gh-drawer-link--enterprise.fixeo-gh-drawer-link--ac
     top: 0 !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FIXEO GLOBAL MOBILE HEADER V5B — VIEWPORT LOCK
+   Canonical mobile header remains visible during page scroll.
+   The legacy host keeps the layout height; .fixeo-gh-mobile
+   becomes viewport-fixed and independent from page header behavior.
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* Keep the original header host as a layout spacer */
+  body.fixeo-gh-enabled .navbar.fixeo-gh-host,
+  body.fixeo-gh-enabled .site-header.fixeo-gh-shell,
+  body.fixeo-gh-enabled .fixeo-gh-shell--synthetic {
+    position: relative !important;
+    top: auto !important;
+
+    min-height:
+      calc(60px + env(safe-area-inset-top, 0px)) !important;
+
+    z-index: auto !important;
+  }
+
+  /* Canonical FIXEO mobile header:
+     permanently attached to the viewport */
+  body.fixeo-gh-enabled .fixeo-gh-mobile {
+    position: fixed !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+
+    z-index: 1300 !important;
+
+    transform: none !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-mobile-bar {
+    position: relative !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    isolation: isolate;
+  }
+
+  /* Drawer / notification remain above the fixed header */
+  body.fixeo-gh-enabled .fixeo-gh-drawer {
+    z-index: 1350 !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-backdrop {
+    z-index: 1340 !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-notif-panel {
+    z-index: 1360 !important;
+  }
+}
