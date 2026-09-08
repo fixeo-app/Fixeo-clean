@@ -1838,3 +1838,43 @@ body.fixeo-gh-enabled .fixeo-gh-drawer-link--enterprise.fixeo-gh-drawer-link--ac
 }
 
 /* END FIXEO MOBILE MENU PLATFORM GATEWAY V4 */
+
+/* ══════════════════════════════════════════════════════════════
+   FIXEO MOBILE GATEWAY V4 — ARTISAN SUBLINK ALIGNMENT
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card--artisan
+  .fixeo-gh-gateway-sublinks {
+    display:grid;
+    grid-template-columns:auto auto;
+    justify-content:start;
+    align-items:center;
+    gap:8px 18px;
+  }
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card--artisan
+  .fixeo-gh-gateway-sublink {
+    white-space:nowrap;
+  }
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card--artisan
+  .fixeo-gh-gateway-sublink +
+  .fixeo-gh-gateway-sublink::before {
+    display:none;
+  }
+}
+
+@media (max-width: 340px) {
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card--artisan
+  .fixeo-gh-gateway-sublinks {
+    grid-template-columns:1fr;
+    gap:3px;
+  }
+}
