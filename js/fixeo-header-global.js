@@ -78,104 +78,509 @@
     return [];
   }
 
+
+
   function buildDrawerMarkup() {
-    const dashboardLinks = getDashboardLinks();
-    const user = getAuthUser();
+  const user = getAuthUser();
 
-    /* ── Active page detection ───────────────────────────────── */
-    function _activeClass(href) {
-      const target = (href.split('/').pop() || 'index.html').split('#')[0].toLowerCase();
-      const current = path.split('#')[0].toLowerCase();
-      return (current === target || (target === 'index.html' && isHomepage)) ? ' fixeo-gh-drawer-link--active' : '';
-    }
+  /* ── Active page detection ───────────────────────────────── */
+  function _activeClass(href) {
+    const target = (href.split('/').pop() || 'index.html')
+      .split('#')[0]
+      .toLowerCase();
 
-    /* ── Section 1 — Navigation ──────────────────────────────── */
-    const navSection = `
-      <div class="fixeo-gh-drawer-group">
-        <div class="fixeo-gh-drawer-label">Navigation</div>
-        <a class="fixeo-gh-drawer-link${_activeClass('index.html')}" href="${isHomepage ? '#home' : 'index.html'}"><span class="fixeo-gh-di" aria-hidden="true">🏠</span> Accueil</a>
-        <a class="fixeo-gh-drawer-link${_activeClass('services.html')}" href="services.html"><span class="fixeo-gh-di" aria-hidden="true">🔧</span> Services</a>
-        <a class="fixeo-gh-drawer-link${_activeClass('artisans.html')}" href="artisans.html"><span class="fixeo-gh-di" aria-hidden="true">👷</span> Artisans</a>
-        <a class="fixeo-gh-drawer-link${_activeClass('comment-ca-marche.html')}" href="comment-ca-marche.html"><span class="fixeo-gh-di" aria-hidden="true">💡</span> Comment \u00e7a marche</a>
-        <a class="fixeo-gh-drawer-link${_activeClass('estimation.html')}" href="estimation.html"><span class="fixeo-gh-di" aria-hidden="true">✦</span> Estimation FIXEO</a>
-        <a class="fixeo-gh-drawer-link${_activeClass('pricing.html')}" href="pricing.html"><span class="fixeo-gh-di" aria-hidden="true">💎</span> Tarifs</a>
-        <a class="fixeo-gh-drawer-link${_activeClass('presse-partenariats.html')}" href="presse-partenariats.html"><span class="fixeo-gh-di" aria-hidden="true">📰</span> Presse &amp; Partenariats</a>
-        <a class="fixeo-gh-drawer-link fixeo-gh-drawer-link--enterprise${_activeClass('entreprises.html')}" href="entreprises.html"><span class="fixeo-gh-di" aria-hidden="true">🏢</span> Entreprises</a>
-      </div>`;
+    const current = path
+      .split('#')[0]
+      .toLowerCase();
 
-    /* ── Section 2 — Besoin d'un artisan ─────────────────────── */
-    const clientSection = `
-      <div class="fixeo-gh-drawer-group">
-        <div class="fixeo-gh-drawer-label">Besoin d\u2019un artisan</div>
-        <a class="fixeo-gh-drawer-link" href="index.html#artisans-section"><span class="fixeo-gh-di" aria-hidden="true">🔍</span> Trouver un artisan</a>
-        ${isHomepage
-          ? '<button type="button" class="fixeo-gh-drawer-link fixeo-gh-drawer-cta is-primary" data-open-request-form="true" data-request-mode="marketplace"><span class="fixeo-gh-di" aria-hidden="true">📝</span> Publier une demande</button>'
-          : '<a class="fixeo-gh-drawer-link fixeo-gh-drawer-cta is-primary" href="index.html"><span class="fixeo-gh-di" aria-hidden="true">📝</span> Publier une demande</a>'
-        }
-      </div>`;
-
-    /* ── Section 3 — Pour les artisans ───────────────────────── */
-    const artisanSection = `
-      <div class="fixeo-gh-drawer-group">
-        <div class="fixeo-gh-drawer-label">Pour les artisans</div>
-        <a class="fixeo-gh-drawer-link${_activeClass('rejoindre-fixeo.html')}" href="rejoindre-fixeo.html"><span class="fixeo-gh-di" aria-hidden="true">🧰</span> Je suis artisan</a>
-        <a class="fixeo-gh-drawer-link" href="rejoindre-fixeo.html#revendiquer"><span class="fixeo-gh-di" aria-hidden="true">👤</span> Revendiquer mon profil</a>
-        <a class="fixeo-gh-drawer-link${_activeClass('dashboard-artisan-v2.html')}" href="dashboard-artisan-v2.html"><span class="fixeo-gh-di" aria-hidden="true">📊</span> Espace artisan</a>
-      </div>`;
-
-    /* ── Section 4 — Compte (auth-aware) ─────────────────────── */
-    const _dashDest = user && user.role === 'artisan' ? 'dashboard-artisan-v2.html' : 'dashboard-client.html';
-    const compteSection = user
-      ? `<div class="fixeo-gh-drawer-group fixeo-gh-drawer-compte">
-          <div class="fixeo-gh-drawer-label">Mon compte</div>
-          <a class="fixeo-gh-drawer-link fixeo-gh-drawer-compte-user" href="${_dashDest}">
-            <span class="fixeo-gh-drawer-avatar">${esc(user.name.charAt(0).toUpperCase())}</span>
-            <span>${esc(user.name)}</span>
-          </a>
-          <a class="fixeo-gh-drawer-link fixeo-gh-drawer-espace" href="${_dashDest}"><span class="fixeo-gh-di" aria-hidden="true">⚡</span> Mon Espace Fixeo</a>
-          <a class="fixeo-gh-drawer-link" id="fixeo-gh-drawer-logout" href="#"><span class="fixeo-gh-di" aria-hidden="true">🚪</span> D\u00e9connexion</a>
-        </div>`
-      : `<div class="fixeo-gh-drawer-group">
-          <div class="fixeo-gh-drawer-label">Compte</div>
-          <a class="fixeo-gh-drawer-cta is-primary fixeo-gh-drawer-link" href="auth.html"><span class="fixeo-gh-di" aria-hidden="true">🔓</span> Connexion</a>
-          <a class="fixeo-gh-drawer-link" href="auth.html#signup"><span class="fixeo-gh-di" aria-hidden="true">✨</span> Inscription</a>
-        </div>`;
-
-    /* ── Language selector ───────────────────────────────────── */
-    const langSection = `
-      <div class="fixeo-gh-drawer-group fixeo-gh-drawer-lang">
-        <div class="fixeo-gh-drawer-label">Langue</div>
-        <div class="fixeo-gh-drawer-lang-row">
-          <button class="fixeo-gh-drawer-lang-btn" data-lang="fr">FR</button>
-          <button class="fixeo-gh-drawer-lang-btn" data-lang="ar">AR</button>
-          <button class="fixeo-gh-drawer-lang-btn" data-lang="en">EN</button>
-        </div>
-      </div>`;
-
-    /* ── Dashboard section (only on dashboard pages) ─────────── */
-    const dashboardMarkup = dashboardLinks.length
-      ? `<div class="fixeo-gh-drawer-group">
-          <div class="fixeo-gh-drawer-label">Dashboard</div>
-          ${dashboardLinks.map(link => {
-            // Wrap leading emoji in icon span for consistent alignment
-            const labelWithSpan = link.label.replace(/^([\u{1F000}-\u{1FFFF}][\uFE0F\uFE0E]?|[\u2000-\u27FF][\uFE0F\uFE0E]?)\s*/u,
-              (m, icon) => `<span class="fixeo-gh-di" aria-hidden="true">${icon}</span> `);
-            return `<a class="fixeo-gh-drawer-link" href="${link.href}" ${link.onclick ? `onclick="${link.onclick}"` : ''}>${labelWithSpan}</a>`;
-          }).join('')}
-        </div>`
+    return (
+      current === target ||
+      (target === 'index.html' && isHomepage)
+    )
+      ? ' fixeo-gh-drawer-link--active'
       : '';
-
-    return `
-      <div class="fixeo-gh-drawer" aria-hidden="true">
-        ${navSection}
-        ${dashboardMarkup}
-        ${clientSection}
-        ${artisanSection}
-        ${compteSection}
-        ${langSection}
-      </div>
-      <button class="fixeo-gh-backdrop" type="button" aria-label="Fermer le menu"></button>`;
   }
+
+
+  /* ════════════════════════════════════════════════════════════
+     1. SHORT NAVIGATION
+     ════════════════════════════════════════════════════════════ */
+
+  const navSection = `
+    <div class="fixeo-gh-drawer-group">
+
+      <div class="fixeo-gh-drawer-label">
+        Navigation
+      </div>
+
+      <div class="fixeo-gh-gateway-nav-grid">
+
+        <a
+          class="fixeo-gh-drawer-link
+                 fixeo-gh-gateway-nav-item${_activeClass('index.html')}"
+          href="${isHomepage ? '#home' : 'index.html'}">
+
+          <span class="fixeo-gh-di" aria-hidden="true">
+            ⌂
+          </span>
+
+          <span>Accueil</span>
+
+        </a>
+
+
+        <a
+          class="fixeo-gh-drawer-link
+                 fixeo-gh-gateway-nav-item${_activeClass('services.html')}"
+          href="services.html">
+
+          <span class="fixeo-gh-di" aria-hidden="true">
+            ◇
+          </span>
+
+          <span>Services</span>
+
+        </a>
+
+
+        <a
+          class="fixeo-gh-drawer-link
+                 fixeo-gh-gateway-nav-item${_activeClass('artisans.html')}"
+          href="artisans.html">
+
+          <span class="fixeo-gh-di" aria-hidden="true">
+            ◎
+          </span>
+
+          <span>Artisans</span>
+
+        </a>
+
+
+        <a
+          class="fixeo-gh-drawer-link
+                 fixeo-gh-gateway-nav-item${_activeClass('estimation.html')}"
+          href="estimation.html">
+
+          <span class="fixeo-gh-di" aria-hidden="true">
+            ✦
+          </span>
+
+          <span>Estimation</span>
+
+        </a>
+
+      </div>
+
+    </div>`;
+
+
+  /* ════════════════════════════════════════════════════════════
+     2. PLATFORM GATEWAYS
+     CLIENT → ARTISAN → ENTERPRISE
+     ════════════════════════════════════════════════════════════ */
+
+  const gatewaySection = `
+    <div class="fixeo-gh-drawer-group">
+
+      <div class="fixeo-gh-drawer-label">
+        Plateforme FIXEO
+      </div>
+
+
+      <div class="fixeo-gh-gateway-stack">
+
+
+        <!-- CLIENT -->
+        <div
+          class="fixeo-gh-gateway-card
+                 fixeo-gh-gateway-card--client">
+
+          <div class="fixeo-gh-gateway-card-head">
+
+            <span
+              class="fixeo-gh-gateway-symbol"
+              aria-hidden="true">
+              ↗️
+            </span>
+
+            <div class="fixeo-gh-gateway-card-copy">
+
+              <span class="fixeo-gh-gateway-kicker">
+                BESOIN D’UN ARTISAN
+              </span>
+
+              <h3 class="fixeo-gh-gateway-title">
+                Trouvez le professionnel adapté
+              </h3>
+
+              <p class="fixeo-gh-gateway-desc">
+                Décrivez votre besoin ou explorez le réseau FIXEO.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          ${
+            isHomepage
+              ? `
+                <button
+                  type="button"
+                  class="fixeo-gh-drawer-cta
+                         fixeo-gh-gateway-action
+                         fixeo-gh-gateway-action--client"
+                  data-open-request-form="true"
+                  data-request-mode="marketplace">
+
+                  <span>Publier une demande</span>
+
+                </button>
+              `
+              : `
+                <a
+                  class="fixeo-gh-drawer-link
+                         fixeo-gh-gateway-action
+                         fixeo-gh-gateway-action--client"
+                  href="index.html">
+
+                  <span>Publier une demande</span>
+
+                </a>
+              `
+          }
+
+
+          <div class="fixeo-gh-gateway-sublinks">
+
+            <a
+              class="fixeo-gh-drawer-link
+                     fixeo-gh-gateway-sublink"
+              href="artisans.html">
+
+              Explorer les artisans
+
+            </a>
+
+          </div>
+
+        </div>
+
+
+        <!-- ARTISAN -->
+        <div
+          class="fixeo-gh-gateway-card
+                 fixeo-gh-gateway-card--artisan">
+
+          <div class="fixeo-gh-gateway-card-head">
+
+            <span
+              class="fixeo-gh-gateway-symbol"
+              aria-hidden="true">
+              ◇
+            </span>
+
+            <div class="fixeo-gh-gateway-card-copy">
+
+              <span class="fixeo-gh-gateway-kicker">
+                POUR LES ARTISANS
+              </span>
+
+              <h3 class="fixeo-gh-gateway-title">
+                Développez votre présence sur FIXEO
+              </h3>
+
+              <p class="fixeo-gh-gateway-desc">
+                Rejoignez le réseau et structurez votre activité professionnelle.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <a
+            class="fixeo-gh-drawer-link
+                   fixeo-gh-gateway-action
+                   fixeo-gh-gateway-action--artisan"
+            href="rejoindre-fixeo.html">
+
+            <span>Rejoindre FIXEO</span>
+
+          </a>
+
+
+          <div class="fixeo-gh-gateway-sublinks">
+
+            <a
+              class="fixeo-gh-drawer-link
+                     fixeo-gh-gateway-sublink"
+              href="rejoindre-fixeo.html#revendiquer">
+
+              Revendiquer mon profil
+
+            </a>
+
+            <a
+              class="fixeo-gh-drawer-link
+                     fixeo-gh-gateway-sublink"
+              href="dashboard-artisan-v2.html">
+
+              Espace artisan
+
+            </a>
+
+          </div>
+
+        </div>
+
+
+        <!-- ENTERPRISE -->
+        <div
+          class="fixeo-gh-gateway-card
+                 fixeo-gh-gateway-card--enterprise">
+
+          <div class="fixeo-gh-gateway-card-head">
+
+            <span
+              class="fixeo-gh-gateway-symbol"
+              aria-hidden="true">
+              ▦
+            </span>
+
+            <div class="fixeo-gh-gateway-card-copy">
+
+              <span class="fixeo-gh-gateway-kicker">
+                FIXEO ENTREPRISES
+              </span>
+
+              <h3 class="fixeo-gh-gateway-title">
+                Une porte dédiée aux professionnels
+              </h3>
+
+              <p class="fixeo-gh-gateway-desc">
+                Découvrez l’univers FIXEO destiné aux besoins des entreprises.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <a
+            class="fixeo-gh-drawer-link
+                   fixeo-gh-gateway-action
+                   fixeo-gh-gateway-action--enterprise"
+            href="entreprises.html">
+
+            <span>Découvrir FIXEO Entreprises</span>
+
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>`;
+
+
+  /* ════════════════════════════════════════════════════════════
+     3. DISCOVER
+     ════════════════════════════════════════════════════════════ */
+
+  const discoverSection = `
+    <div class="fixeo-gh-drawer-group">
+
+      <div class="fixeo-gh-drawer-label">
+        Découvrir FIXEO
+      </div>
+
+
+      <div class="fixeo-gh-gateway-discover">
+
+        <a
+          class="fixeo-gh-drawer-link
+                 fixeo-gh-gateway-discover-link${_activeClass('comment-ca-marche.html')}"
+          href="comment-ca-marche.html">
+
+          <span>Comment ça marche</span>
+
+        </a>
+
+
+        <a
+          class="fixeo-gh-drawer-link
+                 fixeo-gh-gateway-discover-link${_activeClass('pricing.html')}"
+          href="pricing.html">
+
+          <span>Tarifs</span>
+
+        </a>
+
+
+        <a
+          class="fixeo-gh-drawer-link
+                 fixeo-gh-gateway-discover-link${_activeClass('presse-partenariats.html')}"
+          href="presse-partenariats.html">
+
+          <span>Presse &amp; Partenariats</span>
+
+        </a>
+
+      </div>
+
+    </div>`;
+
+
+  /* ════════════════════════════════════════════════════════════
+     4. ACCOUNT
+     ════════════════════════════════════════════════════════════ */
+
+  const dashDest =
+    user && user.role === 'artisan'
+      ? 'dashboard-artisan-v2.html'
+      : user && user.role === 'admin'
+        ? 'admin.html'
+        : 'dashboard-client.html';
+
+
+  const accountSection = user
+    ? `
+      <div
+        class="fixeo-gh-drawer-group
+               fixeo-gh-drawer-compte">
+
+        <div class="fixeo-gh-drawer-label">
+          Mon compte
+        </div>
+
+
+        <a
+          class="fixeo-gh-drawer-link
+                 fixeo-gh-drawer-compte-user"
+          href="${dashDest}">
+
+          <span class="fixeo-gh-drawer-avatar">
+            ${esc(user.name.charAt(0).toUpperCase())}
+          </span>
+
+          <span>
+            ${esc(user.name)}
+          </span>
+
+        </a>
+
+
+        <a
+          class="fixeo-gh-drawer-link
+                 fixeo-gh-drawer-espace"
+          href="${dashDest}">
+
+          <span
+            class="fixeo-gh-di"
+            aria-hidden="true">
+            ⚡
+          </span>
+
+          <span>
+            Mon Espace FIXEO
+          </span>
+
+        </a>
+
+
+        <a
+          class="fixeo-gh-drawer-link"
+          id="fixeo-gh-drawer-logout"
+          href="#">
+
+          <span
+            class="fixeo-gh-di"
+            aria-hidden="true">
+            ↪️
+          </span>
+
+          <span>
+            Déconnexion
+          </span>
+
+        </a>
+
+      </div>
+    `
+    : `
+      <div class="fixeo-gh-drawer-group">
+
+        <div class="fixeo-gh-drawer-label">
+          Compte
+        </div>
+
+
+        <div class="fixeo-gh-gateway-account-actions">
+
+          <a
+            class="fixeo-gh-drawer-link
+                   fixeo-gh-gateway-account-link"
+            href="auth.html">
+
+            <span aria-hidden="true">
+              ↳
+            </span>
+
+            <span>
+              Connexion
+            </span>
+
+          </a>
+
+
+          <a
+            class="fixeo-gh-drawer-link
+                   fixeo-gh-gateway-account-link"
+            href="auth.html#signup">
+
+            <span aria-hidden="true">
+              +
+            </span>
+
+            <span>
+              Inscription
+            </span>
+
+          </a>
+
+        </div>
+
+      </div>
+    `;
+
+
+  /* ════════════════════════════════════════════════════════════
+     FINAL DRAWER
+     No FR / AR / EN selector until multilingual UX is ready.
+     ════════════════════════════════════════════════════════════ */
+
+  return `
+    <div
+      class="fixeo-gh-drawer
+             fixeo-gh-drawer--gateway"
+      aria-hidden="true">
+
+      ${navSection}
+      ${gatewaySection}
+      ${discoverSection}
+      ${accountSection}
+
+    </div>
+
+    <button
+      class="fixeo-gh-backdrop"
+      type="button"
+      aria-label="Fermer le menu">
+    </button>
+  `;
+}
 
   function buildMarkup() {
     return `
