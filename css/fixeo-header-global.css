@@ -2436,3 +2436,28 @@ body.fixeo-gh-enabled .fixeo-gh-drawer-link--enterprise.fixeo-gh-drawer-link--ac
       0 0 16px rgba(131,58,180,.17) !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FIXEO GLOBAL HEADER V5B — MOBILE STICKY LOCK
+   Canonical mobile header remains visible while scrolling.
+   Applies uniformly to navbar, site-header and synthetic hosts.
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  body.fixeo-gh-enabled .navbar.fixeo-gh-host,
+  body.fixeo-gh-enabled .site-header.fixeo-gh-shell,
+  body.fixeo-gh-enabled .fixeo-gh-shell--synthetic {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1200 !important;
+
+    transform: none !important;
+    translate: none !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-mobile-bar {
+    position: relative !important;
+    top: 0 !important;
+  }
+}
