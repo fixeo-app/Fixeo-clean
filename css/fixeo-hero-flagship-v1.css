@@ -4060,3 +4060,37 @@
 .fxhf-eyebrow::before {
   display: none;
 }
+
+/* ============================================================
+   RAFI — SIGNATURE LIGHT / MOBILE
+   Large ambient breathing light without changing RAFI geometry
+   ============================================================ */
+
+@media (max-width: 640px) {
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-rafi-halo {
+    inset: -72% !important;
+
+    background:
+      radial-gradient(
+        circle at 50% 50%,
+        rgba(205, 248, 255, 0.46) 0%,
+        rgba(111, 220, 255, 0.34) 17%,
+        rgba(72, 130, 255, 0.22) 35%,
+        rgba(88, 82, 255, 0.14) 49%,
+        rgba(225, 48, 108, 0.065) 62%,
+        transparent 78%
+      ) !important;
+
+    filter: blur(18px) !important;
+
+    transform-origin: center center;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .fxhf-root[data-fxhf-state="need"] .fxhf-rafi-core {
+    position: relative;
+    z-index: 2;
+  }
+}
