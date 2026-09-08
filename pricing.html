@@ -62,6 +62,400 @@
       .fixeo-gh-brand img.fixeo-logo-img { height:22px !important; }
     }
   </style>
+  /* ════════════════════════════════════════════════════════════════
+   FIXEO PRICING V2 — COMMERCIAL MODEL HERO
+════════════════════════════════════════════════════════════════ */
+
+.fxp2-hero{
+  position:relative;
+  overflow:hidden;
+  padding:
+    clamp(70px,8vw,108px)
+    22px
+    clamp(58px,7vw,84px);
+
+  border-bottom:1px solid rgba(255,255,255,.06);
+
+  background:
+    radial-gradient(
+      ellipse 72% 58% at 18% 10%,
+      rgba(225,48,108,.13),
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 60% 52% at 88% 45%,
+      rgba(131,58,180,.12),
+      transparent 70%
+    ),
+    #0a0a14;
+}
+
+.fxp2-hero::after{
+  content:'';
+
+  position:absolute;
+  inset:0;
+
+  pointer-events:none;
+
+  opacity:.025;
+
+  background-image:
+    linear-gradient(
+      rgba(255,255,255,.28) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.28) 1px,
+      transparent 1px
+    );
+
+  background-size:52px 52px;
+}
+
+.fxp2-shell{
+  position:relative;
+  z-index:1;
+
+  max-width:1060px;
+  margin:0 auto;
+}
+
+.fxp2-top{
+  max-width:760px;
+  margin:0 auto 40px;
+  text-align:center;
+}
+
+.fxp2-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+
+  margin-bottom:20px;
+
+  padding:7px 13px;
+
+  border-radius:999px;
+
+  background:rgba(225,48,108,.07);
+  border:1px solid rgba(225,48,108,.18);
+
+  color:rgba(251,142,181,.88);
+
+  font-size:.64rem;
+  font-weight:850;
+
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+
+.fxp2-eyebrow::before{
+  content:'';
+
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:#E1306C;
+
+  box-shadow:0 0 13px rgba(225,48,108,.65);
+}
+
+.fxp2-title{
+  margin:0 0 18px;
+
+  color:#fff;
+
+  font-size:
+    clamp(2rem,5vw,3.45rem);
+
+  line-height:1.06;
+
+  letter-spacing:-.038em;
+
+  font-weight:900;
+}
+
+.fxp2-title span{
+  display:block;
+
+  margin-top:5px;
+
+  background:
+    linear-gradient(
+      110deg,
+      #ff7fae,
+      #dc68d8 52%,
+      #a98cff
+    );
+
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.fxp2-lead{
+  max-width:670px;
+
+  margin:0 auto;
+
+  color:rgba(220,226,240,.62);
+
+  font-size:
+    clamp(.94rem,1.5vw,1.04rem);
+
+  line-height:1.72;
+}
+
+.fxp2-lead strong{
+  color:rgba(246,248,255,.94);
+  font-weight:750;
+}
+
+
+/* ── Commercial model cards ───────────────────────────── */
+
+.fxp2-model{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+
+  gap:12px;
+
+  max-width:920px;
+  margin:0 auto;
+}
+
+.fxp2-model-card{
+  position:relative;
+
+  min-height:170px;
+
+  padding:22px 20px;
+
+  border-radius:21px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.055),
+      rgba(255,255,255,.022)
+    );
+
+  border:1px solid rgba(255,255,255,.09);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.045),
+    0 18px 48px rgba(0,0,0,.16);
+}
+
+.fxp2-model-index{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  width:34px;
+  height:34px;
+
+  margin-bottom:16px;
+
+  border-radius:11px;
+
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+
+  color:rgba(255,255,255,.65);
+
+  font-size:.64rem;
+  font-weight:900;
+}
+
+.fxp2-model-kicker{
+  display:block;
+
+  margin-bottom:5px;
+
+  color:rgba(255,135,180,.66);
+
+  font-size:.56rem;
+  font-weight:850;
+
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.fxp2-model-card strong{
+  display:block;
+
+  margin-bottom:7px;
+
+  color:#fff;
+
+  font-size:.94rem;
+  line-height:1.35;
+}
+
+.fxp2-model-card p{
+  margin:0;
+
+  color:rgba(190,203,226,.50);
+
+  font-size:.76rem;
+  line-height:1.58;
+}
+
+.fxp2-model-card--active{
+  border-color:rgba(110,231,183,.16);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(110,231,183,.045),
+      rgba(255,255,255,.022)
+    );
+}
+
+.fxp2-model-card--future{
+  border-color:rgba(167,139,250,.16);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(131,58,180,.06),
+      rgba(255,255,255,.022)
+    );
+}
+
+.fxp2-state{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+
+  margin-top:13px;
+
+  padding:5px 8px;
+
+  border-radius:999px;
+
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.065);
+
+  color:rgba(255,255,255,.42);
+
+  font-size:.54rem;
+  font-weight:850;
+
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.fxp2-state-dot{
+  width:5px;
+  height:5px;
+
+  border-radius:50%;
+
+  background:#6ee7b7;
+
+  box-shadow:0 0 9px rgba(110,231,183,.50);
+}
+
+.fxp2-model-card--future .fxp2-state-dot{
+  background:#a78bfa;
+
+  box-shadow:0 0 9px rgba(167,139,250,.50);
+}
+
+
+/* ── Bottom truth line ───────────────────────────────── */
+
+.fxp2-truth{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+
+  max-width:760px;
+
+  margin:28px auto 0;
+
+  padding-top:22px;
+
+  border-top:1px solid rgba(255,255,255,.06);
+
+  color:rgba(190,203,226,.42);
+
+  text-align:center;
+
+  font-size:.72rem;
+  line-height:1.55;
+}
+
+.fxp2-truth i{
+  flex:0 0 6px;
+
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:#6ee7b7;
+
+  box-shadow:0 0 11px rgba(110,231,183,.42);
+}
+
+
+/* ── Mobile ─────────────────────────────────────────── */
+
+@media(max-width:760px){
+
+  .fxp2-model{
+    grid-template-columns:1fr;
+    max-width:540px;
+  }
+
+  .fxp2-model-card{
+    min-height:0;
+  }
+}
+
+@media(max-width:560px){
+
+  .fxp2-hero{
+    padding:
+      56px
+      15px
+      58px;
+  }
+
+  .fxp2-title{
+    font-size:
+      clamp(1.95rem,10vw,2.65rem);
+  }
+
+  .fxp2-lead{
+    font-size:.88rem;
+  }
+
+  .fxp2-top{
+    margin-bottom:32px;
+  }
+
+  .fxp2-model-card{
+    padding:18px;
+    border-radius:18px;
+  }
+
+  .fxp2-truth{
+    align-items:flex-start;
+    text-align:left;
+  }
+}
+
+</style>
+  
 <!-- SEO-4 -->
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.fixeo.ma/pricing.html">
@@ -284,28 +678,172 @@
 
 </div>
 
-<!-- HERO PRICING -->
-<section class="pricing-hero">
-  <div class="pricing-hero-inner">
-    <span class="section-tag">ABONNEMENTS ARTISANS</span>
-    <h1>Plus de clients.<br>Moins d'effort.<br><span class="text-gradient">Avec Fixeo.</span></h1>
-    <p>Des centaines d'artisans au Maroc développent leur activité grâce à Fixeo. Commencez gratuitement — sans carte bancaire.</p>
-    <!-- Trust outcome pills -->
-    <div class="pricing-trust-pills">
-      <span class="pricing-trust-pill pill-green">✓ Sans engagement ni carte bancaire</span>
-      <span class="pricing-trust-pill pill-pink">🔒 Paiement 100% sécurisé</span>
-      <span class="pricing-trust-pill pill-purple">🇲🇦 Remboursé si insatisfait — 14 jours</span>
+<!-- ═════════════════════════════════════════════════════════════
+     FIXEO PRICING V2 — COMMERCIAL MODEL
+═════════════════════════════════════════════════════════════ -->
+<section
+  class="fxp2-hero"
+  aria-labelledby="fxp2-title">
+
+  <div class="fxp2-shell">
+
+    <div class="fxp2-top">
+
+      <span class="fxp2-eyebrow">
+        MODÈLE ARTISAN FIXEO
+      </span>
+
+      <h1
+        class="fxp2-title"
+        id="fxp2-title">
+
+        Une présence professionnelle
+        <span>
+          avec un modèle simple et transparent.
+        </span>
+
+      </h1>
+
+      <p class="fxp2-lead">
+
+        Rejoindre le réseau FIXEO commence gratuitement.
+        Votre profil professionnel peut être créé sans abonnement,
+        et la rémunération FIXEO est principalement liée aux
+        <strong>missions effectivement réalisées.</strong>
+
+      </p>
+
     </div>
-    <div class="billing-toggle">
-      <span id="toggle-monthly" class="billing-label active" onclick="setBilling('monthly')">Mensuel</span>
-      <div class="toggle-switch-wrap" onclick="toggleBilling()">
-        <div class="toggle-pill" id="toggle-pill"></div>
-      </div>
-      <span id="toggle-annual" class="billing-label" onclick="setBilling('annual')">Annuel <span class="save-badge">Économisez 20%</span></span>
+
+
+    <div
+      class="fxp2-model"
+      aria-label="Modèle commercial FIXEO pour artisans">
+
+
+      <!-- ACCESS -->
+      <article class="fxp2-model-card fxp2-model-card--active">
+
+        <span class="fxp2-model-index">
+          01
+        </span>
+
+        <span class="fxp2-model-kicker">
+          ACCÈS
+        </span>
+
+        <strong>
+          Créer son profil est gratuit
+        </strong>
+
+        <p>
+          Un artisan peut rejoindre FIXEO et construire
+          sa présence professionnelle sans abonnement initial.
+        </p>
+
+        <span class="fxp2-state">
+
+          <i
+            class="fxp2-state-dot"
+            aria-hidden="true">
+          </i>
+
+          DISPONIBLE
+
+        </span>
+
+      </article>
+
+
+      <!-- MISSIONS -->
+      <article class="fxp2-model-card fxp2-model-card--active">
+
+        <span class="fxp2-model-index">
+          02
+        </span>
+
+        <span class="fxp2-model-kicker">
+          MISSIONS
+        </span>
+
+        <strong>
+          Commission liée aux interventions
+        </strong>
+
+        <p>
+          Lorsqu’une mission est réalisée via FIXEO,
+          la commission appliquée fait partie du modèle
+          économique de la plateforme.
+        </p>
+
+        <span class="fxp2-state">
+
+          <i
+            class="fxp2-state-dot"
+            aria-hidden="true">
+          </i>
+
+          MODÈLE ACTIF
+
+        </span>
+
+      </article>
+
+
+      <!-- FUTURE -->
+      <article class="fxp2-model-card fxp2-model-card--future">
+
+        <span class="fxp2-model-index">
+          03
+        </span>
+
+        <span class="fxp2-model-kicker">
+          ÉVOLUTION
+        </span>
+
+        <strong>
+          Des offres professionnelles sont en préparation
+        </strong>
+
+        <p>
+          FIXEO prépare des niveaux de services supplémentaires
+          pour les artisans qui souhaitent enrichir davantage
+          leur présence et leurs outils.
+        </p>
+
+        <span class="fxp2-state">
+
+          <i
+            class="fxp2-state-dot"
+            aria-hidden="true">
+          </i>
+
+          BIENTÔT DISPONIBLE
+
+        </span>
+
+      </article>
+
+
     </div>
+
+
+    <div class="fxp2-truth">
+
+      <i aria-hidden="true"></i>
+
+      <span>
+        Le paiement en ligne des offres professionnelles
+        n’est pas encore disponible sur FIXEO.
+      </span>
+
+    </div>
+
   </div>
+
 </section>
 
+  
 <!-- PRICING CARDS -->
 <section class="section" style="padding-top:0">
   <div class="container">
