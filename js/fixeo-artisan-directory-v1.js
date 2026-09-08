@@ -620,7 +620,12 @@
     } else {
       btn.hidden = false;
       var remaining = total - visible;
-      btn.textContent = 'Voir plus d\u2019artisans (' + remaining + ' restant' + (remaining > 1 ? 's' : '') + ')';
+var nextCount = Math.min(BATCH, remaining);
+
+btn.textContent =
+  nextCount === 1
+    ? 'Voir 1 artisan de plus'
+    : 'Voir ' + nextCount + ' artisans de plus';
     }
   }
 
