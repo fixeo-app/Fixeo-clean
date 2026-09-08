@@ -19,7 +19,7 @@
  *
  * Engine unchanged:
  *   URL params, city normalization, trade normalization, filtering,
- *   FixeoMatchingEngine.sortByMatch(), load-more batch 12,
+ *   FixeoMatchingEngine.sortByMatch(), load-more batch 3,
  *   history.replaceState, empty state, localStorage city fallback.
  *
  * Avatar source priority:
@@ -57,7 +57,7 @@
   ══════════════════════════════════════════════════════════════ */
 
   var VERSION      = '2.0';
-  var BATCH        = 12;
+  var BATCH        = 3 ;
   var PAGE_ID      = 'artisan-directory';
   var GRID_ID      = 'artdir-grid';
   var LOADING_ID   = 'artdir-loading';
