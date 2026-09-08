@@ -579,35 +579,362 @@
   }
 }
 
-    /* ════════════════════════════
-       2. VALUE PROPOSITION
-    ════════════════════════════ */
-    .rj-section{padding:72px 22px}
-    .rj-section-alt{background:rgba(255,255,255,.022)}
+ /* ══════════════════════════════════════════════════════════════
+   2. ARTISAN VALUE SYSTEM
+   ══════════════════════════════════════════════════════════════ */
 
-    .rj-section-label{
-      display:inline-block;padding:4px 14px;border-radius:999px;
-      font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-      background:rgba(225,48,108,.1);border:1px solid rgba(225,48,108,.22);
-      color:rgba(225,48,108,.9);margin-bottom:14px;
-    }
-    .rj-section-title{font-size:clamp(1.25rem,2.8vw,1.85rem);font-weight:900;color:#fff;margin:0 0 10px;letter-spacing:-.015em}
-    .rj-section-sub{font-size:.93rem;color:var(--muted);margin:0 0 44px;line-height:1.65;max-width:580px}
+.rj-section{
+  padding:clamp(64px,8vw,96px) 22px;
+}
 
-    .rj-val-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
-    .rj-val-card{
-      background:var(--card);border:1px solid var(--border);border-radius:22px;
-      padding:26px 20px;display:flex;flex-direction:column;gap:12px;
-      transition:transform .2s,border-color .2s,box-shadow .2s;
-    }
-    .rj-val-card:hover{transform:translateY(-4px);border-color:var(--border-glow);box-shadow:0 14px 36px rgba(0,0,0,.25)}
-    .rj-val-icon{font-size:2rem;animation:float 4s ease-in-out infinite}
-    .rj-val-card:nth-child(2) .rj-val-icon{animation-delay:.5s}
-    .rj-val-card:nth-child(3) .rj-val-icon{animation-delay:1s}
-    .rj-val-card:nth-child(4) .rj-val-icon{animation-delay:1.5s}
-    .rj-val-card:nth-child(5) .rj-val-icon{animation-delay:2s}
-    .rj-val-title{font-size:.98rem;font-weight:800;color:#fff;margin:0}
-    .rj-val-text{font-size:.84rem;color:var(--muted);margin:0;line-height:1.55}
+.rj-section-alt{
+  background:rgba(255,255,255,.018);
+}
+
+.rj-section-label{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:14px;
+  font-size:.67rem;
+  font-weight:800;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:rgba(255,145,185,.78);
+}
+
+.rj-section-label::before{
+  content:'';
+  width:18px;
+  height:1px;
+  background:linear-gradient(
+    90deg,
+    rgba(225,48,108,.9),
+    rgba(131,58,180,.5)
+  );
+}
+
+.rj-section-title{
+  margin:0 0 12px;
+  color:#fff;
+  font-size:clamp(1.55rem,3vw,2.25rem);
+  font-weight:900;
+  line-height:1.15;
+  letter-spacing:-.025em;
+}
+
+.rj-section-sub{
+  max-width:620px;
+  margin:0 0 44px;
+  color:rgba(205,215,235,.56);
+  font-size:.93rem;
+  line-height:1.7;
+}
+
+
+/* ── Value system layout ───────────────────────────────────── */
+
+.rj-value{
+  position:relative;
+  border-top:1px solid rgba(255,255,255,.05);
+  border-bottom:1px solid rgba(255,255,255,.05);
+  background:
+    radial-gradient(
+      ellipse 55% 55% at 10% 30%,
+      rgba(225,48,108,.055),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 50% 50% at 90% 75%,
+      rgba(131,58,180,.055),
+      transparent 72%
+    );
+}
+
+.rj-value-shell{
+  display:grid;
+  grid-template-columns:minmax(280px,.80fr) minmax(0,1.20fr);
+  gap:clamp(42px,7vw,92px);
+  align-items:start;
+}
+
+
+/* ── Left manifesto ─────────────────────────────────────────── */
+
+.rj-value-intro{
+  position:sticky;
+  top:110px;
+}
+
+.rj-value-index{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:56px;
+  height:27px;
+  margin-bottom:18px;
+  padding:0 11px;
+  border-radius:999px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.07);
+  color:rgba(170,185,215,.42);
+  font-size:.61rem;
+  font-weight:800;
+  letter-spacing:.10em;
+}
+
+.rj-value-intro h2{
+  max-width:470px;
+  margin:0 0 18px;
+  color:#fff;
+  font-size:clamp(1.75rem,3.3vw,2.7rem);
+  font-weight:900;
+  line-height:1.10;
+  letter-spacing:-.035em;
+}
+
+.rj-value-intro h2 span{
+  display:block;
+  margin-top:5px;
+  background:linear-gradient(
+    105deg,
+    #ff82b1,
+    #dc68d8 52%,
+    #a98cff
+  );
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.rj-value-intro > p{
+  max-width:440px;
+  margin:0;
+  color:rgba(205,215,235,.55);
+  font-size:.92rem;
+  line-height:1.75;
+}
+
+.rj-value-principle{
+  margin-top:28px;
+  padding:15px 16px;
+  border-radius:15px;
+  background:rgba(255,255,255,.028);
+  border:1px solid rgba(255,255,255,.065);
+}
+
+.rj-value-principle strong{
+  display:block;
+  margin-bottom:4px;
+  color:rgba(240,244,255,.90);
+  font-size:.76rem;
+}
+
+.rj-value-principle span{
+  color:rgba(175,190,215,.46);
+  font-size:.70rem;
+  line-height:1.55;
+}
+
+
+/* ── Right professional stack ──────────────────────────────── */
+
+.rj-value-stack{
+  display:flex;
+  flex-direction:column;
+}
+
+.rj-value-row{
+  position:relative;
+  display:grid;
+  grid-template-columns:52px 1fr;
+  gap:17px;
+  padding:22px 0;
+  border-bottom:1px solid rgba(255,255,255,.065);
+}
+
+.rj-value-row:first-child{
+  padding-top:2px;
+}
+
+.rj-value-row:last-child{
+  border-bottom:none;
+  padding-bottom:2px;
+}
+
+.rj-value-num{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:44px;
+  height:44px;
+  border-radius:13px;
+  background:rgba(255,255,255,.032);
+  border:1px solid rgba(255,255,255,.075);
+  color:rgba(255,255,255,.62);
+  font-size:.67rem;
+  font-weight:900;
+  transition:
+    border-color .18s ease,
+    background .18s ease,
+    box-shadow .18s ease;
+}
+
+.rj-value-row:hover .rj-value-num{
+  background:rgba(225,48,108,.055);
+  border-color:rgba(225,48,108,.20);
+  box-shadow:0 0 22px rgba(225,48,108,.07);
+}
+
+.rj-value-copy{
+  min-width:0;
+}
+
+.rj-value-kicker{
+  display:block;
+  margin-bottom:4px;
+  color:rgba(255,135,180,.62);
+  font-size:.57rem;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.rj-value-copy h3{
+  margin:0 0 6px;
+  color:rgba(246,248,255,.95);
+  font-size:1rem;
+  font-weight:800;
+  letter-spacing:-.01em;
+}
+
+.rj-value-copy p{
+  max-width:550px;
+  margin:0;
+  color:rgba(190,203,226,.49);
+  font-size:.81rem;
+  line-height:1.62;
+}
+
+
+/* ── Closing statement ─────────────────────────────────────── */
+
+.rj-value-outcome{
+  margin-top:42px;
+  padding:19px 21px;
+  border-radius:17px;
+  display:flex;
+  align-items:flex-start;
+  gap:13px;
+  background:
+    linear-gradient(
+      115deg,
+      rgba(225,48,108,.055),
+      rgba(131,58,180,.045)
+    );
+  border:1px solid rgba(225,48,108,.10);
+}
+
+.rj-value-outcome-dot{
+  width:8px;
+  height:8px;
+  margin-top:6px;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:rgba(100,235,190,.95);
+  box-shadow:0 0 15px rgba(52,211,153,.40);
+}
+
+.rj-value-outcome p{
+  margin:0;
+  color:rgba(215,224,240,.67);
+  font-size:.80rem;
+  line-height:1.65;
+}
+
+.rj-value-outcome strong{
+  color:rgba(245,248,255,.93);
+  font-weight:800;
+}
+
+
+/* ── Responsive ────────────────────────────────────────────── */
+
+@media(max-width:800px){
+
+  .rj-value-shell{
+    grid-template-columns:1fr;
+    gap:42px;
+  }
+
+  .rj-value-intro{
+    position:static;
+    text-align:center;
+  }
+
+  .rj-value-intro h2,
+  .rj-value-intro > p{
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  .rj-value-principle{
+    max-width:520px;
+    margin-left:auto;
+    margin-right:auto;
+    text-align:left;
+  }
+
+}
+
+@media(max-width:560px){
+
+  .rj-section{
+    padding:58px 16px;
+  }
+
+  .rj-section-sub{
+    margin-bottom:32px;
+  }
+
+  .rj-value-shell{
+    gap:34px;
+  }
+
+  .rj-value-row{
+    grid-template-columns:42px 1fr;
+    gap:13px;
+    padding:18px 0;
+  }
+
+  .rj-value-num{
+    width:38px;
+    height:38px;
+    border-radius:11px;
+  }
+
+  .rj-value-copy h3{
+    font-size:.93rem;
+  }
+
+  .rj-value-copy p{
+    font-size:.77rem;
+  }
+
+  .rj-value-outcome{
+    margin-top:30px;
+    padding:15px 16px;
+  }
+
+}
+
+@media(prefers-reduced-motion:reduce){
+
+  .rj-value-num{
+    transition:none;
+  }
+
+}
 
     /* ════════════════════════════
        3. HOW IT WORKS — TIMELINE
@@ -965,44 +1292,147 @@
 
 </section>
 
-<!-- ════════════════════
-     2. VALUE PROPOSITION
-════════════════════ -->
-<section class="rj-section" aria-labelledby="rj-val-title">
+
+
+<!-- ══════════════════════════════════════════════════════════
+     ARTISAN VALUE SYSTEM
+════════════════════════════════════════════════════════════ -->
+<section class="rj-section rj-value" aria-labelledby="rj-value-title">
+
   <div class="rj-wrap">
-    <span class="rj-section-label">Pourquoi Fixeo</span>
-    <p class="rj-fade-in" style="font-size:.97rem;color:rgba(255,255,255,.45);margin:0 0 10px;font-style:italic">Aujourd’hui, trouver des clients est difficile et incertain.</p>
-    <h2 class="rj-section-title rj-fade-in" id="rj-val-title">Tout ce que Fixeo fait pour vous</h2>
-    <p class="rj-section-sub rj-fade-in">Fixeo simplifie la relation artisan-client. Vous vous concentrez sur votre métier, Fixeo s'occupe du reste.</p>
-    <div class="rj-val-grid">
-      <div class="rj-val-card rj-fade-in">
-        <span class="rj-val-icon">📍</span>
-        <p class="rj-val-title">Visibilité locale instantanée</p>
-        <p class="rj-val-text">Votre profil apparaît en priorité pour les clients qui cherchent votre métier dans votre ville.</p>
+
+    <div class="rj-value-shell">
+
+      <!-- Manifesto -->
+      <div class="rj-value-intro rj-fade-in">
+
+        <span class="rj-value-index">01 · VALEUR</span>
+
+        <h2 id="rj-value-title">
+          Votre savoir-faire est le cœur.
+          <span>FIXEO construit ce qui l’entoure.</span>
+        </h2>
+
+        <p>
+          Un bon professionnel ne devrait pas dépendre uniquement du bouche-à-oreille.
+          FIXEO structure progressivement les éléments qui permettent à son activité
+          d’être identifiable, accessible et mieux organisée.
+        </p>
+
+        <div class="rj-value-principle">
+          <strong>Principe FIXEO</strong>
+          <span>
+            Le métier reste entre les mains du professionnel.
+            La plateforme organise l’identité, le contexte et la relation autour de l’intervention.
+          </span>
+        </div>
+
       </div>
-      <div class="rj-val-card rj-fade-in">
-        <span class="rj-val-icon">⚡</span>
-        <p class="rj-val-title">Demandes clients en temps réel</p>
-        <p class="rj-val-text">Recevez les demandes pertinentes directement — sans prospection, sans démarchage.</p>
+
+
+      <!-- Professional stack -->
+      <div class="rj-value-stack">
+
+        <article class="rj-value-row rj-fade-in">
+
+          <span class="rj-value-num">01</span>
+
+          <div class="rj-value-copy">
+            <span class="rj-value-kicker">IDENTITÉ</span>
+            <h3>Une présence professionnelle structurée</h3>
+            <p>
+              Métier, ville, informations utiles et profil public permettent de mieux
+              identifier votre activité dans le réseau FIXEO.
+            </p>
+          </div>
+
+        </article>
+
+
+        <article class="rj-value-row rj-fade-in">
+
+          <span class="rj-value-num">02</span>
+
+          <div class="rj-value-copy">
+            <span class="rj-value-kicker">TERRITOIRE</span>
+            <h3>Une activité rattachée à votre zone</h3>
+            <p>
+              Votre métier et votre territoire d’intervention participent au
+              rapprochement entre votre profil et les besoins correspondants.
+            </p>
+          </div>
+
+        </article>
+
+
+        <article class="rj-value-row rj-fade-in">
+
+          <span class="rj-value-num">03</span>
+
+          <div class="rj-value-copy">
+            <span class="rj-value-kicker">OPPORTUNITÉS</span>
+            <h3>Des demandes mieux contextualisées</h3>
+            <p>
+              Lorsqu’un besoin correspond à votre spécialité et à votre zone,
+              FIXEO peut préparer son rapprochement avec les professionnels pertinents.
+            </p>
+          </div>
+
+        </article>
+
+
+        <article class="rj-value-row rj-fade-in">
+
+          <span class="rj-value-num">04</span>
+
+          <div class="rj-value-copy">
+            <span class="rj-value-kicker">MISSION</span>
+            <h3>Un cadre plus clair avant l’intervention</h3>
+            <p>
+              Besoin, localisation, disponibilité et conditions de l’intervention
+              sont progressivement structurés avant l’organisation de la mission.
+            </p>
+          </div>
+
+        </article>
+
+
+        <article class="rj-value-row rj-fade-in">
+
+          <span class="rj-value-num">05</span>
+
+          <div class="rj-value-copy">
+            <span class="rj-value-kicker">RÉPUTATION</span>
+            <h3>Une identité qui peut s’enrichir avec votre activité</h3>
+            <p>
+              Votre profil est conçu pour évoluer avec les informations,
+              réalisations et évaluations disponibles au fil de votre présence sur FIXEO.
+            </p>
+          </div>
+
+        </article>
+
+
+        <div class="rj-value-outcome rj-fade-in">
+
+          <span class="rj-value-outcome-dot" aria-hidden="true"></span>
+
+          <p>
+            <strong>L’objectif :</strong>
+            permettre à un professionnel sérieux de construire progressivement
+            une présence numérique qui reflète mieux son activité réelle.
+          </p>
+
+        </div>
+
       </div>
-      <div class="rj-val-card rj-fade-in">
-        <span class="rj-val-icon">💰</span>
-        <p class="rj-val-title">Paiement après intervention</p>
-        <p class="rj-val-text">Le client paie après validation. Vous êtes payé pour votre travail, pas pour une promesse.</p>
-      </div>
-      <div class="rj-val-card rj-fade-in">
-        <span class="rj-val-icon">⭐</span>
-        <p class="rj-val-title">Réputation &amp; avis clients</p>
-        <p class="rj-val-text">Chaque intervention est une opportunité de construire votre réputation sur la plateforme.</p>
-      </div>
-      <div class="rj-val-card rj-fade-in">
-        <span class="rj-val-icon">📱</span>
-        <p class="rj-val-title">Profil professionnel sans effort</p>
-        <p class="rj-val-text">Créez ou revendiquez votre profil en quelques minutes. Fixeo le met en avant auprès des bons clients.</p>
-      </div>
+
     </div>
+
   </div>
+
 </section>
+  
 <div class="rj-fade-in" style="text-align:center;padding:4px 22px 48px">
   <a href="onboarding-artisan.html" class="rj-btn rj-btn-primary" style="animation:none;display:inline-flex">🧰 Créer mon profil</a>
 </div>
