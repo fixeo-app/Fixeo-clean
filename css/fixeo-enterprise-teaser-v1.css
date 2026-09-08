@@ -756,6 +756,31 @@ letter-spacing: 0.13em;
 }
 
 /* ============================================================
+   FIXEO ENTERPRISE TEASER — COCKPIT DESIGN TOKENS
+   Scoped copy of the enterprise visual system
+   ============================================================ */
+
+#enterprise-teaser {
+  --fxe2-indigo: rgb(72, 100, 255);
+  --fxe2-pink: #FFA6BD;
+  --fxe2-green: #10B981;
+  --fxe2-amber: #F59E0B;
+
+  --fxe2-bg-2: #111128;
+
+  --fxe2-border: rgba(255,255,255,0.08);
+  --fxe2-border-h: rgba(255,255,255,0.15);
+
+  --fxe2-text-1: #FFFFFF;
+  --fxe2-text-2: rgba(255,255,255,0.72);
+  --fxe2-text-3: rgba(255,255,255,0.45);
+
+  --fxe2-shadow-md: 0 8px 30px rgba(0,0,0,0.4);
+  --fxe2-shadow-lg: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+
+/* ============================================================
    FIXEO ENTERPRISE TEASER — OPERATIONS COCKPIT BASE
    Shared visual language with entreprises.html
    ============================================================ */
