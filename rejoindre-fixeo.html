@@ -2148,19 +2148,521 @@
   }
 }
 
-    /* ════════════════════════════
-       5. TECHNOLOGY
-    ════════════════════════════ */
-    .rj-tech-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    .rj-tech-card{
-      background:var(--card);border:1px solid var(--border);border-radius:18px;
-      padding:22px 18px;transition:border-color .2s;
-    }
-    .rj-tech-card:hover{border-color:rgba(56,189,248,.25)}
-    .rj-tech-icon{font-size:1.55rem;margin-bottom:10px;display:block}
-    .rj-tech-title{font-size:.93rem;font-weight:800;color:#fff;margin:0 0 6px}
-    .rj-tech-text{font-size:.83rem;color:var(--muted);margin:0;line-height:1.55}
+   
+/* ════════════════════════════════════════════════════════════════
+   5. FIXEO ARTISAN INFRASTRUCTURE
+════════════════════════════════════════════════════════════════ */
 
+.rj-artisan-infra{
+  position:relative;
+  overflow:hidden;
+  background:rgba(255,255,255,.016);
+}
+
+.rj-artisan-infra::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(
+      ellipse 55% 48% at 20% 20%,
+      rgba(56,189,248,.055),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 60% 55% at 82% 70%,
+      rgba(131,58,180,.08),
+      transparent 72%
+    );
+}
+
+.rj-artisan-infra .rj-wrap{
+  position:relative;
+  z-index:1;
+}
+
+
+/* ── Intro ───────────────────────────────────────────── */
+
+.rj-infra-head{
+  max-width:730px;
+  margin-bottom:34px;
+}
+
+.rj-infra-head .rj-section-sub{
+  margin-bottom:0;
+  max-width:650px;
+}
+
+
+/* ── Main system shell ───────────────────────────────── */
+
+.rj-infra-shell{
+  max-width:960px;
+  margin:0 auto;
+
+  padding:26px;
+
+  border-radius:30px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.058),
+      rgba(255,255,255,.022)
+    );
+
+  border:1px solid rgba(255,255,255,.105);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    0 34px 90px rgba(0,0,0,.25);
+
+  position:relative;
+  overflow:hidden;
+}
+
+.rj-infra-shell::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.018),
+      transparent
+    ),
+    radial-gradient(
+      ellipse 58% 42% at 50% 0%,
+      rgba(131,58,180,.09),
+      transparent 72%
+    );
+}
+
+.rj-infra-shell > *{
+  position:relative;
+  z-index:1;
+}
+
+
+/* ── System header ───────────────────────────────────── */
+
+.rj-infra-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+
+  padding:0 2px 22px;
+  margin-bottom:22px;
+
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+.rj-infra-top-copy{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.rj-infra-eyebrow{
+  font-size:.64rem;
+  font-weight:850;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+
+  color:rgba(167,110,255,.82);
+}
+
+.rj-infra-top strong{
+  color:#fff;
+  font-size:.95rem;
+  font-weight:850;
+}
+
+.rj-infra-status{
+  flex-shrink:0;
+
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+
+  padding:7px 11px;
+
+  border-radius:999px;
+
+  background:rgba(56,189,248,.055);
+  border:1px solid rgba(56,189,248,.16);
+
+  color:rgba(125,211,252,.8);
+
+  font-size:.59rem;
+  font-weight:850;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.rj-infra-status::before{
+  content:'';
+
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:#38bdf8;
+
+  box-shadow:0 0 12px rgba(56,189,248,.6);
+}
+
+
+/* ── Infrastructure flow ─────────────────────────────── */
+
+.rj-infra-flow{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:13px;
+
+  position:relative;
+}
+
+.rj-infra-node{
+  min-height:178px;
+
+  padding:20px 18px 18px;
+
+  border-radius:19px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.052),
+      rgba(255,255,255,.021)
+    );
+
+  border:1px solid rgba(255,255,255,.085);
+
+  position:relative;
+
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    background .18s ease;
+}
+
+.rj-infra-node:hover{
+  transform:translateY(-3px);
+
+  border-color:rgba(255,255,255,.145);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.068),
+      rgba(255,255,255,.026)
+    );
+}
+
+
+/* top signal */
+
+.rj-infra-node::before{
+  content:'';
+
+  position:absolute;
+  left:18px;
+  right:18px;
+  top:0;
+
+  height:1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.18),
+      transparent
+    );
+}
+
+.rj-infra-node-num{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  width:34px;
+  height:34px;
+
+  margin-bottom:17px;
+
+  border-radius:11px;
+
+  background:rgba(255,255,255,.055);
+
+  border:1px solid rgba(255,255,255,.10);
+
+  color:rgba(255,255,255,.72);
+
+  font-size:.68rem;
+  font-weight:900;
+}
+
+
+/* individual node colors */
+
+.rj-infra-node:nth-child(1) .rj-infra-node-num{
+  border-color:rgba(110,231,183,.24);
+  color:#6ee7b7;
+}
+
+.rj-infra-node:nth-child(2) .rj-infra-node-num{
+  border-color:rgba(56,189,248,.25);
+  color:#7dd3fc;
+}
+
+.rj-infra-node:nth-child(3) .rj-infra-node-num{
+  border-color:rgba(167,110,255,.26);
+  color:#c4a1ff;
+}
+
+.rj-infra-node:nth-child(4) .rj-infra-node-num{
+  border-color:rgba(245,158,11,.25);
+  color:#fbbf24;
+}
+
+.rj-infra-node:nth-child(5) .rj-infra-node-num{
+  border-color:rgba(225,48,108,.28);
+  color:#fb8eb5;
+}
+
+.rj-infra-node:nth-child(6) .rj-infra-node-num{
+  border-color:rgba(110,231,183,.24);
+  color:#6ee7b7;
+}
+
+
+.rj-infra-node-kicker{
+  display:block;
+
+  margin-bottom:7px;
+
+  font-size:.60rem;
+  font-weight:850;
+
+  letter-spacing:.12em;
+  text-transform:uppercase;
+
+  color:rgba(255,255,255,.37);
+}
+
+.rj-infra-node h3{
+  margin:0 0 8px;
+
+  color:#fff;
+
+  font-size:.94rem;
+  font-weight:850;
+
+  line-height:1.35;
+}
+
+.rj-infra-node p{
+  margin:0;
+
+  color:rgba(232,234,240,.52);
+
+  font-size:.76rem;
+  line-height:1.58;
+}
+
+
+/* ── Bottom infrastructure statement ─────────────────── */
+
+.rj-infra-bottom{
+  margin-top:18px;
+
+  display:grid;
+  grid-template-columns:1fr auto;
+
+  align-items:center;
+  gap:18px;
+
+  padding:17px 18px;
+
+  border-radius:17px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(56,189,248,.035),
+      rgba(131,58,180,.045),
+      rgba(225,48,108,.035)
+    );
+
+  border:1px solid rgba(255,255,255,.07);
+}
+
+.rj-infra-bottom-copy{
+  display:flex;
+  align-items:flex-start;
+  gap:11px;
+}
+
+.rj-infra-bottom-dot{
+  flex:0 0 7px;
+
+  width:7px;
+  height:7px;
+
+  margin-top:7px;
+
+  border-radius:50%;
+
+  background:#6ee7b7;
+
+  box-shadow:0 0 14px rgba(110,231,183,.55);
+}
+
+.rj-infra-bottom p{
+  margin:0;
+
+  color:rgba(232,234,240,.52);
+
+  font-size:.76rem;
+  line-height:1.6;
+}
+
+.rj-infra-bottom strong{
+  color:rgba(255,255,255,.84);
+}
+
+.rj-infra-signature{
+  font-size:.61rem;
+  font-weight:850;
+
+  color:rgba(255,255,255,.30);
+
+  letter-spacing:.11em;
+  text-transform:uppercase;
+
+  white-space:nowrap;
+}
+
+
+/* ── Mobile ──────────────────────────────────────────── */
+
+@media(max-width:780px){
+
+  .rj-infra-flow{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:560px){
+
+  .rj-infra-shell{
+    padding:16px;
+    border-radius:22px;
+  }
+
+  .rj-infra-head{
+    margin-bottom:24px;
+  }
+
+  .rj-infra-top{
+    align-items:flex-start;
+    padding-bottom:15px;
+    margin-bottom:16px;
+  }
+
+  .rj-infra-top strong{
+    font-size:.85rem;
+  }
+
+  .rj-infra-status{
+    font-size:.52rem;
+    padding:6px 8px;
+  }
+
+  .rj-infra-flow{
+    gap:9px;
+  }
+
+  .rj-infra-node{
+    min-height:170px;
+
+    padding:16px 14px;
+
+    border-radius:16px;
+  }
+
+  .rj-infra-node-num{
+    width:32px;
+    height:32px;
+
+    margin-bottom:13px;
+  }
+
+  .rj-infra-node h3{
+    font-size:.84rem;
+  }
+
+  .rj-infra-node p{
+    font-size:.69rem;
+    line-height:1.5;
+  }
+
+  .rj-infra-node-kicker{
+    font-size:.54rem;
+  }
+
+  .rj-infra-bottom{
+    grid-template-columns:1fr;
+
+    gap:10px;
+
+    padding:14px;
+  }
+
+  .rj-infra-bottom p{
+    font-size:.70rem;
+  }
+
+  .rj-infra-signature{
+    padding-left:18px;
+    font-size:.55rem;
+  }
+}
+
+@media(max-width:380px){
+
+  .rj-infra-flow{
+    grid-template-columns:1fr;
+  }
+
+  .rj-infra-node{
+    min-height:0;
+  }
+
+  .rj-infra-top{
+    flex-direction:column;
+    gap:9px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+
+  .rj-infra-node,
+  .rj-infra-node:hover{
+    transition:none;
+    transform:none;
+  }
+}
+    
     /* ════════════════════════════
        6. MARKET SHIFT
     ════════════════════════════ */
@@ -2998,48 +3500,234 @@
 
 </section>
 
-<!-- ════════════════════
-     5. TECHNOLOGY
-════════════════════ -->
-<div class="rj-section rj-section-alt" aria-labelledby="rj-tech-title">
+<!-- ═════════════════════════════════════════════════════════════
+     5. FIXEO ARTISAN INFRASTRUCTURE
+═════════════════════════════════════════════════════════════ -->
+<section
+  class="rj-section rj-artisan-infra"
+  aria-labelledby="rj-infra-title">
+
   <div class="rj-wrap">
-    <span class="rj-section-label">Intelligence Fixeo</span>
-    <h2 class="rj-section-title rj-fade-in" id="rj-tech-title">La technologie qui travaille pour vous</h2>
-    <p class="rj-section-sub rj-fade-in">En arrière-plan, Fixeo met en place des systèmes pour vous faire apparaître devant les bons clients au bon moment.</p>
-    <div class="rj-tech-grid">
-      <div class="rj-tech-card rj-fade-in">
-        <span class="rj-tech-icon">🔀</span>
-        <p class="rj-tech-title">Matching intelligent</p>
-        <p class="rj-tech-text">Votre profil est mis en face des demandes qui correspondent exactement à votre métier et à votre zone.</p>
-      </div>
-      <div class="rj-tech-card rj-fade-in">
-        <span class="rj-tech-icon">📍</span>
-        <p class="rj-tech-title">Géolocalisation automatique</p>
-        <p class="rj-tech-text">Fixeo détecte la ville du client et filtre les artisans disponibles à proximité. Votre zone est respectée.</p>
-      </div>
-      <div class="rj-tech-card rj-fade-in">
-        <span class="rj-tech-icon">🚀</span>
-        <p class="rj-tech-title">Priorisation des actifs</p>
-        <p class="rj-tech-text">Les artisans avec profil complet et interventions récentes sont mis en avant dans les résultats.</p>
-      </div>
-      <div class="rj-tech-card rj-fade-in">
-        <span class="rj-tech-icon">🛡</span>
-        <p class="rj-tech-title">Algorithme de confiance</p>
-        <p class="rj-tech-text">Chaque évaluation client renforce votre score de confiance et améliore votre position dans Fixeo.</p>
-      </div>
-      <div class="rj-tech-card rj-fade-in">
-        <span class="rj-tech-icon">📱</span>
-        <p class="rj-tech-title">Plateforme mobile-first</p>
-        <p class="rj-tech-text">Gérez votre profil, vos missions et vos demandes depuis votre téléphone. Fixeo est pensé pour le terrain.</p>
-      </div>
-      <div class="rj-tech-card rj-fade-in">
-        <span class="rj-tech-icon">💡</span>
-        <p class="rj-tech-title">Estimation transparente</p>
-        <p class="rj-tech-text">Les clients voient une fourchette de prix avant de vous contacter. Moins de négociation, plus d'interventions qualifiées.</p>
-      </div>
+
+    <div class="rj-infra-head">
+
+      <span class="rj-section-label">
+        Infrastructure FIXEO
+      </span>
+
+      <h2
+        class="rj-section-title rj-fade-in"
+        id="rj-infra-title">
+        Votre métier reste humain.
+        <span class="rj-hl">FIXEO structure ce qui l’entoure.</span>
+      </h2>
+
+      <p class="rj-section-sub rj-fade-in">
+        Derrière chaque profil, FIXEO organise les informations nécessaires
+        pour rapprocher un professionnel, un territoire et une opportunité
+        d’intervention dans un même parcours.
+      </p>
+
     </div>
+
+
+    <div class="rj-infra-shell rj-fade-in">
+
+      <!-- System header -->
+      <div class="rj-infra-top">
+
+        <div class="rj-infra-top-copy">
+
+          <span class="rj-infra-eyebrow">
+            FIXEO · ARTISAN OPERATING LAYER
+          </span>
+
+          <strong>
+            Du profil professionnel à l’activité terrain.
+          </strong>
+
+        </div>
+
+        <span class="rj-infra-status">
+          RÉSEAU STRUCTURÉ
+        </span>
+
+      </div>
+
+
+      <!-- Infrastructure flow -->
+      <div class="rj-infra-flow">
+
+
+        <!-- 01 -->
+        <article class="rj-infra-node">
+
+          <span class="rj-infra-node-num">
+            01
+          </span>
+
+          <span class="rj-infra-node-kicker">
+            PROFIL
+          </span>
+
+          <h3>
+            Structurer votre identité
+          </h3>
+
+          <p>
+            Votre métier, votre ville et les informations disponibles
+            constituent la base de votre présence professionnelle FIXEO.
+          </p>
+
+        </article>
+
+
+        <!-- 02 -->
+        <article class="rj-infra-node">
+
+          <span class="rj-infra-node-num">
+            02
+          </span>
+
+          <span class="rj-infra-node-kicker">
+            ZONE
+          </span>
+
+          <h3>
+            Contextualiser votre activité
+          </h3>
+
+          <p>
+            Votre zone d’intervention permet de replacer votre profil
+            dans le territoire où vous pouvez réellement intervenir.
+          </p>
+
+        </article>
+
+
+        <!-- 03 -->
+        <article class="rj-infra-node">
+
+          <span class="rj-infra-node-num">
+            03
+          </span>
+
+          <span class="rj-infra-node-kicker">
+            MATCHING
+          </span>
+
+          <h3>
+            Rapprocher les bons contextes
+          </h3>
+
+          <p>
+            FIXEO utilise le métier, la localisation et les informations
+            de la demande pour identifier les profils pertinents.
+          </p>
+
+        </article>
+
+
+        <!-- 04 -->
+        <article class="rj-infra-node">
+
+          <span class="rj-infra-node-num">
+            04
+          </span>
+
+          <span class="rj-infra-node-kicker">
+            OPPORTUNITÉ
+          </span>
+
+          <h3>
+            Transformer le besoin en opportunité
+          </h3>
+
+          <p>
+            Lorsqu’un besoin correspond à votre activité, il peut devenir
+            une opportunité d’intervention à examiner.
+          </p>
+
+        </article>
+
+
+        <!-- 05 -->
+        <article class="rj-infra-node">
+
+          <span class="rj-infra-node-num">
+            05
+          </span>
+
+          <span class="rj-infra-node-kicker">
+            MISSION
+          </span>
+
+          <h3>
+            Organiser l’intervention
+          </h3>
+
+          <p>
+            Une mission réunit progressivement le besoin, le professionnel,
+            les conditions convenues et l’organisation de l’intervention.
+          </p>
+
+        </article>
+
+
+        <!-- 06 -->
+        <article class="rj-infra-node">
+
+          <span class="rj-infra-node-num">
+            06
+          </span>
+
+          <span class="rj-infra-node-kicker">
+            HISTORIQUE
+          </span>
+
+          <h3>
+            Construire votre continuité
+          </h3>
+
+          <p>
+            Votre activité sur FIXEO peut progressivement enrichir
+            votre présence professionnelle et son historique.
+          </p>
+
+        </article>
+
+      </div>
+
+
+      <!-- Bottom statement -->
+      <div class="rj-infra-bottom">
+
+        <div class="rj-infra-bottom-copy">
+
+          <span
+            class="rj-infra-bottom-dot"
+            aria-hidden="true">
+          </span>
+
+          <p>
+            <strong>FIXEO n’a pas vocation à remplacer l’artisan.</strong>
+            La plateforme structure l’environnement numérique autour
+            de son métier pour rendre la relation avec le marché plus lisible.
+          </p>
+
+        </div>
+
+        <span class="rj-infra-signature">
+          FIXEO · ARTISAN NETWORK
+        </span>
+
+      </div>
+
+    </div>
+
   </div>
-</div>
+
+</section>
 
 <!-- ════════════════════
      7. FINAL CTA
