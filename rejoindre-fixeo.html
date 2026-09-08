@@ -936,28 +936,691 @@
 
 }
 
-    /* ════════════════════════════
-       3. HOW IT WORKS — TIMELINE
-    ════════════════════════════ */
-    .rj-steps-wrap{position:relative;max-width:680px;margin:0 auto}
-    /* vertical connector line */
-    .rj-steps-wrap::before{
-      content:'';position:absolute;left:23px;top:24px;bottom:24px;width:2px;
-      background:linear-gradient(to bottom,rgba(225,48,108,.5),rgba(131,58,180,.5));
-      border-radius:2px;
-    }
-    .rj-step{display:flex;gap:22px;align-items:flex-start;padding:20px 0;position:relative}
-    .rj-step-num{
-      flex:0 0 48px;height:48px;border-radius:15px;
-      background:var(--grad);
-      display:flex;align-items:center;justify-content:center;
-      font-size:1.05rem;font-weight:900;color:#fff;
-      box-shadow:0 6px 18px rgba(225,48,108,.25);
-      z-index:1;position:relative;
-    }
-    .rj-step-body{flex:1;padding-top:4px}
-    .rj-step-title{font-size:1rem;font-weight:800;color:#fff;margin:0 0 5px}
-    .rj-step-desc{font-size:.87rem;color:var(--muted);margin:0;line-height:1.6}
+    /* ════════════════════════════════════════════════════════════════
+   3. ARTISAN MISSION CYCLE — PREMIUM OPERATING LAYER
+════════════════════════════════════════════════════════════════ */
+
+.rj-mission-cycle{
+  position:relative;
+  overflow:hidden;
+}
+
+/* subtle ambient depth */
+.rj-mission-cycle::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(
+      ellipse 58% 42% at 14% 18%,
+      rgba(56,189,248,.055),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 62% 48% at 88% 74%,
+      rgba(225,48,108,.06),
+      transparent 74%
+    );
+}
+
+.rj-mission-cycle .rj-wrap{
+  position:relative;
+  z-index:1;
+}
+
+/* ── Heading ───────────────────────────────────────────── */
+
+.rj-mission-heading{
+  max-width:720px;
+  margin-bottom:34px;
+}
+
+.rj-mission-heading .rj-section-sub{
+  margin-bottom:0;
+  max-width:660px;
+}
+
+.rj-mission-title-accent{
+  background:linear-gradient(
+    110deg,
+    #ff7fb2 0%,
+    #e1306c 42%,
+    #a76eff 100%
+  );
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* ── Main system shell ─────────────────────────────────── */
+
+.rj-mission-system{
+  position:relative;
+  max-width:920px;
+  margin:0 auto;
+
+  padding:24px;
+
+  border-radius:28px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.065),
+      rgba(255,255,255,.025)
+    );
+
+  border:1px solid rgba(255,255,255,.105);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    0 30px 80px rgba(0,0,0,.22);
+
+  overflow:hidden;
+}
+
+.rj-mission-system::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      ellipse 68% 38% at 50% 0%,
+      rgba(131,58,180,.12),
+      transparent 70%
+    ),
+    linear-gradient(
+      115deg,
+      rgba(56,189,248,.022),
+      transparent 38%,
+      rgba(225,48,108,.028)
+    );
+}
+
+/* subtle technical grid */
+.rj-mission-system::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.022;
+
+  background-image:
+    linear-gradient(rgba(255,255,255,.35) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.35) 1px,transparent 1px);
+
+  background-size:42px 42px;
+}
+
+/* all direct system content above decorative layers */
+.rj-mission-system > *{
+  position:relative;
+  z-index:1;
+}
+
+/* ── Console header ────────────────────────────────────── */
+
+.rj-mission-system-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+
+  padding:0 2px 20px;
+
+  border-bottom:1px solid rgba(255,255,255,.075);
+}
+
+.rj-mission-system-top > div{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.rj-mission-system-eyebrow{
+  font-size:.66rem;
+  font-weight:800;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+
+  color:rgba(56,189,248,.74);
+}
+
+.rj-mission-system-top strong{
+  font-size:.94rem;
+  font-weight:800;
+  color:#fff;
+  letter-spacing:-.01em;
+}
+
+.rj-mission-system-status{
+  flex-shrink:0;
+
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+
+  padding:7px 11px;
+
+  border-radius:999px;
+
+  background:rgba(52,211,153,.065);
+  border:1px solid rgba(52,211,153,.18);
+
+  color:rgba(110,231,183,.86);
+
+  font-size:.64rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.rj-mission-system-status > span{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+
+  background:#6ee7b7;
+
+  box-shadow:0 0 12px rgba(110,231,183,.65);
+}
+
+/* ── Flow ──────────────────────────────────────────────── */
+
+.rj-mission-flow{
+  display:flex;
+  flex-direction:column;
+  padding:22px 0;
+}
+
+/* nodes */
+.rj-mission-node{
+  position:relative;
+
+  padding:22px 22px 20px;
+
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.052),
+      rgba(255,255,255,.022)
+    );
+
+  border:1px solid rgba(255,255,255,.085);
+
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    background .18s ease;
+}
+
+.rj-mission-node:hover{
+  transform:translateY(-2px);
+
+  border-color:rgba(255,255,255,.15);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.068),
+      rgba(255,255,255,.028)
+    );
+}
+
+/* coloured left accent */
+.rj-mission-node::before{
+  content:'';
+  position:absolute;
+
+  left:-1px;
+  top:18px;
+  bottom:18px;
+
+  width:2px;
+  border-radius:999px;
+
+  opacity:.75;
+}
+
+.rj-mission-node--profile::before{
+  background:#a78bfa;
+  box-shadow:0 0 18px rgba(167,139,250,.35);
+}
+
+.rj-mission-node--zone::before{
+  background:#38bdf8;
+  box-shadow:0 0 18px rgba(56,189,248,.35);
+}
+
+.rj-mission-node--request::before{
+  background:#6ee7b7;
+  box-shadow:0 0 18px rgba(110,231,183,.30);
+}
+
+.rj-mission-node--mission::before{
+  background:#fb7185;
+  box-shadow:0 0 18px rgba(251,113,133,.32);
+}
+
+.rj-mission-node--history::before{
+  background:#e1306c;
+  box-shadow:0 0 18px rgba(225,48,108,.35);
+}
+
+/* node header */
+.rj-mission-node-head{
+  display:flex;
+  align-items:flex-start;
+  gap:15px;
+
+  margin-bottom:13px;
+}
+
+.rj-mission-num{
+  flex:0 0 42px;
+
+  width:42px;
+  height:42px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:13px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.09),
+      rgba(255,255,255,.035)
+    );
+
+  border:1px solid rgba(255,255,255,.12);
+
+  color:#fff;
+
+  font-size:.79rem;
+  font-weight:900;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    0 8px 20px rgba(0,0,0,.12);
+}
+
+/* individual number accents */
+.rj-mission-node--profile .rj-mission-num{
+  border-color:rgba(167,139,250,.30);
+  color:#c4b5fd;
+}
+
+.rj-mission-node--zone .rj-mission-num{
+  border-color:rgba(56,189,248,.30);
+  color:#7dd3fc;
+}
+
+.rj-mission-node--request .rj-mission-num{
+  border-color:rgba(110,231,183,.28);
+  color:#6ee7b7;
+}
+
+.rj-mission-node--mission .rj-mission-num{
+  border-color:rgba(251,113,133,.30);
+  color:#fda4af;
+}
+
+.rj-mission-node--history .rj-mission-num{
+  border-color:rgba(225,48,108,.32);
+  color:#fb8eb5;
+}
+
+.rj-mission-node-head > div{
+  min-width:0;
+}
+
+.rj-mission-kicker{
+  display:block;
+
+  margin:1px 0 4px;
+
+  font-size:.66rem;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+
+  color:rgba(110,231,183,.78);
+}
+
+.rj-mission-node h3{
+  margin:0;
+
+  color:#fff;
+
+  font-size:clamp(.98rem,1.8vw,1.13rem);
+  font-weight:850;
+  line-height:1.3;
+  letter-spacing:-.012em;
+}
+
+.rj-mission-node > p{
+  margin:0 0 15px;
+
+  color:rgba(232,234,240,.60);
+
+  font-size:.84rem;
+  line-height:1.65;
+
+  max-width:700px;
+}
+
+/* micro-signals */
+.rj-mission-signals{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+
+.rj-mission-signals span{
+  display:inline-flex;
+  align-items:center;
+
+  min-height:27px;
+  padding:4px 9px;
+
+  border-radius:999px;
+
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.075);
+
+  color:rgba(255,255,255,.54);
+
+  font-size:.66rem;
+  font-weight:700;
+}
+
+/* ── Vertical connectors ───────────────────────────────── */
+
+.rj-mission-connector{
+  height:22px;
+
+  display:flex;
+  justify-content:flex-start;
+
+  padding-left:42px;
+}
+
+.rj-mission-connector span{
+  width:1px;
+  height:100%;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(255,255,255,.16),
+      rgba(225,48,108,.34),
+      rgba(255,255,255,.11)
+    );
+
+  position:relative;
+}
+
+.rj-mission-connector span::after{
+  content:'';
+
+  position:absolute;
+  left:50%;
+  bottom:-1px;
+
+  width:5px;
+  height:5px;
+
+  border-right:1px solid rgba(225,48,108,.55);
+  border-bottom:1px solid rgba(225,48,108,.55);
+
+  transform:translateX(-50%) rotate(45deg);
+}
+
+/* ── Outcome ───────────────────────────────────────────── */
+
+.rj-mission-outcome{
+  display:flex;
+  align-items:flex-start;
+  gap:13px;
+
+  padding:17px 18px;
+
+  border-radius:17px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(52,211,153,.055),
+      rgba(56,189,248,.03)
+    );
+
+  border:1px solid rgba(110,231,183,.12);
+}
+
+.rj-mission-outcome-dot{
+  flex:0 0 8px;
+
+  width:8px;
+  height:8px;
+
+  margin-top:7px;
+
+  border-radius:50%;
+
+  background:#6ee7b7;
+
+  box-shadow:0 0 16px rgba(110,231,183,.60);
+}
+
+.rj-mission-outcome strong{
+  display:block;
+
+  color:#fff;
+
+  font-size:.82rem;
+  font-weight:850;
+
+  margin-bottom:3px;
+}
+
+.rj-mission-outcome p{
+  margin:0;
+
+  color:rgba(232,234,240,.57);
+
+  font-size:.78rem;
+  line-height:1.6;
+}
+
+/* ── Console footer ────────────────────────────────────── */
+
+.rj-mission-system-bottom{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+
+  margin-top:18px;
+  padding:15px 2px 0;
+
+  border-top:1px solid rgba(255,255,255,.065);
+}
+
+.rj-mission-system-bottom > span{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;
+
+  color:rgba(255,255,255,.32);
+
+  font-size:.59rem;
+  font-weight:800;
+  letter-spacing:.075em;
+}
+
+.rj-mission-system-bottom i{
+  font-style:normal;
+  color:rgba(225,48,108,.48);
+}
+
+.rj-mission-system-bottom strong{
+  flex-shrink:0;
+
+  font-size:.59rem;
+  font-weight:800;
+  letter-spacing:.10em;
+
+  color:rgba(255,255,255,.30);
+}
+
+/* ── Mobile ────────────────────────────────────────────── */
+
+@media(max-width:640px){
+
+  .rj-mission-cycle{
+    padding-top:54px;
+    padding-bottom:54px;
+  }
+
+  .rj-mission-heading{
+    margin-bottom:24px;
+  }
+
+  .rj-mission-system{
+    padding:16px;
+    border-radius:22px;
+  }
+
+  .rj-mission-system-top{
+    padding-bottom:15px;
+    align-items:flex-start;
+  }
+
+  .rj-mission-system-top strong{
+    font-size:.86rem;
+  }
+
+  .rj-mission-system-status{
+    padding:6px 9px;
+    font-size:.57rem;
+  }
+
+  .rj-mission-flow{
+    padding:17px 0;
+  }
+
+  .rj-mission-node{
+    padding:18px 16px 17px;
+    border-radius:17px;
+  }
+
+  .rj-mission-node-head{
+    gap:11px;
+    margin-bottom:10px;
+  }
+
+  .rj-mission-num{
+    flex-basis:38px;
+    width:38px;
+    height:38px;
+    border-radius:11px;
+    font-size:.72rem;
+  }
+
+  .rj-mission-kicker{
+    font-size:.60rem;
+  }
+
+  .rj-mission-node h3{
+    font-size:.96rem;
+  }
+
+  .rj-mission-node > p{
+    font-size:.78rem;
+    line-height:1.58;
+    margin-bottom:12px;
+  }
+
+  .rj-mission-signals{
+    gap:5px;
+  }
+
+  .rj-mission-signals span{
+    min-height:25px;
+    padding:3px 8px;
+    font-size:.61rem;
+  }
+
+  .rj-mission-connector{
+    height:17px;
+    padding-left:35px;
+  }
+
+  .rj-mission-outcome{
+    padding:14px 13px;
+  }
+
+  .rj-mission-outcome p{
+    font-size:.72rem;
+  }
+
+  .rj-mission-system-bottom{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:9px;
+
+    margin-top:14px;
+  }
+
+  .rj-mission-system-bottom > span{
+    gap:4px;
+    font-size:.52rem;
+  }
+
+  .rj-mission-system-bottom strong{
+    font-size:.53rem;
+  }
+}
+
+@media(max-width:380px){
+
+  .rj-mission-system{
+    padding:13px;
+  }
+
+  .rj-mission-system-top{
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .rj-mission-node{
+    padding:16px 14px;
+  }
+
+  .rj-mission-node h3{
+    font-size:.91rem;
+  }
+}
+
+/* ── Motion accessibility ──────────────────────────────── */
+
+@media(prefers-reduced-motion:reduce){
+
+  .rj-mission-node,
+  .rj-mission-node:hover{
+    transition:none;
+    transform:none;
+  }
+}
 
     /* ════════════════════════════
        4. CLAIM PROFILE
