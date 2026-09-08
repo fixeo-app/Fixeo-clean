@@ -562,24 +562,56 @@
      ════════════════════════════════════════════════════════════ */
 
   return `
-    <div
-      class="fixeo-gh-drawer
-             fixeo-gh-drawer--gateway"
-      aria-hidden="true">
+  <div
+    class="fixeo-gh-drawer
+           fixeo-gh-drawer--gateway"
+    aria-hidden="true">
 
-      ${navSection}
-      ${gatewaySection}
-      ${discoverSection}
-      ${accountSection}
+    <!-- FIXEO Mobile Menu V5B — persistent drawer control -->
+    <div class="fixeo-gh-drawer-control">
+
+      <div class="fixeo-gh-drawer-control-brand">
+        <span class="fixeo-gh-drawer-control-dot" aria-hidden="true"></span>
+
+        <span class="fixeo-gh-drawer-control-title">
+          Menu FIXEO
+        </span>
+      </div>
+
+      <button
+        type="button"
+        class="fixeo-gh-drawer-link
+               fixeo-gh-drawer-close"
+        aria-label="Fermer le menu">
+
+        <span
+          class="fixeo-gh-drawer-close-icon"
+          aria-hidden="true">
+          ×
+        </span>
+
+        <span class="fixeo-gh-drawer-close-label">
+          Fermer
+        </span>
+
+      </button>
 
     </div>
 
-    <button
-      class="fixeo-gh-backdrop"
-      type="button"
-      aria-label="Fermer le menu">
-    </button>
-  `;
+    ${navSection}
+    ${gatewaySection}
+    ${discoverSection}
+    ${accountSection}
+
+  </div>
+
+  <button
+    class="fixeo-gh-backdrop"
+    type="button"
+    aria-label="Fermer le menu">
+  </button>
+`;
+    
 }
 
   function buildMarkup() {
