@@ -1280,6 +1280,338 @@
     transform:none;
   }
 }
+/* ════════════════════════════════════════════════════════════════
+   ARTISAN DIRECTORY V3 — TRUST SYSTEM
+════════════════════════════════════════════════════════════════ */
+
+.artdir-trust-v3{
+  max-width:1060px;
+  margin:0 auto;
+
+  padding:
+    clamp(50px,7vw,78px)
+    20px;
+}
+
+.artdir-trust-v3-shell{
+  position:relative;
+  overflow:hidden;
+
+  padding:
+    clamp(27px,4vw,42px);
+
+  border-radius:28px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.052),
+      rgba(255,255,255,.018)
+    );
+
+  border:1px solid rgba(255,255,255,.085);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.045),
+    0 28px 85px rgba(0,0,0,.22);
+}
+
+.artdir-trust-v3-shell::before{
+  content:'';
+
+  position:absolute;
+  inset:0;
+
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      ellipse 58% 42% at 0% 0%,
+      rgba(56,189,248,.065),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 50% 45% at 100% 100%,
+      rgba(131,58,180,.085),
+      transparent 72%
+    );
+}
+
+
+/* ── Heading ───────────────────────────────────────── */
+
+.artdir-trust-v3-head{
+  position:relative;
+  z-index:1;
+
+  max-width:680px;
+  margin-bottom:28px;
+}
+
+.artdir-trust-v3-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+
+  margin-bottom:13px;
+
+  color:rgba(143,205,255,.70);
+
+  font-size:.61rem;
+  font-weight:850;
+
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.artdir-trust-v3-eyebrow::before{
+  content:'';
+
+  width:18px;
+  height:1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(56,189,248,.9),
+      rgba(56,189,248,.10)
+    );
+}
+
+.artdir-trust-v3-title{
+  margin:0 0 10px;
+
+  color:#fff;
+
+  font-size:
+    clamp(1.55rem,3.4vw,2.25rem);
+
+  font-weight:900;
+  line-height:1.15;
+
+  letter-spacing:-.025em;
+}
+
+.artdir-trust-v3-title span{
+  color:#ff8ab4;
+}
+
+.artdir-trust-v3-lead{
+  margin:0;
+
+  color:rgba(225,231,244,.56);
+
+  font-size:.86rem;
+  line-height:1.68;
+}
+
+
+/* ── Trust grid ────────────────────────────────────── */
+
+.artdir-trust-v3-grid{
+  position:relative;
+  z-index:1;
+
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+
+  gap:11px;
+}
+
+.artdir-trust-v3-card{
+  position:relative;
+
+  min-height:185px;
+
+  padding:21px 20px;
+
+  border-radius:19px;
+
+  background:
+    rgba(255,255,255,.032);
+
+  border:1px solid rgba(255,255,255,.072);
+}
+
+.artdir-trust-v3-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  gap:14px;
+
+  margin-bottom:20px;
+}
+
+.artdir-trust-v3-index{
+  width:34px;
+  height:34px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  flex:0 0 auto;
+
+  border-radius:11px;
+
+  background:
+    rgba(255,255,255,.045);
+
+  border:1px solid rgba(255,255,255,.08);
+
+  color:rgba(255,255,255,.54);
+
+  font-size:.66rem;
+  font-weight:850;
+}
+
+.artdir-trust-v3-state{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+
+  color:rgba(110,231,183,.75);
+
+  font-size:.54rem;
+  font-weight:850;
+
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.artdir-trust-v3-state::before{
+  content:'';
+
+  width:5px;
+  height:5px;
+
+  border-radius:50%;
+
+  background:#6ee7b7;
+
+  box-shadow:
+    0 0 9px rgba(110,231,183,.42);
+}
+
+.artdir-trust-v3-card-label{
+  display:block;
+
+  margin-bottom:6px;
+
+  color:rgba(255,145,185,.58);
+
+  font-size:.56rem;
+  font-weight:850;
+
+  letter-spacing:.10em;
+  text-transform:uppercase;
+}
+
+.artdir-trust-v3-card h3{
+  margin:0 0 8px;
+
+  color:#fff;
+
+  font-size:.97rem;
+  font-weight:850;
+
+  line-height:1.35;
+}
+
+.artdir-trust-v3-card p{
+  margin:0;
+
+  color:rgba(225,231,244,.50);
+
+  font-size:.76rem;
+  line-height:1.58;
+}
+
+
+/* ── Bottom principle ──────────────────────────────── */
+
+.artdir-trust-v3-principle{
+  position:relative;
+  z-index:1;
+
+  display:flex;
+  align-items:flex-start;
+
+  gap:11px;
+
+  margin-top:17px;
+  padding:17px 18px;
+
+  border-radius:16px;
+
+  background:
+    rgba(110,231,183,.035);
+
+  border:1px solid rgba(110,231,183,.10);
+}
+
+.artdir-trust-v3-dot{
+  width:7px;
+  height:7px;
+
+  flex:0 0 auto;
+
+  margin-top:6px;
+
+  border-radius:50%;
+
+  background:#6ee7b7;
+
+  box-shadow:
+    0 0 12px rgba(110,231,183,.45);
+}
+
+.artdir-trust-v3-principle p{
+  margin:0;
+
+  color:rgba(225,231,244,.55);
+
+  font-size:.77rem;
+  line-height:1.58;
+}
+
+.artdir-trust-v3-principle strong{
+  color:rgba(255,255,255,.84);
+}
+
+
+/* ── Mobile ────────────────────────────────────────── */
+
+@media(max-width:720px){
+
+  .artdir-trust-v3{
+    padding:
+      46px
+      14px;
+  }
+
+  .artdir-trust-v3-shell{
+    padding:
+      23px
+      17px;
+
+    border-radius:23px;
+  }
+
+  .artdir-trust-v3-grid{
+    grid-template-columns:1fr;
+    gap:9px;
+  }
+
+  .artdir-trust-v3-card{
+    min-height:0;
+
+    padding:
+      18px
+      16px;
+  }
+}
     
 </style>
   
@@ -1726,36 +2058,185 @@
 
 </section>
 
-<!-- ── PHASE 6B.3 — Compact trust block (compacted from former cp-section) ──
-     All 4 factual claims retained. Padding reduced. No section heading removed.
-     ──────────────────────────────────────────────────────────────────────── -->
-<section class="cp-section cp-container" aria-labelledby="artdir-trust-heading">
-  <h2 class="cp-section-title" id="artdir-trust-heading">Comment Fixeo construit la confiance</h2>
-  <p class="cp-section-sub">Chaque profil artisan sur Fixeo repose sur des critères clairs et vérifiables.</p>
-  <div class="cp-trust-grid">
-    <div class="cp-trust-card">
-      <span class="cp-trust-icon">✔️</span>
-      <p class="cp-trust-title">Profil enrichi progressivement</p>
-      <p class="cp-trust-text">La spécialité et la ville sont déclarées à l'inscription. Les évaluations s'accumulent au fil des interventions réelles.</p>
-    </div>
-    <div class="cp-trust-card">
-      <span class="cp-trust-icon">🧰</span>
-      <p class="cp-trust-title">Spécialité claire</p>
-      <p class="cp-trust-text">Chaque artisan est associé à un ou plusieurs métiers précis. Pas de profils généralistes flous — vous savez ce que vous demandez.</p>
-    </div>
-    <div class="cp-trust-card">
-      <span class="cp-trust-icon">💡</span>
-      <p class="cp-trust-title">Estimation transparente</p>
-      <p class="cp-trust-text">Fixeo affiche une fourchette de prix indicative avant tout contact. Vous savez approximativement à quoi vous attendre.</p>
-    </div>
-    <div class="cp-trust-card">
-      <span class="cp-trust-icon">💳</span>
-      <p class="cp-trust-title">Paiement après intervention</p>
-      <p class="cp-trust-text">Aucun acompte, aucun prépaiement. Vous réglez uniquement après que le travail est fait et que vous l'avez validé.</p>
-    </div>
-  </div>
-</section>
 
+<!-- ═════════════════════════════════════════════════════════════
+     ARTISAN DIRECTORY V3 — TRUST SYSTEM
+═════════════════════════════════════════════════════════════ -->
+<section
+  class="artdir-trust-v3"
+  aria-labelledby="artdir-trust-v3-title">
+
+  <div class="artdir-trust-v3-shell">
+
+    <div class="artdir-trust-v3-head">
+
+      <span class="artdir-trust-v3-eyebrow">
+        CONFIANCE FIXEO
+      </span>
+
+      <h2
+        class="artdir-trust-v3-title"
+        id="artdir-trust-v3-title">
+
+        Une décision plus claire,
+        <span>avant l’intervention.</span>
+
+      </h2>
+
+      <p class="artdir-trust-v3-lead">
+        FIXEO organise les informations disponibles autour de chaque
+        professionnel afin de rendre la recherche plus lisible et
+        d’aider le client à mieux comprendre le profil qu’il consulte.
+      </p>
+
+    </div>
+
+
+    <div class="artdir-trust-v3-grid">
+
+      <article class="artdir-trust-v3-card">
+
+        <div class="artdir-trust-v3-top">
+
+          <span class="artdir-trust-v3-index">
+            01
+          </span>
+
+          <span class="artdir-trust-v3-state">
+            Identité
+          </span>
+
+        </div>
+
+        <span class="artdir-trust-v3-card-label">
+          PROFIL
+        </span>
+
+        <h3>
+          Une identité professionnelle identifiable
+        </h3>
+
+        <p>
+          Métier, ville et informations disponibles permettent
+          de comprendre rapidement l’activité associée au profil.
+        </p>
+
+      </article>
+
+
+      <article class="artdir-trust-v3-card">
+
+        <div class="artdir-trust-v3-top">
+
+          <span class="artdir-trust-v3-index">
+            02
+          </span>
+
+          <span class="artdir-trust-v3-state">
+            Spécialité
+          </span>
+
+        </div>
+
+        <span class="artdir-trust-v3-card-label">
+          MÉTIER
+        </span>
+
+        <h3>
+          Un besoin rapproché du bon métier
+        </h3>
+
+        <p>
+          Le répertoire distingue les spécialités afin d’éviter
+          de présenter tous les professionnels comme interchangeables.
+        </p>
+
+      </article>
+
+
+      <article class="artdir-trust-v3-card">
+
+        <div class="artdir-trust-v3-top">
+
+          <span class="artdir-trust-v3-index">
+            03
+          </span>
+
+          <span class="artdir-trust-v3-state">
+            Tarif
+          </span>
+
+        </div>
+
+        <span class="artdir-trust-v3-card-label">
+          INFORMATION
+        </span>
+
+        <h3>
+          Un tarif indicatif lorsqu’il est renseigné
+        </h3>
+
+        <p>
+          Lorsqu’une information tarifaire est disponible,
+          elle est affichée avant la réservation comme repère
+          pour mieux contextualiser l’intervention.
+        </p>
+
+      </article>
+
+
+      <article class="artdir-trust-v3-card">
+
+        <div class="artdir-trust-v3-top">
+
+          <span class="artdir-trust-v3-index">
+            04
+          </span>
+
+          <span class="artdir-trust-v3-state">
+            Intervention
+          </span>
+
+        </div>
+
+        <span class="artdir-trust-v3-card-label">
+          RÈGLEMENT
+        </span>
+
+        <h3>
+          Le paiement intervient après la mission
+        </h3>
+
+        <p>
+          Aucun paiement en ligne n’est demandé pour réserver
+          depuis ce répertoire. Le règlement intervient après
+          l’intervention selon les conditions convenues.
+        </p>
+
+      </article>
+
+    </div>
+
+
+    <div class="artdir-trust-v3-principle">
+
+      <span
+        class="artdir-trust-v3-dot"
+        aria-hidden="true">
+      </span>
+
+      <p>
+        <strong>Principe FIXEO :</strong>
+        distinguer ce qui est réellement renseigné aujourd’hui
+        de ce qui pourra enrichir progressivement le profil demain.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+  
 <!-- ── PHASE 6B.3 — Merged explore block: métiers + villes ─────────────────
      Replaces two large independent cp-section-alt sections.
      All 13 métier + 12 city labels retained for SEO.
