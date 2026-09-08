@@ -917,3 +917,924 @@ body.fixeo-gh-enabled .fixeo-gh-drawer-link--enterprise.fixeo-gh-drawer-link--ac
   }
 }
 /* END fxgh-nav3 */
+
+/* ══════════════════════════════════════════════════════════════
+   FIXEO GLOBAL MOBILE MENU — PLATFORM GATEWAY V4
+   Namespace: fixeo-gh-gateway-*
+   Activation class: .fixeo-gh-drawer--gateway
+
+   Architecture:
+   Navigation courte
+   → Client
+   → Artisan
+   → Entreprise
+   → Découvrir
+   → Compte
+
+   Language selector intentionally omitted from V4 until the
+   multilingual experience is production-ready.
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ── DRAWER CANVAS ────────────────────────────────────────── */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-drawer.fixeo-gh-drawer--gateway {
+    padding: 7px 7px 14px !important;
+
+    background:
+      radial-gradient(
+        ellipse 80% 38% at 12% 0%,
+        rgba(225,48,108,.075),
+        transparent 72%
+      ),
+      radial-gradient(
+        ellipse 70% 34% at 100% 100%,
+        rgba(64,93,230,.055),
+        transparent 74%
+      ),
+      linear-gradient(
+        175deg,
+        rgba(13,16,30,.995),
+        rgba(8,11,22,.985)
+      ) !important;
+
+    border:
+      1px solid rgba(255,255,255,.09) !important;
+
+    border-radius:24px !important;
+
+    box-shadow:
+      0 32px 75px rgba(0,0,0,.48),
+      inset 0 1px 0 rgba(255,255,255,.055) !important;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-drawer.fixeo-gh-drawer--gateway::before {
+    height:2px;
+
+    margin:
+      0
+      13px
+      12px;
+
+    background:
+      linear-gradient(
+        90deg,
+        rgba(225,48,108,.85),
+        rgba(131,58,180,.58) 50%,
+        rgba(64,93,230,.28),
+        transparent
+      );
+  }
+
+
+  /* ── COMMON GROUP ─────────────────────────────────────────── */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-drawer--gateway
+  .fixeo-gh-drawer-group {
+    padding:
+      0
+      8px !important;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-drawer--gateway
+  .fixeo-gh-drawer-group +
+  .fixeo-gh-drawer-group {
+    margin-top:9px !important;
+
+    padding-top:13px !important;
+
+    border-top:
+      1px solid rgba(255,255,255,.06) !important;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-drawer--gateway
+  .fixeo-gh-drawer-label {
+    margin:
+      0
+      0
+      8px !important;
+
+    padding:
+      0
+      2px !important;
+
+    color:
+      rgba(255,255,255,.30) !important;
+
+    font-size:.61rem !important;
+    font-weight:800 !important;
+
+    letter-spacing:.13em !important;
+    line-height:1.2;
+
+    text-transform:uppercase;
+  }
+
+
+  /* ════════════════════════════════════════════════════════════
+     SHORT NAVIGATION
+     ════════════════════════════════════════════════════════════ */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-nav-grid {
+    display:grid;
+
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+
+    gap:6px;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-nav-item {
+    position:relative;
+
+    display:flex;
+    align-items:center;
+
+    gap:9px;
+
+    min-width:0;
+    min-height:43px;
+
+    padding:
+      8px
+      10px !important;
+
+    border-radius:12px !important;
+
+    border:
+      1px solid rgba(255,255,255,.065);
+
+    background:
+      rgba(255,255,255,.025);
+
+    color:
+      rgba(240,244,252,.70) !important;
+
+    font-size:.78rem !important;
+    font-weight:650 !important;
+
+    text-decoration:none;
+
+    transition:
+      background .15s ease,
+      border-color .15s ease,
+      color .15s ease;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-nav-item:hover,
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-nav-item:active {
+    background:
+      rgba(255,255,255,.055);
+
+    border-color:
+      rgba(255,255,255,.11);
+
+    color:#fff !important;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-nav-item
+  .fixeo-gh-di {
+    width:19px !important;
+
+    font-size:.88rem !important;
+
+    opacity:.66;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-nav-item.fixeo-gh-drawer-link--active {
+    background:
+      linear-gradient(
+        135deg,
+        rgba(225,48,108,.08),
+        rgba(131,58,180,.045)
+      ) !important;
+
+    border-color:
+      rgba(225,48,108,.16);
+
+    color:#fff !important;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-nav-item.fixeo-gh-drawer-link--active::before {
+    display:none;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-nav-item.fixeo-gh-drawer-link--active::after {
+    content:'';
+
+    position:absolute;
+
+    top:8px;
+    right:8px;
+
+    width:5px;
+    height:5px;
+
+    border-radius:50%;
+
+    background:#ff76a8;
+
+    box-shadow:
+      0 0 9px rgba(225,48,108,.55);
+  }
+
+
+  /* ════════════════════════════════════════════════════════════
+     PLATFORM GATEWAY STACK
+     ════════════════════════════════════════════════════════════ */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-stack {
+    display:flex;
+    flex-direction:column;
+
+    gap:8px;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card {
+    position:relative;
+
+    overflow:hidden;
+
+    padding:
+      15px
+      14px
+      14px;
+
+    border-radius:17px;
+
+    border:
+      1px solid rgba(255,255,255,.075);
+
+    background:
+      rgba(255,255,255,.025);
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.025);
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card::before {
+    content:'';
+
+    position:absolute;
+
+    inset:
+      0
+      auto
+      0
+      0;
+
+    width:2px;
+
+    opacity:.70;
+  }
+
+
+  /* Client */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card--client {
+    background:
+      radial-gradient(
+        ellipse 65% 90% at 0% 0%,
+        rgba(225,48,108,.075),
+        transparent 74%
+      ),
+      rgba(255,255,255,.025);
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card--client::before {
+    background:
+      linear-gradient(
+        180deg,
+        #E1306C,
+        rgba(131,58,180,.32),
+        transparent
+      );
+  }
+
+
+  /* Artisan */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card--artisan {
+    background:
+      radial-gradient(
+        ellipse 65% 90% at 0% 0%,
+        rgba(131,58,180,.075),
+        transparent 74%
+      ),
+      rgba(255,255,255,.025);
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card--artisan::before {
+    background:
+      linear-gradient(
+        180deg,
+        #a86df4,
+        rgba(225,48,108,.25),
+        transparent
+      );
+  }
+
+
+  /* Enterprise */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card--enterprise {
+    background:
+      radial-gradient(
+        ellipse 68% 90% at 0% 0%,
+        rgba(64,93,230,.09),
+        transparent 74%
+      ),
+      rgba(255,255,255,.025);
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card--enterprise::before {
+    background:
+      linear-gradient(
+        180deg,
+        #6077ff,
+        rgba(64,93,230,.22),
+        transparent
+      );
+  }
+
+
+  /* ── Gateway heading ─────────────────────────────────────── */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card-head {
+    display:flex;
+    align-items:flex-start;
+
+    gap:11px;
+
+    margin-bottom:11px;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-symbol {
+    width:33px;
+    height:33px;
+
+    flex:0 0 33px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:10px;
+
+    border:
+      1px solid rgba(255,255,255,.075);
+
+    background:
+      rgba(255,255,255,.035);
+
+    color:
+      rgba(255,255,255,.80);
+
+    font-size:.86rem;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card-copy {
+    min-width:0;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-kicker {
+    display:block;
+
+    margin-bottom:3px;
+
+    color:
+      rgba(255,255,255,.30);
+
+    font-size:.52rem;
+    font-weight:850;
+
+    letter-spacing:.11em;
+
+    text-transform:uppercase;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-title {
+    margin:0;
+
+    color:#fff;
+
+    font-size:.91rem;
+    font-weight:820;
+
+    line-height:1.25;
+
+    letter-spacing:-.01em;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-desc {
+    margin:
+      4px
+      0
+      0;
+
+    color:
+      rgba(225,231,244,.45);
+
+    font-size:.68rem;
+
+    line-height:1.48;
+  }
+
+
+  /* ── Main gateway actions ────────────────────────────────── */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-action {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:10px;
+
+    width:100%;
+
+    min-height:42px;
+
+    padding:
+      9px
+      12px !important;
+
+    border-radius:12px !important;
+
+    text-decoration:none;
+
+    font-family:inherit;
+
+    font-size:.76rem !important;
+    font-weight:780 !important;
+
+    cursor:pointer;
+
+    transition:
+      transform .14s ease,
+      filter .14s ease,
+      border-color .14s ease,
+      background .14s ease;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-action::after {
+    content:'→';
+
+    flex:0 0 auto;
+
+    opacity:.62;
+
+    font-size:.85rem;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-action:hover,
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-action:active {
+    transform:translateY(-1px);
+  }
+
+
+  /* Client = only dominant CTA */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-action--client {
+    border:
+      1px solid rgba(225,48,108,.25) !important;
+
+    background:
+      linear-gradient(
+        135deg,
+        #E1306C,
+        #833AB4
+      ) !important;
+
+    color:#fff !important;
+
+    box-shadow:
+      0 8px 22px rgba(225,48,108,.18);
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-action--client:hover {
+    filter:brightness(1.07);
+  }
+
+
+  /* Artisan = secondary strategic gateway */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-action--artisan {
+    border:
+      1px solid rgba(168,109,244,.18) !important;
+
+    background:
+      rgba(131,58,180,.075) !important;
+
+    color:
+      rgba(237,220,255,.90) !important;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-action--artisan:hover {
+    background:
+      rgba(131,58,180,.13) !important;
+
+    border-color:
+      rgba(168,109,244,.27) !important;
+  }
+
+
+  /* Enterprise = institutional gateway */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-action--enterprise {
+    border:
+      1px solid rgba(96,119,255,.20) !important;
+
+    background:
+      rgba(64,93,230,.075) !important;
+
+    color:
+      rgba(190,202,255,.93) !important;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-action--enterprise:hover {
+    background:
+      rgba(64,93,230,.13) !important;
+
+    border-color:
+      rgba(96,119,255,.30) !important;
+  }
+
+
+  /* ── Secondary contextual links ──────────────────────────── */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-sublinks {
+    display:flex;
+    flex-wrap:wrap;
+
+    align-items:center;
+
+    gap:
+      6px
+      13px;
+
+    margin-top:9px;
+
+    padding:
+      0
+      2px;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-sublink {
+    position:relative;
+
+    display:inline-flex;
+    align-items:center;
+
+    min-height:26px;
+
+    padding:0 !important;
+
+    color:
+      rgba(225,231,244,.45) !important;
+
+    font-size:.65rem !important;
+    font-weight:650 !important;
+
+    text-decoration:none;
+
+    background:none !important;
+
+    border:0 !important;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-sublink:hover {
+    color:
+      rgba(255,255,255,.82) !important;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-sublink +
+  .fixeo-gh-gateway-sublink::before {
+    content:'';
+
+    width:3px;
+    height:3px;
+
+    margin-right:10px;
+
+    border-radius:50%;
+
+    background:
+      rgba(255,255,255,.18);
+  }
+
+
+  /* ════════════════════════════════════════════════════════════
+     DISCOVER FIXEO
+     ════════════════════════════════════════════════════════════ */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-discover {
+    display:grid;
+
+    grid-template-columns:1fr;
+
+    gap:3px;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-discover-link {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:12px;
+
+    min-height:36px;
+
+    padding:
+      6px
+      4px !important;
+
+    border-radius:9px !important;
+
+    background:none !important;
+
+    color:
+      rgba(225,231,244,.52) !important;
+
+    font-size:.72rem !important;
+    font-weight:600 !important;
+
+    text-decoration:none;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-discover-link::after {
+    content:'›';
+
+    color:
+      rgba(255,255,255,.20);
+
+    font-size:.92rem;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-discover-link:hover {
+    padding-left:
+      8px !important;
+
+    background:
+      rgba(255,255,255,.025) !important;
+
+    color:
+      rgba(255,255,255,.82) !important;
+  }
+
+
+  /* ════════════════════════════════════════════════════════════
+     ACCOUNT
+     ════════════════════════════════════════════════════════════ */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-account-actions {
+    display:grid;
+
+    grid-template-columns:
+      1fr
+      1fr;
+
+    gap:7px;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-account-link {
+    min-height:40px !important;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:7px;
+
+    padding:
+      8px
+      10px !important;
+
+    border-radius:11px !important;
+
+    border:
+      1px solid rgba(255,255,255,.075) !important;
+
+    background:
+      rgba(255,255,255,.026) !important;
+
+    color:
+      rgba(240,244,252,.68) !important;
+
+    font-size:.72rem !important;
+    font-weight:700 !important;
+
+    text-decoration:none;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-account-link:hover {
+    border-color:
+      rgba(255,255,255,.13) !important;
+
+    background:
+      rgba(255,255,255,.055) !important;
+
+    color:#fff !important;
+  }
+
+
+  /* Logged-in user remains premium, but no competition
+     with the client marketplace CTA. */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-drawer--gateway
+  .fixeo-gh-drawer-compte-user {
+    min-height:42px !important;
+
+    margin-bottom:6px !important;
+
+    background:
+      linear-gradient(
+        135deg,
+        rgba(225,48,108,.075),
+        rgba(131,58,180,.055)
+      ) !important;
+
+    border:
+      1px solid rgba(225,48,108,.12) !important;
+
+    box-shadow:none !important;
+  }
+
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-drawer--gateway
+  .fixeo-gh-drawer-espace {
+    margin-top:0 !important;
+
+    min-height:42px !important;
+
+    background:
+      rgba(255,255,255,.032) !important;
+
+    border:
+      1px solid rgba(255,255,255,.075) !important;
+
+    box-shadow:none !important;
+
+    color:
+      rgba(240,244,252,.78) !important;
+  }
+
+
+  /* ── NO LANGUAGE SURFACE IN V4 ───────────────────────────── */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-drawer--gateway
+  .fixeo-gh-drawer-lang {
+    display:none !important;
+  }
+
+
+  /* ── FINAL SAFE AREA ─────────────────────────────────────── */
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-drawer--gateway
+  .fixeo-gh-drawer-group:last-child {
+    padding-bottom:
+      calc(
+        6px +
+        env(safe-area-inset-bottom,0px)
+      ) !important;
+  }
+}
+
+
+/* ── Small devices ─────────────────────────────────────────── */
+
+@media (max-width: 360px) {
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-card {
+    padding:
+      13px
+      12px;
+  }
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-title {
+    font-size:.87rem;
+  }
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-desc {
+    font-size:.65rem;
+  }
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-nav-item {
+    font-size:.73rem !important;
+  }
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-account-actions {
+    grid-template-columns:1fr;
+  }
+}
+
+
+/* ── Reduced motion ────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-action,
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-nav-item,
+
+  body.fixeo-gh-enabled
+  .fixeo-gh-gateway-discover-link {
+    transition:none !important;
+
+    transform:none !important;
+  }
+}
+
+/* END FIXEO MOBILE MENU PLATFORM GATEWAY V4 */
