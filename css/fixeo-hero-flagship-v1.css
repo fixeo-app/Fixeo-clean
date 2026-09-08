@@ -2517,9 +2517,12 @@
   }
 
   .fxhf-root[data-fxhf-state="need"] .fxhf-visual {
-    min-height: 108px;
-    margin: 0;
-  }
+  height: 132px !important;
+  min-height: 132px !important;
+  max-height: 132px !important;
+  flex: 0 0 132px !important;
+  margin: 0 !important;
+}
 
   .fxhf-root[data-fxhf-state="need"] .fxhf-rafi-sphere {
     width: min(112px, 30vw);
