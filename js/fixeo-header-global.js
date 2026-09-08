@@ -222,36 +222,17 @@
 
           </div>
 
+<a
+  class="fixeo-gh-drawer-link
+         fixeo-gh-gateway-action
+         fixeo-gh-gateway-action--client"
+  href="${isHomepage ? '#home' : 'index.html#home'}"
+  data-fixeo-hero-entry="request">
 
-          ${
-            isHomepage
-              ? `
-                <button
-                  type="button"
-                  class="fixeo-gh-drawer-cta
-                         fixeo-gh-gateway-action
-                         fixeo-gh-gateway-action--client"
-                  data-open-request-form="true"
-                  data-request-mode="marketplace">
+  <span>Décrire mon besoin</span>
 
-                  <span>Publier une demande</span>
-
-                </button>
-              `
-              : `
-                <a
-                  class="fixeo-gh-drawer-link
-                         fixeo-gh-gateway-action
-                         fixeo-gh-gateway-action--client"
-                  href="index.html">
-
-                  <span>Publier une demande</span>
-
-                </a>
-              `
-          }
-
-
+</a>
+         
           <div class="fixeo-gh-gateway-sublinks">
 
             <a
