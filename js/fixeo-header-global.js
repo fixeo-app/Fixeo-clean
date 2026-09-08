@@ -622,13 +622,95 @@
             <img src="/img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="26" loading="eager">
           </a>
           <div class="fixeo-gh-actions">
-            <button class="fixeo-gh-icon-btn fixeo-gh-search" type="button" aria-label="Parler à RAFI">
-              <span class="fixeo-gh-icon">🎙️</span>
-            </button>
-            <button class="fixeo-gh-icon-btn fixeo-gh-notif notif-btn" type="button" aria-label="Notifications">
-              <span class="fixeo-gh-icon">🔔</span>
-              <span class="notif-badge fixeo-gh-badge" aria-live="polite"></span>
-            </button>
+
+<button
+  class="fixeo-gh-icon-btn fixeo-gh-search"
+  type="button"
+  aria-label="Parler à RAFI"
+  title="RAFI — Assistant FIXEO">
+
+  <span class="fixeo-gh-icon" aria-hidden="true">
+    <svg
+      class="fixeo-gh-icon-svg"
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg">
+
+      <rect
+        x="8"
+        y="3"
+        width="8"
+        height="12"
+        rx="4"
+        stroke="currentColor"
+        stroke-width="1.7"/>
+
+      <path
+        d="M5.8 11.5C5.8 15 8.55 17.7 12 17.7C15.45 17.7 18.2 15 18.2 11.5"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"/>
+
+      <path
+        d="M12 17.7V21"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"/>
+
+      <path
+        d="M9.5 21H14.5"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"/>
+
+    </svg>
+  </span>
+</button>
+
+<button
+  class="fixeo-gh-icon-btn fixeo-gh-notif notif-btn"
+  type="button"
+  aria-label="Notifications"
+  title="Notifications">
+
+  <span class="fixeo-gh-icon" aria-hidden="true">
+    <svg
+      class="fixeo-gh-icon-svg"
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg">
+
+      <path
+        d="M6.8 10.2C6.8 7.1 9 5 12 5C15 5 17.2 7.1 17.2 10.2V13.3C17.2 14.9 17.8 16 19 17.2H5C6.2 16 6.8 14.9 6.8 13.3V10.2Z"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linejoin="round"/>
+
+      <path
+        d="M10 19C10.45 19.65 11.15 20 12 20C12.85 20 13.55 19.65 14 19"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"/>
+
+      <path
+        d="M12 3.2V5"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"/>
+
+    </svg>
+  </span>
+
+  <span
+    class="notif-badge fixeo-gh-badge"
+    aria-live="polite">
+  </span>
+</button>
+           
             <a class="fixeo-gh-avatar-link" href="auth.html" aria-label="Mon compte">
               <span class="fixeo-gh-avatar">U</span>
             </a>
