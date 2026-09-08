@@ -1612,6 +1612,462 @@
       16px;
   }
 }
+    /* ════════════════════════════════════════════════════════════════
+   ARTISAN DIRECTORY V3 — NETWORK EXPLORER
+════════════════════════════════════════════════════════════════ */
+
+.artdir-explore-v3{
+  max-width:1060px;
+  margin:0 auto;
+
+  padding:
+    12px
+    20px
+    clamp(58px,8vw,88px);
+}
+
+.artdir-explore-v3-shell{
+  position:relative;
+  overflow:hidden;
+
+  padding:
+    clamp(28px,4vw,42px);
+
+  border-radius:29px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.048),
+      rgba(255,255,255,.017)
+    );
+
+  border:1px solid rgba(255,255,255,.085);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.045),
+    0 30px 90px rgba(0,0,0,.23);
+}
+
+.artdir-explore-v3-shell::before{
+  content:'';
+
+  position:absolute;
+  inset:0;
+
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      ellipse 58% 44% at 0% 0%,
+      rgba(225,48,108,.075),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 58% 46% at 100% 100%,
+      rgba(56,189,248,.065),
+      transparent 72%
+    );
+}
+
+
+/* ── Header ───────────────────────────────────────── */
+
+.artdir-explore-v3-head{
+  position:relative;
+  z-index:1;
+
+  max-width:700px;
+
+  margin-bottom:
+    clamp(26px,4vw,36px);
+}
+
+.artdir-explore-v3-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+
+  margin-bottom:13px;
+
+  color:rgba(255,145,185,.70);
+
+  font-size:.61rem;
+  font-weight:850;
+
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.artdir-explore-v3-eyebrow::before{
+  content:'';
+
+  width:18px;
+  height:1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #E1306C,
+      rgba(225,48,108,.08)
+    );
+}
+
+.artdir-explore-v3-title{
+  margin:0 0 10px;
+
+  color:#fff;
+
+  font-size:
+    clamp(1.5rem,3.4vw,2.25rem);
+
+  line-height:1.15;
+
+  font-weight:900;
+
+  letter-spacing:-.025em;
+}
+
+.artdir-explore-v3-title span{
+  background:
+    linear-gradient(
+      135deg,
+      #ff85b1,
+      #c894ff
+    );
+
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.artdir-explore-v3-lead{
+  margin:0;
+
+  color:rgba(225,231,244,.55);
+
+  font-size:.86rem;
+  line-height:1.67;
+}
+
+
+/* ── Two gateways ─────────────────────────────────── */
+
+.artdir-explore-v3-grid{
+  position:relative;
+  z-index:1;
+
+  display:grid;
+  grid-template-columns:1fr 1fr;
+
+  gap:12px;
+}
+
+.artdir-explore-v3-panel{
+  position:relative;
+  overflow:hidden;
+
+  padding:
+    22px
+    20px;
+
+  border-radius:20px;
+
+  background:
+    rgba(255,255,255,.028);
+
+  border:1px solid rgba(255,255,255,.068);
+}
+
+.artdir-explore-v3-panel::before{
+  content:'';
+
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+
+  height:2px;
+
+  opacity:.60;
+}
+
+.artdir-explore-v3-panel--trade::before{
+  background:
+    linear-gradient(
+      90deg,
+      #E1306C,
+      #833AB4,
+      transparent
+    );
+}
+
+.artdir-explore-v3-panel--city::before{
+  background:
+    linear-gradient(
+      90deg,
+      #38bdf8,
+      #833AB4,
+      transparent
+    );
+}
+
+.artdir-explore-v3-panel-top{
+  display:flex;
+  align-items:flex-start;
+
+  gap:13px;
+
+  margin-bottom:18px;
+}
+
+.artdir-explore-v3-index{
+  width:36px;
+  height:36px;
+
+  flex:0 0 auto;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:11px;
+
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+
+  color:rgba(255,255,255,.52);
+
+  font-size:.66rem;
+  font-weight:850;
+}
+
+.artdir-explore-v3-panel-copy{
+  min-width:0;
+}
+
+.artdir-explore-v3-label{
+  display:block;
+
+  margin-bottom:3px;
+
+  color:rgba(255,145,185,.58);
+
+  font-size:.55rem;
+  font-weight:850;
+
+  letter-spacing:.10em;
+  text-transform:uppercase;
+}
+
+.artdir-explore-v3-panel--city
+.artdir-explore-v3-label{
+  color:rgba(125,211,252,.65);
+}
+
+.artdir-explore-v3-panel h3{
+  margin:0 0 4px;
+
+  color:#fff;
+
+  font-size:.96rem;
+  font-weight:850;
+}
+
+.artdir-explore-v3-panel p{
+  margin:0;
+
+  color:rgba(225,231,244,.46);
+
+  font-size:.73rem;
+  line-height:1.5;
+}
+
+
+/* ── Existing métier chips ────────────────────────── */
+
+.artdir-explore-v3 .cp-metier-grid{
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:7px;
+}
+
+.artdir-explore-v3 .cp-metier-item{
+  display:inline-flex;
+  align-items:center;
+
+  padding:
+    8px
+    12px;
+
+  border-radius:12px;
+
+  background:
+    rgba(255,255,255,.032);
+
+  border:1px solid rgba(255,255,255,.075);
+
+  color:rgba(242,245,252,.76);
+
+  font-size:.75rem;
+  font-weight:750;
+
+  cursor:pointer;
+
+  transition:
+    transform .14s ease,
+    background .14s ease,
+    border-color .14s ease;
+}
+
+.artdir-explore-v3 .cp-metier-item:hover{
+  transform:translateY(-1px);
+
+  background:
+    rgba(225,48,108,.07);
+
+  border-color:
+    rgba(225,48,108,.20);
+}
+
+
+/* ── Existing city pills ──────────────────────────── */
+
+.artdir-explore-v3 .cp-city-grid{
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:7px;
+}
+
+.artdir-explore-v3 .cp-city-pill{
+  display:inline-flex;
+  align-items:center;
+
+  padding:
+    8px
+    12px;
+
+  border-radius:12px;
+
+  background:
+    rgba(255,255,255,.032);
+
+  border:1px solid rgba(255,255,255,.075);
+
+  color:rgba(242,245,252,.76);
+
+  font-size:.75rem;
+  font-weight:750;
+
+  cursor:pointer;
+
+  transition:
+    transform .14s ease,
+    background .14s ease,
+    border-color .14s ease;
+}
+
+.artdir-explore-v3 .cp-city-pill:hover{
+  transform:translateY(-1px);
+
+  background:
+    rgba(56,189,248,.06);
+
+  border-color:
+    rgba(56,189,248,.19);
+}
+
+
+/* ── Network footer ───────────────────────────────── */
+
+.artdir-explore-v3-bottom{
+  position:relative;
+  z-index:1;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  gap:18px;
+
+  margin-top:18px;
+  padding-top:17px;
+
+  border-top:1px solid rgba(255,255,255,.055);
+}
+
+.artdir-explore-v3-bottom p{
+  margin:0;
+
+  color:rgba(225,231,244,.38);
+
+  font-size:.7rem;
+  line-height:1.5;
+}
+
+.artdir-explore-v3-signature{
+  flex:0 0 auto;
+
+  color:rgba(255,255,255,.25);
+
+  font-size:.55rem;
+  font-weight:850;
+
+  letter-spacing:.11em;
+  text-transform:uppercase;
+}
+
+
+/* ── Mobile ───────────────────────────────────────── */
+
+@media(max-width:720px){
+
+  .artdir-explore-v3{
+    padding:
+      8px
+      14px
+      58px;
+  }
+
+  .artdir-explore-v3-shell{
+    padding:
+      23px
+      17px;
+
+    border-radius:23px;
+  }
+
+  .artdir-explore-v3-grid{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .artdir-explore-v3-panel{
+    padding:
+      19px
+      16px;
+  }
+
+  .artdir-explore-v3-bottom{
+    flex-direction:column;
+    align-items:flex-start;
+
+    gap:8px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+
+  .artdir-explore-v3 .cp-metier-item,
+  .artdir-explore-v3 .cp-metier-item:hover,
+  .artdir-explore-v3 .cp-city-pill,
+  .artdir-explore-v3 .cp-city-pill:hover{
+    transition:none;
+    transform:none;
+  }
+}
     
 </style>
   
@@ -2237,59 +2693,190 @@
 
 </section>
   
-<!-- ── PHASE 6B.3 — Merged explore block: métiers + villes ─────────────────
-     Replaces two large independent cp-section-alt sections.
-     All 13 métier + 12 city labels retained for SEO.
-     cp-metier-item / cp-city-pill classes and data-* attrs preserved
-     so existing frozen JS click handlers continue to work.
-     pointer-events: auto (restoring intended interactivity — bug fix).
-     ──────────────────────────────────────────────────────────────────────── -->
-<div class="artdir-explore" role="region" aria-labelledby="artdir-explore-heading">
-  <div class="artdir-explore-inner">
+<!-- ═════════════════════════════════════════════════════════════
+     ARTISAN DIRECTORY V3 — NETWORK EXPLORER
+═════════════════════════════════════════════════════════════ -->
+<section
+  class="artdir-explore-v3"
+  aria-labelledby="artdir-explore-v3-title">
 
-    <!-- Métiers -->
-    <div class="artdir-explore-group">
-      <h2 class="artdir-explore-heading" id="artdir-explore-heading">Métiers disponibles sur FIXEO</h2>
-      <p class="artdir-explore-sub">Trouvez des artisans pour les besoins courants à domicile et en entreprise.</p>
-      <div class="cp-metier-grid" aria-label="Filtrer par métier">
-        <div class="cp-metier-item" data-metier="plomberie" role="button" tabindex="0" title="Filtrer : Plomberie">🚿 Plomberie</div>
-        <div class="cp-metier-item" data-metier="electricite" role="button" tabindex="0" title="Filtrer : Électricité">⚡ Électricité</div>
-        <div class="cp-metier-item" data-metier="climatisation" role="button" tabindex="0" title="Filtrer : Climatisation">❄️ Climatisation</div>
-        <div class="cp-metier-item" data-metier="peinture" role="button" tabindex="0" title="Filtrer : Peinture">🎨 Peinture</div>
-        <div class="cp-metier-item" data-metier="nettoyage" role="button" tabindex="0" title="Filtrer : Nettoyage">🧹 Nettoyage</div>
-        <div class="cp-metier-item" data-metier="menuiserie" role="button" tabindex="0" title="Filtrer : Menuiserie">🪚 Menuiserie</div>
-        <div class="cp-metier-item" data-metier="serrurerie" role="button" tabindex="0" title="Filtrer : Serrurerie">🔑 Serrurerie</div>
-        <div class="cp-metier-item" data-metier="maconnerie" role="button" tabindex="0" title="Filtrer : Maçonnerie">🧱 Maçonnerie</div>
-        <div class="cp-metier-item" data-metier="jardinage" role="button" tabindex="0" title="Filtrer : Jardinage">🌿 Jardinage</div>
-        <div class="cp-metier-item" data-metier="bricolage" role="button" tabindex="0" title="Filtrer : Bricolage">🔩 Bricolage</div>
-        <div class="cp-metier-item" data-metier="demenagement" role="button" tabindex="0" title="Filtrer : Déménagement">🚛 Déménagement</div>
-        <div class="cp-metier-item" data-metier="carrelage" role="button" tabindex="0" title="Filtrer : Carrelage">🪟 Carrelage</div>
-        <div class="cp-metier-item" data-metier="toiture" role="button" tabindex="0" title="Filtrer : Toiture">🏠 Toiture</div>
-      </div>
+  <div class="artdir-explore-v3-shell">
+
+    <div class="artdir-explore-v3-head">
+
+      <span class="artdir-explore-v3-eyebrow">
+        EXPLORER LE RÉSEAU
+      </span>
+
+      <h2
+        class="artdir-explore-v3-title"
+        id="artdir-explore-v3-title">
+
+        Explorez FIXEO
+        <span>selon votre besoin.</span>
+
+      </h2>
+
+      <p class="artdir-explore-v3-lead">
+        Parcourez le réseau par métier ou par ville.
+        Chaque choix vous permet de rapprocher progressivement
+        votre recherche des profils référencés correspondants.
+      </p>
+
     </div>
 
-    <!-- Villes -->
-    <div class="artdir-explore-group">
-      <h2 class="artdir-explore-heading" id="artdir-villes-heading">Villes couvertes</h2>
-      <p class="artdir-explore-sub">Explorez les artisans disponibles dans les principales villes du Maroc.</p>
-      <div class="cp-city-grid" aria-label="Filtrer par ville">
-        <span class="cp-city-pill" data-city="Casablanca" role="button" tabindex="0" title="Filtrer : Casablanca">📍 Casablanca</span>
-        <span class="cp-city-pill" data-city="Rabat" role="button" tabindex="0" title="Filtrer : Rabat">📍 Rabat</span>
-        <span class="cp-city-pill" data-city="Marrakech" role="button" tabindex="0" title="Filtrer : Marrakech">📍 Marrakech</span>
-        <span class="cp-city-pill" data-city="Fès" role="button" tabindex="0" title="Filtrer : Fès">📍 Fès</span>
-        <span class="cp-city-pill" data-city="Tanger" role="button" tabindex="0" title="Filtrer : Tanger">📍 Tanger</span>
-        <span class="cp-city-pill" data-city="Agadir" role="button" tabindex="0" title="Filtrer : Agadir">📍 Agadir</span>
-        <span class="cp-city-pill" data-city="Meknès" role="button" tabindex="0" title="Filtrer : Meknès">📍 Meknès</span>
-        <span class="cp-city-pill" data-city="Oujda" role="button" tabindex="0" title="Filtrer : Oujda">📍 Oujda</span>
-        <span class="cp-city-pill" data-city="Kénitra" role="button" tabindex="0" title="Filtrer : Kénitra">📍 Kénitra</span>
-        <span class="cp-city-pill" data-city="Tétouan" role="button" tabindex="0" title="Filtrer : Tétouan">📍 Tétouan</span>
-        <span class="cp-city-pill" data-city="Salé" role="button" tabindex="0" title="Filtrer : Salé">📍 Salé</span>
-        <span class="cp-city-pill" data-city="Laâyoune" role="button" tabindex="0" title="Filtrer : Laâyoune">📍 Laâyoune</span>
+
+    <div class="artdir-explore-v3-grid">
+
+
+      <!-- MÉTIERS -->
+      <div
+        class="artdir-explore-v3-panel
+               artdir-explore-v3-panel--trade">
+
+        <div class="artdir-explore-v3-panel-top">
+
+          <span class="artdir-explore-v3-index">
+            01
+          </span>
+
+          <div class="artdir-explore-v3-panel-copy">
+
+            <span class="artdir-explore-v3-label">
+              MÉTIER
+            </span>
+
+            <h3>
+              Choisissez une spécialité
+            </h3>
+
+            <p>
+              Filtrez directement le répertoire
+              selon le métier correspondant à votre besoin.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="cp-metier-grid"
+          aria-label="Filtrer par métier">
+
+          <div class="cp-metier-item" data-metier="plomberie" role="button" tabindex="0" title="Filtrer : Plomberie">🚿 Plomberie</div>
+
+          <div class="cp-metier-item" data-metier="electricite" role="button" tabindex="0" title="Filtrer : Électricité">⚡ Électricité</div>
+
+          <div class="cp-metier-item" data-metier="climatisation" role="button" tabindex="0" title="Filtrer : Climatisation">❄️ Climatisation</div>
+
+          <div class="cp-metier-item" data-metier="peinture" role="button" tabindex="0" title="Filtrer : Peinture">🎨 Peinture</div>
+
+          <div class="cp-metier-item" data-metier="nettoyage" role="button" tabindex="0" title="Filtrer : Nettoyage">🧹 Nettoyage</div>
+
+          <div class="cp-metier-item" data-metier="menuiserie" role="button" tabindex="0" title="Filtrer : Menuiserie">🪚 Menuiserie</div>
+
+          <div class="cp-metier-item" data-metier="serrurerie" role="button" tabindex="0" title="Filtrer : Serrurerie">🔑 Serrurerie</div>
+
+          <div class="cp-metier-item" data-metier="maconnerie" role="button" tabindex="0" title="Filtrer : Maçonnerie">🧱 Maçonnerie</div>
+
+          <div class="cp-metier-item" data-metier="jardinage" role="button" tabindex="0" title="Filtrer : Jardinage">🌿 Jardinage</div>
+
+          <div class="cp-metier-item" data-metier="bricolage" role="button" tabindex="0" title="Filtrer : Bricolage">🔩 Bricolage</div>
+
+          <div class="cp-metier-item" data-metier="demenagement" role="button" tabindex="0" title="Filtrer : Déménagement">🚛 Déménagement</div>
+
+          <div class="cp-metier-item" data-metier="carrelage" role="button" tabindex="0" title="Filtrer : Carrelage">🪟 Carrelage</div>
+
+          <div class="cp-metier-item" data-metier="toiture" role="button" tabindex="0" title="Filtrer : Toiture">🏠 Toiture</div>
+
+        </div>
+
       </div>
+
+
+      <!-- VILLES -->
+      <div
+        class="artdir-explore-v3-panel
+               artdir-explore-v3-panel--city">
+
+        <div class="artdir-explore-v3-panel-top">
+
+          <span class="artdir-explore-v3-index">
+            02
+          </span>
+
+          <div class="artdir-explore-v3-panel-copy">
+
+            <span class="artdir-explore-v3-label">
+              TERRITOIRE
+            </span>
+
+            <h3>
+              Explorez votre ville
+            </h3>
+
+            <p>
+              Consultez les profils référencés
+              dans les principales villes couvertes par FIXEO.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="cp-city-grid"
+          aria-label="Filtrer par ville">
+
+          <span class="cp-city-pill" data-city="Casablanca" role="button" tabindex="0" title="Filtrer : Casablanca">📍 Casablanca</span>
+
+          <span class="cp-city-pill" data-city="Rabat" role="button" tabindex="0" title="Filtrer : Rabat">📍 Rabat</span>
+
+          <span class="cp-city-pill" data-city="Marrakech" role="button" tabindex="0" title="Filtrer : Marrakech">📍 Marrakech</span>
+
+          <span class="cp-city-pill" data-city="Fès" role="button" tabindex="0" title="Filtrer : Fès">📍 Fès</span>
+
+          <span class="cp-city-pill" data-city="Tanger" role="button" tabindex="0" title="Filtrer : Tanger">📍 Tanger</span>
+
+          <span class="cp-city-pill" data-city="Agadir" role="button" tabindex="0" title="Filtrer : Agadir">📍 Agadir</span>
+
+          <span class="cp-city-pill" data-city="Meknès" role="button" tabindex="0" title="Filtrer : Meknès">📍 Meknès</span>
+
+          <span class="cp-city-pill" data-city="Oujda" role="button" tabindex="0" title="Filtrer : Oujda">📍 Oujda</span>
+
+          <span class="cp-city-pill" data-city="Kénitra" role="button" tabindex="0" title="Filtrer : Kénitra">📍 Kénitra</span>
+
+          <span class="cp-city-pill" data-city="Tétouan" role="button" tabindex="0" title="Filtrer : Tétouan">📍 Tétouan</span>
+
+          <span class="cp-city-pill" data-city="Salé" role="button" tabindex="0" title="Filtrer : Salé">📍 Salé</span>
+
+          <span class="cp-city-pill" data-city="Laâyoune" role="button" tabindex="0" title="Filtrer : Laâyoune">📍 Laâyoune</span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="artdir-explore-v3-bottom">
+
+      <p>
+        Les métiers et villes proposés servent à explorer
+        les profils actuellement référencés dans le réseau.
+      </p>
+
+      <span class="artdir-explore-v3-signature">
+        FIXEO · RÉSEAU MAROC
+      </span>
+
     </div>
 
   </div>
-</div>
+
+</section>
 
 <script src="js/fixeo-header-global.js?v=gfnav5"></script>
 <script src="js/i18n.js?v=50a38b9"></script>
