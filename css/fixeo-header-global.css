@@ -1938,3 +1938,182 @@ body.fixeo-gh-enabled .fixeo-gh-drawer-link--enterprise.fixeo-gh-drawer-link--ac
   }
 
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FIXEO GLOBAL HEADER V5B.2
+   PREMIUM STICKY DRAWER CONTROL
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ── Persistent top control ─────────────────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-control {
+    position: sticky;
+    top: 0;
+    z-index: 8;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    min-height: 48px;
+    margin: 0 -2px 8px;
+    padding: 7px 8px 8px;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(12,16,30,.985) 0%,
+        rgba(12,16,30,.965) 76%,
+        rgba(12,16,30,.90) 100%
+      );
+
+    border-bottom: 1px solid rgba(255,255,255,.07);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+
+  /* ── FIXEO identity ─────────────────────────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-control-brand {
+    min-width: 0;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    padding-left: 4px;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-control-dot {
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
+
+    border-radius: 50%;
+
+    background: #ff6b9d;
+
+    box-shadow:
+      0 0 0 4px rgba(225,48,108,.08),
+      0 0 12px rgba(225,48,108,.45);
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-control-title {
+    color: rgba(255,255,255,.58);
+
+    font-size: .64rem;
+    font-weight: 800;
+
+    letter-spacing: .13em;
+    text-transform: uppercase;
+
+    white-space: nowrap;
+  }
+
+
+  /* ── Close control ──────────────────────────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-close {
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 34px !important;
+
+    flex: 0 0 auto;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+
+    margin: 0 !important;
+    padding: 5px 10px !important;
+
+    border-radius: 10px !important;
+
+    border: 1px solid rgba(255,255,255,.09) !important;
+
+    background: rgba(255,255,255,.045) !important;
+
+    color: rgba(255,255,255,.72) !important;
+
+    font-family: inherit;
+    font-size: .72rem !important;
+    font-weight: 700 !important;
+
+    cursor: pointer;
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.035) !important;
+
+    transition:
+      background .15s ease,
+      border-color .15s ease,
+      color .15s ease !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-close:hover,
+  body.fixeo-gh-enabled .fixeo-gh-drawer-close:active {
+    background: rgba(255,255,255,.085) !important;
+    border-color: rgba(255,255,255,.15) !important;
+    color: #fff !important;
+    transform: none !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-close-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 18px;
+    height: 18px;
+
+    color: rgba(255,255,255,.88);
+
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-close-label {
+    line-height: 1;
+  }
+
+
+  /*
+   * The V4 accent line remains the visual entrance signal.
+   * Keep it tighter now that the drawer has its own control bar.
+   */
+  body.fixeo-gh-enabled .fixeo-gh-drawer::before {
+    margin-bottom: 4px !important;
+  }
+
+}
+
+
+@media (max-width: 340px) {
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-close {
+    padding: 5px 8px !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-close-label {
+    display: none;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-close-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-close {
+    transition: none !important;
+  }
+
+}
