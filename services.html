@@ -2962,6 +2962,326 @@ a{text-decoration:none}
   }
 }
 </style>
+
+  <style id="fxsvc-process-v1">
+/* ════════════════════════════════════════════════════════════
+   FIXEO SERVICES — REQUEST PROCESS
+   fxsvc-process-v1
+   Presentation only. No CTA / RAFI / request-flow dependency.
+   ════════════════════════════════════════════════════════════ */
+
+.fxsvc-process {
+  position: relative;
+  overflow: hidden;
+}
+
+.fxsvc-process::before {
+  content: "";
+  position: absolute;
+  width: 620px;
+  height: 620px;
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  background:
+    radial-gradient(
+      circle,
+      rgba(72,100,255,0.075) 0%,
+      rgba(131,58,180,0.035) 38%,
+      transparent 70%
+    );
+  pointer-events: none;
+}
+
+.fxsvc-process .cp-container {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* ── Process system ───────────────────────────────────────── */
+
+.fxsvc-process-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+/* subtle system line */
+.fxsvc-process-grid::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 12%;
+  bottom: 12%;
+  width: 1px;
+  transform: translateX(-50%);
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgba(110,135,255,0.18) 20%,
+      rgba(225,48,108,0.15) 80%,
+      transparent
+    );
+  pointer-events: none;
+}
+
+
+/* ── Card ─────────────────────────────────────────────────── */
+
+.fxsvc-process-card {
+  position: relative;
+  min-width: 0;
+  padding: 22px 22px 21px;
+
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.085);
+
+  background:
+    linear-gradient(
+      155deg,
+      rgba(255,255,255,0.055) 0%,
+      rgba(255,255,255,0.028) 55%,
+      rgba(255,255,255,0.017) 100%
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.065),
+    0 12px 32px rgba(0,0,0,0.20);
+
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.fxsvc-process-card::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 0;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(120,150,255,0.34),
+      rgba(225,48,108,0.22),
+      transparent
+    );
+
+  opacity: 0.8;
+}
+
+.fxsvc-process-card:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(255,255,255,0.14);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.085),
+    0 18px 42px rgba(0,0,0,0.27);
+}
+
+
+/* ── Number + system label ────────────────────────────────── */
+
+.fxsvc-process-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  margin: 0 10px 16px 0;
+
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(91,116,255,0.18),
+      rgba(131,58,180,0.10)
+    );
+
+  border: 1px solid rgba(105,135,255,0.22);
+
+  color: rgba(215,225,255,0.92);
+
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.07);
+}
+
+.fxsvc-process-kicker {
+  display: inline-block;
+
+  color: rgba(120,225,195,0.82);
+
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+
+/* ── Typography ───────────────────────────────────────────── */
+
+.fxsvc-process-card h3 {
+  margin: 0 0 8px;
+
+  color: rgba(247,249,255,0.96);
+
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.28;
+  letter-spacing: -0.015em;
+}
+
+.fxsvc-process-card p {
+  margin: 0;
+
+  color: rgba(202,212,235,0.52);
+
+  font-size: 0.80rem;
+  line-height: 1.65;
+}
+
+
+/* ── Progressive hierarchy ────────────────────────────────── */
+
+.fxsvc-process-card:nth-child(2) .fxsvc-process-num {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(56,189,248,0.14),
+      rgba(72,100,255,0.09)
+    );
+
+  border-color: rgba(56,189,248,0.20);
+}
+
+.fxsvc-process-card:nth-child(3) .fxsvc-process-num {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(131,58,180,0.16),
+      rgba(225,48,108,0.07)
+    );
+
+  border-color: rgba(167,139,250,0.20);
+}
+
+.fxsvc-process-card:nth-child(4) .fxsvc-process-num {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(225,48,108,0.14),
+      rgba(131,58,180,0.09)
+    );
+
+  border-color: rgba(225,48,108,0.20);
+}
+
+
+/* ── Mobile ───────────────────────────────────────────────── */
+
+@media (max-width: 639px) {
+
+  .fxsvc-process-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    max-width: 100%;
+  }
+
+  .fxsvc-process-grid::before {
+    left: 18px;
+    top: 26px;
+    bottom: 26px;
+
+    transform: none;
+
+    background:
+      linear-gradient(
+        180deg,
+        transparent,
+        rgba(100,135,255,0.16) 12%,
+        rgba(225,48,108,0.12) 88%,
+        transparent
+      );
+  }
+
+  .fxsvc-process-card {
+    padding: 17px 17px 16px;
+    border-radius: 15px;
+  }
+
+  .fxsvc-process-num {
+    width: 32px;
+    height: 32px;
+
+    margin-right: 8px;
+    margin-bottom: 12px;
+
+    border-radius: 9px;
+
+    font-size: 0.67rem;
+  }
+
+  .fxsvc-process-kicker {
+    font-size: 0.58rem;
+  }
+
+  .fxsvc-process-card h3 {
+    font-size: 0.94rem;
+    margin-bottom: 6px;
+  }
+
+  .fxsvc-process-card p {
+    font-size: 0.76rem;
+    line-height: 1.58;
+  }
+}
+
+
+/* ── Small phones ─────────────────────────────────────────── */
+
+@media (max-width: 380px) {
+
+  .fxsvc-process-card {
+    padding: 15px 14px 14px;
+  }
+
+  .fxsvc-process-card p {
+    font-size: 0.74rem;
+  }
+
+}
+
+
+/* ── Reduced motion ───────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .fxsvc-process-card,
+  .fxsvc-process-card:hover {
+    transition: none;
+    transform: none;
+  }
+
+}
+</style>
   
 <!-- SEO -->
 <meta name="robots" content="index, follow">
