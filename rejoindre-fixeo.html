@@ -56,79 +56,528 @@
     /* ─── Container ─── */
     .rj-wrap{max-width:1060px;margin:0 auto;padding:0 22px}
 
-    /* ════════════════════════════
-       1. HERO
-    ════════════════════════════ */
-    .rj-hero{
-      position:relative;min-height:86vh;display:flex;align-items:center;
-      padding:88px 22px 72px;text-align:center;overflow:hidden;
-    }
-    /* Radial glow background */
-    .rj-hero::before{
-      content:'';position:absolute;inset:0;pointer-events:none;
-      background:
-        radial-gradient(ellipse 90% 70% at 50% -10%,rgba(225,48,108,.15),transparent 65%),
-        radial-gradient(ellipse 60% 50% at 80% 80%,rgba(131,58,180,.10),transparent 60%),
-        radial-gradient(ellipse 50% 40% at 20% 70%,rgba(56,189,248,.08),transparent 55%);
-    }
-    /* Animated grid overlay */
-    .rj-hero::after{
-      content:'';position:absolute;inset:0;pointer-events:none;opacity:.03;
-      background-image:linear-gradient(rgba(255,255,255,.3) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.3) 1px,transparent 1px);
-      background-size:50px 50px;
-    }
-    .rj-hero-inner{position:relative;z-index:1;max-width:760px;margin:0 auto}
+  /* ══════════════════════════════════════════════════════════════
+   1. ARTISAN UNIVERSE HERO — premium infrastructure gateway
+   ══════════════════════════════════════════════════════════════ */
 
-    .rj-hero-badge{
-      display:inline-flex;align-items:center;gap:7px;
-      padding:6px 18px;border-radius:999px;
-      background:rgba(225,48,108,.10);
-      border:1px solid rgba(225,48,108,.28);
-      color:rgba(255,140,170,.9);
-      font-size:.76rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
-      margin-bottom:28px;
-    }
-    .rj-hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#E1306C;animation:glowPulse 2s infinite}
+.rj-hero{
+  position:relative;
+  overflow:hidden;
+  padding:clamp(64px,8vw,104px) 22px clamp(54px,7vw,88px);
+  border-bottom:1px solid rgba(255,255,255,.055);
+}
 
-    .rj-hero h1{
-      font-size:clamp(2rem,5.5vw,3.6rem);font-weight:900;line-height:1.1;
-      letter-spacing:-.03em;margin:0 0 22px;color:#fff;
-    }
-    .rj-hl{
-      background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-      display:inline-block;
-    }
+.rj-hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse 72% 62% at 20% 8%,
+      rgba(225,48,108,.13) 0%,
+      transparent 64%),
+    radial-gradient(ellipse 62% 58% at 88% 44%,
+      rgba(131,58,180,.12) 0%,
+      transparent 66%),
+    radial-gradient(ellipse 46% 45% at 60% 96%,
+      rgba(56,189,248,.055) 0%,
+      transparent 66%);
+}
 
-    .rj-hero p{
-      font-size:clamp(1rem,1.9vw,1.18rem);color:var(--muted);
-      max-width:560px;margin:0 auto 38px;line-height:1.7;
-    }
+.rj-hero::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.025;
+  background-image:
+    linear-gradient(rgba(255,255,255,.28) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.28) 1px,transparent 1px);
+  background-size:54px 54px;
+}
 
-    /* CTA buttons */
-    .rj-cta-row{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-bottom:32px}
-    .rj-btn{
-      display:inline-flex;align-items:center;gap:9px;
-      padding:16px 34px;border-radius:16px;font-size:.97rem;font-weight:800;
-      cursor:pointer;border:none;color:#fff;transition:transform .15s,box-shadow .15s;
-    }
-    .rj-btn:hover{transform:translateY(-2px)}
-    .rj-btn-primary{
-      background:var(--grad);
-      box-shadow:0 8px 28px rgba(225,48,108,.3);
-      animation:glowPulse 3s ease-in-out infinite;
-    }
-    .rj-btn-primary:hover{background:var(--grad-h);box-shadow:0 14px 40px rgba(225,48,108,.45)}
-    .rj-btn-outline{
-      background:rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.16);
-    }
-    .rj-btn-outline:hover{background:rgba(255,255,255,.13)}
+.rj-hero-shell{
+  position:relative;
+  z-index:1;
+  max-width:1120px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);
+  gap:clamp(40px,6vw,84px);
+  align-items:center;
+}
 
-    .rj-hero-trust{
-      font-size:.82rem;color:rgba(255,255,255,.38);
-      display:flex;align-items:center;justify-content:center;gap:8px;
-    }
-    .rj-hero-trust span{color:rgba(52,211,153,.7)}
+/* ── Left narrative ─────────────────────────────────────────── */
+
+.rj-hero-copy{
+  max-width:650px;
+}
+
+.rj-hero-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  margin-bottom:20px;
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(255,160,190,.82);
+}
+
+.rj-hero-eyebrow-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#E1306C;
+  box-shadow:0 0 16px rgba(225,48,108,.70);
+}
+
+.rj-hero h1{
+  max-width:720px;
+  margin:0 0 22px;
+  color:#fff;
+  font-size:clamp(2.35rem,5.3vw,4.15rem);
+  font-weight:900;
+  line-height:1.035;
+  letter-spacing:-.045em;
+}
+
+.rj-hl{
+  display:inline-block;
+  background:linear-gradient(
+    105deg,
+    #ff7fb0 0%,
+    #e966d5 48%,
+    #a987ff 100%
+  );
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.rj-hero-lead{
+  max-width:590px;
+  margin:0 0 30px;
+  font-size:clamp(.98rem,1.6vw,1.08rem);
+  line-height:1.72;
+  color:rgba(220,226,240,.66);
+}
+
+.rj-hero-lead strong{
+  color:rgba(245,247,255,.94);
+  font-weight:700;
+}
+
+.rj-hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:11px;
+  margin-bottom:28px;
+}
+
+.rj-hero-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:48px;
+  padding:0 22px;
+  border-radius:14px;
+  font-size:.86rem;
+  font-weight:800;
+  transition:
+    transform .14s ease,
+    background .14s ease,
+    border-color .14s ease,
+    box-shadow .14s ease;
+}
+
+.rj-hero-btn:hover{
+  transform:translateY(-2px);
+}
+
+.rj-hero-btn-primary{
+  color:#fff;
+  background:linear-gradient(135deg,#E1306C,#833AB4);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 12px 32px rgba(225,48,108,.24);
+}
+
+.rj-hero-btn-primary:hover{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 16px 38px rgba(225,48,108,.34);
+}
+
+.rj-hero-btn-secondary{
+  color:rgba(240,244,255,.88);
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.11);
+}
+
+.rj-hero-btn-secondary:hover{
+  background:rgba(255,255,255,.065);
+  border-color:rgba(255,255,255,.17);
+}
+
+.rj-hero-proof{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 18px;
+  padding-top:22px;
+  border-top:1px solid rgba(255,255,255,.065);
+}
+
+.rj-hero-proof-item{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:rgba(190,202,225,.52);
+  font-size:.75rem;
+  font-weight:600;
+}
+
+.rj-hero-proof-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:20px;
+  height:20px;
+  border-radius:7px;
+  color:rgba(110,235,190,.92);
+  background:rgba(52,211,153,.07);
+  border:1px solid rgba(52,211,153,.12);
+  font-size:.65rem;
+}
+
+/* ── Right: artisan operating system visual ────────────────── */
+
+.rj-artisan-system{
+  position:relative;
+  padding:1px;
+  border-radius:28px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.14),
+      rgba(225,48,108,.10) 42%,
+      rgba(131,58,180,.12) 72%,
+      rgba(255,255,255,.06)
+    );
+  box-shadow:
+    0 28px 80px rgba(0,0,0,.40),
+    0 0 70px rgba(131,58,180,.08);
+}
+
+.rj-artisan-system-inner{
+  position:relative;
+  overflow:hidden;
+  border-radius:27px;
+  padding:22px;
+  background:
+    linear-gradient(
+      155deg,
+      rgba(26,27,49,.97),
+      rgba(14,15,29,.98)
+    );
+}
+
+.rj-artisan-system-inner::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(
+      ellipse 80% 42% at 50% 0%,
+      rgba(225,48,108,.095),
+      transparent 70%
+    );
+}
+
+.rj-artisan-system-top{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:20px;
+}
+
+.rj-artisan-system-brand{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.rj-artisan-system-eyebrow{
+  font-size:.56rem;
+  font-weight:800;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.28);
+}
+
+.rj-artisan-system-title{
+  color:rgba(247,249,255,.96);
+  font-size:.90rem;
+  font-weight:800;
+}
+
+.rj-artisan-status{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:rgba(52,211,153,.07);
+  border:1px solid rgba(52,211,153,.16);
+  color:rgba(130,240,200,.88);
+  font-size:.57rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.rj-artisan-status::before{
+  content:'';
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:rgba(90,235,180,.95);
+  box-shadow:0 0 10px rgba(52,211,153,.55);
+}
+
+/* Identity */
+
+.rj-artisan-profile{
+  position:relative;
+  padding:16px;
+  margin-bottom:12px;
+  border-radius:18px;
+  background:rgba(255,255,255,.038);
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.rj-artisan-profile-main{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.rj-artisan-avatar{
+  width:46px;
+  height:46px;
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  font-size:1.15rem;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(225,48,108,.16),
+      rgba(131,58,180,.16)
+    );
+  border:1px solid rgba(225,48,108,.20);
+}
+
+.rj-artisan-profile-copy{
+  min-width:0;
+}
+
+.rj-artisan-profile-copy strong{
+  display:block;
+  color:#fff;
+  font-size:.88rem;
+  line-height:1.35;
+}
+
+.rj-artisan-profile-copy span{
+  display:block;
+  margin-top:2px;
+  color:rgba(190,202,225,.45);
+  font-size:.67rem;
+}
+
+.rj-artisan-profile-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:12px;
+}
+
+.rj-artisan-meta{
+  padding:4px 8px;
+  border-radius:7px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.07);
+  color:rgba(205,215,235,.54);
+  font-size:.61rem;
+  font-weight:600;
+}
+
+/* Flow */
+
+.rj-artisan-flow{
+  position:relative;
+  display:grid;
+  gap:8px;
+}
+
+.rj-artisan-flow-row{
+  display:grid;
+  grid-template-columns:28px 1fr auto;
+  gap:10px;
+  align-items:center;
+  min-height:52px;
+  padding:9px 11px;
+  border-radius:14px;
+  background:rgba(255,255,255,.026);
+  border:1px solid rgba(255,255,255,.065);
+}
+
+.rj-artisan-flow-num{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;
+  height:28px;
+  border-radius:9px;
+  color:rgba(255,255,255,.78);
+  background:rgba(255,255,255,.055);
+  font-size:.61rem;
+  font-weight:800;
+}
+
+.rj-artisan-flow-copy strong{
+  display:block;
+  margin-bottom:1px;
+  color:rgba(240,244,255,.90);
+  font-size:.72rem;
+}
+
+.rj-artisan-flow-copy span{
+  display:block;
+  color:rgba(180,195,220,.40);
+  font-size:.59rem;
+}
+
+.rj-artisan-flow-state{
+  font-size:.52rem;
+  font-weight:800;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  color:rgba(255,145,190,.78);
+}
+
+.rj-artisan-system-bottom{
+  position:relative;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:16px;
+  padding-top:15px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+
+.rj-artisan-system-bottom span{
+  color:rgba(165,180,210,.36);
+  font-size:.58rem;
+  line-height:1.4;
+}
+
+.rj-artisan-system-bottom strong{
+  color:rgba(225,232,248,.68);
+  font-size:.60rem;
+  font-weight:700;
+}
+
+/* ── Mobile ───────────────────────────────────────────────── */
+
+@media(max-width:860px){
+  .rj-hero-shell{
+    grid-template-columns:1fr;
+    max-width:680px;
+    gap:42px;
+  }
+
+  .rj-hero-copy{
+    max-width:none;
+    text-align:center;
+  }
+
+  .rj-hero-lead{
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  .rj-hero-actions,
+  .rj-hero-proof{
+    justify-content:center;
+  }
+
+  .rj-artisan-system{
+    width:min(100%,520px);
+    margin:0 auto;
+  }
+}
+
+@media(max-width:560px){
+  .rj-hero{
+    padding:54px 15px 56px;
+  }
+
+  .rj-hero h1{
+    font-size:clamp(2.15rem,11vw,3rem);
+    line-height:1.04;
+  }
+
+  .rj-hero-lead{
+    font-size:.91rem;
+    line-height:1.65;
+  }
+
+  .rj-hero-actions{
+    flex-direction:column;
+  }
+
+  .rj-hero-btn{
+    width:100%;
+  }
+
+  .rj-hero-proof{
+    align-items:flex-start;
+    justify-content:flex-start;
+    gap:8px 14px;
+    text-align:left;
+  }
+
+  .rj-artisan-system-inner{
+    padding:15px;
+  }
+
+  .rj-artisan-flow-row{
+    grid-template-columns:27px 1fr;
+  }
+
+  .rj-artisan-flow-state{
+    grid-column:2;
+    margin-top:-5px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .rj-hero-btn,
+  .rj-hero-btn:hover{
+    transition:none;
+    transform:none;
+  }
+}
 
     /* ════════════════════════════
        2. VALUE PROPOSITION
@@ -357,41 +806,163 @@
   </button>
 </nav>
 
-<!-- ════════════════════
-     1. HERO
-════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════
+     ARTISAN UNIVERSE HERO
+════════════════════════════════════════════════════════════ -->
 <section class="rj-hero" aria-labelledby="rj-hero-title">
-  <div class="rj-hero-inner rj-fade-in">
-    <div class="rj-hero-badge" style="background:rgba(52,211,153,.10);border-color:rgba(52,211,153,.28);color:rgba(52,211,153,.9);margin-bottom:10px">
-      ✓ Inscription gratuite
+
+  <div class="rj-hero-shell">
+
+    <!-- Narrative -->
+    <div class="rj-hero-copy rj-fade-in">
+
+      <div class="rj-hero-eyebrow">
+        <span class="rj-hero-eyebrow-dot" aria-hidden="true"></span>
+        LE RÉSEAU PROFESSIONNEL FIXEO
+      </div>
+
+      <h1 id="rj-hero-title">
+        Votre métier mérite<br>
+        <span class="rj-hl">plus qu’une simple visibilité.</span>
+      </h1>
+
+      <p class="rj-hero-lead">
+        FIXEO construit autour de votre activité une
+        <strong>identité professionnelle, une présence locale et un accès structuré
+        aux opportunités d’intervention.</strong>
+        Vous exercez votre métier. FIXEO organise l’environnement autour.
+      </p>
+
+      <div class="rj-hero-actions">
+
+        <a
+          href="onboarding-artisan.html"
+          class="rj-hero-btn rj-hero-btn-primary">
+          Rejoindre le réseau FIXEO
+          <span aria-hidden="true">→</span>
+        </a>
+
+        <a
+          href="#revendiquer"
+          class="rj-hero-btn rj-hero-btn-secondary">
+          Profil déjà référencé ?
+        </a>
+
+      </div>
+
+      <div class="rj-hero-proof" aria-label="Principes du réseau artisan FIXEO">
+
+        <span class="rj-hero-proof-item">
+          <span class="rj-hero-proof-icon" aria-hidden="true">✓</span>
+          Inscription gratuite
+        </span>
+
+        <span class="rj-hero-proof-item">
+          <span class="rj-hero-proof-icon" aria-hidden="true">✓</span>
+          Profil professionnel
+        </span>
+
+        <span class="rj-hero-proof-item">
+          <span class="rj-hero-proof-icon" aria-hidden="true">✓</span>
+          Réseau multi-villes
+        </span>
+
+      </div>
+
     </div>
-    <div class="rj-hero-badge">
-      <span class="rj-hero-badge-dot"></span>
-      Réseau artisan Fixeo
+
+
+    <!-- Artisan operating system -->
+    <div class="rj-artisan-system rj-fade-in" aria-label="Aperçu du parcours professionnel FIXEO">
+
+      <div class="rj-artisan-system-inner">
+
+        <div class="rj-artisan-system-top">
+
+          <div class="rj-artisan-system-brand">
+            <span class="rj-artisan-system-eyebrow">FIXEO ARTISAN</span>
+            <span class="rj-artisan-system-title">Votre activité dans le réseau</span>
+          </div>
+
+          <span class="rj-artisan-status">Réseau actif</span>
+
+        </div>
+
+
+        <div class="rj-artisan-profile">
+
+          <div class="rj-artisan-profile-main">
+
+            <div class="rj-artisan-avatar" aria-hidden="true">🧰</div>
+
+            <div class="rj-artisan-profile-copy">
+              <strong>Identité professionnelle</strong>
+              <span>Métier · ville · informations utiles</span>
+            </div>
+
+          </div>
+
+          <div class="rj-artisan-profile-meta">
+            <span class="rj-artisan-meta">PROFIL</span>
+            <span class="rj-artisan-meta">ZONE</span>
+            <span class="rj-artisan-meta">ACTIVITÉ</span>
+          </div>
+
+        </div>
+
+
+        <div class="rj-artisan-flow">
+
+          <div class="rj-artisan-flow-row">
+            <span class="rj-artisan-flow-num">01</span>
+            <div class="rj-artisan-flow-copy">
+              <strong>Être identifiable</strong>
+              <span>Une présence professionnelle structurée</span>
+            </div>
+            <span class="rj-artisan-flow-state">PROFIL</span>
+          </div>
+
+          <div class="rj-artisan-flow-row">
+            <span class="rj-artisan-flow-num">02</span>
+            <div class="rj-artisan-flow-copy">
+              <strong>Être rapproché du bon besoin</strong>
+              <span>Métier, contexte et territoire</span>
+            </div>
+            <span class="rj-artisan-flow-state">MATCHING</span>
+          </div>
+
+          <div class="rj-artisan-flow-row">
+            <span class="rj-artisan-flow-num">03</span>
+            <div class="rj-artisan-flow-copy">
+              <strong>Recevoir une opportunité</strong>
+              <span>Une intervention correspondant à votre activité</span>
+            </div>
+            <span class="rj-artisan-flow-state">MISSION</span>
+          </div>
+
+          <div class="rj-artisan-flow-row">
+            <span class="rj-artisan-flow-num">04</span>
+            <div class="rj-artisan-flow-copy">
+              <strong>Construire votre historique</strong>
+              <span>Votre activité professionnelle évolue avec le réseau</span>
+            </div>
+            <span class="rj-artisan-flow-state">ACTIVITÉ</span>
+          </div>
+
+        </div>
+
+
+        <div class="rj-artisan-system-bottom">
+          <span>Une infrastructure pensée pour les professionnels de terrain.</span>
+          <strong>FIXEO · MAROC</strong>
+        </div>
+
+      </div>
+
     </div>
-    <!-- rafi-v2: FullBody_Color — decorative brand character, Phase 2 -->
-    <div style="display:flex;justify-content:center;margin:16px 0 8px">
-      <img class="rafi-img rafi-img--hero"
-           src="/rafi/RAFI_V2_FullBody_Color.png"
-           alt=""
-           loading="lazy"
-           decoding="async"
-           width="280" height="280">
-    </div>
-    <h1 id="rj-hero-title">
-      Développez votre activité<br>
-      <span class="rj-hl">avec Fixeo</span>
-    </h1>
-    <p>Recevez des demandes qualifiées, gagnez en visibilité et construisez votre réputation dans votre ville.</p>
-    <p style="font-size:.93rem;color:rgba(255,255,255,.55);margin:-16px 0 0;line-height:1.6">Des clients recherchent déjà votre service dans votre ville.</p>
-    <div class="rj-cta-row">
-      <a href="onboarding-artisan.html" class="rj-btn rj-btn-primary">🧰 Créer mon profil et recevoir des demandes</a>
-      <a href="#revendiquer" class="rj-btn rj-btn-outline">👤 Revendiquer mon profil</a>
-    </div>
-    <p class="rj-hero-trust">
-      <span>✓</span> Des artisans sont déjà actifs à Fès, Casablanca, Rabat…
-    </p>
+
   </div>
+
 </section>
 
 <!-- ════════════════════
