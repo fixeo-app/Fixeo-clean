@@ -1851,28 +1851,6 @@
   
 <!-- FOOTER: replaced by fixeo-footer-global.js injection (gf2) -->
 
-<script>
-/* pp2 — Annual savings visibility hook */
-(function() {
-  var _origSet = null;
-  function _hookSavings(mode) {
-    var proSav = document.getElementById('pro-saving');
-    var premSav = document.getElementById('premium-saving');
-    if (proSav) proSav.style.display = mode === 'annual' ? 'block' : 'none';
-    if (premSav) premSav.style.display = mode === 'annual' ? 'block' : 'none';
-  }
-  document.addEventListener('DOMContentLoaded', function() {
-    if (typeof setBilling === 'function') {
-      _origSet = setBilling;
-      window.setBilling = function(mode) {
-        _origSet(mode);
-        _hookSavings(mode);
-      };
-    }
-    _hookSavings('monthly');
-  });
-})();
-</script>
 <script src="js/fixeo-session-mobile.js"></script>
 <script src="js/fixeo-header-global.js"></script>
 <script src="js/i18n.js"></script>
