@@ -754,3 +754,155 @@ letter-spacing: 0.13em;
     margin-right: auto;
   }
 }
+
+/* ============================================================
+   FIXEO ENTERPRISE TEASER — OPERATIONS COCKPIT BASE
+   Shared visual language with entreprises.html
+   ============================================================ */
+
+#enterprise-teaser .fxe2-hero-visual {
+  position: relative;
+}
+
+#enterprise-teaser .fxe2-hero-dashboard {
+  background: var(--fxe2-bg-2);
+  border: 1px solid var(--fxe2-border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow:
+    var(--fxe2-shadow-lg),
+    0 0 60px rgba(72,100,255,0.07);
+  animation: fxe2-hero-float 6s ease-in-out infinite;
+}
+
+@keyframes fxe2-hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+#enterprise-teaser .fxe2-hd-topbar {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--fxe2-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.02);
+}
+
+#enterprise-teaser .fxe2-hd-dots {
+  display: flex;
+  gap: 5px;
+}
+
+#enterprise-teaser .fxe2-hd-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+#enterprise-teaser .fxe2-hd-dot-r {
+  background: #FF5F57;
+}
+
+#enterprise-teaser .fxe2-hd-dot-y {
+  background: #FFBD2E;
+}
+
+#enterprise-teaser .fxe2-hd-dot-g {
+  background: #28C840;
+}
+
+#enterprise-teaser .fxe2-hd-title {
+  margin-left: 4px;
+  color: var(--fxe2-text-3);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+#enterprise-teaser .fxe2-hd-body {
+  padding: 18px;
+}
+
+#enterprise-teaser .fxe2-hd-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  margin-bottom: 14px;
+}
+
+#enterprise-teaser .fxe2-hd-kpi {
+  padding: 10px;
+  border: 1px solid var(--fxe2-border);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+}
+
+#enterprise-teaser .fxe2-hd-kpi-label {
+  margin-bottom: 3px;
+  color: var(--fxe2-text-3);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+#enterprise-teaser .fxe2-hd-kpi-value {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+#enterprise-teaser .fxe2-hd-kpi-value.green {
+  color: var(--fxe2-green);
+}
+
+#enterprise-teaser .fxe2-hd-kpi-value.indigo {
+  color: var(--fxe2-indigo);
+}
+
+#enterprise-teaser .fxe2-hd-kpi-value.pink {
+  color: var(--fxe2-pink);
+}
+
+#enterprise-teaser .fxe2-hd-activity {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+#enterprise-teaser .fxe2-hd-activity-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border: 1px solid var(--fxe2-border);
+  border-radius: 7px;
+  background: rgba(255,255,255,0.03);
+  color: var(--fxe2-text-2);
+  font-size: 11px;
+}
+
+#enterprise-teaser .fxe2-hd-act-dot {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+#enterprise-teaser .fxe2-hd-act-dot.active {
+  background: var(--fxe2-green);
+  box-shadow: 0 0 6px var(--fxe2-green);
+}
+
+#enterprise-teaser .fxe2-hd-act-dot.pending {
+  background: var(--fxe2-amber);
+}
+
+#enterprise-teaser .fxe2-hd-act-dot.done {
+  background: var(--fxe2-indigo);
+}
