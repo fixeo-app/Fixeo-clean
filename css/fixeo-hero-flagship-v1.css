@@ -4063,13 +4063,21 @@
 
 /* ============================================================
    RAFI — SIGNATURE LIGHT / MOBILE
-   Large ambient breathing light without changing RAFI geometry
+   Explicit geometric centering for Safari mobile
    ============================================================ */
 
 @media (max-width: 640px) {
 
   .fxhf-root[data-fxhf-state="need"] .fxhf-rafi-halo {
-    inset: -72% !important;
+    inset: auto !important;
+
+    left: 50% !important;
+    top: 50% !important;
+
+    width: 244% !important;
+    height: 244% !important;
+
+    border-radius: 50% !important;
 
     background:
       radial-gradient(
@@ -4084,7 +4092,14 @@
 
     filter: blur(18px) !important;
 
-    transform-origin: center center;
+    transform-origin: center center !important;
+
+    animation:
+      fxhf-rafi-breathe-mobile
+      4.2s
+      cubic-bezier(0.45, 0, 0.55, 1)
+      infinite !important;
+
     pointer-events: none;
     z-index: 0;
   }
@@ -4092,5 +4107,31 @@
   .fxhf-root[data-fxhf-state="need"] .fxhf-rafi-core {
     position: relative;
     z-index: 2;
+  }
+}
+
+@keyframes fxhf-rafi-breathe-mobile {
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(0.90);
+    opacity: 0.64;
+  }
+
+  42% {
+    transform: translate(-50%, -50%) scale(1.16);
+    opacity: 0.96;
+  }
+
+  58% {
+    transform: translate(-50%, -50%) scale(1.12);
+    opacity: 0.90;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fxhf-root[data-fxhf-state="need"] .fxhf-rafi-halo {
+    animation: none !important;
+    transform: translate(-50%, -50%) scale(1) !important;
   }
 }
