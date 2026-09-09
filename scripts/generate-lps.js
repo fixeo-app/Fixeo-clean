@@ -1090,17 +1090,29 @@ function buildPage(svcKey, cityKey) {
 
     <hr class="fxlp-divider">
 
-    <!-- §§2 SITUATIONS -->
-    <section class="fxlp-section fxlp-section--tinted" aria-labelledby="fxlp-sit-title">
-      <div class="fxlp-wrap">
-        <span class="fxlp-section-label">BESOINS FRÉQUENTS</span>
-        <h2 id="fxlp-sit-title" class="fxlp-section-title">Pour quels besoins contacter ${esc(article + ' ' + profession)} à ${esc(city.label)} ?</h2>
-        <p class="fxlp-section-sub">${svc.section_sit_sub || 'Les prestations proposées dépendent du diagnostic et des compétences de l’artisan sélectionné.'}</p>
-        <ul class="fxlp-sit-grid" role="list">
-          ${situationsHtml}
-        </ul>
-      </div>
-    </section>
+  <!-- §§2 YOUR NEED — FIXEO LOCAL FLAGSHIP V2 -->
+<section class="fxlp-section fxlp-section--tinted" aria-labelledby="fxlp-sit-title">
+  <div class="fxlp-wrap">
+
+    <span class="fxlp-section-label">VOTRE BESOIN</span>
+
+    <h2 id="fxlp-sit-title" class="fxlp-section-title">
+      Quel est votre besoin ${esc(svc.howlocal_adj || svc.label_adj)} à ${esc(city.label)} ?
+    </h2>
+
+    <p class="fxlp-section-sub">
+      Voici quelques situations courantes.
+      Si votre besoin est différent, décrivez simplement ce qui se passe :
+      FIXEO vous aide à structurer les informations utiles avant la mise en relation.
+    </p>
+
+    <ul class="fxlp-sit-grid" role="list">
+      ${situationsHtml}
+    </ul>
+
+  </div>
+</section>
+   
 
     <hr class="fxlp-divider">
 
