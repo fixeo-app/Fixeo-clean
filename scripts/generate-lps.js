@@ -1006,6 +1006,15 @@ function buildPage(svcKey, cityKey) {
   ).join('\n\n          ');
 
   const relLinks = buildRelatedLinks(svcKey, cityKey, svc);
+   
+   const neighborhoodsHtml = String(city.neighborhoods || '')
+  .split(',')
+  .map(n => n.trim())
+  .filter(Boolean)
+  .map(n =>
+    '<span class="fxlp-chip fxlp-chip--city" role="listitem">📍 ' + esc(n) + '</span>'
+  )
+  .join('\n          ');
 
   const html = `<!DOCTYPE html>
 <html lang="fr">
@@ -1348,6 +1357,36 @@ function buildPage(svcKey, cityKey) {
           </div>
 
         </div>
+
+      </div>
+    </section>
+
+    <hr class="fxlp-divider">
+
+    <!-- §§7 LOCAL CONTEXT — FIXEO LOCAL FLAGSHIP V2 -->
+    <section class="fxlp-section" aria-labelledby="fxlp-local-title">
+      <div class="fxlp-wrap">
+
+        <span class="fxlp-section-label">VOTRE SECTEUR</span>
+
+        <h2 id="fxlp-local-title" class="fxlp-section-title">
+          Précisez votre quartier ou secteur à ${esc(city.label)}
+        </h2>
+
+        <p class="fxlp-section-sub">
+          La localisation aide à contextualiser votre demande.
+          Vous pouvez indiquer votre quartier, un repère ou partager votre localisation
+          lorsque cela est utile à l’organisation de l’intervention.
+        </p>
+
+        <div class="fxlp-chips" role="list" aria-label="Secteurs de ${esc(city.label)}">
+          ${neighborhoodsHtml}
+        </div>
+
+        <p class="fxlp-note-price">
+          Ces secteurs sont présentés à titre de repère local.
+          La disponibilité d’un professionnel est confirmée séparément.
+        </p>
 
       </div>
     </section>
