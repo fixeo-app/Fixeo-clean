@@ -860,13 +860,12 @@ function buildPage(svcKey, cityKey) {
   const filename     = `${routeKey}-${cityKey}.html`;
   const canonicalUrl = `https://www.fixeo.ma/${routeKey}/${cityKey}`;
 
-  const h1        = `${esc(svc.h1_prefix + ' ' + city.label)}`;
   const title     = `${svc.h1_prefix} ${city.label} | ${svc.title_suffix}`;
   const metaDesc  = buildLocalMetaDesc(svc, city);
   const faqItems  = buildLocalFlagshipFAQ(svc, city);
   const profession  = svc.profession;
   const professionU = profession.charAt(0).toUpperCase() + profession.slice(1);
-  const profPl    = svc.profession_pl;
+  
   const svcCat    = svc.supabase_category;
 
   const breadcrumbLD = {
