@@ -706,6 +706,19 @@ function slugify(s) {
     .replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').trim();
 }
 
+function buildLocalMetaDesc(svc, city) {
+  const focus = (svc.sub_services || [])
+    .slice(0, 2)
+    .join(', ');
+
+  return (
+    ${svc.label} à ${city.label} via FIXEO +
+    (focus ? ` : ${focus}. ` : '. ') +
+    Profils référencés. Tarif à confirmer avec le professionnel avant intervention.
+  );
+}
+
+
 // Blog articles connexes by service
 const BLOG_LINKS = {
   plombier: [
@@ -876,7 +889,7 @@ function buildPage(svcKey, cityKey) {
 
   const h1        = `${esc(svc.h1_prefix + ' ' + city.label)}`;
   const title     = `${svc.h1_prefix} ${city.label} | ${svc.title_suffix}`;
-  const metaDesc  = svc.meta_desc(city.label);
+  const metaDesc  = buildLocalMetaDesc(svc, city);
   const faqItems  = svc.faq_flagship(city);
   const profession  = svc.profession;
   const professionU = profession.charAt(0).toUpperCase() + profession.slice(1);
@@ -1022,7 +1035,7 @@ function buildPage(svcKey, cityKey) {
             ${esc((svc.eyebrow_label || svc.label).toUpperCase())} · ${esc(city.label.toUpperCase())} · 2026
           </div>
           <h1 id="fxlp-h1" class="fxlp-h1">${esc(svc.h1_prefix)}&nbsp;<em class="fxlp-h1-em">${esc(city.label)}</em></h1>
-          <p class="fxlp-lead">${esc(svc.meta_desc(city.label))}</p>
+          <p class="fxlp-lead">${esc(metaDesc)}</p>
           <div class="fxlp-chips" role="list">
             <span class="fxlp-chip fxlp-chip--city" role="listitem">📍 ${esc(city.label)}</span>
             <span class="fxlp-chip fxlp-chip--svc"  role="listitem">${svc.icon} ${esc(svc.chip_label || svc.label)}</span>
