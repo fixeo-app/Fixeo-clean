@@ -969,3 +969,251 @@ details.fxlp-faq-item[open] .fxlp-faq-chevron {
     justify-content: center;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   LOCAL FLAGSHIP — RAFI PREMIUM V2
+   Shared Métier × Ville experience
+══════════════════════════════════════════════════════════════ */
+
+.seo-service-page #fxlp-how-local-title {
+  max-width: 720px;
+}
+
+.seo-service-page
+section[aria-labelledby="fxlp-how-local-title"] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  padding-top: 42px;
+  padding-bottom: 46px;
+
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(77,108,255,.075) 0%,
+      rgba(77,108,255,0) 32%
+    ),
+    radial-gradient(
+      circle at 88% 75%,
+      rgba(138,63,252,.055) 0%,
+      rgba(138,63,252,0) 28%
+    );
+}
+
+.seo-service-page
+section[aria-labelledby="fxlp-how-local-title"]
+.fxlp-section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  width: fit-content;
+  margin-bottom: 10px;
+
+  color: #9caeff;
+}
+
+.seo-service-page
+section[aria-labelledby="fxlp-how-local-title"]
+.fxlp-section-label::before {
+  content: "✦";
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 22px;
+  height: 22px;
+
+  border: 1px solid rgba(124,146,255,.22);
+  border-radius: 50%;
+
+  background: rgba(91,116,255,.08);
+
+  color: #b8c4ff;
+  font-size: .67rem;
+
+  box-shadow:
+    0 0 0 5px rgba(91,116,255,.025);
+}
+
+.seo-service-page
+section[aria-labelledby="fxlp-how-local-title"]
+.fxlp-section-title {
+  max-width: 700px;
+
+  margin-bottom: 8px;
+
+  font-size: clamp(1.38rem, 2.6vw, 1.85rem);
+  line-height: 1.18;
+}
+
+.seo-service-page
+section[aria-labelledby="fxlp-how-local-title"]
+.fxlp-section-sub {
+  max-width: 720px;
+
+  margin-bottom: 26px;
+
+  color: #929fb5;
+  line-height: 1.65;
+}
+
+.seo-service-page
+section[aria-labelledby="fxlp-how-local-title"]
+.fxlp-expl-grid {
+  position: relative;
+
+  gap: 14px;
+}
+
+.seo-service-page
+section[aria-labelledby="fxlp-how-local-title"]
+.fxlp-expl-item {
+  position: relative;
+  overflow: hidden;
+
+  min-height: 180px;
+  padding: 22px 20px 21px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(20,28,46,.90) 0%,
+      rgba(13,19,32,.94) 100%
+    );
+
+  border: 1px solid rgba(129,148,255,.11);
+  border-radius: 18px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.025);
+
+  transition:
+    transform .22s var(--fxlp-spring),
+    border-color .22s,
+    background .22s;
+}
+
+.seo-service-page
+section[aria-labelledby="fxlp-how-local-title"]
+.fxlp-expl-item::before {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  width: 2px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(112,137,255,.85),
+      rgba(138,63,252,.25)
+    );
+
+  opacity: .65;
+}
+
+.seo-service-page
+section[aria-labelledby="fxlp-how-local-title"]
+.fxlp-expl-item:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(129,148,255,.22);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(22,31,52,.94) 0%,
+      rgba(14,20,35,.97) 100%
+    );
+}
+
+.seo-service-page
+section[aria-labelledby="fxlp-how-local-title"]
+.fxlp-expl-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  border-radius: 11px;
+
+  background: rgba(112,137,255,.08);
+  border: 1px solid rgba(112,137,255,.13);
+
+  color: #c2ccff;
+
+  font-size: 1rem;
+}
+
+.seo-service-page
+section[aria-labelledby="fxlp-how-local-title"]
+.fxlp-expl-text {
+  color: #909db2;
+
+  font-size: .84rem;
+  line-height: 1.63;
+}
+
+.seo-service-page
+section[aria-labelledby="fxlp-how-local-title"]
+.fxlp-expl-text strong {
+  color: #edf1fa;
+
+  font-size: .91rem;
+  font-weight: 750;
+}
+
+@media (min-width: 640px) {
+  .seo-service-page
+  section[aria-labelledby="fxlp-how-local-title"]
+  .fxlp-expl-grid::before {
+    content: "";
+
+    position: absolute;
+    z-index: 0;
+
+    left: 12%;
+    right: 12%;
+    top: 39px;
+
+    height: 1px;
+
+    background:
+      linear-gradient(
+        90deg,
+        transparent,
+        rgba(112,137,255,.17) 18%,
+        rgba(112,137,255,.17) 82%,
+        transparent
+      );
+  }
+
+  .seo-service-page
+  section[aria-labelledby="fxlp-how-local-title"]
+  .fxlp-expl-item {
+    z-index: 1;
+  }
+}
+
+@media (max-width: 639px) {
+  .seo-service-page
+  section[aria-labelledby="fxlp-how-local-title"] {
+    padding-top: 34px;
+    padding-bottom: 38px;
+  }
+
+  .seo-service-page
+  section[aria-labelledby="fxlp-how-local-title"]
+  .fxlp-expl-item {
+    min-height: 0;
+    padding: 18px 17px;
+  }
+}
