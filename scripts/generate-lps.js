@@ -281,27 +281,22 @@ const SERVICES = {
     situations: [
       { icon: '\uD83D\uDCA7', label: "Fuite d'eau" },
       { icon: '\uD83D\uDEBF', label: "Robinet ou chasse d'eau" },
-      { icon: '\uD83D\uDD29', label: 'Canalisation boucHée' },
+      { icon: '\uD83D\uDD29', label: 'Canalisation bouchée' },
       { icon: '\uD83C\uDFE0', label: 'Installation sanitaire' },
       { icon: '\uD83D\uDD25', label: 'Chauffe-eau' },
       { icon: '\uD83D\uDD0D', label: 'Recherche et diagnostic de panne' },
     ],
     faq_flagship: (city) => [
-      { q: 'Comment trouver un plombier à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans plombiers référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
-      { q: 'Quels types de problèmes de plomberie peuvent être pris en charge ?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour des fuites d'eau, des robinets ou chasses d'eau défectueux, des canalisations boucHées, des installations sanitaires, des chauffe-eau et des diagnostics de panne. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
-      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
-      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
-      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
+      { q: 'Comment trouver un plombier à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans plombiers référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
+      { q: 'Quels types de problèmes de plomberie peuvent être pris en charge ?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour des fuites d'eau, des robinets ou chasses d'eau défectueux, des canalisations bouchées, des installations sanitaires, des chauffe-eau et des diagnostics de panne. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
+      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
+      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
+      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
     ],
     h1_prefix: 'Plombier à',
     title_suffix: 'Dépannage, fuite et urgence | Fixeo',
-    meta_desc: (city) => `Trouvez rapidement un plombier à ${city} avec Fixeo. Fuite d'eau, débouchage, chauffe-eau, robinetterie, installation sanitaire et intervention urgente.`,
-    intro_template: (c) => `Votre recherche d'un plombier à ${c.label} s'arrête ici. Fixeo vous met en relation avec des artisans locaux qualifiés pour tout besoin en plomberie : fuite d'eau, débouchage de canalisation, installation sanitaire, remplacement de chauffe-eau ou dépannage d'urgence. Avec ${c.population ? c.population + ' d\'habitants, ' : ''}${c.label} concentre un parc immobilier important — ${c.demand}`,
-    faq: (c) => [
-      { q: `Quel est le tarif d'un plombier à ${c.label} ?`, a: `Le coût d'une intervention plomberie à ${c.label} varie entre ${c.pricing_low} et ${c.pricing_high} DH selon la nature du problème (fuite, débouchage, installation) et le moment de l'intervention (urgence de nuit ou week-end). ${c.pricing_note}` },
-      { q: `Comment trouver un plombier disponible rapidement à ${c.label} ?`, a: `Via Fixeo, signalez votre besoin en quelques secondes. Notre système identifie les plombiers disponibles à ${c.label} et vous met en relation directe. Pour les urgences — fuite visible, coupure d'eau — la mise en relation est prioritaire.` },
-      { q: `Un plombier Fixeo intervient-il dans toute la ville ${c.label_de} ?`, a: `Oui. Les artisans Fixeo couvrent l'ensemble ${c.label_de}, notamment les quartiers de ${c.neighborhoods}. En cas d'urgence, le plombier le plus proche est contacté en priorité.` }
-    ],
+    meta_desc: (city) => Trouvez rapidement un plombier à ${city} avec Fixeo. Fuite d'eau, débouchage, chauffe-eau, robinetterie, installation sanitaire et intervention urgente.,
+    intro_template: (c) => Votre recherche d'un plombier à ${c.label} s'arrête ici. Fixeo vous met en relation avec des artisans locaux qualifiés pour tout besoin en plomberie : fuite d'eau, débouchage de canalisation, installation sanitaire, remplacement de chauffe-eau ou dépannage d'urgence. Avec ${c.population ? c.population + ' d\'habitants, ' : ''}${c.label} concentre un parc immobilier important — ${c.demand},
     urgency_services: ['Fuite d\'eau visible', 'Canalisation bouchée', 'Chauffe-eau en panne', 'Inondation sous évier', 'Coupure d\'eau générale'],
     related_services: ['electricien', 'serrurier'],
     pricing_tiers: [
@@ -311,6 +306,7 @@ const SERVICES = {
       { label: 'Installation sanitaire complète', range: '500–1 500 DH' }
     ]
   },
+
   electricien: {
     label: 'Électricien', label_adj: 'électricité', canonicalRouteKey: 'electricien',
     icon: '⚡', service_schema: 'Electrical',
@@ -326,21 +322,16 @@ const SERVICES = {
       { icon: '\uD83D\uDD0D', label: 'Diagnostic et mise aux normes' },
     ],
     faq_flagship: (city) => [
-      { q: 'Comment trouver un électricien à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans électriciens référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
-      { q: 'Quels types de travaux électriques peuvent être pris en charge ?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour des pannes électriques, des prises ou interrupteurs, de l'éclairage, des tableaux électriques et du câblage. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
-      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
-      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
-      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
+      { q: 'Comment trouver un électricien à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans électriciens référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
+      { q: 'Quels types de travaux électriques peuvent être pris en charge ?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour des pannes électriques, des prises ou interrupteurs, de l'éclairage, des tableaux électriques et du câblage. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
+      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
+      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
+      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
     ],
     h1_prefix: 'Électricien à',
     title_suffix: 'Dépannage, installation et urgence | Fixeo',
-    meta_desc: (city) => `Trouvez un électricien à ${city} avec Fixeo. Panne électrique, disjoncteur, installation, mise aux normes et intervention urgente.`,
-    intro_template: (c) => `Trouver un électricien qualifié à ${c.label} en cas de panne ou pour des travaux d'installation est maintenant simple avec Fixeo. Notre réseau d'artisans locaux couvre ${c.label} et ses quartiers — ${c.neighborhoods}. ${c.demand} Les pannes électriques les plus fréquentes (disjoncteur déclenché, court-circuit, tableau défaillant) nécessitent une intervention rapide pour éviter tout risque.`,
-    faq: (c) => [
-      { q: `Quel est le tarif d'un électricien à ${c.label} ?`, a: `Le tarif d'un électricien à ${c.label} varie entre ${c.pricing_low} et ${c.pricing_high} DH selon la nature des travaux (dépannage, installation, mise aux normes). ${c.pricing_note}` },
-      { q: `Quelle est la durée d'intervention d'un électricien à ${c.label} ?`, a: `Pour un dépannage courant (disjoncteur, prise défaillante), l'intervention dure généralement 30 minutes à 1 heure. Une installation complète ou mise aux normes peut prendre une demi-journée. Via Fixeo, l'artisan vous précise la durée lors de la prise de contact.` },
-      { q: `Est-il possible d'appeler un électricien en urgence à ${c.label} ?`, a: `Oui. Via Fixeo, les demandes urgentes sont signalées comme prioritaires. Un électricien disponible dans votre secteur ${c.label_de} est contacté immédiatement. ${c.emergency}` }
-    ],
+    meta_desc: (city) => Trouvez un électricien à ${city} avec Fixeo. Panne électrique, disjoncteur, installation, mise aux normes et intervention urgente.,
+    intro_template: (c) => Trouver un électricien qualifié à ${c.label} en cas de panne ou pour des travaux d'installation est maintenant simple avec Fixeo. Notre réseau d'artisans locaux couvre ${c.label} et ses quartiers — ${c.neighborhoods}. ${c.demand} Les pannes électriques les plus fréquentes (disjoncteur déclenché, court-circuit, tableau défaillant) nécessitent une intervention rapide pour éviter tout risque.,
     urgency_services: ['Panne électrique totale', 'Disjoncteur déclenché', 'Court-circuit', 'Câble sectionné', 'Prise qui brûle'],
     related_services: ['plombier', 'climatisation'],
     pricing_tiers: [
@@ -350,6 +341,7 @@ const SERVICES = {
       { label: 'Mise aux normes complète', range: '800–2 500 DH' }
     ]
   },
+
   serrurier: {
     label: 'Serrurier', label_adj: 'serrurerie', canonicalRouteKey: 'serrurier',
     icon: '🔑', service_schema: 'LocksmithService',
@@ -365,21 +357,16 @@ const SERVICES = {
       { icon: '\uD83D\uDD0D', label: 'Diagnostic et conseil sécurité' },
     ],
     faq_flagship: (city) => [
-      { q: 'Comment trouver un serrurier à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans serruriers référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
-      { q: 'Quels types de problèmes de serrurerie peuvent être pris en charge ?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour des portes claquées ou bloquées, des remplacements de serrure, des clés cassées ou perdues, des sécurisations après effraction et des diagnostics. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
-      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
-      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
-      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
+      { q: 'Comment trouver un serrurier à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans serruriers référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
+      { q: 'Quels types de problèmes de serrurerie peuvent être pris en charge ?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour des portes claquées ou bloquées, des remplacements de serrure, des clés cassées ou perdues, des sécurisations après effraction et des diagnostics. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
+      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
+      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
+      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
     ],
     h1_prefix: 'Serrurier à',
     title_suffix: 'Urgence, ouverture de porte | Fixeo',
-    meta_desc: (city) => `Besoin d'un serrurier à ${city} ? Fixeo vous met en contact rapidement pour ouverture de porte, remplacement de serrure ou urgence.`,
-    intro_template: (c) => `Porte claquée, serrure bloquée ou effraction — un serrurier disponible à ${c.label} est accessible via Fixeo en quelques secondes. Notre réseau couvre l'ensemble des quartiers ${c.label_de} — ${c.neighborhoods}. ${c.context} Les urgences serrurerie (porte impossible à ouvrir, clé cassée dans la serrure) sont traitées en priorité.`,
-    faq: (c) => [
-      { q: `Combien coûte un serrurier en urgence à ${c.label} ?`, a: `Le tarif d'un serrurier à ${c.label} pour une ouverture de porte d'urgence varie entre ${c.pricing_low} et ${Math.round(parseInt(c.pricing_high) * 1.2)} DH selon le type de serrure et l'heure d'intervention. ${c.pricing_note}` },
-      { q: `Un serrurier Fixeo peut-il intervenir la nuit à ${c.label} ?`, a: `Les demandes urgentes sont signalées comme prioritaires sur Fixeo. Un serrurier disponible à ${c.label} est contacté immédiatement, y compris en soirée. Les tarifs d'intervention de nuit ou le week-end peuvent être légèrement plus élevés.` },
-      { q: `Comment éviter d'appeler un serrurier trop cher à ${c.label} ?`, a: `Avec Fixeo, les artisans affichent leurs tarifs indicatifs et sont évalués par les clients précédents. Évitez les prestataires trouvés dans des annuaires non vérifiés — préférez les artisans Fixeo dont les profils sont vérifiés.` }
-    ],
+    meta_desc: (city) => Besoin d'un serrurier à ${city} ? Fixeo vous met en contact rapidement pour ouverture de porte, remplacement de serrure ou urgence.,
+    intro_template: (c) => Porte claquée, serrure bloquée ou effraction — un serrurier disponible à ${c.label} est accessible via Fixeo en quelques secondes. Notre réseau couvre l'ensemble des quartiers ${c.label_de} — ${c.neighborhoods}. ${c.context} Les urgences serrurerie (porte impossible à ouvrir, clé cassée dans la serrure) sont traitées en priorité.,
     urgency_services: ['Porte claquée', 'Clé perdue ou cassée', 'Serrure bloquée', 'Sécurisation après effraction', 'Cylindre changement urgent'],
     related_services: ['electricien', 'plombier'],
     pricing_tiers: [
@@ -389,6 +376,7 @@ const SERVICES = {
       { label: 'Porte blindée installation', range: '1 200–3 500 DH' }
     ]
   },
+
   climatisation: {
     label: 'Climatisation', label_adj: 'climatisation', canonicalRouteKey: 'climatisation',
     icon: '❄️', service_schema: 'HVACBusiness',
@@ -404,21 +392,16 @@ const SERVICES = {
       { icon: '\uD83D\uDD0D', label: 'Diagnostic de panne' },
     ],
     faq_flagship: (city) => [
-      { q: 'Comment trouver un technicien climatisation à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans spécialisés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
-      { q: "Quels types d'interventions climatisation peuvent être pris en charge ?", a: "Les artisans référencés sur FIXEO peuvent intervenir pour des pannes, des installations, le nettoyage, la recharge de gaz réfrigérant, les bruits anormaux et les diagnostics. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
-      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
-      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
-      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
+      { q: 'Comment trouver un technicien climatisation à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans spécialisés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
+      { q: "Quels types d'interventions climatisation peuvent être pris en charge ?", a: "Les artisans référencés sur FIXEO peuvent intervenir pour des pannes, des installations, le nettoyage, la recharge de gaz réfrigérant, les bruits anormaux et les diagnostics. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
+      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
+      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
+      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
     ],
     h1_prefix: 'Technicien Climatisation à',
     title_suffix: 'Installation, entretien, panne | Fixeo',
-    meta_desc: (city) => `Trouvez un technicien en climatisation à ${city} avec Fixeo. Installation, entretien, recharge gaz, réparation et dépannage rapide.`,
-    intro_template: (c) => `L'installation ou l'entretien de votre climatiseur à ${c.label} demande un technicien qualifié. Fixeo vous connecte avec des spécialistes locaux pour tout type d'intervention : pose de split, entretien annuel, recharge en gaz réfrigérant ou réparation de panne. ${c.context} ${c.demand}`,
-    faq: (c) => [
-      { q: `Quel est le tarif d'installation d'une climatisation à ${c.label} ?`, a: `L'installation d'un climatiseur (split mural) à ${c.label} coûte entre ${Math.round(parseInt(c.pricing_low) * 1.2)} et ${Math.round(parseInt(c.pricing_high) * 1.5)} DH selon la puissance, la marque et les contraintes de l'installation (distance unités, passages de câbles). ${c.pricing_note}` },
-      { q: `À quelle fréquence faut-il entretenir sa climatisation à ${c.label} ?`, a: `Un entretien annuel est fortement recommandé avant la saison chaude (avril-mai). Il comprend le nettoyage des filtres, la vérification du niveau de gaz et le contrôle général du système. Un technicien Fixeo peut effectuer cet entretien à domicile à ${c.label}.` },
-      { q: `Mon climatiseur ne refroidit plus à ${c.label} — que faire ?`, a: `Un refroidissement insuffisant est souvent signe d'une perte de gaz réfrigérant ou d'un filtre encrassé. Via Fixeo, un technicien disponible à ${c.label} diagnostique et répare votre appareil. ${c.emergency}` }
-    ],
+    meta_desc: (city) => Trouvez un technicien en climatisation à ${city} avec Fixeo. Installation, entretien, recharge gaz, réparation et dépannage rapide.,
+    intro_template: (c) => L'installation ou l'entretien de votre climatiseur à ${c.label} demande un technicien qualifié. Fixeo vous connecte avec des spécialistes locaux pour tout type d'intervention : pose de split, entretien annuel, recharge en gaz réfrigérant ou réparation de panne. ${c.context} ${c.demand},
     urgency_services: ['Climatiseur en panne', 'Plus de refroidissement', 'Fuite liquide réfrigérant', 'Bruit anormal', 'Télécommande ne répond plus'],
     related_services: ['electricien', 'plombier'],
     pricing_tiers: [
@@ -428,6 +411,7 @@ const SERVICES = {
       { label: 'Dépannage panne électronique', range: '250–700 DH' }
     ]
   },
+
   peintre: {
     label: 'Peintre', label_adj: 'peinture',
     icon: '🎨', service_schema: 'ProfessionalService',
@@ -464,13 +448,8 @@ const SERVICES = {
     ],
     h1_prefix: 'Peintre à',
     title_suffix: 'Travaux intérieurs, finitions | Fixeo',
-    meta_desc: (city) => `Trouvez un peintre à ${city} avec Fixeo. Peinture intérieure, extérieure, préparation des murs, enduit ou rénovation. Tarif confirmé avant intervention.`,
-    intro_template: (c) => `Décrivez votre projet de peinture à ${c.label}. FIXEO enregistre votre demande et recherche une solution correspondant à votre secteur. Le tarif définitif est confirmé avec l'artisan avant l'intervention.`,
-    faq: (c) => [
-      { q: `Quel est le tarif d'un peintre à ${c.label} ?`, a: `Le tarif d'un peintre à ${c.label} varie selon la surface, la préparation nécessaire et le type de peinture. Le tarif définitif est confirmé avec l'artisan avant le début des travaux. ${c.pricing_note}` },
-      { q: `Comment trouver un peintre à ${c.label} ?`, a: `Via Fixeo, décrivez votre besoin en quelques secondes. Votre demande est enregistrée et transmise aux artisans référencés à ${c.label}.` },
-      { q: `Un peintre Fixeo intervient-il dans toute la ville ${c.label_de} ?`, a: `Les artisans référencés sur FIXEO couvrent l'ensemble ${c.label_de}, notamment les quartiers de ${c.neighborhoods}.` }
-    ],
+    meta_desc: (city) => Trouvez un peintre à ${city} avec Fixeo. Peinture intérieure, extérieure, préparation des murs, enduit ou rénovation. Tarif confirmé avant intervention.,
+    intro_template: (c) => Décrivez votre projet de peinture à ${c.label}. FIXEO enregistre votre demande et recherche une solution correspondant à votre secteur. Le tarif définitif est confirmé avec l'artisan avant l'intervention.,
     urgency_services: ['Remise en état rapide', 'Réparation dégât des eaux (peinture)', 'Finitions avant emménagement', 'Ravalement façade urgent'],
     related_services: ['serrurier'],
     prix_explorer: { slug: 'peinture', icon: '💰', title_prefix: 'Prix peinture à' },
@@ -481,6 +460,7 @@ const SERVICES = {
       { label: 'Peinture façade extérieure', range: '35–80 DH/m²' }
     ]
   },
+
   menuisier: {
     label: 'Menuisier', label_adj: 'menuiserie',
     icon: '🪵', service_schema: 'HomeAndConstructionBusiness',
@@ -510,13 +490,8 @@ const SERVICES = {
     ],
     h1_prefix: 'Menuisier à',
     title_suffix: 'Portes, meubles sur mesure, boiseries | Fixeo',
-    meta_desc: (city) => `Trouvez un menuisier à ${city} avec Fixeo. Portes, fenêtres, meubles sur mesure, boiseries et travaux de menuiserie par des artisans locaux référencés.`,
-    intro_template: (c) => `Trouvez un menuisier à ${c.label} via FIXEO. Portes, fenêtres, meubles sur mesure, boiseries et travaux de menuiserie — notre réseau d'artisans référencés couvre l'ensemble de ${c.label} et ses quartiers : ${c.neighborhoods}. Le tarif définitif est confirmé avec l'artisan avant le début des travaux.`,
-    faq: (c) => [
-      { q: `Quel est le tarif d'un menuisier à ${c.label} ?`, a: `Le tarif d'un menuisier à ${c.label} varie selon la nature des travaux (portes, meubles sur mesure, boiseries). ${c.pricing_note}` },
-      { q: `Comment trouver un menuisier disponible à ${c.label} ?`, a: `Via Fixeo, décrivez votre besoin en quelques secondes. Notre système identifie les menuisiers référencés à ${c.label} et vous met en relation directe.` },
-      { q: `Un menuisier Fixeo intervient-il dans toute la ville ${c.label_de} ?`, a: `Les artisans Fixeo couvrent l'ensemble ${c.label_de}, notamment les quartiers de ${c.neighborhoods}.` }
-    ],
+    meta_desc: (city) => Trouvez un menuisier à ${city} avec Fixeo. Portes, fenêtres, meubles sur mesure, boiseries et travaux de menuiserie par des artisans locaux référencés.,
+    intro_template: (c) => Trouvez un menuisier à ${c.label} via FIXEO. Portes, fenêtres, meubles sur mesure, boiseries et travaux de menuiserie — notre réseau d'artisans référencés couvre l'ensemble de ${c.label} et ses quartiers : ${c.neighborhoods}. Le tarif définitif est confirmé avec l'artisan avant le début des travaux.,
     urgency_services: ['Réparation porte endommagée', 'Remplacement vitre cassée', 'Finitions avant emménagement', 'Remise en état urgente'],
     related_services: ['serrurier', 'electricien'],
     pricing_tiers: [
@@ -526,6 +501,7 @@ const SERVICES = {
       { label: 'Boiseries et habillage mural', range: '200–600 DH/m²' }
     ]
   },
+
   macon: {
     label: 'Maçon', label_adj: 'maçonnerie',
     icon: '🧱', service_schema: 'HomeAndConstructionBusiness',
@@ -564,13 +540,8 @@ const SERVICES = {
     ],
     h1_prefix: 'Maçon à',
     title_suffix: 'Maçonnerie, ravalement, carrelage | Fixeo',
-    meta_desc: (city) => `Trouvez un maçon à ${city} avec Fixeo. Maçonnerie générale, ravalement de façade, carrelage, chape et travaux de gros œuvre par des artisans locaux référencés.`,
-    intro_template: (c) => `Décrivez votre projet de maçonnerie à ${c.label}. FIXEO enregistre votre demande et recherche une solution correspondant à votre secteur. Le tarif définitif est confirmé avec l'artisan avant l'intervention.`,
-    faq: (c) => [
-      { q: `Quel est le tarif d'un maçon à ${c.label} ?`, a: `Le tarif d'un maçon à ${c.label} varie selon la nature et le volume des travaux (maçonnerie, ravalement, carrelage). Le tarif définitif est confirmé avec l'artisan avant le début des travaux. ${c.pricing_note}` },
-      { q: `Comment trouver un maçon à ${c.label} ?`, a: `Via Fixeo, décrivez votre projet en quelques secondes. Votre demande est enregistrée et transmise aux artisans référencés à ${c.label}.` },
-      { q: `Un maçon Fixeo intervient-il dans toute la ville ${c.label_de} ?`, a: `Les artisans référencés sur FIXEO couvrent l'ensemble ${c.label_de}, notamment les quartiers de ${c.neighborhoods}.` }
-    ],
+    meta_desc: (city) => Trouvez un maçon à ${city} avec Fixeo. Maçonnerie générale, ravalement de façade, carrelage, chape et travaux de gros œuvre par des artisans locaux référencés.,
+    intro_template: (c) => Décrivez votre projet de maçonnerie à ${c.label}. FIXEO enregistre votre demande et recherche une solution correspondant à votre secteur. Le tarif définitif est confirmé avec l'artisan avant l'intervention.,
     urgency_services: ['Réparation mur fissuré', 'Reprise de fuite en sous-œuvre', 'Consolidation urgente', 'Remise en état après sinistre'],
     related_services: ['peintre', 'menuisier'],
     pricing_tiers: [
@@ -580,6 +551,7 @@ const SERVICES = {
       { label: 'Chape ou dallage (au m²)', range: '80–200 DH/m²' }
     ]
   },
+
   nettoyage: {
     label: 'Service de nettoyage', label_adj: 'de nettoyage',
     icon: '🧹', service_schema: 'HomeAndConstructionBusiness',
@@ -601,7 +573,7 @@ const SERVICES = {
     expl_card2: 'FIXEO enregistre votre demande et la transmet aux prestataires référencés correspondant à votre secteur à ${city}.',
     expl_card3: 'Un prestataire vous contacte et confirme le tarif définitif et le créneau avant de commencer. Paiement après intervention.',
     section_sit_sub: "Les prestations proposées dépendent du type de lieu, de sa surface et des besoins précisés au prestataire sélectionné.",
-    cta_eyebrow: "BESOIN D’UN PRESTATAIRE ?",
+    cta_eyebrow: "BESOIN D’UN PRESTATAIRE ?",
     cta_lead: "Votre ville et le service sont déjà sélectionnés. Décrivez votre besoin — c’est tout.",
     chip_label: 'Nettoyage',
     eyebrow_label: 'Nettoyage',
@@ -612,14 +584,14 @@ const SERVICES = {
     note_price_agent: 'Le tarif définitif est confirmé avec le prestataire avant l’intervention.',
     h1_prefix: 'Service de nettoyage à',
     title_suffix: 'Nettoyage maison, bureaux, après travaux | Fixeo',
-    meta_desc: (city) => `Trouvez un service de nettoyage à ${city} avec Fixeo. Maison, appartement, bureaux, locaux et nettoyage après travaux. Tarif définitif confirmé avec le prestataire avant l’intervention.`,
-    intro_template: (c) => `Décrivez votre besoin de nettoyage à ${c.label}. FIXEO enregistre votre demande et recherche une solution correspondant à votre secteur. Le tarif définitif est confirmé avec le prestataire avant l’intervention.`,
+    meta_desc: (city) => Trouvez un service de nettoyage à ${city} avec Fixeo. Maison, appartement, bureaux, locaux et nettoyage après travaux. Tarif définitif confirmé avec le prestataire avant l’intervention.,
+    intro_template: (c) => Décrivez votre besoin de nettoyage à ${c.label}. FIXEO enregistre votre demande et recherche une solution correspondant à votre secteur. Le tarif définitif est confirmé avec le prestataire avant l’intervention.,
     faq_flagship: (city) => [
-      { q: 'Comment demander un service de nettoyage à ' + city.label + ' ?', a: "Décrivez votre besoin sur FIXEO. Votre demande est enregistrée et transmise aux prestataires référencés correspondant à votre secteur à " + city.label + ". Le prestataire vous contacte et confirme le tarif définitif avant de commencer." },
-      { q: 'Quels types de nettoyage peut-on demander ?', a: "Les prestataires référencés sur FIXEO peuvent intervenir pour le nettoyage de maisons et appartements, de bureaux et locaux commerciaux, le nettoyage après travaux, le nettoyage après déménagement et le nettoyage de vitres et surfaces. Les prestations dépendent du type de lieu et des besoins précisés au prestataire sélectionné." },
-      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après analyse de votre besoin, le prestataire vous communique le tarif définitif avant de commencer. Vous n’êtes pas obligé d’accepter. En cas d’accord, le paiement s’effectue après la prestation." },
-      { q: 'Les produits et le matériel sont-ils inclus ?', a: "L’inclusion des produits et du matériel dépend du prestataire sélectionné. Ce point doit être confirmé avec le prestataire avant le début de la prestation." },
-      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s’effectue après la fin de la prestation, jamais en avance complète. Aucun paiement anticipé n’est demandé." },
+      { q: 'Comment demander un service de nettoyage à ' + city.label + ' ?', a: "Décrivez votre besoin sur FIXEO. Votre demande est enregistrée et transmise aux prestataires référencés correspondant à votre secteur à " + city.label + ". Le prestataire vous contacte et confirme le tarif définitif avant de commencer." },
+      { q: 'Quels types de nettoyage peut-on demander ?', a: "Les prestataires référencés sur FIXEO peuvent intervenir pour le nettoyage de maisons et appartements, de bureaux et locaux commerciaux, le nettoyage après travaux, le nettoyage après déménagement et le nettoyage de vitres et surfaces. Les prestations dépendent du type de lieu et des besoins précisés au prestataire sélectionné." },
+      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après analyse de votre besoin, le prestataire vous communique le tarif définitif avant de commencer. Vous n’êtes pas obligé d’accepter. En cas d’accord, le paiement s’effectue après la prestation." },
+      { q: 'Les produits et le matériel sont-ils inclus ?', a: "L’inclusion des produits et du matériel dépend du prestataire sélectionné. Ce point doit être confirmé avec le prestataire avant le début de la prestation." },
+      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s’effectue après la fin de la prestation, jamais en avance complète. Aucun paiement anticipé n’est demandé." },
     ],
     situations: [
       { icon: '🏠', label: 'Maison ou appartement' },
@@ -628,11 +600,6 @@ const SERVICES = {
       { icon: '📦', label: 'Après déménagement' },
       { icon: '🪟', label: 'Vitres et surfaces' },
       { icon: '🔍', label: 'Grand nettoyage ou besoin spécifique' },
-    ],
-    faq: (c) => [
-      { q: `Quel est le tarif d’un service de nettoyage à ${c.label} ?`, a: `Le tarif d’un service de nettoyage à ${c.label} varie selon le type de lieu, la surface et la prestation souhaitée. Le tarif définitif est confirmé avec le prestataire avant le début. ${c.pricing_note}` },
-      { q: `Comment trouver un prestataire de nettoyage à ${c.label} ?`, a: `Via Fixeo, décrivez votre besoin en quelques secondes. Votre demande est enregistrée et transmise aux prestataires référencés à ${c.label}.` },
-      { q: `Un prestataire Fixeo intervient-il dans toute la ville ${c.label_de} ?`, a: `Les prestataires référencés sur FIXEO couvrent l’ensemble ${c.label_de}, notamment les quartiers de ${c.neighborhoods}.` }
     ],
     urgency_services: ['Nettoyage urgent après sinistre', 'Nettoyage après dégât des eaux', 'Remise en état après travaux', 'Nettoyage avant événement'],
     related_services: ['peintre', 'menuisier'],
@@ -648,6 +615,9 @@ const SERVICES = {
 /* ═══════════════════════════════════════════════════════════
    NEARBY CITIES
 ══════════════════════════════════════════════════════════ */
+
+
+
 
 const NEARBY = {
   casablanca: ['mohammedia', 'sale', 'rabat'],
