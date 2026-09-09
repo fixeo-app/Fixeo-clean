@@ -35,15 +35,60 @@
     maconnerie:'Maçonnerie', serrurerie:'Serrurerie', carrelage:'Carrelage',
   };
 
-  /* ── Internal state ── */
-  const st = {
-    query:   '',
-    cat:     '',
-    city:    '',
-    filters: { availableNow: false, topScore: false, fastResponse: false },
-    results: [],
-    searched: false,
+  /* ── SEO entry context ───────────────────────────────────────
+ * Allows local SEO pages to hand off an explicit service + city
+ * to the homepage.
+ *
+ * Example:
+ * /?service=Plombier&city=Oujda
+ *
+ * Explicit URL context must take precedence over automatic geo.
+ * No search is launched automatically.
+ * ─────────────────────────────────────────────────────────── */
+function _readEntryContext() {
+  var context = {
+    service: '',
+    city: ''
   };
+
+  try {
+    var params = new URLSearchParams(window.location.search);
+
+    var service = (params.get('service') || '').trim();
+    var city = (params.get('city') || '').trim();
+
+    if (service && service.length <= 80) {
+      context.service = service;
+    }
+
+    if (city && city.length <= 50) {
+      context.city = city;
+    }
+  } catch (_) {}
+
+  return context;
+}
+
+const ENTRY_CONTEXT = _readEntryContext();
+
+try {
+  window.FIXEO_ENTRY_CONTEXT = {
+    service: ENTRY_CONTEXT.service,
+    city: ENTRY_CONTEXT.city,
+    source: (ENTRY_CONTEXT.service || ENTRY_CONTEXT.city) ? 'seo' : ''
+  };
+} catch (_) {}
+
+  /* ── Internal state ── */
+
+  const st = {
+  query: ENTRY_CONTEXT.service || '',
+  cat: '',
+  city: ENTRY_CONTEXT.city || '',
+  filters: { availableNow: false, topScore: false, fastResponse: false },
+  results: [],
+  searched: false,
+};
 
   /* ══════════════════════════════════════════════════════════
      UTILITIES
