@@ -215,26 +215,15 @@
             '\u00a9 ' + yr + ' Fixeo. Tous droits r\u00e9serv\u00e9s.' +
           '</span>' +
 
-          '<div class="fxf-legal-links">' +
-
-            '<a href="/cgu.html">CGU</a>' +
-            '<span aria-hidden="true">\u00b7</span>' +
-
-            '<a href="/confidentialite.html">' +
-              'Confidentialit\u00e9' +
-            '</a>' +
-
-            '<span aria-hidden="true">\u00b7</span>' +
-
-            '<button ' +
-              'type="button" ' +
-              'class="footer-cookie-btn" ' +
-              'onclick="window.FixeoConsent && window.FixeoConsent.open()" ' +
-              'aria-label="G\u00e9rer vos pr\u00e9f\u00e9rences cookies">' +
-              'Pr\u00e9f\u00e9rences cookies' +
-            '</button>' +
-
-          '</div>' +
+         '<div class="fxf-legal-links">' +
+  '<a href="/cgu.html">CGU</a>' +
+  '<span aria-hidden="true">\u00b7</span>' +
+  '<a href="/confidentialite.html">Confidentialit\u00e9</a>' +
+  '<span aria-hidden="true">\u00b7</span>' +
+  '<a href="/mentions-legales.html">Mentions l\u00e9gales</a>' +
+  '<span aria-hidden="true">\u00b7</span>' +
+  '<button type="button" class="footer-cookie-btn" onclick="window.FixeoConsent && window.FixeoConsent.open()" aria-label="G\u00e9rer vos pr\u00e9f\u00e9rences cookies">Pr\u00e9f\u00e9rences cookies</button>' +
+'</div>' +
 
         '</div>' +
 
