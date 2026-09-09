@@ -1,210 +1,1683 @@
 <!DOCTYPE html>
 <html lang="fr" dir="ltr" data-theme="dark">
+
 <head>
+
   <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
   <link rel="apple-touch-icon" href="img/favicon.png">
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <meta name="description" content="Réponses aux questions fréquentes sur Fixeo — plateforme artisans au Maroc.">
-  <title>FAQ — Fixeo</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1.0">
+
+  <meta
+    name="description"
+    content="Questions fréquentes sur FIXEO : recherche d'artisans, profils référencés, demandes d'intervention, paiement, urgences, artisans et entreprises au Maroc.">
+
+  <meta
+    name="robots"
+    content="index, follow">
+
+  <link
+    rel="canonical"
+    href="https://www.fixeo.ma/faq.html">
+
+  <title>FAQ — Questions fréquentes | FIXEO</title>
+
+
+  <meta property="og:type" content="website">
+
+  <meta
+    property="og:title"
+    content="FAQ — Questions fréquentes | FIXEO">
+
+  <meta
+    property="og:description"
+    content="Comprendre le fonctionnement de FIXEO pour les clients, artisans et entreprises.">
+
+  <meta
+    property="og:url"
+    content="https://www.fixeo.ma/faq.html">
+
+  <meta
+    property="og:image"
+    content="https://www.fixeo.ma/img/logo.png">
+
+  <meta
+    property="og:site_name"
+    content="Fixeo">
+
+  <meta
+    name="twitter:card"
+    content="summary">
+
+  <meta
+    name="twitter:title"
+    content="FAQ — FIXEO">
+
+  <meta
+    name="twitter:description"
+    content="Les réponses aux principales questions sur la plateforme FIXEO.">
+
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap"
+    rel="stylesheet">
+
+
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/header-unified.css">
   <link rel="stylesheet" href="css/fixeo-header-global.css">
   <link rel="stylesheet" href="css/auth-global.css">
   <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf4a">
+
+
   <style id="fixeo-logo-override">
-    .navbar-brand .logo-icon,.logo-wrap .logo-icon,.fixeo-gh-brand .logo-icon{display:none!important;width:0!important;height:0!important;min-width:0!important;flex:0!important}
-    .navbar-brand .logo-text,.logo-wrap .logo-text,.fixeo-gh-brand .logo-text{display:none!important;width:0!important;height:0!important}
-    .navbar-brand,.logo-wrap{max-width:220px!important;overflow:visible!important;gap:0!important;background:transparent!important}
-    .fixeo-gh-brand{max-width:180px!important;overflow:visible!important;gap:0!important;background:transparent!important}
-    img.fixeo-logo-img{display:block!important;height:32px!important;width:auto!important;object-fit:contain!important;object-position:left center!important;background:transparent!important;mix-blend-mode:normal!important;filter:none!important;box-shadow:none!important;border:none!important;flex:0 0 auto!important;overflow:visible!important}
-    .fixeo-gh-brand img.fixeo-logo-img,.fixeo-gh-mobile-bar img.fixeo-logo-img{height:26px!important;width:auto!important}
-    @media(max-width:480px){img.fixeo-logo-img{height:24px!important}.fixeo-gh-brand img.fixeo-logo-img{height:22px!important}}
-  </style>
-  <style>
-    *,*::before,*::after{box-sizing:border-box}
-    body{margin:0;font-family:Cairo,Tajawal,Arial,sans-serif;background:#0a0a14;color:#e8eaf0;min-height:100vh;padding-top:70px;overflow-x:hidden}
-    a{text-decoration:none;color:inherit}
-    :root{
-      --pink:#E1306C;--purple:#833AB4;--blue:#38bdf8;
-      --grad:linear-gradient(135deg,#E1306C,#833AB4);
-      --muted:rgba(232,234,240,.58);
-      --card:rgba(255,255,255,.055);
-      --border:rgba(255,255,255,.09);
+
+    .navbar-brand .logo-icon,
+    .logo-wrap .logo-icon,
+    .fixeo-gh-brand .logo-icon {
+      display:none!important;
+      width:0!important;
+      height:0!important;
+      min-width:0!important;
+      flex:0!important;
     }
-    .fx-wrap{max-width:900px;margin:0 auto;padding:0 22px}
-    .fx-hero{padding:72px 22px 40px;text-align:center;position:relative}
-    .fx-hero::before{content:'';position:absolute;inset:0;pointer-events:none;
-      background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(225,48,108,.12),transparent 65%)}
-    .fx-hero-badge{display:inline-flex;align-items:center;gap:7px;padding:6px 16px;
-      border-radius:999px;border:1px solid rgba(225,48,108,.3);background:rgba(225,48,108,.08);
-      font-size:.75rem;font-weight:700;color:rgba(225,48,108,.9);letter-spacing:.05em;
-      text-transform:uppercase;margin:0 0 20px}
-    .fx-hero h1{font-size:clamp(1.7rem,4vw,2.6rem);font-weight:900;margin:0 0 14px;
-      background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-    .fx-hero p{font-size:1rem;color:var(--muted);max-width:560px;margin:0 auto}
-    .fx-section{padding:48px 22px}
-    .fx-section h2{font-size:1.25rem;font-weight:800;margin:0 0 20px;color:#fff}
-    .fx-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
-      padding:28px 28px;margin-bottom:16px}
-    .fx-card h3{font-size:1rem;font-weight:700;color:#fff;margin:0 0 10px}
-    .fx-card p,.fx-card li{font-size:.9rem;color:var(--muted);line-height:1.65}
-    .fx-card ul{margin:8px 0 0 0;padding-left:18px}
-    .fx-card ul li{margin-bottom:4px}
-    .fx-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-    @media(max-width:640px){.fx-grid{grid-template-columns:1fr}}
-    .fx-cta-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:32px 0 0}
-    .fx-btn-primary{
-      display:inline-flex;align-items:center;gap:8px;padding:14px 28px;
-      border-radius:14px;font-weight:700;font-size:.95rem;cursor:pointer;border:none;
-      background:var(--grad);color:#fff;transition:opacity .15s,transform .15s}
-    .fx-btn-primary:hover{opacity:.88;transform:translateY(-2px)}
-    .fx-btn-outline{
-      display:inline-flex;align-items:center;gap:8px;padding:13px 26px;
-      border-radius:14px;font-weight:700;font-size:.92rem;cursor:pointer;
-      border:1.5px solid rgba(225,48,108,.35);background:rgba(225,48,108,.08);
-      color:rgba(255,180,200,.9);transition:background .15s,border-color .15s}
-    .fx-btn-outline:hover{background:rgba(225,48,108,.16);border-color:rgba(225,48,108,.6)}
-    .fx-email{display:inline-flex;align-items:center;gap:6px;
-      color:rgba(56,189,248,.85);font-weight:600;font-size:.9rem;
-      border-bottom:1px dashed rgba(56,189,248,.3);padding-bottom:1px;transition:color .15s}
-    .fx-email:hover{color:#fff}
-    .fx-divider{border:none;border-top:1px solid var(--border);margin:32px 0}
-    .fx-muted{font-size:.8rem;color:rgba(232,234,240,.38);text-align:center;margin-top:32px}
-    /* Accordion (FAQ) */
-    .faq-item{background:var(--card);border:1px solid var(--border);border-radius:14px;
-      margin-bottom:10px;overflow:hidden}
-    .faq-q{width:100%;text-align:left;background:none;border:none;color:#fff;
-      font-family:inherit;font-size:.95rem;font-weight:700;padding:18px 22px;
-      cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
-    .faq-q .faq-icon{font-size:1.1rem;transition:transform .2s;flex-shrink:0}
-    .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .2s ease;
-      padding:0 22px;font-size:.9rem;color:var(--muted);line-height:1.7}
-    .faq-item.open .faq-a{max-height:400px;padding:0 22px 18px}
-    .faq-item.open .faq-icon{transform:rotate(45deg)}
-    /* Legal blocks */
-    .legal-section{margin-bottom:32px}
-    .legal-section h2{font-size:1.1rem;font-weight:800;color:#fff;margin:0 0 12px;
-      padding-bottom:8px;border-bottom:1px solid var(--border)}
-    .legal-section p,.legal-section li{font-size:.88rem;color:var(--muted);line-height:1.7}
-    .legal-section ul{padding-left:18px;margin:8px 0}
-    .legal-section ul li{margin-bottom:4px}
-    /* Footer */
-    .fx-footer{border-top:1px solid var(--border);padding:24px 22px;text-align:center;
-      font-size:.78rem;color:rgba(232,234,240,.28)}
-    .fx-footer a{color:rgba(232,234,240,.42);margin:0 8px}
-    .fx-footer a:hover{color:#fff}
-</style>
-<!-- SEO-1A -->
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://www.fixeo.ma/faq.html">
-<meta property="og:type" content="website">
-<meta property="og:title" content="FAQ — Questions fréquentes | Fixeo">
-<meta property="og:description" content="Réponses aux questions fréquentes sur Fixeo — comment ça marche, gratuité, paiement, rejoindre la plateforme.">
-<meta property="og:url" content="https://www.fixeo.ma/faq.html">
-<meta property="og:image" content="https://www.fixeo.ma/img/logo.png">
-<meta property="og:site_name" content="Fixeo">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="FAQ Fixeo — Questions fréquentes artisans Maroc">
-<meta name="twitter:description" content="Réponses aux questions fréquentes sur Fixeo.">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {"@type":"Question","name":"Comment fonctionne Fixeo ?","acceptedAnswer":{"@type":"Answer","text":"Fixeo connecte directement clients et artisans vérifiés au Maroc. Vous publiez votre besoin, notre système vous propose des artisans disponibles dans votre ville, et vous prenez contact."}},
-    {"@type":"Question","name":"Est-ce gratuit de publier une demande ?","acceptedAnswer":{"@type":"Answer","text":"Oui, publier une demande est entièrement gratuit pour les clients. Vous ne payez que l'intervention de l'artisan, après service rendu."}},
-    {"@type":"Question","name":"Comment choisir un artisan ?","acceptedAnswer":{"@type":"Answer","text":"Fixeo vous présente des artisans correspondant à votre besoin et à votre ville. Vous pouvez consulter leur profil, leur spécialité et leur disponibilité avant de contacter."}},
-    {"@type":"Question","name":"Comment fonctionne le paiement après intervention ?","acceptedAnswer":{"@type":"Answer","text":"Le paiement se fait directement avec l'artisan après l'intervention. Fixeo ne prélève pas de frais sur les clients."}},
-    {"@type":"Question","name":"Comment rejoindre Fixeo en tant qu'artisan ?","acceptedAnswer":{"@type":"Answer","text":"Rendez-vous sur la page Rejoindre Fixeo et créez votre profil artisan. Après vérification, vous commencerez à recevoir des demandes dans votre zone."}},
-    {"@type":"Question","name":"Fixeo est-il disponible dans tout le Maroc ?","acceptedAnswer":{"@type":"Answer","text":"Fixeo est actif dans les principales villes du Maroc : Casablanca, Rabat, Marrakech, Fès, Tanger et d'autres. La couverture s'étend progressivement."}},
-    {"@type":"Question","name":"Que faire en cas d'urgence ?","acceptedAnswer":{"@type":"Answer","text":"Utilisez le bouton Urgence disponible sur la page d'accueil. Votre demande est marquée prioritaire et traitée en premier."}}
-  ]
-}
-</script>
-  <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
+
+    .navbar-brand .logo-text,
+    .logo-wrap .logo-text,
+    .fixeo-gh-brand .logo-text {
+      display:none!important;
+      width:0!important;
+      height:0!important;
+    }
+
+    .navbar-brand,
+    .logo-wrap {
+      max-width:220px!important;
+      overflow:visible!important;
+      gap:0!important;
+      background:transparent!important;
+    }
+
+    .fixeo-gh-brand {
+      max-width:180px!important;
+      overflow:visible!important;
+      gap:0!important;
+      background:transparent!important;
+    }
+
+    img.fixeo-logo-img {
+      display:block!important;
+      height:32px!important;
+      width:auto!important;
+      object-fit:contain!important;
+      object-position:left center!important;
+      background:transparent!important;
+      mix-blend-mode:normal!important;
+      filter:none!important;
+      box-shadow:none!important;
+      border:none!important;
+      flex:0 0 auto!important;
+      overflow:visible!important;
+    }
+
+    .fixeo-gh-brand img.fixeo-logo-img,
+    .fixeo-gh-mobile-bar img.fixeo-logo-img {
+      height:26px!important;
+      width:auto!important;
+    }
+
+    @media(max-width:480px) {
+
+      img.fixeo-logo-img {
+        height:24px!important;
+      }
+
+      .fixeo-gh-brand img.fixeo-logo-img {
+        height:22px!important;
+      }
+    }
+
+  </style>
+
+
+  <style>
+
+    *,
+    *::before,
+    *::after {
+      box-sizing:border-box;
+    }
+
+    body {
+      margin:0;
+      min-height:100vh;
+      padding-top:70px;
+      overflow-x:hidden;
+
+      background:#0a0a14;
+      color:#e8eaf0;
+
+      font-family:
+        Cairo,
+        Tajawal,
+        Arial,
+        sans-serif;
+    }
+
+    a {
+      color:inherit;
+      text-decoration:none;
+    }
+
+    :root {
+      --pink:#E1306C;
+      --purple:#833AB4;
+      --blue:#38bdf8;
+
+      --grad:
+        linear-gradient(
+          135deg,
+          #E1306C,
+          #833AB4
+        );
+
+      --muted:
+        rgba(232,234,240,.60);
+
+      --muted-soft:
+        rgba(232,234,240,.40);
+
+      --card:
+        rgba(255,255,255,.045);
+
+      --border:
+        rgba(255,255,255,.09);
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       LAYOUT
+    ═══════════════════════════════════════════════════ */
+
+    .fx-wrap {
+      max-width:900px;
+      margin:0 auto;
+      padding:0 22px;
+    }
+
+    .faq-shell {
+      padding-bottom:56px;
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════════════ */
+
+    .fx-hero {
+      position:relative;
+
+      padding:
+        72px
+        22px
+        42px;
+
+      text-align:center;
+    }
+
+    .fx-hero::before {
+      content:'';
+
+      position:absolute;
+      inset:0;
+
+      pointer-events:none;
+
+      background:
+        radial-gradient(
+          ellipse 80% 60% at 50% -10%,
+          rgba(225,48,108,.12),
+          transparent 65%
+        );
+    }
+
+    .fx-hero-badge {
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+
+      margin-bottom:20px;
+
+      padding:
+        6px
+        16px;
+
+      border:
+        1px solid
+        rgba(225,48,108,.30);
+
+      border-radius:999px;
+
+      background:
+        rgba(225,48,108,.08);
+
+      color:
+        rgba(255,150,185,.92);
+
+      font-size:.72rem;
+      font-weight:800;
+
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .fx-hero h1 {
+      margin:
+        0
+        0
+        14px;
+
+      font-size:
+        clamp(
+          1.9rem,
+          4vw,
+          2.8rem
+        );
+
+      font-weight:900;
+
+      background:var(--grad);
+
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+
+    .fx-hero p {
+      max-width:620px;
+      margin:0 auto;
+
+      color:var(--muted);
+
+      font-size:1rem;
+      line-height:1.72;
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       INTRO
+    ═══════════════════════════════════════════════════ */
+
+    .faq-intro {
+      margin-bottom:34px;
+
+      padding:
+        24px
+        26px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.09);
+
+      border-radius:18px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.055),
+          rgba(255,255,255,.025)
+        );
+    }
+
+    .faq-intro-label {
+      margin-bottom:7px;
+
+      color:
+        rgba(255,150,185,.78);
+
+      font-size:.67rem;
+      font-weight:850;
+
+      letter-spacing:.10em;
+      text-transform:uppercase;
+    }
+
+    .faq-intro strong {
+      display:block;
+
+      margin-bottom:7px;
+
+      color:#fff;
+
+      font-size:1.05rem;
+      font-weight:850;
+    }
+
+    .faq-intro p {
+      margin:0;
+
+      color:var(--muted);
+
+      font-size:.87rem;
+      line-height:1.7;
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       GROUPS
+    ═══════════════════════════════════════════════════ */
+
+    .faq-group {
+      margin-bottom:38px;
+    }
+
+    .faq-group-head {
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:16px;
+
+      margin-bottom:14px;
+    }
+
+    .faq-group-eyebrow {
+      margin-bottom:4px;
+
+      color:
+        rgba(232,234,240,.36);
+
+      font-size:.65rem;
+      font-weight:850;
+
+      letter-spacing:.11em;
+      text-transform:uppercase;
+    }
+
+    .faq-group h2 {
+      margin:0;
+
+      color:#fff;
+
+      font-size:1.12rem;
+      font-weight:850;
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       ACCORDION
+    ═══════════════════════════════════════════════════ */
+
+    .faq-item {
+      overflow:hidden;
+
+      margin-bottom:10px;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:15px;
+
+      background:var(--card);
+
+      transition:
+        border-color .18s ease,
+        background .18s ease;
+    }
+
+    .faq-item.open {
+      border-color:
+        rgba(255,255,255,.14);
+
+      background:
+        rgba(255,255,255,.06);
+    }
+
+    .faq-q {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+
+      width:100%;
+
+      gap:18px;
+
+      padding:
+        19px
+        21px;
+
+      border:0;
+
+      background:transparent;
+      color:#fff;
+
+      font-family:inherit;
+      font-size:.92rem;
+      font-weight:750;
+
+      text-align:left;
+      cursor:pointer;
+    }
+
+    .faq-q-text {
+      min-width:0;
+    }
+
+    .faq-icon {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      flex:0 0 auto;
+
+      width:27px;
+      height:27px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.10);
+
+      border-radius:9px;
+
+      background:
+        rgba(255,255,255,.035);
+
+      color:
+        rgba(255,255,255,.65);
+
+      font-size:1rem;
+      font-weight:400;
+
+      transition:
+        transform .2s ease,
+        background .2s ease,
+        color .2s ease;
+    }
+
+    .faq-item.open .faq-icon {
+      transform:rotate(45deg);
+
+      background:
+        rgba(225,48,108,.08);
+
+      color:
+        rgba(255,170,195,.92);
+    }
+
+    .faq-a {
+      max-height:0;
+
+      overflow:hidden;
+
+      padding:
+        0
+        21px;
+
+      color:var(--muted);
+
+      font-size:.87rem;
+      line-height:1.75;
+
+      transition:
+        max-height .32s ease,
+        padding .22s ease;
+    }
+
+    .faq-a p {
+      margin:0;
+    }
+
+    .faq-item.open .faq-a {
+      max-height:650px;
+
+      padding:
+        0
+        21px
+        19px;
+    }
+
+    .faq-a strong {
+      color:
+        rgba(255,255,255,.86);
+
+      font-weight:750;
+    }
+
+    .faq-a a {
+      color:
+        rgba(56,189,248,.88);
+
+      border-bottom:
+        1px dashed
+        rgba(56,189,248,.28);
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       SUPPORT
+    ═══════════════════════════════════════════════════ */
+
+    .faq-support {
+      position:relative;
+      overflow:hidden;
+
+      margin-top:42px;
+
+      padding:
+        26px
+        26px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.09);
+
+      border-radius:18px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.055),
+          rgba(255,255,255,.025)
+        );
+    }
+
+    .faq-support::before {
+      content:'';
+
+      position:absolute;
+
+      width:220px;
+      height:220px;
+
+      right:-100px;
+      top:-120px;
+
+      border-radius:50%;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(131,58,180,.15),
+          transparent 68%
+        );
+
+      pointer-events:none;
+    }
+
+    .faq-support-content {
+      position:relative;
+      z-index:1;
+    }
+
+    .faq-support-eyebrow {
+      margin-bottom:6px;
+
+      color:
+        rgba(255,150,185,.76);
+
+      font-size:.66rem;
+      font-weight:850;
+
+      letter-spacing:.10em;
+      text-transform:uppercase;
+    }
+
+    .faq-support h2 {
+      margin:
+        0
+        0
+        7px;
+
+      color:#fff;
+
+      font-size:1.08rem;
+      font-weight:850;
+    }
+
+    .faq-support p {
+      max-width:570px;
+
+      margin:
+        0
+        0
+        18px;
+
+      color:var(--muted);
+
+      font-size:.84rem;
+      line-height:1.7;
+    }
+
+    .faq-actions {
+      display:flex;
+      flex-wrap:wrap;
+
+      gap:10px;
+    }
+
+    .faq-btn-primary,
+    .faq-btn-secondary {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+
+      min-height:44px;
+
+      padding:
+        0
+        17px;
+
+      border-radius:12px;
+
+      font-size:.82rem;
+      font-weight:750;
+
+      transition:
+        opacity .15s ease,
+        transform .15s ease,
+        border-color .15s ease,
+        background .15s ease;
+    }
+
+    .faq-btn-primary {
+      border:0;
+
+      background:var(--grad);
+      color:#fff;
+    }
+
+    .faq-btn-primary:hover {
+      opacity:.90;
+      transform:translateY(-1px);
+    }
+
+    .faq-btn-secondary {
+      border:
+        1px solid
+        rgba(255,255,255,.10);
+
+      background:
+        rgba(255,255,255,.035);
+
+      color:
+        rgba(240,244,255,.82);
+    }
+
+    .faq-btn-secondary:hover {
+      background:
+        rgba(255,255,255,.065);
+
+      border-color:
+        rgba(255,255,255,.16);
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       LEGAL
+    ═══════════════════════════════════════════════════ */
+
+    .faq-legal {
+      margin-top:28px;
+
+      padding-top:24px;
+
+      border-top:
+        1px solid
+        var(--border);
+
+      text-align:center;
+    }
+
+    .faq-legal p {
+      margin:
+        0
+        auto
+        12px;
+
+      color:
+        rgba(232,234,240,.34);
+
+      font-size:.73rem;
+      line-height:1.6;
+    }
+
+    .faq-legal-links {
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+
+      gap:
+        8px
+        16px;
+    }
+
+    .faq-legal-links a {
+      color:
+        rgba(232,234,240,.48);
+
+      font-size:.73rem;
+      font-weight:650;
+    }
+
+    .faq-legal-links a:hover {
+      color:#fff;
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       MOBILE
+    ═══════════════════════════════════════════════════ */
+
+    @media(max-width:640px) {
+
+      .fx-hero {
+        padding:
+          54px
+          18px
+          34px;
+      }
+
+      .fx-wrap {
+        padding:
+          0
+          18px;
+      }
+
+      .faq-intro,
+      .faq-support {
+        padding:
+          20px
+          18px;
+      }
+
+      .faq-q {
+        padding:
+          17px
+          17px;
+
+        font-size:.88rem;
+      }
+
+      .faq-a {
+        padding:
+          0
+          17px;
+      }
+
+      .faq-item.open .faq-a {
+        padding:
+          0
+          17px
+          18px;
+      }
+
+      .faq-actions {
+        flex-direction:column;
+      }
+
+      .faq-btn-primary,
+      .faq-btn-secondary {
+        width:100%;
+      }
+    }
+
+  </style>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       STRUCTURED DATA
+  ═══════════════════════════════════════════════════ -->
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Comment fonctionne FIXEO ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "FIXEO est une plateforme qui facilite la mise en relation entre des clients ayant un besoin d'intervention et des artisans ou professionnels référencés. Le client décrit son besoin, consulte des profils ou transmet une demande, puis une mise en relation peut être organisée selon le contexte."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Qu'est-ce qu'un profil référencé sur FIXEO ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Un profil référencé est un profil présent dans le réseau ou l'annuaire FIXEO. Cette mention ne constitue pas à elle seule une certification professionnelle ou administrative."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Est-ce gratuit pour les clients ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "L'utilisation de FIXEO pour rechercher un artisan ou transmettre une demande est gratuite côté client. Le client règle la prestation du professionnel lorsque celle-ci est réalisée."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "FIXEO garantit-il qu'un artisan sera disponible ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Non. La disponibilité dépend des professionnels présents dans la zone, du métier recherché, du moment de la demande et de leur décision d'accepter ou non une intervention."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Comment est fixé le prix d'une intervention ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Lorsqu'un montant est indicatif, le prix définitif doit être confirmé avec le professionnel avant le début des travaux. Si le besoin évolue, les travaux supplémentaires doivent également faire l'objet d'un accord."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Comment fonctionne le paiement ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Dans le fonctionnement actuellement proposé, le paiement de l'intervention s'effectue après la prestation directement entre le client et le professionnel concerné."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Que faire si ma demande est urgente ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Lorsque le parcours FIXEO permet de signaler l'urgence, indiquez clairement qu'une intervention est urgente. La possibilité d'organiser l'intervention dépend néanmoins de la disponibilité d'un professionnel susceptible de l'accepter."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Comment rejoindre FIXEO en tant qu'artisan ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Un artisan peut accéder à la page Rejoindre FIXEO afin de créer ou compléter son profil. L'activation des fonctionnalités et la réception de missions dépendent du profil, de la zone, du métier et des demandes disponibles."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Comment revendiquer un profil artisan existant ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Lorsqu'un profil existe déjà, l'artisan peut utiliser le parcours de revendication disponible sur FIXEO. La demande est examinée afin de permettre l'association du profil à la bonne personne."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "FIXEO est-il disponible partout au Maroc ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "FIXEO développe progressivement son réseau et sa couverture au Maroc. Le nombre de profils et la capacité à organiser une intervention peuvent varier selon la ville, le métier et le moment de la demande."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "FIXEO réalise-t-il lui-même les travaux ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Non. FIXEO exploite une plateforme de mise en relation. Les travaux sont réalisés par les artisans ou professionnels concernés sous leur propre responsabilité."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "FIXEO propose-t-il aussi un service pour les entreprises ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Oui. FIXEO développe une offre destinée aux entreprises et organisations pour structurer et coordonner leurs besoins d'intervention."
+        }
+      }
+    ]
+  }
+  </script>
+
+
+  <link
+    rel="stylesheet"
+    href="css/fixeo-consent-v1.css?v=fcv1b">
+
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
-  <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
-  <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
+
+  <script
+    src="js/fixeo-analytics-config.js?v=fac1b"
+    defer>
+  </script>
+
+  <script
+    src="js/fixeo-analytics-bootstrap.js?v=fab1c"
+    defer>
+  </script>
+
 </head>
+
+
 <body>
 
-<div class="fx-hero">
-  <div class="fx-wrap" style="position:relative;z-index:1">
-    <div class="fx-hero-badge">❓ Questions fréquentes</div>
-    <h1>FAQ — Questions fréquentes</h1>
-    <p>Retrouvez ici les réponses aux questions les plus posées sur Fixeo.</p>
-  </div>
-</div>
 
-<div class="fx-wrap">
-  <div class="faq-item">
-    <button class="faq-q" onclick="var p=this.parentElement;p.classList.toggle('open')">
-      <span>Comment fonctionne Fixeo ?</span><span class="faq-icon">+</span>
-    </button>
-    <div class="faq-a"><p>Fixeo connecte directement clients et artisans vérifiés au Maroc. Vous publiez votre besoin, notre système vous propose des artisans disponibles dans votre ville, et vous prenez contact. Simple et rapide.</p></div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-q" onclick="var p=this.parentElement;p.classList.toggle('open')">
-      <span>Est-ce gratuit de publier une demande ?</span><span class="faq-icon">+</span>
-    </button>
-    <div class="faq-a"><p>Oui, publier une demande est entièrement gratuit pour les clients. Vous ne payez que l'intervention de l'artisan, après service rendu.</p></div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-q" onclick="var p=this.parentElement;p.classList.toggle('open')">
-      <span>Comment choisir un artisan ?</span><span class="faq-icon">+</span>
-    </button>
-    <div class="faq-a"><p>Fixeo vous présente des artisans correspondant à votre besoin et à votre ville. Vous pouvez consulter leur profil, leur spécialité et leur disponibilité avant de contacter.</p></div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-q" onclick="var p=this.parentElement;p.classList.toggle('open')">
-      <span>Comment fonctionne le paiement après intervention ?</span><span class="faq-icon">+</span>
-    </button>
-    <div class="faq-a"><p>Le paiement se fait directement avec l'artisan après l'intervention. Fixeo ne prélève pas de frais sur les clients. Les modalités sont convenues entre vous et l'artisan.</p></div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-q" onclick="var p=this.parentElement;p.classList.toggle('open')">
-      <span>Comment rejoindre Fixeo en tant qu'artisan ?</span><span class="faq-icon">+</span>
-    </button>
-    <div class="faq-a"><p>Rendez-vous sur la page « Rejoindre Fixeo » et créez votre profil artisan. Après vérification, vous commencerez à recevoir des demandes dans votre zone.</p></div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-q" onclick="var p=this.parentElement;p.classList.toggle('open')">
-      <span>Comment revendiquer mon profil ?</span><span class="faq-icon">+</span>
-    </button>
-    <div class="faq-a"><p>Si votre profil existe déjà sur Fixeo, vous pouvez le revendiquer depuis la page « Rejoindre Fixeo ». Après vérification de votre identité, vous en aurez le contrôle total.</p></div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-q" onclick="var p=this.parentElement;p.classList.toggle('open')">
-      <span>Fixeo est-il disponible dans tout le Maroc ?</span><span class="faq-icon">+</span>
-    </button>
-    <div class="faq-a"><p>Fixeo est actif dans les principales villes du Maroc : Casablanca, Rabat, Marrakech, Fès, Tanger, et d'autres. La couverture s'étend progressivement.</p></div>
-  </div>
-  <div class="faq-item">
-    <button class="faq-q" onclick="var p=this.parentElement;p.classList.toggle('open')">
-      <span>Que faire en cas d'urgence ?</span><span class="faq-icon">+</span>
-    </button>
-    <div class="faq-a"><p>Utilisez le bouton « ⚡ Urgence » disponible sur la page d'accueil. Votre demande est marquée prioritaire et traitée en premier.</p></div>
-  </div>
+  <!-- ═══════════════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════════════ -->
 
-  <hr class="fx-divider">
+  <section class="fx-hero">
 
-  <p class="fx-muted">Une question non listée ? Écrivez-nous à <a href="mailto:support@fixeo.ma" style="color:rgba(56,189,248,.8)">support@fixeo.ma</a></p>
+    <div
+      class="fx-wrap"
+      style="position:relative;z-index:1">
 
-  <div class="fx-cta-row" style="margin-bottom:48px">
-    <button class="fx-btn-primary" onclick="location.href='index.html#home'">
-      📝 Publier une demande
-    </button>
-    <a class="fx-btn-outline" href="rejoindre-fixeo.html">
-      🛠 Je suis artisan
-    </a>
-  </div>
-</div>
+      <div class="fx-hero-badge">
+        Centre d’aide
+      </div>
 
+      <h1>
+        Questions fréquentes
+      </h1>
+
+      <p>
+        Comprendre le fonctionnement de FIXEO,
+        de la recherche d’un professionnel jusqu’à
+        l’intervention.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       FAQ
+  ═══════════════════════════════════════════════════ -->
+
+  <main class="fx-wrap faq-shell">
+
+
+    <div class="faq-intro">
+
+      <div class="faq-intro-label">
+        FIXEO
+      </div>
+
+      <strong>
+        Une plateforme pour organiser la mise en relation
+      </strong>
+
+      <p>
+        FIXEO rapproche clients, artisans, professionnels
+        et entreprises autour d’un besoin d’intervention.
+        Les réponses ci-dessous décrivent le fonctionnement
+        actuel de la plateforme.
+      </p>
+
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════
+         CLIENTS
+    ═══════════════════════════════════════════════ -->
+
+    <section
+      class="faq-group"
+      aria-labelledby="faq-clients-title">
+
+      <div class="faq-group-head">
+
+        <div>
+
+          <div class="faq-group-eyebrow">
+            Clients
+          </div>
+
+          <h2 id="faq-clients-title">
+            Utiliser FIXEO
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <button
+          class="faq-q"
+          type="button"
+          aria-expanded="false">
+
+          <span class="faq-q-text">
+            Comment fonctionne FIXEO ?
+          </span>
+
+          <span
+            class="faq-icon"
+            aria-hidden="true">
+            +
+          </span>
+
+        </button>
+
+        <div class="faq-a">
+
+          <p>
+            FIXEO est une plateforme qui facilite la mise en
+            relation entre des clients ayant un besoin
+            d’intervention et des artisans ou professionnels
+            référencés. Vous pouvez décrire votre besoin,
+            consulter des profils ou transmettre une demande,
+            puis une mise en relation peut être organisée selon
+            le contexte.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <button
+          class="faq-q"
+          type="button"
+          aria-expanded="false">
+
+          <span class="faq-q-text">
+            Qu’est-ce qu’un profil référencé sur FIXEO ?
+          </span>
+
+          <span
+            class="faq-icon"
+            aria-hidden="true">
+            +
+          </span>
+
+        </button>
+
+        <div class="faq-a">
+
+          <p>
+            Un profil référencé est un profil présent dans le
+            réseau ou l’annuaire FIXEO. Cette mention ne
+            constitue pas, à elle seule, une certification
+            professionnelle ou administrative.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <button
+          class="faq-q"
+          type="button"
+          aria-expanded="false">
+
+          <span class="faq-q-text">
+            Est-ce gratuit pour les clients ?
+          </span>
+
+          <span
+            class="faq-icon"
+            aria-hidden="true">
+            +
+          </span>
+
+        </button>
+
+        <div class="faq-a">
+
+          <p>
+            Oui. L’utilisation de FIXEO pour rechercher un
+            artisan ou transmettre une demande est gratuite
+            côté client. Vous réglez la prestation du
+            professionnel lorsque celle-ci est réalisée.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <button
+          class="faq-q"
+          type="button"
+          aria-expanded="false">
+
+          <span class="faq-q-text">
+            FIXEO garantit-il qu’un artisan sera disponible ?
+          </span>
+
+          <span
+            class="faq-icon"
+            aria-hidden="true">
+            +
+          </span>
+
+        </button>
+
+        <div class="faq-a">
+
+          <p>
+            Non. La disponibilité dépend notamment des
+            professionnels présents dans la zone, du métier
+            recherché, du moment de la demande et de leur
+            décision d’accepter ou non une intervention.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <button
+          class="faq-q"
+          type="button"
+          aria-expanded="false">
+
+          <span class="faq-q-text">
+            Comment est fixé le prix d’une intervention ?
+          </span>
+
+          <span
+            class="faq-icon"
+            aria-hidden="true">
+            +
+          </span>
+
+        </button>
+
+        <div class="faq-a">
+
+          <p>
+            Lorsqu’un montant est présenté comme indicatif,
+            le prix définitif doit être confirmé avec le
+            professionnel avant le début des travaux. Si le
+            besoin évolue ou si des travaux supplémentaires
+            sont nécessaires, ils doivent également faire
+            l’objet d’un accord.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <button
+          class="faq-q"
+          type="button"
+          aria-expanded="false">
+
+          <span class="faq-q-text">
+            Comment fonctionne le paiement ?
+          </span>
+
+          <span
+            class="faq-icon"
+            aria-hidden="true">
+            +
+          </span>
+
+        </button>
+
+        <div class="faq-a">
+
+          <p>
+            Dans le fonctionnement actuellement proposé,
+            le paiement de l’intervention s’effectue
+            <strong>après la prestation</strong>,
+            directement entre le client et le professionnel
+            concerné.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <button
+          class="faq-q"
+          type="button"
+          aria-expanded="false">
+
+          <span class="faq-q-text">
+            Que faire si ma demande est urgente ?
+          </span>
+
+          <span
+            class="faq-icon"
+            aria-hidden="true">
+            +
+          </span>
+
+        </button>
+
+        <div class="faq-a">
+
+          <p>
+            Lorsque le parcours FIXEO permet de signaler
+            l’urgence, indiquez clairement qu’une intervention
+            est urgente. La possibilité d’organiser
+            l’intervention dépend néanmoins de la disponibilité
+            d’un professionnel susceptible de l’accepter.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <button
+          class="faq-q"
+          type="button"
+          aria-expanded="false">
+
+          <span class="faq-q-text">
+            FIXEO réalise-t-il lui-même les travaux ?
+          </span>
+
+          <span
+            class="faq-icon"
+            aria-hidden="true">
+            +
+          </span>
+
+        </button>
+
+        <div class="faq-a">
+
+          <p>
+            Non. FIXEO exploite une plateforme de mise en
+            relation. Les travaux sont réalisés par les artisans
+            ou professionnels concernés sous leur propre
+            responsabilité.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         ARTISANS
+    ═══════════════════════════════════════════════ -->
+
+    <section
+      class="faq-group"
+      aria-labelledby="faq-artisans-title">
+
+      <div class="faq-group-head">
+
+        <div>
+
+          <div class="faq-group-eyebrow">
+            Professionnels
+          </div>
+
+          <h2 id="faq-artisans-title">
+            Artisans & réseau FIXEO
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <button
+          class="faq-q"
+          type="button"
+          aria-expanded="false">
+
+          <span class="faq-q-text">
+            Comment rejoindre FIXEO en tant qu’artisan ?
+          </span>
+
+          <span
+            class="faq-icon"
+            aria-hidden="true">
+            +
+          </span>
+
+        </button>
+
+        <div class="faq-a">
+
+          <p>
+            Rendez-vous sur
+            <a href="/rejoindre-fixeo.html">
+              Rejoindre FIXEO
+            </a>
+            pour créer ou compléter votre profil.
+            L’activation des fonctionnalités et la réception
+            de missions dépendent notamment de votre profil,
+            de votre zone, de votre métier et des demandes
+            disponibles.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <button
+          class="faq-q"
+          type="button"
+          aria-expanded="false">
+
+          <span class="faq-q-text">
+            Comment revendiquer un profil artisan existant ?
+          </span>
+
+          <span
+            class="faq-icon"
+            aria-hidden="true">
+            +
+          </span>
+
+        </button>
+
+        <div class="faq-a">
+
+          <p>
+            Lorsqu’un profil existe déjà sur FIXEO, l’artisan
+            peut utiliser le parcours de revendication
+            disponible sur la plateforme. La demande est
+            examinée afin de permettre l’association du profil
+            à la bonne personne.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <button
+          class="faq-q"
+          type="button"
+          aria-expanded="false">
+
+          <span class="faq-q-text">
+            Est-ce que rejoindre FIXEO garantit des missions ?
+          </span>
+
+          <span
+            class="faq-icon"
+            aria-hidden="true">
+            +
+          </span>
+
+        </button>
+
+        <div class="faq-a">
+
+          <p>
+            Non. Le référencement sur FIXEO ne garantit pas un
+            volume minimum de missions. Les opportunités
+            dépendent des demandes reçues, du métier, de la
+            zone concernée et de la disponibilité des
+            professionnels.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         COUVERTURE / ENTREPRISES
+    ═══════════════════════════════════════════════ -->
+
+    <section
+      class="faq-group"
+      aria-labelledby="faq-network-title">
+
+      <div class="faq-group-head">
+
+        <div>
+
+          <div class="faq-group-eyebrow">
+            Réseau
+          </div>
+
+          <h2 id="faq-network-title">
+            Couverture & entreprises
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <button
+          class="faq-q"
+          type="button"
+          aria-expanded="false">
+
+          <span class="faq-q-text">
+            FIXEO est-il disponible partout au Maroc ?
+          </span>
+
+          <span
+            class="faq-icon"
+            aria-hidden="true">
+            +
+          </span>
+
+        </button>
+
+        <div class="faq-a">
+
+          <p>
+            FIXEO développe progressivement son réseau et sa
+            couverture au Maroc. Le nombre de profils et la
+            capacité à organiser une intervention peuvent varier
+            selon la ville, le métier et le moment de la demande.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="faq-item">
+
+        <button
+          class="faq-q"
+          type="button"
+          aria-expanded="false">
+
+          <span class="faq-q-text">
+            FIXEO propose-t-il aussi un service pour les entreprises ?
+          </span>
+
+          <span
+            class="faq-icon"
+            aria-hidden="true">
+            +
+          </span>
+
+        </button>
+
+        <div class="faq-a">
+
+          <p>
+            Oui. FIXEO développe une offre destinée aux
+            entreprises et organisations afin de structurer,
+            centraliser et coordonner leurs besoins
+            d’intervention. Vous pouvez découvrir cet univers
+            sur
+            <a href="/entreprises.html">
+              FIXEO Entreprise
+            </a>.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         SUPPORT
+    ═══════════════════════════════════════════════ -->
+
+    <section
+      class="faq-support"
+      aria-labelledby="faq-support-title">
+
+      <div class="faq-support-content">
+
+        <div class="faq-support-eyebrow">
+          Une autre question ?
+        </div>
+
+        <h2 id="faq-support-title">
+          L’équipe FIXEO peut vous orienter
+        </h2>
+
+        <p>
+          Pour une question concernant une demande,
+          un profil, une intervention ou le fonctionnement
+          de la plateforme, utilisez notre page de contact.
+        </p>
+
+        <div class="faq-actions">
+
+          <a
+            class="faq-btn-primary"
+            href="/contact.html">
+            Contacter FIXEO
+          </a>
+
+          <a
+            class="faq-btn-secondary"
+            href="/artisans.html">
+            Explorer les artisans
+          </a>
+
+          <a
+            class="faq-btn-secondary"
+            href="/rejoindre-fixeo.html">
+            Rejoindre FIXEO
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         LEGAL
+    ═══════════════════════════════════════════════ -->
+
+    <div class="faq-legal">
+
+      <p>
+        FIXEO est une plateforme numérique exploitée par
+        FIXEO SARLAU.
+      </p>
+
+      <div class="faq-legal-links">
+
+        <a href="/mentions-legales.html">
+          Mentions légales
+        </a>
+
+        <a href="/cgu.html">
+          CGU
+        </a>
+
+        <a href="/confidentialite.html">
+          Confidentialité
+        </a>
+
+      </div>
+
+    </div>
+
+
+  </main>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       FAQ INTERACTION
+  ═══════════════════════════════════════════════════ -->
+
+  <script>
+
+    (function () {
+
+      'use strict';
+
+      var buttons =
+        document.querySelectorAll('.faq-q');
+
+      buttons.forEach(function (button) {
+
+        button.addEventListener('click', function () {
+
+          var item =
+            button.closest('.faq-item');
+
+          if (!item) return;
+
+          var isOpen =
+            item.classList.toggle('open');
+
+          button.setAttribute(
+            'aria-expanded',
+            isOpen ? 'true' : 'false'
+          );
+
+        });
+
+      });
+
+    })();
+
+  </script>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       GLOBAL SCRIPTS
+  ═══════════════════════════════════════════════════ -->
 
   <script src="js/fixeo-session-mobile.js?v=50a38b9"></script>
   <script src="js/fixeo-header-global.js?v=gfnav5"></script>
@@ -212,9 +1685,10 @@
   <script src="js/auth-global.js?v=50a38b9"></script>
   <script src="js/header-unified.js?v=50a38b9"></script>
 
-  <script src="js/fixeo-footer-global.js?v=gf4a" defer></script>
+  <script
+    src="js/fixeo-footer-global.js?v=gf4a"
+    defer>
+  </script>
 
-<!-- Editorial attribution (Phase 4.1 EEAT) -->
-<p style="text-align:center;font-size:0.8rem;color:#aaa;padding:1rem 0 0.5rem;">Contenu produit par <a href="/equipe" style="color:#888;">l'équipe Fixeo</a> &middot; <a href="/blog" style="color:#888;">Tous nos guides</a></p>
 </body>
 </html>
