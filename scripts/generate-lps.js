@@ -1211,30 +1211,56 @@ function buildPage(svcKey, cityKey) {
 
     <hr class="fxlp-divider">
 
-    <!-- §§5 HOW-IT-WORKS STEPS -->
-    <section class="fxlp-how" aria-labelledby="fxlp-steps-title">
-      <div class="fxlp-wrap">
-        <span class="fxlp-section-label">EN 3 ÉTAPES</span>
-        <h2 id="fxlp-steps-title" class="fxlp-section-title">Trouver ${esc(article + ' ' + profession)} à ${esc(city.label)} en 3 étapes</h2>
-        <div class="fxlp-steps" role="list">
-          <div class="fxlp-step" role="listitem">
-            <div class="fxlp-step-num" aria-hidden="true">1</div>
-            <h3 class="fxlp-step-title">${svc.step1_title || 'Décrivez votre besoin'}</h3>
-            <p class="fxlp-step-desc">${svc.step1_desc || 'Votre ville et le service sont déjà sélectionnés — décrivez simplement votre situation.'}</p>
-          </div>
-          <div class="fxlp-step" role="listitem">
-            <div class="fxlp-step-num" aria-hidden="true">2</div>
-            <h3 class="fxlp-step-title">FIXEO recherche la solution adaptée</h3>
-            <p class="fxlp-step-desc">${svc.step2_desc || 'Votre demande est enregistrée et transmise aux artisans référencés correspondant à votre secteur.'}</p>
-          </div>
-          <div class="fxlp-step" role="listitem">
-            <div class="fxlp-step-num" aria-hidden="true">3</div>
-            <h3 class="fxlp-step-title">${svc.step3_title || "Confirmez le tarif avec l’artisan"}</h3>
-            <p class="fxlp-step-desc">${svc.step3_desc || "L’artisan vous communique le tarif définitif avant de commencer. Paiement après intervention."}</p>
-          </div>
-        </div>
+  <!-- §§5 FIXEO JOURNEY — LOCAL FLAGSHIP V2 -->
+<section class="fxlp-how" aria-labelledby="fxlp-steps-title">
+  <div class="fxlp-wrap">
+
+    <span class="fxlp-section-label">APRÈS VOTRE DEMANDE</span>
+
+    <h2 id="fxlp-steps-title" class="fxlp-section-title">
+      De votre besoin à l’intervention
+    </h2>
+
+    <p class="fxlp-section-sub">
+      Une fois votre situation renseignée, le parcours se poursuit avec les informations
+      nécessaires pour organiser l’intervention dans de bonnes conditions.
+    </p>
+
+    <div class="fxlp-steps" role="list">
+
+      <div class="fxlp-step" role="listitem">
+        <div class="fxlp-step-num" aria-hidden="true">1</div>
+        <h3 class="fxlp-step-title">Orientation</h3>
+        <p class="fxlp-step-desc">
+          FIXEO peut orienter votre demande vers des profils référencés correspondant
+          au métier recherché et au contexte renseigné.
+        </p>
       </div>
-    </section>
+
+      <div class="fxlp-step" role="listitem">
+        <div class="fxlp-step-num" aria-hidden="true">2</div>
+        <h3 class="fxlp-step-title">Confirmation</h3>
+        <p class="fxlp-step-desc">
+          Le professionnel confirme sa disponibilité, le créneau proposé
+          et le tarif avant de commencer.
+        </p>
+      </div>
+
+      <div class="fxlp-step" role="listitem">
+        <div class="fxlp-step-num" aria-hidden="true">3</div>
+        <h3 class="fxlp-step-title">Intervention</h3>
+        <p class="fxlp-step-desc">
+          En cas d’accord, l’intervention peut avoir lieu.
+          Le paiement s’effectue après l’intervention.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+   
 
     <!-- §§6 FINAL CTA BANNER -->
     <div class="fxlp-wrap">
