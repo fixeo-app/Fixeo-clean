@@ -7507,7 +7507,25 @@ window.addEventListener('load', function () {
       }
     }
 
-    _startGeoFlow();
+    /* Explicit SEO entry context has priority over automatic geolocation. */
+var _entryCity = '';
+
+try {
+  if (
+    window.FIXEO_ENTRY_CONTEXT &&
+    window.FIXEO_ENTRY_CONTEXT.source === 'seo' &&
+    window.FIXEO_ENTRY_CONTEXT.city
+  ) {
+    _entryCity = String(window.FIXEO_ENTRY_CONTEXT.city).trim();
+  }
+} catch (_) {}
+
+if (_entryCity) {
+  _preselectCity(_entryCity);
+  _setLabel('\u{1F4CD} ' + _entryCity + ' \u00b7 Modifier');
+} else {
+  _startGeoFlow();
+}
 
     /* T4 / T5 - City smart line click handler */
     var smartEl = document.getElementById('hero-city-smart');
