@@ -1,154 +1,1793 @@
 <!DOCTYPE html>
 <html lang="fr" dir="ltr" data-theme="dark">
+
 <head>
+
   <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
   <link rel="apple-touch-icon" href="img/favicon.png">
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <meta name="description" content="Politique de confidentialité Fixeo — comment nous protégeons vos données.">
-  <title>Politique de confidentialité — Fixeo</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1.0">
+
+  <meta
+    name="description"
+    content="Politique de confidentialité de FIXEO : informations sur la collecte, l'utilisation et la protection des données personnelles sur fixeo.ma.">
+
+  <meta
+    name="robots"
+    content="index, follow">
+
+  <link
+    rel="canonical"
+    href="https://www.fixeo.ma/confidentialite.html">
+
+  <title>Politique de confidentialité — FIXEO</title>
+
+
+  <meta
+    property="og:type"
+    content="website">
+
+  <meta
+    property="og:title"
+    content="Politique de confidentialité — FIXEO">
+
+  <meta
+    property="og:description"
+    content="Découvrez comment FIXEO traite et protège les données personnelles utilisées dans le cadre de ses services.">
+
+  <meta
+    property="og:url"
+    content="https://www.fixeo.ma/confidentialite.html">
+
+  <meta
+    property="og:site_name"
+    content="Fixeo">
+
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com">
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap"
+    rel="stylesheet">
+
+
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/header-unified.css">
   <link rel="stylesheet" href="css/fixeo-header-global.css">
   <link rel="stylesheet" href="css/auth-global.css">
   <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf4a">
+
+
   <style id="fixeo-logo-override">
-    .navbar-brand .logo-icon,.logo-wrap .logo-icon,.fixeo-gh-brand .logo-icon{display:none!important;width:0!important;height:0!important;min-width:0!important;flex:0!important}
-    .navbar-brand .logo-text,.logo-wrap .logo-text,.fixeo-gh-brand .logo-text{display:none!important;width:0!important;height:0!important}
-    .navbar-brand,.logo-wrap{max-width:220px!important;overflow:visible!important;gap:0!important;background:transparent!important}
-    .fixeo-gh-brand{max-width:180px!important;overflow:visible!important;gap:0!important;background:transparent!important}
-    img.fixeo-logo-img{display:block!important;height:32px!important;width:auto!important;object-fit:contain!important;object-position:left center!important;background:transparent!important;mix-blend-mode:normal!important;filter:none!important;box-shadow:none!important;border:none!important;flex:0 0 auto!important;overflow:visible!important}
-    .fixeo-gh-brand img.fixeo-logo-img,.fixeo-gh-mobile-bar img.fixeo-logo-img{height:26px!important;width:auto!important}
-    @media(max-width:480px){img.fixeo-logo-img{height:24px!important}.fixeo-gh-brand img.fixeo-logo-img{height:22px!important}}
-  </style>
-  <style>
-    *,*::before,*::after{box-sizing:border-box}
-    body{margin:0;font-family:Cairo,Tajawal,Arial,sans-serif;background:#0a0a14;color:#e8eaf0;min-height:100vh;padding-top:70px;overflow-x:hidden}
-    a{text-decoration:none;color:inherit}
-    :root{
-      --pink:#E1306C;--purple:#833AB4;--blue:#38bdf8;
-      --grad:linear-gradient(135deg,#E1306C,#833AB4);
-      --muted:rgba(232,234,240,.58);
-      --card:rgba(255,255,255,.055);
-      --border:rgba(255,255,255,.09);
+
+    .navbar-brand .logo-icon,
+    .logo-wrap .logo-icon,
+    .fixeo-gh-brand .logo-icon {
+      display:none!important;
+      width:0!important;
+      height:0!important;
+      min-width:0!important;
+      flex:0!important;
     }
-    .fx-wrap{max-width:900px;margin:0 auto;padding:0 22px}
-    .fx-hero{padding:72px 22px 40px;text-align:center;position:relative}
-    .fx-hero::before{content:'';position:absolute;inset:0;pointer-events:none;
-      background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(225,48,108,.12),transparent 65%)}
-    .fx-hero-badge{display:inline-flex;align-items:center;gap:7px;padding:6px 16px;
-      border-radius:999px;border:1px solid rgba(225,48,108,.3);background:rgba(225,48,108,.08);
-      font-size:.75rem;font-weight:700;color:rgba(225,48,108,.9);letter-spacing:.05em;
-      text-transform:uppercase;margin:0 0 20px}
-    .fx-hero h1{font-size:clamp(1.7rem,4vw,2.6rem);font-weight:900;margin:0 0 14px;
-      background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-    .fx-hero p{font-size:1rem;color:var(--muted);max-width:560px;margin:0 auto}
-    .fx-section{padding:48px 22px}
-    .fx-section h2{font-size:1.25rem;font-weight:800;margin:0 0 20px;color:#fff}
-    .fx-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
-      padding:28px 28px;margin-bottom:16px}
-    .fx-card h3{font-size:1rem;font-weight:700;color:#fff;margin:0 0 10px}
-    .fx-card p,.fx-card li{font-size:.9rem;color:var(--muted);line-height:1.65}
-    .fx-card ul{margin:8px 0 0 0;padding-left:18px}
-    .fx-card ul li{margin-bottom:4px}
-    .fx-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-    @media(max-width:640px){.fx-grid{grid-template-columns:1fr}}
-    .fx-cta-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:32px 0 0}
-    .fx-btn-primary{
-      display:inline-flex;align-items:center;gap:8px;padding:14px 28px;
-      border-radius:14px;font-weight:700;font-size:.95rem;cursor:pointer;border:none;
-      background:var(--grad);color:#fff;transition:opacity .15s,transform .15s}
-    .fx-btn-primary:hover{opacity:.88;transform:translateY(-2px)}
-    .fx-btn-outline{
-      display:inline-flex;align-items:center;gap:8px;padding:13px 26px;
-      border-radius:14px;font-weight:700;font-size:.92rem;cursor:pointer;
-      border:1.5px solid rgba(225,48,108,.35);background:rgba(225,48,108,.08);
-      color:rgba(255,180,200,.9);transition:background .15s,border-color .15s}
-    .fx-btn-outline:hover{background:rgba(225,48,108,.16);border-color:rgba(225,48,108,.6)}
-    .fx-email{display:inline-flex;align-items:center;gap:6px;
-      color:rgba(56,189,248,.85);font-weight:600;font-size:.9rem;
-      border-bottom:1px dashed rgba(56,189,248,.3);padding-bottom:1px;transition:color .15s}
-    .fx-email:hover{color:#fff}
-    .fx-divider{border:none;border-top:1px solid var(--border);margin:32px 0}
-    .fx-muted{font-size:.8rem;color:rgba(232,234,240,.38);text-align:center;margin-top:32px}
-    /* Accordion (FAQ) */
-    .faq-item{background:var(--card);border:1px solid var(--border);border-radius:14px;
-      margin-bottom:10px;overflow:hidden}
-    .faq-q{width:100%;text-align:left;background:none;border:none;color:#fff;
-      font-family:inherit;font-size:.95rem;font-weight:700;padding:18px 22px;
-      cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
-    .faq-q .faq-icon{font-size:1.1rem;transition:transform .2s;flex-shrink:0}
-    .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .2s ease;
-      padding:0 22px;font-size:.9rem;color:var(--muted);line-height:1.7}
-    .faq-item.open .faq-a{max-height:400px;padding:0 22px 18px}
-    .faq-item.open .faq-icon{transform:rotate(45deg)}
-    /* Legal blocks */
-    .legal-section{margin-bottom:32px}
-    .legal-section h2{font-size:1.1rem;font-weight:800;color:#fff;margin:0 0 12px;
-      padding-bottom:8px;border-bottom:1px solid var(--border)}
-    .legal-section p,.legal-section li{font-size:.88rem;color:var(--muted);line-height:1.7}
-    .legal-section ul{padding-left:18px;margin:8px 0}
-    .legal-section ul li{margin-bottom:4px}
-    /* Footer */
-    .fx-footer{border-top:1px solid var(--border);padding:24px 22px;text-align:center;
-      font-size:.78rem;color:rgba(232,234,240,.28)}
-    .fx-footer a{color:rgba(232,234,240,.42);margin:0 8px}
-    .fx-footer a:hover{color:#fff}
-</style>
-  <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
-  <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
-  <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
-  <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
+
+    .navbar-brand .logo-text,
+    .logo-wrap .logo-text,
+    .fixeo-gh-brand .logo-text {
+      display:none!important;
+      width:0!important;
+      height:0!important;
+    }
+
+    .navbar-brand,
+    .logo-wrap {
+      max-width:220px!important;
+      overflow:visible!important;
+      gap:0!important;
+      background:transparent!important;
+    }
+
+    .fixeo-gh-brand {
+      max-width:180px!important;
+      overflow:visible!important;
+      gap:0!important;
+      background:transparent!important;
+    }
+
+    img.fixeo-logo-img {
+      display:block!important;
+      height:32px!important;
+      width:auto!important;
+      object-fit:contain!important;
+      object-position:left center!important;
+      background:transparent!important;
+      mix-blend-mode:normal!important;
+      filter:none!important;
+      box-shadow:none!important;
+      border:none!important;
+      flex:0 0 auto!important;
+      overflow:visible!important;
+    }
+
+    .fixeo-gh-brand img.fixeo-logo-img,
+    .fixeo-gh-mobile-bar img.fixeo-logo-img {
+      height:26px!important;
+      width:auto!important;
+    }
+
+    @media(max-width:480px) {
+
+      img.fixeo-logo-img {
+        height:24px!important;
+      }
+
+      .fixeo-gh-brand img.fixeo-logo-img {
+        height:22px!important;
+      }
+    }
+
+  </style>
+
+
+  <style>
+
+    *,
+    *::before,
+    *::after {
+      box-sizing:border-box;
+    }
+
+    body {
+      margin:0;
+      min-height:100vh;
+      padding-top:70px;
+
+      overflow-x:hidden;
+
+      background:#0a0a14;
+      color:#e8eaf0;
+
+      font-family:
+        Cairo,
+        Tajawal,
+        Arial,
+        sans-serif;
+    }
+
+    a {
+      color:inherit;
+      text-decoration:none;
+    }
+
+    :root {
+
+      --pink:#E1306C;
+      --purple:#833AB4;
+      --blue:#38bdf8;
+      --green:#34d399;
+
+      --grad:
+        linear-gradient(
+          135deg,
+          #E1306C,
+          #833AB4
+        );
+
+      --muted:
+        rgba(232,234,240,.60);
+
+      --muted-soft:
+        rgba(232,234,240,.40);
+
+      --card:
+        rgba(255,255,255,.045);
+
+      --border:
+        rgba(255,255,255,.09);
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       LAYOUT
+    ═══════════════════════════════════════════════════ */
+
+    .fx-wrap {
+      max-width:900px;
+      margin:0 auto;
+      padding:0 22px;
+    }
+
+    .legal-shell {
+      padding-bottom:56px;
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════════════ */
+
+    .fx-hero {
+      position:relative;
+
+      padding:
+        72px
+        22px
+        42px;
+
+      text-align:center;
+    }
+
+    .fx-hero::before {
+      content:'';
+
+      position:absolute;
+      inset:0;
+
+      pointer-events:none;
+
+      background:
+        radial-gradient(
+          ellipse 80% 60% at 50% -10%,
+          rgba(225,48,108,.12),
+          transparent 65%
+        );
+    }
+
+    .fx-hero-badge {
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+
+      margin-bottom:20px;
+
+      padding:
+        6px
+        16px;
+
+      border:
+        1px solid
+        rgba(56,189,248,.28);
+
+      border-radius:999px;
+
+      background:
+        rgba(56,189,248,.07);
+
+      color:
+        rgba(145,215,255,.90);
+
+      font-size:.72rem;
+      font-weight:800;
+
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .fx-hero h1 {
+      margin:
+        0
+        0
+        14px;
+
+      font-size:
+        clamp(
+          1.8rem,
+          4vw,
+          2.7rem
+        );
+
+      font-weight:900;
+
+      background:var(--grad);
+
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+
+    .fx-hero p {
+      max-width:620px;
+
+      margin:0 auto;
+
+      color:var(--muted);
+
+      font-size:1rem;
+      line-height:1.7;
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       INTRO
+    ═══════════════════════════════════════════════════ */
+
+    .privacy-intro {
+      margin-bottom:34px;
+
+      padding:
+        25px
+        27px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.09);
+
+      border-radius:18px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.055),
+          rgba(255,255,255,.025)
+        );
+
+      box-shadow:
+        0 18px 50px
+        rgba(0,0,0,.18);
+    }
+
+    .privacy-intro-label {
+      margin-bottom:8px;
+
+      color:
+        rgba(120,210,255,.82);
+
+      font-size:.67rem;
+      font-weight:850;
+
+      letter-spacing:.10em;
+      text-transform:uppercase;
+    }
+
+    .privacy-intro strong {
+      display:block;
+
+      margin-bottom:8px;
+
+      color:#fff;
+
+      font-size:1.08rem;
+      font-weight:850;
+    }
+
+    .privacy-intro p {
+      margin:0;
+
+      color:var(--muted);
+
+      font-size:.9rem;
+      line-height:1.75;
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       PRIVACY PRINCIPLES
+    ═══════════════════════════════════════════════════ */
+
+    .privacy-principles {
+      display:grid;
+
+      grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+      gap:12px;
+
+      margin-bottom:38px;
+    }
+
+    .privacy-principle {
+      padding:
+        18px
+        16px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.08);
+
+      border-radius:15px;
+
+      background:
+        rgba(255,255,255,.032);
+    }
+
+    .privacy-principle-icon {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      width:31px;
+      height:31px;
+
+      margin-bottom:12px;
+
+      border:
+        1px solid
+        rgba(56,189,248,.20);
+
+      border-radius:10px;
+
+      background:
+        rgba(56,189,248,.07);
+
+      font-size:.88rem;
+    }
+
+    .privacy-principle strong {
+      display:block;
+
+      margin-bottom:4px;
+
+      color:
+        rgba(255,255,255,.92);
+
+      font-size:.84rem;
+      font-weight:800;
+    }
+
+    .privacy-principle span {
+      display:block;
+
+      color:
+        rgba(232,234,240,.48);
+
+      font-size:.73rem;
+      line-height:1.55;
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       LEGAL SECTIONS
+    ═══════════════════════════════════════════════════ */
+
+    .legal-section {
+      margin-bottom:35px;
+    }
+
+    .legal-section h2 {
+      margin:
+        0
+        0
+        14px;
+
+      padding-bottom:9px;
+
+      border-bottom:
+        1px solid
+        var(--border);
+
+      color:#fff;
+
+      font-size:1.1rem;
+      font-weight:850;
+    }
+
+    .legal-section h3 {
+      margin:
+        20px
+        0
+        8px;
+
+      color:
+        rgba(255,255,255,.92);
+
+      font-size:.94rem;
+      font-weight:750;
+    }
+
+    .legal-section p,
+    .legal-section li {
+      color:var(--muted);
+
+      font-size:.89rem;
+      line-height:1.78;
+    }
+
+    .legal-section p {
+      margin:
+        8px
+        0;
+    }
+
+    .legal-section ul {
+      margin:
+        10px
+        0;
+
+      padding-left:20px;
+    }
+
+    .legal-section li {
+      margin-bottom:6px;
+    }
+
+    .legal-section strong {
+      color:
+        rgba(255,255,255,.86);
+
+      font-weight:750;
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       COMPANY CARD
+    ═══════════════════════════════════════════════════ */
+
+    .legal-company-card {
+      overflow:hidden;
+
+      border:
+        1px solid
+        rgba(255,255,255,.09);
+
+      border-radius:18px;
+
+      background:
+        rgba(255,255,255,.038);
+    }
+
+    .legal-company-row {
+      display:grid;
+
+      grid-template-columns:
+        minmax(150px,.75fr)
+        minmax(0,1.25fr);
+
+      gap:22px;
+
+      padding:
+        14px
+        18px;
+
+      border-bottom:
+        1px solid
+        rgba(255,255,255,.065);
+    }
+
+    .legal-company-row:last-child {
+      border-bottom:0;
+    }
+
+    .legal-company-label {
+      color:
+        rgba(232,234,240,.42);
+
+      font-size:.78rem;
+      font-weight:700;
+    }
+
+    .legal-company-value {
+      color:
+        rgba(255,255,255,.88);
+
+      font-size:.86rem;
+      font-weight:650;
+
+      overflow-wrap:anywhere;
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       INFO CARDS
+    ═══════════════════════════════════════════════════ */
+
+    .privacy-data-grid {
+      display:grid;
+
+      grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+      gap:12px;
+
+      margin-top:16px;
+    }
+
+    .privacy-data-card {
+      padding:
+        17px
+        18px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.075);
+
+      border-radius:14px;
+
+      background:
+        rgba(255,255,255,.03);
+    }
+
+    .privacy-data-card strong {
+      display:block;
+
+      margin-bottom:5px;
+
+      color:
+        rgba(255,255,255,.90);
+
+      font-size:.82rem;
+      font-weight:800;
+    }
+
+    .privacy-data-card span {
+      display:block;
+
+      color:
+        rgba(232,234,240,.50);
+
+      font-size:.76rem;
+      line-height:1.6;
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       NOTICE
+    ═══════════════════════════════════════════════════ */
+
+    .legal-note {
+      margin:
+        14px
+        0;
+
+      padding:
+        15px
+        17px;
+
+      border:
+        1px solid
+        rgba(56,189,248,.16);
+
+      border-radius:13px;
+
+      background:
+        rgba(56,189,248,.045);
+
+      color:
+        rgba(220,235,250,.68);
+
+      font-size:.84rem;
+      line-height:1.7;
+    }
+
+    .legal-note--green {
+      border-color:
+        rgba(52,211,153,.17);
+
+      background:
+        rgba(52,211,153,.045);
+
+      color:
+        rgba(200,245,225,.68);
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       LINKS / BUTTONS
+    ═══════════════════════════════════════════════════ */
+
+    .fx-email {
+      display:inline-flex;
+
+      padding-bottom:1px;
+
+      border-bottom:
+        1px dashed
+        rgba(56,189,248,.30);
+
+      color:
+        rgba(56,189,248,.90);
+
+      font-weight:650;
+
+      transition:color .15s ease;
+    }
+
+    .fx-email:hover {
+      color:#fff;
+    }
+
+    .legal-links {
+      display:flex;
+      flex-wrap:wrap;
+
+      gap:10px;
+
+      margin-top:18px;
+    }
+
+    .legal-link {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+
+      min-height:42px;
+
+      padding:
+        0
+        15px;
+
+      border:
+        1px solid
+        rgba(255,255,255,.09);
+
+      border-radius:12px;
+
+      background:
+        rgba(255,255,255,.035);
+
+      color:
+        rgba(235,240,250,.72);
+
+      font-family:inherit;
+      font-size:.82rem;
+      font-weight:700;
+
+      cursor:pointer;
+
+      transition:
+        background .15s ease,
+        border-color .15s ease,
+        color .15s ease;
+    }
+
+    .legal-link:hover {
+      background:
+        rgba(255,255,255,.065);
+
+      border-color:
+        rgba(255,255,255,.15);
+
+      color:#fff;
+    }
+
+    .fx-muted {
+      margin-top:40px;
+
+      color:var(--muted-soft);
+
+      text-align:center;
+
+      font-size:.78rem;
+      line-height:1.6;
+    }
+
+
+    /* ═══════════════════════════════════════════════════
+       MOBILE
+    ═══════════════════════════════════════════════════ */
+
+    @media(max-width:640px) {
+
+      .fx-hero {
+        padding:
+          54px
+          18px
+          34px;
+      }
+
+      .fx-wrap {
+        padding:
+          0
+          18px;
+      }
+
+      .privacy-intro {
+        padding:
+          20px
+          18px;
+      }
+
+      .privacy-principles,
+      .privacy-data-grid {
+        grid-template-columns:1fr;
+      }
+
+      .legal-company-row {
+        grid-template-columns:1fr;
+
+        gap:4px;
+
+        padding:
+          14px
+          16px;
+      }
+
+      .legal-company-label {
+        font-size:.69rem;
+
+        letter-spacing:.06em;
+        text-transform:uppercase;
+      }
+
+      .legal-company-value {
+        font-size:.85rem;
+      }
+
+      .legal-links {
+        flex-direction:column;
+      }
+
+      .legal-link {
+        width:100%;
+      }
+    }
+
+  </style>
+
+
+  <link
+    rel="stylesheet"
+    href="css/fixeo-consent-v1.css?v=fcv1b">
+
+  <script
+    src="js/fixeo-consent-v1.js?v=fcv1c">
+  </script>
+
+  <script
+    src="js/fixeo-analytics-config.js?v=fac1b"
+    defer>
+  </script>
+
+  <script
+    src="js/fixeo-analytics-bootstrap.js?v=fab1c"
+    defer>
+  </script>
+
 </head>
+
+
 <body>
 
-<div class="fx-hero">
-  <div class="fx-wrap" style="position:relative;z-index:1">
-    <div class="fx-hero-badge">🔒 Confidentialité</div>
-    <h1>Politique de confidentialité</h1>
-    <p>Dernière mise à jour : mai 2025. Vos données vous appartiennent.</p>
+
+  <!-- ═══════════════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════════════ -->
+
+  <div class="fx-hero">
+
+    <div
+      class="fx-wrap"
+      style="position:relative;z-index:1">
+
+      <div class="fx-hero-badge">
+        🔒 Données personnelles
+      </div>
+
+      <h1>
+        Politique de confidentialité
+      </h1>
+
+      <p>
+        Cette politique explique quelles données peuvent être
+        traitées par FIXEO, pourquoi elles sont utilisées et
+        quels droits vous pouvez exercer.
+      </p>
+
+    </div>
+
   </div>
-</div>
 
-<div class="fx-wrap" style="padding-bottom:48px">
-<div class="legal-section">
-  <h2>1. Données collectées</h2>
-  <p>Fixeo collecte les données que vous fournissez lors de votre inscription : nom, email, ville, et le cas échéant votre spécialité artisanale.</p><p>Les données de navigation (pages visitées, durée de session) peuvent être collectées à des fins d'amélioration du service.</p><p>Aucune carte bancaire n'est stockée sur nos serveurs.</p>
-</div>
-<div class="legal-section">
-  <h2>2. Utilisation des données</h2>
-  <p>Vos données sont utilisées pour : vous connecter aux artisans disponibles, améliorer notre service, vous envoyer des communications liées à vos demandes.</p><p>Vos données ne sont pas vendues à des tiers.</p><p>Nous n'utilisons pas vos données à des fins de publicité non sollicitée.</p>
-</div>
-<div class="legal-section">
-  <h2>3. Géolocalisation</h2>
-  <p>Fixeo peut vous proposer de partager votre position pour améliorer la pertinence des résultats (artisans proches de vous).</p><p>La géolocalisation est entièrement optionnelle. Vous pouvez saisir votre ville manuellement.</p><p>Les coordonnées GPS ne sont pas stockées au-delà de la session.</p>
-</div>
-<div class="legal-section">
-  <h2>4. Cookies et stockage local</h2>
-  <p>Fixeo utilise des cookies fonctionnels pour maintenir votre session et vos préférences.</p><p>Le stockage local (localStorage) est utilisé pour la performance de l'application.</p><p>Vous pouvez désactiver les cookies dans votre navigateur ; certaines fonctionnalités peuvent alors être limitées.</p>
-</div>
-<div class="legal-section">
-  <h2>5. Partage des données</h2>
-  <p>Vos données ne sont partagées qu'avec les artisans que vous contactez via Fixeo, dans la limite nécessaire à la mise en relation.</p><p>Fixeo peut faire appel à des prestataires techniques (hébergement, analytics) soumis à des obligations de confidentialité.</p>
-</div>
-<div class="legal-section">
-  <h2>6. Sécurité</h2>
-  <p>Fixeo met en œuvre des mesures techniques et organisationnelles raisonnables pour protéger vos données.</p><p>En cas de suspicion de compromission, nous vous informerons dans les meilleurs délais.</p>
-</div>
-<div class="legal-section">
-  <h2>7. Droits des utilisateurs</h2>
-  <p>Vous disposez d'un droit d'accès, de rectification et de suppression de vos données.</p><p>Pour exercer ces droits : <a href="mailto:support@fixeo.ma" style="color:rgba(56,189,248,.8)">support@fixeo.ma</a></p>
-</div>
-<div class="legal-section">
-  <h2>8. Contact</h2>
-  <p>Pour toute question relative à la confidentialité : <a href="mailto:contact@fixeo.ma" style="color:rgba(56,189,248,.8)">contact@fixeo.ma</a></p><p>Responsable traitement : Fixeo — <a href="mailto:admin@fixeo.ma" style="color:rgba(56,189,248,.8)">admin@fixeo.ma</a></p>
-</div>
-</div>
 
+  <!-- ═══════════════════════════════════════════════════
+       CONTENT
+  ═══════════════════════════════════════════════════ -->
+
+  <main class="fx-wrap legal-shell">
+
+
+    <div class="privacy-intro">
+
+      <div class="privacy-intro-label">
+        Confidentialité FIXEO
+      </div>
+
+      <strong>
+        Des données utilisées pour faire fonctionner le service
+      </strong>
+
+      <p>
+        FIXEO traite les informations nécessaires à la gestion
+        de la plateforme, aux comptes utilisateurs, aux profils
+        professionnels, aux demandes d’intervention et à la mise
+        en relation entre les parties.
+      </p>
+
+    </div>
+
+
+    <div
+      class="privacy-principles"
+      aria-label="Principes de confidentialité">
+
+      <div class="privacy-principle">
+
+        <div class="privacy-principle-icon">
+          ◎
+        </div>
+
+        <strong>
+          Finalités déterminées
+        </strong>
+
+        <span>
+          Les données sont utilisées dans le cadre des
+          fonctionnalités et opérations de FIXEO.
+        </span>
+
+      </div>
+
+
+      <div class="privacy-principle">
+
+        <div class="privacy-principle-icon">
+          ◇
+        </div>
+
+        <strong>
+          Collecte proportionnée
+        </strong>
+
+        <span>
+          FIXEO cherche à limiter les informations collectées
+          à celles utiles au service concerné.
+        </span>
+
+      </div>
+
+
+      <div class="privacy-principle">
+
+        <div class="privacy-principle-icon">
+          ✓
+        </div>
+
+        <strong>
+          Droits des utilisateurs
+        </strong>
+
+        <span>
+          Vous pouvez exercer les droits prévus par la
+          réglementation marocaine applicable.
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════
+         1
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        1. Responsable du traitement
+      </h2>
+
+      <p>
+        Le responsable des traitements de données personnelles
+        décrits dans la présente politique est :
+      </p>
+
+      <div class="legal-company-card">
+
+        <div class="legal-company-row">
+
+          <div class="legal-company-label">
+            Société
+          </div>
+
+          <div class="legal-company-value">
+            FIXEO SARLAU
+          </div>
+
+        </div>
+
+
+        <div class="legal-company-row">
+
+          <div class="legal-company-label">
+            Forme juridique
+          </div>
+
+          <div class="legal-company-value">
+            Société à responsabilité limitée à associé unique
+            (SARL AU)
+          </div>
+
+        </div>
+
+
+        <div class="legal-company-row">
+
+          <div class="legal-company-label">
+            Siège social
+          </div>
+
+          <div class="legal-company-value">
+            Vital Place, 10 rue Zaki Eddine Taoussi,
+            Bureau n°503, Casablanca, Maroc
+          </div>
+
+        </div>
+
+
+        <div class="legal-company-row">
+
+          <div class="legal-company-label">
+            RC
+          </div>
+
+          <div class="legal-company-value">
+            Casablanca n° 744767
+          </div>
+
+        </div>
+
+
+        <div class="legal-company-row">
+
+          <div class="legal-company-label">
+            ICE
+          </div>
+
+          <div class="legal-company-value">
+            004018130000043
+          </div>
+
+        </div>
+
+
+        <div class="legal-company-row">
+
+          <div class="legal-company-label">
+            Contact données personnelles
+          </div>
+
+          <div class="legal-company-value">
+            <a
+              href="mailto:admin@fixeo.ma"
+              class="fx-email">
+              admin@fixeo.ma
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         2
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        2. Cadre applicable
+      </h2>
+
+      <p>
+        Les traitements de données personnelles réalisés dans le
+        cadre de FIXEO sont soumis aux dispositions applicables
+        au Maroc, notamment à la
+        <strong>
+          Loi n° 09-08 relative à la protection des personnes
+          physiques à l’égard du traitement des données à
+          caractère personnel
+        </strong>.
+      </p>
+
+      <p>
+        FIXEO veille notamment à ce que les données traitées
+        soient pertinentes au regard des finalités poursuivies
+        et à mettre en œuvre des mesures adaptées de
+        confidentialité et de sécurité.
+      </p>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         3
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        3. Données susceptibles d’être traitées
+      </h2>
+
+      <p>
+        Les catégories de données effectivement utilisées
+        dépendent des fonctionnalités auxquelles vous avez
+        recours.
+      </p>
+
+      <div class="privacy-data-grid">
+
+
+        <div class="privacy-data-card">
+
+          <strong>
+            Identification et compte
+          </strong>
+
+          <span>
+            Nom, prénom, adresse électronique, numéro de
+            téléphone, identifiants techniques de compte et
+            informations nécessaires à l’authentification.
+          </span>
+
+        </div>
+
+
+        <div class="privacy-data-card">
+
+          <strong>
+            Localisation et zone
+          </strong>
+
+          <span>
+            Ville, quartier, adresse ou localisation communiquée
+            lorsque ces informations sont nécessaires à une
+            recherche ou à une intervention.
+          </span>
+
+        </div>
+
+
+        <div class="privacy-data-card">
+
+          <strong>
+            Demandes d’intervention
+          </strong>
+
+          <span>
+            Métier recherché, description du besoin, urgence,
+            disponibilité souhaitée et informations utiles à la
+            compréhension de la demande.
+          </span>
+
+        </div>
+
+
+        <div class="privacy-data-card">
+
+          <strong>
+            Photos et contenus
+          </strong>
+
+          <span>
+            Photos, vidéos, descriptions ou autres éléments
+            transmis volontairement pour illustrer un besoin,
+            un profil ou une réalisation.
+          </span>
+
+        </div>
+
+
+        <div class="privacy-data-card">
+
+          <strong>
+            Profils professionnels
+          </strong>
+
+          <span>
+            Métier, zone d’activité, description, coordonnées
+            professionnelles, réalisations et informations
+            nécessaires au fonctionnement du profil.
+          </span>
+
+        </div>
+
+
+        <div class="privacy-data-card">
+
+          <strong>
+            Données techniques
+          </strong>
+
+          <span>
+            Informations techniques nécessaires au
+            fonctionnement, à la sécurité et au diagnostic de
+            la plateforme, telles que certaines informations de
+            connexion, de navigateur ou d’appareil.
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         4
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        4. Origine des données
+      </h2>
+
+      <p>
+        Les données peuvent notamment provenir :
+      </p>
+
+      <ul>
+        <li>des informations que vous fournissez directement à FIXEO ;</li>
+        <li>de votre utilisation des formulaires et fonctionnalités de la plateforme ;</li>
+        <li>de la création ou de la gestion d’un compte ;</li>
+        <li>des informations communiquées dans le cadre d’une demande ou d’une intervention ;</li>
+        <li>des échanges avec l’équipe FIXEO ;</li>
+        <li>des données techniques générées lors de l’utilisation du service.</li>
+      </ul>
+
+      <p>
+        Lorsqu’une personne communique à FIXEO des informations
+        concernant un tiers, elle doit s’assurer qu’elle est
+        autorisée à le faire.
+      </p>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         5
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        5. Finalités des traitements
+      </h2>
+
+      <p>
+        Les données peuvent être utilisées notamment afin de :
+      </p>
+
+      <ul>
+        <li>créer, sécuriser et administrer les comptes utilisateurs ;</li>
+        <li>enregistrer et structurer les demandes de service ;</li>
+        <li>rechercher et identifier des professionnels correspondant au contexte d’une demande ;</li>
+        <li>faciliter la mise en relation entre clients et professionnels ;</li>
+        <li>transmettre les informations nécessaires à une intervention ;</li>
+        <li>permettre le suivi opérationnel des demandes et interventions ;</li>
+        <li>administrer les profils professionnels ;</li>
+        <li>assurer le support utilisateur ;</li>
+        <li>prévenir les abus, fraudes et incidents de sécurité ;</li>
+        <li>améliorer les fonctionnalités et l’expérience de la plateforme ;</li>
+        <li>établir des statistiques d’utilisation lorsque les conditions applicables le permettent ;</li>
+        <li>respecter les obligations légales ou réglementaires applicables à FIXEO.</li>
+      </ul>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         6
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        6. Données communiquées aux artisans et professionnels
+      </h2>
+
+      <p>
+        Lorsqu’une mise en relation ou une intervention le
+        nécessite, certaines informations relatives à la demande
+        peuvent être communiquées à un ou plusieurs
+        professionnels susceptibles d’y répondre.
+      </p>
+
+      <p>
+        Cette communication peut notamment concerner :
+      </p>
+
+      <ul>
+        <li>le métier ou type de besoin ;</li>
+        <li>la ville ou la zone concernée ;</li>
+        <li>la description utile de la demande ;</li>
+        <li>les informations nécessaires à la coordination de l’intervention ;</li>
+        <li>les coordonnées utiles lorsque la mise en relation le justifie.</li>
+      </ul>
+
+      <div class="legal-note">
+        FIXEO cherche à limiter les informations communiquées aux
+        éléments nécessaires au traitement de la demande et à la
+        coordination de l’intervention concernée.
+      </div>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         7
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        7. Prestataires techniques
+      </h2>
+
+      <p>
+        FIXEO s’appuie sur différents services techniques pour
+        faire fonctionner la plateforme.
+      </p>
+
+      <p>
+        Selon les fonctionnalités utilisées, ces services peuvent
+        notamment intervenir dans :
+      </p>
+
+      <ul>
+        <li>l’hébergement de la plateforme ;</li>
+        <li>l’hébergement ou la gestion de bases de données ;</li>
+        <li>l’authentification ;</li>
+        <li>la sécurité et les opérations techniques ;</li>
+        <li>la mesure d’audience lorsque l’utilisateur y a consenti.</li>
+      </ul>
+
+      <p>
+        FIXEO utilise notamment des services techniques de
+        <strong>Supabase</strong> pour certaines fonctions de
+        données et d’authentification, ainsi que
+        <strong>Google Analytics 4</strong> pour la mesure
+        d’audience lorsque cette mesure est activée conformément
+        aux préférences de l’utilisateur.
+      </p>
+
+      <p>
+        Ces prestataires n’ont vocation à traiter les données que
+        dans la mesure nécessaire à la fourniture des services
+        techniques concernés et selon les conditions applicables
+        à leurs prestations.
+      </p>
+
+      <div class="legal-note legal-note--green">
+        FIXEO ne commercialise pas les données personnelles de ses
+        utilisateurs auprès d’annonceurs ou de courtiers en
+        données.
+      </div>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         8
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        8. Hébergement et transferts de données
+      </h2>
+
+      <p>
+        Certains fournisseurs techniques utilisés pour exploiter
+        un service numérique peuvent disposer d’infrastructures
+        ou de sous-traitants situés hors du Maroc.
+      </p>
+
+      <p>
+        Lorsqu’un traitement implique un transfert de données
+        personnelles à l’étranger, FIXEO prend en compte les
+        exigences et formalités prévues par la réglementation
+        marocaine applicable.
+      </p>
+
+      <p>
+        Cette politique ne présente volontairement aucune
+        localisation d’hébergement comme permanente lorsqu’elle
+        dépend de l’infrastructure ou de la configuration d’un
+        fournisseur technique.
+      </p>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         9
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        9. Géolocalisation
+      </h2>
+
+      <p>
+        Certaines fonctionnalités peuvent permettre à
+        l’utilisateur de communiquer une localisation afin de
+        préciser le lieu d’une intervention ou d’améliorer la
+        pertinence d’une recherche.
+      </p>
+
+      <p>
+        Lorsqu’une autorisation du navigateur ou de l’appareil
+        est requise pour obtenir une localisation, l’utilisateur
+        conserve le contrôle sur cette autorisation.
+      </p>
+
+      <p>
+        Lorsque cela est possible, une ville, une zone ou une
+        adresse peut également être renseignée manuellement.
+      </p>
+
+      <p>
+        Les informations de localisation effectivement
+        enregistrées dans une demande peuvent être conservées
+        avec cette demande lorsqu’elles sont nécessaires à son
+        traitement ou à son suivi.
+      </p>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         10
+    ═══════════════════════════════════════════════ -->
+
+    <section
+      class="legal-section"
+      id="cookies">
+
+      <h2>
+        10. Cookies et technologies similaires
+      </h2>
+
+      <h3>
+        10.1 Fonctionnement de la plateforme
+      </h3>
+
+      <p>
+        FIXEO peut utiliser des cookies, des mécanismes de
+        stockage local ou des technologies similaires
+        nécessaires au fonctionnement du site, à la gestion de
+        session, aux préférences ou à la sécurité.
+      </p>
+
+
+      <h3>
+        10.2 Mesure d’audience
+      </h3>
+
+      <p>
+        FIXEO utilise Google Analytics 4 pour disposer
+        d’informations statistiques sur l’utilisation de la
+        plateforme lorsque l’activation de cette mesure est
+        autorisée par les préférences de l’utilisateur.
+      </p>
+
+      <p>
+        Les outils de mesure d’audience soumis au consentement
+        ne doivent pas être activés comme outils analytiques
+        avant le choix correspondant de l’utilisateur.
+      </p>
+
+
+      <h3>
+        10.3 Modifier votre choix
+      </h3>
+
+      <p>
+        Vous pouvez rouvrir le gestionnaire de consentement
+        depuis le pied de page ou avec le bouton ci-dessous.
+      </p>
+
+      <button
+        type="button"
+        class="legal-link"
+        onclick="window.FixeoConsent && window.FixeoConsent.open()">
+        Gérer mes préférences cookies
+      </button>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         11
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        11. Durées de conservation
+      </h2>
+
+      <p>
+        FIXEO ne conserve pas les données personnelles plus
+        longtemps que nécessaire au regard de la finalité pour
+        laquelle elles sont traitées, sous réserve des
+        obligations légales, réglementaires, comptables,
+        opérationnelles ou de conservation nécessaires à la
+        constatation, l’exercice ou la défense de droits.
+      </p>
+
+      <p>
+        La durée dépend notamment de la catégorie de données :
+      </p>
+
+      <ul>
+        <li>
+          les données nécessaires à un compte peuvent être
+          conservées pendant la durée d’utilisation du compte,
+          puis pendant la période nécessaire à sa clôture et aux
+          obligations applicables ;
+        </li>
+
+        <li>
+          les demandes et informations d’intervention peuvent
+          être conservées pendant la durée nécessaire à leur
+          traitement, leur suivi et aux besoins légitimes
+          d’historique ou de preuve ;
+        </li>
+
+        <li>
+          les données techniques et de sécurité sont conservées
+          pendant une durée proportionnée aux besoins de
+          diagnostic, de sécurité et de prévention des abus ;
+        </li>
+
+        <li>
+          les données liées à la mesure d’audience sont soumises
+          aux paramètres de conservation configurés pour le
+          service analytique concerné.
+        </li>
+      </ul>
+
+      <p>
+        Lorsqu’une donnée n’est plus nécessaire, elle peut être
+        supprimée, anonymisée ou archivée lorsque la législation
+        permet ou impose une telle conservation.
+      </p>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         12
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        12. Sécurité et confidentialité
+      </h2>
+
+      <p>
+        FIXEO met en œuvre des mesures techniques et
+        organisationnelles adaptées au fonctionnement de la
+        plateforme afin de réduire les risques d’accès non
+        autorisé, d’altération, de divulgation ou de perte des
+        données.
+      </p>
+
+      <p>
+        Ces mesures peuvent notamment comprendre des mécanismes
+        d’authentification, des restrictions d’accès, des règles
+        de sécurité applicatives et de base de données ainsi que
+        des mesures de surveillance technique.
+      </p>
+
+      <p>
+        Aucun système informatique ne pouvant garantir un risque
+        nul, FIXEO ne présente pas la sécurité de ses systèmes
+        comme absolue.
+      </p>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         13
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        13. Vos droits
+      </h2>
+
+      <p>
+        Conformément à la Loi n° 09-08 et dans les conditions
+        qu’elle prévoit, une personne concernée peut notamment
+        exercer :
+      </p>
+
+      <ul>
+        <li>un droit d’accès aux données personnelles la concernant ;</li>
+        <li>un droit de rectification des données inexactes, incomplètes ou périmées ;</li>
+        <li>un droit d’opposition au traitement pour des motifs légitimes, lorsque ce droit est applicable ;</li>
+        <li>la demande d’effacement ou de verrouillage de certaines données lorsque les conditions légales correspondantes sont réunies.</li>
+      </ul>
+
+      <p>
+        Afin de protéger les données concernées, FIXEO peut
+        demander les éléments raisonnablement nécessaires pour
+        vérifier l’identité de la personne présentant une
+        demande.
+      </p>
+
+      <p>
+        Pour exercer vos droits :
+      </p>
+
+      <p>
+        <a
+          href="mailto:admin@fixeo.ma"
+          class="fx-email">
+          admin@fixeo.ma
+        </a>
+      </p>
+
+      <p>
+        La demande doit permettre d’identifier suffisamment le
+        compte ou les données concernés.
+      </p>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         14
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        14. Réclamation auprès de la CNDP
+      </h2>
+
+      <p>
+        Toute personne estimant qu’un traitement de ses données
+        personnelles ne respecte pas les règles applicables peut,
+        après les démarches qu’elle juge utiles auprès de FIXEO,
+        saisir la
+        <strong>
+          Commission Nationale de contrôle de la protection des
+          Données à caractère Personnel (CNDP)
+        </strong>
+        conformément aux procédures prévues par celle-ci.
+      </p>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         15
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        15. Communications
+      </h2>
+
+      <p>
+        FIXEO peut utiliser les coordonnées communiquées pour
+        transmettre les informations nécessaires au
+        fonctionnement d’une demande, d’un compte, d’une
+        intervention ou d’un service demandé par l’utilisateur.
+      </p>
+
+      <p>
+        Les éventuelles communications promotionnelles ou
+        commerciales sont distinguées des communications
+        strictement nécessaires au service et sont soumises aux
+        règles applicables.
+      </p>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         16
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        16. Évolution de la politique
+      </h2>
+
+      <p>
+        La présente politique peut être mise à jour afin de tenir
+        compte de l’évolution des fonctionnalités de FIXEO, de
+        ses prestataires techniques ou du cadre réglementaire.
+      </p>
+
+      <p>
+        La version publiée sur fixeo.ma constitue la version
+        accessible aux utilisateurs.
+      </p>
+
+      <p>
+        Lorsque cela est approprié, les modifications importantes
+        pourront faire l’objet d’une information particulière.
+      </p>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         17
+    ═══════════════════════════════════════════════ -->
+
+    <section class="legal-section">
+
+      <h2>
+        17. Contact
+      </h2>
+
+      <p>
+        Pour toute question relative à cette politique ou au
+        traitement de vos données personnelles :
+      </p>
+
+      <p>
+        <a
+          href="mailto:admin@fixeo.ma"
+          class="fx-email">
+          admin@fixeo.ma
+        </a>
+      </p>
+
+      <div class="legal-links">
+
+        <a
+          href="/mentions-legales.html"
+          class="legal-link">
+          Mentions légales
+        </a>
+
+        <a
+          href="/cgu.html"
+          class="legal-link">
+          Conditions d’utilisation
+        </a>
+
+        <button
+          type="button"
+          class="legal-link"
+          onclick="window.FixeoConsent && window.FixeoConsent.open()">
+          Préférences cookies
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <p class="fx-muted">
+      Politique de confidentialité —
+      dernière mise à jour : septembre 2026.
+    </p>
+
+
+  </main>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       GLOBAL SCRIPTS
+  ═══════════════════════════════════════════════════ -->
 
   <script src="js/fixeo-session-mobile.js?v=50a38b9"></script>
   <script src="js/fixeo-header-global.js?v=gfnav5"></script>
@@ -156,6 +1795,10 @@
   <script src="js/auth-global.js?v=50a38b9"></script>
   <script src="js/header-unified.js?v=50a38b9"></script>
 
-  <script src="js/fixeo-footer-global.js?v=gf4a" defer></script>
+  <script
+    src="js/fixeo-footer-global.js?v=gf4a"
+    defer>
+  </script>
+
 </body>
 </html>
