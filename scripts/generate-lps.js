@@ -788,7 +788,7 @@ function buildPage(svcKey, cityKey) {
   <link rel="stylesheet" href="/css/reservation.css?v=fxlp-res-v1">
   <link rel="stylesheet" href="/css/reservation-v2.css?v=fxlp-res-v1">
   <link rel="stylesheet" href="/css/reservation-v2a.css?v=fxlp-res-v1">
-  <link rel="stylesheet" href="/css/fixeo-local-flagship-v1.css?v=fxlp-v17">
+  <link rel="stylesheet" href="/css/fixeo-local-flagship-v1.css?v=fxlp-v18">
   <link rel="stylesheet" href="/css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a">
   <link rel="stylesheet" href="/css/fx-request-flow-v4.css?v=fxrf4-v5z">
   <link rel="icon" href="/img/favicon.png" type="image/png">
