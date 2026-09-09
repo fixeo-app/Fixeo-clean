@@ -296,11 +296,8 @@ const SERVICES = {
     h1_prefix: 'Plombier à',
     title_suffix: 'Dépannage, fuite et urgence | Fixeo',
     meta_desc: (city) => Trouvez rapidement un plombier à ${city} avec Fixeo. Fuite d'eau, débouchage, chauffe-eau, robinetterie, installation sanitaire et intervention urgente.,
-    intro_template: (c) => Votre recherche d'un plombier à ${c.label} s'arrête ici. Fixeo vous met en relation avec des artisans locaux qualifiés pour tout besoin en plomberie : fuite d'eau, débouchage de canalisation, installation sanitaire, remplacement de chauffe-eau ou dépannage d'urgence. Avec ${c.population ? c.population + ' d\'habitants, ' : ''}${c.label} concentre un parc immobilier important — ${c.demand},
-    urgency_services: ['Fuite d\'eau visible', 'Canalisation bouchée', 'Chauffe-eau en panne', 'Inondation sous évier', 'Coupure d\'eau générale'],
-    related_services: ['electricien', 'serrurier'],
-    
-  },
+intro_template: (c) => Décrivez votre projet de maçonnerie à ${c.label}. FIXEO vous aide à structurer votre besoin et à consulter les profils référencés dans la catégorie Maçonnerie. La disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
+},
 
   electricien: {
     label: 'Électricien', label_adj: 'électricité', canonicalRouteKey: 'electricien',
@@ -326,9 +323,10 @@ const SERVICES = {
     h1_prefix: 'Électricien à',
     title_suffix: 'Dépannage, installation et urgence | Fixeo',
     meta_desc: (city) => Trouvez un électricien à ${city} avec Fixeo. Panne électrique, disjoncteur, installation, mise aux normes et intervention urgente.,
-    intro_template: (c) => Trouver un électricien qualifié à ${c.label} en cas de panne ou pour des travaux d'installation est maintenant simple avec Fixeo. Notre réseau d'artisans locaux couvre ${c.label} et ses quartiers — ${c.neighborhoods}. ${c.demand} Les pannes électriques les plus fréquentes (disjoncteur déclenché, court-circuit, tableau défaillant) nécessitent une intervention rapide pour éviter tout risque.,
-    urgency_services: ['Panne électrique totale', 'Disjoncteur déclenché', 'Court-circuit', 'Câble sectionné', 'Prise qui brûle'],
+intro_template: (c) => Décrivez votre besoin en serrurerie à ${c.label} — porte claquée ou bloquée, clé cassée ou perdue, remplacement de serrure ou sécurisation après effraction. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Serrurerie. La disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
+       urgency_services: ['Panne électrique totale', 'Disjoncteur déclenché', 'Court-circuit', 'Câble sectionné', 'Prise qui brûle'],
     related_services: ['plombier', 'climatisation'],
+       
     
   },
 
@@ -356,9 +354,9 @@ const SERVICES = {
     h1_prefix: 'Serrurier à',
     title_suffix: 'Urgence, ouverture de porte | Fixeo',
     meta_desc: (city) => Besoin d'un serrurier à ${city} ? Fixeo vous met en contact rapidement pour ouverture de porte, remplacement de serrure ou urgence.,
-    intro_template: (c) => Porte claquée, serrure bloquée ou effraction — un serrurier disponible à ${c.label} est accessible via Fixeo en quelques secondes. Notre réseau couvre l'ensemble des quartiers ${c.label_de} — ${c.neighborhoods}. ${c.context} Les urgences serrurerie (porte impossible à ouvrir, clé cassée dans la serrure) sont traitées en priorité.,
-    urgency_services: ['Porte claquée', 'Clé perdue ou cassée', 'Serrure bloquée', 'Sécurisation après effraction', 'Cylindre changement urgent'],
-    related_services: ['electricien', 'plombier'],
+    intro_template: (c) => Décrivez votre besoin en serrurerie à ${c.label} — porte claquée ou bloquée, clé cassée ou perdue, remplacement de serrure ou sécurisation après effraction. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Serrurerie. La disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
+urgency_services: ['Porte claquée', 'Clé perdue ou cassée', 'Serrure bloquée', 'Sécurisation après effraction', 'Cylindre changement urgent'],
+related_services: ['electricien', 'plombier'],
     
   },
 
@@ -429,10 +427,10 @@ const SERVICES = {
     h1_prefix: 'Peintre à',
     title_suffix: 'Travaux intérieurs, finitions | Fixeo',
     meta_desc: (city) => Trouvez un peintre à ${city} avec Fixeo. Peinture intérieure, extérieure, préparation des murs, enduit ou rénovation. Tarif confirmé avant intervention.,
-    intro_template: (c) => Décrivez votre projet de peinture à ${c.label}. FIXEO enregistre votre demande et recherche une solution correspondant à votre secteur. Le tarif définitif est confirmé avec l'artisan avant l'intervention.,
-    urgency_services: ['Remise en état rapide', 'Réparation dégât des eaux (peinture)', 'Finitions avant emménagement', 'Ravalement façade urgent'],
-    related_services: ['serrurier'],
-    prix_explorer: { slug: 'peinture', icon: '💰', title_prefix: 'Prix peinture à' },
+    intro_template: (c) => Décrivez votre projet de peinture à ${c.label} — peinture intérieure ou extérieure, préparation des murs, enduit, plafonds ou boiseries. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Peinture. Le périmètre des travaux, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
+urgency_services: ['Remise en état', 'Réparation après dégât des eaux', 'Finitions avant emménagement', 'Ravalement de façade'],
+related_services: ['serrurier'],
+prix_explorer: { slug: 'peinture', icon: '💰', title_prefix: 'Prix peinture à' },
     
   },
 
@@ -466,9 +464,9 @@ const SERVICES = {
     h1_prefix: 'Menuisier à',
     title_suffix: 'Portes, meubles sur mesure, boiseries | Fixeo',
     meta_desc: (city) => Trouvez un menuisier à ${city} avec Fixeo. Portes, fenêtres, meubles sur mesure, boiseries et travaux de menuiserie par des artisans locaux référencés.,
-    intro_template: (c) => Trouvez un menuisier à ${c.label} via FIXEO. Portes, fenêtres, meubles sur mesure, boiseries et travaux de menuiserie — notre réseau d'artisans référencés couvre l'ensemble de ${c.label} et ses quartiers : ${c.neighborhoods}. Le tarif définitif est confirmé avec l'artisan avant le début des travaux.,
-    urgency_services: ['Réparation porte endommagée', 'Remplacement vitre cassée', 'Finitions avant emménagement', 'Remise en état urgente'],
-    related_services: ['serrurier', 'electricien'],
+intro_template: (c) => Décrivez votre besoin en menuiserie à ${c.label} — portes, fenêtres, meubles sur mesure, boiseries, cuisine, placards ou réparation. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Menuiserie. Le périmètre des travaux, la disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
+       urgency_services: ['Réparation porte endommagée', 'Remplacement vitre cassée', 'Finitions avant emménagement', 'Remise en état'],
+related_services: ['serrurier', 'electricien'],
    
   },
 
@@ -511,9 +509,9 @@ const SERVICES = {
     h1_prefix: 'Maçon à',
     title_suffix: 'Maçonnerie, ravalement, carrelage | Fixeo',
     meta_desc: (city) => Trouvez un maçon à ${city} avec Fixeo. Maçonnerie générale, ravalement de façade, carrelage, chape et travaux de gros œuvre par des artisans locaux référencés.,
-    intro_template: (c) => Décrivez votre projet de maçonnerie à ${c.label}. FIXEO enregistre votre demande et recherche une solution correspondant à votre secteur. Le tarif définitif est confirmé avec l'artisan avant l'intervention.,
-    urgency_services: ['Réparation mur fissuré', 'Reprise de fuite en sous-œuvre', 'Consolidation urgente', 'Remise en état après sinistre'],
-    related_services: ['peintre', 'menuisier'],
+ intro_template: (c) => Décrivez votre projet de maçonnerie à ${c.label} — maçonnerie générale, façade, carrelage, chape, murs, cloisons ou travaux de reprise. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Maçonnerie. Le périmètre des travaux, la disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
+       urgency_services: ['Réparation mur fissuré', 'Reprise de fuite en sous-œuvre', 'Consolidation', 'Remise en état après sinistre'],
+related_services: ['peintre', 'menuisier'],
     
   },
 
@@ -550,8 +548,8 @@ const SERVICES = {
     h1_prefix: 'Service de nettoyage à',
     title_suffix: 'Nettoyage maison, bureaux, après travaux | Fixeo',
     meta_desc: (city) => Trouvez un service de nettoyage à ${city} avec Fixeo. Maison, appartement, bureaux, locaux et nettoyage après travaux. Tarif définitif confirmé avec le prestataire avant l’intervention.,
-    intro_template: (c) => Décrivez votre besoin de nettoyage à ${c.label}. FIXEO enregistre votre demande et recherche une solution correspondant à votre secteur. Le tarif définitif est confirmé avec le prestataire avant l’intervention.,
-    faq_flagship: (city) => [
+intro_template: (c) => Décrivez votre besoin de nettoyage à ${c.label} — logement, bureaux, remise en état, nettoyage après travaux ou entretien ponctuel. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Nettoyage. Le périmètre de la prestation, la disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
+       faq_flagship: (city) => [
       { q: 'Comment demander un service de nettoyage à ' + city.label + ' ?', a: "Décrivez votre besoin sur FIXEO. Votre demande est enregistrée et transmise aux prestataires référencés correspondant à votre secteur à " + city.label + ". Le prestataire vous contacte et confirme le tarif définitif avant de commencer." },
       { q: 'Quels types de nettoyage peut-on demander ?', a: "Les prestataires référencés sur FIXEO peuvent intervenir pour le nettoyage de maisons et appartements, de bureaux et locaux commerciaux, le nettoyage après travaux, le nettoyage après déménagement et le nettoyage de vitres et surfaces. Les prestations dépendent du type de lieu et des besoins précisés au prestataire sélectionné." },
       { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après analyse de votre besoin, le prestataire vous communique le tarif définitif avant de commencer. Vous n’êtes pas obligé d’accepter. En cas d’accord, le paiement s’effectue après la prestation." },
