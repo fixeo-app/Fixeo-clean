@@ -1026,34 +1026,64 @@ function buildPage(svcKey, cityKey) {
       </nav>
     </div>
 
-    <!-- §§1 HERO -->
+
+
+     <!-- §§1 HERO — FIXEO LOCAL FLAGSHIP V2 -->
     <section class="fxlp-hero" aria-labelledby="fxlp-h1">
       <div class="fxlp-wrap">
         <div class="fxlp-hero-copy">
+
           <div class="fxlp-eyebrow">
             <span class="fxlp-eyebrow-dot" aria-hidden="true"></span>
-            ${esc((svc.eyebrow_label || svc.label).toUpperCase())} · ${esc(city.label.toUpperCase())} · 2026
+            FIXEO LOCAL · ${esc(String(svcCat || svc.label).toUpperCase())} · ${esc(city.label.toUpperCase())}
           </div>
-          <h1 id="fxlp-h1" class="fxlp-h1">${esc(svc.h1_prefix)}&nbsp;<em class="fxlp-h1-em">${esc(city.label)}</em></h1>
-          <p class="fxlp-lead">${esc(metaDesc)}</p>
+
+          <h1 id="fxlp-h1" class="fxlp-h1">
+            ${esc(svc.h1_prefix)}&nbsp;<em class="fxlp-h1-em">${esc(city.label)}</em>
+          </h1>
+
+          <p class="fxlp-lead">
+            Décrivez votre situation à ${esc(city.label)}.
+            FIXEO vous aide à structurer votre besoin et à consulter les profils référencés
+            dans la catégorie ${esc(svcCat || svc.label)}.
+            Le tarif est confirmé avec le professionnel avant intervention.
+          </p>
+
           <div class="fxlp-chips" role="list">
-            <span class="fxlp-chip fxlp-chip--city" role="listitem">📍 ${esc(city.label)}</span>
-            <span class="fxlp-chip fxlp-chip--svc"  role="listitem">${svc.icon} ${esc(svc.chip_label || svc.label)}</span>
-            <span class="fxlp-chip fxlp-chip--pay"  role="listitem">✓ Paiement après intervention</span>
+            <span class="fxlp-chip fxlp-chip--city" role="listitem">
+              📍 ${esc(city.label)}
+            </span>
+
+            <span class="fxlp-chip fxlp-chip--svc" role="listitem">
+              ${svc.icon} ${esc(svcCat || svc.chip_label || svc.label)}
+            </span>
+
+            <span class="fxlp-chip fxlp-chip--pay" role="listitem">
+              ✓ Paiement après intervention
+            </span>
           </div>
-          <p class="fxlp-note-price">${svc.note_price_agent || 'Le tarif définitif est confirmé avec l’artisan avant l’intervention.'}</p>
+
+          <p class="fxlp-note-price">
+            Le professionnel confirme le tarif avant de commencer l’intervention.
+          </p>
+
           <div class="fxlp-cta-group">
 
-           <a
-           class="fxlp-btn-primary"
-          href="/?service=${encodeURIComponent(svc.label)}&amp;city=${encodeURIComponent(city.label)}#hero-quick-search">
-          Décrire mon besoin à ${esc(city.label)}
-           </a>
-
-            <a href="#fxlp-artisans" id="fxlp-scroll-artisans" class="fxlp-btn-secondary">
-              ${svc.cta_secondary_text || 'Voir les artisans à'} ${esc(city.label)} ↓
+            <a
+              class="fxlp-btn-primary"
+              href="/?service=${encodeURIComponent(svc.label)}&amp;city=${encodeURIComponent(city.label)}#hero-quick-search">
+              Décrire mon besoin
             </a>
+
+            <a
+              href="#fxlp-artisans"
+              id="fxlp-scroll-artisans"
+              class="fxlp-btn-secondary">
+              Voir les profils référencés ↓
+            </a>
+
           </div>
+
         </div>
       </div>
     </section>
