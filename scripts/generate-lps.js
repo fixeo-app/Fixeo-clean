@@ -743,46 +743,6 @@ function buildLocalFlagshipFAQ(svc, city) {
 }
 
 
-// Blog articles connexes by service
-const BLOG_LINKS = {
-  plombier: [
-    { slug: 'prix-plombier-maroc', title: 'Prix plombier au Maroc 2025 : tarifs et devis', time: '6 min' },
-    { slug: 'urgence-plombier-casablanca', title: 'Plombier urgence 24h/7 : comment réagir', time: '4 min' },
-    { slug: 'comment-choisir-plombier-maroc', title: 'Comment choisir un bon plombier au Maroc', time: '5 min' }
-  ],
-  electricien: [
-    { slug: 'prix-electricien-maroc', title: 'Prix électricien au Maroc 2025', time: '5 min' },
-    { slug: 'urgence-electricien-rabat', title: 'Urgence électricien : quoi faire', time: '4 min' },
-    { slug: 'artisan-verifie-maroc', title: 'Pourquoi choisir un artisan vérifié Fixeo', time: '4 min' }
-  ],
-  serrurier: [
-    { slug: 'prix-serrurier-maroc', title: 'Prix serrurier au Maroc 2025 : tarifs et conseils', time: '5 min' },
-    { slug: 'urgence-serrurier-marrakech', title: 'Urgence serrurerie : porte bloquée', time: '4 min' },
-    { slug: 'artisan-verifie-maroc', title: 'Pourquoi choisir un artisan vérifié Fixeo', time: '4 min' }
-  ],
-  climatisation: [
-    { slug: 'prix-climatisation-maroc', title: 'Prix installation climatisation Maroc 2025', time: '6 min' },
-    { slug: 'climatisation-agadir', title: 'Climatisation : guide installation et entretien', time: '4 min' },
-    { slug: 'artisan-verifie-maroc', title: 'Pourquoi choisir un artisan vérifié Fixeo', time: '4 min' }
-  ],
-  peinture: [
-    { slug: 'prix-peinture-maroc', title: 'Prix peintre en bâtiment Maroc 2025', time: '5 min' },
-    { slug: 'artisan-verifie-maroc', title: 'Pourquoi choisir un artisan vérifié Fixeo', time: '4 min' },
-    { slug: 'garantie-intervention-fixeo', title: 'Garantie et SAV sur vos interventions Fixeo', time: '4 min' }
-  ]
-};
-
-function buildBlogLinks(svcKey) {
-  const articles = BLOG_LINKS[svcKey] || BLOG_LINKS.plombier;
-  return articles.slice(0, 3).map(a =>
-    `<a class="seo-blog-link" href="/blog/${a.slug}">
-            <span class="seo-blog-time">⏱ ${a.time}</span>
-            <span class="seo-blog-title">${esc(a.title)}</span>
-            <span class="seo-blog-arrow">→</span>
-          </a>`
-  ).join('\n          ');
-}
-
 function buildRelatedLinks(svcKey, cityKey, svc) {
   const relSvcs = svc.related_services || [];
   const rawNearby = NEARBY[cityKey] || [];
