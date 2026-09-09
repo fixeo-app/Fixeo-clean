@@ -861,33 +861,6 @@ function buildFAQJsonLD(faqItems) {
   };
 }
 
-function buildServiceJsonLD(svcKey, cityKey, svc, city, canonicalUrl) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    '@id': canonicalUrl + '#localbusiness',
-    'name': `Fixeo — ${svc.label} à ${city.label}`,
-    'description': svc.meta_desc(city.label),
-    'url': canonicalUrl,
-    'image': `https://www.fixeo.ma/img/logo.png`,
-    'priceRange': `${city.pricing_low}–${city.pricing_high} DH`,
-    'areaServed': { '@type': 'City', 'name': city.label, 'containedInPlace': { '@type': 'Country', 'name': 'Maroc' } },
-    'address': { '@type': 'PostalAddress', 'addressLocality': city.label, 'addressCountry': 'MA' },
-    'geo': { '@type': 'GeoCoordinates', 'latitude': city.lat, 'longitude': city.lng },
-    'serviceType': svc.service_schema,
-    'provider': { '@type': 'Organization', 'name': 'Fixeo', 'url': 'https://www.fixeo.ma/' },
-    'hasOfferCatalog': {
-      '@type': 'OfferCatalog',
-      'name': `Services ${svc.label_adj} à ${city.label}`,
-      'itemListElement': svc.pricing_tiers.map((t, i) => ({
-        '@type': 'Offer', 'position': i + 1,
-        'name': t.label, 'description': t.range,
-        'priceSpecification': { '@type': 'PriceSpecification', 'priceCurrency': 'MAD' }
-      }))
-    }
-  };
-}
-
 function buildBreadcrumbJsonLD(svcKey, cityKey, svc, city, canonicalUrl) {
   return {
     '@context': 'https://schema.org',
