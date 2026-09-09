@@ -174,39 +174,105 @@ if (existingMain) {
     if (proof) proof.textContent = 'Gratuit • Sans engagement • Artisans vérifiés et notés';
   }
 
-  function optimizeFooter() {
-    const supportList = $('.footer-links:last-of-type ul');
-    if (supportList && !supportList.querySelector('[data-footer-request-link]')) {
-      const requestItem = document.createElement('li');
-      requestItem.innerHTML = '<a href="#" data-footer-request-link="true">Publier une demande</a>';
-      supportList.prepend(requestItem);
 
-      /* [patched] wa.me footer link disabled — whatsapp.html now in footer */
+function optimizeFooter() {
 
-      /* fxrf4-v5b: route via V5 */
-      requestItem.querySelector('a').addEventListener('click', function(event) {
-        event.preventDefault();
-        if (window.FixeoRequestFlowV4) window.FixeoRequestFlowV4.open({ mode: 'marketplace', source: 'footer' });
-      });
+    /*
+   * Canonical client entry:
+   * Footer CTA → Homepage Flagship Hero.
+   *
+   * Do NOT open FixeoRequestFlowV4 here.
+   * The old modal / estimation reservation flow is no longer
+   * a canonical entry point for a generic client request.
+   */
+  function goToHeroRequest(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
     }
 
-    const brand = $('.footer-brand');
-    if (brand && !$('.footer-quick-actions', brand)) {
-      const quickActions = document.createElement('div');
-      quickActions.className = 'footer-quick-actions';
-      quickActions.innerHTML = [
-        '<a href="#" data-footer-quick-request="true">Publier une demande</a>',
-        ''
-      ].join('');
-      brand.appendChild(quickActions);
-      /* fxrf4-v5b: route via V5 */
-      quickActions.querySelector('[data-footer-quick-request="true"]').addEventListener('click', function(event) {
-        event.preventDefault();
-        if (window.FixeoRequestFlowV4) window.FixeoRequestFlowV4.open({ mode: 'marketplace', source: 'footer' });
+    const hero =
+      document.getElementById('home') ||
+      document.querySelector('.fxhf-root');
+
+    if (hero) {
+      hero.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
       });
+
+      try {
+        history.replaceState(
+          null,
+          '',
+          window.location.pathname +
+          window.location.search +
+          '#home'
+        );
+      } catch (error) {}
+
+      return;
     }
+
+    /*
+     * Defensive fallback if this script is ever executed
+     * outside the homepage.
+     */
+    window.location.href = 'index.html#home';
   }
 
+
+  /* ── Footer support link ─────────────────────────────── */
+
+  const supportList = $('.footer-links:last-of-type ul');
+
+  if (
+    supportList &&
+    !supportList.querySelector('[data-footer-hero-request]')
+  ) {
+
+    const requestItem = document.createElement('li');
+
+    requestItem.innerHTML =
+      '<a href="#home" ' +
+      'data-footer-hero-request="true">' +
+      'Publier une demande' +
+      '</a>';
+
+    supportList.prepend(requestItem);
+
+    requestItem
+      .querySelector('[data-footer-hero-request]')
+      .addEventListener('click', goToHeroRequest);
+  }
+
+
+  /* ── Footer primary quick action ─────────────────────── */
+
+  const brand = $('.footer-brand');
+
+  if (
+    brand &&
+    !$('.footer-quick-actions', brand)
+  ) {
+
+    const quickActions = document.createElement('div');
+
+    quickActions.className = 'footer-quick-actions';
+
+    quickActions.innerHTML =
+      '<a href="#home" ' +
+      'data-footer-hero-request="true">' +
+      'Publier une demande' +
+      '</a>';
+
+    brand.appendChild(quickActions);
+
+    quickActions
+      .querySelector('[data-footer-hero-request]')
+      .addEventListener('click', goToHeroRequest);
+  }
+}
   function optimizeFeedVisibility() {
     const feedContainer = $('#feed-container');
     const seeMoreButton = $('#feed-see-more-btn');
