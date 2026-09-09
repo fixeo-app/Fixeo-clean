@@ -141,6 +141,15 @@ main#main-content {
 .fxlp-breadcrumbs a { color: var(--fxlp-dim); transition: color .18s; }
 .fxlp-breadcrumbs a:hover { color: var(--fxlp-orange); }
 
+/* ── Skip link accessibility ───────────────────────────────── */
+.fxlp-skip-link:focus,
+.fxlp-skip-link:focus-visible {
+  left: 12px !important;
+  top: 12px !important;
+  outline: 2px solid #ff8c5a;
+  outline-offset: 3px;
+}
+
 /* ── Divider ────────────────────────────────────────────────── */
 .fxlp-divider { border: none; border-top: 1px solid rgba(255,255,255,.07); margin: 0; }
 
