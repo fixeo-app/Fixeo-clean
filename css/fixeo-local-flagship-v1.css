@@ -2878,20 +2878,34 @@ section[aria-labelledby="fxlp-how-local-title"]
     font-size: 1.06rem !important;
   }
 }
+/* ══════════════════════════════════════════════════════════════
+   FIXEO LOCAL ARTISAN CARD — HOMEPAGE V3B PARITY V18
+   --------------------------------------------------------------
+   Scope: SEO Métier × Ville pages only.
 
-/* ═══════════════════════════════════════════════════════════════
-   FIXEO LOCAL ARTISAN CARD — DEFINITIVE PREMIUM V17
-   ---------------------------------------------------------------
-   Local SEO owns its card presentation.
-   DOM / Supabase / reservation contracts remain unchanged.
-   Scope: SEO service pages only.
-═══════════════════════════════════════════════════════════════ */
+   Goal:
+   - same visual hierarchy as homepage V3B cards
+   - same compact 400px card architecture
+   - 2-line description
+   - 2-row trust block
+   - bottom-anchored price / CTA / profile link
+   - no change to DOM, Supabase or reservation contracts
 
-/* ── CARD SHELL ─────────────────────────────────────────────── */
+   Homepage remains untouched.
+══════════════════════════════════════════════════════════════ */
 
-.seo-service-page #fxlp-artisan-grid > .pvc-card.fxlp-art-card {
+
+/* ──────────────────────────────────────────────────────────────
+   1. CARD SHELL
+────────────────────────────────────────────────────────────── */
+
+.seo-service-page #fxlp-artisan-grid
+> .pvc-card.fxlp-art-card {
   display: flex !important;
   flex-direction: column !important;
+
+  width: 100% !important;
+  min-width: 0 !important;
 
   height: 400px !important;
   min-height: 400px !important;
@@ -2903,7 +2917,7 @@ section[aria-labelledby="fxlp-how-local-title"]
 
   overflow: hidden !important;
 
-  border-radius: 22px !important;
+  border-radius: 24px !important;
   border: 1px solid rgba(255,255,255,.10) !important;
 
   background:
@@ -2914,71 +2928,111 @@ section[aria-labelledby="fxlp-how-local-title"]
     ),
     linear-gradient(
       180deg,
-      rgba(19,25,39,.98),
-      rgba(10,15,26,.99)
+      rgba(20,25,40,.96),
+      rgba(10,15,26,.98)
     ) !important;
 
   box-shadow:
-    0 18px 46px rgba(0,0,0,.34),
-    inset 0 1px 0 rgba(255,255,255,.035) !important;
-
-  cursor: pointer !important;
+    0 10px 34px rgba(0,0,0,.34),
+    inset 0 1px 0 rgba(255,255,255,.025) !important;
 
   transition:
-    transform .22s cubic-bezier(.22,1,.36,1),
+    transform .22s ease,
     border-color .22s ease,
     box-shadow .22s ease !important;
 }
 
 
-/* ── HEADER / IDENTITY ──────────────────────────────────────── */
+/* Desktop hover only */
 
-.seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-card-header,
-.seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-card-header-final {
+@media (min-width: 768px) {
+  .seo-service-page #fxlp-artisan-grid
+  > .pvc-card.fxlp-art-card:hover {
+    transform: translateY(-4px) !important;
 
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
+    border-color: rgba(255,255,255,.17) !important;
 
-  gap: 14px !important;
-
-  padding: 0 !important;
-  margin: 0 0 10px !important;
-
-  flex-shrink: 0 !important;
-  width: 100% !important;
+    box-shadow:
+      0 24px 54px rgba(0,0,0,.46),
+      0 0 28px rgba(255,79,154,.07),
+      inset 0 1px 0 rgba(255,255,255,.04) !important;
+  }
 }
 
 
-/* ── AVATAR ────────────────────────────────────────────────── */
+/* ──────────────────────────────────────────────────────────────
+   2. HEADER / IDENTITY
+────────────────────────────────────────────────────────────── */
 
 .seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-avatar {
+.pvc-card.fxlp-art-card
+.pvc-card-header,
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-card-header-final {
+  display: flex !important;
+  align-items: center !important;
 
+  gap: 13px !important;
+
+  padding: 0 !important;
+  margin: 0 0 6px !important;
+
+  flex-shrink: 0 !important;
+}
+
+
+/* Identity column */
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-identity,
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-identity-final {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  gap: 0 !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   3. AVATAR
+────────────────────────────────────────────────────────────── */
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-avatar {
   position: relative !important;
 
   width: 92px !important;
   height: 92px !important;
   min-width: 92px !important;
 
-  flex: 0 0 92px !important;
+  flex-shrink: 0 !important;
 
-  border-radius: 20px !important;
+  border-radius: 18px !important;
+
   overflow: visible !important;
 
-  outline: 2px solid rgba(255,255,255,.09) !important;
+  outline: 2px solid rgba(255,255,255,.10) !important;
   outline-offset: 3px !important;
 
   box-shadow:
-    0 12px 30px rgba(0,0,0,.46),
-    0 0 24px rgba(255,255,255,.035) !important;
+    0 8px 26px rgba(0,0,0,.42),
+    0 0 0 1px rgba(255,255,255,.04) !important;
 }
 
-.seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-avatar > .pvc-avatar-img {
 
+/* Image / illustration fills avatar */
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-avatar > .pvc-avatar-img {
   position: absolute !important;
   inset: 0 !important;
 
@@ -2990,92 +3044,100 @@ section[aria-labelledby="fxlp-how-local-title"]
   object-fit: cover !important;
   object-position: center top !important;
 
-  border-radius: 20px !important;
+  border-radius: 18px !important;
   overflow: hidden !important;
 }
 
-.seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-avatar-badge {
 
-  width: 27px !important;
-  height: 27px !important;
+/* Image state → no silhouette */
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-avatar[data-avatar-state="real-photo"]
+> .pvc-avatar-silhouette,
+.seo-service-page #fxlp-artisan-grid
+.pvc-avatar[data-avatar-state="illustrative-metier"]
+> .pvc-avatar-silhouette {
+  display: none !important;
+}
+
+
+/* Silhouette fallback state */
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-avatar[data-avatar-state="silhouette"]
+> .pvc-avatar-img {
+  display: none !important;
+}
+
+
+/* Service badge */
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-avatar-badge {
+  position: absolute !important;
 
   right: -5px !important;
   bottom: -5px !important;
+
+  width: 28px !important;
+  height: 28px !important;
 
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 
-  opacity: 1 !important;
-
-  font-size: 13px !important;
-
   border-radius: 50% !important;
 
   background: rgba(7,10,17,.94) !important;
-  border: 1px solid rgba(255,255,255,.20) !important;
+  border: 1.5px solid rgba(255,255,255,.20) !important;
 
-  box-shadow: 0 5px 14px rgba(0,0,0,.48) !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+
+  opacity: 1 !important;
+
+  z-index: 5 !important;
+
+  box-shadow:
+    0 4px 12px rgba(0,0,0,.50),
+    0 0 10px rgba(255,255,255,.08) !important;
 }
 
 
-/* ── IDENTITY COLUMN ───────────────────────────────────────── */
+/* ──────────────────────────────────────────────────────────────
+   4. NAME + CITY + METIER
+────────────────────────────────────────────────────────────── */
 
 .seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-identity,
-.seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-identity-final {
-
-  display: flex !important;
-  flex-direction: column !important;
-
-  justify-content: center !important;
-
-  flex: 1 1 0 !important;
-  min-width: 0 !important;
-
-  gap: 2px !important;
-}
-
-
-/* ── NAME ──────────────────────────────────────────────────── */
-
-.seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-name {
-
-  margin: 0 0 4px !important;
-
-  font-size: 1rem !important;
-  font-weight: 800 !important;
-  line-height: 1.18 !important;
-
-  letter-spacing: -.018em !important;
+.pvc-card.fxlp-art-card
+.pvc-name {
+  margin: 0 0 3px !important;
 
   color: #fff !important;
-  -webkit-text-fill-color: #fff !important;
+
+  font-size: .96rem !important;
+  font-weight: 700 !important;
+  line-height: 1.22 !important;
+  letter-spacing: -.015em !important;
 
   display: -webkit-box !important;
-  -webkit-box-orient: vertical !important;
   -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
 
   overflow: hidden !important;
 }
 
 
-/* ── CITY / CATEGORY ───────────────────────────────────────── */
-
 .seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-line {
-
-  margin: 0 !important;
-
-  font-size: .72rem !important;
-  font-weight: 500 !important;
-  line-height: 1.35 !important;
+.pvc-card.fxlp-art-card
+.pvc-line {
+  margin: 0 0 2px !important;
 
   color: rgba(255,255,255,.58) !important;
-  -webkit-text-fill-color: rgba(255,255,255,.58) !important;
+
+  font-size: .70rem !important;
+  line-height: 1.30 !important;
 
   white-space: nowrap !important;
   overflow: hidden !important;
@@ -3083,21 +3145,20 @@ section[aria-labelledby="fxlp-how-local-title"]
 }
 
 
-/* ── DESCRIPTION ────────────────────────────────────────────── */
+/* ──────────────────────────────────────────────────────────────
+   5. DESCRIPTION — HOMEPAGE TWO-LINE CLAMP
+────────────────────────────────────────────────────────────── */
 
 .seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-desc-v3b {
+.pvc-card.fxlp-art-card
+.pvc-desc-v3b {
+  margin: 0 0 9px !important;
 
-  margin: 2px 0 10px !important;
-
-  padding: 0 !important;
+  color: rgba(255,255,255,.58) !important;
 
   font-size: .76rem !important;
   font-weight: 400 !important;
-  line-height: 1.48 !important;
-
-  color: rgba(255,255,255,.58) !important;
-  -webkit-text-fill-color: rgba(255,255,255,.58) !important;
+  line-height: 1.50 !important;
 
   display: -webkit-box !important;
   -webkit-box-orient: vertical !important;
@@ -3105,35 +3166,40 @@ section[aria-labelledby="fxlp-how-local-title"]
 
   overflow: hidden !important;
 
+  max-height: 2.30em !important;
+
   flex-shrink: 0 !important;
 }
 
 
-/* ── TRUST ─────────────────────────────────────────────────── */
+/* ──────────────────────────────────────────────────────────────
+   6. TRUST — TWO CLEAN ROWS
+────────────────────────────────────────────────────────────── */
 
 .seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-trust-v3b {
-
+.pvc-card.fxlp-art-card
+.pvc-trust-v3b {
   display: flex !important;
   flex-direction: column !important;
 
-  gap: 5px !important;
-
   width: 100% !important;
+  min-width: 0 !important;
+
+  gap: 4px !important;
 
   margin: 0 0 10px !important;
-  padding: 0 !important;
 
   flex-shrink: 0 !important;
 }
 
-.seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-trust-v3b-item {
 
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-trust-v3b-item {
   display: flex !important;
   align-items: center !important;
 
-  gap: 6px !important;
+  gap: 5px !important;
 
   padding: 0 !important;
   margin: 0 !important;
@@ -3141,111 +3207,153 @@ section[aria-labelledby="fxlp-how-local-title"]
   border: none !important;
   background: none !important;
 
-  font-size: .69rem !important;
-  font-weight: 500 !important;
-  line-height: 1.25 !important;
+  color: rgba(255,255,255,.48) !important;
 
-  color: rgba(255,255,255,.53) !important;
-  -webkit-text-fill-color: rgba(255,255,255,.53) !important;
+  font-size: .68rem !important;
+  font-weight: 400 !important;
+  line-height: 1.20 !important;
 
   white-space: nowrap !important;
+
+  min-width: 0 !important;
 }
 
 
-/* ── ACTION AREA ───────────────────────────────────────────── */
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-trust-v3b-icon {
+  flex-shrink: 0 !important;
+
+  opacity: .72 !important;
+
+  font-size: .72rem !important;
+}
+
+
+/* SVG icons if present */
 
 .seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-action-v3b {
+.pvc-card.fxlp-art-card
+.pvc-trust-v3b-icon svg {
+  width: 14px !important;
+  height: 14px !important;
 
+  display: inline-block !important;
+
+  color: rgba(255,255,255,.42) !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   7. ACTION AREA — ANCHORED TO BOTTOM
+────────────────────────────────────────────────────────────── */
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-action-v3b {
   display: flex !important;
   flex-direction: column !important;
 
-  width: 100% !important;
+  gap: 0 !important;
 
   margin-top: auto !important;
-
-  padding: 0 !important;
 
   flex-shrink: 0 !important;
 }
 
 
-/* ── DIVIDER ───────────────────────────────────────────────── */
+/* Separator */
 
 .seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-divider-v3b {
-
+.pvc-card.fxlp-art-card
+.pvc-divider-v3b {
   display: block !important;
 
   width: 100% !important;
   height: 1px !important;
 
-  margin: 0 0 12px !important;
+  margin: 0 0 13px !important;
 
   background: rgba(255,255,255,.07) !important;
+
+  flex-shrink: 0 !important;
 }
 
 
-/* ── PRICE ─────────────────────────────────────────────────── */
+/* ──────────────────────────────────────────────────────────────
+   8. PRICE
+────────────────────────────────────────────────────────────── */
 
 .seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-price-v3b {
+.pvc-card.fxlp-art-card
+.pvc-price-v3b,
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-price-block {
+  display: flex !important;
+  flex-direction: column !important;
 
-  display: block !important;
+  align-items: flex-start !important;
 
-  margin: 0 0 12px !important;
-  padding: 0 !important;
+  gap: 0 !important;
+
+  margin: 0 0 13px !important;
+
+  width: 100% !important;
 }
 
-.seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-price-amount {
 
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-price-amount {
   margin: 0 0 3px !important;
 
-  font-size: 1.10rem !important;
-  font-weight: 800 !important;
-  line-height: 1.15 !important;
-
-  letter-spacing: -.02em !important;
-
   color: #fff !important;
-  -webkit-text-fill-color: #fff !important;
+
+  font-size: 1.10rem !important;
+  font-weight: 700 !important;
+  line-height: 1.20 !important;
+
+  letter-spacing: -.01em !important;
 }
 
-.seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-price-from {
 
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-price-from {
   display: block !important;
 
   margin: 0 !important;
 
-  font-size: .65rem !important;
-  font-weight: 600 !important;
+  color: rgba(255,212,100,.72) !important;
 
-  color: rgba(255,211,99,.74) !important;
-  -webkit-text-fill-color: rgba(255,211,99,.74) !important;
+  font-size: .63rem !important;
+  font-weight: 500 !important;
+  line-height: 1.20 !important;
 }
 
 
-/* ── PRIMARY CTA ────────────────────────────────────────────── */
+/* ──────────────────────────────────────────────────────────────
+   9. PRIMARY CTA
+────────────────────────────────────────────────────────────── */
 
 .seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-btn-v3b {
-
+.pvc-card.fxlp-art-card
+.pvc-btn-v3b {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 
   width: 100% !important;
-  min-height: 44px !important;
+  min-height: 42px !important;
 
-  margin: 0 0 5px !important;
-  padding: 11px 18px !important;
+  padding: 12px 18px !important;
+  margin: 0 0 6px !important;
 
-  border: none !important;
+  border: 0 !important;
   border-radius: 14px !important;
 
-  background:
+  background-image:
     linear-gradient(
       135deg,
       #ff8a3d 0%,
@@ -3253,164 +3361,268 @@ section[aria-labelledby="fxlp-how-local-title"]
       #8b5cff 100%
     ) !important;
 
+  background-color: #ff4f9a !important;
+
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
 
   font-family: inherit !important;
-  font-size: .86rem !important;
-  font-weight: 800 !important;
 
-  text-align: center !important;
+  font-size: .88rem !important;
+  font-weight: 700 !important;
 
-  box-shadow:
-    0 5px 16px rgba(225,48,108,.22),
-    0 1px 4px rgba(0,0,0,.28),
-    inset 0 1px 0 rgba(255,255,255,.11) !important;
+  line-height: 1.20 !important;
+  letter-spacing: .015em !important;
+
+  white-space: nowrap !important;
+
+  opacity: 1 !important;
 
   cursor: pointer !important;
+
+  box-shadow:
+    0 4px 13px rgba(225,48,108,.18),
+    0 1px 3px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.08) !important;
+
+  text-shadow: 0 1px 2px rgba(0,0,0,.18) !important;
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease !important;
 
   flex-shrink: 0 !important;
 }
 
 
-/* ── PROFILE LINK ───────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .seo-service-page #fxlp-artisan-grid
+  .pvc-card.fxlp-art-card
+  .pvc-btn-v3b:hover {
+    transform: translateY(-1px) !important;
+
+    box-shadow:
+      0 7px 20px rgba(225,48,108,.28),
+      0 2px 5px rgba(0,0,0,.30),
+      inset 0 1px 0 rgba(255,255,255,.12) !important;
+  }
+}
+
 
 .seo-service-page #fxlp-artisan-grid
-.pvc-card.fxlp-art-card .pvc-profile-v3b {
+.pvc-card.fxlp-art-card
+.pvc-btn-v3b:active {
+  transform: scale(.975) !important;
+}
 
+
+/* ──────────────────────────────────────────────────────────────
+   10. PROFILE LINK
+────────────────────────────────────────────────────────────── */
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-profile-v3b {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 
-  min-height: 36px !important;
+  width: 100% !important;
+  min-height: 40px !important;
 
+  padding: 0 8px !important;
   margin: 0 !important;
-  padding: 0 6px !important;
 
-  border: none !important;
   background: none !important;
+  border: 0 !important;
 
-  font-size: .76rem !important;
+  color: rgba(255,255,255,.62) !important;
+  -webkit-text-fill-color: rgba(255,255,255,.62) !important;
+
+  font-size: .78rem !important;
   font-weight: 500 !important;
 
-  color: rgba(255,255,255,.60) !important;
-  -webkit-text-fill-color: rgba(255,255,255,.60) !important;
+  line-height: 1.2 !important;
 
+  text-align: center !important;
   text-decoration: none !important;
 
   border-radius: 8px !important;
+
+  flex-shrink: 0 !important;
+
+  transition: color .18s ease !important;
 }
 
 
-/* ── DESKTOP INTERACTION ───────────────────────────────────── */
-
-@media (min-width: 768px) {
-
-  .seo-service-page #fxlp-artisan-grid
-  > .pvc-card.fxlp-art-card:hover {
-
-    transform: translateY(-5px) !important;
-
-    border-color: rgba(255,255,255,.17) !important;
-
-    box-shadow:
-      0 28px 60px rgba(0,0,0,.48),
-      0 0 32px rgba(255,79,154,.07),
-      inset 0 1px 0 rgba(255,255,255,.05) !important;
-  }
-
-  .seo-service-page #fxlp-artisan-grid
-  .pvc-card.fxlp-art-card .pvc-profile-v3b:hover {
-
-    color: rgba(255,255,255,.88) !important;
-    -webkit-text-fill-color: rgba(255,255,255,.88) !important;
-
-    background: rgba(255,255,255,.035) !important;
-  }
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-profile-v3b:hover {
+  color: rgba(255,255,255,.88) !important;
+  -webkit-text-fill-color: rgba(255,255,255,.88) !important;
 }
 
 
-/* ── MOBILE CAROUSEL ───────────────────────────────────────── */
+/* ──────────────────────────────────────────────────────────────
+   11. REMOVE LEGACY CARD ELEMENTS
+────────────────────────────────────────────────────────────── */
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-divider:not(.pvc-divider-v3b),
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-stats,
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-live-signals,
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-trust-line,
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-footer,
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-cta-col,
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-cta-row,
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-badges-v2,
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-info-bar,
+
+.seo-service-page #fxlp-artisan-grid
+.pvc-card.fxlp-art-card
+.pvc-fomo {
+  display: none !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   12. MOBILE
+────────────────────────────────────────────────────────────── */
 
 @media (max-width: 767px) {
 
-  .seo-service-page #fxlp-artisan-grid {
-
-    display: flex !important;
-    flex-direction: row !important;
-
-    gap: 14px !important;
-
-    overflow-x: auto !important;
-    overflow-y: visible !important;
-
-    scroll-snap-type: x mandatory !important;
-
-    padding-right: 42px !important;
-    padding-bottom: 10px !important;
-
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
-  }
-
-  .seo-service-page #fxlp-artisan-grid::-webkit-scrollbar {
-    display: none !important;
-  }
-
   .seo-service-page #fxlp-artisan-grid
   > .pvc-card.fxlp-art-card {
-
-    flex: 0 0 76vw !important;
-
-    width: 76vw !important;
-    min-width: 76vw !important;
-    max-width: 76vw !important;
-
     height: 400px !important;
     min-height: 400px !important;
     max-height: 400px !important;
 
-    scroll-snap-align: start !important;
+    padding: 24px 18px 16px !important;
+
+    border-radius: 22px !important;
   }
 
-  .seo-service-page #fxlp-artisan-grid
-  .pvc-card.fxlp-art-card .pvc-avatar {
 
+  .seo-service-page #fxlp-artisan-grid
+  .pvc-card.fxlp-art-card
+  .pvc-avatar {
     width: 88px !important;
     height: 88px !important;
     min-width: 88px !important;
+  }
 
-    flex-basis: 88px !important;
+
+  .seo-service-page #fxlp-artisan-grid
+  .pvc-card.fxlp-art-card
+  .pvc-name {
+    font-size: .94rem !important;
+  }
+
+
+  .seo-service-page #fxlp-artisan-grid
+  .pvc-card.fxlp-art-card
+  .pvc-desc-v3b {
+    font-size: .74rem !important;
+
+    -webkit-line-clamp: 2 !important;
+    max-height: 2.25em !important;
+  }
+
+
+  .seo-service-page #fxlp-artisan-grid
+  .pvc-card.fxlp-art-card
+  .pvc-btn-v3b {
+    min-height: 42px !important;
+
+    font-size: .84rem !important;
   }
 }
 
 
-/* ── SMALL PHONE SAFETY ────────────────────────────────────── */
+/* ──────────────────────────────────────────────────────────────
+   13. SMALL PHONE SAFETY
+────────────────────────────────────────────────────────────── */
 
 @media (max-width: 340px) {
 
   .seo-service-page #fxlp-artisan-grid
   > .pvc-card.fxlp-art-card {
-
     flex-basis: calc(100vw - 44px) !important;
 
     width: calc(100vw - 44px) !important;
     min-width: calc(100vw - 44px) !important;
     max-width: calc(100vw - 44px) !important;
 
-    padding-left: 16px !important;
-    padding-right: 16px !important;
+    height: 400px !important;
+    min-height: 400px !important;
+    max-height: 400px !important;
+
+    padding: 20px 16px 14px !important;
   }
 
-  .seo-service-page #fxlp-artisan-grid
-  .pvc-card.fxlp-art-card .pvc-name {
-    font-size: .92rem !important;
-  }
 
   .seo-service-page #fxlp-artisan-grid
-  .pvc-card.fxlp-art-card .pvc-desc-v3b {
+  .pvc-card.fxlp-art-card
+  .pvc-avatar {
+    width: 82px !important;
+    height: 82px !important;
+    min-width: 82px !important;
+  }
+
+
+  .seo-service-page #fxlp-artisan-grid
+  .pvc-card.fxlp-art-card
+  .pvc-name {
+    font-size: .88rem !important;
+  }
+
+
+  .seo-service-page #fxlp-artisan-grid
+  .pvc-card.fxlp-art-card
+  .pvc-desc-v3b {
     font-size: .72rem !important;
+  }
+
+
+  .seo-service-page #fxlp-artisan-grid
+  .pvc-card.fxlp-art-card
+  .pvc-price-amount {
+    font-size: 1.02rem !important;
+  }
+
+
+  .seo-service-page #fxlp-artisan-grid
+  .pvc-card.fxlp-art-card
+  .pvc-trust-v3b-item {
+    font-size: .62rem !important;
   }
 }
 
-/* END FIXEO LOCAL ARTISAN CARD — DEFINITIVE PREMIUM V17 */
+
+/* END FIXEO LOCAL ARTISAN CARD — HOMEPAGE V3B PARITY V18 */
+
