@@ -1116,28 +1116,54 @@ function buildPage(svcKey, cityKey) {
 
     <hr class="fxlp-divider">
 
-    <!-- §§3 LOCAL SERVICE EXPLANATION -->
-    <section class="fxlp-section" aria-labelledby="fxlp-how-local-title">
-      <div class="fxlp-wrap">
-        <span class="fxlp-section-label">COMMENT ÇA MARCHE</span>
-        <h2 id="fxlp-how-local-title" class="fxlp-section-title">Trouver une solution ${esc(svc.howlocal_adj || svc.label_adj)} à ${esc(city.label)}</h2>
-        <div class="fxlp-expl-grid">
-          <div class="fxlp-expl-item">
-            <span class="fxlp-expl-icon" aria-hidden="true">✏️</span>
-            <p class="fxlp-expl-text">${svc.step1_desc || 'Vous décrivez votre problème — panne, installation ou diagnostic.'}</p>
-          </div>
-          <div class="fxlp-expl-item">
-            <span class="fxlp-expl-icon" aria-hidden="true">📋</span>
-            <p class="fxlp-expl-text">${svc.expl_card2 ? svc.expl_card2.replace('${city}', esc(city.label)) : 'FIXEO enregistre votre demande et la transmet aux artisans référencés correspondant à votre secteur à ' + esc(city.label) + '.'}</p>
-          </div>
-          <div class="fxlp-expl-item">
-            <span class="fxlp-expl-icon" aria-hidden="true">📞</span>
-            <p class="fxlp-expl-text">${svc.expl_card3 || 'Un artisan vous contacte et confirme le tarif définitif et le créneau avant de commencer. Paiement après intervention.'}</p>
-          </div>
-        </div>
-      </div>
-    </section>
+   <!-- §§3 RAFI — FIXEO LOCAL FLAGSHIP V2 -->
+<section class="fxlp-section" aria-labelledby="fxlp-how-local-title">
+  <div class="fxlp-wrap">
 
+    <span class="fxlp-section-label">RAFI · ASSISTANT FIXEO</span>
+
+    <h2 id="fxlp-how-local-title" class="fxlp-section-title">
+      Décrivez votre besoin. RAFI vous aide à le structurer.
+    </h2>
+
+    <p class="fxlp-section-sub">
+      Vous n’avez pas besoin de connaître le diagnostic exact.
+      Expliquez simplement votre situation à ${esc(city.label)} :
+      FIXEO organise les informations utiles avant la mise en relation.
+    </p>
+
+    <div class="fxlp-expl-grid">
+
+      <div class="fxlp-expl-item">
+        <span class="fxlp-expl-icon" aria-hidden="true">✦</span>
+        <p class="fxlp-expl-text">
+          <strong>Décrivez ce qui se passe</strong><br>
+          Panne, réparation, installation ou projet : utilisez vos propres mots.
+        </p>
+      </div>
+
+      <div class="fxlp-expl-item">
+        <span class="fxlp-expl-icon" aria-hidden="true">◎</span>
+        <p class="fxlp-expl-text">
+          <strong>Ajoutez le contexte utile</strong><br>
+          Votre ville, le métier concerné et les précisions données aident FIXEO à mieux contextualiser la demande.
+        </p>
+      </div>
+
+      <div class="fxlp-expl-item">
+        <span class="fxlp-expl-icon" aria-hidden="true">→</span>
+        <p class="fxlp-expl-text">
+          <strong>Préparez la mise en relation</strong><br>
+          FIXEO peut ensuite orienter la demande vers des profils référencés. Le professionnel confirme disponibilité, créneau et tarif.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+   
     <hr class="fxlp-divider">
 
     <!-- §§4 REAL ARTISAN SECTION -->
