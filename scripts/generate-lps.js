@@ -1151,9 +1151,13 @@ function buildPage(svcKey, cityKey) {
         <p class="fxlp-cta-eyebrow">${svc.cta_eyebrow || 'BESOIN D’UN ARTISAN ?'}</p>
         <h2 class="fxlp-cta-title">Votre ${svc.cta_title_noun || 'demande'} à ${esc(city.label)}, en quelques secondes.</h2>
         <p class="fxlp-cta-lead">${svc.cta_lead || 'Votre ville et le service sont déjà sélectionnés. Décrivez votre problème — c’est tout.'}</p>
-        <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="marketplace">
-          Continuer avec ${esc(svc.cta_service_label || svc.label)} · ${esc(city.label)}
-        </button>
+
+         <a
+      class="fxlp-btn-primary"
+  href="/?service=${encodeURIComponent(svc.label)}&amp;city=${encodeURIComponent(city.label)}#hero-quick-search">
+      Continuer avec ${esc(svc.cta_service_label || svc.label)} · ${esc(city.label)}
+       </a>
+        
         <p class="fxlp-cta-note">Aucun paiement maintenant · Tarif confirmé avant l’intervention</p>
       </div>
     </div>
