@@ -1260,7 +1260,56 @@ function buildPage(svcKey, cityKey) {
   </div>
 </section>
 
-   
+   <!-- §§6 TRUST — FIXEO LOCAL FLAGSHIP V2 -->
+    <section class="fxlp-section fxlp-section--tinted" aria-labelledby="fxlp-trust-title">
+      <div class="fxlp-wrap">
+
+        <span class="fxlp-section-label">AVANT L’INTERVENTION</span>
+
+        <h2 id="fxlp-trust-title" class="fxlp-section-title">
+          Les éléments à confirmer avec le professionnel
+        </h2>
+
+        <p class="fxlp-section-sub">
+          FIXEO structure le parcours, mais les conditions concrètes de l’intervention
+          sont confirmées avec le professionnel avant de commencer.
+        </p>
+
+        <div class="fxlp-expl-grid">
+
+          <div class="fxlp-expl-item">
+            <span class="fxlp-expl-icon" aria-hidden="true">✓</span>
+            <p class="fxlp-expl-text">
+              <strong>Tarif confirmé</strong><br>
+              Le professionnel vous communique le tarif applicable à votre situation
+              avant le début de l’intervention.
+            </p>
+          </div>
+
+          <div class="fxlp-expl-item">
+            <span class="fxlp-expl-icon" aria-hidden="true">◷</span>
+            <p class="fxlp-expl-text">
+              <strong>Disponibilité et créneau</strong><br>
+              Le professionnel confirme sa disponibilité et le créneau proposé
+              avant le déplacement.
+            </p>
+          </div>
+
+          <div class="fxlp-expl-item">
+            <span class="fxlp-expl-icon" aria-hidden="true">✓</span>
+            <p class="fxlp-expl-text">
+              <strong>Paiement après intervention</strong><br>
+              Le règlement intervient après l’intervention.
+              Aucun paiement en ligne n’est demandé par FIXEO à cette étape.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <hr class="fxlp-divider">
 
     <!-- §§6 FINAL CTA BANNER -->
     <div class="fxlp-wrap">
