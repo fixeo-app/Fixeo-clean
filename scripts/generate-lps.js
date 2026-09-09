@@ -1043,7 +1043,7 @@ function buildPage(svcKey, cityKey) {
           </div>
           <p class="fxlp-note-price">${svc.note_price_agent || 'Le tarif définitif est confirmé avec l’artisan avant l’intervention.'}</p>
           <div class="fxlp-cta-group">
-            <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="default">
+            <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="marketplace">
               ${svc.cta_primary_text || 'Décrire mon besoin à'} ${esc(city.label)}
             </button>
             <a href="#fxlp-artisans" id="fxlp-scroll-artisans" class="fxlp-btn-secondary">
@@ -1147,7 +1147,7 @@ function buildPage(svcKey, cityKey) {
         <p class="fxlp-cta-eyebrow">${svc.cta_eyebrow || 'BESOIN D’UN ARTISAN ?'}</p>
         <h2 class="fxlp-cta-title">Votre ${svc.cta_title_noun || 'demande'} à ${esc(city.label)}, en quelques secondes.</h2>
         <p class="fxlp-cta-lead">${svc.cta_lead || 'Votre ville et le service sont déjà sélectionnés. Décrivez votre problème — c’est tout.'}</p>
-        <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="default">
+        <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="marketplace">
           Continuer avec ${esc(svc.cta_service_label || svc.label)} · ${esc(city.label)}
         </button>
         <p class="fxlp-cta-note">Aucun paiement maintenant · Tarif confirmé avant l’intervention</p>
