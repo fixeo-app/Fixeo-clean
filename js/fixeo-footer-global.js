@@ -126,7 +126,7 @@
 
           '</div>' +
 
-          /* Navigation group */
+           /* Navigation group */
           '<div class="footer-links fxf-links">' +
 
             '<details class="fxf-group">' +
@@ -142,11 +142,13 @@
                 '<li><a href="/comment-ca-marche.html">Comment \u00e7a marche</a></li>' +
                 '<li><a href="/pricing.html">Tarifs</a></li>' +
                 '<li><a href="/entreprises.html">Entreprises</a></li>' +
+                '<li><a href="/a-propos.html">\u00c0 propos</a></li>' +
               '</ul>' +
 
             '</details>' +
 
           '</div>' +
+    
 
           /* Artisans group */
           '<div class="footer-links fxf-links">' +
