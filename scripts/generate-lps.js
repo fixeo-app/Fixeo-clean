@@ -299,12 +299,7 @@ const SERVICES = {
     intro_template: (c) => Votre recherche d'un plombier à ${c.label} s'arrête ici. Fixeo vous met en relation avec des artisans locaux qualifiés pour tout besoin en plomberie : fuite d'eau, débouchage de canalisation, installation sanitaire, remplacement de chauffe-eau ou dépannage d'urgence. Avec ${c.population ? c.population + ' d\'habitants, ' : ''}${c.label} concentre un parc immobilier important — ${c.demand},
     urgency_services: ['Fuite d\'eau visible', 'Canalisation bouchée', 'Chauffe-eau en panne', 'Inondation sous évier', 'Coupure d\'eau générale'],
     related_services: ['electricien', 'serrurier'],
-    pricing_tiers: [
-      { label: 'Dépannage simple (fuite robinet)', range: '150–300 DH' },
-      { label: 'Débouchage canalisation', range: '200–450 DH' },
-      { label: 'Remplacement chauffe-eau', range: '350–800 DH' },
-      { label: 'Installation sanitaire complète', range: '500–1 500 DH' }
-    ]
+    
   },
 
   electricien: {
@@ -334,12 +329,7 @@ const SERVICES = {
     intro_template: (c) => Trouver un électricien qualifié à ${c.label} en cas de panne ou pour des travaux d'installation est maintenant simple avec Fixeo. Notre réseau d'artisans locaux couvre ${c.label} et ses quartiers — ${c.neighborhoods}. ${c.demand} Les pannes électriques les plus fréquentes (disjoncteur déclenché, court-circuit, tableau défaillant) nécessitent une intervention rapide pour éviter tout risque.,
     urgency_services: ['Panne électrique totale', 'Disjoncteur déclenché', 'Court-circuit', 'Câble sectionné', 'Prise qui brûle'],
     related_services: ['plombier', 'climatisation'],
-    pricing_tiers: [
-      { label: 'Dépannage simple (disjoncteur, prise)', range: '150–350 DH' },
-      { label: 'Remplacement de tableau électrique', range: '400–900 DH' },
-      { label: 'Installation éclairage + prises (pièce)', range: '300–700 DH' },
-      { label: 'Mise aux normes complète', range: '800–2 500 DH' }
-    ]
+    
   },
 
   serrurier: {
@@ -369,12 +359,7 @@ const SERVICES = {
     intro_template: (c) => Porte claquée, serrure bloquée ou effraction — un serrurier disponible à ${c.label} est accessible via Fixeo en quelques secondes. Notre réseau couvre l'ensemble des quartiers ${c.label_de} — ${c.neighborhoods}. ${c.context} Les urgences serrurerie (porte impossible à ouvrir, clé cassée dans la serrure) sont traitées en priorité.,
     urgency_services: ['Porte claquée', 'Clé perdue ou cassée', 'Serrure bloquée', 'Sécurisation après effraction', 'Cylindre changement urgent'],
     related_services: ['electricien', 'plombier'],
-    pricing_tiers: [
-      { label: 'Ouverture porte simple (claquée)', range: '200–500 DH' },
-      { label: 'Remplacement cylindre serrure', range: '250–600 DH' },
-      { label: 'Pose cylindre blindé', range: '400–900 DH' },
-      { label: 'Porte blindée installation', range: '1 200–3 500 DH' }
-    ]
+    
   },
 
   climatisation: {
@@ -404,12 +389,7 @@ const SERVICES = {
     intro_template: (c) => L'installation ou l'entretien de votre climatiseur à ${c.label} demande un technicien qualifié. Fixeo vous connecte avec des spécialistes locaux pour tout type d'intervention : pose de split, entretien annuel, recharge en gaz réfrigérant ou réparation de panne. ${c.context} ${c.demand},
     urgency_services: ['Climatiseur en panne', 'Plus de refroidissement', 'Fuite liquide réfrigérant', 'Bruit anormal', 'Télécommande ne répond plus'],
     related_services: ['electricien', 'plombier'],
-    pricing_tiers: [
-      { label: 'Nettoyage filtres + entretien annuel', range: '150–350 DH' },
-      { label: 'Recharge gaz réfrigérant', range: '300–600 DH' },
-      { label: 'Installation split mural (9000 BTU)', range: '800–1 800 DH' },
-      { label: 'Dépannage panne électronique', range: '250–700 DH' }
-    ]
+    
   },
 
   peintre: {
@@ -453,12 +433,7 @@ const SERVICES = {
     urgency_services: ['Remise en état rapide', 'Réparation dégât des eaux (peinture)', 'Finitions avant emménagement', 'Ravalement façade urgent'],
     related_services: ['serrurier'],
     prix_explorer: { slug: 'peinture', icon: '💰', title_prefix: 'Prix peinture à' },
-    pricing_tiers: [
-      { label: 'Peinture 1 pièce (préparation incluse)', range: '150–600 DH' },
-      { label: 'Appartement 3 pièces complet', range: '1 200–3 500 DH' },
-      { label: 'Enduit + peinture (par m²)', range: '25–60 DH/m²' },
-      { label: 'Peinture façade extérieure', range: '35–80 DH/m²' }
-    ]
+    
   },
 
   menuisier: {
@@ -494,12 +469,7 @@ const SERVICES = {
     intro_template: (c) => Trouvez un menuisier à ${c.label} via FIXEO. Portes, fenêtres, meubles sur mesure, boiseries et travaux de menuiserie — notre réseau d'artisans référencés couvre l'ensemble de ${c.label} et ses quartiers : ${c.neighborhoods}. Le tarif définitif est confirmé avec l'artisan avant le début des travaux.,
     urgency_services: ['Réparation porte endommagée', 'Remplacement vitre cassée', 'Finitions avant emménagement', 'Remise en état urgente'],
     related_services: ['serrurier', 'electricien'],
-    pricing_tiers: [
-      { label: 'Pose / remplacement porte intérieure', range: '300–800 DH' },
-      { label: 'Meuble sur mesure (petite pièce)', range: '800–3 000 DH' },
-      { label: 'Cuisine sur mesure (par mètre linéaire)', range: '600–1 500 DH/ml' },
-      { label: 'Boiseries et habillage mural', range: '200–600 DH/m²' }
-    ]
+   
   },
 
   macon: {
@@ -544,12 +514,7 @@ const SERVICES = {
     intro_template: (c) => Décrivez votre projet de maçonnerie à ${c.label}. FIXEO enregistre votre demande et recherche une solution correspondant à votre secteur. Le tarif définitif est confirmé avec l'artisan avant l'intervention.,
     urgency_services: ['Réparation mur fissuré', 'Reprise de fuite en sous-œuvre', 'Consolidation urgente', 'Remise en état après sinistre'],
     related_services: ['peintre', 'menuisier'],
-    pricing_tiers: [
-      { label: 'Maçonnerie générale (au m²)', range: '200–800 DH' },
-      { label: 'Ravalement de façade (au m²)', range: '150–400 DH/m²' },
-      { label: 'Pose carrelage (au m²)', range: '100–250 DH/m²' },
-      { label: 'Chape ou dallage (au m²)', range: '80–200 DH/m²' }
-    ]
+    
   },
 
   nettoyage: {
@@ -603,12 +568,7 @@ const SERVICES = {
     ],
     urgency_services: ['Nettoyage urgent après sinistre', 'Nettoyage après dégât des eaux', 'Remise en état après travaux', 'Nettoyage avant événement'],
     related_services: ['peintre', 'menuisier'],
-    pricing_tiers: [
-      { label: 'Nettoyage appartement (par session)', range: '200–500 DH' },
-      { label: 'Nettoyage bureaux (au m²)', range: '15–40 DH/m²' },
-      { label: 'Nettoyage après travaux (au m²)', range: '30–70 DH/m²' },
-      { label: 'Nettoyage vitres (par vitre)', range: '10–30 DH' }
-    ]
+  
   }
 };
 
