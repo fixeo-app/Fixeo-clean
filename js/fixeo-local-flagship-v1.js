@@ -198,9 +198,11 @@
     var desc    = _sanitizeDesc(artisan.description);
     var descHtml = desc ? '<p class="pvc-desc-v3b">' + _esc(desc) + '</p>' : '';
 
-    var priceMain = artisan.price_label
-      || (artisan.price_from ? 'À partir de ' + artisan.price_from + ' MAD' : 'Devis sur demande');
-    var priceHint = artisan.price_label ? '' : 'Tarif indicatif';
+    /* Local Flagship truth rule:
+   never infer an intervention price from an artisan profile.
+   The professional confirms the actual tariff before intervention. */
+   var priceMain = 'Tarif à confirmer';
+var priceHint = 'Avant intervention';
 
     return '<article class="pvc-card fhp-card fxlp-art-card"'
       + ' data-artisan-id="' + id + '"'
