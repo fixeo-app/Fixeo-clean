@@ -718,6 +718,49 @@ function buildLocalMetaDesc(svc, city) {
   );
 }
 
+function buildLocalFlagshipFAQ(svc, city) {
+  const profession = svc.profession || 'professionnel';
+  const article = svc.article || 'un';
+  const examples = (svc.sub_services || []).slice(0, 5);
+  const examplesText = examples.length
+    ? examples.join(', ')
+    : 'le besoin décrit par le client';
+
+  return [
+    {
+      q: 'Comment trouver ' + article + ' ' + profession + ' à ' + city.label + ' avec FIXEO ?',
+      a:
+        'Décrivez votre besoin sur FIXEO en précisant votre situation et votre ville. ' +
+        'FIXEO aide à structurer les informations utiles et peut orienter la demande vers des profils référencés. ' +
+        'La disponibilité, le créneau et le tarif sont ensuite confirmés avec le professionnel.'
+    },
+    {
+      q: 'Quels types de besoins peut-on décrire ?',
+      a:
+        'Selon la situation, votre demande peut notamment concerner : ' + examplesText + '. ' +
+        'La prestation exacte dépend du diagnostic, du matériel nécessaire et des compétences du professionnel sélectionné.'
+    },
+    {
+      q: 'Comment le tarif est-il confirmé ?',
+      a:
+        'Le professionnel évalue votre situation et vous communique le tarif applicable avant de commencer. ' +
+        'Vous pouvez décider de poursuivre ou non après cette confirmation.'
+    },
+    {
+      q: 'FIXEO garantit-il la disponibilité ou un délai d’intervention ?',
+      a:
+        'Non. La disponibilité et le délai dépendent du professionnel, de votre localisation et de la situation décrite. ' +
+        'Le créneau doit être confirmé avant le déplacement.'
+    },
+    {
+      q: 'Quand le paiement est-il effectué ?',
+      a:
+        'Le paiement intervient après l’intervention ou la prestation réalisée. ' +
+        'FIXEO ne demande pas de paiement en ligne à cette étape.'
+    }
+  ];
+}
+
 
 // Blog articles connexes by service
 const BLOG_LINKS = {
@@ -890,7 +933,7 @@ function buildPage(svcKey, cityKey) {
   const h1        = `${esc(svc.h1_prefix + ' ' + city.label)}`;
   const title     = `${svc.h1_prefix} ${city.label} | ${svc.title_suffix}`;
   const metaDesc  = buildLocalMetaDesc(svc, city);
-  const faqItems  = svc.faq_flagship(city);
+  const faqItems  = buildLocalFlagshipFAQ(svc, city);
   const profession  = svc.profession;
   const professionU = profession.charAt(0).toUpperCase() + profession.slice(1);
   const profPl    = svc.profession_pl;
