@@ -439,10 +439,22 @@
     ──────────────────────────────────────────────────────────────────── */
     try {
       var mode = 'default'; /* always default — emergency breaks chip pre-selection */
+       if (window.FixeoRequestFlowV4 && typeof window.FixeoRequestFlowV4.open === 'function') {
+  var entryContext = window.FIXEO_ENTRY_CONTEXT || {};
 
-      if (window.FixeoRequestFlowV4 && typeof window.FixeoRequestFlowV4.open === 'function') {
-        window.FixeoRequestFlowV4.open({ mode: mode, source: 'need-builder' });
-      } else if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
+  window.FixeoRequestFlowV4.open({
+    mode: mode,
+    source: 'need-builder',
+    prefillService:
+      (_state.category && _state.category.label)
+        ? _state.category.label
+        : (entryContext.service || relayValue || ''),
+    prefillCity:
+      _state.city || entryContext.city || ''
+  });
+}
+     
+       else if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
         var syntheticTrigger = document.createElement('button');
         syntheticTrigger.setAttribute('data-request-mode', mode);
         syntheticTrigger.setAttribute('data-open-request-form', 'true');
