@@ -658,14 +658,32 @@
     /* Pre-populate city */
     _state.city = _getCity();
 
-    /* If RAFI memory already has text (e.g. user navigated back), prefill */
-    try {
-      var relay = _el('search-input');
-      if (relay && relay.value && relay.value.length > 2) {
-        area.value = relay.value;
-        _updateSubmitState();
-      }
-    } catch(e) {}
+    /* If RAFI memory already has text, it has priority.
+   Otherwise, prefill the need from an explicit SEO entry context. */
+try {
+  var relay = _el('search-input');
+
+  if (relay && relay.value && relay.value.length > 2) {
+    area.value = relay.value;
+  } else {
+    var entryContext = window.FIXEO_ENTRY_CONTEXT || {};
+    var entryService =
+      (typeof entryContext.service === 'string')
+        ? entryContext.service.trim()
+        : '';
+
+    if (
+      !area.value &&
+      entryContext.source === 'seo' &&
+      entryService.length > 2
+    ) {
+      area.value = entryService;
+    }
+  }
+
+  _updateSubmitState();
+} catch(e) {}
+    
   }
 
   /* ── Public API ── */
