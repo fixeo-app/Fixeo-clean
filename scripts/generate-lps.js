@@ -286,13 +286,7 @@ const SERVICES = {
       { icon: '\uD83D\uDD25', label: 'Chauffe-eau' },
       { icon: '\uD83D\uDD0D', label: 'Recherche et diagnostic de panne' },
     ],
-    faq_flagship: (city) => [
-      { q: 'Comment trouver un plombier à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans plombiers référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
-      { q: 'Quels types de problèmes de plomberie peuvent être pris en charge ?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour des fuites d'eau, des robinets ou chasses d'eau défectueux, des canalisations bouchées, des installations sanitaires, des chauffe-eau et des diagnostics de panne. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
-      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
-      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
-      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
-    ],
+  
     h1_prefix: 'Plombier à',
     title_suffix: 'Dépannage, fuite et urgence | Fixeo',
 intro_template: (c) => Décrivez votre projet de maçonnerie à ${c.label}. FIXEO vous aide à structurer votre besoin et à consulter les profils référencés dans la catégorie Maçonnerie. La disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
@@ -312,13 +306,7 @@ intro_template: (c) => Décrivez votre projet de maçonnerie à ${c.label}. FIXE
       { icon: '\uD83D\uDCE6', label: 'Câblage et installation' },
       { icon: '\uD83D\uDD0D', label: 'Diagnostic et mise aux normes' },
     ],
-    faq_flagship: (city) => [
-      { q: 'Comment trouver un électricien à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans électriciens référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
-      { q: 'Quels types de travaux électriques peuvent être pris en charge ?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour des pannes électriques, des prises ou interrupteurs, de l'éclairage, des tableaux électriques et du câblage. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
-      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
-      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
-      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
-    ],
+   
     h1_prefix: 'Électricien à',
     title_suffix: 'Dépannage, installation et urgence | Fixeo',
 intro_template: (c) => Décrivez votre besoin en serrurerie à ${c.label} — porte claquée ou bloquée, clé cassée ou perdue, remplacement de serrure ou sécurisation après effraction. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Serrurerie. La disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
@@ -341,13 +329,7 @@ intro_template: (c) => Décrivez votre besoin en serrurerie à ${c.label} — po
       { icon: '\uD83D\uDEAA', label: 'Cylindre blindé' },
       { icon: '\uD83D\uDD0D', label: 'Diagnostic et conseil sécurité' },
     ],
-    faq_flagship: (city) => [
-      { q: 'Comment trouver un serrurier à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans serruriers référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
-      { q: 'Quels types de problèmes de serrurerie peuvent être pris en charge ?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour des portes claquées ou bloquées, des remplacements de serrure, des clés cassées ou perdues, des sécurisations après effraction et des diagnostics. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
-      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
-      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
-      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
-    ],
+   
     h1_prefix: 'Serrurier à',
     title_suffix: 'Urgence, ouverture de porte | Fixeo',
     intro_template: (c) => Décrivez votre besoin en serrurerie à ${c.label} — porte claquée ou bloquée, clé cassée ou perdue, remplacement de serrure ou sécurisation après effraction. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Serrurerie. La disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
@@ -369,13 +351,7 @@ intro_template: (c) => Décrivez votre besoin en serrurerie à ${c.label} — po
       { icon: '\uD83D\uDD0A', label: 'Bruit anormal ou fuite' },
       { icon: '\uD83D\uDD0D', label: 'Diagnostic de panne' },
     ],
-    faq_flagship: (city) => [
-      { q: 'Comment trouver un technicien climatisation à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans spécialisés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
-      { q: "Quels types d'interventions climatisation peuvent être pris en charge ?", a: "Les artisans référencés sur FIXEO peuvent intervenir pour des pannes, des installations, le nettoyage, la recharge de gaz réfrigérant, les bruits anormaux et les diagnostics. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
-      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
-      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
-      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
-    ],
+    
     h1_prefix: 'Technicien Climatisation à',
     title_suffix: 'Installation, entretien, panne | Fixeo',
     intro_template: (c) => L'installation ou l'entretien de votre climatiseur à ${c.label} demande un technicien qualifié. Fixeo vous connecte avec des spécialistes locaux pour tout type d'intervention : pose de split, entretien annuel, recharge en gaz réfrigérant ou réparation de panne. ${c.context} ${c.demand},
@@ -410,13 +386,7 @@ intro_template: (c) => Décrivez votre besoin en serrurerie à ${c.label} — po
       { icon: '🔧', label: 'Plafonds et boiseries' },
       { icon: '🔍', label: 'Conseil couleur et diagnostic' },
     ],
-    faq_flagship: (city) => [
-      { q: 'Comment demander un peintre à ' + city.label + '\u00a0?', a: "Décrivez votre besoin ou votre projet sur FIXEO. Votre demande est enregistrée et transmise aux artisans peintres référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant de commencer." },
-      { q: 'Quels types de travaux de peinture peut-on demander\u00a0?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour la peinture intérieure, la peinture extérieure, la préparation des murs, les enduits et rebouchages, les plafonds et boiseries. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
-      { q: 'Comment le tarif définitif est-il confirmé\u00a0?', a: "Après évaluation de votre projet, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin des travaux." },
-      { q: 'Le déplacement et les fournitures sont-ils inclus\u00a0?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
-      { q: 'Quand le paiement est-il effectué\u00a0?', a: "Le paiement s'effectue après la fin des travaux, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
-    ],
+    
     h1_prefix: 'Peintre à',
     title_suffix: 'Travaux intérieurs, finitions | Fixeo',
     intro_template: (c) => Décrivez votre projet de peinture à ${c.label} — peinture intérieure ou extérieure, préparation des murs, enduit, plafonds ou boiseries. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Peinture. Le périmètre des travaux, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
@@ -445,13 +415,7 @@ prix_explorer: { slug: 'peinture', icon: '💰', title_prefix: 'Prix peinture à
       { icon: '🔧', label: 'Réparation et remise en état' },
       { icon: '🔍', label: 'Conseil et diagnostic' },
     ],
-    faq_flagship: (city) => [
-      { q: 'Comment trouver un menuisier à ' + city.label + '\u00a0?', a: "Décrivez votre besoin ou votre projet sur FIXEO. Votre demande est enregistrée et transmise aux artisans menuisiers référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant de commencer." },
-      { q: 'Quels types de travaux de menuiserie peut-on demander\u00a0?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour la pose et réparation de portes et fenêtres, la fabrication de meubles sur mesure, les boiseries et habillages muraux, les cuisines et placards, et les remises en état de menuiserie existante. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
-      { q: 'Comment le tarif définitif est-il confirmé\u00a0?', a: "Après évaluation de votre projet, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin des travaux." },
-      { q: 'Le déplacement est-il inclus dans le prix\u00a0?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
-      { q: 'Quand le paiement est-il effectué\u00a0?', a: "Le paiement s'effectue après la fin des travaux, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
-    ],
+    
     h1_prefix: 'Menuisier à',
     title_suffix: 'Portes, meubles sur mesure, boiseries | Fixeo',
      intro_template: (c) => Décrivez votre besoin en menuiserie à ${c.label} — portes, fenêtres, meubles sur mesure, boiseries, cuisine, placards ou réparation. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Menuiserie. Le périmètre des travaux, la disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
@@ -488,13 +452,7 @@ prix_explorer: { slug: 'peinture', icon: '💰', title_prefix: 'Prix peinture à
       { icon: '🧰', label: 'Murs, cloisons et ouvertures' },
       { icon: '🔍', label: 'Reprise, renforcement et diagnostic' },
     ],
-    faq_flagship: (city) => [
-      { q: 'Comment trouver un maçon à ' + city.label + '\u00a0?', a: "Décrivez votre projet sur FIXEO. Votre demande est enregistrée et transmise aux artisans maçons référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant de commencer." },
-      { q: 'Quels types de travaux de maçonnerie peut-on demander\u00a0?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour la maçonnerie générale, le ravalement de façade, la pose de carrelage et dallage, la réalisation de chapes, les murs et cloisons, et les travaux de reprise et renforcement. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
-      { q: 'Comment le tarif définitif est-il confirmé\u00a0?', a: "Après évaluation de votre projet, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin des travaux." },
-      { q: 'Le déplacement est-il inclus dans le prix\u00a0?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
-      { q: 'Quand le paiement est-il effectué\u00a0?', a: "Le paiement s'effectue après la fin des travaux, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
-    ],
+   
     h1_prefix: 'Maçon à',
     title_suffix: 'Maçonnerie, ravalement, carrelage | Fixeo',
  intro_template: (c) => Décrivez votre projet de maçonnerie à ${c.label} — maçonnerie générale, façade, carrelage, chape, murs, cloisons ou travaux de reprise. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Maçonnerie. Le périmètre des travaux, la disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
@@ -535,13 +493,7 @@ related_services: ['peintre', 'menuisier'],
     h1_prefix: 'Service de nettoyage à',
     title_suffix: 'Nettoyage maison, bureaux, après travaux | Fixeo',
 intro_template: (c) => Décrivez votre besoin de nettoyage à ${c.label} — logement, bureaux, remise en état, nettoyage après travaux ou entretien ponctuel. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Nettoyage. Le périmètre de la prestation, la disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
-       faq_flagship: (city) => [
-      { q: 'Comment demander un service de nettoyage à ' + city.label + ' ?', a: "Décrivez votre besoin sur FIXEO. Votre demande est enregistrée et transmise aux prestataires référencés correspondant à votre secteur à " + city.label + ". Le prestataire vous contacte et confirme le tarif définitif avant de commencer." },
-      { q: 'Quels types de nettoyage peut-on demander ?', a: "Les prestataires référencés sur FIXEO peuvent intervenir pour le nettoyage de maisons et appartements, de bureaux et locaux commerciaux, le nettoyage après travaux, le nettoyage après déménagement et le nettoyage de vitres et surfaces. Les prestations dépendent du type de lieu et des besoins précisés au prestataire sélectionné." },
-      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après analyse de votre besoin, le prestataire vous communique le tarif définitif avant de commencer. Vous n’êtes pas obligé d’accepter. En cas d’accord, le paiement s’effectue après la prestation." },
-      { q: 'Les produits et le matériel sont-ils inclus ?', a: "L’inclusion des produits et du matériel dépend du prestataire sélectionné. Ce point doit être confirmé avec le prestataire avant le début de la prestation." },
-      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s’effectue après la fin de la prestation, jamais en avance complète. Aucun paiement anticipé n’est demandé." },
-    ],
+      
     situations: [
       { icon: '🏠', label: 'Maison ou appartement' },
       { icon: '🏢', label: 'Bureaux et locaux' },
