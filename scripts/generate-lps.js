@@ -648,6 +648,7 @@ const SERVICES = {
 /* ═══════════════════════════════════════════════════════════
    NEARBY CITIES
 ══════════════════════════════════════════════════════════ */
+
 const NEARBY = {
   casablanca: ['mohammedia', 'sale', 'rabat'],
   rabat: ['sale', 'temara', 'kenitra'],
@@ -661,34 +662,14 @@ const NEARBY = {
   temara: ['rabat', 'sale', 'kenitra'],
   sale: ['rabat', 'temara', 'kenitra'],
   mohammedia: ['casablanca', 'sale', 'rabat'],
-  'el-jadida': ['casablanca', 'safi', 'mohammedia'],
+  'el-jadida': ['casablanca', 'safi', 'marrakech'],
   'beni-mellal': ['khouribga', 'marrakech', 'fes'],
   khouribga: ['beni-mellal', 'casablanca', 'meknes'],
   safi: ['el-jadida', 'marrakech', 'agadir'],
   nador: ['oujda', 'taza', 'fes'],
   taza: ['fes', 'oujda', 'meknes'],
   ouarzazate: ['agadir', 'marrakech', 'safi'],
-  tetouan: ['tanger', 'kenitra', 'rabat'],
-  'beni-mellal': {
-    label: 'Béni Mellal', label_de: 'de Béni Mellal',
-    neighborhoods: 'Centre-ville, Hay Al Massira, Hay Chemi, Hay El Majd',
-    context: 'Ville agricole en expansion au cœur de la région Béni Mellal-Khénifra, avec un tissu résidentiel dense et croissant.',
-    demand: 'Demandes en plomberie et électricité portées par les nouvelles constructions et le parc résidentiel existant.',
-    pricing_low: '100', pricing_high: '380',
-    pricing_note: 'Marché local avec tarifs adaptés à la région.',
-    nearby: ['khouribga', 'marrakech', 'fes']
-  },
-  'el-jadida': {
-    label: 'El Jadida', label_de: "d'El Jadida",
-    neighborhoods: 'Centre-ville, Hay Hassani, Cité Portugaise, Plateau',
-    context: 'Ville côtière de la région Casablanca-Settat, El Jadida combine un habitat résidentiel dense et un tourisme balnéaire soutenu.',
-    demand: 'Demandes régulières en plomberie et électricité dans les immeubles résidentiels et maisons individuelles.',
-    pricing_low: '100', pricing_high: '380',
-    pricing_note: 'Marché local avec tarifs adaptés à la région côtière.',
-    nearby: ['casablanca', 'safi', 'casablanca']
-  },
-  'beni-mellal': ['khouribga', 'marrakech', 'fes'],
-  'el-jadida': ['casablanca', 'safi', 'marrakech']
+  tetouan: ['tanger', 'kenitra', 'rabat']
 };
 
 /* ═══════════════════════════════════════════════════════════
