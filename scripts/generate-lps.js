@@ -322,7 +322,6 @@ intro_template: (c) => Décrivez votre projet de maçonnerie à ${c.label}. FIXE
     h1_prefix: 'Électricien à',
     title_suffix: 'Dépannage, installation et urgence | Fixeo',
 intro_template: (c) => Décrivez votre besoin en serrurerie à ${c.label} — porte claquée ou bloquée, clé cassée ou perdue, remplacement de serrure ou sécurisation après effraction. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Serrurerie. La disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
-       urgency_services: ['Panne électrique totale', 'Disjoncteur déclenché', 'Court-circuit', 'Câble sectionné', 'Prise qui brûle'],
     related_services: ['plombier', 'climatisation'],
        
     
@@ -352,8 +351,7 @@ intro_template: (c) => Décrivez votre besoin en serrurerie à ${c.label} — po
     h1_prefix: 'Serrurier à',
     title_suffix: 'Urgence, ouverture de porte | Fixeo',
     intro_template: (c) => Décrivez votre besoin en serrurerie à ${c.label} — porte claquée ou bloquée, clé cassée ou perdue, remplacement de serrure ou sécurisation après effraction. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Serrurerie. La disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
-urgency_services: ['Porte claquée', 'Clé perdue ou cassée', 'Serrure bloquée', 'Sécurisation après effraction', 'Cylindre changement urgent'],
-related_services: ['electricien', 'plombier'],
+    related_services: ['electricien', 'plombier'],
     
   },
 
@@ -381,7 +379,6 @@ related_services: ['electricien', 'plombier'],
     h1_prefix: 'Technicien Climatisation à',
     title_suffix: 'Installation, entretien, panne | Fixeo',
     intro_template: (c) => L'installation ou l'entretien de votre climatiseur à ${c.label} demande un technicien qualifié. Fixeo vous connecte avec des spécialistes locaux pour tout type d'intervention : pose de split, entretien annuel, recharge en gaz réfrigérant ou réparation de panne. ${c.context} ${c.demand},
-    urgency_services: ['Climatiseur en panne', 'Plus de refroidissement', 'Fuite liquide réfrigérant', 'Bruit anormal', 'Télécommande ne répond plus'],
     related_services: ['electricien', 'plombier'],
     
   },
@@ -423,8 +420,7 @@ related_services: ['electricien', 'plombier'],
     h1_prefix: 'Peintre à',
     title_suffix: 'Travaux intérieurs, finitions | Fixeo',
     intro_template: (c) => Décrivez votre projet de peinture à ${c.label} — peinture intérieure ou extérieure, préparation des murs, enduit, plafonds ou boiseries. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Peinture. Le périmètre des travaux, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
-urgency_services: ['Remise en état', 'Réparation après dégât des eaux', 'Finitions avant emménagement', 'Ravalement de façade'],
-related_services: ['serrurier'],
+    related_services: ['serrurier'],
 prix_explorer: { slug: 'peinture', icon: '💰', title_prefix: 'Prix peinture à' },
     
   },
@@ -459,8 +455,7 @@ prix_explorer: { slug: 'peinture', icon: '💰', title_prefix: 'Prix peinture à
     h1_prefix: 'Menuisier à',
     title_suffix: 'Portes, meubles sur mesure, boiseries | Fixeo',
      intro_template: (c) => Décrivez votre besoin en menuiserie à ${c.label} — portes, fenêtres, meubles sur mesure, boiseries, cuisine, placards ou réparation. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Menuiserie. Le périmètre des travaux, la disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
-       urgency_services: ['Réparation porte endommagée', 'Remplacement vitre cassée', 'Finitions avant emménagement', 'Remise en état'],
-related_services: ['serrurier', 'electricien'],
+    related_services: ['serrurier', 'electricien'],
    
   },
 
@@ -503,7 +498,6 @@ related_services: ['serrurier', 'electricien'],
     h1_prefix: 'Maçon à',
     title_suffix: 'Maçonnerie, ravalement, carrelage | Fixeo',
  intro_template: (c) => Décrivez votre projet de maçonnerie à ${c.label} — maçonnerie générale, façade, carrelage, chape, murs, cloisons ou travaux de reprise. FIXEO vous aide à structurer votre demande et à consulter les profils référencés dans la catégorie Maçonnerie. Le périmètre des travaux, la disponibilité, le créneau et le tarif sont confirmés avec le professionnel avant l’intervention.,
-       urgency_services: ['Réparation mur fissuré', 'Reprise de fuite en sous-œuvre', 'Consolidation', 'Remise en état après sinistre'],
 related_services: ['peintre', 'menuisier'],
     
   },
@@ -556,7 +550,6 @@ intro_template: (c) => Décrivez votre besoin de nettoyage à ${c.label} — log
       { icon: '🪟', label: 'Vitres et surfaces' },
       { icon: '🔍', label: 'Grand nettoyage ou besoin spécifique' },
     ],
-    urgency_services: ['Nettoyage urgent après sinistre', 'Nettoyage après dégât des eaux', 'Remise en état après travaux', 'Nettoyage avant événement'],
     related_services: ['peintre', 'menuisier'],
   
   }
