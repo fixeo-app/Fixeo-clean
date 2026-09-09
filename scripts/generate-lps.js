@@ -1043,9 +1043,13 @@ function buildPage(svcKey, cityKey) {
           </div>
           <p class="fxlp-note-price">${svc.note_price_agent || 'Le tarif définitif est confirmé avec l’artisan avant l’intervention.'}</p>
           <div class="fxlp-cta-group">
-            <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="marketplace">
-              ${svc.cta_primary_text || 'Décrire mon besoin à'} ${esc(city.label)}
-            </button>
+
+           <a
+           class="fxlp-btn-primary"
+          href="/?service=${encodeURIComponent(svc.label)}&amp;city=${encodeURIComponent(city.label)}#hero-quick-search">
+          Décrire mon besoin à ${esc(city.label)}
+           </a>
+
             <a href="#fxlp-artisans" id="fxlp-scroll-artisans" class="fxlp-btn-secondary">
               ${svc.cta_secondary_text || 'Voir les artisans à'} ${esc(city.label)} ↓
             </a>
