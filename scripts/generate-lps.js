@@ -910,7 +910,7 @@ function buildPage(svcKey, cityKey) {
     '@type': 'Service',
     '@id': canonicalUrl + '#service',
 
-    name: ${svc.label} à ${city.label} via FIXEO,
+    name: svc.label + ' à ' + city.label + ' via FIXEO',
     description: metaDesc,
     url: canonicalUrl,
 
