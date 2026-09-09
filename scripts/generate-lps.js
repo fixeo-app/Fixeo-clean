@@ -1166,25 +1166,48 @@ function buildPage(svcKey, cityKey) {
    
     <hr class="fxlp-divider">
 
-    <!-- §§4 REAL ARTISAN SECTION -->
-    <section id="fxlp-artisans" class="fxlp-section" aria-labelledby="fxlp-art-title">
-      <div class="fxlp-wrap">
-        <span class="fxlp-section-label">ARTISANS RÉFÉRENCÉS</span>
-        <h2 id="fxlp-art-title" class="fxlp-section-title">${esc(svc.profession_pl_u || (professionU + 's'))} référencés à ${esc(city.label)}</h2>
-        <p class="fxlp-section-sub">Profils référencés sur FIXEO. Paiement après intervention.</p>
-        <div class="fxlp-artisan-grid" role="list" aria-label="${esc((svc.profession_pl_u || (professionU + 's')) + ' référencés à ' + city.label)}" aria-live="polite">
-          <div id="fxlp-artisan-grid" class="fxlp-artisan-loading" role="list"
-               aria-label="${esc((svc.profession_pl_u || (professionU + 's')) + ' à ' + city.label)}"
-               data-fxlp-city="${esc(city.label)}"
-               data-fxlp-service="${runtimeSvcKey}"
-               data-fxlp-category="${esc(svcCat)}">
-            <div class="fxlp-skeleton" aria-hidden="true"></div>
-            <div class="fxlp-skeleton" aria-hidden="true"></div>
-            <div class="fxlp-skeleton" aria-hidden="true"></div>
-          </div>
-        </div>
+
+   <!-- §§4 REFERENCED PROFILES — FIXEO LOCAL FLAGSHIP V2 -->
+<section id="fxlp-artisans" class="fxlp-section" aria-labelledby="fxlp-art-title">
+  <div class="fxlp-wrap">
+
+    <span class="fxlp-section-label">PROFILS RÉFÉRENCÉS</span>
+
+    <h2 id="fxlp-art-title" class="fxlp-section-title">
+      ${esc(svc.profession_pl_u || (professionU + 's'))} à ${esc(city.label)}
+    </h2>
+
+    <p class="fxlp-section-sub">
+      Consultez les profils référencés dans cette catégorie.
+      La disponibilité, le créneau et le tarif sont confirmés avec le professionnel
+      avant l’intervention.
+    </p>
+
+    <div
+      class="fxlp-artisan-grid"
+      role="list"
+      aria-label="${esc((svc.profession_pl_u || (professionU + 's')) + ' référencés à ' + city.label)}"
+      aria-live="polite">
+
+      <div
+        id="fxlp-artisan-grid"
+        class="fxlp-artisan-loading"
+        role="list"
+        aria-label="${esc((svc.profession_pl_u || (professionU + 's')) + ' à ' + city.label)}"
+        data-fxlp-city="${esc(city.label)}"
+        data-fxlp-service="${runtimeSvcKey}"
+        data-fxlp-category="${esc(svcCat)}">
+
+        <div class="fxlp-skeleton" aria-hidden="true"></div>
+        <div class="fxlp-skeleton" aria-hidden="true"></div>
+        <div class="fxlp-skeleton" aria-hidden="true"></div>
+
       </div>
-    </section>
+    </div>
+
+  </div>
+</section>
+ 
 
     <hr class="fxlp-divider">
 
