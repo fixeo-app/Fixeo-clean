@@ -421,151 +421,31 @@ main#main-content {
   }
 }
 
-/* ── pvc-card base in our grid context ──────────────────────── */
-#fxlp-artisan-grid .pvc-card,
-#fxlp-artisan-grid .fhp-card,
+/* ══════════════════════════════════════════════════════════════
+   ARTISAN CARDS — HOMEPAGE DESIGN BRIDGE
+   ------------------------------------------------------------
+   The canonical card appearance is owned by:
+   - artisan-card-conversion-v1.css
+   - fixeo-artisan-card-premium-v2.css
+   - fixeo-artisan-section-v1.css
+
+   Local SEO only controls card sizing inside its own grid.
+══════════════════════════════════════════════════════════════ */
+
 #fxlp-artisan-grid .fxlp-art-card {
   width: 100%;
   min-width: 0;
-  display: flex !important;
-  flex-direction: column !important;
-  background: #0f1520 !important;
-  border: 1px solid rgba(255,255,255,.09) !important;
-  border-radius: 16px !important;
-  overflow: hidden;
-  font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-#fxlp-artisan-grid .pvc-card-header,
-#fxlp-artisan-grid .pvc-card-header-final {
-  display: flex !important;
-  gap: 12px;
-  align-items: flex-start;
-  padding: 16px 16px 10px;
+/* Keep all cards aligned inside the local grid without
+   overriding the canonical homepage card appearance. */
+#fxlp-artisan-grid > .pvc-card {
+  min-width: 0;
+  height: 100%;
 }
 
-/* Avatar */
-#fxlp-artisan-grid .pvc-avatar {
-  position: relative;
-  flex-shrink: 0;
-  width: 64px; height: 64px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: #141c2e;
-  border: 2px solid rgba(255,255,255,.1);
-}
-#fxlp-artisan-grid .pvc-avatar-img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-}
-#fxlp-artisan-grid .pvc-avatar-badge {
-  position: absolute; bottom: -2px; right: -2px;
-  width: 22px; height: 22px; border-radius: 50%;
-  background: #141c2e; border: 1.5px solid rgba(255,255,255,.15);
-  display: flex; align-items: center; justify-content: center;
-  font-size: .7rem; line-height: 1;
-}
-#fxlp-artisan-grid .pvc-avatar-silhouette {
-  display: block; width: 100%; height: 100%;
-  background: linear-gradient(135deg, rgba(255,107,61,.25), rgba(245,83,166,.15));
-}
+/* Local page must not alter canonical card internals. */
 
-/* Identity */
-#fxlp-artisan-grid .pvc-identity,
-#fxlp-artisan-grid .pvc-identity-final {
-  flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;
-}
-#fxlp-artisan-grid .pvc-name {
-  font-size: .93rem; font-weight: 700; color: #eaeff8 !important;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0;
-  -webkit-text-fill-color: #eaeff8 !important;
-}
-#fxlp-artisan-grid .pvc-line {
-  font-size: .75rem; color: #8896b0 !important;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  -webkit-text-fill-color: #8896b0 !important;
-}
-
-/* Description */
-#fxlp-artisan-grid .pvc-desc-v3b {
-  font-size: .80rem; color: #8896b0 !important; line-height: 1.55;
-  padding: 0 16px 10px; margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  -webkit-text-fill-color: #8896b0 !important;
-}
-
-/* Trust rows */
-#fxlp-artisan-grid .pvc-trust-v3b {
-  display: flex !important; flex-direction: column; gap: 5px;
-  padding: 8px 16px; border-top: 1px solid rgba(255,255,255,.06);
-}
-#fxlp-artisan-grid .pvc-trust-v3b-item {
-  display: flex !important; align-items: center; gap: 6px;
-  font-size: .72rem; color: #8896b0 !important; line-height: 1.3;
-  -webkit-text-fill-color: #8896b0 !important;
-}
-#fxlp-artisan-grid .pvc-trust-v3b-icon {
-  display: inline-flex; align-items: center; flex-shrink: 0; color: #4ade80;
-  width: 14px; height: 14px;
-}
-#fxlp-artisan-grid .pvc-trust-v3b-icon svg { width: 14px; height: 14px; }
-
-/* Action area */
-#fxlp-artisan-grid .pvc-action-v3b {
-  display: flex !important; flex-direction: column; gap: 8px;
-  padding: 10px 16px 16px; margin-top: auto;
-}
-#fxlp-artisan-grid .pvc-divider,
-#fxlp-artisan-grid .pvc-divider-v3b {
-  border: none; border-top: 1px solid rgba(255,255,255,.07); margin: 0 0 2px;
-}
-#fxlp-artisan-grid .pvc-price-block,
-#fxlp-artisan-grid .pvc-price-v3b { display: flex; flex-direction: column; gap: 1px; }
-#fxlp-artisan-grid .pvc-price-amount { font-size: .92rem; font-weight: 700; color: #4ade80 !important; -webkit-text-fill-color: #4ade80 !important; }
-#fxlp-artisan-grid .pvc-price-from  { font-size: .68rem; color: #4a5a72 !important; }
-
-/* Reserve button — V1.2: reduced glow to match page CTA fix */
-#fxlp-artisan-grid .pvc-btn-reserve-v2,
-#fxlp-artisan-grid .fhp-btn-reserve,
-#fxlp-artisan-grid .pvc-btn-v3b,
-#fxlp-artisan-grid .fxlp-btn-reserve {
-  display: flex !important; align-items: center; justify-content: center;
-  width: 100%; padding: 11px 16px; min-height: 44px;
-  border-radius: 12px; border: none; cursor: pointer;
-  font-size: .84rem; font-weight: 700;
-  color: #fff !important;
-  -webkit-text-fill-color: #fff !important;
-  background: linear-gradient(
-  135deg,
-  #ff8a3d 0%,
-  #ff4f9a 50%,
-  #8b5cff 100%
-) !important;
-  font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
-  -webkit-appearance: none;
-  transition: opacity .18s, transform .18s;
-  box-shadow: 0 2px 8px rgba(255,107,61,.12);
-  opacity: 1; filter: none; text-shadow: none;
-}
-#fxlp-artisan-grid .fxlp-btn-reserve:hover { opacity: .88; transform: translateY(-1px); }
-#fxlp-artisan-grid .fxlp-btn-reserve:focus-visible { outline: 2px solid #ff8c5a; outline-offset: 3px; }
-
-/* Profile link */
-#fxlp-artisan-grid .pvc-profile-link,
-#fxlp-artisan-grid .fhp-btn-profile,
-#fxlp-artisan-grid .pvc-profile-v3b {
-  display: block !important; text-align: center;
-  font-size: .76rem; color: rgba(255,255,255,.55) !important; text-decoration: none;
-  padding: 4px 0; transition: color .18s;
-  min-height: 32px; line-height: 32px;
-  -webkit-text-fill-color: rgba(255,255,255,.55) !important;
-}
-#fxlp-artisan-grid .pvc-profile-link:hover {
-  color: #ff6b3d !important;
-  -webkit-text-fill-color: #ff6b3d !important;
-}
 
 /* Skeleton loaders */
 .fxlp-artisan-loading .fxlp-skeleton {
