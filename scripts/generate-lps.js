@@ -712,9 +712,9 @@ function buildLocalMetaDesc(svc, city) {
     .join(', ');
 
   return (
-    ${svc.label} à ${city.label} via FIXEO +
-    (focus ? ` : ${focus}. ` : '. ') +
-    Profils référencés. Tarif à confirmer avec le professionnel avant intervention.
+    svc.label + ' à ' + city.label + ' via FIXEO' +
+    (focus ? ' : ' + focus + '. ' : '. ') +
+    'Profils référencés. Tarif à confirmer avec le professionnel avant intervention.'
   );
 }
 
