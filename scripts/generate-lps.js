@@ -1311,22 +1311,35 @@ function buildPage(svcKey, cityKey) {
 
     <hr class="fxlp-divider">
 
-    <!-- §§6 FINAL CTA BANNER -->
-    <div class="fxlp-wrap">
-      <div class="fxlp-cta-banner" role="complementary">
-        <p class="fxlp-cta-eyebrow">${svc.cta_eyebrow || 'BESOIN D’UN ARTISAN ?'}</p>
-        <h2 class="fxlp-cta-title">Votre ${svc.cta_title_noun || 'demande'} à ${esc(city.label)}, en quelques secondes.</h2>
-        <p class="fxlp-cta-lead">${svc.cta_lead || 'Votre ville et le service sont déjà sélectionnés. Décrivez votre problème — c’est tout.'}</p>
+   <!-- §§7 FINAL CTA — FIXEO LOCAL FLAGSHIP V2 -->
+<div class="fxlp-wrap">
+  <div class="fxlp-cta-banner" role="complementary">
 
-         <a
+    <p class="fxlp-cta-eyebrow">CONTINUER AVEC FIXEO</p>
+
+    <h2 class="fxlp-cta-title">
+      Votre besoin à ${esc(city.label)} commence ici.
+    </h2>
+
+    <p class="fxlp-cta-lead">
+      Le métier et la ville sont déjà renseignés.
+      Décrivez maintenant votre situation pour continuer le parcours FIXEO.
+    </p>
+
+    <a
       class="fxlp-btn-primary"
-  href="/?service=${encodeURIComponent(svc.label)}&amp;city=${encodeURIComponent(city.label)}#hero-quick-search">
-      Continuer avec ${esc(svc.cta_service_label || svc.label)} · ${esc(city.label)}
-       </a>
-        
-        <p class="fxlp-cta-note">Aucun paiement maintenant · Tarif confirmé avant l’intervention</p>
-      </div>
-    </div>
+      href="/?service=${encodeURIComponent(svc.label)}&amp;city=${encodeURIComponent(city.label)}#hero-quick-search">
+      Continuer avec ${esc(svc.cta_service_label || svcCat || svc.label)} · ${esc(city.label)}
+    </a>
+
+    <p class="fxlp-cta-note">
+      Tarif confirmé avant intervention · Paiement après intervention
+    </p>
+
+  </div>
+</div>
+
+   
 
     <!-- §§7 FAQ -->
     <section id="fxlp-faq" class="fxlp-faq-section" aria-labelledby="fxlp-faq-title">
