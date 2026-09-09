@@ -892,16 +892,37 @@ function buildPage(svcKey, cityKey) {
       { '@type': 'ListItem', position: 4, name: city.label, item: canonicalUrl },
     ]
   };
-  const localBizLD = {
-    '@context': 'https://schema.org', '@type': 'LocalBusiness',
-    '@id': canonicalUrl + '#localbusiness',
-    name: `Fixeo — ${svc.label} à ${city.label}`,
-    description: `${svc.label} à ${city.label}. Paiement après intervention.`,
-    url: canonicalUrl, image: 'https://www.fixeo.ma/img/logo.png',
-    areaServed: { '@type': 'City', name: city.label, containedInPlace: { '@type': 'Country', name: 'Maroc' } },
-    address: { '@type': 'PostalAddress', addressLocality: city.label, addressCountry: 'MA' },
-    geo: { '@type': 'GeoCoordinates', latitude: city.lat, longitude: city.lng },
-    provider: { '@type': 'Organization', name: 'Fixeo', url: 'https://www.fixeo.ma/' }
+ const serviceLD = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    '@id': canonicalUrl + '#service',
+
+    name: ${svc.label} à ${city.label} via FIXEO,
+    description: metaDesc,
+    url: canonicalUrl,
+
+    serviceType: svc.label,
+
+    areaServed: {
+      '@type': 'City',
+      name: city.label,
+      containedInPlace: {
+        '@type': 'Country',
+        name: 'Maroc'
+      }
+    },
+
+    provider: {
+      '@type': 'Organization',
+      '@id': 'https://www.fixeo.ma/#organization',
+      name: 'FIXEO SARLAU',
+      alternateName: 'Fixeo',
+      url: 'https://www.fixeo.ma/',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.fixeo.ma/img/logo.png'
+      }
+    }
   };
   const article = svc.article;
     const faqLD = {
@@ -951,7 +972,7 @@ function buildPage(svcKey, cityKey) {
   <meta name="twitter:title" content="${esc(title)}">
   <meta name="twitter:description" content="${esc(metaDesc)}">
   <script type="application/ld+json">${JSON.stringify(breadcrumbLD)}</script>
-  <script type="application/ld+json">${JSON.stringify(localBizLD)}</script>
+  <script type="application/ld+json">${JSON.stringify(serviceLD)}</script>
   <script type="application/ld+json">${JSON.stringify(faqLD)}</script>
   <link rel="stylesheet" href="/css/variables.css">
   <link rel="stylesheet" href="/css/header-unified.css">
