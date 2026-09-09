@@ -849,30 +849,6 @@ function buildRelatedLinks(svcKey, cityKey, svc) {
   ).join('\n          ');
 }
 
-function buildFAQJsonLD(faqItems) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    'mainEntity': faqItems.map(f => ({
-      '@type': 'Question',
-      'name': f.q,
-      'acceptedAnswer': { '@type': 'Answer', 'text': f.a }
-    }))
-  };
-}
-
-function buildBreadcrumbJsonLD(svcKey, cityKey, svc, city, canonicalUrl) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    'itemListElement': [
-      { '@type': 'ListItem', 'position': 1, 'name': 'Accueil', 'item': 'https://www.fixeo.ma/' },
-      { '@type': 'ListItem', 'position': 2, 'name': 'Services', 'item': 'https://www.fixeo.ma/services.html' },
-      { '@type': 'ListItem', 'position': 3, 'name': svc.label, 'item': `https://www.fixeo.ma/services.html` },
-      { '@type': 'ListItem', 'position': 4, 'name': `${svc.label} à ${city.label}`, 'item': canonicalUrl }
-    ]
-  };
-}
 
 function buildPage(svcKey, cityKey) {
   const svc  = SERVICES[svcKey];
