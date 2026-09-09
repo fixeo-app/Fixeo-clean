@@ -1218,153 +1218,988 @@ section[aria-labelledby="fxlp-how-local-title"]
   }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   LOCAL FLAGSHIP — ARTISAN CARDS PREMIUM V2
-   Local SEO refinement only.
-   Canonical card visuals remain owned by homepage card CSS.
-══════════════════════════════════════════════════════════════ */
+/*
+ * FIXEO — Artisan Card Conversion v1
+ * Uber-level UX upgrade. CSS-only overrides on top of artisan-card-premium-v2.css.
+ * Loaded LAST → wins all specificity ties.
+ * No structural changes. Pure override layer.
+ *
+ * CHANGES:
+ *  1. Entire card is the CTA (cursor, pointer, active feedback)
+ *  2. Availability badge inline with name (not absolute top-right)
+ *  3. Noise hidden: divider, badges-v2, "Profil à revendiquer"
+ *  4. Rating block bigger + bolder
+ *  5. Price: "150 MAD" dominant, "/ intervention" quiet below
+ *  6. Single CTA: "Réserver" full-weight + profile as text link below
+ *  7. FOMO line styled
+ *  8. Mobile: card active feedback, counter strip above grid
+ *  9. Micro-interactions: hover translateY(-6px), active scale(0.98)
+ */
 
-.seo-service-page #fxlp-artisan-grid > .pvc-card.fxlp-art-card {
-  display: flex;
-  flex-direction: column;
-
-  min-width: 0;
-  height: 100%;
-
-  border-color: rgba(255,255,255,.075);
-
-  background:
-    linear-gradient(
-      155deg,
-      rgba(18,25,40,.96) 0%,
-      rgba(10,15,26,.98) 100%
-    );
-
+/* ═══════════════════════════════════════════════════════════════
+   1. CARD = THE CTA
+═══════════════════════════════════════════════════════════════ */
+.pvc-card {
+  cursor: pointer !important;
+  user-select: none !important;
+}
+.pvc-card:hover {
+  transform: translateY(-6px) scale(1.01) !important;
+  border-color: rgba(225,48,108,0.40) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.025),
-    0 12px 34px rgba(0,0,0,.10);
-
-  transition:
-    transform .22s var(--fxlp-spring),
-    border-color .22s,
-    box-shadow .22s;
+    0 18px 56px rgba(225,48,108,0.20),
+    0 4px 16px rgba(0,0,0,0.40) !important;
 }
-
-.seo-service-page #fxlp-artisan-grid > .pvc-card.fxlp-art-card:hover {
-  transform: translateY(-3px);
-
-  border-color: rgba(255,107,61,.15);
-
+.pvc-card:active {
+  transform: scale(0.98) translateY(0) !important;
+  transition: transform 0.1s ease !important;
+}
+.pvc-card--real:hover {
+  border-color: rgba(32,201,151,0.45) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.035),
-    0 16px 40px rgba(0,0,0,.16);
+    0 18px 56px rgba(32,201,151,0.16),
+    0 4px 16px rgba(0,0,0,0.40) !important;
 }
 
-/* Description: enough information without turning the card
-   into a long text block. */
-.seo-service-page #fxlp-artisan-grid .pvc-desc-v3b {
-  display: -webkit-box;
+/* ═══════════════════════════════════════════════════════════════
+   2. AVAILABILITY BADGE — inline with name, not absolute
+═══════════════════════════════════════════════════════════════ */
 
-  overflow: hidden;
-
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
-  line-clamp: 4;
-
-  margin-top: 14px;
-  margin-bottom: 14px;
-
-  color: #a2aec0;
-
-  font-size: .84rem;
-  line-height: 1.58;
+/* Old absolute badge: hide it (it's now rendered inside .pvc-meta-row) */
+.pvc-avail-badge {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 20px !important;
+  white-space: nowrap !important;
+}
+.pvc-avail-badge--on {
+  background: rgba(32,201,151,0.18) !important;
+  color: #20c997 !important;
+  border: 1px solid rgba(32,201,151,0.32) !important;
+}
+.pvc-avail-badge--today {
+  background: rgba(255,165,2,0.14) !important;
+  color: #ffa502 !important;
+  border: 1px solid rgba(255,165,2,0.28) !important;
+}
+.pvc-avail-badge--off {
+  background: rgba(255,255,255,0.05) !important;
+  color: rgba(255,255,255,0.36) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
 }
 
-/* Keep the action area aligned at the bottom of every card. */
-.seo-service-page #fxlp-artisan-grid .pvc-action-v3b {
-  margin-top: auto;
-  padding-top: 14px;
+/* Meta row: flex wrap so badge sits next to cat pill */
+.pvc-meta-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  flex-wrap: wrap !important;
+  margin-top: 4px !important;
 }
 
-/* Price confirmation hierarchy */
-.seo-service-page #fxlp-artisan-grid .pvc-price-v3b {
-  margin-bottom: 12px;
+/* City pill: quieter — move to after availability */
+.pvc-city-pill {
+  font-size: 0.70rem !important;
+  color: rgba(255,255,255,0.42) !important;
 }
 
-.seo-service-page #fxlp-artisan-grid .pvc-price-amount {
-  margin-bottom: 2px;
+/* ═══════════════════════════════════════════════════════════════
+   3. NOISE REDUCTION
+═══════════════════════════════════════════════════════════════ */
 
-  color: #f2f5fa;
-
-  font-size: clamp(1.45rem, 2.1vw, 1.85rem);
-  line-height: 1.08;
-  letter-spacing: -.035em;
+/* Divider: invisible (removed from template, but keep style silent) */
+.pvc-divider {
+  display: none !important;
 }
 
-.seo-service-page #fxlp-artisan-grid .pvc-price-from {
-  color: #d6bb72;
-
-  font-size: .75rem;
-  font-weight: 700;
+/* Badges row: hidden (claim badge hurts conversion) */
+.pvc-badges-v2 {
+  display: none !important;
 }
 
-/* Primary reservation CTA:
-   keep FIXEO identity but remove excessive glow. */
-.seo-service-page #fxlp-artisan-grid .fxlp-btn-reserve {
-  min-height: 46px;
-
-  border-radius: 14px;
-
-  box-shadow:
-    0 5px 16px rgba(255,107,61,.12),
-    inset 0 1px 0 rgba(255,255,255,.18);
-
-  font-weight: 750;
-
-  transition:
-    transform .2s var(--fxlp-spring),
-    box-shadow .2s;
+/* Info chips: keep but quieter */
+.pvc-info-bar {
+  margin-top: 6px !important;
+  padding: 0 16px !important;
+}
+.pvc-info-chip {
+  font-size: 0.68rem !important;
+  opacity: 0.75 !important;
 }
 
-.seo-service-page #fxlp-artisan-grid .fxlp-btn-reserve:hover {
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 8px 22px rgba(255,107,61,.17),
-    inset 0 1px 0 rgba(255,255,255,.20);
+/* ═══════════════════════════════════════════════════════════════
+   4. RATING BLOCK — bigger, bolder
+═══════════════════════════════════════════════════════════════ */
+.pvc-stats {
+  padding: 12px 16px 0 !important;
+}
+.pvc-stars-v2 {
+  font-size: 1.02rem !important;
+  letter-spacing: 1.5px !important;
+}
+.pvc-rating-num {
+  font-size: 1.02rem !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+}
+.pvc-reviews-count {
+  font-size: 0.74rem !important;
+  color: rgba(255,255,255,0.45) !important;
 }
 
-/* Secondary profile action */
-.seo-service-page #fxlp-artisan-grid .pvc-profile-v3b {
-  display: inline-flex;
-  align-items: center;
-
-  width: fit-content;
-  margin-top: 10px;
-
-  color: #aeb9ca;
-
-  font-size: .78rem;
-  font-weight: 650;
-
-  transition: color .18s;
+/* ═══════════════════════════════════════════════════════════════
+   5. PRICE — dominant number, quiet label below
+═══════════════════════════════════════════════════════════════ */
+.pvc-price-block {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1px !important;
+}
+.pvc-price-amount {
+  font-size: 1.55rem !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+  line-height: 1.05 !important;
+  order: 1 !important;
+}
+.pvc-price-amount .price-currency {
+  font-size: 0.80rem !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,0.60) !important;
+  vertical-align: super !important;
+  margin-left: 2px !important;
+  line-height: 0 !important;
+}
+/* "/ intervention" — replaces old "À partir de" label */
+.pvc-price-from {
+  font-size: 0.66rem !important;
+  color: rgba(255,255,255,0.40) !important;
+  font-weight: 400 !important;
+  order: 2 !important;
+  line-height: 1.2 !important;
 }
 
-.seo-service-page #fxlp-artisan-grid .pvc-profile-v3b:hover {
-  color: #ff8c5a;
+/* ═══════════════════════════════════════════════════════════════
+   6. SINGLE CTA — "Réserver" primary + profile text link below
+═══════════════════════════════════════════════════════════════ */
+
+/* Vertical stack: button on top, profile link below */
+.pvc-cta-col {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 5px !important;
+  flex-shrink: 0 !important;
 }
 
-/* Mobile: keep cards compact and readable. */
-@media (max-width: 767px) {
-  .seo-service-page #fxlp-artisan-grid .pvc-desc-v3b {
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
+/* Primary CTA — stronger, no calendar emoji (handled in JS) */
+.pvc-btn-reserve-v2 {
+  padding: 11px 20px !important;
+  border-radius: 12px !important;
+  font-size: 0.86rem !important;
+  font-weight: 800 !important;
+  background: linear-gradient(135deg, #E1306C, #833AB4) !important;
+  color: #fff !important;
+  border: none !important;
+  cursor: pointer !important;
+  letter-spacing: 0.02em !important;
+  white-space: nowrap !important;
+  box-shadow: 0 8px 22px rgba(225,48,108,0.30) !important;
+  transition: all 0.18s ease !important;
+}
+.pvc-btn-reserve-v2:hover {
+  transform: scale(1.03) translateY(-1px) !important;
+  box-shadow: 0 14px 32px rgba(225,48,108,0.40) !important;
+}
+.pvc-btn-reserve-v2:active {
+  transform: scale(0.98) !important;
+  box-shadow: 0 4px 12px rgba(225,48,108,0.22) !important;
+}
 
-    font-size: .82rem;
-    line-height: 1.55;
+/* Profile text link — low priority, no button frame */
+.pvc-profile-link {
+  font-size: 0.70rem !important;
+  color: rgba(255,255,255,0.40) !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  padding: 2px 4px !important;
+  border-radius: 4px !important;
+  transition: color 0.15s !important;
+  white-space: nowrap !important;
+  user-select: none !important;
+  display: block !important;
+  text-align: right !important;
+}
+.pvc-profile-link:hover {
+  color: rgba(255,255,255,0.75) !important;
+}
+
+/* Footer layout: price left, CTA right */
+.pvc-footer {
+  padding: 14px 16px 16px !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  border-top: 1px solid rgba(255,255,255,0.06) !important;
+  margin-top: auto !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   7. FOMO LINE
+═══════════════════════════════════════════════════════════════ */
+.pvc-fomo-line {
+  font-size: 0.70rem !important;
+  color: #ffb86b !important;
+  font-weight: 600 !important;
+  padding: 6px 16px 0 !important;
+  opacity: 0.82 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   8. MOBILE COUNTER STRIP (above vedette grid)
+═══════════════════════════════════════════════════════════════ */
+.pvc-grid-counter {
+  font-size: 0.78rem !important;
+  color: rgba(255,255,255,0.45) !important;
+  padding: 0 16px 8px !important;
+  letter-spacing: 0.01em !important;
+  display: none !important; /* shown only on mobile via media query */
+}
+
+@media (max-width: 640px) {
+  .pvc-grid-counter {
+    display: block !important;
   }
 
-  .seo-service-page #fxlp-artisan-grid .pvc-price-amount {
-    font-size: 1.5rem;
+  /* Card tap feedback — stronger on mobile */
+  .pvc-card:active {
+    transform: scale(0.97) !important;
+    transition: transform 0.08s ease !important;
+  }
+
+  /* Mobile button: full-width feel inside card */
+  .pvc-btn-reserve-v2 {
+    padding: 10px 16px !important;
+    font-size: 0.82rem !important;
+  }
+
+  /* Mobile: bigger availability badge text */
+  .pvc-avail-badge {
+    font-size: 0.68rem !important;
+  }
+
+  /* Mobile: rating row slightly smaller */
+  .pvc-stars-v2, .pvc-rating-num {
+    font-size: 0.92rem !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FIXEO AVATAR UPGRADE v2 (Tasks 1–3)
+   Silhouette SVG + service icon badge
+   Replaces initials — CSS only
+═══════════════════════════════════════════════════════════════ */
+
+/* Avatar wrapper: dark premium bg replaces gradient-with-letter */
+.pvc-avatar {
+  position: relative !important;
+  background: linear-gradient(135deg, #1a1a2a, #2a2a3e) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: visible !important; /* badge overflows corner */
+}
+
+/* Silhouette SVG — centered, 60% of avatar */
+.pvc-avatar-svg {
+  width: 60% !important;
+  height: 60% !important;
+  fill: rgba(255,255,255,0.75) !important;
+  display: block !important;
+  flex-shrink: 0 !important;
+  margin: auto !important;
+}
+
+/* Real photo: keep circular fill */
+.pvc-avatar-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: inherit !important;
+  display: block !important;
+}
+
+/* Service icon badge — bottom-right corner */
+.pvc-avatar-badge {
+  position: absolute !important;
+  bottom: -4px !important;
+  right: -4px !important;
+  width: 22px !important;
+  height: 22px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+  background: rgba(10,10,20,0.80) !important;
+  border: 1px solid rgba(255,255,255,0.20) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.40) !important;
+  z-index: 4 !important;
+  pointer-events: none !important;
+}
+
+/* Mobile: slightly smaller badge */
+@media (max-width: 640px) {
+  .pvc-avatar-badge {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 10px !important;
+    bottom: -3px !important;
+    right: -3px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FIXEO PRICE LABEL UPGRADE (Task 4)
+   "💡 Prix conseillé Fixeo" — gold, stronger signal
+═══════════════════════════════════════════════════════════════ */
+.pvc-price-from {
+  font-size: 0.69rem !important;
+  color: #ffd166 !important;
+  font-weight: 600 !important;
+  opacity: 0.88 !important;
+  order: 2 !important;
+  line-height: 1.3 !important;
+  letter-spacing: 0.005em !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BADGE CLEANUP (Task 5+6)
+   Claim/revendiqué removed from JS template.
+   pvc-badges-v2 stays hidden (display:none from prior rule).
+   If future code re-shows it, only --verified and --premium are safe.
+═══════════════════════════════════════════════════════════════ */
+
+/* Defensive: always hide claim badges even if template ever re-adds them */
+.pvc-badge-v2--claim {
+  display: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FINAL UX POLISH — v3 (Tasks 1–6)
+   Appended block — wins all prior rules in same file
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Task 1: defensive — hide any claim/real badges (belt+suspenders) ── */
+.pvc-badge-v2--claim,
+.pvc-badge-v2--real {
+  display: none !important;
+}
+
+/* ── Task 2: meta-row — avail badge always right-aligned, no overlap ── */
+.pvc-meta-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+.pvc-avail-badge {
+  position: static !important;
+  margin-left: auto !important;
+  white-space: nowrap !important;
+}
+
+/* ── Task 3: initials kill-switch (defensive — already removed from JS) ── */
+.pvc-avatar-initials {
+  display: none !important;
+}
+
+/* ── Task 4: price — dominant amount + strong Fixeo label ── */
+.pvc-price-amount {
+  font-size: 1.70rem !important;
+  font-weight: 900 !important;
+  color: #fff !important;
+  line-height: 1.0 !important;
+  order: 1 !important;
+}
+.pvc-price-from {
+  font-size: 0.72rem !important;
+  color: #ffd166 !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+  margin-top: 4px !important;
+  order: 2 !important;
+  line-height: 1.3 !important;
+}
+.pvc-price-hint {
+  color: rgba(255,255,255,0.65) !important;
+  font-size: 0.72rem !important;
+}
+
+/* ── Task 5: CTA — always visible, strong gradient ── */
+.pvc-btn-reserve-v2 {
+  background: linear-gradient(135deg, #ff4d8d, #a855f7) !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+.pvc-btn-reserve-v2:hover {
+  transform: scale(1.03) !important;
+  opacity: 1 !important;
+}
+
+/* ── Task 6: card micro-interaction ── */
+.pvc-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
+}
+.pvc-card:hover {
+  transform: translateY(-4px) !important;
+}
+
+/* Mobile: no hover effects (touch devices) */
+@media (max-width: 640px) {
+  .pvc-avail-badge {
+    margin-left: 0 !important; /* wraps below on small screens */
+  }
+  .pvc-price-amount {
+    font-size: 1.50rem !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FINAL CLEANUP PASS — v4
+   Fix avatar visibility, price clarity, badge/overlap, CTA
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T1: avatar icon — large centered emoji replaces SVG silhouette ── */
+.pvc-avatar-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  font-size: 1.55rem !important;
+  line-height: 1 !important;
+  position: static !important;
+}
+
+/* Hide SVG silhouette fallback (previous approach — fully replaced) */
+.pvc-avatar-svg,
+.pvc-avatar-silhouette {
+  display: none !important;
+}
+
+/* Avatar: dark bg + overflow visible for badge bleed */
+.pvc-avatar {
+  overflow: visible !important;
+  background: linear-gradient(135deg, #1a1a2a 0%, #2c2040 100%) !important;
+}
+
+/* Avatar badge: service icon pill — keep but smaller (emoji already in main circle) */
+.pvc-avatar-badge {
+  width: 18px !important;
+  height: 18px !important;
+  font-size: 9px !important;
+  bottom: -3px !important;
+  right: -3px !important;
+  opacity: 0 !important; /* hide redundant badge — icon already in avatar body */
+}
+
+/* ── T2: meta-row — availability badge right-aligned, no overlap ── */
+.pvc-meta-row {
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 6px !important;
+  overflow: hidden !important;
+}
+.pvc-cat-pill {
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.pvc-city-pill {
+  display: inline-flex !important; /* T3: city restored — visible but subtle */
+}
+.pvc-avail-badge {
+  flex-shrink: 0 !important;
+  margin-left: auto !important;
+  white-space: nowrap !important;
+  position: static !important;
+}
+
+/* ── T2+: "Profil réel" / pvc-badge-v2--real — belt-and-suspenders ── */
+.pvc-badge-v2--real,
+.pvc-badge-v2--claim,
+[class*="badge-real"],
+[class*="badge-claim"] {
+  display: none !important;
+}
+
+/* ── T3: price block — clear hierarchy ── */
+.pvc-price-block {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+.pvc-price-amount {
+  font-size: 1.65rem !important;
+  font-weight: 900 !important;
+  line-height: 1.0 !important;
+  order: 1 !important;
+}
+.pvc-price-from {
+  font-size: 0.72rem !important;
+  color: #ffd166 !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+  letter-spacing: 0 !important;
+  order: 2 !important;
+}
+
+/* ── T4: profile link — clear visual separation from CTA ── */
+.pvc-profile-link {
+  font-size: 0.69rem !important;
+  color: rgba(255,255,255,0.38) !important;
+  margin-top: 4px !important;
+  display: block !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(255,255,255,0.18) !important;
+  text-underline-offset: 2px !important;
+}
+.pvc-profile-link:hover {
+  color: rgba(255,255,255,0.65) !important;
+}
+
+/* ── T5: CTA — "Réserver maintenant" — always dominant ── */
+.pvc-btn-reserve-v2 {
+  background: linear-gradient(
+  135deg,
+  #ff8a3d 0%,
+  #ff4f9a 50%,
+  #8b5cff 100%
+) !important;
+   
+  color: #fff !important;
+  font-weight: 700 !important;
+  font-size: 0.84rem !important;
+  padding: 11px 18px !important;
+  border-radius: 12px !important;
+  opacity: 1 !important;
+  white-space: nowrap !important;
+  letter-spacing: 0.01em !important;
+}
+.pvc-btn-reserve-v2:hover {
+  background: linear-gradient(
+  135deg,
+  #ff8a3d 0%,
+  #ff4f9a 50%,
+  #8b5cff 100%
+) !important;
+}
+
+/* Mobile ── */
+@media (max-width: 640px) {
+  .pvc-avatar-icon { font-size: 1.35rem !important; }
+  .pvc-price-amount { font-size: 1.45rem !important; }
+  .pvc-btn-reserve-v2 {
+    padding: 10px 14px !important;
+    font-size: 0.80rem !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FIX REAL RENDERER — v5 (fhp-card targets)
+   Scope: #fixeo-homepage-vedette-grid .pvc-card
+   Tasks T6 (mobile footer) + T7 (profile link style)
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T7: profile link — text link style ── */
+.pvc-profile-link {
+  display: inline-block !important;
+  color: rgba(255,255,255,0.72) !important;
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(255,255,255,0.30) !important;
+  text-underline-offset: 2px !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  padding: 2px 0 !important;
+  opacity: 1 !important;
+}
+.pvc-profile-link:hover {
+  color: #fff !important;
+  text-decoration-color: rgba(255,255,255,0.65) !important;
+}
+
+/* ── T6: mobile footer — clean vertical layout ── */
+@media (max-width: 640px) {
+  .pvc-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .pvc-price-block {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2px !important;
+  }
+
+  /* Hide market range hint on mobile — too noisy in small card */
+  .pvc-price-hint {
+    display: none !important;
+  }
+
+  .pvc-cta-col {
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  .pvc-cta-row {
+    width: 100% !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .pvc-btn-reserve-v2 {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  .pvc-profile-link {
+    display: block !important;
+    text-align: center !important;
+    margin-top: 4px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UBER PREMIUM PASS — v6
+   Tasks T2 (silhouette system) + T3 (category gradients)
+         T6 (price CSS) + T7 (profile link) + T8 (mobile footer)
+   Scoped to real renderer: #fixeo-homepage-vedette-grid .fhp-card
+   Loads LAST → wins all specificity ties
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T2: Silhouette system — pvc-avatar-silhouette pseudo-elements ── */
+
+/* Kill emoji/icon approach — silhouette replaces it */
+.fhp-card .pvc-avatar-icon {
+  display: none !important;
+}
+
+/* Silhouette span itself */
+.pvc-avatar-silhouette {
+  display: block !important;
+  position: relative !important;
+  width: 62% !important;
+  height: 62% !important;
+  pointer-events: none !important;
+}
+
+/* Head circle */
+.pvc-avatar-silhouette::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 8% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 38% !important;
+  height: 38% !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.90) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18) !important;
+}
+
+/* Body/shoulders */
+.pvc-avatar-silhouette::after {
+  content: "" !important;
+  position: absolute !important;
+  bottom: 4% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 74% !important;
+  height: 42% !important;
+  border-radius: 999px 999px 22px 22px !important;
+  background: rgba(255,255,255,0.78) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.16) !important;
+}
+
+/* Avatar container base — override overflow:visible so silhouette is clipped cleanly */
+.fhp-card .pvc-avatar {
+  overflow: hidden !important;
+  border-radius: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+}
+
+/* ── T3: Category-specific gradients on .pvc-avatar[data-category] ── */
+
+.pvc-avatar[data-category="plomberie"] {
+  background: linear-gradient(135deg, #0ea5e9, #2563eb) !important;
+}
+.pvc-avatar[data-category="electricite"] {
+  background: linear-gradient(135deg, #facc15, #f97316) !important;
+}
+.pvc-avatar[data-category="climatisation"] {
+  background: linear-gradient(135deg, #22d3ee, #06b6d4) !important;
+}
+.pvc-avatar[data-category="peinture"] {
+  background: linear-gradient(135deg, #f472b6, #ec4899) !important;
+}
+.pvc-avatar[data-category="nettoyage"] {
+  background: linear-gradient(135deg, #34d399, #10b981) !important;
+}
+.pvc-avatar[data-category="menuiserie"] {
+  background: linear-gradient(135deg, #a16207, #78350f) !important;
+}
+.pvc-avatar[data-category="serrurerie"] {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+}
+.pvc-avatar[data-category="maconnerie"] {
+  background: linear-gradient(135deg, #6b7280, #374151) !important;
+}
+.pvc-avatar[data-category="jardinage"] {
+  background: linear-gradient(135deg, #84cc16, #16a34a) !important;
+}
+.pvc-avatar[data-category="bricolage"] {
+  background: linear-gradient(135deg, #f97316, #ea580c) !important;
+}
+.pvc-avatar[data-category="demenagement"] {
+  background: linear-gradient(135deg, #c084fc, #7c3aed) !important;
+}
+.pvc-avatar[data-category="carrelage"] {
+  background: linear-gradient(135deg, #94a3b8, #475569) !important;
+}
+.pvc-avatar[data-category="toiture"] {
+  background: linear-gradient(135deg, #ef4444, #991b1b) !important;
+}
+.pvc-avatar[data-category="vitrerie"] {
+  background: linear-gradient(135deg, #38bdf8, #0369a1) !important;
+}
+.pvc-avatar[data-category="chauffage"] {
+  background: linear-gradient(135deg, #fb923c, #dc2626) !important;
+}
+
+/* ── T6: Price CSS — dominant amount + subtle Fixeo hint ── */
+
+.pvc-price-amount {
+  font-size: 1.75rem !important;
+  font-weight: 900 !important;
+  color: #fff !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.1 !important;
+}
+
+.pvc-price-from {
+  color: #ffd166 !important;
+  font-weight: 700 !important;
+  font-size: 0.76rem !important;
+  opacity: 1 !important;
+  margin-top: 4px !important;
+  display: block !important;
+}
+
+.pvc-price-hint {
+  color: rgba(255,255,255,0.58) !important;
+  font-size: 0.72rem !important;
+  margin-top: 2px !important;
+}
+
+/* Hide the old nested hint sub-divs (only the simplified span is now rendered) */
+.pvc-price-hint-market {
+  display: none !important;
+}
+.pvc-price-hint-rec {
+  display: none !important;
+}
+
+/* ── T7: Profile link — low-priority text link ── */
+
+.pvc-profile-link {
+  display: inline-block !important;
+  color: rgba(255,255,255,0.62) !important;
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(255,255,255,0.28) !important;
+  text-underline-offset: 2px !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  padding: 2px 4px !important;
+  opacity: 1 !important;
+  background: none !important;
+  border: none !important;
+}
+.pvc-profile-link:hover {
+  color: #fff !important;
+  text-decoration-color: rgba(255,255,255,0.65) !important;
+}
+
+/* ── T8: Mobile footer — clean vertical layout ── */
+
+@media (max-width: 640px) {
+  .pvc-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .pvc-price-block {
+    width: 100% !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 3px !important;
+  }
+
+  /* Already display:none globally — reinforce for mobile */
+  .pvc-price-hint {
+    display: none !important;
+  }
+
+  .pvc-cta-col {
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  .pvc-cta-row {
+    width: 100% !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .pvc-btn-reserve-v2 {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  .pvc-profile-link {
+    display: block !important;
+    text-align: center !important;
+    margin-top: 8px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FINAL POLISH — v7 (micro UX + perception boost)
+   Tasks T1(CSS) T2 T3 T4 T5 T6 T7
+   Real renderer: #fixeo-homepage-vedette-grid .fhp-card
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T1: Price clarity — "Dès" style ── */
+.pvc-price-amount {
+  font-size: 1.75rem !important;
+  font-weight: 900 !important;
+  color: #fff !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.1 !important;
+}
+/* "Dès" prefix (rendered inline) + currency */
+.pvc-price-amount .price-currency {
+  font-size: 0.90rem !important;
+  font-weight: 700 !important;
+  opacity: 0.80 !important;
+  margin-left: 3px !important;
+  vertical-align: middle !important;
+}
+
+/* ── T2: Avatar service badge (bottom-right icon) ── */
+/* Re-allow overflow:visible on the avatar container so badge bleeds out */
+.fhp-card .pvc-avatar {
+  overflow: visible !important;
+  border-radius: 16px !important;
+}
+/* Clip only the silhouette content, not the badge */
+.fhp-card .pvc-avatar > .pvc-avatar-silhouette,
+.fhp-card .pvc-avatar > .pvc-avatar-img {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+}
+.pvc-avatar-badge {
+  position: absolute !important;
+  bottom: -4px !important;
+  right: -4px !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: rgba(0,0,0,0.85) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 11px !important;
+  border: 1.5px solid rgba(255,255,255,0.18) !important;
+  z-index: 4 !important;
+  pointer-events: none !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.40) !important;
+}
+
+/* ── T3: Reduce noise — secondary signals lighter ── */
+.pvc-info-chip {
+  opacity: 0.65 !important;
+  font-size: 0.70rem !important;
+}
+.pvc-fomo {
+  opacity: 0.65 !important;
+  font-size: 0.70rem !important;
+}
+.pvc-trust-line {
+  opacity: 0.65 !important;
+  font-size: 0.70rem !important;
+}
+
+/* ── T4: Compact spacing ── */
+.pvc-card .pvc-body {
+  gap: 8px !important;
+}
+.pvc-rating-row,
+.pvc-stats {
+  margin-top: 4px !important;
+}
+
+/* ── T5: CTA premium depth ── */
+.pvc-btn-reserve-v2 {
+  box-shadow: 0 10px 30px rgba(255,77,141,0.35) !important;
+}
+.pvc-btn-reserve-v2:hover {
+  transform: translateY(-2px) scale(1.01) !important;
+  box-shadow: 0 14px 36px rgba(255,77,141,0.48) !important;
+}
+
+/* ── T6: Card hover — desktop only ── */
+@media (min-width: 641px) {
+  .pvc-card:hover {
+    transform: translateY(-6px) !important;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.50) !important;
+  }
+}
+
+/* ── T7: Subtle footer divider ── */
+.pvc-footer {
+  border-top: 1px solid rgba(255,255,255,0.05) !important;
+  padding-top: 12px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UBER FINAL POLISH — v8
+   CSS-only. No JS touched. No layout broken.
+   Real renderer: #fixeo-homepage-vedette-grid .fhp-card
+   All rules appended — loads last → wins all specificity ties
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T1: Visual noise reduction ── */
+.pvc-info-chip {
+  opacity: 0.45 !important;
