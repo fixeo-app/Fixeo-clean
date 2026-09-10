@@ -697,11 +697,12 @@ body.seo-service-page .fxlp-faq-item {
   border-radius: var(--v3-r-md);
   background: var(--v3-surface);
   overflow: hidden;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 body.seo-service-page .fxlp-faq-item[open] {
-  border-color: var(--v3-orange-glow);
+  border-color: rgba(255, 107, 61, 0.22);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
 }
 
 /* Summary row */
@@ -714,17 +715,25 @@ body.seo-service-page .fxlp-faq-summary {
   cursor: pointer;
   list-style: none;
   font-size: 0.90rem;
-  font-weight: 600;
+  font-weight: 650;
   color: var(--v3-text);
   -webkit-user-select: none;
   user-select: none;
   min-height: 54px;
+  line-height: 1.40;
   transition: background 0.15s;
   -webkit-text-fill-color: var(--v3-text);
 }
 body.seo-service-page .fxlp-faq-summary::-webkit-details-marker { display: none; }
 body.seo-service-page .fxlp-faq-summary:hover {
   background: rgba(255, 255, 255, 0.03);
+}
+
+/* <strong> inside summary — inherit, ensure no override */
+body.seo-service-page .fxlp-faq-summary strong {
+  font-weight: inherit;
+  color: inherit;
+  -webkit-text-fill-color: inherit;
 }
 
 /* Chevron indicator */
@@ -734,32 +743,231 @@ body.seo-service-page .fxlp-faq-chevron {
   height: 22px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.68rem;
-  color: var(--v3-orange);
+  color: var(--v3-muted);
   font-style: normal;
-  transition: transform 0.28s var(--v3-spring), background 0.2s;
-  -webkit-text-fill-color: var(--v3-orange);
+  transition: transform 0.28s var(--v3-spring), background 0.2s, border-color 0.2s, color 0.2s;
+  -webkit-text-fill-color: var(--v3-muted);
 }
 
 body.seo-service-page details.fxlp-faq-item[open] .fxlp-faq-chevron {
   transform: rotate(90deg);
-  background: var(--v3-orange-g);
+  background: rgba(255, 107, 61, 0.12);
+  border-color: rgba(255, 107, 61, 0.20);
+  color: var(--v3-orange);
+  -webkit-text-fill-color: var(--v3-orange);
 }
 
-/* Answer body */
+/* Answer body — readable comfortable text */
 body.seo-service-page .fxlp-faq-answer {
-  padding: 0 18px 16px;
+  padding: 2px 18px 18px;
   font-size: 0.86rem;
-  color: var(--v3-muted);
-  line-height: 1.68;
+  color: var(--v3-text-2, rgba(232, 234, 240, 0.68));
+  line-height: 1.70;
   border-top: 1px solid var(--v3-border);
 }
 
 body.seo-service-page .fxlp-faq-answer p {
   margin: 12px 0 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   9.5  EXPLORER AUSSI — INTERNAL DISCOVERY SURFACE  (Step 3C)
+   Authoritative page-scoped override of unscoped legacy rules
+   in fixeo-local-flagship-v1.css (lines 593–660).
+
+   Markup tree (unchanged):
+     .fxlp-explorer          — section root
+       .fxlp-explorer-heading — <h2> section title
+       .fxlp-explorer-grid    — <nav> responsive grid
+         .fxlp-explorer-card  — <a> each link card
+           .fxlp-explorer-icon  — <span> emoji icon
+           .fxlp-explorer-city  — <span> city eyebrow
+           .fxlp-explorer-title — <span> destination label
+
+   VISUAL INTENT:
+   Premium discovery/navigation surface. Vertical card layout:
+   icon tile on left, city eyebrow + destination label stacked.
+   Distinct from FAQ (accordion rows) and pricing (orange rows).
+   Neutral dark surface — navigational, not promotional.
+══════════════════════════════════════════════════════════════ */
+
+/* ── Section wrapper ────────────────────────────────────────── */
+
+body.seo-service-page .fxlp-explorer {
+  padding: var(--v3-section-py-sm) 0;
+}
+
+@media (min-width: 820px) {
+  body.seo-service-page .fxlp-explorer {
+    padding: var(--v3-section-py) 0;
+  }
+}
+
+/* ── Section heading ──────────────────────────────────────── */
+
+body.seo-service-page .fxlp-explorer-heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--v3-text);
+  margin: 4px 0 18px;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+/* ── Responsive grid: 1-col mobile, 2-col tablet, 3-col desktop ── */
+
+body.seo-service-page .fxlp-explorer-grid {
+  display: grid;
+  grid-template-columns: 1fr;     /* mobile: single column */
+  gap: 10px;
+  /* Overflow protection */
+  overflow: hidden;
+  max-width: 100%;
+  /* Remove unscoped flex/grid inheritance */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 520px) {
+  body.seo-service-page .fxlp-explorer-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (min-width: 900px) {
+  body.seo-service-page .fxlp-explorer-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ── Link card — grid layout: icon left, city+title stacked right ── */
+
+body.seo-service-page .fxlp-explorer-card {
+  /* CSS grid: icon spans both rows in col-1; city + title stack in col-2 */
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 2px;
+  padding: 14px 16px;
+  min-width: 0;                   /* grid cell overflow guard */
+  box-sizing: border-box;
+
+  /* Neutral navigational surface — intentionally quieter than pricing/artisan */
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--v3-border);
+  border-radius: var(--v3-r-md, 14px);
+
+  text-decoration: none;
+  color: var(--v3-text-2, rgba(232, 234, 240, 0.72));
+  -webkit-text-fill-color: var(--v3-text-2, rgba(232, 234, 240, 0.72));
+
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.seo-service-page .fxlp-explorer-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: var(--v3-text);
+  -webkit-text-fill-color: var(--v3-text);
+}
+
+body.seo-service-page .fxlp-explorer-card:focus-visible {
+  outline: 2px solid var(--v3-orange-s, #ff8c5a);
+  outline-offset: 3px;
+}
+
+/* ── Icon tile — spans both rows in column 1 ────────────────────── */
+
+body.seo-service-page .fxlp-explorer-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Span both rows: city + title */
+  grid-column: 1;
+  grid-row: 1 / 3;
+  align-self: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 1.0rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ── City eyebrow: row 1, column 2 ─────────────────────────── */
+
+body.seo-service-page .fxlp-explorer-city {
+  grid-column: 2;
+  grid-row: 1;
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 650;
+  color: var(--v3-dim, #4a5a72);
+  -webkit-text-fill-color: var(--v3-dim, #4a5a72);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Destination title: row 2, column 2 ─────────────────────── */
+
+body.seo-service-page .fxlp-explorer-title {
+  grid-column: 2;
+  grid-row: 2;
+  display: block;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: inherit;
+  -webkit-text-fill-color: inherit;
+  /* Allow wrapping — long labels like “Plombier à Mohammedia” wrap cleanly */
+  white-space: normal;
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+/* ── Narrow phone: compact ───────────────────────────────────── */
+
+@media (max-width: 420px) {
+  body.seo-service-page .fxlp-explorer-card {
+    grid-template-columns: 30px 1fr;
+    padding: 11px 13px;
+    column-gap: 10px;
+  }
+
+  body.seo-service-page .fxlp-explorer-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 0.90rem;
+  }
+
+  body.seo-service-page .fxlp-explorer-title {
+    font-size: 0.82rem;
+  }
+}
+
+/* ── Reduced-motion ────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  body.seo-service-page .fxlp-explorer-card {
+    transition: none !important;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════
