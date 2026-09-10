@@ -265,6 +265,29 @@
     if (citySrc && citySrc.value && ALL_CITIES.indexOf(citySrc.value) >= 0) {
       st.prefillCity = citySrc.value;
     }
+
+    /* SEO V3 handoff context — lowest-priority FALLBACK only.
+     * Consumed from window.FixeoSeoHandoff.context which is populated by
+     * js/fixeo-seo-handoff-v1.js (loaded synchronously before this script).
+     * context._fxrf4ServiceLabel is already translated to a SERVICES[i].label
+     * string that _normalizeSlug() can match (e.g. "Plomberie" not "plombier").
+     * context._fxrf4CityLabel is already translated to an ALL_CITIES label
+     * (e.g. "Casablanca" not "casablanca").
+     * NEVER overrides an already-set prefillService or prefillCity.
+     * NEVER parses raw fx_* query params — only reads validated adapter output.
+     * fsh-v3 seam — Task 2.6B */
+    try {
+      var _seoCtx = window.FixeoSeoHandoff && window.FixeoSeoHandoff.context;
+      if (_seoCtx) {
+        if (!st.prefillService && _seoCtx._fxrf4ServiceLabel) {
+          st.prefillService = _seoCtx._fxrf4ServiceLabel;
+        }
+        if (!st.prefillCity && _seoCtx._fxrf4CityLabel &&
+            ALL_CITIES.indexOf(_seoCtx._fxrf4CityLabel) >= 0) {
+          st.prefillCity = _seoCtx._fxrf4CityLabel;
+        }
+      }
+    } catch (_) {}
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -1353,7 +1376,7 @@ voiceBtn.addEventListener('click', async function () {
     var isEmergency = st.mode === 'emergency';
     /* Emergency mode acts like urgent for city tap (skip urgency section) */
     var isUrgent = isEmergency;
-    var detected = st.detectedCity || st.prefillCity || '';
+    var detected = st.prefillCity || st.detectedCity || '';
 
     _setProgress(2, 3);
     if (isEmergency) _updateLaneStep(2);
