@@ -218,7 +218,7 @@
       }
     },
     {
-      "src": "^/menuisier/(casablanca|rabat|fes|tanger|marrakech|agadir)$",
+      "src": "^/menuisier/(casablanca|rabat|fes|tanger|marrakech|agadir|meknes|oujda|sale)$",
       "dest": "/menuisier-$1.html"
     },
     {
