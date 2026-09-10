@@ -2,7 +2,7 @@
  * seo-v3.css — FIXEO SEO V3 Flagship Visual System
  * Namespace:  body.seo-service-page (page-level gate, already on <body> in page-template.js)
  *             All fxlp-* component selectors scoped under body.seo-service-page
- * Version: seo-v3-a2 · 2026-09-10
+ * Version: seo-v3-a2-premium · 2026-09-10
  *
  * SCOPE ARCHITECTURE (corrected in v3-a2)
  * ─────────────────────────────────────────
@@ -619,20 +619,65 @@ body.seo-service-page .fxlp-faq-answer p {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   10. ARTISAN ZONE
-   Surrounds artisan grid. Card visual deferred to Task 2.x.
-   Styles the zone: section framing, grid layout, skeleton, empty state.
+   10. ARTISAN ZONE  — PREMIUM DESIGN (Step 2)
+   Principal trust surface. Visually elevated vs surrounding sections.
+   Subtle background lift + accent top rule distinguish this as the
+   page’s primary proof/referral surface without a heavy container frame.
+   Grid: carousel on mobile, 3-column on desktop with equal card height.
 ══════════════════════════════════════════════════════════════ */
 
-/* Zone section padding */
+/* Zone section — premium surface lift */
 body.seo-service-page #fxlp-artisans {
   padding: var(--v3-section-py-sm) 0;
+  /* Subtle elevated background distinguishes trust surface from canvas */
+  background: linear-gradient(
+    180deg,
+    rgba(20, 28, 46, 0.72) 0%,
+    rgba(15, 21, 32, 0.60) 100%
+  );
+  /* Soft top accent rule in the brand gradient */
+  border-top: 1px solid rgba(255, 107, 61, 0.15);
+  border-bottom: 1px solid var(--v3-border);
+  /* Extend to viewport edges on mobile without breaking the wrap container */
+  margin-left: calc(-1 * var(--v3-wrap-px, 16px));
+  margin-right: calc(-1 * var(--v3-wrap-px, 16px));
+  padding-left: var(--v3-wrap-px, 16px);
+  padding-right: var(--v3-wrap-px, 16px);
 }
 
 @media (min-width: 820px) {
   body.seo-service-page #fxlp-artisans {
     padding: var(--v3-section-py) 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-radius: var(--v3-r-lg);
+    border: 1px solid rgba(255, 107, 61, 0.13);
+    border-top-color: rgba(255, 107, 61, 0.22);
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255,255,255,0.04);
   }
+}
+
+/* Section heading upgrade — artisan zone only */
+body.seo-service-page #fxlp-artisans .fxlp-section-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+@media (min-width: 820px) {
+  body.seo-service-page #fxlp-artisans .fxlp-section-title {
+    font-size: 1.75rem;
+  }
+}
+
+/* Sub-label upgrade — trust-tinted color for artisan zone */
+body.seo-service-page #fxlp-artisans .fxlp-section-sub {
+  color: var(--v3-teal-s, #5eead4);
+  font-size: 0.82rem;
+  font-weight: 600;
+  opacity: 0.85;
 }
 
 /* Outer grid wrapper (accessible live region) */
@@ -676,15 +721,16 @@ body.seo-service-page #fxlp-artisan-grid > * {
   }
 }
 
-/* Desktop: 3-column grid */
+/* Desktop: 3-column grid with equal-height cards */
 @media (min-width: 768px) {
   body.seo-service-page #fxlp-artisan-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    align-items: stretch;     /* equal column height */
     overflow-x: unset;
     overflow-y: unset;
     scroll-snap-type: none;
-    gap: 16px;
+    gap: 20px;                /* upgraded from 16px */
     padding-right: 0;
     padding-bottom: 0;
   }
@@ -692,6 +738,7 @@ body.seo-service-page #fxlp-artisan-grid > * {
   body.seo-service-page #fxlp-artisan-grid > * {
     flex: unset;
     max-width: unset;
+    height: 100%;             /* fill grid cell for equal height */
   }
 }
 
