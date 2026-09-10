@@ -570,7 +570,7 @@
       "dest": "/problem-climatisation-en-panne-$1.html"
     },
     {
-      "src": "^/prix/([a-z][a-z-])/([a-z][a-z-])$",
+      "src": "^/prix/([a-z][a-z-]*)/([a-z][a-z-]*)$",
       "dest": "/prix-$1-$2.html"
     },
     {
@@ -606,15 +606,15 @@
       "dest": "/$1.html"
     },
     {
-      "src": "^/plombier/([a-z][a-z-])/([a-z][a-z-])$",
+      "src": "^/plombier/([a-z][a-z-]*)/([a-z][a-z-]*)$",
       "dest": "/quartier-plombier-$1-$2.html"
     },
     {
-      "src": "^/electricien/([a-z][a-z-])/([a-z][a-z-])$",
+      "src": "^/electricien/([a-z][a-z-]*)/([a-z][a-z-]*)$",
       "dest": "/quartier-electricite-$1-$2.html"
     },
     {
-      "src": "^/serrurier/([a-z][a-z-])/([a-z][a-z-])$",
+      "src": "^/serrurier/([a-z][a-z-]*)/([a-z][a-z-]*)$",
       "dest": "/quartier-serrurerie-$1-$2.html"
     },
     {
