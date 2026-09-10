@@ -532,7 +532,7 @@ function buildPage(options) {
   if (!options || typeof options !== 'object')
     throw new Error('page-template: options must be an object');
 
-  const { pageType, generator, seo, hero, sections, artisans, extraCss, extraJs } = options;
+  const { pageType, generator, seo, hero, sections, artisans, artisanPosition, extraCss, extraJs } = options;
 
   if (!VALID_PAGE_TYPES.has(pageType))
     throw new Error(`page-template: unknown pageType "${pageType}". Valid: ${[...VALID_PAGE_TYPES].join(', ')}`);
@@ -599,10 +599,10 @@ ${jsonLd}
 
     <hr class="fxlp-divider">
 
-    <!-- Content sections -->
+    ${artisanPosition === 'after_hero_marker' && artisanHtml ? `<!-- Artisan grid -->\n    ${artisanHtml}\n\n    <hr class="fxlp-divider">\n\n    ` : ''}<!-- Content sections -->
     ${sectionsHtml}
 
-    ${artisanHtml ? `<hr class="fxlp-divider">\n\n    <!-- Artisan grid -->\n    ${artisanHtml}` : ''}
+    ${artisanPosition === 'after_hero_marker' ? '' : artisanHtml ? `<hr class="fxlp-divider">\n\n    <!-- Artisan grid -->\n    ${artisanHtml}` : ''}
 
   </main>
 

@@ -534,6 +534,31 @@ test('S-16. content-guard 51/51 still passes', () => {
   assert(result.includes('Failed      : 0'),  `content-guard had failures:\n${result.slice(-400)}`);
 });
 
+test('S-17. Final generated section order: besoins < artisans < steps < avant < tarifs < faq < explorer < cta', () => {
+  const h = getPilot().html;
+  // Stable unique markers for each section (DOM ids / unique class names)
+  const sectionMarkers = [
+    { name: 'BESOINS FRÉQUENTS', marker: 'id="fxlp-sit-title"'           },
+    { name: 'ARTISANS',          marker: 'id="fxlp-artisans"'            },
+    { name: 'COMMENT FIXEO',     marker: 'class="fxlp-section fxlp-section--steps"' },
+    { name: 'AVANT',             marker: 'id="fxlp-before-title"'        },
+    { name: 'TARIFS',            marker: 'id="fxlp-price-title"'         },
+    { name: 'FAQ',               marker: 'id="fxlp-faq"'                 },
+    { name: 'EXPLORER',          marker: 'id="fxlp-explorer-title"'      },
+    { name: 'CTA',               marker: 'class="fxlp-cta-banner"'       },
+  ];
+  const positions = sectionMarkers.map(s => h.indexOf(s.marker));
+  sectionMarkers.forEach((s, i) => {
+    assert(positions[i] !== -1, `Section "${s.name}" marker not found in HTML`);
+  });
+  for (let i = 1; i < positions.length; i++) {
+    assert(
+      positions[i] > positions[i - 1],
+      `Section order FAIL: "${sectionMarkers[i-1].name}" (pos ${positions[i-1]}) must appear before "${sectionMarkers[i].name}" (pos ${positions[i]})`
+    );
+  }
+});
+
 // ── Summary ───────────────────────────────────────────────────────────────────
 
 console.log(`\nTotal tests : ${passed + failed}`);

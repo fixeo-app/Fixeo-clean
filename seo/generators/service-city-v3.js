@@ -632,6 +632,8 @@ function generateServiceCityPage(opts) {
       },
     ],
 
+    artisanPosition: 'after_hero_marker',
+
     artisans: {
       heading:       serviceLabel + 's référencés à ' + cityLabel,
       subtext:       'Profils référencés sur FIXEO · Paiement après intervention',
@@ -667,25 +669,50 @@ function generateServiceCityPage(opts) {
   const priceHtml      = buildPriceHtml(service.pricing_tiers, priceIntro, city.pricing_note, cityLabel);
   const explorerHtml   = buildExplorerHtml(service, citySlug, city, cities, services);
 
-  // Inject situations + before after the first <hr class="fxlp-divider"> (post-hero)
+  // Injection 1: insert BESOINS FRÉQUENTS after the first <hr class="fxlp-divider"> (post-hero).
+  // artisanHtml is already placed by page-template immediately after that <hr> (artisanPosition).
+  // So the injection order becomes: <hr> → situationsHtml → artisanHtml → sections
   const heroEndMarker = '<hr class="fxlp-divider">';
   const heroEndIdx    = html.indexOf(heroEndMarker);
   if (heroEndIdx !== -1) {
     const insertAt = heroEndIdx + heroEndMarker.length;
     html = html.slice(0, insertAt)
       + situationsHtml
-      + beforeHtml
       + html.slice(insertAt);
   }
 
-  // Inject price + explorer just before the FAQ section
+  // Injection 2: insert AVANT L'INTERVENTION after the COMMENT FIXEO (steps) section close tag.
+  // steps section is uniquely identified by class="fxlp-section--steps".
+  // Target order: artisans → steps (COMMENT FIXEO) → avant → tarifs → faq → ...
+  const stepsAnchor    = 'class="fxlp-section fxlp-section--steps"';
+  const stepsAnchorIdx = html.indexOf(stepsAnchor);
+  if (stepsAnchorIdx !== -1) {
+    const stepsCloseTag = '</section>';
+    const stepsCloseIdx = html.indexOf(stepsCloseTag, stepsAnchorIdx);
+    if (stepsCloseIdx !== -1) {
+      const insertAt = stepsCloseIdx + stepsCloseTag.length;
+      html = html.slice(0, insertAt)
+        + beforeHtml
+        + html.slice(insertAt);
+    }
+  }
+
+  // Injection 3: insert TARIFS INDICATIFS just before the FAQ section.
   const faqMarker = '<section id="fxlp-faq"';
   const faqIdx    = html.indexOf(faqMarker);
   if (faqIdx !== -1) {
     html = html.slice(0, faqIdx)
       + priceHtml + '\n\n'
-      + explorerHtml + '\n\n'
       + html.slice(faqIdx);
+  }
+
+  // Injection 4: insert EXPLORER AUSSI just before the CTA banner (after FAQ).
+  const ctaMarker = '<div class="fxlp-cta-banner"';
+  const ctaIdx    = html.indexOf(ctaMarker);
+  if (ctaIdx !== -1) {
+    html = html.slice(0, ctaIdx)
+      + explorerHtml + '\n\n'
+      + html.slice(ctaIdx);
   }
 
   // ── Return result ─────────────────────────────────────────────────────────────
