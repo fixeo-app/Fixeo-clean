@@ -3,6 +3,27 @@
  * FIXEO Programmatic SEO Engine V2 — generate-pseo-v2.js
  * Version: pseo-v2a — 2026-06-12
  * ─────────────────────────────────────────────────────────
+ *
+ * ╔══════════════════════════════════════════════════════════╗
+ * ║  LEGACY / FROZEN — DO NOT USE FOR SEO V3 PRODUCTION     ║
+ * ║  GENERATION                                             ║
+ * ║                                                         ║
+ * ║  This generator is FROZEN during the SEO V3 lifecycle.  ║
+ * ║  It must NOT be used to regenerate production SEO pages. ║
+ * ║                                                         ║
+ * ║  It writes:                                             ║
+ * ║    - ~394 legacy HTML pages (problem/price/quartier)    ║
+ * ║    - sitemap-pseo.xml + sitemap-index.xml               ║
+ * ║    - vercel.json routes (DESTRUCTIVE)                   ║
+ * ║                                                         ║
+ * ║  SEO V3 canonical generators:                           ║
+ * ║    seo/generators/generate-service-cities-v3.js         ║
+ * ║    seo/generators/generate-service-hubs.js              ║
+ * ║                                                         ║
+ * ║  This file is retained for historical reference ONLY.   ║
+ * ║  Execution is blocked by a hard safety guard below.     ║
+ * ╚══════════════════════════════════════════════════════════╝
+ *
  * Generates 3 types of transactional SEO pages:
  *   1A. Problem pages:  8 problems × 20 cities = 160 pages
  *   1B. Price pages:    6 services × 20 cities = 120 pages
@@ -12,6 +33,41 @@
  * ─────────────────────────────────────────────────────────
  */
 'use strict';
+
+/* ═══════════════════════════════════════════════════════════
+   SAFETY GUARD — DO NOT REMOVE
+   This generator is LEGACY / FROZEN.
+   SEO V3 owns all service×city and SEO page generation.
+   This file also writes vercel.json and sitemap-index.xml —
+   accidental execution is DESTRUCTIVE.
+   Canonical V3 generators:
+     seo/generators/generate-service-cities-v3.js
+     seo/generators/generate-service-hubs.js
+══════════════════════════════════════════════════════════ */
+(function legacyPseoGeneratorGuard() {
+  const msg = [
+    '',
+    '╔══════════════════════════════════════════════════════════╗',
+    '║  BLOCKED: legacy PSEO V2 generator                      ║',
+    '║                                                         ║',
+    '║  This generator (generate-pseo-v2.js) is FROZEN.        ║',
+    '║  It must not be used during the SEO V3 lifecycle.       ║',
+    '║                                                         ║',
+    '║  Accidental execution would overwrite:                  ║',
+    '║    - ~394 legacy HTML pages (problem/price/quartier)    ║',
+    '║    - sitemap-pseo.xml + sitemap-index.xml               ║',
+    '║    - vercel.json routes (DESTRUCTIVE)                   ║',
+    '║                                                         ║',
+    '║  Use the canonical V3 generators instead:              ║',
+    '║    node seo/generators/generate-service-cities-v3.js   ║',
+    '║    node seo/generators/generate-service-hubs.js        ║',
+    '╚══════════════════════════════════════════════════════════╝',
+    '',
+  ].join('\n');
+  process.stderr.write(msg + '\n');
+  process.exit(1);
+}());
+
 const fs   = require('fs');
 const path = require('path');
 
