@@ -537,6 +537,150 @@ body.seo-service-page .fxlp-step-body {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   8.5  BEFORE-INTERVENTION SURFACE  (Step 3B)
+   Authoritative page-scoped override of the unscoped base rules
+   in fixeo-local-flagship-v1.css (lines 715–738).
+   Higher specificity via body.seo-service-page + aria-labelledby anchor
+   wins without touching the legacy file.
+
+   Markup tree (unchanged):
+     section[aria-labelledby="fxlp-before-title"]
+       .fxlp-expl-grid        — 3-column grid
+         .fxlp-expl-item      — each checkpoint card
+           .fxlp-expl-icon    — <span> with emoji (aria-hidden)
+           .fxlp-expl-text    — <p> prose content
+
+   VISUAL INTENT:
+   Calm preparation/checkpoint surface. Teal accent (distinct from
+   orange CTA/pricing, transparent process steps). Compact — not
+   oversized cards. Creates visual rhythm:
+     PROCESS (transparent/separated rows)
+     → AVANT (teal-accented glass checkpoints)
+     → TARIFS (orange-accented glass rows)
+══════════════════════════════════════════════════════════════ */
+
+/* ── Grid: 3-column on desktop, 1-column mobile ────────────────── */
+
+body.seo-service-page section[aria-labelledby="fxlp-before-title"] .fxlp-expl-grid {
+  display: grid;
+  grid-template-columns: 1fr;      /* mobile: single column */
+  gap: 12px;
+  margin-top: 8px;
+  /* Explicit overflow guard — prevents third card escaping viewport */
+  overflow: hidden;
+  max-width: 100%;
+}
+
+@media (min-width: 640px) {
+  body.seo-service-page section[aria-labelledby="fxlp-before-title"] .fxlp-expl-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+/* Tablet safety: 3-column below 820px with tighter gap */
+@media (min-width: 640px) and (max-width: 819px) {
+  body.seo-service-page section[aria-labelledby="fxlp-before-title"] .fxlp-expl-grid {
+    gap: 12px;
+  }
+}
+
+/* ── Checkpoint card ────────────────────────────────────────── */
+
+body.seo-service-page section[aria-labelledby="fxlp-before-title"] .fxlp-expl-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 18px 20px;
+  min-width: 0;               /* grid cell overflow guard */
+  box-sizing: border-box;
+
+  /* Teal-tinted glass surface — distinguishes from orange pricing rows */
+  background: linear-gradient(
+    145deg,
+    rgba(20, 30, 48, 0.90) 0%,
+    rgba(14, 21, 36, 0.94) 100%
+  );
+  border: 1px solid rgba(45, 212, 191, 0.12);
+  border-radius: var(--v3-r-md, 14px);
+
+  /* Teal left-accent rule — restrained checkpoint indicator */
+  border-left: 2px solid rgba(45, 212, 191, 0.28);
+
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  transition: border-color 0.20s, box-shadow 0.20s, transform 0.20s;
+}
+
+body.seo-service-page section[aria-labelledby="fxlp-before-title"] .fxlp-expl-item:hover {
+  border-color: rgba(45, 212, 191, 0.22);
+  border-left-color: rgba(45, 212, 191, 0.48);
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+}
+
+/* ── Icon container — intentional teal tile ─────────────────── */
+
+body.seo-service-page section[aria-labelledby="fxlp-before-title"] .fxlp-expl-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+
+  /* Teal-tinted container — emoji rendered at comfortable size */
+  background: rgba(45, 212, 191, 0.08);
+  border: 1px solid rgba(45, 212, 191, 0.15);
+
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+/* ── Body text — elevated from bare muted ────────────────────── */
+
+body.seo-service-page section[aria-labelledby="fxlp-before-title"] .fxlp-expl-text {
+  font-size: 0.84rem;
+  /* Slightly lighter than bare muted — readable without looking editorial */
+  color: var(--v3-text-2, rgba(232, 234, 240, 0.70));
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ── Very narrow phone: tighter padding ───────────────────── */
+
+@media (max-width: 420px) {
+  body.seo-service-page section[aria-labelledby="fxlp-before-title"] .fxlp-expl-item {
+    padding: 14px 14px 16px;
+    gap: 10px;
+  }
+
+  body.seo-service-page section[aria-labelledby="fxlp-before-title"] .fxlp-expl-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 0.95rem;
+  }
+
+  body.seo-service-page section[aria-labelledby="fxlp-before-title"] .fxlp-expl-text {
+    font-size: 0.81rem;
+    line-height: 1.60;
+  }
+}
+
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  body.seo-service-page section[aria-labelledby="fxlp-before-title"] .fxlp-expl-item {
+    transition: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
    9. FAQ
    Semantic <details>/<summary> from page-template.js output
 ══════════════════════════════════════════════════════════════ */
