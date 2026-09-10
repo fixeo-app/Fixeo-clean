@@ -1,0 +1,243 @@
+{
+  "_meta": {
+    "version": "v3.0.0",
+    "generated": "2026-09-10",
+    "total_db_rows": 1383,
+    "matrix_city_count": 20,
+    "matrix_service_count": 8,
+    "matrix_cell_count": 160,
+    "matrix_grand_total": 1003,
+    "filter_contract": {
+      "source_file": "js/fixeo-local-flagship-v1.js",
+      "city_filter": "ilike('city', '%{city.label.toLowerCase()}%') — case-insensitive substring match",
+      "category_filter": "ilike('category', '{supabase_category.toLowerCase()}%') — case-insensitive prefix match",
+      "status_filter": "NONE — not present in live query",
+      "verified_filter": "NONE — field fetched for card display only; not used as eligibility gate",
+      "active_filter": "NONE",
+      "onboarding_filter": "NONE",
+      "public_filter": "NONE",
+      "claimed_filter": "NONE",
+      "ordering": "ORDER BY rating DESC — affects display order only; all matched rows counted",
+      "display_limit": "MAX_CARDS=3 — applies to rendered cards only; all matched rows are counted"
+    },
+    "category_prefix_map": {
+      "plombier": "plomberie",
+      "electricien": "électricité",
+      "serrurier": "serrurerie",
+      "climatisation": "climatisation",
+      "peintre": "peinture",
+      "menuisier": "menuiserie",
+      "macon": "maçonnerie",
+      "nettoyage": "nettoyage"
+    },
+    "distribution": {
+      "zero": 74,
+      "one": 24,
+      "two": 7,
+      "three_plus": 55
+    },
+    "note_grand_total_vs_db": "Matrix grand total differs from DB row count because: (1) rows whose city does not substring-match any of the 20 canonical city labels are excluded from all cells; (2) rows whose category does not prefix-match any of the 8 canonical prefixes are excluded; (3) a single row may be counted in multiple city cells if its city value substring-matches more than one canonical city label.",
+    "cities_source": "seo/data/cities.json",
+    "services_source": "seo/data/services.json"
+  },
+  "casablanca": {
+    "plombier": 69,
+    "electricien": 117,
+    "serrurier": 9,
+    "climatisation": 32,
+    "peintre": 23,
+    "menuisier": 225,
+    "macon": 4,
+    "nettoyage": 17
+  },
+  "rabat": {
+    "plombier": 10,
+    "electricien": 15,
+    "serrurier": 3,
+    "climatisation": 7,
+    "peintre": 2,
+    "menuisier": 5,
+    "macon": 3,
+    "nettoyage": 1
+  },
+  "marrakech": {
+    "plombier": 15,
+    "electricien": 44,
+    "serrurier": 9,
+    "climatisation": 13,
+    "peintre": 13,
+    "menuisier": 29,
+    "macon": 6,
+    "nettoyage": 2
+  },
+  "fes": {
+    "plombier": 3,
+    "electricien": 12,
+    "serrurier": 0,
+    "climatisation": 1,
+    "peintre": 1,
+    "menuisier": 15,
+    "macon": 0,
+    "nettoyage": 0
+  },
+  "tanger": {
+    "plombier": 57,
+    "electricien": 12,
+    "serrurier": 3,
+    "climatisation": 16,
+    "peintre": 1,
+    "menuisier": 6,
+    "macon": 1,
+    "nettoyage": 4
+  },
+  "agadir": {
+    "plombier": 10,
+    "electricien": 10,
+    "serrurier": 0,
+    "climatisation": 1,
+    "peintre": 0,
+    "menuisier": 11,
+    "macon": 0,
+    "nettoyage": 7
+  },
+  "meknes": {
+    "plombier": 6,
+    "electricien": 2,
+    "serrurier": 1,
+    "climatisation": 5,
+    "peintre": 2,
+    "menuisier": 5,
+    "macon": 0,
+    "nettoyage": 0
+  },
+  "oujda": {
+    "plombier": 4,
+    "electricien": 5,
+    "serrurier": 0,
+    "climatisation": 4,
+    "peintre": 0,
+    "menuisier": 6,
+    "macon": 0,
+    "nettoyage": 1
+  },
+  "kenitra": {
+    "plombier": 3,
+    "electricien": 7,
+    "serrurier": 0,
+    "climatisation": 4,
+    "peintre": 4,
+    "menuisier": 1,
+    "macon": 0,
+    "nettoyage": 1
+  },
+  "temara": {
+    "plombier": 1,
+    "electricien": 1,
+    "serrurier": 0,
+    "climatisation": 1,
+    "peintre": 0,
+    "menuisier": 3,
+    "macon": 0,
+    "nettoyage": 0
+  },
+  "sale": {
+    "plombier": 4,
+    "electricien": 10,
+    "serrurier": 0,
+    "climatisation": 20,
+    "peintre": 1,
+    "menuisier": 19,
+    "macon": 1,
+    "nettoyage": 1
+  },
+  "mohammedia": {
+    "plombier": 0,
+    "electricien": 0,
+    "serrurier": 0,
+    "climatisation": 0,
+    "peintre": 0,
+    "menuisier": 1,
+    "macon": 0,
+    "nettoyage": 0
+  },
+  "el-jadida": {
+    "plombier": 0,
+    "electricien": 3,
+    "serrurier": 0,
+    "climatisation": 0,
+    "peintre": 0,
+    "menuisier": 0,
+    "macon": 0,
+    "nettoyage": 0
+  },
+  "beni-mellal": {
+    "plombier": 2,
+    "electricien": 3,
+    "serrurier": 0,
+    "climatisation": 0,
+    "peintre": 1,
+    "menuisier": 1,
+    "macon": 0,
+    "nettoyage": 0
+  },
+  "khouribga": {
+    "plombier": 0,
+    "electricien": 0,
+    "serrurier": 0,
+    "climatisation": 0,
+    "peintre": 0,
+    "menuisier": 0,
+    "macon": 0,
+    "nettoyage": 0
+  },
+  "safi": {
+    "plombier": 1,
+    "electricien": 0,
+    "serrurier": 0,
+    "climatisation": 0,
+    "peintre": 0,
+    "menuisier": 0,
+    "macon": 0,
+    "nettoyage": 0
+  },
+  "nador": {
+    "plombier": 2,
+    "electricien": 3,
+    "serrurier": 0,
+    "climatisation": 2,
+    "peintre": 0,
+    "menuisier": 1,
+    "macon": 0,
+    "nettoyage": 0
+  },
+  "taza": {
+    "plombier": 1,
+    "electricien": 0,
+    "serrurier": 0,
+    "climatisation": 0,
+    "peintre": 0,
+    "menuisier": 0,
+    "macon": 0,
+    "nettoyage": 0
+  },
+  "ouarzazate": {
+    "plombier": 1,
+    "electricien": 0,
+    "serrurier": 0,
+    "climatisation": 0,
+    "peintre": 0,
+    "menuisier": 0,
+    "macon": 0,
+    "nettoyage": 0
+  },
+  "tetouan": {
+    "plombier": 10,
+    "electricien": 3,
+    "serrurier": 1,
+    "climatisation": 0,
+    "peintre": 0,
+    "menuisier": 0,
+    "macon": 0,
+    "nettoyage": 0
+  }
+}

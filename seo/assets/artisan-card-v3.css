@@ -1,0 +1,394 @@
+/*
+ * artisan-card-v3.css — FIXEO Canonical Artisan Card V3
+ * =======================================================
+ * Clean-room component. Zero override of frozen artisan-card-conversion-v1.css.
+ *
+ * CSS SCOPE:
+ *   All selectors scoped under: body.seo-service-page .fxseo-card-v3
+ *   No generic img / a / article / h3 selectors.
+ *   No .pvc-* / .fhp-* / .artdir-* / .pvc-card overrides.
+ *
+ * ROOT CLASS:
+ *   .fxseo-card-v3 — applied by artisan-card-v3.js on <article>.
+ *   Must NOT appear on any non-V3-generated card.
+ *
+ * DESIGN LANGUAGE:
+ *   Consistent with seo-v3.css visual system:
+ *   - Dark surface: var(--v3-surface) = #0f1520
+ *   - Border: var(--v3-border) = rgba(255,255,255,0.07)
+ *   - Orange accent: var(--v3-orange) = #ff6b3d
+ *   - Text: var(--v3-text) = #eaeff8
+ *   - Muted: var(--v3-muted) = #8896b0
+ *   - Radius: var(--v3-r-md) = 14px, var(--v3-r-full) = 9999px
+ *
+ * VISUAL HIERARCHY (top → bottom):
+ *   1. Header: avatar (56px) + identity (name + service·city meta)
+ *   2. Description (optional, max 160 chars, 3-line clamp)
+ *   3. Trust rows: "Profil référencé sur FIXEO" · "Paiement après intervention"
+ *   4. Action area: optional price + optional profile link
+ *
+ * RESPONSIVE:
+ *   - Mobile (≤767px): full-width in horizontal carousel (flex child)
+ *   - Desktop (≥768px): 3-col grid cell in #fxlp-artisan-grid
+ *   - ≤420px: tighter padding, smaller avatar
+ *
+ * AVATAR FALLBACK STATES (via data-avatar-state on .fxseo-card-v3__avatar):
+ *   real-photo  → <img> displayed, initials hidden
+ *   initials    → gradient circle with first letter
+ *
+ * FILE: seo/assets/artisan-card-v3.css
+ * Version: v3-a1 · 2026-09-10
+ */
+
+/* ══════════════════════════════════════════════════════════════
+   1. CARD SHELL
+   Glass surface on the dark canvas. No overflow:hidden — allows
+   focus rings to render without clipping and avoids content truncation.
+══════════════════════════════════════════════════════════════ */
+
+body.seo-service-page .fxseo-card-v3 {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  background: var(--v3-surface, #0f1520);
+  border: 1px solid var(--v3-border, rgba(255, 255, 255, 0.07));
+  border-radius: var(--v3-r-md, 14px);
+  padding: 16px;
+
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+  transition: border-color 0.22s, box-shadow 0.22s, transform 0.22s;
+}
+
+body.seo-service-page .fxseo-card-v3:hover {
+  border-color: var(--v3-border-glow, rgba(255, 107, 61, 0.22));
+  box-shadow:
+    0 6px 24px rgba(255, 107, 61, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.32);
+  transform: translateY(-2px);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   2. HEADER — avatar + identity side-by-side
+══════════════════════════════════════════════════════════════ */
+
+body.seo-service-page .fxseo-card-v3__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* ── Avatar container ── */
+
+body.seo-service-page .fxseo-card-v3__avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 107, 61, 0.18) 0%, rgba(245, 83, 166, 0.18) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  overflow: hidden;
+}
+
+/* Real photo */
+body.seo-service-page .fxseo-card-v3__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  border-radius: 50%;
+}
+
+/* Initials fallback */
+body.seo-service-page .fxseo-card-v3__avatar-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--v3-orange, #ff6b3d);
+  -webkit-text-fill-color: var(--v3-orange, #ff6b3d);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* Avatar badge — service emoji, bottom-right corner */
+body.seo-service-page .fxseo-card-v3__avatar-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--v3-bg-2, #111828);
+  border: 1.5px solid var(--v3-border, rgba(255, 255, 255, 0.07));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  line-height: 1;
+}
+
+/* ── Identity column ── */
+
+body.seo-service-page .fxseo-card-v3__identity {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+body.seo-service-page .fxseo-card-v3__name {
+  font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: var(--v3-text, #eaeff8);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Meta row: service · city */
+body.seo-service-page .fxseo-card-v3__meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  color: var(--v3-muted, #8896b0);
+  line-height: 1.4;
+  min-width: 0;
+}
+
+body.seo-service-page .fxseo-card-v3__meta-service,
+body.seo-service-page .fxseo-card-v3__meta-city {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.seo-service-page .fxseo-card-v3__meta-sep {
+  color: var(--v3-dim, #4a5a72);
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   3. DESCRIPTION
+   Optional. Clamp at 3 lines on all viewports.
+   Gap provided by parent flex gap.
+══════════════════════════════════════════════════════════════ */
+
+body.seo-service-page .fxseo-card-v3__desc {
+  font-size: 0.80rem;
+  color: var(--v3-muted, #8896b0);
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   4. TRUST ROWS
+   Mirrors the pvc-trust-v3b language ("Profil référencé sur FIXEO",
+   "Paiement après intervention") used across all FIXEO card systems.
+   Clean-room implementation — no .pvc-* classes used.
+══════════════════════════════════════════════════════════════ */
+
+body.seo-service-page .fxseo-card-v3__trust {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+body.seo-service-page .fxseo-card-v3__trust-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--v3-muted, #8896b0);
+  line-height: 1.3;
+}
+
+body.seo-service-page .fxseo-card-v3__trust-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--v3-teal, #2dd4bf);
+  width: 14px;
+  height: 14px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   5. ACTION AREA — price + profile link
+   Pushed to bottom via flex on card shell (flex-direction: column).
+   Margin-top: auto handled by layout — no hard bottom margin needed.
+══════════════════════════════════════════════════════════════ */
+
+body.seo-service-page .fxseo-card-v3__action {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+}
+
+/* Divider hairline */
+body.seo-service-page .fxseo-card-v3__divider {
+  height: 1px;
+  background: var(--v3-border, rgba(255, 255, 255, 0.07));
+  border: none;
+}
+
+/* Price block — optional */
+body.seo-service-page .fxseo-card-v3__price {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+body.seo-service-page .fxseo-card-v3__price-main {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--v3-text, #eaeff8);
+  line-height: 1.2;
+}
+
+body.seo-service-page .fxseo-card-v3__price-hint {
+  font-size: 0.72rem;
+  color: var(--v3-muted, #8896b0);
+  line-height: 1.3;
+}
+
+/* Profile CTA link — secondary style */
+body.seo-service-page .fxseo-card-v3__profile-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--v3-orange, #ff6b3d) !important;
+  -webkit-text-fill-color: var(--v3-orange, #ff6b3d) !important;
+  text-decoration: none;
+  border: 1.5px solid var(--v3-border-glow, rgba(255, 107, 61, 0.22));
+  border-radius: var(--v3-r-full, 9999px);
+  padding: 9px 16px;
+  min-height: 40px;
+  min-width: 44px;
+  width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s, transform 0.18s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+body.seo-service-page .fxseo-card-v3__profile-link:hover {
+  background: var(--v3-orange-g, rgba(255, 107, 61, 0.10));
+  border-color: var(--v3-orange, #ff6b3d);
+  transform: translateY(-1px);
+}
+
+body.seo-service-page .fxseo-card-v3__profile-link:focus-visible {
+  outline: 2px solid var(--v3-orange-s, #ff8c5a);
+  outline-offset: 3px;
+}
+
+body.seo-service-page .fxseo-card-v3__profile-link:active {
+  transform: none;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   6. RESPONSIVE
+══════════════════════════════════════════════════════════════ */
+
+/* ≤420px — very narrow phone */
+@media (max-width: 420px) {
+  body.seo-service-page .fxseo-card-v3 {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  body.seo-service-page .fxseo-card-v3__avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  body.seo-service-page .fxseo-card-v3__avatar-initials {
+    font-size: 1.1rem;
+  }
+
+  body.seo-service-page .fxseo-card-v3__name {
+    font-size: 0.88rem;
+  }
+
+  body.seo-service-page .fxseo-card-v3__meta {
+    font-size: 0.70rem;
+  }
+
+  body.seo-service-page .fxseo-card-v3__trust-item {
+    font-size: 0.70rem;
+  }
+
+  body.seo-service-page .fxseo-card-v3__profile-link {
+    font-size: 0.78rem;
+    padding: 8px 14px;
+    min-height: 38px;
+  }
+}
+
+/* Desktop — 3-column grid. Cards fill their grid cell; no forced height. */
+@media (min-width: 768px) {
+  body.seo-service-page .fxseo-card-v3 {
+    padding: 18px;
+    gap: 14px;
+  }
+
+  body.seo-service-page .fxseo-card-v3__name {
+    font-size: 1.0rem;
+  }
+
+  body.seo-service-page .fxseo-card-v3__meta {
+    font-size: 0.77rem;
+  }
+
+  body.seo-service-page .fxseo-card-v3__desc {
+    font-size: 0.82rem;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   7. ACCESSIBILITY
+══════════════════════════════════════════════════════════════ */
+
+/* focus-visible ring on card (for keyboard navigation) */
+body.seo-service-page .fxseo-card-v3:focus-visible {
+  outline: 2px solid var(--v3-orange-s, #ff8c5a);
+  outline-offset: 3px;
+}
+
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  body.seo-service-page .fxseo-card-v3,
+  body.seo-service-page .fxseo-card-v3__profile-link {
+    transition: none !important;
+  }
+}

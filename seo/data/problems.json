@@ -1,0 +1,732 @@
+{
+  "_meta": {
+    "version": "v3.0.0",
+    "generated": "2026-09-10",
+    "source": "Reconciled from scripts/generate-pseo-v2.js (PROBLEMS). All content fully rewritten for V3 product-truth compliance.",
+    "intro_variant_policy": "Legacy PROBLEMS had intro_variants: an array of 2 closures alternating by (count % 2). BOTH variants contained banned terms in all 8 problems. V3 uses a single compliant intro template string per problem. The variant rotation concept is DEAD in V3. See dead_field_log.",
+    "title_policy": "Legacy title template at generate-pseo-v2.js:453 was '${prob.label} à ${city.label} — Artisan disponible maintenant | Fixeo'. 'Artisan disponible maintenant' is a BANNED TERM. V3 titles use compliant templates.",
+    "body_sections_policy": "Legacy body_sections were hardcoded inline in generateProblemPages() HTML template — not stored in PROBLEMS object. They included a banned urgency box ('Disponible 24h/7') and a 'Artisans vérifiés' trust card. V3 body_sections are explicit data with compliant copy.",
+    "faq_policy": "Legacy PROBLEMS had NO faq field. The faq in PRICE_SERVICES (generate-pseo-v2.js) is for price pages only and is not carried into problems.json. V3 problems define problem-specific FAQ per entry.",
+    "q11_wording_policy": "Q11-approved time wording ('Votre demande est enregistrée à toute heure. L'artisan confirme sa disponibilité et le créneau dans les meilleurs délais.') used ONLY where urgency context genuinely adds value: fuite-eau, wc-bouche, porte-bloquee, serrure-cassee, panne-electrique, climatisation-en-panne. NOT used for disjoncteur-saute (diagnostic/non-emergency) or chauffe-eau-en-panne (daily discomfort, not safety-critical).",
+    "placeholder_convention": "{{city.label}} = human-readable city name (e.g. 'Casablanca'). {{city.label_de}} = 'de Casablanca'. Resolved by V3 template engine before content-guard runs.",
+    "dead_field_log": "seo/docs/phase1-qa-report.md — Task 1.3 section"
+  },
+
+  "fuite-eau": {
+    "slug": "fuite-eau",
+    "label": "Fuite d'eau",
+    "service_key": "plombier",
+    "parent_service_route": "/plombier",
+    "breadcrumb_label": "Fuite d'eau",
+    "icon": "💧",
+    "uses_q11_wording": true,
+    "_q11_justification": "Water leaks are genuinely urgent — structural damage escalates by the hour. Q11 request-submission wording is contextually appropriate and accurate.",
+
+    "title_template": "Fuite d'eau à {{city.label}} — Plombier référencé disponible | Fixeo",
+    "meta_desc_template": "Fuite d'eau à {{city.label}} ? Fixeo met en relation avec des plombiers référencés. Décrivez le problème, le tarif est confirmé avant toute intervention.",
+    "h1_template": "Fuite d'eau à {{city.label}} : trouver un plombier référencé",
+
+    "intro_template": "Une fuite d'eau peut causer des dégâts structurels importants en quelques heures — plancher gorgé, moisissures, litiges de copropriété. À {{city.label}}, Fixeo met en relation les particuliers et professionnels avec des plombiers référencés sur la plateforme, capables de diagnostiquer une fuite de joint, de tuyau fissuré ou de raccord endommagé et d'intervenir sur place. Votre demande est enregistrée à toute heure. L'artisan confirme sa disponibilité et le créneau dans les meilleurs délais.",
+
+    "body_sections": [
+      {
+        "kind": "how_it_works",
+        "title": "Comment ça marche ?",
+        "steps": [
+          {
+            "num": "1️⃣",
+            "title": "Décrivez la fuite",
+            "body": "Indiquez l'origine probable (joint, tuyau, robinet, siphon) et l'adresse à {{city.label}}."
+          },
+          {
+            "num": "2️⃣",
+            "title": "Mise en relation",
+            "body": "Fixeo transmet votre demande aux plombiers référencés disponibles dans votre secteur de {{city.label}}."
+          },
+          {
+            "num": "3️⃣",
+            "title": "Tarif confirmé, paiement après",
+            "body": "L'artisan vous contacte, confirme le tarif avant intervention. Paiement uniquement après la fin des travaux."
+          }
+        ]
+      },
+      {
+        "kind": "why_fixeo",
+        "title": "Pourquoi utiliser Fixeo ?",
+        "cards": [
+          {
+            "icon": "✅",
+            "title": "Profils référencés",
+            "body": "Les plombiers sur FIXEO sont des professionnels référencés sur la plateforme."
+          },
+          {
+            "icon": "💰",
+            "title": "Tarif confirmé avant intervention",
+            "body": "Le montant définitif vous est communiqué par l'artisan avant le début des travaux. Aucune surprise sur la facture."
+          },
+          {
+            "icon": "🛡️",
+            "title": "Paiement après intervention",
+            "body": "Vous ne payez qu'une fois l'intervention terminée. Aucun acompte n'est demandé."
+          }
+        ]
+      },
+      {
+        "kind": "diagnostic_info",
+        "title": "Types de fuites fréquentes",
+        "items": [
+          { "icon": "🔩", "label": "Joint défaillant (robinet, siphon, raccord)" },
+          { "icon": "💧", "label": "Tuyau fissuré ou corrodé" },
+          { "icon": "🏠", "label": "Fuite sous évier ou derrière un mur" },
+          { "icon": "🚿", "label": "Fuite chasse d'eau ou colonne montante" }
+        ]
+      }
+    ],
+
+    "faq": [
+      {
+        "q": "Comment identifier l'origine d'une fuite d'eau ?",
+        "a": "Une fuite se manifeste par une tache d'humidité, un bruit de goutte ou une hausse anormale de la facture d'eau. Un plombier peut localiser l'origine avec un manomètre ou une caméra d'inspection selon l'accessibilité de la canalisation."
+      },
+      {
+        "q": "Faut-il couper l'eau avant l'arrivée du plombier ?",
+        "a": "En cas de fuite active ou d'inondation, coupez le robinet d'arrêt général de votre logement. Cela limite les dégâts en attendant l'intervention. Si vous ne trouvez pas le robinet, décrivez la situation lors de votre demande — l'artisan peut vous guider."
+      },
+      {
+        "q": "Comment est fixé le tarif d'intervention pour une fuite d'eau à {{city.label}} ?",
+        "a": "Le tarif définitif est établi par l'artisan après diagnostic sur place. Il vous est communiqué avant toute intervention. Vous n'avez aucune obligation d'accepter. En cas d'accord, le paiement s'effectue après la fin des travaux."
+      },
+      {
+        "q": "Une fuite derrière un mur nécessite-t-elle une démolition ?",
+        "a": "Pas systématiquement. Un plombier équipé d'une caméra d'inspection ou d'un détecteur de fuite acoustique peut souvent localiser la fuite avec précision avant d'ouvrir le mur, ce qui réduit les travaux de reprise."
+      }
+    ],
+
+    "blog_links": ["fuite-eau-mur", "detection-fuite-eau-cachee", "fuite-sous-evier"]
+  },
+
+  "wc-bouche": {
+    "slug": "wc-bouche",
+    "label": "WC bouché",
+    "service_key": "plombier",
+    "parent_service_route": "/plombier",
+    "breadcrumb_label": "WC bouché",
+    "icon": "🚽",
+    "uses_q11_wording": true,
+    "_q11_justification": "A blocked toilet is a genuine sanitation emergency, especially in a household. Q11 request-submission wording is contextually appropriate.",
+
+    "title_template": "WC bouché à {{city.label}} — Plombier référencé pour débouchage | Fixeo",
+    "meta_desc_template": "WC bouché à {{city.label}} ? Fixeo met en relation avec des plombiers référencés pour débouchage. Tarif confirmé avant intervention, paiement après.",
+    "h1_template": "WC bouché à {{city.label}} : débouchage par un plombier référencé",
+
+    "intro_template": "Un WC bouché dans un appartement ou une villa est une urgence sanitaire, surtout en présence de famille ou de colocataires. La plupart des obstructions (corps étranger, accumulation de calcaire, papier) peuvent être résolues en une seule visite grâce aux équipements de débouchage haute pression ou à la ventouse motorisée. À {{city.label}}, Fixeo met en relation les particuliers avec des plombiers référencés qui interviennent sur tous types de canalisations. Votre demande est enregistrée à toute heure. L'artisan confirme sa disponibilité et le créneau dans les meilleurs délais.",
+
+    "body_sections": [
+      {
+        "kind": "how_it_works",
+        "title": "Comment ça marche ?",
+        "steps": [
+          {
+            "num": "1️⃣",
+            "title": "Décrivez l'obstruction",
+            "body": "Précisez si l'obstruction est partielle ou totale et l'adresse à {{city.label}}. Plus votre description est précise, plus l'artisan arrive équipé."
+          },
+          {
+            "num": "2️⃣",
+            "title": "Mise en relation",
+            "body": "Fixeo transmet votre demande aux plombiers référencés disponibles dans votre secteur de {{city.label}}."
+          },
+          {
+            "num": "3️⃣",
+            "title": "Tarif confirmé, paiement après",
+            "body": "L'artisan vous contacte, confirme le tarif avant intervention. Paiement uniquement après débouchage."
+          }
+        ]
+      },
+      {
+        "kind": "why_fixeo",
+        "title": "Pourquoi utiliser Fixeo ?",
+        "cards": [
+          {
+            "icon": "✅",
+            "title": "Profils référencés",
+            "body": "Les plombiers sur FIXEO sont des professionnels référencés sur la plateforme."
+          },
+          {
+            "icon": "💰",
+            "title": "Tarif confirmé avant intervention",
+            "body": "Le montant définitif vous est communiqué par l'artisan avant le début des travaux."
+          },
+          {
+            "icon": "🛡️",
+            "title": "Paiement après intervention",
+            "body": "Vous ne payez qu'une fois le débouchage terminé."
+          }
+        ]
+      },
+      {
+        "kind": "diagnostic_info",
+        "title": "Causes fréquentes d'un WC bouché",
+        "items": [
+          { "icon": "🧻", "label": "Accumulation de papier ou de lingettes" },
+          { "icon": "🪨", "label": "Dépôt de calcaire dans la canalisation" },
+          { "icon": "🚗", "label": "Corps étranger introduit accidentellement" },
+          { "icon": "🏗️", "label": "Canalisation endommagée ou mal posée" }
+        ]
+      }
+    ],
+
+    "faq": [
+      {
+        "q": "Quelle est la différence entre un débouchage à la ventouse et au furet ?",
+        "a": "La ventouse crée une pression mécanique pour déloger une obstruction proche du siphon. Le furet électrique ou manuel permet d'atteindre et de désintégrer les bouchons plus profonds dans la canalisation. Le choix de la méthode dépend de l'emplacement et de la nature de l'obstruction — l'artisan l'évalue sur place."
+      },
+      {
+        "q": "Peut-on éviter les obstructions de WC ?",
+        "a": "Oui : n'introduire que du papier hygiénique dans les WC (pas de lingettes, même étiquetées 'flushables'), éviter les dépôts de graisse dans les canalisations, et faire inspecter les canalisations anciennes tous les 5 à 10 ans."
+      },
+      {
+        "q": "Comment est fixé le tarif de débouchage à {{city.label}} ?",
+        "a": "Le tarif définitif est établi par l'artisan après évaluation sur place. Il vous est communiqué avant toute intervention. En cas d'accord, le paiement s'effectue après la fin de l'intervention."
+      }
+    ],
+
+    "blog_links": ["wc-bouche-comment-deboucher", "canalisation-bouchee"]
+  },
+
+  "chauffe-eau-en-panne": {
+    "slug": "chauffe-eau-en-panne",
+    "label": "Chauffe-eau en panne",
+    "service_key": "plombier",
+    "parent_service_route": "/plombier",
+    "breadcrumb_label": "Chauffe-eau en panne",
+    "icon": "🚿",
+    "uses_q11_wording": false,
+    "_q11_justification": "Hot water failure is a daily discomfort, not a safety-critical or structural emergency. The urgency is real but the situation does not warrant the request-submission framing — it implies urgency that may set unrealistic expectations on artisan response time.",
+
+    "title_template": "Chauffe-eau en panne à {{city.label}} — Plombier référencé pour dépannage | Fixeo",
+    "meta_desc_template": "Chauffe-eau en panne à {{city.label}} ? Fixeo met en relation avec des plombiers-chauffagistes référencés. Diagnostic sur place, tarif confirmé avant intervention.",
+    "h1_template": "Chauffe-eau en panne à {{city.label}} : diagnostic et dépannage",
+
+    "intro_template": "Plus d'eau chaude à {{city.label}} — une situation inconfortable qui perturbe le quotidien du foyer. Les pannes de chauffe-eau ont généralement plusieurs origines identifiables : résistance électrique grillée, thermostat défaillant, anode épuisée ou fuite interne. À {{city.label}}, le calcaire présent dans l'eau du réseau accélère l'usure des éléments internes. Fixeo met en relation les particuliers avec des plombiers-chauffagistes référencés, capables de diagnostiquer votre appareil sur place — qu'il soit électrique, à gaz, solaire ou thermodynamique — et de vous conseiller sur la réparation ou le remplacement le mieux adapté à votre logement.",
+
+    "body_sections": [
+      {
+        "kind": "how_it_works",
+        "title": "Comment ça marche ?",
+        "steps": [
+          {
+            "num": "1️⃣",
+            "title": "Décrivez la panne",
+            "body": "Indiquez le type d'appareil (électrique, gaz, solaire), les symptômes observés et l'adresse à {{city.label}}."
+          },
+          {
+            "num": "2️⃣",
+            "title": "Mise en relation",
+            "body": "Fixeo transmet votre demande aux plombiers-chauffagistes référencés disponibles dans votre secteur de {{city.label}}."
+          },
+          {
+            "num": "3️⃣",
+            "title": "Diagnostic sur place, tarif confirmé",
+            "body": "L'artisan diagnostique l'appareil, vous communique le tarif avant toute intervention. Paiement après travaux."
+          }
+        ]
+      },
+      {
+        "kind": "why_fixeo",
+        "title": "Pourquoi utiliser Fixeo ?",
+        "cards": [
+          {
+            "icon": "✅",
+            "title": "Profils référencés",
+            "body": "Les plombiers sur FIXEO sont des professionnels référencés sur la plateforme."
+          },
+          {
+            "icon": "💰",
+            "title": "Tarif confirmé avant intervention",
+            "body": "Le montant est communiqué par l'artisan après diagnostic, avant toute réparation ou remplacement."
+          },
+          {
+            "icon": "🛡️",
+            "title": "Paiement après intervention",
+            "body": "Vous ne payez qu'une fois l'intervention terminée. Aucun acompte n'est demandé."
+          }
+        ]
+      },
+      {
+        "kind": "diagnostic_info",
+        "title": "Pannes fréquentes de chauffe-eau",
+        "items": [
+          { "icon": "⚡", "label": "Résistance électrique grillée (chauffe-eau électrique)" },
+          { "icon": "🌡️", "label": "Thermostat défaillant (eau pas assez chaude ou trop chaude)" },
+          { "icon": "💧", "label": "Fuite interne sur le ballon ou la robinetterie" },
+          { "icon": "🔋", "label": "Anode épuisée (corrosion avancée)" },
+          { "icon": "🔥", "label": "Veilleuse éteinte ou thermocouple (chauffe-eau à gaz)" }
+        ]
+      }
+    ],
+
+    "faq": [
+      {
+        "q": "Comment savoir si mon chauffe-eau doit être réparé ou remplacé ?",
+        "a": "Un chauffe-eau de moins de 8–10 ans avec une panne isolée (résistance, thermostat) est généralement réparable à un coût raisonnable. Au-delà de 10–12 ans, ou en cas de corrosion avancée du ballon, le remplacement devient souvent plus économique à long terme. L'artisan vous présente les deux options avec leurs coûts respectifs avant toute décision."
+      },
+      {
+        "q": "Quelles marques de chauffe-eau sont courantes à {{city.label}} ?",
+        "a": "Les plombiers référencés sur FIXEO interviennent sur les modèles courants au Maroc : Atlantic, Ariston, Chaffoteaux, Thermor, ainsi que sur les appareils à gaz de marques locales. Précisez la marque et le modèle lors de votre demande pour faciliter la préparation de l'artisan."
+      },
+      {
+        "q": "Comment est fixé le tarif de dépannage chauffe-eau à {{city.label}} ?",
+        "a": "Le tarif définitif est établi après diagnostic sur place. Il tient compte du type de panne, des pièces nécessaires et de la durée d'intervention. L'artisan vous le communique avant de commencer. Paiement après intervention uniquement."
+      }
+    ],
+
+    "blog_links": ["chauffe-eau-fuit", "installation-chauffe-eau-electrique", "remplacement-cumulus-maroc"]
+  },
+
+  "porte-bloquee": {
+    "slug": "porte-bloquee",
+    "label": "Porte bloquée",
+    "service_key": "serrurier",
+    "parent_service_route": "/serrurier",
+    "breadcrumb_label": "Porte bloquée",
+    "icon": "🚪",
+    "uses_q11_wording": true,
+    "_q11_justification": "Being locked out is a genuine emergency situation, particularly at night or with children. Q11 request-submission wording is contextually accurate and appropriate.",
+
+    "title_template": "Porte bloquée à {{city.label}} — Serrurier référencé pour ouverture | Fixeo",
+    "meta_desc_template": "Porte bloquée à {{city.label}} ? Fixeo met en relation avec des serruriers référencés. Ouverture sans casse dans la majorité des cas. Tarif confirmé avant intervention.",
+    "h1_template": "Porte bloquée à {{city.label}} : ouverture par un serrurier référencé",
+
+    "intro_template": "Être bloqué devant sa porte à {{city.label}} est une situation stressante — encore plus la nuit ou avec des enfants. Fixeo met en relation les particuliers avec des serruriers référencés sur la plateforme, qui pratiquent des techniques d'ouverture non destructives (crochetage, décodage, carte) avant d'envisager tout perçage. L'objectif est d'ouvrir sans endommager la porte dans la grande majorité des cas. Votre demande est enregistrée à toute heure. L'artisan confirme sa disponibilité et le créneau dans les meilleurs délais.",
+
+    "body_sections": [
+      {
+        "kind": "how_it_works",
+        "title": "Comment ça marche ?",
+        "steps": [
+          {
+            "num": "1️⃣",
+            "title": "Décrivez la situation",
+            "body": "Précisez le type de porte (appartement, villa, commerce), le type de serrure si vous le connaissez, et l'adresse à {{city.label}}."
+          },
+          {
+            "num": "2️⃣",
+            "title": "Mise en relation",
+            "body": "Fixeo transmet votre demande aux serruriers référencés disponibles dans votre secteur de {{city.label}}."
+          },
+          {
+            "num": "3️⃣",
+            "title": "Tarif confirmé, paiement après",
+            "body": "L'artisan vous contacte, évalue la situation et vous communique le tarif avant toute intervention. Paiement après ouverture."
+          }
+        ]
+      },
+      {
+        "kind": "why_fixeo",
+        "title": "Pourquoi utiliser Fixeo ?",
+        "cards": [
+          {
+            "icon": "✅",
+            "title": "Profils référencés",
+            "body": "Les serruriers sur FIXEO sont des professionnels référencés sur la plateforme."
+          },
+          {
+            "icon": "💰",
+            "title": "Tarif confirmé avant intervention",
+            "body": "Le montant vous est communiqué avant que l'artisan ne commence. Pas de tarif imposé à l'arrivée."
+          },
+          {
+            "icon": "🛡️",
+            "title": "Paiement après intervention",
+            "body": "Vous ne payez qu'une fois la porte ouverte. Aucun acompte n'est demandé."
+          }
+        ]
+      },
+      {
+        "kind": "diagnostic_info",
+        "title": "Situations courantes",
+        "items": [
+          { "icon": "🔑", "label": "Porte claquée (clé restée à l'intérieur)" },
+          { "icon": "🔐", "label": "Mécanisme de serrure bloqué ou grippé" },
+          { "icon": "🚪", "label": "Serrure multipoints qui refuse de s'ouvrir" },
+          { "icon": "🔩", "label": "Clé cassée dans le barillet" }
+        ]
+      }
+    ],
+
+    "faq": [
+      {
+        "q": "Le serrurier peut-il ouvrir ma porte sans la casser ?",
+        "a": "Dans la grande majorité des cas, un serrurier expérimenté peut ouvrir une porte sans endommager ni la porte ni le cadre, grâce aux techniques de crochetage et de décodage. Le perçage n'est envisagé qu'en dernier recours (serrure multipoints haute sécurité, barillet antidéstructurage). L'artisan vous prévient avant d'utiliser cette méthode."
+      },
+      {
+        "q": "Dois-je remplacer ma serrure après une ouverture d'urgence ?",
+        "a": "Pas nécessairement si la serrure n'a pas été endommagée lors de l'ouverture. Si le barillet a été percé ou si la serrure est ancienne, l'artisan peut vous recommander un remplacement. La décision vous appartient et le tarif du remplacement éventuel vous est communiqué séparément."
+      },
+      {
+        "q": "Comment est fixé le tarif d'ouverture de porte à {{city.label}} ?",
+        "a": "Le tarif dépend du type de serrure, de la technique nécessaire et de l'horaire. Il vous est communiqué par l'artisan avant tout commencement. Paiement après ouverture uniquement."
+      }
+    ],
+
+    "blog_links": ["porte-claquee-comment-entrer", "serrure-multipoints-bloquee"]
+  },
+
+  "serrure-cassee": {
+    "slug": "serrure-cassee",
+    "label": "Serrure cassée",
+    "service_key": "serrurier",
+    "parent_service_route": "/serrurier",
+    "breadcrumb_label": "Serrure cassée",
+    "icon": "🔐",
+    "uses_q11_wording": true,
+    "_q11_justification": "A broken lock compromises home security immediately. Q11 wording is contextually appropriate — the situation is urgent from a security standpoint.",
+
+    "title_template": "Serrure cassée à {{city.label}} — Serrurier référencé pour remplacement | Fixeo",
+    "meta_desc_template": "Serrure cassée à {{city.label}} ? Fixeo met en relation avec des serruriers référencés. Remplacement rapide avec du matériel de qualité. Tarif confirmé avant intervention.",
+    "h1_template": "Serrure cassée à {{city.label}} : remplacement par un serrurier référencé",
+
+    "intro_template": "Une serrure cassée ou détériorée à {{city.label}} compromet immédiatement la sécurité de votre logement ou local professionnel. Que le canon soit fracturé, le mécanisme endommagé ou la poignée arrachée, il est important d'agir rapidement. Fixeo met en relation les particuliers et professionnels avec des serruriers référencés qui se déplacent généralement avec un stock de cylindres et mécanismes pour procéder au remplacement en une seule visite. Votre demande est enregistrée à toute heure. L'artisan confirme sa disponibilité et le créneau dans les meilleurs délais.",
+
+    "body_sections": [
+      {
+        "kind": "how_it_works",
+        "title": "Comment ça marche ?",
+        "steps": [
+          {
+            "num": "1️⃣",
+            "title": "Décrivez le problème",
+            "body": "Indiquez le type de serrure (simple, multipoints, blindée), la nature du dommage et l'adresse à {{city.label}}."
+          },
+          {
+            "num": "2️⃣",
+            "title": "Mise en relation",
+            "body": "Fixeo transmet votre demande aux serruriers référencés disponibles dans votre secteur de {{city.label}}."
+          },
+          {
+            "num": "3️⃣",
+            "title": "Remplacement, tarif confirmé",
+            "body": "L'artisan vous contacte, évalue la situation et vous communique le tarif — cylindre et main-d'œuvre inclus. Paiement après remplacement."
+          }
+        ]
+      },
+      {
+        "kind": "why_fixeo",
+        "title": "Pourquoi utiliser Fixeo ?",
+        "cards": [
+          {
+            "icon": "✅",
+            "title": "Profils référencés",
+            "body": "Les serruriers sur FIXEO sont des professionnels référencés sur la plateforme."
+          },
+          {
+            "icon": "💰",
+            "title": "Tarif confirmé avant intervention",
+            "body": "Le coût total (main-d'œuvre + fourniture du cylindre) vous est communiqué avant que l'artisan commence."
+          },
+          {
+            "icon": "🛡️",
+            "title": "Paiement après intervention",
+            "body": "Vous ne payez qu'une fois le remplacement terminé."
+          }
+        ]
+      },
+      {
+        "kind": "diagnostic_info",
+        "title": "Situations fréquentes",
+        "items": [
+          { "icon": "🔩", "label": "Canon de serrure fracturé ou arraché" },
+          { "icon": "🔐", "label": "Mécanisme interne bloqué ou cassé" },
+          { "icon": "🚪", "label": "Poignée ou béquille arrachée" },
+          { "icon": "🔑", "label": "Clé cassée dans le barillet" }
+        ]
+      }
+    ],
+
+    "faq": [
+      {
+        "q": "Quel type de cylindre choisir pour renforcer ma sécurité à {{city.label}} ?",
+        "a": "Un cylindre avec certification A2P (résistance au crochetage, au perçage et à la traction) offre un bon niveau de sécurité. Pour une porte d'entrée principale, un cylindre A2P* ou A2P** est recommandé. L'artisan peut vous conseiller sur le choix adapté à votre type de porte et à votre budget."
+      },
+      {
+        "q": "Le remplacement de serrure se fait-il en une seule visite ?",
+        "a": "Dans la grande majorité des cas, oui. Les serruriers référencés sur FIXEO se déplacent généralement avec un stock de cylindres standards. Pour des serrures multipoints ou blindées sur mesure, une deuxième visite peut être nécessaire si la pièce doit être commandée. L'artisan vous informera dès le diagnostic."
+      },
+      {
+        "q": "Comment est fixé le tarif de remplacement à {{city.label}} ?",
+        "a": "Le tarif comprend la main-d'œuvre et la fourniture du nouveau cylindre ou mécanisme. Il vous est communiqué par l'artisan avant tout commencement. Paiement après remplacement uniquement."
+      }
+    ],
+
+    "blog_links": ["canon-serrure-casse", "changer-serrure-appartement", "cylindre-europeen-changer"]
+  },
+
+  "panne-electrique": {
+    "slug": "panne-electrique",
+    "label": "Panne électrique",
+    "service_key": "electricien",
+    "parent_service_route": "/electricien",
+    "breadcrumb_label": "Panne électrique",
+    "icon": "⚡",
+    "uses_q11_wording": true,
+    "_q11_justification": "A power outage can range from a minor trip to a serious fault. The situation warrants the request-submission framing without implying guaranteed response speed.",
+
+    "title_template": "Panne électrique à {{city.label}} — Électricien référencé pour diagnostic | Fixeo",
+    "meta_desc_template": "Panne électrique à {{city.label}} ? Fixeo met en relation avec des électriciens référencés. Diagnostic sur place, intervention sécurisée. Tarif confirmé avant tout travaux.",
+    "h1_template": "Panne électrique à {{city.label}} : électricien référencé pour diagnostic",
+
+    "intro_template": "Une panne électrique à {{city.label}} peut aller d'un simple disjoncteur déclenché à un court-circuit plus sérieux nécessitant une intervention technique. Ne prenez pas de risques avec l'électricité — une mauvaise manipulation peut aggraver la panne ou présenter un danger. Fixeo met en relation les particuliers et professionnels de {{city.label}} avec des électriciens référencés sur la plateforme, habitués aux installations en vigueur au Maroc (tableaux ONE, compteurs RADEEF, systèmes domestiques standards). Votre demande est enregistrée à toute heure. L'artisan confirme sa disponibilité et le créneau dans les meilleurs délais.",
+
+    "body_sections": [
+      {
+        "kind": "how_it_works",
+        "title": "Comment ça marche ?",
+        "steps": [
+          {
+            "num": "1️⃣",
+            "title": "Décrivez la panne",
+            "body": "Indiquez ce qui ne fonctionne plus (tout le logement, une prise, un circuit) et l'adresse à {{city.label}}."
+          },
+          {
+            "num": "2️⃣",
+            "title": "Mise en relation",
+            "body": "Fixeo transmet votre demande aux électriciens référencés disponibles dans votre secteur de {{city.label}}."
+          },
+          {
+            "num": "3️⃣",
+            "title": "Diagnostic sur place, tarif confirmé",
+            "body": "L'artisan identifie l'origine de la panne, vous communique le tarif avant toute intervention. Paiement après travaux."
+          }
+        ]
+      },
+      {
+        "kind": "why_fixeo",
+        "title": "Pourquoi utiliser Fixeo ?",
+        "cards": [
+          {
+            "icon": "✅",
+            "title": "Profils référencés",
+            "body": "Les électriciens sur FIXEO sont des professionnels référencés sur la plateforme."
+          },
+          {
+            "icon": "💰",
+            "title": "Tarif confirmé avant intervention",
+            "body": "Le montant définitif vous est communiqué après diagnostic, avant tout commencement des travaux."
+          },
+          {
+            "icon": "🛡️",
+            "title": "Paiement après intervention",
+            "body": "Vous ne payez qu'une fois l'intervention terminée."
+          }
+        ]
+      },
+      {
+        "kind": "diagnostic_info",
+        "title": "Types de pannes électriques fréquentes",
+        "items": [
+          { "icon": "⚡", "label": "Disjoncteur général déclenché (coupure totale)" },
+          { "icon": "🔌", "label": "Circuit partiel hors tension (une pièce, une ligne)" },
+          { "icon": "💡", "label": "Court-circuit (odeur de brûlé, étincelles)" },
+          { "icon": "🔧", "label": "Prise ou interrupteur défectueux" }
+        ]
+      }
+    ],
+
+    "faq": [
+      {
+        "q": "Que faire en attendant l'électricien lors d'une panne à {{city.label}} ?",
+        "a": "Vérifiez d'abord si la panne provient du compteur de votre opérateur (ONE, RADEEF) — un voyant sur le compteur peut l'indiquer. Si c'est un disjoncteur interne qui a sauté, vous pouvez tenter de le réarmer une fois. En cas d'odeur de brûlé, d'étincelles ou de chaleur anormale, ne touchez à rien et coupez le compteur principal avant l'arrivée de l'artisan."
+      },
+      {
+        "q": "L'électricien peut-il intervenir sur les compteurs ONE ou RADEEF ?",
+        "a": "Les compteurs et branchements de rue relèvent de la compétence exclusive de l'opérateur public (ONE, RADEEF, REDAL selon la ville). Un électricien intervient sur l'installation intérieure du logement — tableau, circuits, prises, éclairage. Si la panne vient du réseau, l'artisan peut vous conseiller sur la démarche à suivre auprès de l'opérateur."
+      },
+      {
+        "q": "Comment est fixé le tarif d'intervention pour une panne électrique à {{city.label}} ?",
+        "a": "Le tarif dépend de la nature de la panne, de la durée d'intervention et des fournitures éventuelles. Il vous est communiqué par l'artisan après diagnostic, avant tout commencement. Paiement après intervention uniquement."
+      }
+    ],
+
+    "blog_links": ["disjoncteur-saute-souvent", "court-circuit-maison", "panne-tableau-electrique"]
+  },
+
+  "disjoncteur-saute": {
+    "slug": "disjoncteur-saute",
+    "label": "Disjoncteur qui saute",
+    "service_key": "electricien",
+    "parent_service_route": "/electricien",
+    "breadcrumb_label": "Disjoncteur qui saute",
+    "icon": "🔌",
+    "uses_q11_wording": false,
+    "_q11_justification": "A tripping breaker is a recurring diagnostic situation, not an emergency. No structural risk, no safety hazard in most cases. Q11 wording is not warranted here and would falsely imply urgency.",
+
+    "title_template": "Disjoncteur qui saute à {{city.label}} — Électricien référencé pour diagnostic | Fixeo",
+    "meta_desc_template": "Disjoncteur qui saute à {{city.label}} ? Fixeo met en relation avec des électriciens référencés. Diagnostic de surcharge, court-circuit ou défaut d'isolement. Tarif confirmé avant intervention.",
+    "h1_template": "Disjoncteur qui saute à {{city.label}} : diagnostic par un électricien référencé",
+
+    "intro_template": "Un disjoncteur qui saute régulièrement à {{city.label}} n'est pas une simple gêne — c'est souvent le signe d'un problème électrique sous-jacent qu'il faut identifier avant qu'il ne s'aggrave. Les causes sont variées : surcharge de circuit (trop d'appareils sur une même ligne), court-circuit, défaut d'isolement ou appareil électroménager défectueux. Dans les foyers de {{city.label}} qui se sont équipés en climatiseurs, chauffe-eau électriques et appareils modernes, l'installation d'origine peut aussi être sous-dimensionnée. Fixeo met en relation les particuliers avec des électriciens référencés capables d'identifier la cause avec précision et de proposer une solution durable — pas seulement un réarmement.",
+
+    "body_sections": [
+      {
+        "kind": "how_it_works",
+        "title": "Comment ça marche ?",
+        "steps": [
+          {
+            "num": "1️⃣",
+            "title": "Décrivez le comportement",
+            "body": "Précisez quand le disjoncteur saute (au démarrage d'un appareil, au bout de quelques minutes, aléatoirement) et l'adresse à {{city.label}}."
+          },
+          {
+            "num": "2️⃣",
+            "title": "Mise en relation",
+            "body": "Fixeo transmet votre demande aux électriciens référencés disponibles dans votre secteur de {{city.label}}."
+          },
+          {
+            "num": "3️⃣",
+            "title": "Diagnostic et solution durable",
+            "body": "L'artisan identifie la cause, vous communique le tarif avant toute intervention. Paiement après travaux."
+          }
+        ]
+      },
+      {
+        "kind": "why_fixeo",
+        "title": "Pourquoi utiliser Fixeo ?",
+        "cards": [
+          {
+            "icon": "✅",
+            "title": "Profils référencés",
+            "body": "Les électriciens sur FIXEO sont des professionnels référencés sur la plateforme."
+          },
+          {
+            "icon": "💰",
+            "title": "Tarif confirmé avant intervention",
+            "body": "Le montant vous est communiqué après diagnostic, avant tout commencement."
+          },
+          {
+            "icon": "🛡️",
+            "title": "Paiement après intervention",
+            "body": "Vous ne payez qu'une fois le problème résolu."
+          }
+        ]
+      },
+      {
+        "kind": "diagnostic_info",
+        "title": "Causes fréquentes d'un disjoncteur qui saute",
+        "items": [
+          { "icon": "🔌", "label": "Surcharge : trop d'appareils sur un même circuit" },
+          { "icon": "⚡", "label": "Court-circuit dans un appareil ou un câble" },
+          { "icon": "🔋", "label": "Défaut d'isolement (humidité, câble endommagé)" },
+          { "icon": "📊", "label": "Tableau électrique sous-dimensionné" }
+        ]
+      }
+    ],
+
+    "faq": [
+      {
+        "q": "Peut-on simplement réarmer le disjoncteur soi-même ?",
+        "a": "Oui, vous pouvez réarmer une fois pour vérifier si le disjoncteur reste en position. Si le disjoncteur saute à nouveau immédiatement ou systématiquement dès qu'un appareil est branché, il y a un problème sous-jacent à diagnostiquer. Ne continuez pas à réarmer en boucle — cela peut aggraver le défaut."
+      },
+      {
+        "q": "Mon installation électrique est-elle sous-dimensionnée ?",
+        "a": "Les installations dans les logements marocains construits avant 2010 n'avaient pas toujours prévu la charge des équipements modernes (climatiseurs réversibles, chauffe-eau électriques, fours à induction). Un électricien peut évaluer la capacité de votre tableau et vous proposer un renforcement de circuit ou l'ajout d'un disjoncteur différentiel adapté."
+      },
+      {
+        "q": "Comment est fixé le tarif de diagnostic à {{city.label}} ?",
+        "a": "Le tarif de diagnostic et d'intervention est établi par l'artisan après évaluation sur place. Il vous est communiqué avant tout commencement. En cas d'accord, le paiement s'effectue après la fin de l'intervention."
+      }
+    ],
+
+    "blog_links": ["disjoncteur-saute-souvent", "tableau-electrique-upgrade", "court-circuit-maison"]
+  },
+
+  "climatisation-en-panne": {
+    "slug": "climatisation-en-panne",
+    "label": "Climatisation en panne",
+    "service_key": "climatisation",
+    "parent_service_route": "/climatisation",
+    "breadcrumb_label": "Climatisation en panne",
+    "icon": "❄️",
+    "uses_q11_wording": true,
+    "_q11_justification": "In peak summer heat (July–August in Morocco), a failed AC unit can be a genuine health risk for elderly or young children. Q11 wording is contextually justified, without implying guaranteed response speed.",
+
+    "title_template": "Climatisation en panne à {{city.label}} — Technicien référencé pour réparation | Fixeo",
+    "meta_desc_template": "Climatisation en panne à {{city.label}} ? Fixeo met en relation avec des techniciens climatisation référencés. Diagnostic sur place, toutes marques. Tarif confirmé avant intervention.",
+    "h1_template": "Climatisation en panne à {{city.label}} : technicien référencé pour diagnostic et réparation",
+
+    "intro_template": "En été à {{city.label}}, une climatisation en panne n'est pas un simple désagrément — pour les personnes âgées, les jeunes enfants ou les logements mal ventilés, la chaleur peut rapidement devenir difficile à supporter. Les pannes les plus courantes (manque de gaz réfrigérant, compresseur défaillant, carte électronique, fuite du circuit frigorifique) nécessitent un diagnostic technique avec les bons instruments de mesure. Fixeo met en relation les particuliers avec des techniciens climatisation référencés sur la plateforme, familiers des marques courantes au Maroc : Chigo, Carrier, Daikin, Gree, Midea. Votre demande est enregistrée à toute heure. L'artisan confirme sa disponibilité et le créneau dans les meilleurs délais.",
+
+    "body_sections": [
+      {
+        "kind": "how_it_works",
+        "title": "Comment ça marche ?",
+        "steps": [
+          {
+            "num": "1️⃣",
+            "title": "Décrivez la panne",
+            "body": "Indiquez la marque, le modèle et les symptômes observés (ne refroidit plus, fait du bruit, fuit, s'éteint seul) et l'adresse à {{city.label}}."
+          },
+          {
+            "num": "2️⃣",
+            "title": "Mise en relation",
+            "body": "Fixeo transmet votre demande aux techniciens climatisation référencés disponibles dans votre secteur de {{city.label}}."
+          },
+          {
+            "num": "3️⃣",
+            "title": "Diagnostic sur place, tarif confirmé",
+            "body": "Le technicien diagnostique l'appareil, vous communique le tarif avant toute réparation ou remplacement de pièce."
+          }
+        ]
+      },
+      {
+        "kind": "why_fixeo",
+        "title": "Pourquoi utiliser Fixeo ?",
+        "cards": [
+          {
+            "icon": "✅",
+            "title": "Profils référencés",
+            "body": "Les techniciens sur FIXEO sont des professionnels référencés sur la plateforme."
+          },
+          {
+            "icon": "💰",
+            "title": "Tarif confirmé avant intervention",
+            "body": "Le coût de la réparation vous est communiqué après diagnostic, avant tout remplacement de pièce."
+          },
+          {
+            "icon": "🛡️",
+            "title": "Paiement après intervention",
+            "body": "Vous ne payez qu'une fois la réparation terminée."
+          }
+        ]
+      },
+      {
+        "kind": "diagnostic_info",
+        "title": "Pannes fréquentes de climatisation",
+        "items": [
+          { "icon": "🧊", "label": "Manque de gaz réfrigérant (ne refroidit plus)" },
+          { "icon": "⚙️", "label": "Compresseur défaillant (bruit anormal, surchauffe)" },
+          { "icon": "💧", "label": "Fuite sur le circuit frigorifique" },
+          { "icon": "🔌", "label": "Carte électronique ou capteur en défaut" },
+          { "icon": "🌀", "label": "Ventilateur ou condenseur encrassé" }
+        ]
+      }
+    ],
+
+    "faq": [
+      {
+        "q": "Ma climatisation peut-elle être réparée ou doit-elle être remplacée ?",
+        "a": "Cela dépend de l'âge de l'appareil et de la nature de la panne. Un climatiseur de moins de 7–8 ans avec une panne isolée (recharge de gaz, carte électronique) est généralement réparable à coût raisonnable. Au-delà de 10 ans, notamment si le compresseur est défaillant, le remplacement peut être plus économique à long terme. L'artisan vous présente les deux options avant toute décision."
+      },
+      {
+        "q": "Combien de temps prend un diagnostic de climatisation à {{city.label}} ?",
+        "a": "Un diagnostic standard prend généralement entre 30 et 60 minutes. Si la panne nécessite une pièce de rechange non disponible sur place, une deuxième visite peut être nécessaire. L'artisan vous informera après le premier diagnostic."
+      },
+      {
+        "q": "Comment est fixé le tarif de réparation climatisation à {{city.label}} ?",
+        "a": "Le tarif comprend le déplacement, le diagnostic et les pièces nécessaires. Il vous est communiqué par l'artisan après évaluation, avant tout commencement de réparation. Paiement après intervention uniquement."
+      }
+    ],
+
+    "blog_links": ["clim-ne-refroidit-plus", "compresseur-clim-en-panne", "recharge-gaz-climatisation"]
+  }
+}
