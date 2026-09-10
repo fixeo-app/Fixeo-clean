@@ -3,6 +3,19 @@
  * FIXEO LP Generator — generate-lps.js
  * Version: lpgen-v1a — 2026-06-12
  * ─────────────────────────────────────────────────────────
+ *
+ * ╔══════════════════════════════════════════════════════════╗
+ * ║  LEGACY / FROZEN — DO NOT USE FOR SERVICE×CITY          ║
+ * ║  PRODUCTION GENERATION                                  ║
+ * ║                                                         ║
+ * ║  SEO V3 owns all service×city page generation.          ║
+ * ║  Canonical generator:                                   ║
+ * ║    seo/generators/generate-service-cities-v3.js         ║
+ * ║                                                         ║
+ * ║  This file is retained for historical reference ONLY.   ║
+ * ║  Execution is blocked by a hard safety guard below.     ║
+ * ╚══════════════════════════════════════════════════════════╝
+ *
  * Programmatic local page generator.
  * Reads CITY_DATA + SERVICE_DATA below,
  * stamps a hardcoded base template with city/service specific content,
@@ -31,6 +44,31 @@
  */
 
 'use strict';
+
+/* ═══════════════════════════════════════════════════════════
+   SAFETY GUARD — DO NOT REMOVE
+   This generator is LEGACY / FROZEN.
+   SEO V3 owns service×city generation.
+   Use: seo/generators/generate-service-cities-v3.js
+══════════════════════════════════════════════════════════ */
+(function legacyGeneratorGuard() {
+  const msg = [
+    '',
+    '╔══════════════════════════════════════════════════════════╗',
+    '║  BLOCKED: legacy service×city generator                 ║',
+    '║                                                         ║',
+    '║  This generator (generate-lps.js) is FROZEN.            ║',
+    '║  SEO V3 owns all service×city page generation.          ║',
+    '║                                                         ║',
+    '║  Use the canonical V3 generator instead:               ║',
+    '║    node seo/generators/generate-service-cities-v3.js   ║',
+    '╚══════════════════════════════════════════════════════════╝',
+    '',
+  ].join('\n');
+  process.stderr.write(msg + '\n');
+  process.exit(1);
+}());
+
 const fs   = require('fs');
 const path = require('path');
 
