@@ -258,6 +258,9 @@ DO $$ BEGIN RAISE NOTICE '7c13a2 — enterprise_sites RLS enabled, 4 policies cr
 
 REVOKE ALL ON public.enterprise_sites FROM PUBLIC;
 REVOKE ALL ON public.enterprise_sites FROM anon;
+-- Supabase default privileges grant authenticated=arwdDxtm on every new table.
+-- Explicitly revoke all before issuing minimum required grants.
+REVOKE ALL ON public.enterprise_sites FROM authenticated;
 
 GRANT SELECT ON public.enterprise_sites TO authenticated;
 
