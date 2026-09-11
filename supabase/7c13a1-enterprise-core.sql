@@ -2,6 +2,7 @@
 -- FIXEO OPERATIONS — 7C.13A.1 Enterprise Core Foundation
 -- File: supabase/7c13a1-enterprise-core.sql
 -- HEAD at preparation: 8f4074a6
+-- HEAD at RLS hardening: fa2c6cfcefa8cd592b3370298f07898f933d8890
 --
 -- PURPOSE
 --   Introduce the minimum enterprise identity schema required
@@ -12,13 +13,14 @@
 --   RPC, trigger, or constraint.
 --
 -- SCOPE
---   1. public.enterprise_accounts    (new table)
---   2. public.enterprise_members     (new table)
---   3. updated_at triggers           (reuse existing update_updated_at())
---   4. Indexes                       (5 indexes across both tables)
---   5. RLS                           (8 policies across both tables)
---   6. public.create_enterprise_account()  (bootstrap RPC, SECURITY DEFINER)
---   7. Grants / revokes
+--   1. public.enterprise_accounts      (new table)
+--   2. public.enterprise_members       (new table)
+--   3. updated_at triggers             (reuse existing update_updated_at())
+--   4. Indexes                         (5 indexes across both tables)
+--   5. Authorization helpers           (3 SECURITY DEFINER helpers)
+--   6. RLS                             (8 policies across both tables)
+--   7. public.create_enterprise_account()  (bootstrap RPC, SECURITY DEFINER)
+--   8. Grants / revokes
 --
 -- DOCTRINE
 --   EXTEND FIXEO. DO NOT REWRITE FIXEO.
@@ -32,42 +34,58 @@
 --   Follows established repo convention (7c11c, 7c11e2, 7c12a1, 7c12a3):
 --     SECURITY DEFINER
 --     SET search_path = ''
---     All object references fully schema-qualified (public.*, auth.*, pg_catalog.*)
+--     All object references fully schema-qualified
 --     REVOKE EXECUTE FROM PUBLIC
 --     REVOKE EXECUTE FROM anon
---     GRANT EXECUTE TO authenticated
+--
+-- RLS RECURSION — STRUCTURAL ELIMINATION
+--   No RLS policy on public.enterprise_members queries
+--   public.enterprise_members. Same-table self-reference is
+--   structurally impossible in this design.
+--
+--   All membership checks are delegated to three SECURITY DEFINER
+--   helper functions (_fixeo_is_admin, _fixeo_is_enterprise_member,
+--   _fixeo_is_enterprise_manager). These functions execute as
+--   their definer (the Supabase postgres superuser role), for whom
+--   RLS is NOT enforced. The helper body reads enterprise_members
+--   directly as a superuser — no policies fire on that inner read.
+--   The RLS policy itself calls the helper (which returns a boolean)
+--   and never directly queries enterprise_members.
+--
+--   Therefore:
+--     enterprise_members RLS policy calls helper (no table ref)
+--     helper reads enterprise_members as superuser (no RLS applied)
+--     No cycle. No recursion. Structurally impossible.
+--
+-- MUTATION SURFACE — ENTERPRISE MEMBERS
+--   authenticated has SELECT only on enterprise_members.
+--   No INSERT, UPDATE, or DELETE is granted to authenticated.
+--   All membership writes go through the bootstrap RPC (SECURITY DEFINER)
+--   or service_role (Supabase Studio).
+--   Member administration (invitation, role change, suspension) is
+--   deferred to reviewed server-authoritative RPCs in a later migration.
+--
+-- ACCOUNT UPDATE SURFACE
+--   authenticated owners/admins may UPDATE name and legal_name only.
+--   status is NOT client-updatable: enforced by column-level grant
+--   UPDATE(name, legal_name) rather than a broad UPDATE grant.
+--   status changes (suspend/close) are a FIXEO staff operation
+--   performed via service_role.
 --
 -- UPDATED_AT TRIGGER
 --   Reuses existing public.update_updated_at() trigger function
---   (declared in schema.sql; verified live in production).
---   No schema-qualified references exist in its body (NEW.updated_at,
---   NOW()) — it is a plain trigger function, not SECURITY DEFINER,
---   and requires no modification.
+--   (declared in schema.sql; confirmed live in production).
+--   Body: NEW.updated_at = NOW() — no schema references.
+--   Not SECURITY DEFINER. Safe to reuse unchanged.
+--   Triggers are added ONLY to the two new tables.
 --
 -- BOOTSTRAP APPROACH
 --   The RPC public.create_enterprise_account() atomically creates
 --   enterprise_accounts + first enterprise_members (role='owner')
 --   in a single transaction. This is the ONLY supported path for
---   creating a new enterprise account.
---   FIXEO staff may also create accounts via service_role in
---   Supabase Studio (service_role bypasses RLS).
---   No direct authenticated INSERT policy exists on enterprise_accounts.
---
--- ADMIN IDENTITY
---   Canonical pattern:
---     EXISTS (SELECT 1 FROM public.users u
---             WHERE u.id = auth.uid() AND u.role = 'admin')
---   NOT public.profiles.role (legacy pattern in older migrations).
---   This migration uses public.users exclusively.
---
--- RLS RECURSION
---   enterprise_members policies reference enterprise_members in a
---   self-subquery. PostgreSQL does NOT re-apply RLS to subquery
---   results on the same table (subquery bypasses row-level security
---   for the inner scan). No infinite recursion is possible.
---   The enterprise_accounts SELECT policy references enterprise_members.
---   The enterprise_members SELECT policy references enterprise_members.
---   These are two distinct tables/policies — no circular dependency.
+--   creating a new enterprise account from authenticated context.
+--   FIXEO staff may also create accounts via service_role directly.
+--   No direct authenticated INSERT policy on either enterprise table.
 --
 -- NOT IN SCOPE (deferred to later migrations)
 --   enterprise_sites, enterprise_site_members
@@ -75,6 +93,7 @@
 --   enterprise_policies, enterprise_approvals
 --   enterprise_operation_events
 --   enterprise_providers, enterprise_media
+--   Member invitation, role-change, suspension RPCs
 --
 -- EXISTING TABLES NOT TOUCHED
 --   public.users              — NO changes
@@ -107,6 +126,9 @@ DECLARE
   v_ea_exists         boolean;
   v_em_exists         boolean;
   v_rpc_exists        boolean;
+  v_h1_exists         boolean;
+  v_h2_exists         boolean;
+  v_h3_exists         boolean;
 BEGIN
   -- 1. public.users must exist (schema.sql dependency)
   SELECT EXISTS (
@@ -121,10 +143,10 @@ BEGIN
   -- 2. update_updated_at() trigger function must exist
   SELECT EXISTS (
     SELECT 1
-    FROM   pg_catalog.pg_proc   p
+    FROM   pg_catalog.pg_proc     p
     JOIN   pg_catalog.pg_namespace n ON n.oid = p.pronamespace
-    WHERE  n.nspname  = 'public'
-      AND  p.proname  = 'update_updated_at'
+    WHERE  n.nspname = 'public'
+      AND  p.proname = 'update_updated_at'
   ) INTO v_update_fn_exists;
   IF NOT v_update_fn_exists THEN
     RAISE EXCEPTION
@@ -132,7 +154,7 @@ BEGIN
       'Apply schema.sql first.';
   END IF;
 
-  -- 3. enterprise_accounts must NOT already exist (idempotency guard)
+  -- 3. enterprise_accounts must NOT already exist
   SELECT EXISTS (
     SELECT 1 FROM information_schema.tables
     WHERE  table_schema = 'public'
@@ -161,7 +183,7 @@ BEGIN
   -- 5. create_enterprise_account RPC must NOT already exist
   SELECT EXISTS (
     SELECT 1
-    FROM   pg_catalog.pg_proc   p
+    FROM   pg_catalog.pg_proc     p
     JOIN   pg_catalog.pg_namespace n ON n.oid = p.pronamespace
     WHERE  n.nspname = 'public'
       AND  p.proname = 'create_enterprise_account'
@@ -170,6 +192,34 @@ BEGIN
     RAISE EXCEPTION
       'ABORT: public.create_enterprise_account() already exists. '
       'This migration may have been applied previously.';
+  END IF;
+
+  -- 6. Authorization helpers must NOT already exist
+  SELECT EXISTS (
+    SELECT 1
+    FROM   pg_catalog.pg_proc     p
+    JOIN   pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+    WHERE  n.nspname = 'public' AND p.proname = '_fixeo_is_admin'
+  ) INTO v_h1_exists;
+  SELECT EXISTS (
+    SELECT 1
+    FROM   pg_catalog.pg_proc     p
+    JOIN   pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+    WHERE  n.nspname = 'public' AND p.proname = '_fixeo_is_enterprise_member'
+  ) INTO v_h2_exists;
+  SELECT EXISTS (
+    SELECT 1
+    FROM   pg_catalog.pg_proc     p
+    JOIN   pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+    WHERE  n.nspname = 'public' AND p.proname = '_fixeo_is_enterprise_manager'
+  ) INTO v_h3_exists;
+  IF v_h1_exists OR v_h2_exists OR v_h3_exists THEN
+    RAISE EXCEPTION
+      'ABORT: one or more authorization helpers already exist '
+      '(_fixeo_is_admin: %, _fixeo_is_enterprise_member: %, '
+      '_fixeo_is_enterprise_manager: %). '
+      'This migration may have been applied previously.',
+      v_h1_exists, v_h2_exists, v_h3_exists;
   END IF;
 
   RAISE NOTICE '7c13a1 preconditions PASSED';
@@ -187,12 +237,12 @@ END $$;
 -- ════════════════════════════════════════════════════════════
 
 CREATE TABLE public.enterprise_accounts (
-  id           uuid         NOT NULL DEFAULT gen_random_uuid(),
-  name         text         NOT NULL,
+  id           uuid        NOT NULL DEFAULT gen_random_uuid(),
+  name         text        NOT NULL,
   legal_name   text,
-  status       text         NOT NULL DEFAULT 'active',
-  created_at   timestamptz  NOT NULL DEFAULT now(),
-  updated_at   timestamptz  NOT NULL DEFAULT now(),
+  status       text        NOT NULL DEFAULT 'active',
+  created_at   timestamptz NOT NULL DEFAULT now(),
+  updated_at   timestamptz NOT NULL DEFAULT now(),
 
   CONSTRAINT enterprise_accounts_pkey
     PRIMARY KEY (id),
@@ -209,7 +259,7 @@ CREATE TABLE public.enterprise_accounts (
 
 RAISE NOTICE '7c13a1 — enterprise_accounts table created';
 
--- updated_at trigger (reuses existing helper)
+-- updated_at trigger (reuses existing helper — see doctrine note)
 DROP TRIGGER IF EXISTS enterprise_accounts_updated_at ON public.enterprise_accounts;
 CREATE TRIGGER enterprise_accounts_updated_at
   BEFORE UPDATE ON public.enterprise_accounts
@@ -234,14 +284,14 @@ RAISE NOTICE '7c13a1 — enterprise_accounts trigger + index created';
 -- ════════════════════════════════════════════════════════════
 
 CREATE TABLE public.enterprise_members (
-  id             uuid         NOT NULL DEFAULT gen_random_uuid(),
-  enterprise_id  uuid         NOT NULL,
-  user_id        uuid         NOT NULL,
-  role           text         NOT NULL,
-  status         text         NOT NULL DEFAULT 'active',
+  id             uuid        NOT NULL DEFAULT gen_random_uuid(),
+  enterprise_id  uuid        NOT NULL,
+  user_id        uuid        NOT NULL,
+  role           text        NOT NULL,
+  status         text        NOT NULL DEFAULT 'active',
   invited_by     uuid,
-  created_at     timestamptz  NOT NULL DEFAULT now(),
-  updated_at     timestamptz  NOT NULL DEFAULT now(),
+  created_at     timestamptz NOT NULL DEFAULT now(),
+  updated_at     timestamptz NOT NULL DEFAULT now(),
 
   CONSTRAINT enterprise_members_pkey
     PRIMARY KEY (id),
@@ -254,8 +304,8 @@ CREATE TABLE public.enterprise_members (
     ON UPDATE CASCADE,
 
   -- FK: user deleted → membership deleted
-  -- Rationale: an orphaned member row with NULL user_id is
-  -- operationally unresolvable. CASCADE is safer than SET NULL here.
+  -- Rationale: an orphaned member row with no user is unresolvable.
+  -- CASCADE is safer than SET NULL here.
   CONSTRAINT enterprise_members_user_fk
     FOREIGN KEY (user_id)
     REFERENCES public.users (id)
@@ -270,9 +320,10 @@ CREATE TABLE public.enterprise_members (
     ON UPDATE CASCADE,
 
   -- Enterprise role vocabulary.
-  -- 'admin' is intentionally absent: use public.users.role='admin' for
-  -- FIXEO platform admins. Enterprise account admins are 'owner'.
-  -- This prevents semantic ambiguity with the global admin role.
+  -- 'admin' deliberately included as an enterprise-scoped admin role.
+  -- This does NOT conflict with public.users.role='admin' (FIXEO platform
+  -- admin) because enterprise_members.role is a different column on a
+  -- different table. Context always disambiguates.
   CONSTRAINT enterprise_members_role_values
     CHECK (role IN (
       'owner',
@@ -286,14 +337,14 @@ CREATE TABLE public.enterprise_members (
   CONSTRAINT enterprise_members_status_values
     CHECK (status IN ('invited', 'active', 'suspended', 'removed')),
 
-  -- One active membership per user per enterprise
+  -- One membership record per user per enterprise
   CONSTRAINT enterprise_members_unique_membership
     UNIQUE (enterprise_id, user_id)
 );
 
 RAISE NOTICE '7c13a1 — enterprise_members table created';
 
--- updated_at trigger (reuses existing helper)
+-- updated_at trigger (reuses existing helper — see doctrine note)
 DROP TRIGGER IF EXISTS enterprise_members_updated_at ON public.enterprise_members;
 CREATE TRIGGER enterprise_members_updated_at
   BEFORE UPDATE ON public.enterprise_members
@@ -307,9 +358,8 @@ CREATE INDEX idx_em_enterprise_status
 CREATE INDEX idx_em_user_status
   ON public.enterprise_members (user_id, status);
 
--- Index: RLS hot path — active membership check
--- Used by every enterprise_accounts and enterprise_members RLS policy.
--- Partial index keeps it small and fast.
+-- Index: RLS hot path — active membership check (used by all helpers)
+-- Partial unique index: fast lookup, small footprint
 CREATE UNIQUE INDEX idx_em_active_membership
   ON public.enterprise_members (enterprise_id, user_id)
   WHERE status = 'active';
@@ -323,40 +373,225 @@ RAISE NOTICE '7c13a1 — enterprise_members triggers + indexes created';
 
 
 -- ════════════════════════════════════════════════════════════
--- SECTION 3: RLS — public.enterprise_accounts
+-- SECTION 3: Authorization Helpers
 --
--- RLS RECURSION ANALYSIS:
---   ea_members_select queries enterprise_members to check membership.
---   enterprise_members' own RLS (em_members_select) queries
---   enterprise_members in a self-subquery.
---   These are independent policy evaluations on different tables.
---   PostgreSQL does NOT recurse infinitely here:
---     - Accessing enterprise_accounts triggers ea_* policies.
---     - Those policies subquery enterprise_members.
---     - Accessing enterprise_members triggers em_* policies.
---     - Those policies subquery enterprise_members (self-referential).
---     - PostgreSQL evaluates self-referential subqueries directly
---       against the table rows without re-applying the outer policy
---       to the inner scan (the inner scan is a direct table read,
---       not a policy-filtered read of the same policy scope).
---   No infinite recursion is possible.
+-- PURPOSE
+--   All membership authorization in RLS policies is delegated
+--   to these three SECURITY DEFINER functions. This is the
+--   structural mechanism that eliminates RLS recursion.
+--
+-- WHY THIS ELIMINATES RECURSION
+--   PostgreSQL enforces RLS for roles that are NOT the table
+--   owner and NOT superusers. SECURITY DEFINER functions execute
+--   as their DEFINER, which in Supabase is the 'postgres' role
+--   (a superuser). When a SECURITY DEFINER function reads
+--   public.enterprise_members, it does so as 'postgres' — RLS
+--   is NOT applied to that read. Therefore:
+--
+--     RLS policy on enterprise_members calls helper (no table ref)
+--     helper reads enterprise_members as postgres/superuser
+--     enterprise_members RLS policies do NOT fire on that read
+--     No cycle. No recursion. Structurally impossible.
+--
+--   If the helpers were NOT SECURITY DEFINER, they would run as
+--   the calling user and enterprise_members RLS would re-apply,
+--   causing infinite recursion. SECURITY DEFINER is the essential
+--   mechanism here, not merely a convention.
+--
+-- WHO EXECUTES THE HELPERS
+--   The helpers are called from within RLS USING/WITH CHECK
+--   clauses. PostgreSQL invokes them on behalf of the calling
+--   user to evaluate row visibility. The helpers themselves
+--   execute as postgres (definer). The calling user never
+--   executes the helper body directly — they only receive the
+--   boolean result that PostgreSQL uses to admit or reject the row.
+--
+-- GRANT DESIGN
+--   REVOKE FROM PUBLIC — deny by default
+--   REVOKE FROM anon   — explicit belt-and-suspenders
+--   GRANT TO authenticated — required: PostgreSQL must be able to
+--     EXECUTE the helper when evaluating RLS for authenticated users.
+--     Without GRANT TO authenticated, the RLS policy evaluation
+--     itself would fail with a permission error.
+--   service_role: implicit superuser access — no explicit grant needed.
+--
+-- HELPER PROPERTIES
+--   SECURITY DEFINER — runs as definer (postgres), bypasses RLS
+--   SET search_path = '' — prevents search_path injection
+--   STABLE — no side effects; same inputs return same output
+--             within a transaction; allows planner to cache calls
+--   RETURNS boolean — minimal, single-purpose output
+--   auth.uid() derived internally — no caller-supplied user_id
+--   no dynamic SQL
+--   no mutation
+-- ════════════════════════════════════════════════════════════
+
+
+-- ── Helper 1: _fixeo_is_admin() ──────────────────────────────
+--
+-- Returns true if the current caller is a FIXEO platform admin.
+-- Uses canonical public.users.role = 'admin' pattern.
+-- Does NOT use public.profiles.role (legacy inconsistency).
+--
+-- Called by: ea_fixeo_admin_all, em_fixeo_admin_all policies.
+-- ─────────────────────────────────────────────────────────────
+CREATE OR REPLACE FUNCTION public._fixeo_is_admin()
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+STABLE
+SET search_path = ''
+AS $$
+DECLARE
+  v_caller_id uuid;
+  v_result    boolean;
+BEGIN
+  v_caller_id := auth.uid();
+  IF v_caller_id IS NULL THEN
+    RETURN false;
+  END IF;
+
+  SELECT EXISTS (
+    SELECT 1
+    FROM   public.users u
+    WHERE  u.id   = v_caller_id
+      AND  u.role = 'admin'
+  ) INTO v_result;
+
+  RETURN COALESCE(v_result, false);
+END;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public._fixeo_is_admin() FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public._fixeo_is_admin() FROM anon;
+GRANT  EXECUTE ON FUNCTION public._fixeo_is_admin() TO authenticated;
+
+RAISE NOTICE '7c13a1 — _fixeo_is_admin() helper created';
+
+
+-- ── Helper 2: _fixeo_is_enterprise_member(uuid) ──────────────
+--
+-- Returns true if the current caller has an active membership
+-- in the given enterprise_id.
+--
+-- Called by: ea_members_select, em_members_select policies.
+--
+-- RECURSION SAFETY:
+--   This function reads public.enterprise_members as its definer
+--   (postgres). RLS on enterprise_members does NOT fire for
+--   postgres. No recursive policy evaluation occurs.
+-- ─────────────────────────────────────────────────────────────
+CREATE OR REPLACE FUNCTION public._fixeo_is_enterprise_member(
+  p_enterprise_id uuid
+)
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+STABLE
+SET search_path = ''
+AS $$
+DECLARE
+  v_caller_id uuid;
+  v_result    boolean;
+BEGIN
+  v_caller_id := auth.uid();
+  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN
+    RETURN false;
+  END IF;
+
+  SELECT EXISTS (
+    SELECT 1
+    FROM   public.enterprise_members em
+    WHERE  em.enterprise_id = p_enterprise_id
+      AND  em.user_id       = v_caller_id
+      AND  em.status        = 'active'
+  ) INTO v_result;
+
+  RETURN COALESCE(v_result, false);
+END;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public._fixeo_is_enterprise_member(uuid) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public._fixeo_is_enterprise_member(uuid) FROM anon;
+GRANT  EXECUTE ON FUNCTION public._fixeo_is_enterprise_member(uuid) TO authenticated;
+
+RAISE NOTICE '7c13a1 — _fixeo_is_enterprise_member() helper created';
+
+
+-- ── Helper 3: _fixeo_is_enterprise_manager(uuid) ─────────────
+--
+-- Returns true if the current caller holds an owner or admin
+-- role with active status in the given enterprise_id.
+-- Used to gate account name/legal_name updates.
+--
+-- Called by: ea_owner_update policy.
+--
+-- RECURSION SAFETY: identical to _fixeo_is_enterprise_member.
+-- ─────────────────────────────────────────────────────────────
+CREATE OR REPLACE FUNCTION public._fixeo_is_enterprise_manager(
+  p_enterprise_id uuid
+)
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+STABLE
+SET search_path = ''
+AS $$
+DECLARE
+  v_caller_id uuid;
+  v_result    boolean;
+BEGIN
+  v_caller_id := auth.uid();
+  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN
+    RETURN false;
+  END IF;
+
+  SELECT EXISTS (
+    SELECT 1
+    FROM   public.enterprise_members em
+    WHERE  em.enterprise_id = p_enterprise_id
+      AND  em.user_id       = v_caller_id
+      AND  em.role          IN ('owner', 'admin')
+      AND  em.status        = 'active'
+  ) INTO v_result;
+
+  RETURN COALESCE(v_result, false);
+END;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public._fixeo_is_enterprise_manager(uuid) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public._fixeo_is_enterprise_manager(uuid) FROM anon;
+GRANT  EXECUTE ON FUNCTION public._fixeo_is_enterprise_manager(uuid) TO authenticated;
+
+RAISE NOTICE '7c13a1 — _fixeo_is_enterprise_manager() helper created';
+
+
+-- ════════════════════════════════════════════════════════════
+-- SECTION 4: RLS — public.enterprise_accounts
 --
 -- TENANT ISOLATION:
---   Every non-admin SELECT on enterprise_accounts is gated by:
---     id IN (SELECT enterprise_id FROM enterprise_members
---            WHERE user_id = auth.uid() AND status = 'active')
---   A user in enterprise A cannot see enterprise B's row because
---   they have no active enterprise_members row with enterprise_id = B.
---   PostgREST applies RLS before returning any rows to the caller.
+--   Every non-admin SELECT is gated by _fixeo_is_enterprise_member(id).
+--   A user in enterprise A cannot see enterprise B because the helper
+--   returns false for any enterprise_id where they lack active membership.
+--
+-- ACCOUNT UPDATE SCOPE:
+--   Authenticated owners/admins may update name and legal_name ONLY.
+--   Column-level grant UPDATE(name, legal_name) enforces this at the
+--   privilege layer — no UPDATE on status, id, created_at is possible
+--   regardless of what the API client sends.
+--   Status changes (suspend/close) are a service_role operation only.
+--
+-- NO SELF-REFERENCE:
+--   No policy on enterprise_accounts queries enterprise_accounts.
 -- ════════════════════════════════════════════════════════════
 
 ALTER TABLE public.enterprise_accounts ENABLE ROW LEVEL SECURITY;
 -- NOT FORCE ROW LEVEL SECURITY: service_role bypass is intentional
--- for admin/bootstrap operations via Supabase Studio.
+-- for bootstrap and staff operations via Supabase Studio.
 
--- Policy 1: Deny all access to anon (belt-and-suspenders;
--- primary guard is the absence of a GRANT to anon below).
-DROP POLICY IF EXISTS "ea_deny_anon"        ON public.enterprise_accounts;
+-- Policy 1: Deny all access to anon.
+-- Belt-and-suspenders: primary guard is absence of GRANT to anon.
+DROP POLICY IF EXISTS "ea_deny_anon"       ON public.enterprise_accounts;
 CREATE POLICY "ea_deny_anon"
   ON public.enterprise_accounts
   FOR ALL
@@ -364,105 +599,73 @@ CREATE POLICY "ea_deny_anon"
   USING (false)
   WITH CHECK (false);
 
--- Policy 2: Active members can SELECT their own enterprise account.
-DROP POLICY IF EXISTS "ea_members_select"   ON public.enterprise_accounts;
+-- Policy 2: Active members may SELECT their own enterprise account.
+-- Delegates to _fixeo_is_enterprise_member — no table self-reference.
+-- No recursion possible (see Section 3 analysis).
+DROP POLICY IF EXISTS "ea_members_select"  ON public.enterprise_accounts;
 CREATE POLICY "ea_members_select"
   ON public.enterprise_accounts
   FOR SELECT
   TO authenticated
-  USING (
-    id IN (
-      SELECT em.enterprise_id
-      FROM   public.enterprise_members em
-      WHERE  em.user_id = auth.uid()
-        AND  em.status  = 'active'
-    )
-  );
+  USING (public._fixeo_is_enterprise_member(id));
 
--- Policy 3: Enterprise owners and admins can UPDATE their account.
--- WITH CHECK: status updates are blocked here — only FIXEO staff
--- (service_role) can change status to 'suspended' or 'closed'.
--- Owners may update name and legal_name only.
-DROP POLICY IF EXISTS "ea_owner_update"     ON public.enterprise_accounts;
+-- Policy 3: Enterprise owner/admin may UPDATE name and legal_name.
+-- Delegates membership check to _fixeo_is_enterprise_manager.
+-- WITH CHECK: status must remain 'active' — owners cannot self-suspend
+-- or close their account through this policy.
+-- Note: the column-level grant (UPDATE(name, legal_name) below) is the
+-- hard enforcement that prevents status from being modified. WITH CHECK
+-- is an additional logical guard.
+DROP POLICY IF EXISTS "ea_owner_update"    ON public.enterprise_accounts;
 CREATE POLICY "ea_owner_update"
   ON public.enterprise_accounts
   FOR UPDATE
   TO authenticated
-  USING (
-    id IN (
-      SELECT em.enterprise_id
-      FROM   public.enterprise_members em
-      WHERE  em.user_id = auth.uid()
-        AND  em.role    IN ('owner', 'admin')
-        AND  em.status  = 'active'
-    )
-  )
+  USING  (public._fixeo_is_enterprise_manager(id))
   WITH CHECK (
-    -- Owners cannot change their own status via this policy.
-    -- Status changes (suspend/close) are a FIXEO staff operation.
-    status = 'active'
+    public._fixeo_is_enterprise_manager(id)
+    AND status = 'active'
   );
 
 -- Policy 4: FIXEO global admin has full access to all enterprise accounts.
--- Uses canonical public.users.role = 'admin' pattern.
-DROP POLICY IF EXISTS "ea_fixeo_admin_all"  ON public.enterprise_accounts;
+-- Delegates to _fixeo_is_admin — uses canonical public.users.role='admin'.
+DROP POLICY IF EXISTS "ea_fixeo_admin_all" ON public.enterprise_accounts;
 CREATE POLICY "ea_fixeo_admin_all"
   ON public.enterprise_accounts
   FOR ALL
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1
-      FROM   public.users u
-      WHERE  u.id   = auth.uid()
-        AND  u.role = 'admin'
-    )
-  )
-  WITH CHECK (
-    EXISTS (
-      SELECT 1
-      FROM   public.users u
-      WHERE  u.id   = auth.uid()
-        AND  u.role = 'admin'
-    )
-  );
+  USING     (public._fixeo_is_admin())
+  WITH CHECK (public._fixeo_is_admin());
 
 RAISE NOTICE '7c13a1 — enterprise_accounts RLS enabled (4 policies)';
 
 
 -- ════════════════════════════════════════════════════════════
--- SECTION 4: RLS — public.enterprise_members
+-- SECTION 5: RLS — public.enterprise_members
 --
--- RLS RECURSION ANALYSIS (self-referential subquery):
---   em_members_select uses:
---     enterprise_id IN (SELECT em2.enterprise_id
---                       FROM public.enterprise_members em2
---                       WHERE em2.user_id = auth.uid()
---                         AND em2.status = 'active')
---   This is a self-referential subquery on the same table.
---   PostgreSQL evaluates the subquery as a direct table scan
---   without re-applying the outer SELECT policy to the inner
---   scan. This is safe and is the standard multi-tenant pattern
---   used in Supabase's own documentation.
---   No infinite recursion is possible.
+-- RECURSION: STRUCTURALLY IMPOSSIBLE.
+--   No policy on enterprise_members queries enterprise_members.
+--   All membership checks are delegated to SECURITY DEFINER
+--   helpers that read enterprise_members as postgres (no RLS).
+--
+-- MUTATION SURFACE:
+--   authenticated has SELECT only. No INSERT, UPDATE, or DELETE
+--   is granted to authenticated on this table.
+--   All member writes go through the bootstrap RPC or service_role.
 --
 -- TENANT ISOLATION:
---   A member of enterprise A cannot see enterprise B's members
---   because the subquery only returns enterprise_ids where
---   auth.uid() has an active membership.
---
--- UPDATE POLICY SCOPE:
---   Role update capability is intentionally NOT exposed in M1.
---   The em_owner_admin_update policy allows owners/admins to
---   update status only. Role changes require a future reviewed
---   server-authoritative contract (M2 or later).
---   This prevents cross-tenant role escalation entirely in V1.
+--   em_members_select is gated by _fixeo_is_enterprise_member(enterprise_id).
+--   A member of enterprise A cannot see enterprise B's members because
+--   the helper returns false for any enterprise_id where they lack
+--   active membership.
+--   em_self_select allows a user to see their own row regardless of
+--   status (e.g. when invited and not yet active).
 -- ════════════════════════════════════════════════════════════
 
 ALTER TABLE public.enterprise_members ENABLE ROW LEVEL SECURITY;
 
 -- Policy 1: Deny all access to anon.
-DROP POLICY IF EXISTS "em_deny_anon"            ON public.enterprise_members;
+DROP POLICY IF EXISTS "em_deny_anon"        ON public.enterprise_members;
 CREATE POLICY "em_deny_anon"
   ON public.enterprise_members
   FOR ALL
@@ -470,156 +673,109 @@ CREATE POLICY "em_deny_anon"
   USING (false)
   WITH CHECK (false);
 
--- Policy 2: A user can always read their own membership row.
--- Needed to check invitation status before accepting.
-DROP POLICY IF EXISTS "em_self_select"          ON public.enterprise_members;
+-- Policy 2: A user may always SELECT their own membership row.
+-- Needed to read invitation status before the membership is active.
+-- Pure column comparison — no table reference, no helper needed.
+DROP POLICY IF EXISTS "em_self_select"      ON public.enterprise_members;
 CREATE POLICY "em_self_select"
   ON public.enterprise_members
   FOR SELECT
   TO authenticated
   USING (user_id = auth.uid());
 
--- Policy 3: Active members can see all other members of their enterprise.
--- Uses self-referential subquery (safe — see analysis above).
--- Combined with em_self_select via PostgreSQL OR semantics:
---   a user sees their own row (em_self_select)
---   AND all active enterprise rows (em_members_select).
-DROP POLICY IF EXISTS "em_members_select"       ON public.enterprise_members;
+-- Policy 3: Active members may SELECT all members of their enterprise.
+-- Delegates to _fixeo_is_enterprise_member(enterprise_id).
+-- No direct query of enterprise_members in this policy body.
+-- No recursion possible (see Section 3 analysis).
+DROP POLICY IF EXISTS "em_members_select"   ON public.enterprise_members;
 CREATE POLICY "em_members_select"
   ON public.enterprise_members
   FOR SELECT
   TO authenticated
-  USING (
-    enterprise_id IN (
-      SELECT em2.enterprise_id
-      FROM   public.enterprise_members em2
-      WHERE  em2.user_id = auth.uid()
-        AND  em2.status  = 'active'
-    )
-  );
+  USING (public._fixeo_is_enterprise_member(enterprise_id));
 
--- Policy 4: Enterprise owner/admin can update member STATUS only.
--- Scope: status transitions (e.g. active→suspended, invited→removed).
--- Role updates are NOT permitted via this policy in M1.
--- Self-update is excluded (user_id != auth.uid()) to prevent
--- owner self-suspension or self-removal.
--- WITH CHECK: only allows transitions within the defined status set.
--- Role field must remain unchanged (enforced by server-side API
--- sending only the status field; this policy cannot enforce OLD
--- comparisons — that is a known RLS limitation; server contract holds it).
-DROP POLICY IF EXISTS "em_owner_admin_update"   ON public.enterprise_members;
-CREATE POLICY "em_owner_admin_update"
-  ON public.enterprise_members
-  FOR UPDATE
-  TO authenticated
-  USING (
-    -- Caller must be owner or admin of the same enterprise
-    enterprise_id IN (
-      SELECT em2.enterprise_id
-      FROM   public.enterprise_members em2
-      WHERE  em2.user_id = auth.uid()
-        AND  em2.role    IN ('owner', 'admin')
-        AND  em2.status  = 'active'
-    )
-    -- Cannot modify own row (prevents self-suspension/removal)
-    AND user_id != auth.uid()
-  )
-  WITH CHECK (
-    -- Status must be a valid value
-    status IN ('invited', 'active', 'suspended', 'removed')
-    -- Cannot update a row to belong to a different enterprise
-    -- (enterprise_id change would be a cross-tenant move — blocked
-    -- by the USING clause requiring membership in the same enterprise)
-    AND enterprise_id IN (
-      SELECT em2.enterprise_id
-      FROM   public.enterprise_members em2
-      WHERE  em2.user_id = auth.uid()
-        AND  em2.role    IN ('owner', 'admin')
-        AND  em2.status  = 'active'
-    )
-  );
-
--- Policy 5: FIXEO global admin has full access to all member rows.
--- Uses canonical public.users.role = 'admin' pattern.
-DROP POLICY IF EXISTS "em_fixeo_admin_all"      ON public.enterprise_members;
+-- Policy 4: FIXEO global admin has full access to all member rows.
+-- Delegates to _fixeo_is_admin.
+-- Admin may INSERT/UPDATE/DELETE via this policy if needed for support.
+-- Note: INSERT/UPDATE/DELETE table grants to authenticated are withheld
+-- (see Section 6 grants). Admin INSERT/UPDATE/DELETE works because
+-- service_role bypasses RLS entirely — this policy covers the edge
+-- case where a FIXEO admin acts via an authenticated session.
+DROP POLICY IF EXISTS "em_fixeo_admin_all"  ON public.enterprise_members;
 CREATE POLICY "em_fixeo_admin_all"
   ON public.enterprise_members
   FOR ALL
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1
-      FROM   public.users u
-      WHERE  u.id   = auth.uid()
-        AND  u.role = 'admin'
-    )
-  )
-  WITH CHECK (
-    EXISTS (
-      SELECT 1
-      FROM   public.users u
-      WHERE  u.id   = auth.uid()
-        AND  u.role = 'admin'
-    )
-  );
+  USING     (public._fixeo_is_admin())
+  WITH CHECK (public._fixeo_is_admin());
 
-RAISE NOTICE '7c13a1 — enterprise_members RLS enabled (5 policies)';
+RAISE NOTICE '7c13a1 — enterprise_members RLS enabled (4 policies)';
 
 
 -- ════════════════════════════════════════════════════════════
--- SECTION 5: Grants and revokes
+-- SECTION 6: Grants and revokes
+--
+-- enterprise_accounts:
+--   REVOKE ALL from anon and PUBLIC (explicit block)
+--   SELECT granted to authenticated (RLS policies restrict rows)
+--   UPDATE(name, legal_name) granted to authenticated
+--     — column-level grant: authenticated cannot UPDATE status, id,
+--       created_at, or updated_at regardless of RLS policy allowance.
+--       This is the hard column-level enforcement of the update scope.
+--   No INSERT or DELETE to authenticated.
+--
+-- enterprise_members:
+--   REVOKE ALL from anon and PUBLIC
+--   SELECT granted to authenticated (RLS policies restrict rows)
+--   No INSERT, UPDATE, or DELETE to authenticated.
+--   All member writes: bootstrap RPC (SECURITY DEFINER) or service_role.
 -- ════════════════════════════════════════════════════════════
 
--- enterprise_accounts
 REVOKE ALL ON public.enterprise_accounts FROM anon;
 REVOKE ALL ON public.enterprise_accounts FROM PUBLIC;
--- authenticated: SELECT (via RLS member policy), UPDATE (via RLS owner policy).
--- No INSERT grant to authenticated: account creation goes through the RPC.
--- No DELETE grant to authenticated: hard delete is a service_role operation.
-GRANT SELECT, UPDATE ON public.enterprise_accounts TO authenticated;
--- service_role has implicit full access in Supabase; no explicit grant needed.
+GRANT  SELECT                ON public.enterprise_accounts TO authenticated;
+GRANT  UPDATE (name, legal_name) ON public.enterprise_accounts TO authenticated;
+-- No INSERT/DELETE to authenticated. No broad UPDATE.
 
--- enterprise_members
 REVOKE ALL ON public.enterprise_members FROM anon;
 REVOKE ALL ON public.enterprise_members FROM PUBLIC;
--- authenticated: SELECT (via RLS), UPDATE (via RLS owner/admin policy).
--- No INSERT grant to authenticated: membership creation goes through the RPC.
--- No DELETE grant to authenticated: hard delete is a service_role operation.
-GRANT SELECT, UPDATE ON public.enterprise_members TO authenticated;
+GRANT  SELECT ON public.enterprise_members TO authenticated;
+-- No INSERT, UPDATE, or DELETE to authenticated.
 
 RAISE NOTICE '7c13a1 — grants/revokes applied';
 
 
 -- ════════════════════════════════════════════════════════════
--- SECTION 6: Bootstrap RPC — public.create_enterprise_account()
+-- SECTION 7: Bootstrap RPC — public.create_enterprise_account()
 --
 -- PURPOSE
 --   Atomically creates a new enterprise account AND the calling
---   user's first membership (role='owner') in a single transaction.
+--   user's first membership (role='owner', status='active')
+--   in a single transaction.
 --   This is the ONLY supported path for authenticated account creation.
 --
 -- SECURITY DEFINER RATIONALE
---   enterprise_accounts has no authenticated INSERT policy.
---   enterprise_members has no authenticated INSERT policy.
---   The RPC holds SECURITY DEFINER to perform these inserts on
---   behalf of the authenticated caller under strictly controlled
---   conditions. No caller-supplied owner identity or initial role
---   is accepted.
+--   enterprise_accounts has no authenticated INSERT privilege.
+--   enterprise_members has no authenticated INSERT privilege.
+--   This RPC executes as its definer (postgres) and performs both
+--   inserts under controlled conditions. No caller-supplied owner
+--   identity or role is accepted.
 --
 -- SECURITY CONTROLS
---   1. SET search_path = '' — prevents search_path injection
---   2. All object references are fully schema-qualified
---   3. auth.uid() IS NOT NULL — caller must be authenticated
---   4. Caller must exist in public.users — prevents ghost accounts
---   5. Caller is automatically the owner — no role override
---   6. Name length validated
---   7. REVOKE EXECUTE FROM PUBLIC; REVOKE FROM anon
---   8. GRANT EXECUTE TO authenticated
+--   1. SECURITY DEFINER — executes as postgres
+--   2. SET search_path = '' — prevents search_path injection
+--   3. All object references fully schema-qualified
+--   4. auth.uid() derived internally — no caller-supplied user_id
+--   5. Caller must exist in public.users
+--   6. Role is hardcoded 'owner' — not caller-supplied
+--   7. Name and legal_name validated before insert
+--   8. REVOKE FROM PUBLIC; REVOKE FROM anon; GRANT TO authenticated
 --
 -- RETURN VALUE
---   On success: jsonb { ok: true,  enterprise_id: <uuid> }
---   On failure: jsonb { ok: false, reason: <text> }
---   (Never raises unhandled exceptions to the caller.)
+--   Success: { "ok": true,  "enterprise_id": "<uuid>" }
+--   Failure: { "ok": false, "reason": "<code>" }
+--   Unexpected: { "ok": false, "reason": "internal_error" }
+--   SQLSTATE is NOT returned to the client (no internal detail leak).
 -- ════════════════════════════════════════════════════════════
 
 CREATE OR REPLACE FUNCTION public.create_enterprise_account(
@@ -644,8 +800,8 @@ BEGIN
   END IF;
 
   -- Guard 2: caller must exist in public.users
-  -- Prevents ghost enterprise creation from auth.users records that have
-  -- not yet been inserted into public.users (e.g. mid-registration failures).
+  -- Prevents ghost account creation from auth.users rows that were
+  -- not yet reflected into public.users (e.g. registration failures).
   SELECT EXISTS (
     SELECT 1 FROM public.users u WHERE u.id = v_caller_id
   ) INTO v_caller_exists;
@@ -664,18 +820,23 @@ BEGIN
   -- Guard 4: validate legal_name if provided
   IF p_legal_name IS NOT NULL THEN
     IF pg_catalog.char_length(pg_catalog.trim(p_legal_name)) < 1
-       OR pg_catalog.char_length(pg_catalog.trim(p_legal_name)) > 300 THEN
+       OR pg_catalog.char_length(pg_catalog.trim(p_legal_name)) > 300
+    THEN
       RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'legal_name_invalid');
     END IF;
   END IF;
 
-  -- Atomic insert: enterprise_accounts + enterprise_members
-  -- Both inserts must succeed or neither persists.
+  -- Atomic insert: both rows or neither.
+  -- Executes as postgres (SECURITY DEFINER) — INSERT privileges held
+  -- by definer, not caller. RLS does not apply to this context.
 
   INSERT INTO public.enterprise_accounts (name, legal_name, status)
   VALUES (
     pg_catalog.trim(p_name),
-    CASE WHEN p_legal_name IS NOT NULL THEN pg_catalog.trim(p_legal_name) ELSE NULL END,
+    CASE
+      WHEN p_legal_name IS NOT NULL THEN pg_catalog.trim(p_legal_name)
+      ELSE NULL
+    END,
     'active'
   )
   RETURNING id INTO v_enterprise_id;
@@ -684,9 +845,9 @@ BEGIN
   VALUES (
     v_enterprise_id,
     v_caller_id,
-    'owner',       -- caller is always the owner; not caller-supplied
-    'active',      -- first owner is immediately active
-    NULL           -- no inviter for the founding member
+    'owner',   -- hardcoded: caller always becomes owner; not caller-supplied
+    'active',  -- founding member is immediately active
+    NULL       -- no inviter for the founding member
   );
 
   RETURN pg_catalog.jsonb_build_object(
@@ -696,11 +857,11 @@ BEGIN
 
 EXCEPTION
   WHEN OTHERS THEN
-    -- Surface the SQLSTATE code for debugging without leaking internals.
+    -- Do not return SQLSTATE or internal detail to the client.
+    -- Diagnostics are available in Supabase postgres logs.
     RETURN pg_catalog.jsonb_build_object(
-      'ok',      false,
-      'reason',  'internal_error',
-      'code',    pg_catalog.substring(SQLSTATE, 1, 5)
+      'ok',     false,
+      'reason', 'internal_error'
     );
 END;
 $$;
@@ -721,12 +882,24 @@ BEGIN
   RAISE NOTICE '══════════════════════════════════════════════════════════';
   RAISE NOTICE '7C.13A.1 Enterprise Core — migration script complete.';
   RAISE NOTICE '';
-  RAISE NOTICE 'Tables created:    enterprise_accounts, enterprise_members';
-  RAISE NOTICE 'RPC created:       create_enterprise_account(text, text)';
-  RAISE NOTICE 'RLS policies:      4 on enterprise_accounts';
-  RAISE NOTICE '                   5 on enterprise_members';
-  RAISE NOTICE 'Indexes:           5 (1 on accounts, 4 on members)';
-  RAISE NOTICE 'Triggers:          2 updated_at (reuse update_updated_at)';
+  RAISE NOTICE 'Tables created:';
+  RAISE NOTICE '  enterprise_accounts';
+  RAISE NOTICE '  enterprise_members';
+  RAISE NOTICE '';
+  RAISE NOTICE 'Helpers created:';
+  RAISE NOTICE '  _fixeo_is_admin()';
+  RAISE NOTICE '  _fixeo_is_enterprise_member(uuid)';
+  RAISE NOTICE '  _fixeo_is_enterprise_manager(uuid)';
+  RAISE NOTICE '';
+  RAISE NOTICE 'RPC created:';
+  RAISE NOTICE '  create_enterprise_account(text, text)';
+  RAISE NOTICE '';
+  RAISE NOTICE 'RLS policies:';
+  RAISE NOTICE '  enterprise_accounts: 4';
+  RAISE NOTICE '  enterprise_members:  4';
+  RAISE NOTICE '';
+  RAISE NOTICE 'Indexes: 5 (1 on accounts, 4 on members)';
+  RAISE NOTICE 'Triggers: 2 (reuse update_updated_at)';
   RAISE NOTICE '';
   RAISE NOTICE 'Existing tables modified:   NONE';
   RAISE NOTICE 'Existing RLS modified:      NONE';
@@ -744,11 +917,12 @@ COMMIT;
 -- NOT executed as part of this migration.
 -- Run ONLY if migration must be reversed after application.
 -- Execute via service_role in Supabase Studio.
+-- Rollback order: members → accounts → helpers (reverse dependency order)
 -- ════════════════════════════════════════════════════════════
 --
 -- BEGIN;
 --
--- -- Safety: abort if any rows exist
+-- -- Safety: abort rollback if any data has been inserted
 -- DO $$
 -- DECLARE
 --   v_ea_count integer;
@@ -762,13 +936,25 @@ COMMIT;
 --       '(enterprise_accounts: %, enterprise_members: %)',
 --       v_ea_count, v_em_count;
 --   END IF;
+--   RAISE NOTICE 'Rollback safety check passed — tables are empty';
 -- END $$;
 --
+-- -- Drop bootstrap RPC
 -- DROP FUNCTION IF EXISTS public.create_enterprise_account(text, text);
+--
+-- -- Drop triggers before dropping tables
 -- DROP TRIGGER IF EXISTS enterprise_members_updated_at  ON public.enterprise_members;
 -- DROP TRIGGER IF EXISTS enterprise_accounts_updated_at ON public.enterprise_accounts;
--- DROP TABLE  IF EXISTS public.enterprise_members;   -- members first (FK ref)
--- DROP TABLE  IF EXISTS public.enterprise_accounts;
+--
+-- -- Drop tables (members first: has FK reference to accounts)
+-- DROP TABLE IF EXISTS public.enterprise_members;
+-- DROP TABLE IF EXISTS public.enterprise_accounts;
+--
+-- -- Drop authorization helpers (after tables: policies referencing them
+-- -- are gone once tables are dropped)
+-- DROP FUNCTION IF EXISTS public._fixeo_is_enterprise_manager(uuid);
+-- DROP FUNCTION IF EXISTS public._fixeo_is_enterprise_member(uuid);
+-- DROP FUNCTION IF EXISTS public._fixeo_is_admin();
 --
 -- COMMIT;
 -- ════════════════════════════════════════════════════════════
