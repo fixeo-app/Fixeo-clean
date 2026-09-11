@@ -1,0 +1,247 @@
+/**
+ * service-hub-v3.css — FIXEO SEO V3 Service Hub Stylesheet
+ * =========================================================
+ * Version: hub-v1
+ *
+ * Hub-specific layout and presentation for /plombier, /electricien, etc.
+ * All selectors scoped under body.seo-service-page (set by page-template.js).
+ * No global or navbar/footer ownership. No !important chain.
+ *
+ * DEPENDS ON:
+ *   seo-v3.css (must be loaded first) — provides:
+ *     --v3-surface, --v3-border, --v3-text, --v3-muted, --v3-accent
+ *     .fxlp-section, .fxlp-wrap, .fxlp-eyebrow, .fxlp-step, etc.
+ *
+ * SECTION CLASSES COVERED:
+ *   .fxlp-hub-needs-section   — service needs/use-cases grid
+ *   .fxlp-hub-cities-section  — city chip discovery grid
+ *   .fxlp-hub-how-section     — how-it-works steps
+ *   .fxlp-hub-price-section   — pricing guidance rows
+ *   .fxlp-hub-problems-section — related problem chips
+ *   .fxlp-hub-faq-section     — hub FAQ
+ *   .fxlp-hub-*               — all hub-specific sub-components
+ *
+ * MUST NOT OVERRIDE:
+ *   .fxlp-hero-*, .fxlp-artisan-*, .fxlp-cta-banner (owned by seo-v3.css)
+ *   .navbar, .fixeo-footer (owned by global CSS)
+ *
+ * TASK 2.8 — extracted from inline <style data-hub-v3> in service-hub-v3.js
+ * APPROVED PILOT CSS — preserves exact visual design from Task 2.7 QA
+ *
+ * FILE: seo/assets/service-hub-v3.css
+ */
+
+/* ── Section spacing ──────────────────────────────────────────────────────── */
+
+body.seo-service-page .fxlp-hub-cities-section,
+body.seo-service-page .fxlp-hub-how-section,
+body.seo-service-page .fxlp-hub-needs-section,
+body.seo-service-page .fxlp-hub-price-section,
+body.seo-service-page .fxlp-hub-problems-section,
+body.seo-service-page .fxlp-hub-faq-section { padding: 4rem 0; }
+
+/* ── Shared section typography ────────────────────────────────────────────── */
+
+/* Section lead text (hub variant — longer than card-page sub) */
+body.seo-service-page .fxlp-section-lead {
+  font-size: 1rem;
+  color: var(--v3-muted);
+  max-width: 640px;
+  line-height: 1.65;
+  margin-top: 0.5rem;
+}
+
+/* h2 inside hub sections */
+body.seo-service-page .fxlp-h2 {
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  font-weight: 800;
+  color: var(--v3-text);
+  margin: 0.25rem 0 0.5rem;
+  line-height: 1.25;
+}
+
+/* Hub hero subtitle (national scope, no city) */
+body.seo-service-page .fxlp-hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.15rem);
+  color: var(--v3-muted);
+  max-width: 680px;
+  margin: 0.75rem auto 0;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ── Needs grid ───────────────────────────────────────────────────────────── */
+
+body.seo-service-page .fxlp-hub-needs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+body.seo-service-page .fxlp-hub-need-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: var(--v3-surface);
+  border: 1px solid var(--v3-border);
+  border-radius: 12px;
+  padding: 1.1rem 1rem;
+  transition: border-color 0.2s;
+}
+
+body.seo-service-page .fxlp-hub-need-card:hover {
+  border-color: rgba(255, 107, 61, 0.4);
+}
+
+body.seo-service-page .fxlp-hub-need-icon  { font-size: 1.5rem; }
+body.seo-service-page .fxlp-hub-need-label { font-size: 0.92rem; font-weight: 700; color: var(--v3-text); }
+body.seo-service-page .fxlp-hub-need-desc  { font-size: 0.78rem; color: var(--v3-muted); line-height: 1.4; }
+
+/* ── City chip grid ───────────────────────────────────────────────────────── */
+
+body.seo-service-page .fxlp-hub-city-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+body.seo-service-page .fxlp-hub-city-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--v3-surface);
+  border: 1px solid var(--v3-border);
+  border-radius: 24px;
+  padding: 0.55rem 1.1rem;
+  text-decoration: none;
+  color: var(--v3-text);
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+body.seo-service-page .fxlp-hub-city-chip:hover {
+  border-color: rgba(255, 107, 61, 0.5);
+  background: rgba(255, 107, 61, 0.06);
+  color: #ff6b3d;
+}
+
+body.seo-service-page .fxlp-hub-city-count {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--v3-muted);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 0.1rem 0.45rem;
+}
+
+/* ── How-it-works section ─────────────────────────────────────────────────── */
+
+body.seo-service-page .fxlp-hub-how-section .fxlp-steps {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+}
+
+/* ── Price guidance table ─────────────────────────────────────────────────── */
+
+body.seo-service-page .fxlp-hub-price-table {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+body.seo-service-page .fxlp-hub-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.85rem 1.1rem;
+  background: var(--v3-surface);
+  border: 1px solid var(--v3-border);
+  border-radius: 10px;
+}
+
+body.seo-service-page .fxlp-hub-price-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--v3-text);
+}
+
+body.seo-service-page .fxlp-hub-price-note {
+  font-size: 0.82rem;
+  color: var(--v3-muted);
+  text-align: right;
+}
+
+body.seo-service-page .fxlp-hub-price-note-global {
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+  color: var(--v3-muted);
+  font-style: italic;
+}
+
+/* ── Related problem chips ────────────────────────────────────────────────── */
+
+body.seo-service-page .fxlp-hub-problem-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+body.seo-service-page .fxlp-hub-problem-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--v3-surface);
+  border: 1px solid var(--v3-border);
+  border-radius: 24px;
+  padding: 0.55rem 1.1rem;
+  text-decoration: none;
+  color: var(--v3-text);
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: border-color 0.2s;
+}
+
+body.seo-service-page .fxlp-hub-problem-chip:hover {
+  border-color: rgba(255, 107, 61, 0.5);
+  color: #ff6b3d;
+}
+
+/* ── Responsive breakpoints ───────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  body.seo-service-page .fxlp-hub-needs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  body.seo-service-page .fxlp-hub-price-row {
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  body.seo-service-page .fxlp-hub-price-note {
+    text-align: left;
+  }
+
+  body.seo-service-page .fxlp-hub-city-chip {
+    font-size: 0.83rem;
+    padding: 0.45rem 0.9rem;
+  }
+
+  body.seo-service-page .fxlp-hub-how-section .fxlp-step {
+    padding: 0.9rem;
+  }
+}
+
+@media (max-width: 390px) {
+  body.seo-service-page .fxlp-hub-needs-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+  }
+}
