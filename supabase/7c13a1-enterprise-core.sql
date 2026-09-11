@@ -305,7 +305,7 @@ CREATE SCHEMA IF NOT EXISTS fixeo_private;
 -- an explicit EXECUTE grant.
 GRANT USAGE ON SCHEMA fixeo_private TO authenticated;
 
-RAISE NOTICE '7c13a1 — fixeo_private schema ready';
+DO $$ BEGIN RAISE NOTICE '7c13a1 — fixeo_private schema ready'; END $$;
 
 
 -- ════════════════════════════════════════════════════════════
@@ -333,7 +333,7 @@ CREATE TABLE public.enterprise_accounts (
     CHECK (status IN ('active', 'suspended', 'closed'))
 );
 
-RAISE NOTICE '7c13a1 — enterprise_accounts created';
+DO $$ BEGIN RAISE NOTICE '7c13a1 — enterprise_accounts created'; END $$;
 
 DROP TRIGGER IF EXISTS enterprise_accounts_updated_at ON public.enterprise_accounts;
 CREATE TRIGGER enterprise_accounts_updated_at
@@ -344,7 +344,7 @@ CREATE INDEX idx_ea_status
   ON public.enterprise_accounts (status)
   WHERE status = 'active';
 
-RAISE NOTICE '7c13a1 — enterprise_accounts trigger + index created';
+DO $$ BEGIN RAISE NOTICE '7c13a1 — enterprise_accounts trigger + index created'; END $$;
 
 
 -- ════════════════════════════════════════════════════════════
@@ -406,7 +406,7 @@ CREATE TABLE public.enterprise_members (
     UNIQUE (enterprise_id, user_id)
 );
 
-RAISE NOTICE '7c13a1 — enterprise_members created';
+DO $$ BEGIN RAISE NOTICE '7c13a1 — enterprise_members created'; END $$;
 
 DROP TRIGGER IF EXISTS enterprise_members_updated_at ON public.enterprise_members;
 CREATE TRIGGER enterprise_members_updated_at
@@ -431,7 +431,7 @@ CREATE INDEX idx_em_invited
   ON public.enterprise_members (enterprise_id, created_at DESC)
   WHERE status = 'invited';
 
-RAISE NOTICE '7c13a1 — enterprise_members triggers + indexes created';
+DO $$ BEGIN RAISE NOTICE '7c13a1 — enterprise_members triggers + indexes created'; END $$;
 
 
 -- ════════════════════════════════════════════════════════════
@@ -516,7 +516,7 @@ REVOKE EXECUTE ON FUNCTION fixeo_private._fixeo_is_admin() FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION fixeo_private._fixeo_is_admin() FROM anon;
 GRANT  EXECUTE ON FUNCTION fixeo_private._fixeo_is_admin() TO authenticated;
 
-RAISE NOTICE '7c13a1 — fixeo_private._fixeo_is_admin() created';
+DO $$ BEGIN RAISE NOTICE '7c13a1 — fixeo_private._fixeo_is_admin() created'; END $$;
 
 
 -- ── Helper 2: fixeo_private._fixeo_is_enterprise_member(uuid) ─
@@ -563,7 +563,7 @@ REVOKE EXECUTE ON FUNCTION fixeo_private._fixeo_is_enterprise_member(uuid) FROM 
 REVOKE EXECUTE ON FUNCTION fixeo_private._fixeo_is_enterprise_member(uuid) FROM anon;
 GRANT  EXECUTE ON FUNCTION fixeo_private._fixeo_is_enterprise_member(uuid) TO authenticated;
 
-RAISE NOTICE '7c13a1 — fixeo_private._fixeo_is_enterprise_member() created';
+DO $$ BEGIN RAISE NOTICE '7c13a1 — fixeo_private._fixeo_is_enterprise_member() created'; END $$;
 
 
 -- ── Helper 3: fixeo_private._fixeo_is_enterprise_manager(uuid) ─
@@ -610,7 +610,7 @@ REVOKE EXECUTE ON FUNCTION fixeo_private._fixeo_is_enterprise_manager(uuid) FROM
 REVOKE EXECUTE ON FUNCTION fixeo_private._fixeo_is_enterprise_manager(uuid) FROM anon;
 GRANT  EXECUTE ON FUNCTION fixeo_private._fixeo_is_enterprise_manager(uuid) TO authenticated;
 
-RAISE NOTICE '7c13a1 — fixeo_private._fixeo_is_enterprise_manager() created';
+DO $$ BEGIN RAISE NOTICE '7c13a1 — fixeo_private._fixeo_is_enterprise_manager() created'; END $$;
 
 
 -- ════════════════════════════════════════════════════════════
@@ -666,7 +666,7 @@ CREATE POLICY "ea_fixeo_admin_all"
   USING     (fixeo_private._fixeo_is_admin())
   WITH CHECK (fixeo_private._fixeo_is_admin());
 
-RAISE NOTICE '7c13a1 — enterprise_accounts RLS enabled (4 policies)';
+DO $$ BEGIN RAISE NOTICE '7c13a1 — enterprise_accounts RLS enabled (4 policies)'; END $$;
 
 
 -- ════════════════════════════════════════════════════════════
@@ -717,7 +717,7 @@ CREATE POLICY "em_fixeo_admin_all"
   USING     (fixeo_private._fixeo_is_admin())
   WITH CHECK (fixeo_private._fixeo_is_admin());
 
-RAISE NOTICE '7c13a1 — enterprise_members RLS enabled (4 policies)';
+DO $$ BEGIN RAISE NOTICE '7c13a1 — enterprise_members RLS enabled (4 policies)'; END $$;
 
 
 -- ════════════════════════════════════════════════════════════
@@ -739,7 +739,7 @@ REVOKE ALL ON public.enterprise_members FROM PUBLIC;
 GRANT  SELECT ON public.enterprise_members TO authenticated;
 -- SELECT only. No INSERT, UPDATE, or DELETE to authenticated.
 
-RAISE NOTICE '7c13a1 — table grants/revokes applied';
+DO $$ BEGIN RAISE NOTICE '7c13a1 — table grants/revokes applied'; END $$;
 
 
 -- ════════════════════════════════════════════════════════════
@@ -876,7 +876,7 @@ REVOKE EXECUTE ON FUNCTION public.create_enterprise_account(text, text) FROM PUB
 REVOKE EXECUTE ON FUNCTION public.create_enterprise_account(text, text) FROM anon;
 GRANT  EXECUTE ON FUNCTION public.create_enterprise_account(text, text) TO authenticated;
 
-RAISE NOTICE '7c13a1 — create_enterprise_account() RPC created';
+DO $$ BEGIN RAISE NOTICE '7c13a1 — create_enterprise_account() RPC created'; END $$;
 
 
 -- ════════════════════════════════════════════════════════════
