@@ -815,17 +815,17 @@ BEGIN
   END IF;
 
   -- Guard 4: validate account name
-  IF p_name IS NULL OR pg_catalog.char_length(pg_catalog.trim(p_name)) < 1 THEN
+  IF p_name IS NULL OR pg_catalog.char_length(pg_catalog.btrim(p_name)) < 1 THEN
     RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'name_required');
   END IF;
-  IF pg_catalog.char_length(pg_catalog.trim(p_name)) > 200 THEN
+  IF pg_catalog.char_length(pg_catalog.btrim(p_name)) > 200 THEN
     RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'name_too_long');
   END IF;
 
   -- Guard 5: validate legal_name if provided
   IF p_legal_name IS NOT NULL THEN
-    IF pg_catalog.char_length(pg_catalog.trim(p_legal_name)) < 1
-       OR pg_catalog.char_length(pg_catalog.trim(p_legal_name)) > 300
+    IF pg_catalog.char_length(pg_catalog.btrim(p_legal_name)) < 1
+       OR pg_catalog.char_length(pg_catalog.btrim(p_legal_name)) > 300
     THEN
       RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'legal_name_invalid');
     END IF;
@@ -836,9 +836,9 @@ BEGIN
 
   INSERT INTO public.enterprise_accounts (name, legal_name, status)
   VALUES (
-    pg_catalog.trim(p_name),
+    pg_catalog.btrim(p_name),
     CASE
-      WHEN p_legal_name IS NOT NULL THEN pg_catalog.trim(p_legal_name)
+      WHEN p_legal_name IS NOT NULL THEN pg_catalog.btrim(p_legal_name)
       ELSE NULL
     END,
     'active'
