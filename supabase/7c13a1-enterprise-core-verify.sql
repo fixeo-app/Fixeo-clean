@@ -347,15 +347,17 @@ BEGIN
     v_fail := v_fail + 1;
   END IF;
 
-  -- ── V-22: postgres is a superuser (RLS bypass confirmed) ─────
-  SELECT rolsuper INTO v_ok
+  -- ── V-22: postgres has RLS bypass capability (rolsuper OR rolbypassrls) ──
+  -- Supabase hosted projects set rolsuper=false but grant rolbypassrls=true.
+  -- Either attribute is sufficient for SECURITY DEFINER functions to bypass RLS.
+  SELECT (rolsuper OR rolbypassrls) INTO v_ok
   FROM pg_catalog.pg_roles
   WHERE rolname = 'postgres';
   IF v_ok IS TRUE THEN
-    RAISE NOTICE 'V-22 PASS  postgres is superuser — SECURITY DEFINER functions bypass RLS';
+    RAISE NOTICE 'V-22 PASS  postgres has RLS bypass capability (rolsuper OR rolbypassrls) — SECURITY DEFINER functions bypass RLS';
     v_pass := v_pass + 1;
   ELSE
-    RAISE WARNING 'V-22 FAIL  postgres is NOT superuser — security model assumption violated';
+    RAISE WARNING 'V-22 FAIL  postgres has neither rolsuper nor rolbypassrls — SECURITY DEFINER functions will NOT bypass RLS';
     v_fail := v_fail + 1;
   END IF;
 
