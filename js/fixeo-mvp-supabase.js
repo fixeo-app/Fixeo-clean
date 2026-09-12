@@ -797,7 +797,16 @@ if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
 
         /* ── p1b: register Supabase card confirm handler on window (idempotent) ──────
          * Called via onclick="window._fxSbConfirmRequest(id, this)" from the card.
-         * Writes 'valid\u00e9e' to Supabase service_requests + client LS + dispatches event.
+         * BP02 fix: replaced unsafe direct service_requests UPDATE with
+         * confirm_completed_mission RPC (SECURITY DEFINER).
+         *   - Old path: sb.from('service_requests').update({status:'validée'}) — UNSAFE:
+         *       (a) no mission.status update → inconsistent state
+         *       (b) 'validée' fails the DB CHECK constraint (must be 'validated')
+         *       (c) no ownership enforcement at DB level
+         *   - New path: sb.rpc('confirm_completed_mission', {p_request_id}) — SAFE:
+         *       (a) atomic: missions→terminée + SR→validated in one DB transaction
+         *       (b) ownership enforced by RPC (B2C + enterprise paths)
+         *       (c) state validation enforced by RPC (must be 'completed')
          * Single registration — safe to overwrite on every renderClientDashboard call. */
         window._fxSbConfirmRequest = function(sbId, btn) {
           if (!sbId || !btn) return;
@@ -814,13 +823,28 @@ if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
 
           FS.getClient().then(function(sb) {
             if (!sb) throw new Error('No Supabase client');
-            return sb.from('service_requests')
-              .update({ status: 'valid\u00e9e' })
-              .eq('id', sbId);
+            /* BP02: confirm_completed_mission RPC — atomic mission+SR transition */
+            return sb.rpc('confirm_completed_mission', { p_request_id: sbId });
           }).then(function(res) {
             if (res && res.error) {
-              throw new Error(res.error.message || res.error.code || 'update failed');
+              throw new Error(res.error.message || res.error.code || 'rpc failed');
             }
+            var data = res && res.data;
+            /* PostgREST may return array for jsonb RPCs */
+            if (Array.isArray(data)) data = data[0] || {};
+            if (!data || data.ok !== true) {
+              var reason = data && data.reason ? data.reason : 'unknown';
+              var messages = {
+                unauthenticated:               'Session expir\u00e9e. Reconnectez-vous.',
+                request_not_found_or_not_owned:'Cette demande est introuvable.',
+                request_not_completed:         'L\u2019intervention n\u2019est pas encore termin\u00e9e.',
+                completed_mission_not_found:   'Mission associ\u00e9e introuvable.',
+                atomicity_error:               'La confirmation n\u2019a pas pu \u00eatre enregistr\u00e9e. R\u00e9essayez.',
+                internal_error:                'Erreur interne. R\u00e9essayez.'
+              };
+              throw new Error(messages[reason] || ('Erreur : ' + reason));
+            }
+            /* Success confirmed by RPC */
 
             /* Success — update LS mirror and dispatch re-render event */
             (function() {
