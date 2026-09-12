@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0d1a">
+  <meta name="robots" content="noindex,nofollow">
+  <title>FIXEO Entreprise — Tableau de bord</title>
+  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="img/favicon.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap"
+        rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  </noscript>
+
+  <!-- Reuse existing dashboard CSS design system -->
+  <link rel="stylesheet" href="css/fixeo-dashboard-v2.css?v=v2a">
+  <!-- Enterprise-specific additions -->
+  <link rel="stylesheet" href="css/enterprise-dashboard-v1.css?v=ed1a">
+
+  <!-- Supabase SDK + client — must load synchronously before JS module -->
+  <script src="js/supabase-client.js?v=sc2"></script>
+</head>
+<body class="fxv2-body">
+
+<!-- ════════════════════════════════════════════════════════════
+     AUTH GATE — shown while loading, hidden on success
+     ════════════════════════════════════════════════════════════ -->
+<div id="ent-auth-gate" class="ent-gate-screen">
+  <div class="ent-gate-inner">
+    <div class="ent-gate-logo">
+      <img src="img/logo.png" alt="FIXEO" height="36"
+           onerror="this.style.display='none';var s=document.createElement('span');s.textContent='FIXEO';s.style.cssText='font-size:1.4rem;font-weight:800;color:#E1306C';this.parentNode.appendChild(s)">
+    </div>
+    <div class="ent-gate-spinner" aria-label="Chargement…"></div>
+    <p class="ent-gate-msg" id="ent-gate-msg">Vérification de la session…</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     ACCESS DENIED — shown if not an enterprise member
+     ════════════════════════════════════════════════════════════ -->
+<div id="ent-access-denied" class="ent-gate-screen" style="display:none">
+  <div class="ent-gate-inner">
+    <div class="ent-gate-logo">
+      <img src="img/logo.png" alt="FIXEO" height="36"
+           onerror="this.style.display='none';var s=document.createElement('span');s.textContent='FIXEO';s.style.cssText='font-size:1.4rem;font-weight:800;color:#E1306C';this.parentNode.appendChild(s)">
+    </div>
+    <div class="ent-denied-icon">🔒</div>
+    <h1 class="ent-denied-title">Accès non autorisé</h1>
+    <p class="ent-denied-sub" id="ent-denied-reason">Vous n'êtes pas membre d'un compte entreprise actif.</p>
+    <a href="auth.html" class="fxv2-btn fxv2-btn-primary" style="margin-top:16px">Se connecter</a>
+    <a href="entreprises.html" class="fxv2-btn fxv2-btn-ghost" style="margin-top:8px">En savoir plus sur FIXEO Entreprise</a>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     ENTERPRISE SELECTOR — shown if member of multiple enterprises
+     ════════════════════════════════════════════════════════════ -->
+<div id="ent-selector" class="ent-gate-screen" style="display:none">
+  <div class="ent-gate-inner ent-selector-inner">
+    <div class="ent-gate-logo">
+      <img src="img/logo.png" alt="FIXEO" height="36"
+           onerror="this.style.display='none';var s=document.createElement('span');s.textContent='FIXEO';s.style.cssText='font-size:1.4rem;font-weight:800;color:#E1306C';this.parentNode.appendChild(s)">
+    </div>
+    <h2 class="ent-selector-title">Choisissez votre compte entreprise</h2>
+    <div id="ent-selector-list" class="ent-selector-list"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     MAIN DASHBOARD — hidden until auth + membership confirmed
+     ════════════════════════════════════════════════════════════ -->
+<div id="ent-dashboard" style="display:none">
+
+  <!-- HEADER -->
+  <header class="fxv2-header">
+    <button class="fxv2-hamburger" id="ent-hamburger"
+            aria-label="Ouvrir le menu" aria-expanded="false"
+            aria-controls="ent-sidebar">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="fxv2-header-logo">FIXEO Entreprise</div>
+    <div id="ent-header-role-badge" class="ent-role-badge-header"></div>
+  </header>
+
+  <!-- SIDEBAR OVERLAY (mobile) -->
+  <div class="fxv2-overlay" id="ent-overlay"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="fxv2-sidebar" id="ent-sidebar" aria-hidden="true">
+    <div class="fxv2-sidebar-profile">
+      <div class="fxv2-sidebar-avatar" id="ent-sb-avatar">🏢</div>
+      <div>
+        <div class="fxv2-sidebar-name" id="ent-sb-name">Chargement…</div>
+        <div class="fxv2-sidebar-sub"  id="ent-sb-enterprise">—</div>
+        <div class="fxv2-sidebar-sub"  id="ent-sb-role" style="margin-top:2px;font-size:.7rem;color:var(--v2-primary)"></div>
+      </div>
+    </div>
+
+    <nav class="fxv2-nav" role="navigation" aria-label="Navigation principale">
+      <button class="fxv2-nav-link active" data-section="requests" id="nav-requests">
+        <span class="icon">📋</span> Mes demandes
+      </button>
+      <button class="fxv2-nav-link" data-section="new-request" id="nav-new-request">
+        <span class="icon">➕</span> Nouvelle demande
+      </button>
+      <button class="fxv2-nav-link" data-section="sites" id="nav-sites">
+        <span class="icon">🏗️</span> Mes sites
+      </button>
+    </nav>
+
+    <div class="fxv2-sidebar-footer">
+      <button class="fxv2-logout-btn" id="ent-logout-btn">
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="fxv2-main" id="ent-main" role="main">
+
+    <!-- ── SECTION: Requests List ───────────────────────── -->
+    <section class="fxv2-section active" id="section-requests">
+      <div class="fxv2-page-title">
+        Mes demandes
+        <div class="fxv2-page-subtitle" id="requests-subtitle">Toutes les demandes de votre organisation</div>
+      </div>
+
+      <!-- KPI Bar -->
+      <div class="fxv2-kpi-bar" id="requests-kpi-bar">
+        <div class="fxv2-kpi">
+          <div class="fxv2-kpi-val loading" id="kpi-total"></div>
+          <div class="fxv2-kpi-label">Total (30j)</div>
+        </div>
+        <div class="fxv2-kpi">
+          <div class="fxv2-kpi-val loading" id="kpi-active"></div>
+          <div class="fxv2-kpi-label">En cours</div>
+        </div>
+        <div class="fxv2-kpi">
+          <div class="fxv2-kpi-val loading" id="kpi-done"></div>
+          <div class="fxv2-kpi-label">Terminées</div>
+        </div>
+        <div class="fxv2-kpi">
+          <div class="fxv2-kpi-val loading" id="kpi-nomatch"></div>
+          <div class="fxv2-kpi-label">Sans artisan</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="ent-filters" id="requests-filters">
+        <select class="ent-filter-select" id="filter-site" aria-label="Filtrer par site">
+          <option value="">Tous les sites</option>
+        </select>
+        <select class="ent-filter-select" id="filter-status" aria-label="Filtrer par statut">
+          <option value="">Tous les statuts</option>
+          <option value="new">Recherche artisan</option>
+          <option value="assigned">Artisan trouvé</option>
+          <option value="in_progress">En cours</option>
+          <option value="completed">Terminé</option>
+          <option value="validated">Validé</option>
+          <option value="cancelled">Annulé</option>
+          <option value="no_match">Sans correspondance</option>
+        </select>
+        <button class="fxv2-btn fxv2-btn-ghost ent-filter-reset" id="filter-reset" style="display:none">
+          Réinitialiser
+        </button>
+      </div>
+
+      <!-- Request list -->
+      <div id="requests-list" class="fxv2-card-list">
+        <!-- Skeleton loading -->
+        <div class="fxv2-skeleton-card ent-skel-item">
+          <div class="fxv2-skel fxv2-skel-title"></div>
+          <div class="fxv2-skel fxv2-skel-line"></div>
+          <div class="fxv2-skel fxv2-skel-badge" style="margin-top:8px"></div>
+        </div>
+        <div class="fxv2-skeleton-card ent-skel-item">
+          <div class="fxv2-skel fxv2-skel-title"></div>
+          <div class="fxv2-skel fxv2-skel-line"></div>
+          <div class="fxv2-skel fxv2-skel-badge" style="margin-top:8px"></div>
+        </div>
+        <div class="fxv2-skeleton-card ent-skel-item">
+          <div class="fxv2-skel fxv2-skel-title"></div>
+          <div class="fxv2-skel fxv2-skel-line"></div>
+          <div class="fxv2-skel fxv2-skel-badge" style="margin-top:8px"></div>
+        </div>
+      </div>
+
+      <!-- Load more -->
+      <div style="text-align:center;margin-top:20px;display:none" id="load-more-wrap">
+        <button class="fxv2-btn fxv2-btn-ghost" id="load-more-btn">
+          Charger plus
+        </button>
+      </div>
+
+      <!-- Empty state -->
+      <div class="fxv2-empty" id="requests-empty" style="display:none">
+        <div class="fxv2-empty-icon">📋</div>
+        <div class="fxv2-empty-title">Aucune demande pour le moment</div>
+        <div class="fxv2-empty-sub">Créez votre première demande pour démarrer une intervention.</div>
+        <button class="fxv2-btn fxv2-btn-primary" onclick="EntDashboard.goTo('new-request')">
+          Nouvelle demande
+        </button>
+      </div>
+
+      <!-- Error state -->
+      <div class="ent-error" id="requests-error" style="display:none">
+        <span class="ent-error-icon">⚠️</span>
+        <span id="requests-error-msg">Erreur de chargement.</span>
+        <button class="fxv2-btn fxv2-btn-ghost" id="requests-retry-btn" style="margin-top:10px">
+          Réessayer
+        </button>
+      </div>
+    </section>
+
+    <!-- ── SECTION: New Request Form ──────────────────────── -->
+    <section class="fxv2-section" id="section-new-request">
+      <div class="fxv2-page-title">
+        Nouvelle demande
+        <div class="fxv2-page-subtitle">Créer une intervention pour un site de votre organisation</div>
+      </div>
+
+      <!-- Viewer role: read-only notice -->
+      <div class="ent-viewer-notice" id="viewer-notice" style="display:none">
+        <span>🔒</span>
+        <div>
+          <strong>Accès en lecture seule</strong>
+          <p>Votre rôle <em>Lecteur</em> ne permet pas de créer des demandes. Contactez votre administrateur entreprise.</p>
+        </div>
+      </div>
+
+      <div id="new-request-form-wrap">
+        <!-- Global form error -->
+        <div class="ent-form-error" id="form-error" style="display:none" role="alert"></div>
+
+        <!-- Global form success -->
+        <div class="ent-form-success" id="form-success" style="display:none" role="status">
+          <span>✅</span>
+          <div>
+            <strong>Demande créée avec succès !</strong>
+            <p>Recherche d'artisan en cours. Retrouvez-la dans <em>Mes demandes</em>.</p>
+          </div>
+          <button class="fxv2-btn fxv2-btn-ghost ent-success-dismiss" id="form-success-view">
+            Voir mes demandes
+          </button>
+        </div>
+
+        <form id="new-request-form" class="ent-form" novalidate autocomplete="off">
+
+          <!-- Site -->
+          <div class="ent-form-group">
+            <label class="ent-form-label" for="req-site">
+              Site <span class="ent-form-required">*</span>
+            </label>
+            <select class="ent-form-select" id="req-site" name="site_id" required aria-required="true">
+              <option value="">Chargement des sites…</option>
+            </select>
+            <div class="ent-form-hint" id="site-hint"></div>
+          </div>
+
+          <!-- Service Category -->
+          <div class="ent-form-group">
+            <label class="ent-form-label" for="req-category">
+              Catégorie de service <span class="ent-form-required">*</span>
+            </label>
+            <select class="ent-form-select" id="req-category" name="service_category" required aria-required="true">
+              <option value="">Sélectionnez une catégorie</option>
+              <option value="plomberie">🔧 Plomberie</option>
+              <option value="electricite">⚡ Électricité</option>
+              <option value="serrurerie">🔑 Serrurerie</option>
+              <option value="peinture">🎨 Peinture</option>
+              <option value="nettoyage">🧹 Nettoyage</option>
+              <option value="maconnerie">🧱 Maçonnerie</option>
+              <option value="menuiserie">🪵 Menuiserie</option>
+              <option value="climatisation">❄️ Climatisation</option>
+              <option value="autre">📦 Autre</option>
+            </select>
+            <!-- Free-text fallback for "autre" -->
+            <input class="ent-form-input" id="req-category-other" type="text"
+                   placeholder="Précisez la catégorie…" style="display:none;margin-top:8px"
+                   maxlength="120" autocomplete="off">
+            <div class="ent-form-hint ent-form-error-msg" id="category-error" style="display:none"></div>
+          </div>
+
+          <!-- Description -->
+          <div class="ent-form-group">
+            <label class="ent-form-label" for="req-desc">
+              Description <span class="ent-form-required">*</span>
+            </label>
+            <textarea class="ent-form-textarea" id="req-desc" name="description"
+                      rows="4" required aria-required="true"
+                      placeholder="Décrivez le problème ou le besoin…"
+                      maxlength="2000"></textarea>
+            <div class="ent-form-hint ent-char-count">
+              <span id="desc-chars">0</span>/2000 caractères
+            </div>
+            <div class="ent-form-hint ent-form-error-msg" id="desc-error" style="display:none"></div>
+          </div>
+
+          <!-- Urgency -->
+          <div class="ent-form-group">
+            <label class="ent-form-label" for="req-urgency">Urgence</label>
+            <div class="ent-urgency-grid" id="urgency-grid">
+              <button type="button" class="ent-urgency-btn active" data-value="">
+                <span class="ent-urg-icon">📅</span>
+                <span class="ent-urg-label">Normale</span>
+                <span class="ent-urg-sub">Dans les jours qui viennent</span>
+              </button>
+              <button type="button" class="ent-urgency-btn" data-value="urgent">
+                <span class="ent-urg-icon">⚡</span>
+                <span class="ent-urg-label">Urgent</span>
+                <span class="ent-urg-sub">Aujourd'hui si possible</span>
+              </button>
+              <button type="button" class="ent-urgency-btn" data-value="now">
+                <span class="ent-urg-icon">🚨</span>
+                <span class="ent-urg-label">Immédiat</span>
+                <span class="ent-urg-sub">Intervention immédiate requise</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="ent-form-actions">
+            <button type="submit" class="fxv2-btn fxv2-btn-primary ent-submit-btn" id="req-submit">
+              <span id="req-submit-text">Créer la demande</span>
+              <span id="req-submit-spinner" class="ent-btn-spinner" style="display:none"></span>
+            </button>
+            <button type="button" class="fxv2-btn fxv2-btn-ghost" id="req-cancel-btn">
+              Annuler
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </section>
+
+    <!-- ── SECTION: Sites ──────────────────────────────────── -->
+    <section class="fxv2-section" id="section-sites">
+      <div class="fxv2-page-title">
+        Mes sites
+        <div class="fxv2-page-subtitle">Sites enregistrés pour votre organisation</div>
+      </div>
+
+      <div id="sites-list" class="fxv2-card-list">
+        <div class="fxv2-skeleton-card ent-skel-item">
+          <div class="fxv2-skel fxv2-skel-title"></div>
+          <div class="fxv2-skel fxv2-skel-line"></div>
+        </div>
+        <div class="fxv2-skeleton-card ent-skel-item">
+          <div class="fxv2-skel fxv2-skel-title"></div>
+          <div class="fxv2-skel fxv2-skel-line"></div>
+        </div>
+      </div>
+
+      <div class="fxv2-empty" id="sites-empty" style="display:none">
+        <div class="fxv2-empty-icon">🏗️</div>
+        <div class="fxv2-empty-title">Aucun site enregistré</div>
+        <div class="fxv2-empty-sub">Contactez votre administrateur FIXEO pour ajouter des sites.</div>
+      </div>
+
+      <div class="ent-error" id="sites-error" style="display:none">
+        <span class="ent-error-icon">⚠️</span>
+        <span id="sites-error-msg">Erreur de chargement des sites.</span>
+        <button class="fxv2-btn fxv2-btn-ghost" id="sites-retry-btn" style="margin-top:10px">
+          Réessayer
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAV (mobile) -->
+  <nav class="fxv2-bottom-nav" aria-label="Navigation mobile">
+    <button class="fxv2-bottom-btn active" data-section="requests" id="bnav-requests">
+      <span class="bicon">📋</span>
+      <span>Demandes</span>
+    </button>
+    <button class="fxv2-bottom-btn" data-section="new-request" id="bnav-new-request">
+      <span class="bicon">➕</span>
+      <span>Nouveau</span>
+    </button>
+    <button class="fxv2-bottom-btn" data-section="sites" id="bnav-sites">
+      <span class="bicon">🏗️</span>
+      <span>Sites</span>
+    </button>
+  </nav>
+
+</div><!-- /#ent-dashboard -->
+
+<!-- Enterprise dashboard module -->
+<script src="js/enterprise-dashboard-v1.js?v=ed1b"></script>
+</body>
+</html>
