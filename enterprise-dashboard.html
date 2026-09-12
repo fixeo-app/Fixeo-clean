@@ -21,10 +21,20 @@
   <!-- Reuse existing dashboard CSS design system -->
   <link rel="stylesheet" href="css/fixeo-dashboard-v2.css?v=v2a">
   <!-- Enterprise-specific additions -->
-  <link rel="stylesheet" href="css/enterprise-dashboard-v1.css?v=ed1a">
+  <link rel="stylesheet" href="css/enterprise-dashboard-v1.css?v=ed1c">
 
   <!-- Supabase SDK + client — must load synchronously before JS module -->
   <script src="js/supabase-client.js?v=sc2"></script>
+
+  <!-- RAFI Operational Intelligence V1
+       Optional modules — BP05 continues normally if either fails to load. -->
+  <script>
+    window.__rafiLoadError = false;
+  </script>
+  <script src="js/rafi-classifier-v1.js?v=rc1"
+          onerror="window.__rafiLoadError=true;console.warn('[RAFI] rafi-classifier-v1.js failed to load — intelligence features disabled');"></script>
+  <script src="js/rafi-status-narrator-v1.js?v=rc1"
+          onerror="window.__rafiLoadError=true;console.warn('[RAFI] rafi-status-narrator-v1.js failed to load — status narration disabled');"></script>
 </head>
 <body class="fxv2-body">
 
@@ -243,8 +253,8 @@
         <div class="ent-form-success" id="form-success" style="display:none" role="status">
           <span>✅</span>
           <div>
-            <strong>Demande créée avec succès !</strong>
-            <p>Recherche d'artisan en cours. Retrouvez-la dans <em>Mes demandes</em>.</p>
+            <strong>Demande créée avec succès !</strong>
+            <p>Demande créée. RAFI lance la recherche selon le système FIXEO.</p>
           </div>
           <button class="fxv2-btn fxv2-btn-ghost ent-success-dismiss" id="form-success-view">
             Voir mes demandes
@@ -279,7 +289,11 @@
               <option value="maconnerie">🧱 Maçonnerie</option>
               <option value="menuiserie">🪵 Menuiserie</option>
               <option value="climatisation">❄️ Climatisation</option>
-              <option value="autre">📦 Autre</option>
+              <option value="carrelage">🔲 Carrelage</option>
+              <option value="jardinage">🌿 Jardinage</option>
+              <option value="bricolage">🔩 Bricolage</option>
+              <option value="demenagement">📦 Déménagement</option>
+              <option value="autre">📋 Autre</option>
             </select>
             <!-- Free-text fallback for "autre" -->
             <input class="ent-form-input" id="req-category-other" type="text"
@@ -302,6 +316,10 @@
             </div>
             <div class="ent-form-hint ent-form-error-msg" id="desc-error" style="display:none"></div>
           </div>
+
+          <!-- RAFI Intelligence Hint (injected by JS when available) -->
+          <div id="rafi-form-hint" class="rafi-hint-block" style="display:none"
+               role="status" aria-live="polite" aria-label="Analyse RAFI"></div>
 
           <!-- Urgency -->
           <div class="ent-form-group">
@@ -394,6 +412,6 @@
 </div><!-- /#ent-dashboard -->
 
 <!-- Enterprise dashboard module -->
-<script src="js/enterprise-dashboard-v1.js?v=ed1b"></script>
+<script src="js/enterprise-dashboard-v1.js?v=ed1c"></script>
 </body>
 </html>

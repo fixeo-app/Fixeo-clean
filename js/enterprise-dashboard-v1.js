@@ -1,6 +1,6 @@
 /**
  * FIXEO Enterprise Dashboard V1
- * js/enterprise-dashboard-v1.js  v1b
+ * js/enterprise-dashboard-v1.js  v1c
  *
  * Architecture:
  *   - Reads: enterprise_request_context + service_requests + enterprise_sites
@@ -9,6 +9,13 @@
  *   - Auth: FixeoSupabaseClient.ready() → supabase.auth.getSession()
  *   - No service_role key. No direct unsafe INSERTs.
  *   - Frontend role checks are UX only — backend/RLS/RPC is authority.
+ *
+ * RAFI Integration (v1c):
+ *   - RafiClassifier: description → category/urgency suggestion (form intelligence)
+ *   - RafiNarrator:   status → human-language narration (request cards)
+ *   - Both modules are OPTIONAL. If unavailable, dashboard works identically.
+ *   - RAFI never overrides user choices (categoryTouchedByUser / urgencyTouchedByUser).
+ *   - RAFI never creates requests, decides permissions, or selects artisans.
  *
  * DO NOT:
  *   - Expose artisan personal data
@@ -24,9 +31,11 @@
    * CONSTANTS
    * ════════════════════════════════════════════════════════════ */
 
-  var VERSION = 'ed1b';
+  var VERSION = 'ed1c';
   var PAGE_SIZE = 25;
   var POLL_INTERVAL_MS = 30000;  // 30s
+  var RAFI_DEBOUNCE_MS = 450;    // ms after keyup before classifying
+  var RAFI_MIN_CONFIDENCE = 1;   // min classifier confidence to show suggestion
 
   // Enterprise member roles that can create requests
   var CAN_CREATE_ROLES = ['owner', 'admin', 'operations_manager', 'site_manager', 'reporter'];
@@ -79,7 +88,15 @@
     isSubmitting:    false,
     isPollInFlight:  false,     // D4: guard concurrent poll requests
     selectedUrgency: '',        // '' | 'urgent' | 'now'
-    currentSection:  'requests'
+    currentSection:  'requests',
+    // RAFI integration state
+    rafi: {
+      available:           false,  // set true once modules confirmed at runtime
+      debounceTimer:       null,   // input debounce timer
+      categoryTouched:     false,  // user manually interacted with category select
+      urgencyTouched:      false,  // user manually interacted with urgency buttons
+      lastResult:          null    // last classifyIfReady result
+    }
   };
 
   /* ════════════════════════════════════════════════════════════
@@ -479,6 +496,340 @@
   }
 
   /* ════════════════════════════════════════════════════════════
+   * RAFI — FORM INTELLIGENCE
+   * ════════════════════════════════════════════════════════════ */
+
+  /**
+   * Check whether RAFI modules are available at runtime.
+   * Call once; result cached in state.rafi.available.
+   */
+  function rafiAvailable() {
+    if (state.rafi.available) return true;
+    var ok = typeof window.RafiClassifier !== 'undefined' &&
+             typeof window.RafiClassifier.classifyIfReady === 'function' &&
+             typeof window.RafiNarrator    !== 'undefined' &&
+             typeof window.RafiNarrator.narrateEnterpriseRequest === 'function';
+    state.rafi.available = ok;
+    return ok;
+  }
+
+  /**
+   * Translate raw classifier confidence into a display label.
+   * Never expose raw numbers to users.
+   */
+  function rafiConfidenceLabel(confidence) {
+    if (!confidence || confidence < 1) return null;
+    if (confidence >= 4) return 'Forte correspondance';
+    if (confidence >= 2) return 'Bonne correspondance';
+    return 'Suggestion';
+  }
+
+  /**
+   * Map classifier category value to the French label shown in the <select>.
+   */
+  function rafiCategoryLabel(value) {
+    var labels = {
+      plomberie:    'Plomberie',
+      electricite:  'Électricité',
+      serrurerie:   'Serrurerie',
+      peinture:     'Peinture',
+      nettoyage:    'Nettoyage',
+      maconnerie:   'Maçonnerie',
+      menuiserie:   'Menuiserie',
+      climatisation:'Climatisation',
+      demenagement: 'Déménagement',
+      carrelage:    'Carrelage',
+      jardinage:    'Jardinage',
+      bricolage:    'Bricolage',
+      autre:        'Autre'
+    };
+    return labels[value] || capitalize(value || '');
+  }
+
+  /**
+   * Map urgency value to French label.
+   */
+  function rafiUrgencyLabel(value) {
+    if (value === 'now')    return 'Immédiate';
+    if (value === 'urgent') return 'Urgente';
+    return 'Normale';
+  }
+
+  /**
+   * Wire RAFI intelligence onto the new-request form.
+   * Idempotent: uses a dataset flag so repeated calls add no duplicate listeners.
+   * DOM identity of #req-desc is preserved (no cloneNode).
+   */
+  function setupRafiFormIntelligence() {
+    if (!rafiAvailable()) return;
+
+    var descEl = el('req-desc');
+    var catEl  = el('req-category');
+    if (!descEl || !catEl) return;
+
+    // Reset RAFI touched flags when form is set up (new visit to section)
+    state.rafi.categoryTouched = false;
+    state.rafi.urgencyTouched  = false;
+    state.rafi.lastResult      = null;
+    hideRafiHint();
+
+    // Idempotency guard: only attach once per element lifetime.
+    // Uses a data attribute as a boolean sentinel on the element itself.
+    if (!descEl.dataset.rafiListenerAttached) {
+      descEl.dataset.rafiListenerAttached = '1';
+
+      descEl.addEventListener('input', function () {
+        // Debounced RAFI classification — shares the single 'input' event with char-count
+        if (state.rafi.debounceTimer) clearTimeout(state.rafi.debounceTimer);
+        state.rafi.debounceTimer = setTimeout(function () {
+          runRafiClassify(descEl.value);
+        }, RAFI_DEBOUNCE_MS);
+      });
+    }
+
+    // Category touch — idempotent via data flag
+    if (!catEl.dataset.rafiListenerAttached) {
+      catEl.dataset.rafiListenerAttached = '1';
+      catEl.addEventListener('change', function () {
+        state.rafi.categoryTouched = true;
+        updateRafiHintAdvisory();
+      });
+    }
+
+    // Urgency buttons — idempotent via data flag on each button
+    document.querySelectorAll('.ent-urgency-btn').forEach(function (btn) {
+      if (!btn.dataset.rafiListenerAttached) {
+        btn.dataset.rafiListenerAttached = '1';
+        btn.addEventListener('click', function () {
+          state.rafi.urgencyTouched = true;
+          updateRafiHintAdvisory();
+        });
+      }
+    });
+  }
+
+  /**
+   * Run the classifier and update the hint UI.
+   */
+  function runRafiClassify(text) {
+    if (!rafiAvailable()) return;
+    var result;
+    try {
+      result = window.RafiClassifier.classifyIfReady(text);
+    } catch (e) {
+      console.warn('[RAFI] classifyIfReady threw:', e);
+      hideRafiHint();
+      return;
+    }
+
+    state.rafi.lastResult = result;
+
+    if (!result) {
+      // Text too short — clear hint
+      hideRafiHint();
+      return;
+    }
+
+    var cat    = result.category;
+    var urg    = result.urgency;
+    var hasCat = cat && cat.confidence >= RAFI_MIN_CONFIDENCE;
+    var hasUrg = urg && urg.value !== 'normale';
+    var isTie  = cat && cat.isTie;
+
+    if (!hasCat && !hasUrg) {
+      hideRafiHint();
+      return;
+    }
+
+    renderRafiHint(result);
+  }
+
+  /**
+   * Render the RAFI hint block.
+   */
+  function renderRafiHint(result) {
+    var hintEl = el('rafi-form-hint');
+    if (!hintEl) return;
+
+    var cat = result.category;
+    var urg = result.urgency;
+    var isTie = cat && cat.isTie;
+
+    var catTouched = state.rafi.categoryTouched;
+    var urgTouched = state.rafi.urgencyTouched;
+
+    // Build the inner HTML
+    var html = '<div class="rafi-hint-header">' +
+      '<span class="rafi-badge" aria-hidden="true">RAFI</span>' +
+      '<span class="rafi-hint-title">Analyse RAFI</span>' +
+    '</div>';
+
+    html += '<div class="rafi-hint-rows">';
+
+    // Category row
+    if (cat && cat.confidence >= RAFI_MIN_CONFIDENCE) {
+      var confLabel = rafiConfidenceLabel(cat.confidence);
+      var catLabel  = rafiCategoryLabel(cat.value);
+      if (isTie) {
+        html += '<div class="rafi-hint-row rafi-hint-ambiguous">' +
+          '<span class="rafi-hint-icon">&#x26A0;&#xFE0F;</span>' +
+          '<span>RAFI hésite entre plusieurs métiers — vérifiez la catégorie.</span>' +
+        '</div>';
+      } else {
+        html += '<div class="rafi-hint-row' + (catTouched ? ' rafi-hint-advisory' : '') + '">' +
+          '<span class="rafi-hint-label">Métier probable</span>' +
+          '<span class="rafi-hint-value">' + sanitize(catLabel) + '</span>' +
+          (confLabel ? '<span class="rafi-conf-tag">' + sanitize(confLabel) + '</span>' : '') +
+        '</div>';
+      }
+    }
+
+    // Urgency row (only when non-normale)
+    if (urg && urg.value !== 'normale') {
+      var urgLabel = rafiUrgencyLabel(urg.value);
+      html += '<div class="rafi-hint-row' + (urgTouched ? ' rafi-hint-advisory' : '') + '">' +
+        '<span class="rafi-hint-label">Urgence probable</span>' +
+        '<span class="rafi-hint-value">' + sanitize(urgLabel) + '</span>' +
+      '</div>';
+    }
+
+    html += '</div>'; // .rafi-hint-rows
+
+    // Apply button: only shown if at least one field is untouched and a non-ambiguous result
+    var canApplyCat = cat && cat.confidence >= RAFI_MIN_CONFIDENCE && !isTie && !catTouched;
+    var canApplyUrg = urg && urg.value !== 'normale' && !urgTouched;
+    if (canApplyCat || canApplyUrg) {
+      html += '<div class="rafi-hint-actions">' +
+        '<button type="button" class="rafi-apply-btn" id="rafi-apply-btn" ' +
+        'aria-label="Utiliser les suggestions RAFI pour la catégorie et l\'urgence">' +
+        'Utiliser ces suggestions' +
+        '</button>' +
+      '</div>';
+    }
+
+    hintEl.innerHTML = html;
+    hintEl.style.display = '';
+
+    // Wire apply button
+    var applyBtn = el('rafi-apply-btn');
+    if (applyBtn) {
+      applyBtn.addEventListener('click', function () {
+        applyRafiSuggestion(result);
+      });
+    }
+  }
+
+  /**
+   * Apply RAFI suggestions to form fields.
+   * Respects categoryTouchedByUser / urgencyTouchedByUser flags.
+   * Never silently overwrites — only called when user clicks the apply button.
+   */
+  function applyRafiSuggestion(result) {
+    if (!result) return;
+    var cat = result.category;
+    var urg = result.urgency;
+    var applied = [];
+
+    // Apply category only if user has NOT manually touched it
+    if (cat && cat.confidence >= RAFI_MIN_CONFIDENCE && !cat.isTie && !state.rafi.categoryTouched) {
+      var catEl = el('req-category');
+      if (catEl) {
+        // Check the value exists in the select options
+        var opts = catEl.options;
+        var found = false;
+        for (var i = 0; i < opts.length; i++) {
+          if (opts[i].value === cat.value) { found = true; break; }
+        }
+        if (found) {
+          catEl.value = cat.value;
+          // Trigger the 'autre' input toggle if needed
+          var otherInput = el('req-category-other');
+          if (otherInput) otherInput.style.display = cat.value === 'autre' ? 'block' : 'none';
+          // Mark as RAFI-applied (not user-touched, so remains overridable)
+          applied.push('catégorie');
+        }
+      }
+    }
+
+    // Apply urgency only if user has NOT manually touched it
+    if (urg && urg.value !== 'normale' && !state.rafi.urgencyTouched) {
+      var urgVal = urg.value;
+      state.selectedUrgency = urgVal;
+      document.querySelectorAll('.ent-urgency-btn').forEach(function (btn) {
+        btn.classList.toggle('active', (btn.dataset.value || '') === urgVal);
+      });
+      applied.push('urgence');
+    }
+
+    if (applied.length) {
+      // Update hint to remove apply button and confirm application
+      var hintEl = el('rafi-form-hint');
+      if (hintEl) {
+        var actionsEl = hintEl.querySelector('.rafi-hint-actions');
+        if (actionsEl) {
+          actionsEl.innerHTML = '<span class="rafi-applied-note">' +
+            '✔ Appliqué : ' + sanitize(applied.join(' + ')) +
+            ' — vous pouvez modifier manuellement.' +
+          '</span>';
+        }
+      }
+    }
+  }
+
+  /**
+   * Update hint to advisory state when user has touched a field.
+   */
+  function updateRafiHintAdvisory() {
+    var hintEl = el('rafi-form-hint');
+    if (!hintEl || hintEl.style.display === 'none') return;
+    if (state.rafi.lastResult) {
+      renderRafiHint(state.rafi.lastResult);
+    }
+  }
+
+  function hideRafiHint() {
+    var hintEl = el('rafi-form-hint');
+    if (hintEl) {
+      hintEl.style.display = 'none';
+      hintEl.innerHTML = '';
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════════
+   * RAFI — STATUS NARRATION
+   * ════════════════════════════════════════════════════════════ */
+
+  /**
+   * Return RAFI narration HTML for a request card.
+   * Returns empty string if RAFI is unavailable or narration is empty.
+   * Status badge is ALWAYS shown by the caller — this is supplemental only.
+   *
+   * @param {string} srStatus
+   * @param {object} context  — {siteName, category, city, artisanName}
+   */
+  function rafiNarrateCard(srStatus, context) {
+    if (!rafiAvailable()) return '';
+    var msg;
+    try {
+      msg = window.RafiNarrator.narrateEnterpriseRequest(srStatus, context || {});
+    } catch (e) {
+      console.warn('[RAFI] narrateEnterpriseRequest threw:', e);
+      return '';
+    }
+    if (!msg || !msg.text) return '';
+    var toneClass = '';
+    try {
+      toneClass = window.RafiNarrator.toneClass(msg.tone);
+    } catch (_) {}
+    var sub = msg.sub ? '<span class="rafi-card-sub">' + sanitize(msg.sub) + '</span>' : '';
+    return '<div class="rafi-card-narration ' + sanitize(toneClass) + '" aria-label="Analyse RAFI : ' + sanitize(msg.text) + '">' +
+      '<span class="rafi-badge-sm" aria-hidden="true">RAFI</span>' +
+      '<span class="rafi-card-text">' + sanitize(msg.text) + '</span>' +
+      sub +
+    '</div>';
+  }
+
+  /* ════════════════════════════════════════════════════════════
    * REQUESTS — RENDER
    * ════════════════════════════════════════════════════════════ */
 
@@ -514,6 +865,16 @@
       card.setAttribute('data-status', status);
       card.setAttribute('data-erc-id', row.id);
 
+      // RAFI narration context — only pass what is actually available
+      var narrateCtx = {
+        siteName: site.name  || null,
+        category: sr.service_category || null,
+        city:     site.city  || sr.city || null
+        // artisanName: NOT available in enterprise_request_context view — omitted
+        // candidateCount / deliveredCount: NOT available client-side — omitted
+      };
+      var rafiNarration = rafiNarrateCard(status, narrateCtx);
+
       card.innerHTML =
         '<div class="fxv2-card-head">' +
           '<div>' +
@@ -528,6 +889,7 @@
         (sr.description
           ? '<div class="ent-card-desc">' + sanitize(sr.description) + '</div>'
           : '') +
+        (rafiNarration || '') +
         '<div class="ent-card-foot">' +
           '<span class="ent-card-age">' + relativeTime(row.created_at) + '</span>' +
           (sr.tracking_ref
@@ -751,17 +1113,20 @@
       populateSiteDropdowns(state.sites);
     }
 
-    // Char count
+    // Char count — idempotent: data flag prevents duplicate listeners.
+    // setupRafiFormIntelligence() no longer clones this element.
     var descEl = el('req-desc');
-    if (descEl) {
+    if (descEl && !descEl.dataset.charCountAttached) {
+      descEl.dataset.charCountAttached = '1';
       descEl.addEventListener('input', function () {
         setText('desc-chars', descEl.value.length);
       });
     }
 
-    // "Autre" category shows free-text input
+    // "Autre" category shows free-text input — idempotent via data flag
     var catEl = el('req-category');
-    if (catEl) {
+    if (catEl && !catEl.dataset.autreAttached) {
+      catEl.dataset.autreAttached = '1';
       catEl.addEventListener('change', function () {
         var otherInput = el('req-category-other');
         if (otherInput) {
@@ -770,6 +1135,9 @@
         }
       });
     }
+
+    // Wire RAFI form intelligence (safe no-op if modules unavailable)
+    setupRafiFormIntelligence();
   }
 
   function handleFormSubmit(e) {
@@ -898,6 +1266,15 @@
     setText('desc-chars', '0');
     if (!keepLocked) state.isSubmitting = false;
     state.selectedUrgency = '';
+    // Reset RAFI state on form reset
+    state.rafi.categoryTouched = false;
+    state.rafi.urgencyTouched  = false;
+    state.rafi.lastResult      = null;
+    if (state.rafi.debounceTimer) {
+      clearTimeout(state.rafi.debounceTimer);
+      state.rafi.debounceTimer = null;
+    }
+    hideRafiHint();
     document.querySelectorAll('.ent-urgency-btn').forEach(function (btn) {
       btn.classList.toggle('active', btn.dataset.value === '');
     });

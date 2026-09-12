@@ -195,14 +195,15 @@
       /* ── NO_MATCH ─────────────────────────────────────────────────
        * Dispatch found no eligible artisan.
        * Do NOT promise a future artisan — that is not guaranteed.
+       * Do NOT claim human notification — no backend evidence.
        * ─────────────────────────────────────────────────────────── */
       case 'no_match': {
-        var cityNote = context.city ? ' dans la région de ' + context.city : '';
+        var cityNote = context.city ? ' dans la région de ' + context.city : ' dans cette zone';
         return {
           icon: '😔',
           tone: 'alert',
           text: 'Aucun artisan disponible' + cityNote + ' pour cette demande.',
-          sub: 'Notre équipe a été informée.',
+          sub: 'Vous pouvez soumettre une nouvelle demande ultérieurement.',
           adminNote: 'no_match: ' + (context.city || '?') + ' / ' + (context.category || '?') +
                      '. Vérifier la couverture artisans pour ce couple ville+catégorie.'
         };
@@ -454,8 +455,8 @@
         return {
           icon: '⚠️',
           tone: 'alert',
-          text: site + cat + ' — Aucun artisan disponible.',
-          sub: 'Notre équipe a été informée.',
+          text: site + cat + ' — Aucun artisan disponible pour le moment dans cette zone.',
+          sub: 'Vous pouvez soumettre une nouvelle demande ultérieurement.',
           adminNote: 'Enterprise no_match: ' + (context.city || '?') + ' / ' + (context.category || '?') + '.'
         };
 
