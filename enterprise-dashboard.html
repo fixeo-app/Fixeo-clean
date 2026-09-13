@@ -34,6 +34,7 @@
           onerror="window.__rafiLoadError=true;console.warn('[RAFI] narrator unavailable');"></script>
 </head>
 <body class="fxv2-body">
+<a href="#ent-main-content" class="skip-link">Aller au contenu principal</a>
 
 <!-- ══════════════════════════════════════════════════════════
      AUTH GATE
@@ -99,6 +100,7 @@
       <span class="ent-header-workspace-label">Entreprise</span>
     </div>
     <div class="ent-header-right">
+      <button id="ent-search-trigger" class="ent-header-search-btn" aria-label="Recherche rapide (/)">🔍</button>
       <span id="ent-header-role-badge" class="ent-role-badge-header" aria-label="Votre rôle"></span>
       <button class="ent-header-ent-btn" id="ent-header-ent-btn" aria-label="Changer d'entreprise" title="Changer d'entreprise">
         <span id="ent-header-ent-name" class="ent-header-ent-name">—</span>
@@ -128,7 +130,7 @@
       </button>
       <button class="fxv2-nav-link" data-section="requests" id="nav-requests">
         <span class="icon" aria-hidden="true">📋</span> Interventions
-        <span class="nav-attention-badge" id="nav-badge-requests" style="display:none"></span>
+        <span class="nav-attention-badge" id="nav-badge-requests" style="display:none" aria-label="Interventions nécessitant attention"></span>
       </button>
       <button class="fxv2-nav-link" data-section="new-request" id="nav-new-request">
         <span class="icon" aria-hidden="true">➕</span> Nouvelle demande
@@ -155,7 +157,7 @@
   </aside>
 
   <!-- MAIN CONTENT -->
-  <main class="fxv2-main" id="ent-main" role="main" aria-live="polite" aria-atomic="false">
+  <main class="fxv2-main" id="ent-main-content" role="main" aria-live="polite" aria-atomic="false" tabindex="-1">
 
     <!-- ═══════════════════════════════════════════════════════
          SECTION: OVERVIEW — Command Center
@@ -221,6 +223,29 @@
         </div>
       </div>
 
+      <!-- DAILY BRIEF -->
+      <div id="ov-daily-brief" class="ent-daily-brief" aria-label="Vue du jour" role="region">
+        <div class="ent-db-header">
+          <span class="ent-db-title">📋 Vue du jour</span>
+          <span class="ent-db-subtitle">Synthèse des interventions en cours</span>
+        </div>
+        <div id="ov-db-items" class="ent-db-items"></div>
+      </div>
+
+      <!-- HEALTH SUMMARY -->
+      <div id="ov-health-summary" class="ent-health-summary" aria-label="Répartition des interventions" role="region">
+        <div class="ent-hs-header">
+          <span class="ent-hs-title">📊 Répartition</span>
+        </div>
+        <div id="ov-hs-body" class="ent-hs-body"></div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="ent-quick-actions" id="ov-quick-actions" aria-label="Actions rapides" role="region">
+        <div class="ent-qa-title">⚡ Actions rapides</div>
+        <div id="ov-qa-buttons" class="ent-qa-buttons"></div>
+      </div>
+
       <!-- TWO COLUMNS: Recent Activity + Sites Snapshot -->
       <div class="ent-ov-cols">
 
@@ -228,7 +253,7 @@
         <div class="ent-ov-col-main">
           <div class="ent-col-header">
             <h2 class="ent-col-title">Activité récente</h2>
-            <button class="ent-col-link" onclick="EntDashboard.goTo('requests')">Tout voir →</button>
+            <button class="ent-col-link" onclick="EntDashboard.goTo('requests')" aria-label="Voir toutes les interventions récentes">Tout voir →</button>
           </div>
           <div id="ov-recent-list" class="fxv2-card-list ent-ov-recent-list" aria-live="polite">
             <div class="fxv2-skeleton-card"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
@@ -247,7 +272,7 @@
         <div class="ent-ov-col-aside">
           <div class="ent-col-header">
             <h2 class="ent-col-title">Sites actifs</h2>
-            <button class="ent-col-link" onclick="EntDashboard.goTo('sites')">Gérer →</button>
+            <button class="ent-col-link" onclick="EntDashboard.goTo('sites')" aria-label="Gérer les sites">Gérer →</button>
           </div>
           <div id="ov-sites-snap" class="ent-sites-snap" aria-live="polite">
             <div class="fxv2-skeleton-card"><div class="fxv2-skel fxv2-skel-title"></div></div>
@@ -273,9 +298,12 @@
           <h1 class="fxv2-page-title">Interventions</h1>
           <div class="fxv2-page-subtitle" id="requests-subtitle">Toutes les demandes de votre organisation</div>
         </div>
-        <button class="ent-action-btn ent-action-primary" onclick="EntDashboard.goTo('new-request')">
-          <span aria-hidden="true">➕</span> Nouvelle
-        </button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="ent-export-btn" id="req-export-btn" aria-label="Exporter en CSV" title="Exporter la liste filtrée">📥 Export CSV</button>
+          <button class="ent-action-btn ent-action-primary" onclick="EntDashboard.goTo('new-request')" aria-label="Créer une nouvelle demande d'intervention">
+            <span aria-hidden="true">➕</span> Nouvelle
+          </button>
+        </div>
       </div>
 
       <!-- STATUS TABS -->
@@ -314,9 +342,40 @@
             <option value="now">🚨 Immédiat</option>
             <option value="urgent">⚡ Urgent</option>
           </select>
+          <select class="ent-filter-select" id="filter-category" aria-label="Filtrer par catégorie">
+            <option value="">Toutes catégories</option>
+            <option value="plomberie">🔧 Plomberie</option>
+            <option value="electricite">⚡ Électricité</option>
+            <option value="serrurerie">🔑 Serrurerie</option>
+            <option value="climatisation">❄️ Climatisation</option>
+            <option value="peinture">🎨 Peinture</option>
+            <option value="nettoyage">🧹 Nettoyage</option>
+            <option value="maconnerie">🧱 Maçonnerie</option>
+            <option value="menuiserie">🪵 Menuiserie</option>
+            <option value="carrelage">🔲 Carrelage</option>
+            <option value="jardinage">🌿 Jardinage</option>
+            <option value="bricolage">🔩 Bricolage</option>
+            <option value="demenagement">📦 Déménagement</option>
+            <option value="autre">📋 Autre</option>
+          </select>
+          <select class="ent-filter-select" id="req-sort" aria-label="Trier les interventions">
+            <option value="newest">Plus récentes</option>
+            <option value="oldest">Plus anciennes</option>
+            <option value="urgent-first">Urgentes en premier</option>
+          </select>
           <button class="ent-filter-reset-btn" id="filter-reset" style="display:none"
                   aria-label="Réinitialiser les filtres">✕ Réinitialiser</button>
         </div>
+        <div id="filter-chips" class="ent-filter-chips" aria-label="Filtres actifs"></div>
+        <div class="ent-result-count">
+          <span id="req-result-count" aria-live="polite" aria-atomic="true"></span>
+        </div>
+      </div>
+
+      <!-- SAVED VIEWS -->
+      <div class="ent-saved-views-bar" id="saved-views-bar">
+        <div class="ent-saved-views-list" id="saved-views-list" role="list" aria-label="Vues sauvegardées"></div>
+        <button class="ent-save-view-btn" id="save-view-btn" aria-label="Sauvegarder la vue actuelle">+ Sauvegarder la vue</button>
       </div>
 
       <!-- REQUESTS LIST -->
@@ -344,7 +403,7 @@
       <div class="ent-error" id="requests-error" style="display:none" role="alert">
         <span class="ent-error-icon" aria-hidden="true">⚠️</span>
         <span id="requests-error-msg">Erreur de chargement.</span>
-        <button class="fxv2-btn fxv2-btn-ghost" id="requests-retry-btn" style="margin-top:10px">Réessayer</button>
+        <button class="fxv2-btn fxv2-btn-ghost" id="requests-retry-btn" style="margin-top:10px" aria-label="Réessayer le chargement des interventions">Réessayer</button>
       </div>
 
     </section>
@@ -395,7 +454,7 @@
             <strong>Demande créée avec succès !</strong>
             <p>FIXEO lance la recherche d'artisan selon votre demande.</p>
           </div>
-          <button class="fxv2-btn fxv2-btn-ghost ent-success-dismiss" id="form-success-view">
+          <button class="fxv2-btn fxv2-btn-ghost ent-success-dismiss" id="form-success-view" aria-label="Voir mes interventions">
             Voir mes interventions →
           </button>
         </div>
@@ -490,7 +549,7 @@
           </div>
 
           <!-- Actions -->
-          <div class="ent-form-actions">
+          <div class="ent-form-actions ent-form-actions-sticky">
             <button type="submit" class="fxv2-btn fxv2-btn-primary ent-submit-btn" id="req-submit">
               <span id="req-submit-text">Créer la demande</span>
               <span id="req-submit-spinner" class="ent-btn-spinner" style="display:none" aria-hidden="true"></span>
@@ -516,6 +575,12 @@
         </div>
       </div>
 
+      <!-- SITE COMPARISON -->
+      <div class="ent-site-compare-wrap" id="site-comparison-wrap">
+        <button class="ent-site-compare-toggle" id="site-comparison-toggle" onclick="toggleSiteComparison()">📋 Comparaison des sites</button>
+        <div id="site-comparison-table" style="display:none"></div>
+      </div>
+
       <div id="sites-list" class="ent-sites-grid" role="list">
         <div class="fxv2-skeleton-card" role="listitem"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
         <div class="fxv2-skeleton-card" role="listitem"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
@@ -529,7 +594,7 @@
       <div class="ent-error" id="sites-error" style="display:none" role="alert">
         <span class="ent-error-icon" aria-hidden="true">⚠️</span>
         <span id="sites-error-msg">Erreur de chargement des sites.</span>
-        <button class="fxv2-btn fxv2-btn-ghost" id="sites-retry-btn" style="margin-top:10px">Réessayer</button>
+        <button class="fxv2-btn fxv2-btn-ghost" id="sites-retry-btn" style="margin-top:10px" aria-label="Réessayer le chargement des sites">Réessayer</button>
       </div>
 
     </section>
@@ -580,7 +645,7 @@
       <div class="ent-error" id="members-error" style="display:none" role="alert">
         <span class="ent-error-icon" aria-hidden="true">⚠️</span>
         <span id="members-error-msg">Erreur de chargement.</span>
-        <button class="fxv2-btn fxv2-btn-ghost" id="members-retry-btn" style="margin-top:10px">Réessayer</button>
+        <button class="fxv2-btn fxv2-btn-ghost" id="members-retry-btn" style="margin-top:10px" aria-label="Réessayer le chargement des membres">Réessayer</button>
       </div>
 
       <!-- Future: invite/remove members — FUTURE CONTRACT REQUIRED -->
@@ -626,7 +691,7 @@
       </div>
 
       <div style="text-align:center;margin-top:20px;display:none" id="hist-load-more-wrap">
-        <button class="fxv2-btn fxv2-btn-ghost" id="hist-load-more-btn">Charger plus</button>
+        <button class="fxv2-btn fxv2-btn-ghost" id="hist-load-more-btn" aria-label="Charger plus d'historique">Charger plus</button>
       </div>
 
       <div class="fxv2-empty" id="history-empty" style="display:none" role="status">
@@ -637,7 +702,7 @@
       <div class="ent-error" id="history-error" style="display:none" role="alert">
         <span class="ent-error-icon" aria-hidden="true">⚠️</span>
         <span id="history-error-msg">Erreur de chargement.</span>
-        <button class="fxv2-btn fxv2-btn-ghost" id="history-retry-btn" style="margin-top:10px">Réessayer</button>
+        <button class="fxv2-btn fxv2-btn-ghost" id="history-retry-btn" style="margin-top:10px" aria-label="Réessayer le chargement de l'historique">Réessayer</button>
       </div>
 
     </section>
@@ -713,5 +778,42 @@
 
 <!-- Enterprise dashboard V2 module -->
 <script src="js/enterprise-dashboard-v1.js?v=ed2"></script>
+
+<!-- GLOBAL SEARCH DIALOG -->
+<div id="ent-search-dialog" role="dialog" aria-modal="true" aria-label="Recherche rapide" style="display:none" hidden>
+  <div id="ent-search-backdrop" class="ent-search-backdrop"></div>
+  <div class="ent-search-panel" role="search">
+    <div class="ent-search-input-wrap">
+      <span class="ent-search-icon" aria-hidden="true">🔍</span>
+      <input type="search" id="ent-search-q" class="ent-search-q-input"
+             placeholder="Rechercher interventions, sites, membres…"
+             autocomplete="off" aria-label="Terme de recherche"
+             aria-autocomplete="list" aria-controls="ent-search-results"/>
+      <kbd class="ent-search-esc-hint">Esc</kbd>
+    </div>
+    <div id="ent-search-results" class="ent-search-results" role="listbox" aria-label="Résultats"></div>
+    <div class="ent-search-footer">
+      <span>↑↓ naviguer</span><span>↵ ouvrir</span><span>Esc fermer</span>
+    </div>
+  </div>
+</div>
+
+<!-- COMMAND PALETTE -->
+<div id="ent-cmd-palette" role="dialog" aria-modal="true" aria-label="Palette de commandes" style="display:none" hidden>
+  <div id="ent-cmd-backdrop" class="ent-search-backdrop"></div>
+  <div class="ent-cmd-panel">
+    <div class="ent-search-input-wrap">
+      <span aria-hidden="true">⌘</span>
+      <input type="text" id="ent-cmd-input" class="ent-search-q-input"
+             placeholder="Taper une commande…"
+             autocomplete="off" aria-label="Commande"
+             aria-autocomplete="list" aria-controls="ent-cmd-list"/>
+      <kbd class="ent-search-esc-hint">Esc</kbd>
+    </div>
+    <div id="ent-cmd-list" class="ent-search-results" role="listbox"></div>
+    <div class="ent-search-footer"><span>↑↓ naviguer</span><span>↵ exécuter</span><span>Esc fermer</span></div>
+  </div>
+</div>
+
 </body>
 </html>

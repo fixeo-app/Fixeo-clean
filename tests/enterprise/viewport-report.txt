@@ -1,0 +1,37 @@
+═══════════════════════════════════════════════════════
+  BP07 Viewport / CSS Breakpoint Report
+  Generated: 2026-09-13T12:26:21.270Z
+  Source: css/enterprise-dashboard-v1.css
+═══════════════════════════════════════════════════════
+
+── All @media breakpoints found (10) ──
+  [01] (max-width: 479px)
+  [02] (max-width: 480px)
+  [03] (max-width: 599px)
+  [04] (max-width: 600px)
+  [05] (max-width: 767px)
+  [06] (max-width: 768px)
+  [07] (min-width: 600px)
+  [08] (min-width: 769px)
+  [09] (min-width: 900px)
+  [10] (min-width: 960px)
+
+── Required patterns check ──
+  ✓ PASS  Mobile sidebar (max-width ≤768px)
+  ✓ PASS  Small mobile (max-width ≤599px or ≤600px)
+  ✓ PASS  Mobile narrow (max-width ≤480px or ≤479px)
+  ✓ PASS  Wide layout (min-width ≥769px or ≥960px)
+  ✓ PASS  Mobile detail bottom-sheet (≤767px)
+
+── BP07 Feature CSS check ──
+  ✓ FOUND  .ent-daily-brief
+  ✓ FOUND  .ent-health-summary
+  ✓ FOUND  .ent-quick-actions
+  ✓ FOUND  .ent-site-compare-table
+  ✓ FOUND  .ent-db-item-critical
+  ✓ FOUND  .ent-hs-bar-fill
+  ✓ FOUND  .ent-qa-btn
+  ✓ FOUND  .ent-site-compare-toggle
+
+── Summary ──
+  ✓ All checks passed.

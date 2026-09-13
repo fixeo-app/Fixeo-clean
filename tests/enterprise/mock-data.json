@@ -1,0 +1,478 @@
+{
+  "_meta": {
+    "generated_at": "2026-09-13T12:26:21.233Z",
+    "generator": "scripts/enterprise/generate-mock-data.js",
+    "description": "Deterministic mock dataset for BP07 QA tests",
+    "counts": {
+      "enterprises": 2,
+      "sites": 6,
+      "members": 5,
+      "requests": 20,
+      "history": 10
+    }
+  },
+  "enterprises": [
+    {
+      "id": "ent-0001-0000-0000-000000000001",
+      "name": "Entreprise Alpha",
+      "plan": "pro",
+      "created_at": "2025-09-13T12:00:00.000Z"
+    },
+    {
+      "id": "ent-0002-0000-0000-000000000002",
+      "name": "Entreprise Beta",
+      "plan": "basic",
+      "created_at": "2026-03-17T13:00:00.000Z"
+    }
+  ],
+  "sites": [
+    {
+      "id": "site-0001",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "name": "Siège Paris",
+      "city": "Paris",
+      "country": "FR"
+    },
+    {
+      "id": "site-0002",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "name": "Entrepôt Lyon",
+      "city": "Lyon",
+      "country": "FR"
+    },
+    {
+      "id": "site-0003",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "name": "Bureau Marseille",
+      "city": "Marseille",
+      "country": "FR"
+    },
+    {
+      "id": "site-0004",
+      "enterprise_id": "ent-0002-0000-0000-000000000002",
+      "name": "HQ Bordeaux",
+      "city": "Bordeaux",
+      "country": "FR"
+    },
+    {
+      "id": "site-0005",
+      "enterprise_id": "ent-0002-0000-0000-000000000002",
+      "name": "Atelier Nantes",
+      "city": "Nantes",
+      "country": "FR"
+    },
+    {
+      "id": "site-0006",
+      "enterprise_id": "ent-0002-0000-0000-000000000002",
+      "name": "Dépôt Lille",
+      "city": "Lille",
+      "country": "FR"
+    }
+  ],
+  "members": [
+    {
+      "id": "mem-0001",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "user_id": "user-0001",
+      "role": "owner",
+      "email": "owner@example.com",
+      "name": "Alice Dupont"
+    },
+    {
+      "id": "mem-0002",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "user_id": "user-0002",
+      "role": "admin",
+      "email": "admin@example.com",
+      "name": "Bob Martin"
+    },
+    {
+      "id": "mem-0003",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "user_id": "user-0003",
+      "role": "operations_manager",
+      "email": "ops@example.com",
+      "name": "Clara Bernard"
+    },
+    {
+      "id": "mem-0004",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "user_id": "user-0004",
+      "role": "site_manager",
+      "email": "sitemgr@example.com",
+      "name": "David Leroy"
+    },
+    {
+      "id": "mem-0005",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "user_id": "user-0005",
+      "role": "reporter",
+      "email": "reporter@example.com",
+      "name": "Eve Moreau"
+    }
+  ],
+  "requests": [
+    {
+      "id": "req-0001",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "enterprise_site_id": "site-0001",
+      "status": "new",
+      "urgency": "now",
+      "category": "Plomberie",
+      "description": "Intervention de type Plomberie sur le site Siège Paris.",
+      "created_at": "2026-09-13T12:00:00.000Z",
+      "updated_at": "2026-09-13T10:00:00.000Z",
+      "artisan_id": null
+    },
+    {
+      "id": "req-0002",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "enterprise_site_id": "site-0002",
+      "status": "assigned",
+      "urgency": "urgent",
+      "category": "Électricité",
+      "description": "Intervention de type Électricité sur le site Entrepôt Lyon.",
+      "created_at": "2026-09-11T12:00:00.000Z",
+      "updated_at": "2026-09-12T10:00:00.000Z",
+      "artisan_id": "artisan-0002"
+    },
+    {
+      "id": "req-0003",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "enterprise_site_id": "site-0003",
+      "status": "in_progress",
+      "urgency": "normale",
+      "category": "Climatisation",
+      "description": "Intervention de type Climatisation sur le site Bureau Marseille.",
+      "created_at": "2026-09-09T12:00:00.000Z",
+      "updated_at": "2026-09-10T10:00:00.000Z",
+      "artisan_id": "artisan-0003"
+    },
+    {
+      "id": "req-0004",
+      "enterprise_id": "ent-0002-0000-0000-000000000002",
+      "enterprise_site_id": "site-0004",
+      "status": "completed",
+      "urgency": "normale",
+      "category": "Serrurerie",
+      "description": "Intervention de type Serrurerie sur le site HQ Bordeaux.",
+      "created_at": "2026-09-07T12:00:00.000Z",
+      "updated_at": "2026-09-08T10:00:00.000Z",
+      "artisan_id": null
+    },
+    {
+      "id": "req-0005",
+      "enterprise_id": "ent-0002-0000-0000-000000000002",
+      "enterprise_site_id": "site-0005",
+      "status": "validated",
+      "urgency": "normale",
+      "category": "Peinture",
+      "description": "Intervention de type Peinture sur le site Atelier Nantes.",
+      "created_at": "2026-09-05T12:00:00.000Z",
+      "updated_at": "2026-09-06T10:00:00.000Z",
+      "artisan_id": null
+    },
+    {
+      "id": "req-0006",
+      "enterprise_id": "ent-0002-0000-0000-000000000002",
+      "enterprise_site_id": "site-0006",
+      "status": "cancelled",
+      "urgency": "now",
+      "category": "Menuiserie",
+      "description": "Intervention de type Menuiserie sur le site Dépôt Lille.",
+      "created_at": "2026-09-03T12:00:00.000Z",
+      "updated_at": "2026-09-04T10:00:00.000Z",
+      "artisan_id": null
+    },
+    {
+      "id": "req-0007",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "enterprise_site_id": "site-0001",
+      "status": "no_match",
+      "urgency": "urgent",
+      "category": "Nettoyage",
+      "description": "Intervention de type Nettoyage sur le site Siège Paris.",
+      "created_at": "2026-09-01T12:00:00.000Z",
+      "updated_at": "2026-09-02T10:00:00.000Z",
+      "artisan_id": null
+    },
+    {
+      "id": "req-0008",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "enterprise_site_id": "site-0002",
+      "status": "new",
+      "urgency": "normale",
+      "category": "Sécurité",
+      "description": "Intervention de type Sécurité sur le site Entrepôt Lyon.",
+      "created_at": "2026-08-30T12:00:00.000Z",
+      "updated_at": "2026-08-31T10:00:00.000Z",
+      "artisan_id": null
+    },
+    {
+      "id": "req-0009",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "enterprise_site_id": "site-0003",
+      "status": "assigned",
+      "urgency": "normale",
+      "category": "Plomberie",
+      "description": "Intervention de type Plomberie sur le site Bureau Marseille.",
+      "created_at": "2026-08-28T12:00:00.000Z",
+      "updated_at": "2026-08-29T10:00:00.000Z",
+      "artisan_id": "artisan-0003"
+    },
+    {
+      "id": "req-0010",
+      "enterprise_id": "ent-0002-0000-0000-000000000002",
+      "enterprise_site_id": "site-0004",
+      "status": "in_progress",
+      "urgency": "normale",
+      "category": "Électricité",
+      "description": "Intervention de type Électricité sur le site HQ Bordeaux.",
+      "created_at": "2026-08-26T12:00:00.000Z",
+      "updated_at": "2026-08-27T10:00:00.000Z",
+      "artisan_id": "artisan-0001"
+    },
+    {
+      "id": "req-0011",
+      "enterprise_id": "ent-0002-0000-0000-000000000002",
+      "enterprise_site_id": "site-0005",
+      "status": "completed",
+      "urgency": "now",
+      "category": "Climatisation",
+      "description": "Intervention de type Climatisation sur le site Atelier Nantes.",
+      "created_at": "2026-08-24T12:00:00.000Z",
+      "updated_at": "2026-08-25T10:00:00.000Z",
+      "artisan_id": null
+    },
+    {
+      "id": "req-0012",
+      "enterprise_id": "ent-0002-0000-0000-000000000002",
+      "enterprise_site_id": "site-0006",
+      "status": "validated",
+      "urgency": "urgent",
+      "category": "Serrurerie",
+      "description": "Intervention de type Serrurerie sur le site Dépôt Lille.",
+      "created_at": "2026-08-22T12:00:00.000Z",
+      "updated_at": "2026-08-23T10:00:00.000Z",
+      "artisan_id": null
+    },
+    {
+      "id": "req-0013",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "enterprise_site_id": "site-0001",
+      "status": "cancelled",
+      "urgency": "normale",
+      "category": "Peinture",
+      "description": "Intervention de type Peinture sur le site Siège Paris.",
+      "created_at": "2026-08-20T12:00:00.000Z",
+      "updated_at": "2026-08-21T10:00:00.000Z",
+      "artisan_id": null
+    },
+    {
+      "id": "req-0014",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "enterprise_site_id": "site-0002",
+      "status": "no_match",
+      "urgency": "normale",
+      "category": "Menuiserie",
+      "description": "Intervention de type Menuiserie sur le site Entrepôt Lyon.",
+      "created_at": "2026-08-18T12:00:00.000Z",
+      "updated_at": "2026-08-19T10:00:00.000Z",
+      "artisan_id": null
+    },
+    {
+      "id": "req-0015",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "enterprise_site_id": "site-0003",
+      "status": "new",
+      "urgency": "normale",
+      "category": "Nettoyage",
+      "description": "Intervention de type Nettoyage sur le site Bureau Marseille.",
+      "created_at": "2026-08-16T12:00:00.000Z",
+      "updated_at": "2026-08-17T10:00:00.000Z",
+      "artisan_id": null
+    },
+    {
+      "id": "req-0016",
+      "enterprise_id": "ent-0002-0000-0000-000000000002",
+      "enterprise_site_id": "site-0004",
+      "status": "assigned",
+      "urgency": "now",
+      "category": "Sécurité",
+      "description": "Intervention de type Sécurité sur le site HQ Bordeaux.",
+      "created_at": "2026-08-14T12:00:00.000Z",
+      "updated_at": "2026-08-15T10:00:00.000Z",
+      "artisan_id": "artisan-0001"
+    },
+    {
+      "id": "req-0017",
+      "enterprise_id": "ent-0002-0000-0000-000000000002",
+      "enterprise_site_id": "site-0005",
+      "status": "in_progress",
+      "urgency": "urgent",
+      "category": "Plomberie",
+      "description": "Intervention de type Plomberie sur le site Atelier Nantes.",
+      "created_at": "2026-08-12T12:00:00.000Z",
+      "updated_at": "2026-08-13T10:00:00.000Z",
+      "artisan_id": "artisan-0002"
+    },
+    {
+      "id": "req-0018",
+      "enterprise_id": "ent-0002-0000-0000-000000000002",
+      "enterprise_site_id": "site-0006",
+      "status": "completed",
+      "urgency": "normale",
+      "category": "Électricité",
+      "description": "Intervention de type Électricité sur le site Dépôt Lille.",
+      "created_at": "2026-08-10T12:00:00.000Z",
+      "updated_at": "2026-08-11T10:00:00.000Z",
+      "artisan_id": null
+    },
+    {
+      "id": "req-0019",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "enterprise_site_id": "site-0001",
+      "status": "validated",
+      "urgency": "normale",
+      "category": "Climatisation",
+      "description": "Intervention de type Climatisation sur le site Siège Paris.",
+      "created_at": "2026-08-08T12:00:00.000Z",
+      "updated_at": "2026-08-09T10:00:00.000Z",
+      "artisan_id": null
+    },
+    {
+      "id": "req-0020",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "enterprise_site_id": "site-0002",
+      "status": "cancelled",
+      "urgency": "normale",
+      "category": "Serrurerie",
+      "description": "Intervention de type Serrurerie sur le site Entrepôt Lyon.",
+      "created_at": "2026-08-06T12:00:00.000Z",
+      "updated_at": "2026-08-07T10:00:00.000Z",
+      "artisan_id": null
+    }
+  ],
+  "history": [
+    {
+      "id": "hist-0001",
+      "request_id": "req-0001",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "event_type": "status_changed",
+      "actor_id": "user-0001",
+      "actor_name": "Alice Dupont",
+      "payload": {
+        "note": "Événement de test n°1"
+      },
+      "created_at": "2026-09-13T12:00:00.000Z"
+    },
+    {
+      "id": "hist-0002",
+      "request_id": "req-0002",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "event_type": "assigned",
+      "actor_id": "user-0002",
+      "actor_name": "Bob Martin",
+      "payload": {
+        "note": "Événement de test n°2"
+      },
+      "created_at": "2026-09-12T11:00:00.000Z"
+    },
+    {
+      "id": "hist-0003",
+      "request_id": "req-0003",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "event_type": "validated",
+      "actor_id": "user-0003",
+      "actor_name": "Clara Bernard",
+      "payload": {
+        "note": "Événement de test n°3"
+      },
+      "created_at": "2026-09-11T10:00:00.000Z"
+    },
+    {
+      "id": "hist-0004",
+      "request_id": "req-0004",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "event_type": "comment_added",
+      "actor_id": "user-0004",
+      "actor_name": "David Leroy",
+      "payload": {
+        "note": "Événement de test n°4"
+      },
+      "created_at": "2026-09-10T09:00:00.000Z"
+    },
+    {
+      "id": "hist-0005",
+      "request_id": "req-0005",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "event_type": "created",
+      "actor_id": "user-0005",
+      "actor_name": "Eve Moreau",
+      "payload": {
+        "note": "Événement de test n°5"
+      },
+      "created_at": "2026-09-09T08:00:00.000Z"
+    },
+    {
+      "id": "hist-0006",
+      "request_id": "req-0006",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "event_type": "status_changed",
+      "actor_id": "user-0001",
+      "actor_name": "Alice Dupont",
+      "payload": {
+        "note": "Événement de test n°6"
+      },
+      "created_at": "2026-09-08T07:00:00.000Z"
+    },
+    {
+      "id": "hist-0007",
+      "request_id": "req-0007",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "event_type": "assigned",
+      "actor_id": "user-0002",
+      "actor_name": "Bob Martin",
+      "payload": {
+        "note": "Événement de test n°7"
+      },
+      "created_at": "2026-09-07T06:00:00.000Z"
+    },
+    {
+      "id": "hist-0008",
+      "request_id": "req-0008",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "event_type": "validated",
+      "actor_id": "user-0003",
+      "actor_name": "Clara Bernard",
+      "payload": {
+        "note": "Événement de test n°8"
+      },
+      "created_at": "2026-09-06T05:00:00.000Z"
+    },
+    {
+      "id": "hist-0009",
+      "request_id": "req-0009",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "event_type": "comment_added",
+      "actor_id": "user-0004",
+      "actor_name": "David Leroy",
+      "payload": {
+        "note": "Événement de test n°9"
+      },
+      "created_at": "2026-09-05T04:00:00.000Z"
+    },
+    {
+      "id": "hist-0010",
+      "request_id": "req-0010",
+      "enterprise_id": "ent-0001-0000-0000-000000000001",
+      "event_type": "created",
+      "actor_id": "user-0005",
+      "actor_name": "Eve Moreau",
+      "payload": {
+        "note": "Événement de test n°10"
+      },
+      "created_at": "2026-09-04T03:00:00.000Z"
+    }
+  ]
+}
