@@ -31,7 +31,10 @@
  *
  * ELIGIBLE MISSION STATUSES
  * ─────────────────────────
- * 'terminée', 'validée'
+ * 'validated'
+ * (BP02 V3.1: canonical DB confirmed state.
+ *  'terminée'/'validée' are localStorage/display vocabulary only;
+ *  they are never stored in missions.status by any deployed Supabase code.)
  * All other statuses → 422 ineligible
  *
  * AUTH MODEL (identical to admin-add-artisan-fn / admin-verify-artisan-fn)
@@ -74,7 +77,13 @@
 var COMMISSION_RATE    = 0.15;  /* 15% — canonical FIXEO commission */
 var MAX_FINAL_PRICE    = 500000; /* reasonable upper bound — 500k MAD */
 var UUID_RE            = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-var ELIGIBLE_STATUSES  = ['terminée', 'validée'];
+/* BP02 V3.1: 'validated' is the sole canonical confirmed mission status.
+ * Production missions CHECK allows: offered,pending,declined,expired,done,cancelled,validated.
+ * 'terminée' and 'validée' are localStorage/display vocabulary — NEVER written to
+ * missions.status by any deployed Supabase code. They are not in the DB vocabulary
+ * and must not be treated as eligible settlement states.
+ * See supabase/7c14a1-mission-lifecycle-validate.sql V3.1 for canonical contract. */
+var ELIGIBLE_STATUSES  = ['validated'];
 
 /* ── Helpers ───────────────────────────────────────────────── */
 function roundMoney(n) {

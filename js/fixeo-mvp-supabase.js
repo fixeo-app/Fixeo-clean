@@ -804,7 +804,8 @@ if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
          *       (b) 'validée' fails the DB CHECK constraint (must be 'validated')
          *       (c) no ownership enforcement at DB level
          *   - New path: sb.rpc('confirm_completed_mission', {p_request_id}) — SAFE:
-         *       (a) atomic: missions→terminée + SR→validated in one DB transaction
+         *       (a) atomic canonical order: SR completed→validated (Step 1),
+         *           then mission done→validated (Step 2), in one DB transaction
          *       (b) ownership enforced by RPC (B2C + enterprise paths)
          *       (c) state validation enforced by RPC (must be 'completed')
          * Single registration — safe to overwrite on every renderClientDashboard call. */
@@ -903,9 +904,12 @@ if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
         requestsEl.innerHTML = requests.length ? requests.map(function (requestRow) {
           var badge = _fxReqStatusBadge(requestRow.status);
           var rawSt = String(requestRow.status || 'new').toLowerCase().trim();
-          var isTerminee = rawSt === 'termin\u00e9e' || rawSt === 'terminee';
+          /* BP02 V3 FIX: service_requests.status is 'completed' when artisan finishes.
+           * 'terminée' is localStorage/display vocabulary — never stored in SR.status.
+           * Show confirm block when SR.status = 'completed'. */
+          var isTerminee = rawSt === 'completed';
 
-          /* p1b: confirm block — only for terminée status */
+          /* p1b: confirm block — shown when SR.status = 'completed' */
           var confirmHtml = '';
           if (isTerminee) {
             var safeId = escapeHtml(requestRow.id);

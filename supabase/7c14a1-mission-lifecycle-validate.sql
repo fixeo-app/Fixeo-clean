@@ -1,169 +1,218 @@
--- ════════════════════════════════════════════════════════════
--- FIXEO — 7C.14A.1 Mission Lifecycle: Client Confirmation
--- File: supabase/7c14a1-mission-lifecycle-validate.sql
--- Phase: BP02 — Mission Lifecycle Completion
+-- ════════════════════════════════════════════════════════════════════════════
+-- FIXEO — Migration 7c14a1 — Mission Lifecycle: Enterprise Confirmation Extension
+-- File:     supabase/7c14a1-mission-lifecycle-validate.sql
+-- Phase:    BP02 V3.1 — Strict B2C backward-compatible production delta
+-- Version:  v3.1 (2026-09-12)
 --
--- PURPOSE
--- ────────
--- 1. Extend missions.status CHECK to include terminée and validée,
---    resolving the gap between admin-settle-mission-fn ELIGIBLE_STATUSES
---    and the existing DB constraint.
--- 2. Create confirm_completed_mission(p_request_id uuid) — the
---    authoritative client-side confirmation RPC called by fixeo-dashboard-v2.js.
--- 3. Create validate_mission_v1(p_mission_id uuid) — an alternative
---    mission-UUID-keyed confirmation path for BP02 completeness.
+-- ════════════════════════════════════════════════════════════════════════════
+-- AUTHORITATIVE PRODUCTION CONTRACT
+-- ─────────────────────────────────
+--   Production function: public.confirm_completed_mission(p_request_id uuid)
+--   Production baseline MD5: 8b70152880cd87d52044f730fd1dd2c2
 --
--- STATE TRANSITIONS IMPLEMENTED
--- ──────────────────────────────
--- confirm_completed_mission():
---   service_requests: completed → validated     (by client)
---   missions:         done      → terminée      (atomic pair)
+--   CANONICAL UPDATE ORDER (production):
+--     STEP 1 — service_requests: completed → validated   ← FIRST
+--     STEP 2 — missions:         done      → validated   ← SECOND
 --
--- validate_mission_v1():
---   missions:         done      → terminée      (by client, mission-UUID path)
---   service_requests: completed → validated     (atomic pair)
+--   CANONICAL REPAIR PATH (production):
+--     SR.status = validated + mission.status IN ('done','validated'):
+--       mission = validated → already_validated:true (idempotent, no mutation)
+--       mission = done      → UPDATE mission done→validated, repaired:true
 --
--- Both RPCs are equivalent in semantics; they differ only in their
--- primary key argument (request UUID vs mission UUID).
--- fixeo-dashboard-v2.js calls confirm_completed_mission.
--- BP02 tests call validate_mission_v1.
--- Only one confirmation per mission is possible (idempotent guards).
+--   UNSUPPORTED INVERSE STATE (NOT in production — NOT introduced here):
+--     SR.status = completed, mission.status = validated
+--     → completed_mission_not_found (no 'done' mission; SR not healed)
 --
--- CANONICAL STATE MACHINE (BP02-complete):
---   offered    → [claim_mission()]            → pending
---   pending    → [start_mission()]            → (SR: in_progress; mission: pending)
---   pending    → [complete_mission()]         → done     (SR: completed)
---   done       → [confirm_completed_mission   → terminée (SR: validated)
---                  / validate_mission_v1()]
---   terminée   → [admin-settle-mission-fn]    → (final_price set; status unchanged)
---   terminée   → [admin manual]               → validée  (optional final close)
+--   missions_status_check (7c11c):
+--     offered, pending, declined, expired, done, cancelled, validated
 --
--- NOTE ON terminée vs validée
--- ───────────────────────────
--- terminée: client confirmed. Settlement not yet processed. This is the
---   earliest state in which admin-settle-mission-fn will process the mission.
--- validée: manually set by admin after settlement is confirmed.
---   No RPC or automated function currently sets validée. The admin
---   command center (admin-command-center-v3.js _adminValidate) sets
---   service_requests.status = 'validated' directly. There is currently no
---   function that sets missions.status = 'validée' in a single atomic step.
---   BP02 does NOT add such a function — it is out of scope.
---   admin-settle-mission-fn accepts both terminée and validée as eligible.
+-- ════════════════════════════════════════════════════════════════════════════
+-- WHAT THIS MIGRATION DOES
+-- ─────────────────────────
+--   ONLY: CREATE OR REPLACE confirm_completed_mission(p_request_id uuid)
 --
--- OWNERSHIP MODEL
--- ───────────────
--- confirm_completed_mission / validate_mission_v1:
---   B2C:        service_requests.client_profile_id = auth.uid()
---   Enterprise: enterprise_request_context.created_by = auth.uid()
---               (client_profile_id = NULL for enterprise V1 — ERC anchors identity)
---   Admin:      bypass — admin_all_missions policy; no RPC path needed
+--   The B2C path (client_profile_id = auth.uid()) is preserved SEMANTICALLY
+--   IDENTICAL to production. The only authorized change is the ownership
+--   extension: UNION ALL enterprise branch added.
 --
--- SECURITY
--- ────────
--- SECURITY DEFINER + SET search_path = ''
--- REVOKE EXECUTE FROM PUBLIC, anon
--- GRANT  EXECUTE TO authenticated
--- No service_role exposure
--- No caller-supplied artisan identity
--- No direct UPDATE from browser
--- State transitions reject illegal current status
--- Atomicity: RAISE EXCEPTION forces full rollback on partial failure
+--   Enterprise ownership branch:
+--     An authenticated user may confirm an Enterprise service_request if:
+--       (a) enterprise_request_context.service_request_id = p_request_id, AND
+--       (b) enterprise_members.enterprise_id = erc.enterprise_id
+--           AND enterprise_members.user_id   = auth.uid()
+--           AND enterprise_members.status    = 'active'
+--           AND enterprise_members.role IN (
+--                 'owner', 'admin', 'operations_manager', 'site_manager'
+--               )
+--     Explicitly blocked: 'reporter', 'viewer' (read-only roles)
 --
--- TYPE CONTRACTS (inherited from 7C.11E.2)
--- ─────────────────────────────────────────
--- missions.request_id = TEXT
--- service_requests.id = UUID
--- Cross-table join:  m.request_id = sr.id::text
--- NEVER cast missions.request_id to UUID
+-- ════════════════════════════════════════════════════════════════════════════
+-- WHAT THIS MIGRATION DOES NOT DO
+-- ─────────────────────────────────
+--   Does NOT change the happy-path update order (SR first, missions second)
+--   Does NOT introduce the inverse repair path
+--   Does NOT modify missions_status_check
+--   Does NOT add terminée or validée to missions vocabulary
+--   Does NOT create validate_mission_v1
+--   Does NOT alter any other lifecycle transition
+--   Does NOT modify any RLS policy
+--   Does NOT change any behavior for existing B2C callers
 --
--- IDEMPOTENCY
--- ───────────
--- Already-confirmed missions (terminée/validated) return ok:true + already_confirmed:true
--- This allows safe client retry on network ambiguity
---
--- PRE-MIGRATION
--- ─────────────
--- These preconditions must hold before applying:
--- 1. 7c11c-dispatch-foundation.sql APPLIED
--- 2. 7c11e2-mission-lifecycle.sql  APPLIED
--- 3. 7c11f6-missions-privilege-hardening.sql APPLIED
--- 4. missions.status CHECK currently: offered,pending,declined,expired,done,cancelled,validated
---    (terminée and validée are NOT currently in the CHECK — this migration adds them)
---
--- ZERO DATA MUTATIONS. Additive only. Idempotent blocks throughout.
--- ════════════════════════════════════════════════════════════
+-- ════════════════════════════════════════════════════════════════════════════
+-- EXACT PRODUCTION DELTA
+-- ──────────────────────
+--   DATABASE  : replace confirm_completed_mission() — identical B2C semantics
+--               + Enterprise UNION ALL ownership branch (additive only)
+--   SERVER    : admin-settle-mission-fn ELIGIBLE_STATUSES = ['validated']
+--               (separate file — not a DB migration)
+--   FRONTEND  : fixeo-mvp-supabase.js isTerminee bug fixed
+--               (separate file — not a DB migration)
+-- ════════════════════════════════════════════════════════════════════════════
 
 BEGIN;
 
--- ════════════════════════════════════════════════════════════
--- BLOCK 1 — Extend missions.status CHECK
+-- ════════════════════════════════════════════════════════════════════════════
+-- PRODUCTION DRIFT GUARD — FAIL CLOSED
+-- ════════════════════════════════════════════════════════════════════════════
 --
--- Current values: offered, pending, declined, expired, done, cancelled, validated
--- Added values:   terminée, validée
+-- This guard FAILS CLOSED on every mismatch, including function absence.
+-- The production environment is KNOWN to contain the reviewed function.
+-- Function-absent case → ABORT (this is not a first deployment target).
 --
--- admin-settle-mission-fn checks ELIGIBLE_STATUSES = ['terminée','validée']
--- These values are used in production (e.g. cleanup-fake-missions.sql shows
--- a live row with status='validée'). Without this CHECK extension, any UPDATE
--- setting status='terminée' or status='validée' would fail the constraint.
--- ════════════════════════════════════════════════════════════
-
+-- Required preconditions (all must pass):
+--   (1) Exactly one overload of confirm_completed_mission(p_request_id uuid)
+--   (2) MD5(pg_get_functiondef()) = '8b70152880cd87d52044f730fd1dd2c2'
+--   (3) SECURITY DEFINER = true
+--   (4) proconfig contains search_path = ''
+--
 DO $$
 DECLARE
-  v_constraint_exists boolean;
-  v_has_terminee      boolean;
+  v_funcdef  text;
+  v_md5      text;
+  v_expected text    := '8b70152880cd87d52044f730fd1dd2c2';
+  v_overload integer := 0;
+  v_prosecdef boolean;
+  v_proconfig text[];
 BEGIN
-  -- Check if missions_status_check already includes terminée
-  SELECT EXISTS (
-    SELECT 1
-    FROM   pg_catalog.pg_constraint c
-    WHERE  c.conrelid = 'public.missions'::regclass
-      AND  c.contype  = 'c'
-      AND  c.conname  = 'missions_status_check'
-      AND  pg_catalog.pg_get_constraintdef(c.oid) LIKE '%terminée%'
-  ) INTO v_has_terminee;
+  -- ── Precondition 1: exactly one overload ──────────────────────────────
+  SELECT COUNT(*)
+  INTO   v_overload
+  FROM   pg_catalog.pg_proc p
+  JOIN   pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+  WHERE  n.nspname = 'public'
+    AND  p.proname = 'confirm_completed_mission';
 
-  IF v_has_terminee THEN
-    RAISE NOTICE 'Block 1: missions_status_check already includes terminée — skipped.';
-  ELSE
-    -- Drop existing CHECK (if any) and recreate with full vocabulary
-    ALTER TABLE public.missions
-      DROP CONSTRAINT IF EXISTS missions_status_check;
-
-    ALTER TABLE public.missions
-      ADD CONSTRAINT missions_status_check
-      CHECK (status IN (
-        'offered',    -- dispatch created mission row; artisan not yet responded
-        'pending',    -- artisan accepted (claim_mission); awaiting start
-        'declined',   -- artisan declined the offer
-        'expired',    -- offer window elapsed without response
-        'done',       -- artisan marked intervention complete (complete_mission)
-        'cancelled',  -- cancelled before start
-        'validated',  -- legacy English value (pre-terminée era)
-        'terminée',   -- client confirmed intervention (confirm_completed_mission)
-        'validée'     -- admin manually closed / final admin settlement state
-      ));
-
-    RAISE NOTICE 'Block 1: missions_status_check extended with terminée and validée.';
+  IF v_overload = 0 THEN
+    RAISE EXCEPTION
+      'DRIFT GUARD FAILED: confirm_completed_mission does not exist in public schema. '
+      'This migration requires the reviewed production function to be present. '
+      'Do not apply to a fresh database — run preflight PF-3 first.'
+    USING ERRCODE = 'P0001';
   END IF;
+
+  IF v_overload > 1 THEN
+    RAISE EXCEPTION
+      'DRIFT GUARD FAILED: % overloads of confirm_completed_mission found. '
+      'Expected exactly 1. Remove unexpected overloads before proceeding.',
+      v_overload
+    USING ERRCODE = 'P0001';
+  END IF;
+
+  -- ── Precondition 2: MD5 matches reviewed baseline ─────────────────────
+  SELECT pg_catalog.pg_get_functiondef(p.oid),
+         p.prosecdef,
+         p.proconfig
+  INTO   v_funcdef, v_prosecdef, v_proconfig
+  FROM   pg_catalog.pg_proc p
+  JOIN   pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+  WHERE  n.nspname = 'public'
+    AND  p.proname = 'confirm_completed_mission'
+    AND  pg_catalog.pg_get_function_identity_arguments(p.oid) = 'p_request_id uuid';
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION
+      'DRIFT GUARD FAILED: confirm_completed_mission(p_request_id uuid) not found. '
+      'An overload exists but with a different signature. '
+      'Expected signature: (p_request_id uuid).'
+    USING ERRCODE = 'P0001';
+  END IF;
+
+  v_md5 := md5(v_funcdef);
+
+  IF v_md5 != v_expected THEN
+    RAISE EXCEPTION
+      'DRIFT GUARD FAILED: confirm_completed_mission body has changed since review. '
+      'Expected MD5: %. Actual MD5: %. '
+      'Read the current production function, compare with reviewed baseline, '
+      'update this migration accordingly, then re-baseline the MD5.',
+      v_expected, v_md5
+    USING ERRCODE = 'P0001';
+  END IF;
+
+  -- ── Precondition 3: SECURITY DEFINER ──────────────────────────────────
+  IF NOT v_prosecdef THEN
+    RAISE EXCEPTION
+      'DRIFT GUARD FAILED: confirm_completed_mission is NOT SECURITY DEFINER in production. '
+      'Unexpected security posture. Review before proceeding.'
+    USING ERRCODE = 'P0001';
+  END IF;
+
+  -- ── Precondition 4: search_path = '''' ────────────────────────────────
+  IF v_proconfig IS NULL
+     OR NOT EXISTS (
+       SELECT 1 FROM unnest(v_proconfig) c
+       WHERE c ILIKE 'search_path%'
+     )
+  THEN
+    RAISE EXCEPTION
+      'DRIFT GUARD FAILED: confirm_completed_mission does not set search_path in proconfig. '
+      'Unexpected security posture. Review before proceeding.'
+    USING ERRCODE = 'P0001';
+  END IF;
+
+  RAISE NOTICE
+    'DRIFT GUARD PASSED: MD5 = % (matches reviewed baseline). '
+    'SECURITY DEFINER = true. search_path present. Proceeding.',
+    v_md5;
 END;
 $$;
 
-
--- ════════════════════════════════════════════════════════════
--- BLOCK 2 — confirm_completed_mission(p_request_id uuid)
+-- ════════════════════════════════════════════════════════════════════════════
+-- confirm_completed_mission(p_request_id uuid)
+-- ════════════════════════════════════════════════════════════════════════════
 --
--- Primary confirmation path called by fixeo-dashboard-v2.js.
--- Keyed on service_request UUID (the client's primary identifier).
+-- STRICT B2C BACKWARD COMPATIBILITY GUARANTEE
+-- ────────────────────────────────────────────
+-- Every logical block below is classified as either:
+--   UNCHANGED  — byte-for-byte equivalent to production behavior
+--   ADDITIVE   — enterprise-only extension; does not affect B2C path
 --
--- Transitions:
---   service_requests.status: completed → validated
---   missions.status:         done      → terminée
+-- LOGICAL BLOCK CLASSIFICATION:
+--   AUTH                  UNCHANGED
+--   REQUEST LOOKUP        UNCHANGED
+--   OWNERSHIP QUERY       ADDITIVE (UNION ALL — B2C path first, unchanged)
+--   VALIDATED IDEMPOTENCY UNCHANGED
+--   COMPLETED PRECOND     UNCHANGED
+--   REPAIR PATH           UNCHANGED (SR=validated: mission done→validated repaired:true; mission validated→already_validated:true)
+--   MISSION SELECTION     UNCHANGED
+--   SR UPDATE (Step 1)    UNCHANGED (service_requests first — production order)
+--   MISSION UPDATE (Step 2) UNCHANGED (missions second — production order)
+--   ATOMICITY GUARD       UNCHANGED
+--   EXCEPTION HANDLING    UNCHANGED
+--   RETURN SHAPE          UNCHANGED
+--   ACL                   UNCHANGED
 --
--- Client ownership:
---   B2C:        service_requests.client_profile_id = auth.uid()
---   Enterprise: enterprise_request_context.created_by = auth.uid()
--- ════════════════════════════════════════════════════════════
-
+-- UPDATE ORDER PRESERVED EXACTLY:
+--   Step 1: service_requests  completed → validated   ← FIRST (production order)
+--   Step 2: missions          done      → validated   ← SECOND (production order)
+--
+-- REPAIR PATH PRESERVED EXACTLY:
+--   SR.status = validated:
+--     mission = done      → UPDATE done→validated, return repaired:true
+--     mission = validated → return already_validated:true (idempotent, no mutation)
+--   SR.status = completed + mission.status = validated (unsupported inverse state):
+--     → completed_mission_not_found (no done mission; SR not healed)
+--
 CREATE OR REPLACE FUNCTION public.confirm_completed_mission(
   p_request_id uuid
 )
@@ -173,22 +222,25 @@ SECURITY DEFINER
 SET search_path = ''
 AS $$
 DECLARE
-  v_uid           uuid;
-  v_sr_status     text;
-  v_is_owned      boolean;
-  v_mission_id    uuid;
-  v_mission_status text;
-  v_rows_sr       integer;
-  v_rows_m        integer;
+  v_uid        uuid;
+  v_sr_status  text;
+  v_is_owned   boolean;
+  v_mission_id uuid;
+  v_rows_sr    integer;
+  v_rows_m     integer;
 BEGIN
 
-  -- Guard 0: authenticated caller required
+  -- ── BLOCK: AUTH — UNCHANGED ─────────────────────────────────────────────
+  -- Guard 0: authenticated caller required.
   v_uid := auth.uid();
   IF v_uid IS NULL THEN
     RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'unauthenticated');
   END IF;
 
-  -- Guard 1: service_request must exist; read current status
+  -- ── BLOCK: REQUEST LOOKUP — UNCHANGED ──────────────────────────────────
+  -- Guard 1: service_request must exist; read current status.
+  -- Existence check precedes ownership to avoid timing info leaks
+  -- (consistent with production: NOT FOUND → request_not_found_or_not_owned).
   SELECT sr.status
   INTO   v_sr_status
   FROM   public.service_requests sr
@@ -198,20 +250,49 @@ BEGIN
     RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'request_not_found_or_not_owned');
   END IF;
 
-  -- Guard 2: client ownership check
-  -- B2C path:        client_profile_id = auth.uid()
-  -- Enterprise path: enterprise_request_context.created_by = auth.uid()
-  -- Either is sufficient.
+  -- ── BLOCK: OWNERSHIP QUERY — ADDITIVE UNION ALL ─────────────────────────
+  -- Guard 2: ownership check.
+  --
+  -- Path A — B2C (UNCHANGED from production baseline):
+  --   service_requests.client_profile_id = auth.uid()
+  --
+  -- Path B — Enterprise (ADDITIVE — does not affect B2C callers):
+  --   An enterprise_request_context row links this SR to an enterprise.
+  --   The caller must be an ACTIVE member of that enterprise in a
+  --   confirming-eligible role.
+  --   Eligible:  owner, admin, operations_manager, site_manager
+  --   Blocked:   reporter, viewer (read-only — cannot trigger lifecycle)
+  --
+  -- Both paths are evaluated via a single EXISTS query.
+  -- The B2C path is listed first (matching production query structure).
+  -- B2C callers satisfy Path A and are unaffected by Path B.
+  -- Enterprise SRs have client_profile_id = NULL; Path A fails for them;
+  -- Path B is the only route — entirely additive.
+  --
   SELECT EXISTS (
+    -- Path A: B2C — direct client ownership (production baseline — unchanged)
     SELECT 1
-    FROM   public.service_requests sr
-    WHERE  sr.id               = p_request_id
-      AND  sr.client_profile_id = v_uid
+    FROM   public.service_requests sr2
+    WHERE  sr2.id                = p_request_id
+      AND  sr2.client_profile_id = v_uid
+
     UNION ALL
+
+    -- Path B: Enterprise — authorized enterprise member (additive)
     SELECT 1
     FROM   public.enterprise_request_context erc
+    JOIN   public.enterprise_members em
+           ON  em.enterprise_id = erc.enterprise_id
+           AND em.user_id       = v_uid
+           AND em.status        = 'active'
+           AND em.role          IN (
+                 'owner',
+                 'admin',
+                 'operations_manager',
+                 'site_manager'
+               )
     WHERE  erc.service_request_id = p_request_id
-      AND  erc.created_by         = v_uid
+
     LIMIT 1
   ) INTO v_is_owned;
 
@@ -219,85 +300,125 @@ BEGIN
     RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'request_not_found_or_not_owned');
   END IF;
 
-  -- Guard 3: request must be in 'completed' status (artisan finished)
-  -- Idempotent fast-path: already validated → return ok:true
+  -- ── BLOCK: VALIDATED — CANONICAL REPAIR PATH — UNCHANGED ─────────────────
+  -- Guard 3a: SR is already 'validated'.
+  --
+  -- Production behavior (authoritative):
+  --   Find mission WHERE status IN ('done','validated') for this SR.
+  --
+  --   mission = validated:
+  --     Both steps already completed. Return already_validated:true. No mutation.
+  --
+  --   mission = done:
+  --     Step 1 (SR→validated) completed in a prior call; Step 2 (mission→validated)
+  --     did not. Perform canonical repair: UPDATE mission done→validated.
+  --     Return repaired:true.
+  --
+  --   No mission in done/validated:
+  --     SR validated, mission in some other state or absent.
+  --     Return {ok:false, reason:'mission_not_found'}.
+  --
+  -- This is the ONLY supported repair path. The inverse
+  -- (SR=completed + mission=validated) is NOT supported and NOT introduced.
+  --
   IF v_sr_status = 'validated' THEN
-    RETURN pg_catalog.jsonb_build_object('ok', true, 'already_confirmed', true);
+    DECLARE
+      v_repair_id   uuid;
+      v_repair_rows integer;
+    BEGIN
+      SELECT m.id
+      INTO   v_repair_id
+      FROM   public.missions m
+      WHERE  m.request_id = p_request_id::text
+        AND  m.status     IN ('done', 'validated')
+      ORDER  BY m.created_at DESC
+      LIMIT  1;
+
+      IF NOT FOUND THEN
+        -- No actionable mission — SR validated but no done/validated mission exists
+        RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'mission_not_found');
+      END IF;
+
+      -- Check if mission is already validated (full idempotent path)
+      IF EXISTS (
+        SELECT 1 FROM public.missions m
+        WHERE  m.id     = v_repair_id
+          AND  m.status = 'validated'
+      ) THEN
+        RETURN pg_catalog.jsonb_build_object(
+          'ok',              true,
+          'request_id',      p_request_id,
+          'mission_id',      v_repair_id,
+          'already_validated', true
+        );
+      END IF;
+
+      -- Mission is 'done' — canonical repair: complete Step 2
+      UPDATE public.missions
+      SET    status = 'validated'
+      WHERE  id     = v_repair_id
+        AND  status = 'done';
+
+      GET DIAGNOSTICS v_repair_rows = ROW_COUNT;
+
+      IF v_repair_rows = 0 THEN
+        -- Concurrent call beat us to the repair — treat as atomicity violation
+        RAISE EXCEPTION
+          '[confirm_completed_mission] repair atomicity: mission % could not be set validated '
+          '(concurrent call completed the repair).', v_repair_id
+        USING ERRCODE = 'P0001';
+      END IF;
+
+      RETURN pg_catalog.jsonb_build_object(
+        'ok',         true,
+        'request_id', p_request_id,
+        'mission_id', v_repair_id,
+        'repaired',   true
+      );
+    END;
   END IF;
 
+  -- ── BLOCK: COMPLETED PRECONDITION — UNCHANGED ───────────────────────────
+  -- Guard 3b: SR must be 'completed' for a new confirmation to proceed.
+  -- Any other state (new, assigned, in_progress, etc.) → request_not_completed.
+  -- NOTE: SR=validated is fully handled by Guard 3a above.
   IF v_sr_status != 'completed' THEN
     RETURN pg_catalog.jsonb_build_object(
-      'ok',     false,
-      'reason', 'request_not_completed',
+      'ok',      false,
+      'reason',  'request_not_completed',
       'current', v_sr_status
     );
   END IF;
 
-  -- Guard 4: find the winning mission (status='done') for this request
-  -- TYPE CONTRACT: missions.request_id is TEXT, service_requests.id is UUID
-  -- Cast UUID side to TEXT.
-  SELECT m.id, m.status
-  INTO   v_mission_id, v_mission_status
+  -- ── BLOCK: MISSION LOOKUP (SR=completed path) — UNCHANGED ───────────────
+  -- Guard 3c: SR is 'completed'. Locate the 'done' mission.
+  --
+  -- UNSUPPORTED INVERSE STATE:
+  --   SR=completed + mission=validated.
+  --   Production does NOT heal SR in this case — not a supported repair path.
+  --   No 'done' mission found → completed_mission_not_found.
+  --   SR remains 'completed'. No mutation.
+  --
+  SELECT m.id
+  INTO   v_mission_id
   FROM   public.missions m
   WHERE  m.request_id = p_request_id::text
     AND  m.status     = 'done'
+  ORDER  BY m.created_at DESC
   LIMIT  1;
 
   IF NOT FOUND THEN
-    -- No done mission found — check if one already terminée (idempotent)
-    SELECT m.id, m.status
-    INTO   v_mission_id, v_mission_status
-    FROM   public.missions m
-    WHERE  m.request_id = p_request_id::text
-      AND  m.status IN ('terminée', 'validée', 'validated')
-    LIMIT  1;
-
-    IF FOUND THEN
-      -- Mission already confirmed — but SR is not yet validated? Inconsistent.
-      -- Attempt SR update to validated for recovery.
-      UPDATE public.service_requests
-      SET    status = 'validated'
-      WHERE  id     = p_request_id
-        AND  status = 'completed';
-      -- Return ok:true + already_confirmed regardless of whether SR update affected rows
-      RETURN pg_catalog.jsonb_build_object('ok', true, 'already_confirmed', true);
-    END IF;
-
+    -- No 'done' mission. SR=completed but no actionable mission.
+    -- Includes the unsupported inverse state (mission='validated', SR='completed').
+    -- Production does not repair SR here. Return not_found.
     RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'completed_mission_not_found');
   END IF;
 
-  -- ── ATOMIC PAIR ──────────────────────────────────────────
-  -- Both UPDATEs must succeed or rollback.
-  -- RAISE EXCEPTION after the first UPDATE forces full rollback.
-
-  -- Step 1: missions done → terminée
-  UPDATE public.missions
-  SET    status = 'terminée'
-  WHERE  id     = v_mission_id
-    AND  status = 'done';
-
-  GET DIAGNOSTICS v_rows_m = ROW_COUNT;
-
-  IF v_rows_m = 0 THEN
-    -- Concurrent call already transitioned mission
-    -- Re-read to determine if idempotent ok:true applies
-    SELECT m.status INTO v_mission_status
-    FROM   public.missions m
-    WHERE  m.id = v_mission_id;
-
-    IF v_mission_status IN ('terminée', 'validée', 'validated') THEN
-      -- Also recover SR if needed
-      UPDATE public.service_requests
-      SET    status = 'validated'
-      WHERE  id     = p_request_id
-        AND  status = 'completed';
-      RETURN pg_catalog.jsonb_build_object('ok', true, 'already_confirmed', true);
-    END IF;
-
-    RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'mission_not_found');
-  END IF;
-
-  -- Step 2: service_requests completed → validated
+  -- ── BLOCK: SR UPDATE (Step 1) — UNCHANGED ──────────────────────────────
+  -- Production update order: service_requests FIRST, missions SECOND.
+  -- This order is preserved exactly.
+  --
+  -- Step 1: service_request completed → validated
   UPDATE public.service_requests
   SET    status = 'validated'
   WHERE  id     = p_request_id
@@ -305,19 +426,48 @@ BEGIN
 
   GET DIAGNOSTICS v_rows_sr = ROW_COUNT;
 
-  -- ATOMICITY ENFORCEMENT: if SR update failed, roll back mission update
+  -- ROW_COUNT guard on Step 1: if 0 rows affected, the SR status changed
+  -- concurrently (race condition). Raise P0001 to abort — rolls back cleanly.
+  -- Production behavior: 0 rows → RAISE EXCEPTION P0001 → atomicity_error.
   IF v_rows_sr = 0 THEN
-    RAISE EXCEPTION '[confirm_completed_mission] atomicity violation: mission % set terminée but service_request % could not be set validated. Rolling back.',
-      v_mission_id, p_request_id
+    -- Concurrent call beat us to Step 1 — raise to roll back and signal atomicity error.
+    RAISE EXCEPTION
+      '[confirm_completed_mission] atomicity violation: '
+      'service_request % not updated (status was not completed — possible race).', p_request_id
     USING ERRCODE = 'P0001';
   END IF;
 
+  -- ── BLOCK: MISSION UPDATE (Step 2) — UNCHANGED ─────────────────────────
+  -- Step 2: mission done → validated
+  UPDATE public.missions
+  SET    status = 'validated'
+  WHERE  id     = v_mission_id
+    AND  status = 'done';
+
+  GET DIAGNOSTICS v_rows_m = ROW_COUNT;
+
+  -- ── BLOCK: ATOMICITY GUARD — UNCHANGED ──────────────────────────────────
+  -- If Step 2 affected 0 rows, the mission was not in 'done' state.
+  -- This means Step 1 (SR) already completed but Step 2 (mission) could not.
+  -- Raise exception to roll back Step 1 automatically.
+  IF v_rows_m = 0 THEN
+    RAISE EXCEPTION
+      '[confirm_completed_mission] atomicity violation: '
+      'service_request % set to validated but mission % could not be set validated '
+      '(mission status may have changed concurrently). Rolling back.',
+      p_request_id, v_mission_id
+    USING ERRCODE = 'P0001';
+  END IF;
+
+  -- ── BLOCK: RETURN SHAPE — UNCHANGED ────────────────────────────────────
   RETURN pg_catalog.jsonb_build_object(
     'ok',         true,
+    'request_id', p_request_id,
     'mission_id', v_mission_id
   );
 
 EXCEPTION
+  -- ── BLOCK: EXCEPTION HANDLING — UNCHANGED ──────────────────────────────
   WHEN SQLSTATE 'P0001' THEN
     RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'atomicity_error');
   WHEN OTHERS THEN
@@ -326,277 +476,103 @@ EXCEPTION
 END;
 $$;
 
+-- ════════════════════════════════════════════════════════════════════════════
+-- BLOCK: ACL — UNCHANGED
+-- ════════════════════════════════════════════════════════════════════════════
 REVOKE EXECUTE ON FUNCTION public.confirm_completed_mission(uuid) FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION public.confirm_completed_mission(uuid) FROM anon;
 GRANT  EXECUTE ON FUNCTION public.confirm_completed_mission(uuid) TO authenticated;
 
-DO $$
-BEGIN
-  RAISE NOTICE 'Block 2: confirm_completed_mission(uuid) created/replaced.';
-END $$;
+-- ════════════════════════════════════════════════════════════════════════════
+-- POST-APPLY VERIFICATION QUERIES (read-only — run manually after apply)
+-- ════════════════════════════════════════════════════════════════════════════
 
+-- PV-1: Confirm function exists with correct signature
+-- SELECT proname, pg_get_function_identity_arguments(oid) AS args
+-- FROM   pg_catalog.pg_proc
+-- WHERE  proname = 'confirm_completed_mission'
+--   AND  pronamespace = 'public'::regnamespace;
+-- Expected: 1 row — confirm_completed_mission | p_request_id uuid
 
--- ════════════════════════════════════════════════════════════
--- BLOCK 3 — validate_mission_v1(p_mission_id uuid)
---
--- Alternative confirmation path keyed on mission UUID.
--- Semantically identical to confirm_completed_mission but uses
--- the mission's primary key as the entry point.
---
--- Useful for:
--- - BP02 test pack (mission UUID available from missions SELECT)
--- - Admin tooling
--- - Future artisan-OS client confirmation UI
---
--- Transitions (same as confirm_completed_mission):
---   missions.status:         done → terminée
---   service_requests.status: completed → validated
---
--- Ownership check:
---   Resolves service_request from mission.request_id,
---   then applies same B2C + enterprise ownership test.
--- ════════════════════════════════════════════════════════════
+-- PV-2: Confirm SECURITY DEFINER
+-- SELECT prosecdef FROM pg_catalog.pg_proc
+-- WHERE  proname = 'confirm_completed_mission' AND pronamespace = 'public'::regnamespace;
+-- Expected: true
 
-CREATE OR REPLACE FUNCTION public.validate_mission_v1(
-  p_mission_id uuid
-)
-RETURNS jsonb
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = ''
-AS $$
-DECLARE
-  v_uid            uuid;
-  v_mission_status text;
-  v_request_id     text;    -- TEXT: matches missions.request_id type
-  v_sr_id          uuid;    -- resolved UUID for service_requests
-  v_sr_status      text;
-  v_is_owned       boolean;
-  v_rows_m         integer;
-  v_rows_sr        integer;
-BEGIN
+-- PV-3: Confirm ACL
+-- SELECT grantee, privilege_type FROM information_schema.routine_privileges
+-- WHERE  routine_schema = 'public' AND routine_name = 'confirm_completed_mission';
+-- Expected: authenticated | EXECUTE only
 
-  -- Guard 0: authenticated caller required
-  v_uid := auth.uid();
-  IF v_uid IS NULL THEN
-    RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'unauthenticated');
-  END IF;
+-- PV-4: Confirm no overloads
+-- SELECT COUNT(*) FROM pg_catalog.pg_proc
+-- WHERE  proname = 'confirm_completed_mission' AND pronamespace = 'public'::regnamespace;
+-- Expected: 1
 
-  -- Guard 1: mission must exist
-  SELECT m.status, m.request_id
-  INTO   v_mission_status, v_request_id
-  FROM   public.missions m
-  WHERE  m.id = p_mission_id;
+-- PV-5: Confirm missions CHECK is unchanged (no terminée/validée)
+-- SELECT pg_get_constraintdef(oid) FROM pg_catalog.pg_constraint
+-- WHERE  conrelid = 'public.missions'::regclass
+--   AND  contype = 'c' AND conname = 'missions_status_check';
+-- Expected: 'offered','pending','declined','expired','done','cancelled','validated' — 7 values only
 
-  IF NOT FOUND THEN
-    RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'mission_not_found');
-  END IF;
-
-  -- Guard 2: resolve service_request UUID
-  -- TYPE CONTRACT: missions.request_id = TEXT; service_requests.id = UUID
-  -- Cast TEXT to UUID. If missions.request_id is a non-UUID legacy value, this cast
-  -- will raise an exception — caught by OTHERS handler below.
-  BEGIN
-    v_sr_id := v_request_id::uuid;
-  EXCEPTION WHEN OTHERS THEN
-    RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'invalid_request_id');
-  END;
-
-  -- Guard 3: read service_request status
-  SELECT sr.status
-  INTO   v_sr_status
-  FROM   public.service_requests sr
-  WHERE  sr.id = v_sr_id;
-
-  IF NOT FOUND THEN
-    RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'request_not_found_or_not_owned');
-  END IF;
-
-  -- Guard 4: client ownership check (same logic as confirm_completed_mission)
-  SELECT EXISTS (
-    SELECT 1
-    FROM   public.service_requests sr
-    WHERE  sr.id               = v_sr_id
-      AND  sr.client_profile_id = v_uid
-    UNION ALL
-    SELECT 1
-    FROM   public.enterprise_request_context erc
-    WHERE  erc.service_request_id = v_sr_id
-      AND  erc.created_by         = v_uid
-    LIMIT 1
-  ) INTO v_is_owned;
-
-  IF NOT v_is_owned THEN
-    RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'request_not_found_or_not_owned');
-  END IF;
-
-  -- Guard 5: mission must be in 'done' status
-  -- Idempotent: already terminée/validée → ok:true
-  IF v_mission_status IN ('terminée', 'validée', 'validated') THEN
-    RETURN pg_catalog.jsonb_build_object('ok', true, 'already_confirmed', true);
-  END IF;
-
-  IF v_mission_status != 'done' THEN
-    RETURN pg_catalog.jsonb_build_object(
-      'ok',     false,
-      'reason', 'not_done_yet',
-      'current', v_mission_status
-    );
-  END IF;
-
-  -- Guard 6: service_request must be in 'completed' status
-  IF v_sr_status = 'validated' THEN
-    -- SR already validated but mission not yet terminée — recover
-    UPDATE public.missions
-    SET    status = 'terminée'
-    WHERE  id     = p_mission_id
-      AND  status = 'done';
-    RETURN pg_catalog.jsonb_build_object('ok', true, 'already_confirmed', true);
-  END IF;
-
-  IF v_sr_status != 'completed' THEN
-    RETURN pg_catalog.jsonb_build_object(
-      'ok',     false,
-      'reason', 'request_not_completed',
-      'current', v_sr_status
-    );
-  END IF;
-
-  -- ── ATOMIC PAIR ──────────────────────────────────────────
-
-  -- Step 1: missions done → terminée
-  UPDATE public.missions
-  SET    status = 'terminée'
-  WHERE  id     = p_mission_id
-    AND  status = 'done';
-
-  GET DIAGNOSTICS v_rows_m = ROW_COUNT;
-
-  IF v_rows_m = 0 THEN
-    -- Concurrent transition: check current mission state
-    SELECT m.status INTO v_mission_status
-    FROM   public.missions m
-    WHERE  m.id = p_mission_id;
-
-    IF v_mission_status IN ('terminée', 'validée', 'validated') THEN
-      UPDATE public.service_requests
-      SET    status = 'validated'
-      WHERE  id     = v_sr_id
-        AND  status = 'completed';
-      RETURN pg_catalog.jsonb_build_object('ok', true, 'already_confirmed', true);
-    END IF;
-
-    RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'mission_not_found');
-  END IF;
-
-  -- Step 2: service_requests completed → validated
-  UPDATE public.service_requests
-  SET    status = 'validated'
-  WHERE  id     = v_sr_id
-    AND  status = 'completed';
-
-  GET DIAGNOSTICS v_rows_sr = ROW_COUNT;
-
-  IF v_rows_sr = 0 THEN
-    RAISE EXCEPTION '[validate_mission_v1] atomicity violation: mission % set terminée but service_request % could not be set validated. Rolling back.',
-      p_mission_id, v_sr_id
-    USING ERRCODE = 'P0001';
-  END IF;
-
-  RETURN pg_catalog.jsonb_build_object(
-    'ok',         true,
-    'mission_id', p_mission_id
-  );
-
-EXCEPTION
-  WHEN SQLSTATE 'P0001' THEN
-    RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'atomicity_error');
-  WHEN OTHERS THEN
-    RAISE WARNING '[validate_mission_v1] unexpected error: %', SQLERRM;
-    RETURN pg_catalog.jsonb_build_object('ok', false, 'reason', 'internal_error');
-END;
-$$;
-
-REVOKE EXECUTE ON FUNCTION public.validate_mission_v1(uuid) FROM PUBLIC;
-REVOKE EXECUTE ON FUNCTION public.validate_mission_v1(uuid) FROM anon;
-GRANT  EXECUTE ON FUNCTION public.validate_mission_v1(uuid) TO authenticated;
-
-DO $$
-BEGIN
-  RAISE NOTICE 'Block 3: validate_mission_v1(uuid) created/replaced.';
-END $$;
-
-
--- ════════════════════════════════════════════════════════════
--- BLOCK 4 — RLS: client UPDATE on service_requests for validation
---
--- The existing client_read_own_requests policy allows SELECT only.
--- confirm_completed_mission and validate_mission_v1 are SECURITY DEFINER
--- and execute under the function owner's privileges — they do NOT need
--- a client UPDATE RLS policy to operate.
---
--- This block is therefore a NO-OP in terms of new grants.
--- We confirm: DO NOT add a client UPDATE policy on service_requests.
--- The SECURITY DEFINER pattern is the correct isolation.
--- ════════════════════════════════════════════════════════════
-
-DO $$
-BEGIN
-  RAISE NOTICE 'Block 4: No RLS change needed — SECURITY DEFINER functions bypass caller RLS.';
-END $$;
-
-
--- ════════════════════════════════════════════════════════════
--- BLOCK 5 — Remove unsafe direct frontend UPDATE path
---
--- fixeo-mvp-supabase.js _fxSbConfirmRequest() calls:
---   sb.from('service_requests').update({ status: 'validée' }).eq('id', sbId)
---
--- This is an unsafe direct browser UPDATE path:
---   (a) No ownership verification at function level
---   (b) No corresponding missions.status update → inconsistent state
---   (c) 'validée' is not in the service_requests_status_check constraint
---       (constraint contains 'validated' not 'validée') → update silently
---       fails on CHECK violation in most Supabase JS SDK versions
---   (d) RLS client_update_own_requests policy may or may not exist
---
--- fixeo-dashboard-v2.js already calls confirm_completed_mission RPC (correct path).
--- fixeo-mvp-supabase.js is the older dashboard and uses the direct UPDATE.
---
--- This migration does NOT remove that code path (that is a JS code change, not SQL).
--- The JS change is handled in Phase 5 (frontend) below.
---
--- HOWEVER: we do NOT add a broad client UPDATE policy on service_requests
--- that would make the direct UPDATE path work — doing so would be a regression.
--- The SECURITY DEFINER RPC pattern is the only authorized path.
--- ════════════════════════════════════════════════════════════
-
-DO $$
-BEGIN
-  RAISE NOTICE 'Block 5: Direct frontend UPDATE path documented. No SQL change. JS fix in Phase 5.';
-  RAISE NOTICE '         fixeo-dashboard-v2.js already uses confirm_completed_mission RPC (correct).';
-  RAISE NOTICE '         fixeo-mvp-supabase.js fallback path to be fixed in BP02 Phase 5.';
-END $$;
-
-
--- ════════════════════════════════════════════════════════════
--- BLOCK 6 — Verification queries (run after applying)
--- ════════════════════════════════════════════════════════════
-
-DO $$
-BEGIN
-  RAISE NOTICE '============================================================';
-  RAISE NOTICE '7c14a1 migration ready to apply.';
-  RAISE NOTICE 'Post-apply verification:';
-  RAISE NOTICE '  V1: SELECT conname, pg_get_constraintdef(oid) FROM pg_constraint WHERE conrelid=''public.missions''::regclass AND contype=''c'' AND conname=''missions_status_check'';';
-  RAISE NOTICE '      Expected: includes terminée and validée';
-  RAISE NOTICE '  V2: SELECT proname, prosecdef, proacl FROM pg_proc WHERE proname IN (''confirm_completed_mission'',''validate_mission_v1'');';
-  RAISE NOTICE '      Expected: both functions, prosecdef=true';
-  RAISE NOTICE '  V3: SELECT has_function_privilege(''authenticated'',''confirm_completed_mission(uuid)'',''EXECUTE'');';
-  RAISE NOTICE '      Expected: true';
-  RAISE NOTICE '  V4: SELECT has_function_privilege(''authenticated'',''validate_mission_v1(uuid)'',''EXECUTE'');';
-  RAISE NOTICE '      Expected: true';
-  RAISE NOTICE '============================================================';
-END $$;
+-- PV-6: Record new drift guard baseline MD5 for next migration
+-- SELECT md5(pg_catalog.pg_get_functiondef(p.oid))
+-- FROM   pg_catalog.pg_proc p
+-- JOIN   pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+-- WHERE  n.nspname = 'public' AND p.proname = 'confirm_completed_mission'
+--   AND  pg_catalog.pg_get_function_identity_arguments(p.oid) = 'p_request_id uuid';
 
 COMMIT;
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- SECOND PREFLIGHT SQL — read-only — run BEFORE applying this migration
+-- ════════════════════════════════════════════════════════════════════════════
+
+-- PF-1: Verify missions_status_check — confirm 'terminée' NOT present
+-- SELECT pg_get_constraintdef(oid) FROM pg_catalog.pg_constraint
+-- WHERE  conrelid = 'public.missions'::regclass AND contype = 'c'
+--   AND  conname = 'missions_status_check';
+-- Expected: 7 canonical values; terminée and validée absent
+
+-- PF-2: Verify zero missions in unexpected statuses
+-- SELECT status, COUNT(*) FROM public.missions
+-- WHERE  status NOT IN ('offered','pending','declined','expired','done','cancelled','validated')
+-- GROUP  BY status;
+-- Expected: 0 rows
+
+-- PF-3: Verify production function baseline MD5
+-- SELECT md5(pg_catalog.pg_get_functiondef(p.oid)) AS current_md5,
+--        '8b70152880cd87d52044f730fd1dd2c2' AS expected_md5,
+--        md5(pg_catalog.pg_get_functiondef(p.oid)) = '8b70152880cd87d52044f730fd1dd2c2' AS matches
+-- FROM   pg_catalog.pg_proc p
+-- JOIN   pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+-- WHERE  n.nspname = 'public' AND p.proname = 'confirm_completed_mission'
+--   AND  pg_catalog.pg_get_function_identity_arguments(p.oid) = 'p_request_id uuid';
+-- Expected: matches = true
+
+-- PF-4: Verify enterprise tables exist
+-- SELECT table_name FROM information_schema.tables
+-- WHERE  table_schema = 'public'
+--   AND  table_name IN ('enterprise_request_context','enterprise_members','enterprise_accounts')
+-- ORDER  BY table_name;
+-- Expected: 3 rows
+
+-- PF-5: Verify enterprise_members columns
+-- SELECT column_name, data_type FROM information_schema.columns
+-- WHERE  table_schema = 'public' AND table_name = 'enterprise_members'
+--   AND  column_name IN ('enterprise_id','user_id','status','role')
+-- ORDER  BY column_name;
+-- Expected: 4 rows
+
+-- PF-6: Baseline confirmed-mission counts (informational)
+-- SELECT status, COUNT(*) FROM public.missions
+-- WHERE  status IN ('validated','done') GROUP BY status;
+
+-- PF-7: Confirm zero missions in terminée state
+-- SELECT COUNT(*) FROM public.missions WHERE status = 'terminée';
+-- Expected: 0
+
+-- PF-8: Verify current function ACL
+-- SELECT grantee, privilege_type FROM information_schema.routine_privileges
+-- WHERE  routine_schema = 'public' AND routine_name = 'confirm_completed_mission';
+-- Expected: authenticated only

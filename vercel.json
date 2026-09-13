@@ -109,14 +109,6 @@
     {
       "src": "api/whatsapp-webhook-fn/index.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "api/artisan-mission-fn/index.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "api/client-mission-fn/index.js",
-      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -528,14 +520,6 @@
         "Location": "/nettoyage/agadir"
       },
       "status": 301
-    },
-    {
-      "src": "^/api/artisan/missions/action$",
-      "dest": "/api/artisan-mission-fn/index.js"
-    },
-    {
-      "src": "^/api/client/missions/confirm$",
-      "dest": "/api/client-mission-fn/index.js"
     },
     {
       "src": "^/espace-artisan$",
