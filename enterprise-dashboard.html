@@ -161,6 +161,10 @@
       <button class="fxv2-nav-link" data-section="members" id="nav-members">
         <span class="icon" aria-hidden="true">👥</span> Membres
       </button>
+      <button class="fxv2-nav-link" data-section="ops" id="nav-ops">
+        <span class="fxv2-nav-icon" aria-hidden="true">⚙️</span>
+        <span class="fxv2-nav-label">Commande</span>
+      </button>
       <button class="fxv2-nav-link" data-section="history" id="nav-history">
         <span class="icon" aria-hidden="true">📊</span> Historique
       </button>
@@ -802,6 +806,214 @@
 
     </section>
 
+    <!-- ═══════════════════════════════════════════════════════
+         SECTION: OPS COMMAND CENTER (BP11)
+         ═══════════════════════════════════════════════════════ -->
+    <section class="fxv2-section" id="section-ops" aria-label="Centre de commande opérations">
+
+      <div class="ent-section-head">
+        <div>
+          <h1 class="fxv2-page-title">Centre de Commande</h1>
+          <div class="fxv2-page-subtitle">File opérationnelle temps réel — BESOIN → DEMANDE → DISPATCH → MISSION → VALIDATION</div>
+        </div>
+        <button class="ent-action-btn ent-action-primary" onclick="EntDashboard.goTo('new-request')"
+                aria-label="Créer une nouvelle demande d'intervention">
+          <span aria-hidden="true">➕</span> Nouvelle demande
+        </button>
+      </div>
+
+      <!-- OPS KPI STRIP -->
+      <div class="ops-kpi-strip" id="ops-kpi-strip" role="region" aria-label="Indicateurs opérations">
+        <button class="ops-kpi-card" id="ops-kpi-open" aria-label="Demandes ouvertes" data-ops-filter-status="open">
+          <div class="ops-kpi-val" id="ops-kpi-open-val">—</div>
+          <div class="ops-kpi-label">Ouvertes</div>
+        </button>
+        <button class="ops-kpi-card ops-kpi-card--urgent" id="ops-kpi-urgent" aria-label="Demandes urgentes" data-ops-filter-urgency="urgent">
+          <div class="ops-kpi-val" id="ops-kpi-urgent-val">—</div>
+          <div class="ops-kpi-label">Urgentes</div>
+        </button>
+        <button class="ops-kpi-card ops-kpi-card--awaiting" id="ops-kpi-awaiting" aria-label="En attente de validation" data-ops-filter-status="completed">
+          <div class="ops-kpi-val" id="ops-kpi-awaiting-val">—</div>
+          <div class="ops-kpi-label">À valider</div>
+        </button>
+        <button class="ops-kpi-card ops-kpi-card--missions" id="ops-kpi-missions" aria-label="Missions actives">
+          <div class="ops-kpi-val" id="ops-kpi-missions-val">—</div>
+          <div class="ops-kpi-label">Missions actives</div>
+        </button>
+        <button class="ops-kpi-card ops-kpi-card--attention" id="ops-kpi-attention" aria-label="Requièrent attention" data-ops-filter-attention="true">
+          <div class="ops-kpi-val" id="ops-kpi-attention-val">—</div>
+          <div class="ops-kpi-label">À traiter</div>
+        </button>
+      </div>
+
+      <!-- OPS QUEUE SECTION -->
+      <div class="ops-queue-section" id="ops-queue-section">
+
+        <!-- FILTER BAR -->
+        <div class="ops-filter-bar" role="search" aria-label="Filtres file opérationnelle">
+          <select class="ops-filter-select" id="ops-filter-site" aria-label="Filtrer par site">
+            <option value="">Tous les sites</option>
+          </select>
+          <select class="ops-filter-select" id="ops-filter-status" aria-label="Filtrer par statut">
+            <option value="">Tous les statuts</option>
+            <option value="new">Nouvelle</option>
+            <option value="assigned">Assignée</option>
+            <option value="in_progress">En cours</option>
+            <option value="completed">À valider</option>
+            <option value="validated">Validée</option>
+          </select>
+          <select class="ops-filter-select" id="ops-filter-urgency" aria-label="Filtrer par urgence">
+            <option value="">Toutes urgences</option>
+            <option value="now">Immédiat</option>
+            <option value="urgent">Urgent</option>
+            <option value="normale">Normale</option>
+          </select>
+          <input type="search" class="ops-search-input" id="ops-search-input"
+                 placeholder="Rechercher…" aria-label="Recherche dans les demandes" autocomplete="off">
+          <button class="ops-attention-toggle" id="ops-needs-attention-toggle"
+                  role="switch" aria-checked="false" aria-label="Afficher uniquement les demandes nécessitant attention">
+            <span aria-hidden="true">🔴</span> À traiter
+          </button>
+          <button class="ops-refresh-btn" id="ops-refresh-btn" aria-label="Rafraîchir la file">
+            <span aria-hidden="true">↻</span>
+          </button>
+        </div>
+
+        <!-- QUEUE LIST -->
+        <div id="ops-queue-loading" class="ops-queue-state" aria-live="polite" style="display:none">
+          <div class="ops-queue-spinner" aria-hidden="true"></div>
+          <span>Chargement en cours…</span>
+        </div>
+        <div id="ops-queue-error" class="ops-queue-state ops-queue-state--error" role="alert" style="display:none">
+          <span aria-hidden="true">⚠️</span>
+          <span id="ops-queue-error-msg">Erreur de chargement. Veuillez réessayer.</span>
+          <button class="fxv2-btn fxv2-btn-sm" id="ops-queue-retry-btn">Réessayer</button>
+        </div>
+        <div id="ops-queue-empty" class="ops-queue-state ops-queue-state--empty" style="display:none">
+          <div class="fxv2-empty-icon" aria-hidden="true">✅</div>
+          <div>Aucune demande correspondante.</div>
+        </div>
+        <ul class="ops-queue-list" id="ops-queue-list" role="list" aria-label="File des demandes" aria-live="polite"></ul>
+        <div class="ops-queue-footer">
+          <button class="fxv2-btn fxv2-btn-outline" id="ops-queue-load-more" style="display:none">
+            Charger plus
+          </button>
+        </div>
+
+      </div><!-- /#ops-queue-section -->
+
+      <!-- OPS DETAIL PANEL -->
+      <div class="ops-detail-panel" id="ops-detail-panel" style="display:none" role="region" aria-label="Détail demande">
+
+        <div class="ops-detail-header">
+          <button class="ops-detail-back fxv2-btn fxv2-btn-ghost" id="ops-detail-back" aria-label="Retour à la file">
+            ← Retour
+          </button>
+          <h2 class="ops-detail-title">Détail de la demande</h2>
+        </div>
+
+        <!-- LIFECYCLE BAR -->
+        <div class="ops-lifecycle-bar" id="ops-lifecycle-bar" role="list" aria-label="Cycle de vie de la demande">
+          <div class="ops-lifecycle-step" data-step="need" role="listitem">
+            <div class="ops-lifecycle-dot"></div>
+            <div class="ops-lifecycle-label">Besoin</div>
+          </div>
+          <div class="ops-lifecycle-connector" aria-hidden="true"></div>
+          <div class="ops-lifecycle-step" data-step="request" role="listitem">
+            <div class="ops-lifecycle-dot"></div>
+            <div class="ops-lifecycle-label">Demande</div>
+          </div>
+          <div class="ops-lifecycle-connector" aria-hidden="true"></div>
+          <div class="ops-lifecycle-step" data-step="dispatch" role="listitem">
+            <div class="ops-lifecycle-dot"></div>
+            <div class="ops-lifecycle-label">Dispatch</div>
+          </div>
+          <div class="ops-lifecycle-connector" aria-hidden="true"></div>
+          <div class="ops-lifecycle-step" data-step="mission" role="listitem">
+            <div class="ops-lifecycle-dot"></div>
+            <div class="ops-lifecycle-label">Mission</div>
+          </div>
+          <div class="ops-lifecycle-connector" aria-hidden="true"></div>
+          <div class="ops-lifecycle-step" data-step="validation" role="listitem">
+            <div class="ops-lifecycle-dot"></div>
+            <div class="ops-lifecycle-label">Validation</div>
+          </div>
+        </div>
+
+        <!-- DETAIL FIELDS -->
+        <div class="ops-detail-body">
+
+          <div class="ops-detail-row">
+            <span class="ops-detail-key">Site</span>
+            <span class="ops-detail-val" id="ops-detail-site">—</span>
+          </div>
+          <div class="ops-detail-row">
+            <span class="ops-detail-key">Catégorie</span>
+            <span class="ops-detail-val" id="ops-detail-category">—</span>
+          </div>
+          <div class="ops-detail-row">
+            <span class="ops-detail-key">Urgence</span>
+            <span class="ops-detail-val">
+              <span class="ops-urgency-badge" id="ops-detail-urgency"></span>
+            </span>
+          </div>
+          <div class="ops-detail-row">
+            <span class="ops-detail-key">Statut</span>
+            <span class="ops-detail-val">
+              <span class="ops-status-badge" id="ops-detail-status"></span>
+            </span>
+          </div>
+          <div class="ops-detail-row">
+            <span class="ops-detail-key">Âge</span>
+            <span class="ops-detail-val" id="ops-detail-age">—</span>
+          </div>
+          <div class="ops-detail-row ops-detail-row--desc">
+            <span class="ops-detail-key">Description</span>
+            <span class="ops-detail-val ops-detail-desc" id="ops-detail-description">—</span>
+          </div>
+
+          <!-- MISSION BLOCK -->
+          <div class="ops-detail-mission-block" id="ops-detail-mission-block">
+            <div class="ops-detail-section-title">Mission</div>
+            <div class="ops-detail-row">
+              <span class="ops-detail-key">Statut mission</span>
+              <span class="ops-detail-val">
+                <span class="ops-status-badge" id="ops-detail-mission-status">—</span>
+              </span>
+            </div>
+            <div class="ops-detail-row" id="ops-detail-mission-started-row" style="display:none">
+              <span class="ops-detail-key">Démarrée le</span>
+              <span class="ops-detail-val" id="ops-detail-mission-started">—</span>
+            </div>
+            <div class="ops-detail-row" id="ops-detail-mission-completed-row" style="display:none">
+              <span class="ops-detail-key">Terminée le</span>
+              <span class="ops-detail-val" id="ops-detail-mission-completed">—</span>
+            </div>
+          </div>
+
+          <!-- CONFIRM VALIDATION -->
+          <div class="ops-detail-confirm-block" id="ops-detail-confirm-block" style="display:none">
+            <button class="fxv2-btn fxv2-btn-success" id="ops-detail-confirm-btn"
+                    aria-label="Valider la mission terminée">
+              ✅ Valider la mission
+            </button>
+            <div class="ops-detail-confirm-loading" id="ops-detail-confirm-loading"
+                 style="display:none" aria-live="polite">Validation en cours…</div>
+            <div class="ops-detail-confirm-error" id="ops-detail-confirm-error"
+                 role="alert" style="display:none"></div>
+          </div>
+
+          <!-- DETAIL LOADING STATE -->
+          <div id="ops-detail-loading" style="display:none" aria-live="polite">
+            <div class="ops-queue-spinner" aria-hidden="true"></div>
+            Chargement du détail…
+          </div>
+
+        </div><!-- /.ops-detail-body -->
+      </div><!-- /#ops-detail-panel -->
+
+    </section><!-- /#section-ops -->
+
   </main><!-- /#ent-main -->
 
   <!-- BOTTOM NAVIGATION — mobile only -->
@@ -848,6 +1060,7 @@
 </div>
 
 <!-- Enterprise dashboard V2 module -->
+<script src="js/enterprise-ops-contract-v1.js?v=bp11"></script>
 <script src="js/enterprise-dashboard-v1.js?v=ed2"></script>
 
 <!-- GLOBAL SEARCH DIALOG -->

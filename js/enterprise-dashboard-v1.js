@@ -231,6 +231,7 @@ function navigateTo(section, ctx) {
     case 'members':         loadMembers();                         break;
     case 'history':         loadHistory(true);                     break;
     case 'account':         renderAccount();                       break;
+    case 'ops':             populateOpsSiteFilter(); initOpsCommandCenter(); loadOpsQueue(true); refreshOpsKpis(); break;
   }
   pushNavState(section, ctx);
 }
@@ -1775,8 +1776,8 @@ async function loadDetailMission(requestId, container) {
   try {
     const { data, error } = await _sb
       .from('missions')
-      .select('id, status, artisan_id, started_at, completed_at')
-      .eq('service_request_id', requestId)
+      .select('id, status, artisan_profile_id, started_at, completed_at')
+      .eq('request_id', String(requestId))
       .order('created_at',{ ascending:false })
       .limit(1)
       .maybeSingle();
@@ -3866,4 +3867,597 @@ async function checkInvitationParam() {
 document.addEventListener('DOMContentLoaded', () => {
   attachInviteFormListeners();
   checkInvitationParam();
+});
+
+// ════════════════════════════════════════════════════════════════
+// BP11 — Operations Command Center
+// Extends enterprise-dashboard-v1.js
+// Uses window.EnterpriseOpsContract (enterprise-ops-contract-v1.js)
+// ════════════════════════════════════════════════════════════════
+
+// ── State additions ──────────────────────────────────────────────
+// (appended to existing S object at runtime via Object.assign)
+(function(){
+  Object.assign(S, {
+    opsQueue:              [],
+    opsQueueCursor:        null,
+    opsQueueExhausted:     false,
+    opsQueueLoading:       false,
+    opsConfirmSubmitting:  false,
+    opsFilters: { site:'', status:'', urgency:'', search:'', needsAttention:false },
+    opsDetailRequestId:    null,
+    opsDetailMission:      null,
+    opsSearchDebounce:     null,
+    opsInitDone:           false,
+  });
+}());
+
+// ── Contract helpers (defer to EnterpriseOpsContract if loaded) ──
+function _opsContract() {
+  return (typeof window !== 'undefined' && window.EnterpriseOpsContract) || null;
+}
+const OPS_PAGE_SIZE       = 20;
+const OPS_STALE_MS        = 48 * 60 * 60 * 1000;
+const OPEN_STATUSES_OPS   = ['new','assigned','in_progress'];
+const URGENT_URGENCIES_OPS= ['now','urgent'];
+
+function opsNeedsAttention(row) {
+  var c = _opsContract();
+  if (c) return c.needsAttention(row);
+  if (!row) return false;
+  var u = row.urgency || '', st = row.status || '', age = row.ageMs || 0;
+  if (u === 'now' && (st === 'new' || st === 'assigned')) return true;
+  if (st === 'completed') return true;
+  if (age > OPS_STALE_MS && (st === 'new' || st === 'assigned')) return true;
+  return false;
+}
+
+function computeOpsAge(createdAt) {
+  if (!createdAt) return { ms: 0, label: '—' };
+  var ms = Date.now() - new Date(createdAt).getTime();
+  if (ms < 0) ms = 0;
+  if (ms < 60000)           return { ms: ms, label: '<1 min' };
+  if (ms < 3600000)         return { ms: ms, label: Math.floor(ms/60000) + ' min' };
+  if (ms < 86400000)        return { ms: ms, label: Math.floor(ms/3600000) + 'h' };
+  return { ms: ms, label: Math.floor(ms/86400000) + 'j' };
+}
+
+function buildOpsCursor(rows) {
+  var c = _opsContract();
+  if (c) return c.buildCursor(rows);
+  if (!rows || !rows.length) return null;
+  var last = rows[rows.length - 1];
+  return { lastCreatedAt: last.createdAt || last.created_at, lastId: last.id };
+}
+
+// ── fetchOpsQueue ────────────────────────────────────────────────
+async function fetchOpsQueuePage(enterpriseId, filters, cursor) {
+  var c = _opsContract();
+  if (c) {
+    var f = Object.assign({}, filters, { cursor: cursor });
+    return await c.fetchOperationsQueue(enterpriseId, f);
+  }
+  // Inline fallback (same logic as contract module)
+  var q = _sb
+    .from('service_requests')
+    .select(
+      'id, status, category, urgency, description, created_at, city,' +
+      'enterprise_request_context!inner(id, enterprise_id, site_id,' +
+      'enterprise_sites!inner(id, name, site_code))'
+    )
+    .eq('enterprise_request_context.enterprise_id', enterpriseId)
+    .order('created_at', { ascending: false })
+    .limit(OPS_PAGE_SIZE);
+  if (filters.site)    q = q.eq('enterprise_request_context.site_id', filters.site);
+  if (filters.status)  q = q.eq('status', filters.status);
+  if (filters.urgency) q = q.eq('urgency', filters.urgency);
+  if (filters.search) {
+    var t = '%' + filters.search + '%';
+    q = q.or('category.ilike.' + t + ',description.ilike.' + t);
+  }
+  if (cursor && cursor.lastCreatedAt) {
+    q = q.or('created_at.lt.' + cursor.lastCreatedAt +
+      ',and(created_at.eq.' + cursor.lastCreatedAt + ',id.lt.' + cursor.lastId + ')');
+  }
+  var res = await q;
+  if (res.error) throw res.error;
+  var now = Date.now();
+  var rows = (res.data||[]).map(function(r){
+    var erc  = Array.isArray(r.enterprise_request_context) ? r.enterprise_request_context[0] : r.enterprise_request_context;
+    var site = erc && (Array.isArray(erc.enterprise_sites) ? erc.enterprise_sites[0] : erc.enterprise_sites);
+    var age  = r.created_at ? now - new Date(r.created_at).getTime() : 0;
+    return { id:r.id, ercId:erc?erc.id:null, siteId:erc?erc.site_id:null, siteName:site?site.name:'—',
+             category:r.category||'', urgency:r.urgency||'normale', status:r.status||'',
+             description:r.description||'', city:r.city||'', createdAt:r.created_at, ageMs:age };
+  });
+  if (filters.needsAttention) rows = rows.filter(opsNeedsAttention);
+  return { rows:rows, cursor:buildOpsCursor(rows), exhausted:(res.data||[]).length < OPS_PAGE_SIZE };
+}
+
+async function fetchOpsMission(srId) {
+  var c = _opsContract();
+  if (c) return await c.fetchMissionForRequest(srId);
+  try {
+    var res = await _sb
+      .from('missions')
+      .select('id, status, artisan_profile_id, started_at, completed_at, created_at')
+      .eq('request_id', String(srId))
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (res.error) return null;
+    return res.data || null;
+  } catch(_) { return null; }
+}
+
+// ── renderOpsRow ─────────────────────────────────────────────────
+function renderOpsRow(r) {
+  var li = document.createElement('li');
+  li.className = 'ops-queue-row';
+  li.setAttribute('tabindex', '0');
+  li.setAttribute('role', 'button');
+  li.setAttribute('data-rid', r.id);
+  // Attention class
+  if (r.urgency === 'now' && (r.status === 'new' || r.status === 'assigned')) {
+    li.classList.add('ops-attention-urgent');
+  } else if (r.status === 'completed') {
+    li.classList.add('ops-attention-validation');
+  } else if (r.ageMs > OPS_STALE_MS && (r.status === 'new' || r.status === 'assigned')) {
+    li.classList.add('ops-attention-stale');
+  }
+  var ageLabel = computeOpsAge(r.createdAt).label;
+
+  // Main row (all textContent — no innerHTML with user data)
+  var top = document.createElement('div');
+  top.className = 'ops-queue-row-top';
+
+  var siteName = document.createElement('span');
+  siteName.className = 'ops-queue-row-site';
+  siteName.textContent = r.siteName;
+  top.appendChild(siteName);
+
+  var cat = document.createElement('span');
+  cat.className = 'ops-queue-row-category';
+  cat.textContent = r.category;
+  top.appendChild(cat);
+
+  var desc = document.createElement('div');
+  desc.className = 'ops-queue-row-desc';
+  desc.textContent = r.description;
+
+  var age = document.createElement('div');
+  age.className = 'ops-queue-row-age';
+  age.textContent = ageLabel;
+
+  // Badges (use safeHtml values for class names only, textContent for text)
+  var badges = document.createElement('div');
+  badges.className = 'ops-queue-row-badges';
+
+  var urgBadge = document.createElement('span');
+  urgBadge.className = 'ops-urgency-badge ops-urgency-' + safeHtml(r.urgency || 'normale');
+  urgBadge.textContent = formatUrgency(r.urgency);
+  badges.appendChild(urgBadge);
+
+  var stBadge = document.createElement('span');
+  stBadge.className = 'ops-status-badge ops-status-' + safeHtml(r.status || '');
+  stBadge.textContent = formatStatus(r.status);
+  badges.appendChild(stBadge);
+
+  var main = document.createElement('div');
+  main.appendChild(top);
+  main.appendChild(desc);
+  main.appendChild(badges);
+  main.appendChild(age);
+  li.appendChild(main);
+
+  // Click / keyboard
+  function _open(e) {
+    if (e && e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+    if (e) e.preventDefault();
+    openOpsDetail(r.id);
+  }
+  li.addEventListener('click', _open);
+  li.addEventListener('keydown', _open);
+
+  return li;
+}
+
+// ── loadOpsQueue ─────────────────────────────────────────────────
+async function loadOpsQueue(reset) {
+  if (!S.activeEnterprise) return;
+  if (S.opsQueueLoading) return;
+  if (!reset && S.opsQueueExhausted) return;
+
+  S.opsQueueLoading = true;
+  var list      = document.getElementById('ops-queue-list');
+  var loadEl    = document.getElementById('ops-queue-loading');
+  var emptyEl   = document.getElementById('ops-queue-empty');
+  var errorEl   = document.getElementById('ops-queue-error');
+  var loadMore  = document.getElementById('ops-queue-load-more');
+
+  if (reset) {
+    S.opsQueue = [];
+    S.opsQueueCursor = null;
+    S.opsQueueExhausted = false;
+    if (list) list.innerHTML = '';
+  }
+  if (loadEl)   { loadEl.style.display = ''; }
+  if (emptyEl)  { emptyEl.style.display = 'none'; }
+  if (errorEl)  { errorEl.style.display = 'none'; }
+  if (loadMore) { loadMore.style.display = 'none'; }
+
+  try {
+    var result = await fetchOpsQueuePage(
+      S.activeEnterprise.id,
+      S.opsFilters,
+      reset ? null : S.opsQueueCursor
+    );
+    S.opsQueue = reset ? result.rows : S.opsQueue.concat(result.rows);
+    S.opsQueueCursor   = result.cursor;
+    S.opsQueueExhausted= result.exhausted;
+
+    if (loadEl) loadEl.style.display = 'none';
+
+    if (S.opsQueue.length === 0) {
+      if (emptyEl) emptyEl.style.display = '';
+    } else {
+      if (list) {
+        if (reset) list.innerHTML = '';
+        result.rows.forEach(function(r) { list.appendChild(renderOpsRow(r)); });
+      }
+    }
+    if (loadMore) {
+      loadMore.style.display = S.opsQueueExhausted ? 'none' : '';
+    }
+  } catch(err) {
+    if (loadEl) loadEl.style.display = 'none';
+    if (errorEl) {
+      errorEl.style.display = '';
+      var msg = document.getElementById('ops-queue-error-msg');
+      if (msg) msg.textContent = 'Erreur de chargement. Veuillez réessayer.';
+    }
+  }
+  S.opsQueueLoading = false;
+}
+
+// ── KPI strip ────────────────────────────────────────────────────
+function renderOpsKpis(counts) {
+  function set(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = (val === null || val === undefined) ? '—' : String(val);
+  }
+  set('ops-kpi-open-val',      counts.open      ?? '—');
+  set('ops-kpi-urgent-val',    counts.urgent     ?? '—');
+  set('ops-kpi-awaiting-val',  counts.awaiting   ?? '—');
+  set('ops-kpi-missions-val',  counts.activeMissions === null ? '—' : counts.activeMissions);
+  set('ops-kpi-attention-val', counts.attention  ?? '—');
+}
+
+async function refreshOpsKpis() {
+  if (!S.activeEnterprise) return;
+  try {
+    var c = _opsContract();
+    var counts;
+    if (c) {
+      counts = await c.fetchOperationsKpis(S.activeEnterprise.id);
+    } else {
+      // Derive from loaded queue as fallback
+      var rows = S.opsQueue;
+      counts = {
+        open:    rows.filter(function(r){ return OPEN_STATUSES_OPS.indexOf(r.status) !== -1; }).length,
+        urgent:  rows.filter(function(r){ return URGENT_URGENCIES_OPS.indexOf(r.urgency) !== -1; }).length,
+        awaiting:rows.filter(function(r){ return r.status === 'completed'; }).length,
+        activeMissions: null,
+      };
+    }
+    counts.attention = S.opsQueue.filter(opsNeedsAttention).length;
+    renderOpsKpis(counts);
+  } catch(_) { /* kpis optional */ }
+}
+
+// ── Detail panel ─────────────────────────────────────────────────
+function _setOpsDetailText(id, text) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = text || '—';
+}
+function _setOpsDetailBadge(id, cssClass, text) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  // Remove old badge classes
+  el.className = el.className.replace(/ops-[a-z]+-[a-z_]+/g, '').trim();
+  el.classList.add(cssClass);
+  el.textContent = text || '';
+}
+function _setOpsLifecycleStep(status, hasMission) {
+  var bar = document.getElementById('ops-lifecycle-bar');
+  if (!bar) return;
+  var steps = bar.querySelectorAll('.ops-lifecycle-step');
+  // step order: need, request, dispatch, mission, validation
+  // need: always done (request exists)
+  // request: always done
+  // dispatch: done if mission exists or status in_progress+
+  // mission: done/active based on status
+  // validation: done if validated
+  var stepMap = { need:0, request:1, dispatch:2, mission:3, validation:4 };
+  var activeStep = 1; // request is always at least the active step
+  if (hasMission)                                          activeStep = 3;
+  if (status === 'in_progress')                            activeStep = 3;
+  if (status === 'completed')                              activeStep = 4;
+  if (status === 'validated')                              activeStep = 4;
+  steps.forEach(function(step, idx) {
+    step.classList.remove('done', 'active');
+    if (idx < activeStep)  step.classList.add('done');
+    if (idx === activeStep) step.classList.add('active');
+  });
+}
+
+async function loadOpsDetail(requestId) {
+  if (!requestId) return;
+  // Guard: discard stale response if a newer request was opened
+  var myRequestId = requestId;
+  S.opsDetailRequestId = requestId;
+
+  var panel   = document.getElementById('ops-detail-panel');
+  var queueSec= document.getElementById('ops-queue-section');
+  var loadEl  = document.getElementById('ops-detail-loading');
+  if (panel)    panel.style.display = '';
+  if (queueSec) queueSec.style.display = 'none';
+  if (loadEl)   loadEl.style.display = '';
+
+  // Reset confirm block
+  var confirmBlock = document.getElementById('ops-detail-confirm-block');
+  var confirmErr   = document.getElementById('ops-detail-confirm-error');
+  if (confirmBlock) confirmBlock.style.display = 'none';
+  if (confirmErr)   { confirmErr.style.display = 'none'; confirmErr.textContent = ''; }
+
+  try {
+    // Fetch SR
+    var srRes = await _sb
+      .from('service_requests')
+      .select('id, status, category, urgency, description, created_at, city,' +
+              'enterprise_request_context!inner(id, site_id, enterprise_id,' +
+              'enterprise_sites!inner(id, name))')
+      .eq('id', requestId)
+      .maybeSingle();
+
+    // Staleness check: another row was opened while awaiting
+    if (S.opsDetailRequestId !== myRequestId) return;
+
+    if (srRes.error || !srRes.data) {
+      if (loadEl) loadEl.style.display = 'none';
+      return;
+    }
+    var sr  = srRes.data;
+    var erc = Array.isArray(sr.enterprise_request_context) ? sr.enterprise_request_context[0] : sr.enterprise_request_context;
+    var site= erc && (Array.isArray(erc.enterprise_sites) ? erc.enterprise_sites[0] : erc.enterprise_sites);
+
+    // Fetch mission (null-safe — may not be visible pre-BP09)
+    var mission = await fetchOpsMission(requestId);
+    if (S.opsDetailRequestId !== myRequestId) return; // stale check again
+    S.opsDetailMission = mission;
+
+    if (loadEl) loadEl.style.display = 'none';
+    renderOpsDetail(sr, mission, site);
+  } catch(_) {
+    if (S.opsDetailRequestId !== myRequestId) return;
+    if (loadEl) loadEl.style.display = 'none';
+  }
+}
+
+function renderOpsDetail(sr, mission, site) {
+  var age = computeOpsAge(sr.created_at);
+  _setOpsDetailText('ops-detail-site', site ? site.name : '—');
+  _setOpsDetailText('ops-detail-category', sr.category || '—');
+  _setOpsDetailBadge('ops-detail-urgency', 'ops-urgency-badge ops-urgency-' + safeHtml(sr.urgency||'normale'), formatUrgency(sr.urgency));
+  _setOpsDetailBadge('ops-detail-status',  'ops-status-badge ops-status-' + safeHtml(sr.status||''), formatStatus(sr.status));
+  _setOpsDetailText('ops-detail-age', age.label);
+  _setOpsDetailText('ops-detail-description', sr.description || '—');
+
+  // Mission block
+  var mBlock = document.getElementById('ops-detail-mission-block');
+  if (mission) {
+    if (mBlock) mBlock.style.display = '';
+    _setOpsDetailBadge('ops-detail-mission-status',
+      'ops-status-badge ops-mission-' + safeHtml(mission.status||''),
+      formatStatus(mission.status));
+    var startRow = document.getElementById('ops-detail-mission-started-row');
+    var compRow  = document.getElementById('ops-detail-mission-completed-row');
+    if (mission.started_at && startRow) {
+      startRow.style.display = '';
+      _setOpsDetailText('ops-detail-mission-started', new Date(mission.started_at).toLocaleString('fr-FR'));
+    }
+    if (mission.completed_at && compRow) {
+      compRow.style.display = '';
+      _setOpsDetailText('ops-detail-mission-completed', new Date(mission.completed_at).toLocaleString('fr-FR'));
+    }
+  } else {
+    if (mBlock) {
+      var mStatus = document.getElementById('ops-detail-mission-status');
+      if (mStatus) { mStatus.className = 'ops-status-badge ops-mission-none'; mStatus.textContent = 'Aucune mission'; }
+    }
+  }
+
+  // Lifecycle bar
+  _setOpsLifecycleStep(sr.status, !!mission);
+
+  // Confirm button — show only if canConfirm + status=completed
+  var confirmBlock = document.getElementById('ops-detail-confirm-block');
+  if (confirmBlock) {
+    var show = sr.status === 'completed' && canConfirm(S.userRole);
+    confirmBlock.style.display = show ? '' : 'none';
+    var btn = document.getElementById('ops-detail-confirm-btn');
+    if (btn) btn.setAttribute('data-rid', sr.id);
+  }
+}
+
+// ── confirmOpsValidation ─────────────────────────────────────────
+async function confirmOpsValidation(requestId) {
+  if (S.opsConfirmSubmitting) return;           // double-submit guard
+  if (!canConfirm(S.userRole)) return;          // role gate
+  S.opsConfirmSubmitting = true;
+
+  var btn     = document.getElementById('ops-detail-confirm-btn');
+  var loading = document.getElementById('ops-detail-confirm-loading');
+  var errEl   = document.getElementById('ops-detail-confirm-error');
+
+  if (btn)     { btn.disabled = true; }
+  if (loading) { loading.style.display = ''; }
+  if (errEl)   { errEl.style.display = 'none'; errEl.textContent = ''; }
+
+  try {
+    var res = await _sb.rpc('confirm_completed_mission', { p_request_id: requestId });
+    if (res.error) throw res.error;
+    // Success: reload detail
+    S.opsConfirmSubmitting = false;
+    if (btn) btn.disabled = false;
+    if (loading) loading.style.display = 'none';
+    await loadOpsDetail(requestId);
+    // Refresh queue row & KPIs
+    await loadOpsQueue(true);
+    await refreshOpsKpis();
+  } catch(_) {
+    S.opsConfirmSubmitting = false;
+    if (btn)     { btn.disabled = false; }
+    if (loading) { loading.style.display = 'none'; }
+    if (errEl)   { errEl.textContent = 'Erreur lors de la validation. Veuillez réessayer.'; errEl.style.display = ''; }
+  }
+}
+
+// ── Navigation ───────────────────────────────────────────────────
+function openOpsDetail(requestId) {
+  loadOpsDetail(requestId);
+}
+
+function closeOpsDetail() {
+  S.opsDetailRequestId = null;
+  var panel    = document.getElementById('ops-detail-panel');
+  var queueSec = document.getElementById('ops-queue-section');
+  if (panel)    panel.style.display = 'none';
+  if (queueSec) queueSec.style.display = '';
+}
+
+// ── Site filter population ───────────────────────────────────────
+function populateOpsSiteFilter() {
+  var sel = document.getElementById('ops-filter-site');
+  if (!sel || !S.sites) return;
+  // Keep the "Tous les sites" option; rebuild rest
+  while (sel.options.length > 1) sel.remove(1);
+  S.sites.forEach(function(site) {
+    if (!site || site.status === 'inactive') return;
+    var opt = document.createElement('option');
+    opt.value = site.id;
+    opt.textContent = site.name;
+    if (site.id === S.opsFilters.site) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+// ── initOpsCommandCenter ─────────────────────────────────────────
+function initOpsCommandCenter() {
+  if (S.opsInitDone) return;
+  S.opsInitDone = true;
+
+  // Filter bar
+  var siteSel   = document.getElementById('ops-filter-site');
+  var statusSel = document.getElementById('ops-filter-status');
+  var urgSel    = document.getElementById('ops-filter-urgency');
+  var searchIn  = document.getElementById('ops-search-input');
+  var attToggle = document.getElementById('ops-needs-attention-toggle');
+  var refreshBtn= document.getElementById('ops-refresh-btn');
+  var loadMore  = document.getElementById('ops-queue-load-more');
+  var retryBtn  = document.getElementById('ops-queue-retry-btn');
+  var backBtn   = document.getElementById('ops-detail-back');
+  var confirmBtn= document.getElementById('ops-detail-confirm-btn');
+
+  if (siteSel)   siteSel.addEventListener('change',   function(){ S.opsFilters.site    = siteSel.value;   loadOpsQueue(true); });
+  if (statusSel) statusSel.addEventListener('change', function(){ S.opsFilters.status  = statusSel.value; loadOpsQueue(true); });
+  if (urgSel)    urgSel.addEventListener('change',    function(){ S.opsFilters.urgency = urgSel.value;    loadOpsQueue(true); });
+  if (searchIn) {
+    searchIn.addEventListener('input', function() {
+      clearTimeout(S.opsSearchDebounce);
+      S.opsSearchDebounce = setTimeout(function(){
+        S.opsFilters.search = searchIn.value.trim();
+        loadOpsQueue(true);
+      }, 350);
+    });
+  }
+  if (attToggle) {
+    attToggle.addEventListener('click', function() {
+      S.opsFilters.needsAttention = !S.opsFilters.needsAttention;
+      attToggle.setAttribute('aria-checked', S.opsFilters.needsAttention ? 'true' : 'false');
+      loadOpsQueue(true);
+    });
+  }
+  if (refreshBtn) refreshBtn.addEventListener('click', function(){ loadOpsQueue(true); refreshOpsKpis(); });
+  if (loadMore)   loadMore.addEventListener('click',   function(){ loadOpsQueue(false); });
+  if (retryBtn)   retryBtn.addEventListener('click',   function(){ loadOpsQueue(true); });
+  if (backBtn)    backBtn.addEventListener('click',    closeOpsDetail);
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', function(){
+      var rid = confirmBtn.getAttribute('data-rid') || S.opsDetailRequestId;
+      if (rid) confirmOpsValidation(rid);
+    });
+  }
+
+  // KPI card filters
+  document.querySelectorAll('.ops-kpi-card[data-ops-filter-status]').forEach(function(card){
+    card.addEventListener('click', function(){
+      S.opsFilters.status = card.getAttribute('data-ops-filter-status') === 'open' ? '' : card.getAttribute('data-ops-filter-status');
+      if (statusSel) statusSel.value = S.opsFilters.status;
+      loadOpsQueue(true);
+    });
+  });
+  document.querySelectorAll('.ops-kpi-card[data-ops-filter-attention]').forEach(function(card){
+    card.addEventListener('click', function(){
+      S.opsFilters.needsAttention = true;
+      if (attToggle) attToggle.setAttribute('aria-checked', 'true');
+      loadOpsQueue(true);
+    });
+  });
+}
+
+// ── navigateTo extension (ops section) ───────────────────────────
+(function patchNavigateTo() {
+  var _origNav = window.EntDashboard.goTo;
+  window.EntDashboard.goTo = function(sec, ctx) {
+    _origNav(sec, ctx);
+  };
+  // Patch internal navigateTo switch — hook via section show
+  var _origShowSection = typeof showSection === 'function' ? showSection : null;
+  if (_origShowSection) {
+    // Override showSection to trigger ops init + load
+    window._opsShowSectionHooked = true;
+  }
+  // Simpler: listen for section-ops becoming active
+  var obs = new MutationObserver(function(muts) {
+    muts.forEach(function(m) {
+      if (m.target && m.target.id === 'section-ops' &&
+          m.target.classList.contains('active')) {
+        populateOpsSiteFilter();
+        initOpsCommandCenter();
+        loadOpsQueue(true);
+        refreshOpsKpis();
+      }
+    });
+  });
+  var opsSection = document.getElementById('section-ops');
+  if (opsSection) {
+    obs.observe(opsSection, { attributes: true, attributeFilter: ['class'] });
+  }
+}());
+
+// Also wire navigateTo 'ops' case via DOMContentLoaded patch
+document.addEventListener('DOMContentLoaded', function() {
+  // Patch navigateTo to handle 'ops' section
+  if (typeof navigateTo === 'function') {
+    var _origNavigateTo = navigateTo;
+    // We can't easily reassign the closure, but the MutationObserver above handles it
+  }
+  // Wire data-section=ops nav buttons
+  document.querySelectorAll('[data-section="ops"]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      // showSection is already called by the existing nav handler;
+      // the MutationObserver triggers ops init/load
+    });
+  });
 });
