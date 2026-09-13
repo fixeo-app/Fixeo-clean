@@ -178,6 +178,10 @@
       <button class="fxv2-nav-link ent-nav-item" data-section="escalations" id="nav-escalations" aria-label="Incidents">
         <span class="icon" aria-hidden="true">🚨</span> Incidents
       </button>
+      <!-- BP14 Reporting nav -->
+      <button class="fxv2-nav-link ent-nav-item" data-section="reporting" id="nav-reporting" aria-label="Rapports">
+        Rapports
+      </button>
     </nav>
 
     <div class="fxv2-sidebar-footer">
@@ -1249,6 +1253,94 @@
       </div>
     </section><!-- /#section-escalations -->
 
+    <!-- BP14 Executive Reporting Section -->
+    <section id="section-reporting" class="ent-section fxv2-section" aria-label="Tableau de bord exécutif" style="display:none">
+
+      <!-- Header + period selector -->
+      <header class="rpt-header">
+        <h2>Tableau de bord exécutif</h2>
+        <div class="rpt-period-bar" role="group" aria-label="Période d'analyse">
+          <button class="rpt-period-btn active" data-period="30" aria-pressed="true">30j</button>
+          <button class="rpt-period-btn" data-period="7"  aria-pressed="false">7j</button>
+          <button class="rpt-period-btn" data-period="90" aria-pressed="false">90j</button>
+        </div>
+      </header>
+
+      <!-- Loading / error states -->
+      <div id="rpt-loading" aria-live="polite" style="display:none">Chargement…</div>
+      <div id="rpt-error"  role="alert" style="display:none">
+        <span id="rpt-error-msg"></span>
+        <button id="rpt-retry-btn">Réessayer</button>
+      </div>
+
+      <!-- Executive KPI Strip -->
+      <div id="rpt-kpi-strip" class="rpt-kpi-strip" aria-label="Indicateurs clés" style="display:none">
+        <div class="rpt-kpi-card" id="rpt-kpi-total">
+          <span class="rpt-kpi-label">Demandes</span>
+          <span class="rpt-kpi-val" id="rpt-kpi-total-val">—</span>
+          <span class="rpt-kpi-delta" id="rpt-kpi-total-delta"></span>
+        </div>
+        <div class="rpt-kpi-card" id="rpt-kpi-open">
+          <span class="rpt-kpi-label">Ouvertes</span>
+          <span class="rpt-kpi-val" id="rpt-kpi-open-val">—</span>
+        </div>
+        <div class="rpt-kpi-card rpt-kpi-danger" id="rpt-kpi-sla-breached">
+          <span class="rpt-kpi-label">SLA dépassés</span>
+          <span class="rpt-kpi-val" id="rpt-kpi-sla-breached-val">—</span>
+        </div>
+        <div class="rpt-kpi-card rpt-kpi-warn" id="rpt-kpi-esc-open">
+          <span class="rpt-kpi-label">Escalades ouvertes</span>
+          <span class="rpt-kpi-val" id="rpt-kpi-esc-open-val">—</span>
+          <span class="rpt-kpi-delta" id="rpt-kpi-esc-delta"></span>
+        </div>
+        <div class="rpt-kpi-card rpt-kpi-ok" id="rpt-kpi-completed">
+          <span class="rpt-kpi-label">Résolues</span>
+          <span class="rpt-kpi-val" id="rpt-kpi-completed-val">—</span>
+          <span class="rpt-kpi-delta" id="rpt-kpi-completed-delta"></span>
+        </div>
+        <div class="rpt-kpi-card" id="rpt-kpi-urgent">
+          <span class="rpt-kpi-label">Urgentes</span>
+          <span class="rpt-kpi-val" id="rpt-kpi-urgent-val">—</span>
+        </div>
+      </div>
+
+      <!-- Trend visualization (SVG sparklines) -->
+      <div id="rpt-trend-block" class="rpt-trend-block" style="display:none">
+        <h3>Tendance — <span id="rpt-trend-period-label">30 derniers jours</span></h3>
+        <div class="rpt-sparklines" id="rpt-sparklines" aria-label="Graphiques de tendance"></div>
+      </div>
+
+      <!-- Site Performance Table -->
+      <div id="rpt-sites-block" class="rpt-sites-block" style="display:none">
+        <h3>Performance par site</h3>
+        <div class="rpt-sites-table-wrap" role="region" aria-label="Tableau de performance des sites" tabindex="0">
+          <table class="rpt-sites-table" id="rpt-sites-table" aria-live="polite">
+            <thead>
+              <tr>
+                <th scope="col">Site</th>
+                <th scope="col" class="rpt-num-col">Demandes</th>
+                <th scope="col" class="rpt-num-col">Ouvertes</th>
+                <th scope="col" class="rpt-num-col">SLA ❗</th>
+                <th scope="col" class="rpt-num-col">Escalades</th>
+                <th scope="col" class="rpt-num-col">Résolution</th>
+                <th scope="col" class="rpt-num-col" title="Score d'attention (formule déterministe)">Pression ↑</th>
+              </tr>
+            </thead>
+            <tbody id="rpt-sites-tbody" aria-live="polite"></tbody>
+          </table>
+        </div>
+        <div id="rpt-sites-empty" style="display:none">Aucun site actif dans la période.</div>
+      </div>
+
+      <!-- Management Attention -->
+      <div id="rpt-attention-block" class="rpt-attention-block" style="display:none">
+        <h3>Attention management</h3>
+        <div id="rpt-attention-list" role="list" aria-label="Éléments nécessitant attention" aria-live="polite"></div>
+        <div id="rpt-attention-empty" style="display:none">Aucun élément d'attention identifié.</div>
+      </div>
+
+    </section><!-- /#section-reporting -->
+
   </main><!-- /#ent-main -->
 
   <!-- BOTTOM NAVIGATION — mobile only -->
@@ -1283,6 +1375,15 @@
             aria-label="Incidents">
       <span class="bicon" aria-hidden="true">🚨</span>
       <span>Incidents</span>
+    </button>
+    <!-- BP14 Reporting bottom nav -->
+    <button class="fxv2-bottom-btn ent-nav-item" data-section="reporting" id="bnav-reporting"
+      aria-label="Rapports exécutifs">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/>
+        <line x1="9" y1="21" x2="9" y2="9"/>
+      </svg>
+      <span>Rapports</span>
     </button>
   </nav>
 

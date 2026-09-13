@@ -5827,3 +5827,550 @@ function _formatEscDate(iso) {
 })();
 
 /* End BP13 */
+
+/* ============================================================
+   BP14 — Executive Reporting Dashboard
+   ============================================================ */
+
+// --- State additions ---
+Object.assign(S, {
+  reportingPeriod: 30,
+  reportingLoading: false,
+  reportingKpis: null,
+  reportingSites: [],
+  reportingTrend: [],
+  reportingAttention: [],
+  reportingInitDone: false,
+});
+
+// --- Contract accessor ---
+function _rptContract() {
+  return (typeof window !== 'undefined' && window.EnterpriseReportingContract) || null;
+}
+
+// --- Error display ---
+function _rptError(msg) {
+  var errEl  = $e('rpt-error');
+  var msgEl  = $e('rpt-error-msg');
+  var loadEl = $e('rpt-loading');
+  if (loadEl) loadEl.style.display = 'none';
+  if (msgEl) msgEl.textContent = msg || 'Une erreur est survenue. Veuillez réessayer.';
+  if (errEl) errEl.style.display = 'flex';
+}
+
+function _rptClearError() {
+  var errEl = $e('rpt-error');
+  var msgEl = $e('rpt-error-msg');
+  if (errEl) errEl.style.display = 'none';
+  if (msgEl) msgEl.textContent = '';
+}
+
+// --- Loading state ---
+function _rptSetLoading(on) {
+  S.reportingLoading = !!on;
+  var loadEl = $e('rpt-loading');
+  if (loadEl) loadEl.style.display = on ? 'block' : 'none';
+}
+
+// --- Delta formatter ---
+function _rptFormatDelta(value) {
+  if (value === null || value === undefined || isNaN(value)) return { text: '', cls: 'flat' };
+  var n = Number(value);
+  if (n > 0)  return { text: '↑ +' + n + '%', cls: 'up'   };
+  if (n < 0)  return { text: '↓ ' + n + '%', cls: 'down'  };
+  return       { text: '→ 0%',                cls: 'flat'  };
+}
+
+// --- Render KPI strip ---
+function renderRptKpis(summary) {
+  if (!summary) return;
+
+  function setVal(id, val) {
+    var el = $e(id);
+    if (el) el.textContent = (val !== null && val !== undefined) ? String(val) : '—';
+  }
+  function setDelta(id, pct) {
+    var el = $e(id);
+    if (!el) return;
+    var d = _rptFormatDelta(pct);
+    el.textContent = d.text;
+    el.className = 'rpt-kpi-delta' + (d.cls ? ' ' + d.cls : '');
+  }
+
+  setVal('rpt-kpi-total-val',       summary.total_requests);
+  setVal('rpt-kpi-open-val',        summary.open_requests);
+  setVal('rpt-kpi-sla-breached-val',summary.sla_breached);
+  setVal('rpt-kpi-esc-open-val',    summary.open_escalations);
+  setVal('rpt-kpi-completed-val',   summary.completed_requests);
+  setVal('rpt-kpi-urgent-val',      summary.urgent_open);
+
+  setDelta('rpt-kpi-total-delta',     summary.total_delta_pct);
+  setDelta('rpt-kpi-esc-delta',       summary.esc_delta_pct);
+  setDelta('rpt-kpi-completed-delta', summary.completed_delta_pct);
+
+  var strip = $e('rpt-kpi-strip');
+  if (strip) strip.style.display = 'flex';
+}
+
+// --- Render sparklines (pure SVG, no external libs) ---
+function renderRptSparklines(trend) {
+  var container = $e('rpt-sparklines');
+  var block     = $e('rpt-trend-block');
+  if (!container) return;
+
+  // Clear existing
+  while (container.firstChild) container.removeChild(container.firstChild);
+
+  if (!trend || trend.length === 0) {
+    if (block) block.style.display = 'none';
+    return;
+  }
+
+  var SVG_NS   = 'http://www.w3.org/2000/svg';
+  var svgH     = 48;
+  var barPad   = 2;
+  var svgW     = 200; // viewBox width; CSS makes it 100%
+
+  var series = [
+    { key: 'new_requests', label: 'Nouvelles demandes', color: '#3182ce' },
+    { key: 'completed',    label: 'Résolues',           color: '#38a169' },
+    { key: 'escalations',  label: 'Escalades',          color: '#ed8936' },
+  ];
+
+  series.forEach(function(s) {
+    var values = trend.map(function(pt) {
+      var v = pt[s.key];
+      return (v !== null && v !== undefined && !isNaN(Number(v))) ? Number(v) : 0;
+    });
+
+    var maxVal = Math.max.apply(null, values);
+    if (maxVal < 1) maxVal = 1; // avoid div/0
+
+    var n      = values.length;
+    var barW   = n > 0 ? Math.max(1, Math.floor((svgW - barPad) / n) - barPad) : svgW;
+
+    // Wrapper div
+    var wrap = document.createElement('div');
+    wrap.className = 'rpt-sparkline';
+
+    // Label
+    var lbl = document.createElement('span');
+    lbl.className = 'rpt-sparkline-label';
+    lbl.textContent = s.label;
+    wrap.appendChild(lbl);
+
+    // SVG
+    var svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + svgW + ' ' + svgH);
+    svg.setAttribute('aria-label', s.label + ' sur la période');
+    svg.setAttribute('role', 'img');
+
+    // Accessible title
+    var title = document.createElementNS(SVG_NS, 'title');
+    title.textContent = s.label + ': ' + values.join(', ');
+    svg.appendChild(title);
+
+    values.forEach(function(v, i) {
+      var barH = Math.max(2, Math.round((v / maxVal) * (svgH - 2)));
+      var x    = i * (barW + barPad) + barPad;
+      var y    = svgH - barH;
+
+      var rect = document.createElementNS(SVG_NS, 'rect');
+      rect.setAttribute('x',      String(x));
+      rect.setAttribute('y',      String(y));
+      rect.setAttribute('width',  String(barW));
+      rect.setAttribute('height', String(barH));
+      rect.setAttribute('fill',   s.color);
+      rect.setAttribute('rx',     '1');
+      rect.setAttribute('class',  'rpt-sparkline-bar');
+
+      // Per-bar title for accessibility
+      var barTitle = document.createElementNS(SVG_NS, 'title');
+      var dateLabel = (trend[i] && trend[i].date) ? trend[i].date : ('Jour ' + (i + 1));
+      barTitle.textContent = dateLabel + ': ' + v;
+      rect.appendChild(barTitle);
+
+      svg.appendChild(rect);
+    });
+
+    wrap.appendChild(svg);
+    container.appendChild(wrap);
+  });
+
+  if (block) block.style.display = 'block';
+}
+
+// --- Render site performance table ---
+function renderRptSitesTable(sites) {
+  var tbody  = $e('rpt-sites-tbody');
+  var empty  = $e('rpt-sites-empty');
+  var block  = $e('rpt-sites-block');
+  if (!tbody) return;
+
+  // Clear
+  while (tbody.firstChild) tbody.removeChild(tbody.firstChild);
+
+  if (!sites || sites.length === 0) {
+    if (empty) empty.style.display = 'block';
+    if (block) block.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  // Find max attention_score for bar normalisation
+  var maxScore = Math.max.apply(null, sites.map(function(s) {
+    return Number(s.attention_score) || 0;
+  }));
+  if (maxScore < 1) maxScore = 1;
+
+  sites.forEach(function(site) {
+    var tr = document.createElement('tr');
+    tr.setAttribute('tabindex', '0');
+    tr.setAttribute('role', 'row');
+
+    var siteId   = site.site_id   || site.id   || null;
+    var siteName = site.site_name || site.name || '—';
+
+    // Site name
+    var tdName = document.createElement('td');
+    tdName.textContent = siteName;
+    tr.appendChild(tdName);
+
+    // Total
+    var tdTotal = document.createElement('td');
+    tdTotal.className = 'rpt-num-col';
+    tdTotal.textContent = (site.total_requests !== undefined && site.total_requests !== null)
+      ? String(site.total_requests) : '—';
+    tr.appendChild(tdTotal);
+
+    // Open
+    var tdOpen = document.createElement('td');
+    tdOpen.className = 'rpt-num-col';
+    tdOpen.textContent = (site.open_requests !== undefined && site.open_requests !== null)
+      ? String(site.open_requests) : '—';
+    tr.appendChild(tdOpen);
+
+    // SLA breached
+    var tdSla = document.createElement('td');
+    tdSla.className = 'rpt-num-col';
+    var slaVal = site.sla_breached;
+    tdSla.textContent = (slaVal !== undefined && slaVal !== null) ? String(slaVal) : '—';
+    if (Number(slaVal) > 0) {
+      tdSla.style.color = '#c53030';
+      tdSla.style.fontWeight = '700';
+    }
+    tr.appendChild(tdSla);
+
+    // Escalations open
+    var tdEsc = document.createElement('td');
+    tdEsc.className = 'rpt-num-col';
+    var escVal = site.escalations_open;
+    tdEsc.textContent = (escVal !== undefined && escVal !== null) ? String(escVal) : '—';
+    if (Number(escVal) > 0) {
+      tdEsc.style.color = '#c05621';
+      tdEsc.style.fontWeight = '700';
+    }
+    tr.appendChild(tdEsc);
+
+    // Completion rate
+    var tdRes = document.createElement('td');
+    tdRes.className = 'rpt-num-col';
+    var compRate = site.completion_rate;
+    if (compRate !== null && compRate !== undefined) {
+      var pct = Math.round(Number(compRate) * 100);
+      tdRes.textContent = pct + '%';
+    } else {
+      tdRes.textContent = 'N/A';
+    }
+    tr.appendChild(tdRes);
+
+    // Attention score with inline bar
+    var tdScore = document.createElement('td');
+    tdScore.className = 'rpt-num-col';
+    var scoreVal = Number(site.attention_score) || 0;
+    var barPct   = Math.round((scoreVal / maxScore) * 60); // max 60px visual bar
+
+    var scoreCell = document.createElement('div');
+    scoreCell.className = 'rpt-score-cell';
+
+    var bar = document.createElement('span');
+    bar.className = 'rpt-attention-score-bar';
+    bar.style.width  = barPct + 'px';
+    bar.setAttribute('aria-hidden', 'true');
+    scoreCell.appendChild(bar);
+
+    var num = document.createElement('span');
+    num.className = 'rpt-score-num';
+    num.textContent = String(scoreVal);
+    scoreCell.appendChild(num);
+
+    tdScore.appendChild(scoreCell);
+    tr.appendChild(tdScore);
+
+    // Row click → site-detail
+    if (siteId) {
+      tr.addEventListener('click', function() {
+        navigateTo('site-detail', { siteId: siteId });
+      });
+      tr.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          navigateTo('site-detail', { siteId: siteId });
+        }
+      });
+    }
+
+    tbody.appendChild(tr);
+  });
+
+  if (block) block.style.display = 'block';
+}
+
+// --- Render management attention ---
+function renderRptAttention(items) {
+  var list   = $e('rpt-attention-list');
+  var empty  = $e('rpt-attention-empty');
+  var block  = $e('rpt-attention-block');
+  if (!list) return;
+
+  // Clear
+  while (list.firstChild) list.removeChild(list.firstChild);
+
+  if (!items || items.length === 0) {
+    if (empty) empty.style.display = 'block';
+    if (block) block.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  // Badge label map (French)
+  var badgeLabels = {
+    'sla_breach':        'SLA dépassé',
+    'open_escalation':   'Escalade ouverte',
+    'overdue':           'En retard',
+    'stalled':           'Bloqué',
+    'urgent_open':       'Urgent ouvert',
+  };
+
+  function _fmtAgeHours(h) {
+    if (h === null || h === undefined || isNaN(Number(h))) return '';
+    var hours = Math.round(Number(h));
+    if (hours < 24) return hours + 'h';
+    var days   = Math.floor(hours / 24);
+    var remain = hours % 24;
+    return remain > 0 ? (days + 'j ' + remain + 'h') : (days + 'j');
+  }
+
+  items.forEach(function(item) {
+    var row = document.createElement('div');
+    row.className = 'rpt-attention-item';
+    row.setAttribute('role', 'listitem');
+    row.setAttribute('tabindex', '0');
+
+    // Badge
+    var type      = item.attention_type || 'default';
+    var badge     = document.createElement('span');
+    badge.className = 'rpt-attention-type-badge rpt-badge-' + type.replace(/[^a-z0-9_]/gi, '') + ' rpt-badge-default';
+    badge.textContent = badgeLabels[type] || type;
+    row.appendChild(badge);
+
+    // Body
+    var body = document.createElement('div');
+    body.className = 'rpt-attention-body';
+
+    var siteLine = document.createElement('div');
+    siteLine.className = 'rpt-attention-site';
+    var siteName = item.site_name || item.site_id || '—';
+    var urgency  = item.urgency ? (' · ' + item.urgency) : '';
+    siteLine.textContent = siteName + urgency;
+    body.appendChild(siteLine);
+
+    var signalLine = document.createElement('div');
+    signalLine.className = 'rpt-attention-signal';
+    var ageStr = item.age_hours !== undefined ? _fmtAgeHours(item.age_hours) : '';
+    var signal = item.signal || item.detail || '';
+    var signalText = signal + (ageStr ? ' · ' + ageStr : '');
+    signalLine.textContent = signalText;
+    body.appendChild(signalLine);
+
+    row.appendChild(body);
+
+    // Click handler — navigate to request-detail or ops
+    var requestId = item.request_id || item.requestId || null;
+    row.addEventListener('click', function() {
+      if (requestId) {
+        navigateTo('request-detail', { requestId: requestId });
+      } else {
+        navigateTo('ops', {});
+      }
+    });
+    row.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (requestId) {
+          navigateTo('request-detail', { requestId: requestId });
+        } else {
+          navigateTo('ops', {});
+        }
+      }
+    });
+
+    list.appendChild(row);
+  });
+
+  if (block) block.style.display = 'block';
+}
+
+// --- Main data loader ---
+function loadReportingData(reset) {
+  // Double-load guard
+  if (S.reportingLoading) return;
+
+  var contract = _rptContract();
+  if (!contract) {
+    _rptError('Le module de rapports n\'est pas disponible.');
+    return;
+  }
+
+  _rptClearError();
+  _rptSetLoading(true);
+
+  var enterpriseId = S.activeEnterprise && S.activeEnterprise.id;
+  var period       = S.reportingPeriod || 30;
+
+  if (!enterpriseId) {
+    _rptSetLoading(false);
+    _rptError('Entreprise non sélectionnée.');
+    return;
+  }
+
+  // Run all three RPCs in parallel
+  var pSummary = Promise.resolve(null);
+  var pSites   = Promise.resolve(null);
+  var pTrend   = Promise.resolve(null);
+
+  try {
+    if (typeof contract.getExecutiveSummary === 'function') {
+      pSummary = contract.getExecutiveSummary(enterpriseId, period).catch(function() { return null; });
+    }
+  } catch(_e) {}
+  try {
+    if (typeof contract.getSitePerformance === 'function') {
+      pSites = contract.getSitePerformance(enterpriseId, period).catch(function() { return null; });
+    }
+  } catch(_e) {}
+  try {
+    if (typeof contract.getTrend === 'function') {
+      pTrend = contract.getTrend(enterpriseId, period).catch(function() { return null; });
+    }
+  } catch(_e) {}
+
+  Promise.all([pSummary, pSites, pTrend]).then(function(results) {
+    var summary = results[0];
+    var sites   = results[1];
+    var trend   = results[2];
+
+    if (summary) {
+      S.reportingKpis = summary;
+      renderRptKpis(summary);
+    }
+    if (sites) {
+      S.reportingSites = Array.isArray(sites) ? sites : (sites.data || []);
+      renderRptSitesTable(S.reportingSites);
+    }
+    if (trend) {
+      S.reportingTrend = Array.isArray(trend) ? trend : (trend.data || []);
+      renderRptSparklines(S.reportingTrend);
+    }
+
+    // Update trend period label
+    var periodLabel = $e('rpt-trend-period-label');
+    if (periodLabel) periodLabel.textContent = period + ' derniers jours';
+
+    // Now load attention (sequential — depends on having basic data loaded)
+    var pAttention = Promise.resolve(null);
+    try {
+      if (typeof contract.getManagementAttention === 'function') {
+        pAttention = contract.getManagementAttention(enterpriseId, period).catch(function() { return null; });
+      }
+    } catch(_e) {}
+
+    return pAttention;
+  }).then(function(attention) {
+    if (attention) {
+      S.reportingAttention = Array.isArray(attention) ? attention : (attention.data || []);
+      renderRptAttention(S.reportingAttention);
+    }
+  }).catch(function(_err) {
+    // Partial data is already rendered — show generic error but don't wipe what loaded
+    _rptError('Certaines données n\'ont pas pu être chargées. Veuillez réessayer.');
+  }).finally(function() {
+    _rptSetLoading(false);
+  });
+}
+
+// --- Period selector ---
+function _rptSetPeriod(days) {
+  var d = parseInt(days, 10);
+  if (isNaN(d) || d < 1) return;
+  if (d > 90) d = 90; // hard cap per constraint
+  S.reportingPeriod = d;
+
+  // Update button states
+  var btns = document.querySelectorAll('#section-reporting .rpt-period-btn');
+  btns.forEach(function(btn) {
+    var btnPeriod = parseInt(btn.getAttribute('data-period'), 10);
+    var active = (btnPeriod === d);
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+
+  loadReportingData(true);
+}
+
+// --- Section initialiser (idempotent) ---
+function initReportingSection() {
+  if (S.reportingInitDone) return;
+
+  // Period buttons
+  var btns = document.querySelectorAll('#section-reporting [data-period]');
+  btns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var days = parseInt(btn.getAttribute('data-period'), 10);
+      if (!isNaN(days)) _rptSetPeriod(days);
+    });
+  });
+
+  // Retry button
+  var retryBtn = $e('rpt-retry-btn');
+  if (retryBtn) {
+    retryBtn.addEventListener('click', function() {
+      loadReportingData(true);
+    });
+  }
+
+  S.reportingInitDone = true;
+}
+
+// --- Extend navigateTo switch to handle 'reporting' ---
+(function() {
+  var _origNavigateToRpt = typeof navigateTo === 'function' ? navigateTo : null;
+  if (!_origNavigateToRpt) return;
+  var _patchedRpt = function(section, ctx) {
+    if (section === 'reporting') {
+      _origNavigateToRpt(section, ctx);
+      initReportingSection();
+      loadReportingData(false);
+      return;
+    }
+    return _origNavigateToRpt(section, ctx);
+  };
+  if (window.navigateTo === _origNavigateToRpt) {
+    window.navigateTo = _patchedRpt;
+  }
+  if (typeof navigateTo !== 'undefined' && window.navigateTo !== navigateTo) {
+    // Also update the local reference via the switch-case extension pattern
+  }
+})();
+
+/* End BP14 */
