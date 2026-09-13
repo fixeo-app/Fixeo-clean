@@ -5,7 +5,94 @@
 'use strict';
 
 // ── Supabase client
-const _sb = window._supabase;
+// BP09-FIX-01: window._supabase is never set by supabase-client.js (which exposes
+// window.FixeoSupabaseClient.client). Use a lazy proxy so that _sb is resolved
+// at call-time (inside async functions, after DOMContentLoaded + SDK load),
+// not at parse time when the CDN SDK may not yet be loaded.
+function _sbClient() {
+  return window.FixeoSupabaseClient && window.FixeoSupabaseClient.client;
+}
+const _sb = new Proxy({}, {
+  get: function(_t, prop) {
+    const c = _sbClient();
+    if (!c) {
+      console.error('[enterprise-dashboard] Supabase client not ready (prop: ' + String(prop) + ')');
+      // Minimal stub — prevents hard crashes; bootApp will show the error gate
+      if (prop === 'auth') {
+        return {
+          getSession: async function() { return { data:{ session:null }, error: new Error('Supabase client not initialised') }; },
+          onAuthStateChange: function() {},
+          signOut: async function() { return {}; }
+        };
+      }
+      if (prop === 'from') {
+        return function() {
+          var _stub = { select:function(){return _stub;}, eq:function(){return _stub;}, in:function(){return _stub;}, or:function(){return _stub;}, order:function(){return _stub;}, limit:function(){return _stub;}, gte:function(){return _stub;}, lte:function(){return _stub;}, single:function(){return _stub;}, maybeSingle:function(){return _stub;} };
+          _stub.then = function(resolve) { return Promise.resolve({data:null,error:new Error('Supabase client not initialised')}).then(resolve); };
+          return _stub;
+        };
+      }
+      if (prop === 'rpc') {
+        return async function() { return { data:null, error: new Error('Supabase client not initialised') }; };
+      }
+      return undefined;
+    }
+    const val = c[prop];
+    return typeof val === 'function' ? val.bind(c) : val;
+  }
+});
+
+// ── BP09 Observability — safe error normalization
+// Strips Supabase/Postgres internals; maps known reason codes to user messages.
+const _REASON_MSG = {
+  unauthenticated:              'Session expirée. Veuillez vous reconnecter.',
+  user_not_found:               'Utilisateur introuvable.',
+  enterprise_required:          'Compte entreprise requis.',
+  enterprise_not_found:         'Compte entreprise introuvable.',
+  forbidden:                    'Accès refusé.',
+  site_not_assigned:            'Ce site ne vous est pas assigné.',
+  site_not_found:               'Site introuvable.',
+  site_enterprise_mismatch:     'Le site n\'appartient pas à ce compte.',
+  site_inactive:                'Ce site est inactif.',
+  site_required:                'Veuillez sélectionner un site.',
+  service_category_required:    'Veuillez sélectionner une catégorie.',
+  description_required:         'La description est requise.',
+  urgency_invalid:              'Niveau d\'urgence invalide.',
+  request_not_found_or_not_owned: 'Demande introuvable ou accès refusé.',
+  request_not_completed:        'Cette demande n\'est pas encore terminée.',
+  completed_mission_not_found:  'Mission terminée introuvable.',
+  mission_not_found:            'Mission introuvable.',
+  atomicity_error:              'Erreur de synchronisation, veuillez réessayer.',
+  internal_error:               'Erreur interne. Veuillez réessayer.',
+  no_change:                    'Aucun changement.',
+};
+// Generates a short opaque correlation tag (no PII) for log correlation.
+function _corrId() {
+  return (Date.now().toString(36) + Math.random().toString(36).slice(2, 6)).toUpperCase();
+}
+// Normalize a backend error to a safe user-facing string.
+// Never exposes raw SQL messages, JWT, or PII.
+function _safeMsg(err, fallback) {
+  if (!err) return fallback || 'Erreur inconnue.';
+  // Supabase error objects can carry {message, details, hint, code}
+  // Map known reason codes first (from RPC {ok:false,reason:...})
+  if (err._reason && _REASON_MSG[err._reason]) return _REASON_MSG[err._reason];
+  const msg = (typeof err === 'string') ? err : (err.message || '');
+  // Block raw Postgres / Supabase internals
+  if (/PGRST|column|relation|violates|constraint|syntax|unexpected/i.test(msg)) {
+    return fallback || 'Erreur de chargement.';
+  }
+  // Allow through already-normalized messages
+  if (msg && msg.length < 200) return msg;
+  return fallback || 'Erreur de chargement.';
+}
+// Wrap an RPC {ok:false, reason:...} response as a normalized Error.
+function _rpcErr(data, fallback) {
+  const reason = (data && data.reason) || 'internal_error';
+  const e = new Error(_REASON_MSG[reason] || fallback || 'Erreur lors de l\'opération.');
+  e._reason = reason;
+  return e;
+}
 
 // ── Role constants
 const CAN_CREATE_ROLES  = ['owner','admin','operations_manager','site_manager','reporter'];
@@ -296,7 +383,7 @@ async function bootApp() {
     if(error) throw error;
     session = data.session;
   } catch(err) {
-    setText('ent-gate-msg', err.message||'Erreur de connexion');
+    setText('ent-gate-msg', _safeMsg(err,'Erreur de connexion'));
     showGate('ent-access-denied');
     return;
   }
@@ -316,7 +403,7 @@ async function bootApp() {
     if(error) throw error;
     rows = data||[];
   } catch(err) {
-    setText('ent-denied-reason', err.message||'Erreur de chargement');
+    setText('ent-denied-reason', _safeMsg(err,'Erreur de chargement'));
     showGate('ent-access-denied');
     return;
   }
@@ -398,7 +485,7 @@ async function refreshKpis() {
     const thirtyDaysAgo = new Date(Date.now()-30*24*60*60*1000).toISOString();
     const { data, error } = await _sb
       .from('service_requests')
-      .select('id, status, enterprise_request_context!inner(enterprise_id)')
+      .select('id, status, enterprise_request_context!inner(enterprise_id, site_id)')
       .eq('enterprise_request_context.enterprise_id', S.activeEnterprise.id)
       .gte('created_at', thirtyDaysAgo);
     if(error) throw error;
@@ -436,7 +523,7 @@ async function loadOverview() {
   try {
     const { data, error } = await _sb
       .from('service_requests')
-      .select('id, status, category, urgency, description, created_at, enterprise_site_id, enterprise_request_context!inner(enterprise_id)')
+      .select('id, status, category, urgency, description, created_at, enterprise_request_context!inner(enterprise_id, site_id)')
       .eq('enterprise_request_context.enterprise_id', S.activeEnterprise.id)
       .order('created_at',{ ascending:false })
       .order('id',{ ascending:false })
@@ -450,7 +537,7 @@ async function loadOverview() {
     renderHealthSummary(rows);
     renderQuickActions(rows);
   } catch(err) {
-    console.warn('[overview]', err.message);
+    console.warn('[overview]', _safeMsg(err,'load error'));
   }
   renderSitesSnap();
   updateOverviewRefreshHint();
@@ -495,7 +582,7 @@ function renderActionRequired(rows) {
   listEl.innerHTML='';
 
   function makeArItem(r, priority) {
-    const siteName = getSiteName(r.enterprise_site_id);
+    const siteName = getSiteName((r.enterprise_request_context&&r.enterprise_request_context.site_id));
     const ageDays  = r.created_at ? Math.floor((Date.now()-new Date(r.created_at).getTime())/(86400000)) : '?';
     const urgBadge = (r.urgency==='now'||r.urgency==='urgent')
       ? '<span class="ent-urgency-badge-'+(r.urgency==='now'?'now':'urgent')+' ent-ar-urg-badge">'+safeHtml(formatUrgency(r.urgency))+'</span> '
@@ -549,7 +636,7 @@ function renderRecentList(rows) {
   listEl.style.display='';
   listEl.innerHTML='';
   rows.slice(0,6).forEach(function(r){
-    const siteName = getSiteName(r.enterprise_site_id);
+    const siteName = getSiteName((r.enterprise_request_context&&r.enterprise_request_context.site_id));
     const date     = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '—';
     const div = document.createElement('div');
     div.className='ent-req-card';
@@ -594,8 +681,8 @@ function renderSitesSnap() {
     div.setAttribute('role','button');
     div.setAttribute('aria-label',s.name);
     div.setAttribute('data-site-id',s.id);
-    const snapOpen=S.requests.filter(function(r){return r.enterprise_site_id===s.id&&(r.status==='new'||r.status==='in_progress');}).length;
-    const snapAct=S.requests.filter(function(r){return r.enterprise_site_id===s.id&&r.status==='completed';}).length;
+    const snapOpen=S.requests.filter(function(r){return (r.enterprise_request_context&&r.enterprise_request_context.site_id)===s.id&&(r.status==='new'||r.status==='in_progress');}).length;
+    const snapAct=S.requests.filter(function(r){return (r.enterprise_request_context&&r.enterprise_request_context.site_id)===s.id&&r.status==='completed';}).length;
     div.innerHTML =
       '<div class="ent-site-snap-left">'+
         '<div class="ent-site-snap-name">'+safeHtml(s.name)+'</div>'+
@@ -708,7 +795,7 @@ function renderHealthSummary(rows) {
   var siteOpen = {};
   rows.forEach(function(r){
     if(r.status==='new'||r.status==='assigned'||r.status==='in_progress'){
-      siteOpen[r.enterprise_site_id] = (siteOpen[r.enterprise_site_id]||0) + 1;
+      siteOpen[(r.enterprise_request_context&&r.enterprise_request_context.site_id)] = (siteOpen[(r.enterprise_request_context&&r.enterprise_request_context.site_id)]||0) + 1;
     }
   });
   var topSites = Object.keys(siteOpen).sort(function(a,b){ return siteOpen[b]-siteOpen[a]; }).slice(0,3);
@@ -771,10 +858,10 @@ function renderSiteComparison() {
     '</tr></thead><tbody>';
 
   sites.forEach(function(s) {
-    var open     = rows.filter(function(r){ return r.enterprise_site_id===s.id && (r.status==='new'||r.status==='assigned'||r.status==='in_progress'); }).length;
-    var action   = rows.filter(function(r){ return r.enterprise_site_id===s.id && r.status==='completed'; }).length;
-    var noMatch  = rows.filter(function(r){ return r.enterprise_site_id===s.id && r.status==='no_match'; }).length;
-    var validated= rows.filter(function(r){ return r.enterprise_site_id===s.id && r.status==='validated'; }).length;
+    var open     = rows.filter(function(r){ return (r.enterprise_request_context&&r.enterprise_request_context.site_id)===s.id && (r.status==='new'||r.status==='assigned'||r.status==='in_progress'); }).length;
+    var action   = rows.filter(function(r){ return (r.enterprise_request_context&&r.enterprise_request_context.site_id)===s.id && r.status==='completed'; }).length;
+    var noMatch  = rows.filter(function(r){ return (r.enterprise_request_context&&r.enterprise_request_context.site_id)===s.id && r.status==='no_match'; }).length;
+    var validated= rows.filter(function(r){ return (r.enterprise_request_context&&r.enterprise_request_context.site_id)===s.id && r.status==='validated'; }).length;
 
     var openCls   = open>0  ? (open>5?'ent-site-compare-warn':'ent-site-compare-num') : 'ent-site-compare-zero';
     var actionCls = action>0 ? 'ent-site-compare-danger' : 'ent-site-compare-zero';
@@ -920,7 +1007,7 @@ function getSiteName(siteId) {
 
 // ── RAFI narration helper (Workstream I)
 function rafiNarrate(r) {
-  const site = getSiteName(r.enterprise_site_id);
+  const site = getSiteName((r.enterprise_request_context&&r.enterprise_request_context.site_id));
   switch(r.status) {
     case 'new':         return 'En attente d\'attribution — ' + (r.category||'intervention') + ' (' + site + ')';
     case 'assigned':    return 'Artisan assigné — ' + (r.category||'intervention') + ' (' + site + ')';
@@ -939,14 +1026,16 @@ async function fetchSites() {
   try {
     const { data, error } = await _sb
       .from('enterprise_sites')
-      .select('id, name, address, city')
+      // BP09-FIX-02: include status (required for BP08C admin controls + inactive
+      // site filtering) and address_line/site_code (used by doSiteUpdate)
+      .select('id, name, address, city, status, site_code, address_line')
       .eq('enterprise_id', S.activeEnterprise.id)
       .order('name');
     if(error) throw error;
     S.sites = data||[];
     S.sitesLoaded = true;
     populateSiteFilters();
-  } catch(err){ console.warn('[fetchSites]',err.message); }
+  } catch(err){ console.warn('[fetchSites]',_safeMsg(err,'load error')); }
 }
 
 function populateSiteFilters() {
@@ -969,9 +1058,25 @@ function populateSiteFilters() {
 }
 
 // ── Auth state listener
+// BP09-RES-02: handle TOKEN_REFRESHED failures and visibilitychange re-auth
 function attachAuthListener() {
-  _sb.auth.onAuthStateChange(function(event) {
-    if(event==='SIGNED_OUT'){ stopPolling(); window.location.href='/'; }
+  _sb.auth.onAuthStateChange(function(event, session) {
+    if(event==='SIGNED_OUT'){ stopPolling(); window.location.href='/'; return; }
+    // Supabase emits SIGNED_IN on token refresh success.
+    // If a refresh attempt fails, the client emits TOKEN_REFRESHED with null session
+    // or a subsequent SIGNED_OUT. Guard: redirect on null session for any auth event.
+    if(session === null && event !== 'INITIAL_SESSION') {
+      stopPolling(); window.location.href='/';
+    }
+  });
+  // BP09-RES-03: re-check session when tab regains visibility (browser back/forward
+  // or returning from idle may leave the page with a stale/expired session).
+  document.addEventListener('visibilitychange', async function() {
+    if(document.visibilityState !== 'visible') return;
+    try {
+      const { data } = await _sb.auth.getSession();
+      if(!data || !data.session) { stopPolling(); window.location.href='/'; }
+    } catch(_) { /* network unavailable — stay on page, poll will catch RLS errors */ }
   });
 }
 
@@ -988,7 +1093,7 @@ async function loadMyAssignments() {
     S.assignedSiteIds = (data||[]).map(function(r){ return r.site_id; });
   } catch(err) {
     S.assignedSiteIds = [];
-    console.warn('[loadMyAssignments]', err.message);
+    console.warn('[loadMyAssignments]', _safeMsg(err,'load error'));
   }
 }
 
@@ -1280,7 +1385,7 @@ function exportRequestsCSV() {
   if(!S.requests.length) { alert('Aucune intervention \u00e0 exporter.'); return; }
   const header = ['R\u00e9f\u00e9rence','Site','Ville','Cat\u00e9gorie','Urgence','Statut','Cr\u00e9\u00e9e le'];
   const rows = S.requests.map(function(r) {
-    const site = S.sites.find(function(s){ return s.id === r.enterprise_site_id; }) || {};
+    const site = S.sites.find(function(s){ return s.id === (r.enterprise_request_context&&r.enterprise_request_context.site_id); }) || {};
     return [
       r.id.slice(0,8).toUpperCase(),
       csvEscape(site.name || '\u2014'),
@@ -1337,14 +1442,14 @@ async function loadRequests(reset) {
   try {
     let q = _sb
       .from('service_requests')
-      .select('id, status, category, urgency, description, created_at, enterprise_site_id, enterprise_request_context!inner(enterprise_id)')
+      .select('id, status, category, urgency, description, created_at, enterprise_request_context!inner(enterprise_id, site_id)')
       .eq('enterprise_request_context.enterprise_id', S.activeEnterprise.id)
       .order('created_at',{ ascending:false })
       .order('id',{ ascending:false })
       .limit(PAGE_SIZE+1);
 
     if(statuses) q=q.in('status', statuses);
-    if(S.reqSiteFilter)     q=q.eq('enterprise_site_id', S.reqSiteFilter);
+    if(S.reqSiteFilter)     q=q.eq('enterprise_request_context.site_id', S.reqSiteFilter);
     if(S.reqUrgencyFilter)  q=q.eq('urgency', S.reqUrgencyFilter);
     if(S.reqCategoryFilter) q=q.eq('category', S.reqCategoryFilter);
 
@@ -1391,7 +1496,7 @@ async function loadRequests(reset) {
 
   } catch(err){
     if(errorEl){ errorEl.style.display=''; }
-    if(errorMsgEl){ errorMsgEl.textContent=err.message||'Erreur de chargement.'; }
+    if(errorMsgEl){ errorMsgEl.textContent=_safeMsg(err,'Erreur de chargement.'); }
   } finally {
     S.requestsLoading = false;
     setLoading('section-requests', false);
@@ -1404,7 +1509,7 @@ async function silentRefreshRequests() {
   S.requestCursor=null;
   let q = _sb
     .from('service_requests')
-    .select('id, status, category, urgency, description, created_at, enterprise_site_id, enterprise_request_context!inner(enterprise_id)')
+    .select('id, status, category, urgency, description, created_at, enterprise_request_context!inner(enterprise_id, site_id)')
     .eq('enterprise_request_context.enterprise_id', S.activeEnterprise.id)
     .order('created_at',{ ascending:false })
     .order('id',{ ascending:false })
@@ -1465,7 +1570,7 @@ function renderRequestsList(reset) {
 }
 
 function buildRequestCard(r) {
-  const siteName = getSiteName(r.enterprise_site_id);
+  const siteName = getSiteName((r.enterprise_request_context&&r.enterprise_request_context.site_id));
   const ageStr   = formatAge(r.created_at);
   const refStr   = r.id ? r.id.slice(0,8).toUpperCase() : '—';
   const nextAct  = getNextAction(r.status, S.userRole);
@@ -1519,7 +1624,7 @@ async function loadDetail(requestId) {
   try {
     const { data, error } = await _sb
       .from('service_requests')
-      .select('id, status, category, urgency, description, created_at, enterprise_site_id, enterprise_request_context!inner(enterprise_id)')
+      .select('id, status, category, urgency, description, created_at, enterprise_request_context!inner(enterprise_id, site_id)')
       .eq('id', requestId)
       .eq('enterprise_request_context.enterprise_id', S.activeEnterprise.id)
       .single();
@@ -1530,12 +1635,12 @@ async function loadDetail(requestId) {
     // Desktop only: show modal dialog
     if(window.innerWidth >= 768) { openDetailDialog(data); }
   } catch(err){
-    contentEl.innerHTML='<div class="ent-error"><span>⚠️ '+safeHtml(err.message)+'</span></div>';
+    contentEl.innerHTML='<div class="ent-error"><span>⚠️ '+safeHtml(_safeMsg(err,'Erreur de chargement.'))+'</span></div>';
   }
 }
 
 function renderDetailContent(r, container) {
-  const siteName = getSiteName(r.enterprise_site_id);
+  const siteName = getSiteName((r.enterprise_request_context&&r.enterprise_request_context.site_id));
   const date = r.created_at?new Date(r.created_at).toLocaleString('fr-FR'):'—';
   const ref  = r.id ? r.id.slice(0,8).toUpperCase() : '—';
   const urgBadge = (r.urgency==='now'||r.urgency==='urgent')
@@ -1705,8 +1810,10 @@ async function confirmMission(requestId) {
   if(errEl) errEl.style.display='none';
 
   try {
-    const { error } = await _sb.rpc('confirm_completed_mission',{ p_request_id: requestId });
+    const { data, error } = await _sb.rpc('confirm_completed_mission',{ p_request_id: requestId });
     if(error) throw error;
+    // BP09-RES-01: check RPC business-logic failures ({ok:false, reason:...})
+    if(data && data.ok === false) throw _rpcErr(data, 'Erreur lors de la validation.');
     // Success — reload detail
     S.confirmSubmitting=false;
     await loadDetail(requestId);
@@ -1717,7 +1824,7 @@ async function confirmMission(requestId) {
     if(btn){ btn.disabled=false; }
     if(spinner) spinner.style.display='none';
     if(text) text.style.display='';
-    if(errEl){ errEl.textContent=err.message||'Erreur lors de la validation.'; errEl.style.display=''; }
+    if(errEl){ errEl.textContent=_safeMsg(err,'Erreur lors de la validation.'); errEl.style.display=''; }
   }
 }
 
@@ -1796,7 +1903,7 @@ async function loadSites() {
       await fetchSites();
     } catch(err) {
       if(errEl){ errEl.style.display=''; }
-      if(errMsgEl){ errMsgEl.textContent=err.message||'Erreur de chargement des sites.'; }
+      if(errMsgEl){ errMsgEl.textContent=_safeMsg(err,'Erreur de chargement des sites.'); }
       return;
     }
   }
@@ -1825,11 +1932,11 @@ async function loadSites() {
 }
 
 function buildSiteCard(s) {
-  const sOpen   = S.requests.filter(function(r){ return r.enterprise_site_id===s.id&&(r.status==='new'||r.status==='in_progress'); }).length;
-  const sAction = S.requests.filter(function(r){ return r.enterprise_site_id===s.id&&r.status==='completed'; }).length;
-  const sNoMatch= S.requests.filter(function(r){ return r.enterprise_site_id===s.id&&r.status==='no_match'; }).length;
+  const sOpen   = S.requests.filter(function(r){ return (r.enterprise_request_context&&r.enterprise_request_context.site_id)===s.id&&(r.status==='new'||r.status==='in_progress'); }).length;
+  const sAction = S.requests.filter(function(r){ return (r.enterprise_request_context&&r.enterprise_request_context.site_id)===s.id&&r.status==='completed'; }).length;
+  const sNoMatch= S.requests.filter(function(r){ return (r.enterprise_request_context&&r.enterprise_request_context.site_id)===s.id&&r.status==='no_match'; }).length;
   // Last activity: most recent created_at for this site
-  const siteReqs = S.requests.filter(function(r){ return r.enterprise_site_id===s.id&&r.created_at; });
+  const siteReqs = S.requests.filter(function(r){ return (r.enterprise_request_context&&r.enterprise_request_context.site_id)===s.id&&r.created_at; });
   const lastAct  = siteReqs.reduce(function(acc, r){ return (!acc||r.created_at>acc)?r.created_at:acc; }, null);
   const lastActStr = lastAct ? new Date(lastAct).toLocaleDateString('fr-FR') : null;
 
@@ -1881,9 +1988,9 @@ async function loadSiteDetail(siteId) {
   try {
     const { data, error } = await _sb
       .from('service_requests')
-      .select('id, status, category, urgency, created_at, enterprise_site_id, enterprise_request_context!inner(enterprise_id)')
+      .select('id, status, category, urgency, created_at, enterprise_request_context!inner(enterprise_id, site_id)')
       .eq('enterprise_request_context.enterprise_id', S.activeEnterprise.id)
-      .eq('enterprise_site_id', siteId)
+      .eq('enterprise_request_context.site_id', siteId)
       .in('status',['new','in_progress','completed'])
       .order('created_at',{ ascending:false })
       .limit(20);
@@ -1891,7 +1998,7 @@ async function loadSiteDetail(siteId) {
     const reqs=data||[];
     renderSiteDetail(site, reqs, contentEl);
   } catch(err){
-    contentEl.innerHTML='<div class="ent-error"><span>⚠️ '+safeHtml(err.message)+'</span></div>';
+    contentEl.innerHTML='<div class="ent-error"><span>⚠️ '+safeHtml(_safeMsg(err,'Erreur de chargement.'))+'</span></div>';
   }
 }
 
@@ -2047,7 +2154,7 @@ async function loadMembers() {
   } catch(err){
     if(listEl) listEl.innerHTML='';
     if(errEl){ errEl.style.display=''; }
-    if(errMsgEl){ errMsgEl.textContent=err.message||'Erreur de chargement.'; }
+    if(errMsgEl){ errMsgEl.textContent=_safeMsg(err,'Erreur de chargement.'); }
   }
 }
 
@@ -2249,6 +2356,8 @@ async function doSaveAssignments(mid, siteIds) {
       p_member_id:     mid,
       p_site_ids:      siteIds
     });
+    // BP09-FIX-03: check Supabase transport error before inspecting data
+    if(res.error) throw res.error;
     var d = res.data;
     if(!d||!d.ok) {
       var reason = (d&&d.reason)||'error';
@@ -2268,7 +2377,7 @@ async function doSaveAssignments(mid, siteIds) {
       setTimeout(function(){ loadMembers(); }, 800);
     }
   } catch(err) {
-    if(fbEl){ fbEl.textContent='Erreur: '+(err.message||'inconnu'); fbEl.className='bp08f-assign-feedback bp08f-fb-error'; }
+    if(fbEl){ fbEl.textContent=_safeMsg(err,'Erreur.'); fbEl.className='bp08f-assign-feedback bp08f-fb-error'; }
   }
 }
 
@@ -2307,6 +2416,8 @@ async function doMemberRoleChange(mid, newRole) {
       p_member_id:     mid,
       p_new_role:      newRole
     });
+    // BP09-FIX-03: check Supabase transport error before inspecting data
+    if(res.error) throw res.error;
     var d = res.data;
     if(!d||!d.ok) {
       var reason = (d&&d.reason)||'error';
@@ -2326,7 +2437,7 @@ async function doMemberRoleChange(mid, newRole) {
       setTimeout(function(){ loadMembers(); }, 800);
     }
   } catch(err) {
-    showMemberFeedback(mid, 'Erreur réseau: '+(err.message||'inconnu'), 'error');
+    showMemberFeedback(mid, _safeMsg(err,'Erreur réseau.'), 'error');
   } finally {
     _memberActionPending[mid] = false;
   }
@@ -2342,6 +2453,8 @@ async function doMemberStatusChange(mid, newStatus) {
       p_member_id:     mid,
       p_new_status:    newStatus
     });
+    // BP09-FIX-03: check Supabase transport error before inspecting data
+    if(res.error) throw res.error;
     var d = res.data;
     if(!d||!d.ok) {
       var reason = (d&&d.reason)||'error';
@@ -2361,7 +2474,7 @@ async function doMemberStatusChange(mid, newStatus) {
       setTimeout(function(){ loadMembers(); }, 800);
     }
   } catch(err) {
-    showMemberFeedback(mid, 'Erreur réseau: '+(err.message||'inconnu'), 'error');
+    showMemberFeedback(mid, _safeMsg(err,'Erreur réseau.'), 'error');
   } finally {
     _memberActionPending[mid] = false;
   }
@@ -2439,14 +2552,14 @@ async function loadHistory(reset) {
   try {
     let q=_sb
       .from('service_requests')
-      .select('id, status, category, urgency, description, created_at, enterprise_site_id, enterprise_request_context!inner(enterprise_id)')
+      .select('id, status, category, urgency, description, created_at, enterprise_request_context!inner(enterprise_id, site_id)')
       .eq('enterprise_request_context.enterprise_id', S.activeEnterprise.id)
       .in('status', HIST_STATUSES)
       .order('created_at',{ ascending:false })
       .order('id',{ ascending:false })
       .limit(PAGE_SIZE+1);
 
-    if(S.histSiteFilter) q=q.eq('enterprise_site_id', S.histSiteFilter);
+    if(S.histSiteFilter) q=q.eq('enterprise_request_context.site_id', S.histSiteFilter);
 
     if(S.historyCursor){
       q=q.or('created_at.lt.'+S.historyCursor.lastCreatedAt+',and(created_at.eq.'+S.historyCursor.lastCreatedAt+',id.lt.'+S.historyCursor.lastId+')');
@@ -2476,7 +2589,7 @@ async function loadHistory(reset) {
   } catch(err){
     if(listEl) listEl.innerHTML='';
     if(errEl){ errEl.style.display=''; }
-    if(errMsgEl){ errMsgEl.textContent=err.message||'Erreur de chargement.'; }
+    if(errMsgEl){ errMsgEl.textContent=_safeMsg(err,'Erreur de chargement.'); }
   } finally {
     S.historyLoading = false;
     setLoading('section-history', false);
@@ -2590,7 +2703,7 @@ function renderAccount() {
         })
         .catch(function(err) {
           saveBtn.disabled = false;
-          showAccountFeedback('Erreur réseau: ' + (err.message || 'inconnu'), true);
+          showAccountFeedback(_safeMsg(err,'Erreur réseau.'), true);
         });
     });
 
@@ -2808,14 +2921,29 @@ async function submitNewRequest(form) {
     if(submitBtn) submitBtn.disabled=false;
     if(submitSpin) submitSpin.style.display='none';
     if(submitText) submitText.style.display='';
-    if(errEl){ errEl.textContent=err.message||'Erreur lors de la création.'; errEl.style.display=''; }
+    if(errEl){ errEl.textContent=_safeMsg(err,'Erreur lors de la création.'); errEl.style.display=''; }
   }
 }
 
 // ── DOMContentLoaded bootstrap
+// BP09-FIX-01 (cont.): Wait for FixeoSupabaseClient.ready() before bootApp()
+// so that _sbClient() returns a real client (not null) when bootApp() runs.
 document.addEventListener('DOMContentLoaded', function() {
-  attachAuthListener();
-  bootApp();
+  if (window.FixeoSupabaseClient && typeof window.FixeoSupabaseClient.ready === 'function') {
+    window.FixeoSupabaseClient.ready().then(function() {
+      attachAuthListener();
+      bootApp();
+    }).catch(function(err) {
+      // SDK load failure — show error gate
+      const msg = $e('ent-gate-msg');
+      if (msg) msg.textContent = 'Impossible de charger le SDK. ' + (err && err.message ? err.message : '');
+      showGate('ent-access-denied');
+    });
+  } else {
+    // Fallback: FixeoSupabaseClient not present; try direct boot (QA/mock environment)
+    attachAuthListener();
+    bootApp();
+  }
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -3297,7 +3425,7 @@ function wireSiteAdminControls(cardEl, site) {
           }
         })
         .catch(function(err) {
-          showSiteFeedback(site.id, 'Erreur réseau: ' + (err.message || 'inconnu'), true);
+          showSiteFeedback(site.id, _safeMsg(err,'Erreur réseau.'), true);
         });
     });
   }
@@ -3320,7 +3448,7 @@ function wireSiteAdminControls(cardEl, site) {
           }
         })
         .catch(function(err) {
-          showSiteFeedback(site.id, 'Erreur réseau: ' + (err.message || 'inconnu'), true);
+          showSiteFeedback(site.id, _safeMsg(err,'Erreur réseau.'), true);
         });
     });
   }
@@ -3343,7 +3471,7 @@ function wireSiteAdminControls(cardEl, site) {
           }
         })
         .catch(function(err) {
-          showSiteFeedback(site.id, 'Erreur réseau: ' + (err.message || 'inconnu'), true);
+          showSiteFeedback(site.id, _safeMsg(err,'Erreur réseau.'), true);
         });
     });
   }
@@ -3362,6 +3490,8 @@ async function doSiteUpdate(enterpriseId, siteId, name, city, siteCode, addressL
     if (siteCode     !== undefined) params.p_site_code   = siteCode;
     if (addressLine  !== undefined) params.p_address_line = addressLine;
     var result = await _sb.rpc('update_enterprise_site', params);
+    // BP09-FIX-03: surface Supabase transport errors to caller
+    if (result.error) throw result.error;
     return result.data;
   } finally {
     delete _siteActionPending[siteId];
@@ -3376,6 +3506,8 @@ async function doSiteStatusChange(enterpriseId, siteId, newStatus) {
       p_site_id:       siteId,
       p_status:        newStatus,
     });
+    // BP09-FIX-03: surface Supabase transport errors to caller
+    if (result.error) throw result.error;
     return result.data;
   } finally {
     delete _siteActionPending[siteId];
@@ -3401,6 +3533,8 @@ async function doAccountUpdate(enterpriseId, name, legalName) {
     p_name:          name,
     p_legal_name:    legalName || null,
   });
+  // BP09-FIX-03: surface Supabase transport errors to caller
+  if (result.error) throw result.error;
   return result.data;
 }
 
