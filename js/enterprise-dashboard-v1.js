@@ -4461,3 +4461,674 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+
+// ════════════════════════════════════════════════════════════════
+// BP12 — SLA UI additions
+// ════════════════════════════════════════════════════════════════
+
+// ── State additions ──────────────────────────────────────────
+Object.assign(S, {
+  slaPolicies: [],
+  slaPoliciesLoading: false,
+  slaSummary: null,
+  slaFilters: { state: '' },
+  slaFormOpen: false,
+  slaFormSubmitting: false,
+  slaInitDone: false,
+});
+
+// ── Contract accessor ────────────────────────────────────────
+function _slaContract() {
+  return (typeof window.EnterpriseSLAContract !== 'undefined')
+    ? window.EnterpriseSLAContract
+    : null;
+}
+
+// ── Derive SLA display state ─────────────────────────────────
+// Never uses browser clock for authority — uses server-provided sla_state field.
+function getSLAState(row, slaSummaryRow) {
+  var src = slaSummaryRow || row || {};
+  var state = src.sla_state || (src.sla && src.sla.state) || null;
+  if (!state) return 'not_applicable';
+  var valid = ['on_track', 'approaching', 'breached', 'completed', 'not_applicable'];
+  return valid.indexOf(state) !== -1 ? state : 'not_applicable';
+}
+
+// ── Render SLA badge element ─────────────────────────────────
+function renderSLABadge(state) {
+  var span = document.createElement('span');
+  span.className = 'ops-sla-badge';
+  var classMap = {
+    breached: 'sla-breached',
+    approaching: 'sla-approaching',
+    on_track: 'sla-on-track',
+    completed: 'sla-completed',
+    not_applicable: 'sla-na'
+  };
+  var labelMap = {
+    breached: 'SLA dépassé',
+    approaching: 'À surveiller',
+    on_track: 'SLA OK',
+    completed: 'Terminé',
+    not_applicable: 'N/A'
+  };
+  span.classList.add(classMap[state] || 'sla-na');
+  span.textContent = labelMap[state] || state || '—';
+  return span;
+}
+
+// ── Add SLA badge to queue row list item ─────────────────────
+function renderOpsSLABadgeOnRow(listItem, slaState) {
+  if (!listItem) return;
+  // Remove any prior SLA badge
+  var old = listItem.querySelector('.ops-row-sla-badge');
+  if (old) old.parentNode.removeChild(old);
+  if (!slaState || slaState === 'not_applicable') return;
+  var wrap = document.createElement('span');
+  wrap.className = 'ops-row-sla-badge';
+  wrap.style.marginLeft = '6px';
+  var badge = renderSLABadge(slaState);
+  var classMap = {
+    breached: 'sla-badge-breached',
+    approaching: 'sla-badge-approaching',
+    on_track: 'sla-badge-ok'
+  };
+  badge.className = 'ops-sla-badge ' + (classMap[slaState] || 'sla-na');
+  wrap.appendChild(badge);
+  // Append to first found meta/footer line, or directly to listItem
+  var meta = listItem.querySelector('.ops-queue-row-meta') ||
+             listItem.querySelector('.ops-queue-row-footer') ||
+             listItem;
+  meta.appendChild(wrap);
+}
+
+// ── Populate #ops-detail-sla-block ───────────────────────────
+function renderOpsDetailSLA(slaData) {
+  var block = document.getElementById('ops-detail-sla-block');
+  if (!block) return;
+  if (!slaData) {
+    block.style.display = 'none';
+    return;
+  }
+  block.style.display = '';
+
+  var policyLabel   = document.getElementById('ops-sla-policy-label');
+  var responseTarget= document.getElementById('ops-sla-response-target');
+  var responseDeadline = document.getElementById('ops-sla-response-deadline');
+  var responseRemaining= document.getElementById('ops-sla-response-remaining');
+  var stateBadgeWrap = document.getElementById('ops-sla-state-badge');
+  var naReason       = document.getElementById('ops-sla-na-reason');
+  var resolutionRow  = document.getElementById('ops-sla-resolution-row');
+  var resolutionTarget = document.getElementById('ops-sla-resolution-target');
+  var resolutionDeadlineRow = document.getElementById('ops-sla-resolution-deadline-row');
+  var resolutionDeadline = document.getElementById('ops-sla-resolution-deadline');
+
+  var state = getSLAState(null, slaData);
+
+  // Policy label
+  if (policyLabel) policyLabel.textContent = slaData.policy_name || slaData.scope || '—';
+
+  // Response target (minutes → human)
+  if (responseTarget) {
+    var rt = slaData.response_target_minutes || slaData.response_target || null;
+    responseTarget.textContent = rt ? _slaMinsToHuman(rt) : '—';
+  }
+
+  // Response deadline
+  if (responseDeadline) {
+    responseDeadline.textContent = slaData.response_deadline
+      ? _slaFormatDate(slaData.response_deadline)
+      : '—';
+  }
+
+  // Remaining time
+  if (responseRemaining) {
+    var rem = slaData.response_remaining_minutes != null
+      ? slaData.response_remaining_minutes
+      : null;
+    responseRemaining.textContent = rem != null ? _slaRemainingText(rem) : '—';
+    responseRemaining.className = 'ops-sla-remaining';
+    if (rem != null) {
+      if (rem < 0) {
+        responseRemaining.classList.add('sla-remaining--red');
+      } else if (rem < 60) {
+        responseRemaining.classList.add('sla-remaining--amber');
+      } else {
+        responseRemaining.classList.add('sla-remaining--ok');
+      }
+    }
+  }
+
+  // Resolution target (optional)
+  var resTgt = slaData.resolution_target_minutes || slaData.resolution_target || null;
+  if (resolutionRow) resolutionRow.style.display = resTgt ? '' : 'none';
+  if (resolutionTarget && resTgt) resolutionTarget.textContent = _slaMinsToHuman(resTgt);
+
+  var resDeadline = slaData.resolution_deadline || null;
+  if (resolutionDeadlineRow) resolutionDeadlineRow.style.display = resDeadline ? '' : 'none';
+  if (resolutionDeadline && resDeadline) resolutionDeadline.textContent = _slaFormatDate(resDeadline);
+
+  // State badge — clear old content, append new element
+  if (stateBadgeWrap) {
+    while (stateBadgeWrap.firstChild) stateBadgeWrap.removeChild(stateBadgeWrap.firstChild);
+    var badgeEl = renderSLABadge(state);
+    stateBadgeWrap.appendChild(badgeEl);
+  }
+
+  // NA reason
+  if (naReason) naReason.style.display = (state === 'not_applicable') ? '' : 'none';
+}
+
+// ── Helper: minutes → human ──────────────────────────────────
+function _slaMinsToHuman(mins) {
+  var m = parseInt(mins, 10);
+  if (isNaN(m) || m <= 0) return '—';
+  if (m < 60) return m + ' min';
+  var h = Math.floor(m / 60), rm = m % 60;
+  return h + 'h' + (rm ? rm + 'min' : '');
+}
+
+// ── Helper: remaining minutes → readable ─────────────────────
+function _slaRemainingText(mins) {
+  var m = parseInt(mins, 10);
+  if (isNaN(m)) return '—';
+  if (m < 0) return 'Dépassé de ' + _slaMinsToHuman(-m);
+  if (m === 0) return 'Maintenant';
+  return _slaMinsToHuman(m);
+}
+
+// ── Helper: ISO date → short locale string ───────────────────
+function _slaFormatDate(iso) {
+  try {
+    return new Date(iso).toLocaleString('fr-FR', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+  } catch(e) { return iso || '—'; }
+}
+
+// ── Refresh SLA KPIs ─────────────────────────────────────────
+function refreshSLAKpis() {
+  var eid = S.activeEnterprise;
+  if (!eid) return;
+
+  var setVal = function(id, v) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = (v != null) ? String(v) : '—';
+  };
+
+  var contract = _slaContract();
+  var rpcPromise;
+  if (contract && typeof contract.fetchSLASummary === 'function') {
+    rpcPromise = contract.fetchSLASummary({ enterprise_id: eid });
+  } else if (typeof _sb !== 'undefined' && _sb && typeof _sb.rpc === 'function') {
+    rpcPromise = _sb.rpc('get_enterprise_sla_summary', { p_enterprise_id: eid })
+      .then(function(res) { return res && res.data ? res.data : null; });
+  } else {
+    rpcPromise = Promise.resolve(null);
+  }
+
+  rpcPromise.then(function(summary) {
+    if (!summary) {
+      setVal('ops-kpi-sla-breached-val', '—');
+      setVal('ops-kpi-sla-approaching-val', '—');
+      setVal('ops-kpi-sla-ok-val', '—');
+      setVal('ops-kpi-sla-urgent-breached-val', '—');
+      return;
+    }
+    S.slaSummary = summary;
+    setVal('ops-kpi-sla-breached-val',        summary.breached        != null ? summary.breached : '—');
+    setVal('ops-kpi-sla-approaching-val',     summary.approaching     != null ? summary.approaching : '—');
+    setVal('ops-kpi-sla-ok-val',              summary.on_track        != null ? summary.on_track : '—');
+    setVal('ops-kpi-sla-urgent-breached-val', summary.urgent_breached != null ? summary.urgent_breached : '—');
+  }).catch(function() {
+    setVal('ops-kpi-sla-breached-val', '—');
+    setVal('ops-kpi-sla-approaching-val', '—');
+    setVal('ops-kpi-sla-ok-val', '—');
+    setVal('ops-kpi-sla-urgent-breached-val', '—');
+  });
+}
+
+// ── Init SLA policies section ────────────────────────────────
+function initSLAPoliciesSection() {
+  // Populate site dropdown in form
+  var siteSelect = document.getElementById('sla-form-site');
+  if (siteSelect && S.sites && S.sites.length) {
+    S.sites.forEach(function(site) {
+      var opt = document.createElement('option');
+      opt.value = site.id;
+      opt.textContent = site.name || site.id;
+      siteSelect.appendChild(opt);
+    });
+  }
+}
+
+// ── Load & render SLA policies ───────────────────────────────
+function loadSLAPolicies() {
+  if (S.slaPoliciesLoading) return;
+  S.slaPoliciesLoading = true;
+
+  var loadingEl = document.getElementById('sla-policies-loading');
+  var listEl    = document.getElementById('sla-policies-list');
+  var emptyEl   = document.getElementById('sla-policies-empty');
+  var errorEl   = document.getElementById('sla-policies-error');
+  var errorMsg  = document.getElementById('sla-policies-error-msg');
+
+  if (loadingEl) { loadingEl.style.display = ''; }
+  if (listEl)    { listEl.innerHTML = ''; }
+  if (emptyEl)   { emptyEl.style.display = 'none'; }
+  if (errorEl)   { errorEl.style.display = 'none'; }
+
+  var eid = S.activeEnterprise;
+  if (!eid) {
+    S.slaPoliciesLoading = false;
+    if (loadingEl) loadingEl.style.display = 'none';
+    return;
+  }
+
+  var contract = _slaContract();
+  var promise;
+  if (contract && typeof contract.fetchPolicies === 'function') {
+    promise = contract.fetchPolicies({ enterprise_id: eid });
+  } else if (typeof _sb !== 'undefined' && _sb) {
+    promise = _sb
+      .from('enterprise_sla_policies')
+      .select('*')
+      .eq('enterprise_id', eid)
+      .order('created_at', { ascending: false })
+      .then(function(res) { return res && res.data ? res.data : []; });
+  } else {
+    promise = Promise.resolve([]);
+  }
+
+  promise.then(function(policies) {
+    S.slaPolicies = policies || [];
+    S.slaPoliciesLoading = false;
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (!S.slaPolicies.length) {
+      if (emptyEl) emptyEl.style.display = '';
+      return;
+    }
+    if (listEl) {
+      S.slaPolicies.forEach(function(policy) {
+        var row = renderSLAPolicyRow(policy);
+        if (row) listEl.appendChild(row);
+      });
+    }
+  }).catch(function(err) {
+    S.slaPoliciesLoading = false;
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (errorEl)   errorEl.style.display = '';
+    if (errorMsg)  errorMsg.textContent = (err && err.message) ? err.message : 'Erreur de chargement des politiques SLA.';
+  });
+}
+
+// ── Render a single SLA policy row ──────────────────────────
+function renderSLAPolicyRow(policy) {
+  if (!policy) return null;
+
+  var row = document.createElement('div');
+  row.className = 'sla-policy-row' + (policy.active === false ? ' sla-policy-inactive' : '');
+  row.setAttribute('role', 'listitem');
+  row.setAttribute('data-policy-id', policy.id || '');
+
+  // Scope label
+  var scopeEl = document.createElement('div');
+  scopeEl.className = 'sla-policy-scope';
+  var siteName = '—';
+  if (policy.site_id) {
+    var siteObj = (S.sites || []).find(function(s){ return s.id === policy.site_id; });
+    siteName = (siteObj && siteObj.name) ? siteObj.name : policy.site_id;
+  } else {
+    siteName = 'Défaut entreprise';
+  }
+  scopeEl.textContent = siteName;
+  row.appendChild(scopeEl);
+
+  // Urgency
+  var urgEl = document.createElement('div');
+  urgEl.className = 'sla-policy-scope';
+  urgEl.style.minWidth = '80px';
+  var urgLabels = { normale: 'Normale', urgent: 'Urgent', now: 'Now' };
+  urgEl.textContent = policy.urgency ? (urgLabels[policy.urgency] || policy.urgency) : 'Toutes';
+  row.appendChild(urgEl);
+
+  // Targets
+  var targetsEl = document.createElement('div');
+  targetsEl.className = 'sla-policy-targets';
+
+  var tSpan = document.createElement('span');
+  tSpan.textContent = 'Réponse: ' + (policy.response_target_minutes ? _slaMinsToHuman(policy.response_target_minutes) : '—');
+  targetsEl.appendChild(tSpan);
+
+  if (policy.intervention_target_minutes) {
+    var iSpan = document.createElement('span');
+    iSpan.textContent = 'Intervention: ' + _slaMinsToHuman(policy.intervention_target_minutes);
+    targetsEl.appendChild(iSpan);
+  }
+
+  if (policy.resolution_target_minutes) {
+    var rSpan = document.createElement('span');
+    rSpan.textContent = 'Résolution: ' + _slaMinsToHuman(policy.resolution_target_minutes);
+    targetsEl.appendChild(rSpan);
+  }
+
+  // Active badge
+  var activeBadge = document.createElement('span');
+  activeBadge.className = 'ops-sla-badge ' + (policy.active !== false ? 'sla-on-track' : 'sla-na');
+  activeBadge.textContent = policy.active !== false ? 'Actif' : 'Inactif';
+  targetsEl.appendChild(activeBadge);
+
+  row.appendChild(targetsEl);
+
+  // Actions (owner/admin only)
+  var role = S.userRole || '';
+  var canManage = (role === 'owner' || role === 'admin');
+  if (canManage && policy.active !== false) {
+    var actionsEl = document.createElement('div');
+    actionsEl.className = 'sla-policy-actions';
+
+    var deactivateBtn = document.createElement('button');
+    deactivateBtn.className = 'fxv2-btn fxv2-btn-sm';
+    deactivateBtn.textContent = 'Désactiver';
+    deactivateBtn.setAttribute('aria-label', 'Désactiver cette politique SLA');
+    deactivateBtn.addEventListener('click', function() {
+      deactivateSLAPolicy(policy.id);
+    });
+    actionsEl.appendChild(deactivateBtn);
+
+    row.appendChild(actionsEl);
+  }
+
+  return row;
+}
+
+// ── Open SLA policy form ─────────────────────────────────────
+function openSLAPolicyForm(existingPolicy) {
+  var form = document.getElementById('sla-policy-form');
+  var title = document.getElementById('sla-form-title');
+  if (!form) return;
+
+  S.slaFormOpen = true;
+  form.style.display = '';
+
+  if (title) title.textContent = existingPolicy ? 'Modifier la politique SLA' : 'Nouvelle politique SLA';
+
+  var siteSelect  = document.getElementById('sla-form-site');
+  var urgSelect   = document.getElementById('sla-form-urgency');
+  var respInput   = document.getElementById('sla-form-response');
+  var intInput    = document.getElementById('sla-form-intervention');
+  var resInput    = document.getElementById('sla-form-resolution');
+  var errEl       = document.getElementById('sla-form-error');
+
+  if (errEl) errEl.style.display = 'none';
+
+  if (existingPolicy) {
+    form.setAttribute('data-edit-id', existingPolicy.id || '');
+    if (siteSelect) siteSelect.value = existingPolicy.site_id || '';
+    if (urgSelect)  urgSelect.value  = existingPolicy.urgency || '';
+    if (respInput)  respInput.value  = existingPolicy.response_target_minutes || 240;
+    if (intInput)   intInput.value   = existingPolicy.intervention_target_minutes || '';
+    if (resInput)   resInput.value   = existingPolicy.resolution_target_minutes || '';
+  } else {
+    form.removeAttribute('data-edit-id');
+    if (siteSelect) siteSelect.value = '';
+    if (urgSelect)  urgSelect.value  = '';
+    if (respInput)  respInput.value  = 240;
+    if (intInput)   intInput.value   = '';
+    if (resInput)   resInput.value   = '';
+  }
+
+  if (respInput) respInput.focus();
+}
+
+// ── Close SLA policy form ─────────────────────────────────────
+function closeSLAPolicyForm() {
+  var form = document.getElementById('sla-policy-form');
+  S.slaFormOpen = false;
+  if (!form) return;
+  form.style.display = 'none';
+  form.removeAttribute('data-edit-id');
+
+  var errEl = document.getElementById('sla-form-error');
+  var loadEl = document.getElementById('sla-form-loading');
+  if (errEl) errEl.style.display = 'none';
+  if (loadEl) loadEl.style.display = 'none';
+}
+
+// ── Submit SLA policy ─────────────────────────────────────────
+function submitSLAPolicy() {
+  if (S.slaFormSubmitting) return;
+
+  // Role gate
+  var role = S.userRole || '';
+  if (role !== 'owner' && role !== 'admin') {
+    var errEl = document.getElementById('sla-form-error');
+    if (errEl) { errEl.textContent = 'Accès refusé : rôle owner ou admin requis.'; errEl.style.display = ''; }
+    return;
+  }
+
+  var form       = document.getElementById('sla-policy-form');
+  var siteSelect = document.getElementById('sla-form-site');
+  var urgSelect  = document.getElementById('sla-form-urgency');
+  var respInput  = document.getElementById('sla-form-response');
+  var intInput   = document.getElementById('sla-form-intervention');
+  var resInput   = document.getElementById('sla-form-resolution');
+  var errEl      = document.getElementById('sla-form-error');
+  var loadEl     = document.getElementById('sla-form-loading');
+
+  if (errEl) errEl.style.display = 'none';
+
+  // Validate
+  var respVal = parseInt(respInput ? respInput.value : '', 10);
+  if (!respInput || isNaN(respVal) || respVal < 1 || respVal > 10080) {
+    if (errEl) { errEl.textContent = 'Cible réponse invalide (1–10080 minutes).'; errEl.style.display = ''; }
+    return;
+  }
+
+  var intVal = intInput && intInput.value ? parseInt(intInput.value, 10) : null;
+  if (intVal !== null && (isNaN(intVal) || intVal < 1 || intVal > 10080)) {
+    if (errEl) { errEl.textContent = 'Cible intervention invalide (1–10080 minutes).'; errEl.style.display = ''; }
+    return;
+  }
+
+  var resVal = resInput && resInput.value ? parseInt(resInput.value, 10) : null;
+  if (resVal !== null && (isNaN(resVal) || resVal < 1 || resVal > 10080)) {
+    if (errEl) { errEl.textContent = 'Cible résolution invalide (1–10080 minutes).'; errEl.style.display = ''; }
+    return;
+  }
+
+  var urgVal = urgSelect ? urgSelect.value : '';
+  var validUrgencies = ['', 'normale', 'urgent', 'now'];
+  if (validUrgencies.indexOf(urgVal) === -1) {
+    if (errEl) { errEl.textContent = 'Urgence invalide.'; errEl.style.display = ''; }
+    return;
+  }
+
+  var editId = form ? form.getAttribute('data-edit-id') : null;
+  var payload = {
+    p_enterprise_id: S.activeEnterprise,
+    p_site_id: (siteSelect && siteSelect.value) ? siteSelect.value : null,
+    p_urgency: urgVal || null,
+    p_response_target_minutes: respVal,
+    p_intervention_target_minutes: intVal || null,
+    p_resolution_target_minutes: resVal || null,
+  };
+  if (editId) payload.p_policy_id = editId;
+
+  S.slaFormSubmitting = true;
+  if (loadEl) loadEl.style.display = '';
+
+  var contract = _slaContract();
+  var promise;
+  if (contract && typeof contract.upsertPolicy === 'function') {
+    promise = contract.upsertPolicy(payload);
+  } else if (typeof _sb !== 'undefined' && _sb && typeof _sb.rpc === 'function') {
+    promise = _sb.rpc('upsert_sla_policy', payload)
+      .then(function(res) { return res; });
+  } else {
+    promise = Promise.reject(new Error('SLA contract non disponible.'));
+  }
+
+  promise.then(function() {
+    S.slaFormSubmitting = false;
+    if (loadEl) loadEl.style.display = 'none';
+    closeSLAPolicyForm();
+    loadSLAPolicies();
+  }).catch(function(err) {
+    S.slaFormSubmitting = false;
+    if (loadEl) loadEl.style.display = 'none';
+    if (errEl) {
+      errEl.textContent = (err && err.message) ? err.message : 'Erreur lors de l\'enregistrement.';
+      errEl.style.display = '';
+    }
+  });
+}
+
+// ── Deactivate SLA policy ────────────────────────────────────
+function deactivateSLAPolicy(policyId) {
+  if (!policyId) return;
+
+  // Role gate
+  var role = S.userRole || '';
+  if (role !== 'owner' && role !== 'admin') return;
+
+  var contract = _slaContract();
+  var promise;
+  if (contract && typeof contract.deactivatePolicy === 'function') {
+    promise = contract.deactivatePolicy({ policy_id: policyId, enterprise_id: S.activeEnterprise });
+  } else if (typeof _sb !== 'undefined' && _sb && typeof _sb.rpc === 'function') {
+    promise = _sb.rpc('deactivate_sla_policy', {
+      p_policy_id: policyId,
+      p_enterprise_id: S.activeEnterprise
+    }).then(function(res) { return res; });
+  } else {
+    promise = Promise.reject(new Error('SLA contract non disponible.'));
+  }
+
+  promise.then(function() {
+    loadSLAPolicies();
+  }).catch(function(err) {
+    var msg = (err && err.message) ? err.message : 'Erreur de désactivation.';
+    // Surface error gracefully — no silent swallow
+    var errEl = document.getElementById('sla-policies-error');
+    var errMsg = document.getElementById('sla-policies-error-msg');
+    if (errEl && errMsg) { errMsg.textContent = msg; errEl.style.display = ''; }
+  });
+}
+
+// ── Init SLA section (once) ──────────────────────────────────
+function initSLASection() {
+  if (S.slaInitDone) return;
+  S.slaInitDone = true;
+
+  initSLAPoliciesSection();
+
+  var addBtn     = document.getElementById('sla-add-policy-btn');
+  var retryBtn   = document.getElementById('sla-policies-retry-btn');
+  var submitBtn  = document.getElementById('sla-form-submit-btn');
+  var cancelBtn  = document.getElementById('sla-form-cancel-btn');
+
+  if (addBtn) {
+    addBtn.addEventListener('click', function() {
+      var role = S.userRole || '';
+      if (role === 'owner' || role === 'admin') {
+        openSLAPolicyForm(null);
+      }
+    });
+  }
+  if (retryBtn) {
+    retryBtn.addEventListener('click', function() {
+      var errEl = document.getElementById('sla-policies-error');
+      if (errEl) errEl.style.display = 'none';
+      loadSLAPolicies();
+    });
+  }
+  if (submitBtn) {
+    submitBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      submitSLAPolicy();
+    });
+  }
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', function() {
+      closeSLAPolicyForm();
+    });
+  }
+
+  // SLA filter in ops queue
+  var slaFilter = document.getElementById('ops-filter-sla');
+  if (slaFilter) {
+    slaFilter.addEventListener('change', function() {
+      S.slaFilters.state = slaFilter.value;
+      _applySLAFilterToQueue();
+    });
+  }
+
+  // SLA KPI card clicks
+  document.querySelectorAll('[data-ops-filter-sla]').forEach(function(card) {
+    card.addEventListener('click', function() {
+      var val = card.getAttribute('data-ops-filter-sla') || '';
+      S.slaFilters.state = val;
+      if (slaFilter) slaFilter.value = val;
+      _applySLAFilterToQueue();
+    });
+  });
+}
+
+// ── Client-side SLA state filter on rendered queue rows ──────
+function _applySLAFilterToQueue() {
+  var state = S.slaFilters.state;
+  var list = document.getElementById('ops-queue-list');
+  if (!list) return;
+  var items = list.querySelectorAll('li[data-sla-state]');
+  if (!state) {
+    items.forEach(function(li) { li.style.display = ''; });
+    return;
+  }
+  items.forEach(function(li) {
+    var rowState = li.getAttribute('data-sla-state') || '';
+    li.style.display = (rowState === state) ? '' : 'none';
+  });
+}
+
+// ── MutationObserver for #section-sla becoming active ────────
+(function wireSLASectionObserver() {
+  var slaSection = document.getElementById('section-sla');
+  if (!slaSection) return;
+  var obs = new MutationObserver(function(muts) {
+    muts.forEach(function(m) {
+      if (m.target && m.target.id === 'section-sla' &&
+          m.target.classList.contains('active')) {
+        initSLASection();
+        loadSLAPolicies();
+        refreshSLAKpis();
+      }
+    });
+  });
+  obs.observe(slaSection, { attributes: true, attributeFilter: ['class'] });
+}());
+
+// ── Wire data-section=sla nav buttons ────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('[data-section="sla"]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      initSLASection();
+      loadSLAPolicies();
+      refreshSLAKpis();
+    });
+  });
+});
+
+// ── Extend refreshOpsKpis to also refresh SLA KPIs ───────────
+(function patchOpsKpiRefresh() {
+  var _origRefreshOpsKpis = typeof refreshOpsKpis === 'function' ? refreshOpsKpis : null;
+  if (_origRefreshOpsKpis) {
+    var _newRefreshOpsKpis = function() {
+      _origRefreshOpsKpis.apply(this, arguments);
+      refreshSLAKpis();
+    };
+    // Override in accessible scope — wrapped in IIFE so only applies within BP12 additions
+    window._bp12RefreshOpsKpisPatched = _newRefreshOpsKpis;
+  }
+}());

@@ -171,6 +171,9 @@
       <button class="fxv2-nav-link" data-section="account" id="nav-account">
         <span class="icon" aria-hidden="true">⚙️</span> Compte
       </button>
+      <button class="fxv2-nav-link ent-nav-item" data-section="sla" id="nav-sla" aria-label="Politiques SLA">
+        <span class="icon" aria-hidden="true">📋</span> SLA
+      </button>
     </nav>
 
     <div class="fxv2-sidebar-footer">
@@ -844,6 +847,23 @@
           <div class="ops-kpi-val" id="ops-kpi-attention-val">—</div>
           <div class="ops-kpi-label">À traiter</div>
         </button>
+        <!-- BP12 SLA KPI cards -->
+        <div class="ops-kpi-card sla-kpi-card" id="ops-kpi-sla-breached" data-ops-filter-sla="breached">
+          <span class="ops-kpi-label">SLA dépassé</span>
+          <span class="ops-kpi-val" id="ops-kpi-sla-breached-val">—</span>
+        </div>
+        <div class="ops-kpi-card sla-kpi-card" id="ops-kpi-sla-approaching" data-ops-filter-sla="approaching">
+          <span class="ops-kpi-label">À surveiller</span>
+          <span class="ops-kpi-val" id="ops-kpi-sla-approaching-val">—</span>
+        </div>
+        <div class="ops-kpi-card sla-kpi-card" id="ops-kpi-sla-ok" data-ops-filter-sla="on_track">
+          <span class="ops-kpi-label">SLA OK</span>
+          <span class="ops-kpi-val" id="ops-kpi-sla-ok-val">—</span>
+        </div>
+        <div class="ops-kpi-card sla-kpi-card" id="ops-kpi-sla-urgent-breached" data-ops-filter-sla="urgent_breached">
+          <span class="ops-kpi-label">Urgent dépassé</span>
+          <span class="ops-kpi-val" id="ops-kpi-sla-urgent-breached-val">—</span>
+        </div>
       </div>
 
       <!-- OPS QUEUE SECTION -->
@@ -867,6 +887,12 @@
             <option value="now">Immédiat</option>
             <option value="urgent">Urgent</option>
             <option value="normale">Normale</option>
+          </select>
+          <select class="ops-filter-select" id="ops-filter-sla" aria-label="Filtre SLA">
+            <option value="">Tous SLA</option>
+            <option value="breached">SLA dépassé</option>
+            <option value="approaching">À surveiller</option>
+            <option value="on_track">SLA OK</option>
           </select>
           <input type="search" class="ops-search-input" id="ops-search-input"
                  placeholder="Rechercher…" aria-label="Recherche dans les demandes" autocomplete="off">
@@ -937,6 +963,28 @@
           <div class="ops-lifecycle-step" data-step="validation" role="listitem">
             <div class="ops-lifecycle-dot"></div>
             <div class="ops-lifecycle-label">Validation</div>
+          </div>
+        </div>
+
+        <!-- BP12 SLA DETAIL BLOCK -->
+        <div id="ops-detail-sla-block" class="ops-detail-sla" style="display:none">
+          <h4>SLA</h4>
+          <div class="ops-sla-row"><span>Politique</span><span id="ops-sla-policy-label">—</span></div>
+          <div class="ops-sla-row"><span>Cible réponse</span><span id="ops-sla-response-target">—</span></div>
+          <div class="ops-sla-row"><span>Délai réponse</span><span id="ops-sla-response-deadline">—</span></div>
+          <div class="ops-sla-row"><span>Temps restant</span><span id="ops-sla-response-remaining" class="ops-sla-remaining">—</span></div>
+          <div class="ops-sla-row" id="ops-sla-resolution-row" style="display:none">
+            <span>Cible résolution</span><span id="ops-sla-resolution-target">—</span>
+          </div>
+          <div class="ops-sla-row" id="ops-sla-resolution-deadline-row" style="display:none">
+            <span>Délai résolution</span><span id="ops-sla-resolution-deadline">—</span>
+          </div>
+          <div class="ops-sla-row ops-sla-state-row">
+            <span>État SLA</span>
+            <span id="ops-sla-state-badge" class="ops-sla-badge">—</span>
+          </div>
+          <div id="ops-sla-na-reason" class="ops-sla-na-reason" style="display:none">
+            Aucune politique SLA configurée pour ce site/urgence.
           </div>
         </div>
 
@@ -1014,6 +1062,60 @@
 
     </section><!-- /#section-ops -->
 
+    <!-- ═══════════════════════════════════════════════════════
+         SECTION: SLA — Gestion des politiques SLA (BP12)
+         ═══════════════════════════════════════════════════════ -->
+    <section id="section-sla" class="ent-section fxv2-section" aria-label="Gestion des politiques SLA" style="display:none">
+      <header class="ent-section-header ent-section-head">
+        <h2>Politiques SLA</h2>
+        <button id="sla-add-policy-btn" class="btn-primary ent-action-btn ent-action-primary" aria-label="Ajouter une politique SLA">+ Ajouter</button>
+      </header>
+
+      <div id="sla-policies-list" role="list" aria-label="Liste des politiques SLA"></div>
+      <div id="sla-policies-loading" aria-live="polite">Chargement…</div>
+      <div id="sla-policies-empty" style="display:none">Aucune politique SLA configurée.</div>
+      <div id="sla-policies-error" style="display:none">
+        <span id="sla-policies-error-msg"></span>
+        <button id="sla-policies-retry-btn">Réessayer</button>
+      </div>
+
+      <!-- Policy form (owner/admin only) -->
+      <div id="sla-policy-form" class="sla-policy-form" style="display:none" role="dialog" aria-modal="true" aria-label="Formulaire politique SLA">
+        <h3 id="sla-form-title">Nouvelle politique SLA</h3>
+        <div class="sla-form-field">
+          <label for="sla-form-site">Site <span class="sla-optional">(optionnel — vide = défaut entreprise)</span></label>
+          <select id="sla-form-site"><option value="">— Entreprise (défaut) —</option></select>
+        </div>
+        <div class="sla-form-field">
+          <label for="sla-form-urgency">Urgence <span class="sla-optional">(optionnel — vide = toutes)</span></label>
+          <select id="sla-form-urgency">
+            <option value="">— Toutes —</option>
+            <option value="normale">Normale</option>
+            <option value="urgent">Urgent</option>
+            <option value="now">Now</option>
+          </select>
+        </div>
+        <div class="sla-form-field">
+          <label for="sla-form-response">Cible réponse (minutes) *</label>
+          <input type="number" id="sla-form-response" min="1" max="10080" value="240" required>
+        </div>
+        <div class="sla-form-field">
+          <label for="sla-form-intervention">Cible intervention (minutes) <span class="sla-optional">(optionnel)</span></label>
+          <input type="number" id="sla-form-intervention" min="1" max="10080" placeholder="—">
+        </div>
+        <div class="sla-form-field">
+          <label for="sla-form-resolution">Cible résolution (minutes) <span class="sla-optional">(optionnel)</span></label>
+          <input type="number" id="sla-form-resolution" min="1" max="10080" placeholder="—">
+        </div>
+        <div class="sla-form-actions">
+          <button id="sla-form-submit-btn" class="btn-primary">Enregistrer</button>
+          <button id="sla-form-cancel-btn" class="btn-secondary">Annuler</button>
+          <span id="sla-form-loading" style="display:none">Enregistrement…</span>
+          <span id="sla-form-error" class="sla-form-error" style="display:none" role="alert"></span>
+        </div>
+      </div>
+    </section><!-- /#section-sla -->
+
   </main><!-- /#ent-main -->
 
   <!-- BOTTOM NAVIGATION — mobile only -->
@@ -1037,6 +1139,11 @@
             aria-label="Sites">
       <span class="bicon" aria-hidden="true">🏗️</span>
       <span>Sites</span>
+    </button>
+    <button class="fxv2-bottom-btn ent-nav-item" data-section="sla" id="bnav-sla"
+            aria-label="Politiques SLA">
+      <span class="bicon" aria-hidden="true">📋</span>
+      <span>SLA</span>
     </button>
   </nav>
 

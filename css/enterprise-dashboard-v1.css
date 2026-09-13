@@ -2388,3 +2388,309 @@
   .ops-lifecycle-step { min-width: 48px; }
   .ops-lifecycle-label { font-size: 0.65rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   BP12 — SLA UI additions
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── SLA KPI cards ─────────────────────────────────────────── */
+.sla-kpi-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+.sla-kpi-card .ops-kpi-label { font-size: 0.72rem; font-weight: 600; color: var(--fxv2-muted, #718096); }
+.sla-kpi-card .ops-kpi-val   { font-size: 1.4rem; font-weight: 700; }
+
+#ops-kpi-sla-breached {
+  border: 2px solid #fc8181;
+  color: #c53030;
+}
+#ops-kpi-sla-breached .ops-kpi-val { color: #c53030; }
+
+#ops-kpi-sla-approaching {
+  border: 2px solid #f6ad55;
+  color: #c05621;
+}
+#ops-kpi-sla-approaching .ops-kpi-val { color: #c05621; }
+
+#ops-kpi-sla-ok {
+  border: 2px solid #68d391;
+  color: #276749;
+}
+#ops-kpi-sla-ok .ops-kpi-val { color: #276749; }
+
+#ops-kpi-sla-urgent-breached {
+  border: 2px solid #e53e3e;
+  color: #9b2c2c;
+  background: #fff5f5;
+}
+#ops-kpi-sla-urgent-breached .ops-kpi-val { color: #9b2c2c; }
+
+/* ── SLA badge (inline pill) ───────────────────────────────── */
+.ops-sla-badge,
+.sla-badge-ok,
+.sla-badge-approaching,
+.sla-badge-breached {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.ops-sla-badge.sla-breached,
+.sla-badge-breached {
+  background: #fed7d7;
+  color: #c53030;
+  border: 1px solid #fc8181;
+}
+
+.ops-sla-badge.sla-approaching,
+.sla-badge-approaching {
+  background: #fefcbf;
+  color: #975a16;
+  border: 1px solid #f6ad55;
+}
+
+.ops-sla-badge.sla-on-track,
+.sla-badge-ok {
+  background: #c6f6d5;
+  color: #276749;
+  border: 1px solid #68d391;
+}
+
+.ops-sla-badge.sla-completed {
+  background: #e9d8fd;
+  color: #553c9a;
+  border: 1px solid #b794f4;
+}
+
+.ops-sla-badge.sla-na {
+  background: #edf2f7;
+  color: #718096;
+  border: 1px solid #cbd5e0;
+}
+
+/* ── SLA detail block ──────────────────────────────────────── */
+.ops-detail-sla {
+  margin: 16px 0 8px;
+  padding: 14px 16px;
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.ops-detail-sla h4 {
+  margin: 0 0 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6366f1;
+}
+
+.ops-sla-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 0.84rem;
+  border-bottom: 1px solid #edf2f7;
+}
+.ops-sla-row:last-child { border-bottom: none; }
+.ops-sla-row > span:first-child {
+  color: var(--fxv2-muted, #718096);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.ops-sla-row > span:last-child { text-align: right; }
+
+.ops-sla-state-row { padding-top: 8px; }
+
+/* Remaining time coloring */
+.ops-sla-remaining.sla-remaining--ok    { color: #276749; font-weight: 700; }
+.ops-sla-remaining.sla-remaining--amber { color: #c05621; font-weight: 700; }
+.ops-sla-remaining.sla-remaining--red   { color: #c53030; font-weight: 700; }
+
+.ops-sla-na-reason {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--fxv2-muted, #718096);
+  font-style: italic;
+}
+
+/* ── Section SLA — policy management ──────────────────────── */
+#section-sla {
+  padding: 24px;
+}
+
+#section-sla .ent-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+#section-sla h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--fxv2-text, #1a202c);
+  margin: 0;
+}
+
+#sla-policies-loading,
+#sla-policies-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--fxv2-muted, #718096);
+  font-size: 0.9rem;
+}
+
+#sla-policies-error {
+  padding: 16px;
+  background: #fff5f5;
+  border: 1px solid #fc8181;
+  border-radius: 8px;
+  color: #c53030;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.88rem;
+}
+
+/* ── Policy list row ───────────────────────────────────────── */
+.sla-policy-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.sla-policy-scope {
+  flex: 0 0 auto;
+  min-width: 120px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--fxv2-text, #1a202c);
+}
+
+.sla-policy-targets {
+  flex: 1 1 auto;
+  font-size: 0.82rem;
+  color: var(--fxv2-muted, #718096);
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sla-policy-actions {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.sla-policy-inactive {
+  opacity: 0.55;
+}
+
+/* ── SLA policy form (card/overlay) ───────────────────────── */
+.sla-policy-form {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 28px 32px;
+  max-width: 500px;
+  width: calc(100% - 32px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  z-index: 1200;
+}
+
+.sla-policy-form h3 {
+  margin: 0 0 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--fxv2-text, #1a202c);
+}
+
+.sla-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.sla-form-field label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--fxv2-text, #1a202c);
+}
+
+.sla-form-field select,
+.sla-form-field input[type="number"] {
+  padding: 8px 10px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  color: var(--fxv2-text, #1a202c);
+  background: #f7fafc;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sla-form-field select:focus,
+.sla-form-field input:focus {
+  outline: 2px solid #6366f1;
+  border-color: #6366f1;
+}
+
+.sla-optional {
+  font-weight: 400;
+  color: var(--fxv2-muted, #718096);
+  font-size: 0.77rem;
+}
+
+.sla-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.sla-form-error {
+  color: #c53030;
+  font-size: 0.82rem;
+  flex: 1 1 100%;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .sla-policy-form {
+    padding: 20px 16px;
+  }
+  .sla-policy-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .sla-policy-targets { flex-direction: column; gap: 4px; }
+  #section-sla { padding: 16px 12px; }
+  #ops-filter-sla { width: 100%; min-width: unset; }
+}
