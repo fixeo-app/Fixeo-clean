@@ -322,8 +322,30 @@ DO $$ BEGIN RAISE NOTICE '7c15a7 SECTION 1 — enterprise_sites RLS updated: es_
 -- ════════════════════════════════════════════════════════════
 
 -- ── Step 2a: Drop the existing broad member select policy ──────────────
+-- BP08F-FIX (blocker01): 7c13a3 created 'erc_members_select' (with 's'),
+-- but this migration originally attempted to drop 'erc_member_select'
+-- (without 's'). The name mismatch meant the broad policy survived,
+-- allowing ALL enterprise members to see ALL ERC rows, defeating the
+-- site_manager scoping introduced in Steps 2b/2c.
+-- The fix drops both the correct name ('erc_members_select') and the
+-- legacy misnamed target ('erc_member_select') using IF EXISTS guards
+-- so the patch is safe to apply whether or not either name is present.
 DO $$
 BEGIN
+  -- Drop the correctly-named policy created by 7c13a3 (PRIMARY FIX)
+  IF EXISTS (
+    SELECT 1 FROM pg_catalog.pg_policies
+    WHERE schemaname = 'public'
+      AND tablename  = 'enterprise_request_context'
+      AND policyname = 'erc_members_select'
+  ) THEN
+    EXECUTE 'DROP POLICY erc_members_select ON public.enterprise_request_context';
+    RAISE NOTICE '7c15a7 — erc_members_select policy dropped from enterprise_request_context (blocker01 fix)';
+  ELSE
+    RAISE NOTICE '7c15a7 — erc_members_select policy not found on enterprise_request_context (already dropped or never existed)';
+  END IF;
+
+  -- Also drop the legacy misnamed target (defensive — covers old deployments)
   IF EXISTS (
     SELECT 1 FROM pg_catalog.pg_policies
     WHERE schemaname = 'public'
@@ -331,7 +353,7 @@ BEGIN
       AND policyname = 'erc_member_select'
   ) THEN
     EXECUTE 'DROP POLICY erc_member_select ON public.enterprise_request_context';
-    RAISE NOTICE '7c15a7 — erc_member_select policy dropped from enterprise_request_context';
+    RAISE NOTICE '7c15a7 — erc_member_select policy dropped from enterprise_request_context (legacy name)';
   ELSE
     RAISE NOTICE '7c15a7 — erc_member_select policy not found on enterprise_request_context (already dropped or never existed)';
   END IF;
