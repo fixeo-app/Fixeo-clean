@@ -305,7 +305,8 @@ async function bootApp() {
     const { data, error } = await _sb
       .from('enterprise_members')
       .select('role, enterprise_accounts!inner(id, name)')
-      .eq('user_id', S.userId);
+      .eq('user_id', S.userId)
+      .eq('status', 'active'); // FE-AUTH-01: only active memberships enter the dashboard
     if(error) throw error;
     rows = data||[];
   } catch(err) {
@@ -1975,11 +1976,13 @@ async function loadMembers() {
   if(retryBtn) retryBtn.onclick=function(){ loadMembers(); };
 
   try {
+    // BP08B: include status in query; NO active-only filter (owner/admin must see all statuses)
     const { data, error } = await _sb
       .from('enterprise_members')
-      .select('id, role, user_id, users!inner(email, full_name)')
+      .select('id, role, status, user_id, users!inner(email, full_name)')
       .eq('enterprise_id', S.activeEnterprise.id)
-      .order('role');
+      .order('role')
+      .order('status');
     if(error) throw error;
     S.members=data||[];
     renderMembers(S.members, listEl, emptyEl);
@@ -1990,6 +1993,26 @@ async function loadMembers() {
   }
 }
 
+// BP08B: status badge helper
+function memberStatusBadge(status) {
+  var label = { active: 'Actif', suspended: 'Suspendu', removed: 'Retiré', invited: 'Invité' }[status] || status;
+  var cls   = { active: 'bp08b-badge-active', suspended: 'bp08b-badge-suspended',
+                removed: 'bp08b-badge-removed', invited: 'bp08b-badge-invited' }[status] || '';
+  return '<span class="bp08b-member-status-badge '+safeHtml(cls)+'">'+safeHtml(label)+'</span>';
+}
+
+// BP08B: role selector options (no owner)
+var BP08B_ROLES = [
+  {v:'admin',            l:'Administrateur'},
+  {v:'operations_manager',l:'Responsable opérations'},
+  {v:'site_manager',     l:'Responsable site'},
+  {v:'reporter',         l:'Rapporteur'},
+  {v:'viewer',           l:'Lecteur'}
+];
+
+// BP08B: in-progress state per member (prevents double-submit)
+var _memberActionPending = {};
+
 function renderMembers(members, listEl, emptyEl) {
   if(!listEl) return;
   if(!members.length){
@@ -1999,26 +2022,193 @@ function renderMembers(members, listEl, emptyEl) {
   }
   if(emptyEl) emptyEl.style.display='none';
   listEl.innerHTML='';
+
+  var isManager = (S.userRole==='owner'||S.userRole==='admin');
+
   members.forEach(function(m){
-    const profile=m.users||{};
-    const fullName=profile.full_name||profile.email||m.user_id;
-    const initials=fullName.split(' ').slice(0,2).map(function(w){return w.charAt(0).toUpperCase();}).join('');
-    const div=document.createElement('div');
-    div.className='ent-member-card';
+    var profile  = m.users||{};
+    var fullName = profile.full_name||profile.email||m.user_id;
+    var initials = fullName.split(' ').slice(0,2).map(function(w){return w.charAt(0).toUpperCase();}).join('');
+    var isOwnerRow   = (m.role==='owner');
+    var callerIsAdmin = (S.userRole==='admin');
+    // Admin cannot act on owner rows; owner can act on any non-self-last-owner
+    var canAct = isManager && !(callerIsAdmin && isOwnerRow);
+
+    var div = document.createElement('div');
+    div.className = 'ent-member-card bp08b-member-card' + (m.status!=='active'?' bp08b-member-inactive':'');
     div.setAttribute('role','listitem');
-    div.innerHTML=
+    div.setAttribute('data-member-id', m.id);
+
+    var actionsHtml = '';
+    if(canAct) {
+      // Role selector (disabled for owner rows — no promotion to owner via UI)
+      var roleOpts = BP08B_ROLES.map(function(r){
+        return '<option value="'+safeHtml(r.v)+'"'+(m.role===r.v?' selected':'')+'>'+safeHtml(r.l)+'</option>';
+      }).join('');
+      actionsHtml +=
+        '<div class="bp08b-member-actions" role="group" aria-label="Actions membre">'+
+          '<select class="bp08b-role-select" aria-label="Rôle" data-mid="'+safeHtml(m.id)+'" data-current-role="'+safeHtml(m.role)+'">'+
+          roleOpts+'</select>'+
+          '<button class="bp08b-btn bp08b-btn-role" data-mid="'+safeHtml(m.id)+'" title="Appliquer rôle">✓ Rôle</button>';
+
+      if(m.status==='active') {
+        if(isOwnerRow) {
+          // Owner row — suspend/remove shown but disabled (last-owner protection)
+          actionsHtml +=
+            '<button class="bp08b-btn bp08b-btn-suspend" data-mid="'+safeHtml(m.id)+'" '+
+            'disabled aria-disabled="true" title="Protégé: seul propriétaire actif">Suspendre</button>'+
+            '<button class="bp08b-btn bp08b-btn-remove" data-mid="'+safeHtml(m.id)+'" '+
+            'disabled aria-disabled="true" title="Protégé: seul propriétaire actif">Retirer</button>';
+        } else {
+          actionsHtml +=
+            '<button class="bp08b-btn bp08b-btn-suspend" data-mid="'+safeHtml(m.id)+'">Suspendre</button>'+
+            '<button class="bp08b-btn bp08b-btn-remove" data-mid="'+safeHtml(m.id)+'">Retirer</button>';
+        }
+      } else if(m.status==='suspended') {
+        actionsHtml +=
+          '<button class="bp08b-btn bp08b-btn-reactivate" data-mid="'+safeHtml(m.id)+'">Réactiver</button>'+
+          '<button class="bp08b-btn bp08b-btn-remove" data-mid="'+safeHtml(m.id)+'">Retirer</button>';
+      } else if(m.status==='removed') {
+        actionsHtml += '<span class="bp08b-label-removed" aria-label="Membre retiré">Retiré (définitif)</span>';
+      }
+      actionsHtml += '<div class="bp08b-member-feedback" id="mbfb-'+safeHtml(m.id)+'" aria-live="polite"></div></div>';
+    }
+
+    div.innerHTML =
       '<div class="ent-member-avatar" aria-hidden="true">'+safeHtml(initials||'?')+'</div>'+
       '<div class="ent-member-info">'+
         '<div class="ent-member-name">'+safeHtml(fullName)+'</div>'+
-        '<div class="ent-member-role">'+safeHtml(formatRole(m.role))+'</div>'+
-        (profile.email?'<div style="font-size:.74rem;color:var(--v2-text-3);margin-top:2px">'+safeHtml(profile.email)+'</div>':'')+
+        '<div class="ent-member-role-line">'+safeHtml(formatRole(m.role))+' '+memberStatusBadge(m.status)+'</div>'+
+        (profile.email?'<div class="ent-member-email">'+safeHtml(profile.email)+'</div>':'')+
+        actionsHtml+
       '</div>';
     listEl.appendChild(div);
   });
-  // Show mutation note (read-only)
-  const mutNote=$e('members-mutation-note');
-  if(mutNote&&(S.userRole==='owner'||S.userRole==='admin')){
-    mutNote.style.display=''; mutNote.removeAttribute('aria-hidden');
+
+  // Wire action buttons (event delegation on list)
+  listEl.onclick = null; // reset before re-wiring
+  listEl.addEventListener('click', function bp08bClickHandler(e) {
+    var btn = e.target.closest('button[data-mid]');
+    if(!btn||!btn.dataset.mid) return;
+    var mid  = btn.dataset.mid;
+    if(_memberActionPending[mid]) return;
+    if(btn.classList.contains('bp08b-btn-role')) {
+      var sel = listEl.querySelector('.bp08b-role-select[data-mid="'+mid+'"]');
+      if(!sel) return;
+      var newRole = sel.value;
+      var curRole = sel.dataset.currentRole;
+      if(newRole===curRole) { showMemberFeedback(mid,'Aucun changement.','info'); return; }
+      confirmMemberAction(mid,'Changer le rôle vers «'+formatRole(newRole)+'» ?',function(){
+        doMemberRoleChange(mid, newRole);
+      });
+    } else if(btn.classList.contains('bp08b-btn-suspend')) {
+      confirmMemberAction(mid,'Suspendre ce membre ?',function(){ doMemberStatusChange(mid,'suspended'); });
+    } else if(btn.classList.contains('bp08b-btn-remove')) {
+      confirmMemberAction(mid,'Retirer définitivement ce membre ? Cette action est irréversible.',function(){
+        doMemberStatusChange(mid,'removed');
+      });
+    } else if(btn.classList.contains('bp08b-btn-reactivate')) {
+      confirmMemberAction(mid,'Réactiver ce membre ?',function(){ doMemberStatusChange(mid,'active'); });
+    }
+  }, {once:false});
+
+  // Hide old mutation note
+  var mutNote=$e('members-mutation-note');
+  if(mutNote) { mutNote.style.display='none'; mutNote.setAttribute('aria-hidden','true'); }
+}
+
+function showMemberFeedback(mid, msg, type) {
+  var el = document.getElementById('mbfb-'+mid);
+  if(!el) return;
+  el.textContent = msg;
+  el.className = 'bp08b-member-feedback bp08b-fb-'+(type||'info');
+  setTimeout(function(){ el.textContent=''; el.className='bp08b-member-feedback'; }, 4000);
+}
+
+function confirmMemberAction(mid, message, onConfirm) {
+  // Simple inline confirmation via feedback area before destructive action.
+  var el = document.getElementById('mbfb-'+mid);
+  if(!el) { onConfirm(); return; }
+  el.innerHTML = safeHtml(message)+
+    ' <button class="bp08b-btn-confirm-yes" style="margin-left:4px">Confirmer</button>'+
+    ' <button class="bp08b-btn-confirm-no">Annuler</button>';
+  el.className = 'bp08b-member-feedback bp08b-fb-warn';
+  el.querySelector('.bp08b-btn-confirm-yes').onclick = function(){
+    el.innerHTML=''; el.className='bp08b-member-feedback';
+    onConfirm();
+  };
+  el.querySelector('.bp08b-btn-confirm-no').onclick = function(){
+    el.innerHTML=''; el.className='bp08b-member-feedback';
+  };
+}
+
+async function doMemberRoleChange(mid, newRole) {
+  if(!S.activeEnterprise) return;
+  _memberActionPending[mid] = true;
+  showMemberFeedback(mid, 'En cours…', 'info');
+  try {
+    var res = await _sb.rpc('update_enterprise_member_role', {
+      p_enterprise_id: S.activeEnterprise.id,
+      p_member_id:     mid,
+      p_new_role:      newRole
+    });
+    var d = res.data;
+    if(!d||!d.ok) {
+      var reason = (d&&d.reason)||'error';
+      var msg = {
+        forbidden:                 'Permission refusée.',
+        cannot_modify_owner:       'Impossible de modifier un propriétaire.',
+        owner_invariant_violation: 'Dernier propriétaire actif — action impossible.',
+        invalid_role:              'Rôle invalide.',
+        member_not_found:          'Membre introuvable.',
+        caller_not_active:         'Votre compte n\'est pas actif.',
+        unauthenticated:           'Session expirée.',
+        no_change:                 'Aucun changement.'
+      }[reason]||('Erreur: '+reason);
+      showMemberFeedback(mid, msg, reason==='no_change'?'info':'error');
+    } else {
+      showMemberFeedback(mid, 'Rôle mis à jour.', 'success');
+      setTimeout(function(){ loadMembers(); }, 800);
+    }
+  } catch(err) {
+    showMemberFeedback(mid, 'Erreur réseau: '+(err.message||'inconnu'), 'error');
+  } finally {
+    _memberActionPending[mid] = false;
+  }
+}
+
+async function doMemberStatusChange(mid, newStatus) {
+  if(!S.activeEnterprise) return;
+  _memberActionPending[mid] = true;
+  showMemberFeedback(mid, 'En cours…', 'info');
+  try {
+    var res = await _sb.rpc('set_enterprise_member_status', {
+      p_enterprise_id: S.activeEnterprise.id,
+      p_member_id:     mid,
+      p_new_status:    newStatus
+    });
+    var d = res.data;
+    if(!d||!d.ok) {
+      var reason = (d&&d.reason)||'error';
+      var msg = {
+        forbidden:                 'Permission refusée.',
+        cannot_modify_owner:       'Impossible de modifier un propriétaire.',
+        owner_invariant_violation: 'Dernier propriétaire actif — action impossible.',
+        member_already_removed:    'Ce membre est déjà retiré.',
+        caller_not_active:         'Votre compte n\'est pas actif.',
+        unauthenticated:           'Session expirée.',
+        invalid_status:            'Statut invalide.'
+      }[reason]||('Erreur: '+reason);
+      showMemberFeedback(mid, msg, 'error');
+    } else {
+      var labels = {suspended:'Membre suspendu.',removed:'Membre retiré.',active:'Membre réactivé.'};
+      showMemberFeedback(mid, labels[newStatus]||'Statut mis à jour.', 'success');
+      setTimeout(function(){ loadMembers(); }, 800);
+    }
+  } catch(err) {
+    showMemberFeedback(mid, 'Erreur réseau: '+(err.message||'inconnu'), 'error');
+  } finally {
+    _memberActionPending[mid] = false;
   }
 }
 

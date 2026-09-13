@@ -1425,3 +1425,112 @@
 .ent-site-compare-warn { color: #f59e0b; }
 .ent-site-compare-danger { color: var(--v2-danger); }
 .ent-site-compare-toggle { background: transparent; border: 1px solid var(--v2-border); border-radius: var(--v2-radius-sm); color: var(--v2-text-3); font-size: .78rem; padding: 6px 12px; cursor: pointer; font-family: inherit; margin-bottom: 12px; }
+
+/* ═══════════════════════════════════════════════════════════
+   BP08B — Member Administration Controls
+   ═══════════════════════════════════════════════════════════ */
+
+/* Inactive member card (suspended/removed) */
+.bp08b-member-card.bp08b-member-inactive {
+  opacity: .72;
+  background: var(--v2-surface-2, #f7f7f7);
+}
+
+/* Member role+status line */
+.ent-member-role-line {
+  font-size: .82rem;
+  color: var(--v2-text-2, #555);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 1px;
+}
+.ent-member-email {
+  font-size: .74rem;
+  color: var(--v2-text-3, #888);
+  margin-top: 2px;
+}
+
+/* Status badges */
+.bp08b-member-status-badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 600;
+  border-radius: 4px;
+  padding: 1px 6px;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.bp08b-badge-active   { background: #d1fae5; color: #065f46; }
+.bp08b-badge-suspended{ background: #fef3c7; color: #92400e; }
+.bp08b-badge-removed  { background: #fee2e2; color: #991b1b; }
+.bp08b-badge-invited  { background: #dbeafe; color: #1e40af; }
+
+/* Member action row */
+.bp08b-member-actions {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.bp08b-role-select {
+  font-size: .78rem;
+  padding: 3px 6px;
+  border: 1px solid var(--v2-border, #ddd);
+  border-radius: 6px;
+  background: var(--v2-surface, #fff);
+  color: var(--v2-text-1, #222);
+  cursor: pointer;
+  max-width: 160px;
+}
+.bp08b-btn {
+  font-size: .74rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: background .15s;
+  white-space: nowrap;
+}
+.bp08b-btn:disabled,
+.bp08b-btn[aria-disabled="true"] {
+  opacity: .4;
+  cursor: not-allowed;
+}
+.bp08b-btn-role       { background: var(--v2-accent, #2563eb); color: #fff; }
+.bp08b-btn-role:hover:not(:disabled) { background: #1d4ed8; }
+.bp08b-btn-suspend    { background: #fef3c7; color: #92400e; }
+.bp08b-btn-suspend:hover:not(:disabled){ background: #fde68a; }
+.bp08b-btn-remove     { background: #fee2e2; color: #991b1b; }
+.bp08b-btn-remove:hover:not(:disabled) { background: #fca5a5; }
+.bp08b-btn-reactivate { background: #d1fae5; color: #065f46; }
+.bp08b-btn-reactivate:hover:not(:disabled){ background: #6ee7b7; }
+.bp08b-label-removed  { font-size: .74rem; color: #991b1b; font-style: italic; }
+
+/* Inline feedback */
+.bp08b-member-feedback {
+  width: 100%;
+  font-size: .78rem;
+  padding: 2px 0;
+  min-height: 1.2em;
+  transition: color .2s;
+}
+.bp08b-fb-success { color: #065f46; }
+.bp08b-fb-error   { color: #991b1b; }
+.bp08b-fb-warn    { color: #92400e; }
+.bp08b-fb-info    { color: var(--v2-text-2, #555); }
+
+/* Inline confirm mini-buttons */
+.bp08b-btn-confirm-yes,
+.bp08b-btn-confirm-no {
+  font-size: .72rem;
+  border: none;
+  border-radius: 4px;
+  padding: 1px 8px;
+  cursor: pointer;
+}
+.bp08b-btn-confirm-yes { background: #ef4444; color: #fff; }
+.bp08b-btn-confirm-no  { background: #e5e7eb; color: #333; }
