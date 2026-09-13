@@ -26,6 +26,8 @@ const S = {
   history: [], historyCursor: null, historyExhausted: false,
   histStatusFilter: '', histSiteFilter: '',
   members: [],
+  memberAssignments: {},
+  assignedSiteIds: [],
   kpis: { total:0, action:0, active:0, pending:0, done:0, nomatch:0 },
   pollTimer: null, isPolling: false,
   detailRequest: null, detailMission: null,
@@ -258,7 +260,7 @@ function selectEnterprise(ent) {
   S.sites=[]; S.sitesLoaded=false;
   S.requests=[]; S.requestCursor=null; S.requestsExhausted=false;
   S.history=[]; S.historyCursor=null; S.historyExhausted=false;
-  S.members=[];
+  S.members=[]; S.memberAssignments={}; S.assignedSiteIds=[];
   S.kpis={ total:0, action:0, active:0, pending:0, done:0, nomatch:0 };
   loadSavedViews();
 
@@ -423,6 +425,7 @@ function renderNavBadge() {
 async function loadOverview() {
   if(!S.activeEnterprise) return;
   if(!S.sitesLoaded) await fetchSites();
+  await loadMyAssignments();
   await refreshKpis();
   renderKpis();
   renderNavBadge();
@@ -570,7 +573,12 @@ function renderSitesSnap() {
   if(!el) return;
   if(!S.sites.length){
     el.innerHTML='';
-    if(emptyEl){ emptyEl.style.display=''; }
+    if(isSiteManagerWithNoSites()) {
+      var noSitesMsg = document.createElement('div');
+      noSitesMsg.className = 'bp08f-no-sites-msg';
+      noSitesMsg.textContent = 'Aucun site ne vous est encore assigné. Contactez un administrateur.';
+      el.appendChild(noSitesMsg);
+    } else if(emptyEl){ emptyEl.style.display=''; }
     return;
   }
   if(emptyEl) emptyEl.style.display='none';
@@ -961,6 +969,27 @@ function attachAuthListener() {
   _sb.auth.onAuthStateChange(function(event) {
     if(event==='SIGNED_OUT'){ stopPolling(); window.location.href='/'; }
   });
+}
+
+// ── BP08F: Assignment helpers
+async function loadMyAssignments() {
+  if(!S.activeEnterprise) return;
+  if(S.userRole !== 'site_manager') { S.assignedSiteIds=[]; return; }
+  try {
+    var { data, error } = await _sb
+      .from('enterprise_member_sites')
+      .select('site_id')
+      .eq('enterprise_id', S.activeEnterprise.id);
+    if(error) throw error;
+    S.assignedSiteIds = (data||[]).map(function(r){ return r.site_id; });
+  } catch(err) {
+    S.assignedSiteIds = [];
+    console.warn('[loadMyAssignments]', err.message);
+  }
+}
+
+function isSiteManagerWithNoSites() {
+  return S.userRole === 'site_manager' && S.assignedSiteIds.length === 0;
 }
 
 
@@ -1769,7 +1798,12 @@ async function loadSites() {
 
   if(!S.sites.length){
     listEl.innerHTML='';
-    if(emptyEl) emptyEl.style.display='';
+    if(isSiteManagerWithNoSites()) {
+      var noSitesMsg = document.createElement('div');
+      noSitesMsg.className = 'bp08f-no-sites-msg';
+      noSitesMsg.textContent = 'Aucun site ne vous est encore assign\u00e9. Contactez un administrateur.';
+      listEl.appendChild(noSitesMsg);
+    } else if(emptyEl) emptyEl.style.display='';
     return;
   }
   if(emptyEl) emptyEl.style.display='none';
@@ -1996,6 +2030,14 @@ async function loadMembers() {
       .order('status');
     if(error) throw error;
     S.members=data||[];
+    // BP08F: load site assignments for all members (owner/admin view)
+    var { data: asnData } = await _sb.from('enterprise_member_sites')
+      .select('member_id, site_id').eq('enterprise_id', S.activeEnterprise.id);
+    S.memberAssignments = {};
+    (asnData||[]).forEach(function(a){
+      if(!S.memberAssignments[a.member_id]) S.memberAssignments[a.member_id]=[];
+      S.memberAssignments[a.member_id].push(a.site_id);
+    });
     renderMembers(S.members, listEl, emptyEl);
   } catch(err){
     if(listEl) listEl.innerHTML='';
@@ -2093,6 +2135,13 @@ function renderMembers(members, listEl, emptyEl) {
         (profile.email?'<div class="ent-member-email">'+safeHtml(profile.email)+'</div>':'')+
         actionsHtml+
       '</div>';
+    // BP08F: assignment section for site_manager members (owner/admin only)
+    if(canAct && m.role === 'site_manager') {
+      var assignSection = buildAssignmentSection(m);
+      var infoDiv = div.querySelector('.ent-member-info');
+      if(infoDiv) infoDiv.appendChild(assignSection);
+      else div.appendChild(assignSection);
+    }
     listEl.appendChild(div);
   });
 
@@ -2126,6 +2175,96 @@ function renderMembers(members, listEl, emptyEl) {
   // Hide old mutation note
   var mutNote=$e('members-mutation-note');
   if(mutNote) { mutNote.style.display='none'; mutNote.setAttribute('aria-hidden','true'); }
+}
+
+// ── BP08F: buildAssignmentSection
+function buildAssignmentSection(m) {
+  var div = document.createElement('div');
+  div.className = 'bp08f-assign-section';
+  div.setAttribute('aria-label', 'Gestion des sites assignés');
+
+  var label = document.createElement('div');
+  label.className = 'bp08f-assign-label';
+  label.textContent = 'Sites assignés :';
+  div.appendChild(label);
+
+  var siteList = document.createElement('div');
+  siteList.className = 'bp08f-assign-site-list';
+  siteList.setAttribute('role', 'group');
+
+  var currentAssigned = S.memberAssignments[m.id] || [];
+  var allSites = S.sites || [];
+
+  allSites.forEach(function(site) {
+    var row = document.createElement('label');
+    row.className = 'bp08f-assign-site-row';
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = site.id;
+    cb.checked = currentAssigned.includes(site.id);
+    if(site.status === 'inactive') cb.setAttribute('data-inactive','true');
+    row.appendChild(cb);
+    var nameSpan = document.createElement('span');
+    nameSpan.textContent = site.name + (site.city ? ' — ' + site.city : '') + (site.status === 'inactive' ? ' (inactif)' : '');
+    row.appendChild(nameSpan);
+    siteList.appendChild(row);
+  });
+
+  div.appendChild(siteList);
+
+  var saveBtn = document.createElement('button');
+  saveBtn.className = 'bp08f-btn-save-assign';
+  saveBtn.setAttribute('data-mid', m.id);
+  saveBtn.textContent = 'Enregistrer';
+  div.appendChild(saveBtn);
+
+  var fb = document.createElement('div');
+  fb.className = 'bp08f-assign-feedback';
+  fb.id = 'asgnfb-' + m.id;
+  fb.setAttribute('aria-live', 'polite');
+  div.appendChild(fb);
+
+  // Wire save button
+  saveBtn.addEventListener('click', function() {
+    var selected = Array.from(siteList.querySelectorAll('input[type=checkbox]:checked')).map(function(cb){ return cb.value; });
+    doSaveAssignments(m.id, selected);
+  });
+
+  return div;
+}
+
+// ── BP08F: doSaveAssignments
+async function doSaveAssignments(mid, siteIds) {
+  if(!S.activeEnterprise) return;
+  var fbEl = document.getElementById('asgnfb-'+mid);
+  if(fbEl) { fbEl.textContent = 'Enregistrement…'; fbEl.className='bp08f-assign-feedback bp08f-fb-info'; }
+  try {
+    var res = await _sb.rpc('set_enterprise_member_sites', {
+      p_enterprise_id: S.activeEnterprise.id,
+      p_member_id:     mid,
+      p_site_ids:      siteIds
+    });
+    var d = res.data;
+    if(!d||!d.ok) {
+      var reason = (d&&d.reason)||'error';
+      var msg = {
+        forbidden:              'Permission refusée.',
+        member_not_found:       'Membre introuvable.',
+        target_not_site_manager:'Ce membre n\'est pas site_manager.',
+        target_not_active:      'Ce membre n\'est pas actif.',
+        site_not_found:         'Site introuvable.',
+        site_enterprise_mismatch:'Site hors de cet enterprise.',
+        no_change:              'Aucun changement.',
+        unauthenticated:        'Session expirée.'
+      }[reason]||('Erreur: '+reason);
+      if(fbEl){ fbEl.textContent=msg; fbEl.className='bp08f-assign-feedback '+(reason==='no_change'?'bp08f-fb-info':'bp08f-fb-error'); }
+    } else {
+      if(fbEl){ fbEl.textContent='Sites mis à jour.'; fbEl.className='bp08f-assign-feedback bp08f-fb-success'; }
+      setTimeout(function(){ loadMembers(); }, 800);
+    }
+  } catch(err) {
+    if(fbEl){ fbEl.textContent='Erreur: '+(err.message||'inconnu'); fbEl.className='bp08f-assign-feedback bp08f-fb-error'; }
+  }
 }
 
 function showMemberFeedback(mid, msg, type) {
