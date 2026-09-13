@@ -6374,3 +6374,606 @@ function initReportingSection() {
 })();
 
 /* End BP14 */
+
+/* ============================================================
+   BP15 — Automation Section
+   ============================================================ */
+
+/* -- State additions ---------------------------------------- */
+Object.assign(S, {
+  autoLoading:    false,
+  autoRules:      [],
+  autoExecutions: [],
+  autoInitDone:   false,
+  autoFormOpen:   false,
+  autoEvaluating: false
+});
+
+/* -- Contract accessor ------------------------------------- */
+function _autoContract() {
+  return (typeof window !== 'undefined' && window.EnterpriseAutomationContract)
+    ? window.EnterpriseAutomationContract
+    : null;
+}
+
+/* -- Role gate --------------------------------------------- */
+function _autoCanManage() {
+  return S.userRole === 'owner' || S.userRole === 'admin';
+}
+
+/* -- Error / loading helpers ------------------------------- */
+function _autoError(msg) {
+  var el = $e('auto-error');
+  var msgEl = $e('auto-error-msg');
+  if (!el) return;
+  if (msgEl) msgEl.textContent = msg || 'Une erreur est survenue. Veuillez réessayer.';
+  el.style.display = 'flex';
+}
+
+function _autoClearError() {
+  var el = $e('auto-error');
+  if (el) el.style.display = 'none';
+}
+
+function _autoSetLoading(on) {
+  S.autoLoading = !!on;
+  var el = $e('auto-loading');
+  if (el) el.style.display = on ? '' : 'none';
+}
+
+/* -- Relative time helper ---------------------------------- */
+function _autoRelTime(isoStr) {
+  if (!isoStr) return '—';
+  var d = new Date(isoStr);
+  if (isNaN(d)) return isoStr;
+  var diffMs = Date.now() - d.getTime();
+  var diffMin = Math.round(diffMs / 60000);
+  if (diffMin < 1) return 'à l\'instant';
+  if (diffMin < 60) return 'il y a ' + diffMin + ' min';
+  var diffH = Math.round(diffMin / 60);
+  if (diffH < 24) return 'il y a ' + diffH + ' h';
+  var diffD = Math.round(diffH / 24);
+  return 'il y a ' + diffD + ' j';
+}
+
+/* -- KPI renderer ------------------------------------------ */
+function renderAutoKpis(rules, executions) {
+  var strip = $e('auto-kpi-strip');
+  if (!strip) return;
+
+  var activeCount = 0;
+  for (var i = 0; i < rules.length; i++) {
+    if (rules[i].active) activeCount++;
+  }
+  var executedCount = 0;
+  var skippedCount = 0;
+  for (var j = 0; j < executions.length; j++) {
+    if (executions[j].outcome === 'executed') executedCount++;
+    else if (executions[j].outcome === 'skipped') skippedCount++;
+  }
+
+  var elActive    = $e('auto-kpi-active');
+  var elTotal     = $e('auto-kpi-total');
+  var elExecuted  = $e('auto-kpi-executed');
+  var elSkipped   = $e('auto-kpi-skipped');
+
+  if (elActive)   elActive.textContent   = String(activeCount);
+  if (elTotal)    elTotal.textContent    = String(rules.length);
+  if (elExecuted) elExecuted.textContent = String(executedCount);
+  if (elSkipped)  elSkipped.textContent  = String(skippedCount);
+
+  strip.style.display = '';
+}
+
+/* -- Rules renderer ---------------------------------------- */
+function renderAutoRules(rules) {
+  var listEl  = $e('auto-rules-list');
+  var emptyEl = $e('auto-rules-empty');
+  var block   = $e('auto-rules-block');
+  if (!listEl) return;
+
+  // Clear existing children safely
+  while (listEl.firstChild) listEl.removeChild(listEl.firstChild);
+
+  if (!rules || rules.length === 0) {
+    if (emptyEl) emptyEl.style.display = '';
+    if (block)   block.style.display   = '';
+    return;
+  }
+
+  if (emptyEl) emptyEl.style.display = 'none';
+  if (block)   block.style.display   = '';
+
+  var contract = _autoContract();
+  var canManage = _autoCanManage();
+
+  for (var i = 0; i < rules.length; i++) {
+    (function(rule) {
+      var item = document.createElement('div');
+      item.className = 'auto-rule-item';
+      item.setAttribute('role', 'listitem');
+
+      // Name
+      var nameEl = document.createElement('div');
+      nameEl.className = 'auto-rule-name';
+      nameEl.textContent = rule.name || '(sans nom)';
+      item.appendChild(nameEl);
+
+      // Description "Quand X → faire Y"
+      var descEl = document.createElement('div');
+      descEl.className = 'auto-rule-desc';
+      descEl.textContent = contract ? contract.describeRule(rule) : '';
+      item.appendChild(descEl);
+
+      // Footer: badge + actions
+      var footer = document.createElement('div');
+      footer.className = 'auto-rule-footer';
+
+      var badge = document.createElement('span');
+      badge.className = 'auto-rule-status-badge ' + (rule.active ? 'is-active' : 'is-inactive');
+      badge.textContent = rule.active ? 'Active' : 'Inactive';
+      // Use aria-label instead of color-only meaning
+      badge.setAttribute('aria-label', rule.active ? 'Règle active' : 'Règle inactive');
+      footer.appendChild(badge);
+
+      // Toggle button for owner/admin
+      if (canManage) {
+        var actionsDiv = document.createElement('div');
+        actionsDiv.className = 'auto-rule-actions';
+
+        var toggleBtn = document.createElement('button');
+        toggleBtn.className = 'auto-rule-toggle-btn';
+        toggleBtn.textContent = rule.active ? 'Désactiver' : 'Activer';
+        toggleBtn.setAttribute('aria-label',
+          (rule.active ? 'Désactiver la règle : ' : 'Activer la règle : ') + (rule.name || ''));
+
+        var _toggling = false;
+        toggleBtn.addEventListener('click', function() {
+          if (_toggling) return;
+          _toggling = true;
+          toggleBtn.disabled = true;
+          _autoToggleRule(rule.id, !rule.active).finally(function() {
+            _toggling = false;
+            toggleBtn.disabled = false;
+          });
+        });
+
+        actionsDiv.appendChild(toggleBtn);
+        footer.appendChild(actionsDiv);
+      }
+
+      item.appendChild(footer);
+      listEl.appendChild(item);
+    }(rules[i]));
+  }
+}
+
+/* -- Executions renderer ----------------------------------- */
+function renderAutoExecutions(executions) {
+  var listEl  = $e('auto-exec-list');
+  var emptyEl = $e('auto-exec-empty');
+  var block   = $e('auto-exec-block');
+  if (!listEl) return;
+
+  while (listEl.firstChild) listEl.removeChild(listEl.firstChild);
+
+  if (!executions || executions.length === 0) {
+    if (emptyEl) emptyEl.style.display = '';
+    if (block)   block.style.display   = '';
+    return;
+  }
+
+  if (emptyEl) emptyEl.style.display = 'none';
+  if (block)   block.style.display   = '';
+
+  var contract = _autoContract();
+
+  for (var i = 0; i < executions.length; i++) {
+    (function(exec) {
+      var item = document.createElement('div');
+      item.className = 'auto-exec-item';
+      item.setAttribute('role', 'listitem');
+
+      // Rule name
+      var nameEl = document.createElement('span');
+      nameEl.className = 'auto-exec-rule-name';
+      nameEl.textContent = exec.rule_name || exec.rule_id || '—';
+      item.appendChild(nameEl);
+
+      // Signal label
+      var signalEl = document.createElement('span');
+      signalEl.className = 'auto-exec-signal';
+      signalEl.textContent = contract
+        ? contract.getSignalLabel(exec.signal_type)
+        : (exec.signal_type || '—');
+      item.appendChild(signalEl);
+
+      // Outcome badge
+      var outcome = exec.outcome || 'skipped';
+      var outcomeCls = 'outcome-' + outcome;
+      var badgeEl = document.createElement('span');
+      badgeEl.className = 'auto-exec-outcome-badge ' + outcomeCls;
+      badgeEl.textContent = contract
+        ? contract.getOutcomeLabel(outcome)
+        : outcome;
+      badgeEl.setAttribute('aria-label', 'Résultat : ' + (contract ? contract.getOutcomeLabel(outcome) : outcome));
+      item.appendChild(badgeEl);
+
+      // Time
+      var timeEl = document.createElement('span');
+      timeEl.className = 'auto-exec-time';
+      timeEl.textContent = _autoRelTime(exec.executed_at);
+      item.appendChild(timeEl);
+
+      listEl.appendChild(item);
+    }(executions[i]));
+  }
+}
+
+/* -- Form preview ------------------------------------------ */
+function _autoUpdatePreview() {
+  var previewEl = $e('auto-form-preview');
+  if (!previewEl) return;
+  var contract = _autoContract();
+  if (!contract) { previewEl.textContent = ''; return; }
+
+  var signalEl    = $e('auto-form-signal');
+  var actionEl    = $e('auto-form-action');
+  var severityEl  = $e('auto-form-severity');
+  var urgencyEl   = $e('auto-form-urgency');
+  var thresholdEl = $e('auto-form-threshold');
+
+  var fakeRule = {
+    signal_type:       signalEl    ? signalEl.value    : '',
+    action_type:       actionEl    ? actionEl.value    : '',
+    severity:          severityEl  ? severityEl.value  : '',
+    urgency_filter:    (urgencyEl && urgencyEl.value)   ? urgencyEl.value   : null,
+    threshold_minutes: (thresholdEl && thresholdEl.value) ? parseInt(thresholdEl.value, 10) : null
+  };
+
+  previewEl.textContent = contract.describeRule(fakeRule);
+}
+
+/* -- Form open/close --------------------------------------- */
+function _autoOpenForm() {
+  var overlay = $e('auto-rule-form-overlay');
+  if (!overlay) return;
+
+  // Reset all form fields
+  var nameEl      = $e('auto-form-name');
+  var signalEl    = $e('auto-form-signal');
+  var actionEl    = $e('auto-form-action');
+  var severityEl  = $e('auto-form-severity');
+  var urgencyEl   = $e('auto-form-urgency');
+  var thresholdEl = $e('auto-form-threshold');
+  var errEl       = $e('auto-form-error');
+
+  if (nameEl)      nameEl.value      = '';
+  if (signalEl)    signalEl.selectedIndex = 0;
+  if (actionEl)    actionEl.selectedIndex = 0;
+  if (severityEl) {
+    // Default to 'high'
+    for (var i = 0; i < severityEl.options.length; i++) {
+      if (severityEl.options[i].value === 'high') {
+        severityEl.selectedIndex = i; break;
+      }
+    }
+  }
+  if (urgencyEl)   urgencyEl.selectedIndex = 0;
+  if (thresholdEl) thresholdEl.value = '';
+  if (errEl)       errEl.style.display = 'none';
+
+  _autoUpdatePreview();
+  overlay.style.display = '';
+
+  // Focus first field
+  if (nameEl) {
+    setTimeout(function() { nameEl.focus(); }, 50);
+  }
+}
+
+function _autoCloseForm() {
+  var overlay = $e('auto-rule-form-overlay');
+  if (overlay) overlay.style.display = 'none';
+  S.autoFormOpen = false;
+}
+
+/* -- Submit rule form -------------------------------------- */
+function _autoSubmitRule() {
+  // Double-submit guard
+  if (S.autoFormOpen) return;
+  S.autoFormOpen = true;
+
+  var submitBtn = $e('auto-form-submit');
+  if (submitBtn) submitBtn.disabled = true;
+
+  var errEl = $e('auto-form-error');
+  if (errEl) errEl.style.display = 'none';
+
+  var contract = _autoContract();
+  if (!contract) {
+    if (errEl) {
+      errEl.textContent = 'Service d\'automatisation indisponible.';
+      errEl.style.display = '';
+    }
+    S.autoFormOpen = false;
+    if (submitBtn) submitBtn.disabled = false;
+    return;
+  }
+
+  var nameEl      = $e('auto-form-name');
+  var signalEl    = $e('auto-form-signal');
+  var actionEl    = $e('auto-form-action');
+  var severityEl  = $e('auto-form-severity');
+  var urgencyEl   = $e('auto-form-urgency');
+  var thresholdEl = $e('auto-form-threshold');
+
+  var name      = nameEl      ? nameEl.value.trim()      : '';
+  var signal    = signalEl    ? signalEl.value            : '';
+  var action    = actionEl    ? actionEl.value            : '';
+  var severity  = severityEl  ? severityEl.value          : 'high';
+  var urgency   = (urgencyEl && urgencyEl.value) ? urgencyEl.value : null;
+  var threshold = (thresholdEl && thresholdEl.value) ? thresholdEl.value : null;
+
+  // Validate
+  var nameCheck = contract.validateRuleName(name);
+  if (!nameCheck.valid) {
+    if (errEl) {
+      errEl.textContent = nameCheck.reason;
+      errEl.style.display = '';
+    }
+    S.autoFormOpen = false;
+    if (submitBtn) submitBtn.disabled = false;
+    if (nameEl) nameEl.focus();
+    return;
+  }
+
+  var threshCheck = contract.validateThreshold(threshold);
+  if (!threshCheck.valid) {
+    if (errEl) {
+      errEl.textContent = threshCheck.reason;
+      errEl.style.display = '';
+    }
+    S.autoFormOpen = false;
+    if (submitBtn) submitBtn.disabled = false;
+    if (thresholdEl) thresholdEl.focus();
+    return;
+  }
+
+  var enterpriseId = S.activeEnterprise;
+  var params = {
+    name:             name,
+    signal_type:      signal,
+    action_type:      action,
+    severity:         severity,
+    urgency_filter:   urgency,
+    threshold_minutes: threshold ? parseInt(threshold, 10) : null,
+    reason_code:      'sla_breached'
+  };
+
+  contract.createRule(enterpriseId, params).then(function() {
+    _autoCloseForm();
+    loadAutomationData(true);
+    // Show success notification if available
+    if (typeof showToast === 'function') {
+      showToast('Règle créée avec succès.', 'success');
+    } else if (typeof showNotification === 'function') {
+      showNotification('Règle créée avec succès.', 'success');
+    }
+  }).catch(function(_err) {
+    if (errEl) {
+      errEl.textContent = 'Impossible de créer la règle. Veuillez réessayer.';
+      errEl.style.display = '';
+    }
+    S.autoFormOpen = false;
+    if (submitBtn) submitBtn.disabled = false;
+  });
+}
+
+/* -- Toggle rule active ------------------------------------ */
+function _autoToggleRule(ruleId, active) {
+  var contract = _autoContract();
+  if (!contract) return Promise.resolve();
+
+  return contract.setRuleActive(ruleId, active).then(function() {
+    return loadAutomationData(true);
+  }).catch(function(_err) {
+    _autoError('Impossible de modifier la règle. Veuillez réessayer.');
+  });
+}
+
+/* -- Evaluate automations ---------------------------------- */
+function _autoEvaluate() {
+  if (S.autoEvaluating) return;
+  S.autoEvaluating = true;
+
+  var btn = $e('auto-btn-evaluate');
+  if (btn) btn.disabled = true;
+
+  var contract = _autoContract();
+  if (!contract) {
+    S.autoEvaluating = false;
+    if (btn) btn.disabled = false;
+    _autoError('Service d\'automatisation indisponible.');
+    return;
+  }
+
+  _autoClearError();
+
+  contract.evaluateAutomations(S.activeEnterprise).then(function(result) {
+    S.autoEvaluating = false;
+    if (btn) btn.disabled = false;
+
+    // Show summary notification
+    var summary = 'Évaluation terminée.';
+    if (result && typeof result === 'object') {
+      var exec = result.executed != null ? result.executed : (result.executed_count != null ? result.executed_count : null);
+      var skip = result.skipped  != null ? result.skipped  : (result.skipped_count  != null ? result.skipped_count  : null);
+      if (exec !== null || skip !== null) {
+        summary = 'Évaluation : '
+          + (exec !== null ? exec + ' exécutée(s)' : '')
+          + (exec !== null && skip !== null ? ', ' : '')
+          + (skip !== null ? skip + ' ignorée(s)' : '')
+          + '.';
+      }
+    }
+
+    if (typeof showToast === 'function') {
+      showToast(summary, 'info');
+    } else if (typeof showNotification === 'function') {
+      showNotification(summary, 'info');
+    }
+
+    // Reload executions to reflect new results
+    var execContract = _autoContract();
+    if (execContract) {
+      execContract.listExecutions(S.activeEnterprise, 50).then(function(execs) {
+        S.autoExecutions = Array.isArray(execs) ? execs : [];
+        renderAutoExecutions(S.autoExecutions);
+        renderAutoKpis(S.autoRules, S.autoExecutions);
+      }).catch(function() {});
+    }
+  }).catch(function(_err) {
+    S.autoEvaluating = false;
+    if (btn) btn.disabled = false;
+    _autoError('L\'évaluation a échoué. Veuillez réessayer.');
+  });
+}
+
+/* -- Load automation data ---------------------------------- */
+function loadAutomationData(reset) {
+  if (S.autoLoading) return;
+
+  _autoClearError();
+  _autoSetLoading(true);
+
+  var contract = _autoContract();
+  if (!contract) {
+    _autoSetLoading(false);
+    _autoError('Le module d\'automatisation n\'est pas disponible.');
+    return;
+  }
+
+  var enterpriseId = S.activeEnterprise;
+  var pRules      = contract.listRules(enterpriseId, false).catch(function() { return []; });
+  var pExecutions = contract.listExecutions(enterpriseId, 50).catch(function() { return []; });
+
+  Promise.all([pRules, pExecutions]).then(function(results) {
+    S.autoRules      = Array.isArray(results[0]) ? results[0] : [];
+    S.autoExecutions = Array.isArray(results[1]) ? results[1] : [];
+
+    renderAutoKpis(S.autoRules, S.autoExecutions);
+    renderAutoRules(S.autoRules);
+    renderAutoExecutions(S.autoExecutions);
+  }).catch(function(_err) {
+    _autoError('Les données d\'automatisation n\'ont pas pu être chargées. Veuillez réessayer.');
+  }).finally(function() {
+    _autoSetLoading(false);
+  });
+}
+
+/* -- Section initialiser (idempotent) ---------------------- */
+function initAutomationSection() {
+  if (S.autoInitDone) return;
+
+  // Role gate: show/hide new-rule button
+  var newRuleBtn = $e('auto-btn-new-rule');
+  if (newRuleBtn) {
+    newRuleBtn.style.display = _autoCanManage() ? '' : 'none';
+  }
+
+  // New rule button
+  if (newRuleBtn) {
+    newRuleBtn.addEventListener('click', function() {
+      _autoOpenForm();
+    });
+  }
+
+  // Evaluate button
+  var evalBtn = $e('auto-btn-evaluate');
+  if (evalBtn) {
+    evalBtn.addEventListener('click', function() {
+      _autoEvaluate();
+    });
+  }
+
+  // Retry button
+  var retryBtn = $e('auto-retry-btn');
+  if (retryBtn) {
+    retryBtn.addEventListener('click', function() {
+      loadAutomationData(true);
+    });
+  }
+
+  // Form: cancel
+  var cancelBtn = $e('auto-form-cancel');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', function() {
+      _autoCloseForm();
+    });
+  }
+
+  // Form: submit
+  var submitBtn = $e('auto-form-submit');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', function() {
+      _autoSubmitRule();
+    });
+  }
+
+  // Form: live preview updates
+  var previewFields = ['auto-form-signal', 'auto-form-action', 'auto-form-severity',
+                       'auto-form-urgency', 'auto-form-threshold'];
+  for (var fi = 0; fi < previewFields.length; fi++) {
+    (function(fieldId) {
+      var el = $e(fieldId);
+      if (!el) return;
+      var evtName = (el.tagName.toLowerCase() === 'input') ? 'input' : 'change';
+      el.addEventListener(evtName, function() { _autoUpdatePreview(); });
+      // Also listen to 'input' on select for extra robustness
+      if (el.tagName.toLowerCase() === 'select') {
+        el.addEventListener('input', function() { _autoUpdatePreview(); });
+      }
+    }(previewFields[fi]));
+  }
+
+  // Close overlay on backdrop click (click outside panel)
+  var overlay = $e('auto-rule-form-overlay');
+  if (overlay) {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) {
+        _autoCloseForm();
+      }
+    });
+  }
+
+  // Escape key closes form
+  document.addEventListener('keydown', function(e) {
+    if ((e.key === 'Escape' || e.key === 'Esc') &&
+        overlay && overlay.style.display !== 'none') {
+      _autoCloseForm();
+    }
+  });
+
+  S.autoInitDone = true;
+}
+
+/* -- navigateTo extension ---------------------------------- */
+(function() {
+  var _origNavigateToAuto = typeof navigateTo === 'function' ? navigateTo : null;
+  if (!_origNavigateToAuto) return;
+  var _patchedAuto = function(section, ctx) {
+    if (section === 'automation') {
+      _origNavigateToAuto(section, ctx);
+      initAutomationSection();
+      loadAutomationData(false);
+      return;
+    }
+    return _origNavigateToAuto(section, ctx);
+  };
+  if (window.navigateTo === _origNavigateToAuto) {
+    window.navigateTo = _patchedAuto;
+  }
+})();
+
+/* End BP15 */

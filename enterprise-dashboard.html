@@ -182,6 +182,10 @@
       <button class="fxv2-nav-link ent-nav-item" data-section="reporting" id="nav-reporting" aria-label="Rapports">
         Rapports
       </button>
+      <!-- BP15 Automation nav -->
+      <button class="fxv2-nav-link ent-nav-item" data-section="automation" id="nav-automation" aria-label="Automatisations">
+        Automatisations
+      </button>
     </nav>
 
     <div class="fxv2-sidebar-footer">
@@ -1341,6 +1345,122 @@
 
     </section><!-- /#section-reporting -->
 
+    <!-- BP15 Automation section -->
+    <section id="section-automation" class="ent-section fxv2-section" aria-label="Automatisations" style="display:none">
+
+      <!-- Header -->
+      <header class="auto-header">
+        <h2>Automatisations</h2>
+        <div class="auto-header-actions" id="auto-header-actions">
+          <!-- shown only to owner/admin -->
+          <button class="auto-btn-primary" id="auto-btn-new-rule" style="display:none"
+                  aria-label="Créer une règle d'automatisation">
+            + Nouvelle règle
+          </button>
+          <button class="auto-btn-secondary" id="auto-btn-evaluate"
+                  aria-label="Évaluer les automatisations maintenant">
+            &#9654; Évaluer maintenant
+          </button>
+        </div>
+      </header>
+
+      <!-- Loading / error -->
+      <div id="auto-loading" aria-live="polite" style="display:none">Chargement…</div>
+      <div id="auto-error" role="alert" style="display:none">
+        <span id="auto-error-msg"></span>
+        <button id="auto-retry-btn">Réessayer</button>
+      </div>
+
+      <!-- KPI strip -->
+      <div id="auto-kpi-strip" class="auto-kpi-strip" style="display:none">
+        <div class="auto-kpi-card">
+          <span class="auto-kpi-label">Règles actives</span>
+          <span class="auto-kpi-val" id="auto-kpi-active">—</span>
+        </div>
+        <div class="auto-kpi-card">
+          <span class="auto-kpi-label">Total règles</span>
+          <span class="auto-kpi-val" id="auto-kpi-total">—</span>
+        </div>
+        <div class="auto-kpi-card auto-kpi-ok">
+          <span class="auto-kpi-label">Exécutions</span>
+          <span class="auto-kpi-val" id="auto-kpi-executed">—</span>
+        </div>
+        <div class="auto-kpi-card auto-kpi-warn">
+          <span class="auto-kpi-label">Ignorées</span>
+          <span class="auto-kpi-val" id="auto-kpi-skipped">—</span>
+        </div>
+      </div>
+
+      <!-- Rules list -->
+      <div id="auto-rules-block" style="display:none">
+        <h3>Règles configurées</h3>
+        <div id="auto-rules-list" role="list" aria-label="Liste des règles" aria-live="polite"></div>
+        <div id="auto-rules-empty" style="display:none">Aucune règle configurée.</div>
+      </div>
+
+      <!-- Execution history -->
+      <div id="auto-exec-block" style="display:none">
+        <h3>Déclenchements récents</h3>
+        <div id="auto-exec-list" role="list" aria-label="Historique des déclenchements" aria-live="polite"></div>
+        <div id="auto-exec-empty" style="display:none">Aucun déclenchement enregistré.</div>
+      </div>
+
+      <!-- Create rule modal / inline form (owner/admin only) -->
+      <div id="auto-rule-form-overlay" class="auto-overlay" role="dialog"
+           aria-modal="true" aria-labelledby="auto-rule-form-title" style="display:none">
+        <div class="auto-overlay-panel">
+          <h3 id="auto-rule-form-title">Nouvelle règle d'automatisation</h3>
+          <p class="auto-overlay-hint">Définissez une réaction automatique à un signal opérationnel.</p>
+
+          <label for="auto-form-name">Nom de la règle</label>
+          <input type="text" id="auto-form-name" maxlength="200"
+                 placeholder="Ex : SLA dépassé → escalade critique" autocomplete="off"/>
+
+          <label for="auto-form-signal">Signal déclencheur</label>
+          <select id="auto-form-signal">
+            <option value="sla_breached">SLA dépassé</option>
+            <option value="urgent_unattended">Demande urgente sans prise en charge</option>
+            <option value="escalation_unacknowledged">Escalade non acquittée</option>
+          </select>
+
+          <label for="auto-form-action">Action</label>
+          <select id="auto-form-action">
+            <option value="open_escalation">Ouvrir une escalade</option>
+          </select>
+
+          <label for="auto-form-severity">Sévérité de l'escalade</label>
+          <select id="auto-form-severity">
+            <option value="critical">Critique</option>
+            <option value="high" selected>Haute</option>
+            <option value="medium">Moyenne</option>
+            <option value="low">Basse</option>
+          </select>
+
+          <label for="auto-form-urgency">Filtrer par urgence (optionnel)</label>
+          <select id="auto-form-urgency">
+            <option value="">Toutes les urgences</option>
+            <option value="now">Immédiate (now)</option>
+            <option value="urgent">Urgente</option>
+            <option value="normale">Normale</option>
+          </select>
+
+          <label for="auto-form-threshold">Seuil temporel (minutes, optionnel)</label>
+          <input type="number" id="auto-form-threshold" min="1" max="10080"
+                 placeholder="Ex : 30 (laisser vide = immédiat)"/>
+
+          <div id="auto-form-preview" class="auto-rule-preview" aria-live="polite"></div>
+
+          <div id="auto-form-error" role="alert" class="auto-form-error" style="display:none"></div>
+
+          <div class="auto-overlay-actions">
+            <button id="auto-form-cancel">Annuler</button>
+            <button id="auto-form-submit" class="auto-btn-primary">Créer la règle</button>
+          </div>
+        </div>
+      </div>
+
+    </section><!-- /#section-automation -->
+
   </main><!-- /#ent-main -->
 
   <!-- BOTTOM NAVIGATION — mobile only -->
@@ -1385,6 +1505,13 @@
       </svg>
       <span>Rapports</span>
     </button>
+    <!-- BP15 Automation bottom nav -->
+    <button class="fxv2-bottom-btn ent-nav-item" data-section="automation" id="bnav-automation" aria-label="Automatisations">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+      </svg>
+      <span>Auto</span>
+    </button>
   </nav>
 
 </div><!-- /#ent-dashboard -->
@@ -1408,6 +1535,7 @@
 
 <!-- Enterprise dashboard V2 module -->
 <script src="js/enterprise-ops-contract-v1.js?v=bp11"></script>
+<script src="js/enterprise-automation-contract-v1.js?v=bp15"></script>
 <script src="js/enterprise-dashboard-v1.js?v=ed2"></script>
 
 <!-- GLOBAL SEARCH DIALOG -->
