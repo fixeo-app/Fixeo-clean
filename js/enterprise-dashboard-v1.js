@@ -160,7 +160,10 @@ function selectEnterprise(ent) {
   S.kpis={ total:0, action:0, active:0, pending:0, done:0, nomatch:0 };
 
   setText('ent-header-ent-name', ent.name);
-  setText('ent-header-role-badge', formatRole(ent.role));
+  setText('ent-header-role-badge', formatRole(ent.role).toUpperCase());
+  setText('ent-sb-enterprise', ent.name);
+  setText('ent-sb-role', formatRole(ent.role));
+  const _av=$e('ent-sb-avatar'); if(_av&&S.userEmail) _av.textContent=S.userEmail.charAt(0).toUpperCase();
 
   startPolling();
   navigateTo('overview');
@@ -190,6 +193,8 @@ async function bootApp() {
   if(!session) { window.location.href='/'; return; }
   S.userId    = session.user.id;
   S.userEmail = session.user.email;
+  setText('ent-sb-name', (session.user.user_metadata&&session.user.user_metadata.full_name)||session.user.email||'—');
+  const _bav=$e('ent-sb-avatar'); if(_bav) _bav.textContent=(session.user.email||'?').charAt(0).toUpperCase();
 
   let rows;
   try {
@@ -230,11 +235,6 @@ async function bootApp() {
   attachFormListeners();
 
   if(S.enterprises.length===1) {
-    showApp();
-    attachNavListeners();
-    attachRequestsListeners();
-    attachHistoryListeners();
-    attachFormListeners();
     selectEnterprise(S.enterprises[0]);
   } else {
     // Multiple enterprises — render card selector
@@ -384,9 +384,11 @@ function renderActionRequired(rows) {
     div.setAttribute('tabindex','0');
     div.setAttribute('data-request-id', r.id);
     div.innerHTML =
-      '<span class="ent-ar-cat">'+safeHtml(r.category||'—')+'</span>'+
-      '<span class="ent-ar-site">'+safeHtml(siteName)+'</span>'+
-      '<span class="ent-ar-cta">Valider →</span>';
+      '<div class="ent-ar-item-text">'+
+        '<strong>'+safeHtml(r.category||'—')+'</strong>'+
+        '<div class="ent-ar-item-site">'+safeHtml(siteName)+'</div>'+
+      '</div>'+
+      '<span class="ent-ar-item-arrow" aria-hidden="true">→</span>';
     div.addEventListener('click', function(){ navigateTo('request-detail',{requestId:r.id}); });
     div.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' ') div.click(); });
     listEl.appendChild(div);
@@ -441,13 +443,22 @@ function renderSitesSnap() {
   el.innerHTML='';
   S.sites.slice(0,4).forEach(function(s){
     const div = document.createElement('div');
-    div.className='ent-site-snap';
+    div.className='ent-site-snap-card';
     div.setAttribute('tabindex','0');
     div.setAttribute('role','button');
+    div.setAttribute('aria-label',s.name);
     div.setAttribute('data-site-id',s.id);
+    const snapOpen=S.requests.filter(function(r){return r.enterprise_site_id===s.id&&(r.status==='new'||r.status==='in_progress');}).length;
+    const snapAct=S.requests.filter(function(r){return r.enterprise_site_id===s.id&&r.status==='completed';}).length;
     div.innerHTML =
-      '<span class="ent-site-snap-name">'+safeHtml(s.name)+'</span>'+
-      (s.city?'<span class="ent-site-snap-city">'+safeHtml(s.city)+'</span>':'');
+      '<div class="ent-site-snap-left">'+
+        '<div class="ent-site-snap-name">'+safeHtml(s.name)+'</div>'+
+        (s.city?'<div class="ent-site-snap-city">'+safeHtml(s.city)+'</div>':'')+
+      '</div>'+
+      '<div class="ent-site-snap-right">'+
+        (snapOpen?'<span class="ent-site-snap-count has-open">'+snapOpen+'</span>':'')+
+        (snapAct?'<span class="ent-site-snap-count" style="color:#f59e0b">'+snapAct+' val.</span>':'')+
+      '</div>';
     div.addEventListener('click', function(){ navigateTo('site-detail',{siteId:s.id}); });
     div.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' ') div.click(); });
     el.appendChild(div);
@@ -467,16 +478,16 @@ function renderRafiOps(rows) {
   const newC    = rows.filter(function(r){ return r.status==='new'; }).length;
   const nomatch = rows.filter(function(r){ return r.status==='no_match'; }).length;
   const lines=[];
-  if(action>0)  lines.push({ icon:'🔴', text: action+' intervention'+(action>1?'s':'')+' terminée'+(action>1?'s':'')+' attendant validation.' });
-  if(inprog>0)  lines.push({ icon:'🟡', text: inprog+' en cours de traitement.' });
-  if(newC>0)    lines.push({ icon:'🔵', text: newC+' nouvelle'+(newC>1?'s':'')+' demande'+(newC>1?'s':'')+' en attente d\'attribution.' });
-  if(nomatch>0) lines.push({ icon:'⚪', text: nomatch+' sans artisan disponible.' });
-  if(!lines.length) lines.push({ icon:'✅', text: 'Toutes les interventions récentes sont clôturées.' });
+  if(action>0)  lines.push({ dot:'dot-red',    text: action+' intervention'+(action>1?'s':'')+' terminée'+(action>1?'s':'')+' — validation requise.' });
+  if(inprog>0)  lines.push({ dot:'dot-yellow', text: inprog+' en cours de traitement.' });
+  if(newC>0)    lines.push({ dot:'dot-blue',   text: newC+' nouvelle'+(newC>1?'s':'')+' demande'+(newC>1?'s':'')+' en attente d\'attribution.' });
+  if(nomatch>0) lines.push({ dot:'',           text: nomatch+' sans artisan disponible.' });
+  if(!lines.length) lines.push({ dot:'dot-green', text: 'Toutes les interventions récentes sont clôturées.' });
   linesEl.innerHTML='';
   lines.forEach(function(l){
     const p=document.createElement('p');
     p.className='ent-rafi-ops-line';
-    p.innerHTML='<span class="ent-rafi-icon" aria-hidden="true">'+safeHtml(l.icon)+'</span> '+safeHtml(l.text);
+    p.innerHTML='<span class="ent-rafi-ops-dot '+(l.dot||'')+'" aria-hidden="true"></span>'+safeHtml(l.text);
     linesEl.appendChild(p);
   });
 }
@@ -489,7 +500,8 @@ function formatStatus(status) {
   })[status]||status;
 }
 function formatUrgency(urgency) {
-  return ({ low:'Faible', normal:'Normale', high:'Haute', critical:'Critique' })[urgency]||urgency;
+  if(!urgency||urgency==='normale'||urgency==='normal') return 'Normale';
+  return ({ now:'Immédiat', urgent:'Urgent', '':'Normale' })[urgency]||urgency;
 }
 function getSiteName(siteId) {
   if(!siteId) return '—';
@@ -649,13 +661,14 @@ async function loadRequests(reset) {
   if(emptyEl) emptyEl.style.display='none';
 
   // Build status list from current filter
-  const DONE_STATUSES = ['completed','validated','cancelled','no_match'];
   let statuses=null;
   switch(S.reqStatusFilter){
-    case 'active':    statuses=['new','in_progress']; break;
-    case 'pending':   statuses=['new']; break;
-    case 'validated': statuses=['validated']; break;
-    default:          statuses=null; // all
+    case 'new':         statuses=['new'];          break;
+    case 'in_progress': statuses=['in_progress'];  break;
+    case 'completed':   statuses=['completed'];    break;
+    case 'validated':   statuses=['validated'];    break;
+    case 'all':
+    default:            statuses=null; break;
   }
 
   try {
@@ -774,21 +787,26 @@ function buildRequestCard(r) {
   const siteName = getSiteName(r.enterprise_site_id);
   const date = r.created_at?new Date(r.created_at).toLocaleDateString('fr-FR'):'—';
   const div=document.createElement('div');
-  div.className='ent-req-card';
+  div.className='ent-req-card fxv2-card';
   div.setAttribute('role','listitem');
   div.setAttribute('tabindex','0');
   div.setAttribute('data-request-id',r.id);
+  div.setAttribute('data-status',r.status||'new');
+  div.setAttribute('aria-label',(r.category||'Intervention')+' — '+formatStatus(r.status));
+  const urgHtml=(r.urgency==='now'||r.urgency==='urgent')
+    ?'<span class="ent-urgency-badge-'+(r.urgency==='now'?'now':'urgent')+'">'+safeHtml(formatUrgency(r.urgency))+'</span>'
+    :'';
   div.innerHTML =
     '<div class="ent-req-top">'+
       '<span class="ent-req-cat">'+safeHtml(r.category||'—')+'</span>'+
       '<span class="ent-status-badge ent-status-'+safeHtml(r.status)+'">'+safeHtml(formatStatus(r.status))+'</span>'+
     '</div>'+
     '<div class="ent-req-meta">'+
-      '<span class="ent-req-site">'+safeHtml(siteName)+'</span>'+
-      '<span class="ent-req-urgency ent-urg-'+safeHtml(r.urgency||'normal')+'">'+safeHtml(formatUrgency(r.urgency||'normal'))+'</span>'+
+      '<span class="ent-req-site">🏗️ '+safeHtml(siteName)+'</span>'+
+      (urgHtml?urgHtml:'')+
       '<span class="ent-req-date">'+safeHtml(date)+'</span>'+
     '</div>'+
-    (r.description?'<p class="ent-req-desc">'+safeHtml(r.description.substring(0,120))+(r.description.length>120?'…':'')+'</p>':'');
+    (r.description?'<p class="ent-req-desc">'+safeHtml(r.description.substring(0,130))+(r.description.length>130?'…':'')+'</p>':'');
   div.addEventListener('click', function(){ navigateTo('request-detail',{requestId:r.id}); });
   div.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' ') div.click(); });
   return div;
@@ -813,8 +831,8 @@ async function loadDetail(requestId) {
     S.detailRequest = data;
     renderDetailContent(data, contentEl);
     setText('detail-back-title', data.category||'Intervention');
-    // Also populate dialog if it exists (desktop)
-    openDetailDialog(data);
+    // Desktop only: show modal dialog
+    if(window.innerWidth >= 768) { openDetailDialog(data); }
   } catch(err){
     contentEl.innerHTML='<div class="ent-error"><span>⚠️ '+safeHtml(err.message)+'</span></div>';
   }
@@ -823,24 +841,27 @@ async function loadDetail(requestId) {
 function renderDetailContent(r, container) {
   const siteName = getSiteName(r.enterprise_site_id);
   const date = r.created_at?new Date(r.created_at).toLocaleString('fr-FR'):'—';
+  const urgBadge = (r.urgency==='now'||r.urgency==='urgent')
+    ? '<span class="ent-urgency-badge-'+(r.urgency==='now'?'now':'urgent')+'">'+safeHtml(formatUrgency(r.urgency))+'</span>'
+    : '<span style="color:var(--v2-text-3)">Normale</span>';
   container.innerHTML =
     '<div class="ent-detail-section">'+
-      '<div class="ent-detail-row"><span class="ent-detail-label">Catégorie</span><span class="ent-detail-val">'+safeHtml(r.category||'—')+'</span></div>'+
-      '<div class="ent-detail-row"><span class="ent-detail-label">Site</span><span class="ent-detail-val">'+safeHtml(siteName)+'</span></div>'+
-      '<div class="ent-detail-row"><span class="ent-detail-label">Urgence</span><span class="ent-detail-val ent-urg-'+safeHtml(r.urgency||'normal')+'">'+safeHtml(formatUrgency(r.urgency||'normal'))+'</span></div>'+
-      '<div class="ent-detail-row"><span class="ent-detail-label">Statut</span><span class="ent-status-badge ent-status-'+safeHtml(r.status)+'">'+safeHtml(formatStatus(r.status))+'</span></div>'+
-      '<div class="ent-detail-row"><span class="ent-detail-label">Créée le</span><span class="ent-detail-val">'+safeHtml(date)+'</span></div>'+
+      '<div class="ent-detail-row"><span class="ent-detail-key">Catégorie</span><span class="ent-detail-val">'+safeHtml(r.category||'—')+'</span></div>'+
+      '<div class="ent-detail-row"><span class="ent-detail-key">Site</span><span class="ent-detail-val">'+safeHtml(siteName)+'</span></div>'+
+      '<div class="ent-detail-row"><span class="ent-detail-key">Urgence</span><span class="ent-detail-val">'+urgBadge+'</span></div>'+
+      '<div class="ent-detail-row"><span class="ent-detail-key">Statut</span><span class="ent-detail-val"><span class="ent-status-badge ent-status-'+safeHtml(r.status)+'">'+safeHtml(formatStatus(r.status))+'</span></span></div>'+
+      '<div class="ent-detail-row"><span class="ent-detail-key">Créée le</span><span class="ent-detail-val">'+safeHtml(date)+'</span></div>'+
     '</div>'+
     (r.description?
-      '<div class="ent-detail-section"><h3 class="ent-detail-sub">Description</h3><p class="ent-detail-desc">'+safeHtml(r.description)+'</p></div>':'')+
+      '<div class="ent-detail-section"><div class="ent-detail-section-title">Description</div><div class="ent-detail-desc-block">'+safeHtml(r.description)+'</div></div>':'')+
     '<div id="ent-mission-block" class="ent-detail-section" style="display:none"></div>'+
     (r.status==='completed'&&canConfirm(S.userRole)?
-      '<div class="ent-detail-actions">'+
-        '<button class="fxv2-btn fxv2-btn-primary" id="ent-confirm-btn" data-request-id="'+safeHtml(r.id)+'">'+
+      '<div class="ent-detail-action-row">'+
+        '<button class="ent-confirm-btn" id="ent-confirm-btn" data-request-id="'+safeHtml(r.id)+'" aria-label="Valider cette intervention">'+
           '<span id="ent-confirm-text">✅ Valider l\'intervention</span>'+
-          '<span id="ent-confirm-spinner" class="ent-btn-spinner" style="display:none" aria-hidden="true"></span>'+
+          '<span id="ent-confirm-spinner" class="ent-confirm-spinner" style="display:none" aria-hidden="true"></span>'+
         '</button>'+
-        '<div class="ent-form-error" id="ent-confirm-error" style="display:none" role="alert" aria-live="assertive"></div>'+
+        '<div class="ent-confirm-result err" id="ent-confirm-error" style="display:none" role="alert" aria-live="assertive"></div>'+
       '</div>':'');
 
   // Wire confirm btn
@@ -871,9 +892,9 @@ async function loadDetailMission(requestId, container) {
     if(!missionBlock) return;
     missionBlock.style.display='';
     missionBlock.innerHTML =
-      '<h3 class="ent-detail-sub">Mission</h3>'+
-      '<div class="ent-detail-row"><span class="ent-detail-label">Statut mission</span><span class="ent-status-badge ent-status-'+safeHtml(data.status)+'">'+safeHtml(formatStatus(data.status))+'</span></div>'+
-      (data.completed_at?'<div class="ent-detail-row"><span class="ent-detail-label">Terminée le</span><span class="ent-detail-val">'+safeHtml(new Date(data.completed_at).toLocaleString('fr-FR'))+'</span></div>':'');
+      '<div class="ent-detail-section-title">Mission</div>'+
+      '<div class="ent-detail-row"><span class="ent-detail-key">Statut mission</span><span class="ent-detail-val"><span class="ent-status-badge ent-status-'+safeHtml(data.status)+'">'+safeHtml(formatStatus(data.status))+'</span></span></div>'+
+      (data.completed_at?'<div class="ent-detail-row"><span class="ent-detail-key">Terminée le</span><span class="ent-detail-val">'+safeHtml(new Date(data.completed_at).toLocaleString('fr-FR'))+'</span></div>':'');
   } catch(_){/* mission optional */ }
 }
 
@@ -975,15 +996,27 @@ async function loadSites() {
 }
 
 function buildSiteCard(s) {
+  const sOpen=S.requests.filter(function(r){return r.enterprise_site_id===s.id&&(r.status==='new'||r.status==='in_progress');}).length;
+  const sAction=S.requests.filter(function(r){return r.enterprise_site_id===s.id&&r.status==='completed';}).length;
   const div=document.createElement('div');
   div.className='ent-site-card';
   div.setAttribute('role','listitem');
   div.setAttribute('tabindex','0');
   div.setAttribute('data-site-id',s.id);
+  div.setAttribute('aria-label',s.name+(s.city?' — '+s.city:''));
   div.innerHTML =
-    '<div class="ent-site-name">'+safeHtml(s.name)+'</div>'+
-    (s.address?'<div class="ent-site-address">'+safeHtml(s.address)+(s.city?', '+safeHtml(s.city):'')+'</div>':'')+
-    '<div class="ent-site-link">Voir le détail →</div>';
+    '<div class="ent-site-card-top">'+
+      '<div>'+
+        '<div class="ent-site-name">'+safeHtml(s.name)+'</div>'+
+        (s.city?'<div class="ent-site-city">'+safeHtml(s.city)+'</div>':'')+
+      '</div>'+
+      (sOpen||sAction?'<div style="display:flex;gap:4px;flex-wrap:wrap">'+
+        (sOpen?'<span class="ent-site-stat has-open">'+sOpen+' actif'+(sOpen>1?'s':'')+'</span>':'')+
+        (sAction?'<span class="ent-site-stat" style="color:#f59e0b">'+sAction+' val.</span>':'')+
+      '</div>':'')+
+    '</div>'+
+    (s.address?'<div style="font-size:.78rem;color:var(--v2-text-3);margin-top:4px">'+safeHtml(s.address+(s.city?' — '+s.city:''))+'</div>':'')+
+    '<div style="font-size:.78rem;color:var(--v2-primary);margin-top:8px;font-weight:700">Voir le détail →</div>';
   div.addEventListener('click', function(){ navigateTo('site-detail',{siteId:s.id}); });
   div.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' ') div.click(); });
   return div;
@@ -1024,10 +1057,15 @@ function renderSiteDetail(site, reqs, container) {
 
   let html=
     '<div class="ent-detail-section">'+
-      '<div class="ent-detail-row"><span class="ent-detail-label">Site</span><span class="ent-detail-val">'+safeHtml(site.name)+'</span></div>'+
-      (site.address?'<div class="ent-detail-row"><span class="ent-detail-label">Adresse</span><span class="ent-detail-val">'+safeHtml(site.address+(site.city?', '+site.city:''))+'</span></div>':'')+
-      '<div class="ent-detail-row"><span class="ent-detail-label">En cours</span><span class="ent-detail-val">'+safeHtml(String(openC))+'</span></div>'+
-      '<div class="ent-detail-row"><span class="ent-detail-label">À valider</span><span class="ent-detail-val">'+safeHtml(String(actionC))+'</span></div>'+
+      '<div class="ent-detail-section-title">Informations du site</div>'+
+      '<div class="ent-detail-row"><span class="ent-detail-key">Site</span><span class="ent-detail-val">'+safeHtml(site.name)+'</span></div>'+
+      (site.address?'<div class="ent-detail-row"><span class="ent-detail-key">Adresse</span><span class="ent-detail-val">'+safeHtml(site.address+(site.city?' — '+site.city:''))+'</span></div>':'')+
+      '<div class="ent-detail-row"><span class="ent-detail-key">En cours</span><span class="ent-detail-val">'+
+        (openC?'<span class="ent-site-stat has-open">'+openC+' active'+(openC>1?'s':'')+'</span>':'<span style="color:var(--v2-text-3)">0</span>')+
+      '</span></div>'+
+      '<div class="ent-detail-row"><span class="ent-detail-key">À valider</span><span class="ent-detail-val">'+
+        (actionC?'<span class="ent-site-stat" style="color:#f59e0b">'+actionC+' à valider</span>':'<span style="color:var(--v2-text-3)">0</span>')+
+      '</span></div>'+
     '</div>';
 
   if(canCreate(S.userRole)){
@@ -1037,7 +1075,7 @@ function renderSiteDetail(site, reqs, container) {
   }
 
   if(reqs.length){
-    html+='<div class="ent-detail-section"><h3 class="ent-detail-sub">Interventions actives</h3><div id="site-detail-req-list" class="fxv2-card-list" role="list"></div></div>';
+    html+='<div class="ent-detail-section"><div class="ent-detail-section-title">Interventions actives</div><div id="site-detail-req-list" class="fxv2-card-list" role="list"></div></div>';
   }
 
   container.innerHTML=html;
@@ -1112,13 +1150,17 @@ function renderMembers(members, listEl, emptyEl) {
   members.forEach(function(m){
     const profile=m.users||{};
     const fullName=profile.full_name||profile.email||m.user_id;
+    const initials=fullName.split(' ').slice(0,2).map(function(w){return w.charAt(0).toUpperCase();}).join('');
     const div=document.createElement('div');
     div.className='ent-member-card';
     div.setAttribute('role','listitem');
     div.innerHTML=
-      '<div class="ent-member-name">'+safeHtml(fullName)+'</div>'+
-      '<div class="ent-member-role">'+safeHtml(formatRole(m.role))+'</div>'+
-      (profile.email?'<div class="ent-member-email">'+safeHtml(profile.email)+'</div>':'');
+      '<div class="ent-member-avatar" aria-hidden="true">'+safeHtml(initials||'?')+'</div>'+
+      '<div class="ent-member-info">'+
+        '<div class="ent-member-name">'+safeHtml(fullName)+'</div>'+
+        '<div class="ent-member-role">'+safeHtml(formatRole(m.role))+'</div>'+
+        (profile.email?'<div style="font-size:.74rem;color:var(--v2-text-3);margin-top:2px">'+safeHtml(profile.email)+'</div>':'')+
+      '</div>';
     listEl.appendChild(div);
   });
   // Show mutation note (read-only)
@@ -1183,7 +1225,7 @@ async function loadHistory(reset) {
   const emptyEl   = $e('history-empty');
   const errEl     = $e('history-error');
   const errMsgEl  = $e('history-error-msg');
-  const loadWrap  = $e('hist-load-more-wrap');
+  const loadWrap  = $e('hist-load-more-wrap')||$e('hist-l…wrap');
 
   if(reset&&listEl) listEl.innerHTML=
     '<div class="fxv2-skeleton-card" role="listitem"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>';
@@ -1261,9 +1303,12 @@ function renderAccount() {
   contentEl.innerHTML=
     '<div class="ent-account-block">'+
       '<div class="ent-account-row"><span class="ent-account-label">Organisation</span><span class="ent-account-val">'+safeHtml(S.activeEnterprise.name)+'</span></div>'+
-      '<div class="ent-account-row"><span class="ent-account-label">Plan</span><span class="ent-account-val">'+safeHtml(S.activeEnterprise.plan||'—')+'</span></div>'+
-      '<div class="ent-account-row"><span class="ent-account-label">Votre rôle</span><span class="ent-account-val">'+safeHtml(formatRole(S.userRole))+'</span></div>'+
       '<div class="ent-account-row"><span class="ent-account-label">Email</span><span class="ent-account-val">'+safeHtml(S.userEmail||'—')+'</span></div>'+
+      '<div class="ent-account-row"><span class="ent-account-label">Votre rôle</span><span class="ent-account-val">'+safeHtml(formatRole(S.userRole))+'</span></div>'+
+      '<div class="ent-account-row"><span class="ent-account-label">Création demandes</span><span class="ent-account-val">'+(canCreate(S.userRole)?'Autorisé':'Non autorisé')+'</span></div>'+
+      '<div class="ent-account-row"><span class="ent-account-label">Validation missions</span><span class="ent-account-val">'+(canConfirm(S.userRole)?'Autorisé':'Non autorisé')+'</span></div>'+
+      '<div class="ent-account-row"><span class="ent-account-label">Sites enregistrés</span><span class="ent-account-val">'+safeHtml(String(S.sites.length||0))+'</span></div>'+
+      '<div class="ent-account-row"><span class="ent-account-label">Membres</span><span class="ent-account-val">'+safeHtml(String(S.members.length||0))+'</span></div>'+
       (S.enterprises.length>1?
         '<div class="ent-account-row"><span class="ent-account-label">Espaces</span>'+
         '<span class="ent-account-val">'+S.enterprises.map(function(e){ return safeHtml(e.name); }).join(', ')+'</span></div>':'')+
@@ -1329,8 +1374,8 @@ function attachFormListeners() {
   // Urgency grid
   document.querySelectorAll('.ent-urgency-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
-      document.querySelectorAll('.ent-urgency-btn').forEach(function(b){ b.classList.remove('selected'); b.setAttribute('aria-pressed','false'); });
-      btn.classList.add('selected'); btn.setAttribute('aria-pressed','true');
+      document.querySelectorAll('.ent-urgency-btn').forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+      btn.classList.add('active'); btn.setAttribute('aria-pressed','true');
     });
   });
 }
@@ -1358,10 +1403,10 @@ function initNewRequestForm() {
   const descChars=$e('desc-chars');
   if(descChars) descChars.textContent='0';
 
-  document.querySelectorAll('.ent-urgency-btn').forEach(function(b){ b.classList.remove('selected'); b.setAttribute('aria-pressed','false'); });
+  document.querySelectorAll('.ent-urgency-btn').forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
   // Default urgency: first button (data-value="") = normale
   const normalBtn=document.querySelector('.ent-urgency-btn[data-value=""]');
-  if(normalBtn){ normalBtn.classList.add('selected'); normalBtn.setAttribute('aria-pressed','true'); }
+  if(normalBtn){ normalBtn.classList.add('active'); normalBtn.setAttribute('aria-pressed','true'); }
 
   // Prefill site if coming from site-detail
   if(S.prefillSiteId){
@@ -1422,7 +1467,7 @@ async function submitNewRequest(form) {
   const category = ($e('req-category')||{}).value||'';
   const catOther = ($e('req-category-other')||{}).value||'';
   const desc     = (($e('req-desc')||{}).value||'').trim();
-  const _urgBtn  = document.querySelector('.ent-urgency-btn.selected');
+  const _urgBtn  = document.querySelector('.ent-urgency-btn.active');
   const urgency  = (_urgBtn&&_urgBtn.dataset.value!==undefined) ? (_urgBtn.dataset.value||'normale') : 'normale';
 
   const catFinal = category==='other'?(catOther.trim()||'other'):category;
