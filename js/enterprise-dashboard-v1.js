@@ -68,9 +68,14 @@ const ALL_SECTIONS = [
 function showSection(name) {
   ALL_SECTIONS.forEach(s => {
     const el=$e('section-'+s);
-    if(el){ el.hidden=(s!==name); el.style.display=(s!==name)?'none':''; }
+    if(!el) return;
+    const isActive = s===name;
+    el.hidden = !isActive;
+    // Set explicit 'block' so the shared .fxv2-section{display:none} rule cannot
+    // win when the inline style is cleared by setting it to ''.
+    el.style.display = isActive ? 'block' : 'none';
   });
-  // Bottom nav
+  // Bottom nav & sidebar nav active state
   document.querySelectorAll('[data-section]').forEach(btn => {
     const sec = btn.dataset.section;
     const match = sec===name
@@ -79,6 +84,16 @@ function showSection(name) {
     btn.classList.toggle('active', match);
     if(btn.id&&btn.id.startsWith('bnav-')) btn.setAttribute('aria-current', match?'page':'');
   });
+  // Sync sidebar nav links aria-current
+  document.querySelectorAll('.fxv2-nav-link[data-section]').forEach(btn => {
+    const sec = btn.dataset.section;
+    const match = sec===name
+      ||(sec==='requests'&&(name==='request-detail'||name==='new-request'))
+      ||(sec==='sites'&&name==='site-detail');
+    btn.setAttribute('aria-current', match?'page':'false');
+  });
+  // Auto-close mobile sidebar after navigation
+  _closeSidebar();
   S.activeSection = name;
 }
 
@@ -104,6 +119,26 @@ function navigateTo(section, ctx) {
 // Expose globally for inline onclick attributes in HTML
 window.EntDashboard = { goTo: function(sec,ctx){ navigateTo(sec,ctx); } };
 
+// ── Mobile sidebar helpers
+function _openSidebar() {
+  const sidebar  = $e('ent-sidebar');
+  const overlay  = $e('ent-overlay');
+  const hamburger= $e('ent-hamburger');
+  if(sidebar){ sidebar.classList.add('open'); sidebar.setAttribute('aria-hidden','false'); }
+  if(overlay){ overlay.classList.add('show'); }
+  if(hamburger){ hamburger.classList.add('open'); hamburger.setAttribute('aria-expanded','true'); }
+  document.body.style.overflow='hidden';
+}
+function _closeSidebar() {
+  const sidebar  = $e('ent-sidebar');
+  const overlay  = $e('ent-overlay');
+  const hamburger= $e('ent-hamburger');
+  if(sidebar){ sidebar.classList.remove('open'); sidebar.setAttribute('aria-hidden','true'); }
+  if(overlay){ overlay.classList.remove('show'); }
+  if(hamburger){ hamburger.classList.remove('open'); hamburger.setAttribute('aria-expanded','false'); }
+  document.body.style.overflow='';
+}
+
 // ── Nav listeners (idempotent)
 let _navAttached = false;
 function attachNavListeners() {
@@ -117,14 +152,29 @@ function attachNavListeners() {
     });
   });
 
-  // Gate buttons: HTML uses ent-denied logout link, no dedicated retry/logout btn IDs
-  // (auth gate uses <a href="auth.html"> links — no JS wiring needed)
+  // Hamburger / mobile sidebar toggle
+  const hamburger = $e('ent-hamburger');
+  if(hamburger){
+    hamburger.addEventListener('click', function(){
+      const sidebar = $e('ent-sidebar');
+      if(sidebar && sidebar.classList.contains('open')) _closeSidebar();
+      else _openSidebar();
+    });
+  }
 
+  // Mobile overlay — tap to close sidebar
+  const overlay = $e('ent-overlay');
+  if(overlay) overlay.addEventListener('click', _closeSidebar);
+
+  // Enterprise selector button
   const entBtn = $e('ent-header-ent-btn');
   if(entBtn) entBtn.addEventListener('click', function(){ showEnterprisePicker(); });
 
+  // Logout — both account section and sidebar footer
   const logoutBtn = $e('account-logout-btn');
   if(logoutBtn) logoutBtn.addEventListener('click', function(){ doSignOut(); });
+  const sidebarLogout = $e('ent-logout-btn');
+  if(sidebarLogout) sidebarLogout.addEventListener('click', function(){ doSignOut(); });
 
   const detailBack = $e('detail-back-btn');
   if(detailBack) detailBack.addEventListener('click', function(){ navigateTo('requests'); });
@@ -495,7 +545,7 @@ function renderRafiOps(rows) {
 // ── Formatting helpers
 function formatStatus(status) {
   return ({
-    new:'Nouvelle', in_progress:'En cours', completed:'Terminée',
+    new:'Nouvelle', assigned:'Assignée', in_progress:'En cours', completed:'Terminée',
     validated:'Validée', cancelled:'Annulée', no_match:'Sans suite'
   })[status]||status;
 }
@@ -1225,7 +1275,7 @@ async function loadHistory(reset) {
   const emptyEl   = $e('history-empty');
   const errEl     = $e('history-error');
   const errMsgEl  = $e('history-error-msg');
-  const loadWrap  = $e('hist-load-more-wrap')||$e('hist-l…wrap');
+  const loadWrap  = $e('hist-load-more-wrap');
 
   if(reset&&listEl) listEl.innerHTML=
     '<div class="fxv2-skeleton-card" role="listitem"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>';
