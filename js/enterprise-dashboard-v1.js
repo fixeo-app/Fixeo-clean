@@ -167,7 +167,7 @@ function setLoading(sectionId, busy) {
 
 // ── Gate helpers
 // HTML IDs: ent-auth-gate | ent-access-denied | ent-selector | ent-dashboard
-const GATES = ['ent-auth-gate','ent-access-denied','ent-selector'];
+const GATES = ['ent-auth-gate','ent-access-denied','ent-selector','gate-accept-invitation'];
 function showGate(name) {
   GATES.forEach(id => { const el=$e(id); if(el){ el.hidden=(id!==name); el.style.display=(id!==name)?'none':''; } });
   const dash=$e('ent-dashboard'); if(dash){ dash.hidden=true; dash.style.display='none'; }
@@ -2151,6 +2151,7 @@ async function loadMembers() {
       S.memberAssignments[a.member_id].push(a.site_id);
     });
     renderMembers(S.members, listEl, emptyEl);
+    renderInvitePanel();
   } catch(err){
     if(listEl) listEl.innerHTML='';
     if(errEl){ errEl.style.display=''; }
@@ -3544,3 +3545,325 @@ function showAccountFeedback(msg, isError) {
   el.textContent = msg;
   el.className   = 'bp08d-account-feedback' + (msg ? (isError ? ' error' : ' success') : '');
 }
+
+// ══════════════════════════════════════════════════════════════
+// BP10 — INVITATION MANAGEMENT
+// ══════════════════════════════════════════════════════════════
+
+// Constants
+const CAN_INVITE_ROLES = ['owner', 'admin'];
+const INVITABLE_ROLES = ['admin','operations_manager','site_manager','reporter','viewer'];
+
+function canInvite(role) { return CAN_INVITE_ROLES.includes(role); }
+
+// Show/hide invite panel based on role
+function renderInvitePanel() {
+  const panel = document.getElementById('invite-panel');
+  const pendingPanel = document.getElementById('pending-invitations-panel');
+  if (!panel || !pendingPanel) return;
+  if (canInvite(S.userRole)) {
+    panel.hidden = false;
+    pendingPanel.hidden = false;
+    populateInviteSitesCheckboxes();
+    loadPendingInvitations();
+  } else {
+    panel.hidden = true;
+    pendingPanel.hidden = true;
+  }
+}
+
+// Populate site checkboxes for site_manager role
+function populateInviteSitesCheckboxes() {
+  const container = document.getElementById('invite-sites-checkboxes');
+  if (!container) return;
+  container.innerHTML = '';
+  (S.sites || []).forEach(site => {
+    const label = document.createElement('label');
+    label.className = 'ent-site-checkbox-label';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = site.id;
+    cb.className = 'ent-site-checkbox';
+    const text = document.createTextNode(' ' + site.name);
+    label.appendChild(cb);
+    label.appendChild(text);
+    container.appendChild(label);
+  });
+}
+
+// Load pending invitations
+async function loadPendingInvitations() {
+  const listEl = document.getElementById('pending-list');
+  const loadingEl = document.getElementById('pending-loading');
+  const emptyEl = document.getElementById('pending-empty');
+  const errorEl = document.getElementById('pending-error');
+  const errorMsgEl = document.getElementById('pending-error-msg');
+  if (!listEl) return;
+  if (loadingEl) loadingEl.hidden = false;
+  if (emptyEl) emptyEl.hidden = true;
+  if (errorEl) errorEl.hidden = true;
+  listEl.innerHTML = '';
+  const sb = _sbClient();
+  if (!sb) return;
+  try {
+    const { data, error } = await sb
+      .from('enterprise_invitations')
+      .select('id, email_normalized, role, status, expires_at, created_at')
+      .eq('enterprise_id', S.activeEnterprise.id)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (error) throw error;
+    if (loadingEl) loadingEl.hidden = true;
+    if (!data || data.length === 0) {
+      if (emptyEl) emptyEl.hidden = false;
+      return;
+    }
+    data.forEach(inv => {
+      const card = renderPendingInvitationCard(inv);
+      listEl.appendChild(card);
+    });
+  } catch (err) {
+    if (loadingEl) loadingEl.hidden = true;
+    if (errorEl) errorEl.hidden = false;
+    if (errorMsgEl) errorMsgEl.textContent = 'Erreur lors du chargement des invitations.';
+  }
+}
+
+// Render a single pending invitation card
+function renderPendingInvitationCard(inv) {
+  const card = document.createElement('div');
+  card.className = 'ent-pending-card';
+  card.dataset.invId = inv.id;
+  const info = document.createElement('div');
+  info.className = 'ent-pending-info';
+  const emailEl = document.createElement('span');
+  emailEl.className = 'ent-pending-email';
+  emailEl.textContent = inv.email_normalized;
+  const roleEl = document.createElement('span');
+  roleEl.className = 'ent-pending-role';
+  roleEl.textContent = formatRole(inv.role);
+  const expiryEl = document.createElement('span');
+  expiryEl.className = 'ent-pending-expiry';
+  const exp = new Date(inv.expires_at);
+  expiryEl.textContent = 'Expire: ' + exp.toLocaleDateString('fr-FR');
+  info.appendChild(emailEl);
+  info.appendChild(roleEl);
+  info.appendChild(expiryEl);
+  const revokeBtn = document.createElement('button');
+  revokeBtn.className = 'ent-btn ent-btn-danger ent-btn-sm';
+  revokeBtn.textContent = 'Révoquer';
+  revokeBtn.setAttribute('aria-label', 'Révoquer invitation pour ' + inv.email_normalized);
+  revokeBtn.addEventListener('click', () => handleRevokeInvitation(inv.id, card));
+  card.appendChild(info);
+  card.appendChild(revokeBtn);
+  return card;
+}
+
+// Submit invitation form
+async function handleInviteSubmit(e) {
+  e.preventDefault();
+  const emailInput = document.getElementById('invite-email');
+  const roleSelect = document.getElementById('invite-role');
+  const submitBtn = document.getElementById('invite-submit-btn');
+  const loadingEl = document.getElementById('invite-loading');
+  const successEl = document.getElementById('invite-success');
+  const successMsgEl = document.getElementById('invite-success-msg');
+  const linkBlock = document.getElementById('invite-link-block');
+  const linkInput = document.getElementById('invite-link-input');
+  const errorEl = document.getElementById('invite-error');
+  const errorMsgEl = document.getElementById('invite-error-msg');
+  if (!emailInput || !roleSelect) return;
+  const email = emailInput.value.trim();
+  const role = roleSelect.value;
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (errorEl) errorEl.hidden = false;
+    if (errorMsgEl) errorMsgEl.textContent = 'Adresse e-mail invalide.';
+    return;
+  }
+  if (!INVITABLE_ROLES.includes(role)) {
+    if (errorEl) errorEl.hidden = false;
+    if (errorMsgEl) errorMsgEl.textContent = 'Rôle non autorisé.';
+    return;
+  }
+  // Collect site IDs if site_manager
+  let siteIds = null;
+  if (role === 'site_manager') {
+    const checkboxes = document.querySelectorAll('#invite-sites-checkboxes .ent-site-checkbox:checked');
+    siteIds = Array.from(checkboxes).map(cb => cb.value);
+    if (!siteIds.length) siteIds = null;
+  }
+  if (submitBtn) submitBtn.disabled = true;
+  if (loadingEl) loadingEl.hidden = false;
+  if (successEl) successEl.hidden = true;
+  if (errorEl) errorEl.hidden = true;
+  const sb = _sbClient();
+  if (!sb) return;
+  try {
+    const params = { p_enterprise_id: S.activeEnterprise.id, p_email: email, p_role: role };
+    if (siteIds && siteIds.length) params.p_site_ids = siteIds;
+    const { data, error } = await sb.rpc('create_enterprise_invitation', params);
+    if (loadingEl) loadingEl.hidden = true;
+    if (submitBtn) submitBtn.disabled = false;
+    if (error) throw error;
+    if (!data || !data.ok) throw new Error(data && data.error ? data.error : 'Erreur inconnue');
+    emailInput.value = '';
+    if (successEl) successEl.hidden = false;
+    if (successMsgEl) successMsgEl.textContent = 'Invitation envoyée à ' + email + '.';
+    // Show copy link block if raw_token returned
+    if (data.raw_token && linkInput && linkBlock) {
+      const baseUrl = window.location.origin + window.location.pathname;
+      const link = baseUrl + '?invite=' + encodeURIComponent(data.raw_token);
+      linkInput.value = link;
+      linkBlock.hidden = false;
+    } else if (linkBlock) {
+      linkBlock.hidden = true;
+    }
+    loadPendingInvitations();
+  } catch (err) {
+    if (loadingEl) loadingEl.hidden = true;
+    if (submitBtn) submitBtn.disabled = false;
+    if (errorEl) errorEl.hidden = false;
+    const code = err && err.message ? err.message : '';
+    if (code.includes('already_member')) {
+      if (errorMsgEl) errorMsgEl.textContent = 'Cette personne est déjà membre.';
+    } else if (code.includes('invalid_role')) {
+      if (errorMsgEl) errorMsgEl.textContent = 'Rôle non autorisé.';
+    } else if (code.includes('pending_exists')) {
+      if (errorMsgEl) errorMsgEl.textContent = 'Une invitation est déjà en attente pour cet e-mail.';
+    } else {
+      if (errorMsgEl) errorMsgEl.textContent = 'Échec de l\'invitation. Veuillez réessayer.';
+    }
+  }
+}
+
+// Revoke invitation
+async function handleRevokeInvitation(invitationId, cardEl) {
+  const sb = _sbClient();
+  if (!sb || !invitationId) return;
+  const revokeBtn = cardEl ? cardEl.querySelector('button') : null;
+  if (revokeBtn) revokeBtn.disabled = true;
+  try {
+    const { data, error } = await sb.rpc('revoke_enterprise_invitation', { p_invitation_id: invitationId });
+    if (error) throw error;
+    if (!data || !data.ok) throw new Error(data && data.error ? data.error : 'Erreur inconnue');
+    if (cardEl) cardEl.remove();
+    const listEl = document.getElementById('pending-list');
+    const emptyEl = document.getElementById('pending-empty');
+    if (listEl && emptyEl && listEl.children.length === 0) emptyEl.hidden = false;
+  } catch (err) {
+    if (revokeBtn) revokeBtn.disabled = false;
+  }
+}
+
+// Copy invite link
+function attachInviteCopyBtn() {
+  const btn = document.getElementById('invite-copy-btn');
+  const input = document.getElementById('invite-link-input');
+  if (!btn || !input) return;
+  btn.addEventListener('click', () => {
+    if (!input.value) return;
+    navigator.clipboard.writeText(input.value).then(() => {
+      btn.textContent = 'Copié !';
+      setTimeout(() => { btn.textContent = 'Copier'; }, 2000);
+    }).catch(() => {
+      input.select();
+      document.execCommand('copy');
+      btn.textContent = 'Copié !';
+      setTimeout(() => { btn.textContent = 'Copier'; }, 2000);
+    });
+  });
+}
+
+// Toggle site checkboxes visibility
+function attachInviteRoleChange() {
+  const roleSelect = document.getElementById('invite-role');
+  const sitesRow = document.getElementById('invite-sites-row');
+  if (!roleSelect || !sitesRow) return;
+  roleSelect.addEventListener('change', () => {
+    sitesRow.hidden = (roleSelect.value !== 'site_manager');
+  });
+}
+
+// Invite form submit listener
+function attachInviteFormListeners() {
+  const form = document.getElementById('invite-form');
+  if (!form) return;
+  form.addEventListener('submit', handleInviteSubmit);
+  attachInviteRoleChange();
+  attachInviteCopyBtn();
+}
+
+// ─────────────────────────────────────────────────────────
+// INVITATION ACCEPTANCE FLOW
+// Called at page load if ?invite= param is present in URL
+// ─────────────────────────────────────────────────────────
+async function checkInvitationParam() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('invite');
+  if (!token) return false;
+  // Show acceptance gate screen
+  showGate('gate-accept-invitation');
+  const titleEl = document.getElementById('accept-title');
+  const statusEl = document.getElementById('accept-status-msg');
+  const actionsEl = document.getElementById('accept-actions');
+  const acceptBtn = document.getElementById('accept-btn');
+  if (statusEl) statusEl.textContent = 'Vérification de l\'invitation…';
+  // Wait for auth state — user may need to sign in first
+  const sb = _sbClient();
+  if (!sb) return true;
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    if (titleEl) titleEl.textContent = 'Connexion requise';
+    if (statusEl) statusEl.textContent = 'Veuillez vous connecter pour accepter cette invitation.';
+    return true;
+  }
+  // User is authenticated — show accept button
+  if (statusEl) statusEl.textContent = '';
+  if (titleEl) titleEl.textContent = 'Accepter l\'invitation';
+  if (actionsEl) actionsEl.hidden = false;
+  if (acceptBtn) {
+    acceptBtn.addEventListener('click', async () => {
+      acceptBtn.disabled = true;
+      const loadingEl = document.getElementById('accept-loading');
+      if (loadingEl) loadingEl.hidden = false;
+      if (statusEl) statusEl.textContent = '';
+      try {
+        const sbInner = _sbClient();
+        if (!sbInner) throw new Error('Client non disponible');
+        const { data, error } = await sbInner.rpc('accept_enterprise_invitation', { p_token: token });
+        if (loadingEl) loadingEl.hidden = true;
+        if (error) throw error;
+        if (!data || !data.ok) throw new Error(data && data.error ? data.error : 'Erreur inconnue');
+        if (statusEl) statusEl.textContent = 'Invitation acceptée ! Chargement du tableau de bord…';
+        if (actionsEl) actionsEl.hidden = true;
+        // Remove ?invite= from URL cleanly
+        const url = new URL(window.location.href);
+        url.searchParams.delete('invite');
+        window.history.replaceState({}, '', url.toString());
+        // Reboot into app
+        setTimeout(() => bootApp(), 1500);
+      } catch (err) {
+        if (loadingEl) loadingEl.hidden = true;
+        acceptBtn.disabled = false;
+        const code = err && err.message ? err.message : '';
+        if (code.includes('invitation_expired')) {
+          if (statusEl) statusEl.textContent = 'Cette invitation a expiré. Demandez une nouvelle invitation.';
+        } else if (code.includes('email_mismatch')) {
+          if (statusEl) statusEl.textContent = 'Cette invitation est destinée à une autre adresse e-mail.';
+        } else if (code.includes('already_member')) {
+          if (statusEl) statusEl.textContent = 'Vous êtes déjà membre de cette entreprise.';
+        } else {
+          if (statusEl) statusEl.textContent = 'Invitation invalide ou déjà utilisée.';
+        }
+      }
+    });
+  }
+  return true;
+}
+
+// Wire invitation listeners at DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  attachInviteFormListeners();
+  checkInvitationParam();
+});

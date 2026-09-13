@@ -1726,3 +1726,28 @@
   border: 1px dashed #cbd5e1;
   margin: 12px 0;
 }
+
+/* ══════════════════════════════════════════════════
+   BP10 — Invitations
+   ══════════════════════════════════════════════════ */
+.ent-invite-panel { margin-top: 2rem; padding: 1.5rem; background: var(--surface, #fff); border-radius: var(--radius, 8px); border: 1px solid var(--border, #e5e7eb); }
+.ent-invite-title { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; }
+.ent-pending-panel { margin-top: 1.5rem; }
+.ent-pending-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem; }
+.ent-pending-card { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border: 1px solid var(--border, #e5e7eb); border-radius: 6px; margin-bottom: 0.5rem; }
+.ent-pending-info { display: flex; flex-direction: column; gap: 0.25rem; }
+.ent-pending-email { font-weight: 500; font-size: 0.9rem; }
+.ent-pending-role { font-size: 0.8rem; color: var(--text-secondary, #6b7280); }
+.ent-pending-expiry { font-size: 0.75rem; color: var(--text-secondary, #6b7280); }
+.ent-btn-danger { background: #dc2626; color: #fff; border: none; }
+.ent-btn-danger:hover { background: #b91c1c; }
+.ent-btn-sm { padding: 0.25rem 0.75rem; font-size: 0.8rem; }
+.ent-sites-checkboxes { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.ent-site-checkbox-label { display: flex; align-items: center; gap: 0.3rem; font-size: 0.875rem; cursor: pointer; }
+.ent-invite-success { padding: 0.75rem 1rem; background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; color: #166534; margin-top: 0.75rem; }
+.ent-invite-link-row { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+.ent-invite-link-row .ent-input { flex: 1; font-size: 0.8rem; font-family: monospace; }
+/* Acceptance gate */
+.accept-ent-name { font-weight: 600; font-size: 1.1rem; margin: 0.5rem 0; }
+.accept-role-label { color: var(--text-secondary, #6b7280); font-size: 0.9rem; }
+.accept-status { margin-top: 1rem; font-size: 0.9rem; }
