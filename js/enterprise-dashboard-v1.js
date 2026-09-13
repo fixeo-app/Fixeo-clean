@@ -943,7 +943,11 @@ function populateSiteFilters() {
     if(!sel) return;
     const cur=sel.value;
     while(sel.options.length>1) sel.remove(1);
-    S.sites.forEach(function(s){
+    // BP08C: req-site only shows active sites; filter/hist show all
+    var sitesToShow = (id === 'req-site')
+      ? S.sites.filter(function(s){ return s.status === 'active'; })
+      : S.sites;
+    sitesToShow.forEach(function(s){
       const opt=document.createElement('option');
       opt.value=s.id; opt.textContent=s.name;
       sel.appendChild(opt);
@@ -1791,7 +1795,8 @@ function buildSiteCard(s) {
   const lastActStr = lastAct ? new Date(lastAct).toLocaleDateString('fr-FR') : null;
 
   const div=document.createElement('div');
-  div.className='ent-site-card';
+  // BP08C: inactive site gets visual indicator class
+  div.className='ent-site-card'+(s.status==='inactive'?' bp08c-site-inactive':'');
   div.setAttribute('role','listitem');
   div.setAttribute('tabindex','0');
   div.setAttribute('data-site-id',s.id);
@@ -1811,6 +1816,12 @@ function buildSiteCard(s) {
     (s.address?'<div style="font-size:.78rem;color:var(--v2-text-3);margin-top:4px">'+safeHtml(s.address+(s.city?' — '+s.city:''))+'</div>':'')+
     (lastActStr?'<div style="font-size:.73rem;color:var(--v2-text-3);margin-top:4px">⏰ Dernière activité : '+safeHtml(lastActStr)+'</div>':'')+
     '<div style="font-size:.78rem;color:var(--v2-primary);margin-top:8px;font-weight:700">Voir le détail →</div>';
+  // BP08C: append admin controls (DOM-safe, no innerHTML for user data)
+  var adminControls = renderSiteAdminControls(s, S.userRole);
+  if (adminControls) {
+    div.appendChild(adminControls);
+    wireSiteAdminControls(div, s);
+  }
   div.addEventListener('click', function(){ navigateTo('site-detail',{siteId:s.id}); });
   div.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' ') div.click(); });
   return div;
@@ -2361,6 +2372,86 @@ function renderAccount() {
         '<div class="ent-account-row"><span class="ent-account-label">Espaces</span>'+
         '<span class="ent-account-val">'+S.enterprises.map(function(e){ return safeHtml(e.name); }).join(', ')+'</span></div>':'')+
     '</div>';
+
+  // BP08D: append account edit form for owner/admin (DOM-only, no innerHTML for user data)
+  if (isManager(S.userRole)) {
+    var editWrap = document.createElement('div');
+    editWrap.className = 'bp08d-account-edit-form';
+
+    var heading = document.createElement('div');
+    heading.className = 'ent-detail-section-title';
+    heading.textContent = 'Modifier les informations du compte';
+    editWrap.appendChild(heading);
+
+    var nameField = document.createElement('div');
+    nameField.className = 'bp08d-account-field';
+    var nameLabel = document.createElement('label');
+    nameLabel.setAttribute('for', 'bp08d-name-input');
+    nameLabel.textContent = 'Nom de l’organisation';
+    var nameInput = document.createElement('input');
+    nameInput.className = 'fxv2-input';
+    nameInput.id = 'bp08d-name-input';
+    nameInput.setAttribute('type', 'text');
+    nameInput.setAttribute('placeholder', 'Nom');
+    nameInput.setAttribute('aria-label', 'Nom de l’organisation');
+    nameInput.value = S.activeEnterprise.name || '';
+    nameField.appendChild(nameLabel);
+    nameField.appendChild(nameInput);
+    editWrap.appendChild(nameField);
+
+    var legalField = document.createElement('div');
+    legalField.className = 'bp08d-account-field';
+    var legalLabel = document.createElement('label');
+    legalLabel.setAttribute('for', 'bp08d-legal-name-input');
+    legalLabel.textContent = 'Raison sociale (optionnel)';
+    var legalInput = document.createElement('input');
+    legalInput.className = 'fxv2-input';
+    legalInput.id = 'bp08d-legal-name-input';
+    legalInput.setAttribute('type', 'text');
+    legalInput.setAttribute('placeholder', 'Raison sociale');
+    legalInput.setAttribute('aria-label', 'Raison sociale');
+    legalInput.value = S.activeEnterprise.legal_name || '';
+    legalField.appendChild(legalLabel);
+    legalField.appendChild(legalInput);
+    editWrap.appendChild(legalField);
+
+    var saveBtn = document.createElement('button');
+    saveBtn.className = 'bp08d-account-save-btn fxv2-btn fxv2-btn-primary';
+    saveBtn.setAttribute('type', 'button');
+    saveBtn.textContent = 'Enregistrer';
+    editWrap.appendChild(saveBtn);
+
+    var feedbackEl = document.createElement('div');
+    feedbackEl.className = 'bp08d-account-feedback';
+    feedbackEl.setAttribute('aria-live', 'polite');
+    editWrap.appendChild(feedbackEl);
+
+    saveBtn.addEventListener('click', function() {
+      var name      = nameInput.value.trim();
+      var legalName = legalInput.value.trim();
+      if (!name) { showAccountFeedback('Le nom est requis.', true); return; }
+      saveBtn.disabled = true;
+      showAccountFeedback('En cours…', false);
+      doAccountUpdate(S.activeEnterprise.id, name, legalName)
+        .then(function(result) {
+          saveBtn.disabled = false;
+          if (!result || result.ok === false) {
+            var msg = (result && result.reason) ? result.reason : 'Erreur lors de la mise à jour.';
+            showAccountFeedback(msg, true);
+          } else {
+            S.activeEnterprise.name = name;
+            if (legalName) S.activeEnterprise.legal_name = legalName;
+            showAccountFeedback('Informations mises à jour.', false);
+          }
+        })
+        .catch(function(err) {
+          saveBtn.disabled = false;
+          showAccountFeedback('Erreur réseau: ' + (err.message || 'inconnu'), true);
+        });
+    });
+
+    contentEl.appendChild(editWrap);
+  }
 }
 
 // ── New request form
@@ -2466,11 +2557,11 @@ function initNewRequestForm() {
     S.prefillSiteId=null;
   }
 
-  // Populate site select
+  // Populate site select — BP08C: active sites only
   const siteSel=$e('req-site');
   if(siteSel){
     while(siteSel.options.length>1) siteSel.remove(1);
-    S.sites.forEach(function(s){
+    S.sites.filter(function(s){ return s.status === 'active'; }).forEach(function(s){
       const opt=document.createElement('option');
       opt.value=s.id; opt.textContent=s.name;
       siteSel.appendChild(opt);
@@ -2905,4 +2996,269 @@ function _initCmdPalette() {
     });
   }
   dlg.addEventListener('keydown', _cmdPaletteKeydown);
+}
+
+/* ============================================================
+   BP08C — Site Administration UI
+   ============================================================ */
+
+// ── BP08C helpers ─────────────────────────────────────────────────────────────
+function isManager(role) { return role === 'owner' || role === 'admin'; }
+
+const BP08C_SITE_STATUSES = ['active', 'inactive'];
+var   _siteActionPending  = {};
+
+function siteStatusBadge(status) {
+  return { active: 'Actif', inactive: 'Inactif' }[status] || status;
+}
+
+// ── BP08C: render admin controls per site card (DOM-only, no innerHTML for user data) ──
+function renderSiteAdminControls(site, callerRole) {
+  if (!isManager(callerRole)) return null;
+
+  var wrap = document.createElement('div');
+  wrap.className = 'bp08c-site-edit-controls';
+
+  var editBtn = document.createElement('button');
+  editBtn.className = 'bp08c-site-edit-btn fxv2-btn fxv2-btn-ghost';
+  editBtn.setAttribute('data-site-id', site.id);
+  editBtn.setAttribute('aria-label', 'Modifier le site');
+  editBtn.setAttribute('type', 'button');
+  editBtn.textContent = '✏️ Modifier';
+
+  var statusBadge = document.createElement('span');
+  statusBadge.className = 'bp08c-site-status-badge bp08c-site-status-badge-' + site.status;
+  statusBadge.textContent = siteStatusBadge(site.status);
+
+  if (site.status === 'active') {
+    var deactBtn = document.createElement('button');
+    deactBtn.className = 'bp08c-site-deactivate-btn fxv2-btn fxv2-btn-ghost';
+    deactBtn.setAttribute('data-site-id', site.id);
+    deactBtn.setAttribute('aria-label', 'Désactiver le site');
+    deactBtn.setAttribute('type', 'button');
+    deactBtn.textContent = '⏸ Désactiver';
+    wrap.appendChild(statusBadge);
+    wrap.appendChild(editBtn);
+    wrap.appendChild(deactBtn);
+  } else {
+    var actBtn = document.createElement('button');
+    actBtn.className = 'bp08c-site-activate-btn fxv2-btn fxv2-btn-ghost';
+    actBtn.setAttribute('data-site-id', site.id);
+    actBtn.setAttribute('aria-label', 'Réactiver le site');
+    actBtn.setAttribute('type', 'button');
+    actBtn.textContent = '▶ Réactiver';
+    wrap.appendChild(statusBadge);
+    wrap.appendChild(editBtn);
+    wrap.appendChild(actBtn);
+  }
+
+  // Inline edit form (initially hidden)
+  var form = document.createElement('div');
+  form.className = 'bp08c-site-inline-form';
+  form.style.display = 'none';
+  form.setAttribute('data-site-id', site.id);
+
+  var nameInput = document.createElement('input');
+  nameInput.className = 'bp08c-site-name-input fxv2-input';
+  nameInput.setAttribute('type', 'text');
+  nameInput.setAttribute('data-site-id', site.id);
+  nameInput.setAttribute('placeholder', 'Nom du site');
+  nameInput.setAttribute('aria-label', 'Nom du site');
+  nameInput.value = site.name || '';
+
+  var cityInput = document.createElement('input');
+  cityInput.className = 'bp08c-site-city-input fxv2-input';
+  cityInput.setAttribute('type', 'text');
+  cityInput.setAttribute('data-site-id', site.id);
+  cityInput.setAttribute('placeholder', 'Ville');
+  cityInput.setAttribute('aria-label', 'Ville du site');
+  cityInput.value = site.city || '';
+
+  var saveBtn = document.createElement('button');
+  saveBtn.className = 'bp08c-site-save-btn fxv2-btn fxv2-btn-primary';
+  saveBtn.setAttribute('data-site-id', site.id);
+  saveBtn.setAttribute('type', 'button');
+  saveBtn.textContent = 'Enregistrer';
+
+  var cancelBtn = document.createElement('button');
+  cancelBtn.className = 'bp08c-site-cancel-btn fxv2-btn fxv2-btn-ghost';
+  cancelBtn.setAttribute('data-site-id', site.id);
+  cancelBtn.setAttribute('type', 'button');
+  cancelBtn.textContent = 'Annuler';
+
+  var feedbackEl = document.createElement('div');
+  feedbackEl.className = 'bp08c-site-feedback';
+  feedbackEl.setAttribute('data-site-id', site.id);
+  feedbackEl.setAttribute('aria-live', 'polite');
+  feedbackEl.textContent = '';
+
+  form.appendChild(nameInput);
+  form.appendChild(cityInput);
+  form.appendChild(saveBtn);
+  form.appendChild(cancelBtn);
+  form.appendChild(feedbackEl);
+  wrap.appendChild(form);
+
+  return wrap;
+}
+
+// ── BP08C: wire admin controls click handlers ─────────────────────────────────
+function wireSiteAdminControls(cardEl, site) {
+  var editBtn  = cardEl.querySelector('.bp08c-site-edit-btn[data-site-id="' + site.id + '"]');
+  var deactBtn = cardEl.querySelector('.bp08c-site-deactivate-btn[data-site-id="' + site.id + '"]');
+  var actBtn   = cardEl.querySelector('.bp08c-site-activate-btn[data-site-id="' + site.id + '"]');
+  var form     = cardEl.querySelector('.bp08c-site-inline-form[data-site-id="' + site.id + '"]');
+  var saveBtn  = cardEl.querySelector('.bp08c-site-save-btn[data-site-id="' + site.id + '"]');
+  var cancelBtn= cardEl.querySelector('.bp08c-site-cancel-btn[data-site-id="' + site.id + '"]');
+
+  if (editBtn && form) {
+    editBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      form.style.display = form.style.display === 'none' ? '' : 'none';
+    });
+  }
+
+  if (cancelBtn && form) {
+    cancelBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      form.style.display = 'none';
+      showSiteFeedback(site.id, '', false);
+    });
+  }
+
+  if (saveBtn) {
+    saveBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (_siteActionPending[site.id]) return;
+      var nameInput = cardEl.querySelector('.bp08c-site-name-input[data-site-id="' + site.id + '"]');
+      var cityInput = cardEl.querySelector('.bp08c-site-city-input[data-site-id="' + site.id + '"]');
+      var name = nameInput ? nameInput.value.trim() : site.name;
+      var city = cityInput ? cityInput.value.trim() : site.city;
+      if (!name) { showSiteFeedback(site.id, 'Le nom du site est requis.', true); return; }
+      doSiteUpdate(S.activeEnterprise.id, site.id, name, city, site.site_code, site.address_line)
+        .then(function(result) {
+          if (!result || result.ok === false) {
+            var msg = (result && result.reason) ? result.reason : 'Erreur lors de la mise à jour.';
+            showSiteFeedback(site.id, msg, true);
+          } else {
+            showSiteFeedback(site.id, 'Site mis à jour.', false);
+            // Update local state
+            var idx = S.sites.findIndex(function(s){ return s.id === site.id; });
+            if (idx >= 0) { S.sites[idx].name = name; S.sites[idx].city = city; }
+            if (form) form.style.display = 'none';
+          }
+        })
+        .catch(function(err) {
+          showSiteFeedback(site.id, 'Erreur réseau: ' + (err.message || 'inconnu'), true);
+        });
+    });
+  }
+
+  if (deactBtn) {
+    deactBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (_siteActionPending[site.id]) return;
+      if (!window.confirm('Désactiver ce site ?')) return;
+      doSiteStatusChange(S.activeEnterprise.id, site.id, 'inactive')
+        .then(function(result) {
+          if (!result || result.ok === false) {
+            var msg = (result && result.reason) ? result.reason : 'Erreur lors de la désactivation.';
+            showSiteFeedback(site.id, msg, true);
+          } else {
+            showSiteFeedback(site.id, 'Site désactivé.', false);
+            var idx = S.sites.findIndex(function(s){ return s.id === site.id; });
+            if (idx >= 0) S.sites[idx].status = 'inactive';
+            setTimeout(function(){ loadSites(); }, 600);
+          }
+        })
+        .catch(function(err) {
+          showSiteFeedback(site.id, 'Erreur réseau: ' + (err.message || 'inconnu'), true);
+        });
+    });
+  }
+
+  if (actBtn) {
+    actBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (_siteActionPending[site.id]) return;
+      if (!window.confirm('Réactiver ce site ?')) return;
+      doSiteStatusChange(S.activeEnterprise.id, site.id, 'active')
+        .then(function(result) {
+          if (!result || result.ok === false) {
+            var msg = (result && result.reason) ? result.reason : 'Erreur lors de la réactivation.';
+            showSiteFeedback(site.id, msg, true);
+          } else {
+            showSiteFeedback(site.id, 'Site réactivé.', false);
+            var idx = S.sites.findIndex(function(s){ return s.id === site.id; });
+            if (idx >= 0) S.sites[idx].status = 'active';
+            setTimeout(function(){ loadSites(); }, 600);
+          }
+        })
+        .catch(function(err) {
+          showSiteFeedback(site.id, 'Erreur réseau: ' + (err.message || 'inconnu'), true);
+        });
+    });
+  }
+}
+
+// ── BP08C: RPC wrappers ───────────────────────────────────────────────────────
+async function doSiteUpdate(enterpriseId, siteId, name, city, siteCode, addressLine) {
+  _siteActionPending[siteId] = true;
+  try {
+    var params = {
+      p_enterprise_id: enterpriseId,
+      p_site_id:       siteId,
+      p_name:          name,
+      p_city:          city || null,
+    };
+    if (siteCode     !== undefined) params.p_site_code   = siteCode;
+    if (addressLine  !== undefined) params.p_address_line = addressLine;
+    var result = await _sb.rpc('update_enterprise_site', params);
+    return result.data;
+  } finally {
+    delete _siteActionPending[siteId];
+  }
+}
+
+async function doSiteStatusChange(enterpriseId, siteId, newStatus) {
+  _siteActionPending[siteId] = true;
+  try {
+    var result = await _sb.rpc('set_enterprise_site_status', {
+      p_enterprise_id: enterpriseId,
+      p_site_id:       siteId,
+      p_status:        newStatus,
+    });
+    return result.data;
+  } finally {
+    delete _siteActionPending[siteId];
+  }
+}
+
+function showSiteFeedback(siteId, msg, isError) {
+  // Look in the rendered cards
+  var feedbackEls = document.querySelectorAll('.bp08c-site-feedback[data-site-id="' + siteId + '"]');
+  feedbackEls.forEach(function(el) {
+    el.textContent = msg;
+    el.className   = 'bp08c-site-feedback' + (msg ? (isError ? ' error' : ' success') : '');
+  });
+}
+
+/* ============================================================
+   BP08D — Account Edit UI
+   ============================================================ */
+
+async function doAccountUpdate(enterpriseId, name, legalName) {
+  var result = await _sb.rpc('update_enterprise_account', {
+    p_enterprise_id: enterpriseId,
+    p_name:          name,
+    p_legal_name:    legalName || null,
+  });
+  return result.data;
+}
+
+function showAccountFeedback(msg, isError) {
+  var el = document.querySelector('.bp08d-account-feedback');
+  if (!el) return;
+  el.textContent = msg;
+  el.className   = 'bp08d-account-feedback' + (msg ? (isError ? ' error' : ' success') : '');
 }
