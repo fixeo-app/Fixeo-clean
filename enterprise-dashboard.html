@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0d0d1a">
   <meta name="robots" content="noindex,nofollow">
-  <title>FIXEO Entreprise — Tableau de bord</title>
+  <title>FIXEO Entreprise — Centre Opérations</title>
   <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
   <link rel="apple-touch-icon" href="img/favicon.png">
 
@@ -18,50 +18,47 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
   </noscript>
 
-  <!-- Reuse existing dashboard CSS design system -->
+  <!-- Core dashboard design system -->
   <link rel="stylesheet" href="css/fixeo-dashboard-v2.css?v=v2a">
-  <!-- Enterprise-specific additions -->
-  <link rel="stylesheet" href="css/enterprise-dashboard-v1.css?v=ed1c">
+  <!-- Enterprise V2 — complete operations workspace -->
+  <link rel="stylesheet" href="css/enterprise-dashboard-v1.css?v=ed2">
 
-  <!-- Supabase SDK + client — must load synchronously before JS module -->
+  <!-- Supabase SDK + client -->
   <script src="js/supabase-client.js?v=sc2"></script>
 
-  <!-- RAFI Operational Intelligence V1
-       Optional modules — BP05 continues normally if either fails to load. -->
-  <script>
-    window.__rafiLoadError = false;
-  </script>
+  <!-- RAFI Operational Intelligence — optional, dashboard works without -->
+  <script>window.__rafiLoadError = false;</script>
   <script src="js/rafi-classifier-v1.js?v=rc1"
-          onerror="window.__rafiLoadError=true;console.warn('[RAFI] rafi-classifier-v1.js failed to load — intelligence features disabled');"></script>
+          onerror="window.__rafiLoadError=true;console.warn('[RAFI] classifier unavailable');"></script>
   <script src="js/rafi-status-narrator-v1.js?v=rc1"
-          onerror="window.__rafiLoadError=true;console.warn('[RAFI] rafi-status-narrator-v1.js failed to load — status narration disabled');"></script>
+          onerror="window.__rafiLoadError=true;console.warn('[RAFI] narrator unavailable');"></script>
 </head>
 <body class="fxv2-body">
 
-<!-- ════════════════════════════════════════════════════════════
-     AUTH GATE — shown while loading, hidden on success
-     ════════════════════════════════════════════════════════════ -->
-<div id="ent-auth-gate" class="ent-gate-screen">
+<!-- ══════════════════════════════════════════════════════════
+     AUTH GATE
+     ══════════════════════════════════════════════════════════ -->
+<div id="ent-auth-gate" class="ent-gate-screen" role="status" aria-live="polite">
   <div class="ent-gate-inner">
     <div class="ent-gate-logo">
       <img src="img/logo.png" alt="FIXEO" height="36"
            onerror="this.style.display='none';var s=document.createElement('span');s.textContent='FIXEO';s.style.cssText='font-size:1.4rem;font-weight:800;color:#E1306C';this.parentNode.appendChild(s)">
     </div>
-    <div class="ent-gate-spinner" aria-label="Chargement…"></div>
+    <div class="ent-gate-spinner" aria-label="Chargement…" aria-hidden="true"></div>
     <p class="ent-gate-msg" id="ent-gate-msg">Vérification de la session…</p>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════════════════
-     ACCESS DENIED — shown if not an enterprise member
-     ════════════════════════════════════════════════════════════ -->
-<div id="ent-access-denied" class="ent-gate-screen" style="display:none">
+<!-- ══════════════════════════════════════════════════════════
+     ACCESS DENIED
+     ══════════════════════════════════════════════════════════ -->
+<div id="ent-access-denied" class="ent-gate-screen" style="display:none" role="alert">
   <div class="ent-gate-inner">
     <div class="ent-gate-logo">
       <img src="img/logo.png" alt="FIXEO" height="36"
            onerror="this.style.display='none';var s=document.createElement('span');s.textContent='FIXEO';s.style.cssText='font-size:1.4rem;font-weight:800;color:#E1306C';this.parentNode.appendChild(s)">
     </div>
-    <div class="ent-denied-icon">🔒</div>
+    <div class="ent-denied-icon" aria-hidden="true">🔒</div>
     <h1 class="ent-denied-title">Accès non autorisé</h1>
     <p class="ent-denied-sub" id="ent-denied-reason">Vous n'êtes pas membre d'un compte entreprise actif.</p>
     <a href="auth.html" class="fxv2-btn fxv2-btn-primary" style="margin-top:16px">Se connecter</a>
@@ -69,9 +66,9 @@
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════════════════
-     ENTERPRISE SELECTOR — shown if member of multiple enterprises
-     ════════════════════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════
+     ENTERPRISE SELECTOR — multiple memberships
+     ══════════════════════════════════════════════════════════ -->
 <div id="ent-selector" class="ent-gate-screen" style="display:none">
   <div class="ent-gate-inner ent-selector-inner">
     <div class="ent-gate-logo">
@@ -79,185 +76,327 @@
            onerror="this.style.display='none';var s=document.createElement('span');s.textContent='FIXEO';s.style.cssText='font-size:1.4rem;font-weight:800;color:#E1306C';this.parentNode.appendChild(s)">
     </div>
     <h2 class="ent-selector-title">Choisissez votre compte entreprise</h2>
-    <div id="ent-selector-list" class="ent-selector-list"></div>
+    <div id="ent-selector-list" class="ent-selector-list" role="list"></div>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════════════════
-     MAIN DASHBOARD — hidden until auth + membership confirmed
-     ════════════════════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════
+     MAIN DASHBOARD
+     ══════════════════════════════════════════════════════════ -->
 <div id="ent-dashboard" style="display:none">
 
-  <!-- HEADER -->
-  <header class="fxv2-header">
+  <!-- TOP HEADER -->
+  <header class="fxv2-header" role="banner">
     <button class="fxv2-hamburger" id="ent-hamburger"
-            aria-label="Ouvrir le menu" aria-expanded="false"
+            aria-label="Ouvrir le menu de navigation" aria-expanded="false"
             aria-controls="ent-sidebar">
-      <span></span><span></span><span></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
     </button>
-    <div class="fxv2-header-logo">FIXEO Entreprise</div>
-    <div id="ent-header-role-badge" class="ent-role-badge-header"></div>
+    <div class="fxv2-header-logo" aria-label="FIXEO Entreprise">
+      <span aria-hidden="true">FIXEO</span>
+      <span class="ent-header-workspace-label">Entreprise</span>
+    </div>
+    <div class="ent-header-right">
+      <span id="ent-header-role-badge" class="ent-role-badge-header" aria-label="Votre rôle"></span>
+      <button class="ent-header-ent-btn" id="ent-header-ent-btn" aria-label="Changer d'entreprise" title="Changer d'entreprise">
+        <span id="ent-header-ent-name" class="ent-header-ent-name">—</span>
+        <span class="ent-header-ent-icon" aria-hidden="true">▾</span>
+      </button>
+    </div>
   </header>
 
-  <!-- SIDEBAR OVERLAY (mobile) -->
-  <div class="fxv2-overlay" id="ent-overlay"></div>
+  <!-- MOBILE OVERLAY -->
+  <div class="fxv2-overlay" id="ent-overlay" aria-hidden="true"></div>
 
   <!-- SIDEBAR -->
-  <aside class="fxv2-sidebar" id="ent-sidebar" aria-hidden="true">
+  <aside class="fxv2-sidebar" id="ent-sidebar" aria-label="Navigation principale" aria-hidden="true">
     <div class="fxv2-sidebar-profile">
-      <div class="fxv2-sidebar-avatar" id="ent-sb-avatar">🏢</div>
-      <div>
+      <div class="fxv2-sidebar-avatar" id="ent-sb-avatar" aria-hidden="true">🏢</div>
+      <div class="fxv2-sidebar-profile-info">
         <div class="fxv2-sidebar-name" id="ent-sb-name">Chargement…</div>
-        <div class="fxv2-sidebar-sub"  id="ent-sb-enterprise">—</div>
-        <div class="fxv2-sidebar-sub"  id="ent-sb-role" style="margin-top:2px;font-size:.7rem;color:var(--v2-primary)"></div>
+        <div class="fxv2-sidebar-sub" id="ent-sb-enterprise">—</div>
+        <div class="fxv2-sidebar-sub ent-sb-role-label" id="ent-sb-role"></div>
       </div>
     </div>
 
-    <nav class="fxv2-nav" role="navigation" aria-label="Navigation principale">
-      <button class="fxv2-nav-link active" data-section="requests" id="nav-requests">
-        <span class="icon">📋</span> Mes demandes
+    <nav class="fxv2-nav" role="navigation" aria-label="Sections du tableau de bord">
+      <button class="fxv2-nav-link active" data-section="overview" id="nav-overview" aria-current="page">
+        <span class="icon" aria-hidden="true">⚡</span> Vue d'ensemble
+        <span class="nav-attention-badge" id="nav-badge-overview" style="display:none" aria-label="Actions requises"></span>
+      </button>
+      <button class="fxv2-nav-link" data-section="requests" id="nav-requests">
+        <span class="icon" aria-hidden="true">📋</span> Interventions
+        <span class="nav-attention-badge" id="nav-badge-requests" style="display:none"></span>
       </button>
       <button class="fxv2-nav-link" data-section="new-request" id="nav-new-request">
-        <span class="icon">➕</span> Nouvelle demande
+        <span class="icon" aria-hidden="true">➕</span> Nouvelle demande
       </button>
       <button class="fxv2-nav-link" data-section="sites" id="nav-sites">
-        <span class="icon">🏗️</span> Mes sites
+        <span class="icon" aria-hidden="true">🏗️</span> Sites
+      </button>
+      <button class="fxv2-nav-link" data-section="members" id="nav-members">
+        <span class="icon" aria-hidden="true">👥</span> Membres
+      </button>
+      <button class="fxv2-nav-link" data-section="history" id="nav-history">
+        <span class="icon" aria-hidden="true">📊</span> Historique
+      </button>
+      <button class="fxv2-nav-link" data-section="account" id="nav-account">
+        <span class="icon" aria-hidden="true">⚙️</span> Compte
       </button>
     </nav>
 
     <div class="fxv2-sidebar-footer">
-      <button class="fxv2-logout-btn" id="ent-logout-btn">
-        Déconnexion
+      <button class="fxv2-logout-btn" id="ent-logout-btn" aria-label="Se déconnecter">
+        <span aria-hidden="true">↩</span> Déconnexion
       </button>
     </div>
   </aside>
 
   <!-- MAIN CONTENT -->
-  <main class="fxv2-main" id="ent-main" role="main">
+  <main class="fxv2-main" id="ent-main" role="main" aria-live="polite" aria-atomic="false">
 
-    <!-- ── SECTION: Requests List ───────────────────────── -->
-    <section class="fxv2-section active" id="section-requests">
-      <div class="fxv2-page-title">
-        Mes demandes
-        <div class="fxv2-page-subtitle" id="requests-subtitle">Toutes les demandes de votre organisation</div>
-      </div>
+    <!-- ═══════════════════════════════════════════════════════
+         SECTION: OVERVIEW — Command Center
+         ═══════════════════════════════════════════════════════ -->
+    <section class="fxv2-section active" id="section-overview" aria-label="Vue d'ensemble opérationnelle">
 
-      <!-- KPI Bar -->
-      <div class="fxv2-kpi-bar" id="requests-kpi-bar">
-        <div class="fxv2-kpi">
-          <div class="fxv2-kpi-val loading" id="kpi-total"></div>
-          <div class="fxv2-kpi-label">Total (30j)</div>
+      <div class="ent-section-head">
+        <div>
+          <h1 class="fxv2-page-title">Centre Opérations</h1>
+          <div class="fxv2-page-subtitle" id="ov-subtitle">Vue temps réel de vos interventions</div>
         </div>
-        <div class="fxv2-kpi">
-          <div class="fxv2-kpi-val loading" id="kpi-active"></div>
-          <div class="fxv2-kpi-label">En cours</div>
-        </div>
-        <div class="fxv2-kpi">
-          <div class="fxv2-kpi-val loading" id="kpi-done"></div>
-          <div class="fxv2-kpi-label">Terminées</div>
-        </div>
-        <div class="fxv2-kpi">
-          <div class="fxv2-kpi-val loading" id="kpi-nomatch"></div>
-          <div class="fxv2-kpi-label">Sans artisan</div>
-        </div>
-      </div>
-
-      <!-- Filters -->
-      <div class="ent-filters" id="requests-filters">
-        <select class="ent-filter-select" id="filter-site" aria-label="Filtrer par site">
-          <option value="">Tous les sites</option>
-        </select>
-        <select class="ent-filter-select" id="filter-status" aria-label="Filtrer par statut">
-          <option value="">Tous les statuts</option>
-          <option value="new">Recherche artisan</option>
-          <option value="assigned">Artisan trouvé</option>
-          <option value="in_progress">En cours</option>
-          <option value="completed">Terminé</option>
-          <option value="validated">Validé</option>
-          <option value="cancelled">Annulé</option>
-          <option value="no_match">Sans correspondance</option>
-        </select>
-        <button class="fxv2-btn fxv2-btn-ghost ent-filter-reset" id="filter-reset" style="display:none">
-          Réinitialiser
+        <button class="ent-action-btn ent-action-primary" onclick="EntDashboard.goTo('new-request')"
+                aria-label="Créer une nouvelle demande d'intervention">
+          <span aria-hidden="true">➕</span> Nouvelle demande
         </button>
       </div>
 
-      <!-- Request list -->
-      <div id="requests-list" class="fxv2-card-list">
-        <!-- Skeleton loading -->
-        <div class="fxv2-skeleton-card ent-skel-item">
-          <div class="fxv2-skel fxv2-skel-title"></div>
-          <div class="fxv2-skel fxv2-skel-line"></div>
-          <div class="fxv2-skel fxv2-skel-badge" style="margin-top:8px"></div>
+      <!-- ACTION REQUIRED BLOCK -->
+      <div id="ov-action-required" class="ent-action-required-block" style="display:none" role="alert" aria-live="assertive">
+        <div class="ent-ar-header">
+          <span class="ent-ar-icon" aria-hidden="true">🔴</span>
+          <span class="ent-ar-title">Action requise</span>
+          <span class="ent-ar-count" id="ov-ar-count"></span>
         </div>
-        <div class="fxv2-skeleton-card ent-skel-item">
-          <div class="fxv2-skel fxv2-skel-title"></div>
-          <div class="fxv2-skel fxv2-skel-line"></div>
-          <div class="fxv2-skel fxv2-skel-badge" style="margin-top:8px"></div>
+        <div id="ov-ar-items" class="ent-ar-items" role="list"></div>
+      </div>
+
+      <!-- RAFI OPERATIONS SUMMARY -->
+      <div id="ov-rafi-summary" class="ent-rafi-ops-block" style="display:none" aria-label="Analyse RAFI de l'activité">
+        <div class="ent-rafi-ops-header">
+          <span class="rafi-badge" aria-hidden="true">RAFI</span>
+          <span class="ent-rafi-ops-title">Analyse opérationnelle</span>
+          <span class="ent-rafi-ops-ts" id="ov-rafi-ts"></span>
         </div>
-        <div class="fxv2-skeleton-card ent-skel-item">
-          <div class="fxv2-skel fxv2-skel-title"></div>
-          <div class="fxv2-skel fxv2-skel-line"></div>
-          <div class="fxv2-skel fxv2-skel-badge" style="margin-top:8px"></div>
+        <div id="ov-rafi-lines" class="ent-rafi-ops-lines" aria-live="polite"></div>
+      </div>
+
+      <!-- KPI GRID — 6 cards -->
+      <div class="ent-kpi-grid" role="region" aria-label="Indicateurs opérationnels">
+        <div class="ent-kpi-card ent-kpi-total">
+          <div class="ent-kpi-val loading" id="kpi-total" aria-label="Total interventions 30 jours">—</div>
+          <div class="ent-kpi-label">Interventions (30j)</div>
+        </div>
+        <div class="ent-kpi-card ent-kpi-attention">
+          <div class="ent-kpi-val loading" id="kpi-action" aria-label="Requièrent une action">—</div>
+          <div class="ent-kpi-label">Action requise</div>
+        </div>
+        <div class="ent-kpi-card ent-kpi-active">
+          <div class="ent-kpi-val loading" id="kpi-active" aria-label="En cours">—</div>
+          <div class="ent-kpi-label">En cours</div>
+        </div>
+        <div class="ent-kpi-card ent-kpi-pending">
+          <div class="ent-kpi-val loading" id="kpi-pending" aria-label="En attente artisan">—</div>
+          <div class="ent-kpi-label">En attente</div>
+        </div>
+        <div class="ent-kpi-card ent-kpi-done">
+          <div class="ent-kpi-val loading" id="kpi-done" aria-label="Terminées">—</div>
+          <div class="ent-kpi-label">Terminées</div>
+        </div>
+        <div class="ent-kpi-card ent-kpi-nomatch">
+          <div class="ent-kpi-val loading" id="kpi-nomatch" aria-label="Sans artisan">—</div>
+          <div class="ent-kpi-label">Sans artisan</div>
         </div>
       </div>
 
-      <!-- Load more -->
+      <!-- TWO COLUMNS: Recent Activity + Sites Snapshot -->
+      <div class="ent-ov-cols">
+
+        <!-- LEFT: Recent interventions -->
+        <div class="ent-ov-col-main">
+          <div class="ent-col-header">
+            <h2 class="ent-col-title">Activité récente</h2>
+            <button class="ent-col-link" onclick="EntDashboard.goTo('requests')">Tout voir →</button>
+          </div>
+          <div id="ov-recent-list" class="fxv2-card-list ent-ov-recent-list" aria-live="polite">
+            <div class="fxv2-skeleton-card"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
+            <div class="fxv2-skeleton-card"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
+            <div class="fxv2-skeleton-card"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
+          </div>
+          <div id="ov-recent-empty" class="fxv2-empty" style="display:none">
+            <div class="fxv2-empty-icon" aria-hidden="true">📋</div>
+            <div class="fxv2-empty-title">Aucune intervention</div>
+            <div class="fxv2-empty-sub">Créez votre première demande pour démarrer.</div>
+            <button class="fxv2-btn fxv2-btn-primary" onclick="EntDashboard.goTo('new-request')">Nouvelle demande</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: Sites snapshot -->
+        <div class="ent-ov-col-aside">
+          <div class="ent-col-header">
+            <h2 class="ent-col-title">Sites actifs</h2>
+            <button class="ent-col-link" onclick="EntDashboard.goTo('sites')">Gérer →</button>
+          </div>
+          <div id="ov-sites-snap" class="ent-sites-snap" aria-live="polite">
+            <div class="fxv2-skeleton-card"><div class="fxv2-skel fxv2-skel-title"></div></div>
+            <div class="fxv2-skeleton-card"><div class="fxv2-skel fxv2-skel-title"></div></div>
+          </div>
+          <div id="ov-sites-empty" style="display:none" class="ent-snap-empty">Aucun site enregistré.</div>
+        </div>
+
+      </div><!-- /.ent-ov-cols -->
+
+      <!-- Polling indicator -->
+      <div class="ent-refresh-hint" id="ov-refresh-hint" aria-live="polite" aria-atomic="true"></div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SECTION: REQUESTS CENTER
+         ═══════════════════════════════════════════════════════ -->
+    <section class="fxv2-section" id="section-requests" aria-label="Centre des interventions">
+
+      <div class="ent-section-head">
+        <div>
+          <h1 class="fxv2-page-title">Interventions</h1>
+          <div class="fxv2-page-subtitle" id="requests-subtitle">Toutes les demandes de votre organisation</div>
+        </div>
+        <button class="ent-action-btn ent-action-primary" onclick="EntDashboard.goTo('new-request')">
+          <span aria-hidden="true">➕</span> Nouvelle
+        </button>
+      </div>
+
+      <!-- STATUS TABS -->
+      <div class="ent-status-tabs" role="tablist" aria-label="Filtrer par statut">
+        <button class="ent-status-tab active" role="tab" aria-selected="true" data-status-tab="" id="tab-all">
+          Toutes <span class="ent-tab-count" id="tab-count-all"></span>
+        </button>
+        <button class="ent-status-tab" role="tab" aria-selected="false" data-status-tab="new" id="tab-new">
+          Attente <span class="ent-tab-count" id="tab-count-new"></span>
+        </button>
+        <button class="ent-status-tab" role="tab" aria-selected="false" data-status-tab="in_progress" id="tab-progress">
+          En cours <span class="ent-tab-count" id="tab-count-progress"></span>
+        </button>
+        <button class="ent-status-tab" role="tab" aria-selected="false" data-status-tab="completed" id="tab-completed">
+          À valider <span class="ent-tab-count" id="tab-count-completed"></span>
+        </button>
+        <button class="ent-status-tab" role="tab" aria-selected="false" data-status-tab="validated" id="tab-validated">
+          Validées <span class="ent-tab-count" id="tab-count-validated"></span>
+        </button>
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="ent-filter-bar" role="search" aria-label="Filtres des interventions">
+        <div class="ent-filter-row">
+          <div class="ent-search-wrap">
+            <span class="ent-search-icon" aria-hidden="true">🔍</span>
+            <input type="search" class="ent-search-input" id="req-search"
+                   placeholder="Rechercher…" aria-label="Rechercher une intervention"
+                   autocomplete="off" maxlength="120">
+          </div>
+          <select class="ent-filter-select" id="filter-site" aria-label="Filtrer par site">
+            <option value="">Tous les sites</option>
+          </select>
+          <select class="ent-filter-select" id="filter-urgency" aria-label="Filtrer par urgence">
+            <option value="">Toutes urgences</option>
+            <option value="now">🚨 Immédiat</option>
+            <option value="urgent">⚡ Urgent</option>
+          </select>
+          <button class="ent-filter-reset-btn" id="filter-reset" style="display:none"
+                  aria-label="Réinitialiser les filtres">✕ Réinitialiser</button>
+        </div>
+      </div>
+
+      <!-- REQUESTS LIST -->
+      <div id="requests-list" class="fxv2-card-list" role="list" aria-label="Liste des interventions">
+        <div class="fxv2-skeleton-card ent-skel-item" role="listitem"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div><div class="fxv2-skel fxv2-skel-badge" style="margin-top:8px"></div></div>
+        <div class="fxv2-skeleton-card ent-skel-item" role="listitem"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div><div class="fxv2-skel fxv2-skel-badge" style="margin-top:8px"></div></div>
+        <div class="fxv2-skeleton-card ent-skel-item" role="listitem"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div><div class="fxv2-skel fxv2-skel-badge" style="margin-top:8px"></div></div>
+      </div>
+
       <div style="text-align:center;margin-top:20px;display:none" id="load-more-wrap">
-        <button class="fxv2-btn fxv2-btn-ghost" id="load-more-btn">
+        <button class="fxv2-btn fxv2-btn-ghost" id="load-more-btn" aria-label="Charger plus d'interventions">
           Charger plus
         </button>
       </div>
 
-      <!-- Empty state -->
-      <div class="fxv2-empty" id="requests-empty" style="display:none">
-        <div class="fxv2-empty-icon">📋</div>
-        <div class="fxv2-empty-title">Aucune demande pour le moment</div>
-        <div class="fxv2-empty-sub">Créez votre première demande pour démarrer une intervention.</div>
+      <div class="fxv2-empty" id="requests-empty" style="display:none" role="status">
+        <div class="fxv2-empty-icon" aria-hidden="true">📋</div>
+        <div class="fxv2-empty-title">Aucune intervention</div>
+        <div class="fxv2-empty-sub" id="requests-empty-sub">Créez votre première demande pour démarrer.</div>
         <button class="fxv2-btn fxv2-btn-primary" onclick="EntDashboard.goTo('new-request')">
           Nouvelle demande
         </button>
       </div>
 
-      <!-- Error state -->
-      <div class="ent-error" id="requests-error" style="display:none">
-        <span class="ent-error-icon">⚠️</span>
+      <div class="ent-error" id="requests-error" style="display:none" role="alert">
+        <span class="ent-error-icon" aria-hidden="true">⚠️</span>
         <span id="requests-error-msg">Erreur de chargement.</span>
-        <button class="fxv2-btn fxv2-btn-ghost" id="requests-retry-btn" style="margin-top:10px">
-          Réessayer
+        <button class="fxv2-btn fxv2-btn-ghost" id="requests-retry-btn" style="margin-top:10px">Réessayer</button>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SECTION: REQUEST DETAIL (slide-in panel)
+         ═══════════════════════════════════════════════════════ -->
+    <section class="fxv2-section" id="section-request-detail" aria-label="Détail de l'intervention">
+      <div class="ent-detail-back-bar">
+        <button class="ent-back-btn" id="detail-back-btn" aria-label="Retour à la liste des interventions">
+          <span aria-hidden="true">←</span> Retour
         </button>
+        <span class="ent-detail-back-title" id="detail-back-title">Intervention</span>
+      </div>
+
+      <div id="request-detail-content" class="ent-detail-content">
+        <!-- Injected by JS -->
+        <div class="fxv2-skeleton-card"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div><div class="fxv2-skel fxv2-skel-line" style="width:60%"></div></div>
       </div>
     </section>
 
-    <!-- ── SECTION: New Request Form ──────────────────────── -->
-    <section class="fxv2-section" id="section-new-request">
-      <div class="fxv2-page-title">
-        Nouvelle demande
-        <div class="fxv2-page-subtitle">Créer une intervention pour un site de votre organisation</div>
+    <!-- ═══════════════════════════════════════════════════════
+         SECTION: NEW REQUEST FORM
+         ═══════════════════════════════════════════════════════ -->
+    <section class="fxv2-section" id="section-new-request" aria-label="Créer une nouvelle demande">
+
+      <div class="ent-section-head">
+        <div>
+          <h1 class="fxv2-page-title">Nouvelle demande</h1>
+          <div class="fxv2-page-subtitle">Créer une intervention pour un site de votre organisation</div>
+        </div>
       </div>
 
-      <!-- Viewer role: read-only notice -->
-      <div class="ent-viewer-notice" id="viewer-notice" style="display:none">
-        <span>🔒</span>
+      <!-- Viewer notice -->
+      <div class="ent-viewer-notice" id="viewer-notice" style="display:none" role="alert">
+        <span aria-hidden="true">🔒</span>
         <div>
           <strong>Accès en lecture seule</strong>
-          <p>Votre rôle <em>Lecteur</em> ne permet pas de créer des demandes. Contactez votre administrateur entreprise.</p>
+          <p>Votre rôle <em>Lecteur</em> ne permet pas de créer des demandes. Contactez votre administrateur.</p>
         </div>
       </div>
 
       <div id="new-request-form-wrap">
-        <!-- Global form error -->
-        <div class="ent-form-error" id="form-error" style="display:none" role="alert"></div>
-
-        <!-- Global form success -->
-        <div class="ent-form-success" id="form-success" style="display:none" role="status">
-          <span>✅</span>
+        <div class="ent-form-error" id="form-error" style="display:none" role="alert" aria-live="assertive"></div>
+        <div class="ent-form-success" id="form-success" style="display:none" role="status" aria-live="polite">
+          <span aria-hidden="true">✅</span>
           <div>
-            <strong>Demande créée avec succès !</strong>
-            <p>Demande créée. RAFI lance la recherche selon le système FIXEO.</p>
+            <strong>Demande créée avec succès !</strong>
+            <p>FIXEO lance la recherche d'artisan selon votre demande.</p>
           </div>
           <button class="fxv2-btn fxv2-btn-ghost ent-success-dismiss" id="form-success-view">
-            Voir mes demandes
+            Voir mes interventions →
           </button>
         </div>
 
@@ -266,88 +405,95 @@
           <!-- Site -->
           <div class="ent-form-group">
             <label class="ent-form-label" for="req-site">
-              Site <span class="ent-form-required">*</span>
+              Site <span class="ent-form-required" aria-label="obligatoire">*</span>
             </label>
-            <select class="ent-form-select" id="req-site" name="site_id" required aria-required="true">
+            <select class="ent-form-select" id="req-site" name="site_id"
+                    required aria-required="true" aria-describedby="site-hint">
               <option value="">Chargement des sites…</option>
             </select>
-            <div class="ent-form-hint" id="site-hint"></div>
+            <div class="ent-form-hint" id="site-hint" aria-live="polite"></div>
           </div>
 
-          <!-- Service Category -->
+          <!-- Category -->
           <div class="ent-form-group">
             <label class="ent-form-label" for="req-category">
-              Catégorie de service <span class="ent-form-required">*</span>
+              Catégorie <span class="ent-form-required" aria-label="obligatoire">*</span>
             </label>
-            <select class="ent-form-select" id="req-category" name="service_category" required aria-required="true">
+            <select class="ent-form-select" id="req-category" name="service_category"
+                    required aria-required="true" aria-describedby="category-error">
               <option value="">Sélectionnez une catégorie</option>
               <option value="plomberie">🔧 Plomberie</option>
               <option value="electricite">⚡ Électricité</option>
               <option value="serrurerie">🔑 Serrurerie</option>
+              <option value="climatisation">❄️ Climatisation</option>
               <option value="peinture">🎨 Peinture</option>
               <option value="nettoyage">🧹 Nettoyage</option>
               <option value="maconnerie">🧱 Maçonnerie</option>
               <option value="menuiserie">🪵 Menuiserie</option>
-              <option value="climatisation">❄️ Climatisation</option>
               <option value="carrelage">🔲 Carrelage</option>
               <option value="jardinage">🌿 Jardinage</option>
               <option value="bricolage">🔩 Bricolage</option>
               <option value="demenagement">📦 Déménagement</option>
               <option value="autre">📋 Autre</option>
             </select>
-            <!-- Free-text fallback for "autre" -->
             <input class="ent-form-input" id="req-category-other" type="text"
                    placeholder="Précisez la catégorie…" style="display:none;margin-top:8px"
-                   maxlength="120" autocomplete="off">
-            <div class="ent-form-hint ent-form-error-msg" id="category-error" style="display:none"></div>
+                   maxlength="120" autocomplete="off" aria-label="Précisez la catégorie">
+            <div class="ent-form-hint ent-form-error-msg" id="category-error"
+                 style="display:none" role="alert" aria-live="assertive"></div>
           </div>
 
           <!-- Description -->
           <div class="ent-form-group">
             <label class="ent-form-label" for="req-desc">
-              Description <span class="ent-form-required">*</span>
+              Description <span class="ent-form-required" aria-label="obligatoire">*</span>
             </label>
             <textarea class="ent-form-textarea" id="req-desc" name="description"
                       rows="4" required aria-required="true"
-                      placeholder="Décrivez le problème ou le besoin…"
+                      aria-describedby="desc-chars desc-error"
+                      placeholder="Décrivez le problème ou le besoin en détail…"
                       maxlength="2000"></textarea>
             <div class="ent-form-hint ent-char-count">
               <span id="desc-chars">0</span>/2000 caractères
             </div>
-            <div class="ent-form-hint ent-form-error-msg" id="desc-error" style="display:none"></div>
+            <div class="ent-form-hint ent-form-error-msg" id="desc-error"
+                 style="display:none" role="alert" aria-live="assertive"></div>
           </div>
 
-          <!-- RAFI Intelligence Hint (injected by JS when available) -->
+          <!-- RAFI Intelligence -->
           <div id="rafi-form-hint" class="rafi-hint-block" style="display:none"
                role="status" aria-live="polite" aria-label="Analyse RAFI"></div>
 
           <!-- Urgency -->
           <div class="ent-form-group">
-            <label class="ent-form-label" for="req-urgency">Urgence</label>
-            <div class="ent-urgency-grid" id="urgency-grid">
-              <button type="button" class="ent-urgency-btn active" data-value="">
-                <span class="ent-urg-icon">📅</span>
+            <label class="ent-form-label" id="urgency-label">Urgence</label>
+            <div class="ent-urgency-grid" id="urgency-grid" role="group" aria-labelledby="urgency-label">
+              <button type="button" class="ent-urgency-btn active" data-value=""
+                      aria-pressed="true" aria-label="Urgence normale">
+                <span class="ent-urg-icon" aria-hidden="true">📅</span>
                 <span class="ent-urg-label">Normale</span>
                 <span class="ent-urg-sub">Dans les jours qui viennent</span>
               </button>
-              <button type="button" class="ent-urgency-btn" data-value="urgent">
-                <span class="ent-urg-icon">⚡</span>
+              <button type="button" class="ent-urgency-btn" data-value="urgent"
+                      aria-pressed="false" aria-label="Urgence : aujourd'hui si possible">
+                <span class="ent-urg-icon" aria-hidden="true">⚡</span>
                 <span class="ent-urg-label">Urgent</span>
                 <span class="ent-urg-sub">Aujourd'hui si possible</span>
               </button>
-              <button type="button" class="ent-urgency-btn" data-value="now">
-                <span class="ent-urg-icon">🚨</span>
+              <button type="button" class="ent-urgency-btn" data-value="now"
+                      aria-pressed="false" aria-label="Urgence immédiate : intervention requise maintenant">
+                <span class="ent-urg-icon" aria-hidden="true">🚨</span>
                 <span class="ent-urg-label">Immédiat</span>
                 <span class="ent-urg-sub">Intervention immédiate requise</span>
               </button>
             </div>
           </div>
 
-          <!-- Submit -->
+          <!-- Actions -->
           <div class="ent-form-actions">
             <button type="submit" class="fxv2-btn fxv2-btn-primary ent-submit-btn" id="req-submit">
               <span id="req-submit-text">Créer la demande</span>
-              <span id="req-submit-spinner" class="ent-btn-spinner" style="display:none"></span>
+              <span id="req-submit-spinner" class="ent-btn-spinner" style="display:none" aria-hidden="true"></span>
             </button>
             <button type="button" class="fxv2-btn fxv2-btn-ghost" id="req-cancel-btn">
               Annuler
@@ -358,60 +504,214 @@
       </div>
     </section>
 
-    <!-- ── SECTION: Sites ──────────────────────────────────── -->
-    <section class="fxv2-section" id="section-sites">
-      <div class="fxv2-page-title">
-        Mes sites
-        <div class="fxv2-page-subtitle">Sites enregistrés pour votre organisation</div>
-      </div>
+    <!-- ═══════════════════════════════════════════════════════
+         SECTION: SITES
+         ═══════════════════════════════════════════════════════ -->
+    <section class="fxv2-section" id="section-sites" aria-label="Sites de l'organisation">
 
-      <div id="sites-list" class="fxv2-card-list">
-        <div class="fxv2-skeleton-card ent-skel-item">
-          <div class="fxv2-skel fxv2-skel-title"></div>
-          <div class="fxv2-skel fxv2-skel-line"></div>
-        </div>
-        <div class="fxv2-skeleton-card ent-skel-item">
-          <div class="fxv2-skel fxv2-skel-title"></div>
-          <div class="fxv2-skel fxv2-skel-line"></div>
+      <div class="ent-section-head">
+        <div>
+          <h1 class="fxv2-page-title">Sites</h1>
+          <div class="fxv2-page-subtitle">Sites enregistrés pour votre organisation</div>
         </div>
       </div>
 
-      <div class="fxv2-empty" id="sites-empty" style="display:none">
-        <div class="fxv2-empty-icon">🏗️</div>
+      <div id="sites-list" class="ent-sites-grid" role="list">
+        <div class="fxv2-skeleton-card" role="listitem"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
+        <div class="fxv2-skeleton-card" role="listitem"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
+      </div>
+
+      <div class="fxv2-empty" id="sites-empty" style="display:none" role="status">
+        <div class="fxv2-empty-icon" aria-hidden="true">🏗️</div>
         <div class="fxv2-empty-title">Aucun site enregistré</div>
         <div class="fxv2-empty-sub">Contactez votre administrateur FIXEO pour ajouter des sites.</div>
       </div>
-
-      <div class="ent-error" id="sites-error" style="display:none">
-        <span class="ent-error-icon">⚠️</span>
+      <div class="ent-error" id="sites-error" style="display:none" role="alert">
+        <span class="ent-error-icon" aria-hidden="true">⚠️</span>
         <span id="sites-error-msg">Erreur de chargement des sites.</span>
-        <button class="fxv2-btn fxv2-btn-ghost" id="sites-retry-btn" style="margin-top:10px">
-          Réessayer
+        <button class="fxv2-btn fxv2-btn-ghost" id="sites-retry-btn" style="margin-top:10px">Réessayer</button>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SECTION: SITE DETAIL
+         ═══════════════════════════════════════════════════════ -->
+    <section class="fxv2-section" id="section-site-detail" aria-label="Détail du site">
+      <div class="ent-detail-back-bar">
+        <button class="ent-back-btn" id="site-detail-back-btn" aria-label="Retour à la liste des sites">
+          <span aria-hidden="true">←</span> Sites
         </button>
+        <span class="ent-detail-back-title" id="site-detail-back-title">Site</span>
+      </div>
+      <div id="site-detail-content" class="ent-detail-content">
+        <div class="fxv2-skeleton-card"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
       </div>
     </section>
 
-  </main>
+    <!-- ═══════════════════════════════════════════════════════
+         SECTION: MEMBERS
+         ═══════════════════════════════════════════════════════ -->
+    <section class="fxv2-section" id="section-members" aria-label="Membres de l'organisation">
 
-  <!-- BOTTOM NAV (mobile) -->
-  <nav class="fxv2-bottom-nav" aria-label="Navigation mobile">
-    <button class="fxv2-bottom-btn active" data-section="requests" id="bnav-requests">
-      <span class="bicon">📋</span>
+      <div class="ent-section-head">
+        <div>
+          <h1 class="fxv2-page-title">Membres</h1>
+          <div class="fxv2-page-subtitle">Annuaire des membres de votre organisation</div>
+        </div>
+      </div>
+
+      <!-- Role gate notice: shown for roles that cannot view members -->
+      <div id="members-role-gate" style="display:none" class="ent-info-notice" role="status">
+        <span aria-hidden="true">ℹ️</span>
+        <span>La liste des membres est réservée aux administrateurs et propriétaires. Contactez votre administrateur.</span>
+      </div>
+
+      <div id="members-list" class="fxv2-card-list" role="list" aria-label="Liste des membres">
+        <div class="fxv2-skeleton-card" role="listitem"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
+        <div class="fxv2-skeleton-card" role="listitem"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
+      </div>
+
+      <div class="fxv2-empty" id="members-empty" style="display:none" role="status">
+        <div class="fxv2-empty-icon" aria-hidden="true">👥</div>
+        <div class="fxv2-empty-title">Aucun membre</div>
+        <div class="fxv2-empty-sub">Aucun membre actif trouvé.</div>
+      </div>
+      <div class="ent-error" id="members-error" style="display:none" role="alert">
+        <span class="ent-error-icon" aria-hidden="true">⚠️</span>
+        <span id="members-error-msg">Erreur de chargement.</span>
+        <button class="fxv2-btn fxv2-btn-ghost" id="members-retry-btn" style="margin-top:10px">Réessayer</button>
+      </div>
+
+      <!-- Future: invite/remove members — FUTURE CONTRACT REQUIRED -->
+      <div class="ent-future-note" id="members-mutation-note" style="display:none" aria-hidden="true">
+        <span aria-hidden="true">🔮</span> Inviter / modifier les membres — disponible prochainement.
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SECTION: HISTORY
+         ═══════════════════════════════════════════════════════ -->
+    <section class="fxv2-section" id="section-history" aria-label="Historique des interventions">
+
+      <div class="ent-section-head">
+        <div>
+          <h1 class="fxv2-page-title">Historique</h1>
+          <div class="fxv2-page-subtitle">Interventions terminées et validées</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="ent-filter-bar" role="search" aria-label="Filtres de l'historique">
+        <div class="ent-filter-row">
+          <select class="ent-filter-select" id="hist-filter-site" aria-label="Filtrer par site">
+            <option value="">Tous les sites</option>
+          </select>
+          <select class="ent-filter-select" id="hist-filter-status" aria-label="Filtrer par statut">
+            <option value="">Tous les statuts</option>
+            <option value="completed">Terminé</option>
+            <option value="validated">Validé</option>
+            <option value="cancelled">Annulé</option>
+            <option value="no_match">Sans artisan</option>
+          </select>
+          <button class="ent-filter-reset-btn" id="hist-reset" style="display:none"
+                  aria-label="Réinitialiser les filtres historique">✕ Réinitialiser</button>
+        </div>
+      </div>
+
+      <div id="history-list" class="fxv2-card-list" role="list" aria-label="Historique des interventions">
+        <div class="fxv2-skeleton-card" role="listitem"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
+        <div class="fxv2-skeleton-card" role="listitem"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;display:none" id="hist-load-more-wrap">
+        <button class="fxv2-btn fxv2-btn-ghost" id="hist-load-more-btn">Charger plus</button>
+      </div>
+
+      <div class="fxv2-empty" id="history-empty" style="display:none" role="status">
+        <div class="fxv2-empty-icon" aria-hidden="true">📊</div>
+        <div class="fxv2-empty-title">Aucun historique</div>
+        <div class="fxv2-empty-sub">Les interventions terminées et validées apparaîtront ici.</div>
+      </div>
+      <div class="ent-error" id="history-error" style="display:none" role="alert">
+        <span class="ent-error-icon" aria-hidden="true">⚠️</span>
+        <span id="history-error-msg">Erreur de chargement.</span>
+        <button class="fxv2-btn fxv2-btn-ghost" id="history-retry-btn" style="margin-top:10px">Réessayer</button>
+      </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SECTION: ACCOUNT
+         ═══════════════════════════════════════════════════════ -->
+    <section class="fxv2-section" id="section-account" aria-label="Informations du compte entreprise">
+
+      <div class="ent-section-head">
+        <div>
+          <h1 class="fxv2-page-title">Compte</h1>
+          <div class="fxv2-page-subtitle">Informations de votre compte entreprise</div>
+        </div>
+      </div>
+
+      <div id="account-content" class="ent-account-content">
+        <div class="fxv2-skeleton-card"><div class="fxv2-skel fxv2-skel-title"></div><div class="fxv2-skel fxv2-skel-line"></div></div>
+      </div>
+
+      <div class="ent-account-actions">
+        <button class="fxv2-btn fxv2-btn-ghost" id="account-logout-btn" aria-label="Se déconnecter">
+          <span aria-hidden="true">↩</span> Déconnexion
+        </button>
+      </div>
+
+    </section>
+
+  </main><!-- /#ent-main -->
+
+  <!-- BOTTOM NAVIGATION — mobile only -->
+  <nav class="fxv2-bottom-nav" aria-label="Navigation mobile principale">
+    <button class="fxv2-bottom-btn active" data-section="overview" id="bnav-overview"
+            aria-label="Vue d'ensemble" aria-current="page">
+      <span class="bicon" aria-hidden="true">⚡</span>
+      <span>Opérations</span>
+    </button>
+    <button class="fxv2-bottom-btn" data-section="requests" id="bnav-requests"
+            aria-label="Interventions">
+      <span class="bicon" aria-hidden="true">📋</span>
       <span>Demandes</span>
     </button>
-    <button class="fxv2-bottom-btn" data-section="new-request" id="bnav-new-request">
-      <span class="bicon">➕</span>
+    <button class="fxv2-bottom-btn ent-bnav-new" data-section="new-request" id="bnav-new-request"
+            aria-label="Nouvelle demande">
+      <span class="bicon" aria-hidden="true">➕</span>
       <span>Nouveau</span>
     </button>
-    <button class="fxv2-bottom-btn" data-section="sites" id="bnav-sites">
-      <span class="bicon">🏗️</span>
+    <button class="fxv2-bottom-btn" data-section="sites" id="bnav-sites"
+            aria-label="Sites">
+      <span class="bicon" aria-hidden="true">🏗️</span>
       <span>Sites</span>
     </button>
   </nav>
 
 </div><!-- /#ent-dashboard -->
 
-<!-- Enterprise dashboard module -->
-<script src="js/enterprise-dashboard-v1.js?v=ed1c"></script>
+<!-- REQUEST DETAIL DIALOG (accessible modal for desktop) -->
+<div id="ent-detail-dialog" class="ent-detail-dialog" role="dialog"
+     aria-modal="true" aria-labelledby="ent-dialog-title"
+     style="display:none">
+  <div class="ent-detail-dialog-backdrop" id="ent-dialog-backdrop" aria-hidden="true"></div>
+  <div class="ent-detail-dialog-panel" role="document">
+    <div class="ent-detail-dialog-header">
+      <h2 class="ent-detail-dialog-title" id="ent-dialog-title">Détail de l'intervention</h2>
+      <button class="ent-detail-dialog-close" id="ent-dialog-close"
+              aria-label="Fermer le détail de l'intervention">×</button>
+    </div>
+    <div class="ent-detail-dialog-body" id="ent-dialog-body">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Enterprise dashboard V2 module -->
+<script src="js/enterprise-dashboard-v1.js?v=ed2"></script>
 </body>
 </html>
