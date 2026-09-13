@@ -63,11 +63,15 @@ function trapFocus(el) {
   const focusable = el.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
   const first = focusable[0];
   const last  = focusable[focusable.length-1];
-  el.addEventListener('keydown', function(e) {
+  function _handler(e) {
     if(e.key !== 'Tab') return;
     if(e.shiftKey) { if(document.activeElement===first){ e.preventDefault(); if(last) last.focus(); } }
     else           { if(document.activeElement===last) { e.preventDefault(); if(first) first.focus(); } }
-  });
+  }
+  el.addEventListener('keydown', _handler);
+  return function releaseFocusTrap() {
+    el.removeEventListener('keydown', _handler);
+  };
 }
 function setLoading(sectionId, busy) {
   const el=$e(sectionId);
@@ -1732,7 +1736,7 @@ function openDetailDialog(r) {
 
   dialog.style.display='';
   dialog.removeAttribute('hidden');
-  trapFocus(dialog);
+  const _releaseTrap = trapFocus(dialog);
 
   // Focus management: track triggering element, focus close btn
   S.lastFocusedElement = document.activeElement;
@@ -1744,6 +1748,7 @@ function openDetailDialog(r) {
   }, 50);
 
   function closeDialog() {
+    _releaseTrap();
     dialog.style.display='none';
     // Return focus to trigger
     if(S.lastFocusedElement&&typeof S.lastFocusedElement.focus==='function'){
@@ -2792,7 +2797,7 @@ async function submitNewRequest(form) {
     if(submitText) submitText.style.display='';
     if(successEl){ successEl.style.display=''; }
     const viewBtn=$e('form-success-view');
-    const newId=(data&&(data.id||data.request_id))||null;
+    const newId=(data&&(data.service_request_id||data.request_id||data.id))||null;
     if(viewBtn&&newId){ viewBtn.dataset.requestId=newId; }
     form.reset();
     const descChars=$e('desc-chars'); if(descChars) descChars.textContent='0';
@@ -2818,6 +2823,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ══════════════════════════════════════════════════════════════
 
 let _searchPrevFocus = null;
+let _searchTrapRelease = null;
 
 function openSearch() {
   if(S.searchOpen) return;
@@ -2828,7 +2834,7 @@ function openSearch() {
   dlg.style.display = '';
   dlg.hidden = false;
   _searchPrevFocus = document.activeElement;
-  trapFocus(dlg);
+  _searchTrapRelease = trapFocus(dlg);
   const inp = $e('ent-search-q');
   if(inp){ inp.value = ''; inp.focus(); }
   renderSearchResults('');
@@ -2837,6 +2843,7 @@ function openSearch() {
 function closeSearch() {
   if(!S.searchOpen) return;
   S.searchOpen = false;
+  if(typeof _searchTrapRelease==='function'){ _searchTrapRelease(); _searchTrapRelease=null; }
   const dlg = $e('ent-search-dialog');
   if(dlg){ dlg.style.display='none'; dlg.hidden=true; }
   if(_searchPrevFocus && typeof _searchPrevFocus.focus==='function') _searchPrevFocus.focus();
@@ -3018,6 +3025,7 @@ var COMMANDS = [
 ];
 
 var _cmdPrevFocus = null;
+var _cmdTrapRelease = null;
 
 function _visibleCommands(query) {
   var q = (query||'').trim().toLowerCase();
@@ -3038,7 +3046,7 @@ function openCmdPalette() {
   dlg.style.display = '';
   dlg.hidden = false;
   _cmdPrevFocus = document.activeElement;
-  trapFocus(dlg);
+  _cmdTrapRelease = trapFocus(dlg);
   var inp = $e('ent-cmd-input');
   if(inp){ inp.value = ''; inp.focus(); }
   renderCmdItems('');
@@ -3047,6 +3055,7 @@ function openCmdPalette() {
 function closeCmdPalette() {
   if(!S.cmdOpen) return;
   S.cmdOpen = false;
+  if(typeof _cmdTrapRelease==='function'){ _cmdTrapRelease(); _cmdTrapRelease=null; }
   var dlg = $e('ent-cmd-palette');
   if(dlg){ dlg.style.display='none'; dlg.hidden=true; }
   if(_cmdPrevFocus && typeof _cmdPrevFocus.focus==='function') _cmdPrevFocus.focus();
