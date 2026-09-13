@@ -97,6 +97,7 @@ function _rpcErr(data, fallback) {
 // ── Role constants
 const CAN_CREATE_ROLES  = ['owner','admin','operations_manager','site_manager','reporter'];
 const CAN_CONFIRM_ROLES = ['owner','admin','operations_manager','site_manager'];
+const CAN_ESCALATE_ROLES = ['owner','admin','operations_manager','site_manager'];
 function canCreate(role)  { return CAN_CREATE_ROLES.includes(role); }
 function canConfirm(role) { return CAN_CONFIRM_ROLES.includes(role); }
 
@@ -5132,3 +5133,697 @@ document.addEventListener('DOMContentLoaded', function() {
     window._bp12RefreshOpsKpisPatched = _newRefreshOpsKpis;
   }
 }());
+
+/* ============================================================
+   BP13 — ESCALATION MODULE
+   ============================================================ */
+
+function canEscalate(role) { return CAN_ESCALATE_ROLES.includes(role); }
+
+// --- State extensions ---
+Object.assign(S, {
+  escalations: [],
+  escLoading: false,
+  escFilters: { status: '', severity: '', siteId: '', reason: '', search: '' },
+  escPage: 0,
+  escExhausted: false,
+  escKpis: null,
+  escSearchTimer: null,
+  escOpenFormActive: false,
+  escOpenSubmitting: false,
+  escAckSubmitting: false,
+  escResolveSubmitting: false,
+  escResolveTargetId: null,
+  escDetailLoading: false,
+  escDetailEscalations: [],
+  escInitDone: false,
+});
+
+// --- Contract accessor ---
+function _escContract() {
+  return window.EnterpriseEscalationContract || null;
+}
+
+// --- Label helpers ---
+function getEscSeverityLabel(s) {
+  return { critical: 'Critique', high: 'Élevé', medium: 'Moyen', low: 'Faible' }[s] || s || '—';
+}
+function getEscReasonLabel(r) {
+  return {
+    sla_breached: 'SLA dépassé',
+    sla_approaching: 'SLA à risque',
+    urgent_unassigned: 'Urgent non assigné',
+    mission_stalled: 'Mission en attente',
+    manual: 'Manuel',
+  }[r] || r || '—';
+}
+function getEscStatusLabel(s) {
+  return { open: 'Ouvert', acknowledged: 'À acquitter', resolved: 'Résolu' }[s] || s || '—';
+}
+
+// --- Badge renderers ---
+function renderEscSeverityBadge(severity) {
+  const span = document.createElement('span');
+  span.className = 'ops-esc-severity-badge sev-' + (severity || 'low');
+  span.textContent = getEscSeverityLabel(severity);
+  return span;
+}
+function renderEscStatusBadge(status) {
+  const span = document.createElement('span');
+  span.className = 'ops-esc-status-badge st-' + (status || 'open');
+  span.textContent = getEscStatusLabel(status);
+  return span;
+}
+
+// --- Queue row escalation indicator ---
+function renderEscKpiIndicatorOnQueueRow(listItem, escalations) {
+  if (!listItem || !escalations || !escalations.length) return;
+  const active = escalations.filter(function(e) { return e.status !== 'resolved'; });
+  if (!active.length) return;
+  const worst = active.reduce(function(prev, cur) {
+    const order = { critical: 0, high: 1, medium: 2, low: 3 };
+    return (order[cur.severity] || 3) < (order[prev.severity] || 3) ? cur : prev;
+  }, active[0]);
+  const badge = document.createElement('span');
+  badge.className = 'esc-indicator sev-' + (worst.severity || 'low');
+  badge.setAttribute('aria-label', 'Escalade ' + getEscSeverityLabel(worst.severity));
+  badge.textContent = '⚠ ' + getEscSeverityLabel(worst.severity);
+  // Append badge into title/header area of the list item
+  const titleEl = listItem.querySelector('.ops-queue-title, .ops-queue-desc, .ops-queue-row-main') || listItem;
+  titleEl.appendChild(badge);
+}
+
+// --- KPI refresh ---
+async function refreshEscKpis() {
+  const sb = window._supabase;
+  const eid = S.activeEnterprise && S.activeEnterprise.id;
+  if (!sb || !eid) return;
+  try {
+    const contract = _escContract();
+    let kpis = null;
+    if (contract && typeof contract.getEscalationSummaryKpis === 'function') {
+      kpis = await contract.getEscalationSummaryKpis(eid);
+    } else {
+      // Direct aggregate fallback
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const [openR, critR, ackR, resolvedR] = await Promise.all([
+        sb.from('escalations').select('id', { count: 'exact', head: true })
+          .eq('enterprise_id', eid).eq('status', 'open'),
+        sb.from('escalations').select('id', { count: 'exact', head: true })
+          .eq('enterprise_id', eid).eq('severity', 'critical').neq('status', 'resolved'),
+        sb.from('escalations').select('id', { count: 'exact', head: true })
+          .eq('enterprise_id', eid).eq('status', 'acknowledged'),
+        sb.from('escalations').select('id', { count: 'exact', head: true })
+          .eq('enterprise_id', eid).eq('status', 'resolved')
+          .gte('resolved_at', today.toISOString()),
+      ]);
+      kpis = {
+        open: openR.count || 0,
+        critical: critR.count || 0,
+        acknowledged: ackR.count || 0,
+        resolved_today: resolvedR.count || 0,
+      };
+    }
+    S.escKpis = kpis;
+    const setKpi = function(id, val) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = (val !== null && val !== undefined) ? String(val) : '—';
+    };
+    setKpi('ops-kpi-esc-open-val', kpis.open);
+    setKpi('ops-kpi-esc-critical-val', kpis.critical);
+    setKpi('ops-kpi-esc-ack-val', kpis.acknowledged);
+    setKpi('ops-kpi-esc-resolved-today-val', kpis.resolved_today);
+    // Toggle pulse on critical card
+    const critCard = document.getElementById('ops-kpi-esc-critical');
+    if (critCard) critCard.dataset.hasCritical = (kpis.critical > 0) ? 'true' : 'false';
+  } catch (_e) {
+    // Null-safe: silently set to '—'
+    ['ops-kpi-esc-open-val','ops-kpi-esc-critical-val','ops-kpi-esc-ack-val','ops-kpi-esc-resolved-today-val']
+      .forEach(function(id) { const el = document.getElementById(id); if (el) el.textContent = '—'; });
+  }
+}
+
+// --- Detail panel escalations ---
+async function loadDetailEscalations(requestId) {
+  const block = document.getElementById('ops-detail-esc-block');
+  if (!block) return;
+  block.style.display = '';
+  const list = document.getElementById('ops-esc-list');
+  const empty = document.getElementById('ops-esc-empty');
+  const loading = document.getElementById('ops-esc-loading');
+  const errEl = document.getElementById('ops-esc-error');
+  const errMsg = document.getElementById('ops-esc-error-msg');
+  const openBtn = document.getElementById('ops-esc-open-btn');
+  const openForm = document.getElementById('ops-esc-open-form');
+  if (list) list.innerHTML = '';
+  if (empty) empty.style.display = 'none';
+  if (errEl) errEl.style.display = 'none';
+  if (loading) loading.style.display = '';
+  if (openBtn) openBtn.style.display = 'none';
+  if (openForm) openForm.style.display = 'none';
+  S.escDetailLoading = true;
+  S.escDetailEscalations = [];
+  try {
+    const sb = window._supabase;
+    if (!sb) throw new Error('client');
+    let rows = [];
+    const contract = _escContract();
+    if (contract && typeof contract.getEscalationsForRequest === 'function') {
+      rows = await contract.getEscalationsForRequest(requestId);
+    } else {
+      const { data, error } = await sb.from('escalations')
+        .select('*')
+        .eq('request_id', requestId)
+        .order('opened_at', { ascending: false })
+        .limit(20);
+      if (error) throw error;
+      rows = data || [];
+    }
+    S.escDetailEscalations = rows;
+    if (loading) loading.style.display = 'none';
+    const canMutate = CAN_CONFIRM_ROLES.indexOf(S.userRole) !== -1;
+    if (!rows.length) {
+      if (empty) empty.style.display = '';
+    } else {
+      rows.forEach(function(esc) {
+        if (list) list.appendChild(_buildDetailEscItem(esc, canMutate));
+      });
+    }
+    // Show open form button for mutation roles
+    if (canMutate && openBtn) {
+      openBtn.style.display = '';
+    }
+  } catch (_e) {
+    if (loading) loading.style.display = 'none';
+    // Null-safe: show block with neutral message, do not expose raw error
+    if (empty) { empty.style.display = ''; empty.textContent = '—'; }
+  } finally {
+    S.escDetailLoading = false;
+  }
+}
+
+function _buildDetailEscItem(esc, canMutate) {
+  const item = document.createElement('div');
+  item.className = 'ops-esc-item';
+  item.dataset.escId = esc.id;
+  const meta = document.createElement('div');
+  meta.className = 'ops-esc-item-meta';
+  const top = document.createElement('div');
+  top.style.display = 'flex';
+  top.style.gap = '6px';
+  top.style.alignItems = 'center';
+  top.style.flexWrap = 'wrap';
+  top.appendChild(renderEscSeverityBadge(esc.severity));
+  top.appendChild(renderEscStatusBadge(esc.status));
+  const reason = document.createElement('span');
+  reason.className = 'ops-esc-item-age';
+  reason.textContent = getEscReasonLabel(esc.reason);
+  top.appendChild(reason);
+  meta.appendChild(top);
+  if (esc.opened_at) {
+    const age = document.createElement('div');
+    age.className = 'ops-esc-item-age';
+    age.textContent = 'Ouvert ' + _formatEscDate(esc.opened_at);
+    meta.appendChild(age);
+  }
+  if (esc.acknowledged_at && esc.acknowledged_by_name) {
+    const ackLine = document.createElement('div');
+    ackLine.className = 'ops-esc-item-age';
+    ackLine.textContent = 'Acquitté par ';
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = esc.acknowledged_by_name;
+    ackLine.appendChild(nameSpan);
+    meta.appendChild(ackLine);
+  }
+  if (esc.status === 'resolved' && esc.resolution_note) {
+    const resLine = document.createElement('div');
+    resLine.className = 'ops-esc-item-age';
+    resLine.textContent = 'Résolution : ';
+    const noteSpan = document.createElement('span');
+    noteSpan.textContent = esc.resolution_note;
+    resLine.appendChild(noteSpan);
+    meta.appendChild(resLine);
+  }
+  item.appendChild(meta);
+  if (canMutate && esc.status !== 'resolved') {
+    const actions = document.createElement('div');
+    actions.className = 'ops-esc-item-actions';
+    if (esc.status === 'open') {
+      const ackBtn = document.createElement('button');
+      ackBtn.textContent = 'Acquitter';
+      ackBtn.addEventListener('click', function() { acknowledgeEscalation(esc.id); });
+      actions.appendChild(ackBtn);
+    }
+    const resBtn = document.createElement('button');
+    resBtn.textContent = 'Résoudre';
+    resBtn.addEventListener('click', function() { openResolveDialog(esc.id); });
+    actions.appendChild(resBtn);
+    item.appendChild(actions);
+  }
+  return item;
+}
+
+// --- Open escalation ---
+async function openEscalation(requestId) {
+  if (S.escOpenSubmitting) return;
+  const severityEl = document.getElementById('ops-esc-form-severity');
+  const reasonEl = document.getElementById('ops-esc-form-reason');
+  const submitBtn = document.getElementById('ops-esc-form-submit');
+  const loadingEl = document.getElementById('ops-esc-form-loading');
+  const errorEl = document.getElementById('ops-esc-form-error');
+  if (!severityEl || !reasonEl) return;
+  const severity = severityEl.value;
+  const reason = reasonEl.value;
+  if (!severity || !reason) {
+    if (errorEl) { errorEl.textContent = 'Veuillez sélectionner la sévérité et le motif.'; errorEl.style.display = ''; }
+    return;
+  }
+  S.escOpenSubmitting = true;
+  if (submitBtn) submitBtn.disabled = true;
+  if (loadingEl) loadingEl.style.display = '';
+  if (errorEl) errorEl.style.display = 'none';
+  try {
+    const sb = window._supabase;
+    if (!sb) throw new Error('client');
+    const contract = _escContract();
+    if (contract && typeof contract.openEscalation === 'function') {
+      await contract.openEscalation({ requestId, severity, reason });
+    } else {
+      const { error } = await sb.rpc('open_escalation', {
+        p_request_id: requestId,
+        p_severity: severity,
+        p_reason: reason,
+        p_enterprise_id: S.activeEnterprise && S.activeEnterprise.id,
+      });
+      if (error) throw error;
+    }
+    // Reset form and reload
+    severityEl.value = 'medium';
+    reasonEl.value = 'manual';
+    const openForm = document.getElementById('ops-esc-open-form');
+    if (openForm) openForm.style.display = 'none';
+    S.escOpenFormActive = false;
+    await loadDetailEscalations(requestId);
+    await refreshEscKpis();
+  } catch (_e) {
+    if (errorEl) { errorEl.textContent = 'Une erreur est survenue. Veuillez réessayer.'; errorEl.style.display = ''; }
+  } finally {
+    S.escOpenSubmitting = false;
+    if (submitBtn) submitBtn.disabled = false;
+    if (loadingEl) loadingEl.style.display = 'none';
+  }
+}
+
+// --- Acknowledge escalation ---
+async function acknowledgeEscalation(escalationId) {
+  if (S.escAckSubmitting) return;
+  S.escAckSubmitting = true;
+  try {
+    const sb = window._supabase;
+    if (!sb) throw new Error('client');
+    const contract = _escContract();
+    if (contract && typeof contract.acknowledgeEscalation === 'function') {
+      await contract.acknowledgeEscalation(escalationId);
+    } else {
+      const { error } = await sb.rpc('acknowledge_escalation', { p_escalation_id: escalationId });
+      if (error) throw error;
+    }
+    // Reload detail
+    const requestId = S.activeOpsRequest && S.activeOpsRequest.id;
+    if (requestId) await loadDetailEscalations(requestId);
+    await refreshEscKpis();
+  } catch (_e) {
+    // Generic failure — no raw error exposed
+  } finally {
+    S.escAckSubmitting = false;
+  }
+}
+
+// --- Resolve dialog ---
+function openResolveDialog(escalationId) {
+  S.escResolveTargetId = escalationId;
+  const dialog = document.getElementById('esc-resolve-dialog');
+  const note = document.getElementById('esc-resolve-note');
+  const errEl = document.getElementById('esc-resolve-error');
+  const loading = document.getElementById('esc-resolve-loading');
+  if (note) note.value = '';
+  if (errEl) errEl.style.display = 'none';
+  if (loading) loading.style.display = 'none';
+  if (dialog) dialog.style.display = '';
+}
+function closeResolveDialog() {
+  S.escResolveTargetId = null;
+  const dialog = document.getElementById('esc-resolve-dialog');
+  const note = document.getElementById('esc-resolve-note');
+  if (note) note.value = '';
+  if (dialog) dialog.style.display = 'none';
+}
+
+// --- Resolve escalation ---
+async function resolveEscalation() {
+  if (S.escResolveSubmitting) return;
+  const noteEl = document.getElementById('esc-resolve-note');
+  const submitBtn = document.getElementById('esc-resolve-submit-btn');
+  const loadingEl = document.getElementById('esc-resolve-loading');
+  const errorEl = document.getElementById('esc-resolve-error');
+  const note = noteEl ? noteEl.value.trim() : '';
+  if (!note) {
+    if (errorEl) { errorEl.textContent = 'La note de résolution est obligatoire.'; errorEl.style.display = ''; }
+    return;
+  }
+  if (!S.escResolveTargetId) return;
+  S.escResolveSubmitting = true;
+  if (submitBtn) submitBtn.disabled = true;
+  if (loadingEl) loadingEl.style.display = '';
+  if (errorEl) errorEl.style.display = 'none';
+  try {
+    const sb = window._supabase;
+    if (!sb) throw new Error('client');
+    const contract = _escContract();
+    if (contract && typeof contract.resolveEscalation === 'function') {
+      await contract.resolveEscalation(S.escResolveTargetId, note);
+    } else {
+      const { error } = await sb.rpc('resolve_escalation', {
+        p_escalation_id: S.escResolveTargetId,
+        p_resolution_note: note,
+      });
+      if (error) throw error;
+    }
+    closeResolveDialog();
+    // Reload appropriate context
+    const requestId = S.activeOpsRequest && S.activeOpsRequest.id;
+    if (requestId) await loadDetailEscalations(requestId);
+    // If in escalations section, also reload list
+    if (S.activeSection === 'escalations') await loadEscalations(true);
+    await refreshEscKpis();
+  } catch (_e) {
+    if (errorEl) { errorEl.textContent = 'Une erreur est survenue. Veuillez réessayer.'; errorEl.style.display = ''; }
+  } finally {
+    S.escResolveSubmitting = false;
+    if (submitBtn) submitBtn.disabled = false;
+    if (loadingEl) loadingEl.style.display = 'none';
+  }
+}
+
+// --- Load escalations list (paginated) ---
+async function loadEscalations(reset) {
+  if (S.escLoading) return;
+  if (reset) {
+    S.escalations = [];
+    S.escPage = 0;
+    S.escExhausted = false;
+  }
+  if (S.escExhausted && !reset) return;
+  S.escLoading = true;
+  const listEl = document.getElementById('esc-list');
+  const loadingEl = document.getElementById('esc-loading');
+  const emptyEl = document.getElementById('esc-empty');
+  const errorEl = document.getElementById('esc-error');
+  const errMsgEl = document.getElementById('esc-error-msg');
+  const loadMoreBtn = document.getElementById('esc-load-more-btn');
+  if (reset && listEl) listEl.innerHTML = '';
+  if (emptyEl) emptyEl.style.display = 'none';
+  if (errorEl) errorEl.style.display = 'none';
+  if (loadingEl) loadingEl.style.display = '';
+  if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+  const PAGE_SIZE = 50;
+  const offset = S.escPage * PAGE_SIZE;
+  try {
+    const sb = window._supabase;
+    const eid = S.activeEnterprise && S.activeEnterprise.id;
+    if (!sb || !eid) throw new Error('client');
+    const f = S.escFilters;
+    let rows = [];
+    const contract = _escContract();
+    if (contract && typeof contract.listEscalations === 'function') {
+      rows = await contract.listEscalations({ enterpriseId: eid, filters: f, offset, limit: PAGE_SIZE });
+    } else {
+      let q = sb.from('escalations').select('*, sites(name)')
+        .eq('enterprise_id', eid)
+        .order('opened_at', { ascending: false })
+        .range(offset, offset + PAGE_SIZE - 1);
+      if (f.status) q = q.eq('status', f.status);
+      if (f.severity) q = q.eq('severity', f.severity);
+      if (f.siteId) q = q.eq('site_id', f.siteId);
+      if (f.reason) q = q.eq('reason', f.reason);
+      if (f.search) q = q.ilike('id', '%' + f.search + '%'); // fallback text search
+      const { data, error } = await q;
+      if (error) throw error;
+      rows = data || [];
+    }
+    // Apply client-side search if needed
+    if (f.search) {
+      const term = f.search.toLowerCase();
+      rows = rows.filter(function(r) {
+        return (r.reason || '').toLowerCase().includes(term)
+          || (r.severity || '').toLowerCase().includes(term)
+          || (r.status || '').toLowerCase().includes(term)
+          || ((r.sites && r.sites.name) || '').toLowerCase().includes(term);
+      });
+    }
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (rows.length < PAGE_SIZE) S.escExhausted = true;
+    S.escPage++;
+    S.escalations = S.escalations.concat(rows);
+    const canMutate = CAN_CONFIRM_ROLES.indexOf(S.userRole) !== -1;
+    rows.forEach(function(esc) {
+      if (listEl) listEl.appendChild(renderEscalationRow(esc, canMutate));
+    });
+    if (!S.escalations.length) {
+      if (emptyEl) emptyEl.style.display = '';
+    }
+    if (!S.escExhausted && rows.length === PAGE_SIZE) {
+      if (loadMoreBtn) loadMoreBtn.style.display = '';
+    }
+  } catch (_e) {
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (errorEl) {
+      errorEl.style.display = '';
+      if (errMsgEl) errMsgEl.textContent = 'Impossible de charger les incidents. Veuillez réessayer.';
+    }
+  } finally {
+    S.escLoading = false;
+  }
+}
+
+// --- Render escalation list row ---
+function renderEscalationRow(esc, canMutate) {
+  const item = document.createElement('div');
+  item.className = 'esc-item' + (esc.severity === 'critical' ? ' esc-item-critical' : '');
+  item.dataset.escId = esc.id;
+  const left = document.createElement('div');
+  left.className = 'esc-item-left';
+  const title = document.createElement('div');
+  title.className = 'esc-item-title';
+  title.appendChild(renderEscSeverityBadge(esc.severity));
+  const reasonSpan = document.createElement('span');
+  reasonSpan.textContent = getEscReasonLabel(esc.reason);
+  title.appendChild(reasonSpan);
+  left.appendChild(title);
+  const metaRow = document.createElement('div');
+  metaRow.className = 'esc-item-meta';
+  if (esc.sites && esc.sites.name) {
+    const siteSpan = document.createElement('span');
+    siteSpan.textContent = esc.sites.name;
+    metaRow.appendChild(siteSpan);
+  }
+  if (esc.opened_at) {
+    const dateSpan = document.createElement('span');
+    dateSpan.textContent = _formatEscDate(esc.opened_at);
+    metaRow.appendChild(dateSpan);
+  }
+  left.appendChild(metaRow);
+  item.appendChild(left);
+  const right = document.createElement('div');
+  right.className = 'esc-item-right';
+  right.appendChild(renderEscStatusBadge(esc.status));
+  if (canMutate && esc.status !== 'resolved') {
+    const actions = document.createElement('div');
+    actions.className = 'esc-item-actions';
+    if (esc.status === 'open') {
+      const ackBtn = document.createElement('button');
+      ackBtn.textContent = 'Acquitter';
+      ackBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        acknowledgeEscalation(esc.id);
+      });
+      actions.appendChild(ackBtn);
+    }
+    const resBtn = document.createElement('button');
+    resBtn.textContent = 'Résoudre';
+    resBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      openResolveDialog(esc.id);
+    });
+    actions.appendChild(resBtn);
+    right.appendChild(actions);
+  }
+  item.appendChild(right);
+  return item;
+}
+
+// --- Init escalations section (once) ---
+function initEscalationsSection() {
+  if (S.escInitDone) return;
+  S.escInitDone = true;
+
+  // Populate site filter
+  const siteFilter = document.getElementById('esc-filter-site');
+  if (siteFilter && S.sites && S.sites.length) {
+    S.sites.forEach(function(site) {
+      const opt = document.createElement('option');
+      opt.value = site.id;
+      opt.textContent = site.name;
+      siteFilter.appendChild(opt);
+    });
+  }
+
+  // Filter change handlers
+  function _applyFilter() { loadEscalations(true); }
+
+  var statusFilter = document.getElementById('esc-filter-status');
+  var severityFilter = document.getElementById('esc-filter-severity');
+  var reasonFilter = document.getElementById('esc-filter-reason');
+  var searchInput = document.getElementById('esc-search');
+
+  if (statusFilter) statusFilter.addEventListener('change', function() {
+    S.escFilters.status = statusFilter.value; _applyFilter();
+  });
+  if (severityFilter) severityFilter.addEventListener('change', function() {
+    S.escFilters.severity = severityFilter.value; _applyFilter();
+  });
+  if (siteFilter) siteFilter.addEventListener('change', function() {
+    S.escFilters.siteId = siteFilter.value; _applyFilter();
+  });
+  if (reasonFilter) reasonFilter.addEventListener('change', function() {
+    S.escFilters.reason = reasonFilter.value; _applyFilter();
+  });
+  if (searchInput) searchInput.addEventListener('input', function() {
+    clearTimeout(S.escSearchTimer);
+    S.escSearchTimer = setTimeout(function() {
+      S.escFilters.search = searchInput.value.trim();
+      _applyFilter();
+    }, 400);
+  });
+
+  // Retry button
+  var retryBtn = document.getElementById('esc-retry-btn');
+  if (retryBtn) retryBtn.addEventListener('click', function() { loadEscalations(true); });
+
+  // Load more
+  var loadMoreBtn = document.getElementById('esc-load-more-btn');
+  if (loadMoreBtn) loadMoreBtn.addEventListener('click', function() { loadEscalations(false); });
+
+  // Resolve dialog buttons
+  var resolveSubmit = document.getElementById('esc-resolve-submit-btn');
+  var resolveCancel = document.getElementById('esc-resolve-cancel-btn');
+  if (resolveSubmit) resolveSubmit.addEventListener('click', resolveEscalation);
+  if (resolveCancel) resolveCancel.addEventListener('click', closeResolveDialog);
+
+  // Open escalation form toggle (detail panel)
+  var openBtn = document.getElementById('ops-esc-open-btn');
+  var openForm = document.getElementById('ops-esc-open-form');
+  var formCancel = document.getElementById('ops-esc-form-cancel');
+  var formSubmit = document.getElementById('ops-esc-form-submit');
+  if (openBtn && openForm) {
+    openBtn.addEventListener('click', function() {
+      S.escOpenFormActive = !S.escOpenFormActive;
+      openForm.style.display = S.escOpenFormActive ? '' : 'none';
+      openBtn.style.display = S.escOpenFormActive ? 'none' : '';
+    });
+  }
+  if (formCancel && openForm && openBtn) {
+    formCancel.addEventListener('click', function() {
+      openForm.style.display = 'none';
+      openBtn.style.display = '';
+      S.escOpenFormActive = false;
+      var errEl = document.getElementById('ops-esc-form-error');
+      if (errEl) errEl.style.display = 'none';
+    });
+  }
+  if (formSubmit) {
+    formSubmit.addEventListener('click', function() {
+      var requestId = S.activeOpsRequest && S.activeOpsRequest.id;
+      if (requestId) openEscalation(requestId);
+    });
+  }
+
+  // KPI card click wiring — [data-ops-filter-esc]
+  document.querySelectorAll('[data-ops-filter-esc]').forEach(function(card) {
+    card.addEventListener('click', function() {
+      var val = card.dataset.opsFilterEsc || '';
+      // Map resolved_today → resolved filter
+      var status = (val === 'resolved_today') ? 'resolved' : '';
+      var severity = (val === 'critical') ? 'critical' : '';
+      if (val === 'open' || val === 'acknowledged') status = val;
+      S.escFilters.status = status;
+      S.escFilters.severity = severity;
+      // Sync selects if section already rendered
+      var sf = document.getElementById('esc-filter-status');
+      var sv = document.getElementById('esc-filter-severity');
+      if (sf) sf.value = status;
+      if (sv) sv.value = severity;
+      if (typeof navigateTo === 'function') navigateTo('escalations');
+    });
+  });
+}
+
+// --- Ops detail panel integration ---
+function renderOpsDetailEscalations(requestId) {
+  if (!requestId) {
+    var block = document.getElementById('ops-detail-esc-block');
+    if (block) block.style.display = 'none';
+    return;
+  }
+  loadDetailEscalations(requestId);
+}
+
+// --- Date formatter ---
+function _formatEscDate(iso) {
+  if (!iso) return '—';
+  try {
+    var d = new Date(iso);
+    var now = new Date();
+    var diff = Math.floor((now - d) / 1000);
+    if (diff < 60) return 'à l\'instant';
+    if (diff < 3600) return 'il y a ' + Math.floor(diff / 60) + ' min';
+    if (diff < 86400) return 'il y a ' + Math.floor(diff / 3600) + ' h';
+    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  } catch (_e) { return '—'; }
+}
+
+// --- Hook into navigateTo for 'escalations' ---
+(function() {
+  var _origNavigateTo = typeof navigateTo === 'function' ? navigateTo : null;
+  if (!_origNavigateTo) return;
+  // Override navigateTo to handle 'escalations' case
+  var _patchedNavigateTo = function(section) {
+    if (section === 'escalations') {
+      initEscalationsSection();
+      loadEscalations(true);
+    }
+    return _origNavigateTo(section);
+  };
+  // Expose patched version globally only if the original was global
+  if (window.navigateTo === _origNavigateTo) {
+    window.navigateTo = _patchedNavigateTo;
+  }
+})();
+
+// --- Hook into ops detail panel open ---
+// Extend renderOpsDetailSLA to also call escalations detail
+(function() {
+  var _origRenderOpsDetailSLA = typeof renderOpsDetailSLA === 'function' ? renderOpsDetailSLA : null;
+  if (!_origRenderOpsDetailSLA) return;
+  var _patched = function(req) {
+    _origRenderOpsDetailSLA(req);
+    var requestId = req && req.id;
+    renderOpsDetailEscalations(requestId || null);
+  };
+  if (window.renderOpsDetailSLA === _origRenderOpsDetailSLA) {
+    window.renderOpsDetailSLA = _patched;
+  }
+})();
+
+/* End BP13 */

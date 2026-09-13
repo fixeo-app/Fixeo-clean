@@ -174,6 +174,10 @@
       <button class="fxv2-nav-link ent-nav-item" data-section="sla" id="nav-sla" aria-label="Politiques SLA">
         <span class="icon" aria-hidden="true">📋</span> SLA
       </button>
+      <!-- BP13 Escalations nav -->
+      <button class="fxv2-nav-link ent-nav-item" data-section="escalations" id="nav-escalations" aria-label="Incidents">
+        <span class="icon" aria-hidden="true">🚨</span> Incidents
+      </button>
     </nav>
 
     <div class="fxv2-sidebar-footer">
@@ -864,6 +868,23 @@
           <span class="ops-kpi-label">Urgent dépassé</span>
           <span class="ops-kpi-val" id="ops-kpi-sla-urgent-breached-val">—</span>
         </div>
+        <!-- BP13 Escalation KPI cards -->
+        <div class="ops-kpi-card esc-kpi-card" id="ops-kpi-esc-open" data-ops-filter-esc="open">
+          <span class="ops-kpi-label">Incidents ouverts</span>
+          <span class="ops-kpi-val" id="ops-kpi-esc-open-val">—</span>
+        </div>
+        <div class="ops-kpi-card esc-kpi-card esc-critical-card" id="ops-kpi-esc-critical" data-ops-filter-esc="critical">
+          <span class="ops-kpi-label">Critiques</span>
+          <span class="ops-kpi-val" id="ops-kpi-esc-critical-val">—</span>
+        </div>
+        <div class="ops-kpi-card esc-kpi-card" id="ops-kpi-esc-ack" data-ops-filter-esc="acknowledged">
+          <span class="ops-kpi-label">À acquitter</span>
+          <span class="ops-kpi-val" id="ops-kpi-esc-ack-val">—</span>
+        </div>
+        <div class="ops-kpi-card esc-kpi-card" id="ops-kpi-esc-resolved-today" data-ops-filter-esc="resolved_today">
+          <span class="ops-kpi-label">Résolus aujourd'hui</span>
+          <span class="ops-kpi-val" id="ops-kpi-esc-resolved-today-val">—</span>
+        </div>
       </div>
 
       <!-- OPS QUEUE SECTION -->
@@ -893,6 +914,14 @@
             <option value="breached">SLA dépassé</option>
             <option value="approaching">À surveiller</option>
             <option value="on_track">SLA OK</option>
+          </select>
+          <!-- BP13 Escalation filter -->
+          <select class="ops-filter-select" id="ops-filter-esc" aria-label="Filtre incidents">
+            <option value="">Tous incidents</option>
+            <option value="open">Ouverts</option>
+            <option value="acknowledged">À acquitter</option>
+            <option value="resolved">Résolus</option>
+            <option value="critical">Critiques</option>
           </select>
           <input type="search" class="ops-search-input" id="ops-search-input"
                  placeholder="Rechercher…" aria-label="Recherche dans les demandes" autocomplete="off">
@@ -986,6 +1015,49 @@
           <div id="ops-sla-na-reason" class="ops-sla-na-reason" style="display:none">
             Aucune politique SLA configurée pour ce site/urgence.
           </div>
+        </div>
+
+        <!-- BP13 ESCALATION DETAIL BLOCK -->
+        <div id="ops-detail-esc-block" class="ops-detail-esc" style="display:none">
+          <h4>Escalade / Incident</h4>
+          <div id="ops-esc-list" role="list" aria-label="Escalades actives"></div>
+          <div id="ops-esc-empty" style="display:none">Aucune escalade active.</div>
+          <div id="ops-esc-loading" style="display:none" aria-live="polite">Chargement…</div>
+          <div id="ops-esc-error" style="display:none" role="alert">
+            <span id="ops-esc-error-msg"></span>
+          </div>
+          <!-- Open escalation form (mutation roles only) -->
+          <div id="ops-esc-open-form" class="ops-esc-form" style="display:none">
+            <h5>Ouvrir une escalade</h5>
+            <div class="ops-esc-form-row">
+              <label for="ops-esc-form-severity">Sévérité *</label>
+              <select id="ops-esc-form-severity">
+                <option value="critical">Critique</option>
+                <option value="high">Élevé</option>
+                <option value="medium" selected>Moyen</option>
+                <option value="low">Faible</option>
+              </select>
+            </div>
+            <div class="ops-esc-form-row">
+              <label for="ops-esc-form-reason">Motif *</label>
+              <select id="ops-esc-form-reason">
+                <option value="sla_breached">SLA dépassé</option>
+                <option value="sla_approaching">SLA à risque</option>
+                <option value="urgent_unassigned">Urgent non assigné</option>
+                <option value="mission_stalled">Mission en attente</option>
+                <option value="manual">Manuel</option>
+              </select>
+            </div>
+            <div class="ops-esc-form-actions">
+              <button id="ops-esc-form-submit" class="btn-primary">Ouvrir</button>
+              <button id="ops-esc-form-cancel" class="btn-secondary">Annuler</button>
+              <span id="ops-esc-form-loading" style="display:none">Envoi…</span>
+              <span id="ops-esc-form-error" class="ops-esc-form-error" style="display:none" role="alert"></span>
+            </div>
+          </div>
+          <!-- Action: open escalation button -->
+          <button id="ops-esc-open-btn" class="btn-secondary ops-esc-action-btn" style="display:none"
+            aria-label="Ouvrir une escalade">+ Escalade</button>
         </div>
 
         <!-- DETAIL FIELDS -->
@@ -1116,6 +1188,67 @@
       </div>
     </section><!-- /#section-sla -->
 
+    <!-- BP13 ESCALATIONS SECTION -->
+    <section id="section-escalations" class="ent-section" aria-label="Incidents et escalades" style="display:none">
+      <header class="ent-section-header">
+        <h2>Incidents &amp; Escalades</h2>
+      </header>
+
+      <!-- Filter bar -->
+      <div class="esc-filter-bar" role="search" aria-label="Filtres incidents">
+        <input type="search" id="esc-search" placeholder="Rechercher…" aria-label="Recherche incidents" autocomplete="off">
+        <select id="esc-filter-status" aria-label="Filtre statut">
+          <option value="">Tous statuts</option>
+          <option value="open">Ouverts</option>
+          <option value="acknowledged">À acquitter</option>
+          <option value="resolved">Résolus</option>
+        </select>
+        <select id="esc-filter-severity" aria-label="Filtre sévérité">
+          <option value="">Toutes sévérités</option>
+          <option value="critical">Critique</option>
+          <option value="high">Élevé</option>
+          <option value="medium">Moyen</option>
+          <option value="low">Faible</option>
+        </select>
+        <select id="esc-filter-site" aria-label="Filtre site">
+          <option value="">Tous les sites</option>
+        </select>
+        <select id="esc-filter-reason" aria-label="Filtre motif">
+          <option value="">Tous motifs</option>
+          <option value="sla_breached">SLA dépassé</option>
+          <option value="sla_approaching">SLA à risque</option>
+          <option value="urgent_unassigned">Urgent non assigné</option>
+          <option value="mission_stalled">Mission en attente</option>
+          <option value="manual">Manuel</option>
+        </select>
+      </div>
+
+      <!-- Escalation list -->
+      <div id="esc-list" role="list" aria-label="Liste des escalades"></div>
+      <div id="esc-loading" aria-live="polite" style="display:none">Chargement…</div>
+      <div id="esc-empty" style="display:none">Aucun incident trouvé.</div>
+      <div id="esc-error" style="display:none">
+        <span id="esc-error-msg"></span>
+        <button id="esc-retry-btn">Réessayer</button>
+      </div>
+      <button id="esc-load-more-btn" style="display:none" aria-label="Charger plus">Charger plus</button>
+
+      <!-- Resolve dialog -->
+      <div id="esc-resolve-dialog" class="esc-dialog" style="display:none" role="dialog" aria-modal="true" aria-label="Résoudre l'incident">
+        <h3>Résoudre l'incident</h3>
+        <div class="esc-dialog-field">
+          <label for="esc-resolve-note">Note de résolution *</label>
+          <textarea id="esc-resolve-note" rows="3" maxlength="1000" placeholder="Décrivez comment l'incident a été résolu…"></textarea>
+        </div>
+        <div class="esc-dialog-actions">
+          <button id="esc-resolve-submit-btn" class="btn-primary">Résoudre</button>
+          <button id="esc-resolve-cancel-btn" class="btn-secondary">Annuler</button>
+          <span id="esc-resolve-loading" style="display:none">Envoi…</span>
+          <span id="esc-resolve-error" class="esc-error" style="display:none" role="alert"></span>
+        </div>
+      </div>
+    </section><!-- /#section-escalations -->
+
   </main><!-- /#ent-main -->
 
   <!-- BOTTOM NAVIGATION — mobile only -->
@@ -1144,6 +1277,12 @@
             aria-label="Politiques SLA">
       <span class="bicon" aria-hidden="true">📋</span>
       <span>SLA</span>
+    </button>
+    <!-- BP13 Escalations bottom nav -->
+    <button class="fxv2-bottom-btn ent-nav-item" data-section="escalations" id="bnav-escalations"
+            aria-label="Incidents">
+      <span class="bicon" aria-hidden="true">🚨</span>
+      <span>Incidents</span>
     </button>
   </nav>
 
