@@ -240,16 +240,22 @@ BEGIN
     (p_enterprise_id, p_service_request_id, v_site_id, p_severity, p_reason_code, 'open', auth.uid())
   RETURNING id INTO v_escalation_id;
 
-  -- Audit
-  INSERT INTO public.enterprise_audit_log
-    (enterprise_id, actor_user_id, action_type, target_id, details)
-  VALUES
-    (p_enterprise_id, auth.uid(), 'escalation_opened', v_escalation_id,
-     jsonb_build_object(
-       'severity',           p_severity,
-       'reason_code',        p_reason_code,
-       'service_request_id', p_service_request_id
-     ));
+  -- Audit (via _eal_append helper — canonical contract)
+  -- target_type = 'enterprise_escalation' (NOT NULL required)
+  -- target_id   = v_escalation_id (the new escalation row uuid)
+  -- metadata    = jsonb context (canonical column, not 'details')
+  PERFORM fixeo_private._eal_append(
+    p_enterprise_id,
+    auth.uid(),
+    'escalation_opened',
+    'enterprise_escalation',
+    v_escalation_id,
+    jsonb_build_object(
+      'severity',           p_severity,
+      'reason_code',        p_reason_code,
+      'service_request_id', p_service_request_id
+    )
+  );
 
   RETURN v_escalation_id;
 END;
@@ -307,12 +313,18 @@ BEGIN
     RAISE EXCEPTION 'escalation_not_open';
   END IF;
 
-  -- Audit
-  INSERT INTO public.enterprise_audit_log
-    (enterprise_id, actor_user_id, action_type, target_id, details)
-  VALUES
-    (v_enterprise_id, auth.uid(), 'escalation_acknowledged', p_escalation_id,
-     jsonb_build_object('escalation_id', p_escalation_id));
+  -- Audit (via _eal_append helper — canonical contract)
+  -- target_type = 'enterprise_escalation' (NOT NULL required)
+  -- target_id   = p_escalation_id
+  -- metadata    = jsonb context (canonical column, not 'details')
+  PERFORM fixeo_private._eal_append(
+    v_enterprise_id,
+    auth.uid(),
+    'escalation_acknowledged',
+    'enterprise_escalation',
+    p_escalation_id,
+    jsonb_build_object('escalation_id', p_escalation_id)
+  );
 END;
 $$;
 
@@ -380,15 +392,21 @@ BEGIN
     RAISE EXCEPTION 'escalation_already_resolved';
   END IF;
 
-  -- Audit
-  INSERT INTO public.enterprise_audit_log
-    (enterprise_id, actor_user_id, action_type, target_id, details)
-  VALUES
-    (v_enterprise_id, auth.uid(), 'escalation_resolved', p_escalation_id,
-     jsonb_build_object(
-       'escalation_id',   p_escalation_id,
-       'resolution_note', p_resolution_note
-     ));
+  -- Audit (via _eal_append helper — canonical contract)
+  -- target_type = 'enterprise_escalation' (NOT NULL required)
+  -- target_id   = p_escalation_id
+  -- metadata    = jsonb context (canonical column, not 'details')
+  PERFORM fixeo_private._eal_append(
+    v_enterprise_id,
+    auth.uid(),
+    'escalation_resolved',
+    'enterprise_escalation',
+    p_escalation_id,
+    jsonb_build_object(
+      'escalation_id',   p_escalation_id,
+      'resolution_note', p_resolution_note
+    )
+  );
 END;
 $$;
 

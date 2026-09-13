@@ -765,6 +765,124 @@ runTest('L-04: RC hardening tests',
 
 
 // ════════════════════════════════════════════════════════════════
+// SECTION M — BP13 Audit Column Corrigendum (SEC-BP13-GAP fix)
+// ════════════════════════════════════════════════════════════════
+section('M — Audit contract corrigendum (SEC-BP13-GAP fix)', true);
+
+{
+  const BP13_SQL = fs.readFileSync(
+    path.join(ROOT, 'supabase/bp13-enterprise-escalations.sql'), 'utf8'
+  , true);
+
+  // M-01: No direct INSERT INTO enterprise_audit_log in BP13 SQL
+  check('M-01: no direct INSERT INTO enterprise_audit_log in BP13',
+    !BP13_SQL.includes('INSERT INTO public.enterprise_audit_log') &&
+    !BP13_SQL.includes('INSERT INTO enterprise_audit_log'), true);
+
+  // M-02: 'details' column no longer referenced in audit context
+  // (checks for the comma-prefixed pattern used in column lists)
+  const detailsAuditPattern = /,\s*details[\s)]/;
+  check('M-02: no "details" column in BP13 audit INSERT column list',
+    !detailsAuditPattern.test(BP13_SQL), true);
+
+  // M-03: _eal_append called in open_escalation
+  const openBlock = BP13_SQL.slice(
+    BP13_SQL.indexOf('CREATE OR REPLACE FUNCTION public.open_escalation'),
+    BP13_SQL.indexOf('REVOKE EXECUTE ON FUNCTION public.open_escalation')
+  , true);
+  check('M-03: _eal_append called in open_escalation',
+    openBlock.includes('_eal_append'), true);
+
+  // M-04: _eal_append called in acknowledge_escalation
+  const ackBlock = BP13_SQL.slice(
+    BP13_SQL.indexOf('CREATE OR REPLACE FUNCTION public.acknowledge_escalation'),
+    BP13_SQL.indexOf('REVOKE EXECUTE ON FUNCTION public.acknowledge_escalation')
+  , true);
+  check('M-04: _eal_append called in acknowledge_escalation',
+    ackBlock.includes('_eal_append'), true);
+
+  // M-05: _eal_append called in resolve_escalation
+  const resolveBlock = BP13_SQL.slice(
+    BP13_SQL.indexOf('CREATE OR REPLACE FUNCTION public.resolve_escalation'),
+    BP13_SQL.indexOf('REVOKE EXECUTE ON FUNCTION public.resolve_escalation')
+  , true);
+  check('M-05: _eal_append called in resolve_escalation',
+    resolveBlock.includes('_eal_append'), true);
+
+  // M-06: target_type 'enterprise_escalation' supplied in open_escalation
+  check('M-06: target_type \'enterprise_escalation\' supplied in open_escalation',
+    openBlock.includes("'enterprise_escalation'"), true);
+
+  // M-07: target_type 'enterprise_escalation' supplied in acknowledge_escalation
+  check('M-07: target_type \'enterprise_escalation\' supplied in acknowledge_escalation',
+    ackBlock.includes("'enterprise_escalation'"), true);
+
+  // M-08: target_type 'enterprise_escalation' supplied in resolve_escalation
+  check('M-08: target_type \'enterprise_escalation\' supplied in resolve_escalation',
+    resolveBlock.includes("'enterprise_escalation'"), true);
+
+  // M-09: exactly 3 _eal_append PERFORM calls in BP13
+  const appendCalls = (BP13_SQL.match(/PERFORM fixeo_private\._eal_append/g) || []).length;
+  check('M-09: exactly 3 PERFORM _eal_append calls in BP13 (one per write RPC)',
+    appendCalls === 3, true);
+
+  // M-10: metadata column (not details) is the 6th positional arg in _eal_append
+  // Canonical signature: _eal_append(enterprise_id, actor_id, action_type, target_type, target_id, metadata)
+  // Verify all 3 calls pass jsonb_build_object as 6th arg (metadata position)
+  const ealCalls = BP13_SQL.match(/PERFORM fixeo_private\._eal_append\([\s\S]+?\);/g) || [];
+  const allHaveJsonb = ealCalls.every(call => call.includes('jsonb_build_object'), true);
+  check('M-10: all _eal_append calls supply jsonb_build_object as metadata arg',
+    allHaveJsonb && ealCalls.length === 3, true);
+
+  // M-11: open_escalation _eal_append passes p_enterprise_id as first arg
+  check('M-11: open_escalation _eal_append passes p_enterprise_id (enterprise scope)',
+    openBlock.match(/PERFORM fixeo_private\._eal_append\(\s*p_enterprise_id/) !== null, true);
+
+  // M-12: acknowledge_escalation _eal_append passes v_enterprise_id as first arg
+  check('M-12: acknowledge_escalation _eal_append passes v_enterprise_id (resolved scope)',
+    ackBlock.match(/PERFORM fixeo_private\._eal_append\(\s*v_enterprise_id/) !== null, true);
+
+  // M-13: resolve_escalation _eal_append passes v_enterprise_id as first arg
+  check('M-13: resolve_escalation _eal_append passes v_enterprise_id (resolved scope)',
+    resolveBlock.match(/PERFORM fixeo_private\._eal_append\(\s*v_enterprise_id/) !== null, true);
+
+  // M-14: open_escalation audit includes service_request_id in metadata
+  check('M-14: open_escalation audit metadata includes service_request_id',
+    openBlock.includes('service_request_id'), true);
+
+  // M-15: resolve_escalation audit metadata includes resolution_note
+  check('M-15: resolve_escalation audit metadata includes resolution_note',
+    resolveBlock.includes('resolution_note'), true);
+
+  // M-16: eal_action_type_check extension includes escalation_opened/acknowledged/resolved
+  check('M-16: eal_action_type_check extension includes escalation_opened',
+    BP13_SQL.includes("'escalation_opened'"), true);
+  check('M-16: eal_action_type_check extension includes escalation_acknowledged',
+    BP13_SQL.includes("'escalation_acknowledged'"), true);
+  check('M-16: eal_action_type_check extension includes escalation_resolved',
+    BP13_SQL.includes("'escalation_resolved'"), true);
+
+  // M-17: BP13 SQL file still has SECURITY DEFINER on all 3 write RPCs
+  const sdCount = (BP13_SQL.match(/SECURITY DEFINER/g) || []).length;
+  check('M-17: SECURITY DEFINER present on write RPCs (≥3 occurrences)',
+    sdCount >= 3, true);
+
+  // M-18: BP13 SQL file still has SET search_path = ''
+  check('M-18: SET search_path = \"\" present in BP13',
+    BP13_SQL.includes("SET search_path = ''"), true);
+
+  // M-19: No 'details' anywhere in the file after the fix
+  // (checks for literal column name in SQL context — not in comments)
+  const nonCommentLines = BP13_SQL.split('\n')
+    .filter(l => !l.trim().startsWith('--'))
+    .join('\n', true);
+  check('M-19: no "details" identifier in non-comment SQL lines',
+    !nonCommentLines.includes(', details)') &&
+    !nonCommentLines.includes(',details)') &&
+    !nonCommentLines.includes('(details)'), true);
+}
+
+// ════════════════════════════════════════════════════════════════
 // FINAL SUMMARY
 // ════════════════════════════════════════════════════════════════
 console.log('\n' + '═'.repeat(60));
