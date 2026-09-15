@@ -1,9 +1,9 @@
 -- =============================================================================
--- FIXEO ENTERPRISE — BP13 — CORRECTED DRAFT v2
+-- FIXEO ENTERPRISE — BP13 — PRODUCTION
 -- Enterprise Audit Read & Export Control
 --
 -- STATUS:
---   DRAFT — DO NOT APPLY TO PRODUCTION.
+--   PRODUCTION — APPLIED AND POST-APPLY VALIDATED.
 --
 -- FROZEN CONTRACT:
 --   * public.enterprise_audit_events remains the single audit source of truth.
@@ -20,7 +20,7 @@
 --   * Existing indexes are reused; no new index is created.
 --
 -- IMPORTANT:
---   This file is a migration DRAFT for static review only.
+--   Applied to Production and validated by the BP13 post-apply READ-ONLY verification.
 -- =============================================================================
 
 BEGIN;
@@ -453,5 +453,5 @@ GRANT EXECUTE ON FUNCTION public.export_enterprise_audit_events(
 COMMIT;
 
 -- =============================================================================
--- END BP13 — CORRECTED DRAFT v2 — DO NOT APPLY TO PRODUCTION
+-- END BP13 — PRODUCTION — PRODUCTION — APPLIED AND POST-APPLY VALIDATED
 -- =============================================================================
