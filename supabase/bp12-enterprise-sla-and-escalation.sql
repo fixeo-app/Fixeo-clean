@@ -1,9 +1,9 @@
 -- =============================================================================
--- FIXEO ENTERPRISE — BP12 — DRAFT v1
+-- FIXEO ENTERPRISE — BP12 — PRODUCTION
 -- Enterprise SLA Policy, Immutable Request Snapshot & Derived SLA Status
 --
 -- STATUS:
---   DRAFT FOR STATIC AUDIT ONLY — DO NOT APPLY TO PRODUCTION.
+--   PRODUCTION — APPLIED AND POST-APPLY VALIDATED.
 --
 -- Frozen V1 contract:
 --   * Canonical request linkage remains enterprise_request_context.
@@ -1038,7 +1038,7 @@ REVOKE INSERT, UPDATE, DELETE ON public.enterprise_request_sla
 COMMIT;
 
 -- =============================================================================
--- END BP12 DRAFT v1
+-- END BP12 — PRODUCTION
 --
 -- STATIC AUDIT MUST PROVE, at minimum:
 --   A. No canonical urgency constraint/value was rewritten.
