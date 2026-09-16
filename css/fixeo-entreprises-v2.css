@@ -6173,3 +6173,21 @@ body.fxe2-page .fxlf-success-icon {
     transition: none;
   }
 }
+/* ============================================================
+   FIXEO ENTERPRISE LEAD FLOW
+   Step 3 — mobile footer clearance
+   Version: fxlf-mobile-v3 — 2026-09-16
+   ============================================================ */
+
+@media (max-width: 640px) {
+
+  /*
+   * Keep the last Step 3 need card fully reachable
+   * above the persistent action footer.
+   */
+  body.fxe2-page .fxlf-step-pane[data-step="3"] {
+    padding-bottom:
+      calc(150px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+}
