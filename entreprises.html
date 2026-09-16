@@ -40,16 +40,27 @@
     "inLanguage": "fr-MA"
   }
   </script>
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Service",
     "name": "FIXEO Entreprise",
-    "provider": { "@type": "Organization", "name": "FIXEO", "@id": "https://www.fixeo.ma/#organization" },
-    "areaServed": { "@type": "Country", "name": "Maroc" },
+    "provider": {
+      "@type": "Organization",
+      "name": "FIXEO",
+      "@id": "https://www.fixeo.ma/#organization"
+    },
+    "areaServed": {
+      "@type": "Country",
+      "name": "Maroc"
+    },
     "serviceType": "Coordination des interventions et facility management",
     "description": "Service B2B de coordination des interventions techniques pour hôtels, bureaux, cliniques et syndics au Maroc.",
-    "audience": { "@type": "BusinessAudience", "audienceType": "Directeur Technique, Facility Manager, Responsable Infrastructure" }
+    "audience": {
+      "@type": "BusinessAudience",
+      "audienceType": "Directeur Technique, Facility Manager, Responsable Infrastructure"
+    }
   }
   </script>
 
@@ -60,10 +71,13 @@
   <link rel="stylesheet" href="/css/variables.css">
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/fixeo-header-global.css">
+
   <!-- V2 Page CSS -->
   <link rel="stylesheet" href="/css/fixeo-entreprises-v2.css?v=fxe-v2c-conversion-console">
+
   <!-- Canonical footer -->
   <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf4a">
+
   <!-- Consent -->
   <link rel="stylesheet" href="/css/fixeo-consent-v1.css?v=fcv1b">
 
@@ -73,29 +87,72 @@
   </style>
 
   <style id="fixeo-logo-override">
-    .navbar-brand .logo-icon, .logo-wrap .logo-icon, .fixeo-gh-brand .logo-icon
-      { display:none !important; width:0 !important; height:0 !important; min-width:0 !important; flex:0 !important; }
-    .navbar-brand .logo-text, .logo-wrap .logo-text, .fixeo-gh-brand .logo-text
-      { display:none !important; width:0 !important; height:0 !important; }
-    .navbar-brand, .logo-wrap
-      { max-width:220px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
-    .fixeo-gh-brand
-      { max-width:180px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
-    img.fixeo-logo-img {
-      display:block !important; height:32px !important; width:auto !important;
-      object-fit:contain !important; object-position:left center !important;
-      background:transparent !important; mix-blend-mode:normal !important;
-      filter:none !important; box-shadow:none !important; border:none !important;
-      flex:0 0 auto !important; overflow:visible !important;
+    .navbar-brand .logo-icon,
+    .logo-wrap .logo-icon,
+    .fixeo-gh-brand .logo-icon {
+      display:none !important;
+      width:0 !important;
+      height:0 !important;
+      min-width:0 !important;
+      flex:0 !important;
     }
+
+    .navbar-brand .logo-text,
+    .logo-wrap .logo-text,
+    .fixeo-gh-brand .logo-text {
+      display:none !important;
+      width:0 !important;
+      height:0 !important;
+    }
+
+    .navbar-brand,
+    .logo-wrap {
+      max-width:220px !important;
+      overflow:visible !important;
+      gap:0 !important;
+      background:transparent !important;
+    }
+
+    .fixeo-gh-brand {
+      max-width:180px !important;
+      overflow:visible !important;
+      gap:0 !important;
+      background:transparent !important;
+    }
+
+    img.fixeo-logo-img {
+      display:block !important;
+      height:32px !important;
+      width:auto !important;
+      object-fit:contain !important;
+      object-position:left center !important;
+      background:transparent !important;
+      mix-blend-mode:normal !important;
+      filter:none !important;
+      box-shadow:none !important;
+      border:none !important;
+      flex:0 0 auto !important;
+      overflow:visible !important;
+    }
+
     .fixeo-gh-brand img.fixeo-logo-img,
-    .fixeo-gh-mobile-bar img.fixeo-logo-img { height:26px !important; width:auto !important; }
+    .fixeo-gh-mobile-bar img.fixeo-logo-img {
+      height:26px !important;
+      width:auto !important;
+    }
+
     @media (max-width:480px) {
-      img.fixeo-logo-img { height:24px !important; }
-      .fixeo-gh-brand img.fixeo-logo-img { height:22px !important; }
+      img.fixeo-logo-img {
+        height:24px !important;
+      }
+
+      .fixeo-gh-brand img.fixeo-logo-img {
+        height:22px !important;
+      }
     }
   </style>
 </head>
+
 <body class="fxe2-page fixeo-gh-enabled">
 
   <!-- Shared mobile header (injected by fixeo-header-global.js) -->
@@ -103,6 +160,7 @@
     <a href="/index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
       <img src="/img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="32" loading="eager">
     </a>
+
     <nav class="navbar-nav" aria-label="Menu principal">
       <a href="/services.html" class="nav-link">Services</a>
       <a href="/artisans.html" class="nav-link">Artisans</a>
@@ -111,6 +169,7 @@
       <a href="/entreprises.html" class="nav-link" style="color:rgb(72,100,255);font-weight:700;" aria-current="page">Entreprises</a>
       <a href="/auth.html" class="nav-link">Connexion</a>
     </nav>
+
     <div class="nav-actions">
       <button
         type="button"
@@ -127,7 +186,6 @@
        SECTION 1 — HERO
   ══════════════════════════════════════════════════════════════ -->
   <section class="fxe2-hero" id="hero" aria-label="FIXEO Entreprise — Présentation">
-    <!-- Background -->
     <div class="fxe2-hero-bg" aria-hidden="true">
       <div class="fxe2-hero-grid"></div>
       <div class="fxe2-hero-glow-a"></div>
@@ -137,7 +195,6 @@
     <div class="fxe2-container">
       <div class="fxe2-hero-inner">
 
-        <!-- Content -->
         <div class="fxe2-hero-content">
           <div class="fxe2-hero-badge">
             <span class="fxe2-hero-badge-dot"></span>
@@ -150,28 +207,28 @@
             Toutes vos interventions.
           </h1>
 
-         <p class="fxe2-hero-lead">
-         Signalez une intervention en quelques mots. FIXEO qualifie le besoin,
-         mobilise le professionnel adapté et centralise le suivi de chaque intervention,
-         sur tous vos sites, depuis un même environnement.
-         </p>
+          <p class="fxe2-hero-lead">
+            Signalez une intervention en quelques mots. FIXEO qualifie le besoin,
+            mobilise le professionnel adapté et centralise le suivi de chaque intervention,
+            sur tous vos sites, depuis un même environnement.
+          </p>
 
-         <div class="fxe2-hero-ctas">
-  <button
-    type="button"
-    class="fxe2-btn fxe2-btn-primary fxe2-btn-lg"
-    data-lead-intent="demo"
-    data-source-cta="hero-demo">
-    Planifier une session de cadrage
-  </button>
-</div>
+          <div class="fxe2-hero-ctas">
+            <button
+              type="button"
+              class="fxe2-btn fxe2-btn-primary fxe2-btn-lg"
+              data-lead-intent="cadrage"
+              data-source-cta="hero-cadrage">
+              Planifier une session de cadrage
+            </button>
+          </div>
 
           <div class="fxe2-hero-proof" aria-label="Indicateurs du réseau FIXEO">
-            
             <div class="fxe2-hero-proof-item">
               <span class="fxe2-hero-proof-check" aria-hidden="true">✓</span>
               20 villes au Maroc
             </div>
+
             <div class="fxe2-hero-proof-item">
               <span class="fxe2-hero-proof-check" aria-hidden="true">✓</span>
               12 corps de métier
@@ -179,139 +236,127 @@
           </div>
         </div>
 
-       <!-- Dashboard visual -->
-<div class="fxe2-hero-visual" aria-hidden="true">
+        <!-- Dashboard visual -->
+        <div class="fxe2-hero-visual" aria-hidden="true">
+          <div class="fxe2-hero-dashboard fxe2-hero-cockpit">
 
-  <div class="fxe2-hero-dashboard fxe2-hero-cockpit">
+            <div class="fxe2-hd-topbar">
+              <div class="fxe2-hd-dots">
+                <div class="fxe2-hd-dot fxe2-hd-dot-r"></div>
+                <div class="fxe2-hd-dot fxe2-hd-dot-y"></div>
+                <div class="fxe2-hd-dot fxe2-hd-dot-g"></div>
+              </div>
 
-    <div class="fxe2-hd-topbar">
-      <div class="fxe2-hd-dots">
-        <div class="fxe2-hd-dot fxe2-hd-dot-r"></div>
-        <div class="fxe2-hd-dot fxe2-hd-dot-y"></div>
-        <div class="fxe2-hd-dot fxe2-hd-dot-g"></div>
-      </div>
+              <div class="fxe2-hd-title">
+                FIXEO Operations
+              </div>
 
-      <div class="fxe2-hd-title">
-        FIXEO Operations
-      </div>
+              <div class="fxe2-hd-status">
+                <span class="fxe2-hd-status-dot"></span>
+                Système FIXEO
+              </div>
+            </div>
 
-      <div class="fxe2-hd-status">
-        <span class="fxe2-hd-status-dot"></span>
-        Système FIXEO
-      </div>
-    </div>
+            <div class="fxe2-hd-body">
 
+              <div class="fxe2-hd-product-label">
+                APERÇU OPÉRATIONNEL
+              </div>
 
-    <div class="fxe2-hd-body">
+              <div class="fxe2-hd-kpi-row">
 
-      <div class="fxe2-hd-product-label">
-        APERÇU OPÉRATIONNEL
-      </div>
+                <div class="fxe2-hd-kpi fxe2-hd-kpi--rafi">
+                  <div class="fxe2-hd-kpi-label">RAFI</div>
+                  <div class="fxe2-hd-kpi-value indigo">
+                    Besoin structuré
+                  </div>
+                  <div class="fxe2-hd-kpi-meta">
+                    Contexte · métier · site
+                  </div>
+                </div>
 
+                <div class="fxe2-hd-kpi fxe2-hd-kpi--matching">
+                  <div class="fxe2-hd-kpi-label">MATCHING</div>
+                  <div class="fxe2-hd-kpi-value pink">
+                    Profils adaptés
+                  </div>
+                  <div class="fxe2-hd-kpi-meta">
+                    Métier · zone · contexte
+                  </div>
+                </div>
 
-      <div class="fxe2-hd-kpi-row">
+                <div class="fxe2-hd-kpi fxe2-hd-kpi--pilotage">
+                  <div class="fxe2-hd-kpi-label">PILOTAGE</div>
+                  <div class="fxe2-hd-kpi-value green">
+                    Multi-sites
+                  </div>
+                  <div class="fxe2-hd-kpi-meta">
+                    Vue consolidée
+                  </div>
+                </div>
 
-        <div class="fxe2-hd-kpi fxe2-hd-kpi--rafi">
-          <div class="fxe2-hd-kpi-label">RAFI</div>
-          <div class="fxe2-hd-kpi-value indigo">
-            Besoin structuré
+              </div>
+
+              <div class="fxe2-hd-flow">
+
+                <div class="fxe2-hd-flow-step is-done">
+                  <span class="fxe2-hd-flow-node">✓</span>
+                  <span class="fxe2-hd-flow-label">Signalement</span>
+                </div>
+
+                <div class="fxe2-hd-flow-line"></div>
+
+                <div class="fxe2-hd-flow-step is-active">
+                  <span class="fxe2-hd-flow-node">✦</span>
+                  <span class="fxe2-hd-flow-label">RAFI</span>
+                </div>
+
+                <div class="fxe2-hd-flow-line"></div>
+
+                <div class="fxe2-hd-flow-step">
+                  <span class="fxe2-hd-flow-node">⚡</span>
+                  <span class="fxe2-hd-flow-label">Matching</span>
+                </div>
+
+                <div class="fxe2-hd-flow-line"></div>
+
+                <div class="fxe2-hd-flow-step">
+                  <span class="fxe2-hd-flow-node">📍</span>
+                  <span class="fxe2-hd-flow-label">Suivi</span>
+                </div>
+
+              </div>
+
+              <div class="fxe2-hd-activity">
+
+                <div class="fxe2-hd-activity-head">
+                  Flux d’interventions
+                </div>
+
+                <div class="fxe2-hd-activity-row">
+                  <div class="fxe2-hd-act-dot active"></div>
+                  <span>Plomberie · Casablanca</span>
+                  <strong>Assignée</strong>
+                </div>
+
+                <div class="fxe2-hd-activity-row">
+                  <div class="fxe2-hd-act-dot pending"></div>
+                  <span>Climatisation · Rabat</span>
+                  <strong>Qualification</strong>
+                </div>
+
+                <div class="fxe2-hd-activity-row">
+                  <div class="fxe2-hd-act-dot done"></div>
+                  <span>Électricité · Marrakech</span>
+                  <strong>Terminée</strong>
+                </div>
+
+              </div>
+
+            </div>
           </div>
-          <div class="fxe2-hd-kpi-meta">
-            Contexte · métier · site
-          </div>
         </div>
 
-        <div class="fxe2-hd-kpi fxe2-hd-kpi--matching">
-          <div class="fxe2-hd-kpi-label">MATCHING</div>
-          <div class="fxe2-hd-kpi-value pink">
-            Profils adaptés
-          </div>
-          <div class="fxe2-hd-kpi-meta">
-            Métier · zone · contexte
-          </div>
-        </div>
-
-        <div class="fxe2-hd-kpi fxe2-hd-kpi--pilotage">
-          <div class="fxe2-hd-kpi-label">PILOTAGE</div>
-          <div class="fxe2-hd-kpi-value green">
-            Multi-sites
-          </div>
-          <div class="fxe2-hd-kpi-meta">
-            Vue consolidée
-          </div>
-        </div>
-
-      </div>
-
-
-      <div class="fxe2-hd-flow">
-
-        <div class="fxe2-hd-flow-step is-done">
-          <span class="fxe2-hd-flow-node">✓</span>
-          <span class="fxe2-hd-flow-label">Signalement</span>
-        </div>
-
-        <div class="fxe2-hd-flow-line"></div>
-
-        <div class="fxe2-hd-flow-step is-active">
-          <span class="fxe2-hd-flow-node">✦</span>
-          <span class="fxe2-hd-flow-label">RAFI</span>
-        </div>
-
-        <div class="fxe2-hd-flow-line"></div>
-
-        <div class="fxe2-hd-flow-step">
-          <span class="fxe2-hd-flow-node">⚡</span>
-          <span class="fxe2-hd-flow-label">Matching</span>
-        </div>
-
-        <div class="fxe2-hd-flow-line"></div>
-
-        <div class="fxe2-hd-flow-step">
-          <span class="fxe2-hd-flow-node">📍</span>
-          <span class="fxe2-hd-flow-label">Suivi</span>
-        </div>
-
-      </div>
-
-
-      <div class="fxe2-hd-activity">
-
-        <div class="fxe2-hd-activity-head">
-          Flux d’interventions
-        </div>
-
-        <div class="fxe2-hd-activity-row">
-          <div class="fxe2-hd-act-dot active"></div>
-          <span>
-            Plomberie · Casablanca
-          </span>
-          <strong>Assignée</strong>
-        </div>
-
-        <div class="fxe2-hd-activity-row">
-          <div class="fxe2-hd-act-dot pending"></div>
-          <span>
-            Climatisation · Rabat
-          </span>
-          <strong>Qualification</strong>
-        </div>
-
-        <div class="fxe2-hd-activity-row">
-          <div class="fxe2-hd-act-dot done"></div>
-          <span>
-            Électricité · Marrakech
-          </span>
-          <strong>Terminée</strong>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
       </div>
     </div>
   </section>
@@ -323,92 +368,79 @@
   ══════════════════════════════════════════════════════════════ -->
   <section class="fxe2-section fxe2-section-alt" id="problemes" aria-labelledby="problemes-title">
     <div class="fxe2-container">
+
       <div class="fxe2-section-header">
-  <div class="fxe2-eyebrow">Diagnostic opérationnel</div>
+        <div class="fxe2-eyebrow">Diagnostic opérationnel</div>
 
-  <h2 id="problemes-title" class="fxe2-h2">
-    Quand la maintenance se fragmente,
-    <span class="fxe2-gradient-text">le pilotage disparaît.</span>
-  </h2>
+        <h2 id="problemes-title" class="fxe2-h2">
+          Quand la maintenance se fragmente,
+          <span class="fxe2-gradient-text">le pilotage disparaît.</span>
+        </h2>
 
-  <p class="fxe2-lead">
-    Prestataires, urgences, suivi et bâtiments finissent souvent par fonctionner
-    en silos. FIXEO part précisément de ces points de friction.
-  </p>
-</div>
-
-  <div class="fxe2-problems-grid fxe2-diagnostic-grid" role="list">
-
-  <article class="fxe2-problem-card fxe2-diagnostic-card" role="listitem">
-    <span class="fxe2-problem-icon" aria-hidden="true">📋</span>
-
-    <div class="fxe2-diagnostic-content">
-      <div class="fxe2-diagnostic-kicker">01 · FRAGMENTATION</div>
-
-      <div class="fxe2-problem-title">
-        Prestataires dispersés
+        <p class="fxe2-lead">
+          Prestataires, urgences, suivi et bâtiments finissent souvent par fonctionner
+          en silos. FIXEO part précisément de ces points de friction.
+        </p>
       </div>
 
-      <p class="fxe2-problem-desc">
-        Des dizaines de contacts pour différents corps de métier,
-        sans point de coordination ni vue commune.
-      </p>
-    </div>
-  </article>
+      <div class="fxe2-problems-grid fxe2-diagnostic-grid" role="list">
 
+        <article class="fxe2-problem-card fxe2-diagnostic-card" role="listitem">
+          <span class="fxe2-problem-icon" aria-hidden="true">📋</span>
 
-  <article class="fxe2-problem-card fxe2-diagnostic-card" role="listitem">
-    <span class="fxe2-problem-icon" aria-hidden="true">◉</span>
+          <div class="fxe2-diagnostic-content">
+            <div class="fxe2-diagnostic-kicker">01 · FRAGMENTATION</div>
+            <div class="fxe2-problem-title">Prestataires dispersés</div>
 
-    <div class="fxe2-diagnostic-content">
-      <div class="fxe2-diagnostic-kicker">02 · VISIBILITÉ</div>
+            <p class="fxe2-problem-desc">
+              Des dizaines de contacts pour différents corps de métier,
+              sans point de coordination ni vue commune.
+            </p>
+          </div>
+        </article>
 
-      <div class="fxe2-problem-title">
-        Interventions difficiles à suivre
-      </div>
+        <article class="fxe2-problem-card fxe2-diagnostic-card" role="listitem">
+          <span class="fxe2-problem-icon" aria-hidden="true">◉</span>
 
-      <p class="fxe2-problem-desc">
-        Qui intervient, où en est la demande et ce qui a déjà été fait
-        restent souvent dispersés entre plusieurs interlocuteurs.
-      </p>
-    </div>
-  </article>
+          <div class="fxe2-diagnostic-content">
+            <div class="fxe2-diagnostic-kicker">02 · VISIBILITÉ</div>
+            <div class="fxe2-problem-title">Interventions difficiles à suivre</div>
 
+            <p class="fxe2-problem-desc">
+              Qui intervient, où en est la demande et ce qui a déjà été fait
+              restent souvent dispersés entre plusieurs interlocuteurs.
+            </p>
+          </div>
+        </article>
 
-  <article class="fxe2-problem-card fxe2-diagnostic-card" role="listitem">
-    <span class="fxe2-problem-icon" aria-hidden="true">⚠️</span>
+        <article class="fxe2-problem-card fxe2-diagnostic-card" role="listitem">
+          <span class="fxe2-problem-icon" aria-hidden="true">⚠️</span>
 
-    <div class="fxe2-diagnostic-content">
-      <div class="fxe2-diagnostic-kicker">03 · RÉACTIVITÉ</div>
+          <div class="fxe2-diagnostic-content">
+            <div class="fxe2-diagnostic-kicker">03 · RÉACTIVITÉ</div>
+            <div class="fxe2-problem-title">Les urgences deviennent des crises</div>
 
-      <div class="fxe2-problem-title">
-        Les urgences deviennent des crises
-      </div>
+            <p class="fxe2-problem-desc">
+              Une panne critique devient difficile à gérer lorsque le bon professionnel
+              ne peut pas être mobilisé rapidement.
+            </p>
+          </div>
+        </article>
 
-      <p class="fxe2-problem-desc">
-        Une panne critique devient difficile à gérer lorsque le bon professionnel
-        ne peut pas être mobilisé rapidement.
-      </p>
-    </div>
-  </article>
+        <article class="fxe2-problem-card fxe2-diagnostic-card" role="listitem">
+          <span class="fxe2-problem-icon" aria-hidden="true">🏢</span>
 
+          <div class="fxe2-diagnostic-content">
+            <div class="fxe2-diagnostic-kicker">04 · MULTI-SITES</div>
+            <div class="fxe2-problem-title">Chaque bâtiment fonctionne en silo</div>
 
-  <article class="fxe2-problem-card fxe2-diagnostic-card" role="listitem">
-    <span class="fxe2-problem-icon" aria-hidden="true">🏢</span>
+            <p class="fxe2-problem-desc">
+              Plus le nombre de sites augmente, plus la coordination,
+              l’historique et le pilotage deviennent fragmentés.
+            </p>
+          </div>
+        </article>
 
-    <div class="fxe2-diagnostic-content">
-      <div class="fxe2-diagnostic-kicker">04 · MULTI-SITES</div>
-
-      <div class="fxe2-problem-title">
-        Chaque bâtiment fonctionne en silo
-      </div>
-
-      <p class="fxe2-problem-desc">
-        Plus le nombre de sites augmente, plus la coordination,
-        l’historique et le pilotage deviennent fragmentés.
-      </p>
-    </div>
-  </article>
       </div>
     </div>
   </section>
@@ -420,330 +452,317 @@
   ══════════════════════════════════════════════════════════════ -->
   <section class="fxe2-section" id="centralisation" aria-labelledby="centralisation-title">
     <div class="fxe2-container">
+
       <div class="fxe2-section-header">
-  <div class="fxe2-eyebrow">Le système FIXEO</div>
-  <h2 id="centralisation-title" class="fxe2-h2">Du signalement au suivi, un seul flux opérationnel.</h2>
-  <p class="fxe2-lead">
-    Chaque besoin est structuré, orienté vers le bon métier, coordonné puis suivi
-    jusqu'à sa clôture — avec une vision commune pour tous vos sites.
-    </p>
+        <div class="fxe2-eyebrow">Le système FIXEO</div>
+
+        <h2 id="centralisation-title" class="fxe2-h2">
+          Du signalement au suivi, un seul flux opérationnel.
+        </h2>
+
+        <p class="fxe2-lead">
+          Chaque besoin est structuré, orienté vers le bon métier, coordonné puis suivi
+          jusqu'à sa clôture — avec une vision commune pour tous vos sites.
+        </p>
       </div>
 
       <div class="fxe2-centralise-grid fxe2-system-bento">
 
-  <div class="fxe2-centralise-item fxe2-system-card fxe2-system-card--rafi">
-    <div class="fxe2-centralise-icon fxe2-system-icon" aria-hidden="true">✨</div>
+        <div class="fxe2-centralise-item fxe2-system-card fxe2-system-card--rafi">
+          <div class="fxe2-centralise-icon fxe2-system-icon" aria-hidden="true">✨</div>
 
-    <div class="fxe2-system-content">
-      <div class="fxe2-system-kicker">INTELLIGENCE D’ENTRÉE</div>
+          <div class="fxe2-system-content">
+            <div class="fxe2-system-kicker">INTELLIGENCE D’ENTRÉE</div>
 
-      <div class="fxe2-centralise-title">
-        RAFI comprend et structure le besoin
+            <div class="fxe2-centralise-title">
+              RAFI comprend et structure le besoin
+            </div>
+
+            <p class="fxe2-centralise-desc">
+              Décrivez simplement ce qui se passe. RAFI analyse la demande,
+              identifie le contexte et le métier concerné, puis prépare
+              sa prise en charge.
+            </p>
+
+            <span class="fxe2-centralise-tag service">Avec RAFI</span>
+          </div>
+        </div>
+
+        <div class="fxe2-centralise-item fxe2-system-card fxe2-system-card--matching">
+          <div class="fxe2-centralise-icon fxe2-system-icon" aria-hidden="true">⚡</div>
+
+          <div class="fxe2-system-content">
+            <div class="fxe2-system-kicker">MOTEUR FIXEO</div>
+
+            <div class="fxe2-centralise-title">
+              Le bon professionnel pour le bon contexte
+            </div>
+
+            <p class="fxe2-centralise-desc">
+              FIXEO croise le métier, la zone et le contexte de l’intervention
+              pour orienter la demande vers les professionnels les plus adaptés.
+            </p>
+
+            <span class="fxe2-centralise-tag service">Matching FIXEO</span>
+          </div>
+        </div>
+
+        <div class="fxe2-centralise-item fxe2-system-card fxe2-system-card--tracking">
+          <div class="fxe2-centralise-icon fxe2-system-icon" aria-hidden="true">📍</div>
+
+          <div class="fxe2-system-content">
+            <div class="fxe2-system-kicker">EXÉCUTION</div>
+
+            <div class="fxe2-centralise-title">
+              Chaque intervention reste visible
+            </div>
+
+            <p class="fxe2-centralise-desc">
+              Suivez l’avancement de la demande depuis sa création jusqu’à sa clôture,
+              avec une lecture commune pour vos équipes et vos sites.
+            </p>
+
+            <span class="fxe2-centralise-tag live">Suivi FIXEO</span>
+          </div>
+        </div>
+
+        <div class="fxe2-centralise-item fxe2-system-card fxe2-system-card--memory">
+          <div class="fxe2-centralise-icon fxe2-system-icon" aria-hidden="true">📁</div>
+
+          <div class="fxe2-system-content">
+            <div class="fxe2-system-kicker">MÉMOIRE</div>
+
+            <div class="fxe2-centralise-title">
+              L’historique technique reste attaché au site
+            </div>
+
+            <p class="fxe2-centralise-desc">
+              Date, contexte, professionnel et résultat restent disponibles
+              pour construire progressivement la mémoire opérationnelle
+              de chaque bâtiment.
+            </p>
+
+            <span class="fxe2-centralise-tag live">Historique FIXEO</span>
+          </div>
+        </div>
+
+        <div class="fxe2-centralise-item fxe2-system-card fxe2-system-card--command">
+          <div class="fxe2-centralise-icon fxe2-system-icon" aria-hidden="true">🏢</div>
+
+          <div class="fxe2-system-content">
+            <div class="fxe2-system-kicker">PILOTAGE</div>
+
+            <div class="fxe2-centralise-title">
+              Une vision commune de tous vos sites
+            </div>
+
+            <p class="fxe2-centralise-desc">
+              Regroupez vos bâtiments et retrouvez l’activité de vos interventions
+              dans un même environnement, sans multiplier les outils
+              ni les interlocuteurs.
+            </p>
+
+            <span class="fxe2-centralise-tag live">Vue multi-sites</span>
+          </div>
+        </div>
+
       </div>
-
-      <p class="fxe2-centralise-desc">
-        Décrivez simplement ce qui se passe. RAFI analyse la demande,
-        identifie le contexte et le métier concerné, puis prépare
-        sa prise en charge.
-      </p>
-
-      <span class="fxe2-centralise-tag service">Avec RAFI</span>
-    </div>
-  </div>
-
-
-  <div class="fxe2-centralise-item fxe2-system-card fxe2-system-card--matching">
-    <div class="fxe2-centralise-icon fxe2-system-icon" aria-hidden="true">⚡</div>
-
-    <div class="fxe2-system-content">
-      <div class="fxe2-system-kicker">MOTEUR FIXEO</div>
-
-      <div class="fxe2-centralise-title">
-        Le bon professionnel pour le bon contexte
-      </div>
-
-      <p class="fxe2-centralise-desc">
-        FIXEO croise le métier, la zone et le contexte de l’intervention
-        pour orienter la demande vers les professionnels les plus adaptés.
-      </p>
-
-      <span class="fxe2-centralise-tag service">Matching FIXEO</span>
-    </div>
-  </div>
-
-
-  <div class="fxe2-centralise-item fxe2-system-card fxe2-system-card--tracking">
-    <div class="fxe2-centralise-icon fxe2-system-icon" aria-hidden="true">📍</div>
-
-    <div class="fxe2-system-content">
-      <div class="fxe2-system-kicker">EXÉCUTION</div>
-
-      <div class="fxe2-centralise-title">
-        Chaque intervention reste visible
-      </div>
-
-      <p class="fxe2-centralise-desc">
-        Suivez l’avancement de la demande depuis sa création jusqu’à sa clôture,
-        avec une lecture commune pour vos équipes et vos sites.
-      </p>
-
-      <span class="fxe2-centralise-tag live">Suivi FIXEO</span>
-    </div>
-  </div>
-
-
-  <div class="fxe2-centralise-item fxe2-system-card fxe2-system-card--memory">
-    <div class="fxe2-centralise-icon fxe2-system-icon" aria-hidden="true">📁</div>
-
-    <div class="fxe2-system-content">
-      <div class="fxe2-system-kicker">MÉMOIRE</div>
-
-      <div class="fxe2-centralise-title">
-        L’historique technique reste attaché au site
-      </div>
-
-      <p class="fxe2-centralise-desc">
-        Date, contexte, professionnel et résultat restent disponibles
-        pour construire progressivement la mémoire opérationnelle
-        de chaque bâtiment.
-      </p>
-
-      <span class="fxe2-centralise-tag live">Historique FIXEO</span>
-    </div>
-  </div>
-
-
-  <div class="fxe2-centralise-item fxe2-system-card fxe2-system-card--command">
-    <div class="fxe2-centralise-icon fxe2-system-icon" aria-hidden="true">🏢</div>
-
-    <div class="fxe2-system-content">
-      <div class="fxe2-system-kicker">PILOTAGE</div>
-
-      <div class="fxe2-centralise-title">
-        Une vision commune de tous vos sites
-      </div>
-
-      <p class="fxe2-centralise-desc">
-        Regroupez vos bâtiments et retrouvez l’activité de vos interventions
-        dans un même environnement, sans multiplier les outils
-        ni les interlocuteurs.
-      </p>
-
-      <span class="fxe2-centralise-tag live">Vue multi-sites</span>
-    </div>
-  </div>
-
-</div>
     </div>
   </section>
 
   <div class="fxe2-divider"></div>
 
   <!-- ══════════════════════════════════════════════════════════════
-       SECTION 4 — COMMENT ÇA MARCHE (4 étapes)
+       SECTION 4 — COMMENT ÇA MARCHE
   ══════════════════════════════════════════════════════════════ -->
- <section class="fxe2-section fxe2-section-alt" id="fonctionnement" aria-labelledby="fonctionnement-title">
-  <div class="fxe2-container">
+  <section class="fxe2-section fxe2-section-alt" id="fonctionnement" aria-labelledby="fonctionnement-title">
+    <div class="fxe2-container">
 
-    <div class="fxe2-section-header">
-      <div class="fxe2-eyebrow">Parcours d'une intervention</div>
+      <div class="fxe2-section-header">
+        <div class="fxe2-eyebrow">Parcours d'une intervention</div>
 
-      <h2 id="fonctionnement-title" class="fxe2-h2">
-        Une demande entre. Une intervention ressort structurée et suivie.
-      </h2>
+        <h2 id="fonctionnement-title" class="fxe2-h2">
+          Une demande entre. Une intervention ressort structurée et suivie.
+        </h2>
 
-      <p class="fxe2-lead">
-        Chaque étape est visible, organisée et rattachée à votre site —
-        du signalement initial jusqu'à la clôture.
-      </p>
+        <p class="fxe2-lead">
+          Chaque étape est visible, organisée et rattachée à votre site —
+          du signalement initial jusqu'à la clôture.
+        </p>
+      </div>
+
+      <div class="fxe2-steps-grid" role="list">
+
+        <div class="fxe2-step" role="listitem">
+          <div class="fxe2-step-num">📝</div>
+          <div class="fxe2-step-title">Votre équipe décrit le besoin</div>
+
+          <p class="fxe2-step-desc">
+            Une demande urgente, ponctuelle ou planifiée est créée et rattachée
+            au site concerné avec son contexte opérationnel.
+          </p>
+        </div>
+
+        <div class="fxe2-step" role="listitem">
+          <div class="fxe2-step-num highlight">⚡</div>
+          <div class="fxe2-step-title">RAFI qualifie, FIXEO orchestre</div>
+
+          <p class="fxe2-step-desc">
+            Le besoin est structuré, orienté vers le bon métier puis transmis
+            au moteur FIXEO pour identifier les professionnels adaptés
+            et organiser la prise en charge.
+          </p>
+        </div>
+
+        <div class="fxe2-step" role="listitem">
+          <div class="fxe2-step-num">🔧</div>
+          <div class="fxe2-step-title">L'intervention avance sous suivi FIXEO</div>
+
+          <p class="fxe2-step-desc">
+            De l'assignation à la réalisation, l'avancement de la demande
+            reste visible pour vos équipes avec un statut partagé.
+          </p>
+        </div>
+
+        <div class="fxe2-step" role="listitem">
+          <div class="fxe2-step-num">📁</div>
+          <div class="fxe2-step-title">L'intervention rejoint votre historique</div>
+
+          <p class="fxe2-step-desc">
+            Une fois terminée, l'intervention reste rattachée à votre activité
+            afin de conserver une vision structurée des opérations réalisées.
+          </p>
+        </div>
+
+      </div>
     </div>
-
-
-    <div class="fxe2-steps-grid" role="list">
-
-      <div class="fxe2-step" role="listitem">
-        <div class="fxe2-step-num">📝</div>
-
-        <div class="fxe2-step-title">
-          Votre équipe décrit le besoin
-        </div>
-
-        <p class="fxe2-step-desc">
-          Une demande urgente, ponctuelle ou planifiée est créée et rattachée
-          au site concerné avec son contexte opérationnel.
-        </p>
-      </div>
-
-
-      <div class="fxe2-step" role="listitem">
-        <div class="fxe2-step-num highlight">⚡</div>
-
-        <div class="fxe2-step-title">
-          RAFI qualifie, FIXEO orchestre
-        </div>
-
-        <p class="fxe2-step-desc">
-          Le besoin est structuré, orienté vers le bon métier puis transmis
-          au moteur FIXEO pour identifier les professionnels adaptés
-          et organiser la prise en charge.
-        </p>
-      </div>
-
-
-      <div class="fxe2-step" role="listitem">
-        <div class="fxe2-step-num">🔧</div>
-
-        <div class="fxe2-step-title">
-          L'intervention avance sous suivi FIXEO
-        </div>
-
-        <p class="fxe2-step-desc">
-          De l'assignation à la réalisation, l'avancement de la demande
-          reste visible pour vos équipes avec un statut partagé.
-        </p>
-      </div>
-
-
-      <div class="fxe2-step" role="listitem">
-        <div class="fxe2-step-num">📁</div>
-
-        <div class="fxe2-step-title">
-          L'intervention rejoint votre historique
-        </div>
-
-        <p class="fxe2-step-desc">
-          Une fois terminée, l'intervention reste rattachée à votre activité
-          afin de conserver une vision structurée des opérations réalisées.
-        </p>
-      </div>
-
-    </div>
-
-  </div>
-</section>
+  </section>
 
   <div class="fxe2-divider"></div>
-
 
   <!-- ══════════════════════════════════════════════════════════════
        SECTION 6 — SECTEURS ET CAS D'USAGE
   ══════════════════════════════════════════════════════════════ -->
   <section class="fxe2-section fxe2-section-alt" id="secteurs" aria-labelledby="secteurs-title">
     <div class="fxe2-container">
+
       <div class="fxe2-section-header">
         <div class="fxe2-eyebrow">Secteurs d'activité</div>
         <h2 id="secteurs-title" class="fxe2-h2">Adapté aux organisations qui gèrent…</h2>
-        <p class="fxe2-lead">FIXEO Entreprise est conçu pour des structures qui ont plusieurs sites ou plusieurs corps de métier à coordonner.</p>
+
+        <p class="fxe2-lead">
+          FIXEO Entreprise est conçu pour des structures qui ont plusieurs sites
+          ou plusieurs corps de métier à coordonner.
+        </p>
       </div>
 
-    <div class="fxe2-sectors-grid fxe2-sector-matrix" role="list">
+      <div class="fxe2-sectors-grid fxe2-sector-matrix" role="list">
 
-  <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
-    <div class="fxe2-sector-icon" aria-hidden="true">🏨</div>
-    <div class="fxe2-sector-content">
-      <div class="fxe2-sector-meta">EXPLOITATION CONTINUE</div>
-      <div class="fxe2-sector-name">Hôtellerie</div>
-      <p class="fxe2-sector-desc">
-        Coordination des interventions entre chambres, espaces communs
-        et équipements, y compris hors des horaires habituels.
-      </p>
-    </div>
-    <span class="fxe2-sector-signal">Multi-zones</span>
-  </article>
+        <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
+          <div class="fxe2-sector-icon" aria-hidden="true">🏨</div>
+          <div class="fxe2-sector-content">
+            <div class="fxe2-sector-meta">EXPLOITATION CONTINUE</div>
+            <div class="fxe2-sector-name">Hôtellerie</div>
+            <p class="fxe2-sector-desc">
+              Coordination des interventions entre chambres, espaces communs
+              et équipements, y compris hors des horaires habituels.
+            </p>
+          </div>
+          <span class="fxe2-sector-signal">Multi-zones</span>
+        </article>
 
-  <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
-    <div class="fxe2-sector-icon" aria-hidden="true">🏢</div>
-    <div class="fxe2-sector-content">
-      <div class="fxe2-sector-meta">ENVIRONNEMENT TERTIAIRE</div>
-      <div class="fxe2-sector-name">Bureaux et sièges</div>
-      <p class="fxe2-sector-desc">
-        Interventions organisées autour de l’activité des équipes
-        avec une lecture commune lorsque plusieurs sites sont concernés.
-      </p>
-    </div>
-    <span class="fxe2-sector-signal">Multi-sites</span>
-  </article>
+        <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
+          <div class="fxe2-sector-icon" aria-hidden="true">🏢</div>
+          <div class="fxe2-sector-content">
+            <div class="fxe2-sector-meta">ENVIRONNEMENT TERTIAIRE</div>
+            <div class="fxe2-sector-name">Bureaux et sièges</div>
+            <p class="fxe2-sector-desc">
+              Interventions organisées autour de l’activité des équipes
+              avec une lecture commune lorsque plusieurs sites sont concernés.
+            </p>
+          </div>
+          <span class="fxe2-sector-signal">Multi-sites</span>
+        </article>
 
-  <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
-    <div class="fxe2-sector-icon" aria-hidden="true">🏥</div>
-    <div class="fxe2-sector-content">
-      <div class="fxe2-sector-meta">ENVIRONNEMENT SENSIBLE</div>
-      <div class="fxe2-sector-name">Cliniques et santé</div>
-      <p class="fxe2-sector-desc">
-        Besoins techniques nécessitant une coordination structurée
-        et une visibilité claire sur la prise en charge.
-      </p>
-    </div>
-    <span class="fxe2-sector-signal">Priorisation</span>
-  </article>
+        <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
+          <div class="fxe2-sector-icon" aria-hidden="true">🏥</div>
+          <div class="fxe2-sector-content">
+            <div class="fxe2-sector-meta">ENVIRONNEMENT SENSIBLE</div>
+            <div class="fxe2-sector-name">Cliniques et santé</div>
+            <p class="fxe2-sector-desc">
+              Besoins techniques nécessitant une coordination structurée
+              et une visibilité claire sur la prise en charge.
+            </p>
+          </div>
+          <span class="fxe2-sector-signal">Priorisation</span>
+        </article>
 
-  <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
-    <div class="fxe2-sector-icon" aria-hidden="true">🛍️</div>
-    <div class="fxe2-sector-content">
-      <div class="fxe2-sector-meta">RÉSEAU DE POINTS DE VENTE</div>
-      <div class="fxe2-sector-name">Commerce et retail</div>
-      <p class="fxe2-sector-desc">
-        Coordination des interventions sur plusieurs points de vente
-        avec prise en compte des contraintes d’ouverture.
-      </p>
-    </div>
-    <span class="fxe2-sector-signal">Réseau</span>
-  </article>
+        <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
+          <div class="fxe2-sector-icon" aria-hidden="true">🛍️</div>
+          <div class="fxe2-sector-content">
+            <div class="fxe2-sector-meta">RÉSEAU DE POINTS DE VENTE</div>
+            <div class="fxe2-sector-name">Commerce et retail</div>
+            <p class="fxe2-sector-desc">
+              Coordination des interventions sur plusieurs points de vente
+              avec prise en compte des contraintes d’ouverture.
+            </p>
+          </div>
+          <span class="fxe2-sector-signal">Réseau</span>
+        </article>
 
-  <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
-    <div class="fxe2-sector-icon" aria-hidden="true">🔑</div>
-    <div class="fxe2-sector-content">
-      <div class="fxe2-sector-meta">PATRIMOINE IMMOBILIER</div>
-      <div class="fxe2-sector-name">Syndics et gérants</div>
-      <p class="fxe2-sector-desc">
-        Centralisation des demandes et des prestataires
-        avec suivi rattaché à chaque immeuble ou résidence.
-      </p>
-    </div>
-    <span class="fxe2-sector-signal">Par bâtiment</span>
-  </article>
+        <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
+          <div class="fxe2-sector-icon" aria-hidden="true">🔑</div>
+          <div class="fxe2-sector-content">
+            <div class="fxe2-sector-meta">PATRIMOINE IMMOBILIER</div>
+            <div class="fxe2-sector-name">Syndics et gérants</div>
+            <p class="fxe2-sector-desc">
+              Centralisation des demandes et des prestataires
+              avec suivi rattaché à chaque immeuble ou résidence.
+            </p>
+          </div>
+          <span class="fxe2-sector-signal">Par bâtiment</span>
+        </article>
 
-  <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
-    <div class="fxe2-sector-icon" aria-hidden="true">🏭</div>
-    <div class="fxe2-sector-content">
-      <div class="fxe2-sector-meta">CONTINUITÉ D’EXPLOITATION</div>
-      <div class="fxe2-sector-name">Industrie et logistique</div>
-      <p class="fxe2-sector-desc">
-        Organisation des interventions correctives ou planifiées
-        autour des contraintes opérationnelles du site.
-      </p>
-    </div>
-    <span class="fxe2-sector-signal">Exploitation</span>
-  </article>
+        <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
+          <div class="fxe2-sector-icon" aria-hidden="true">🏭</div>
+          <div class="fxe2-sector-content">
+            <div class="fxe2-sector-meta">CONTINUITÉ D’EXPLOITATION</div>
+            <div class="fxe2-sector-name">Industrie et logistique</div>
+            <p class="fxe2-sector-desc">
+              Organisation des interventions correctives ou planifiées
+              autour des contraintes opérationnelles du site.
+            </p>
+          </div>
+          <span class="fxe2-sector-signal">Exploitation</span>
+        </article>
 
-  <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
-    <div class="fxe2-sector-icon" aria-hidden="true">🏫</div>
-    <div class="fxe2-sector-content">
-      <div class="fxe2-sector-meta">SITES OCCUPÉS</div>
-      <div class="fxe2-sector-name">Éducation</div>
-      <p class="fxe2-sector-desc">
-        Planification des interventions en fonction du calendrier
-        et des périodes d’occupation des établissements.
-      </p>
-    </div>
-    <span class="fxe2-sector-signal">Planification</span>
-  </article>
+        <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
+          <div class="fxe2-sector-icon" aria-hidden="true">🏫</div>
+          <div class="fxe2-sector-content">
+            <div class="fxe2-sector-meta">SITES OCCUPÉS</div>
+            <div class="fxe2-sector-name">Éducation</div>
+            <p class="fxe2-sector-desc">
+              Planification des interventions en fonction du calendrier
+              et des périodes d’occupation des établissements.
+            </p>
+          </div>
+          <span class="fxe2-sector-signal">Planification</span>
+        </article>
 
-  <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
-    <div class="fxe2-sector-icon" aria-hidden="true">🏦</div>
-    <div class="fxe2-sector-content">
-      <div class="fxe2-sector-meta">RÉSEAU ENCADRÉ</div>
-      <div class="fxe2-sector-name">Banque et finance</div>
-      <p class="fxe2-sector-desc">
-        Coordination multi-sites avec des professionnels sélectionnés
-        selon les exigences définies avec votre organisation.
-      </p>
-    </div>
-    <span class="fxe2-sector-signal">Exigences définies</span>
-  </article>
+        <article class="fxe2-sector-card fxe2-sector-lane" role="listitem">
+          <div class="fxe2-sector-icon" aria-hidden="true">🏦</div>
+          <div class="fxe2-sector-content">
+            <div class="fxe2-sector-meta">RÉSEAU ENCADRÉ</div>
+            <div class="fxe2-sector-name">Banque et finance</div>
+            <p class="fxe2-sector-desc">
+              Coordination multi-sites avec des professionnels sélectionnés
+              selon les exigences définies avec votre organisation.
+            </p>
+          </div>
+          <span class="fxe2-sector-signal">Exigences définies</span>
+        </article>
 
-</div>
-        
+      </div>
     </div>
   </section>
 
@@ -754,117 +773,114 @@
   ══════════════════════════════════════════════════════════════ -->
   <section class="fxe2-section" id="couverture" aria-labelledby="couverture-title">
     <div class="fxe2-container">
-     <div class="fxe2-section-header">
-  <div class="fxe2-eyebrow">Couverture opérationnelle</div>
 
-  <h2 id="couverture-title" class="fxe2-h2">
-    Un réseau qui s’adapte à vos implantations.
-  </h2>
+      <div class="fxe2-section-header">
+        <div class="fxe2-eyebrow">Couverture opérationnelle</div>
 
-  <p class="fxe2-lead">
-    FIXEO coordonne des professionnels qualifiés dans 20 villes au Maroc
-    et peut développer son dispositif autour de vos sites grâce à des
-    partenaires locaux sélectionnés selon les exigences FIXEO.
-  </p>
-</div>
+        <h2 id="couverture-title" class="fxe2-h2">
+          Un réseau qui s’adapte à vos implantations.
+        </h2>
+
+        <p class="fxe2-lead">
+          FIXEO coordonne des professionnels qualifiés dans 20 villes au Maroc
+          et peut développer son dispositif autour de vos sites grâce à des
+          partenaires locaux sélectionnés selon les exigences FIXEO.
+        </p>
+      </div>
 
       <div class="fxe2-coverage-inner">
-        
-        <!-- Map -->
-        
+
         <div
-  class="fxe2-coverage-map"
-  role="img"
-  aria-label="Schéma illustratif du réseau opérationnel FIXEO au Maroc"
->
-  <div style="width:100%;max-width:460px;position:relative;">
+          class="fxe2-coverage-map"
+          role="img"
+          aria-label="Schéma illustratif du réseau opérationnel FIXEO au Maroc">
 
-    <svg
-      viewBox="0 0 400 380"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      style="width:100%;opacity:0.72;"
-      aria-hidden="true"
-    >
-      <!-- Contour territorial stylisé -->
-      <path
-        d="M92 34
-           C145 18 225 18 296 39
-           C326 72 334 112 323 153
-           C313 196 295 244 268 292
-           C247 327 221 350 194 360
-           C165 346 132 321 105 286
-           C76 246 57 202 50 157
-           C44 111 58 67 92 34Z"
-        stroke="rgba(116,138,255,0.50)"
-        stroke-width="2"
-        fill="rgba(72,100,255,0.035)"
-      />
+          <div style="width:100%;max-width:460px;position:relative;">
 
-      <!-- Réseau -->
-      <g stroke="rgba(92,122,255,0.28)" stroke-width="1.5">
-        <line x1="168" y1="142" x2="154" y2="104"/>
-        <line x1="168" y1="142" x2="237" y2="72"/>
-        <line x1="168" y1="142" x2="255" y2="92"/>
-        <line x1="168" y1="142" x2="252" y2="124"/>
-        <line x1="168" y1="142" x2="244" y2="160"/>
-        <line x1="168" y1="142" x2="218" y2="198"/>
-        <line x1="168" y1="142" x2="160" y2="238"/>
-      </g>
+            <svg
+              viewBox="0 0 400 380"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style="width:100%;opacity:0.72;"
+              aria-hidden="true">
 
-      <!-- Hub central -->
-      <circle
-        cx="168"
-        cy="142"
-        r="20"
-        fill="rgba(72,100,255,0.08)"
-        stroke="rgba(72,100,255,0.30)"
-      />
-      <circle
-        cx="168"
-        cy="142"
-        r="6"
-        fill="rgba(116,138,255,0.95)"
-      />
-    </svg>
+              <path
+                d="M92 34
+                   C145 18 225 18 296 39
+                   C326 72 334 112 323 153
+                   C313 196 295 244 268 292
+                   C247 327 221 350 194 360
+                   C165 346 132 321 105 286
+                   C76 246 57 202 50 157
+                   C44 111 58 67 92 34Z"
+                stroke="rgba(116,138,255,0.50)"
+                stroke-width="2"
+                fill="rgba(72,100,255,0.035)"
+              />
 
-    <div class="fxe2-city-dot" style="top:38%;left:42%">
-      <div class="fxe2-city-name">Casablanca</div>
-    </div>
+              <g stroke="rgba(92,122,255,0.28)" stroke-width="1.5">
+                <line x1="168" y1="142" x2="154" y2="104"/>
+                <line x1="168" y1="142" x2="237" y2="72"/>
+                <line x1="168" y1="142" x2="255" y2="92"/>
+                <line x1="168" y1="142" x2="252" y2="124"/>
+                <line x1="168" y1="142" x2="244" y2="160"/>
+                <line x1="168" y1="142" x2="218" y2="198"/>
+                <line x1="168" y1="142" x2="160" y2="238"/>
+              </g>
 
-    <div class="fxe2-city-dot" style="top:28%;left:38%">
-      <div class="fxe2-city-name">Rabat</div>
-    </div>
+              <circle
+                cx="168"
+                cy="142"
+                r="20"
+                fill="rgba(72,100,255,0.08)"
+                stroke="rgba(72,100,255,0.30)"
+              />
 
-    <div class="fxe2-city-dot" style="top:55%;left:40%">
-      <div class="fxe2-city-name">Marrakech</div>
-    </div>
+              <circle
+                cx="168"
+                cy="142"
+                r="6"
+                fill="rgba(116,138,255,0.95)"
+              />
+            </svg>
 
-    <div class="fxe2-city-dot" style="top:18%;left:60%">
-      <div class="fxe2-city-name">Fès</div>
-    </div>
+            <div class="fxe2-city-dot" style="top:38%;left:42%">
+              <div class="fxe2-city-name">Casablanca</div>
+            </div>
 
-    <div class="fxe2-city-dot" style="top:13%;left:44%">
-      <div class="fxe2-city-name">Tanger</div>
-    </div>
+            <div class="fxe2-city-dot" style="top:28%;left:38%">
+              <div class="fxe2-city-name">Rabat</div>
+            </div>
 
-    <div class="fxe2-city-dot" style="top:22%;left:65%">
-      <div class="fxe2-city-name">Meknès</div>
-    </div>
+            <div class="fxe2-city-dot" style="top:55%;left:40%">
+              <div class="fxe2-city-name">Marrakech</div>
+            </div>
 
-    <div class="fxe2-city-dot" style="top:32%;left:65%">
-      <div class="fxe2-city-name">Kénitra</div>
-    </div>
+            <div class="fxe2-city-dot" style="top:18%;left:60%">
+              <div class="fxe2-city-name">Fès</div>
+            </div>
 
-    <div class="fxe2-city-dot" style="top:42%;left:55%">
-      <div class="fxe2-city-name">Béni Mellal</div>
-    </div>
+            <div class="fxe2-city-dot" style="top:13%;left:44%">
+              <div class="fxe2-city-name">Tanger</div>
+            </div>
 
-  </div>
-</div>
+            <div class="fxe2-city-dot" style="top:22%;left:65%">
+              <div class="fxe2-city-name">Meknès</div>
+            </div>
 
-        <!-- Stats -->
+            <div class="fxe2-city-dot" style="top:32%;left:65%">
+              <div class="fxe2-city-name">Kénitra</div>
+            </div>
+
+            <div class="fxe2-city-dot" style="top:42%;left:55%">
+              <div class="fxe2-city-name">Béni Mellal</div>
+            </div>
+
+          </div>
+        </div>
+
         <div class="fxe2-coverage-stats">
+
           <div class="fxe2-coverage-stat">
             <div class="fxe2-coverage-stat-icon" aria-hidden="true">🏙️</div>
             <div>
@@ -872,13 +888,15 @@
               <div class="fxe2-coverage-stat-label">Villes couvertes</div>
             </div>
           </div>
-         <div class="fxe2-coverage-stat">
-       <div class="fxe2-coverage-stat-icon" aria-hidden="true">👷</div>
-    <div>
-    <div class="fxe2-coverage-stat-value">Réseau</div>
-    <div class="fxe2-coverage-stat-label">Professionnels qualifiés</div>
-  </div>
-      </div>
+
+          <div class="fxe2-coverage-stat">
+            <div class="fxe2-coverage-stat-icon" aria-hidden="true">👷</div>
+            <div>
+              <div class="fxe2-coverage-stat-value">Réseau</div>
+              <div class="fxe2-coverage-stat-label">Professionnels qualifiés</div>
+            </div>
+          </div>
+
           <div class="fxe2-coverage-stat">
             <div class="fxe2-coverage-stat-icon" aria-hidden="true">🔧</div>
             <div>
@@ -886,18 +904,23 @@
               <div class="fxe2-coverage-stat-label">Corps de métier</div>
             </div>
           </div>
+
           <div class="fxe2-coverage-stat">
-  <div class="fxe2-coverage-stat-icon" aria-hidden="true">🤝</div>
-  <div>
-    <div class="fxe2-coverage-stat-value">Extension</div>
-    <div class="fxe2-coverage-stat-label">
-      Réseau adaptable à vos implantations
-    </div>
-  </div>
-</div>
+            <div class="fxe2-coverage-stat-icon" aria-hidden="true">🤝</div>
+            <div>
+              <div class="fxe2-coverage-stat-value">Extension</div>
+              <div class="fxe2-coverage-stat-label">
+                Réseau adaptable à vos implantations
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
-      <p class="fxe2-coverage-note">Données issues du réseau FIXEO actif. La couverture évolue régulièrement.</p>
+
+      <p class="fxe2-coverage-note">
+        Données issues du réseau FIXEO actif. La couverture évolue régulièrement.
+      </p>
     </div>
   </section>
 
@@ -908,147 +931,136 @@
   ══════════════════════════════════════════════════════════════ -->
   <section class="fxe2-section fxe2-section-alt" id="pourquoi" aria-labelledby="pourquoi-title">
     <div class="fxe2-container">
+
       <div class="fxe2-section-header">
-  <div class="fxe2-eyebrow">Technologie + opérations</div>
+        <div class="fxe2-eyebrow">Technologie + opérations</div>
 
-  <h2 id="pourquoi-title" class="fxe2-h2">
-    La technologie qui transforme une demande en intervention suivie.
-  </h2>
+        <h2 id="pourquoi-title" class="fxe2-h2">
+          La technologie qui transforme une demande en intervention suivie.
+        </h2>
 
-  <p class="fxe2-lead">
-    RAFI structure le besoin, le moteur FIXEO oriente la demande,
-    la coordination mobilise le professionnel adapté et chaque étape
-    alimente un historique commun à vos sites.
-  </p>
-</div>
-<div class="fxe2-why-grid fxe2-architecture-stack" role="list">
-
-  <!-- 01 — Intelligence -->
-  <article class="fxe2-why-card fxe2-architecture-layer" role="listitem">
-    <div class="fxe2-architecture-index">01</div>
-
-    <div class="fxe2-why-icon" aria-hidden="true">✦</div>
-
-    <div class="fxe2-architecture-content">
-      <div class="fxe2-architecture-kicker">INTELLIGENCE D’ENTRÉE</div>
-
-      <div class="fxe2-why-title">
-        RAFI transforme le signalement en besoin structuré
+        <p class="fxe2-lead">
+          RAFI structure le besoin, le moteur FIXEO oriente la demande,
+          la coordination mobilise le professionnel adapté et chaque étape
+          alimente un historique commun à vos sites.
+        </p>
       </div>
 
-      <p class="fxe2-why-desc">
-        Une demande formulée simplement est analysée pour identifier
-        son contexte, le métier concerné et les informations utiles
-        à sa prise en charge.
-      </p>
+      <div class="fxe2-why-grid fxe2-architecture-stack" role="list">
 
-      <div class="fxe2-architecture-signals" aria-label="Informations structurées">
-        <span>Contexte</span>
-        <span>Métier</span>
-        <span>Site</span>
+        <article class="fxe2-why-card fxe2-architecture-layer" role="listitem">
+          <div class="fxe2-architecture-index">01</div>
+          <div class="fxe2-why-icon" aria-hidden="true">✦</div>
+
+          <div class="fxe2-architecture-content">
+            <div class="fxe2-architecture-kicker">INTELLIGENCE D’ENTRÉE</div>
+
+            <div class="fxe2-why-title">
+              RAFI transforme le signalement en besoin structuré
+            </div>
+
+            <p class="fxe2-why-desc">
+              Une demande formulée simplement est analysée pour identifier
+              son contexte, le métier concerné et les informations utiles
+              à sa prise en charge.
+            </p>
+
+            <div class="fxe2-architecture-signals" aria-label="Informations structurées">
+              <span>Contexte</span>
+              <span>Métier</span>
+              <span>Site</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="fxe2-why-card fxe2-architecture-layer" role="listitem">
+          <div class="fxe2-architecture-index">02</div>
+          <div class="fxe2-why-icon" aria-hidden="true">⚡</div>
+
+          <div class="fxe2-architecture-content">
+            <div class="fxe2-architecture-kicker">MOTEUR FIXEO</div>
+
+            <div class="fxe2-why-title">
+              Le besoin est orienté vers les profils les plus adaptés
+            </div>
+
+            <p class="fxe2-why-desc">
+              FIXEO croise le métier, la zone et le contexte de l’intervention
+              afin d’orienter la demande vers les professionnels correspondant
+              le mieux au besoin identifié.
+            </p>
+
+            <div class="fxe2-architecture-signals" aria-label="Critères de matching">
+              <span>Métier</span>
+              <span>Zone</span>
+              <span>Contexte</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="fxe2-why-card fxe2-architecture-layer" role="listitem">
+          <div class="fxe2-architecture-index">03</div>
+          <div class="fxe2-why-icon" aria-hidden="true">◎</div>
+
+          <div class="fxe2-architecture-content">
+            <div class="fxe2-architecture-kicker">ORCHESTRATION</div>
+
+            <div class="fxe2-why-title">
+              La technologie devient prise en charge opérationnelle
+            </div>
+
+            <p class="fxe2-why-desc">
+              Une fois les profils adaptés identifiés, FIXEO organise
+              la coordination autour de la demande et accompagne sa progression
+              de l’assignation jusqu’à sa réalisation.
+            </p>
+
+            <div class="fxe2-architecture-signals" aria-label="Étapes opérationnelles">
+              <span>Assignation</span>
+              <span>Suivi</span>
+              <span>Clôture</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="fxe2-why-card fxe2-architecture-layer" role="listitem">
+          <div class="fxe2-architecture-index">04</div>
+          <div class="fxe2-why-icon" aria-hidden="true">◫</div>
+
+          <div class="fxe2-architecture-content">
+            <div class="fxe2-architecture-kicker">MÉMOIRE & PILOTAGE</div>
+
+            <div class="fxe2-why-title">
+              Chaque intervention enrichit une vision commune
+            </div>
+
+            <p class="fxe2-why-desc">
+              Le site, le besoin, le métier, le statut et le résultat restent
+              rattachés à l’intervention afin de construire progressivement
+              une mémoire opérationnelle exploitable par votre organisation.
+            </p>
+
+            <div class="fxe2-architecture-signals" aria-label="Données de pilotage">
+              <span>Historique</span>
+              <span>Multi-sites</span>
+              <span>Activité</span>
+            </div>
+          </div>
+        </article>
+
+        <div class="fxe2-architecture-terrain">
+          <span class="fxe2-architecture-terrain-dot" aria-hidden="true"></span>
+
+          <div>
+            <strong>Technologie connectée au terrain</strong>
+            <span>
+              Le moteur structure et oriente ; la coordination locale transforme
+              cette logique en intervention réelle.
+            </span>
+          </div>
+        </div>
+
       </div>
-    </div>
-  </article>
-
-
-  <!-- 02 — Matching -->
-  <article class="fxe2-why-card fxe2-architecture-layer" role="listitem">
-    <div class="fxe2-architecture-index">02</div>
-
-    <div class="fxe2-why-icon" aria-hidden="true">⚡</div>
-
-    <div class="fxe2-architecture-content">
-      <div class="fxe2-architecture-kicker">MOTEUR FIXEO</div>
-
-      <div class="fxe2-why-title">
-        Le besoin est orienté vers les profils les plus adaptés
-      </div>
-
-      <p class="fxe2-why-desc">
-        FIXEO croise le métier, la zone et le contexte de l’intervention
-        afin d’orienter la demande vers les professionnels correspondant
-        le mieux au besoin identifié.
-      </p>
-
-      <div class="fxe2-architecture-signals" aria-label="Critères de matching">
-        <span>Métier</span>
-        <span>Zone</span>
-        <span>Contexte</span>
-      </div>
-    </div>
-  </article>
-
-
-  <!-- 03 — Execution -->
-  <article class="fxe2-why-card fxe2-architecture-layer" role="listitem">
-    <div class="fxe2-architecture-index">03</div>
-
-    <div class="fxe2-why-icon" aria-hidden="true">◎</div>
-
-    <div class="fxe2-architecture-content">
-      <div class="fxe2-architecture-kicker">ORCHESTRATION</div>
-
-      <div class="fxe2-why-title">
-        La technologie devient prise en charge opérationnelle
-      </div>
-
-      <p class="fxe2-why-desc">
-        Une fois les profils adaptés identifiés, FIXEO organise
-        la coordination autour de la demande et accompagne sa progression
-        de l’assignation jusqu’à sa réalisation.
-      </p>
-
-      <div class="fxe2-architecture-signals" aria-label="Étapes opérationnelles">
-        <span>Assignation</span>
-        <span>Suivi</span>
-        <span>Clôture</span>
-      </div>
-    </div>
-  </article>
-
-
-  <!-- 04 — Memory & control -->
-  <article class="fxe2-why-card fxe2-architecture-layer" role="listitem">
-    <div class="fxe2-architecture-index">04</div>
-
-    <div class="fxe2-why-icon" aria-hidden="true">◫</div>
-
-    <div class="fxe2-architecture-content">
-      <div class="fxe2-architecture-kicker">MÉMOIRE & PILOTAGE</div>
-
-      <div class="fxe2-why-title">
-        Chaque intervention enrichit une vision commune
-      </div>
-
-      <p class="fxe2-why-desc">
-        Le site, le besoin, le métier, le statut et le résultat restent
-        rattachés à l’intervention afin de construire progressivement
-        une mémoire opérationnelle exploitable par votre organisation.
-      </p>
-
-      <div class="fxe2-architecture-signals" aria-label="Données de pilotage">
-        <span>Historique</span>
-        <span>Multi-sites</span>
-        <span>Activité</span>
-      </div>
-    </div>
-  </article>
-
-
-  <!-- Terrain bridge -->
-  <div class="fxe2-architecture-terrain">
-    <span class="fxe2-architecture-terrain-dot" aria-hidden="true"></span>
-
-    <div>
-      <strong>Technologie connectée au terrain</strong>
-      <span>
-        Le moteur structure et oriente ; la coordination locale transforme
-        cette logique en intervention réelle.
-      </span>
-    </div>
-  </div>
-
-</div
 
     </div>
   </section>
@@ -1056,112 +1068,112 @@
   <div class="fxe2-divider"></div>
 
   <!-- ══════════════════════════════════════════════════════════════
-       SECTION 9 — DÉMO vs CONTACT (bloc de conversion)
+       SECTION 9 — SESSION DE CADRAGE
   ══════════════════════════════════════════════════════════════ -->
   <section class="fxe2-section fxe2-conversion-section" id="conversion" aria-labelledby="conversion-title">
     <div class="fxe2-conversion-bg" aria-hidden="true"></div>
+
     <div class="fxe2-container" style="position:relative;z-index:1;">
+
       <div class="fxe2-section-header">
         <div class="fxe2-eyebrow">Passez à l’action</div>
-<h2 id="conversion-title" class="fxe2-h2">
-  Voyons comment FIXEO s’intègre à votre organisation.
-</h2>
-<p class="fxe2-lead">
-  Présentez-nous vos sites, vos contraintes et votre fonctionnement actuel.
-  Nous vous montrons comment structurer la prise en charge avec FIXEO.
-</p>
+
+        <h2 id="conversion-title" class="fxe2-h2">
+          Voyons comment FIXEO s’intègre à votre organisation.
+        </h2>
+
+        <p class="fxe2-lead">
+          Présentez-nous vos sites, vos contraintes et votre fonctionnement actuel.
+          Nous vous montrons comment structurer la prise en charge avec FIXEO.
+        </p>
       </div>
 
- <div class="fxe2-conversion-grid fxe2-conversion-console">
+      <div class="fxe2-conversion-grid fxe2-conversion-console">
 
-  <article class="fxe2-conversion-card primary fxe2-conversion-primary">
+        <article class="fxe2-conversion-card primary fxe2-conversion-primary">
 
-    <div class="fxe2-conversion-console-head">
+          <div class="fxe2-conversion-console-head">
 
-      <div>
-        <div class="fxe2-conversion-card-eyebrow">
-          SESSION DE CADRAGE FIXEO
-        </div>
+            <div>
+              <div class="fxe2-conversion-card-eyebrow">
+                SESSION DE CADRAGE FIXEO
+              </div>
 
-        <div class="fxe2-conversion-card-title">
-          Construisons le dispositif adapté à votre organisation.
-        </div>
-      </div>
+              <div class="fxe2-conversion-card-title">
+                Construisons le dispositif adapté à votre organisation.
+              </div>
+            </div>
 
-      <div class="fxe2-conversion-status">
-        <span class="fxe2-conversion-status-dot" aria-hidden="true"></span>
-        Cadrage personnalisé
+            <div class="fxe2-conversion-status">
+              <span class="fxe2-conversion-status-dot" aria-hidden="true"></span>
+              Cadrage personnalisé
+            </div>
+
+          </div>
+
+          <p class="fxe2-conversion-card-desc">
+            Présentez-nous vos sites, vos flux d’intervention et vos contraintes.
+            Nous parcourons avec vous la façon dont FIXEO peut structurer
+            la qualification, la coordination et le suivi de vos opérations.
+          </p>
+
+          <div class="fxe2-conversion-flow" role="list">
+
+            <div class="fxe2-conversion-flow-step" role="listitem">
+              <span class="fxe2-conversion-flow-index">01</span>
+              <div>
+                <strong>Cartographier</strong>
+                <span>Vos sites, vos métiers et vos flux d’intervention</span>
+              </div>
+            </div>
+
+            <div class="fxe2-conversion-flow-step" role="listitem">
+              <span class="fxe2-conversion-flow-index">02</span>
+              <div>
+                <strong>Qualifier</strong>
+                <span>Vos contraintes et vos priorités opérationnelles</span>
+              </div>
+            </div>
+
+            <div class="fxe2-conversion-flow-step" role="listitem">
+              <span class="fxe2-conversion-flow-index">03</span>
+              <div>
+                <strong>Simuler</strong>
+                <span>Un parcours réel de prise en charge avec FIXEO</span>
+              </div>
+            </div>
+
+            <div class="fxe2-conversion-flow-step" role="listitem">
+              <span class="fxe2-conversion-flow-index">04</span>
+              <div>
+                <strong>Structurer la suite</strong>
+                <span>Les prochaines étapes adaptées à votre organisation</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="fxe2-conversion-footer">
+
+            <div class="fxe2-conversion-footer-note">
+              <span aria-hidden="true">✓</span>
+              Sans engagement
+            </div>
+
+            <button
+              type="button"
+              class="fxe2-btn fxe2-btn-primary fxe2-btn-lg"
+              data-lead-intent="cadrage"
+              data-source-cta="conversion-cadrage">
+              Planifier une session de cadrage
+            </button>
+
+          </div>
+
+        </article>
       </div>
 
     </div>
-
-
-    <p class="fxe2-conversion-card-desc">
-      Présentez-nous vos sites, vos flux d’intervention et vos contraintes.
-      Nous parcourons avec vous la façon dont FIXEO peut structurer
-      la qualification, la coordination et le suivi de vos opérations.
-    </p>
-
-
-    <div class="fxe2-conversion-flow" role="list">
-
-      <div class="fxe2-conversion-flow-step" role="listitem">
-        <span class="fxe2-conversion-flow-index">01</span>
-        <div>
-          <strong>Cartographier</strong>
-          <span>Vos sites, vos métiers et vos flux d’intervention</span>
-        </div>
-      </div>
-
-      <div class="fxe2-conversion-flow-step" role="listitem">
-        <span class="fxe2-conversion-flow-index">02</span>
-        <div>
-          <strong>Qualifier</strong>
-          <span>Vos contraintes et vos priorités opérationnelles</span>
-        </div>
-      </div>
-
-      <div class="fxe2-conversion-flow-step" role="listitem">
-        <span class="fxe2-conversion-flow-index">03</span>
-        <div>
-          <strong>Simuler</strong>
-          <span>Un parcours réel de prise en charge avec FIXEO</span>
-        </div>
-      </div>
-
-      <div class="fxe2-conversion-flow-step" role="listitem">
-        <span class="fxe2-conversion-flow-index">04</span>
-        <div>
-          <strong>Structurer la suite</strong>
-          <span>Les prochaines étapes adaptées à votre organisation</span>
-        </div>
-      </div>
-
-    </div>
-
-
-    <div class="fxe2-conversion-footer">
-
-      <div class="fxe2-conversion-footer-note">
-        <span aria-hidden="true">✓</span>
-        Sans engagement
-      </div>
-
-      <button
-        type="button"
-        class="fxe2-btn fxe2-btn-primary fxe2-btn-lg"
-        data-lead-intent="demo"
-        data-source-cta="conversion-demo">
-        Planifier une session de cadrage
-      </button>
-
-    </div>
-
-  </article>
-
-</div>
-      
-      </div>
   </section>
 
   <div class="fxe2-divider"></div>
@@ -1171,116 +1183,115 @@
   ══════════════════════════════════════════════════════════════ -->
   <section class="fxe2-section fxe2-section-alt" id="faq" aria-labelledby="faq-title">
     <div class="fxe2-container">
+
       <div class="fxe2-section-header">
         <div class="fxe2-eyebrow">Avant de démarrer</div>
-<h2 id="faq-title" class="fxe2-h2">
-  Les réponses aux questions essentielles.
-</h2>
+        <h2 id="faq-title" class="fxe2-h2">Les réponses aux questions essentielles.</h2>
       </div>
 
       <div class="fxe2-faq-list" role="list">
 
         <div class="fxe2-faq-item" role="listitem">
-  <button class="fxe2-faq-q" aria-expanded="false">
-    Comment FIXEO traite-t-il une demande urgente ?
-    <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
-  </button>
+          <button class="fxe2-faq-q" aria-expanded="false">
+            Comment FIXEO traite-t-il une demande urgente ?
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
+          </button>
 
-  <div class="fxe2-faq-a">
-    La demande est qualifiée, rattachée au site concerné puis orientée vers
-    les professionnels adaptés disponibles dans la zone. La prise en charge
-    dépend du métier, de la localisation, du niveau d’urgence et du dispositif
-    convenu avec votre organisation. Les modalités en dehors des horaires
-    standards peuvent être définies dans le cadre du partenariat.
-  </div>
-</div>
-
-       <div class="fxe2-faq-item" role="listitem">
-  <button class="fxe2-faq-q" aria-expanded="false">
-    Comment FIXEO sélectionne-t-il les professionnels intervenants ?
-    <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
-  </button>
-
-  <div class="fxe2-faq-a">
-    FIXEO oriente chaque demande selon le métier requis, la zone,
-    les informations disponibles sur le professionnel et le contexte
-    de l’intervention. La sélection peut également intégrer les exigences
-    définies avec votre organisation ainsi que les retours issus
-    des interventions précédentes.
-  </div>
-</div>
+          <div class="fxe2-faq-a">
+            La demande est qualifiée, rattachée au site concerné puis orientée vers
+            les professionnels adaptés disponibles dans la zone. La prise en charge
+            dépend du métier, de la localisation, du niveau d’urgence et du dispositif
+            convenu avec votre organisation. Les modalités en dehors des horaires
+            standards peuvent être définies dans le cadre du partenariat.
+          </div>
+        </div>
 
         <div class="fxe2-faq-item" role="listitem">
-  <button class="fxe2-faq-q" aria-expanded="false">
-    Peut-on gérer plusieurs bâtiments dans des villes différentes ?
-    <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
-  </button>
+          <button class="fxe2-faq-q" aria-expanded="false">
+            Comment FIXEO sélectionne-t-il les professionnels intervenants ?
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
+          </button>
 
-  <div class="fxe2-faq-a">
-    Oui. FIXEO Entreprise est conçu pour les organisations multi-sites.
-    Chaque bâtiment peut être rattaché à votre organisation et suivi
-    séparément dans un même environnement. Le dispositif opérationnel
-    est ensuite adapté à la couverture disponible et peut être étendu
-    autour de vos implantations selon vos besoins.
-  </div>
-</div>
+          <div class="fxe2-faq-a">
+            FIXEO oriente chaque demande selon le métier requis, la zone,
+            les informations disponibles sur le professionnel et le contexte
+            de l’intervention. La sélection peut également intégrer les exigences
+            définies avec votre organisation ainsi que les retours issus
+            des interventions précédentes.
+          </div>
+        </div>
 
-       <div class="fxe2-faq-item" role="listitem">
-  <button class="fxe2-faq-q" aria-expanded="false">
-    Quelles informations peut-on centraliser dans FIXEO ?
-    <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
-  </button>
+        <div class="fxe2-faq-item" role="listitem">
+          <button class="fxe2-faq-q" aria-expanded="false">
+            Peut-on gérer plusieurs bâtiments dans des villes différentes ?
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
+          </button>
 
-  <div class="fxe2-faq-a">
-    FIXEO peut regrouper les informations utiles à chaque intervention :
-    site concerné, besoin, métier, statut, professionnel mobilisé et historique
-    disponible. Le niveau de détail et les vues accessibles dépendent du
-    dispositif et des modules activés pour votre organisation.
-  </div>
-</div>
+          <div class="fxe2-faq-a">
+            Oui. FIXEO Entreprise est conçu pour les organisations multi-sites.
+            Chaque bâtiment peut être rattaché à votre organisation et suivi
+            séparément dans un même environnement. Le dispositif opérationnel
+            est ensuite adapté à la couverture disponible et peut être étendu
+            autour de vos implantations selon vos besoins.
+          </div>
+        </div>
 
-       <div class="fxe2-faq-item" role="listitem">
-  <button class="fxe2-faq-q" aria-expanded="false">
-    Comment fonctionne la tarification Entreprise ?
-    <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
-  </button>
+        <div class="fxe2-faq-item" role="listitem">
+          <button class="fxe2-faq-q" aria-expanded="false">
+            Quelles informations peut-on centraliser dans FIXEO ?
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
+          </button>
 
-  <div class="fxe2-faq-a">
-    La tarification est définie selon le périmètre de votre organisation :
-    nombre de sites, volume et typologie des interventions, besoins de coordination
-    et niveau de service attendu. Un cadrage permet d’établir une proposition
-    adaptée à votre dispositif.
-  </div>
-</div>
+          <div class="fxe2-faq-a">
+            FIXEO peut regrouper les informations utiles à chaque intervention :
+            site concerné, besoin, métier, statut, professionnel mobilisé et historique
+            disponible. Le niveau de détail et les vues accessibles dépendent du
+            dispositif et des modules activés pour votre organisation.
+          </div>
+        </div>
 
-      <div class="fxe2-faq-item" role="listitem">
-  <button class="fxe2-faq-q" aria-expanded="false">
-    Comment FIXEO traite-t-il les données de notre organisation ?
-    <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
-  </button>
+        <div class="fxe2-faq-item" role="listitem">
+          <button class="fxe2-faq-q" aria-expanded="false">
+            Comment fonctionne la tarification Entreprise ?
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
+          </button>
 
-  <div class="fxe2-faq-a">
-    Les informations liées à votre organisation et à vos interventions
-    sont utilisées pour assurer la qualification, la coordination
-    et le suivi des demandes. Les modalités d’accès, de conservation
-    et de traitement des données peuvent être précisées dans le cadre
-    du dispositif convenu avec votre organisation.
-  </div>
-</div>
+          <div class="fxe2-faq-a">
+            La tarification est définie selon le périmètre de votre organisation :
+            nombre de sites, volume et typologie des interventions, besoins de coordination
+            et niveau de service attendu. Un cadrage permet d’établir une proposition
+            adaptée à votre dispositif.
+          </div>
+        </div>
 
-      <div class="fxe2-faq-item" role="listitem">
-  <button class="fxe2-faq-q" aria-expanded="false">
-    Comment se déroule la mise en place de FIXEO dans notre organisation ?
-    <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
-  </button>
+        <div class="fxe2-faq-item" role="listitem">
+          <button class="fxe2-faq-q" aria-expanded="false">
+            Comment FIXEO traite-t-il les données de notre organisation ?
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
+          </button>
 
-  <div class="fxe2-faq-a">
-    La mise en place commence par un cadrage de votre organisation :
-    sites concernés, types d’interventions, utilisateurs et besoins de suivi.
-    Le dispositif FIXEO est ensuite configuré progressivement selon le périmètre
-    convenu, avec un accompagnement adapté jusqu’à sa prise en main par vos équipes.
-  </div>
-</div>
+          <div class="fxe2-faq-a">
+            Les informations liées à votre organisation et à vos interventions
+            sont utilisées pour assurer la qualification, la coordination
+            et le suivi des demandes. Les modalités d’accès, de conservation
+            et de traitement des données peuvent être précisées dans le cadre
+            du dispositif convenu avec votre organisation.
+          </div>
+        </div>
+
+        <div class="fxe2-faq-item" role="listitem">
+          <button class="fxe2-faq-q" aria-expanded="false">
+            Comment se déroule la mise en place de FIXEO dans notre organisation ?
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
+          </button>
+
+          <div class="fxe2-faq-a">
+            La mise en place commence par un cadrage de votre organisation :
+            sites concernés, types d’interventions, utilisateurs et besoins de suivi.
+            Le dispositif FIXEO est ensuite configuré progressivement selon le périmètre
+            convenu, avec un accompagnement adapté jusqu’à sa prise en main par vos équipes.
+          </div>
+        </div>
 
       </div>
     </div>
@@ -1291,34 +1302,47 @@
   <!-- ══════════════════════════════════════════════════════════════
        SECTION 11 — FINAL CTA
   ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe2-section" id="contact" aria-labelledby="final-cta-title" style="text-align:center;position:relative;overflow:hidden;">
-    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(72,100,255,0.14) 0%,transparent 70%);pointer-events:none;" aria-hidden="true"></div>
+  <section
+    class="fxe2-section"
+    id="contact"
+    aria-labelledby="final-cta-title"
+    style="text-align:center;position:relative;overflow:hidden;">
+
+    <div
+      style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(72,100,255,0.14) 0%,transparent 70%);pointer-events:none;"
+      aria-hidden="true">
+    </div>
+
     <div class="fxe2-container" style="position:relative;z-index:1;">
-     <div class="fxe2-eyebrow" style="margin-left:auto;margin-right:auto;">
-  Construisons la suite
-</div>
 
-<h2 id="final-cta-title" class="fxe2-h2" style="margin-bottom:16px;">
-  Transformez vos interventions en<br>
-  <span class="fxe2-gradient-text">un dispositif réellement piloté.</span>
-</h2>
+      <div class="fxe2-eyebrow" style="margin-left:auto;margin-right:auto;">
+        Construisons la suite
+      </div>
 
-<p class="fxe2-lead" style="max-width:560px;margin:0 auto 44px;">
-  Présentez-nous votre organisation, vos sites et vos contraintes.
-  Nous cadrons avec vous le dispositif FIXEO adapté à votre réalité opérationnelle.
-</p>
+      <h2 id="final-cta-title" class="fxe2-h2" style="margin-bottom:16px;">
+        Transformez vos interventions en<br>
+        <span class="fxe2-gradient-text">un dispositif réellement piloté.</span>
+      </h2>
+
+      <p class="fxe2-lead" style="max-width:560px;margin:0 auto 44px;">
+        Présentez-nous votre organisation, vos sites et vos contraintes.
+        Nous cadrons avec vous le dispositif FIXEO adapté à votre réalité opérationnelle.
+      </p>
+
       <div style="display:flex;justify-content:center;">
-  <button
-    type="button"
-    class="fxe2-btn fxe2-btn-primary fxe2-btn-lg"
-    data-lead-intent="demo"
-    data-source-cta="final-demo">
-    Planifier une session de cadrage
-  </button>
-</div>
+        <button
+          type="button"
+          class="fxe2-btn fxe2-btn-primary fxe2-btn-lg"
+          data-lead-intent="cadrage"
+          data-source-cta="final-cadrage">
+          Planifier une session de cadrage
+        </button>
+      </div>
+
       <p style="margin-top:22px;font-size:13px;color:rgba(255,255,255,0.35);">
-  Échange de cadrage · Sans engagement · Dispositif adapté à votre organisation
-</p>
+        Échange de cadrage · Sans engagement · Dispositif adapté à votre organisation
+      </p>
+
     </div>
   </section>
 
@@ -1332,10 +1356,15 @@
   ══════════════════════════════════════════════════════════════ -->
 
   <!-- Supabase (needed for shared header auth state) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" crossorigin="anonymous" defer></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
+    crossorigin="anonymous"
+    defer>
+  </script>
 
   <!-- Shared header JS -->
   <script src="/js/fixeo-header-global.js?v=gfnav5" defer></script>
+
   <!-- Canonical footer -->
   <script src="/js/fixeo-footer-global.js?v=gf4a" defer></script>
 
@@ -1344,10 +1373,10 @@
   <script src="/js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
   <script src="/js/fixeo-consent-v1.js?v=fcv1c" defer></script>
 
-  <!-- V2 Lead Flow Engine (replaces modal for all V2 triggers) -->
-  <script src="/js/fixeo-enterprise-lead-v2.js?v=fxlf-v2a" defer></script>
+  <!-- V2 Lead Flow Engine -->
+  <script src="/js/fixeo-enterprise-lead-v2.js?v=fxlf-v2c" defer></script>
 
-  <!-- V1 Enterprise Modal (left intact for any V1 data-request-mode="enterprise" buttons on other pages) -->
+  <!-- V1 Enterprise Modal -->
   <script src="/js/fixeo-enterprise-modal-v1.js?v=fem-v1a" defer></script>
 
   <!-- Page-specific interactions -->
@@ -1359,12 +1388,12 @@
         btn.addEventListener('click', function () {
           var item = btn.closest('.fxe2-faq-item');
           var isOpen = item.classList.contains('open');
-          /* Close all */
+
           document.querySelectorAll('.fxe2-faq-item.open').forEach(function (el) {
             el.classList.remove('open');
             el.querySelector('.fxe2-faq-q').setAttribute('aria-expanded', 'false');
           });
-          /* Toggle current */
+
           if (!isOpen) {
             item.classList.add('open');
             btn.setAttribute('aria-expanded', 'true');
@@ -1377,11 +1406,17 @@
         anchor.addEventListener('click', function (e) {
           var id = anchor.getAttribute('href').slice(1);
           var target = document.getElementById(id);
+
           if (target) {
             e.preventDefault();
+
             var offset = 80;
             var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
-            window.scrollTo({ top: top, behavior: 'smooth' });
+
+            window.scrollTo({
+              top: top,
+              behavior: 'smooth'
+            });
           }
         });
       });
@@ -1389,9 +1424,11 @@
       /* ── Entrance animations ─────────────────────────────────── */
       if ('IntersectionObserver' in window) {
         var style = document.createElement('style');
+
         style.textContent =
           '.fxe2-anim{opacity:0;transform:translateY(18px);transition:opacity 0.5s ease,transform 0.5s ease}' +
           '.fxe2-anim.fxe2-visible{opacity:1;transform:none}';
+
         document.head.appendChild(style);
 
         var io = new IntersectionObserver(function (entries) {
@@ -1401,7 +1438,9 @@
               io.unobserve(entry.target);
             }
           });
-        }, { threshold: 0.1 });
+        }, {
+          threshold: 0.1
+        });
 
         var animSelectors = [
           '.fxe2-problem-card',
