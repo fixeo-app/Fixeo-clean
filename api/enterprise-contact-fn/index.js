@@ -202,9 +202,17 @@ module.exports = async function handler(req, res) {
    * Table CHECK constraint: char_length(needs) <= 500 — enforce here. */
   var needsRaw = _sanitize(body.selected_needs, 500) || _sanitize(body.needs, 500);
 
-  /* Entry intent (V2 only, fallback to 'demo') */
-  var entryIntent = ['demo','contact'].includes(String(body.entry_intent || 'demo').toLowerCase())
-    ? String(body.entry_intent).toLowerCase() : 'demo';
+  /* Entry intent (V2 only, fallback to 'demo').
+ * Supported intents:
+ *   demo     → explicit product demonstration request
+ *   cadrage  → operational scoping session; does NOT imply a demonstration
+ *   contact  → general Enterprise contact
+ */
+var entryIntent = ['demo', 'cadrage', 'contact'].includes(
+  String(body.entry_intent || 'demo').toLowerCase()
+)
+  ? String(body.entry_intent).toLowerCase()
+  : 'demo';
 
   /* Build enriched message prefix: entry_intent + secteur + CTA tag */
   var messagePrefix = '';
