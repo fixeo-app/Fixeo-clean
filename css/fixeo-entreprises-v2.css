@@ -5092,3 +5092,116 @@
     font-size: 9.8px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FIXEO ENTERPRISE LEAD FLOW
+   Mobile viewport + Global Header contract
+   Version: fxlf-mobile-v1 — 2026-09-16
+══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+
+  /*
+   * Global mobile header final contract:
+   * visible bar = 62px + device top safe area.
+   *
+   * The Enterprise lead flow deliberately stays BELOW the
+   * global FIXEO header instead of competing with its global
+   * fixed-layer z-index contract.
+   */
+  body.fxe2-page {
+    --fxlf-global-header-offset:
+      calc(62px + env(safe-area-inset-top, 0px));
+  }
+
+  /* Backdrop starts below the persistent FIXEO header. */
+  body.fxe2-page .fxlf-overlay {
+    top: var(--fxlf-global-header-offset);
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    height: auto;
+  }
+
+  /* Full mobile workspace, constrained to the usable viewport. */
+  body.fxe2-page .fxlf-panel {
+    top: var(--fxlf-global-header-offset);
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    height:
+      calc(100vh - var(--fxlf-global-header-offset));
+    height:
+      calc(100dvh - var(--fxlf-global-header-offset));
+
+    max-height: none;
+
+    transform: none;
+
+    padding-bottom: 0;
+
+    border: 0;
+    border-radius: 0;
+  }
+
+  /*
+   * The device top safe area is already consumed by the
+   * persistent global header. Do not add it a second time here.
+   */
+  body.fxe2-page .fxlf-header {
+    padding:
+      18px
+      58px
+      15px
+      18px;
+  }
+
+  /*
+   * Body-level mobile close control.
+   * Its coordinates are viewport-based, therefore position it
+   * immediately below the global header.
+   */
+  body.fxe2-page #fxlf-mobile-close {
+    top:
+      calc(
+        var(--fxlf-global-header-offset)
+        + 10px
+      );
+
+    right: 12px;
+  }
+
+  /*
+   * Preserve the iPhone home-indicator safe area.
+   * This also wins over the older <=480px footer shorthand.
+   */
+  body.fxe2-page .fxlf-footer {
+    padding:
+      12px
+      18px
+      calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+
+/* Very small phones: keep the same safe-area contract. */
+@media (max-width: 480px) {
+
+  body.fxe2-page .fxlf-header {
+    padding:
+      16px
+      56px
+      14px
+      18px;
+  }
+
+  body.fxe2-page .fxlf-footer {
+    padding:
+      12px
+      18px
+      calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+}
