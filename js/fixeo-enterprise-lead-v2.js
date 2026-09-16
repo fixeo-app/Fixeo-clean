@@ -1931,62 +1931,78 @@
         '#fxlf-needs-grid'
       );
 
-    if (grid) {
 
-      grid.addEventListener(
-        'click',
-        function (e) {
 
-          var card =
-            e.target.closest(
-              '.fxlf-need-card'
-            );
+if (grid) {
 
-          if (!card) return;
+  grid.addEventListener(
+    'click',
+    function (e) {
 
-          var isSelected =
-            card.classList.contains(
-              'selected'
-            );
+      var card =
+        e.target.closest(
+          '.fxlf-need-card'
+        );
 
-          card.classList.toggle(
-            'selected',
-            !isSelected
-          );
+      if (!card || !grid.contains(card)) {
+        return;
+      }
 
-          card.setAttribute(
-            'aria-checked',
-            String(!isSelected)
-          );
+      /*
+       * The need card is a <label> containing a checkbox.
+       * Prevent the label's native activation from generating
+       * a second checkbox click and immediately undoing the
+       * selection on touch/mobile browsers.
+       */
+      e.preventDefault();
 
-          var cb =
-            card.querySelector(
-              'input[type="checkbox"]'
-            );
+      var isSelected =
+        card.classList.contains(
+          'selected'
+        );
 
-          if (cb) {
-            cb.checked = !isSelected;
-          }
+      var nextSelected =
+        !isSelected;
 
-          var errEl =
-            panel.querySelector(
-              '#fxlf-err-needs'
-            );
-
-          if (
-            errEl &&
-            _getCheckedNeeds(panel)
-              .length > 0
-          ) {
-
-            errEl.classList.remove(
-              'visible'
-            );
-
-          }
-
-        }
+      card.classList.toggle(
+        'selected',
+        nextSelected
       );
+
+      card.setAttribute(
+        'aria-checked',
+        String(nextSelected)
+      );
+
+      var cb =
+        card.querySelector(
+          'input[type="checkbox"]'
+        );
+
+      if (cb) {
+        cb.checked = nextSelected;
+      }
+
+      var errEl =
+        panel.querySelector(
+          '#fxlf-err-needs'
+        );
+
+      if (
+        errEl &&
+        _getCheckedNeeds(panel)
+          .length > 0
+      ) {
+
+        errEl.classList.remove(
+          'visible'
+        );
+
+      }
+
+    }
+  );
+    
 
       grid.addEventListener(
         'keydown',
