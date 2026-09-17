@@ -1030,7 +1030,7 @@ async function fetchSites() {
       .from('enterprise_sites')
       // BP09-FIX-02: include status (required for BP08C admin controls + inactive
       // site filtering) and address_line/site_code (used by doSiteUpdate)
-      .select('id, name, address, city, status, site_code, address_line')
+      .select('id, name, city, status, site_code, address_line')
       .eq('enterprise_id', S.activeEnterprise.id)
       .order('name');
     if(error) throw error;
