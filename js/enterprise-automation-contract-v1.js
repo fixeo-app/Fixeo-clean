@@ -153,6 +153,16 @@
     if (typeof window !== 'undefined' && window.supabase) {
       return window.supabase;
     }
+    if (typeof window !== 'undefined' && window._supabase) {
+      return window._supabase;
+    }
+    if (
+      typeof window !== 'undefined' &&
+      window.FixeoSupabaseClient &&
+      window.FixeoSupabaseClient.client
+    ) {
+      return window.FixeoSupabaseClient.client;
+    }
     throw new Error('Supabase client unavailable');
   }
 

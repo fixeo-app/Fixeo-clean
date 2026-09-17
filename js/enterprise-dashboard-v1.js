@@ -4955,8 +4955,6 @@ function submitSLAPolicy() {
     p_intervention_target_minutes: intVal || null,
     p_resolution_target_minutes: resVal || null,
   };
-  if (editId) payload.p_policy_id = editId;
-
   S.slaFormSubmitting = true;
   if (loadEl) loadEl.style.display = '';
 
@@ -5000,8 +4998,7 @@ function deactivateSLAPolicy(policyId) {
     promise = contract.deactivatePolicy({ policy_id: policyId, enterprise_id: S.activeEnterprise });
   } else if (typeof _sb !== 'undefined' && _sb && typeof _sb.rpc === 'function') {
     promise = _sb.rpc('deactivate_sla_policy', {
-      p_policy_id: policyId,
-      p_enterprise_id: S.activeEnterprise
+      p_policy_id: policyId
     }).then(function(res) { return res; });
   } else {
     promise = Promise.reject(new Error('SLA contract non disponible.'));
@@ -5228,13 +5225,13 @@ async function refreshEscKpis() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const [openR, critR, ackR, resolvedR] = await Promise.all([
-        sb.from('escalations').select('id', { count: 'exact', head: true })
+        sb.from('enterprise_escalations').select('id', { count: 'exact', head: true })
           .eq('enterprise_id', eid).eq('status', 'open'),
-        sb.from('escalations').select('id', { count: 'exact', head: true })
+        sb.from('enterprise_escalations').select('id', { count: 'exact', head: true })
           .eq('enterprise_id', eid).eq('severity', 'critical').neq('status', 'resolved'),
-        sb.from('escalations').select('id', { count: 'exact', head: true })
+        sb.from('enterprise_escalations').select('id', { count: 'exact', head: true })
           .eq('enterprise_id', eid).eq('status', 'acknowledged'),
-        sb.from('escalations').select('id', { count: 'exact', head: true })
+        sb.from('enterprise_escalations').select('id', { count: 'exact', head: true })
           .eq('enterprise_id', eid).eq('status', 'resolved')
           .gte('resolved_at', today.toISOString()),
       ]);
@@ -5292,9 +5289,9 @@ async function loadDetailEscalations(requestId) {
     if (contract && typeof contract.getEscalationsForRequest === 'function') {
       rows = await contract.getEscalationsForRequest(requestId);
     } else {
-      const { data, error } = await sb.from('escalations')
+      const { data, error } = await sb.from('enterprise_escalations')
         .select('*')
-        .eq('request_id', requestId)
+        .eq('service_request_id', requestId)
         .order('opened_at', { ascending: false })
         .limit(20);
       if (error) throw error;
@@ -5411,10 +5408,10 @@ async function openEscalation(requestId) {
       await contract.openEscalation({ requestId, severity, reason });
     } else {
       const { error } = await sb.rpc('open_escalation', {
-        p_request_id: requestId,
-        p_severity: severity,
-        p_reason: reason,
         p_enterprise_id: S.activeEnterprise && S.activeEnterprise.id,
+        p_service_request_id: requestId,
+        p_severity: severity,
+        p_reason_code: reason,
       });
       if (error) throw error;
     }
@@ -5559,14 +5556,14 @@ async function loadEscalations(reset) {
     if (contract && typeof contract.listEscalations === 'function') {
       rows = await contract.listEscalations({ enterpriseId: eid, filters: f, offset, limit: PAGE_SIZE });
     } else {
-      let q = sb.from('escalations').select('*, sites(name)')
+      let q = sb.from('enterprise_escalations').select('*, enterprise_sites(name)')
         .eq('enterprise_id', eid)
         .order('opened_at', { ascending: false })
         .range(offset, offset + PAGE_SIZE - 1);
       if (f.status) q = q.eq('status', f.status);
       if (f.severity) q = q.eq('severity', f.severity);
       if (f.siteId) q = q.eq('site_id', f.siteId);
-      if (f.reason) q = q.eq('reason', f.reason);
+      if (f.reason) q = q.eq('reason_code', f.reason);
       if (f.search) q = q.ilike('id', '%' + f.search + '%'); // fallback text search
       const { data, error } = await q;
       if (error) throw error;
@@ -5576,7 +5573,7 @@ async function loadEscalations(reset) {
     if (f.search) {
       const term = f.search.toLowerCase();
       rows = rows.filter(function(r) {
-        return (r.reason || '').toLowerCase().includes(term)
+        return (r.reason_code || '').toLowerCase().includes(term)
           || (r.severity || '').toLowerCase().includes(term)
           || (r.status || '').toLowerCase().includes(term)
           || ((r.sites && r.sites.name) || '').toLowerCase().includes(term);
