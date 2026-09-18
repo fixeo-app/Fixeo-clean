@@ -1,6 +1,7 @@
 /*!
  * js/fixeo-estimator-v2.js
- * FIXEO Estimator V2 — RAFI 4-State Experience
+ * FIXEO Estimator V2 — RAFI Core UX V3
+ * Structural premium experience; engine/API contracts unchanged.
  *
  * Flow:
  *   1. COMPRENDRE
@@ -796,7 +797,7 @@
     var header =
       el(
         'div',
-        'estimator-header'
+        'estimator-header estimator-header--raficore'
       );
 
     header.setAttribute(
@@ -864,28 +865,6 @@
     );
 
 
-    var rafiMark =
-      el(
-        'span',
-        'rafi-indicator'
-      );
-
-    rafiMark.setAttribute(
-      'id',
-      'rafi-mark'
-    );
-
-    rafiMark.textContent =
-      'RAFI';
-
-    rafiMark.style.display =
-      'none';
-
-    left.appendChild(
-      rafiMark
-    );
-
-
     var headerText =
       el(
         'div',
@@ -893,12 +872,50 @@
       );
 
 
+    var brandLine =
+      el(
+        'div',
+        'rafi-header-brandline'
+      );
+
+    brandLine.appendChild(
+      el(
+        'span',
+        'rafi-header-brand',
+        'RAFI'
+      )
+    );
+
+    brandLine.appendChild(
+      el(
+        'span',
+        'rafi-header-divider',
+        '•'
+      )
+    );
+
+    brandLine.appendChild(
+      el(
+        'span',
+        'rafi-header-product',
+        'ESTIMATION FIXEO'
+      )
+    );
+
     headerText.appendChild(
+      brandLine
+    );
+
+
+    var title =
       el(
         'div',
         'header-title',
-        'Estimation FIXEO'
-      )
+        'Votre estimation guidée'
+      );
+
+    headerText.appendChild(
+      title
     );
 
 
@@ -943,7 +960,7 @@
 
     closeBtn.setAttribute(
       'aria-label',
-      'Fermer'
+      'Fermer l’estimation'
     );
 
     closeBtn.setAttribute(
@@ -952,7 +969,7 @@
     );
 
     closeBtn.innerHTML =
-      '×';
+      '<span aria-hidden="true">×</span>';
 
     closeBtn.addEventListener(
       'click',
@@ -1027,7 +1044,7 @@
     var bar =
       el(
         'div',
-        'rafi-state-bar'
+        'rafi-state-bar rafi-state-bar--premium'
       );
 
 
@@ -1036,6 +1053,11 @@
       fillPct + '%'
     );
 
+
+    bar.setAttribute(
+      'data-stage',
+      stages[activeIdx]
+    );
 
     bar.setAttribute(
       'role',
@@ -1059,7 +1081,9 @@
 
     bar.setAttribute(
       'aria-label',
-      'Estimation : ' +
+      'Étape ' +
+        String(activeIdx + 1) +
+        ' sur 4 : ' +
         labels[
           stages[
             activeIdx
@@ -1097,31 +1121,41 @@
             cls
           );
 
+        s.setAttribute(
+          'data-step',
+          String(i + 1)
+        );
 
-        var dot =
+
+        var index =
           el(
             'span',
-            'rafi-stage-dot'
+            'rafi-stage-index'
           );
 
-
-        dot.setAttribute(
-          'aria-hidden',
-          'true'
-        );
-
-
-        s.appendChild(
-          dot
-        );
+        index.textContent =
+          isDone
+            ? '✓'
+            : String(i + 1);
 
 
         s.appendChild(
+          index
+        );
+
+
+        var text =
           el(
             'span',
-            '',
-            labels[stage]
-          )
+            'rafi-stage-label'
+          );
+
+        text.textContent =
+          labels[stage];
+
+
+        s.appendChild(
+          text
         );
 
 
@@ -1296,7 +1330,7 @@
 
 
   // ───────────────────────────────────────────────────────────────────────────
-  // Answer cards
+  // Answer / choice cards
   // ───────────────────────────────────────────────────────────────────────────
 
   function renderAnswerCard(
@@ -1304,10 +1338,20 @@
     isSelected,
     onSelect
   ) {
+    opt =
+      opt || {};
+
+
     var card =
       el(
         'button',
-        'answer-card' +
+        'answer-card rafi-choice-card' +
+          (
+            opt.variant
+              ? ' rafi-choice-card--' +
+                  opt.variant
+              : ''
+          ) +
           (
             isSelected
               ? ' selected'
@@ -1339,10 +1383,7 @@
     var check =
       el(
         'span',
-        'answer-card__check',
-        isSelected
-          ? '✓'
-          : ''
+        'answer-card__check rafi-choice-card__marker'
       );
 
 
@@ -1352,15 +1393,49 @@
     );
 
 
+    check.textContent =
+      isSelected
+        ? '✓'
+        : (
+            opt.indexLabel ||
+            ''
+          );
+
+
     card.appendChild(
       check
     );
 
 
+    var content =
+      el(
+        'span',
+        'rafi-choice-card__content'
+      );
+
+
+    if (
+      opt.eyebrow
+    ) {
+      var eyebrow =
+        el(
+          'span',
+          'rafi-choice-card__eyebrow'
+        );
+
+      eyebrow.textContent =
+        opt.eyebrow;
+
+      content.appendChild(
+        eyebrow
+      );
+    }
+
+
     var label =
       el(
         'span',
-        'answer-card__label'
+        'answer-card__label rafi-choice-card__label'
       );
 
 
@@ -1369,8 +1444,53 @@
       String(opt);
 
 
-    card.appendChild(
+    content.appendChild(
       label
+    );
+
+
+    if (
+      opt.meta
+    ) {
+      var meta =
+        el(
+          'span',
+          'rafi-choice-card__meta'
+        );
+
+      meta.textContent =
+        opt.meta;
+
+      content.appendChild(
+        meta
+      );
+    }
+
+
+    card.appendChild(
+      content
+    );
+
+
+    var arrow =
+      el(
+        'span',
+        'rafi-choice-card__arrow'
+      );
+
+    arrow.setAttribute(
+      'aria-hidden',
+      'true'
+    );
+
+    arrow.textContent =
+      isSelected
+        ? '✓'
+        : '→';
+
+
+    card.appendChild(
+      arrow
     );
 
 
@@ -1392,7 +1512,7 @@
 
 
   // ───────────────────────────────────────────────────────────────────────────
-  // Question renderer
+  // Question renderer — RAFI verification console
   // ───────────────────────────────────────────────────────────────────────────
 
   function isSurfaceMeasurement(
@@ -1429,6 +1549,13 @@
       );
 
 
+    var consoleWrap =
+      el(
+        'div',
+        'rafi-verification-console'
+      );
+
+
     if (isSafety) {
       var note =
         el(
@@ -1438,53 +1565,76 @@
 
 
       note.textContent =
-        '⚠ Cette question concerne la sécurité. Répondez avec précision.';
+        '⚠ Point de sécurité — répondez avec précision.';
 
 
-      body.appendChild(
+      consoleWrap.appendChild(
         note
       );
     }
 
 
-    var rafiHeader =
+    var kicker =
       el(
         'div',
-        'estimator-context rafi-question-header'
+        'rafi-verification-kicker'
       );
 
 
-    var rafiSmall =
+    kicker.appendChild(
       el(
         'span',
-        'rafi-indicator small',
-        'RAFI vérifie'
-      );
-
-
-    rafiHeader.appendChild(
-      rafiSmall
-    );
-
-
-    rafiHeader.appendChild(
-      el(
-        'span',
-        'context-detail',
-        ' un détail'
+        'rafi-verification-kicker__dot'
       )
     );
 
 
-    body.appendChild(
-      rafiHeader
+    kicker.appendChild(
+      el(
+        'span',
+        '',
+        isSafety
+          ? 'RAFI · SÉCURITÉ'
+          : 'RAFI · VÉRIFICATION DU PÉRIMÈTRE'
+      )
+    );
+
+
+    consoleWrap.appendChild(
+      kicker
+    );
+
+
+    var questionNumber =
+      el(
+        'div',
+        'rafi-verification-meta'
+      );
+
+
+    var remaining =
+      Number(
+        step.questions_remaining ||
+        1
+      );
+
+
+    questionNumber.textContent =
+      remaining > 1
+        ? remaining +
+          ' précisions maximum restantes'
+        : 'Dernière précision avant l’évaluation';
+
+
+    consoleWrap.appendChild(
+      questionNumber
     );
 
 
     var heading =
       el(
         'h2',
-        'question-heading'
+        'question-heading rafi-verification-question'
       );
 
 
@@ -1501,17 +1651,17 @@
       );
 
 
-    body.appendChild(
+    consoleWrap.appendChild(
       heading
     );
 
 
     if (!isSafety) {
-      body.appendChild(
+      consoleWrap.appendChild(
         el(
           'p',
-          'question-intelligence-copy',
-          'Ce détail permet à FIXEO de vérifier précisément le périmètre de l’intervention.'
+          'question-intelligence-copy rafi-verification-copy',
+          'Une seule précision à la fois. RAFI vérifie uniquement ce qui peut changer le périmètre ou le tarif.'
         )
       );
     }
@@ -1543,7 +1693,7 @@
           val;
 
 
-        body
+        consoleWrap
           .querySelectorAll(
             '.answer-card'
           )
@@ -1581,7 +1731,24 @@
                 check.textContent =
                   selected
                     ? '✓'
-                    : '';
+                    : (
+                        c.__indexLabel ||
+                        ''
+                      );
+              }
+
+
+              var arrow =
+                c.querySelector(
+                  '.rafi-choice-card__arrow'
+                );
+
+
+              if (arrow) {
+                arrow.textContent =
+                  selected
+                    ? '✓'
+                    : '→';
               }
             }
           );
@@ -1600,7 +1767,7 @@
             true;
 
 
-          body
+          consoleWrap
             .querySelectorAll(
               '.answer-card'
             )
@@ -1620,7 +1787,7 @@
                 val
               );
             },
-            280
+            260
           );
         }
       };
@@ -1630,12 +1797,14 @@
       var opts = [
         {
           value: true,
-          label: 'Oui'
+          label: 'Oui',
+          meta: 'Ce point est confirmé'
         },
 
         {
           value: false,
-          label: 'Non'
+          label: 'Non',
+          meta: 'Ce point ne s’applique pas'
         }
       ];
 
@@ -1643,7 +1812,7 @@
       var cards =
         el(
           'div',
-          'answer-cards'
+          'answer-cards answer-cards--binary rafi-verification-choices'
         );
 
 
@@ -1654,7 +1823,16 @@
 
 
       opts.forEach(
-        function(opt) {
+        function(opt, idx) {
+          opt.variant =
+            'binary';
+
+          opt.indexLabel =
+            idx === 0
+              ? 'O'
+              : 'N';
+
+
           var card =
             renderAnswerCard(
               opt,
@@ -1666,6 +1844,9 @@
           card.__optValue =
             opt.value;
 
+          card.__indexLabel =
+            opt.indexLabel;
+
 
           cards.appendChild(
             card
@@ -1674,7 +1855,7 @@
       );
 
 
-      body.appendChild(
+      consoleWrap.appendChild(
         cards
       );
 
@@ -1684,19 +1865,19 @@
         step
       )
     ) {
-      var intro =
+      var measureCard =
         el(
-          'p',
-          'diagnostic-intro'
+          'div',
+          'rafi-measurement-card'
         );
 
 
-      intro.textContent =
-        'Indiquez la surface concernée pour permettre à FIXEO d’établir le bon périmètre.';
-
-
-      body.appendChild(
-        intro
+      measureCard.appendChild(
+        el(
+          'p',
+          'diagnostic-intro',
+          'Indiquez uniquement la surface concernée par cette intervention.'
+        )
       );
 
 
@@ -1778,17 +1959,22 @@
       );
 
 
-      body.appendChild(
+      measureCard.appendChild(
         inp
       );
 
 
-      body.appendChild(
+      measureCard.appendChild(
         el(
           'div',
           'measurement-unit',
           'm²'
         )
+      );
+
+
+      consoleWrap.appendChild(
+        measureCard
       );
 
 
@@ -1804,6 +1990,22 @@
 
       STATE.pendingAnswer =
         1;
+
+
+      var qWrap =
+        el(
+          'div',
+          'rafi-quantity-card'
+        );
+
+
+      qWrap.appendChild(
+        el(
+          'div',
+          'rafi-quantity-label',
+          'Quantité concernée'
+        )
+      );
 
 
       var qRow =
@@ -1946,8 +2148,13 @@
       );
 
 
-      body.appendChild(
+      qWrap.appendChild(
         qRow
+      );
+
+
+      consoleWrap.appendChild(
+        qWrap
       );
 
 
@@ -1958,7 +2165,7 @@
       var wrap =
         el(
           'div',
-          'answer-cards'
+          'answer-cards rafi-verification-choices'
         );
 
 
@@ -1975,15 +2182,23 @@
 
 
       step.options.forEach(
-        function(opt) {
+        function(opt, idx) {
           var card =
             renderAnswerCard(
               {
                 value: opt,
+
                 label:
                   optionLabel(
                     opt
-                  )
+                  ),
+
+                eyebrow:
+                  'Option ' +
+                  String(idx + 1),
+
+                indexLabel:
+                  String(idx + 1)
               },
               false,
               onSelect
@@ -1993,6 +2208,9 @@
           card.__optValue =
             opt;
 
+          card.__indexLabel =
+            String(idx + 1);
+
 
           wrap.appendChild(
             card
@@ -2001,7 +2219,7 @@
       );
 
 
-      body.appendChild(
+      consoleWrap.appendChild(
         wrap
       );
 
@@ -2010,19 +2228,21 @@
       var fallback =
         el(
           'div',
-          'answer-cards'
+          'answer-cards answer-cards--binary rafi-verification-choices'
         );
 
 
       [
         {
           value: true,
-          label: 'Oui'
+          label: 'Oui',
+          indexLabel: 'O'
         },
 
         {
           value: false,
-          label: 'Non'
+          label: 'Non',
+          indexLabel: 'N'
         }
       ].forEach(
         function(opt) {
@@ -2037,6 +2257,9 @@
           card.__optValue =
             opt.value;
 
+          card.__indexLabel =
+            opt.indexLabel;
+
 
           fallback.appendChild(
             card
@@ -2045,10 +2268,15 @@
       );
 
 
-      body.appendChild(
+      consoleWrap.appendChild(
         fallback
       );
     }
+
+
+    body.appendChild(
+      consoleWrap
+    );
 
 
     return body;
@@ -2144,7 +2372,7 @@
 
 
   // ───────────────────────────────────────────────────────────────────────────
-  // Price result
+  // Price result — FIXEO verified-price certificate
   // ───────────────────────────────────────────────────────────────────────────
 
   function renderPriceResult(
@@ -2174,71 +2402,92 @@
     var shell =
       el(
         'div',
-        'result-shell step-enter result-enter'
+        'result-shell step-enter result-enter result-shell--price-certificate'
       );
 
 
-    var rHead =
+    var certificate =
+      el(
+        'section',
+        'price-certificate'
+      );
+
+    certificate.setAttribute(
+      'aria-label',
+      'Prix FIXEO vérifié'
+    );
+
+
+    var certTop =
       el(
         'div',
-        'result-header'
+        'price-certificate__top'
       );
 
 
-    rHead.appendChild(
+    var seal =
       el(
         'div',
-        'result-verified-dot'
+        'price-certificate__seal'
+      );
+
+
+    seal.appendChild(
+      el(
+        'span',
+        'price-certificate__seal-dot'
       )
     );
 
 
-    var col =
+    seal.appendChild(
       el(
-        'div',
-        'result-rafi-col'
-      );
-
-
-    col.appendChild(
-      el(
-        'div',
-        'result-rafi-state',
-        'Analyse terminée'
+        'span',
+        '',
+        'PRIX FIXEO · VÉRIFIÉ'
       )
     );
 
 
-    col.appendChild(
+    certTop.appendChild(
+      seal
+    );
+
+
+    certTop.appendChild(
       el(
         'div',
-        'result-rafi-label',
-        'Périmètre vérifié par RAFI'
+        'price-certificate__analysis',
+        'Analyse RAFI terminée'
       )
     );
 
 
-    rHead.appendChild(
-      col
+    certificate.appendChild(
+      certTop
     );
 
 
-    shell.appendChild(
-      rHead
-    );
-
-
-    var srow =
+    var service =
       el(
         'div',
-        'result-service-row'
+        'price-certificate__service'
       );
 
 
-    srow.appendChild(
+    service.appendChild(
       el(
         'div',
-        'result-service-name',
+        'price-certificate__service-label',
+        'INTERVENTION'
+      )
+    );
+
+
+    service.appendChild(
+      el(
+        'h2',
+        'price-certificate__service-name',
         lbl.primary
       )
     );
@@ -2247,25 +2496,25 @@
     if (
       lbl.secondary
     ) {
-      srow.appendChild(
+      service.appendChild(
         el(
           'div',
-          'result-service-secondary',
+          'price-certificate__service-secondary',
           lbl.secondary
         )
       );
     }
 
 
-    shell.appendChild(
-      srow
+    certificate.appendChild(
+      service
     );
 
 
     var hero =
       el(
         'div',
-        'price-hero'
+        'price-hero price-certificate__amount'
       );
 
 
@@ -2280,7 +2529,7 @@
       el(
         'div',
         'price-eyebrow',
-        'Prix FIXEO'
+        'Prix pour le périmètre validé'
       )
     );
 
@@ -2319,7 +2568,7 @@
       el(
         'div',
         'price-sublabel',
-        'Périmètre vérifié'
+        'Périmètre vérifié par RAFI'
       )
     );
 
@@ -2329,8 +2578,74 @@
     );
 
 
-    shell.appendChild(
+    certificate.appendChild(
       hero
+    );
+
+
+    var proof =
+      el(
+        'div',
+        'price-certificate__proof'
+      );
+
+
+    var proofScope =
+      el(
+        'div',
+        'price-proof-item'
+      );
+
+    proofScope.appendChild(
+      el(
+        'span',
+        'price-proof-item__icon',
+        '✓'
+      )
+    );
+
+    proofScope.appendChild(
+      el(
+        'span',
+        'price-proof-item__text',
+        'Périmètre analysé'
+      )
+    );
+
+    proof.appendChild(
+      proofScope
+    );
+
+
+    var proofConsent =
+      el(
+        'div',
+        'price-proof-item'
+      );
+
+    proofConsent.appendChild(
+      el(
+        'span',
+        'price-proof-item__icon',
+        '✓'
+      )
+    );
+
+    proofConsent.appendChild(
+      el(
+        'span',
+        'price-proof-item__text',
+        'Aucun supplément sans votre accord'
+      )
+    );
+
+    proof.appendChild(
+      proofConsent
+    );
+
+
+    certificate.appendChild(
+      proof
     );
 
 
@@ -2340,19 +2655,19 @@
       );
 
 
-    var scope =
-      el(
-        'div',
-        'scope-section'
-      );
-
-
     if (chips) {
+      var scope =
+        el(
+          'div',
+          'scope-section price-certificate__scope'
+        );
+
+
       scope.appendChild(
         el(
           'div',
           'scope-section-label',
-          'Ce qui est inclus'
+          'Inclus dans ce périmètre'
         )
       );
 
@@ -2360,10 +2675,31 @@
       scope.appendChild(
         chips
       );
+
+
+      certificate.appendChild(
+        scope
+      );
     }
 
 
-    scope.appendChild(
+    var doctrine =
+      el(
+        'div',
+        'price-certificate__doctrine'
+      );
+
+
+    doctrine.appendChild(
+      el(
+        'span',
+        'price-certificate__doctrine-mark',
+        'FIXEO'
+      )
+    );
+
+
+    doctrine.appendChild(
       el(
         'p',
         'scope-doctrine',
@@ -2372,8 +2708,13 @@
     );
 
 
+    certificate.appendChild(
+      doctrine
+    );
+
+
     shell.appendChild(
-      scope
+      certificate
     );
 
 
@@ -2809,7 +3150,6 @@
     hero.appendChild(
       inner
     );
-
 
     shell.appendChild(
       hero
@@ -3624,8 +3964,14 @@
       var modal =
         el(
           'div',
-          'estimator-modal'
+          'estimator-modal estimator-modal--raficore-v3'
         );
+
+
+      modal.setAttribute(
+        'data-ux-version',
+        'raficore-v3'
+      );
 
 
       modal.setAttribute(
@@ -3814,6 +4160,20 @@
         );
 
 
+      var shell =
+        el(
+          'div',
+          'rafi-understand-console'
+        );
+
+
+      var hero =
+        el(
+          'div',
+          'rafi-understand-hero'
+        );
+
+
       var eyebrow =
         el(
           'div',
@@ -3822,10 +4182,10 @@
 
 
       eyebrow.textContent =
-        'RAFI · ESTIMATION FIXEO';
+        'RAFI · ANALYSE AVANT INTERVENTION';
 
 
-      body.appendChild(
+      hero.appendChild(
         eyebrow
       );
 
@@ -3838,10 +4198,10 @@
 
 
       title.textContent =
-        'Décrivez votre intervention';
+        'Expliquez simplement ce qui se passe';
 
 
-      body.appendChild(
+      hero.appendChild(
         title
       );
 
@@ -3854,18 +4214,107 @@
 
 
       intro.textContent =
-        'Expliquez simplement ce qui se passe. RAFI vous guidera uniquement sur les précisions nécessaires pour établir le bon périmètre.';
+        'RAFI transforme votre besoin en un périmètre clair, puis vérifie uniquement les détails nécessaires avant d’établir le prix FIXEO.';
 
 
-      body.appendChild(
+      hero.appendChild(
         intro
+      );
+
+
+      var promise =
+        el(
+          'div',
+          'rafi-understand-promise'
+        );
+
+
+      [
+        '1 besoin',
+        'Quelques précisions',
+        '1 prix clair'
+      ].forEach(
+        function(label, idx) {
+          var item =
+            el(
+              'span',
+              'rafi-understand-promise__item'
+            );
+
+          item.appendChild(
+            el(
+              'span',
+              'rafi-understand-promise__index',
+              String(idx + 1)
+            )
+          );
+
+          item.appendChild(
+            el(
+              'span',
+              '',
+              label
+            )
+          );
+
+          promise.appendChild(
+            item
+          );
+        }
+      );
+
+
+      hero.appendChild(
+        promise
+      );
+
+
+      shell.appendChild(
+        hero
+      );
+
+
+      var capture =
+        el(
+          'div',
+          'rafi-capture-card'
+        );
+
+
+      var captureHead =
+        el(
+          'div',
+          'rafi-capture-card__head'
+        );
+
+
+      captureHead.appendChild(
+        el(
+          'div',
+          'rafi-capture-card__label',
+          'VOTRE BESOIN'
+        )
+      );
+
+
+      captureHead.appendChild(
+        el(
+          'div',
+          'rafi-capture-card__status',
+          'RAFI écoute'
+        )
+      );
+
+
+      capture.appendChild(
+        captureHead
       );
 
 
       var textarea =
         el(
           'textarea',
-          'estimator-need-input'
+          'estimator-need-input rafi-capture-card__textarea'
         );
 
 
@@ -3913,7 +4362,7 @@
         initialDescription;
 
 
-      body.appendChild(
+      capture.appendChild(
         textarea
       );
 
@@ -3921,7 +4370,7 @@
       var cityBlock =
         el(
           'div',
-          'estimator-city-block'
+          'estimator-city-block rafi-capture-card__city'
         );
 
 
@@ -3998,7 +4447,7 @@
       );
 
 
-      body.appendChild(
+      capture.appendChild(
         cityBlock
       );
 
@@ -4006,7 +4455,7 @@
       var reassurance =
         el(
           'div',
-          'estimator-understand-trust'
+          'estimator-understand-trust rafi-capture-card__trust'
         );
 
 
@@ -4014,8 +4463,18 @@
         'Aucune demande n’est envoyée à un artisan à cette étape.';
 
 
-      body.appendChild(
+      capture.appendChild(
         reassurance
+      );
+
+
+      shell.appendChild(
+        capture
+      );
+
+
+      body.appendChild(
+        shell
       );
 
 
@@ -4065,7 +4524,7 @@
       var footer =
         renderFooter({
           primaryLabel:
-            'Analyser mon besoin →',
+            'Lancer l’analyse RAFI →',
 
           primaryDisabled:
             !canContinue(),
@@ -4627,27 +5086,48 @@
         );
 
 
+      var selector =
+        el(
+          'div',
+          'rafi-selector-console rafi-selector-console--metier'
+        );
+
+
+      var kicker =
+        el(
+          'div',
+          'rafi-selector-kicker'
+        );
+
+      kicker.textContent =
+        'RAFI · IDENTIFICATION DU MÉTIER';
+
+      selector.appendChild(
+        kicker
+      );
+
+
       var title =
         el(
           'h2',
-          'question-heading'
+          'question-heading rafi-selector-title'
         );
 
 
       title.textContent =
-        'Quel métier correspond le mieux à votre besoin ?';
+        'Quel spécialiste correspond à votre besoin ?';
 
 
-      body.appendChild(
+      selector.appendChild(
         title
       );
 
 
-      body.appendChild(
+      selector.appendChild(
         el(
           'p',
-          'question-intelligence-copy',
-          'RAFI conserve votre description et utilisera ce choix pour poursuivre l’analyse.'
+          'question-intelligence-copy rafi-selector-copy',
+          'Votre description est conservée. Sélectionnez simplement le métier : RAFI affinera ensuite l’intervention.'
         )
       );
 
@@ -4655,12 +5135,12 @@
       var cards =
         el(
           'div',
-          'answer-cards'
+          'answer-cards rafi-choice-grid rafi-choice-grid--metiers'
         );
 
 
       candidates.forEach(
-        function(metier) {
+        function(metier, idx) {
           var card =
             renderAnswerCard(
               {
@@ -4670,7 +5150,28 @@
                 label:
                   metierLabel(
                     metier
-                  )
+                  ),
+
+                eyebrow:
+                  'Métier ' +
+                  String(idx + 1)
+                    .padStart(
+                      2,
+                      '0'
+                    ),
+
+                meta:
+                  'Choisir ce spécialiste',
+
+                indexLabel:
+                  String(idx + 1)
+                    .padStart(
+                      2,
+                      '0'
+                    ),
+
+                variant:
+                  'metier'
               },
               false,
               function(selectedMetier) {
@@ -4696,8 +5197,9 @@
                         'true'
                       );
 
-                      c.style.opacity =
-                        '0.55';
+                      c.classList.add(
+                        'is-pending'
+                      );
                     }
                   );
 
@@ -4710,6 +5212,14 @@
             );
 
 
+          card.__indexLabel =
+            String(idx + 1)
+              .padStart(
+                2,
+                '0'
+              );
+
+
           cards.appendChild(
             card
           );
@@ -4717,8 +5227,13 @@
       );
 
 
-      body.appendChild(
+      selector.appendChild(
         cards
+      );
+
+
+      body.appendChild(
+        selector
       );
 
 
@@ -4855,27 +5370,43 @@
         );
 
 
+      var selector =
+        el(
+          'div',
+          'rafi-selector-console rafi-selector-console--service'
+        );
+
+
+      selector.appendChild(
+        el(
+          'div',
+          'rafi-selector-kicker',
+          'RAFI · INTERVENTION'
+        )
+      );
+
+
       var title =
         el(
           'h2',
-          'question-heading'
+          'question-heading rafi-selector-title'
         );
 
 
       title.textContent =
-        'Quel type d’intervention souhaitez-vous ?';
+        'Quelle intervention décrit le mieux la situation ?';
 
 
-      body.appendChild(
+      selector.appendChild(
         title
       );
 
 
-      body.appendChild(
+      selector.appendChild(
         el(
           'p',
-          'question-intelligence-copy',
-          'Choisissez l’intervention qui correspond le mieux à votre situation.'
+          'question-intelligence-copy rafi-selector-copy',
+          'Choisissez le périmètre le plus proche. RAFI vérifiera ensuite les seuls détails qui peuvent changer l’estimation.'
         )
       );
 
@@ -4883,22 +5414,47 @@
       var cards =
         el(
           'div',
-          'answer-cards'
+          'answer-cards rafi-choice-stack rafi-choice-stack--services'
         );
 
 
       candidates.forEach(
-        function(svc) {
+        function(svc, idx) {
+          var label =
+            svc.label_fr ||
+            svc.short_label_fr ||
+            svc.service_code;
+
+
           var card =
             renderAnswerCard(
               {
                 label:
-                  svc.label_fr ||
-                  svc.short_label_fr ||
-                  svc.service_code,
+                  label,
 
                 value:
-                  svc.service_code
+                  svc.service_code,
+
+                eyebrow:
+                  'Intervention ' +
+                  String(idx + 1)
+                    .padStart(
+                      2,
+                      '0'
+                    ),
+
+                meta:
+                  'Sélectionner ce périmètre',
+
+                indexLabel:
+                  String(idx + 1)
+                    .padStart(
+                      2,
+                      '0'
+                    ),
+
+                variant:
+                  'service'
               },
               false,
               function(serviceCode) {
@@ -4924,8 +5480,9 @@
                         'true'
                       );
 
-                      c.style.opacity =
-                        '0.55';
+                      c.classList.add(
+                        'is-pending'
+                      );
                     }
                   );
 
@@ -4988,6 +5545,14 @@
             );
 
 
+          card.__indexLabel =
+            String(idx + 1)
+              .padStart(
+                2,
+                '0'
+              );
+
+
           cards.appendChild(
             card
           );
@@ -4995,8 +5560,13 @@
       );
 
 
-      body.appendChild(
+      selector.appendChild(
         cards
+      );
+
+
+      body.appendChild(
+        selector
       );
 
 
@@ -5380,8 +5950,6 @@
         ) &&
         self._pricingContextToken
       ) {
-       
-
         footerOpts.primaryLabel =
           ctaLabel(
             outcome
@@ -5732,3 +6300,4 @@
   };
 
 }());
+
