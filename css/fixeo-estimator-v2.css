@@ -3092,3 +3092,109 @@ body.fx-estimator-tunnel-active {
     transition-duration: .001ms !important;
   }
 }
+
+/* ==========================================================================
+   RAFI V4 — VIEWPORT SAFETY
+   Desktop: keep CTA visible.
+   Mobile: keep header inside the real dynamic viewport.
+   ========================================================================== */
+
+
+/* DESKTOP / TABLET */
+@media (min-width: 768px) {
+
+  #fixeo-estimator-v2-root .estimator-modal--raficore-v3 {
+    height: min(820px, calc(100dvh - 28px));
+    max-height: calc(100dvh - 28px);
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .estimator-body,
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .result-shell {
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .estimator-footer {
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 10;
+  }
+}
+
+
+/* MOBILE */
+@media (max-width: 767px) {
+
+  #fixeo-estimator-v2-root #estimator-backdrop,
+  #fixeo-estimator-v2-root .estimator-backdrop {
+    align-items: flex-end;
+
+    padding-top:
+      max(
+        8px,
+        env(safe-area-inset-top, 0px)
+      );
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3 {
+    height:
+      calc(
+        100dvh -
+        max(
+          8px,
+          env(safe-area-inset-top, 0px)
+        )
+      );
+
+    max-height:
+      calc(
+        100dvh -
+        max(
+          8px,
+          env(safe-area-inset-top, 0px)
+        )
+      );
+
+    min-height: 0;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .estimator-header {
+    flex: 0 0 auto;
+
+    position: relative;
+    z-index: 20;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .rafi-state-bar {
+    flex: 0 0 auto;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .estimator-body,
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .result-shell {
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .estimator-footer {
+    flex: 0 0 auto;
+  }
+}
