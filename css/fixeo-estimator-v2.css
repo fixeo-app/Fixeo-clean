@@ -3198,3 +3198,26 @@ body.fx-estimator-tunnel-active {
     flex: 0 0 auto;
   }
 }
+
+/* ==========================================================================
+   RAFI V4 — MOBILE STACKING SAFETY
+   Keep the estimator above the synthetic FIXEO mobile global header.
+   ========================================================================== */
+
+@media (max-width: 767px) {
+
+  #fixeo-estimator-v2-root {
+    z-index: 2147483600;
+  }
+
+  #fixeo-estimator-v2-root #estimator-backdrop,
+  #fixeo-estimator-v2-root .estimator-backdrop {
+    z-index: 2147483600;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3 {
+    position: relative;
+    z-index: 1;
+  }
+}
