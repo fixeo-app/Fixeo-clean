@@ -3257,3 +3257,536 @@ body.fx-estimator-tunnel-active {
     scroll-behavior: auto !important;
   }
 }
+
+/* ==========================================================================\n   RAFI ULTRA PREMIUM UX — V2 OVERRIDE\n   Visual-only layer. Keeps current estimator JS/API contracts unchanged.\n   ========================================================================== */
+
+#fixeo-estimator-v2-root,
+.estimation-page {
+  --fxe-up-bg: #07090d;
+  --fxe-up-surface: #0c1017;
+  --fxe-up-card: #111821;
+  --fxe-up-card-2: #17202c;
+  --fxe-up-line: rgba(255,255,255,.075);
+  --fxe-up-line-strong: rgba(255,255,255,.13);
+  --fxe-up-text: #f7f7f4;
+  --fxe-up-text-2: rgba(247,247,244,.71);
+  --fxe-up-text-3: rgba(247,247,244,.43);
+  --fxe-up-green: #32d17d;
+  --fxe-up-orange: #ff7a00;
+  --fxe-up-pink: #ff2d95;
+  --fxe-up-blue: #4e7cff;
+  --fxe-up-grad: linear-gradient(135deg,#ff7a00 0%,#ff2d95 54%,#4e7cff 100%);
+  --fxe-up-ease: cubic-bezier(.2,0,0,1);
+}
+
+body.fx-estimator-tunnel-active {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* Backdrop: darker, cleaner, more app-like */
+.estimator-backdrop {
+  background:
+    radial-gradient(circle at 50% 26%, rgba(255,122,0,.075), rgba(255,45,149,.025) 32%, transparent 58%),
+    rgba(2,3,7,.93);
+  -webkit-backdrop-filter: blur(22px) saturate(122%);
+  backdrop-filter: blur(22px) saturate(122%);
+}
+
+/* Main shell */
+.estimator-modal {
+  width: min(720px,100%);
+  max-height: min(880px,calc(100dvh - 44px));
+  border-radius: 28px;
+  border: 1px solid rgba(255,255,255,.095);
+  background:
+    radial-gradient(circle at 88% -8%, rgba(78,124,255,.095), transparent 31%),
+    radial-gradient(circle at 9% -5%, rgba(255,122,0,.085), transparent 30%),
+    #090c12;
+  box-shadow:
+    0 0 0 1px rgba(255,122,0,.045),
+    0 40px 110px rgba(0,0,0,.74),
+    0 14px 40px rgba(0,0,0,.48);
+}
+.estimator-modal::before {
+  left: 28px;
+  right: 28px;
+  height: 2px;
+  background: var(--fxe-up-grad);
+}
+
+/* Header = RAFI command bar */
+.estimator-header {
+  min-height: 84px;
+  padding: 16px 22px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  background: linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,0));
+}
+.header-left { gap: 14px; }
+.header-title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .015em;
+}
+.header-title::after {
+  content: 'RAFI INTELLIGENCE';
+  display: block;
+  margin-top: 4px;
+  color: rgba(247,247,244,.28);
+  font-size: 8px;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: .16em;
+}
+.rafi-state {
+  margin-top: 6px;
+  color: var(--fxe-up-text-2);
+  font-size: 11.5px;
+}
+.modal-close {
+  width: 36px;
+  height: 36px;
+  flex-basis: 36px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.055);
+}
+.modal-close:hover {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.13);
+}
+
+/* RAFI core */
+.rafi-sphere-wrap {
+  width: 50px;
+  height: 50px;
+  flex-basis: 50px;
+}
+.rafi-sphere {
+  width: 46px;
+  height: 46px;
+  background:
+    radial-gradient(circle at 29% 24%, rgba(255,255,255,.14), transparent 22%),
+    radial-gradient(circle at 42% 37%, rgba(95,61,125,.55), transparent 42%),
+    radial-gradient(circle at 50% 62%, #22172a, #0b0d11 72%);
+}
+.rafi-sphere[data-state='analyzing'] {
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.5),
+    0 0 34px rgba(255,122,0,.25),
+    0 0 10px rgba(255,45,149,.12),
+    inset 0 0 16px rgba(255,122,0,.13);
+}
+.rafi-sphere[data-state='verifying'] {
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.5),
+    0 0 32px rgba(255,45,149,.2),
+    inset 0 0 14px rgba(255,45,149,.1);
+}
+.rafi-sphere[data-state='identified'],
+.rafi-sphere[data-state='complete'] {
+  border-color: rgba(50,209,125,.5);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.5),
+    0 0 28px rgba(50,209,125,.2),
+    inset 0 0 13px rgba(50,209,125,.1);
+}
+
+/* Progress becomes lighter and more precise */
+.rafi-state-bar {
+  min-height: 54px;
+  padding: 0 22px;
+  gap: 9px;
+  background: linear-gradient(180deg,rgba(255,255,255,.012),rgba(255,255,255,.004));
+  border-bottom-color: rgba(255,255,255,.05);
+}
+.rafi-stage {
+  font-size: 9.5px;
+  font-weight: 720;
+  color: rgba(247,247,244,.26);
+}
+.rafi-stage.active {
+  color: #ffa04f;
+  transform: translateY(-1px);
+}
+.rafi-stage.done { color: var(--fxe-up-green); }
+.rafi-stage-dot {
+  width: 7px;
+  height: 7px;
+  flex-basis: 7px;
+}
+.rafi-stage.active .rafi-stage-dot {
+  box-shadow: 0 0 0 4px rgba(255,122,0,.08),0 0 10px rgba(255,122,0,.55);
+}
+.rafi-stage-sep { background: rgba(255,255,255,.075); }
+.rafi-stage-sep.done { background: rgba(50,209,125,.26); }
+
+/* Context */
+.estimator-context-bar { padding: 11px 22px 0; }
+.estimator-context-chip {
+  min-height: 28px;
+  padding: 5px 10px;
+  background: rgba(255,255,255,.035);
+  border-color: rgba(255,255,255,.05);
+  font-size: 10.5px;
+  font-weight: 620;
+}
+
+/* Typography / spacing */
+.estimator-body { padding: 28px 22px 24px; }
+.question-heading {
+  margin-bottom: 17px;
+  font-size: clamp(22px,3.2vw,29px);
+  line-height: 1.16;
+  font-weight: 800;
+  letter-spacing: -.03em;
+}
+.question-intelligence-copy {
+  margin: -5px 0 21px;
+  color: var(--fxe-up-text-2);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* COMPRENDRE */
+.estimator-understand { padding-top: 32px; }
+.estimator-understand-eyebrow {
+  margin-bottom: 14px;
+  color: #ff9f4c;
+  font-size: 9px;
+  font-weight: 880;
+  letter-spacing: .16em;
+}
+.estimator-understand-eyebrow::before {
+  width: 22px;
+  background: var(--fxe-up-grad);
+}
+.estimator-understand-title {
+  margin-bottom: 15px;
+  font-size: clamp(29px,4.6vw,40px);
+  line-height: 1.06;
+  letter-spacing: -.04em;
+}
+.estimator-understand-copy {
+  margin-bottom: 22px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.estimator-need-input {
+  min-height: 132px;
+  padding: 16px 17px;
+  background: linear-gradient(180deg,rgba(255,255,255,.042),rgba(255,255,255,.018)),#0d1219;
+  border-color: rgba(255,255,255,.085);
+  border-radius: 18px;
+  font-size: 14.5px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+}
+.estimator-need-input:focus {
+  border-color: rgba(255,122,0,.68);
+  box-shadow: 0 0 0 3px rgba(255,122,0,.09),0 18px 38px rgba(0,0,0,.16);
+}
+.estimator-city-block {
+  grid-template-columns: 88px minmax(0,1fr);
+  padding: 10px 12px;
+  background: rgba(255,255,255,.024);
+  border-color: rgba(255,255,255,.05);
+}
+.estimator-city-label {
+  font-size: 10px;
+  font-weight: 760;
+}
+.estimator-understand-trust { font-size: 11px; }
+
+/* IDENTIFIER — cards feel lighter and smarter */
+.estimator-metier-selection,
+.estimator-service-selection { padding-top: 29px; }
+.estimator-metier-selection .answer-cards { gap: 9px; }
+.estimator-service-selection .answer-cards { gap: 8px; }
+.answer-card {
+  min-height: 60px;
+  background: linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.017)),#10161f;
+  border-color: rgba(255,255,255,.085);
+  border-radius: 15px;
+  font-size: 14px;
+  font-weight: 620;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.018);
+}
+.answer-card::after {
+  content: '→';
+  position: absolute;
+  right: 16px;
+  color: rgba(247,247,244,.26);
+  font-size: 14px;
+  opacity: .65;
+  transform: translateX(-2px);
+  transition: opacity 120ms ease,transform 120ms ease,color 120ms ease;
+}
+.answer-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255,122,0,.30);
+  background: linear-gradient(135deg,rgba(255,122,0,.06),rgba(255,45,149,.025)),#141b25;
+  box-shadow: 0 10px 24px rgba(0,0,0,.15);
+}
+.answer-card:hover::after {
+  opacity: 1;
+  color: #ff9f4c;
+  transform: none;
+}
+.answer-card.selected::after {
+  content: '✓';
+  color: var(--fxe-up-green);
+  opacity: 1;
+}
+.answer-card__check {
+  width: 46px;
+  min-width: 46px;
+  height: 60px;
+}
+.answer-card__label { padding-right: 42px; }
+
+/* VERIFIER */
+.rafi-question-header { margin-bottom: 15px; }
+.question-safety-note { border-radius: 12px; }
+.quantity-row,
+.measurement-input { background: #0d1219; }
+
+/* Result framing */
+.result-header { padding: 25px 22px 0; }
+.result-service-row { padding: 15px 22px 0; }
+.result-service-name {
+  font-size: clamp(20px,3.2vw,26px);
+  font-weight: 800;
+  letter-spacing: -.025em;
+}
+.result-verified-dot {
+  background: var(--fxe-up-green);
+  box-shadow: 0 0 0 4px rgba(50,209,125,.08),0 0 10px rgba(50,209,125,.48);
+}
+.result-rafi-state {
+  color: #ff9f4c;
+  font-size: 8.8px;
+  font-weight: 880;
+  letter-spacing: .16em;
+}
+
+/* PRIX FIXEO = verified certificate */
+.price-hero { padding: 18px 22px 0; }
+.price-hero-inner {
+  min-height: 208px;
+  padding: 28px 30px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 82% 8%, rgba(78,124,255,.12), transparent 30%),
+    radial-gradient(circle at 12% 95%, rgba(255,122,0,.16), transparent 40%),
+    linear-gradient(145deg,rgba(255,255,255,.052),rgba(255,255,255,.016)),
+    #0f151e;
+  border-color: rgba(255,255,255,.10);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035),0 18px 42px rgba(0,0,0,.22);
+}
+.price-hero-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg,rgba(255,122,0,.38),rgba(255,45,149,.13),rgba(78,124,255,.11),rgba(255,255,255,.02));
+  -webkit-mask: linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.price-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 11px;
+  font-size: 9px;
+  font-weight: 880;
+  letter-spacing: .16em;
+}
+.price-eyebrow::before {
+  content: '✓';
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fxe-up-green);
+  background: rgba(50,209,125,.08);
+  border: 1px solid rgba(50,209,125,.22);
+  border-radius: 50%;
+  font-size: 9px;
+}
+.price-display .amount {
+  font-size: clamp(66px,12vw,96px);
+  line-height: .88;
+  font-weight: 930;
+  letter-spacing: -.065em;
+  background: var(--fxe-up-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.price-display .currency {
+  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 690;
+}
+.scope-section { padding: 17px 22px 4px; }
+.scope-chip { background: rgba(255,255,255,.034); }
+.scope-chip::before { color: var(--fxe-up-green); }
+
+/* Footer CTA — premium but no longer overpowering */
+.estimator-footer {
+  padding: 12px 22px calc(16px + env(safe-area-inset-bottom,0px));
+  background: linear-gradient(180deg,rgba(9,12,18,.86),rgba(9,12,18,.98));
+  border-top-color: rgba(255,255,255,.05);
+}
+.btn-primary {
+  min-height: 56px;
+  background: var(--fxe-up-grad);
+  border-radius: 15px;
+  font-size: 15px;
+  font-weight: 780;
+  box-shadow: 0 9px 24px rgba(255,122,0,.15),0 2px 8px rgba(0,0,0,.28);
+}
+.btn-primary::after { display: none; }
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg,transparent 27%,rgba(255,255,255,.12) 49%,transparent 72%);
+  transform: translateX(-120%);
+  transition: transform 430ms var(--fxe-up-ease);
+}
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 12px 28px rgba(255,122,0,.20),0 3px 10px rgba(0,0,0,.3);
+  filter: saturate(1.05);
+}
+.btn-primary:hover:not(:disabled)::before { transform: translateX(120%); }
+.btn-primary:disabled { opacity: .27; }
+
+/* Mobile = near full-screen RAFI mini-app */
+@media (max-width: 767px) {
+  .estimator-backdrop {
+    align-items: flex-end;
+    padding: max(6px,env(safe-area-inset-top,0px)) 0 0;
+  }
+  .estimator-modal {
+    height: min(96dvh,920px);
+    max-height: 96dvh;
+    border-radius: 26px 26px 0 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    box-shadow: 0 -20px 60px rgba(0,0,0,.45);
+  }
+  .estimator-modal::before { left: 18px; right: 18px; }
+  .estimator-header {
+    min-height: 72px;
+    padding: 13px 16px 12px;
+  }
+  .rafi-sphere-wrap {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+  }
+  .rafi-sphere { width: 38px; height: 38px; }
+  .header-title { font-size: 12px; }
+  .header-title::after { font-size: 7px; }
+  .rafi-state { font-size: 10.5px; }
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+  }
+  .rafi-state-bar {
+    min-height: 46px;
+    gap: 5px;
+    padding: 0 13px;
+  }
+  .rafi-stage {
+    gap: 4px;
+    font-size: 8.3px;
+    letter-spacing: 0;
+  }
+  .rafi-stage-dot {
+    width: 5px;
+    height: 5px;
+    flex-basis: 5px;
+  }
+  .estimator-context-bar { padding: 8px 16px 0; }
+  .estimator-body { padding: 22px 16px 20px; }
+  .estimator-understand { padding-top: 24px; }
+  .estimator-understand-title { font-size: 30px; }
+  .estimator-understand-copy { font-size: 13px; }
+  .question-heading { font-size: 21px; }
+  .question-intelligence-copy { font-size: 12.5px; }
+  .estimator-need-input {
+    min-height: 124px;
+    padding: 14px 15px;
+    font-size: 14px;
+  }
+  .estimator-city-block {
+    grid-template-columns: 70px minmax(0,1fr);
+    gap: 8px;
+    padding: 9px 10px;
+  }
+  .estimator-metier-selection .answer-cards { grid-template-columns: 1fr; }
+  .answer-card { min-height: 54px; }
+  .answer-card__check {
+    width: 42px;
+    min-width: 42px;
+    height: 54px;
+  }
+  .result-header { padding: 20px 16px 0; }
+  .result-service-row { padding: 13px 16px 0; }
+  .price-hero { padding: 16px 16px 0; }
+  .price-hero-inner {
+    min-height: 180px;
+    padding: 24px 22px;
+  }
+  .price-display .amount { font-size: clamp(60px,18vw,80px); }
+  .price-display .currency {
+    margin-bottom: 6px;
+    font-size: 17px;
+  }
+  .labour-split {
+    grid-template-columns: 1fr;
+    padding: 16px 16px 0;
+  }
+  .labour-disclosure,
+  .diagnostic-absorption,
+  .scope-section {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .estimator-footer {
+    padding: 10px 16px calc(12px + env(safe-area-inset-bottom,0px));
+  }
+  .btn-primary {
+    min-height: 52px;
+    font-size: 14px;
+    box-shadow: 0 7px 20px rgba(255,122,0,.13),0 2px 7px rgba(0,0,0,.26);
+  }
+}
+
+@media (max-width: 420px) {
+  .estimator-modal {
+    height: 97dvh;
+    max-height: 97dvh;
+  }
+  .rafi-state-bar { padding: 0 10px; gap: 4px; }
+  .rafi-stage { font-size: 7.8px; }
+  .estimator-understand-title { font-size: 28px; }
+  .price-display .amount { font-size: 64px; }
+  .price-display .currency { font-size: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #fixeo-estimator-v2-root *,
+  #fixeo-estimator-v2-root *::before,
+  #fixeo-estimator-v2-root *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
