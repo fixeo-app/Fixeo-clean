@@ -4422,3 +4422,104 @@ body.fx-estimator-tunnel-active {
     font-size: 64px;
   }
 }
+
+
+/* ==========================================================================
+   34. RAFI CORE UX V3 — DOM ALIGNMENT HOTFIX
+   Aligns the validated Core UX V3 markup with the premium visual layer.
+   Presentation only. No pricing/API/reservation logic.
+   ========================================================================== */
+
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-understand-promise__item {
+  display:grid;
+  grid-template-columns:28px minmax(0,1fr);
+  align-items:center;
+  gap:10px;
+}
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-understand-promise__index {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;
+  height:28px;
+  border-radius:999px;
+}
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-understand-promise__item > span:last-child {
+  display:block;
+  min-width:0;
+}
+
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-choice-card {
+  appearance:none;
+  -webkit-appearance:none;
+  width:100%;
+  text-align:left;
+  cursor:pointer;
+}
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-choice-card__marker,
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-choice-card__content,
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-choice-card__arrow {
+  position:relative;
+  z-index:1;
+}
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-choice-card__marker {
+  align-self:stretch;
+}
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-choice-card__eyebrow,
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-choice-card__label,
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-choice-card__meta {
+  display:block;
+  width:100%;
+}
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-choice-card__label {
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-choice-card__arrow {
+  justify-self:end;
+}
+
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-state-bar--premium .rafi-stage {
+  min-width:0;
+}
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-stage-label {
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .price-certificate__amount .price-display {
+  display:flex;
+  align-items:flex-end;
+  gap:12px;
+}
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .price-certificate__amount .price-display .amount,
+#fixeo-estimator-v2-root .estimator-modal--raficore-v3 .price-certificate__amount .price-display .currency {
+  display:block;
+}
+
+@media (min-width:768px) {
+  #fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-choice-grid--metiers {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media (max-width:767px) {
+  #fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-understand-promise {
+    grid-template-columns:1fr;
+  }
+  #fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-understand-promise__item {
+    grid-template-columns:24px minmax(0,1fr);
+    min-height:38px;
+  }
+  #fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-understand-promise__index {
+    width:24px;
+    height:24px;
+  }
+  #fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-stage-label {
+    font-size:7.4px;
+  }
+  #fixeo-estimator-v2-root .estimator-modal--raficore-v3 .rafi-choice-card {
+    grid-template-columns:36px minmax(0,1fr) 28px;
+  }
+}
