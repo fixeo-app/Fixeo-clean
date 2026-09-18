@@ -1,7 +1,7 @@
 /* ==========================================================================
-   FIXEO Estimator V2 — RAFI Premium Modal
-   Four-state experience:
-   COMPRENDRE → IDENTIFIER → VERIFIER → PRIX FIXEO
+   FIXEO Estimator V2 — RAFI ULTRA PREMIUM UX
+   Version: rafi-premium-v2
+   Flow: COMPRENDRE → IDENTIFIER → VERIFIER → PRIX FIXEO
 
    Scope:
    - Production modal loaded by index.html
@@ -3788,5 +3788,637 @@ body.fx-estimator-tunnel-active {
     animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
+  }
+}
+/* ==========================================================================
+   32. RAFI ULTRA PREMIUM UX V2 — FINAL VISUAL OVERRIDES
+   Pure presentation layer. No pricing/business logic.
+   ========================================================================== */
+
+#fixeo-estimator-v2-root {
+  --fxe-ultra-orange: #ff7a00;
+  --fxe-ultra-pink: #ff2d95;
+  --fxe-ultra-blue: #4c7dff;
+  --fxe-ultra-green: #35d07f;
+  --fxe-ultra-text: #f8f7f4;
+  --fxe-ultra-muted: rgba(248,247,244,.67);
+  --fxe-ultra-dim: rgba(248,247,244,.40);
+  --fxe-ultra-border: rgba(255,255,255,.085);
+  --fxe-ultra-bg: #080a0f;
+  --fxe-ultra-panel: #0f141c;
+  --fxe-ultra-panel-2: #141b25;
+  --fxe-ultra-gradient: linear-gradient(135deg,#ff7a00 0%,#ff2d95 54%,#4c7dff 100%);
+}
+
+/* Backdrop: deeper cinematic focus */
+#fixeo-estimator-v2-root .estimator-backdrop {
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255,122,0,.075), transparent 26%),
+    radial-gradient(circle at 64% 30%, rgba(76,125,255,.05), transparent 32%),
+    rgba(2,3,6,.925);
+  -webkit-backdrop-filter: blur(22px) saturate(118%);
+  backdrop-filter: blur(22px) saturate(118%);
+}
+
+/* Main shell: less "popup", more premium mini-app */
+#fixeo-estimator-v2-root .estimator-modal {
+  width: min(700px, 100%);
+  max-height: min(880px, calc(100dvh - 44px));
+  border-radius: 28px;
+  border: 1px solid rgba(255,255,255,.09);
+  background:
+    radial-gradient(circle at 92% -8%, rgba(76,125,255,.105), transparent 29%),
+    radial-gradient(circle at 7% -7%, rgba(255,122,0,.09), transparent 28%),
+    linear-gradient(180deg,#0b0e14 0%,#080a0f 100%);
+  box-shadow:
+    0 0 0 1px rgba(255,122,0,.04),
+    0 48px 120px rgba(0,0,0,.76),
+    0 18px 44px rgba(0,0,0,.48);
+}
+
+#fixeo-estimator-v2-root .estimator-modal::before {
+  left: 30px;
+  right: 30px;
+  height: 2px;
+  background: var(--fxe-ultra-gradient);
+  opacity: .95;
+}
+
+/* Header: RAFI command bar */
+#fixeo-estimator-v2-root .estimator-header {
+  min-height: 82px;
+  padding: 16px 22px;
+  border-bottom: 1px solid rgba(255,255,255,.055);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.024),rgba(255,255,255,0));
+}
+
+#fixeo-estimator-v2-root .header-left {
+  gap: 14px;
+}
+
+#fixeo-estimator-v2-root .header-title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .015em;
+  color: var(--fxe-ultra-text);
+}
+
+#fixeo-estimator-v2-root .header-title::after {
+  content: "RAFI INTELLIGENCE";
+  display: block;
+  margin-top: 4px;
+  color: rgba(248,247,244,.30);
+  font-size: 7.5px;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: .17em;
+}
+
+#fixeo-estimator-v2-root .rafi-state {
+  margin-top: 6px;
+  color: var(--fxe-ultra-muted);
+  font-size: 11px;
+}
+
+#fixeo-estimator-v2-root .modal-close {
+  width: 35px;
+  height: 35px;
+  flex-basis: 35px;
+  color: rgba(248,247,244,.62);
+  background: rgba(255,255,255,.042);
+  border: 1px solid rgba(255,255,255,.065);
+}
+
+#fixeo-estimator-v2-root .modal-close:hover {
+  color: #fff;
+  background: rgba(255,255,255,.075);
+  border-color: rgba(255,255,255,.13);
+}
+
+/* RAFI sphere: more jewel-like and restrained */
+#fixeo-estimator-v2-root .rafi-sphere-wrap {
+  width: 49px;
+  height: 49px;
+  flex-basis: 49px;
+}
+
+#fixeo-estimator-v2-root .rafi-sphere {
+  width: 45px;
+  height: 45px;
+  background:
+    radial-gradient(circle at 29% 24%,rgba(255,255,255,.15),transparent 21%),
+    radial-gradient(circle at 41% 36%,rgba(102,66,132,.52),transparent 42%),
+    radial-gradient(circle at 50% 62%,#211728,#0b0c11 72%);
+  border-color: rgba(255,122,0,.28);
+  box-shadow:
+    0 3px 9px rgba(0,0,0,.52),
+    inset 0 1px 0 rgba(255,255,255,.075);
+}
+
+#fixeo-estimator-v2-root .rafi-sphere-label {
+  font-size: 6.6px;
+  letter-spacing: .13em;
+  color: rgba(255,159,78,.95);
+}
+
+/* Four-step rail: compact but much more legible */
+#fixeo-estimator-v2-root .rafi-state-bar {
+  min-height: 52px;
+  padding: 0 22px;
+  gap: 8px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.012),rgba(255,255,255,.003));
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+#fixeo-estimator-v2-root .rafi-stage {
+  gap: 6px;
+  color: rgba(248,247,244,.28);
+  font-size: 9.5px;
+  font-weight: 720;
+}
+
+#fixeo-estimator-v2-root .rafi-stage.active {
+  color: #ffa252;
+}
+
+#fixeo-estimator-v2-root .rafi-stage.done {
+  color: var(--fxe-ultra-green);
+}
+
+#fixeo-estimator-v2-root .rafi-stage-dot {
+  width: 6px;
+  height: 6px;
+  flex-basis: 6px;
+}
+
+#fixeo-estimator-v2-root .rafi-stage.active .rafi-stage-dot {
+  box-shadow:
+    0 0 0 4px rgba(255,122,0,.075),
+    0 0 10px rgba(255,122,0,.52);
+}
+
+#fixeo-estimator-v2-root .rafi-stage-sep {
+  background: rgba(255,255,255,.07);
+}
+
+#fixeo-estimator-v2-root .rafi-stage-sep.done {
+  background: rgba(53,208,127,.27);
+}
+
+/* Context becomes small confirmation chips, not visual noise */
+#fixeo-estimator-v2-root .estimator-context-bar {
+  padding: 10px 22px 0;
+  gap: 6px;
+}
+
+#fixeo-estimator-v2-root .estimator-context-chip {
+  min-height: 27px;
+  padding: 5px 10px;
+  color: rgba(248,247,244,.60);
+  background: rgba(255,255,255,.032);
+  border-color: rgba(255,255,255,.05);
+  font-size: 10px;
+}
+
+/* Body rhythm */
+#fixeo-estimator-v2-root .estimator-body {
+  padding: 29px 22px 24px;
+}
+
+#fixeo-estimator-v2-root .question-heading {
+  max-width: 610px;
+  margin-bottom: 16px;
+  font-size: clamp(22px,3.3vw,29px);
+  line-height: 1.16;
+  font-weight: 810;
+  letter-spacing: -.032em;
+}
+
+#fixeo-estimator-v2-root .question-intelligence-copy {
+  max-width: 585px;
+  margin: -4px 0 21px;
+  color: rgba(248,247,244,.63);
+  font-size: 13px;
+  line-height: 1.66;
+}
+
+/* COMPRENDRE: calmer, more editorial */
+#fixeo-estimator-v2-root .estimator-understand {
+  padding-top: 31px;
+}
+
+#fixeo-estimator-v2-root .estimator-understand-eyebrow {
+  margin-bottom: 14px;
+  color: #ff9e4d;
+  font-size: 8.8px;
+  font-weight: 880;
+  letter-spacing: .165em;
+}
+
+#fixeo-estimator-v2-root .estimator-understand-eyebrow::before {
+  width: 22px;
+  background: var(--fxe-ultra-gradient);
+}
+
+#fixeo-estimator-v2-root .estimator-understand-title {
+  max-width: 600px;
+  margin-bottom: 15px;
+  font-size: clamp(30px,4.7vw,41px);
+  line-height: 1.055;
+  letter-spacing: -.043em;
+}
+
+#fixeo-estimator-v2-root .estimator-understand-copy {
+  max-width: 600px;
+  margin-bottom: 22px;
+  color: rgba(248,247,244,.67);
+  font-size: 13.7px;
+  line-height: 1.7;
+}
+
+#fixeo-estimator-v2-root .estimator-need-input {
+  min-height: 128px;
+  padding: 16px 17px;
+  color: var(--fxe-ultra-text);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.016)),
+    #0f141c;
+  border: 1px solid rgba(255,255,255,.085);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.022);
+}
+
+#fixeo-estimator-v2-root .estimator-need-input:focus {
+  border-color: rgba(255,122,0,.66);
+  box-shadow:
+    0 0 0 3px rgba(255,122,0,.085),
+    0 18px 36px rgba(0,0,0,.15);
+}
+
+#fixeo-estimator-v2-root .estimator-city-block {
+  margin-top: 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.022);
+  border-color: rgba(255,255,255,.048);
+}
+
+#fixeo-estimator-v2-root .estimator-understand-trust {
+  color: rgba(248,247,244,.39);
+}
+
+/* IDENTIFIER: less bulky, more interactive */
+#fixeo-estimator-v2-root .estimator-metier-selection .answer-cards {
+  gap: 9px;
+}
+
+#fixeo-estimator-v2-root .estimator-service-selection .answer-cards {
+  gap: 8px;
+}
+
+#fixeo-estimator-v2-root .answer-card {
+  min-height: 58px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.038),rgba(255,255,255,.015)),
+    #111720;
+  border: 1px solid rgba(255,255,255,.075);
+  border-radius: 15px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.016);
+  font-size: 14px;
+  font-weight: 630;
+}
+
+#fixeo-estimator-v2-root .answer-card::after {
+  content: "→";
+  position: absolute;
+  right: 16px;
+  color: rgba(248,247,244,.25);
+  font-size: 14px;
+  opacity: .72;
+  transition: transform 120ms ease,color 120ms ease,opacity 120ms ease;
+}
+
+#fixeo-estimator-v2-root .answer-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255,122,0,.28);
+  background:
+    linear-gradient(135deg,rgba(255,122,0,.055),rgba(255,45,149,.022)),
+    #141b25;
+  box-shadow: 0 10px 24px rgba(0,0,0,.14);
+}
+
+#fixeo-estimator-v2-root .answer-card:hover::after {
+  color: #ffa252;
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+#fixeo-estimator-v2-root .answer-card.selected::after {
+  content: "✓";
+  color: var(--fxe-ultra-green);
+  opacity: 1;
+}
+
+#fixeo-estimator-v2-root .answer-card__label {
+  padding-right: 42px;
+}
+
+/* VERIFIER: feels like RAFI asking one deliberate question */
+#fixeo-estimator-v2-root .rafi-question-header {
+  padding: 0;
+  margin-bottom: 2px;
+}
+
+#fixeo-estimator-v2-root .question-safety-note {
+  border-radius: 13px;
+  background: rgba(255,177,74,.075);
+  border-color: rgba(255,177,74,.22);
+}
+
+/* Result framing */
+#fixeo-estimator-v2-root .result-header {
+  padding: 25px 22px 0;
+}
+
+#fixeo-estimator-v2-root .result-service-row {
+  padding: 15px 22px 0;
+}
+
+#fixeo-estimator-v2-root .result-service-name {
+  font-size: clamp(21px,3.3vw,26px);
+  font-weight: 810;
+  letter-spacing: -.028em;
+}
+
+/* PRIX FIXEO: certificate / verified-price moment */
+#fixeo-estimator-v2-root .price-hero {
+  padding: 18px 22px 0;
+}
+
+#fixeo-estimator-v2-root .price-hero-inner {
+  min-height: 205px;
+  padding: 29px 30px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 85% 7%,rgba(76,125,255,.12),transparent 30%),
+    radial-gradient(circle at 12% 96%,rgba(255,122,0,.16),transparent 41%),
+    linear-gradient(145deg,rgba(255,255,255,.052),rgba(255,255,255,.016)),
+    #0f141c;
+  border-color: rgba(255,255,255,.095);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.035),
+    0 20px 44px rgba(0,0,0,.22);
+}
+
+#fixeo-estimator-v2-root .price-hero-inner::before {
+  width: 370px;
+  height: 170px;
+  bottom: -87px;
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(255,122,0,.23),
+      rgba(255,45,149,.085) 43%,
+      transparent 71%
+    );
+}
+
+#fixeo-estimator-v2-root .price-hero-inner::after {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,122,0,.40),
+      rgba(255,45,149,.14),
+      rgba(76,125,255,.12),
+      rgba(255,255,255,.02)
+    );
+}
+
+#fixeo-estimator-v2-root .price-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(248,247,244,.42);
+  font-size: 8.8px;
+  letter-spacing: .165em;
+}
+
+#fixeo-estimator-v2-root .price-eyebrow::before {
+  content: "✓";
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fxe-ultra-green);
+  background: rgba(53,208,127,.075);
+  border: 1px solid rgba(53,208,127,.21);
+  border-radius: 50%;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+#fixeo-estimator-v2-root .price-display {
+  margin-bottom: 9px;
+}
+
+#fixeo-estimator-v2-root .price-display .amount {
+  font-size: clamp(68px,12vw,98px);
+  font-weight: 930;
+  letter-spacing: -.067em;
+  background: var(--fxe-ultra-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+#fixeo-estimator-v2-root .price-display .currency {
+  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Scope: supporting evidence, not clutter */
+#fixeo-estimator-v2-root .scope-section {
+  padding: 17px 22px 4px;
+}
+
+#fixeo-estimator-v2-root .scope-chip {
+  min-height: 29px;
+  background: rgba(255,255,255,.032);
+  border-color: rgba(255,255,255,.05);
+}
+
+/* Footer: strong but not overpowering */
+#fixeo-estimator-v2-root .estimator-footer {
+  padding:
+    12px
+    22px
+    calc(16px + env(safe-area-inset-bottom,0px));
+  background:
+    linear-gradient(180deg,rgba(8,10,15,.84),rgba(8,10,15,.98));
+  border-top-color: rgba(255,255,255,.05);
+}
+
+#fixeo-estimator-v2-root .btn-primary {
+  min-height: 55px;
+  background: var(--fxe-ultra-gradient);
+  border-radius: 15px;
+  box-shadow:
+    0 9px 24px rgba(255,122,0,.14),
+    0 2px 8px rgba(0,0,0,.28);
+  font-size: 14.5px;
+  font-weight: 790;
+}
+
+#fixeo-estimator-v2-root .btn-primary:hover:not(:disabled) {
+  box-shadow:
+    0 13px 30px rgba(255,122,0,.19),
+    0 3px 10px rgba(0,0,0,.30);
+}
+
+/* Desktop breathing room */
+@media (min-width: 768px) {
+  #fixeo-estimator-v2-root .estimator-modal {
+    min-height: 620px;
+  }
+
+  #fixeo-estimator-v2-root .estimator-metier-selection .answer-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Mobile: deliberate mini-app */
+@media (max-width: 767px) {
+  #fixeo-estimator-v2-root .estimator-backdrop {
+    align-items: flex-end;
+    padding:
+      max(6px,env(safe-area-inset-top,0px))
+      0
+      0;
+  }
+
+  #fixeo-estimator-v2-root .estimator-modal {
+    width: 100%;
+    max-width: none;
+    height: min(96dvh,920px);
+    max-height: 96dvh;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    border-radius: 26px 26px 0 0;
+    box-shadow: 0 -24px 70px rgba(0,0,0,.48);
+  }
+
+  #fixeo-estimator-v2-root .estimator-header {
+    min-height: 71px;
+    padding: 13px 16px 12px;
+  }
+
+  #fixeo-estimator-v2-root .rafi-state-bar {
+    min-height: 45px;
+    padding: 0 12px;
+    gap: 5px;
+  }
+
+  #fixeo-estimator-v2-root .rafi-stage {
+    font-size: 8.1px;
+    gap: 4px;
+  }
+
+  #fixeo-estimator-v2-root .estimator-context-bar {
+    padding: 8px 16px 0;
+  }
+
+  #fixeo-estimator-v2-root .estimator-body {
+    padding: 22px 16px 20px;
+  }
+
+  #fixeo-estimator-v2-root .estimator-understand {
+    padding-top: 24px;
+  }
+
+  #fixeo-estimator-v2-root .estimator-understand-title {
+    font-size: 29px;
+  }
+
+  #fixeo-estimator-v2-root .estimator-understand-copy {
+    font-size: 12.8px;
+  }
+
+  #fixeo-estimator-v2-root .estimator-need-input {
+    min-height: 120px;
+    font-size: 14px;
+  }
+
+  #fixeo-estimator-v2-root .estimator-metier-selection .answer-cards {
+    grid-template-columns: 1fr;
+  }
+
+  #fixeo-estimator-v2-root .answer-card {
+    min-height: 54px;
+  }
+
+  #fixeo-estimator-v2-root .answer-card__check {
+    width: 42px;
+    min-width: 42px;
+    height: 54px;
+  }
+
+  #fixeo-estimator-v2-root .price-hero {
+    padding: 16px 16px 0;
+  }
+
+  #fixeo-estimator-v2-root .price-hero-inner {
+    min-height: 178px;
+    padding: 24px 22px;
+  }
+
+  #fixeo-estimator-v2-root .price-display .amount {
+    font-size: clamp(61px,18vw,80px);
+  }
+
+  #fixeo-estimator-v2-root .result-header {
+    padding: 20px 16px 0;
+  }
+
+  #fixeo-estimator-v2-root .result-service-row {
+    padding: 13px 16px 0;
+  }
+
+  #fixeo-estimator-v2-root .scope-section {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  #fixeo-estimator-v2-root .estimator-footer {
+    padding:
+      10px
+      16px
+      calc(12px + env(safe-area-inset-bottom,0px));
+  }
+
+  #fixeo-estimator-v2-root .btn-primary {
+    min-height: 52px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 420px) {
+  #fixeo-estimator-v2-root .estimator-modal {
+    height: 97dvh;
+    max-height: 97dvh;
+  }
+
+  #fixeo-estimator-v2-root .rafi-stage {
+    font-size: 7.7px;
+  }
+
+  #fixeo-estimator-v2-root .estimator-understand-title {
+    font-size: 27px;
+  }
+
+  #fixeo-estimator-v2-root .price-display .amount {
+    font-size: 64px;
   }
 }
