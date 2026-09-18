@@ -1,5744 +1,3259 @@
-/*!
- * js/fixeo-estimator-v2.js
- * FIXEO Estimator V2 — RAFI 4-State Experience
- *
- * Flow:
- *   1. COMPRENDRE
- *   2. IDENTIFIER
- *   3. VERIFIER
- *   4. PRIX FIXEO
- *
- * IMPORTANT:
- *   - UI/orchestration only.
- *   - Never calculates monetary values.
- *   - Never invents a métier from free text.
- *   - Never stores raw price amounts in sessionStorage.
- *   - Uses window.FixeoEstimatorAPI as the only estimator API boundary.
- */
+/* ==========================================================================
+   FIXEO Estimator V2 — RAFI Premium Modal
+   Four-state experience:
+   COMPRENDRE → IDENTIFIER → VERIFIER → PRIX FIXEO
 
-(function() {
-  'use strict';
-
-  if (window._fxEstV2Loaded) return;
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Public disabled stub
-  // ───────────────────────────────────────────────────────────────────────────
-
-  window.FixeoEstimatorV2 = {
-    open: function() {
-      return Promise.resolve({
-        accepted: false,
-        reason: 'disabled'
-      });
-    },
-
-    close: function() {},
-
-    hide: function() {},
-
-    reveal: function() {},
-
-    isOpen: function() {
-      return false;
-    }
-  };
+   Scope:
+   - Production modal loaded by index.html
+   - /estimation continuation page
+   - No pricing/business logic
+   - Deliberately scoped to avoid resetting the FIXEO homepage
+   ========================================================================== */
 
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Preview override
-  // ───────────────────────────────────────────────────────────────────────────
+/* ==========================================================================
+   1. DESIGN TOKENS — SCOPED
+   ========================================================================== */
 
-  var _isPreviewHost =
-    typeof location !== 'undefined' &&
-    location.hostname !== 'fixeo.ma' &&
-    location.hostname !== 'www.fixeo.ma';
+#fixeo-estimator-v2-root,
+.estimation-page {
+  --fxe-orange: #FF7A00;
+  --fxe-pink: #FF2D95;
+  --fxe-green: #35D07F;
+  --fxe-warning: #FFAA3B;
 
-  var _previewOverride =
-    _isPreviewHost &&
-    window._FIXEO_ESTIMATOR_PREVIEW_OVERRIDE_ === true;
+  --fxe-gradient:
+    linear-gradient(135deg, #FF7A00 0%, #FF2D95 100%);
+
+  --fxe-gradient-90:
+    linear-gradient(90deg, #FF7A00 0%, #FF2D95 100%);
+
+  --fxe-bg-0: #08090C;
+  --fxe-bg-1: #0E1015;
+  --fxe-bg-2: #14171D;
+  --fxe-bg-3: #1A1E26;
+  --fxe-bg-4: #222732;
+
+  --fxe-glass:
+    rgba(20, 23, 29, 0.88);
+
+  --fxe-glass-strong:
+    rgba(12, 14, 18, 0.96);
+
+  --fxe-border:
+    rgba(255, 255, 255, 0.09);
+
+  --fxe-border-soft:
+    rgba(255, 255, 255, 0.055);
+
+  --fxe-border-strong:
+    rgba(255, 255, 255, 0.14);
+
+  --fxe-text:
+    #F7F5F2;
+
+  --fxe-text-2:
+    rgba(247, 245, 242, 0.68);
+
+  --fxe-text-3:
+    rgba(247, 245, 242, 0.42);
+
+  --fxe-text-4:
+    rgba(247, 245, 242, 0.26);
+
+  --fxe-safe-bg:
+    rgba(255, 170, 59, 0.09);
+
+  --fxe-safe-border:
+    rgba(255, 170, 59, 0.24);
+
+  --fxe-shadow:
+    0 40px 110px rgba(0, 0, 0, 0.72),
+    0 14px 42px rgba(0, 0, 0, 0.48);
+
+  --fxe-ease:
+    cubic-bezier(0.2, 0, 0, 1);
+
+  --fxe-ease-out:
+    cubic-bezier(0, 0, 0.2, 1);
+
+  --fxe-modal-radius: 26px;
+  --fxe-card-radius: 16px;
+}
 
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Feature gate
-  // ───────────────────────────────────────────────────────────────────────────
+/* ==========================================================================
+   2. SAFE RESET — NEVER RESET THE WHOLE HOMEPAGE
+   ========================================================================== */
 
-  if (
-    !_previewOverride &&
-    (
-      !window.FixeoEstimatorConfig ||
-      window.FixeoEstimatorConfig.estimatorV2Enabled !== true
-    )
-  ) {
-    return;
+#fixeo-estimator-v2-root,
+#fixeo-estimator-v2-root *,
+#fixeo-estimator-v2-root *::before,
+#fixeo-estimator-v2-root *::after,
+.estimation-page,
+.estimation-page *,
+.estimation-page *::before,
+.estimation-page *::after {
+  box-sizing: border-box;
+}
+
+#fixeo-estimator-v2-root button,
+#fixeo-estimator-v2-root input,
+#fixeo-estimator-v2-root textarea,
+.estimation-page button,
+.estimation-page input,
+.estimation-page textarea {
+  font: inherit;
+}
+
+#fixeo-estimator-v2-root button,
+.estimation-page button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.fx-estimator-tunnel-active {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+
+/* ==========================================================================
+   3. ROOT + BACKDROP
+   ========================================================================== */
+
+#fixeo-estimator-v2-root {
+  position: fixed;
+  inset: 0;
+  z-index: 2147482000;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Inter",
+    "Segoe UI",
+    Helvetica,
+    Arial,
+    sans-serif;
+  color: var(--fxe-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.estimator-backdrop {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    max(20px, env(safe-area-inset-top, 0px))
+    max(20px, env(safe-area-inset-right, 0px))
+    max(20px, env(safe-area-inset-bottom, 0px))
+    max(20px, env(safe-area-inset-left, 0px));
+
+  background:
+    radial-gradient(
+      circle at 50% 35%,
+      rgba(255, 122, 0, 0.07) 0%,
+      rgba(255, 45, 149, 0.025) 28%,
+      transparent 54%
+    ),
+    rgba(3, 4, 7, 0.86);
+
+  -webkit-backdrop-filter: blur(18px) saturate(115%);
+  backdrop-filter: blur(18px) saturate(115%);
+
+  overscroll-behavior: contain;
+}
+
+
+/* ==========================================================================
+   4. MODAL SHELL
+   ========================================================================== */
+
+.estimator-modal {
+  width: min(680px, 100%);
+  max-height: min(860px, calc(100dvh - 40px));
+
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+  isolation: isolate;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 90% -10%,
+      rgba(255, 45, 149, 0.075),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 10% 0%,
+      rgba(255, 122, 0, 0.09),
+      transparent 30%
+    ),
+    var(--fxe-glass-strong);
+
+  border: 1px solid var(--fxe-border);
+  border-radius: var(--fxe-modal-radius);
+
+  box-shadow:
+    0 0 0 1px rgba(255, 122, 0, 0.08),
+    var(--fxe-shadow);
+
+  transform: translateZ(0);
+}
+
+.estimator-modal::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+
+  background: var(--fxe-gradient-90);
+  border-radius: 0 0 999px 999px;
+
+  opacity: 0.95;
+  z-index: 20;
+}
+
+.estimator-modal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.025) 0%,
+      transparent 18%,
+      transparent 82%,
+      rgba(255, 255, 255, 0.012) 100%
+    );
+}
+
+#progress-slot,
+#ctx-slot,
+#footer-slot {
+  flex: 0 0 auto;
+}
+
+#ctx-slot:empty,
+#footer-slot:empty {
+  display: none;
+}
+
+#body-slot {
+  flex: 1 1 auto;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color:
+    rgba(255, 255, 255, 0.13)
+    transparent;
+}
+
+#body-slot::-webkit-scrollbar {
+  width: 4px;
+}
+
+#body-slot::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.13);
+  border-radius: 999px;
+}
+
+
+/* ==========================================================================
+   5. HEADER
+   ========================================================================== */
+
+.estimator-header {
+  min-height: 76px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  position: relative;
+
+  padding: 15px 20px 14px;
+
+  border-bottom: 1px solid var(--fxe-border-soft);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.025),
+      rgba(255, 255, 255, 0)
+    );
+}
+
+.header-left {
+  min-width: 0;
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-text {
+  min-width: 0;
+}
+
+.header-title {
+  color: var(--fxe-text);
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 760;
+  letter-spacing: 0.015em;
+}
+
+.rafi-state {
+  margin-top: 3px;
+
+  color: var(--fxe-text-2);
+  font-size: 11.5px;
+  line-height: 1.3;
+
+  transition: opacity 150ms ease;
+}
+
+.rafi-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  padding: 5px 11px;
+
+  color: #fff;
+  background: var(--fxe-gradient);
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.07em;
+
+  position: relative;
+  white-space: nowrap;
+}
+
+.rafi-indicator::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+
+  border: 1px solid rgba(255, 122, 0, 0.55);
+  border-radius: inherit;
+
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rafi-indicator.small {
+  padding: 4px 9px;
+  font-size: 9.5px;
+}
+
+.rafi-indicator.rafi-pulse::after {
+  animation: fxe-rafilabel-pulse 550ms var(--fxe-ease) forwards;
+}
+
+@keyframes fxe-rafilabel-pulse {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
   }
 
-  window._fxEstV2Loaded = true;
+  100% {
+    opacity: 0;
+    transform: scale(1.55);
+  }
+}
+
+.modal-close {
+  width: 34px;
+  height: 34px;
+
+  flex: 0 0 34px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  color: var(--fxe-text-2);
+  background: rgba(255, 255, 255, 0.055);
+
+  border: 1px solid var(--fxe-border-soft);
+  border-radius: 50%;
+
+  font-size: 19px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background 130ms ease,
+    color 130ms ease,
+    border-color 130ms ease,
+    transform 130ms ease;
+}
+
+.modal-close:hover {
+  color: var(--fxe-text);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: var(--fxe-border-strong);
+  transform: rotate(2deg);
+}
 
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // RAFI visual states
-  // ───────────────────────────────────────────────────────────────────────────
+/* ==========================================================================
+   6. RAFI INTELLIGENCE SPHERE
+   ========================================================================== */
 
-  var RAFI_STATES = {
-    idle: {
-      label: 'RAFI',
-      copy: 'Estimation FIXEO'
-    },
+.rafi-sphere-wrap {
+  width: 46px;
+  height: 46px;
 
-    understanding: {
-      label: 'RAFI',
-      copy: 'Décrivez votre intervention'
-    },
+  position: relative;
+  flex: 0 0 46px;
+}
 
-    analyzing: {
-      label: 'RAFI analyse',
-      copy: 'Je comprends votre besoin…'
-    },
+.rafi-sphere {
+  width: 42px;
+  height: 42px;
 
-    identified: {
-      label: 'RAFI',
-      copy: 'Intervention identifiée'
-    },
+  position: relative;
+  isolation: isolate;
 
-    verifying: {
-      label: 'RAFI vérifie',
-      copy: 'Je vérifie le périmètre'
-    },
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    complete: {
-      label: 'RAFI',
-      copy: 'Votre Prix FIXEO est prêt'
-    }
-  };
+  overflow: visible;
 
+  border-radius: 50%;
+  border: 1px solid rgba(255, 122, 0, 0.28);
 
-  var _SPHERE_STATE_MAP = {
-    idle: 'idle',
-    understanding: 'idle',
-    analyzing: 'analyzing',
-    identified: 'identified',
-    verifying: 'verifying',
-    complete: 'complete'
-  };
+  background:
+    radial-gradient(
+      circle at 31% 26%,
+      rgba(255, 255, 255, 0.13) 0%,
+      transparent 23%
+    ),
+    radial-gradient(
+      circle at 40% 35%,
+      rgba(89, 61, 116, 0.54) 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 50% 60%,
+      #211827 0%,
+      #0C0D11 70%
+    );
 
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
 
-  function setSphereState(state) {
-    var sphere =
-      document.querySelector('.rafi-sphere');
+  transition:
+    border-color 450ms var(--fxe-ease),
+    box-shadow 650ms var(--fxe-ease);
+}
 
-    if (sphere) {
-      sphere.setAttribute(
-        'data-state',
-        state
-      );
-    }
+.rafi-sphere-label {
+  position: relative;
+  z-index: 3;
+
+  color: rgba(255, 154, 65, 0.92);
+
+  font-size: 6.5px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.rafi-sphere::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  border-radius: inherit;
+
+  z-index: 1;
+  pointer-events: none;
+
+  transition:
+    background 500ms var(--fxe-ease),
+    opacity 500ms var(--fxe-ease);
+}
+
+.rafi-sphere::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+
+  border-radius: 50%;
+  border: 1px solid transparent;
+
+  pointer-events: none;
+
+  transition:
+    border-color 500ms var(--fxe-ease),
+    box-shadow 500ms var(--fxe-ease);
+}
+
+.rafi-sphere[data-state="idle"] {
+  border-color: rgba(255, 122, 0, 0.26);
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    0 0 18px rgba(255, 122, 0, 0.11),
+    inset 0 0 10px rgba(255, 122, 0, 0.06);
+}
+
+.rafi-sphere[data-state="idle"]::before {
+  background:
+    radial-gradient(
+      circle at 50% 65%,
+      rgba(255, 122, 0, 0.09),
+      transparent 66%
+    );
+}
+
+.rafi-sphere[data-state="analyzing"] {
+  border-color: rgba(255, 122, 0, 0.55);
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(255, 122, 0, 0.26),
+    0 0 10px rgba(255, 122, 0, 0.18),
+    inset 0 0 16px rgba(255, 122, 0, 0.14);
+
+  animation: fxe-rafi-breathe 2.6s ease-in-out infinite;
+}
+
+.rafi-sphere[data-state="analyzing"]::before {
+  background:
+    radial-gradient(
+      circle at 43% 59%,
+      rgba(255, 122, 0, 0.27),
+      transparent 61%
+    );
+}
+
+.rafi-sphere[data-state="analyzing"]::after {
+  border-color: rgba(255, 122, 0, 0.24);
+  box-shadow: 0 0 7px rgba(255, 122, 0, 0.13);
+
+  animation: fxe-rafi-orbit 4s linear infinite;
+}
+
+.rafi-sphere[data-state="verifying"] {
+  border-color: rgba(255, 45, 149, 0.45);
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    0 0 28px rgba(255, 45, 149, 0.2),
+    0 0 9px rgba(255, 45, 149, 0.15),
+    inset 0 0 14px rgba(255, 45, 149, 0.1);
+
+  animation: fxe-rafi-verify 3s ease-in-out infinite;
+}
+
+.rafi-sphere[data-state="verifying"]::before {
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 45, 149, 0.21),
+      transparent 60%
+    );
+}
+
+.rafi-sphere[data-state="verifying"]::after {
+  border-color: rgba(255, 45, 149, 0.26);
+
+  animation: fxe-rafi-orbit 5.5s linear infinite;
+}
+
+.rafi-sphere[data-state="identified"] {
+  border-color: rgba(53, 208, 127, 0.5);
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    0 0 26px rgba(53, 208, 127, 0.22),
+    inset 0 0 13px rgba(53, 208, 127, 0.1);
+
+  animation: fxe-rafi-lock 520ms var(--fxe-ease) both;
+}
+
+.rafi-sphere[data-state="identified"]::before {
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(53, 208, 127, 0.2),
+      transparent 60%
+    );
+}
+
+.rafi-sphere[data-state="complete"] {
+  border-color: rgba(53, 208, 127, 0.38);
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    0 0 22px rgba(53, 208, 127, 0.16),
+    inset 0 0 10px rgba(53, 208, 127, 0.08);
+}
+
+.rafi-sphere[data-state="complete"]::before {
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(53, 208, 127, 0.16),
+      transparent 60%
+    );
+}
+
+@keyframes fxe-rafi-breathe {
+  0%,
+  100% {
+    transform: scale(1);
   }
 
+  50% {
+    transform: scale(1.035);
+  }
+}
 
-  function setRAFIState(state) {
-    var s =
-      RAFI_STATES[state] ||
-      RAFI_STATES.idle;
-
-    var markEl =
-      document.getElementById(
-        'rafi-mark'
-      );
-
-    var lineEl =
-      document.getElementById(
-        'rafi-state-line'
-      );
-
-    if (markEl) {
-      markEl.textContent =
-        s.label;
-
-      markEl.classList.remove(
-        'rafi-pulse'
-      );
-
-      void markEl.offsetWidth;
-
-      markEl.classList.add(
-        'rafi-pulse'
-      );
-
-      setTimeout(function() {
-        markEl.classList.remove(
-          'rafi-pulse'
-        );
-      }, 300);
-    }
-
-    if (lineEl) {
-      lineEl.style.opacity =
-        '0';
-
-      setTimeout(function() {
-        lineEl.textContent =
-          s.copy;
-
-        lineEl.style.opacity =
-          '1';
-      }, 90);
-    }
-
-    setSphereState(
-      _SPHERE_STATE_MAP[state] ||
-      'idle'
-    );
+@keyframes fxe-rafi-verify {
+  0%,
+  100% {
+    filter: saturate(1);
   }
 
+  50% {
+    filter: saturate(1.22);
+  }
+}
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Display labels
-  // ───────────────────────────────────────────────────────────────────────────
-
-  var CLIENT_LABELS = {
-    'menuiserie.reglage_porte.sans_rabotage': {
-      primary: 'Réglage de porte',
-      secondary: 'Sans rabotage'
-    },
-
-    'menuiserie.reglage_porte.avec_rabotage': {
-      primary: 'Réglage de porte',
-      secondary: 'Avec rabotage'
-    },
-
-    'menuiserie.remplacement_charniere': {
-      primary: 'Remplacement de charnière',
-      secondary: null
-    },
-
-    'plomberie.robinet_remplacement': {
-      primary: 'Remplacement de robinet',
-      secondary: null
-    },
-
-    'plomberie.diagnostic': {
-      primary: 'Diagnostic plomberie',
-      secondary: null
-    },
-
-    'plomberie.fuite_simple': {
-      primary: 'Réparation fuite',
-      secondary: null
-    },
-
-    'electricite.diagnostic': {
-      primary: 'Diagnostic électrique',
-      secondary: null
-    },
-
-    'electricite.prise_remplacement': {
-      primary: 'Remplacement de prise',
-      secondary: null
-    },
-
-    'electricite.interrupteur_remplacement.simple': {
-      primary: 'Remplacement d\'interrupteur',
-      secondary: null
-    },
-
-    'serrurerie.cylindre_remplacement.standard': {
-      primary: 'Remplacement de cylindre',
-      secondary: 'Standard'
-    },
-
-    'serrurerie.serrure_remplacement.standard': {
-      primary: 'Remplacement de serrure',
-      secondary: 'Standard'
-    },
-
-    'serrurerie.porte_claquee_ouverture': {
-      primary: 'Ouverture porte claquée',
-      secondary: null
-    },
-
-    'nettoyage.grand_menage': {
-      primary: 'Grand ménage',
-      secondary: null
-    },
-
-    'nettoyage.menage_standard': {
-      primary: 'Ménage standard',
-      secondary: null
-    },
-
-    'peinture.mur_interieur.all_in': {
-      primary: 'Peinture mur intérieur',
-      secondary: 'Fournitures incluses'
-    },
-
-    'peinture.mur_interieur.labour_only': {
-      primary: 'Peinture mur intérieur',
-      secondary: 'Main-d\'œuvre seulement'
-    }
-  };
-
-
-  function resolveClientLabel(serviceCode) {
-    var lbl =
-      CLIENT_LABELS[serviceCode];
-
-    if (lbl) return lbl;
-
-    var parts =
-      (serviceCode || '')
-        .split('.');
-
-    var primary =
-      parts
-        .slice(1)
-        .join(' ')
-        .replace(/_/g, ' ') ||
-      serviceCode ||
-      'Intervention';
-
-    return {
-      primary:
-        primary.charAt(0).toUpperCase() +
-        primary.slice(1),
-
-      secondary: null
-    };
+@keyframes fxe-rafi-orbit {
+  from {
+    transform: rotate(0deg);
   }
 
+  to {
+    transform: rotate(360deg);
+  }
+}
 
-  var PROMPT_LABELS = {
-    burning_smell:
-      'Y a-t-il une odeur de brûlé ?',
-
-    scorch_marks:
-      'Y a-t-il des traces de carbonisation ?',
-
-    active_moisture:
-      'Y a-t-il une fuite active en cours ?',
-
-    distributor_equipment_involved:
-      'L\'intervention concerne-t-elle le tableau électrique principal ?',
-
-    ddr_rcd_involved:
-      'L\'intervention concerne-t-elle un disjoncteur différentiel ou DDR ?',
-
-    multi_split:
-      'S\'agit-il d\'un système multi-split ?',
-
-    security_door:
-      'S\'agit-il d\'une porte blindée ou de sécurité ?',
-
-    lock_cylinder_involved:
-      'La serrure comporte-t-elle un cylindre à remplacer ?',
-
-    part_replacement_required:
-      'Une pièce doit-elle être remplacée ?',
-
-    worker_count:
-      'Combien de prestataires souhaitez-vous ?',
-
-    workers_count:
-      'Combien de prestataires souhaitez-vous ?',
-
-    hours:
-      'Combien d\'heures d\'intervention ?',
-
-    hours_per_worker:
-      'Combien d\'heures par prestataire ?',
-
-    painted_m2:
-      'Quelle est la surface à peindre (m²) ?',
-
-    ceiling_m2:
-      'Quelle est la surface du plafond (m²) ?',
-
-    surface_m2:
-      'Quelle est la surface concernée (m²) ?',
-
-    frame_condition:
-      'Dans quel état est le cadre de porte ?',
-
-    leak_location_confirmed:
-      'La localisation de la fuite est-elle connue ?'
-  };
-
-
-  function promptFromKey(
-    promptKey,
-    questionId
-  ) {
-    if (
-      PROMPT_LABELS[promptKey]
-    ) {
-      return PROMPT_LABELS[
-        promptKey
-      ];
-    }
-
-    var base =
-      questionId
-        ? questionId.split('@')[0]
-        : '';
-
-    return (
-      PROMPT_LABELS[base] ||
-      questionId ||
-      'Question de qualification'
-    );
+@keyframes fxe-rafi-lock {
+  0% {
+    transform: scale(1);
   }
 
-
-  function optionLabel(opt) {
-    var labels = {
-      SOUND:
-        'Bon état',
-
-      COMPATIBLE:
-        'Compatible',
-
-      MINOR_DAMAGE:
-        'Légères marques',
-
-      ROTTED:
-        'Dégradé',
-
-      STRUCTURALLY_DEFORMED:
-        'Déformé',
-
-      true:
-        'Oui',
-
-      false:
-        'Non'
-    };
-
-    return (
-      labels[opt] !== undefined
-        ? labels[opt]
-        : String(opt)
-            .replace(/_/g, ' ')
-    );
+  38% {
+    transform: scale(1.09);
   }
 
-
-  var METIER_LABELS = {
-    menuiserie:
-      'Menuiserie',
-
-    plomberie:
-      'Plomberie',
-
-    electricite:
-      'Électricité',
-
-    serrurerie:
-      'Serrurerie',
-
-    climatisation:
-      'Climatisation',
-
-    nettoyage:
-      'Nettoyage',
-
-    peinture:
-      'Peinture',
-
-    bricolage:
-      'Bricolage'
-  };
+  100% {
+    transform: scale(1);
+  }
+}
 
 
-  function metierLabel(
-    metier
-  ) {
-    if (
-      METIER_LABELS[
-        metier
-      ]
-    ) {
-      return METIER_LABELS[
-        metier
-      ];
-    }
+/* ==========================================================================
+   7. INTELLIGENCE SWEEP
+   ========================================================================== */
 
-    var raw =
-      String(
-        metier || ''
-      )
-        .replace(/[_-]/g, ' ')
-        .trim();
+.intelligence-line {
+  position: absolute;
+  top: 1px;
+  left: 18px;
+  right: 18px;
 
-    if (!raw) {
-      return 'Métier';
-    }
+  height: 1px;
 
-    return (
-      raw.charAt(0).toUpperCase() +
-      raw.slice(1)
-    );
+  background: var(--fxe-gradient-90);
+
+  opacity: 0;
+
+  transform: scaleX(0);
+  transform-origin: left center;
+
+  pointer-events: none;
+}
+
+.intelligence-line.active {
+  animation:
+    fxe-intelligence-sweep
+    620ms
+    var(--fxe-ease)
+    forwards;
+}
+
+@keyframes fxe-intelligence-sweep {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
   }
 
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Entry context
-  // ───────────────────────────────────────────────────────────────────────────
-
-  var _ALLOWED_ENTRY_FIELDS = [
-    'entry_point',
-    'source',
-
-    'metier_hint',
-    'service_hint',
-
-    'free_text',
-    'description',
-
-    'city_slug',
-    'city',
-
-    'artisan_id',
-
-    'urgency_context',
-    'urgency',
-
-    'known_inputs'
-  ];
-
-
-  function _normalizeEntryContext(
-    ctx
-  ) {
-    var out = {};
-
-    if (
-      !ctx ||
-      typeof ctx !== 'object' ||
-      Array.isArray(ctx)
-    ) {
-      return out;
-    }
-
-    _ALLOWED_ENTRY_FIELDS
-      .forEach(function(k) {
-        if (
-          ctx[k] !== null &&
-          ctx[k] !== undefined
-        ) {
-          out[k] =
-            ctx[k];
-        }
-      });
-
-    return out;
+  16% {
+    opacity: 1;
   }
 
-
-  function _cleanText(
-    value,
-    max
-  ) {
-    if (
-      value === null ||
-      value === undefined
-    ) {
-      return '';
-    }
-
-    var s =
-      String(value)
-        .trim();
-
-    if (
-      max &&
-      s.length > max
-    ) {
-      s =
-        s.slice(
-          0,
-          max
-        );
-    }
-
-    return s;
+  72% {
+    opacity: 0.9;
+    transform: scaleX(1);
   }
 
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
 
-  function _displayCity(
-    value
-  ) {
-    var s =
-      _cleanText(
-        value,
-        120
-      );
 
-    if (!s) return '';
+/* ==========================================================================
+   8. FOUR-STATE PROGRESS BAR
+   ========================================================================== */
 
-    s =
-      s.replace(
-        /[-_]+/g,
-        ' '
-      );
+.rafi-state-bar {
+  --fill: 25%;
 
-    return (
-      s.charAt(0).toUpperCase() +
-      s.slice(1)
+  min-height: 48px;
+
+  display: grid;
+  grid-template-columns:
+    auto minmax(10px, 1fr)
+    auto minmax(10px, 1fr)
+    auto minmax(10px, 1fr)
+    auto;
+  align-items: center;
+
+  gap: 8px;
+
+  position: relative;
+  overflow: hidden;
+
+  padding: 0 20px;
+
+  border-bottom: 1px solid var(--fxe-border-soft);
+
+  background: rgba(255, 255, 255, 0.012);
+}
+
+.rafi-state-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  width: var(--fill);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 122, 0, 0.075),
+      rgba(255, 45, 149, 0.03)
     );
+
+  transition: width 520ms var(--fxe-ease);
+}
+
+.rafi-stage {
+  min-width: 0;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  position: relative;
+  z-index: 1;
+
+  color: var(--fxe-text-4);
+
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 680;
+  letter-spacing: 0.025em;
+
+  white-space: nowrap;
+
+  transition:
+    color 220ms ease,
+    opacity 220ms ease;
+}
+
+.rafi-stage.active {
+  color: #FF9A45;
+}
+
+.rafi-stage.done {
+  color: var(--fxe-green);
+}
+
+.rafi-stage-dot {
+  width: 6px;
+  height: 6px;
+
+  flex: 0 0 6px;
+
+  border-radius: 50%;
+
+  background: currentColor;
+
+  box-shadow: none;
+
+  transition:
+    background 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.rafi-stage.active .rafi-stage-dot {
+  transform: scale(1.15);
+
+  box-shadow:
+    0 0 0 3px rgba(255, 122, 0, 0.08),
+    0 0 8px rgba(255, 122, 0, 0.48);
+}
+
+.rafi-stage.done .rafi-stage-dot {
+  box-shadow:
+    0 0 7px rgba(53, 208, 127, 0.32);
+}
+
+.rafi-stage-sep {
+  width: 100%;
+  height: 1px;
+
+  position: relative;
+  z-index: 1;
+
+  background: rgba(255, 255, 255, 0.085);
+}
+
+.rafi-stage-sep.done {
+  background: rgba(53, 208, 127, 0.28);
+}
+
+.estimator-progress {
+  display: none;
+}
+
+
+/* ==========================================================================
+   9. CONTEXT STRIP
+   ========================================================================== */
+
+.estimator-context-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+
+  padding: 10px 20px 0;
+}
+
+.estimator-context-chip {
+  min-height: 28px;
+
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 10px;
+
+  color: var(--fxe-text-2);
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  border: 1px solid var(--fxe-border-soft);
+  border-radius: 999px;
+
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 590;
+}
+
+.estimator-context {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 14px;
+}
+
+.rafi-question-header {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.context-detail {
+  color: var(--fxe-text-3);
+  font-size: 11.5px;
+}
+
+
+/* ==========================================================================
+   10. SHARED BODY / TYPOGRAPHY
+   ========================================================================== */
+
+.estimator-body {
+  padding: 26px 20px 22px;
+}
+
+.question-heading {
+  margin: 0 0 18px;
+
+  color: var(--fxe-text);
+
+  font-size: clamp(21px, 3.2vw, 28px);
+  line-height: 1.19;
+  font-weight: 790;
+  letter-spacing: -0.026em;
+}
+
+.question-intelligence-copy {
+  max-width: 570px;
+
+  margin: -7px 0 20px;
+
+  color: var(--fxe-text-2);
+
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.question-safety .question-heading {
+  color: #FFC06E;
+}
+
+.question-safety-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 16px;
+  padding: 10px 12px;
+
+  color: #FFC06E;
+  background: var(--fxe-safe-bg);
+
+  border: 1px solid var(--fxe-safe-border);
+  border-radius: 12px;
+
+  font-size: 11.5px;
+  line-height: 1.45;
+  font-weight: 650;
+}
+
+
+/* ==========================================================================
+   11. STATE 1 — COMPRENDRE
+   ========================================================================== */
+
+.estimator-understand {
+  padding-top: 30px;
+}
+
+.estimator-understand-eyebrow {
+  display: inline-flex;
+  align-items: center;
+
+  margin-bottom: 13px;
+
+  color: #FF9C4A;
+
+  font-size: 9.5px;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: 0.15em;
+
+  text-transform: uppercase;
+}
+
+.estimator-understand-eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 2px;
+
+  margin-right: 8px;
+
+  background: var(--fxe-gradient-90);
+
+  border-radius: 999px;
+}
+
+.estimator-understand-title {
+  max-width: 560px;
+  margin-bottom: 16px;
+
+  font-size: clamp(27px, 4.4vw, 38px);
+  line-height: 1.08;
+  letter-spacing: -0.038em;
+}
+
+.estimator-understand-copy {
+  max-width: 575px;
+
+  margin: 0 0 20px;
+
+  color: var(--fxe-text-2);
+
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.estimator-need-input {
+  width: 100%;
+  min-height: 146px;
+  resize: vertical;
+
+  display: block;
+
+  padding: 16px 17px;
+
+  color: var(--fxe-text);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.025)
+    ),
+    var(--fxe-bg-2);
+
+  border: 1px solid var(--fxe-border);
+  border-radius: 16px;
+
+  outline: none;
+
+  font-size: 15px;
+  line-height: 1.6;
+
+  caret-color: var(--fxe-orange);
+
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    background 140ms ease;
+}
+
+.estimator-need-input::placeholder {
+  color: var(--fxe-text-4);
+}
+
+.estimator-need-input:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.estimator-need-input:focus {
+  border-color: rgba(255, 122, 0, 0.72);
+
+  box-shadow:
+    0 0 0 3px rgba(255, 122, 0, 0.11),
+    0 18px 34px rgba(0, 0, 0, 0.13);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.025)
+    ),
+    var(--fxe-bg-2);
+}
+
+.estimator-city-block {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+
+  margin-top: 12px;
+  padding: 10px 12px;
+
+  background: rgba(255, 255, 255, 0.025);
+
+  border: 1px solid var(--fxe-border-soft);
+  border-radius: 14px;
+}
+
+.estimator-city-label {
+  color: var(--fxe-text-3);
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+
+  text-transform: uppercase;
+}
+
+.estimator-city-input {
+  width: 100%;
+  min-height: 42px;
+
+  padding: 0 12px;
+
+  color: var(--fxe-text);
+  background: var(--fxe-bg-1);
+
+  border: 1px solid var(--fxe-border);
+  border-radius: 10px;
+
+  outline: none;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition:
+    border-color 130ms ease,
+    box-shadow 130ms ease;
+}
+
+.estimator-city-input::placeholder {
+  color: var(--fxe-text-4);
+}
+
+.estimator-city-input:focus {
+  border-color: rgba(255, 122, 0, 0.64);
+  box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.09);
+}
+
+.estimator-understand-trust {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 14px;
+
+  color: var(--fxe-text-3);
+
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.estimator-understand-trust::before {
+  content: "✓";
+
+  color: var(--fxe-green);
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+
+/* ==========================================================================
+   12. LOADING / ANALYSIS
+   ========================================================================== */
+
+.estimator-loading {
+  min-height: 300px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  position: relative;
+}
+
+.estimator-loading::before {
+  content: "";
+
+  width: 58px;
+  height: 58px;
+
+  margin-bottom: 20px;
+
+  border-radius: 50%;
+
+  border:
+    1px solid rgba(255, 122, 0, 0.28);
+
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 122, 0, 0.18),
+      rgba(255, 45, 149, 0.07) 45%,
+      transparent 70%
+    );
+
+  box-shadow:
+    0 0 28px rgba(255, 122, 0, 0.16);
+
+  animation:
+    fxe-loading-breathe
+    1.65s
+    ease-in-out
+    infinite;
+}
+
+.estimator-loading-title {
+  color: var(--fxe-text);
+
+  font-size: 20px;
+  line-height: 1.25;
+  font-weight: 760;
+  letter-spacing: -0.018em;
+}
+
+.estimator-loading-copy {
+  max-width: 360px;
+
+  margin-top: 7px;
+
+  color: var(--fxe-text-3);
+
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+@keyframes fxe-loading-breathe {
+  0%,
+  100% {
+    transform: scale(0.95);
+    opacity: 0.72;
   }
 
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // State
-  // ───────────────────────────────────────────────────────────────────────────
-
-  var STATE = {
-    sessionToken: null,
-    session: null,
-
-    pendingAnswer: null,
-    quantityValue: null,
-    measurementValue: null,
-
-    isSafetyActive: false,
-
-    onClose: null
-  };
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
 
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // DOM utilities
-  // ───────────────────────────────────────────────────────────────────────────
+/* ==========================================================================
+   13. STATE 2 — IDENTIFIER
+   ========================================================================== */
 
-  function el(
-    tag,
-    cls,
-    inner
-  ) {
-    var e =
-      document.createElement(
-        tag
-      );
+.estimator-metier-selection,
+.estimator-service-selection {
+  padding-top: 28px;
+}
 
-    if (cls) {
-      e.className =
-        cls;
-    }
+.estimator-metier-selection .answer-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
 
-    if (
-      inner !== null &&
-      inner !== undefined
-    ) {
-      e.innerHTML =
-        inner;
-    }
+.estimator-service-selection .answer-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
 
-    return e;
+
+/* ==========================================================================
+   14. ANSWER CARDS
+   ========================================================================== */
+
+.answer-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  margin-bottom: 2px;
+}
+
+.answer-card {
+  width: 100%;
+  min-height: 58px;
+
+  display: flex;
+  align-items: center;
+  gap: 0;
+
+  position: relative;
+  overflow: hidden;
+
+  padding: 0;
+
+  color: var(--fxe-text);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.036),
+      rgba(255, 255, 255, 0.018)
+    ),
+    var(--fxe-bg-2);
+
+  border: 1px solid var(--fxe-border);
+  border-radius: 14px;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  font-size: 14px;
+  line-height: 1.3;
+  font-weight: 620;
+
+  transition:
+    transform 120ms var(--fxe-ease),
+    border-color 120ms ease,
+    background 120ms ease,
+    box-shadow 120ms ease,
+    opacity 120ms ease;
+}
+
+.answer-card::before {
+  content: "";
+
+  width: 3px;
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+
+  background: var(--fxe-gradient-90);
+
+  opacity: 0;
+
+  transition: opacity 120ms ease;
+}
+
+.answer-card:hover {
+  transform: translateY(-1px);
+
+  border-color: rgba(255, 122, 0, 0.32);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 122, 0, 0.055),
+      rgba(255, 45, 149, 0.02)
+    ),
+    var(--fxe-bg-3);
+}
+
+.answer-card.selected {
+  border-color: rgba(255, 122, 0, 0.72);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 122, 0, 0.10),
+      rgba(255, 45, 149, 0.045)
+    ),
+    var(--fxe-bg-2);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 122, 0, 0.08),
+    0 8px 20px rgba(0, 0, 0, 0.14);
+}
+
+.answer-card.selected::before {
+  opacity: 1;
+}
+
+.answer-card[aria-disabled="true"] {
+  cursor: default;
+}
+
+.answer-card__check {
+  width: 48px;
+  min-width: 48px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--fxe-orange);
+
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.answer-card__label {
+  flex: 1;
+  min-width: 0;
+
+  padding: 13px 15px 13px 0;
+}
+
+
+/* ==========================================================================
+   15. QUANTITY / MEASUREMENT
+   ========================================================================== */
+
+.quantity-row {
+  width: fit-content;
+  min-width: 174px;
+  height: 58px;
+
+  display: flex;
+  align-items: stretch;
+
+  overflow: hidden;
+
+  margin-bottom: 14px;
+
+  background: var(--fxe-bg-2);
+
+  border: 1px solid var(--fxe-border);
+  border-radius: 14px;
+}
+
+.qty-btn {
+  width: 58px;
+  min-width: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  color: var(--fxe-text);
+  background: transparent;
+
+  border: 0;
+
+  font-size: 21px;
+
+  cursor: pointer;
+
+  transition:
+    color 120ms ease,
+    background 120ms ease;
+}
+
+.qty-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.qty-value {
+  min-width: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--fxe-text);
+
+  border-left: 1px solid var(--fxe-border-soft);
+  border-right: 1px solid var(--fxe-border-soft);
+
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.measurement-input {
+  width: 100%;
+  min-height: 56px;
+
+  display: block;
+
+  padding: 0 15px;
+
+  color: var(--fxe-text);
+  background: var(--fxe-bg-2);
+
+  border: 1px solid var(--fxe-border);
+  border-radius: 14px;
+
+  outline: none;
+
+  font-size: 18px;
+  font-weight: 720;
+
+  appearance: textfield;
+  -moz-appearance: textfield;
+
+  transition:
+    border-color 130ms ease,
+    box-shadow 130ms ease;
+}
+
+.measurement-input::-webkit-outer-spin-button,
+.measurement-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.measurement-input::placeholder {
+  color: var(--fxe-text-4);
+}
+
+.measurement-input:focus {
+  border-color: rgba(255, 122, 0, 0.72);
+
+  box-shadow:
+    0 0 0 3px rgba(255, 122, 0, 0.1);
+}
+
+.measurement-unit {
+  margin-top: 7px;
+  padding-right: 4px;
+
+  color: var(--fxe-text-3);
+
+  font-size: 11px;
+  text-align: right;
+}
+
+.diagnostic-intro {
+  margin-bottom: 15px;
+
+  color: var(--fxe-text-2);
+
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+
+/* ==========================================================================
+   16. RESULT SHELL
+   ========================================================================== */
+
+.result-shell {
+  min-height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  padding-bottom: 8px;
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  position: relative;
+
+  padding: 24px 20px 0;
+}
+
+.result-header::before {
+  content: "";
+
+  width: 3px;
+
+  position: absolute;
+  top: 24px;
+  bottom: 0;
+  left: 0;
+
+  background: var(--fxe-gradient-90);
+
+  border-radius: 0 999px 999px 0;
+}
+
+.result-verified-dot {
+  width: 8px;
+  height: 8px;
+
+  flex: 0 0 8px;
+
+  border-radius: 50%;
+
+  background: var(--fxe-green);
+
+  box-shadow:
+    0 0 0 4px rgba(53, 208, 127, 0.08),
+    0 0 10px rgba(53, 208, 127, 0.45);
+
+  animation:
+    fxe-dot-pulse
+    2s
+    ease-in-out
+    infinite;
+}
+
+.result-rafi-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.result-rafi-state {
+  color: #FF9C4A;
+
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.15em;
+
+  text-transform: uppercase;
+}
+
+.result-rafi-label {
+  color: var(--fxe-text);
+
+  font-size: 13px;
+  font-weight: 650;
+}
+
+@keyframes fxe-dot-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 4px rgba(53, 208, 127, 0.08),
+      0 0 10px rgba(53, 208, 127, 0.45);
   }
 
+  50% {
+    box-shadow:
+      0 0 0 5px rgba(53, 208, 127, 0.04),
+      0 0 17px rgba(53, 208, 127, 0.55);
+  }
+}
 
-  function formatMAD(n) {
-    if (
-      n === null ||
-      n === undefined
-    ) {
-      return '—';
-    }
+.result-service-row {
+  padding: 15px 20px 0;
+}
 
-    return (
-      Math.round(n)
-        .toString() +
-      ' MAD'
+.result-service-name {
+  color: var(--fxe-text);
+
+  font-size: clamp(20px, 3.2vw, 25px);
+  line-height: 1.2;
+  font-weight: 790;
+  letter-spacing: -0.022em;
+}
+
+.result-service-secondary {
+  margin-top: 4px;
+
+  color: var(--fxe-text-2);
+
+  font-size: 12px;
+}
+
+
+/* ==========================================================================
+   17. PRICE FIXEO — WOW MOMENT
+   ========================================================================== */
+
+.price-hero {
+  position: relative;
+
+  padding: 18px 20px 0;
+}
+
+.price-hero-inner {
+  min-height: 190px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  padding: 26px 28px;
+
+  background:
+    radial-gradient(
+      circle at 76% 10%,
+      rgba(255, 45, 149, 0.1),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 18% 92%,
+      rgba(255, 122, 0, 0.13),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.05),
+      rgba(255, 255, 255, 0.018)
+    ),
+    var(--fxe-bg-2);
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 20px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 18px 38px rgba(0, 0, 0, 0.19);
+}
+
+.price-hero-inner::before {
+  content: "";
+
+  width: 330px;
+  height: 150px;
+
+  position: absolute;
+  left: 50%;
+  bottom: -76px;
+
+  transform: translateX(-50%);
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(255, 122, 0, 0.2),
+      rgba(255, 45, 149, 0.07) 42%,
+      transparent 70%
     );
+
+  pointer-events: none;
+  z-index: -1;
+}
+
+.price-hero-inner::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  border-radius: inherit;
+
+  padding: 1px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 122, 0, 0.36),
+      rgba(255, 45, 149, 0.1),
+      rgba(255, 255, 255, 0.02)
+    );
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  pointer-events: none;
+}
+
+.price-eyebrow {
+  margin-bottom: 10px;
+
+  color: var(--fxe-text-3);
+
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.16em;
+
+  text-transform: uppercase;
+}
+
+.price-display {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+
+  margin-bottom: 7px;
+
+  line-height: 1;
+
+  animation:
+    fxe-price-emerge
+    520ms
+    var(--fxe-ease)
+    both;
+
+  animation-delay: 90ms;
+}
+
+.price-display .amount {
+  color: transparent;
+
+  background: var(--fxe-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  font-size: clamp(62px, 12vw, 92px);
+  line-height: 0.9;
+  font-weight: 920;
+  letter-spacing: -0.062em;
+}
+
+.price-display .currency {
+  margin-bottom: 8px;
+
+  color: var(--fxe-text-2);
+  -webkit-text-fill-color: var(--fxe-text-2);
+
+  background: none;
+
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 690;
+}
+
+.price-sublabel {
+  color: var(--fxe-text-3);
+
+  font-size: 9px;
+  font-weight: 820;
+  letter-spacing: 0.13em;
+
+  text-transform: uppercase;
+}
+
+@keyframes fxe-price-emerge {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+    filter: blur(5px);
   }
 
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
 
-  function getFocusable(
-    container
-  ) {
-    return Array.prototype.slice.call(
-      container.querySelectorAll(
-        [
-          'button:not([disabled])',
-          '[href]',
-          'input:not([disabled])',
-          'select:not([disabled])',
-          'textarea:not([disabled])',
-          '[tabindex]:not([tabindex="-1"])'
-        ].join(',')
-      )
-    ).filter(function(node) {
-      return (
-        node.offsetWidth > 0 ||
-        node.offsetHeight > 0 ||
-        node ===
-          document.activeElement
-      );
-    });
+
+/* ==========================================================================
+   18. LABOUR + PART
+   ========================================================================== */
+
+.labour-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  padding: 18px 20px 0;
+}
+
+.labour-card-new {
+  min-width: 0;
+
+  padding: 20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.035),
+      rgba(255, 255, 255, 0.015)
+    ),
+    var(--fxe-bg-2);
+
+  border: 1px solid var(--fxe-border);
+  border-radius: 16px;
+
+  animation:
+    fxe-price-emerge
+    400ms
+    var(--fxe-ease)
+    both;
+}
+
+.labour-card-new:nth-child(2) {
+  border-style: dashed;
+  animation-delay: 70ms;
+}
+
+.labour-card-eyebrow {
+  margin-bottom: 13px;
+
+  color: var(--fxe-text-3);
+
+  font-size: 9px;
+  font-weight: 820;
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+}
+
+.labour-card-amount {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.labour-card-amount .amount {
+  color: transparent;
+
+  background: var(--fxe-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  font-size: 42px;
+  line-height: 0.95;
+  font-weight: 900;
+  letter-spacing: -0.045em;
+}
+
+.labour-card-amount .currency {
+  margin-bottom: 4px;
+
+  color: var(--fxe-text-2);
+  -webkit-text-fill-color: var(--fxe-text-2);
+
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.labour-part-label {
+  margin-top: 3px;
+
+  color: var(--fxe-text-2);
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.labour-disclosure {
+  padding: 12px 20px 0;
+
+  color: var(--fxe-text-2);
+
+  font-size: 11.5px;
+  line-height: 1.65;
+}
+
+
+/* ==========================================================================
+   19. DIAGNOSTIC + SCOPE
+   ========================================================================== */
+
+.diagnostic-tag-new {
+  padding: 20px 20px 0;
+
+  color: #FF6DB1;
+
+  font-size: 9px;
+  font-weight: 840;
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+}
+
+.diagnostic-absorption {
+  padding: 14px 20px 0;
+
+  color: var(--fxe-text-2);
+
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.scope-section {
+  padding: 16px 20px 4px;
+}
+
+.scope-section-label {
+  margin-bottom: 9px;
+
+  color: var(--fxe-text-3);
+
+  font-size: 9px;
+  font-weight: 830;
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+}
+
+.scope-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  margin-bottom: 10px;
+}
+
+.scope-chip {
+  min-height: 29px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 5px 11px;
+
+  color: var(--fxe-text-2);
+  background: rgba(255, 255, 255, 0.035);
+
+  border: 1px solid var(--fxe-border-soft);
+  border-radius: 999px;
+
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.scope-chip::before {
+  content: "✓";
+
+  color: var(--fxe-green);
+
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.scope-doctrine {
+  margin-top: 8px;
+  padding-top: 11px;
+
+  color: var(--fxe-text-2);
+
+  border-top: 1px solid var(--fxe-border-soft);
+
+  font-size: 11.5px;
+  line-height: 1.65;
+}
+
+
+/* ==========================================================================
+   20. QUOTE / ROUTE / SAFETY / REQUALIFY
+   ========================================================================== */
+
+.outcome-surface {
+  padding: 25px 20px;
+}
+
+.outcome-tag {
+  margin-bottom: 13px;
+
+  color: var(--fxe-text-3);
+
+  font-size: 9px;
+  font-weight: 840;
+  letter-spacing: 0.15em;
+
+  text-transform: uppercase;
+}
+
+.outcome-tag.orange {
+  color: #FF9C4A;
+}
+
+.outcome-tag.magenta {
+  color: #FF6DB1;
+}
+
+.outcome-title {
+  margin-bottom: 11px;
+
+  color: var(--fxe-text);
+
+  font-size: clamp(21px, 3.4vw, 26px);
+  line-height: 1.22;
+  font-weight: 790;
+  letter-spacing: -0.025em;
+}
+
+.outcome-body {
+  color: var(--fxe-text-2);
+
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+.route-direction {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-top: 16px;
+  padding: 13px 14px;
+
+  background:
+    rgba(255, 255, 255, 0.03);
+
+  border: 1px solid var(--fxe-border-soft);
+  border-radius: 13px;
+}
+
+.route-arrow {
+  color: var(--fxe-orange);
+  font-size: 17px;
+}
+
+.route-target {
+  color: var(--fxe-text);
+
+  font-size: 17px;
+  font-weight: 760;
+}
+
+.safety-stop-body {
+  padding: 0;
+}
+
+.safety-surface {
+  padding: 30px 20px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 170, 59, 0.08),
+      rgba(255, 170, 59, 0.035)
+    );
+
+  border-top: 1px solid var(--fxe-safe-border);
+  border-bottom: 1px solid var(--fxe-safe-border);
+}
+
+.safety-icon {
+  display: block;
+
+  margin-bottom: 14px;
+
+  font-size: 30px;
+}
+
+.safety-title {
+  margin-bottom: 12px;
+
+  color: #FFC06E;
+
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 760;
+  letter-spacing: -0.02em;
+}
+
+.safety-body {
+  margin-bottom: 8px;
+
+  color: var(--fxe-text-2);
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.safety-recommendation {
+  margin-top: 11px;
+
+  color: #FFC06E;
+
+  font-size: 12.5px;
+  line-height: 1.55;
+  font-weight: 620;
+}
+
+.requali-title {
+  margin-bottom: 10px;
+
+  color: var(--fxe-text);
+
+  font-size: 21px;
+  line-height: 1.25;
+  font-weight: 760;
+}
+
+.requali-body {
+  color: var(--fxe-text-2);
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+
+/* ==========================================================================
+   21. FOOTER / PRIMARY ACTION
+   ========================================================================== */
+
+.estimator-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  padding:
+    12px
+    20px
+    calc(16px + env(safe-area-inset-bottom, 0px));
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(14, 16, 21, 0.86),
+      rgba(14, 16, 21, 0.98)
+    );
+
+  border-top: 1px solid var(--fxe-border-soft);
+
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.btn-primary {
+  width: 100%;
+  min-height: 56px;
+
+  position: relative;
+  overflow: hidden;
+
+  padding: 0 18px;
+
+  color: #fff;
+  background: var(--fxe-gradient);
+
+  border: 0;
+  border-radius: 15px;
+
+  box-shadow:
+    0 9px 24px rgba(255, 122, 0, 0.17),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+
+  font-size: 15px;
+  line-height: 1.2;
+  font-weight: 780;
+  letter-spacing: 0.005em;
+
+  cursor: pointer;
+
+  transition:
+    opacity 130ms ease,
+    transform 100ms var(--fxe-ease),
+    box-shadow 140ms ease,
+    filter 140ms ease;
+}
+
+.btn-primary::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      110deg,
+      transparent 25%,
+      rgba(255, 255, 255, 0.12) 48%,
+      transparent 72%
+    );
+
+  transform: translateX(-120%);
+
+  transition:
+    transform 450ms var(--fxe-ease);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 13px 30px rgba(255, 122, 0, 0.23),
+    0 3px 10px rgba(0, 0, 0, 0.3);
+
+  filter: saturate(1.05);
+}
+
+.btn-primary:hover:not(:disabled)::before {
+  transform: translateX(120%);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.btn-primary:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  width: 100%;
+  min-height: 42px;
+
+  padding: 0 14px;
+
+  color: var(--fxe-text-2);
+  background: transparent;
+
+  border: 0;
+  border-radius: 10px;
+
+  font-size: 13px;
+  font-weight: 620;
+
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  color: var(--fxe-text);
+}
+
+.btn-back {
+  padding: 5px 0;
+
+  color: var(--fxe-text-3);
+  background: transparent;
+
+  border: 0;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  text-align: left;
+}
+
+.btn-back:hover {
+  color: var(--fxe-text-2);
+}
+
+
+/* ==========================================================================
+   22. ERROR SURFACE
+   ========================================================================== */
+
+.estimator-error {
+  min-height: 250px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.estimator-error-title {
+  margin-bottom: 8px;
+
+  color: var(--fxe-text);
+
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 780;
+  letter-spacing: -0.025em;
+}
+
+.estimator-error-copy {
+  max-width: 480px;
+
+  color: var(--fxe-text-2);
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+
+/* ==========================================================================
+   23. RESERVATION HANDOFF — COMPAT
+   ========================================================================== */
+
+.reservation-handoff-screen {
+  padding: 38px 20px;
+
+  text-align: center;
+}
+
+.handoff-badge {
+  display: inline-flex;
+
+  margin-bottom: 18px;
+  padding: 5px 12px;
+
+  color: #fff;
+  background: var(--fxe-gradient);
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 820;
+  letter-spacing: 0.11em;
+
+  text-transform: uppercase;
+}
+
+.handoff-service-title {
+  margin-bottom: 4px;
+
+  color: var(--fxe-text);
+
+  font-size: 22px;
+  font-weight: 780;
+}
+
+.handoff-service-sub {
+  margin-bottom: 15px;
+
+  color: var(--fxe-text-3);
+
+  font-size: 13px;
+}
+
+.handoff-price-large {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 5px;
+
+  margin: 14px 0 5px;
+
+  color: transparent;
+
+  background: var(--fxe-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  font-size: 58px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+
+.handoff-price-large .currency {
+  margin-bottom: 5px;
+
+  color: var(--fxe-text-2);
+  -webkit-text-fill-color: var(--fxe-text-2);
+
+  font-size: 18px;
+}
+
+.handoff-status {
+  margin-bottom: 11px;
+
+  color: var(--fxe-text-3);
+
+  font-size: 9px;
+  letter-spacing: 0.11em;
+
+  text-transform: uppercase;
+}
+
+.handoff-note {
+  max-width: 390px;
+
+  margin: 0 auto 22px;
+
+  color: var(--fxe-text-3);
+
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+
+/* ==========================================================================
+   24. LEGACY / CONTINUATION COMPATIBILITY
+   ========================================================================== */
+
+.understanding-panel {
+  padding: 16px;
+
+  background: var(--fxe-bg-2);
+
+  border: 1px solid var(--fxe-border);
+  border-radius: 14px;
+}
+
+.understanding-head {
+  margin-bottom: 11px;
+
+  color: var(--fxe-text-3);
+
+  font-size: 9px;
+  font-weight: 820;
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+}
+
+.understanding-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.understanding-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.understanding-row.muted {
+  opacity: 0.62;
+}
+
+.understanding-key {
+  min-width: 80px;
+
+  flex: 0 0 auto;
+
+  color: var(--fxe-text-3);
+
+  font-size: 11px;
+}
+
+.understanding-val {
+  color: var(--fxe-text);
+
+  font-size: 13px;
+  font-weight: 590;
+}
+
+.understanding-empty,
+.understanding-status {
+  color: var(--fxe-text-3);
+
+  font-size: 12px;
+}
+
+.fixeo-signal {
+  width: 40px;
+  height: 2px;
+
+  margin: 12px 0;
+
+  background: var(--fxe-gradient-90);
+
+  border-radius: 999px;
+}
+
+.result-price {
+  display: inline-flex;
+  align-items: flex-end;
+}
+
+.result-price .amount,
+.result-price-number {
+  color: transparent;
+
+  background: var(--fxe-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+
+.result-price .amount {
+  font-size: 64px;
+}
+
+.result-price-number {
+  font-size: 72px;
+}
+
+.result-price .currency,
+.result-price-unit {
+  color: var(--fxe-text-2);
+  -webkit-text-fill-color: var(--fxe-text-2);
+
+  font-size: 19px;
+  font-weight: 650;
+}
+
+.result-identified,
+.result-verified-badge {
+  color: var(--fxe-green);
+
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+
+  text-transform: uppercase;
+}
+
+.result-basis {
+  color: var(--fxe-text-3);
+  font-size: 12px;
+}
+
+.result-surface {
+  position: relative;
+
+  padding: 20px;
+
+  border-bottom: 1px solid var(--fxe-border-soft);
+
+  text-align: center;
+}
+
+.result-meta {
+  padding: 16px 20px 0;
+}
+
+.price-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  padding: 18px 20px 0;
+}
+
+.price-split-card {
+  padding: 16px;
+
+  background: var(--fxe-bg-2);
+
+  border: 1px solid var(--fxe-border);
+  border-radius: 14px;
+}
+
+
+/* ==========================================================================
+   25. /estimation PAGE
+   ========================================================================== */
+
+.estimation-page {
+  min-height: 100vh;
+
+  margin: 0;
+
+  color: var(--fxe-text);
+  background:
+    radial-gradient(
+      circle at 50% -20%,
+      rgba(255, 122, 0, 0.08),
+      transparent 34%
+    ),
+    var(--fxe-bg-0);
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Inter",
+    "Segoe UI",
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.page-layout {
+  max-width: 1160px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 30px;
+
+  margin: 0 auto;
+  padding: 40px 24px;
+
+  align-items: start;
+}
+
+.page-main {
+  width: 100%;
+  max-width: 720px;
+
+  position: relative;
+  overflow: hidden;
+
+  background: var(--fxe-bg-1);
+
+  border: 1px solid var(--fxe-border);
+  border-radius: 22px;
+
+  box-shadow:
+    0 22px 64px rgba(0, 0, 0, 0.54);
+}
+
+.page-main::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 22px;
+  right: 22px;
+
+  height: 2px;
+
+  background: var(--fxe-gradient-90);
+
+  border-radius: 0 0 999px 999px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  padding: 17px 20px;
+
+  border-bottom: 1px solid var(--fxe-border-soft);
+}
+
+.page-header-logo {
+  color: transparent;
+
+  background: var(--fxe-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.page-sphere {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+
+  flex: 0 0 32px;
+
+  color: rgba(255, 154, 65, 0.88);
+
+  background:
+    radial-gradient(
+      circle at 34% 30%,
+      rgba(90, 60, 115, 0.48),
+      transparent 42%
+    ),
+    #0E0F13;
+
+  border: 1px solid rgba(255, 122, 0, 0.3);
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 18px rgba(255, 122, 0, 0.15);
+
+  font-size: 6px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.page-summary {
+  position: sticky;
+  top: 24px;
+
+  padding: 22px;
+
+  background: var(--fxe-bg-1);
+
+  border: 1px solid var(--fxe-border);
+  border-radius: 20px;
+
+  box-shadow:
+    0 12px 36px rgba(0, 0, 0, 0.34);
+}
+
+.summary-heading {
+  margin-bottom: 15px;
+
+  color: var(--fxe-text-3);
+
+  font-size: 9px;
+  font-weight: 820;
+  letter-spacing: 0.13em;
+
+  text-transform: uppercase;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  margin-bottom: 12px;
+}
+
+.summary-item__key {
+  color: var(--fxe-text-3);
+  font-size: 10px;
+}
+
+.summary-item__val {
+  color: var(--fxe-text);
+
+  font-size: 13px;
+  font-weight: 620;
+}
+
+.estimation-page-header {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  padding: 15px 24px;
+
+  background: var(--fxe-bg-1);
+
+  border-bottom: 1px solid var(--fxe-border-soft);
+}
+
+.estimation-content {
+  max-width: 760px;
+
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.estimation-restart-box {
+  padding: 58px 20px;
+
+  text-align: center;
+}
+
+.estimation-restart-title {
+  margin-bottom: 11px;
+
+  color: var(--fxe-text);
+
+  font-size: 22px;
+  font-weight: 760;
+}
+
+.estimation-restart-body {
+  margin-bottom: 26px;
+
+  color: var(--fxe-text-2);
+
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.estimation-restart-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 48px;
+
+  padding: 0 24px;
+
+  color: #fff;
+  background: var(--fxe-gradient);
+
+  border-radius: 14px;
+
+  font-size: 14px;
+  font-weight: 720;
+
+  text-decoration: none;
+}
+
+.painting-flow {
+  padding: 24px 0;
+}
+
+.painting-flow-section {
+  margin-bottom: 16px;
+  padding: 20px;
+
+  background: var(--fxe-bg-2);
+
+  border: 1px solid var(--fxe-border);
+  border-radius: 16px;
+}
+
+
+/* ==========================================================================
+   26. ANIMATIONS
+   ========================================================================== */
+
+@keyframes fxe-step-enter {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
   }
 
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 
-  function trapFocus(
-    container
-  ) {
-    container.addEventListener(
-      'keydown',
-      function(e) {
-        if (
-          e.key ===
-          'Escape'
-        ) {
-          if (
-            STATE.onClose
-          ) {
-            STATE.onClose();
-          }
+.step-enter {
+  animation:
+    fxe-step-enter
+    190ms
+    var(--fxe-ease)
+    both;
+}
 
-          return;
-        }
-
-        if (
-          e.key !==
-          'Tab'
-        ) {
-          return;
-        }
-
-        var focusable =
-          getFocusable(
-            container
-          );
-
-        if (
-          !focusable.length
-        ) {
-          e.preventDefault();
-          return;
-        }
-
-        var first =
-          focusable[0];
-
-        var last =
-          focusable[
-            focusable.length - 1
-          ];
-
-        if (
-          e.shiftKey &&
-          document.activeElement ===
-            first
-        ) {
-          e.preventDefault();
-          last.focus();
-
-        } else if (
-          !e.shiftKey &&
-          document.activeElement ===
-            last
-        ) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    );
+@keyframes fxe-result-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
 
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-  function triggerIntelligenceLine() {
-    var line =
-      document.querySelector(
-        '.intelligence-line'
-      );
+.result-enter {
+  animation:
+    fxe-result-enter
+    300ms
+    var(--fxe-ease)
+    both;
+}
 
-    if (!line) return;
+.estimator-modal.result-active .rafi-state-bar {
+  opacity: 0.72;
+}
 
-    line.classList.remove(
-      'active'
-    );
 
-    void line.offsetWidth;
+/* ==========================================================================
+   27. FOCUS / ACCESSIBILITY
+   ========================================================================== */
 
-    line.classList.add(
-      'active'
-    );
+#fixeo-estimator-v2-root :focus-visible,
+.estimation-page :focus-visible {
+  outline: 2px solid var(--fxe-orange);
+  outline-offset: 2px;
+}
+
+
+/* ==========================================================================
+   28. TABLET
+   ========================================================================== */
+
+@media (max-width: 899px) {
+  .page-layout {
+    grid-template-columns: 1fr;
+
+    gap: 20px;
+
+    padding: 18px;
   }
 
-
-  function focusSoon(
-    selector
-  ) {
-    setTimeout(
-      function() {
-        var node =
-          document.querySelector(
-            selector
-          );
-
-        if (
-          node &&
-          typeof node.focus ===
-            'function'
-        ) {
-          node.focus();
-        }
-      },
-      50
-    );
+  .page-main {
+    max-width: none;
   }
 
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Header
-  // ───────────────────────────────────────────────────────────────────────────
-
-  function renderHeader() {
-    var header =
-      el(
-        'div',
-        'estimator-header'
-      );
-
-    header.setAttribute(
-      'id',
-      'estimator-header'
-    );
-
-    var intLine =
-      el(
-        'div',
-        'intelligence-line'
-      );
-
-    header.appendChild(
-      intLine
-    );
+  .page-summary {
+    display: none;
+  }
+}
 
 
-    var left =
-      el(
-        'div',
-        'header-left'
-      );
+/* ==========================================================================
+   29. MOBILE — NEAR FULL-SCREEN APP FEEL
+   ========================================================================== */
 
+@media (max-width: 767px) {
+  .estimator-backdrop {
+    align-items: flex-end;
 
-    var sphereWrap =
-      el(
-        'div',
-        'rafi-sphere-wrap'
-      );
-
-
-    var sphere =
-      el(
-        'div',
-        'rafi-sphere'
-      );
-
-    sphere.setAttribute(
-      'data-state',
-      'idle'
-    );
-
-    sphere.setAttribute(
-      'aria-hidden',
-      'true'
-    );
-
-
-    sphere.appendChild(
-      el(
-        'span',
-        'rafi-sphere-label',
-        'RAFI'
-      )
-    );
-
-
-    sphereWrap.appendChild(
-      sphere
-    );
-
-    left.appendChild(
-      sphereWrap
-    );
-
-
-    var rafiMark =
-      el(
-        'span',
-        'rafi-indicator'
-      );
-
-    rafiMark.setAttribute(
-      'id',
-      'rafi-mark'
-    );
-
-    rafiMark.textContent =
-      'RAFI';
-
-    rafiMark.style.display =
-      'none';
-
-    left.appendChild(
-      rafiMark
-    );
-
-
-    var headerText =
-      el(
-        'div',
-        'header-text'
-      );
-
-
-    headerText.appendChild(
-      el(
-        'div',
-        'header-title',
-        'Estimation FIXEO'
-      )
-    );
-
-
-    var rafiStateLine =
-      el(
-        'div',
-        'rafi-state'
-      );
-
-    rafiStateLine.setAttribute(
-      'id',
-      'rafi-state-line'
-    );
-
-    rafiStateLine.textContent =
-      'Décrivez votre intervention';
-
-
-    headerText.appendChild(
-      rafiStateLine
-    );
-
-    left.appendChild(
-      headerText
-    );
-
-    header.appendChild(
-      left
-    );
-
-
-    var closeBtn =
-      el(
-        'button',
-        'modal-close'
-      );
-
-    closeBtn.setAttribute(
-      'type',
-      'button'
-    );
-
-    closeBtn.setAttribute(
-      'aria-label',
-      'Fermer'
-    );
-
-    closeBtn.setAttribute(
-      'id',
-      'modal-close'
-    );
-
-    closeBtn.innerHTML =
-      '×';
-
-    closeBtn.addEventListener(
-      'click',
-      function() {
-        if (
-          STATE.onClose
-        ) {
-          STATE.onClose();
-        }
-      }
-    );
-
-    header.appendChild(
-      closeBtn
-    );
-
-    return header;
+    padding:
+      max(8px, env(safe-area-inset-top, 0px))
+      0
+      0
+      0;
   }
 
+  .estimator-modal {
+    width: 100%;
+    max-width: none;
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // 4-state progress
-  // ───────────────────────────────────────────────────────────────────────────
+    height: min(94dvh, 900px);
+    max-height: 94dvh;
 
-  function renderProgress(
-    activeStage
-  ) {
-    var stages = [
-      'COMPRENDRE',
-      'IDENTIFIER',
-      'VERIFIER',
-      'PRIX'
-    ];
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
 
-
-    var labels = {
-      COMPRENDRE:
-        'Comprendre',
-
-      IDENTIFIER:
-        'Identifier',
-
-      VERIFIER:
-        'Vérifier',
-
-      PRIX:
-        'Prix FIXEO'
-    };
-
-
-    var activeIdx =
-      stages.indexOf(
-        activeStage
-      );
-
-    if (
-      activeIdx < 0
-    ) {
-      activeIdx = 0;
-    }
-
-
-    var fillPct =
-      [
-        25,
-        50,
-        75,
-        100
-      ][activeIdx];
-
-
-    var bar =
-      el(
-        'div',
-        'rafi-state-bar'
-      );
-
-
-    bar.style.setProperty(
-      '--fill',
-      fillPct + '%'
-    );
-
-
-    bar.setAttribute(
-      'role',
-      'progressbar'
-    );
-
-    bar.setAttribute(
-      'aria-valuemin',
-      '0'
-    );
-
-    bar.setAttribute(
-      'aria-valuemax',
-      '100'
-    );
-
-    bar.setAttribute(
-      'aria-valuenow',
-      String(fillPct)
-    );
-
-    bar.setAttribute(
-      'aria-label',
-      'Estimation : ' +
-        labels[
-          stages[
-            activeIdx
-          ]
-        ]
-    );
-
-
-    stages.forEach(
-      function(stage, i) {
-        var isDone =
-          i < activeIdx;
-
-        var isActive =
-          i === activeIdx;
-
-
-        var cls =
-          'rafi-stage' +
-          (
-            isActive
-              ? ' active'
-              : ''
-          ) +
-          (
-            isDone
-              ? ' done'
-              : ''
-          );
-
-
-        var s =
-          el(
-            'div',
-            cls
-          );
-
-
-        var dot =
-          el(
-            'span',
-            'rafi-stage-dot'
-          );
-
-
-        dot.setAttribute(
-          'aria-hidden',
-          'true'
-        );
-
-
-        s.appendChild(
-          dot
-        );
-
-
-        s.appendChild(
-          el(
-            'span',
-            '',
-            labels[stage]
-          )
-        );
-
-
-        bar.appendChild(
-          s
-        );
-
-
-        if (
-          i <
-          stages.length - 1
-        ) {
-          var sep =
-            el(
-              'div',
-              'rafi-stage-sep' +
-                (
-                  isDone
-                    ? ' done'
-                    : ''
-                )
-            );
-
-
-          sep.setAttribute(
-            'aria-hidden',
-            'true'
-          );
-
-
-          bar.appendChild(
-            sep
-          );
-        }
-      }
-    );
-
-
-    return bar;
+    border-radius: 24px 24px 0 0;
   }
 
-
-  function stageFromSessionState(
-    state
-  ) {
-    if (!state) {
-      return 'COMPRENDRE';
-    }
-
-
-    var map = {
-      START:
-        'COMPRENDRE',
-
-      METIER_SELECTION:
-        'IDENTIFIER',
-
-      SERVICE_SELECTION:
-        'IDENTIFIER',
-
-      QUALIFICATION:
-        'VERIFIER',
-
-      QUESTION_REQUIRED:
-        'VERIFIER',
-
-      READY_FOR_ENGINE:
-        'VERIFIER',
-
-      ENGINE_EVALUATION:
-        'VERIFIER',
-
-      PRICE_READY:
-        'PRIX',
-
-      DIAGNOSTIC_READY:
-        'PRIX',
-
-      LABOUR_PLUS_PART_READY:
-        'PRIX',
-
-      ADD_ON_READY:
-        'PRIX',
-
-      QUOTE_REQUIRED:
-        'PRIX',
-
-      ROUTE_REQUIRED:
-        'PRIX',
-
-      SAFETY_STOP:
-        'PRIX',
-
-      REQUALIFY:
-        'PRIX'
-    };
-
-
-    return (
-      map[state] ||
-      'IDENTIFIER'
-    );
+  .estimator-modal::before {
+    left: 18px;
+    right: 18px;
   }
 
+  .estimator-header {
+    min-height: 70px;
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Context strip
-  // ───────────────────────────────────────────────────────────────────────────
-
-  function renderContextBar(
-    context,
-    session
-  ) {
-    var wrap =
-      el(
-        'div',
-        'estimator-context-bar'
-      );
-
-
-    var city =
-      _displayCity(
-        context.city ||
-        context.city_slug
-      );
-
-
-    if (city) {
-      var cityChip =
-        el(
-          'span',
-          'estimator-context-chip'
-        );
-
-      cityChip.textContent =
-        '📍 ' + city;
-
-      wrap.appendChild(
-        cityChip
-      );
-    }
-
-
-    var metier =
-      (
-        session &&
-        session.metier
-      ) ||
-      context.metier_hint;
-
-
-    if (metier) {
-      var metierChip =
-        el(
-          'span',
-          'estimator-context-chip'
-        );
-
-      metierChip.textContent =
-        metierLabel(
-          metier
-        );
-
-      wrap.appendChild(
-        metierChip
-      );
-    }
-
-
-    return wrap;
+    padding: 13px 16px 12px;
   }
 
+  .rafi-sphere-wrap {
+    width: 42px;
+    height: 42px;
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Answer cards
-  // ───────────────────────────────────────────────────────────────────────────
-
-  function renderAnswerCard(
-    opt,
-    isSelected,
-    onSelect
-  ) {
-    var card =
-      el(
-        'button',
-        'answer-card' +
-          (
-            isSelected
-              ? ' selected'
-              : ''
-          )
-      );
-
-
-    card.setAttribute(
-      'type',
-      'button'
-    );
-
-
-    card.setAttribute(
-      'role',
-      'radio'
-    );
-
-
-    card.setAttribute(
-      'aria-checked',
-      isSelected
-        ? 'true'
-        : 'false'
-    );
-
-
-    var check =
-      el(
-        'span',
-        'answer-card__check',
-        isSelected
-          ? '✓'
-          : ''
-      );
-
-
-    check.setAttribute(
-      'aria-hidden',
-      'true'
-    );
-
-
-    card.appendChild(
-      check
-    );
-
-
-    var label =
-      el(
-        'span',
-        'answer-card__label'
-      );
-
-
-    label.textContent =
-      opt.label ||
-      String(opt);
-
-
-    card.appendChild(
-      label
-    );
-
-
-    card.addEventListener(
-      'click',
-      function() {
-        onSelect(
-          opt.value !==
-            undefined
-            ? opt.value
-            : opt
-        );
-      }
-    );
-
-
-    return card;
+    flex-basis: 42px;
   }
 
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Question renderer
-  // ───────────────────────────────────────────────────────────────────────────
-
-  function isSurfaceMeasurement(
-    step
-  ) {
-    return [
-      'painted_m2',
-      'ceiling_m2',
-      'surface_m2'
-    ].indexOf(
-      step.input_id
-    ) !== -1;
+  .rafi-sphere {
+    width: 38px;
+    height: 38px;
   }
 
-
-  function renderQuestion(
-    step,
-    onAutoAdvance
-  ) {
-    var isSafety =
-      step.priority ===
-      'SAFETY';
-
-
-    var body =
-      el(
-        'div',
-        'estimator-body step-enter' +
-          (
-            isSafety
-              ? ' question-safety'
-              : ''
-          )
-      );
-
-
-    if (isSafety) {
-      var note =
-        el(
-          'div',
-          'question-safety-note'
-        );
-
-
-      note.textContent =
-        '⚠ Cette question concerne la sécurité. Répondez avec précision.';
-
-
-      body.appendChild(
-        note
-      );
-    }
-
-
-    var rafiHeader =
-      el(
-        'div',
-        'estimator-context rafi-question-header'
-      );
-
-
-    var rafiSmall =
-      el(
-        'span',
-        'rafi-indicator small',
-        'RAFI vérifie'
-      );
-
-
-    rafiHeader.appendChild(
-      rafiSmall
-    );
-
-
-    rafiHeader.appendChild(
-      el(
-        'span',
-        'context-detail',
-        ' un détail'
-      )
-    );
-
-
-    body.appendChild(
-      rafiHeader
-    );
-
-
-    var heading =
-      el(
-        'h2',
-        'question-heading'
-      );
-
-
-    heading.setAttribute(
-      'id',
-      'question-heading'
-    );
-
-
-    heading.textContent =
-      promptFromKey(
-        step.prompt_key,
-        step.question_id
-      );
-
-
-    body.appendChild(
-      heading
-    );
-
-
-    if (!isSafety) {
-      body.appendChild(
-        el(
-          'p',
-          'question-intelligence-copy',
-          'Ce détail permet à FIXEO de vérifier précisément le périmètre de l’intervention.'
-        )
-      );
-    }
-
-
-    STATE.pendingAnswer =
-      null;
-
-
-    var isBoolean =
-      step.answer_type ===
-      'boolean';
-
-
-    var autoAdvanceLocked =
-      false;
-
-
-    var onSelect =
-      function(val) {
-        if (
-          autoAdvanceLocked
-        ) {
-          return;
-        }
-
-
-        STATE.pendingAnswer =
-          val;
-
-
-        body
-          .querySelectorAll(
-            '.answer-card'
-          )
-          .forEach(
-            function(c) {
-              var v =
-                c.__optValue;
-
-
-              var selected =
-                v === val;
-
-
-              c.classList.toggle(
-                'selected',
-                selected
-              );
-
-
-              c.setAttribute(
-                'aria-checked',
-                selected
-                  ? 'true'
-                  : 'false'
-              );
-
-
-              var check =
-                c.querySelector(
-                  '.answer-card__check'
-                );
-
-
-              if (check) {
-                check.textContent =
-                  selected
-                    ? '✓'
-                    : '';
-              }
-            }
-          );
-
-
-        updateCTA(
-          true
-        );
-
-
-        if (
-          isBoolean &&
-          onAutoAdvance
-        ) {
-          autoAdvanceLocked =
-            true;
-
-
-          body
-            .querySelectorAll(
-              '.answer-card'
-            )
-            .forEach(
-              function(c) {
-                c.setAttribute(
-                  'aria-disabled',
-                  'true'
-                );
-              }
-            );
-
-
-          setTimeout(
-            function() {
-              onAutoAdvance(
-                val
-              );
-            },
-            280
-          );
-        }
-      };
-
-
-    if (isBoolean) {
-      var opts = [
-        {
-          value: true,
-          label: 'Oui'
-        },
-
-        {
-          value: false,
-          label: 'Non'
-        }
-      ];
-
-
-      var cards =
-        el(
-          'div',
-          'answer-cards'
-        );
-
-
-      cards.setAttribute(
-        'role',
-        'radiogroup'
-      );
-
-
-      opts.forEach(
-        function(opt) {
-          var card =
-            renderAnswerCard(
-              opt,
-              false,
-              onSelect
-            );
-
-
-          card.__optValue =
-            opt.value;
-
-
-          cards.appendChild(
-            card
-          );
-        }
-      );
-
-
-      body.appendChild(
-        cards
-      );
-
-
-    } else if (
-      isSurfaceMeasurement(
-        step
-      )
-    ) {
-      var intro =
-        el(
-          'p',
-          'diagnostic-intro'
-        );
-
-
-      intro.textContent =
-        'Indiquez la surface concernée pour permettre à FIXEO d’établir le bon périmètre.';
-
-
-      body.appendChild(
-        intro
-      );
-
-
-      var inp =
-        el(
-          'input',
-          'measurement-input'
-        );
-
-
-      inp.setAttribute(
-        'type',
-        'number'
-      );
-
-
-      inp.setAttribute(
-        'min',
-        '1'
-      );
-
-
-      inp.setAttribute(
-        'max',
-        '5000'
-      );
-
-
-      inp.setAttribute(
-        'step',
-        '1'
-      );
-
-
-      inp.setAttribute(
-        'placeholder',
-        'Ex. 45'
-      );
-
-
-      inp.setAttribute(
-        'aria-label',
-        'Surface en mètres carrés'
-      );
-
-
-      inp.addEventListener(
-        'input',
-        function() {
-          var v =
-            Number(
-              inp.value
-            );
-
-
-          if (
-            Number.isFinite(v) &&
-            v > 0
-          ) {
-            STATE.measurementValue =
-              v;
-
-            STATE.pendingAnswer =
-              v;
-
-            updateCTA(
-              true
-            );
-
-          } else {
-            STATE.pendingAnswer =
-              null;
-
-            updateCTA(
-              false
-            );
-          }
-        }
-      );
-
-
-      body.appendChild(
-        inp
-      );
-
-
-      body.appendChild(
-        el(
-          'div',
-          'measurement-unit',
-          'm²'
-        )
-      );
-
-
-    } else if (
-      step.answer_type ===
-        'integer' ||
-      step.answer_type ===
-        'number'
-    ) {
-      STATE.quantityValue =
-        1;
-
-
-      STATE.pendingAnswer =
-        1;
-
-
-      var qRow =
-        el(
-          'div',
-          'quantity-row'
-        );
-
-
-      var qVal =
-        el(
-          'div',
-          'qty-value',
-          '1'
-        );
-
-
-      qVal.setAttribute(
-        'aria-live',
-        'polite'
-      );
-
-
-      var btnMinus =
-        el(
-          'button',
-          'qty-btn',
-          '−'
-        );
-
-
-      btnMinus.setAttribute(
-        'type',
-        'button'
-      );
-
-
-      btnMinus.setAttribute(
-        'aria-label',
-        'Diminuer'
-      );
-
-
-      btnMinus.addEventListener(
-        'click',
-        function() {
-          var v =
-            Math.max(
-              1,
-              (
-                STATE.quantityValue ||
-                1
-              ) - 1
-            );
-
-
-          STATE.quantityValue =
-            v;
-
-
-          STATE.pendingAnswer =
-            v;
-
-
-          qVal.textContent =
-            String(v);
-
-
-          updateCTA(
-            true
-          );
-        }
-      );
-
-
-      var btnPlus =
-        el(
-          'button',
-          'qty-btn',
-          '+'
-        );
-
-
-      btnPlus.setAttribute(
-        'type',
-        'button'
-      );
-
-
-      btnPlus.setAttribute(
-        'aria-label',
-        'Augmenter'
-      );
-
-
-      btnPlus.addEventListener(
-        'click',
-        function() {
-          var v =
-            Math.min(
-              20,
-              (
-                STATE.quantityValue ||
-                1
-              ) + 1
-            );
-
-
-          STATE.quantityValue =
-            v;
-
-
-          STATE.pendingAnswer =
-            v;
-
-
-          qVal.textContent =
-            String(v);
-
-
-          updateCTA(
-            true
-          );
-        }
-      );
-
-
-      qRow.appendChild(
-        btnMinus
-      );
-
-
-      qRow.appendChild(
-        qVal
-      );
-
-
-      qRow.appendChild(
-        btnPlus
-      );
-
-
-      body.appendChild(
-        qRow
-      );
-
-
-    } else if (
-      step.options &&
-      step.options.length > 0
-    ) {
-      var wrap =
-        el(
-          'div',
-          'answer-cards'
-        );
-
-
-      wrap.setAttribute(
-        'role',
-        'radiogroup'
-      );
-
-
-      wrap.setAttribute(
-        'aria-labelledby',
-        'question-heading'
-      );
-
-
-      step.options.forEach(
-        function(opt) {
-          var card =
-            renderAnswerCard(
-              {
-                value: opt,
-                label:
-                  optionLabel(
-                    opt
-                  )
-              },
-              false,
-              onSelect
-            );
-
-
-          card.__optValue =
-            opt;
-
-
-          wrap.appendChild(
-            card
-          );
-        }
-      );
-
-
-      body.appendChild(
-        wrap
-      );
-
-
-    } else {
-      var fallback =
-        el(
-          'div',
-          'answer-cards'
-        );
-
-
-      [
-        {
-          value: true,
-          label: 'Oui'
-        },
-
-        {
-          value: false,
-          label: 'Non'
-        }
-      ].forEach(
-        function(opt) {
-          var card =
-            renderAnswerCard(
-              opt,
-              false,
-              onSelect
-            );
-
-
-          card.__optValue =
-            opt.value;
-
-
-          fallback.appendChild(
-            card
-          );
-        }
-      );
-
-
-      body.appendChild(
-        fallback
-      );
-    }
-
-
-    return body;
+  .header-title {
+    font-size: 12px;
   }
 
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Scope/result helpers
-  // ───────────────────────────────────────────────────────────────────────────
-
-  function normalizeScopeItems(
-    scopeSummary
-  ) {
-    if (
-      !Array.isArray(
-        scopeSummary
-      )
-    ) {
-      return [];
-    }
-
-
-    return scopeSummary
-      .map(function(item) {
-        if (
-          typeof item ===
-          'string'
-        ) {
-          return item.trim();
-        }
-
-        return '';
-      })
-      .filter(Boolean);
+  .rafi-state {
+    font-size: 10.5px;
   }
 
+  .modal-close {
+    width: 32px;
+    height: 32px;
 
-  function renderScopeChips(
-    scopeSummary
-  ) {
-    var items =
-      normalizeScopeItems(
-        scopeSummary
-      );
-
-
-    if (!items.length) {
-      return null;
-    }
-
-
-    var chips =
-      el(
-        'div',
-        'scope-chips'
-      );
-
-
-    chips.setAttribute(
-      'role',
-      'list'
-    );
-
-
-    items.forEach(
-      function(item) {
-        var c =
-          el(
-            'span',
-            'scope-chip'
-          );
-
-
-        c.setAttribute(
-          'role',
-          'listitem'
-        );
-
-
-        c.textContent =
-          item;
-
-
-        chips.appendChild(
-          c
-        );
-      }
-    );
-
-
-    return chips;
+    flex-basis: 32px;
   }
 
+  .rafi-state-bar {
+    min-height: 44px;
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Price result
-  // ───────────────────────────────────────────────────────────────────────────
+    gap: 5px;
 
-  function renderPriceResult(
-    outcome
-  ) {
-    var lbl =
-      resolveClientLabel(
-        outcome.service_code ||
-        ''
-      );
-
-
-    var amountMAD =
-      outcome.price &&
-      outcome.price.amount_mad;
-
-
-    var amtNum =
-      amountMAD !== null &&
-      amountMAD !== undefined
-        ? Math.round(
-            amountMAD
-          ).toString()
-        : '—';
-
-
-    var shell =
-      el(
-        'div',
-        'result-shell step-enter result-enter'
-      );
-
-
-    var rHead =
-      el(
-        'div',
-        'result-header'
-      );
-
-
-    rHead.appendChild(
-      el(
-        'div',
-        'result-verified-dot'
-      )
-    );
-
-
-    var col =
-      el(
-        'div',
-        'result-rafi-col'
-      );
-
-
-    col.appendChild(
-      el(
-        'div',
-        'result-rafi-state',
-        'Analyse terminée'
-      )
-    );
-
-
-    col.appendChild(
-      el(
-        'div',
-        'result-rafi-label',
-        'Périmètre vérifié par RAFI'
-      )
-    );
-
-
-    rHead.appendChild(
-      col
-    );
-
-
-    shell.appendChild(
-      rHead
-    );
-
-
-    var srow =
-      el(
-        'div',
-        'result-service-row'
-      );
-
-
-    srow.appendChild(
-      el(
-        'div',
-        'result-service-name',
-        lbl.primary
-      )
-    );
-
-
-    if (
-      lbl.secondary
-    ) {
-      srow.appendChild(
-        el(
-          'div',
-          'result-service-secondary',
-          lbl.secondary
-        )
-      );
-    }
-
-
-    shell.appendChild(
-      srow
-    );
-
-
-    var hero =
-      el(
-        'div',
-        'price-hero'
-      );
-
-
-    var inner =
-      el(
-        'div',
-        'price-hero-inner'
-      );
-
-
-    inner.appendChild(
-      el(
-        'div',
-        'price-eyebrow',
-        'Prix FIXEO'
-      )
-    );
-
-
-    var display =
-      el(
-        'div',
-        'price-display'
-      );
-
-
-    display.appendChild(
-      el(
-        'span',
-        'amount',
-        amtNum
-      )
-    );
-
-
-    display.appendChild(
-      el(
-        'span',
-        'currency',
-        ' MAD'
-      )
-    );
-
-
-    inner.appendChild(
-      display
-    );
-
-
-    inner.appendChild(
-      el(
-        'div',
-        'price-sublabel',
-        'Périmètre vérifié'
-      )
-    );
-
-
-    hero.appendChild(
-      inner
-    );
-
-
-    shell.appendChild(
-      hero
-    );
-
-
-    var chips =
-      renderScopeChips(
-        outcome.scope_summary
-      );
-
-
-    var scope =
-      el(
-        'div',
-        'scope-section'
-      );
-
-
-    if (chips) {
-      scope.appendChild(
-        el(
-          'div',
-          'scope-section-label',
-          'Ce qui est inclus'
-        )
-      );
-
-
-      scope.appendChild(
-        chips
-      );
-    }
-
-
-    scope.appendChild(
-      el(
-        'p',
-        'scope-doctrine',
-        'Ce prix s’applique au périmètre validé pendant l’analyse. Si la situation réelle est différente, aucun supplément ne doit être engagé sans votre accord.'
-      )
-    );
-
-
-    shell.appendChild(
-      scope
-    );
-
-
-    return shell;
+    padding: 0 14px;
   }
 
+  .rafi-stage {
+    gap: 4px;
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Labour + part result
-  // ───────────────────────────────────────────────────────────────────────────
-
-  function renderLabourPartResult(
-    outcome
-  ) {
-    var lbl =
-      resolveClientLabel(
-        outcome.service_code ||
-        ''
-      );
-
-
-    var labourAmt =
-      outcome.price &&
-      outcome.price
-        .labour_amount_mad;
-
-
-    var labAmtStr =
-      labourAmt !== null &&
-      labourAmt !== undefined
-        ? Math.round(
-            labourAmt
-          ).toString()
-        : '—';
-
-
-    var shell =
-      el(
-        'div',
-        'result-shell step-enter result-enter'
-      );
-
-
-    var rHead =
-      el(
-        'div',
-        'result-header'
-      );
-
-
-    rHead.appendChild(
-      el(
-        'div',
-        'result-verified-dot'
-      )
-    );
-
-
-    var col =
-      el(
-        'div',
-        'result-rafi-col'
-      );
-
-
-    col.appendChild(
-      el(
-        'div',
-        'result-rafi-state',
-        'Analyse terminée'
-      )
-    );
-
-
-    col.appendChild(
-      el(
-        'div',
-        'result-rafi-label',
-        'Périmètre vérifié'
-      )
-    );
-
-
-    rHead.appendChild(
-      col
-    );
-
-
-    shell.appendChild(
-      rHead
-    );
-
-
-    var srow =
-      el(
-        'div',
-        'result-service-row'
-      );
-
-
-    srow.appendChild(
-      el(
-        'div',
-        'result-service-name',
-        lbl.primary
-      )
-    );
-
-
-    if (
-      lbl.secondary
-    ) {
-      srow.appendChild(
-        el(
-          'div',
-          'result-service-secondary',
-          lbl.secondary
-        )
-      );
-    }
-
-
-    shell.appendChild(
-      srow
-    );
-
-
-    var split =
-      el(
-        'div',
-        'labour-split'
-      );
-
-
-    var labCard =
-      el(
-        'div',
-        'labour-card-new'
-      );
-
-
-    labCard.appendChild(
-      el(
-        'div',
-        'labour-card-eyebrow',
-        'Main-d’œuvre FIXEO'
-      )
-    );
-
-
-    var labRow =
-      el(
-        'div',
-        'labour-card-amount'
-      );
-
-
-    labRow.appendChild(
-      el(
-        'span',
-        'amount',
-        labAmtStr
-      )
-    );
-
-
-    labRow.appendChild(
-      el(
-        'span',
-        'currency',
-        ' MAD'
-      )
-    );
-
-
-    labCard.appendChild(
-      labRow
-    );
-
-
-    split.appendChild(
-      labCard
-    );
-
-
-    var partCard =
-      el(
-        'div',
-        'labour-card-new'
-      );
-
-
-    partCard.style.borderStyle =
-      'dashed';
-
-
-    partCard.appendChild(
-      el(
-        'div',
-        'labour-card-eyebrow',
-        'Pièce / matériel'
-      )
-    );
-
-
-    partCard.appendChild(
-      el(
-        'div',
-        'labour-part-label',
-        'Prix séparé<br>confirmé avec l’artisan'
-      )
-    );
-
-
-    split.appendChild(
-      partCard
-    );
-
-
-    shell.appendChild(
-      split
-    );
-
-
-    shell.appendChild(
-      el(
-        'div',
-        'labour-disclosure',
-        'Si une pièce est nécessaire, son prix doit vous être communiqué et approuvé avant installation.'
-      )
-    );
-
-
-    return shell;
+    font-size: 8.7px;
+    letter-spacing: 0;
   }
 
+  .rafi-stage-dot {
+    width: 5px;
+    height: 5px;
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Diagnostic result
-  // ───────────────────────────────────────────────────────────────────────────
-
-  function renderDiagnosticResult(
-    outcome
-  ) {
-    var lbl =
-      resolveClientLabel(
-        outcome.service_code ||
-        ''
-      );
-
-
-    var amountMAD =
-      (
-        outcome.price &&
-        outcome.price.amount_mad
-      ) !== undefined
-        ? outcome.price &&
-          outcome.price.amount_mad
-        : outcome.diagnostic_price_mad;
-
-
-    var amtNum =
-      amountMAD !== null &&
-      amountMAD !== undefined
-        ? Math.round(
-            amountMAD
-          ).toString()
-        : '—';
-
-
-    var shell =
-      el(
-        'div',
-        'result-shell step-enter result-enter'
-      );
-
-
-    var rHead =
-      el(
-        'div',
-        'result-header'
-      );
-
-
-    rHead.appendChild(
-      el(
-        'div',
-        'result-verified-dot'
-      )
-    );
-
-
-    var col =
-      el(
-        'div',
-        'result-rafi-col'
-      );
-
-
-    col.appendChild(
-      el(
-        'div',
-        'result-rafi-state',
-        'Diagnostic requis'
-      )
-    );
-
-
-    col.appendChild(
-      el(
-        'div',
-        'result-rafi-label',
-        'Évaluation préalable'
-      )
-    );
-
-
-    rHead.appendChild(
-      col
-    );
-
-
-    shell.appendChild(
-      rHead
-    );
-
-
-    shell.appendChild(
-      el(
-        'div',
-        'diagnostic-tag-new',
-        'Diagnostic FIXEO'
-      )
-    );
-
-
-    var srow =
-      el(
-        'div',
-        'result-service-row'
-      );
-
-
-    srow.appendChild(
-      el(
-        'div',
-        'result-service-name',
-        lbl.primary
-      )
-    );
-
-
-    if (
-      lbl.secondary
-    ) {
-      srow.appendChild(
-        el(
-          'div',
-          'result-service-secondary',
-          lbl.secondary
-        )
-      );
-    }
-
-
-    shell.appendChild(
-      srow
-    );
-
-
-    var hero =
-      el(
-        'div',
-        'price-hero'
-      );
-
-
-    var inner =
-      el(
-        'div',
-        'price-hero-inner'
-      );
-
-
-    inner.appendChild(
-      el(
-        'div',
-        'price-eyebrow',
-        'Tarif diagnostic'
-      )
-    );
-
-
-    var display =
-      el(
-        'div',
-        'price-display'
-      );
-
-
-    display.appendChild(
-      el(
-        'span',
-        'amount',
-        amtNum
-      )
-    );
-
-
-    display.appendChild(
-      el(
-        'span',
-        'currency',
-        ' MAD'
-      )
-    );
-
-
-    inner.appendChild(
-      display
-    );
-
-
-    inner.appendChild(
-      el(
-        'div',
-        'price-sublabel',
-        'Évaluation sur place'
-      )
-    );
-
-
-    hero.appendChild(
-      inner
-    );
-
-
-    shell.appendChild(
-      hero
-    );
-
-
-    shell.appendChild(
-      el(
-        'div',
-        'diagnostic-absorption',
-        'Les conditions d’une éventuelle déduction sur réparation sont confirmées avant intervention.'
-      )
-    );
-
-
-    return shell;
+    flex-basis: 5px;
   }
 
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Quote result
-  // ───────────────────────────────────────────────────────────────────────────
-
-  function renderQuoteResult(
-    outcome
-  ) {
-    var lbl =
-      resolveClientLabel(
-        (
-          outcome &&
-          outcome.service_code
-        ) ||
-        ''
-      );
-
-
-    var shell =
-      el(
-        'div',
-        'result-shell step-enter result-enter'
-      );
-
-
-    var rHead =
-      el(
-        'div',
-        'result-header'
-      );
-
-
-    rHead.appendChild(
-      el(
-        'div',
-        'result-verified-dot'
-      )
-    );
-
-
-    var col =
-      el(
-        'div',
-        'result-rafi-col'
-      );
-
-
-    col.appendChild(
-      el(
-        'div',
-        'result-rafi-state',
-        'Analyse terminée'
-      )
-    );
-
-
-    col.appendChild(
-      el(
-        'div',
-        'result-rafi-label',
-        'Devis nécessaire'
-      )
-    );
-
-
-    rHead.appendChild(
-      col
-    );
-
-
-    shell.appendChild(
-      rHead
-    );
-
-
-    var surf =
-      el(
-        'div',
-        'outcome-surface'
-      );
-
-
-    surf.appendChild(
-      el(
-        'div',
-        'outcome-tag muted',
-        'Devis requis'
-      )
-    );
-
-
-    surf.appendChild(
-      el(
-        'div',
-        'outcome-title',
-        lbl.primary
-      )
-    );
-
-
-    if (
-      lbl.secondary
-    ) {
-      surf.appendChild(
-        el(
-          'div',
-          'result-service-secondary',
-          lbl.secondary
-        )
-      );
-    }
-
-
-    surf.appendChild(
-      el(
-        'div',
-        'outcome-body',
-        'Cette intervention ne peut pas recevoir un prix fixe fiable sans vérification complémentaire.'
-      )
-    );
-
-
-    shell.appendChild(
-      surf
-    );
-
-
-    return shell;
+  .estimator-context-bar {
+    padding:
+      8px
+      16px
+      0;
   }
 
+  .estimator-context-chip {
+    min-height: 26px;
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Route result
-  // ───────────────────────────────────────────────────────────────────────────
+    padding: 4px 9px;
 
-  function renderRouteResult(
-    outcome
-  ) {
-    var targetMetier =
-      (
-        outcome &&
-        outcome.metier
-      ) ||
-      'spécialiste';
-
-
-    var shell =
-      el(
-        'div',
-        'result-shell step-enter result-enter'
-      );
-
-
-    var rHead =
-      el(
-        'div',
-        'result-header'
-      );
-
-
-    rHead.appendChild(
-      el(
-        'div',
-        'result-verified-dot'
-      )
-    );
-
-
-    var col =
-      el(
-        'div',
-        'result-rafi-col'
-      );
-
-
-    col.appendChild(
-      el(
-        'div',
-        'result-rafi-state',
-        'Réorientation'
-      )
-    );
-
-
-    col.appendChild(
-      el(
-        'div',
-        'result-rafi-label',
-        'Bon spécialiste identifié'
-      )
-    );
-
-
-    rHead.appendChild(
-      col
-    );
-
-
-    shell.appendChild(
-      rHead
-    );
-
-
-    var surf =
-      el(
-        'div',
-        'outcome-surface'
-      );
-
-
-    surf.appendChild(
-      el(
-        'div',
-        'outcome-tag orange',
-        'Réorientation RAFI'
-      )
-    );
-
-
-    surf.appendChild(
-      el(
-        'div',
-        'outcome-title',
-        'RAFI a identifié un autre périmètre.'
-      )
-    );
-
-
-    var dir =
-      el(
-        'div',
-        'route-direction'
-      );
-
-
-    dir.appendChild(
-      el(
-        'span',
-        'route-arrow',
-        '→'
-      )
-    );
-
-
-    dir.appendChild(
-      el(
-        'div',
-        'route-target',
-        METIER_LABELS[
-          targetMetier
-        ] ||
-        targetMetier
-      )
-    );
-
-
-    surf.appendChild(
-      dir
-    );
-
-
-    shell.appendChild(
-      surf
-    );
-
-
-    return shell;
+    font-size: 10px;
   }
 
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Safety
-  // ───────────────────────────────────────────────────────────────────────────
-
-  function renderSafetyResult() {
-    var body =
-      el(
-        'div',
-        'estimator-body step-enter safety-stop-body'
-      );
-
-
-    var safetyWrap =
-      el(
-        'div',
-        'safety-surface'
-      );
-
-
-    safetyWrap.appendChild(
-      el(
-        'span',
-        'safety-icon',
-        '⚠'
-      )
-    );
-
-
-    var st =
-      el(
-        'h2',
-        'safety-title',
-        'Une vérification est nécessaire avant de continuer.'
-      );
-
-
-    st.setAttribute(
-      'id',
-      'safety-heading'
-    );
-
-
-    safetyWrap.appendChild(
-      st
-    );
-
-
-    safetyWrap.appendChild(
-      el(
-        'div',
-        'safety-body',
-        'Pour votre sécurité, FIXEO ne peut pas établir un prix dans cette situation.'
-      )
-    );
-
-
-    safetyWrap.appendChild(
-      el(
-        'div',
-        'safety-recommendation',
-        'Une intervention par un professionnel qualifié est recommandée.'
-      )
-    );
-
-
-    body.appendChild(
-      safetyWrap
-    );
-
-
-    return body;
+  .estimator-body {
+    padding:
+      22px
+      16px
+      20px;
   }
 
-
-  function renderRequalifyResult() {
-    var body =
-      el(
-        'div',
-        'estimator-body step-enter result-enter'
-      );
-
-
-    body.appendChild(
-      el(
-        'div',
-        'requali-title',
-        'Votre besoin dépasse le périmètre du prix standard.'
-      )
-    );
-
-
-    body.appendChild(
-      el(
-        'div',
-        'requali-body',
-        'Une évaluation spécifique est nécessaire avant de poursuivre.'
-      )
-    );
-
-
-    return body;
+  .estimator-understand {
+    padding-top: 24px;
   }
 
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Footer
-  // ───────────────────────────────────────────────────────────────────────────
-
-  function renderFooter(
-    opts
-  ) {
-    opts =
-      opts || {};
-
-
-    var footer =
-      el(
-        'div',
-        'estimator-footer'
-      );
-
-
-    footer.setAttribute(
-      'id',
-      'estimator-footer'
-    );
-
-
-    if (
-      opts.primaryLabel
-    ) {
-      var primary =
-        el(
-          'button',
-          'btn-primary'
-        );
-
-
-      primary.textContent =
-        opts.primaryLabel;
-
-
-      primary.setAttribute(
-        'type',
-        'button'
-      );
-
-
-      primary.setAttribute(
-        'id',
-        'cta-primary'
-      );
-
-
-      primary.disabled =
-        !!opts.primaryDisabled;
-
-
-      primary.addEventListener(
-        'click',
-        function() {
-          if (
-            !primary.disabled &&
-            opts.onPrimary
-          ) {
-            opts.onPrimary();
-          }
-        }
-      );
-
-
-      footer.appendChild(
-        primary
-      );
-    }
-
-
-    if (
-      opts.secondaryLabel
-    ) {
-      var secondary =
-        el(
-          'button',
-          'btn-secondary'
-        );
-
-
-      secondary.textContent =
-        opts.secondaryLabel;
-
-
-      secondary.setAttribute(
-        'type',
-        'button'
-      );
-
-
-      secondary.addEventListener(
-        'click',
-        function() {
-          if (
-            opts.onSecondary
-          ) {
-            opts.onSecondary();
-          }
-        }
-      );
-
-
-      footer.appendChild(
-        secondary
-      );
-    }
-
-
-    if (
-      opts.showBack
-    ) {
-      var back =
-        el(
-          'button',
-          'btn-back',
-          '← Retour'
-        );
-
-
-      back.setAttribute(
-        'type',
-        'button'
-      );
-
-
-      back.addEventListener(
-        'click',
-        function() {
-          if (
-            opts.onBack
-          ) {
-            opts.onBack();
-          }
-        }
-      );
-
-
-      footer.appendChild(
-        back
-      );
-    }
-
-
-    return footer;
+  .estimator-understand-title {
+    font-size: 29px;
   }
 
-
-  function updateCTA(
-    enabled
-  ) {
-    var btn =
-      document.getElementById(
-        'cta-primary'
-      );
-
-
-    if (btn) {
-      btn.disabled =
-        !enabled;
-    }
+  .estimator-understand-copy {
+    font-size: 13px;
   }
 
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // CTA labels
-  // ───────────────────────────────────────────────────────────────────────────
-
-  function ctaLabel(
-    outcome
-  ) {
-    var ot =
-      outcome &&
-      outcome.outcome_type;
-
-
-    switch (ot) {
-      case 'PRICE_READY':
-        return (
-          'Trouver mon artisan — ' +
-          formatMAD(
-            outcome.price &&
-            outcome.price.amount_mad
-          )
-        );
-
-
-      case 'LABOUR_PLUS_PART_READY':
-        return (
-          'Trouver mon artisan — Main-d’œuvre ' +
-          formatMAD(
-            outcome.price &&
-            outcome.price
-              .labour_amount_mad
-          )
-        );
-
-
-      case 'DIAGNOSTIC_READY':
-        return (
-          'Réserver le diagnostic — ' +
-          formatMAD(
-            outcome.price &&
-            outcome.price.amount_mad
-          )
-        );
-
-
-      case 'QUOTE_REQUIRED':
-        return 'Demander un devis';
-
-
-      case 'ROUTE_REQUIRED':
-        return 'Continuer';
-
-
-      default:
-        return 'Continuer';
-    }
+  .question-heading {
+    font-size: 21px;
   }
 
+  .estimator-need-input {
+    min-height: 132px;
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Container management
-  // ───────────────────────────────────────────────────────────────────────────
+    padding: 14px 15px;
 
-  var _activeModal =
-    null;
-
-
-  var _activeContainer =
-    null;
-
-
-  var _previousActiveElement =
-    null;
-
-
-  function _createContainer() {
-    var c =
-      document.createElement(
-        'div'
-      );
-
-
-    c.setAttribute(
-      'id',
-      'fixeo-estimator-v2-root'
-    );
-
-
-    c.setAttribute(
-      'aria-live',
-      'polite'
-    );
-
-
-    document.body.appendChild(
-      c
-    );
-
-
-    return c;
+    font-size: 14px;
   }
 
+  .estimator-city-block {
+    grid-template-columns: 72px minmax(0, 1fr);
 
-  function _destroyContainer() {
-    if (
-      !_activeContainer &&
-      !_activeModal
-    ) {
-      return;
-    }
+    gap: 8px;
 
-
-    try {
-      document.body.classList.remove(
-        'fx-estimator-tunnel-active'
-      );
-    } catch (_) {}
-
-
-    try {
-      if (
-        _activeContainer &&
-        _activeContainer.parentNode
-      ) {
-        _activeContainer
-          .parentNode
-          .removeChild(
-            _activeContainer
-          );
-      }
-    } catch (_) {}
-
-
-    _activeContainer =
-      null;
-
-
-    _activeModal =
-      null;
-
-
-    if (
-      _previousActiveElement &&
-      typeof _previousActiveElement.focus ===
-        'function'
-    ) {
-      try {
-        _previousActiveElement.focus();
-      } catch (_) {}
-    }
-
-
-    _previousActiveElement =
-      null;
-
-
-    try {
-      document.dispatchEvent(
-        new CustomEvent(
-          'fixeo:estimator-closed'
-        )
-      );
-    } catch (_) {}
+    padding: 9px 10px;
   }
 
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // EstimatorModal
-  // ───────────────────────────────────────────────────────────────────────────
-
-  function EstimatorModal(
-    rootEl,
-    opts
-  ) {
-    opts =
-      opts || {};
-
-
-    STATE.onClose =
-      opts.onClose ||
-      function() {};
-
-
-    STATE.sessionToken =
-      null;
-
-
-    STATE.session =
-      null;
-
-
-    STATE.pendingAnswer =
-      null;
-
-
-    STATE.quantityValue =
-      null;
-
-
-    STATE.measurementValue =
-      null;
-
-
-    this._root =
-      rootEl;
-
-
-    this._entryContext =
-      opts.entryContext ||
-      {};
-
-
-    this._pricingContextToken =
-      null;
+  .estimator-city-input {
+    min-height: 40px;
   }
 
+  .estimator-metier-selection .answer-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .answer-card {
+    min-height: 56px;
+  }
+
+  .answer-card__check {
+    width: 44px;
+    min-width: 44px;
+    height: 56px;
+  }
+
+  .answer-card__label {
+    padding-right: 13px;
+  }
+
+  .price-hero {
+    padding:
+      16px
+      16px
+      0;
+  }
+
+  .price-hero-inner {
+    min-height: 172px;
+
+    padding: 23px 22px;
+  }
+
+  .price-display .amount {
+    font-size: clamp(58px, 18vw, 78px);
+  }
+
+  .price-display .currency {
+    margin-bottom: 6px;
+
+    font-size: 17px;
+  }
+
+  .result-header {
+    padding:
+      20px
+      16px
+      0;
+  }
+
+  .result-service-row {
+    padding:
+      13px
+      16px
+      0;
+  }
+
+  .result-rafi-col {
+    display: flex;
+  }
+
+  .labour-split {
+    grid-template-columns: 1fr;
+
+    padding:
+      16px
+      16px
+      0;
+  }
+
+  .labour-disclosure,
+  .diagnostic-absorption,
+  .scope-section {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .outcome-surface,
+  .safety-surface {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .estimator-footer {
+    padding:
+      11px
+      16px
+      calc(13px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .btn-primary {
+    min-height: 54px;
+
+    font-size: 14px;
+  }
+
+  .estimation-content {
+    padding:
+      20px
+      16px;
+  }
+}
+
 
-  EstimatorModal.prototype.render =
-    function() {
-      var root =
-        this._root;
-
-
-      root.innerHTML =
-        '';
-
-
-      var backdrop =
-        el(
-          'div',
-          'estimator-backdrop'
-        );
-
-
-      backdrop.setAttribute(
-        'id',
-        'estimator-backdrop'
-      );
-
-
-      backdrop.addEventListener(
-        'click',
-        function(e) {
-          if (
-            e.target ===
-              backdrop &&
-            STATE.onClose
-          ) {
-            STATE.onClose();
-          }
-        }
-      );
-
-
-      var modal =
-        el(
-          'div',
-          'estimator-modal'
-        );
-
-
-      modal.setAttribute(
-        'role',
-        'dialog'
-      );
-
-
-      modal.setAttribute(
-        'aria-modal',
-        'true'
-      );
-
-
-      modal.setAttribute(
-        'aria-labelledby',
-        'estimator-header'
-      );
-
-
-      modal.appendChild(
-        renderHeader()
-      );
-
-
-      var progressSlot =
-        el(
-          'div',
-          ''
-        );
-
-
-      progressSlot.setAttribute(
-        'id',
-        'progress-slot'
-      );
-
-
-      modal.appendChild(
-        progressSlot
-      );
-
-
-      var ctxSlot =
-        el(
-          'div',
-          ''
-        );
-
-
-      ctxSlot.setAttribute(
-        'id',
-        'ctx-slot'
-      );
-
-
-      modal.appendChild(
-        ctxSlot
-      );
-
-
-      var bodySlot =
-        el(
-          'div',
-          ''
-        );
-
-
-      bodySlot.setAttribute(
-        'id',
-        'body-slot'
-      );
-
-
-      modal.appendChild(
-        bodySlot
-      );
-
-
-      var footerSlot =
-        el(
-          'div',
-          ''
-        );
-
-
-      footerSlot.setAttribute(
-        'id',
-        'footer-slot'
-      );
-
-
-      modal.appendChild(
-        footerSlot
-      );
-
-
-      backdrop.appendChild(
-        modal
-      );
-
-
-      root.appendChild(
-        backdrop
-      );
-
-
-      trapFocus(
-        modal
-      );
-
-
-      this._renderUnderstand();
-    };
-
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // STATE 1 — COMPRENDRE
-  // ───────────────────────────────────────────────────────────────────────────
-
-  EstimatorModal.prototype._renderUnderstand =
-    function() {
-      var self =
-        this;
-
-
-      var progressSlot =
-        document.getElementById(
-          'progress-slot'
-        );
-
-
-      var ctxSlot =
-        document.getElementById(
-          'ctx-slot'
-        );
-
-
-      var bodySlot =
-        document.getElementById(
-          'body-slot'
-        );
-
-
-      var footerSlot =
-        document.getElementById(
-          'footer-slot'
-        );
-
-
-      if (
-        !progressSlot ||
-        !bodySlot ||
-        !footerSlot
-      ) {
-        return;
-      }
-
-
-      setRAFIState(
-        'understanding'
-      );
-
-
-      progressSlot.innerHTML =
-        '';
-
-
-      progressSlot.appendChild(
-        renderProgress(
-          'COMPRENDRE'
-        )
-      );
-
-
-      if (ctxSlot) {
-        ctxSlot.innerHTML =
-          '';
-      }
-
-
-      var body =
-        el(
-          'div',
-          'estimator-body estimator-understand step-enter'
-        );
-
-
-      var eyebrow =
-        el(
-          'div',
-          'estimator-understand-eyebrow'
-        );
-
-
-      eyebrow.textContent =
-        'RAFI · ESTIMATION FIXEO';
-
-
-      body.appendChild(
-        eyebrow
-      );
-
-
-      var title =
-        el(
-          'h2',
-          'question-heading estimator-understand-title'
-        );
-
-
-      title.textContent =
-        'Décrivez votre intervention';
-
-
-      body.appendChild(
-        title
-      );
-
-
-      var intro =
-        el(
-          'p',
-          'question-intelligence-copy estimator-understand-copy'
-        );
-
-
-      intro.textContent =
-        'Expliquez simplement ce qui se passe. RAFI vous guidera uniquement sur les précisions nécessaires pour établir le bon périmètre.';
-
-
-      body.appendChild(
-        intro
-      );
-
-
-      var textarea =
-        el(
-          'textarea',
-          'estimator-need-input'
-        );
-
-
-      textarea.setAttribute(
-        'id',
-        'estimator-need-input'
-      );
-
-
-      textarea.setAttribute(
-        'rows',
-        '4'
-      );
-
-
-      textarea.setAttribute(
-        'maxlength',
-        '2000'
-      );
-
-
-      textarea.setAttribute(
-        'placeholder',
-        'Ex. : mon robinet fuit sous l’évier depuis ce matin…'
-      );
-
-
-      textarea.setAttribute(
-        'aria-label',
-        'Décrivez votre intervention'
-      );
-
-
-      var initialDescription =
-        _cleanText(
-          self._entryContext
-            .free_text ||
-          self._entryContext
-            .description,
-          2000
-        );
-
-
-      textarea.value =
-        initialDescription;
-
-
-      body.appendChild(
-        textarea
-      );
-
-
-      var cityBlock =
-        el(
-          'div',
-          'estimator-city-block'
-        );
-
-
-      var cityLabel =
-        el(
-          'label',
-          'estimator-city-label'
-        );
-
-
-      cityLabel.setAttribute(
-        'for',
-        'estimator-city-input'
-      );
-
-
-      cityLabel.textContent =
-        'Ville';
-
-
-      cityBlock.appendChild(
-        cityLabel
-      );
-
-
-      var cityInput =
-        el(
-          'input',
-          'estimator-city-input'
-        );
-
-
-      cityInput.setAttribute(
-        'id',
-        'estimator-city-input'
-      );
-
-
-      cityInput.setAttribute(
-        'type',
-        'text'
-      );
-
-
-      cityInput.setAttribute(
-        'maxlength',
-        '120'
-      );
-
-
-      cityInput.setAttribute(
-        'autocomplete',
-        'address-level2'
-      );
-
-
-      cityInput.setAttribute(
-        'placeholder',
-        'Ex. Fès'
-      );
-
-
-      cityInput.value =
-        _displayCity(
-          self._entryContext
-            .city ||
-          self._entryContext
-            .city_slug
-        );
-
-
-      cityBlock.appendChild(
-        cityInput
-      );
-
-
-      body.appendChild(
-        cityBlock
-      );
-
-
-      var reassurance =
-        el(
-          'div',
-          'estimator-understand-trust'
-        );
-
-
-      reassurance.textContent =
-        'Aucune demande n’est envoyée à un artisan à cette étape.';
-
-
-      body.appendChild(
-        reassurance
-      );
-
-
-      bodySlot.innerHTML =
-        '';
-
-
-      bodySlot.appendChild(
-        body
-      );
-
-
-      function canContinue() {
-        var text =
-          _cleanText(
-            textarea.value,
-            2000
-          );
-
-
-        var city =
-          _cleanText(
-            cityInput.value,
-            120
-          );
-
-
-        var hasStructuredHint =
-          !!(
-            self._entryContext
-              .metier_hint ||
-            self._entryContext
-              .service_hint
-          );
-
-
-        return (
-          city.length > 0 &&
-          (
-            text.length >= 3 ||
-            hasStructuredHint
-          )
-        );
-      }
-
-
-      var footer =
-        renderFooter({
-          primaryLabel:
-            'Analyser mon besoin →',
-
-          primaryDisabled:
-            !canContinue(),
-
-          onPrimary:
-            function() {
-              var description =
-                _cleanText(
-                  textarea.value,
-                  2000
-                );
-
-
-              var city =
-                _cleanText(
-                  cityInput.value,
-                  120
-                );
-
-
-              if (!city) {
-                cityInput.focus();
-                return;
-              }
-
-
-              var hasStructuredHint =
-                !!(
-                  self._entryContext
-                    .metier_hint ||
-                  self._entryContext
-                    .service_hint
-                );
-
-
-              if (
-                !hasStructuredHint &&
-                description.length < 3
-              ) {
-                textarea.focus();
-                return;
-              }
-
-
-              self._entryContext
-                .free_text =
-                description ||
-                null;
-
-
-              self._entryContext
-                .description =
-                description ||
-                null;
-
-
-              self._entryContext
-                .city =
-                city;
-
-
-              self._entryContext
-                .city_slug =
-                city;
-
-
-              if (
-                !self._entryContext
-                  .entry_point
-              ) {
-                self._entryContext
-                  .entry_point =
-                  'RAFI';
-              }
-
-
-              self._startSession();
-            }
-        });
-
-
-      footerSlot.innerHTML =
-        '';
-
-
-      footerSlot.appendChild(
-        footer
-      );
-
-
-      function refreshCTA() {
-        updateCTA(
-          canContinue()
-        );
-      }
-
-
-      textarea.addEventListener(
-        'input',
-        refreshCTA
-      );
-
-
-      cityInput.addEventListener(
-        'input',
-        refreshCTA
-      );
-
-
-      focusSoon(
-        '#estimator-need-input'
-      );
-    };
-
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Start session
-  // ───────────────────────────────────────────────────────────────────────────
-
-  EstimatorModal.prototype._startSession =
-    function() {
-      var self =
-        this;
-
-
-      var bodySlot =
-        document.getElementById(
-          'body-slot'
-        );
-
-
-      var footerSlot =
-        document.getElementById(
-          'footer-slot'
-        );
-
-
-      setRAFIState(
-        'analyzing'
-      );
-
-
-      triggerIntelligenceLine();
-
-
-      if (bodySlot) {
-        bodySlot.innerHTML =
-          '';
-
-
-        var loading =
-          el(
-            'div',
-            'estimator-body estimator-loading step-enter'
-          );
-
-
-        loading.appendChild(
-          el(
-            'div',
-            'estimator-loading-title',
-            'RAFI analyse votre besoin…'
-          )
-        );
-
-
-        loading.appendChild(
-          el(
-            'div',
-            'estimator-loading-copy',
-            'Identification du métier et de l’intervention.'
-          )
-        );
-
-
-        bodySlot.appendChild(
-          loading
-        );
-      }
-
-
-      if (footerSlot) {
-        footerSlot.innerHTML =
-          '';
-      }
-
-
-      window.FixeoEstimatorAPI
-        .start(
-          self._entryContext
-        )
-        .then(
-          function(r) {
-            if (
-              !r ||
-              !r.ok
-            ) {
-              return self._showError(
-                'Impossible de démarrer l’estimation.'
-              );
-            }
-
-
-            STATE.sessionToken =
-              r.session
-                .session_token;
-
-
-            STATE.session =
-              r.session;
-
-
-            self._renderStep(
-              r.session,
-              r.next_step
-            );
-          }
-        )
-        .catch(
-          function() {
-            self._showError(
-              'Problème de connexion. Veuillez réessayer.'
-            );
-          }
-        );
-    };
-
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Render server step
-  // ───────────────────────────────────────────────────────────────────────────
-
-  EstimatorModal.prototype._renderStep =
-    function(
-      session,
-      nextStep
-    ) {
-      var self =
-        this;
-
-
-      var progressSlot =
-        document.getElementById(
-          'progress-slot'
-        );
-
-
-      var ctxSlot =
-        document.getElementById(
-          'ctx-slot'
-        );
-
-
-      var bodySlot =
-        document.getElementById(
-          'body-slot'
-        );
-
-
-      var footerSlot =
-        document.getElementById(
-          'footer-slot'
-        );
-
-
-      if (
-        !progressSlot ||
-        !bodySlot ||
-        !footerSlot
-      ) {
-        return;
-      }
-
-
-      if (
-        session &&
-        session.ui_recommendation ===
-          'PAGE_REQUIRED'
-      ) {
-        try {
-          sessionStorage.setItem(
-            'fixeo_estimator_token_v1',
-            STATE.sessionToken
-          );
-        } catch (_) {}
-
-
-        window.location.href =
-          '/estimation';
-
-        return;
-      }
-
-
-      var stage =
-        stageFromSessionState(
-          session &&
-          session.state
-        );
-
-
-      progressSlot.innerHTML =
-        '';
-
-
-      progressSlot.appendChild(
-        renderProgress(
-          stage
-        )
-      );
-
-
-      if (ctxSlot) {
-        ctxSlot.innerHTML =
-          '';
-
-
-        ctxSlot.appendChild(
-          renderContextBar(
-            self._entryContext,
-            session
-          )
-        );
-      }
-
-
-      triggerIntelligenceLine();
-
-
-      if (
-        nextStep &&
-        nextStep.type ===
-          'METIER_SELECTION'
-      ) {
-        setRAFIState(
-          'analyzing'
-        );
-
-
-        return self
-          ._renderMetierSelection(
-            nextStep
-          );
-      }
-
-
-      if (
-        nextStep &&
-        nextStep.type ===
-          'SERVICE_SELECTION'
-      ) {
-        setRAFIState(
-          'identified'
-        );
-
-
-        return self
-          ._renderServiceSelection(
-            nextStep
-          );
-      }
-
-
-      if (
-        nextStep &&
-        nextStep.type ===
-          'QUESTION'
-      ) {
-        setRAFIState(
-          'verifying'
-        );
-
-
-        var isBoolean =
-          nextStep.answer_type ===
-          'boolean';
-
-
-        var body =
-          renderQuestion(
-            nextStep,
-            isBoolean
-              ? function(val) {
-                  self._submitAnswer(
-                    nextStep.question_id,
-                    val
-                  );
-                }
-              : null
-          );
-
-
-        bodySlot.innerHTML =
-          '';
-
-
-        bodySlot.appendChild(
-          body
-        );
-
-
-        footerSlot.innerHTML =
-          '';
-
-
-        if (!isBoolean) {
-          var footer =
-            renderFooter({
-              primaryLabel:
-                'Confirmer',
-
-              primaryDisabled:
-                STATE.pendingAnswer ===
-                  null ||
-                STATE.pendingAnswer ===
-                  undefined,
-
-              onPrimary:
-                function() {
-                  if (
-                    STATE.pendingAnswer !==
-                      null &&
-                    STATE.pendingAnswer !==
-                      undefined
-                  ) {
-                    self._submitAnswer(
-                      nextStep.question_id,
-                      STATE.pendingAnswer
-                    );
-                  }
-                }
-            });
-
-
-          footerSlot.appendChild(
-            footer
-          );
-        }
-
-
-        return;
-      }
-
-
-      if (
-        (
-          session &&
-          session.state ===
-            'READY_FOR_ENGINE'
-        ) ||
-        (
-          nextStep &&
-          nextStep.type ===
-            'READY'
-        )
-      ) {
-        return self._evaluate();
-      }
-
-
-      if (
-        nextStep &&
-        nextStep.type ===
-          'OUTCOME'
-      ) {
-        return self
-          ._renderTerminalSession(
-            session
-          );
-      }
-
-
-      if (
-        nextStep &&
-        nextStep.type ===
-          'CONFIRMATION'
-      ) {
-        return self
-          ._renderTerminalSession(
-            session
-          );
-      }
-
-
-      if (
-        nextStep &&
-        nextStep.type ===
-          'EVALUATING'
-      ) {
-        setRAFIState(
-          'verifying'
-        );
-
-        return;
-      }
-
-
-      self._showError(
-        'RAFI ne peut pas poursuivre cette estimation pour le moment.'
-      );
-    };
-
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // STATE 2 — Métier selection
-  // ───────────────────────────────────────────────────────────────────────────
-
-  EstimatorModal.prototype._renderMetierSelection =
-    function(nextStep) {
-      var self =
-        this;
-
-
-      var bodySlot =
-        document.getElementById(
-          'body-slot'
-        );
-
-
-      var footerSlot =
-        document.getElementById(
-          'footer-slot'
-        );
-
-
-      if (
-        !bodySlot ||
-        !footerSlot
-      ) {
-        return;
-      }
-
-
-      var candidates =
-        (
-          nextStep &&
-          nextStep.candidate_metiers
-        ) ||
-        [];
-
-
-      if (
-        !candidates.length
-      ) {
-        return self._showError(
-          'Aucun métier disponible pour poursuivre l’analyse.'
-        );
-      }
-
-
-      var pending =
-        false;
-
-
-      var body =
-        el(
-          'div',
-          'estimator-body step-enter estimator-metier-selection'
-        );
-
-
-      var title =
-        el(
-          'h2',
-          'question-heading'
-        );
-
-
-      title.textContent =
-        'Quel métier correspond le mieux à votre besoin ?';
-
-
-      body.appendChild(
-        title
-      );
-
-
-      body.appendChild(
-        el(
-          'p',
-          'question-intelligence-copy',
-          'RAFI conserve votre description et utilisera ce choix pour poursuivre l’analyse.'
-        )
-      );
-
-
-      var cards =
-        el(
-          'div',
-          'answer-cards'
-        );
-
-
-      candidates.forEach(
-        function(metier) {
-          var card =
-            renderAnswerCard(
-              {
-                value:
-                  metier,
-
-                label:
-                  metierLabel(
-                    metier
-                  )
-              },
-              false,
-              function(selectedMetier) {
-                if (
-                  pending
-                ) {
-                  return;
-                }
-
-
-                pending =
-                  true;
-
-
-                cards
-                  .querySelectorAll(
-                    '.answer-card'
-                  )
-                  .forEach(
-                    function(c) {
-                      c.setAttribute(
-                        'aria-disabled',
-                        'true'
-                      );
-
-                      c.style.opacity =
-                        '0.55';
-                    }
-                  );
-
-
-                self
-                  ._restartWithMetier(
-                    selectedMetier
-                  );
-              }
-            );
-
-
-          cards.appendChild(
-            card
-          );
-        }
-      );
-
-
-      body.appendChild(
-        cards
-      );
-
-
-      bodySlot.innerHTML =
-        '';
-
-
-      bodySlot.appendChild(
-        body
-      );
-
-
-      footerSlot.innerHTML =
-        '';
-    };
-
-
-  EstimatorModal.prototype._restartWithMetier =
-    function(metier) {
-      var self =
-        this;
-
-
-      self._entryContext
-        .metier_hint =
-        metier;
-
-
-      setRAFIState(
-        'analyzing'
-      );
-
-
-      triggerIntelligenceLine();
-
-
-      window.FixeoEstimatorAPI
-        .start(
-          self._entryContext
-        )
-        .then(
-          function(r) {
-            if (
-              !r ||
-              !r.ok
-            ) {
-              return self._showError(
-                'Impossible de poursuivre avec ce métier.'
-              );
-            }
-
-
-            STATE.sessionToken =
-              r.session
-                .session_token;
-
-
-            STATE.session =
-              r.session;
-
-
-            self._renderStep(
-              r.session,
-              r.next_step
-            );
-          }
-        )
-        .catch(
-          function() {
-            self._showError(
-              'Problème de connexion. Veuillez réessayer.'
-            );
-          }
-        );
-    };
-
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // STATE 2 — Service selection
-  // ───────────────────────────────────────────────────────────────────────────
-
-  EstimatorModal.prototype._renderServiceSelection =
-    function(nextStep) {
-      var self =
-        this;
-
-
-      var bodySlot =
-        document.getElementById(
-          'body-slot'
-        );
-
-
-      var footerSlot =
-        document.getElementById(
-          'footer-slot'
-        );
-
-
-      if (
-        !bodySlot ||
-        !footerSlot
-      ) {
-        return;
-      }
-
-
-      var candidates =
-        (
-          nextStep &&
-          nextStep.candidate_services
-        ) ||
-        [];
-
-
-      if (
-        candidates.length ===
-        0
-      ) {
-        return self._showError(
-          'Aucun service disponible pour ce métier.'
-        );
-      }
-
-
-      var pending =
-        false;
-
-
-      var body =
-        el(
-          'div',
-          'estimator-body step-enter estimator-service-selection'
-        );
-
-
-      var title =
-        el(
-          'h2',
-          'question-heading'
-        );
-
-
-      title.textContent =
-        'Quel type d’intervention souhaitez-vous ?';
-
-
-      body.appendChild(
-        title
-      );
-
-
-      body.appendChild(
-        el(
-          'p',
-          'question-intelligence-copy',
-          'Choisissez l’intervention qui correspond le mieux à votre situation.'
-        )
-      );
-
-
-      var cards =
-        el(
-          'div',
-          'answer-cards'
-        );
-
-
-      candidates.forEach(
-        function(svc) {
-          var card =
-            renderAnswerCard(
-              {
-                label:
-                  svc.label_fr ||
-                  svc.short_label_fr ||
-                  svc.service_code,
-
-                value:
-                  svc.service_code
-              },
-              false,
-              function(serviceCode) {
-                if (
-                  pending
-                ) {
-                  return;
-                }
-
-
-                pending =
-                  true;
-
-
-                cards
-                  .querySelectorAll(
-                    '.answer-card'
-                  )
-                  .forEach(
-                    function(c) {
-                      c.setAttribute(
-                        'aria-disabled',
-                        'true'
-                      );
-
-                      c.style.opacity =
-                        '0.55';
-                    }
-                  );
-
-
-                setRAFIState(
-                  'analyzing'
-                );
-
-
-                triggerIntelligenceLine();
-
-
-                window.FixeoEstimatorAPI
-                  .selectService(
-                    STATE.sessionToken,
-                    serviceCode
-                  )
-                  .then(
-                    function(r) {
-                      if (
-                        !r ||
-                        !r.ok
-                      ) {
-                        pending =
-                          false;
-
-                        return self._showError(
-                          'Impossible de sélectionner cette intervention.'
-                        );
-                      }
-
-
-                      STATE.sessionToken =
-                        r.session
-                          .session_token;
-
-
-                      STATE.session =
-                        r.session;
-
-
-                      self._renderStep(
-                        r.session,
-                        r.next_step
-                      );
-                    }
-                  )
-                  .catch(
-                    function() {
-                      pending =
-                        false;
-
-
-                      self._showError(
-                        'Problème de connexion. Veuillez réessayer.'
-                      );
-                    }
-                  );
-              }
-            );
-
-
-          cards.appendChild(
-            card
-          );
-        }
-      );
-
-
-      body.appendChild(
-        cards
-      );
-
-
-      bodySlot.innerHTML =
-        '';
-
-
-      bodySlot.appendChild(
-        body
-      );
-
-
-      footerSlot.innerHTML =
-        '';
-    };
-
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // STATE 3 — qualification
-  // ───────────────────────────────────────────────────────────────────────────
-
-  EstimatorModal.prototype._submitAnswer =
-    function(
-      questionId,
-      answer
-    ) {
-      var self =
-        this;
-
-
-      setRAFIState(
-        'analyzing'
-      );
-
-
-      triggerIntelligenceLine();
-
-
-      window.FixeoEstimatorAPI
-        .answer(
-          STATE.sessionToken,
-          questionId,
-          answer
-        )
-        .then(
-          function(r) {
-            if (
-              !r ||
-              !r.ok
-            ) {
-              return self._showError(
-                'Impossible d’enregistrer cette réponse.'
-              );
-            }
-
-
-            STATE.sessionToken =
-              r.session
-                .session_token;
-
-
-            STATE.session =
-              r.session;
-
-
-            self._renderStep(
-              r.session,
-              r.next_step
-            );
-          }
-        )
-        .catch(
-          function() {
-            self._showError(
-              'Problème de connexion. Veuillez réessayer.'
-            );
-          }
-        );
-    };
-
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Evaluate
-  // ───────────────────────────────────────────────────────────────────────────
-
-  EstimatorModal.prototype._evaluate =
-    function() {
-      var self =
-        this;
-
-
-      setRAFIState(
-        'verifying'
-      );
-
-
-      triggerIntelligenceLine();
-
-
-      window.FixeoEstimatorAPI
-        .evaluate(
-          STATE.sessionToken
-        )
-        .then(
-          function(r) {
-            if (
-              !r ||
-              !r.ok
-            ) {
-              return self._showError(
-                'Impossible de calculer l’estimation.'
-              );
-            }
-
-
-            STATE.sessionToken =
-              r.session
-                .session_token;
-
-
-            STATE.session =
-              r.session;
-
-
-            self._pricingContextToken =
-              r.pricing_context_token ||
-              null;
-
-
-            self._renderOutcome(
-              r.session,
-              r.outcome
-            );
-          }
-        )
-        .catch(
-          function() {
-            self._showError(
-              'Problème de connexion. Veuillez réessayer.'
-            );
-          }
-        );
-    };
-
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Terminal session without evaluate()
-  // ───────────────────────────────────────────────────────────────────────────
-
-  EstimatorModal.prototype._renderTerminalSession =
-    function(session) {
-      var state =
-        session &&
-        session.state;
-
-
-      var outcome =
-        (
-          session &&
-          session.outcome
-        ) ||
-        {
-          outcome_type:
-            state,
-
-          service_code:
-            session &&
-            session.service_code
-        };
-
-
-      this._renderOutcome(
-        session,
-        outcome
-      );
-    };
-
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // STATE 4 — Outcome
-  // ───────────────────────────────────────────────────────────────────────────
-
-  EstimatorModal.prototype._renderOutcome =
-    function(
-      session,
-      outcome
-    ) {
-      var self =
-        this;
-
-
-      var progressSlot =
-        document.getElementById(
-          'progress-slot'
-        );
-
-
-      var bodySlot =
-        document.getElementById(
-          'body-slot'
-        );
-
-
-      var footerSlot =
-        document.getElementById(
-          'footer-slot'
-        );
-
-
-      var modal =
-        document.querySelector(
-          '.estimator-modal'
-        );
-
-
-      if (
-        !bodySlot ||
-        !footerSlot
-      ) {
-        return;
-      }
-
-
-      if (progressSlot) {
-        progressSlot.innerHTML =
-          '';
-
-
-        progressSlot.appendChild(
-          renderProgress(
-            'PRIX'
-          )
-        );
-      }
-
-
-      if (modal) {
-        modal.classList.add(
-          'result-active'
-        );
-      }
-
-
-      var ot =
-        outcome &&
-        outcome.outcome_type;
-
-
-      var bodyEl;
-
-
-      switch (ot) {
-        case 'PRICE_READY':
-          setRAFIState(
-            'complete'
-          );
-
-          bodyEl =
-            renderPriceResult(
-              outcome
-            );
-          break;
-
-
-        case 'LABOUR_PLUS_PART_READY':
-          setRAFIState(
-            'complete'
-          );
-
-          bodyEl =
-            renderLabourPartResult(
-              outcome
-            );
-          break;
-
-
-        case 'DIAGNOSTIC_READY':
-          setRAFIState(
-            'complete'
-          );
-
-          bodyEl =
-            renderDiagnosticResult(
-              outcome
-            );
-          break;
-
-
-        case 'QUOTE_REQUIRED':
-          setRAFIState(
-            'idle'
-          );
-
-          bodyEl =
-            renderQuoteResult(
-              outcome
-            );
-          break;
-
-
-        case 'ROUTE_REQUIRED':
-          setRAFIState(
-            'identified'
-          );
-
-          bodyEl =
-            renderRouteResult(
-              outcome
-            );
-          break;
-
-
-        case 'SAFETY_STOP':
-          setRAFIState(
-            'idle'
-          );
-
-          bodyEl =
-            renderSafetyResult();
-          break;
-
-
-        case 'REQUALIFY':
-          setRAFIState(
-            'idle'
-          );
-
-          bodyEl =
-            renderRequalifyResult();
-          break;
-
-
-        default:
-          setRAFIState(
-            'idle'
-          );
-
-
-          bodyEl =
-            el(
-              'div',
-              'estimator-body step-enter'
-            );
-
-
-          bodyEl.appendChild(
-            el(
-              'p',
-              '',
-              'Cette intervention nécessite une vérification complémentaire.'
-            )
-          );
-      }
-
-
-      bodySlot.innerHTML =
-        '';
-
-
-      bodySlot.appendChild(
-        bodyEl
-      );
-
-
-      var footerOpts =
-        {};
-
-
-      var noPricingToken =
-        new Set([
-          'SAFETY_STOP',
-          'QUOTE_REQUIRED',
-          'ROUTE_REQUIRED',
-          'REQUALIFY'
-        ]);
-
-
-      if (
-        !noPricingToken.has(
-          ot
-        ) &&
-        self._pricingContextToken
-      ) {
-        if (
-          window
-            .FixeoEstimatorReservationBridge
-        ) {
-          window
-            .FixeoEstimatorReservationBridge
-            .prepareContext(
-              self._pricingContextToken
-            );
-        }
-
-
-        footerOpts.primaryLabel =
-          ctaLabel(
-            outcome
-          );
-
-
-        footerOpts.onPrimary =
-          function() {
-            if (
-              window
-                .FixeoEstimatorReservationBridge &&
-              self._pricingContextToken
-            ) {
-              window
-                .FixeoEstimatorReservationBridge
-                .prepareContext(
-                  self._pricingContextToken
-                );
-            }
-
-
-            document.dispatchEvent(
-              new CustomEvent(
-                'fixeo:estimator-reserve',
-                {
-                  detail: {
-                    pricing_context_token:
-                      self._pricingContextToken
-                  }
-                }
-              )
-            );
-          };
-
-
-      } else if (
-        ot ===
-        'QUOTE_REQUIRED'
-      ) {
-        footerOpts.primaryLabel =
-          'Demander un devis';
-
-
-        footerOpts.onPrimary =
-          function() {
-            if (
-              STATE.onClose
-            ) {
-              STATE.onClose();
-            }
-          };
-
-
-      } else if (
-        ot ===
-        'SAFETY_STOP'
-      ) {
-        footerOpts.primaryLabel =
-          'Fermer';
-
-
-        footerOpts.onPrimary =
-          function() {
-            if (
-              STATE.onClose
-            ) {
-              STATE.onClose();
-            }
-          };
-
-
-      } else {
-        footerOpts.primaryLabel =
-          'Fermer';
-
-
-        footerOpts.onPrimary =
-          function() {
-            if (
-              STATE.onClose
-            ) {
-              STATE.onClose();
-            }
-          };
-      }
-
-
-      var footer =
-        renderFooter(
-          footerOpts
-        );
-
-
-      footerSlot.innerHTML =
-        '';
-
-
-      footerSlot.appendChild(
-        footer
-      );
-    };
-
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Error surface
-  // ───────────────────────────────────────────────────────────────────────────
-
-  EstimatorModal.prototype._showError =
-    function(msg) {
-      var bodySlot =
-        document.getElementById(
-          'body-slot'
-        );
-
-
-      var footerSlot =
-        document.getElementById(
-          'footer-slot'
-        );
-
-
-      if (!bodySlot) {
-        return;
-      }
-
-
-      setRAFIState(
-        'idle'
-      );
-
-
-      var div =
-        el(
-          'div',
-          'estimator-body estimator-error step-enter'
-        );
-
-
-      var title =
-        el(
-          'div',
-          'estimator-error-title'
-        );
-
-
-      title.textContent =
-        'RAFI ne peut pas poursuivre';
-
-
-      div.appendChild(
-        title
-      );
-
-
-      var copy =
-        el(
-          'p',
-          'estimator-error-copy'
-        );
-
-
-      copy.textContent =
-        msg ||
-        'Une erreur est survenue.';
-
-
-      div.appendChild(
-        copy
-      );
-
-
-      bodySlot.innerHTML =
-        '';
-
-
-      bodySlot.appendChild(
-        div
-      );
-
-
-      if (footerSlot) {
-        footerSlot.innerHTML =
-          '';
-
-
-        footerSlot.appendChild(
-          renderFooter({
-            primaryLabel:
-              'Fermer',
-
-            onPrimary:
-              function() {
-                if (
-                  STATE.onClose
-                ) {
-                  STATE.onClose();
-                }
-              }
-          })
-        );
-      }
-    };
-
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Public API
-  // ───────────────────────────────────────────────────────────────────────────
-
-  window.FixeoEstimatorV2 = {
-    open:
-      function(
-        entryContext
-      ) {
-        if (
-          _activeModal
-        ) {
-          return Promise.resolve({
-            accepted: true
-          });
-        }
-
-
-        var normalizedCtx =
-          _normalizeEntryContext(
-            entryContext ||
-            {}
-          );
-
-
-        try {
-          _previousActiveElement =
-            document.activeElement;
-
-
-          _activeContainer =
-            _createContainer();
-
-
-          _activeModal =
-            new EstimatorModal(
-              _activeContainer,
-              {
-                entryContext:
-                  normalizedCtx,
-
-                onClose:
-                  function() {
-                    _destroyContainer();
-                  }
-              }
-            );
-
-
-          _activeModal.render();
-
-
-          try {
-            document.body.classList.add(
-              'fx-estimator-tunnel-active'
-            );
-          } catch (_) {}
-
-
-          return Promise.resolve({
-            accepted: true
-          });
-
-
-        } catch (_) {
-          _destroyContainer();
-
-
-          return Promise.resolve({
-            accepted: false,
-            reason: 'init_error'
-          });
-        }
-      },
-
-
-    close:
-      function() {
-        if (
-          STATE.onClose
-        ) {
-          STATE.onClose();
-
-        } else {
-          _destroyContainer();
-        }
-      },
-
-
-    hide:
-      function() {
-        if (
-          !_activeContainer
-        ) {
-          return;
-        }
-
-
-        try {
-          _activeContainer
-            .style
-            .visibility =
-            'hidden';
-
-
-          _activeContainer
-            .style
-            .pointerEvents =
-            'none';
-
-        } catch (_) {}
-      },
-
-
-    reveal:
-      function() {
-        if (
-          !_activeContainer
-        ) {
-          return;
-        }
-
-
-        try {
-          _activeContainer
-            .style
-            .visibility =
-            '';
-
-
-          _activeContainer
-            .style
-            .pointerEvents =
-            '';
-
-        } catch (_) {}
-      },
-
-
-    isOpen:
-      function() {
-        return !!_activeModal;
-      }
-  };
-
-}());
+/* ==========================================================================
+   30. SMALL MOBILE
+   ========================================================================== */
+
+@media (max-width: 420px) {
+  .estimator-modal {
+    height: 96dvh;
+    max-height: 96dvh;
+  }
+
+  .rafi-state-bar {
+    gap: 4px;
+
+    padding:
+      0
+      10px;
+  }
+
+  .rafi-stage {
+    font-size: 8px;
+  }
+
+  .rafi-stage-sep {
+    min-width: 6px;
+  }
+
+  .estimator-understand-title {
+    font-size: 27px;
+  }
+
+  .price-display {
+    gap: 6px;
+  }
+
+  .price-display .amount {
+    font-size: 62px;
+  }
+
+  .price-display .currency {
+    font-size: 16px;
+  }
+
+  .labour-card-amount .amount {
+    font-size: 38px;
+  }
+}
+
+
+/* ==========================================================================
+   31. REDUCED MOTION
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  #fixeo-estimator-v2-root *,
+  #fixeo-estimator-v2-root *::before,
+  #fixeo-estimator-v2-root *::after,
+  .estimation-page *,
+  .estimation-page *::before,
+  .estimation-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
