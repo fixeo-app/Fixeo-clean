@@ -5380,17 +5380,7 @@
         ) &&
         self._pricingContextToken
       ) {
-        if (
-          window
-            .FixeoEstimatorReservationBridge
-        ) {
-          window
-            .FixeoEstimatorReservationBridge
-            .prepareContext(
-              self._pricingContextToken
-            );
-        }
-
+       
 
         footerOpts.primaryLabel =
           ctaLabel(
