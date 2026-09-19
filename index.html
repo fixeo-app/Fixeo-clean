@@ -2919,6 +2919,26 @@ box-shadow:
 <link
   rel="stylesheet"
   href="css/fixeo-estimation-signature-v1.css?v=fxes-v1a">
+  <style id="fixeo-ios-focus-zoom-guard">
+  /*
+   * FIXEO — Mobile focus zoom guard
+   * Prevents Safari/iOS automatic zoom when focusing form controls.
+   * User-controlled pinch zoom remains available.
+   */
+  @media (max-width: 768px) {
+    input,
+    textarea,
+    select,
+    button {
+      font-size: max(16px, 1em);
+    }
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+</style>
 </head>
 
 <body class="fixeo-homepage-mode fixeo-gh-enabled">
