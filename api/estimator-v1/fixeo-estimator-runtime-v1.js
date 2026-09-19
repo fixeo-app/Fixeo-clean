@@ -37,7 +37,28 @@ const NO_PRICING_CTX_OUTCOMES = new Set([
  */
 function normalizeSessionView(session, secret) {
   const payload = {
-    session_id:    session.session_id,
+    session_id: session.session_id,
+
+    /*
+     * 7C.9M.3A
+     * Preserve the already-normalized Estimator entry context inside the
+     * encrypted session token.
+     *
+     * This data is NOT exposed as browser-readable session state.
+     * It is required later for the verified request handoff:
+     *   - city_slug
+     *   - free_text / request description
+     *   - original entry context
+     */
+    entry_context:
+      (
+        session.entry_context &&
+        typeof session.entry_context === 'object' &&
+        !Array.isArray(session.entry_context)
+      )
+        ? session.entry_context
+        : {},
+
     metier:        session.metier,
     service_code:  session.service_code,
     known_inputs:  session.known_inputs,
@@ -131,6 +152,24 @@ function buildPricingContextPayload(session) {
     // MUST NOT affect price, pricing engine, or booking authority.
     // null when no trusted current-session city was provided.
     city_slug:     (session.entry_context && session.entry_context.city_slug) || null,
+
+    /*
+     * Canonical operational description carried from the original
+     * Estimator entry context.
+     *
+     * It remains inside the encrypted pricing context and cannot be
+     * altered independently at confirmation time.
+     */
+    description:
+      (
+        session.entry_context &&
+        typeof session.entry_context.free_text === 'string'
+      )
+        ? session.entry_context.free_text
+            .trim()
+            .slice(0, 1000)
+        : null,
+
     // Cryptographic nonce — server-generated, prevents client-side context_id forgery.
     // Uniquely identifies this pricing evaluation event.
     context_id:    generateContextId(),
