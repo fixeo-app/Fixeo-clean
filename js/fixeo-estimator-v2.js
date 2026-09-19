@@ -4386,10 +4386,9 @@
         cityLabel
       );
 
-
-      var cityInput =
+var cityInput =
         el(
-          'input',
+          'select',
           'estimator-city-input'
         );
 
@@ -4401,14 +4400,8 @@
 
 
       cityInput.setAttribute(
-        'type',
-        'text'
-      );
-
-
-      cityInput.setAttribute(
-        'maxlength',
-        '120'
+        'aria-label',
+        'Ville d’intervention'
       );
 
 
@@ -4418,13 +4411,32 @@
       );
 
 
-      cityInput.setAttribute(
-        'placeholder',
-        'Ex. Fès'
-      );
+      var FIXEO_ESTIMATOR_CITIES = [
+        '',
+        'Casablanca',
+        'Rabat',
+        'Marrakech',
+        'Tanger',
+        'Agadir',
+        'Fès',
+        'Meknès',
+        'Oujda',
+        'Kénitra',
+        'Tétouan',
+        'Salé',
+        'Temara',
+        'El Jadida',
+        'Béni Mellal',
+        'Nador',
+        'Khouribga',
+        'Safi',
+        'Taza',
+        'Ouarzazate',
+        'Mohammedia'
+      ];
 
 
-      cityInput.value =
+      var currentCity =
         _displayCity(
           self._entryContext
             .city ||
@@ -4433,10 +4445,41 @@
         );
 
 
+      FIXEO_ESTIMATOR_CITIES.forEach(
+        function(city) {
+          var option =
+            document.createElement(
+              'option'
+            );
+
+          option.value =
+            city;
+
+          option.textContent =
+            city ||
+            'Choisir une ville';
+
+          if (
+            city &&
+            currentCity &&
+            city.toLowerCase() ===
+              currentCity.toLowerCase()
+          ) {
+            option.selected =
+              true;
+          }
+
+          cityInput.appendChild(
+            option
+          );
+        }
+      );
+
+
       cityBlock.appendChild(
         cityInput
       );
-
+    
 
       capture.appendChild(
         cityBlock
@@ -4620,7 +4663,7 @@
 
 
       cityInput.addEventListener(
-        'input',
+        'change',
         refreshCTA
       );
 
