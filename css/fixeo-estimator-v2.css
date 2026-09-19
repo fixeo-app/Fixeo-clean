@@ -3338,3 +3338,123 @@ body.fx-estimator-tunnel-active {
     font-size: 13px;
   }
 }
+
+/* ==========================================================================
+   RAFI V4 — STATE 2 SERVICE CARDS
+   Compact premium intervention selection.
+   ========================================================================== */
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.rafi-choice-card--service {
+  min-height: 64px;
+
+  grid-template-columns: 42px minmax(0, 1fr) 32px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.034),
+      rgba(255,255,255,.010)
+    ),
+    #0f141c;
+
+  border-color: rgba(255,255,255,.065);
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.rafi-choice-card--service
+.rafi-choice-card__eyebrow,
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.rafi-choice-card--service
+.rafi-choice-card__meta {
+  display: none;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.rafi-choice-card--service
+.rafi-choice-card__content {
+  justify-content: center;
+
+  padding: 11px 13px;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.rafi-choice-card--service
+.rafi-choice-card__label {
+  font-size: 13.5px;
+  line-height: 1.25;
+  font-weight: 760;
+  letter-spacing: -0.012em;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.rafi-choice-card--service
+.rafi-choice-card__marker {
+  color: rgba(255,154,60,.72);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,122,0,.045),
+      rgba(255,255,255,.012)
+    );
+
+  border-right-color: rgba(255,122,0,.09);
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.rafi-choice-card--service:hover {
+  border-color: rgba(255,122,0,.24);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,122,0,.05),
+      rgba(255,45,149,.015)
+    ),
+    #111720;
+}
+
+
+/* MOBILE */
+@media (max-width: 767px) {
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .rafi-choice-stack--services {
+    gap: 7px;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .rafi-choice-card--service {
+    min-height: 58px;
+
+    grid-template-columns: 36px minmax(0,1fr) 28px;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .rafi-choice-card--service
+  .rafi-choice-card__content {
+    padding: 9px 11px;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .rafi-choice-card--service
+  .rafi-choice-card__label {
+    font-size: 12.5px;
+  }
+}
