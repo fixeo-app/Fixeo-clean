@@ -3018,7 +3018,7 @@
       el(
         'div',
         'result-rafi-label',
-        'Évaluation préalable'
+        'Diagnostic sur place'
       )
     );
 
