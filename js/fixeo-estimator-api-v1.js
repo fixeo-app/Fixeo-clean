@@ -1,6 +1,6 @@
 /*!
  * js/fixeo-estimator-api-v1.js — FIXEO Estimator Browser API Client
- * Phase 7C.9B — Production Dormant Integration
+ * Phase 7C.9M.4 — Verified Client Confirmation Bridge
  *
  * Browser-side client for /api/estimator-v1.
  * Reads base URL from FixeoEstimatorConfig (loaded before this file).
@@ -36,6 +36,17 @@
     },
     verifyPricingContext: function(pricingToken) {
       return _call({ action: 'verify_pricing_context', pricing_context_token: pricingToken });
+    },
+
+    // 7C.9M.4: verified server-side request confirmation.
+    // The browser supplies only the opaque pricing token + client phone.
+    // Price, service, city, description and tracking credentials remain server-authoritative.
+    confirmRequest: function(pricingToken, clientPhone) {
+      return _call({
+        action: 'confirm_request',
+        pricing_context_token: pricingToken,
+        client_phone: clientPhone
+      });
     },
   };
 }());
