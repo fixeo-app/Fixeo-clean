@@ -4135,3 +4135,21 @@
     transform: translate(-50%, -50%) scale(1) !important;
   }
 }
+
+/* ============================================================
+   FIXEO HERO — iOS automatic focus zoom prevention
+   Prevent Safari from zooming when Hero form controls receive focus.
+   Intentional pinch-zoom remains available.
+   ============================================================ */
+
+.fxhf-root input,
+.fxhf-root textarea,
+.fxhf-root select {
+  font-size: 16px !important;
+}
+
+/* Prevent Safari text inflation from deforming the Hero */
+.fxhf-root {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
