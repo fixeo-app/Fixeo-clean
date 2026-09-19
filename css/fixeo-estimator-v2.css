@@ -4344,3 +4344,40 @@ body.fx-estimator-tunnel-active {
     padding: 11px 12px;
   }
 }
+
+/* ============================================================
+   RAFI CORE V3 — iOS / mobile scroll ownership
+   The modal is the single vertical scroll container on mobile.
+============================================================ */
+@media (max-width: 768px) {
+
+  #fixeo-estimator-v2-root .estimator-backdrop {
+    overflow: hidden !important;
+    overscroll-behavior: none;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3 {
+    max-height: 100dvh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .estimator-body {
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .estimator-footer {
+    position: relative !important;
+  }
+}
