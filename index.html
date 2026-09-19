@@ -3260,7 +3260,27 @@ box-shadow:
 
   </div>
 </section>
+<script>
+(function () {
+  var trigger = document.getElementById('fxes-open-estimator');
 
+  if (!trigger) return;
+
+  trigger.addEventListener('click', function () {
+    if (
+      !window.FixeoEstimatorV2 ||
+      typeof window.FixeoEstimatorV2.open !== 'function'
+    ) {
+      console.error('[FIXEO Estimation] Estimator V2 unavailable');
+      return;
+    }
+
+    window.FixeoEstimatorV2.open({
+      source: 'homepage_estimation_signature'
+    });
+  });
+})();
+</script>
 
 
 <!-- ════════════════════════════════════════════════════════
