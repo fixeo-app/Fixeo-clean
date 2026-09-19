@@ -3133,7 +3133,7 @@
       el(
         'div',
         'price-sublabel',
-        'Évaluation sur place'
+        'Diagnostic sur place'
       )
     );
 
