@@ -10,6 +10,7 @@
  *   select_service
  *   evaluate
  *   verify_pricing_context
+ *   confirm_request
  *
  * Security:
  *   - POST only; all other methods → 405
@@ -31,6 +32,8 @@
  *   server-side pricing context instead of trusting a browser-supplied amount.
  */
 'use strict';
+
+const crypto = require('crypto');
 
 const orchestrator = require(
   '../../data/pricing/orchestrator/estimator-orchestrator-v1'
@@ -65,7 +68,50 @@ const VALID_ACTIONS = new Set([
   'select_service',
   'evaluate',
   'verify_pricing_context',
+  'confirm_request',
 ]);
+
+const CONFIRM_PAYABLE_OUTCOMES = new Set([
+  'PRICE_READY',
+  'DIAGNOSTIC_READY',
+  'LABOUR_PLUS_PART_READY',
+  'ADD_ON_READY',
+]);
+
+const CONFIRM_CITY_SLUGS = new Set([
+  'casablanca',
+  'rabat',
+  'marrakech',
+  'fes',
+  'tanger',
+  'agadir',
+  'meknes',
+  'oujda',
+  'kenitra',
+  'tetouan',
+  'sale',
+  'temara',
+  'el-jadida',
+  'beni-mellal',
+  'nador',
+  'khouribga',
+  'safi',
+  'taza',
+  'ouarzazate',
+  'mohammedia',
+]);
+
+const CONFIRM_CONTEXT_ID_RE =
+  /^fxctx-[0-9a-f]{32}$/;
+
+const CONFIRM_SERVICE_CODE_RE =
+  /^[a-z0-9_]+([.][a-z0-9_]+)+$/;
+
+const CONFIRM_PHONE_RE =
+  /^(\+212|0)[5-7][0-9]{8}$/;
+
+const MAX_PRICING_TOKEN_CHARS =
+  24 * 1024;
 
 const QUESTION_ID_RE =
   /^[a-z0-9_@.\-]{3,120}$/i;
@@ -1244,6 +1290,681 @@ function handleVerifyPricingContext(
 
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Action: confirm_request — 7C.9M.3
+// Body: { action:'confirm_request', pricing_context_token, client_phone }
+// ─────────────────────────────────────────────────────────────────────────────
+
+function normalizeConfirmationPhone(value) {
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  const trimmed =
+    value.trim();
+
+  if (!trimmed || trimmed.length > 32) {
+    return null;
+  }
+
+  const normalized =
+    trimmed.replace(
+      /[\s().-]+/g,
+      ''
+    );
+
+  return CONFIRM_PHONE_RE.test(normalized)
+    ? normalized
+    : null;
+}
+
+
+function deriveStableGuestToken(
+  contextId,
+  secret
+) {
+  return crypto
+    .createHmac(
+      'sha256',
+      secret
+    )
+    .update(
+      'fixeo-estimator-guest-v1:' +
+      contextId,
+      'utf8'
+    )
+    .digest('hex');
+}
+
+
+function deriveStableTrackingRef(
+  contextId,
+  secret
+) {
+  return (
+    'FX-' +
+    crypto
+      .createHmac(
+        'sha256',
+        secret
+      )
+      .update(
+        'fixeo-estimator-track-v1:' +
+        contextId,
+        'utf8'
+      )
+      .digest('hex')
+      .slice(0, 16)
+      .toUpperCase()
+  );
+}
+
+
+function hashGuestToken(token) {
+  return crypto
+    .createHash('sha256')
+    .update(
+      token,
+      'utf8'
+    )
+    .digest('hex');
+}
+
+
+function getSupabaseServerConfig() {
+  const url =
+    process.env.SUPABASE_URL || null;
+
+  const serviceKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY || null;
+
+  if (!url || !serviceKey) {
+    return null;
+  }
+
+  return {
+    url,
+    serviceKey,
+  };
+}
+
+
+async function callEstimatorConfirmationRpc(
+  rpcArgs
+) {
+  const cfg =
+    getSupabaseServerConfig();
+
+  if (!cfg) {
+    const e =
+      new Error(
+        'Supabase server configuration missing'
+      );
+
+    e.code =
+      'ENV_MISSING';
+
+    throw e;
+  }
+
+  let response;
+
+  try {
+    response =
+      await fetch(
+        cfg.url +
+        '/rest/v1/rpc/confirm_estimator_request_v1',
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+
+            'apikey':
+              cfg.serviceKey,
+
+            'Authorization':
+              'Bearer ' +
+              cfg.serviceKey,
+          },
+
+          body:
+            JSON.stringify(
+              rpcArgs
+            ),
+        }
+      );
+  } catch (e) {
+    const networkError =
+      new Error(
+        'Supabase confirmation network error'
+      );
+
+    networkError.code =
+      'NETWORK';
+
+    throw networkError;
+  }
+
+  let payload = null;
+
+  try {
+    payload =
+      await response.json();
+  } catch (_) {
+    payload = null;
+  }
+
+  if (!response.ok) {
+    const e =
+      new Error(
+        'Supabase confirmation RPC failed'
+      );
+
+    e.code =
+      'SUPABASE_RPC_ERROR';
+
+    e.httpStatus =
+      response.status;
+
+    throw e;
+  }
+
+  if (
+    !payload ||
+    typeof payload !== 'object' ||
+    Array.isArray(payload)
+  ) {
+    const e =
+      new Error(
+        'Invalid confirmation RPC response'
+      );
+
+    e.code =
+      'INVALID_RPC_RESPONSE';
+
+    throw e;
+  }
+
+  return payload;
+}
+
+
+async function callEstimatorDispatch(
+  requestId
+) {
+  const cfg =
+    getSupabaseServerConfig();
+
+  if (!cfg) {
+    return {
+      ok: false,
+      reason: 'env_missing',
+    };
+  }
+
+  let response;
+
+  try {
+    response =
+      await fetch(
+        cfg.url +
+        '/rest/v1/rpc/dispatch_request_v1',
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+
+            'apikey':
+              cfg.serviceKey,
+
+            'Authorization':
+              'Bearer ' +
+              cfg.serviceKey,
+          },
+
+          body:
+            JSON.stringify({
+              p_request_id:
+                requestId,
+            }),
+        }
+      );
+  } catch (_) {
+    return {
+      ok: false,
+      reason: 'network_error',
+    };
+  }
+
+  let payload = null;
+
+  try {
+    payload =
+      await response.json();
+  } catch (_) {
+    payload = null;
+  }
+
+  if (!response.ok) {
+    return {
+      ok: false,
+      reason:
+        'http_' +
+        response.status,
+    };
+  }
+
+  return {
+    ok:
+      !!(
+        payload &&
+        payload.ok
+      ),
+
+    reason:
+      (
+        payload &&
+        payload.reason
+      ) ||
+      null,
+  };
+}
+
+
+async function handleConfirmRequest(
+  body,
+  secret
+) {
+  const pricingToken =
+    body.pricing_context_token;
+
+  if (
+    typeof pricingToken !== 'string' ||
+    !pricingToken.trim()
+  ) {
+    return {
+      status: 400,
+      body: {
+        ok: false,
+        error:
+          'missing_pricing_context_token',
+      },
+    };
+  }
+
+  if (
+    pricingToken.length >
+      MAX_PRICING_TOKEN_CHARS
+  ) {
+    return {
+      status: 400,
+      body: {
+        ok: false,
+        error:
+          'invalid_pricing_context_token',
+      },
+    };
+  }
+
+  const clientPhone =
+    normalizeConfirmationPhone(
+      body.client_phone
+    );
+
+  if (!clientPhone) {
+    return {
+      status: 400,
+      body: {
+        ok: false,
+        error:
+          'invalid_client_phone',
+      },
+    };
+  }
+
+  let payload;
+
+  try {
+    payload =
+      unsealToken(
+        pricingToken,
+        secret
+      );
+  } catch (e) {
+    if (
+      e &&
+      e.message ===
+        'Token expired'
+    ) {
+      return {
+        status: 410,
+        body: {
+          ok: false,
+          error:
+            'pricing_context_expired',
+        },
+      };
+    }
+
+    return {
+      status: 400,
+      body: {
+        ok: false,
+        error:
+          'invalid_pricing_context_token',
+      },
+    };
+  }
+
+  if (
+    !payload ||
+    typeof payload !== 'object' ||
+    Array.isArray(payload)
+  ) {
+    return {
+      status: 400,
+      body: {
+        ok: false,
+        error:
+          'invalid_pricing_context',
+      },
+    };
+  }
+
+  const contextId =
+    typeof payload.context_id === 'string'
+      ? payload.context_id.trim()
+      : '';
+
+  const outcomeType =
+    typeof payload.outcome_type === 'string'
+      ? payload.outcome_type.trim().toUpperCase()
+      : '';
+
+  const serviceCode =
+    typeof payload.service_code === 'string'
+      ? payload.service_code.trim().toLowerCase()
+      : '';
+
+  const sessionId =
+    typeof payload.session_id === 'string'
+      ? payload.session_id.trim()
+      : '';
+
+  const citySlug =
+    typeof payload.city_slug === 'string'
+      ? payload.city_slug.trim().toLowerCase()
+      : '';
+
+  const amountMad =
+    payload.amount_mad;
+
+  if (
+    !CONFIRM_CONTEXT_ID_RE.test(
+      contextId
+    ) ||
+    !CONFIRM_PAYABLE_OUTCOMES.has(
+      outcomeType
+    ) ||
+    !CONFIRM_SERVICE_CODE_RE.test(
+      serviceCode
+    ) ||
+    !sessionId ||
+    sessionId.length > 200 ||
+    !CONFIRM_CITY_SLUGS.has(
+      citySlug
+    ) ||
+    !Number.isInteger(
+      amountMad
+    ) ||
+    amountMad <= 0 ||
+    (
+      payload.currency &&
+      payload.currency !== 'MAD'
+    )
+  ) {
+    return {
+      status: 422,
+      body: {
+        ok: false,
+        error:
+          'invalid_pricing_context',
+      },
+    };
+  }
+
+  const serviceDef =
+    resolver.getService(
+      serviceCode
+    );
+
+  if (!serviceDef) {
+    return {
+      status: 422,
+      body: {
+        ok: false,
+        error:
+          'unknown_service_code',
+      },
+    };
+  }
+
+  let description =
+    typeof payload.description === 'string'
+      ? payload.description
+          .trim()
+          .slice(0, 1000)
+      : '';
+
+  if (!description) {
+    description =
+      safeString(
+        serviceDef.label_fr ||
+        serviceDef.short_label_fr ||
+        serviceCode,
+        1000
+      ) ||
+      'Intervention FIXEO';
+  }
+
+  const guestToken =
+    deriveStableGuestToken(
+      contextId,
+      secret
+    );
+
+  const guestTokenHash =
+    hashGuestToken(
+      guestToken
+    );
+
+  const trackingRef =
+    deriveStableTrackingRef(
+      contextId,
+      secret
+    );
+
+  let confirmation;
+
+  try {
+    confirmation =
+      await callEstimatorConfirmationRpc({
+        p_context_id:
+          contextId,
+
+        p_outcome_type:
+          outcomeType,
+
+        p_service_code:
+          serviceCode,
+
+        p_session_id:
+          sessionId,
+
+        p_amount_mad:
+          amountMad,
+
+        p_city_slug:
+          citySlug,
+
+        p_client_phone:
+          clientPhone,
+
+        p_description:
+          description,
+
+        p_tracking_ref:
+          trackingRef,
+
+        p_guest_token_hash:
+          guestTokenHash,
+      });
+  } catch (e) {
+    if (
+      e &&
+      e.code ===
+        'ENV_MISSING'
+    ) {
+      return {
+        status: 503,
+        body: {
+          ok: false,
+          error:
+            'confirmation_not_configured',
+        },
+      };
+    }
+
+    console.error(
+      '[estimator-v1] confirmation RPC failed:',
+      e && e.code
+        ? e.code
+        : 'unknown'
+    );
+
+    return {
+      status: 502,
+      body: {
+        ok: false,
+        error:
+          'confirmation_persistence_failed',
+      },
+    };
+  }
+
+  if (!confirmation.ok) {
+    return {
+      status: 409,
+      body: {
+        ok: false,
+        error:
+          'confirmation_rejected',
+
+        reason:
+          safeString(
+            confirmation.reason,
+            120
+          ) ||
+          'unknown',
+      },
+    };
+  }
+
+  const requestId =
+    safeString(
+      confirmation.request_id,
+      80
+    );
+
+  const confirmedTrackingRef =
+    safeString(
+      confirmation.tracking_ref,
+      32
+    );
+
+  if (
+    !requestId ||
+    !confirmedTrackingRef
+  ) {
+    return {
+      status: 502,
+      body: {
+        ok: false,
+        error:
+          'invalid_confirmation_response',
+      },
+    };
+  }
+
+  /*
+   * Dispatch is deliberately AFTER the confirmation RPC has committed.
+   * A dispatch failure can never roll back or erase the confirmed request.
+   *
+   * Replays also retry dispatch. This closes the network-failure window where
+   * the request committed but the first HTTP response was lost before dispatch.
+   */
+  const dispatch =
+    await callEstimatorDispatch(
+      requestId
+    );
+
+  return {
+    status: 200,
+
+    body: {
+      ok: true,
+
+      replayed:
+        !!confirmation.replayed,
+
+      request_id:
+        requestId,
+
+      tracking_ref:
+        confirmedTrackingRef,
+
+      guest_token:
+        guestToken,
+
+      status:
+        confirmation.status ||
+        'new',
+
+      service_category:
+        confirmation.service_category ||
+        null,
+
+      service_code:
+        serviceCode,
+
+      city:
+        confirmation.city ||
+        null,
+
+      outcome_type:
+        outcomeType,
+
+      amount_mad:
+        amountMad,
+
+      dispatch_attempted:
+        true,
+
+      dispatch_ok:
+        !!dispatch.ok,
+
+      dispatch_reason:
+        dispatch.reason ||
+        null,
+    },
+  };
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Session reconstruction
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -1619,6 +2340,14 @@ async function handler(
       case 'verify_pricing_context':
         result =
           handleVerifyPricingContext(
+            body,
+            secret
+          );
+        break;
+
+      case 'confirm_request':
+        result =
+          await handleConfirmRequest(
             body,
             secret
           );
