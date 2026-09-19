@@ -3017,15 +3017,6 @@
     col.appendChild(
       el(
         'div',
-        'result-rafi-state',
-        'Diagnostic requis'
-      )
-    );
-
-
-    col.appendChild(
-      el(
-        'div',
         'result-rafi-label',
         'Évaluation préalable'
       )
