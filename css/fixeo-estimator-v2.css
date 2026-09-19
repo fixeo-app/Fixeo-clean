@@ -4381,3 +4381,23 @@ body.fx-estimator-tunnel-active {
     position: relative !important;
   }
 }
+
+/* ============================================================
+   RAFI ESTIMATOR — iOS automatic focus zoom prevention
+   Keep intentional pinch-zoom available.
+   ============================================================ */
+
+#fixeo-estimator-v2-root input,
+#fixeo-estimator-v2-root textarea,
+#fixeo-estimator-v2-root select,
+#fixeo-estimator-v2-root .estimator-city-input,
+#fixeo-estimator-v2-root .estimator-need-input {
+  font-size: 16px !important;
+}
+
+/* Prevent Safari from performing additional text inflation */
+#fixeo-estimator-v2-root,
+#fixeo-estimator-v2-root .estimator-modal {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
