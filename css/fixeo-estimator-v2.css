@@ -3557,3 +3557,513 @@ body.fx-estimator-tunnel-active {
     font-size: 13px;
   }
 }
+
+/* ==========================================================================
+   RAFI V4 — STATE 4 / PRIX FIXEO VERIFIED CERTIFICATE
+   Premium final moment. Presentation only.
+   ========================================================================== */
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.result-shell--price-certificate {
+  padding: 16px 18px 22px;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate {
+  display: grid;
+  gap: 12px;
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   VERIFIED HEADER
+   ────────────────────────────────────────────────────────────────────────── */
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__seal {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  min-height: 28px;
+  padding: 6px 10px;
+
+  border: 1px solid rgba(55, 212, 137, .18);
+  border-radius: 999px;
+
+  background: rgba(55, 212, 137, .055);
+
+  color: rgba(218, 255, 237, .86);
+
+  font-size: 9px;
+  font-weight: 760;
+  line-height: 1;
+  letter-spacing: .12em;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__seal-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+
+  border-radius: 50%;
+  background: #37d489;
+
+  box-shadow:
+    0 0 0 4px rgba(55, 212, 137, .08),
+    0 0 14px rgba(55, 212, 137, .35);
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__analysis {
+  color: rgba(231, 238, 248, .43);
+
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: .05em;
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   SERVICE
+   ────────────────────────────────────────────────────────────────────────── */
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__service {
+  padding: 2px 2px 0;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__service-label {
+  margin-bottom: 5px;
+
+  color: rgba(255, 154, 60, .62);
+
+  font-size: 8.5px;
+  font-weight: 760;
+  letter-spacing: .16em;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__service-name {
+  margin: 0;
+
+  color: #f7f9fc;
+
+  font-size: clamp(25px, 4vw, 34px);
+  font-weight: 840;
+  line-height: 1.02;
+  letter-spacing: -.035em;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__service-secondary {
+  margin-top: 4px;
+
+  color: rgba(231, 238, 248, .48);
+
+  font-size: 11px;
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   PRICE HERO
+   ────────────────────────────────────────────────────────────────────────── */
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__amount {
+  padding: 0;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__amount
+.price-hero-inner {
+  min-height: 190px;
+
+  padding: 25px 26px;
+
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 22px;
+
+  background:
+    radial-gradient(
+      circle at 88% 18%,
+      rgba(76, 125, 255, .18),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 10% 105%,
+      rgba(255, 122, 0, .21),
+      transparent 46%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, .055),
+      rgba(255, 255, 255, .014)
+    ),
+    #0f141c;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 18px 45px rgba(0,0,0,.20);
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__amount
+.price-eyebrow {
+  margin-bottom: 10px;
+
+  color: rgba(231, 238, 248, .46);
+
+  font-size: 8.5px;
+  font-weight: 720;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__amount
+.price-display {
+  display: flex;
+  align-items: flex-end;
+  gap: 11px;
+
+  line-height: .88;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__amount
+.price-display
+.amount {
+  font-size: clamp(68px, 12vw, 96px);
+  font-weight: 880;
+  letter-spacing: -.065em;
+
+  background:
+    linear-gradient(
+      105deg,
+      #ff821f 0%,
+      #ff3d91 46%,
+      #8e7bff 75%,
+      #61b8ff 100%
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  filter: drop-shadow(0 10px 28px rgba(255, 70, 140, .10));
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__amount
+.price-display
+.currency {
+  padding-bottom: 8px;
+
+  color: rgba(248, 250, 253, .88);
+
+  font-size: 17px;
+  font-weight: 790;
+  letter-spacing: -.02em;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__amount
+.price-sublabel {
+  margin-top: 11px;
+
+  color: rgba(231, 238, 248, .48);
+
+  font-size: 10.5px;
+  font-weight: 620;
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   VERIFIED PROOFS
+   ────────────────────────────────────────────────────────────────────────── */
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__proof {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-proof-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  min-height: 44px;
+  padding: 9px 11px;
+
+  border: 1px solid rgba(55, 212, 137, .10);
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(55, 212, 137, .045),
+      rgba(255,255,255,.012)
+    );
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-proof-item__icon {
+  display: grid;
+  place-items: center;
+
+  width: 21px;
+  height: 21px;
+  flex: 0 0 21px;
+
+  border-radius: 50%;
+
+  background: rgba(55, 212, 137, .10);
+
+  color: #58df9b;
+
+  font-size: 11px;
+  font-weight: 900;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-proof-item__text {
+  color: rgba(239, 244, 250, .78);
+
+  font-size: 10.5px;
+  line-height: 1.25;
+  font-weight: 660;
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   SCOPE
+   ────────────────────────────────────────────────────────────────────────── */
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__scope {
+  padding-top: 2px;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__scope
+.scope-section-label {
+  margin-bottom: 7px;
+
+  color: rgba(231, 238, 248, .42);
+
+  font-size: 8.5px;
+  font-weight: 720;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__scope
+.scope-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__scope
+.scope-chip {
+  padding: 6px 9px;
+
+  border: 1px solid rgba(255,255,255,.065);
+  border-radius: 999px;
+
+  background: rgba(255,255,255,.022);
+
+  color: rgba(235, 240, 247, .66);
+
+  font-size: 9.5px;
+}
+
+
+/* ──────────────────────────────────────────────────────────────────────────
+   FIXEO DOCTRINE
+   ────────────────────────────────────────────────────────────────────────── */
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__doctrine {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 11px;
+
+  padding: 12px 13px;
+
+  border: 1px solid rgba(255,255,255,.055);
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.025),
+      rgba(255,255,255,.008)
+    );
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__doctrine-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 23px;
+  padding: 5px 8px;
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      110deg,
+      rgba(255,122,0,.12),
+      rgba(255,45,149,.08)
+    );
+
+  color: rgba(255, 180, 108, .90);
+
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: .12em;
+}
+
+#fixeo-estimator-v2-root
+.estimator-modal--raficore-v3
+.price-certificate__doctrine
+.scope-doctrine {
+  margin: 0;
+
+  color: rgba(231, 238, 248, .54);
+
+  font-size: 9.5px;
+  line-height: 1.45;
+}
+
+
+/* MOBILE */
+@media (max-width: 767px) {
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .result-shell--price-certificate {
+    padding: 13px 12px 18px;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .price-certificate {
+    gap: 10px;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .price-certificate__top {
+    align-items: flex-start;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .price-certificate__analysis {
+    padding-top: 7px;
+
+    font-size: 8px;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .price-certificate__service-name {
+    font-size: 26px;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .price-certificate__amount
+  .price-hero-inner {
+    min-height: 172px;
+
+    padding: 21px 20px;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .price-certificate__amount
+  .price-display
+  .amount {
+    font-size: 72px;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .price-certificate__amount
+  .price-display
+  .currency {
+    padding-bottom: 7px;
+
+    font-size: 15px;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .price-certificate__proof {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .price-proof-item {
+    min-height: 40px;
+  }
+
+  #fixeo-estimator-v2-root
+  .estimator-modal--raficore-v3
+  .price-certificate__doctrine {
+    gap: 9px;
+
+    padding: 11px;
+  }
+}
