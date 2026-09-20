@@ -66,6 +66,14 @@ test('homepage boots without marketplace and preserves current entry points',asy
   city.value='Rabat';
   city.dispatchEvent(new w.Event('change',{bubbles:true}));
   assert.equal(w.sessionStorage.getItem('fxrf4_trusted_city_session'),'Rabat');
+  let serviceEstimate;
+  const estimatorOpen=w.FixeoEstimatorV2.open;
+  w.FixeoEstimatorV2.open=opts=>{serviceEstimate=opts;};
+  d.querySelector('#services button[data-category="plomberie"]').click();
+  assert.equal(serviceEstimate.city,'Rabat');
+  assert.equal(serviceEstimate.metier_hint,'plomberie');
+  assert.ok(serviceEstimate.description.includes('plombier'));
+  w.FixeoEstimatorV2.open=undefined;
   let received;const originalOpen=w.FixeoRequestFlowV4.open;
   w.FixeoRequestFlowV4.open=opts=>{received=opts;};
   d.querySelector('#services button[data-category="plomberie"]').click();
@@ -74,6 +82,7 @@ test('homepage boots without marketplace and preserves current entry points',asy
   originalOpen(received);
   assert.ok(d.querySelector('.fxrf4-chip.is-selected'),'actual request UI recognises the métier');
   w.FixeoRequestFlowV4.close();
+  w.FixeoEstimatorV2.open=estimatorOpen;
 
   // Estimate gateway carries the visible description instead of hidden legacy text.
   let estimate;w.FixeoEstimatorV2.open=opts=>{estimate=opts;};

@@ -68,7 +68,12 @@
         input.value = label;
         input.dispatchEvent(new Event('input', { bubbles: true }));
       }
-      if (window.FixeoRequestFlowV4) {
+      if (window.FixeoEstimatorV2 && typeof window.FixeoEstimatorV2.open === 'function') {
+        window.FixeoEstimatorV2.open({
+          source: 'homepage_service', city: city, description: label,
+          metier_hint: chip.dataset.category
+        });
+      } else if (window.FixeoRequestFlowV4) {
         window.FixeoRequestFlowV4.open({
           source: 'homepage_service', mode: 'default',
           prefillCity: city, prefillService: chip.dataset.category
