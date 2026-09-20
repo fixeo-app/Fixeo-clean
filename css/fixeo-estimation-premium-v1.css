@@ -1,0 +1,99 @@
+/* RAFI public estimation page. Shared modal and PAGE_REQUIRED styles are untouched. */
+body.fxep-mode-public {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #090e1b !important;
+  --fxep-text-1: #f4f6fc;
+  --fxep-text-2: #b3bed2;
+  --fxep-text-3: #98aac4;
+  --fxep-max: 1120px;
+  --fxep-border: #ffffff17;
+  --fxep-orange: #ffc48a;
+}
+#fxep-public-root { background: radial-gradient(ellipse 60% 700px at 80% 180px, #34407236, transparent), radial-gradient(ellipse 40% 500px at 0 400px, #833d5020, transparent); }
+#fxep-public-root *, #fxep-public-root *::before, #fxep-public-root *::after { box-sizing: border-box; }
+#fxep-public-root button, #fxep-public-root input, #fxep-public-root textarea { font-family: inherit; }
+#fxep-public-root button, #fxep-public-root a { -webkit-tap-highlight-color: transparent; }
+#fxep-public-root :focus-visible { outline: 3px solid #ffc48a; outline-offset: 4px; }
+#fxep-public-root .fxep-header { height: 76px; padding: 0 max(24px, calc((100vw - 1120px)/2)); background: #090e1bea; }
+#fxep-public-root .fxep-header-back { min-height: 44px; padding: 10px 18px; font-size: 13px; }
+#fxep-public-root .fxep-header-rafi-badge { font-size: 11px; color: #bbccff; }
+#fxep-public-root .fxep-hero {
+  max-width: 1200px; padding: 88px 40px 80px; display: grid;
+  grid-template-columns: 1fr 1fr; align-items: center; gap: 64px; text-align: left;
+}
+#fxep-public-root .fxep-hero-intro { min-width: 0; }
+#fxep-public-root .fxep-hero-signal { margin-bottom: 26px; color: #b3c8ff; font-size: 10px; letter-spacing: .12em; }
+#fxep-public-root .fxep-hero-eyebrow { display: block; font-size: 11px; color: #ffbe89; letter-spacing: .2em; margin-bottom: 18px; }
+#fxep-public-root .fxep-hero-h1 { font-size: clamp(38px, 4.4vw, 62px); line-height: 1.06; letter-spacing: -.055em; font-weight: 750; margin: 0 0 26px; max-width: 550px; }
+#fxep-public-root .fxep-hero-sub { font-size: 17px; line-height: 1.8; color: #b3bed2; margin: 0; max-width: 470px; }
+.fxep-hero-signature { margin-top: 32px; padding-left: 18px; border-left: 2px solid #d599ae; font-size: 13px; line-height: 1.8; max-width: 300px; color: #dce3f0; }
+#fxep-public-root .fxep-input-card { position: relative; width: 100%; margin: 0; padding: 30px; border: 1px solid #adbcff30; border-radius: 26px; background: linear-gradient(145deg,#202a416b,#111a2be8); box-shadow: 0 25px 70px #0004, inset 0 1px #ffffff0a; overflow: visible; }
+#fxep-public-root .fxep-input-card::before { content: ''; position: absolute; height: 2px; top: -1px; left: 26px; right: 26px; background: linear-gradient(90deg,#ffc48a,#f59cc7,#98baff); }
+.fxep-console-kicker { color: #c0ceef; font-size: 10px; font-weight: 700; letter-spacing: .16em; margin-bottom: 14px; }
+.fxep-console-title { display: block; font-size: 25px; line-height: 1.25; font-weight: 700; letter-spacing: -.025em; margin-bottom: 22px; }
+#fxep-public-root .fxep-input-row { padding: 0; align-items: flex-start; border: 1px solid #778db24a; border-radius: 15px; background: #0b1322; }
+#fxep-public-root .fxep-input-icon { display: none; }
+#fxep-public-root .fxep-nlp-input { width: 100%; min-width: 0; min-height: 112px; padding: 17px; margin: 0; border: 0; border-radius: 15px; background: transparent; color: #f4f6fc; resize: vertical; font-size: 16px; line-height: 1.65; }
+#fxep-public-root .fxep-nlp-input::placeholder { color: #a0aec6; opacity: 1; }
+#fxep-public-root .fxep-input-clear { min-width: 44px; min-height: 44px; flex-shrink: 0; }
+#fxep-public-root .fxep-city-row { padding: 16px 0 12px; border: 0; gap: 12px; }
+#fxep-public-root .fxep-city-label { color: #b3bed2; font-size: 13px; }
+#fxep-public-root .fxep-city-chip { min-height: 44px; padding: 10px 16px; background: #ffffff07; border: 1px solid #ffffff24; color: #e0e8fa; font-size: 14px; }
+#fxep-public-root .fxep-input-card button:not(.fxep-hero-cta):not(.fxep-input-clear) { min-height: 44px; }
+#fxep-public-root .fxep-hero-cta { width: 100%; margin: 22px 0 0; min-height: 56px; border: 0; border-radius: 14px; background: linear-gradient(110deg,#ffc47e,#ee9ec6 60%,#a9bcff); color: #161927; font-size: 16px; font-weight: 750; box-shadow: 0 8px 24px #eb9dad16; }
+#fxep-public-root .fxep-hero-cta:hover { filter: brightness(1.07); transform: none; }
+.fxep-console-note { font-size: 11px; line-height: 1.7; color: #adbad0; text-align: center; margin: 14px 0 0; }
+#fxep-public-root .fxep-how, #fxep-public-root .fxep-services, #fxep-public-root .fxep-outcomes, #fxep-public-root .fxep-faq { max-width: 1200px; padding: 54px 40px; margin: 0 auto; }
+#fxep-public-root .fxep-section-label { font-size: 10px; line-height: 1.7; letter-spacing: .16em; color: #bfafca; margin-bottom: 14px; }
+#fxep-public-root .fxep-section-title, #fxep-public-root .fxep-outcomes-heading { font-size: clamp(26px,3vw,36px); line-height: 1.2; letter-spacing: -.035em; margin: 0 0 16px; }
+.fxep-section-copy, #fxep-public-root .fxep-outcomes-sub { font-size: 15px; line-height: 1.8; color: #b3bed2; margin: 0 0 26px; }
+#fxep-public-root .fxep-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; margin-top: 32px; }
+#fxep-public-root .fxep-step { padding: 0; gap: 16px; }
+#fxep-public-root .fxep-step::before, #fxep-public-root .fxep-steps::before { display: none; }
+#fxep-public-root .fxep-step-num { color: #ffc48a; background: #ffc48a0a; border-color: #ffc48a25; width: 40px; height: 40px; flex: 0 0 40px; }
+#fxep-public-root .fxep-step-title { font-size: 16px; margin-bottom: 10px; }
+#fxep-public-root .fxep-step-desc { font-size: 14px; line-height: 1.75; color: #b3bed2; }
+#fxep-public-root .fxep-service-grid { grid-template-columns: repeat(3,1fr); gap: 12px; }
+#fxep-public-root .fxep-service-item { min-height: 102px; padding: 20px; border-radius: 16px; background: #ffffff04; border: 1px solid #ffffff14; text-align: left; }
+#fxep-public-root .fxep-service-item:hover { background: #ffffff08; border-color: #b0c5ff66; }
+#fxep-public-root .fxep-service-name { font-size: 14px; line-height: 1.4; }
+#fxep-public-root .fxep-service-badge { font-size: 11px; margin-top: 6px; color: #b4c5e5; }
+#fxep-public-root .fxep-outcomes-grid { grid-template-columns: repeat(4,1fr); gap: 14px; }
+#fxep-public-root .fxep-outcome-card { padding: 24px; border-radius: 18px; background: #ffffff03; }
+#fxep-public-root .fxep-outcome-card.is-price { background: linear-gradient(145deg,#6e43311f,#55365c18); border-color: #ffc48a38; }
+#fxep-public-root .fxep-outcome-name { font-size: 16px; margin: 14px 0 10px; }
+#fxep-public-root .fxep-outcome-desc { font-size: 14px; line-height: 1.8; color: #b3bed2; }
+#fxep-public-root .fxep-faq { max-width: 900px; padding-top: 70px; padding-bottom: 80px; }
+#fxep-public-root .fxep-faq-q { min-height: 68px; font-size: 15px; padding: 20px; color: #f4f6fc; text-align: left; }
+#fxep-public-root .fxep-faq-a { font-size: 14px; line-height: 1.8; color: #b3bed2; }
+#fxep-public-root .fxep-footer { padding: 28px max(24px, calc((100vw - 1120px)/2)); gap: 24px; border-top: 1px solid #ffffff14; }
+#fxep-public-root .fxep-footer-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 12px; color: #b3bed2; }
+#fxep-public-root .fxep-resume-wrap { max-width: 1120px; margin: 28px auto 0; padding: 0 24px; }
+@media(max-width: 900px) {
+  #fxep-public-root .fxep-hero { grid-template-columns: 1fr; max-width: 660px; gap: 32px; padding: 44px 24px; }
+  #fxep-public-root .fxep-hero-h1 { font-size: 44px; }
+  #fxep-public-root .fxep-hero-signature { display: none; }
+  #fxep-public-root .fxep-outcomes-grid { grid-template-columns: repeat(2,1fr); }
+  #fxep-public-root .fxep-steps { gap: 20px; }
+}
+@media(max-width: 600px) {
+  #fxep-public-root .fxep-header { height: 64px; padding: 0 20px; }
+  #fxep-public-root .fxep-hero { padding: 32px 20px; gap: 26px; }
+  #fxep-public-root .fxep-hero-h1 { font-size: 38px; margin-bottom: 18px; }
+  #fxep-public-root .fxep-hero-sub { font-size: 15px; line-height: 1.7; }
+  #fxep-public-root .fxep-hero-signal { margin-bottom: 18px; font-size: 9px; }
+  #fxep-public-root .fxep-input-card { padding: 22px 18px; border-radius: 22px; }
+  #fxep-public-root .fxep-how, #fxep-public-root .fxep-services, #fxep-public-root .fxep-outcomes, #fxep-public-root .fxep-faq { padding: 36px 20px; }
+  #fxep-public-root .fxep-steps { grid-template-columns: 1fr; gap: 26px; }
+  #fxep-public-root .fxep-service-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  #fxep-public-root .fxep-service-item { padding: 16px 12px; gap: 10px; }
+  #fxep-public-root .fxep-outcome-card { padding: 18px; }
+  #fxep-public-root .fxep-footer { flex-direction: column; align-items: flex-start; padding: 24px 20px; }
+  #fxep-public-root .fxep-footer-links { flex-wrap: wrap; gap: 6px 16px; }
+}
+@media(max-width: 360px) {
+  #fxep-public-root .fxep-hero-h1 { font-size: 33px; }
+  #fxep-public-root .fxep-service-grid, #fxep-public-root .fxep-outcomes-grid { grid-template-columns: 1fr; }
+}
+@media(prefers-reduced-motion: reduce) { #fxep-public-root * { scroll-behavior: auto; transition: none; animation: none; } }

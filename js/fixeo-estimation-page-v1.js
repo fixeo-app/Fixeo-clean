@@ -604,29 +604,34 @@
     section.appendChild(_el('span', 'fxep-hero-eyebrow', 'ESTIMATION FIXEO'));
 
     /* H1 */
-    var h1 = _el('h1', 'fxep-hero-h1', 'Obtenez votre estimation FIXEO');
+    var h1 = _el('h1', 'fxep-hero-h1', 'Votre intervention commence par un prix clair.');
     section.appendChild(h1);
 
     /* Subtitle */
     section.appendChild(_el('p', 'fxep-hero-sub',
-      'Décrivez votre intervention. RAFI analyse votre besoin et vérifie ' +
-      'si un Prix FIXEO peut être établi avant de choisir votre artisan.'));
+      'Une fuite, une panne, un projet ? Décrivez votre besoin. RAFI précise le périmètre et vérifie si un Prix FIXEO peut être établi.'));
 
     /* Input card / analysis console */
     var card = _el('div', 'fxep-input-card');
-    card.setAttribute('role', 'search');
+    card.setAttribute('role', 'group');
+    card.setAttribute('aria-label', 'Commencer mon estimation');
+    card.appendChild(_el('div', 'fxep-console-kicker', 'RAFI · À VOTRE ÉCOUTE'));
+    var inputLabel = _el('label', 'fxep-console-title', 'Que se passe-t-il ?');
+    inputLabel.htmlFor = 'fxep-nlp-input';
+    card.appendChild(inputLabel);
 
     var inputRow = _el('div', 'fxep-input-row');
     var icon = _el('span', 'fxep-input-icon');
-    icon.textContent = '🔍';
+    icon.textContent = '↗';
     icon.setAttribute('aria-hidden', 'true');
     inputRow.appendChild(icon);
 
-    var input = document.createElement('input');
-    input.type = 'text';
+    var input = document.createElement('textarea');
+    input.rows = 3;
+    input.maxLength = 2000;
     input.className = 'fxep-nlp-input';
     input.id = 'fxep-nlp-input';
-    input.placeholder = 'Robinet qui fuit, panne électrique, serrure bloquée…';
+    input.placeholder = 'Ex. : une fuite sous mon évier depuis ce matin…';
     input.setAttribute('autocomplete', 'off');
     input.setAttribute('autocorrect', 'off');
     input.setAttribute('spellcheck', 'false');
@@ -700,15 +705,20 @@
         rail.appendChild(node);
       }
     });
-    section.appendChild(rail);
+    // The three-step explanation below replaces the duplicate pipeline rail.
 
     /* Primary CTA */
-    var cta = _el('button', 'fxep-hero-cta', '✦ Analyser mon besoin');
+    var cta = _el('button', 'fxep-hero-cta', 'Continuer avec RAFI →');
     cta.type = 'button';
     cta.addEventListener('click', function () {
       _launchEstimator(input.value.trim());
     });
-    section.appendChild(cta);
+    card.appendChild(cta);
+    card.appendChild(_el('p', 'fxep-console-note', 'Analyse gratuite · Aucune intervention déclenchée à cette étape.'));
+    var intro = _el('div', 'fxep-hero-intro');
+    [signal, section.querySelector('.fxep-hero-eyebrow'), h1, section.querySelector('.fxep-hero-sub')].forEach(function (n) { intro.appendChild(n); });
+    intro.appendChild(_el('div', 'fxep-hero-signature', 'Un besoin compris. Un périmètre précis. Une décision éclairée.'));
+    section.insertBefore(intro, card);
 
     /* Wire input events */
     input.addEventListener('input', function () {
@@ -717,7 +727,7 @@
       _refreshSuggestions(suggestWrap, input, val);
     });
     input.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
         _launchEstimator(input.value.trim());
       }
@@ -736,10 +746,9 @@
     section.setAttribute('aria-label', 'Parcours RAFI selon le type d\'intervention');
 
     section.appendChild(_el('div', 'fxep-section-label', 'Une analyse, le bon parcours.'));
-    section.appendChild(_el('h2', 'fxep-outcomes-heading', 'RAFI choisit le bon résultat'));
+    section.appendChild(_el('h2', 'fxep-outcomes-heading', 'Le bon résultat, selon votre intervention.'));
     section.appendChild(_el('p', 'fxep-outcomes-sub',
-      'RAFI ne produit pas de prix pour toute intervention. ' +
-      'Quand le périmètre n\'est pas identifiable, il vous oriente vers la bonne étape suivante.'));
+      'Un prix lorsque le périmètre le permet. Une étape adaptée lorsqu’il faut aller plus loin.'));
 
     var grid = _el('div', 'fxep-outcomes-grid');
 
@@ -764,8 +773,8 @@
       },
       {
         icon: '👷',
-        name: 'Artisan',
-        desc: 'RAFI identifie le métier et vous dirige vers les professionnels adaptés.',
+        name: 'Orientation',
+        desc: 'Le besoin demande à être précisé avant de poursuivre. Aucun prix n’est inventé.',
         cls: 'fxep-outcome-card',
       },
     ];
@@ -789,7 +798,8 @@
     var section = _el('section', 'fxep-how fxep-public-only');
     section.setAttribute('aria-label', 'Comment ça marche');
 
-    section.appendChild(_el('div', 'fxep-section-label', 'Comment ça marche'));
+    section.appendChild(_el('div', 'fxep-section-label', 'SIMPLE, DU DÉBUT À LA SUITE'));
+    section.appendChild(_el('h2', 'fxep-section-title', 'Vous décrivez. RAFI vous guide.'));
 
     var steps = _el('div', 'fxep-steps');
 
@@ -806,8 +816,8 @@
       },
       {
         num: '3',
-        title: 'Continuez',
-        desc: 'Prix FIXEO lorsqu\'il est vérifiable, sinon diagnostic, devis ou sélection d\'artisan.',
+        title: 'Décidez de la suite',
+        desc: 'Consultez votre résultat. Si un prix est proposé, vous choisissez ensuite de confirmer votre demande.',
       },
     ];
 
@@ -844,7 +854,9 @@
     var section = _el('section', 'fxep-services fxep-public-only');
     section.setAttribute('aria-label', 'Exemples de services');
 
-    section.appendChild(_el('div', 'fxep-section-label', 'Exemples d\'interventions'));
+    section.appendChild(_el('div', 'fxep-section-label', 'LES BESOINS DU QUOTIDIEN'));
+    section.appendChild(_el('h2', 'fxep-section-title', 'Par où commencer ?'));
+    section.appendChild(_el('p', 'fxep-section-copy', 'Choisissez un exemple, puis adaptez-le à votre situation.'));
 
     var SERVICES = [
       /* Proven PRICE_READY from fixtures */
@@ -870,6 +882,7 @@
           inp.value = hint;
           inp.dispatchEvent(new Event('input', { bubbles: true }));
           /* preventScroll: no viewport jump on iOS (3Z.2E.3 contract) */
+          inp.scrollIntoView({behavior: 'auto', block: 'center'});
           inp.focus({ preventScroll: true });
         }
       });
@@ -984,7 +997,7 @@
       item.appendChild(document.createTextNode(t.label));
       rail.appendChild(item);
     });
-    section.appendChild(rail);
+    // The three-step explanation below replaces the duplicate pipeline rail.
     container.appendChild(section);
   }
 
@@ -1007,13 +1020,11 @@
         q: 'Comment FIXEO calcule-t-il mon estimation ?',
         a: 'RAFI identifie le type d\'intervention à partir de votre description. ' +
            'Lorsque le périmètre est clair et catalogué, le moteur de tarification FIXEO ' +
-           'produit un prix vérifié — basé sur les conditions réelles du marché marocain.',
+           'établit le Prix FIXEO applicable au périmètre validé.',
       },
       {
         q: 'Tous les services ont-ils un Prix FIXEO ?',
-        a: 'Non. Les interventions dont le coût dépend de mesures précises (surface à peindre, ' +
-           'longueur de tuyauterie…) ou de diagnostics sur place ne reçoivent pas de Prix FIXEO. ' +
-           'Dans ces cas, RAFI vous oriente vers un artisan pour un diagnostic ou un devis.',
+        a: 'Non. Selon votre besoin et les précisions recueillies, le résultat peut être un prix, un diagnostic, un devis ou une invitation à préciser votre demande. Le tarif et son périmètre sont indiqués avant toute confirmation.',
       },
       {
         q: 'Que se passe-t-il si l\'intervention réelle est différente ?',
@@ -1022,9 +1033,9 @@
            'votre accord avant de continuer.',
       },
       {
-        q: 'Puis-je choisir mon artisan après l\'estimation ?',
-        a: 'Oui. Une fois votre résultat obtenu, vous accédez à la liste des artisans référencés ' +
-           'disponibles dans votre ville. Vous choisissez librement parmi les profils FIXEO.',
+        q: 'Que se passe-t-il après mon estimation ?',
+        a: 'Lorsqu’un prix est proposé, vous pouvez poursuivre vers la confirmation avec votre téléphone. ' +
+           'Une fois la demande enregistrée, FIXEO recherche un artisan. Son acceptation reste à confirmer et vous pouvez suivre votre demande.',
       },
       {
         q: 'Est-ce que l\'analyse est gratuite ?',
@@ -1085,6 +1096,8 @@
       { label: 'Comment ça marche', href: '/comment-ca-marche.html' },
       { label: 'Tarifs', href: '/pricing.html' },
       { label: 'Entreprises', href: '/entreprises.html' },
+      { label: 'Artisans', href: '/artisans.html' },
+      { label: 'Confidentialité', href: '/confidentialite.html' },
     ];
     LINKS.forEach(function (l) {
       var a = _el('a', 'fxep-footer-link', _esc(l.label));
@@ -1109,22 +1122,9 @@
     /* Resume card: inject between header and hero (after _renderHero) */
     _maybeRenderResume(wrap);
 
-    wrap.appendChild(_el('div', 'fxep-section-divider fxep-public-only'));
-    _renderOutcomes(wrap);
-
-    wrap.appendChild(_el('div', 'fxep-section-divider fxep-public-only'));
     _renderHow(wrap);
-
-    wrap.appendChild(_el('div', 'fxep-section-divider fxep-public-only'));
     _renderServices(wrap);
-
-    wrap.appendChild(_el('div', 'fxep-section-divider fxep-public-only'));
-    _renderGateway(wrap);
-
-    wrap.appendChild(_el('div', 'fxep-section-divider fxep-public-only'));
-    _renderTrust(wrap);
-
-    wrap.appendChild(_el('div', 'fxep-section-divider fxep-public-only'));
+    _renderOutcomes(wrap);
     _renderFAQ(wrap);
 
     _renderFooter(wrap);
