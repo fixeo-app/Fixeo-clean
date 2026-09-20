@@ -41,14 +41,14 @@ var SERVICE_QUESTION_PLANS = {
   },
   'plomberie.fuite_simple': {
     questions: [
-      { input_id: 'leak_location_confirmed', priority: 'ROUTING_BOUNDARY', answer_type: 'boolean', prompt_key: 'plomberie.fuite_simple.leak_confirmed' },
+      {input_id:'plumbing_scope',priority:'ROUTING_BOUNDARY',answer_type:'enum',options:['LOCAL_ACCESSIBLE','COMPLEX','UNKNOWN'],prompt_key:'plumbing_scope'},
     ]
   },
   'plomberie.debouchage_evier': {
-    questions: []
+    questions: [{input_id:'plumbing_scope',priority:'ROUTING_BOUNDARY',answer_type:'enum',options:['LOCAL_ACCESSIBLE','COMPLEX','UNKNOWN'],prompt_key:'plumbing_scope'}]
   },
   'plomberie.debouchage_wc_simple': {
-    questions: []
+    questions: [{input_id:'plumbing_scope',priority:'ROUTING_BOUNDARY',answer_type:'enum',options:['LOCAL_ACCESSIBLE','COMPLEX','UNKNOWN'],prompt_key:'plumbing_scope'}]
   },
   'plomberie.robinet_remplacement': {
     questions: [
@@ -221,6 +221,7 @@ var SERVICE_QUESTION_PLANS = {
   },
   'nettoyage.grand_menage': {
     questions: [
+      {input_id:'surface_m2',priority:'QUANTITY_MEASUREMENT',answer_type:'number',prompt_key:'surface_m2'},
       { input_id: 'property_type', priority: 'ELIGIBILITY', answer_type: 'enum', options: ['APARTMENT', 'VILLA', 'studio_f1', 'f4_f5_large'], prompt_key: 'nettoyage.eligibility.property_type' },
     ]
   },
@@ -392,3 +393,4 @@ module.exports = {
   computeUIRecommendation: computeUIRecommendation,
   getServiceQuestionPlan: getServiceQuestionPlan,
 };
+

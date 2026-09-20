@@ -10,10 +10,10 @@
  }
  function css(href){if(!document.querySelector('link[href="'+href+'"]')){const l=document.createElement('link');l.rel='stylesheet';l.href=href;document.head.append(l);}}
  async function prepare(){
-  css('css/fixeo-estimator-v2.css?v=7c9m4-continuity2');
+  css('css/fixeo-estimator-v2.css?v=coverage1');
   css('css/fixeo-estimation-voice-v1.css?v=voice1');
   // Sequential dependencies; successful files stay cached if a later request fails.
-  for(const src of ['js/fixeo-estimator-config.js','js/fixeo-estimator-api-v1.js','js/fixeo-estimator-reservation-bridge-v1.js?v=7c9m4-continuity2','js/fixeo-ai-request-engine.js?v=aire-v1a','js/fixeo-rafi-language-v1.js?v=frl-v1a','js/fixeo-estimator-v2.js?v=rafi-back1','js/fixeo-estimation-voice-v1.js?v=mic-svg1','js/fixeo-discovery-v1.js?v=dialog5'])await script(src);
+  for(const src of ['js/fixeo-estimator-config.js','js/fixeo-estimator-api-v1.js','js/fixeo-estimator-reservation-bridge-v1.js?v=7c9m4-continuity2','js/fixeo-ai-request-engine.js?v=aire-v1a','js/fixeo-rafi-language-v1.js?v=frl-v1a','js/fixeo-estimator-v2.js?v=coverage1','js/fixeo-estimation-voice-v1.js?v=mic-svg1','js/fixeo-discovery-v1.js?v=coverage1'])await script(src);
  }
  document.getElementById('services-main').addEventListener('click',async event=>{
   const trigger=event.target.closest('button[data-discovery]');if(!trigger||pending)return;

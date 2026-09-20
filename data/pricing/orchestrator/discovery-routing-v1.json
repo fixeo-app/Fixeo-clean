@@ -1,0 +1,457 @@
+{
+  "version": 1,
+  "situations": {
+    "eau.robinet-qui-fuit": {
+      "label": "Robinet qui fuit",
+      "universe": "eau",
+      "metier": "plomberie",
+      "candidate_services": [
+        "plomberie.fuite_simple",
+        "plomberie.robinet_remplacement",
+        "plomberie.diagnostic"
+      ]
+    },
+    "eau.fuite-sous-un-evier": {
+      "label": "Fuite sous un évier",
+      "universe": "eau",
+      "metier": "plomberie",
+      "candidate_services": [
+        "plomberie.fuite_simple",
+        "plomberie.diagnostic"
+      ]
+    },
+    "eau.wc-bouche": {
+      "label": "WC bouché",
+      "universe": "eau",
+      "metier": "plomberie",
+      "candidate_services": [
+        "plomberie.debouchage_wc_simple"
+      ]
+    },
+    "eau.canalisation-bouchee": {
+      "label": "Canalisation bouchée",
+      "universe": "eau",
+      "metier": "plomberie",
+      "candidate_services": [
+        "plomberie.debouchage_evier",
+        "plomberie.diagnostic"
+      ]
+    },
+    "eau.chasse-deau-defectueuse": {
+      "label": "Chasse d’eau défectueuse",
+      "universe": "eau",
+      "metier": "plomberie",
+      "candidate_services": [
+        "plomberie.chasse_eau"
+      ]
+    },
+    "eau.installer-un-sanitaire": {
+      "label": "Installer un sanitaire",
+      "universe": "eau",
+      "metier": "plomberie",
+      "candidate_services": []
+    },
+    "eau.chauffe-eau-en-panne": {
+      "label": "Chauffe-eau en panne",
+      "universe": "eau",
+      "metier": "plomberie",
+      "candidate_services": [
+        "plomberie.diagnostic"
+      ]
+    },
+    "eau.faible-pression-deau": {
+      "label": "Faible pression d’eau",
+      "universe": "eau",
+      "metier": "plomberie",
+      "candidate_services": [
+        "plomberie.diagnostic"
+      ]
+    },
+    "electricite.prise-qui-ne-fonctionne-plus": {
+      "label": "Prise qui ne fonctionne plus",
+      "universe": "electricite",
+      "metier": "electricite",
+      "candidate_services": [
+        "electricite.diagnostic",
+        "electricite.prise_remplacement"
+      ]
+    },
+    "electricite.eclairage-en-panne": {
+      "label": "Éclairage en panne",
+      "universe": "electricite",
+      "metier": "electricite",
+      "candidate_services": [
+        "electricite.diagnostic"
+      ]
+    },
+    "electricite.disjoncteur-qui-saute": {
+      "label": "Disjoncteur qui saute",
+      "universe": "electricite",
+      "metier": "electricite",
+      "candidate_services": [
+        "electricite.diagnostic",
+        "electricite.disjoncteur_remplacement"
+      ]
+    },
+    "electricite.installer-un-luminaire": {
+      "label": "Installer un luminaire",
+      "universe": "electricite",
+      "metier": "electricite",
+      "candidate_services": [
+        "electricite.luminaire_installation"
+      ]
+    },
+    "electricite.ajouter-une-prise": {
+      "label": "Ajouter une prise",
+      "universe": "electricite",
+      "metier": "electricite",
+      "candidate_services": []
+    },
+    "electricite.verifier-un-tableau-electrique": {
+      "label": "Vérifier un tableau électrique",
+      "universe": "electricite",
+      "metier": "electricite",
+      "candidate_services": [
+        "electricite.diagnostic"
+      ]
+    },
+    "electricite.equipement-electrique-en-panne": {
+      "label": "Équipement électrique en panne",
+      "universe": "electricite",
+      "metier": "electricite",
+      "candidate_services": []
+    },
+    "confort.climatiseur-qui-ne-refroidit-plus": {
+      "label": "Climatiseur qui ne refroidit plus",
+      "universe": "confort",
+      "metier": "climatisation",
+      "candidate_services": [
+        "climatisation.diagnostic"
+      ]
+    },
+    "confort.installer-un-climatiseur": {
+      "label": "Installer un climatiseur",
+      "universe": "confort",
+      "metier": "climatisation",
+      "candidate_services": [
+        "climatisation.installation.standard",
+        "climatisation.installation.cassette"
+      ]
+    },
+    "confort.entretenir-une-climatisation": {
+      "label": "Entretenir une climatisation",
+      "universe": "confort",
+      "metier": "climatisation",
+      "candidate_services": [
+        "climatisation.entretien_annuel",
+        "climatisation.desinfection_profonde"
+      ]
+    },
+    "confort.climatiseur-qui-fuit": {
+      "label": "Climatiseur qui fuit",
+      "universe": "confort",
+      "metier": "climatisation",
+      "candidate_services": [
+        "climatisation.diagnostic"
+      ]
+    },
+    "confort.bruit-inhabituel-de-climatisation": {
+      "label": "Bruit inhabituel de climatisation",
+      "universe": "confort",
+      "metier": "climatisation",
+      "candidate_services": [
+        "climatisation.diagnostic"
+      ]
+    },
+    "confort.probleme-de-ventilation": {
+      "label": "Problème de ventilation",
+      "universe": "confort",
+      "metier": "climatisation",
+      "candidate_services": []
+    },
+    "confort.chauffage-en-panne": {
+      "label": "Chauffage en panne",
+      "universe": "confort",
+      "metier": "climatisation",
+      "candidate_services": []
+    },
+    "portes.porte-claquee": {
+      "label": "Porte claquée",
+      "universe": "portes",
+      "metier": "serrurerie",
+      "candidate_services": [
+        "serrurerie.porte_claquee_ouverture",
+        "serrurerie.porte_claquee_blindee.ouverture",
+        "serrurerie.porte_verrouillee.ouverture"
+      ]
+    },
+    "portes.cle-cassee-dans-la-serrure": {
+      "label": "Clé cassée dans la serrure",
+      "universe": "portes",
+      "metier": "serrurerie",
+      "candidate_services": [
+        "serrurerie.cle_cassee_extraction"
+      ]
+    },
+    "portes.remplacer-une-serrure": {
+      "label": "Remplacer une serrure",
+      "universe": "portes",
+      "metier": "serrurerie",
+      "candidate_services": [
+        "serrurerie.serrure_remplacement.standard",
+        "serrurerie.cylindre_remplacement.standard"
+      ]
+    },
+    "portes.fenetre-qui-ferme-mal": {
+      "label": "Fenêtre qui ferme mal",
+      "universe": "portes",
+      "metier": "menuiserie",
+      "candidate_services": []
+    },
+    "portes.vitre-fissuree": {
+      "label": "Vitre fissurée",
+      "universe": "portes",
+      "metier": "autre",
+      "candidate_services": []
+    },
+    "portes.volet-bloque": {
+      "label": "Volet bloqué",
+      "universe": "portes",
+      "metier": "menuiserie",
+      "candidate_services": []
+    },
+    "portes.reparer-une-porte": {
+      "label": "Réparer une porte",
+      "universe": "portes",
+      "metier": "menuiserie",
+      "candidate_services": [
+        "menuiserie.reglage_porte.sans_rabotage",
+        "menuiserie.reglage_porte.avec_rabotage",
+        "menuiserie.remplacement_charniere",
+        "menuiserie.installation_porte"
+      ]
+    },
+    "portes.installer-une-grille-de-protection": {
+      "label": "Installer une grille de protection",
+      "universe": "portes",
+      "metier": "autre",
+      "candidate_services": []
+    },
+    "travaux.repeindre-une-piece": {
+      "label": "Repeindre une pièce",
+      "universe": "travaux",
+      "metier": "peinture",
+      "candidate_services": [
+        "peinture.mur_interieur.labour_only",
+        "peinture.mur_interieur.all_in",
+        "peinture.mur_interieur.all_in_avec_prep",
+        "peinture.plafond.labour_only"
+      ]
+    },
+    "travaux.peindre-une-facade": {
+      "label": "Peindre une façade",
+      "universe": "travaux",
+      "metier": "peinture",
+      "candidate_services": []
+    },
+    "travaux.poser-du-carrelage": {
+      "label": "Poser du carrelage",
+      "universe": "travaux",
+      "metier": "carrelage",
+      "candidate_services": []
+    },
+    "travaux.reparer-des-joints": {
+      "label": "Réparer des joints",
+      "universe": "travaux",
+      "metier": "carrelage",
+      "candidate_services": []
+    },
+    "travaux.infiltration-ou-etancheite": {
+      "label": "Infiltration ou étanchéité",
+      "universe": "travaux",
+      "metier": "autre",
+      "candidate_services": []
+    },
+    "travaux.renover-une-salle-de-bains": {
+      "label": "Rénover une salle de bains",
+      "universe": "travaux",
+      "metier": "autre",
+      "candidate_services": []
+    },
+    "travaux.renover-une-cuisine": {
+      "label": "Rénover une cuisine",
+      "universe": "travaux",
+      "metier": "autre",
+      "candidate_services": []
+    },
+    "travaux.petits-travaux-de-maconnerie": {
+      "label": "Petits travaux de maçonnerie",
+      "universe": "travaux",
+      "metier": "maconnerie",
+      "candidate_services": []
+    },
+    "travaux.amenager-une-cloison": {
+      "label": "Aménager une cloison",
+      "universe": "travaux",
+      "metier": "autre",
+      "candidate_services": []
+    },
+    "travaux.preparer-une-renovation-complete": {
+      "label": "Préparer une rénovation complète",
+      "universe": "travaux",
+      "metier": "autre",
+      "candidate_services": []
+    },
+    "installation.monter-un-meuble": {
+      "label": "Monter un meuble",
+      "universe": "installation",
+      "metier": "bricolage",
+      "candidate_services": [
+        "bricolage.montage_meuble"
+      ]
+    },
+    "installation.fixer-une-etagere": {
+      "label": "Fixer une étagère",
+      "universe": "installation",
+      "metier": "bricolage",
+      "candidate_services": [
+        "bricolage.fixation_accrochage"
+      ]
+    },
+    "installation.installer-une-tringle": {
+      "label": "Installer une tringle",
+      "universe": "installation",
+      "metier": "bricolage",
+      "candidate_services": [
+        "bricolage.fixation_accrochage"
+      ]
+    },
+    "installation.fixer-un-televiseur": {
+      "label": "Fixer un téléviseur",
+      "universe": "installation",
+      "metier": "bricolage",
+      "candidate_services": [
+        "bricolage.intervention_conditionnelle"
+      ]
+    },
+    "installation.poser-des-meubles-de-cuisine": {
+      "label": "Poser des meubles de cuisine",
+      "universe": "installation",
+      "metier": "menuiserie",
+      "candidate_services": []
+    },
+    "installation.reparer-un-meuble": {
+      "label": "Réparer un meuble",
+      "universe": "installation",
+      "metier": "menuiserie",
+      "candidate_services": [
+        "menuiserie.remplacement_charniere",
+        "menuiserie.remplacement_coulisse_tiroir"
+      ]
+    },
+    "installation.creer-un-rangement-sur-mesure": {
+      "label": "Créer un rangement sur mesure",
+      "universe": "installation",
+      "metier": "menuiserie",
+      "candidate_services": []
+    },
+    "installation.installer-un-equipement": {
+      "label": "Installer un équipement",
+      "universe": "installation",
+      "metier": "autre",
+      "candidate_services": []
+    },
+    "entretien.nettoyage-apres-travaux": {
+      "label": "Nettoyage après travaux",
+      "universe": "entretien",
+      "metier": "nettoyage",
+      "candidate_services": [
+        "nettoyage.apres_travaux"
+      ]
+    },
+    "entretien.grand-nettoyage": {
+      "label": "Grand nettoyage",
+      "universe": "entretien",
+      "metier": "nettoyage",
+      "candidate_services": [
+        "nettoyage.grand_menage",
+        "nettoyage.menage_standard"
+      ]
+    },
+    "entretien.nettoyer-un-canape": {
+      "label": "Nettoyer un canapé",
+      "universe": "entretien",
+      "metier": "nettoyage",
+      "candidate_services": [
+        "nettoyage.canape.deux_places",
+        "nettoyage.canape.trois_places"
+      ]
+    },
+    "entretien.entretien-de-jardin": {
+      "label": "Entretien de jardin",
+      "universe": "entretien",
+      "metier": "jardinage",
+      "candidate_services": []
+    },
+    "entretien.taille-de-haie": {
+      "label": "Taille de haie",
+      "universe": "entretien",
+      "metier": "jardinage",
+      "candidate_services": []
+    },
+    "entretien.probleme-darrosage": {
+      "label": "Problème d’arrosage",
+      "universe": "entretien",
+      "metier": "jardinage",
+      "candidate_services": []
+    },
+    "entretien.amenager-une-terrasse": {
+      "label": "Aménager une terrasse",
+      "universe": "entretien",
+      "metier": "autre",
+      "candidate_services": []
+    },
+    "entretien.entretien-de-piscine": {
+      "label": "Entretien de piscine",
+      "universe": "entretien",
+      "metier": "autre",
+      "candidate_services": []
+    },
+    "demenagement.demenager-un-appartement": {
+      "label": "Déménager un appartement",
+      "universe": "demenagement",
+      "metier": "demenagement",
+      "candidate_services": []
+    },
+    "demenagement.transporter-quelques-meubles": {
+      "label": "Transporter quelques meubles",
+      "universe": "demenagement",
+      "metier": "demenagement",
+      "candidate_services": []
+    },
+    "demenagement.deplacer-un-objet-lourd": {
+      "label": "Déplacer un objet lourd",
+      "universe": "demenagement",
+      "metier": "demenagement",
+      "candidate_services": []
+    },
+    "demenagement.demonter-et-remonter-du-mobilier": {
+      "label": "Démonter et remonter du mobilier",
+      "universe": "demenagement",
+      "metier": "demenagement",
+      "candidate_services": []
+    },
+    "demenagement.charger-ou-decharger-un-vehicule": {
+      "label": "Charger ou décharger un véhicule",
+      "universe": "demenagement",
+      "metier": "demenagement",
+      "candidate_services": []
+    },
+    "demenagement.preparer-un-demenagement-de-bureau": {
+      "label": "Préparer un déménagement de bureau",
+      "universe": "demenagement",
+      "metier": "demenagement",
+      "candidate_services": []
+    }
+  }
+}

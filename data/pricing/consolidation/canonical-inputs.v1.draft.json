@@ -99,7 +99,7 @@
       "max": null,
       "max_note": "No hard max. Very large surfaces may trigger quote. NET-030: 1000 MAD project minimum applies below ~56 m².",
       "required_when": "service unit = PER_M2 (NET-030 only in current pilot)",
-      "semantic_definition": "Total floor surface area in square metres. Used ONLY for NET-030 (post-construction cleaning). NOT the same as painted_m2 or ceiling_m2.",
+      "semantic_definition": "Total floor area to clean; also bounds the grand ménage 60–100 m² package.",
       "client_question_fr": "Surface totale à nettoyer (en m²) ?",
       "client_question_ar_darija": "شحال من متر مربع باش تنظف؟",
       "validation_behavior": "REQUIRED for NET-030. Hard block if absent.",
@@ -947,6 +947,19 @@
       "engine_v1_use": false,
       "added_in_phase": "7C.7",
       "note": "Used by orchestrator question planner only. Engine does not require it in V0.3."
+    },
+    "plumbing_scope": {
+      "input_id": "plumbing_scope",
+      "data_type": "string",
+      "allowed_values": [
+        "LOCAL_ACCESSIBLE",
+        "COMPLEX",
+        "UNKNOWN"
+      ],
+      "required_when": "plomberie.fuite_simple / debouchage_evier / debouchage_wc_simple",
+      "client_question_fr": "Le problème est-il localisé sur un seul équipement accessible ?",
+      "semantic_definition": "LOCAL_ACCESSIBLE: one accessible fitting or fixture, no concealed piping or shared main network. COMPLEX or UNKNOWN require assessment before a repair price.",
+      "privacy_classification": "NON_SENSITIVE"
     }
   }
 }

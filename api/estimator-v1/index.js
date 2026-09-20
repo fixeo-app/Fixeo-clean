@@ -2075,6 +2075,8 @@ function sanitizeStep(step) {
             )
           : null,
 
+      prompt_fr: safeString(step.prompt_fr, 600),
+
       priority:
         step.priority,
 
@@ -2391,3 +2393,4 @@ async function handler(
     result.body
   );
 };
+
