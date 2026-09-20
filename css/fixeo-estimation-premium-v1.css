@@ -185,7 +185,7 @@ body.fxep-mode-public .fxf-canonical > .container { max-width: 1120px; padding-l
 #fxep-public-root .fxep-steps { grid-column: 2; grid-row: 1 / 4; display: grid; grid-template-columns: 1fr; list-style: none; margin: 0; padding: 0; gap: 0; border: 1px solid #ccb9ed20; border-radius: 24px; background: linear-gradient(135deg,#25203880,#121c2b90); overflow: hidden; }
 #fxep-public-root .fxep-step { flex-direction: row; gap: 20px; padding: 26px; border: 0; border-radius: 0; background: none; }
 #fxep-public-root .fxep-step + .fxep-step { border-top: 1px solid #ffffff0d; }
-#fxep-public-root .fxep-step-num { flex: 0 0 44px; width: 44px; height: 44px; display: grid; place-items: center; font-size: 13px; color: #ffcf9b; border: 1px solid #ffcf9b40; border-radius: 50%; background: #ffcf9b08; }
+#fxep-public-root .fxep-step-num { flex: 0 0 44px; width: 44px; height: 44px; display: grid; place-items: center; justify-content: center; font-size: 13px; color: #ffcf9b; border: 1px solid #ffcf9b40; border-radius: 50%; background: #ffcf9b08; }
 #fxep-public-root .fxep-step:nth-child(2) .fxep-step-num { color: #e8aeca; border-color: #e8aeca40; }
 #fxep-public-root .fxep-step:nth-child(3) .fxep-step-num { color: #b8c8ff; border-color: #b8c8ff40; }
 #fxep-public-root .fxep-step-title { margin: 0 0 7px; font-size: 16px; line-height: 1.4; }
