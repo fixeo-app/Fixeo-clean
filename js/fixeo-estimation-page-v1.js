@@ -604,18 +604,18 @@
     section.appendChild(_el('span', 'fxep-hero-eyebrow', 'ESTIMATION FIXEO'));
 
     /* H1 */
-    var h1 = _el('h1', 'fxep-hero-h1', 'Votre intervention commence par un prix clair.');
+    var h1 = _el('h1', 'fxep-hero-h1', 'Un problème.<br><span>Voyons plus clair.</span>');
     section.appendChild(h1);
 
     /* Subtitle */
     section.appendChild(_el('p', 'fxep-hero-sub',
-      'Une fuite, une panne, un projet ? Décrivez votre besoin. RAFI précise le périmètre et vérifie si un Prix FIXEO peut être établi.'));
+      'Vos mots suffisent. RAFI vous guide vers un périmètre précis et, lorsque c’est possible, un prix vérifié.'));
 
     /* Input card / analysis console */
     var card = _el('div', 'fxep-input-card');
     card.setAttribute('role', 'group');
     card.setAttribute('aria-label', 'Commencer mon estimation');
-    card.appendChild(_el('div', 'fxep-console-kicker', 'RAFI · À VOTRE ÉCOUTE'));
+    card.appendChild(_el('div', 'fxep-console-kicker', '<span class="fxep-rafi-orb" aria-hidden="true">✦</span><span>RAFI<small>Votre estimation commence ici</small></span>'));
     var inputLabel = _el('label', 'fxep-console-title', 'Que se passe-t-il ?');
     inputLabel.htmlFor = 'fxep-nlp-input';
     card.appendChild(inputLabel);
@@ -627,7 +627,7 @@
     inputRow.appendChild(icon);
 
     var input = document.createElement('textarea');
-    input.rows = 3;
+    input.rows = 2;
     input.maxLength = 2000;
     input.className = 'fxep-nlp-input';
     input.id = 'fxep-nlp-input';
@@ -713,11 +713,16 @@
     cta.addEventListener('click', function () {
       _launchEstimator(input.value.trim());
     });
-    card.appendChild(cta);
+    card.insertBefore(cta, suggestWrap);
+    var inspiration = document.createElement('details');
+    inspiration.className = 'fxep-inspiration';
+    inspiration.appendChild(_el('summary', '', 'Besoin d’une idée ?'));
+    inspiration.appendChild(suggestWrap);
+    card.appendChild(inspiration);
     card.appendChild(_el('p', 'fxep-console-note', 'Analyse gratuite · Aucune intervention déclenchée à cette étape.'));
     var intro = _el('div', 'fxep-hero-intro');
     [signal, section.querySelector('.fxep-hero-eyebrow'), h1, section.querySelector('.fxep-hero-sub')].forEach(function (n) { intro.appendChild(n); });
-    intro.appendChild(_el('div', 'fxep-hero-signature', 'Un besoin compris. Un périmètre précis. Une décision éclairée.'));
+    intro.appendChild(_el('div', 'fxep-hero-signature', '<span>01 · Votre besoin</span><span>02 · Les bonnes questions</span><span>03 · Une décision éclairée</span>'));
     section.insertBefore(intro, card);
 
     /* Wire input events */
@@ -1083,29 +1088,58 @@
   /* ══════════════════════════════════════════════════════
      FOOTER SHIM
   ══════════════════════════════════════════════════════ */
-  function _renderFooter(container) {
-    var footer = _el('footer', 'fxep-footer fxep-public-only');
-    footer.setAttribute('role', 'contentinfo');
-
-    var brand = _el('a', 'fxep-footer-brand', 'FIXEO');
-    brand.href = '/';
-    footer.appendChild(brand);
-
-    var links = _el('div', 'fxep-footer-links');
-    var LINKS = [
-      { label: 'Comment ça marche', href: '/comment-ca-marche.html' },
-      { label: 'Tarifs', href: '/pricing.html' },
-      { label: 'Entreprises', href: '/entreprises.html' },
-      { label: 'Artisans', href: '/artisans.html' },
-      { label: 'Confidentialité', href: '/confidentialite.html' },
+  /* Illustrative examples: never an API result, quote or automatic diagnosis. */
+  function _renderDiscovery(container) {
+    var section = _el('section', 'fxep-discovery fxep-public-only');
+    section.setAttribute('aria-labelledby', 'fxep-discovery-title');
+    section.appendChild(_el('div', 'fxep-section-label', 'LE DÉCLIC RAFI · EXEMPLE INTERACTIF'));
+    var title = _el('h2', 'fxep-section-title', 'Derrière vos mots,<br>les bonnes questions.');
+    title.id = 'fxep-discovery-title';
+    section.appendChild(title);
+    section.appendChild(_el('p', 'fxep-section-copy', 'Explorez un exemple pour comprendre la démarche. Votre analyse personnelle commence dans RAFI.'));
+    var examples = [
+      { name: 'Une fuite', phrase: '« Il y a de l’eau sous mon évier. »', category: 'Plomberie', detail: 'Localiser la fuite avant de définir l’intervention.', questions: ['D’où vient l’eau ?', 'Le raccord est-il accessible ?'], hint: 'Il y a de l’eau sous mon évier.' },
+      { name: 'Une prise', phrase: '« Ma prise ne fonctionne plus. »', category: 'Électricité', detail: 'Distinguer une prise à remplacer d’une panne à diagnostiquer.', questions: ['Une seule prise est concernée ?', 'Le courant fonctionne-t-il ailleurs ?'], hint: 'Ma prise électrique ne fonctionne plus.' },
+      { name: 'Une porte', phrase: '« Ma porte est bloquée. »', category: 'Serrurerie', detail: 'Préciser la situation pour orienter l’intervention.', questions: ['La porte est-elle simplement claquée ?', 'La clé tourne-t-elle dans la serrure ?'], hint: 'Ma porte est bloquée.' }
     ];
-    LINKS.forEach(function (l) {
-      var a = _el('a', 'fxep-footer-link', _esc(l.label));
-      a.href = l.href;
-      links.appendChild(a);
+    var choices = _el('div', 'fxep-example-choices');
+    choices.setAttribute('role', 'group');
+    choices.setAttribute('aria-label', 'Choisir un exemple');
+    section.appendChild(choices);
+    var stage = _el('div', 'fxep-example-stage');
+    stage.id = 'fxep-example-stage';
+    stage.setAttribute('aria-live', 'polite');
+    stage.setAttribute('aria-atomic', 'true');
+    section.appendChild(stage);
+    var selected = 0;
+    function show(index) {
+      selected = index;
+      var ex = examples[index];
+      Array.prototype.forEach.call(choices.children, function (btn, i) { btn.setAttribute('aria-pressed', String(i === index)); });
+      stage.innerHTML = '<div class="fxep-example-before"><span class="fxep-example-label">VOUS LE DITES SIMPLEMENT</span><p>' + _esc(ex.phrase) + '</p><span class="fxep-example-caption">Pas besoin de connaître le nom de la panne.</span></div>' +
+        '<div class="fxep-example-transform" aria-hidden="true">✦</div>' +
+        '<div class="fxep-example-after"><span class="fxep-example-label">CE QU’IL FAUT PRÉCISER · ' + _esc(ex.category) + '</span><h3>' + _esc(ex.detail) + '</h3><ul><li>' + _esc(ex.questions[0]) + '</li><li>' + _esc(ex.questions[1]) + '</li></ul><p class="fxep-example-caption">Un prix si le périmètre le permet. Sinon, une orientation adaptée.</p></div>';
+    }
+    examples.forEach(function (ex, index) {
+      var btn = _el('button', '', _esc(ex.name));
+      btn.type = 'button';
+      btn.setAttribute('aria-controls', stage.id);
+      btn.addEventListener('click', function () { show(index); });
+      choices.appendChild(btn);
     });
-    footer.appendChild(links);
-    container.appendChild(footer);
+    show(0);
+    var tryBtn = _el('button', 'fxep-example-try', 'Partir de cet exemple ↗');
+    tryBtn.type = 'button';
+    tryBtn.addEventListener('click', function () {
+      var input = document.getElementById('fxep-nlp-input');
+      if (!input) return;
+      input.value = examples[selected].hint;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.scrollIntoView({ behavior: 'auto', block: 'center' });
+      input.focus({ preventScroll: true });
+    });
+    section.appendChild(tryBtn);
+    container.appendChild(section);
   }
 
   /* ══════════════════════════════════════════════════════
@@ -1122,12 +1156,13 @@
     /* Resume card: inject between header and hero (after _renderHero) */
     _maybeRenderResume(wrap);
 
+    _renderDiscovery(wrap);
     _renderHow(wrap);
     _renderServices(wrap);
     _renderOutcomes(wrap);
     _renderFAQ(wrap);
 
-    _renderFooter(wrap);
+    /* Full canonical footer is mounted once by fixeo-footer-global.js. */
 
     /* Prepend before PAGE_REQUIRED layout */
     if (document.body) {
@@ -1142,4 +1177,3 @@
   }
 
 }());
-
