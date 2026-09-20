@@ -3901,6 +3901,11 @@
       null;
 
 
+    this._lastAnalyzedDescription = _cleanText((opts.entryContext || {}).description || (opts.entryContext || {}).free_text || '', 2000);
+    this._requestEpoch = 0;
+    this._history = [];
+    this._view = null;
+    this._restoring = false;
     this._root =
       rootEl;
 
@@ -4638,6 +4643,8 @@ var cityInput =
               }
 
 
+              self._prepareDescription(description);
+              if (self._view && self._view.kind === 'understand') self._view.context = copyJourney(self._entryContext);
               self._startSession();
             }
         });
@@ -4685,6 +4692,7 @@ var cityInput =
     function() {
       var self =
         this;
+      var requestEpoch = ++self._requestEpoch;
 
 
       var bodySlot =
@@ -4755,6 +4763,7 @@ var cityInput =
         )
         .then(
           function(r) {
+            if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
             if (
               !r ||
               !r.ok
@@ -4782,6 +4791,7 @@ var cityInput =
         )
         .catch(
           function() {
+            if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
             self._showError(
               'Problème de connexion. Veuillez réessayer.'
             );
@@ -4935,6 +4945,7 @@ var cityInput =
         );
 
 
+        var stepEpoch = self._requestEpoch;
         var isBoolean =
           nextStep.answer_type ===
           'boolean';
@@ -4945,6 +4956,7 @@ var cityInput =
             nextStep,
             isBoolean
               ? function(val) {
+                  if (self !== _activeModal || stepEpoch !== self._requestEpoch) return;
                   self._submitAnswer(
                     nextStep.question_id,
                     val
@@ -5292,6 +5304,7 @@ var cityInput =
     function(metier) {
       var self =
         this;
+      var requestEpoch = ++self._requestEpoch;
 
 
       self._entryContext
@@ -5313,6 +5326,7 @@ var cityInput =
         )
         .then(
           function(r) {
+            if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
             if (
               !r ||
               !r.ok
@@ -5340,6 +5354,7 @@ var cityInput =
         )
         .catch(
           function() {
+            if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
             self._showError(
               'Problème de connexion. Veuillez réessayer.'
             );
@@ -5532,6 +5547,7 @@ var cityInput =
                 triggerIntelligenceLine();
 
 
+                var requestEpoch = ++self._requestEpoch;
                 window.FixeoEstimatorAPI
                   .selectService(
                     STATE.sessionToken,
@@ -5539,6 +5555,7 @@ var cityInput =
                   )
                   .then(
                     function(r) {
+                      if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
                       if (
                         !r ||
                         !r.ok
@@ -5569,6 +5586,7 @@ var cityInput =
                   )
                   .catch(
                     function() {
+                      if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
                       pending =
                         false;
 
@@ -5632,6 +5650,7 @@ var cityInput =
     ) {
       var self =
         this;
+      var requestEpoch = ++self._requestEpoch;
 
 
       setRAFIState(
@@ -5642,6 +5661,7 @@ var cityInput =
       triggerIntelligenceLine();
 
 
+      if (self._view) self._view.answer = answer;
       window.FixeoEstimatorAPI
         .answer(
           STATE.sessionToken,
@@ -5650,6 +5670,7 @@ var cityInput =
         )
         .then(
           function(r) {
+            if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
             if (
               !r ||
               !r.ok
@@ -5677,6 +5698,7 @@ var cityInput =
         )
         .catch(
           function() {
+            if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
             self._showError(
               'Problème de connexion. Veuillez réessayer.'
             );
@@ -5693,6 +5715,7 @@ var cityInput =
     function() {
       var self =
         this;
+      var requestEpoch = ++self._requestEpoch;
 
 
       setRAFIState(
@@ -5709,6 +5732,7 @@ var cityInput =
         )
         .then(
           function(r) {
+            if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
             if (
               !r ||
               !r.ok
@@ -5741,6 +5765,7 @@ var cityInput =
         )
         .catch(
           function() {
+            if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
             self._showError(
               'Problème de connexion. Veuillez réessayer.'
             );
@@ -6190,6 +6215,101 @@ var cityInput =
       }
     };
 
+
+  EstimatorModal.prototype._prepareDescription = function(description) {
+    var changed = this._lastAnalyzedDescription !== undefined && this._lastAnalyzedDescription !== description;
+    if (changed) {
+      this._entryContext.metier_hint = null;
+      this._entryContext.service_hint = null;
+    }
+    this._lastAnalyzedDescription = description;
+    if (!this._entryContext.metier_hint && !this._entryContext.service_hint) {
+      var text = window.FixeoRafiLanguage ? window.FixeoRafiLanguage.normalize(description) : description;
+      var found = window.FixeoAIRE && window.FixeoAIRE.detect(text);
+      var supported = ['plomberie','electricite','serrurerie','climatisation','bricolage','nettoyage','peinture','menuiserie'];
+      if (found && supported.indexOf(found.cat) !== -1) this._entryContext.metier_hint = found.cat;
+    }
+  };
+
+  // Back restores an opaque server-issued session, never a client-built price/session.
+  function copyJourney(value) { return JSON.parse(JSON.stringify(value)); }
+  EstimatorModal.prototype._rememberView = function(kind, session, step, outcome) {
+    if (this._restoring) return;
+    if (this._view) this._history.push(this._view);
+    this._view = {kind: kind, session: session && copyJourney(session),
+      step: step && copyJourney(step), outcome: outcome && copyJourney(outcome),
+      context: copyJourney(this._entryContext), token: STATE.sessionToken,
+      pricingToken: this._pricingContextToken};
+  };
+  EstimatorModal.prototype._back = function() {
+    if (!this._history.length) return;
+    ++this._requestEpoch;
+    var previous = this._history.pop();
+    this._view = previous;
+    this._entryContext = copyJourney(previous.context);
+    STATE.session = previous.session;
+    STATE.sessionToken = previous.token;
+    STATE.pendingAnswer = null;
+    this._pricingContextToken = null;
+    var modal = document.querySelector('.estimator-modal');
+    if (modal) modal.classList.remove('result-active');
+    this._restoring = true;
+    try {
+      if (previous.kind === 'understand') this._renderUnderstand();
+      else if (previous.kind === 'outcome') {
+        this._pricingContextToken = previous.pricingToken;
+        this._renderOutcome(previous.session, previous.outcome);
+      } else this._renderStep(previous.session, previous.step);
+      if (previous.answer !== undefined && previous.step && previous.step.type === 'QUESTION') {
+        STATE.pendingAnswer = previous.answer;
+        STATE.quantityValue = previous.answer;
+        var field = document.querySelector('#body-slot .measurement-input');
+        if (field) field.value = previous.answer;
+        var qty = document.querySelector('#body-slot .qty-value');
+        if (qty) qty.textContent = String(previous.answer);
+        document.querySelectorAll('#body-slot .answer-card').forEach(function(card) {
+          var selected = card.__optValue === previous.answer;
+          card.classList.toggle('selected', selected);
+          card.setAttribute('aria-checked', selected ? 'true' : 'false');
+        });
+        updateCTA(true);
+      }
+    } finally { this._restoring = false; }
+    this._renderBack();
+  };
+  EstimatorModal.prototype._renderBack = function() {
+    var old = document.getElementById('rafi-step-back');
+    if (old) old.remove();
+    var slot = document.getElementById('progress-slot');
+    if (!slot || !this._history.length) return;
+    var self = this;
+    var back = el('button', 'btn-back', '← Étape précédente');
+    back.id = 'rafi-step-back'; back.type = 'button';
+    back.style.cssText = 'margin:8px 20px;padding:10px 14px;min-height:44px;color:#e8efff;background:#24334a;border:1px solid #617699;border-radius:12px;cursor:pointer';
+    back.addEventListener('click', function() { self._back(); });
+    slot.insertBefore(back, slot.firstChild);
+    var ctx = document.getElementById('ctx-slot');
+    if (ctx && !ctx.querySelector('.rafi-need-summary')) {
+      var summary = el('p', 'rafi-need-summary');
+      summary.textContent = self._entryContext.description || self._entryContext.free_text || '';
+      summary.style.cssText = 'margin:8px 20px;color:#bdcbe1;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere';
+      ctx.appendChild(summary);
+    }
+  };
+  ['_renderUnderstand', '_renderStep', '_renderOutcome', '_showError'].forEach(function(method) {
+    var original = EstimatorModal.prototype[method];
+    EstimatorModal.prototype[method] = function(session, step) {
+      if (method === '_renderUnderstand') this._rememberView('understand');
+      if (method === '_renderStep' && step && ['METIER_SELECTION','SERVICE_SELECTION','QUESTION'].indexOf(step.type) !== -1) {
+        this._rememberView('step', session, step);
+      }
+      if (method === '_showError') this._rememberView('error');
+      if (method === '_renderOutcome') this._rememberView('outcome', session, null, step);
+      var result = original.apply(this, arguments);
+      this._renderBack();
+      return result;
+    };
+  });
 
   // ───────────────────────────────────────────────────────────────────────────
   // Public API
