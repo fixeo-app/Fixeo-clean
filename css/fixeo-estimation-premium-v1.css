@@ -174,4 +174,100 @@ body.fxep-mode-public .fxf-canonical > .container { max-width: 1120px; padding-l
   #fxep-public-root .fxep-example-choices button { padding: 10px 12px; font-size: 13px; }
   #fxep-public-root .fxep-step { padding: 20px; gap: 8px; }
 }
+/* Journey edition — sections below the approved hero and discovery. */
+#fxep-public-root .fxep-how .fxep-section-title span,
+#fxep-public-root .fxep-services .fxep-section-title span,
+#fxep-public-root .fxep-outcomes-heading span,
+#fxep-public-root .fxep-faq .fxep-section-title span { color: #baa9d8; }
+#fxep-public-root .fxep-how { display: grid; grid-template-columns: .85fr 1.15fr; column-gap: 70px; align-items: start; padding-top: 64px; padding-bottom: 64px; }
+#fxep-public-root .fxep-how > .fxep-section-label { grid-column: 1; }
+#fxep-public-root .fxep-how > .fxep-section-title { grid-column: 1; font-size: clamp(28px,3.3vw,42px); }
+#fxep-public-root .fxep-steps { grid-column: 2; grid-row: 1 / 4; display: grid; grid-template-columns: 1fr; list-style: none; margin: 0; padding: 0; gap: 0; border: 1px solid #ccb9ed20; border-radius: 24px; background: linear-gradient(135deg,#25203880,#121c2b90); overflow: hidden; }
+#fxep-public-root .fxep-step { flex-direction: row; gap: 20px; padding: 26px; border: 0; border-radius: 0; background: none; }
+#fxep-public-root .fxep-step + .fxep-step { border-top: 1px solid #ffffff0d; }
+#fxep-public-root .fxep-step-num { flex: 0 0 44px; width: 44px; height: 44px; display: grid; place-items: center; font-size: 13px; color: #ffcf9b; border: 1px solid #ffcf9b40; border-radius: 50%; background: #ffcf9b08; }
+#fxep-public-root .fxep-step:nth-child(2) .fxep-step-num { color: #e8aeca; border-color: #e8aeca40; }
+#fxep-public-root .fxep-step:nth-child(3) .fxep-step-num { color: #b8c8ff; border-color: #b8c8ff40; }
+#fxep-public-root .fxep-step-title { margin: 0 0 7px; font-size: 16px; line-height: 1.4; }
+#fxep-public-root .fxep-step-desc { font-size: 14px; line-height: 1.7; }
+#fxep-public-root .fxep-services { padding-top: 60px; padding-bottom: 64px; }
+#fxep-public-root .fxep-services .fxep-section-title { font-size: clamp(30px,3.5vw,44px); }
+#fxep-public-root .fxep-service-grid { gap: 16px; margin-top: 30px; }
+#fxep-public-root .fxep-service-item { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; min-width: 0; min-height: 220px; padding: 26px; overflow: hidden; color: #edf2ff; background: radial-gradient(ellipse at 100% 0,#9379ba14,transparent 75%),#101827; border: 1px solid #b9acd92a; border-radius: 22px; cursor: pointer; }
+#fxep-public-root .fxep-service-item:nth-child(3n+2) { background: radial-gradient(ellipse at 100% 0,#779bc01c,transparent 75%),#101827; }
+#fxep-public-root .fxep-service-item:nth-child(3n) { background: radial-gradient(ellipse at 100% 0,#bd80651a,transparent 75%),#101827; }
+#fxep-public-root .fxep-service-icon { display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid #d4b9f530; border-radius: 14px; color: #d5b5ed; background: #c3a5e00b; }
+#fxep-public-root .fxep-service-item:nth-child(3n+2) .fxep-service-icon { color: #aacaef; }
+#fxep-public-root .fxep-service-item:nth-child(3n) .fxep-service-icon { color: #f2c29a; }
+#fxep-public-root .fxep-service-body { display: block; width: 100%; }
+#fxep-public-root .fxep-service-category { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: #a7b5cc; margin-bottom: 8px; }
+#fxep-public-root .fxep-service-name { display: block; font-size: 17px; line-height: 1.4; font-weight: 650; }
+#fxep-public-root .fxep-service-badge { display: block; margin-top: 14px; padding: 0; border: 0; background: none; color: #b7c6e6; font-size: 12px; }
+#fxep-public-root .fxep-service-arrow { position: absolute; right: 22px; top: 26px; color: #bbc5dc; font-size: 23px; }
+#fxep-public-root .fxep-service-item:hover { border-color: #ddbbe6aa; background-color: #1a2033; }
+#fxep-public-root .fxep-outcomes { padding-top: 68px; padding-bottom: 68px; }
+#fxep-public-root .fxep-outcomes-heading { font-size: clamp(30px,3.5vw,44px); }
+#fxep-public-root .fxep-outcomes-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 12px 24px; margin-top: 30px; }
+#fxep-public-root .fxep-outcome-card { display: flex; align-items: flex-start; gap: 18px; text-align: left; padding: 22px; border: 1px solid #afc0e122; border-radius: 18px; background: #ffffff03; }
+#fxep-public-root .fxep-outcome-card.is-price { grid-row: span 3; display: flex; flex-direction: column; justify-content: space-between; gap: 32px; padding: 36px; position: relative; overflow: hidden; background: radial-gradient(circle at 95% 0,#f0a1bc25,transparent 65%),linear-gradient(150deg,#302434,#171d30); border-color: #ecc39966; }
+#fxep-public-root .fxep-outcome-icon { display: grid; place-items: center; flex: 0 0 42px; width: 42px; height: 42px; margin: 0; border-radius: 12px; background: #aec4ed0b; color: #b8cbed; }
+#fxep-public-root .is-price .fxep-outcome-icon { flex: 0 0 64px; width: 64px; height: 64px; background: #f4c89e12; color: #ffd4a7; border: 1px solid #f4c89e40; border-radius: 18px; }
+#fxep-public-root .is-price .fxep-outcome-icon svg { width: 34px; height: 34px; }
+#fxep-public-root .fxep-outcome-tag { font-size: 9px; letter-spacing: .12em; line-height: 1.7; color: #a6b9d2; }
+#fxep-public-root .is-price .fxep-outcome-tag { color: #f2cbb3; }
+#fxep-public-root .fxep-outcome-name { font-size: 19px; line-height: 1.3; margin: 5px 0 8px; }
+#fxep-public-root .is-price .fxep-outcome-name { color: #ffdab4; font-size: clamp(32px,4vw,48px); margin: 12px 0 18px; letter-spacing: -.04em; }
+#fxep-public-root .fxep-outcome-desc { margin: 0; font-size: 14px; line-height: 1.7; }
+#fxep-public-root .is-price .fxep-outcome-desc { font-size: 16px; color: #d1c8d7; max-width: 320px; }
+#fxep-public-root .fxep-outcome-promise { margin-top: 30px; border-top: 1px solid #e4c6de26; padding-top: 20px; font-size: 13px; color: #edd6d1; }
+#fxep-public-root .fxep-faq { max-width: 1200px; display: grid; grid-template-columns: .85fr 1.15fr; gap: 64px; padding-top: 60px; padding-bottom: 64px; }
+#fxep-public-root .fxep-faq-intro { min-width: 0; }
+#fxep-public-root .fxep-faq-list { min-width: 0; border-top: 1px solid #beadd637; }
+#fxep-public-root .fxep-faq-item { margin: 0; border: 0; border-bottom: 1px solid #beadd62b; border-radius: 0; background: none; overflow: visible; }
+#fxep-public-root .fxep-faq-item.open { background: #c0ace605; }
+#fxep-public-root .fxep-faq-q { padding: 24px 12px; display: flex; gap: 20px; align-items: center; font-size: 15px; line-height: 1.6; font-weight: 600; background: none; }
+#fxep-public-root .fxep-faq-chevron { display: grid; place-items: center; flex: 0 0 28px; width: 28px; height: 28px; border: 1px solid #beadd642; border-radius: 50%; font-size: 20px; color: #eac7dc; transform: none; }
+#fxep-public-root .fxep-faq-a { padding: 0 12px 24px; border: 0; line-height: 1.8; }
+#fxep-public-root .fxep-faq-a[hidden] { display: none !important; }
+#fxep-public-root .fxep-invitation { max-width: 1120px; margin: 12px auto 72px; padding: 56px 28px; border-radius: 28px; border: 1px solid #d5b0e02b; background: radial-gradient(ellipse at 50% 0,#8f4e8440,transparent 70%),linear-gradient(110deg,#1f2034,#151d2e); text-align: center; }
+#fxep-public-root .fxep-invitation h2 { font-size: clamp(30px,4vw,48px); line-height: 1.15; margin: 16px 0; color: #f7f2fc; letter-spacing: -.035em; }
+#fxep-public-root .fxep-invitation h2 span { color: #ecc0db; }
+#fxep-public-root .fxep-invitation p { color: #bfc7da; font-size: 15px; line-height: 1.7; margin: 0 0 24px; }
+#fxep-public-root .fxep-invitation button { display: inline-flex; justify-content: center; align-items: center; min-height: 54px; padding: 14px 30px; border: 0; border-radius: 14px; font-size: 15px; font-weight: 700; color: #191527; background: linear-gradient(105deg,#ffd18c,#f3a8cd 58%,#b8b9ff); cursor: pointer; }
+#fxep-public-root .fxep-invitation small { display: block; margin-top: 16px; color: #b9c4d9; font-size: 11px; line-height: 1.7; }
+@media(max-width:900px) {
+  #fxep-public-root .fxep-how, #fxep-public-root .fxep-faq { grid-template-columns: 1fr; gap: 0; }
+  #fxep-public-root .fxep-steps { grid-column: 1; grid-row: auto; margin-top: 16px; }
+  #fxep-public-root .fxep-faq-list { margin-top: 8px; }
+  #fxep-public-root .fxep-invitation { margin-left: 24px; margin-right: 24px; }
+}
+@media(max-width:600px) {
+  #fxep-public-root .fxep-how, #fxep-public-root .fxep-services, #fxep-public-root .fxep-outcomes, #fxep-public-root .fxep-faq { padding: 32px 18px; }
+  #fxep-public-root .fxep-how > .fxep-section-title, #fxep-public-root .fxep-services .fxep-section-title, #fxep-public-root .fxep-outcomes-heading { font-size: 29px; }
+  #fxep-public-root .fxep-step { padding: 20px 16px; gap: 14px; }
+  #fxep-public-root .fxep-step-num { flex-basis: 36px; width: 36px; height: 36px; font-size: 12px; }
+  #fxep-public-root .fxep-step-title { font-size: 15px; }
+  #fxep-public-root .fxep-step-desc { font-size: 13px; line-height: 1.65; }
+  #fxep-public-root .fxep-service-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 22px; }
+  #fxep-public-root .fxep-service-item { padding: 18px 14px; min-height: 210px; gap: 18px; border-radius: 18px; }
+  #fxep-public-root .fxep-service-icon { width: 40px; height: 40px; border-radius: 12px; }
+  #fxep-public-root .fxep-service-arrow { right: 13px; top: 18px; font-size: 19px; }
+  #fxep-public-root .fxep-service-category { font-size: 9px; letter-spacing: .06em; }
+  #fxep-public-root .fxep-service-name { font-size: 14px; line-height: 1.5; }
+  #fxep-public-root .fxep-service-badge { margin-top: 10px; font-size: 11px; }
+  #fxep-public-root .fxep-outcomes-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 24px; }
+  #fxep-public-root .fxep-outcome-card.is-price { grid-row: auto; padding: 26px; gap: 24px; }
+  #fxep-public-root .fxep-outcome-card { padding: 20px 16px; gap: 14px; }
+  #fxep-public-root .fxep-outcome-name { font-size: 18px; }
+  #fxep-public-root .fxep-outcome-tag { font-size: 9px; letter-spacing: .06em; }
+  #fxep-public-root .fxep-outcome-desc { font-size: 13px; }
+  #fxep-public-root .fxep-faq-q { padding: 20px 4px; font-size: 14px; gap: 12px; }
+  #fxep-public-root .fxep-faq-a { padding: 0 4px 20px; font-size: 14px; }
+  #fxep-public-root .fxep-invitation { margin: 12px 18px 44px; padding: 34px 20px; }
+  #fxep-public-root .fxep-invitation button { width: 100%; }
+}
+@media(max-width:350px) {
+  #fxep-public-root .fxep-service-grid { grid-template-columns: 1fr; }
+  #fxep-public-root .fxep-service-item { min-height: 0; }
+}
 @media(prefers-reduced-motion: reduce) { #fxep-public-root *, #fxep-public-root *::before, #fxep-public-root *::after { scroll-behavior: auto; transition: none !important; animation: none !important; } }
