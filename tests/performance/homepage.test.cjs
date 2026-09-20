@@ -59,7 +59,11 @@ test('homepage boots without marketplace and preserves current entry points',asy
   assert.equal(d.activeElement.id,'fxhf-need-input','header focuses visible current hero');
 
   // User métier selection opens the existing RAFI flow with explicit city context.
-  const city=d.getElementById('fxhf-location');city.value='Rabat';
+  const city=d.getElementById('fxhf-location');
+  for(const name of ['Salé','Temara','Béni Mellal','Nador','Khouribga','Taza','Ouarzazate','Mohammedia'])
+   assert.ok(Array.from(city.options).some(o=>o.value===name),name+' remains available without artisan data');
+  assert.equal(Array.from(city.options).some(o=>/Unknown|\?|qualifier/.test(o.value)),false);
+  city.value='Rabat';
   city.dispatchEvent(new w.Event('change',{bubbles:true}));
   assert.equal(w.sessionStorage.getItem('fxrf4_trusted_city_session'),'Rabat');
   let received;const originalOpen=w.FixeoRequestFlowV4.open;

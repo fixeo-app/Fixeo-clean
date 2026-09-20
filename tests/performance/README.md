@@ -4,7 +4,9 @@ Baseline: `b983706edf5d60f3e30730a564099e70559c3173`.
 
 This change removes the homepage marketplace bootstrap, its hidden sections,
 legacy dialogs, comparison UI and automatic eight-script booking preload.
-Directory/profile assets remain in the repository and are unchanged.
+Directory/profile assets remain in the repository. The shared canonical city
+list now includes all 20 cities supported by RAFI, so the homepage does not
+depend on artisan rows to offer those locations.
 `fixeo-home-core.js` provides métier selection independently of artisan filtering,
 keeps the generic modal contract, routes service buttons into RAFI and directs
 header search to the visible hero. The estimation entry reads that same hero.
