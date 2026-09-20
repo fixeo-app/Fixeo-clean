@@ -54,32 +54,24 @@
       window.QuickSearchModal.focusInline = focusNeed;
       window.QuickSearchModal.open = focusNeed;
     }
-    document.getElementById('services')?.addEventListener('click', function (event) {
-      var chip = event.target.closest('button[data-category]');
-      if (!chip) return;
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      selectCategory(chip.dataset.category);
-      var city = document.getElementById('fxhf-location')?.value ||
-        document.getElementById('services-city-filter')?.value || '';
-      var label = chip.querySelector('.fc3-card-label')?.textContent.trim() || chip.textContent.trim();
-      var input = document.getElementById('fxhf-need-input');
-      if (input) {
-        input.value = label;
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-      }
-      if (window.FixeoEstimatorV2 && typeof window.FixeoEstimatorV2.open === 'function') {
-        window.FixeoEstimatorV2.open({
-          source: 'homepage_service', city: city, description: label,
-          metier_hint: chip.dataset.category
-        });
-      } else if (window.FixeoRequestFlowV4) {
-        window.FixeoRequestFlowV4.open({
-          source: 'homepage_service', mode: 'default',
-          prefillCity: city, prefillService: chip.dataset.category
-        });
-      } else focusNeed();
-    }, true);
+    let discoveryLoad;
+    document.getElementById('rafi-discovery')?.addEventListener('click', async function(event) {
+      const trigger=event.target.closest('button[data-discovery]');
+      if(!trigger || trigger.disabled)return;
+      const status=document.querySelector('.fxd-load-status');
+      trigger.disabled=true;trigger.setAttribute('aria-busy','true');
+      try {
+        if(!window.FixeoDiscovery){
+          if(!discoveryLoad) discoveryLoad=new Promise((resolve,reject)=>{
+            const script=document.createElement('script');script.src='js/fixeo-discovery-v1.js?v=fd2';
+            script.onload=resolve;script.onerror=()=>{script.remove();discoveryLoad=null;reject(new Error('load'));};document.head.append(script);
+          });
+          await discoveryLoad;
+        }
+        status.textContent='';window.FixeoDiscovery.open(trigger.dataset.discovery,trigger);
+      } catch(_){status.textContent='Les situations n’ont pas pu être ouvertes. Réessayez ou décrivez votre besoin à RAFI en haut de page.';}
+      finally{trigger.disabled=false;trigger.removeAttribute('aria-busy');}
+    });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
