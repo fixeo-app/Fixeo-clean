@@ -1,0 +1,76 @@
+# Homepage performance cleanup — first dependency cut
+
+Baseline: `b983706edf5d60f3e30730a564099e70559c3173`.
+
+This change removes the homepage marketplace bootstrap, its hidden sections,
+legacy dialogs, comparison UI and automatic eight-script booking preload.
+Directory/profile assets remain in the repository. The shared canonical city
+list now includes all 20 cities supported by RAFI, so the homepage does not
+depend on artisan rows to offer those locations.
+`fixeo-home-core.js` provides métier selection independently of artisan filtering,
+keeps the generic modal contract, routes service buttons into RAFI and directs
+header search to the visible hero. The estimation entry reads that same hero.
+
+## Source budget (not compressed transfer size)
+
+| Metric | Before | Candidate |
+| --- | ---: | ---: |
+| External script declarations | 68 | 49 |
+| Stylesheet declarations, including noscript fallbacks | 90 | 69 |
+| Declared JS source bytes (excludes dynamic imports/CDN) | 1,543,192 | about 1,025,150 |
+| HTML bytes | 287,933 | about 235,300 |
+| HTML elements before runtime insertion | 974 | 573 |
+| Idle legacy booking scripts | 8 | 0 |
+
+Production baseline in the cloud browser: 1,384 artisans injected approximately
+5.4 seconds after navigation began. Cached reload reached `load` in 1.23 seconds.
+These are observational timings, not LCP/INP measurements or a reproduction of
+the user's >60 second PC load.
+
+Authenticated preview browser check (2026-09-20), three alternating reloads in
+the same cloud browser, measured around the browser reload command:
+
+| Reload | Production | Preview |
+| --- | ---: | ---: |
+| 1 | 1,688 ms | 1,402 ms |
+| 2 | 2,010 ms | 520 ms |
+| 3 | 778 ms | 506 ms |
+
+Median command duration: 1,688 ms versus 520 ms. Cache was not reset; this small
+sample includes automation overhead, excludes later asynchronous work, and is
+not LCP or a guarantee of user-perceived speed. The production PC slowdown has
+not been reproduced. Browser checks confirmed the full footer, absence of the
+directory section, estimation opening with description, and urgent dialog
+rendering. Manual city transfer was found and corrected with a regression test.
+
+## Verification
+
+From a full checkout:
+
+```sh
+npm install --prefix tests/performance
+npm test --prefix tests/performance
+node --test tests/estimator/*.test.cjs
+```
+
+The DOM integration test executes actual homepage scripts with network/auth
+mocked. It verifies startup, footer, absence of artisan bootstrap and idle
+booking scripts, métier selection, RAFI prefill, header focus and estimation
+text continuity. It never creates a request or sends an artisan notification.
+`FIXEO_TEST_ASSET_DIR` optionally supplies unchanged JS in a partial checkout.
+
+Before merging: inspect the preview in a real browser on desktop and mobile;
+verify full footer, menu/account controls, geolocation/manual city, text/voice,
+estimation/back/confirmation UI, urgent path and estimate resume. Measure cold
+and warm visits under the same conditions, network waterfall, LCP and interaction
+responsiveness. Do not equate source-byte savings with time savings.
+
+## Deliberately retained shared dependencies
+
+QuickSearch, RAFI OS, hero resume, homepage-v13 and conversion optimizer still
+have shared context/presentation responsibilities. They are not classified as
+fully unused. Their remaining hidden UI and observers need a separate extraction
+with visual/resume coverage. The new home core overrides the QuickSearch header
+entry only; other pages keep their existing behavior.
+
+No Supabase schema, RPC, payment configuration or pricing data is changed.

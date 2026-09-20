@@ -114,6 +114,14 @@
       aliases:  ['el jadida', 'eljadida']
       /* NOTE: "Salé El Jadida?" excluded — combined/ambiguous string. */
     }
+    ,{ value: 'Salé', label: 'Salé', priority: false, aliases: ['sale', 'salé'] }
+    ,{ value: 'Temara', label: 'Témara', priority: false, aliases: ['temara', 'témara'] }
+    ,{ value: 'Béni Mellal', label: 'Béni Mellal', priority: false, aliases: ['beni mellal', 'béni mellal'] }
+    ,{ value: 'Nador', label: 'Nador', priority: false, aliases: ['nador'] }
+    ,{ value: 'Khouribga', label: 'Khouribga', priority: false, aliases: ['khouribga'] }
+    ,{ value: 'Taza', label: 'Taza', priority: false, aliases: ['taza'] }
+    ,{ value: 'Ouarzazate', label: 'Ouarzazate', priority: false, aliases: ['ouarzazate'] }
+    ,{ value: 'Mohammedia', label: 'Mohammedia', priority: false, aliases: ['mohammedia'] }
   ];
 
   /**
