@@ -746,12 +746,29 @@
      Shows 4 possible RAFI outcomes. No fake percentages.
      No fake confidence. No fake timing.
   ══════════════════════════════════════════════════════ */
+  /* Small inline pictograms share one stroke system; no external asset request. */
+  function _pictogram(name) {
+    var paths = {
+      price: '<path d="m5 12 4 4L19 6"/><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/>',
+      search: '<circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/>',
+      quote: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+      direction: '<path d="m3 10 18-7-7 18-3-8-8-3Z"/>',
+      water: '<path d="M12 3S5 11 5 15a7 7 0 0 0 14 0c0-4-7-12-7-12Z"/><path d="M9 15a3 3 0 0 0 3 3"/>',
+      power: '<path d="m13 2-9 12h7l-1 8 10-13h-8l1-7Z"/>',
+      key: '<circle cx="8" cy="8" r="5"/><path d="m12 12 9 9m-3-3 3-3m-6 0 3-3"/>',
+      climate: '<path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7M9 4l3 3 3-3M9 20l3-3 3 3"/>',
+      paint: '<rect x="3" y="3" width="14" height="6" rx="2"/><path d="M17 6h4v7h-9v3"/><rect x="10" y="16" width="4" height="6" rx="1"/>',
+      tool: '<path d="M14 4a6 6 0 0 0-7 7L2 16a3 3 0 0 0 4 4l5-5a6 6 0 0 0 7-7l-4 4-4-4 4-4Z"/>'
+    };
+    return '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + (paths[name] || paths.direction) + '</svg>';
+  }
+
   function _renderOutcomes(container) {
     var section = _el('section', 'fxep-outcomes fxep-public-only');
     section.setAttribute('aria-label', 'Parcours RAFI selon le type d\'intervention');
 
     section.appendChild(_el('div', 'fxep-section-label', 'Une analyse, le bon parcours.'));
-    section.appendChild(_el('h2', 'fxep-outcomes-heading', 'Le bon résultat, selon votre intervention.'));
+    section.appendChild(_el('h2', 'fxep-outcomes-heading', 'Un prix quand c’est clair.<br><span>La bonne suite, sinon.</span>'));
     section.appendChild(_el('p', 'fxep-outcomes-sub',
       'Un prix lorsque le périmètre le permet. Une étape adaptée lorsqu’il faut aller plus loin.'));
 
@@ -759,25 +776,30 @@
 
     var OUTCOMES = [
       {
-        icon: '💰',
+        icon: 'price',
+        tag: 'LE PÉRIMÈTRE EST DÉFINI',
+        next: 'Vous décidez avant de confirmer.',
         name: 'Prix FIXEO',
         desc: 'Le périmètre est identifiable : FIXEO peut afficher un prix vérifié.',
         cls: 'fxep-outcome-card is-price',
       },
       {
-        icon: '🔎',
+        icon: 'search',
+        tag: 'IL FAUT VÉRIFIER SUR PLACE',
         name: 'Diagnostic',
         desc: 'Une vérification sur place est nécessaire avant de chiffrer correctement.',
         cls: 'fxep-outcome-card',
       },
       {
-        icon: '📋',
+        icon: 'quote',
+        tag: 'VOTRE PROJET EST SUR MESURE',
         name: 'Devis',
         desc: 'Les travaux nécessitent une étude ou plusieurs paramètres sur mesure.',
         cls: 'fxep-outcome-card',
       },
       {
-        icon: '👷',
+        icon: 'direction',
+        tag: 'IL MANQUE UNE PRÉCISION',
         name: 'Orientation',
         desc: 'Le besoin demande à être précisé avant de poursuivre. Aucun prix n’est inventé.',
         cls: 'fxep-outcome-card',
@@ -786,9 +808,13 @@
 
     OUTCOMES.forEach(function (o) {
       var card = _el('div', o.cls);
-      card.appendChild(_el('span', 'fxep-outcome-icon', o.icon));
-      card.appendChild(_el('div', 'fxep-outcome-name', _esc(o.name)));
-      card.appendChild(_el('div', 'fxep-outcome-desc', _esc(o.desc)));
+      card.appendChild(_el('span', 'fxep-outcome-icon', _pictogram(o.icon)));
+      var content = _el('div', 'fxep-outcome-content');
+      content.appendChild(_el('span', 'fxep-outcome-tag', _esc(o.tag)));
+      content.appendChild(_el('h3', 'fxep-outcome-name', _esc(o.name)));
+      content.appendChild(_el('p', 'fxep-outcome-desc', _esc(o.desc)));
+      if (o.next) content.appendChild(_el('div', 'fxep-outcome-promise', _esc(o.next)));
+      card.appendChild(content);
       grid.appendChild(card);
     });
 
@@ -804,30 +830,30 @@
     section.setAttribute('aria-label', 'Comment ça marche');
 
     section.appendChild(_el('div', 'fxep-section-label', 'SIMPLE, DU DÉBUT À LA SUITE'));
-    section.appendChild(_el('h2', 'fxep-section-title', 'Vous décrivez. RAFI vous guide.'));
+    section.appendChild(_el('h2', 'fxep-section-title', 'Vous avancez.<br><span>Vous gardez la main.</span>'));
 
-    var steps = _el('div', 'fxep-steps');
+    var steps = _el('ol', 'fxep-steps');
 
     var STEPS = [
       {
-        num: '1',
-        title: 'Décrivez',
-        desc: 'Expliquez simplement ce qui se passe, avec vos propres mots. Pas de jargon technique requis.',
+        num: '01',
+        title: 'Vos mots, tout simplement.',
+        desc: 'Décrivez ce qui se passe. Aucun terme technique à connaître.',
       },
       {
-        num: '2',
-        title: 'RAFI analyse',
-        desc: 'RAFI identifie le métier, précise le périmètre et pose uniquement les questions nécessaires.',
+        num: '02',
+        title: 'Les précisions qui comptent.',
+        desc: 'RAFI vous guide pour définir ce que l’intervention doit couvrir.',
       },
       {
-        num: '3',
-        title: 'Décidez de la suite',
-        desc: 'Consultez votre résultat. Si un prix est proposé, vous choisissez ensuite de confirmer votre demande.',
+        num: '03',
+        title: 'La décision vous appartient.',
+        desc: 'Découvrez le résultat. Vous choisissez ensuite de poursuivre et de confirmer.',
       },
     ];
 
     STEPS.forEach(function (s) {
-      var step = _el('div', 'fxep-step');
+      var step = _el('li', 'fxep-step');
       step.appendChild(_el('div', 'fxep-step-num', _esc(s.num)));
       var body = _el('div', 'fxep-step-body');
       body.appendChild(_el('div', 'fxep-step-title', _esc(s.title)));
@@ -860,25 +886,25 @@
     section.setAttribute('aria-label', 'Exemples de services');
 
     section.appendChild(_el('div', 'fxep-section-label', 'LES BESOINS DU QUOTIDIEN'));
-    section.appendChild(_el('h2', 'fxep-section-title', 'Par où commencer ?'));
+    section.appendChild(_el('h2', 'fxep-section-title', 'Votre quotidien.<br><span>Notre point de départ.</span>'));
     section.appendChild(_el('p', 'fxep-section-copy', 'Choisissez un exemple, puis adaptez-le à votre situation.'));
 
     var SERVICES = [
       /* Proven PRICE_READY from fixtures */
-      { icon: '🔧', name: 'Débouchage évier', badge: 'Prix FIXEO possible', priced: true },
-      { icon: '⚡', name: 'Prise électrique défectueuse', badge: 'Prix FIXEO possible', priced: true },
-      { icon: '🔑', name: 'Porte claquée', badge: 'Prix FIXEO possible', priced: true },
-      { icon: '❄️', name: 'Installation climatisation', badge: 'Prix FIXEO possible', priced: true },
-      { icon: '🎨', name: 'Peinture mur intérieur', badge: 'Prix FIXEO possible', priced: true },
+      { icon: 'water', category: 'Plomberie', name: 'Débouchage évier', badge: 'Prix FIXEO possible', priced: true },
+      { icon: 'power', category: 'Électricité', name: 'Prise électrique défectueuse', badge: 'Prix FIXEO possible', priced: true },
+      { icon: 'key', category: 'Serrurerie', name: 'Porte claquée', badge: 'Prix FIXEO possible', priced: true },
+      { icon: 'climate', category: 'Climatisation', name: 'Installation climatisation', badge: 'Prix FIXEO possible', priced: true },
+      { icon: 'paint', category: 'Peinture', name: 'Peinture mur intérieur', badge: 'Prix FIXEO possible', priced: true },
       /* Proven PRICE_READY: bricolage à l'heure */
-      { icon: '🔨', name: 'Bricolage à l\'heure', badge: 'Prix FIXEO possible', priced: true },
+      { icon: 'tool', category: 'Bricolage', name: 'Bricolage à l\'heure', badge: 'Prix FIXEO possible', priced: true },
     ];
 
     var grid = _el('div', 'fxep-service-grid');
     SERVICES.forEach(function (s) {
-      var item = _el('div', 'fxep-service-item');
-      item.setAttribute('role', 'button');
-      item.setAttribute('tabindex', '0');
+      var item = _el('button', 'fxep-service-item');
+      item.type = 'button';
+      item.setAttribute('aria-label', 'Décrire mon besoin : ' + s.name);
       /* Clicking a service card pre-fills the hero input */
       var hint = s.name.toLowerCase();
       item.addEventListener('click', function () {
@@ -891,14 +917,15 @@
           inp.focus({ preventScroll: true });
         }
       });
-      item.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.click(); }
-      });
-      item.appendChild(_el('span', 'fxep-service-icon', s.icon));
-      var body = _el('div', 'fxep-service-body');
-      body.appendChild(_el('div', 'fxep-service-name', _esc(s.name)));
-      body.appendChild(_el('div', 'fxep-service-badge' + (s.priced ? ' is-price' : ''), _esc(s.badge)));
+      item.appendChild(_el('span', 'fxep-service-icon', _pictogram(s.icon)));
+      var body = _el('span', 'fxep-service-body');
+      body.appendChild(_el('span', 'fxep-service-category', _esc(s.category)));
+      body.appendChild(_el('span', 'fxep-service-name', _esc(s.name)));
+      body.appendChild(_el('span', 'fxep-service-badge', 'Décrire ce besoin'));
       item.appendChild(body);
+      var arrow = _el('span', 'fxep-service-arrow', '↗');
+      arrow.setAttribute('aria-hidden', 'true');
+      item.appendChild(arrow);
       grid.appendChild(item);
     });
     section.appendChild(grid);
@@ -1016,7 +1043,11 @@
     section.setAttribute('itemscope', '');
     section.setAttribute('itemtype', 'https://schema.org/FAQPage');
 
-    section.appendChild(_el('div', 'fxep-section-label', 'Questions fréquentes'));
+    var intro = _el('div', 'fxep-faq-intro');
+    intro.appendChild(_el('div', 'fxep-section-label', 'AVANT DE VOUS LANCER'));
+    intro.appendChild(_el('h2', 'fxep-section-title', 'Tout simplement,<br><span>en confiance.</span>'));
+    intro.appendChild(_el('p', 'fxep-section-copy', 'Le prix, la suite, votre liberté de choisir. Les réponses à vos questions.'));
+    section.appendChild(intro);
 
     var list = _el('div', 'fxep-faq-list');
 
@@ -1049,7 +1080,7 @@
       },
     ];
 
-    QA.forEach(function (qa) {
+    QA.forEach(function (qa, index) {
       var item = _el('div', 'fxep-faq-item');
       item.setAttribute('itemscope', '');
       item.setAttribute('itemprop', 'mainEntity');
@@ -1057,13 +1088,20 @@
 
       var btn = _el('button', 'fxep-faq-q');
       btn.type = 'button';
+      btn.id = 'fxep-faq-q-' + index;
+      btn.setAttribute('aria-controls', 'fxep-faq-a-' + index);
       var qText = _el('span', '', _esc(qa.q));
       qText.setAttribute('itemprop', 'name');
       btn.appendChild(qText);
-      btn.appendChild(_el('span', 'fxep-faq-chevron', '▾'));
+      var chevron = _el('span', 'fxep-faq-chevron', '+');
+      chevron.setAttribute('aria-hidden', 'true');
+      btn.appendChild(chevron);
       btn.setAttribute('aria-expanded', 'false');
 
       var answer = _el('div', 'fxep-faq-a');
+      answer.id = 'fxep-faq-a-' + index;
+      answer.hidden = true;
+      answer.setAttribute('aria-labelledby', btn.id);
       answer.setAttribute('itemprop', 'acceptedAnswer');
       answer.setAttribute('itemscope', '');
       answer.setAttribute('itemtype', 'https://schema.org/Answer');
@@ -1074,6 +1112,8 @@
       btn.addEventListener('click', function () {
         var open = item.classList.toggle('open');
         btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        answer.hidden = !open;
+        chevron.textContent = open ? '−' : '+';
       });
 
       item.appendChild(btn);
@@ -1088,6 +1128,27 @@
   /* ══════════════════════════════════════════════════════
      FOOTER SHIM
   ══════════════════════════════════════════════════════ */
+  function _renderInvitation(container) {
+    var section = _el('section', 'fxep-invitation fxep-public-only');
+    section.setAttribute('aria-labelledby', 'fxep-invitation-title');
+    section.appendChild(_el('span', 'fxep-section-label', 'À VOUS DE JOUER'));
+    var title = _el('h2', '', 'Et si on éclaircissait<br><span>votre besoin ?</span>');
+    title.id = 'fxep-invitation-title';
+    section.appendChild(title);
+    section.appendChild(_el('p', '', 'Une phrase pour commencer. RAFI vous guide pour la suite.'));
+    var cta = _el('button', '', 'Décrire mon besoin ↗');
+    cta.type = 'button';
+    cta.addEventListener('click', function () {
+      var input = document.getElementById('fxep-nlp-input');
+      if (!input) return;
+      input.scrollIntoView({behavior: 'auto', block: 'center'});
+      input.focus({preventScroll: true});
+    });
+    section.appendChild(cta);
+    section.appendChild(_el('small', '', 'Analyse gratuite · Vous décidez de la suite.'));
+    container.appendChild(section);
+  }
+
   /* Illustrative examples: never an API result, quote or automatic diagnosis. */
   function _renderDiscovery(container) {
     var section = _el('section', 'fxep-discovery fxep-public-only');
@@ -1161,6 +1222,7 @@
     _renderServices(wrap);
     _renderOutcomes(wrap);
     _renderFAQ(wrap);
+    _renderInvitation(wrap);
 
     /* Full canonical footer is mounted once by fixeo-footer-global.js. */
 
