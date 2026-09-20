@@ -16,7 +16,7 @@ function getRegistry() {
   return REGISTRY;
 }
 
-var VALID_METIERS = ['plomberie', 'electricite', 'serrurerie', 'climatisation', 'bricolage', 'nettoyage', 'peinture', 'menuiserie'];
+var VALID_METIERS = ['plomberie', 'electricite', 'serrurerie', 'climatisation', 'bricolage', 'nettoyage', 'peinture', 'menuiserie', 'jardinage', 'demenagement', 'carrelage', 'maconnerie', 'autre'];
 
 /**
  * Metier resolution priority:
@@ -123,3 +123,4 @@ module.exports = {
   getCandidateServices: getCandidateServices,
   getService: getService,
 };
+

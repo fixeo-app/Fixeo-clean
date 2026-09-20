@@ -36,6 +36,7 @@ var path = require('path');
 
 var sessionModule = require('./estimator-session-v1');
 var resolver      = require('./estimator-service-resolver-v1');
+var discovery = require('./estimator-discovery-routing-v1');
 var planner       = require('./estimator-question-planner-v1');
 var mapper        = require('./estimator-outcome-mapper-v1');
 var handoff       = require('./estimator-handoff-v1');
@@ -261,6 +262,7 @@ function normalizeEntryContext(entryContext) {
       200
     ),
 
+    situation_id: cleanString(ctx.situation_id, 200),
     free_text: freeText,
 
     city_slug: toSimpleSlug(
@@ -360,6 +362,13 @@ var MENUISERIE_BATCH_QUOTE_FIELDS = {
  */
 function startEstimator(entryContext) {
   var ctx = normalizeEntryContext(entryContext);
+  var situation = discovery.getSituation(ctx.situation_id);
+  if(ctx.situation_id && !situation)return {ok:false,error:{code:'UNKNOWN_SITUATION'}};
+  if(situation){
+    ctx.metier_hint=situation.metier;
+    // A situation must be qualified through its server-owned candidate list.
+    ctx.service_hint=null;
+  }
 
   var now = ctx._now || new Date().toISOString();
 
@@ -368,6 +377,7 @@ function startEstimator(entryContext) {
     session_id: ctx.session_id,
 
     entry_context: {
+      situation_id: ctx.situation_id || null,
       entry_point: ctx.entry_point || 'DIRECT_CTA',
       metier_hint: ctx.metier_hint || null,
       service_hint: ctx.service_hint || null,
@@ -468,9 +478,7 @@ function startEstimator(entryContext) {
       };
     }
 
-    var candidates = resolver.getCandidateServices(
-      metierResult.metier
-    );
+    var candidates = discovery.candidates(t.session);
 
     return {
       ok: true,
@@ -618,7 +626,7 @@ function getNextEstimatorStep(session) {
         type: 'SERVICE_SELECTION',
         metier: session.metier,
         candidate_services:
-          resolver.getCandidateServices(session.metier),
+          discovery.candidates(session),
       },
     };
   }
@@ -649,6 +657,7 @@ function getNextEstimatorStep(session) {
         question_id: q.question_id,
         input_id: q.input_id,
         prompt_key: q.prompt_key,
+        prompt_fr: (getInputs().inputs[q.input_id]||{}).client_question_fr || null,
         answer_type: q.answer_type,
         options: q.options || null,
         priority: q.priority,
@@ -1604,9 +1613,7 @@ function selectService(
   }
 
   var candidates =
-    resolver.getCandidateServices(
-      session.metier
-    );
+    discovery.candidates(session);
 
   var isCandidate =
     candidates.some(
@@ -1632,6 +1639,10 @@ function selectService(
           canonicalServiceCode,
       },
     };
+  }
+
+  if(canonicalServiceCode===discovery.quoteCode(session)){
+    return {ok:true,session:sessionModule.cloneSession(session,{state:'QUOTE_REQUIRED',service_code:canonicalServiceCode,outcome:discovery.quoteOutcome(session),pending_questions:[]},now)};
   }
 
   var resolvedSvc =
@@ -1705,3 +1716,4 @@ module.exports = {
   _normalizeEntryContext:
     normalizeEntryContext,
 };
+

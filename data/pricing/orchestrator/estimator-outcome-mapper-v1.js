@@ -29,7 +29,23 @@ function mapEngineResultToOutcome(engineResult, serviceCode, session) {
     return mapErrorToOutcome(engineResult, serviceCode);
   }
 
-  var pricing = engineResult.pricing;
+  var pricing = Object.assign({},engineResult.pricing);
+  var svc=require('./estimator-service-resolver-v1').getService(serviceCode);
+  if(svc){
+    var scope=[svc.label_fr];
+    var excluded=[];
+    var material=svc.materials||{};
+    if(material.major_parts==='CLIENT_SUPPLIED')excluded.push('Pièces ou appareil à fournir par le client.');
+    if(material.major_parts==='ARTISAN_DISCLOSED_SEPARATE'||svc.price_model.commercial_output_type==='FIXEO_LABOUR_PRICE_PLUS_PART')excluded.push('Pièces de remplacement facturées séparément, après votre accord.');
+    if(material.major_parts==='ARTISAN_SUPPLIED_INCLUDED')scope.push('Pièce prévue par cette prestation incluse.');
+    if(material.consumables==='ARTISAN_SUPPLIED_INCLUDED')scope.push('Consommables courants inclus dans le périmètre défini.');
+    if(svc.price_model.calculation_model==='DIAGNOSTIC')excluded.push('Les réparations et pièces éventuelles ne sont pas comprises dans le diagnostic.');
+    if(serviceCode==='nettoyage.grand_menage')scope.push('Appartement F2/F3 de 60 à 100 m².');
+    var units={surface_m2:'m² à nettoyer',painted_m2:'m² de murs à peindre',ceiling_m2:'m² de plafond',item_count:'élément(s)',ac_count:'climatiseur(s)',hours:'heure(s)',worker_count:'intervenant(s)'};
+    Object.keys(units).forEach(function(key){var value=session&&session.known_inputs&&session.known_inputs[key];if(typeof value==='number'&&Number.isFinite(value))scope.push(value+' '+units[key]);});
+    excluded.push('Travaux supplémentaires hors du périmètre confirmé.');
+    pricing.scope_summary=scope;pricing.exclusions_summary=excluded;
+  }
   var outputType = pricing.commercial_output_type;
 
   switch (outputType) {
@@ -128,6 +144,11 @@ function mapEngineResultToOutcome(engineResult, serviceCode, session) {
  * Map engine error to outcome.
  */
 function mapErrorToOutcome(engineResult, serviceCode) {
+  if(engineResult && !engineResult.error && engineResult.qualification){
+    var q=engineResult.qualification;
+    var codes={STOP_SAFETY:'STOP_SAFETY',SAFETY_STOP:'STOP_SAFETY',REQUALIFY:'REQUALIFY',ROUTE:'ROUTE_REQUIRED',QUOTE_REQUIRED:'EXCLUSION_TRIGGERED',INELIGIBLE:'EXCLUSION_TRIGGERED'};
+    engineResult=Object.assign({},engineResult,{error:{code:codes[q.status]||'UNKNOWN',message:q.reason||'Périmètre à préciser'}});
+  }
   var code = engineResult && engineResult.error ? engineResult.error.code : 'UNKNOWN';
 
   // Safety stop codes
@@ -290,3 +311,4 @@ module.exports = {
   buildRouteRequired: buildRouteRequired,
   outcomeTypeToState: outcomeTypeToState,
 };
+

@@ -4889,6 +4889,22 @@
             ],
             "effect": "ELIGIBLE",
             "description": "Standard F2/F3 apartment (60–100 m²). Other property types require quote."
+          },
+          {
+            "id": "NET-SURFACE-MIN",
+            "field": "surface_m2",
+            "operator": "GTE",
+            "value": 60,
+            "effect": "ELIGIBLE",
+            "description": "Forfait limité à 60–100 m²."
+          },
+          {
+            "id": "NET-SURFACE-MAX",
+            "field": "surface_m2",
+            "operator": "LTE",
+            "value": 100,
+            "effect": "ELIGIBLE",
+            "description": "Au-delà de 100 m² : devis adapté."
           }
         ],
         "hard_exclusions": [

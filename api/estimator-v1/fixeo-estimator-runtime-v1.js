@@ -78,6 +78,7 @@ function normalizeSessionView(session, secret) {
     service_code:     session.service_code,
     ui_recommendation: session.ui_recommendation || null,
     pending_count,
+    outcome: normalizeOutcomeView(session),
   };
 }
 
@@ -93,6 +94,7 @@ function normalizeOutcomeView(session) {
   const base = {
     outcome_type:               o.outcome_type,
     service_code:               o.service_code,
+    service_label:              o.service_label || null,
     commercial_output_type:     o.commercial_output_type || null,
     scope_summary:              o.scope_summary || [],
     exclusions_summary:         o.exclusions_summary || [],
@@ -207,3 +209,4 @@ module.exports = {
   SESSION_TTL_MS,
   PRICING_CTX_TTL_MS,
 };
+

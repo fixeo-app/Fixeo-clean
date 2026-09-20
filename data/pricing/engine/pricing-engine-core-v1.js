@@ -769,6 +769,10 @@ function evaluateFixeoPrice({ service_code, inputs = {} } = {}) {
     return errorResult('SERVICE_NOT_FOUND', `Service '${service_code}' not found in canonical registry. Do not guess closest service.`, 'service_code', service_code);
   }
 
+  if(['plomberie.fuite_simple','plomberie.debouchage_evier','plomberie.debouchage_wc_simple'].includes(canonicalCode)){
+    if(!['LOCAL_ACCESSIBLE','COMPLEX','UNKNOWN'].includes(inputs.plumbing_scope))return errorResult('MISSING_REQUIRED_INPUT','Confirmez le périmètre accessible avant le prix.','plumbing_scope',canonicalCode);
+    if(inputs.plumbing_scope!=='LOCAL_ACCESSIBLE')return ineligibleResult(canonicalCode,'QUOTE_REQUIRED','PLUMBING_SCOPE_UNCONFIRMED','Le périmètre doit être vérifié avant de chiffrer la réparation.');
+  }
   const pm = svc.price_model || {};
   const model = pm.calculation_model;
 
@@ -939,3 +943,4 @@ module.exports = {
     collectPolicies
   }
 };
+

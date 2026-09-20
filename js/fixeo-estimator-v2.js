@@ -354,6 +354,8 @@
     ceiling_m2:
       'Quelle est la surface du plafond (m²) ?',
 
+    plumbing_scope: 'Le problème concerne-t-il un seul équipement accessible, sans canalisation encastrée ni réseau collectif ?',
+
     surface_m2:
       'Quelle est la surface concernée (m²) ?',
 
@@ -392,6 +394,10 @@
 
   function optionLabel(opt) {
     var labels = {
+      LOCAL_ACCESSIBLE:'Oui, un seul équipement accessible',
+      COMPLEX:'Non, réseau collectif / canalisation encastrée / plusieurs équipements',
+      UNKNOWN:'Je ne sais pas',
+      APARTMENT:'Appartement F2/F3', VILLA:'Villa', studio_f1:'Studio / F1', f4_f5_large:'Grand appartement F4/F5 ou plus',
       SOUND:
         'Bon état',
 
@@ -424,6 +430,7 @@
 
 
   var METIER_LABELS = {
+    jardinage: "Jardinage", demenagement: "Déménagement", carrelage: "Carrelage", maconnerie: "Maçonnerie", autre: "Autre besoin",
     menuiserie:
       'Menuiserie',
 
@@ -491,6 +498,7 @@
 
     'metier_hint',
     'service_hint',
+    'situation_id',
 
     'free_text',
     'description',
@@ -1006,6 +1014,10 @@
 
 
     var labels = {
+      LOCAL_ACCESSIBLE:'Oui, un seul équipement accessible',
+      COMPLEX:'Non, réseau collectif / canalisation encastrée / plusieurs équipements',
+      UNKNOWN:'Je ne sais pas',
+      APARTMENT:'Appartement F2/F3', VILLA:'Villa', studio_f1:'Studio / F1', f4_f5_large:'Grand appartement F4/F5 ou plus',
       COMPRENDRE:
         'Comprendre',
 
@@ -1645,7 +1657,7 @@
 
 
     heading.textContent =
-      promptFromKey(
+      step.prompt_fr || promptFromKey(
         step.prompt_key,
         step.question_id
       );
@@ -2683,6 +2695,13 @@
     }
 
 
+    if(outcome.exclusions_summary && outcome.exclusions_summary.length){
+      var exclusions=el('div','scope-section price-certificate__scope');
+      exclusions.appendChild(el('div','scope-section-label','À prévoir / hors périmètre'));
+      exclusions.appendChild(renderScopeChips(outcome.exclusions_summary));
+      certificate.appendChild(exclusions);
+    }
+
     var doctrine =
       el(
         'div',
@@ -3254,7 +3273,7 @@
       el(
         'div',
         'outcome-title',
-        lbl.primary
+        outcome.service_label || lbl.primary
       )
     );
 
@@ -5307,6 +5326,7 @@ var cityInput =
       var requestEpoch = ++self._requestEpoch;
 
 
+      self._entryContext.situation_id = null;
       self._entryContext
         .metier_hint =
         metier;
@@ -6051,19 +6071,8 @@ var cityInput =
         ot ===
         'QUOTE_REQUIRED'
       ) {
-        footerOpts.primaryLabel =
-          'Demander un devis';
-
-
-        footerOpts.onPrimary =
-          function() {
-            if (
-              STATE.onClose
-            ) {
-              STATE.onClose();
-            }
-          };
-
+        footerOpts.primaryLabel='Préparer ma demande de devis';
+        footerOpts.onPrimary=function(){self._renderQuoteRequest(outcome);};
 
       } else if (
         ot ===
@@ -6221,12 +6230,13 @@ var cityInput =
     if (changed) {
       this._entryContext.metier_hint = null;
       this._entryContext.service_hint = null;
+      this._entryContext.situation_id = null;
     }
     this._lastAnalyzedDescription = description;
     if (!this._entryContext.metier_hint && !this._entryContext.service_hint) {
       var text = window.FixeoRafiLanguage ? window.FixeoRafiLanguage.normalize(description) : description;
       var found = window.FixeoAIRE && window.FixeoAIRE.detect(text);
-      var supported = ['plomberie','electricite','serrurerie','climatisation','bricolage','nettoyage','peinture','menuiserie'];
+      var supported = ['plomberie','electricite','serrurerie','climatisation','bricolage','nettoyage','peinture','menuiserie','jardinage','demenagement','carrelage','maconnerie'];
       if (found && supported.indexOf(found.cat) !== -1) this._entryContext.metier_hint = found.cat;
     }
   };
@@ -6242,6 +6252,7 @@ var cityInput =
       pricingToken: this._pricingContextToken};
   };
   EstimatorModal.prototype._back = function() {
+    if(this._quoteOpen)return this._leaveQuote();
     if (!this._history.length) return;
     ++this._requestEpoch;
     var previous = this._history.pop();
@@ -6312,6 +6323,85 @@ var cityInput =
   });
 
   // ───────────────────────────────────────────────────────────────────────────
+
+  EstimatorModal.prototype._renderQuoteRequest = function(outcome) {
+    var self=this;
+    var body=document.getElementById('body-slot'),footer=document.getElementById('footer-slot');
+    if(!body||!footer)return;
+    self._quoteOpen=true;
+    var ctx=self._entryContext||{};
+    var panel=el('div','estimator-body step-enter');
+    panel.appendChild(el('h2','question-heading','Préparons votre demande de devis'));
+    panel.appendChild(el('p','question-intelligence-copy','Décrivez le périmètre à étudier. Aucun prix ni intervention ne seront confirmés par cet envoi.'));
+    var form=el('form','estimator-quote-form');
+    function field(label,id,node){var l=el('label','',label);l.htmlFor=id;node.id=id;form.appendChild(l);form.appendChild(node);return node;}
+    var description=field('Votre projet','rafi-quote-description',el('textarea',''));
+    description.maxLength=850;description.required=true;
+    description.value=self._quoteDraft?.description||ctx.description||ctx.free_text||outcome.service_label||'';
+    var city=field('Ville d’intervention','rafi-quote-city',el('select',''));
+    var empty=el('option','','Choisir une ville');empty.value='';city.appendChild(empty);
+    (window.FIXEO_CITIES_MAP||[]).forEach(function(c){var o=el('option','',c.label);o.value=c.label;city.appendChild(o);});
+    var cityValue=self._quoteDraft?.city||ctx.city||ctx.city_slug||'';
+    var match=(window.FIXEO_CITIES_MAP||[]).find(function(c){return c.value===cityValue||c.label===cityValue;});
+    city.value=match?match.label:'';city.required=true;
+    var phone=field('Votre numéro pour être recontacté','rafi-quote-phone',el('input',''));
+    phone.type='tel';phone.inputMode='tel';phone.autocomplete='tel';phone.placeholder='06 XX XX XX XX';phone.required=true;phone.value=self._quoteDraft?.phone||'';
+    var status=el('p','estimator-quote-status');status.setAttribute('role','status');
+    var send=el('button','btn-primary','Envoyer ma demande de devis');send.type='submit';
+    var back=el('button','btn-secondary','Retour au résultat');back.type='button';
+    function remember(){self._quoteDraft={description:description.value,city:city.value,phone:phone.value};}
+    form.addEventListener('input',remember);form.addEventListener('change',remember);
+    back.onclick=function(){if(!self._quoteAttempt?.pending){remember();self._leaveQuote();}};
+    form.appendChild(status);form.appendChild(send);form.appendChild(back);panel.appendChild(form);
+    body.replaceChildren(panel);footer.replaceChildren();
+    if(self._quoteAttempt?.pending){send.disabled=true;status.textContent='Envoi en cours…';}
+    form.addEventListener('submit',async function(event){
+      event.preventDefault();if(send.disabled||self._quoteAttempt?.pending)return;
+      var normalizedPhone=phone.value.replace(/[\s().-]/g,'');
+      if(!/^(?:0[5-7]\d{8}|\+212[5-7]\d{8}|212[5-7]\d{8})$/.test(normalizedPhone)){status.textContent='Vérifiez votre numéro marocain.';phone.focus();return;}
+      if(!city.value||!description.value.trim()){status.textContent='Précisez votre projet et votre ville.';return;}
+      remember();
+      var metier=STATE.session?.metier||ctx.metier_hint||'autre';
+      var accepted=['plomberie','electricite','serrurerie','climatisation','menuiserie','peinture','maconnerie','nettoyage','jardinage','demenagement'];
+      var payload={service_category:accepted.includes(metier)?metier:'autre',city:city.value==='Témara'?'Temara':city.value,description:('Demande de devis — aucun prix confirmé. '+(outcome.service_label||resolveClientLabel(outcome.service_code).primary)+' : '+description.value.trim()).slice(0,1000),client_phone:normalizedPhone,urgency:'normale'};
+      var fingerprint=JSON.stringify(payload);
+      if(self._quoteAttempt && self._quoteAttempt.fingerprint!==fingerprint && self._quoteAttempt.uncertain){status.textContent='Un envoi précédent reste à vérifier. Réessayez avec les mêmes informations avant de les modifier.';return;}
+      send.disabled=true;
+      if(!self._quoteAttempt||self._quoteAttempt.fingerprint!==fingerprint){
+        if(!window.crypto?.randomUUID){status.textContent='Impossible de sécuriser cet envoi. Actualisez la page.';send.disabled=false;return;}
+        var savedKey=null,storageKey=null;
+        try{
+          var digest=await window.crypto.subtle.digest('SHA-256',new TextEncoder().encode(fingerprint));
+          storageKey='fixeo:quote:'+Array.from(new Uint8Array(digest)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+          savedKey=sessionStorage.getItem(storageKey);
+        }catch(_){}
+        self._quoteAttempt={fingerprint:fingerprint,key:/^reservation:[0-9a-f-]{36}$/i.test(savedKey||'')?savedKey:'reservation:'+window.crypto.randomUUID()};
+        if(storageKey){try{sessionStorage.setItem(storageKey,self._quoteAttempt.key);}catch(_){}}
+
+      }
+      var attempt=self._quoteAttempt;payload.idempotency_key=attempt.key;attempt.pending=true;attempt.uncertain=true;
+      send.disabled=true;back.disabled=true;description.disabled=true;city.disabled=true;phone.disabled=true;status.textContent='Envoi de votre demande…';
+      var controller=new window.AbortController();
+      var timeout=window.setTimeout(function(){controller.abort();},20000);
+      try{
+        var response=await fetch('/api/create-request-fn',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
+        var result=await response.json();
+        if(!response.ok||!result.ok||!result.id)throw new Error('request_failed');
+        attempt.uncertain=false;attempt.completed=true;self._quoteOpen=false;self._history=[];
+        var headerBack=document.getElementById('rafi-step-back');if(headerBack)headerBack.remove();
+        form.replaceChildren(el('h3','','Votre demande de devis est enregistrée'),el('p','','Référence : '+(result.ref||result.id)),el('p','','Le périmètre et le prix restent à confirmer. Aucune intervention n’est réservée à ce stade.'));
+        var done=el('button','btn-primary','Fermer');done.type='button';done.onclick=function(){if(STATE.onClose)STATE.onClose();};form.appendChild(done);
+      }catch(_){status.textContent='La confirmation n’a pas été reçue. Réessayez : le même envoi sera réutilisé pour éviter un doublon.';send.disabled=false;back.disabled=false;description.disabled=false;city.disabled=false;phone.disabled=false;}
+      finally{window.clearTimeout(timeout);attempt.pending=false;}
+    });
+  };
+
+  EstimatorModal.prototype._leaveQuote=function(){
+    if(this._quoteAttempt?.pending)return;
+    this._quoteOpen=false;this._restoring=true;
+    try{this._renderTerminalSession(STATE.session);}finally{this._restoring=false;}
+  };
+
   // Public API
   // ───────────────────────────────────────────────────────────────────────────
 

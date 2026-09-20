@@ -4477,3 +4477,6 @@ body.fx-estimator-tunnel-active {
 @media (max-width: 540px) {
   .fx-est-confirm { max-height: calc(100dvh - 24px); border-radius: 24px; }
 }
+
+/* Quote preparation keeps the same RAFI surface and explicit submission. */
+.estimator-quote-form{display:grid;gap:12px}.estimator-quote-form label{font-size:13px;color:#c5cee2}.estimator-quote-form textarea,.estimator-quote-form select,.estimator-quote-form input{width:100%;box-sizing:border-box;border:1px solid #ffffff30;border-radius:14px;background:#121a30;color:#f5f6ff;padding:14px;font:inherit;font-size:16px}.estimator-quote-form textarea{min-height:120px}.estimator-quote-form button{min-height:48px;border-radius:14px;padding:12px;font:inherit;cursor:pointer}.estimator-quote-form .btn-primary{background:linear-gradient(105deg,#ffe2a3,#fac1df,#cebdff);color:#20172b;border:0;font-weight:700}.estimator-quote-form .btn-secondary{background:transparent;color:#c5cee2;border:1px solid #ffffff24}.estimator-quote-status{font-size:13px;color:#ffdfac}.estimator-quote-status:empty{display:none}.estimator-quote-form :focus-visible{outline:2px solid #edc7f8;outline-offset:3px}.estimator-quote-form button:disabled{opacity:.6}
