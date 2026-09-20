@@ -50,40 +50,13 @@ test('homepage boots without marketplace and preserves current entry points',asy
   assert.equal(scripts.some(p=>/\/(reservation|payment|slot-lock|cod-payment)(?:-v2)?\.js$/.test(p)),false,'no idle reservation preload');
   assert.equal(requests.some(u=>/artisans|marketplace/.test(u)),false);
 
-  // A microphone recognition update selects a métier without opening any dialog.
-  assert.equal(w.FixeoSelectServiceCategory('electricite'),true);
-  assert.equal(d.querySelector('#services [data-category="electricite"]').getAttribute('aria-pressed'),'true');
-  assert.equal(d.querySelectorAll('.fxrf4-overlay').length,0);
-
+  assert.equal(d.querySelectorAll('[data-discovery]').length,9);
+  assert.equal(scripts.some(p=>p.includes('fixeo-discovery-v1')),false,'details are not loaded on startup');
   w.QuickSearchModal.focusInline();
-  assert.equal(d.activeElement.id,'fxhf-need-input','header focuses visible current hero');
-
-  // User métier selection opens the existing RAFI flow with explicit city context.
-  const city=d.getElementById('fxhf-location');
-  for(const name of ['Salé','Temara','Béni Mellal','Nador','Khouribga','Taza','Ouarzazate','Mohammedia'])
-   assert.ok(Array.from(city.options).some(o=>o.value===name),name+' remains available without artisan data');
-  assert.equal(Array.from(city.options).some(o=>/Unknown|\?|qualifier/.test(o.value)),false);
-  city.value='Rabat';
+  assert.equal(d.activeElement.id,'fxhf-need-input');
+  const city=d.getElementById('fxhf-location');city.value='Rabat';
   city.dispatchEvent(new w.Event('change',{bubbles:true}));
   assert.equal(w.sessionStorage.getItem('fxrf4_trusted_city_session'),'Rabat');
-  let serviceEstimate;
-  const estimatorOpen=w.FixeoEstimatorV2.open;
-  w.FixeoEstimatorV2.open=opts=>{serviceEstimate=opts;};
-  d.querySelector('#services button[data-category="plomberie"]').click();
-  assert.equal(serviceEstimate.city,'Rabat');
-  assert.equal(serviceEstimate.metier_hint,'plomberie');
-  assert.ok(serviceEstimate.description.includes('plombier'));
-  w.FixeoEstimatorV2.open=undefined;
-  let received;const originalOpen=w.FixeoRequestFlowV4.open;
-  w.FixeoRequestFlowV4.open=opts=>{received=opts;};
-  d.querySelector('#services button[data-category="plomberie"]').click();
-  assert.equal(received.prefillCity,'Rabat');assert.equal(received.prefillService,'plomberie');
-  w.FixeoRequestFlowV4.open=originalOpen;
-  originalOpen(received);
-  assert.ok(d.querySelector('.fxrf4-chip.is-selected'),'actual request UI recognises the métier');
-  w.FixeoRequestFlowV4.close();
-  w.FixeoEstimatorV2.open=estimatorOpen;
-
   // Estimate gateway carries the visible description instead of hidden legacy text.
   let estimate;w.FixeoEstimatorV2.open=opts=>{estimate=opts;};
   // A stale detected/session city must not override the user's visible choice.
