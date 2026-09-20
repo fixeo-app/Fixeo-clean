@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr" dir="ltr" data-theme="dark">
 <head>
-  <script defer src="js/fixeo-db.js?v=db2"></script>
+  
   <script defer src="js/supabase-client.js?v=sc2"></script>
   <script defer src="js/fixeo-logout-global.js?v=v2c4a"></script>
-  <script defer src="js/fixeo-repository.js?v=repo2"></script>
-  <script defer src="js/fixeo-supabase-loader.js?v=sl2"></script>
+  
+  
   <script defer src="js/fixeo-auth-supabase.js?v=p1d"></script>
 
   <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
@@ -35,34 +35,34 @@
 <link rel="stylesheet" href="css/rtl.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/v3_ultra_stable.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/ui_fixes.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/payment.css?v=50a38b9" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="css/payment.css?v=50a38b9"/></noscript>
-<link rel="stylesheet" href="css/reservation.css?v=50a38b9" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="css/reservation.css?v=50a38b9"/></noscript>
-<link rel="stylesheet" href="css/reservation-v2.css?v=3" />
-<link rel="stylesheet" href="css/fixeo-estimation-engine-v1.css?v=faee-v1d" />
-<link rel="stylesheet" href="css/fixeo-review-engine-v1.css?v=frev-v1b" />
-<link rel="stylesheet" href="css/reservation-v2a.css?v=v2c" />
+
+
+
+
+
+
 <!-- fxresf-v11a: Flagship reservation presentation — same sheet as artisan-profile.html -->
-<link rel="stylesheet" href="css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a" />
-<link rel="stylesheet" href="css/smart-search.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/smart-search-map.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/artisan_cards_v8.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/hero-search-modal.css?v=50a38b9"/>
+
+
+
+
+
 <link rel="stylesheet" href="css/quick-search-modal.css?v=qsm12-ios-zoom"/>
-<link rel="stylesheet" href="css/secondary-search.css?v=50a38b9"/>
+
 <link rel="stylesheet" href="css/header-unified.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/auth-global.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/slot-lock.css?v=50a38b9"/>
+
 <!-- ★ V13 HOMEPAGE REVAMP - Highest priority, loaded last -->
-<link rel="stylesheet" href="css/artisan-cards-v13.css?v=50a38b9"/>
+
 <link rel="stylesheet" href="css/homepage-v13.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/marketplace-premium-patch.css?v=50a38b9"/>
+
 <!-- V1-D: Marketplace density styles (adjacent-city, empty state, submit CTA) -->
-<link rel="stylesheet" href="css/fixeo-marketplace-density.css?v=v2c2a" />
+
 <link rel="stylesheet" href="css/hero-performance.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/request-form.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/marketplace-secondary-entry.css?v=50a38b9"/>
+
+
 <link rel="stylesheet" href="css/homepage-conversion-optimizer.css?v=50a38b9" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="css/homepage-conversion-optimizer.css?v=50a38b9"/></noscript>
-<link rel="stylesheet" href="css/artisan-onboarding.css?v=50a38b9"/>
+
 <link rel="stylesheet" href="css/fixeo-header-global.css?v=fxgh6"/>
 <link rel="stylesheet" href="css/hero-premium-upgrade.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-ux-fixes.css?v=50a38b9"/>
@@ -2380,7 +2380,7 @@ section#home.hero.hero-section {
      render (pill + chips stagger started). Decoupled from fixeo-sections-ready
      so the section never reveals in the gap between rAF and DOMContentLoaded. */
   html body #services {
-    opacity: 0;
+    opacity: 1;
     transition: opacity 0.25s ease;
   }
   html body.fixeo-services-ready #services {
@@ -2389,7 +2389,7 @@ section#home.hero.hero-section {
 
   /* D. CHIPS - opacity:0 only (no layout shift) until JS stagger */
   #services .service-chip:not(.svc-visible):not(.v12-fade-in) {
-    opacity: 0 !important;
+    opacity: 1 !important;
   }
 
   /* E. HEADER FLASH SHIELD - hide old Urgent button in .nav-actions at ALL
@@ -3105,7 +3105,7 @@ box-shadow:
     <div class="mobile-nav-label">Navigation</div>
     <a href="index.html" class="nav-link">🏠 Accueil</a>
     <a href="index.html#services" class="nav-link">🔧 Services</a>
-    <a href="index.html#artisans-section" class="nav-link">👷 Artisans</a>
+    <a href="artisans.html" class="nav-link">👷 Artisans</a>
     <a href="estimation.html" class="nav-link">✦ Estimation FIXEO</a>
     <a href="pricing.html" class="nav-link">💎 Tarifs</a>
   </div>
@@ -3301,7 +3301,7 @@ box-shadow:
     try {
       city = sessionStorage.getItem('fxrf4_trusted_city_session') || localStorage.getItem('fixeo_detected_city') || '';
     } catch (_) {}
-    var input = document.getElementById('qsm-input-nlp');
+    var input = document.getElementById('fxhf-need-input') || document.getElementById('qsm-input-nlp');
     var description = input ? input.value : '';
     function openEstimator(selectedCity) {
       window.FixeoEstimatorV2.open({
@@ -5567,154 +5567,7 @@ html #services.fc3-chapter {
 
 </section>
 
-<section
-  id="fixeo-chapter-2"
-  class="fc2-chapter"
-  aria-labelledby="fc2-title"
-  hidden
-  aria-hidden="true"
-  style="display:none !important;">
-  <div class="container">
 
-    <!-- ── PART 1 - Header ── -->
-    <header class="fc2-header">
-  <span class="fc2-eyebrow">INTELLIGENCE FIXEO</span>
-
-  <h2 id="fc2-title" class="fc2-title">
-    Comment FIXEO analyse<br>
-    <em>et organise votre demande.</em>
-  </h2>
-
-  <p class="fc2-subtitle">
-    RAFI transforme quelques informations en une demande structurée,
-    prête à être orientée vers les bons profils.
-  </p>
-</header>
-
-    <!-- ── PART 2 - Sphere + 4 signals ── -->
-    <div class="fxrorg-sphere-wrap">
-      <div class="fxrorg-sphere" aria-hidden="true">
-        <div class="fxrorg-halo" aria-hidden="true"></div>
-        <span class="fxrorg-sphere-label">RAFI</span>
-      </div>
-    </div>
-
-    <!-- Four honest signals - what RAFI V5 actually collects -->
-    <div class="fxrorg-signals" role="list" aria-label="Les quatre informations organisées par RAFI">
-
-      <div class="fxrorg-signal" role="listitem">
-  <span class="fxrorg-signal-icon" aria-hidden="true">✦</span>
-  <span class="fxrorg-signal-label">Besoin compris</span>
-  <span class="fxrorg-signal-desc">RAFI interprète les informations utiles de votre demande.</span>
-</div>
-
-      <div class="fxrorg-signal" role="listitem">
-  <span class="fxrorg-signal-icon" aria-hidden="true">◎</span>
-  <span class="fxrorg-signal-label">Zone prise en compte</span>
-  <span class="fxrorg-signal-desc">RAFI intègre votre ville pour orienter la recherche dans la bonne zone.</span>
-</div>
-
-      <div class="fxrorg-signal" role="listitem">
-  <span class="fxrorg-signal-icon" aria-hidden="true">⌁</span>
-  <span class="fxrorg-signal-label">Priorité détectée</span>
-  <span class="fxrorg-signal-desc">Urgence, aujourd’hui ou planifié : RAFI intègre le niveau de priorité.</span>
-</div>
-
-      <div class="fxrorg-signal" role="listitem">
-  <span class="fxrorg-signal-icon" aria-hidden="true">⌘</span>
-  <span class="fxrorg-signal-label">Demande structurée</span>
-  <span class="fxrorg-signal-desc">Les informations utiles sont réunies avant la mise en relation.</span>
-</div>
-
-    </div><!-- /fxrorg-signals -->
-
-    <p class="fxrorg-outcome" aria-hidden="true">
-  Votre demande est structurée. FIXEO peut maintenant l’orienter efficacement.
-</p>
-
-    <!-- ── PART 3 — RAFI Processing Flow ──────────────────────────────
-     Replaces the flat checklist. Four connected system modules on a
-     vertical luminous rail. No fake data, no AI claims, no counters.
-     Namespace: fc2-rf-* (processing flow)
-     ───────────────────────────────────────────────────────────────── -->
-    <div class="fc2-consequences fc2-rf-wrap" aria-label="Traitement RAFI — les quatre étapes" hidden>
-
-      <!-- ── Flow header ── -->
-      <header class="fc2-rf-header">
-  <span class="fc2-rf-eyebrow" aria-hidden="true">MOTEUR FIXEO</span>
-  <h3 class="fc2-rf-title">De votre demande à la bonne orientation.</h3>
-  <p class="fc2-rf-lead">
-    FIXEO transforme le contexte compris par RAFI en étapes utiles pour trouver et organiser la suite.
-  </p>
-</header>
-
-      <!-- ── Rail + modules ── -->
-      <div class="fc2-rf-rail-wrap" role="list" aria-label="Étapes du traitement RAFI">
-
-        <!-- Vertical connecting line (decorative) -->
-        <div class="fc2-rf-line" aria-hidden="true">
-          <div class="fc2-rf-line-fill"></div>
-        </div>
-
-        <!-- ── MODULE 01 ── -->
-        <div class="fc2-rf-module" role="listitem" data-rf-idx="0">
-          <div class="fc2-rf-node" aria-hidden="true">
-            <span class="fc2-rf-node-idx">01</span>
-            <div class="fc2-rf-node-dot"></div>
-          </div>
-
-          <div class="fc2-rf-body">
-  <h4 class="fc2-rf-mod-title">Comprendre la demande</h4>
-  <div class="fc2-rf-chips" aria-label="Statuts">
-    <span class="fc2-rf-chip fc2-rf-chip--ok">Contexte analysé</span>
-  </div>
-  <p class="fc2-rf-mod-text">
-    RAFI transforme vos informations en un besoin clair et exploitable.
-  </p>
-</div>
-
-        <!-- ── MODULE 02 ── -->
-        <div class="fc2-rf-module" role="listitem" data-rf-idx="1">
-          <div class="fc2-rf-node" aria-hidden="true">
-            <span class="fc2-rf-node-idx">02</span>
-            <div class="fc2-rf-node-dot"></div>
-          </div>
-          <div class="fc2-rf-body">
-  <h4 class="fc2-rf-mod-title">Orienter la recherche</h4>
-  <div class="fc2-rf-chips" aria-label="Statuts">
-    <span class="fc2-rf-chip fc2-rf-chip--ok">Zone croisée</span>
-  </div>
-  <p class="fc2-rf-mod-text">
-    FIXEO combine le besoin compris avec votre zone pour cibler les profils pertinents.
-  </p>
-</div>
-        </div>
-
-        <!-- ── MODULE 03 ── -->
-        <div class="fc2-rf-module" role="listitem" data-rf-idx="2">
-          <div class="fc2-rf-node" aria-hidden="true">
-            <span class="fc2-rf-node-idx">03</span>
-            <div class="fc2-rf-node-dot"></div>
-          </div>
-          <div class="fc2-rf-body">
-  <h4 class="fc2-rf-mod-title">Organiser la suite</h4>
-  <div class="fc2-rf-chips" aria-label="Statuts">
-    <span class="fc2-rf-chip fc2-rf-chip--blue">Priorité intégrée</span>
-  </div>
-  <p class="fc2-rf-mod-text">
-    La priorité et le contexte sont conservés pour faciliter la coordination de l’intervention.
-  </p>
-</div>
-        </div>
-
-
-      </div><!-- /fc2-rf-rail-wrap -->
-
-
-    </div><!-- /fc2-consequences -->
-
-  </div><!-- /container -->
-</section>
 
 <!-- ── fxhome-vnext: IntersectionObserver - triggers .fc2-org-visible ──
      Private IIFE. One observer. No permanent rAF. No global listeners.
@@ -5797,39 +5650,11 @@ html #services.fc3-chapter {
   </div>
 </section>
 <!-- Recommended artisan - hidden by default, JS-revealed -->
-<section class="section section-sm recommended-artisan" id="recommended-artisan-section" aria-labelledby="recommended-artisan-title" hidden>
-  <div class="container">
-    <div class="recommended-artisan-shell">
-      <div class="recommended-artisan-head">
-        <span class="section-tag">RECOMMANDATION FIXEO</span>
-        <h2 id="recommended-artisan-title">Artisan recommandé</h2>
-        <p>Une suggestion mise en avant séparément pour garder la HERO claire et concentrée sur la recherche.</p>
-      </div>
-      <div id="recommended-artisan-card" class="recommended-artisan-card" aria-live="polite">
-        <span class="recommended-artisan-badge">Recommandé</span>
-        <img id="rec-avatar" class="rec-avatar" alt="Photo de l'artisan recommandé" src="/default-avatar.jpg" loading="lazy" decoding="async"/>
-        <div class="rec-content">
-          <h3 id="rec-name" class="rec-name"></h3>
-          <p id="rec-info" class="rec-info"></p>
-          <p id="rec-price" class="rec-price"></p>
-        </div>
-        <button id="rec-view-profile" class="btn btn-primary primary-btn rec-cta" type="button">
-          Voir profil
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 <!-- Service artisans (injected by JS) -->
 
-  <div
-  id="service-artisans-section"
-  class="container services-grid"
-  hidden
-  aria-hidden="true"
-  style="display:none !important;"
-></div>
+  
 
 <!-- SEO local pages linked via footer and static routes - visible block removed -->
 
@@ -5839,56 +5664,14 @@ html #services.fc3-chapter {
      3. ARTISANS VEDETTE V13 - Single section, 2×5 grid
 ══════════════════════════════════════════════════════════ -->
 
-<section
-  class="section"
-  id="secondary-search-section"
-  aria-labelledby="vedette-title"
-  hidden
-  aria-hidden="true"
-  style="display:none !important;">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-tag">SÉLECTION PREMIUM</span>
-      <h2 id="vedette-title">⭐ Artisans Vedettes</h2>
-      <p>Notre sélection de professionnels les mieux notés - disponibles et vérifiés</p>
-    </div>
 
-    <!-- 2 lignes × 5 cartes -->
-    <div class="ssb2-vedette-section" id="ssb2-vedette-section">
-      <div class="pvc-grid-counter" id="pvc-grid-counter" aria-live="polite"></div>
-      <div class="ssb2-vedette-grid" id="ssb2-vedette-grid"
-           aria-label="Artisans vedettes - sélection premium"></div>
-      <div class="ssb2-vedette-more-wrap">
-        <button id="ssb2-vedette-more" class="ssb2-btn-more" style="display:none"
-                aria-label="Charger plus d'artisans vedettes">
-          👷 Voir plus d'artisans
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
 
 
 <div class="section-divider" aria-hidden="true" hidden style="display:none !important;"></div>
 
 <!-- ★ CONVERSION BOOST v22 - Top Artisans du Moment -->
 
-<section
-  id="top-artisans"
-  class="section section-sm top-artisan-section"
-  aria-labelledby="top-artisans-title"
-  hidden
-  aria-hidden="true"
-  style="display:none !important;">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-tag">TENDANCE</span>
-      <h2 id="top-artisans-title">🔥 Les meilleurs artisans du moment</h2>
-      <p class="top-artisan-sub">🔥 Les artisans les mieux notés cette semaine</p>
-    </div>
-    <div id="top-list" class="top-artisans-grid" aria-label="Classement des meilleurs artisans"></div>
-  </div>
-</section>
+
 
 
 <div class="section-divider" aria-hidden="true" hidden style="display:none !important;"></div>
@@ -5897,111 +5680,7 @@ html #services.fc3-chapter {
      4. DÉCOUVRIR PLUS D'ARTISANS V13
 ══════════════════════════════════════════════════════════ -->
 
-<section class="section" id="artisans-section" aria-labelledby="fxas-title" data-fxhome-artisans-version="v2a3">
-  <div class="container results-page-shell">
-    <!-- Hidden inputs for search engine compatibility -->
-    <select id="filter-category" style="display:none" aria-hidden="true"></select>
-    <select id="filter-city" style="display:none" aria-hidden="true"></select>
-    <input type="text" id="search-input" style="display:none" aria-hidden="true"/>
-    <select id="filter-availability" style="display:none" aria-hidden="true"></select>
-    <select id="filter-sort" style="display:none" aria-hidden="true"></select>
 
-    <div class="results-header premium-results-header" style="display:none">
-      <div class="results-header-copy">
-        <span class="results-header-kicker">ARTISANS VÉRIFIÉS</span>
-        <h1 id="results-main-title">Artisans près de chez vous</h1>
-        <p id="results-main-meta"></p>
-      </div>
-      <button class="edit-search-btn" id="edit-results-search-btn" type="button" style="display:none">Modifier la recherche</button>
-    </div>
-
-    <div class="results-layout">
-      <aside class="results-filters" style="display:none" aria-labelledby="results-filters-title">
-        <div class="results-filters-head">
-          <h3 id="results-filters-title">Filtres</h3>
-          <button class="results-reset-btn" id="results-reset-btn" type="button">Réinitialiser</button>
-        </div>
-
-        <div class="results-filter-group">
-          <label for="results-filter-city">Ville</label>
-          <select id="results-filter-city">
-            <option value="">Toutes les villes</option>
-          </select>
-        </div>
-
-        <div class="results-filter-group">
-          <label for="results-filter-rating">Note minimum</label>
-          <select id="results-filter-rating">
-            <option value="0">Toutes les notes</option>
-            <option value="4.8">4,8 et plus</option>
-            <option value="4.5">4,5 et plus</option>
-            <option value="4">4,0 et plus</option>
-          </select>
-        </div>
-
-        <div class="results-filter-group">
-          <label for="results-filter-availability">Disponibilité</label>
-          <select id="results-filter-availability">
-            <option value="">Toutes</option>
-            <option value="available">Disponible maintenant</option>
-            <option value="busy">Prend des réservations</option>
-          </select>
-        </div>
-
-        <div class="results-filter-group">
-          <label for="results-filter-price">Prix max</label>
-          <select id="results-filter-price">
-            <option value="">Tous les prix</option>
-            <option value="100">Jusqu'à 100 MAD</option>
-            <option value="150">Jusqu'à 150 MAD</option>
-            <option value="200">Jusqu'à 200 MAD</option>
-            <option value="300">Jusqu'à 300 MAD</option>
-          </select>
-        </div>
-
-        <label class="results-filter-check" for="results-filter-verified">
-          <input id="results-filter-verified" type="checkbox"/>
-          <span>Artisans vérifiés uniquement</span>
-        </label>
-      </aside>
-
-      <div class="results-main-column">
-        <div class="results-toolbar" style="display:none">
-          <div class="results-toolbar-left">
-            <span id="results-count">24 résultats</span>
-            <span class="results-toolbar-badge" id="other-artisans-count-badge">👷 24 profils</span>
-          </div>
-          <select id="results-sort-select" aria-label="Trier les résultats">
-            <option value="rating">Les mieux notés</option>
-            <option value="response">Les plus rapides</option>
-            <option value="price_asc">Les moins chers</option>
-          </select>
-        </div>
-
-        <div id="other-artisans-banner" class="other-artisans-banner results-trust-strip" style="display:none">
-          <div class="other-artisans-banner-inner">
-            <span class="separator-icon">⚡</span>
-            <div class="separator-text-block">
-              <span class="separator-title">Comparez vite, choisissez en confiance</span>
-              <span class="separator-subtitle">Profils vérifiés, prix visibles et CTA toujours accessibles</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Artisans grid (injected by main.js) - pagination by homepage-v13.js -->
-        <div class="artisans-grid results-list" id="artisans-container"
-             aria-live="polite" aria-label="Liste des artisans vérifiés"></div>
-        <div id="loading-artisans" style="display:none" aria-live="polite">Chargement des artisans...</div>
-        <div id="no-artisan" style="display:none;" aria-live="polite">
-          <p>Aucun artisan disponible pour ces critères pour le moment.</p>
-        </div>
-        <!-- Pagination injected by homepage-v13.js -->
-      </div>
-    </div>
-
-    <button class="mobile-sticky-cta" id="mobile-sticky-cta" type="button" data-open-request-form="true">Publier ma demande</button>
-  </div>
-</section>
 
 
 <!-- ══════════════════════════════════════════════════════════
@@ -6010,41 +5689,7 @@ html #services.fc3-chapter {
      Answers: "Pourquoi ces artisans ?"
 ══════════════════════════════════════════════════════════ -->
 <!-- ── fxpaf-v1: Compact RAFI section - fxhome-post-artisan-flow-v1 ── -->
-<section class="section fxpaf-rafi" id="fixeo-chapter-4" aria-labelledby="fc4-title" hidden>
-  <div class="container fxpaf-rafi-inner">
 
-    <div class="fxpaf-rafi-copy">
-      <span class="fxpaf-eyebrow" aria-hidden="true">RAFI INTELLIGENCE</span>
-      <h2 class="fxpaf-rafi-title" id="fc4-title">
-        Une demande mieux comprise.<br>Des profils plus pertinents.
-      </h2>
-      <p class="fxpaf-rafi-subtitle">
-        RAFI analyse votre besoin et vous aide à identifier les profils les plus adaptés.
-      </p>
-    </div>
-
-    <ol class="fxpaf-steps" aria-label="Comment RAFI fonctionne">
-      <li class="fxpaf-step">
-        <span class="fxpaf-step-num" aria-hidden="true">1</span>
-        <span class="fxpaf-step-label">Analyse votre demande</span>
-      </li>
-      <li class="fxpaf-step">
-        <span class="fxpaf-step-num" aria-hidden="true">2</span>
-        <span class="fxpaf-step-label">Identifie les profils pertinents</span>
-      </li>
-      <li class="fxpaf-step">
-        <span class="fxpaf-step-num" aria-hidden="true">3</span>
-        <span class="fxpaf-step-label">Vous laisse choisir librement</span>
-      </li>
-    </ol>
-
-    <div class="fxpaf-rafi-closing">
-      <p class="fxpaf-rafi-closing-title">Vous gardez toujours le dernier mot.</p>
-      <p class="fxpaf-rafi-closing-sub">Vous choisissez librement le professionnel qui vous convient.</p>
-    </div>
-
-  </div>
-</section>
 
 <div class="section-divider" aria-hidden="true"></div>
 
@@ -6384,71 +6029,7 @@ html #services.fc3-chapter {
 
 
 <!-- FIXEO Blog - fxblog-v1b -->
-<section id="fxblog-section" class="fxblog-section fxblog-section--epilogue" aria-labelledby="fxblog-title" hidden>
-  <div class="container">
-    <div class="fxblog-head">
-      <div>
-        <span class="fxblog-tag">CONSEILS FIXEO</span>
-        <h2 id="fxblog-title" class="fxblog-title">Nos derniers articles</h2>
-      </div>
-      <a class="fxblog-see-all" href="/blog">Voir tous les articles →</a>
-    </div>
-    <div class="fxblog-grid">
-      <article class="fxblog-card">
-        <a href="/blog/urgence-plombier-casablanca" class="fxblog-card-link">
-          <div class="fxblog-card-body">
-            <span class="fxblog-card-cat">🚨 Urgences</span>
-            <h3 class="fxblog-card-title">Plombier urgence Casablanca 24h/7</h3>
-            <p class="fxblog-card-excerpt">Fuite d'eau, WC bouché, tuyau éclaté - intervention en 30 à 60 min dans tous les quartiers de Casablanca.</p>
-            <div class="fxblog-card-meta">
-              <span class="fxblog-card-time">⏱ 4 min</span>
-              <span class="fxblog-card-arrow">→</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="fxblog-card">
-        <a href="/blog/prix-plombier-maroc" class="fxblog-card-link">
-          <div class="fxblog-card-body">
-            <span class="fxblog-card-cat">💰 Tarifs &amp; Prix</span>
-            <h3 class="fxblog-card-title">Prix plombier au Maroc 2025 : tarifs et devis</h3>
-            <p class="fxblog-card-excerpt">Tarifs horaires 150-500 MAD, frais de déplacement, comparatif par ville. Tout pour éviter les mauvaises surprises.</p>
-            <div class="fxblog-card-meta">
-              <span class="fxblog-card-time">⏱ 6 min</span>
-              <span class="fxblog-card-arrow">→</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="fxblog-card">
-        <a href="/blog/prix-electricien-maroc" class="fxblog-card-link">
-          <div class="fxblog-card-body">
-            <span class="fxblog-card-cat">⚡ Électricité</span>
-            <h3 class="fxblog-card-title">Prix électricien au Maroc : grille tarifaire 2025</h3>
-            <p class="fxblog-card-excerpt">Coût d'un tableau électrique, mise aux normes, prise de courant - tarifs par type d'intervention et par ville.</p>
-            <div class="fxblog-card-meta">
-              <span class="fxblog-card-time">⏱ 5 min</span>
-              <span class="fxblog-card-arrow">→</span>
-            </div>
-          </div>
-        </a>
-      </article>
-      <article class="fxblog-card">
-        <a href="/blog/artisan-verifie-maroc" class="fxblog-card-link">
-          <div class="fxblog-card-body">
-            <span class="fxblog-card-cat">🛡️ Confiance &amp; Garanties</span>
-            <h3 class="fxblog-card-title">Pourquoi choisir un artisan vérifié Fixeo</h3>
-            <p class="fxblog-card-excerpt">Processus de vérification, badge artisan, avis authentiques - pourquoi c'est plus sûr qu'un contact direct.</p>
-            <div class="fxblog-card-meta">
-              <span class="fxblog-card-time">⏱ 4 min</span>
-              <span class="fxblog-card-arrow">→</span>
-            </div>
-          </div>
-        </a>
-      </article>
-    </div>
-  </div>
-</section>
+
 <div class="section-divider section-divider--spacious" aria-hidden="true"></div>
 <!-- ══════════════════════════════════════════════════════════
      9. FINAL CTA - Conversion
@@ -6514,193 +6095,16 @@ html #services.fc3-chapter {
 <!-- ═══════════════════════════════════════════════════════════
      MODALS - preserved from v11/v12 (backend intact)
 ════════════════════════════════════════════════════════════ -->
-<div class="modal" id="artisan-modal" role="dialog" aria-modal="true" aria-label="Détails artisan"></div>
 
-<div class="modal" id="comment-modal" role="dialog" aria-modal="true" aria-label="Commentaires">
-  <div class="modal-header">
-    <h3>💬 <span id="comment-modal-title"></span></h3>
-    <button class="modal-close" onclick="closeModal('comment-modal')">✕</button>
-  </div>
-  <div id="comment-list" style="margin-bottom:1.25rem;max-height:300px;overflow-y:auto"></div>
-  <div class="form-group">
-    <div class="star-input" style="margin-bottom:.75rem">
-      <input type="radio" name="rating" id="s5" value="5"/><label for="s5">★</label>
-      <input type="radio" name="rating" id="s4" value="4"/><label for="s4">★</label>
-      <input type="radio" name="rating" id="s3" value="3"/><label for="s3">★</label>
-      <input type="radio" name="rating" id="s2" value="2"/><label for="s2">★</label>
-      <input type="radio" name="rating" id="s1" value="1"/><label for="s1">★</label>
-    </div>
-    <div style="display:flex;gap:.75rem">
-      <input type="text" class="form-control" id="new-comment-input" placeholder="Votre commentaire..."/>
-      <button class="btn btn-primary" onclick="submitComment()">Envoyer</button>
-    </div>
-  </div>
-</div>
+
+
 
 <!-- Content modal (FAQ, CGU...) -->
-<div class="modal" id="content-modal" role="dialog" aria-modal="true" aria-label="Contenu">
-  <div class="modal-header">
-    <h3 id="content-modal-title">Contenu</h3>
-    <button class="modal-close" onclick="closeModal('content-modal')">✕</button>
-  </div>
-  <div id="content-modal-body" class="legal-modal-content"></div>
-</div>
+
 
 <!-- Request modal - publication de demande client -->
-<!-- fxrf4-v5b: #request-modal permanently replaced by V5 flow. DOM preserved for JS compat only. -->
-<div class="modal request-modal" id="request-modal" role="dialog" aria-modal="true" aria-hidden="true" hidden style="display:none!important">
-  <!-- V3 header - clean namespace, no shared classes -->
-  <div class="fxrmv3-header">
-    <span class="fxrmv3-mode" aria-hidden="true">FIXEO</span>
-    <span class="fxrmv3-title" id="fxrmv3-title-el">Quel est le probl&#232;me&#160;?</span>
-    <span class="fxrmv3-subtitle" id="fxrmv3-subtitle-el">Un artisan Fixeo vous rappelle sous 30&#160;min</span>
-    <button class="fxrmv3-close" type="button" aria-label="Fermer le formulaire">&#x2715;</button>
-  </div>
-  <!-- Legacy header preserved for rollback - hidden by V3 CSS -->
-  <div class="modal-header request-modal-header" aria-hidden="true" style="display:none">
-    <div>
-      <h3 id="request-modal-title">Quel est le probl&#232;me&#160;?</h3>
-      <p id="request-modal-subtitle" class="request-modal-subtitle">Un artisan Fixeo vous rappelle sous 30&#160;min</p>
-    </div>
-    <button class="modal-close" type="button" aria-label="Fermer">&#x2715;</button>
-  </div>
+<!-- Legacy request DOM removed; the current V5 flow owns its own dialog. -->
 
-  <div class="request-modal-shell">
-    <form id="request-form" class="request-form" novalidate>
-      <div class="request-field">
-        <label for="request-problem">Votre besoin</label>
-        <input id="request-problem" name="problem" type="text" placeholder="Ex&#160;: fuite d&#8217;eau, panne &#233;lectrique, porte bloqu&#233;e&#8230;" maxlength="120" required />
-      </div>
-
-      <div class="request-field">
-        <label for="request-city">Ville</label>
-        <select id="request-city" name="ville" required>
-          <option value="">Choisir une ville</option>
-          <option value="Casablanca">Casablanca</option>
-          <option value="Rabat">Rabat</option>
-          <option value="Marrakech">Marrakech</option>
-          <option value="Fès">Fès</option>
-          <option value="Tanger">Tanger</option>
-          <option value="Agadir">Agadir</option>
-          <option value="Meknès">Meknès</option>
-          <option value="Oujda">Oujda</option>
-          <option value="Kénitra">Kénitra</option>
-          <option value="Tétouan">Tétouan</option>
-          <option value="Salé">Salé</option>
-          <option value="Temara">Temara</option>
-          <option value="El Jadida">El Jadida</option>
-          <option value="Béni Mellal">Béni Mellal</option>
-          <option value="Nador">Nador</option>
-          <option value="Khouribga">Khouribga</option>
-          <option value="Safi">Safi</option>
-          <option value="Taza">Taza</option>
-          <option value="Ouarzazate">Ouarzazate</option>
-          <option value="Mohammedia">Mohammedia</option>
-        </select>
-      </div>
-
-      <div class="request-field">
-        <span class="request-label">Urgence</span>
-        <div class="request-choice-grid" role="radiogroup" aria-label="Urgence">
-          <label class="request-choice-card">
-            <input type="radio" name="urgence" value="Urgent (moins de 30 min)" required />
-            <span class="request-choice-title">Urgent</span>
-            <span class="request-choice-meta">moins de 30 min</span>
-          </label>
-          <label class="request-choice-card">
-            <input type="radio" name="urgence" value="Normal" checked />
-            <span class="request-choice-title">Normal</span>
-            <span class="request-choice-meta">délai classique</span>
-          </label>
-        </div>
-      </div>
-
-      <div class="request-field">
-        <label for="request-budget">Budget <span class="request-optional">(optionnel)</span></label>
-        <select id="request-budget" name="budget">
-          <option value="">Sélectionner un budget</option>
-          <option value="Moins de 100 MAD">Moins de 100 MAD</option>
-          <option value="100 - 300 MAD">100 - 300 MAD</option>
-          <option value="300 - 700 MAD">300 - 700 MAD</option>
-          <option value="+700 MAD">+700 MAD</option>
-        </select>
-      </div>
-
-      <div class="request-field">
-        <label for="request-phone">Téléphone</label>
-        <input id="request-phone" name="telephone" type="tel" inputmode="tel" placeholder="06 12 34 56 78" maxlength="20" required />
-      </div>
-
-      <button class="btn btn-primary request-submit-btn" type="submit">Envoyer ma demande</button>
-
-      <div class="request-trust-copy" aria-hidden="true">
-        <span>Gratuit &#183; Sans engagement</span>
-        <span>Paiement apr&#232;s intervention</span>
-      </div>
-    </form>
-
-    <!-- V2-B: Upgraded success state - operational coordination framing -->
-    <div id="request-success" class="request-success fxrva-success" hidden>
-
-      <!-- Status icon -->
-      <div class="request-success-icon fxrva-success-icon" aria-hidden="true">&#x2714;&#xFE0F;</div>
-
-      <!-- Title + sub - populated by showSuccess() from REQUEST_COPY -->
-      <h4 class="fxrva-success-title">Fixeo coordonne votre intervention</h4>
-      <p class="fxrva-success-sub">Votre demande est enregistr&#233;e. Un artisan disponible dans votre zone sera s&#233;lectionn&#233; et vous contactera pour confirmer.</p>
-
-      <!-- Coordination steps - visual process clarity -->
-      <div class="fxrva-coord-steps" aria-label="&#201;tapes de coordination">
-        <div class="fxrva-coord-step">
-          <span class="fxrva-coord-icon" aria-hidden="true">&#x2705;</span>
-          <span class="fxrva-coord-label">Demand&#x65; enregistr&#233;e</span>
-        </div>
-        <div class="fxrva-coord-sep" aria-hidden="true">&#x2192;</div>
-        <div class="fxrva-coord-step">
-          <span class="fxrva-coord-icon" aria-hidden="true">&#x1F50D;</span>
-          <span class="fxrva-coord-label">Artisan s&#233;lectionn&#233;</span>
-        </div>
-        <div class="fxrva-coord-sep" aria-hidden="true">&#x2192;</div>
-        <div class="fxrva-coord-step">
-          <span class="fxrva-coord-icon" aria-hidden="true">&#x1F4AC;</span>
-          <span class="fxrva-coord-label">Confirmation WhatsApp</span>
-        </div>
-      </div>
-
-      <!-- Notice - coordination guidance - populated by showSuccess() -->
-      <p class="fxrva-success-notice" hidden>
-        Restez joignable sur WhatsApp &#8212; c&#x2019;est l&#xE0; que se fait la coordination.
-      </p>
-
-      <!-- WhatsApp primary CTA -->
-      <a class="btn fxrva-wa-primary" id="request-whatsapp-link"
-         href="#" target="_blank" rel="noopener noreferrer"
-         aria-label="Rester joignable via WhatsApp">
-        <span class="fxrva-wa-ico" aria-hidden="true">&#x1F4AC;</span>
-        <span class="fxrva-wa-main-label">Rester joignable via WhatsApp</span>
-      </a>
-
-      <!-- Contextual sub-label - what to do on WA - populated by showSuccess() -->
-      <p class="fxrva-wa-sub-label" hidden>Partager une photo ou pr&#233;ciser l&#x2019;intervention</p>
-
-      <!-- Secondary action -->
-      <button class="btn fxrva-new-request" type="button" id="request-new-one">Publier une autre demande</button>
-
-    </div>
-  </div>
-</div>
-
-<!-- Comparator bar -->
-<div class="comparator-bar" role="region" aria-label="Comparateur d'artisans">
-  <div style="font-weight:700;white-space:nowrap;font-size:.9rem">⚖️ Comparer</div>
-  <div class="comparator-slots">
-    <div class="comparator-slot"><span style="font-size:1.2rem">+</span></div>
-    <div class="comparator-slot"><span style="font-size:1.2rem">+</span></div>
-    <div class="comparator-slot"><span style="font-size:1.2rem">+</span></div>
-  </div>
-  <button class="btn btn-primary comparator-btn" onclick="openComparatorModal()" disabled style="opacity:.5">Comparer (0/2 min)</button>
-  <button class="btn btn-secondary btn-sm" onclick="clearComparison()" style="padding:.35rem .75rem;font-size:.8rem">🗑 Vider</button>
-</div>
 
 <!-- Chat widget → WhatsApp support -->
 <div class="chat-widget" role="complementary" aria-label="Support WhatsApp">
@@ -6724,200 +6128,27 @@ html #services.fc3-chapter {
 <!-- ═══════════════════════════════════════════════════════════
      SCRIPTS V13
 ════════════════════════════════════════════════════════════ -->
+<script src="js/fixeo-home-core.js?v=home-core1"></script>
 <script src="js/fixeo-heroes.js?v=fxhome-artisans-v2b1"></script>
 <script src="js/fixeo-session-mobile.js?v=50a38b9"></script>
 <script src="js/fixeo-header-global.js?v=gfnav6-estimation"></script>
 <script src="js/i18n.js?v=i18n3"></script>
 <script defer src="js/notifications.js?v=50a38b9"></script>
-<script src="js/fixeo-public-profile-links.js?v=50a38b9"></script>
-<script src="js/main.js?v=facp-v2d"></script>
+
+
 <!-- fixeo_seed_patch.js DISABLED - seeds now in Supabase -->
-  <script src="js/fixeo-matching-engine.js?v=me1"></script>
-  <script src="js/fixeo-pricing-marocain.js?v=pm1" defer></script>
+  
+  
   <!-- fixeo-artisans-master-loader.js DISABLED - data now from Supabase (fixeo-supabase-loader.js) -->
-<script>
-/* ── Page-level utility functions (unchanged from v11/v12) ── */
-function submitComment() {
-  const input = document.getElementById('new-comment-input');
-  if (!input?.value.trim()) return;
-  const list = document.getElementById('comment-list');
-  const div = document.createElement('div');
-  div.style.cssText='display:flex;gap:.75rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--glass-border)';
-  div.innerHTML=`<div style="font-size:1.5rem">😊</div><div><div style="font-weight:600;font-size:.85rem;margin-bottom:.25rem">Vous</div><div style="font-size:.85rem">${input.value.trim()}</div></div>`;
-  list.appendChild(div);
-  input.value='';
-  list.scrollTop=list.scrollHeight;
-}
 
-function openComparatorModal() {
-  const list = window.searchEngine?.compareList || [];
-  if (list.length < 2) {
-    window.notifSystem?.toast({
-      type: 'info',
-      title: 'Sélectionnez au moins 2 artisans',
-      message: 'Cliquez sur "+ Comparer" sur les cartes artisans.',
-      icon: 'i️'
-    });
-    return;
-  }
 
-  const artisans = list
-    .map(id => ARTISANS?.find(a => a.id === id))
-    .filter(Boolean);
 
-  const modal = document.getElementById('artisan-modal');
 
-  const getCatLabel = (cat) => ({
-    plomberie: 'Plomberie',
-    peinture: 'Peinture',
-    electricite: 'Électricité',
-    nettoyage: 'Nettoyage',
-    jardinage: 'Jardinage',
-    demenagement: 'Déménagement',
-    bricolage: 'Bricolage',
-    climatisation: 'Climatisation',
-    menuiserie: 'Menuiserie',
-    maconnerie: 'Maçonnerie'
-  }[cat] || cat);
 
-  const rows = [
-    { label: '⭐ Note', vals: artisans.map(a => `<strong style="color:#FFD700">${a.rating}/5</strong>`) },
-    { label: '💬 Avis', vals: artisans.map(a => `${a.reviewCount} avis`) },
-    {
-      label: '🛡 Confiance',
-      vals: artisans.map(a => {
-        const c = a.trustScore >= 90 ? '#20c997' : a.trustScore >= 70 ? '#ffa502' : '#ff4757';
-        return `<strong style="color:${c}">${a.trustScore}/100</strong>`;
-      })
-    },
-    { label: '💰 Tarif', vals: artisans.map(a => `<strong>${a.priceFrom} MAD</strong>/${a.priceUnit}`) },
-    { label: '⏱ Réponse', vals: artisans.map(a => `~${a.responseTime} min`) },
-    { label: '📍 Ville', vals: artisans.map(a => a.city) },
-    { label: '🔧 Spécialité', vals: artisans.map(a => getCatLabel(a.category)) },
-    {
-      label: '✅ Dispo',
-      vals: artisans.map(a =>
-        `<span style="color:${a.availability === 'available' ? '#20c997' : '#ffa502'}">${
-          a.availability === 'available' ? 'Disponible' : 'Occupé'
-        }</span>`
-      )
-    }
-  ];
 
-  modal.setAttribute('data-mode', 'compare');
-  modal.innerHTML = `
-    <div class="modal-header" style="margin-bottom:1.25rem">
-      <div style="display:flex;align-items:center;gap:.6rem">
-        <span style="font-size:1.3rem">⚖️</span>
-        <h3 style="font-size:1rem;font-weight:700">Comparaison des artisans</h3>
-      </div>
-      <button class="modal-close" onclick="closeModal('artisan-modal')">✕</button>
-    </div>
-
-    <div style="display:grid;grid-template-columns:140px ${artisans.map(() => '1fr').join(' ')};gap:10px;margin-bottom:1rem">
-      <div></div>
-      ${artisans.map(a => `
-        <div style="text-align:center;padding:.75rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px">
-          <div class="artisan-avatar-placeholder" style="width:52px;height:52px;font-size:1.1rem;margin:0 auto .5rem">${a.initials}</div>
-          <div style="font-weight:700;font-size:.85rem">${a.name}</div>
-          <div style="font-size:.7rem;color:rgba(255,255,255,.45)">${getCatLabel(a.category)}</div>
-        </div>
-      `).join('')}
-    </div>
-
-    <div style="border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden">
-      ${rows.map((row, idx) => `
-        <div style="display:grid;grid-template-columns:140px ${artisans.map(() => '1fr').join(' ')};background:${idx % 2 === 0 ? 'rgba(255,255,255,.03)' : 'transparent'};border-bottom:1px solid rgba(255,255,255,.06)">
-          <div style="padding:.65rem .75rem;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.52);border-right:1px solid rgba(255,255,255,.06)">${row.label}</div>
-          ${row.vals.map(v => `<div style="padding:.65rem .75rem;text-align:center;font-size:.82rem">${v}</div>`).join('')}
-        </div>
-      `).join('')}
-    </div>
-
-    <div style="display:grid;grid-template-columns:140px ${artisans.map(() => '1fr').join(' ')};gap:10px;margin-top:1rem">
-      <div style="font-size:.72rem;color:rgba(255,255,255,.35);padding:0 .5rem;display:flex;align-items:center">Actions</div>
-      ${artisans.map(a => `
-        <button class="btn btn-primary btn-sm fixeo-reserve-btn" style="width:100%;padding:.5rem" onclick="closeModal('artisan-modal');openBookingModal('${a.id}')">
-          📅 Réserver
-        </button>
-      `).join('')}
-    </div>
-  `;
-
-  openModal('artisan-modal');
-}
-
-function clearComparison() {
-  if (window.searchEngine) {
-    window.searchEngine.compareList = [];
-    window.searchEngine.updateComparatorBar?.();
-  }
-}
-
-function toggleMapView(btn) {
-  const mapSection = document.getElementById('map-section') || document.querySelector('.smart-search-map');
-  if (mapSection) {
-    const isHidden = mapSection.style.display === 'none' || !mapSection.style.display;
-    mapSection.style.display = isHidden ? '' : 'none';
-    btn.classList.toggle('active', !isHidden);
-  }
-}
-
-function filterQuick(type, btn) {
-  document.querySelectorAll('.results-header .filter-chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-
-  const filterAvail = document.getElementById('filter-availability');
-  const filterSort = document.getElementById('filter-sort');
-
-  if (type === 'available' && filterAvail) {
-    filterAvail.value = 'available';
-    filterAvail.dispatchEvent(new Event('change'));
-  } else if (type === 'top' && filterSort) {
-    filterSort.value = 'rating';
-    filterSort.dispatchEvent(new Event('change'));
-  } else if (filterAvail) {
-    filterAvail.value = '';
-    filterAvail.dispatchEvent(new Event('change'));
-  }
-}
-
-function openBookingModal(artisanId) {
-  if (window.FixeoReservation) window.FixeoReservation.openBooking(artisanId);
-  else if (window.openModal) window.openModal('booking-modal');
-}
-
-function openContentModal(type) {
-  const modal = document.getElementById('content-modal');
-  const title = document.getElementById('content-modal-title');
-  const body = document.getElementById('content-modal-body');
-  if (!modal) return;
-
-  const map = {
-    about: ['À propos de Fixeo', '<p>Fixeo est la plateforme de mise en relation entre particuliers et artisans qualifiés au Maroc. Notre mission : simplifier et sécuriser chaque intervention à domicile.</p>'],
-    careers: ['Carrières', '<p>Rejoignez l\'équipe Fixeo ! Nous recrutons des talents passionnés par l\'innovation et le service client.</p>'],
-    press: ['Presse', '<p>Pour toute demande presse, contactez-nous à presse@fixeo.ma</p>'],
-    blog: ['Blog Fixeo', '<p>Conseils, astuces et actualités du monde de l\'artisanat au Maroc.</p>'],
-    faq: ['FAQ', '<p><strong>Comment fonctionne la réservation ?</strong><br>Choisissez votre artisan, sélectionnez un créneau disponible, confirmez et payez en ligne.</p><p><strong>Quels sont les frais ?</strong><br>Une commission de 15% est appliquée sur chaque transaction.</p>'],
-    contact: ['Nous contacter', '<p>Email : support@fixeo.ma<br>Tel : +212 5XX XX XX XX<br>Disponible 7j/7, 8h-20h</p>'],
-    cgu: ['Conditions Générales d\'Utilisation', '<p>En utilisant Fixeo vous acceptez nos CGU. Pour plus d\'informations, consultez notre document complet.</p>'],
-    privacy: ['Politique de confidentialité', '<p>Vos données personnelles sont protégées et ne sont jamais vendues à des tiers.</p>']
-  };
-
-  const data = map[type] || ['Information', '<p>Contenu à venir.</p>'];
-  if (title) title.textContent = data[0];
-  if (body) body.innerHTML = data[1];
-  openModal('content-modal');
-}
-</script>
-
-<script src="js/v3_ultra_stable.js?v=50a38b9" defer></script>
-<script src="js/pricing.js?v=50a38b9"></script>
-<script src="js/fixeo_v5_fixes.js?v=50a38b9"></script>
-<script src="js/smart-search.js?v=citychips2" defer></script>
 <script src="js/fixeo-cities.js?v=fxc1"></script>
-<script src="js/hero-search-modal.js?v=50a38b9" defer></script>
-<script src="js/secondary-search.js?v=pf-nav1" defer></script>
+
+
 <script src="js/quick-search-modal.js?v=qsm11-reset"></script>
 <script src="js/header-unified.js?v=modalfix3"></script>
 <script src="js/auth-global.js?v=50a38b9"></script>
@@ -6925,211 +6156,13 @@ function openContentModal(type) {
 <script src="js/fixeo-auth-guard.js?v=guard-v15"></script>
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
 <script src="js/homepage-v13.js?v=50a38b9"></script>
-<script src="js/hero-performance.js?v=50a38b9" defer></script>
-<script src="js/fixeo_homepage_premium_patch.js?v=fxhome-artisan-section-v1a6-no-legacy-request"></script>
-<script>
-/* ================================================================
-   FIXEO v22 - CONVERSION BOOST ENGINE
-   1. Artisan Recommandé (Hero)
-   2. Section Top Artisans
-   3. Filtres Rapides
-   4. bookArtisan() helper
-================================================================ */
-(function() {
-  'use strict';
 
-  function loadRecommendedArtisan() {
-    /* /api/artisans/recommended not available on Vercel - use local data directly. */
-    const list = window.ARTISANS || (typeof ARTISANS !== 'undefined' ? ARTISANS : []);
-    if (!list.length) return;
-    const avail = list.filter(a => a.availability === 'available');
-    const best = (avail.length ? avail : list).sort((a, b) =>
-      ((b.trustScore || 0) * 1.2 + (b.rating || 0) * 5) -
-      ((a.trustScore || 0) * 1.2 + (a.rating || 0) * 5)
-    )[0];
-    if (best) showRecommended(best);
-  }
 
-  function showRecommended(a) {
-    window._recId = a.id;
-    const box = document.getElementById('recommended-artisan-card');
-    const name = document.getElementById('rec-name');
-    const info = document.getElementById('rec-info');
-    const avatar = document.getElementById('rec-avatar');
-    const price = document.getElementById('rec-price');
-    const cta = document.getElementById('rec-view-profile');
-    if (!box) return;
 
-    if (name) name.textContent = a.name || '';
 
-    if (info) {
-      const serviceLabel = a.service || a.category || 'Artisan recommandé';
-      const ratingLabel = a.rating || '4.9';
-      const cityLabel = a.city || 'Maroc';
-      info.textContent = serviceLabel + ' · ⭐ ' + ratingLabel + ' · ' + cityLabel;
-    }
 
-    if (avatar) {
-      avatar.src = a.avatar || a.photo || a.image || '/default-avatar.jpg';
-      avatar.onerror = function() {
-        this.onerror = null;
-        this.src = '/default-avatar.jpg';
-      };
-    }
-
-    if (price) {
-      const rawPrice = a.price || a.priceFrom || '';
-      price.innerText = rawPrice ? 'À partir de ' + rawPrice + ' DH' : 'Prix sur demande';
-    }
-
-    if (cta) {
-      cta.setAttribute('data-public-profile', 'true');
-      cta.setAttribute('data-artisan-id', a.id || '');
-      cta.setAttribute('data-artisan-name', a.name || '');
-      cta.setAttribute('data-artisan-category', a.service || a.category || '');
-      cta.setAttribute('data-artisan-city', a.city || '');
-
-      if (window.FixeoPublicProfileLinks && typeof window.FixeoPublicProfileLinks.bindControl === 'function') {
-        window.FixeoPublicProfileLinks.bindControl(cta, a);
-      } else {
-        cta.onclick = function(event) {
-          if (window.FixeoPublicProfileLinks && typeof window.FixeoPublicProfileLinks.open === 'function') {
-            window.FixeoPublicProfileLinks.open(a, event);
-          } else if (typeof window.openArtisanModal === 'function') {
-            window.openArtisanModal(window._recId);
-          } else if (typeof window.openBookingModal === 'function') {
-            window.openBookingModal(window._recId);
-          }
-        };
-      }
-    }
-
-    box.style.display = 'flex';
-    box.style.opacity = '0';
-    box.style.transition = 'opacity 0.4s ease';
-    requestAnimationFrame(() => { box.style.opacity = '1'; });
-  }
-
-  function loadTopArtisans() {
-    /* /api/artisans/top not available on Vercel - use local data directly. */
-    const list = window.ARTISANS || (typeof ARTISANS !== 'undefined' ? ARTISANS : []);
-    if (!list.length) return;
-    const top = [...list]
-      .sort((a, b) =>
-        ((b.trustScore || 0) + (b.rating || 0) * 10 + (b.reviewCount || 0) * 0.1) -
-        ((a.trustScore || 0) + (a.rating || 0) * 10 + (a.reviewCount || 0) * 0.1)
-      )
-      .slice(0, 6);
-    renderTopArtisans(top);
-  }
-
-  function renderTopArtisans(data) {
-    const grid = document.getElementById('top-list');
-    const limitedData = Array.isArray(data) ? data.slice(0, 6) : [];
-    if (!grid || !limitedData.length) return;
-
-    const getAvatar = (artisan) => {
-      const candidate = artisan.avatar || artisan.photo || artisan.image || '';
-      return String(candidate || '').trim() || '/demo-artisan.jpg';
-    };
-
-    const openProfileAction = (id) => {
-      if (!id) return;
-      if (window.FixeoPublicProfileLinks) window.FixeoPublicProfileLinks.openBySourceId(id);
-      else if (typeof window.openArtisanModal === 'function') window.openArtisanModal(id);
-      else if (typeof window.openBookingModal === 'function') window.openBookingModal(id);
-    };
-
-    window.openTopArtisanProfile = openProfileAction;
-
-    grid.innerHTML = limitedData.map((a, i) => `
-      <div class="top-artisan-card top-artisan-chip v12-fade-in ${i < 3 ? 'top' : ''}"
-           onclick="openBookingModal('${a.id}')"
-           title="Réserver ${a.name || ''}">
-        <span class="rank">#${i + 1}</span>
-        <img class="top-chip-avatar" src="${getAvatar(a)}" alt="${a.name || 'Artisan'}" loading="lazy" onerror="this.onerror=null;this.src='/demo-artisan.jpg';"/>
-        <div class="info top-chip-info">
-          <h4 class="top-chip-name"><span class="dot"></span>${a.name || ''}</h4>
-          <p class="top-chip-meta">⭐ ${a.rating || '4.9'} · ${a.city || 'Maroc'}</p>
-        </div>
-        <button class="mini-btn" type="button" onclick="event.stopPropagation();openTopArtisanProfile('${a.id}')">Voir</button>
-        <span class="top-chip-rank" aria-label="Rang ${i + 1}">#${i + 1}</span>
-      </div>
-    `).join('');
-
-    document.querySelectorAll('.top-artisan-card img').forEach(img => {
-      if (!img.src || img.src.includes('undefined')) {
-        img.src = '/demo-artisan.jpg';
-      }
-    });
-
-    setTimeout(() => {
-      grid.querySelectorAll('.top-artisan-chip').forEach((c, i) => {
-        setTimeout(() => c.classList.add('visible'), i * 60);
-      });
-    }, 80);
-  }
-
-  window.filterQuickBoost = function(type, btn) {
-    document.querySelectorAll('.quick-filters .qf-btn').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-
-    const filterSort = document.getElementById('filter-sort');
-    const filterAvail = document.getElementById('filter-availability');
-
-    if (type === 'fast') {
-      if (filterSort) {
-        filterSort.value = 'response';
-        filterSort.dispatchEvent(new Event('change'));
-      } else if (window.searchEngine) {
-        if (filterAvail) {
-          filterAvail.value = '';
-          filterAvail.dispatchEvent(new Event('change'));
-        }
-      }
-
-      if (window.SecondarySearch && window.SecondarySearch.filterFast) {
-        window.SecondarySearch.filterFast();
-      }
-    } else {
-      const existingBtn = document.querySelector(
-        '.results-header .filter-chip[aria-label="' +
-        (type === 'available' ? 'Disponibles maintenant' : type === 'top' ? 'Top notés' : 'Tous les artisans') +
-        '"]'
-      );
-
-      if (existingBtn) existingBtn.click();
-      else filterQuick(type, document.createElement('div'));
-    }
-  };
-
-  window.bookArtisan = function(id) {
-    if (!id) return;
-    if (window.FixeoReservation) window.FixeoReservation.openBooking(id);
-    else if (window.openBookingModal) window.openBookingModal(id);
-  };
-
-  function init() {
-    if (window.FixeoHeroPerf && typeof window.FixeoHeroPerf.scheduleTopArtisans === 'function') {
-      window.FixeoHeroPerf.scheduleTopArtisans(loadTopArtisans);
-    } else {
-      setTimeout(loadTopArtisans, 1200);
-    }
-
-    console.log('%c⚡ Fixeo Conversion Boost v22 loaded', 'color:#E1306C;font-weight:700;');
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-})();
-</script>
-
-<script src="js/marketplace-premium-patch.js?v=50a38b9"></script>
 <script src="js/fixeo-client-requests-store.js?v=50a38b9"></script>
-<script src="js/fixeo-reservation-supabase-bridge.js?v=v3" defer></script>
+
 <!-- fxrf4-v5b: V5 is the only request flow - legacy modal JS removed -->
 <script src="js/fixeo-seo-handoff-v1.js?v=fsh-v3"></script>
 <script src="js/fx-request-flow-v4.js?v=fxrf4-v5e-final-polish"></script>
@@ -7245,7 +6278,7 @@ window._fixeoAvatarNav = function () {
 <script src="js/fixeo-ai-request-engine.js?v=aire-v1a" defer></script>
   <script src="js/fixeo-rafi-language-v1.js?v=frl-v1a" defer></script>
 <script src="js/fxnb-need-builder.js?v=fxnb-v3" defer></script>
-<script src="js/fx-situation-results-bridge-v1.js?v=fxasb-v1" defer></script>
+
 <script src="js/fxnj-journey-v1.js?v=fxnj-v1" defer></script>
 <script src="js/fixeo-hero-insights.js?v=fxhi-v1e-contextual" defer></script>
 <script src="js/fixeo-hero-suggestions-v2.js?v=fxhsv2-v1b-contextual" defer></script>
@@ -7266,144 +6299,7 @@ window.addEventListener('load', function () {
 
   <!-- fxrf4-v5b: legacy capture-phase router removed - V5 fx-request-flow-v4.js is the sole capture-phase listener -->
 
-<script>
-/* ── Lazy loader for reservation stack (reservation.js, slot-lock.js, payment.js, cod-payment.js)
-   These scripts are NOT needed until the user clicks Réserver.
-   Combined size: 153 KB - loading them at page load blocked first paint by ~500ms.
-   ──────────────────────────────────────────────────────────────────────────────────────────── */
-(function () {
-  'use strict';
 
-  var _loaded = false;
-  var _loading = false;
-  var _queue  = [];
-
-  function loadScriptOnce(src) {
-    return new Promise(function (resolve) {
-      if (document.querySelector('script[src="' + src + '"]')) return resolve();
-      var s = document.createElement('script');
-      s.src  = src;
-      s.onload = resolve;
-      s.onerror = resolve; /* never block the queue on a load failure */
-      document.body.appendChild(s);
-    });
-  }
-
-  function loadReservationStack(cb) {
-    if (_loaded) { if (cb) cb(); return; }
-    if (_loading) { if (cb) _queue.push(cb); return; }
-    _loading = true;
-    if (cb) _queue.push(cb);
-
-    /* Load in dependency order: reservation → slot-lock → payment → cod-payment */
-    loadScriptOnce('js/reservation.js?v=v1o-canonical-gate')
-      .then(function () { return loadScriptOnce('js/slot-lock.js?v=50a38b9'); })
-      .then(function () { return loadScriptOnce('js/payment.js?v=50a38b9'); })
-      .then(function () { return loadScriptOnce('js/cod-payment.js?v=50a38b9'); })
-      .then(function () { return loadScriptOnce('js/reservation-v2.js?v=v2c5a'); })
-      /* fxresf-v11a: Flagship presentation enhancer — loads after reservation-v2.js so
-         MutationObserver fires after V2 upgrade; same JS as artisan-profile.html */
-      .then(function () { return loadScriptOnce('js/fixeo-reservation-flagship-v1.js?v=fxresf-v11a'); })
-      .then(function () { return loadScriptOnce('js/fixeo-estimation-engine-v1.js?v=faee-v2a'); })
-
-      .then(function () { return loadScriptOnce('js/fixeo-review-engine-v1.js?v=frev-v1b'); })
-      .then(function () {
-        _loaded  = true;
-        _loading = false;
-        _queue.forEach(function (fn) { try { fn(); } catch (_) {} });
-        _queue = [];
-      });
-  }
-
-  /* Patch openBookingModal to lazy-load the stack first */
-  var _origOpenBooking = window.openBookingModal;
-  window.openBookingModal = function (artisanId) {
-    loadReservationStack(function () {
-      if (window.FixeoReservation) {
-        window.FixeoReservation.openBooking(artisanId);
-      } else if (_origOpenBooking) {
-        _origOpenBooking(artisanId);
-      }
-    });
-  };
-
-  /* Expose for any other callers (e.g. SecondarySearch._handleReserve) */
-  window._loadReservationStack = loadReservationStack;
-
-  /* ── Phase 7C.9L.3U: Estimator artisan picker auto-restore ──────────────
-   * Fires on pageshow (covers bfcache + fresh load) when the user navigated
-   * to artisan-profile.html?source=estimator and pressed "← Retour à ma sélection".
-   * Trigger: BOTH markers present → lazy-load reservation stack → open(null).
-   * existing verifyContext() re-verifies token server-side → restores:
-   *   service_code, service_label, amount_mad, city_slug.
-   * One-shot: marker cleared after restoration attempt (success or failure).
-   * ──────────────────────────────────────────────────────────────────────── */
-  var _fxEstimatorReturnRestoreInFlight = false;
-
-  function _maybeRestoreEstimatorPicker() {
-    if (_fxEstimatorReturnRestoreInFlight) return;
-    var RETURN_MARKER = 'fx_estimator_return_v1';
-    var TOKEN_KEY     = 'fixeo_estimator_ctx_v1';
-    var hasMarker, hasToken;
-    try {
-      hasMarker = !!sessionStorage.getItem(RETURN_MARKER);
-      hasToken  = !!sessionStorage.getItem(TOKEN_KEY);
-    } catch (_) { return; }
-    if (!hasMarker || !hasToken) return;
-
-    _fxEstimatorReturnRestoreInFlight = true;
-    /* 7C.9L.3W.2/BUG-B: capture city hint BEFORE removing sessionStorage markers.
-     * verifyContext() is async (HTTP round-trip). By the time its .then() callback runs,
-     * sessionStorage markers are already gone — the city restore branch in reservation.js
-     * would find an empty string and skip restoration.
-     * Solution: hoist the city into window._fxEstimatorReturnCityHint (ephemeral, one-shot)
-     * so verifyContext() can read it synchronously from the callback. */
-    window._fxEstimatorReturnCityHint = '';
-    try {
-      window._fxEstimatorReturnCityHint =
-        sessionStorage.getItem('fx_estimator_return_city_v1') || '';
-    } catch (_) {}
-    /* Clear both UX one-shot markers — Token (fixeo_estimator_ctx_v1) is NOT cleared. */
-    try { sessionStorage.removeItem(RETURN_MARKER); } catch (_) {}
-    try { sessionStorage.removeItem('fx_estimator_return_city_v1'); } catch (_) {}
-
-    loadReservationStack(function() {
-      try {
-        if (!window.FixeoReservation || typeof window.FixeoReservation.open !== 'function') {
-          _fxEstimatorReturnRestoreInFlight = false;
-          return;
-        }
-        /* open(null) with token present: verifyContext() fires server-side,
-         * restores _estimatorCtx (service, amount, city_slug) → artisan picker rendered. */
-        window.FixeoReservation.open(null, false, null);
-      } catch (_err) {
-        /* Terminal failure — guard stays true to prevent loops */
-      }
-      _fxEstimatorReturnRestoreInFlight = false;
-    });
-  }
-
-  /* pageshow fires on fresh load AND bfcache restore */
-  window.addEventListener('pageshow', function() {
-    setTimeout(_maybeRestoreEstimatorPicker, 120);
-  });
-  /* DOMContentLoaded as secondary safety net for non-bfcache paths */
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(_maybeRestoreEstimatorPicker, 120);
-    }, { once: true });
-  }
-
-  /* Estimator confirmation is handled once by FixeoEstimatorReservationBridge. */
-
-  /* Preload on idle so first-click is instant */
-  var _idle = window.requestIdleCallback
-    ? function (cb) { window.requestIdleCallback(cb, { timeout: 3000 }); }
-    : function (cb) { setTimeout(cb, 2000); };
-  _idle(function () { loadReservationStack(null); });
-
-})();
-</script>
 
 <!-- T4: Hero smart city - async geolocation, zero-blocking (V2) -->
 <script id="fixeo-hero-geo">
@@ -7628,8 +6524,8 @@ if (_entryCity) {
 
 </script>
 <!-- V1-D: Marketplace density layer (availability badge refresh, adjacent-city logic) -->
-<script src="js/fixeo-marketplace-density.js?v=v2c2a" defer></script>
-<script src="js/fixeo-schema-rating.js?v=rating-v1a" defer></script>
+
+
   <script>
 /* Global city-chip delegated handler.
    fxhome-city-global-v2: "+ Plus" now opens svc-city-pill dark picker.
