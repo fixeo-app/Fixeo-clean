@@ -388,7 +388,10 @@
       var c = _el('button', 'fxep-sugg-chip', _esc(chip.label));
       c.type = 'button';
       c.addEventListener('click', function () {
-        inputEl.value = chip.hint;
+        var existing = inputEl.value.trim();
+        var next = existing ? existing + '\n' + chip.hint : chip.hint;
+        if (next.length > inputEl.maxLength) return;
+        inputEl.value = next;
         inputEl.dispatchEvent(new Event('input', { bubbles: true }));
         inputEl.focus();
       });
@@ -524,28 +527,25 @@
      SUGGESTION REFRESH (AIRE-driven)
   ══════════════════════════════════════════════════════ */
   function _refreshSuggestions(wrap, inputEl, query) {
-    if (!query || query.length < 2) {
-      wrap.innerHTML = '';
-      GENERAL_SUGGESTIONS.slice(0, MAX_CHIPS).forEach(function (chip) {
-        var c = _el('button', 'fxep-sugg-chip', _esc(chip.label));
-        c.type = 'button';
-        c.addEventListener('click', function () {
-          inputEl.value = chip.hint;
-          inputEl.dispatchEvent(new Event('input', { bubbles: true }));
-          inputEl.focus();
-        });
-        wrap.appendChild(c);
-      });
-      return;
-    }
-    if (window.FixeoAIRE && typeof window.FixeoAIRE.detect === 'function') {
-      var cat = window.FixeoAIRE.detect(query);
-      if (cat && cat.cat &&
-          window.FixeoHeroSuggestionsV2 &&
-          typeof window.FixeoHeroSuggestionsV2.refreshForCategory === 'function') {
-        window.FixeoHeroSuggestionsV2.refreshForCategory(cat.cat);
+    var value = (query || '').trim();
+    var pool = GENERAL_SUGGESTIONS;
+    if (value) {
+      // Offer optional details, never assert a diagnosis or overwrite a need.
+      var normalized = value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      if (/fuit|fuite|robinet|evier|تسرب|روبيني/.test(normalized)) {
+        pool = [{label:'Sous l’évier', hint:'La fuite se situe sous l’évier.'}, {label:'En continu', hint:'L’eau coule en continu.'}, {label:'Depuis ce matin', hint:'Le problème a commencé ce matin.'}];
+      } else if (/prise|electri|courant|disjonct|ضو|كهرب/.test(normalized)) {
+        pool = [{label:'Une seule prise', hint:'Une seule prise est concernée.'}, {label:'Plusieurs pièces', hint:'Plusieurs pièces sont concernées.'}, {label:'Depuis aujourd’hui', hint:'Le problème a commencé aujourd’hui.'}];
+      } else if (/porte|serrur|cle|باب|ساروت/.test(normalized)) {
+        pool = [{label:'Porte claquée', hint:'La porte est claquée.'}, {label:'Clé cassée', hint:'La clé est cassée dans la serrure.'}, {label:'Clé perdue', hint:'J’ai perdu la clé.'}];
+      } else {
+        pool = [{label:'Depuis aujourd’hui', hint:'Le problème a commencé aujourd’hui.'}, {label:'À mon domicile', hint:'L’intervention concerne mon domicile.'}];
       }
+      pool = pool.filter(function (chip) { return value.indexOf(chip.hint) === -1; });
     }
+    wrap.replaceChildren();
+    var built = _buildSuggestions(pool, inputEl);
+    while (built.firstChild) wrap.appendChild(built.firstChild);
   }
 
   /* ══════════════════════════════════════════════════════
