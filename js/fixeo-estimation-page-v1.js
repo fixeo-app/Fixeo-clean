@@ -208,54 +208,7 @@
     }
   }
 
-  /* ══════════════════════════════════════════════════════
-     RESERVATION HANDOFF LISTENER
-     Handles fixeo:estimator-reserve from both:
-     - PAGE_REQUIRED result CTA (painting flow)
-     - PUBLIC Estimator V2 PRICE_READY CTA
-
-     FLOW (post 7C.10C.0 fix):
-       fixeo:estimator-reserve
-       → _loadReservationStack (scripts ready)
-       → _waitForArtisanData (artisan dataset ready)
-       → FixeoReservation.open()
-
-     window.ARTISANS is guaranteed populated before open() runs.
-  ══════════════════════════════════════════════════════ */
-  var _reservationHandoffPending = false;
-
-  document.addEventListener('fixeo:estimator-reserve', function (e) {
-    var token = e.detail && e.detail.pricing_context_token;
-    if (!token) return;
-    if (_reservationHandoffPending) return;
-    _reservationHandoffPending = true;
-
-    _ensureReservationLoader();
-    window._loadReservationStack(function () {
-      /* Scripts ready. Now ensure artisan data is in window.ARTISANS
-         before opening Reservation — prevents false "Aucun artisan" race. */
-      _waitForArtisanData(function () {
-        try {
-          if (!window.FixeoReservation ||
-              typeof window.FixeoReservation.open !== 'function') {
-            _reservationHandoffPending = false;
-            return;
-          }
-          window.FixeoReservation.open(null, false, null);
-
-          /* Hide Estimator V2 if still open (PRICE_READY dom preserved) */
-          if (window.FixeoEstimatorV2 &&
-              typeof window.FixeoEstimatorV2.hide === 'function') {
-            window.FixeoEstimatorV2.hide();
-          }
-        } catch (_err) {
-          _reservationHandoffPending = false;
-          return;
-        }
-        _reservationHandoffPending = false;
-      });
-    });
-  });
+  /* Estimator confirmation is handled once by FixeoEstimatorReservationBridge. */
 
   /* Preload reservation stack on idle — also triggers artisan data fetch early,
      so that window.ARTISANS is populated before the user taps "Trouver un artisan".
@@ -391,13 +344,10 @@
     var continueBtn = _el('button', 'fxep-resume-cta primary', 'Continuer avec ce prix');
     continueBtn.type = 'button';
     continueBtn.addEventListener('click', function () {
-      _ensureReservationLoader();
-      window._loadReservationStack(function () {
-        if (window.FixeoReservation &&
-            typeof window.FixeoReservation.open === 'function') {
-          window.FixeoReservation.open(null, false, null);
-        }
-      });
+      var bridge = window.FixeoEstimatorReservationBridge;
+      if (bridge && typeof bridge.openConfirmation === 'function') {
+        bridge.openConfirmation(bridge.getContext());
+      }
     });
     actions.appendChild(continueBtn);
 
@@ -1186,3 +1136,4 @@
   }
 
 }());
+
