@@ -38,7 +38,6 @@
     const go=el('button','Continuer avec RAFI →','fxd-primary');go.type='button';
     go.onclick=async()=>{
       draft=input.value.trim();city=select.value;
-      if(!draft && !selected?.hint){error.textContent='Décrivez votre besoin en quelques mots pour continuer.';input.focus();return;}
       if(!window.FixeoEstimatorV2?.open){error.textContent='RAFI se prépare. Réessayez dans un instant.';return;}
       const description=selected && selected.hint && draft && !draft.toLowerCase().includes(selected.label.toLowerCase()) ? selected.label+' — '+draft : draft;
       const context={source:'homepage_discovery',description,city};if(selected?.hint)context.metier_hint=selected.hint;
