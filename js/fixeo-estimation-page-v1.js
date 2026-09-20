@@ -306,6 +306,11 @@
     if (!token) return;
     if (!window.FixeoEstimatorReservationBridge) return;
 
+    var completed = window.FixeoEstimatorReservationBridge.getCompletion(token);
+    if (completed) {
+      _renderResumeCard(container, {completed: completed});
+      return;
+    }
     window.FixeoEstimatorReservationBridge.verifyContext()
       .then(function (ctx) {
         if (!ctx || !ctx.valid) {
@@ -326,9 +331,9 @@
     card.appendChild(_el('div', 'fxep-resume-dot'));
 
     var body = _el('div', 'fxep-resume-body');
-    body.appendChild(_el('div', 'fxep-resume-label', 'Prix FIXEO vérifié'));
+    body.appendChild(_el('div', 'fxep-resume-label', ctx.completed ? 'Demande enregistrée' : 'Prix FIXEO vérifié'));
     /* Display server-returned service label — never fabricate */
-    var svc = ctx.service_label || (ctx.service_code || '').replace(/\./g, ' ');
+    var svc = ctx.completed ? 'Référence : ' + ctx.completed.tracking_ref : ctx.service_label || (ctx.service_code || '').replace(/\./g, ' ');
     body.appendChild(_el('div', 'fxep-resume-service', _esc(svc)));
     if (ctx.amount_mad) {
       /* Server value only — no multiplication */
@@ -341,9 +346,10 @@
 
     var actions = _el('div', 'fxep-resume-actions');
 
-    var continueBtn = _el('button', 'fxep-resume-cta primary', 'Continuer avec ce prix');
+    var continueBtn = _el('button', 'fxep-resume-cta primary', ctx.completed ? 'Suivre ma demande' : 'Continuer avec ce prix');
     continueBtn.type = 'button';
     continueBtn.addEventListener('click', function () {
+      if (ctx.completed) { window.location.assign('/suivi-demande.html'); return; }
       var bridge = window.FixeoEstimatorReservationBridge;
       if (bridge && typeof bridge.openConfirmation === 'function') {
         bridge.openConfirmation(bridge.getContext());
@@ -502,13 +508,13 @@
        source: 'rafi'
        metier_hint: <VALID_METIERS key> — only if AIRE confirms
        city: <canonical city label> — only if canonical
-     DO NOT pass: initial_query, free_text
+     Pass the description as editable text; the server still qualifies the request.
   ══════════════════════════════════════════════════════ */
   function _launchEstimator(query) {
     if (!window.FixeoEstimatorV2) return;
     var metier = _detectMetier(query);
     var city = _getCity();
-    var ctx = { source: 'rafi' };
+    var ctx = { source: 'rafi', description: String(query || '').slice(0, 2000) };
     if (metier) ctx.metier_hint = metier;
     if (city)   ctx.city = city;
     window.FixeoEstimatorV2.open(ctx);

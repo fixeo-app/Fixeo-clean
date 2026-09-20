@@ -4437,3 +4437,43 @@ body.fx-estimator-tunnel-active {
 .fx-est-confirm button:disabled { opacity: .55; cursor: default; }
 .fx-est-confirm :focus-visible { outline: 3px solid #6b42bd; outline-offset: 3px; }
 .fx-est-confirm [hidden] { display: none !important; }
+
+/* Shared RAFI confirmation: responsive native dialog, all price data server verified. */
+.fx-est-confirm {
+  width: min(520px, calc(100vw - 24px));
+  padding: clamp(24px, 5vw, 36px);
+  border: 1px solid #ffffff24;
+  background: radial-gradient(ellipse at top right, #27365d 0, transparent 58%), #101727;
+  color: #f5f7ff;
+  box-shadow: 0 32px 100px #0009, inset 0 1px #ffffff17;
+  color-scheme: dark;
+}
+.fx-est-confirm::backdrop { background: #050915c9; backdrop-filter: blur(8px); }
+.fx-est-confirm .fx-est-confirm-eyebrow {
+  margin-bottom: 16px; color: #ffbf78; font-size: 11px; font-weight: 800;
+  letter-spacing: .15em;
+}
+.fx-est-confirm h2 { font-size: clamp(25px, 6vw, 32px); letter-spacing: -.035em; }
+.fx-est-confirm .fx-est-confirm-summary {
+  padding: 20px; border: 1px solid #8cb6ff40; border-radius: 18px;
+  background: linear-gradient(120deg, #ffffff09, #5978dd19);
+  color: #fff; font-size: 19px; line-height: 1.55;
+}
+.fx-est-confirm .fx-est-confirm-message { color: #c6cfe0; font-size: 15px; }
+.fx-est-confirm input {
+  min-height: 58px; padding: 15px 16px; border: 1px solid #8eabd75e;
+  border-radius: 14px; background: #09111e; color: #fff; font-size: 18px;
+  margin-bottom: 12px; letter-spacing: .04em;
+}
+.fx-est-confirm input::placeholder { color: #98a8c1; }
+.fx-est-confirm .fx-est-confirm-reassurance { color: #adc2bb; font-size: 12px; margin-bottom: 20px; }
+.fx-est-confirm .fx-est-confirm-primary {
+  min-height: 56px; border-radius: 15px; color: #171322;
+  background: linear-gradient(110deg, #ffbf73, #f49acb 62%, #a4b8ff);
+  box-shadow: 0 8px 25px #e98ab51c;
+}
+.fx-est-confirm .fx-est-confirm-back { color: #c6cfe0; min-height: 44px; }
+.fx-est-confirm :focus-visible { outline: 3px solid #ffbf78; outline-offset: 4px; }
+@media (max-width: 540px) {
+  .fx-est-confirm { max-height: calc(100dvh - 24px); border-radius: 24px; }
+}

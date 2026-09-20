@@ -4579,6 +4579,9 @@ var cityInput =
                 );
 
 
+              if (city) {
+                try { sessionStorage.setItem('fxrf4_trusted_city_session', city); } catch (_) {}
+              }
               if (!city) {
                 cityInput.focus();
                 return;
@@ -6334,4 +6337,5 @@ var cityInput =
   };
 
 }());
+
 

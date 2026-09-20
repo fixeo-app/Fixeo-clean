@@ -2907,10 +2907,10 @@ box-shadow:
   <!-- Estimator V2 config bootstrap — dormant (estimatorV2Enabled: false) -->
   <script src="js/fixeo-estimator-config.js" defer></script>
   <!-- 7C.9D: Estimator V2 dormant production assets — inactive until flag ON -->
-  <link rel="stylesheet" href="css/fixeo-estimator-v2.css?v=7c9m4-confirm-ui1">
+  <link rel="stylesheet" href="css/fixeo-estimator-v2.css?v=7c9m4-continuity2">
   <script src="js/fixeo-estimator-api-v1.js" defer></script>
-  <script src="js/fixeo-estimator-reservation-bridge-v1.js?v=7c9m4-confirm-ui1" defer></script>
-  <script src="js/fixeo-estimator-v2.js?v=rafi4a" defer></script>
+  <script src="js/fixeo-estimator-reservation-bridge-v1.js?v=7c9m4-continuity2" defer></script>
+  <script src="js/fixeo-estimator-v2.js?v=7c9m4-continuity2" defer></script>
   <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
 <!-- V1A.2-int1: Section CSS loads last to guarantee source-order win over all external CSS -->
 <link rel="stylesheet" href="css/fixeo-artisan-section-v1.css?v=fxhome-artisan-section-v1a2-int11">
@@ -3295,9 +3295,26 @@ box-shadow:
       return;
     }
 
-    window.FixeoEstimatorV2.open({
-      source: 'homepage_estimation_signature'
-    });
+    var city = '';
+    try {
+      city = sessionStorage.getItem('fxrf4_trusted_city_session') || localStorage.getItem('fixeo_detected_city') || '';
+    } catch (_) {}
+    var input = document.getElementById('qsm-input-nlp');
+    var description = input ? input.value : '';
+    function openEstimator(selectedCity) {
+      window.FixeoEstimatorV2.open({
+        source: 'homepage_estimation_signature',
+        city: selectedCity,
+        description: description
+      });
+    }
+    var bridge = window.FixeoEstimatorReservationBridge;
+    if (!city && bridge && bridge.getContext()) {
+      trigger.disabled = true;
+      bridge.verifyContext().then(function (ctx) {
+        openEstimator(ctx && ctx.valid ? ctx.city_slug : '');
+      }).catch(function () { openEstimator(''); }).then(function () { trigger.disabled = false; });
+    } else openEstimator(city);
   });
 })();
 </script>
@@ -7235,7 +7252,7 @@ window._fixeoAvatarNav = function () {
 <script src="js/fixeo-trust-score.js?v=fts-v2a" defer></script>
 <script src="js/fixeo-tracking-engine.js?v=ftrk-v1b" defer></script>
 <script src="js/fixeo-rafi-os-v1.js?v=rfos-v2d-reentry" defer></script>
-<script src="js/fixeo-hero-resume-v1.js?v=fxhro-v1d-reservation-exit" defer></script>
+<script src="js/fixeo-hero-resume-v1.js?v=7c9m4-continuity2" defer></script>
 <script src="js/fixeo-hero-flagship-v1.js?v=fxhf-v1b" defer></script> 
 
 <script>
