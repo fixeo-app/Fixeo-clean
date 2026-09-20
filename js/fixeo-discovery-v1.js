@@ -12,23 +12,33 @@
     dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();}});
     document.body.append(dialog);
   }
-  function frame() {
-    dialog.replaceChildren(); const header=el('header');header.append(el('span','RAFI · VOTRE POINT DE DÉPART'));
+  function arrow(){
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');svg.classList.add('fxd-choice-arrow');
+    const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d','M5 12h14m-6-6 6 6-6 6');svg.append(path);return svg;
+  }
+  function frame(step) {
+    dialog.replaceChildren();dialog.scrollTop=0;dialog.dataset.step=step;
+    const header=el('header');const brand=el('div',null,'fxd-brand');
+    brand.append(el('span','R','fxd-orb'));const words=el('div');words.append(el('strong','RAFI'),el('small','Votre point de départ'));brand.append(words);header.append(brand);
     const x=el('button','✕','fxd-close');x.type='button';x.setAttribute('aria-label','Fermer les situations');x.onclick=close;header.append(x);
-    const body=el('div',null,'fxd-body');dialog.append(header,body);return body;
+    const body=el('div',null,'fxd-body');
+    const progress=el('div',null,'fxd-progress');progress.setAttribute('aria-label',step==='choices'?'Étape 1 : votre situation':'Étape 2 : vos précisions');
+    progress.append(el('span','01 · Situation',step==='choices'?'is-active':'is-complete'),el('span','02 · Précisions',step==='details'?'is-active':''),el('span','Puis RAFI'));
+    dialog.append(header,progress,body);return body;
   }
   function heading(body,title,desc){const h=el('h2',title);h.id='fxd-dialog-title';body.append(h,el('p',desc));}
   function choices() {
-    const b=frame();heading(b,current.title,'Choisissez ce qui se rapproche de votre besoin. Vous pourrez préciser avec vos mots.');
+    const b=frame('choices');b.append(el('div','QUEL EST VOTRE BESOIN ?','fxd-kicker'));heading(b,current.title,'Un premier choix. RAFI vous aide à préciser la suite.');
     const grid=el('div',null,'fxd-choices');
     for(const item of [...current.items,{label:'Autre besoin / Je ne sais pas',hint:''}]){
-      const button=el('button',item.label);button.type='button';button.onclick=()=>{selected=item;details();};grid.append(button);
+      const button=el('button');button.append(el('span',item.label),arrow());button.type='button';button.onclick=()=>{selected=item;details();};grid.append(button);
     } b.append(grid,el('p','Aucune demande envoyée à cette étape.','fxd-note'));
   }
   function details() {
-    const b=frame();
+    const b=frame('details');
     if(current){const back=el('button','← Retour aux situations','fxd-back');back.type='button';back.onclick=choices;b.append(back);}
-    heading(b,selected?.label==='Autre besoin / Je ne sais pas'?'Parlez-nous de votre besoin':selected?.label||'Votre besoin, avec vos mots','Ajoutez un détail si vous le souhaitez. Le micro français / darija sera disponible dans RAFI à l’étape suivante.');
+    b.append(el('div',current?.title||'VOTRE BESOIN, VOTRE RYTHME','fxd-kicker'));
+    heading(b,selected?.label==='Autre besoin / Je ne sais pas'?'Parlez-nous de votre besoin':selected?.label||'Votre besoin, avec vos mots','Un détail, une ville : RAFI reprend votre besoin et vous guide.');
     const label=el('label','Votre description','fxd-field'); const input=el('textarea');input.id='fxd-description';label.htmlFor=input.id;input.maxLength=2000;
     input.value=draft || (selected?.label==='Autre besoin / Je ne sais pas'?'':selected?.label||'');input.placeholder='Ex. : je souhaite aménager un rangement sous mon escalier…';input.oninput=()=>{draft=input.value;};
     const cityLabel=el('label','Ville d’intervention','fxd-field');const select=el('select');select.id='fxd-city';cityLabel.htmlFor=select.id;
@@ -46,9 +56,11 @@
       catch(_){priorOverflow=document.body.style.overflow;released=false;dialog.showModal();document.body.style.overflow='hidden';error.textContent='L’ouverture a échoué. Votre saisie est conservée, vous pouvez réessayer.';}
       finally{go.disabled=false;}
     };
-    b.append(label,input,cityLabel,select,go,error,el('p','RAFI précisera le périmètre et la suite adaptée. Aucun prix ni artisan n’est confirmé à cette étape.','fxd-note'));
+    const fields=el('div',null,'fxd-form-panel');fields.append(label,input,cityLabel,select);
+    const voice=el('p','Vous préférez parler ? Le micro français / darija vous attend dans RAFI.','fxd-voice-note');
+    b.append(fields,voice,go,error,el('p','Vous gardez la main. Aucune demande envoyée à cette étape.','fxd-note'));
   }
-  window.FixeoDiscovery={open(key,trigger,options){entryOptions=options||{};build();origin=trigger;current=DATA[key]||null;selected=null;
+  window.FixeoDiscovery={open(key,trigger,options){entryOptions=options||{};build();origin=trigger;current=DATA[key]||null;selected=null;dialog.dataset.universe=key||'libre';
     draft=entryOptions.description ?? (document.getElementById('fxhf-need-input')?.value||'');city=entryOptions.city ?? (document.getElementById('fxhf-location')?.value||'');
     if(current)choices();else details();priorOverflow=document.body.style.overflow;released=false;dialog.showModal();document.body.style.overflow='hidden';
   }};
