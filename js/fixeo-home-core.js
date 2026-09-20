@@ -63,7 +63,7 @@
       try {
         if(!window.FixeoDiscovery){
           if(!discoveryLoad) discoveryLoad=new Promise((resolve,reject)=>{
-            const script=document.createElement('script');script.src='js/fixeo-discovery-v1.js?v=fd2';
+            const script=document.createElement('script');script.src='js/fixeo-discovery-v1.js?v=dialog5';
             script.onload=resolve;script.onerror=()=>{script.remove();discoveryLoad=null;reject(new Error('load'));};document.head.append(script);
           });
           await discoveryLoad;
