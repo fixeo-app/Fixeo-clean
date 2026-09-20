@@ -2907,9 +2907,9 @@ box-shadow:
   <!-- Estimator V2 config bootstrap — dormant (estimatorV2Enabled: false) -->
   <script src="js/fixeo-estimator-config.js" defer></script>
   <!-- 7C.9D: Estimator V2 dormant production assets — inactive until flag ON -->
-  <link rel="stylesheet" href="css/fixeo-estimator-v2.css?v=rafipremium5">
+  <link rel="stylesheet" href="css/fixeo-estimator-v2.css?v=7c9m4-confirm-ui1">
   <script src="js/fixeo-estimator-api-v1.js" defer></script>
-  <script src="js/fixeo-estimator-reservation-bridge-v1.js" defer></script>
+  <script src="js/fixeo-estimator-reservation-bridge-v1.js?v=7c9m4-confirm-ui1" defer></script>
   <script src="js/fixeo-estimator-v2.js?v=rafi4a" defer></script>
   <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
 <!-- V1A.2-int1: Section CSS loads last to guarantee source-order win over all external CSS -->
@@ -7375,66 +7375,7 @@ window.addEventListener('load', function () {
     }, { once: true });
   }
 
-  /* ── Phase 7C.9L.1: Estimator V2 → Reservation handoff listener ────────────
-   *
-   * Listens for fixeo:estimator-reserve dispatched by Estimator V2 PRICE_READY CTA.
-   * Loads the reservation stack (lazy, idempotent) then opens the artisan-picker
-   * reservation flow. Closes Estimator V2 ONLY after reservation.open() succeeds.
-   *
-   * If loading fails or FixeoReservation.open is unavailable, Estimator stays
-   * visible so the user can retry. No silent return to homepage.
-   *
-   * Pending guard prevents duplicate opens from rapid CTA taps.
-   * ─────────────────────────────────────────────────────────────────────────── */
-  var _reservationHandoffPending = false;
-
-  document.addEventListener('fixeo:estimator-reserve', function(e) {
-    var token = e.detail && e.detail.pricing_context_token;
-
-    // 1. No token — estimator-reserve event from an invalid context; ignore.
-    if (!token) return;
-
-    // 2. Duplicate tap guard — stack may still be loading.
-    if (_reservationHandoffPending) return;
-    _reservationHandoffPending = true;
-
-    // 3. Lazy-load the reservation stack (idempotent — no-op if already loaded).
-    loadReservationStack(function() {
-      try {
-        // 4. Verify reservation module is available.
-        if (!window.FixeoReservation ||
-            typeof window.FixeoReservation.open !== 'function') {
-          // Reservation unavailable — reset guard, leave Estimator visible.
-          _reservationHandoffPending = false;
-          return;
-        }
-
-        // 5. Open the reservation artisan-picker flow.
-        //    pricing_context_token is already in sessionStorage via prepareContext().
-        //    FixeoReservation.open() reads it async via verifyContext() internally.
-        window.FixeoReservation.open(null, false, null);
-
-        // 6. Reservation modal is open — hide Estimator (keep PRICE_READY DOM alive).
-        // 7C.9L.3X: use hide() instead of close() so city ← Retour can reveal it.
-        if (window.FixeoEstimatorV2 &&
-            typeof window.FixeoEstimatorV2.hide === 'function') {
-          window.FixeoEstimatorV2.hide();
-        } else if (window.FixeoEstimatorV2 &&
-            typeof window.FixeoEstimatorV2.close === 'function') {
-          // Fallback for older script version (should not happen in production).
-          window.FixeoEstimatorV2.close();
-        }
-      } catch (_err) {
-        // 7. Any error — reset guard, leave Estimator visible for retry.
-        _reservationHandoffPending = false;
-        return;
-      }
-
-      // 8. Handoff complete — reset guard for any future session.
-      _reservationHandoffPending = false;
-    });
-  });
-  /* ── end Estimator V2 → Reservation handoff ──────────────────────────────── */
+  /* Estimator confirmation is handled once by FixeoEstimatorReservationBridge. */
 
   /* Preload on idle so first-click is instant */
   var _idle = window.requestIdleCallback
@@ -7718,3 +7659,4 @@ document.addEventListener('click', function(e) {
 
 </body>
 </html>
+

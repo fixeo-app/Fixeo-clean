@@ -4401,3 +4401,39 @@ body.fx-estimator-tunnel-active {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
+/* 7C.9M.4 — shared phone/confirmation dialog; native top layer + focus trap. */
+.fx-est-confirm {
+  box-sizing: border-box;
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  margin: auto;
+  padding: clamp(20px, 5vw, 32px);
+  border: 1px solid #e8e4eb;
+  border-radius: 24px;
+  background: #fff;
+  color: #24202c;
+  font: 16px/1.55 system-ui, sans-serif;
+  box-shadow: 0 24px 80px #21132b33;
+}
+.fx-est-confirm::backdrop { background: #21132b99; }
+.fx-est-confirm h2 { margin: 0 0 16px; font-size: 25px; line-height: 1.2; }
+.fx-est-confirm p { margin: 0 0 20px; }
+.fx-est-confirm-summary { font-weight: 700; padding: 16px; background: #faf5f8; border-radius: 14px; }
+.fx-est-confirm label { display: block; font-weight: 600; margin-bottom: 8px; }
+.fx-est-confirm input {
+  box-sizing: border-box; width: 100%; min-height: 48px; padding: 12px;
+  border: 1px solid #aaa2ad; border-radius: 10px; font: inherit; margin-bottom: 20px;
+}
+.fx-est-confirm button, .fx-est-confirm a { font: inherit; cursor: pointer; }
+.fx-est-confirm .fx-est-confirm-primary {
+  box-sizing: border-box; display: block; width: 100%; min-height: 48px; padding: 13px 16px;
+  border: 0; border-radius: 12px; color: white; background: #b92160;
+  font-weight: 700; text-align: center; text-decoration: none;
+}
+.fx-est-confirm .fx-est-confirm-back {
+  display: block; margin: 16px auto 0; padding: 8px; border: 0; background: transparent; color: #504655;
+}
+.fx-est-confirm button:disabled { opacity: .55; cursor: default; }
+.fx-est-confirm :focus-visible { outline: 3px solid #6b42bd; outline-offset: 3px; }
+.fx-est-confirm [hidden] { display: none !important; }
