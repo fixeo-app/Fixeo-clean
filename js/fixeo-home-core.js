@@ -40,6 +40,14 @@
   };
 
   function init() {
+    // Keep explicitly chosen city available to subsequent RAFI handoffs.
+    document.addEventListener('change', function (event) {
+      if (event.target.id !== 'fxhf-location') return;
+      try {
+        if (event.target.value) sessionStorage.setItem('fxrf4_trusted_city_session', event.target.value);
+        else sessionStorage.removeItem('fxrf4_trusted_city_session');
+      } catch (_) {}
+    });
     // The hidden legacy input is still consumed by estimate-resume components.
     // Header search must focus the visible current hero instead.
     if (window.QuickSearchModal) {

@@ -3297,9 +3297,10 @@ box-shadow:
       return;
     }
 
-    var city = '';
+    var cityInput = document.getElementById('fxhf-location');
+    var city = cityInput ? cityInput.value : '';
     try {
-      city = sessionStorage.getItem('fxrf4_trusted_city_session') || localStorage.getItem('fixeo_detected_city') || '';
+      city = city || sessionStorage.getItem('fxrf4_trusted_city_session') || localStorage.getItem('fixeo_detected_city') || '';
     } catch (_) {}
     var input = document.getElementById('fxhf-need-input') || document.getElementById('qsm-input-nlp');
     var description = input ? input.value : '';
@@ -6574,4 +6575,3 @@ document.addEventListener('click', function(e) {
 
 </body>
 </html>
-

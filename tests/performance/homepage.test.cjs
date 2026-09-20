@@ -60,6 +60,8 @@ test('homepage boots without marketplace and preserves current entry points',asy
 
   // User métier selection opens the existing RAFI flow with explicit city context.
   const city=d.getElementById('fxhf-location');city.value='Rabat';
+  city.dispatchEvent(new w.Event('change',{bubbles:true}));
+  assert.equal(w.sessionStorage.getItem('fxrf4_trusted_city_session'),'Rabat');
   let received;const originalOpen=w.FixeoRequestFlowV4.open;
   w.FixeoRequestFlowV4.open=opts=>{received=opts;};
   d.querySelector('#services button[data-category="plomberie"]').click();
@@ -71,7 +73,8 @@ test('homepage boots without marketplace and preserves current entry points',asy
 
   // Estimate gateway carries the visible description instead of hidden legacy text.
   let estimate;w.FixeoEstimatorV2.open=opts=>{estimate=opts;};
-  w.sessionStorage.setItem('fxrf4_trusted_city_session','Rabat');
+  // A stale detected/session city must not override the user's visible choice.
+  w.sessionStorage.setItem('fxrf4_trusted_city_session','Casablanca');
   d.getElementById('fxhf-need-input').value='Une fuite sous mon évier';
   d.getElementById('fxes-open-estimator').click();
   assert.equal(estimate.description,'Une fuite sous mon évier');assert.equal(estimate.city,'Rabat');

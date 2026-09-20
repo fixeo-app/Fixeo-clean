@@ -23,7 +23,23 @@ header search to the visible hero. The estimation entry reads that same hero.
 Production baseline in the cloud browser: 1,384 artisans injected approximately
 5.4 seconds after navigation began. Cached reload reached `load` in 1.23 seconds.
 These are observational timings, not LCP/INP measurements or a reproduction of
-the user's >60 second PC load. No candidate browser timing is claimed.
+the user's >60 second PC load.
+
+Authenticated preview browser check (2026-09-20), three alternating reloads in
+the same cloud browser, measured around the browser reload command:
+
+| Reload | Production | Preview |
+| --- | ---: | ---: |
+| 1 | 1,688 ms | 1,402 ms |
+| 2 | 2,010 ms | 520 ms |
+| 3 | 778 ms | 506 ms |
+
+Median command duration: 1,688 ms versus 520 ms. Cache was not reset; this small
+sample includes automation overhead, excludes later asynchronous work, and is
+not LCP or a guarantee of user-perceived speed. The production PC slowdown has
+not been reproduced. Browser checks confirmed the full footer, absence of the
+directory section, estimation opening with description, and urgent dialog
+rendering. Manual city transfer was found and corrected with a regression test.
 
 ## Verification
 
