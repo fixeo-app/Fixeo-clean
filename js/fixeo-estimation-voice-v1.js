@@ -30,7 +30,7 @@
     }
     function idle() {
       phase = 'idle'; button.disabled = false; language.disabled = false;
-      button.textContent = '🎙 Parler à RAFI'; button.setAttribute('aria-pressed', 'false');
+      button.innerHTML = "<svg\n      class=\"rafi-mic-icon\" aria-hidden=\"true\" focusable=\"false\" style=\"display:inline-block;vertical-align:-3px;margin-right:8px;flex-shrink:0\"\n      viewBox=\"0 0 24 24\"\n      width=\"18\"\n      height=\"18\"\n      fill=\"none\"\n      xmlns=\"http://www.w3.org/2000/svg\">\n\n      <rect\n        x=\"8\"\n        y=\"3\"\n        width=\"8\"\n        height=\"12\"\n        rx=\"4\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"/>\n\n      <path\n        d=\"M5.8 11.5C5.8 15 8.55 17.7 12 17.7C15.45 17.7 18.2 15 18.2 11.5\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n      <path\n        d=\"M12 17.7V21\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n      <path\n        d=\"M9.5 21H14.5\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n    </svg>Parler à RAFI"; button.setAttribute('aria-pressed', 'false');
       if (active === cancel) active = null;
     }
     function cancel() {
