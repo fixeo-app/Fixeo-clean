@@ -12,6 +12,7 @@
   window._fxEstBridgeLoaded = true;
 
   var CTX_KEY = 'fixeo_estimator_ctx_v1';
+  var DONE_KEY = 'fixeo_estimator_completed_v1';
 
   window.FixeoEstimatorReservationBridge = {
     /**
@@ -39,9 +40,21 @@
     /**
      * Clear the stored token (e.g., after reservation completes).
      */
+    getCompletion: function(token) {
+      try {
+        var done = JSON.parse(sessionStorage.getItem(DONE_KEY) || 'null');
+        return done && done.token === (token || this.getContext()) && done.tracking_ref ? done : null;
+      } catch (_) { return null; }
+    },
+    completeContext: function(token, result) {
+      try {
+        sessionStorage.setItem(DONE_KEY, JSON.stringify({token: token, tracking_ref: result.tracking_ref}));
+      } catch (_) {}
+    },
     clearContext: function() {
       try {
         sessionStorage.removeItem(CTX_KEY);
+        sessionStorage.removeItem(DONE_KEY);
       } catch (_) {}
     },
 
@@ -138,7 +151,8 @@
     view.summary.textContent = 'Référence : ' + result.tracking_ref;
     view.success.hidden = false;
     view.success.replaceChildren();
-    if (saveAccess(result)) {
+    if (view.attempt.restored || saveAccess(result)) {
+      bridge.completeContext(view.attempt.token, result);
       var link = node('a', 'Suivre ma demande', 'fx-est-confirm-primary');
       link.href = '/suivi-demande.html';
       view.success.appendChild(link);
@@ -149,6 +163,7 @@
       retry.addEventListener('click', function () { showSuccess(view); });
       view.success.appendChild(retry);
     }
+    if (window.FixeoHeroResume) window.FixeoHeroResume.refresh();
     // Keep the token/context for an explicit reopen of this successful attempt.
     // No new request is sent when rendering a cached result.
     view.title.focus();
@@ -241,6 +256,11 @@
       attempt = { token: token, phone: null, pending: false, result: null, verified: false };
       attempts.set(token, attempt);
     }
+    var completed = bridge.getCompletion(token);
+    if (!attempt.result && completed) {
+      attempt.result = {tracking_ref: completed.tracking_ref};
+      attempt.restored = true;
+    }
     var previousFocus = document.activeElement;
     var dialog = node('dialog', '', 'fx-est-confirm');
     if (typeof dialog.showModal !== 'function') return; // Fail closed: never use artisan picker.
@@ -249,7 +269,7 @@
     title.id = 'fx-est-confirm-title';
     title.tabIndex = -1;
     var summary = node('p', attempt.summary || '', 'fx-est-confirm-summary');
-    var message = node('p');
+    var message = node('p', '', 'fx-est-confirm-message');
     message.setAttribute('role', 'status');
     message.setAttribute('aria-live', 'polite');
     var form = node('form');
@@ -267,7 +287,8 @@
     var button = node('button', 'Confirmer mon intervention', 'fx-est-confirm-primary');
     button.type = 'submit';
     button.disabled = true;
-    form.append(label, phone, button);
+    var reassurance = node('p', 'Paiement après intervention · Aucun supplément sans votre accord', 'fx-est-confirm-reassurance');
+    form.append(label, phone, reassurance, button);
     var retryVerify = node('button', 'Réessayer la vérification');
     retryVerify.type = 'button';
     retryVerify.hidden = true;
@@ -275,7 +296,8 @@
     success.hidden = true;
     var back = node('button', 'Retour à mon estimation', 'fx-est-confirm-back');
     back.type = 'button';
-    dialog.append(title, summary, message, form, retryVerify, success, back);
+    var eyebrow = node('p', 'RAFI · VOTRE INTERVENTION', 'fx-est-confirm-eyebrow');
+    dialog.append(eyebrow, title, summary, message, form, retryVerify, success, back);
     var view = { dialog: dialog, title: title, summary: summary, message: message,
       form: form, phone: phone, submit: button, back: back, success: success,
       retryVerify: retryVerify, attempt: attempt, verified: attempt.verified };
@@ -287,7 +309,8 @@
       dialog.remove();
       active = null;
       var estimator = window.FixeoEstimatorV2;
-      if (estimator && typeof estimator.reveal === 'function') estimator.reveal();
+      if (attempt.result && estimator && typeof estimator.close === 'function') estimator.close();
+      else if (estimator && typeof estimator.reveal === 'function') estimator.reveal();
       if (previousFocus && previousFocus.isConnected) previousFocus.focus();
     }
     dialog.addEventListener('cancel', function (event) { event.preventDefault(); close(); });

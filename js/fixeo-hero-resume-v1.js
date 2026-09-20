@@ -115,13 +115,13 @@
     /* Eyebrow */
     var eyebrow = document.createElement('div');
     eyebrow.className = 'fxhro-eyebrow';
-    eyebrow.textContent = 'Prix FIXEO vérifié';
+    eyebrow.textContent = ctx.completed ? 'Demande enregistrée' : 'Prix FIXEO vérifié';
 
     /* Service label */
     var service = document.createElement('div');
     service.className = 'fxhro-service';
     service.title = ctx.service_label; /* full text on hover if truncated */
-    service.textContent = ctx.service_label;
+    service.textContent = ctx.completed ? 'Référence : ' + ctx.completed.tracking_ref : ctx.service_label;
 
     /* Price — from server only */
     var price = document.createElement('div');
@@ -137,7 +137,7 @@
 
     card.appendChild(eyebrow);
     card.appendChild(service);
-    card.appendChild(price);
+    if (!ctx.completed) card.appendChild(price);
 
     /* City — only when server-provided */
     if (ctx.city_slug) {
@@ -154,7 +154,7 @@
     var btnContinue = document.createElement('button');
     btnContinue.id = 'fxhro-btn-continue';
     btnContinue.type = 'button';
-    btnContinue.textContent = 'Continuer avec ce prix';
+    btnContinue.textContent = ctx.completed ? 'Suivre ma demande' : 'Continuer avec ce prix';
     btnContinue.addEventListener('click', _onContinue);
 
     var btnNew = document.createElement('button');
@@ -349,35 +349,10 @@
    * New request: clear token, reset Hero.
    */
   function _onContinue() {
-    /* Disable button to prevent double-tap */
-    var btn = _el('fxhro-btn-continue');
-    if (btn) { btn.disabled = true; btn.textContent = 'Chargement…'; }
-
-    if (!window._loadReservationStack) {
-      /* Stack not available — restore button and stay */
-      if (btn) { btn.disabled = false; btn.textContent = 'Continuer avec ce prix'; }
-      return;
-    }
-
-    window._loadReservationStack(function () {
-      try {
-        if (!window.FixeoReservation ||
-            typeof window.FixeoReservation.open !== 'function') {
-          if (btn) { btn.disabled = false; btn.textContent = 'Continuer avec ce prix'; }
-          return;
-        }
-        /* Token already in sessionStorage from 3Z.2B early persist.
-           Reservation.open(null) → verifyContext() server call → artisan or city picker.
-           7C.9L.3Z.2D.1: Do NOT call _dismissPriceReady() here.
-           The Reservation UI overlays the page — the price card does not need
-           to be destroyed. When Reservation closes (fixeo:reservation-closed),
-           _runVerification() re-checks the token and restores the card.
-           This is CLOSE ≠ RESET: cancelling Reservation must return to verified price. */
-        window.FixeoReservation.open(null, false, null);
-      } catch (_e) {
-        if (btn) { btn.disabled = false; btn.textContent = 'Continuer avec ce prix'; }
-      }
-    });
+    var bridge = window.FixeoEstimatorReservationBridge;
+    if (!bridge) return;
+    if (bridge.getCompletion()) { window.location.assign('/suivi-demande.html'); return; }
+    bridge.openConfirmation(bridge.getContext());
   }
 
   function _onNewRequest() {
@@ -389,6 +364,13 @@
     /* Guard: profile-return flow owns restoration — do not compete */
     if (_profileReturnActive()) return;
 
+    var bridge = window.FixeoEstimatorReservationBridge;
+    var completed = bridge && bridge.getCompletion();
+    if (completed) {
+      ++_gen;
+      _renderPriceReady({completed: completed});
+      return;
+    }
     /* Guard: Estimator tunnel active — live session owns Hero */
     if (_estimatorTunnelActive()) return;
 
@@ -407,6 +389,7 @@
     /* verifyContext() — single HTTP round-trip, server-authoritative */
     window.FixeoEstimatorReservationBridge.verifyContext()
       .then(function (ctx) {
+        if (window.FixeoEstimatorReservationBridge.getCompletion()) { _runVerification(); return; }
         /* Stale-result guards — discard if session superseded */
         if (capturedGen !== _gen) return;          /* newer call in flight */
         if (_estimatorTunnelActive()) return;       /* Estimator opened after we started */
@@ -565,3 +548,4 @@
   };
 
 }());
+
