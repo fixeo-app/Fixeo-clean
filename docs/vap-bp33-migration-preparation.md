@@ -46,3 +46,8 @@ Vérification production : 23 missions ; empreinte financière avant/après iden
 Les avis de sécurité Supabase restent identiques après retrait des horodatages d'observation. Les alertes existantes ne constituent pas un audit global résolu : notamment trois vues SECURITY DEFINER à examiner séparément. Documentation : https://supabase.com/docs/guides/database/database-linter?lint=0010_security_definer_view
 
 Les étapes 1 et 2 ci-dessus sont réalisées pour cette fondation. Les étapes 3 à 7 restent à implémenter : rattachement atomique de l'offre à la réservation, autorisation du demandeur, contrat signé, conservation des centimes, règlement versionné et affichage. La table interne seule ne constitue aucune autorité de réservation. Les six forfaits proposés restent des hypothèses non activées.
+
+
+## Mise à jour : branchement applicatif
+
+Voir `vap-integration-2026-09-21.md` pour la liaison estimation/réservation/règlement, la deuxième migration appliquée et les 48 tests. Le registre des forfaits approuvés reste vide ; la calibration commerciale reste distincte de la livraison technique.

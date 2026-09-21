@@ -74,7 +74,7 @@
 var COMMISSION_RATE    = 0.15;  /* 15% — canonical FIXEO commission */
 var MAX_FINAL_PRICE    = 500000; /* reasonable upper bound — 500k MAD */
 var UUID_RE            = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-var ELIGIBLE_STATUSES  = ['terminée', 'validée'];
+var ELIGIBLE_STATUSES  = ['done', 'validated', 'terminée', 'validée'];
 
 /* ── Helpers ───────────────────────────────────────────────── */
 function roundMoney(n) {
@@ -131,7 +131,7 @@ async function _fetchMission(missionId) {
   var res;
   try {
     res = await fetch(
-      url + '/rest/v1/missions?select=id,status,final_price,commission_amount,agreed_price&id=eq.'
+      url + '/rest/v1/missions?select=id,status,final_price,commission_amount,agreed_price,pricing_offer_id&id=eq.'
         + encodeURIComponent(missionId) + '&limit=1',
       { headers: { 'apikey': serviceKey, 'Authorization': 'Bearer ' + serviceKey } }
     );
@@ -218,7 +218,7 @@ module.exports = async function handler(req, res) {
   /* Parse input */
   var body       = req.body || {};
   var missionId  = String(body.mission_id || '').trim();
-  var finalPrice = parseFloat(body.final_price);
+  var finalPrice = Number(body.final_price);
   var force      = body.force === true || body.force === 'true';
 
   /* Validate mission_id */
@@ -233,7 +233,7 @@ module.exports = async function handler(req, res) {
   if (!body.hasOwnProperty('final_price') || body.final_price === null || body.final_price === '') {
     return res.status(400).json({ ok: false, reason: 'validation', detail: 'final_price is required' });
   }
-  if (!Number.isFinite(finalPrice) || finalPrice <= 0) {
+  if (!['number','string'].includes(typeof body.final_price) || !Number.isFinite(finalPrice) || finalPrice <= 0 || Math.abs(finalPrice * 100 - Math.round(finalPrice * 100)) > 1e-7) {
     return res.status(400).json({ ok: false, reason: 'validation', detail: 'final_price must be a positive number' });
   }
   if (finalPrice > MAX_FINAL_PRICE) {
@@ -263,6 +263,9 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  if (mission.pricing_offer_id && roundMoney(Number(mission.agreed_price)) !== finalPrice) {
+    return res.status(409).json({ok:false,reason:'accepted_offer_amount_mismatch',detail:'A scope change requires a new accepted offer.'});
+  }
   /* Idempotency / conflict */
   var existingFinal = mission.final_price !== null && mission.final_price !== undefined
     ? parseFloat(mission.final_price) : null;
@@ -270,7 +273,7 @@ module.exports = async function handler(req, res) {
   if (existingFinal !== null) {
     if (Math.abs(existingFinal - finalPrice) < 0.01) {
       /* Same value — idempotent */
-      var commission = roundMoney(existingFinal * COMMISSION_RATE);
+      var commission = roundMoney(Number(mission.commission_amount));
       console.info('[admin-settle-mission] Idempotent same-value settle:', missionId, '(admin:', auth.userId + ')');
       return res.status(200).json({
         ok:            true,
@@ -318,7 +321,10 @@ module.exports = async function handler(req, res) {
    * did not echo the row (should not happen with service_role). */
   var commissionAmount = updated && updated.commission_amount != null
     ? roundMoney(Number(updated.commission_amount))
-    : roundMoney(finalPrice * COMMISSION_RATE);
+    : null;
+  if (commissionAmount === null || !Number.isFinite(commissionAmount)) {
+    return res.status(502).json({ok:false,reason:'missing_persisted_commission'});
+  }
   var artisanNet = roundMoney(finalPrice - commissionAmount);
 
   console.info('[admin-settle-mission] Settled:', missionId,
@@ -331,6 +337,8 @@ module.exports = async function handler(req, res) {
     final_price:       finalPrice,
     commission_amount: commissionAmount,
     artisan_net:       artisanNet,   /* derived, not stored — for display only */
-    commission_rate:   COMMISSION_RATE,
+    commission_rate:   mission.pricing_offer_id ? null : COMMISSION_RATE,
+    pricing_version: mission.pricing_offer_id ? "vap-bp33-v1" : "legacy",
   });
 };
+
