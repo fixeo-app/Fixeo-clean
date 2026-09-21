@@ -11,7 +11,7 @@ function selectTariff(session,entries=catalogue.entries){
   Object.entries(t.inputs).every(([k,v])=>session.known_inputs?.[k]===v)) || null;
 }
 async function attachOffer(session,payload,{entries=catalogue.entries,fetchImpl=fetch,env=process.env}={}){
- const tariff=selectTariff(session,entries);if(!tariff)return null;
+ const tariff=selectTariff(session,entries);if(!tariff){if(session.service_code?.startsWith('jardinage.'))throw Error('Garden scope or city not eligible for VAP');return null;}
  const breakdown=buildBreakdown({pricingVersion:VERSION,vapMinor:tariff.vap_minor,materialsMinor:tariff.materials_minor});
  if(!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY)throw Error('VAP persistence unavailable');
  const id=crypto.randomUUID();

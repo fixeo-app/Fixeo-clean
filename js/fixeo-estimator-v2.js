@@ -354,6 +354,12 @@
     ceiling_m2:
       'Quelle est la surface du plafond (m²) ?',
 
+    garden_access: "Le jardin ou la haie est-il accessible directement au niveau du sol, sur terrain plat, avec la place pour les outils ?",
+    garden_state: "S’agit-il d’un entretien régulier, sans végétation envahissante ni grosses branches ?",
+    garden_waste: "Les déchets peuvent-ils rester regroupés sur place, dans un emplacement que vous indiquez ?",
+    garden_tasks: "Souhaitez-vous uniquement cette prestation, sans autre travail ni fourniture à acheter ?",
+    GARDEN_UP_TO_100: "Quelle surface souhaitez-vous entretenir ?",
+    HEDGE_WITHIN_LIMITS: "La haie respecte-t-elle ces trois limites : 10 m de longueur, 1,80 m de hauteur et 0,80 m de largeur maximum ?",
     plumbing_scope: 'Le problème concerne-t-il un seul équipement accessible, sans canalisation encastrée ni réseau collectif ?',
 
     surface_m2:
@@ -394,6 +400,15 @@
 
   function optionLabel(opt) {
     var labels = {
+      GARDEN_ACCESS_OK: "Oui, accès direct et travail depuis le sol",
+      GARDEN_MAINTAINED: "Oui, entretien régulier",
+      GARDEN_COMPLEX: "Non, besoin plus complexe",
+      GARDEN_WASTE_ONSITE: "Oui, regroupement sur place",
+      GARDEN_WASTE_REMOVE: "Je souhaite une évacuation",
+      GARDEN_ROUTINE_ONLY: "Oui, uniquement cette prestation",
+      GARDEN_UP_TO_100: "De 1 à 100 m², jardin déjà entretenu",
+      HEDGE_WITHIN_LIMITS: "Oui, dans ces limites, dessus et deux faces accessibles",
+      GARDEN_OVERSIZE: "Dimensions supérieures ou accès aux faces incomplet",
       LOCAL_ACCESSIBLE:'Oui, un seul équipement accessible',
       COMPLEX:'Non, réseau collectif / canalisation encastrée / plusieurs équipements',
       UNKNOWN:'Je ne sais pas',
@@ -1013,6 +1028,15 @@
 
 
     var labels = {
+      GARDEN_ACCESS_OK: "Oui, accès direct et travail depuis le sol",
+      GARDEN_MAINTAINED: "Oui, entretien régulier",
+      GARDEN_COMPLEX: "Non, besoin plus complexe",
+      GARDEN_WASTE_ONSITE: "Oui, regroupement sur place",
+      GARDEN_WASTE_REMOVE: "Je souhaite une évacuation",
+      GARDEN_ROUTINE_ONLY: "Oui, uniquement cette prestation",
+      GARDEN_UP_TO_100: "De 1 à 100 m², jardin déjà entretenu",
+      HEDGE_WITHIN_LIMITS: "Oui, dans ces limites, dessus et deux faces accessibles",
+      GARDEN_OVERSIZE: "Dimensions supérieures ou accès aux faces incomplet",
       LOCAL_ACCESSIBLE:'Oui, un seul équipement accessible',
       COMPLEX:'Non, réseau collectif / canalisation encastrée / plusieurs équipements',
       UNKNOWN:'Je ne sais pas',

@@ -960,6 +960,61 @@
       "client_question_fr": "Le problème est-il localisé sur un seul équipement accessible ?",
       "semantic_definition": "LOCAL_ACCESSIBLE: one accessible fitting or fixture, no concealed piping or shared main network. COMPLEX or UNKNOWN require assessment before a repair price.",
       "privacy_classification": "NON_SENSITIVE"
+    },
+    "garden_access": {
+      "input_id": "garden_access",
+      "data_type": "string",
+      "allowed_values": [
+        "GARDEN_ACCESS_OK",
+        "GARDEN_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Le jardin ou la haie est-il accessible directement au niveau du sol, sur terrain plat, avec la place pour les outils ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "garden_state": {
+      "input_id": "garden_state",
+      "data_type": "string",
+      "allowed_values": [
+        "GARDEN_MAINTAINED",
+        "GARDEN_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "S’agit-il d’un entretien régulier, sans végétation envahissante ni grosses branches ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "garden_waste": {
+      "input_id": "garden_waste",
+      "data_type": "string",
+      "allowed_values": [
+        "GARDEN_WASTE_ONSITE",
+        "GARDEN_WASTE_REMOVE",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Les déchets peuvent-ils rester regroupés sur place, dans un emplacement que vous indiquez ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "garden_tasks": {
+      "input_id": "garden_tasks",
+      "data_type": "string",
+      "allowed_values": [
+        "GARDEN_ROUTINE_ONLY",
+        "GARDEN_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Souhaitez-vous uniquement cette prestation, sans autre travail ni fourniture à acheter ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "garden_dimensions": {
+      "input_id": "garden_dimensions",
+      "data_type": "string",
+      "allowed_values": [
+        "GARDEN_UP_TO_100",
+        "HEDGE_WITHIN_LIMITS",
+        "GARDEN_OVERSIZE",
+        "UNKNOWN"
+      ],
+      "privacy_classification": "NON_SENSITIVE"
     }
   }
 }

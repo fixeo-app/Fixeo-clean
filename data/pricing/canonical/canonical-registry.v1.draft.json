@@ -7593,6 +7593,306 @@
       },
       "human_review_flags": [],
       "semantic_corrections": []
+    },
+    "jardinage.entretien_courant": {
+      "canonical_service_code": "jardinage.entretien_courant",
+      "legacy_codes": [],
+      "metier": "jardinage",
+      "service_family": "ENTRETIEN_EXTERIEUR",
+      "label_fr": "Entretien courant de jardin",
+      "label_ar_darija": null,
+      "short_label_fr": "Entretien courant de jardin",
+      "variant": null,
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "garden-pilot-v1",
+      "effective_from": null,
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "formula_id": "FORMULA-CONDITIONAL-FIXED-V1",
+        "formula_params": {},
+        "fixed_amount_mad": 360,
+        "unit_rate_mad": null,
+        "unit": "FLAT_INTERVENTION",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 30000
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": false,
+        "price_mad": null,
+        "mode": null,
+        "same_visit_absorption": null,
+        "qualifying_service_codes": [],
+        "conditions": [],
+        "policy_ref": null
+      },
+      "materials": {
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
+        "consumables_cap_mad": null,
+        "major_parts": "NOT_APPLICABLE",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "parts_disclosure": null
+      },
+      "measurement": {
+        "basis": "NONE",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "garden_access",
+            "field": "garden_access",
+            "operator": "EQ",
+            "value": "GARDEN_ACCESS_OK",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre jardinage confirmé"
+          },
+          {
+            "id": "garden_state",
+            "field": "garden_state",
+            "operator": "EQ",
+            "value": "GARDEN_MAINTAINED",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre jardinage confirmé"
+          },
+          {
+            "id": "garden_waste",
+            "field": "garden_waste",
+            "operator": "EQ",
+            "value": "GARDEN_WASTE_ONSITE",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre jardinage confirmé"
+          },
+          {
+            "id": "garden_tasks",
+            "field": "garden_tasks",
+            "operator": "EQ",
+            "value": "GARDEN_ROUTINE_ONLY",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre jardinage confirmé"
+          },
+          {
+            "id": "garden_dimensions",
+            "field": "garden_dimensions",
+            "operator": "EQ",
+            "value": "GARDEN_UP_TO_100",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre jardinage confirmé"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "garden_access",
+          "garden_state",
+          "garden_waste",
+          "garden_tasks",
+          "garden_dimensions"
+        ],
+        "supporting_prose": "Entretien uniquement, outils et déplacement inclus, déchets regroupés sur place ; aucun enlèvement, arbre, plantation ou travaux supplémentaires.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1"
+      ],
+      "safety_policy_refs": [],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
+        "transaction_backed": false,
+        "production_ready": true
+      },
+      "confidence": {
+        "price_confidence": "PILOT_NOT_FIELD_VALIDATED",
+        "scope_confidence": "DEFINED",
+        "evidence_confidence": "LIMITED"
+      },
+      "batch_policy": null,
+      "copy_keys": {},
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
+    },
+    "jardinage.taille_haie_basse": {
+      "canonical_service_code": "jardinage.taille_haie_basse",
+      "legacy_codes": [],
+      "metier": "jardinage",
+      "service_family": "ENTRETIEN_EXTERIEUR",
+      "label_fr": "Taille de haie basse",
+      "label_ar_darija": null,
+      "short_label_fr": "Taille de haie basse",
+      "variant": null,
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "garden-pilot-v1",
+      "effective_from": null,
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "formula_id": "FORMULA-CONDITIONAL-FIXED-V1",
+        "formula_params": {},
+        "fixed_amount_mad": 310,
+        "unit_rate_mad": null,
+        "unit": "FLAT_INTERVENTION",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 25000
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": false,
+        "price_mad": null,
+        "mode": null,
+        "same_visit_absorption": null,
+        "qualifying_service_codes": [],
+        "conditions": [],
+        "policy_ref": null
+      },
+      "materials": {
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
+        "consumables_cap_mad": null,
+        "major_parts": "NOT_APPLICABLE",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "parts_disclosure": null
+      },
+      "measurement": {
+        "basis": "NONE",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "garden_access",
+            "field": "garden_access",
+            "operator": "EQ",
+            "value": "GARDEN_ACCESS_OK",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre jardinage confirmé"
+          },
+          {
+            "id": "garden_state",
+            "field": "garden_state",
+            "operator": "EQ",
+            "value": "GARDEN_MAINTAINED",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre jardinage confirmé"
+          },
+          {
+            "id": "garden_waste",
+            "field": "garden_waste",
+            "operator": "EQ",
+            "value": "GARDEN_WASTE_ONSITE",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre jardinage confirmé"
+          },
+          {
+            "id": "garden_tasks",
+            "field": "garden_tasks",
+            "operator": "EQ",
+            "value": "GARDEN_ROUTINE_ONLY",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre jardinage confirmé"
+          },
+          {
+            "id": "garden_dimensions",
+            "field": "garden_dimensions",
+            "operator": "EQ",
+            "value": "HEDGE_WITHIN_LIMITS",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre jardinage confirmé"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "garden_access",
+          "garden_state",
+          "garden_waste",
+          "garden_tasks",
+          "garden_dimensions"
+        ],
+        "supporting_prose": "Entretien uniquement, outils et déplacement inclus, déchets regroupés sur place ; aucun enlèvement, arbre, plantation ou travaux supplémentaires.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1"
+      ],
+      "safety_policy_refs": [],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
+        "transaction_backed": false,
+        "production_ready": true
+      },
+      "confidence": {
+        "price_confidence": "PILOT_NOT_FIELD_VALIDATED",
+        "scope_confidence": "DEFINED",
+        "evidence_confidence": "LIMITED"
+      },
+      "batch_policy": null,
+      "copy_keys": {},
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
     }
   }
 }

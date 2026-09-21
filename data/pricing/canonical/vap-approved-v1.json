@@ -1,5 +1,646 @@
 {
   "version": "vap-approved-v1",
-  "note": "Activation uniquement après calibration explicite du périmètre, de la VAP et du total client. Les six hypothèses ne sont pas des tarifs approuvés.",
-  "entries": []
+  "note": "Deux forfaits jardinage autorisés par le propriétaire pour les 20 villes FIXEO ; prix pilote à suivre, sans garantie de disponibilité artisan.",
+  "entries": [
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.entretien_courant",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "GARDEN_UP_TO_100"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "jardinage.taille_haie_basse",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "garden_access": "GARDEN_ACCESS_OK",
+        "garden_state": "GARDEN_MAINTAINED",
+        "garden_waste": "GARDEN_WASTE_ONSITE",
+        "garden_tasks": "GARDEN_ROUTINE_ONLY",
+        "garden_dimensions": "HEDGE_WITHIN_LIMITS"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "garden-pilot-v1"
+    }
+  ]
 }
