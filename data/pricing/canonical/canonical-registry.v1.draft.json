@@ -7893,6 +7893,353 @@
       },
       "human_review_flags": [],
       "semantic_corrections": []
+    },
+    "carrelage.remplacement_local": {
+      "canonical_service_code": "carrelage.remplacement_local",
+      "legacy_codes": [],
+      "metier": "carrelage",
+      "service_family": "REVETEMENT_SOL",
+      "label_fr": "Remplacer 1 à 4 carreaux de sol",
+      "label_ar_darija": null,
+      "short_label_fr": "Remplacer 1 à 4 carreaux de sol",
+      "variant": null,
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "tile-pilot-v1",
+      "effective_from": null,
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 30000,
+        "materials_minor": 0
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": false,
+        "price_mad": null,
+        "mode": null,
+        "same_visit_absorption": null,
+        "qualifying_service_codes": [],
+        "conditions": [],
+        "policy_ref": null
+      },
+      "materials": {
+        "consumables": "CLIENT_SUPPLIED",
+        "consumables_cap_mad": null,
+        "major_parts": "CLIENT_SUPPLIED",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "parts_disclosure": null
+      },
+      "measurement": {
+        "basis": "COUNT",
+        "quantity_field": "tile_count",
+        "quantity_required": true,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "tile_support",
+            "field": "tile_support",
+            "operator": "EQ",
+            "value": "TILE_SUPPORT_READY",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre carrelage confirmé"
+          },
+          {
+            "id": "tile_format",
+            "field": "tile_format",
+            "operator": "EQ",
+            "value": "TILE_STANDARD",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre carrelage confirmé"
+          },
+          {
+            "id": "tile_supplies",
+            "field": "tile_supplies",
+            "operator": "EQ",
+            "value": "TILE_CLIENT_SUPPLIED",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre carrelage confirmé"
+          },
+          {
+            "id": "tile_access",
+            "field": "tile_access",
+            "operator": "EQ",
+            "value": "TILE_ACCESS_READY",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre carrelage confirmé"
+          },
+          {
+            "id": "tile_finish",
+            "field": "tile_finish",
+            "operator": "EQ",
+            "value": "TILE_STANDARD_FINISH",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre carrelage confirmé"
+          },
+          {
+            "id": "tile_work",
+            "field": "tile_work",
+            "operator": "EQ",
+            "value": "TILE_REPLACE_ONLY",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre carrelage confirmé"
+          },
+          {
+            "id": "tile_count_min",
+            "field": "tile_count",
+            "operator": "GTE",
+            "value": 1,
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "tile_count_max",
+            "field": "tile_count",
+            "operator": "LTE",
+            "value": 4,
+            "effect": "ELIGIBLE"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "tile_count",
+          "tile_support",
+          "tile_format",
+          "tile_supplies",
+          "tile_access",
+          "tile_finish",
+          "tile_work"
+        ],
+        "supporting_prose": "Main-d’œuvre, outillage, déplacement en ville, pose et joints standards, retour pour joints si séchage nécessaire, nettoyage et regroupement des petits gravats sur place inclus. Carreaux, colle et joints fournis par le client. Support sec, sain et prêt, sol intérieur uniquement.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1"
+      ],
+      "safety_policy_refs": [],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
+        "transaction_backed": false,
+        "production_ready": true
+      },
+      "confidence": {
+        "price_confidence": "PILOT_NOT_FIELD_VALIDATED",
+        "scope_confidence": "DEFINED",
+        "evidence_confidence": "LIMITED"
+      },
+      "batch_policy": null,
+      "copy_keys": {},
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
+    },
+    "carrelage.pose_sol_droite": {
+      "canonical_service_code": "carrelage.pose_sol_droite",
+      "legacy_codes": [],
+      "metier": "carrelage",
+      "service_family": "REVETEMENT_SOL",
+      "label_fr": "Pose droite de carrelage au sol — 10 à 30 m²",
+      "label_ar_darija": null,
+      "short_label_fr": "Pose droite de carrelage au sol — 10 à 30 m²",
+      "variant": null,
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "tile-pilot-v1",
+      "effective_from": null,
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": null,
+        "materials_minor": 0,
+        "vap_quantity": {
+          "field": "tile_area_m2",
+          "min": 10,
+          "max": 30,
+          "unit_minor": 5000,
+          "decimals": 2
+        }
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": false,
+        "price_mad": null,
+        "mode": null,
+        "same_visit_absorption": null,
+        "qualifying_service_codes": [],
+        "conditions": [],
+        "policy_ref": null
+      },
+      "materials": {
+        "consumables": "CLIENT_SUPPLIED",
+        "consumables_cap_mad": null,
+        "major_parts": "CLIENT_SUPPLIED",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "parts_disclosure": null
+      },
+      "measurement": {
+        "basis": "SURFACE",
+        "quantity_field": "tile_area_m2",
+        "quantity_required": true,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "tile_support",
+            "field": "tile_support",
+            "operator": "EQ",
+            "value": "TILE_SUPPORT_READY",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre carrelage confirmé"
+          },
+          {
+            "id": "tile_format",
+            "field": "tile_format",
+            "operator": "EQ",
+            "value": "TILE_STANDARD",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre carrelage confirmé"
+          },
+          {
+            "id": "tile_supplies",
+            "field": "tile_supplies",
+            "operator": "EQ",
+            "value": "TILE_CLIENT_SUPPLIED",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre carrelage confirmé"
+          },
+          {
+            "id": "tile_access",
+            "field": "tile_access",
+            "operator": "EQ",
+            "value": "TILE_ACCESS_READY",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre carrelage confirmé"
+          },
+          {
+            "id": "tile_finish",
+            "field": "tile_finish",
+            "operator": "EQ",
+            "value": "TILE_STANDARD_FINISH",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre carrelage confirmé"
+          },
+          {
+            "id": "tile_work",
+            "field": "tile_work",
+            "operator": "EQ",
+            "value": "TILE_INSTALL_ONLY",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre carrelage confirmé"
+          },
+          {
+            "id": "tile_area_m2_min",
+            "field": "tile_area_m2",
+            "operator": "GTE",
+            "value": 10,
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "tile_area_m2_max",
+            "field": "tile_area_m2",
+            "operator": "LTE",
+            "value": 30,
+            "effect": "ELIGIBLE"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "tile_area_m2",
+          "tile_support",
+          "tile_format",
+          "tile_supplies",
+          "tile_access",
+          "tile_finish",
+          "tile_work"
+        ],
+        "supporting_prose": "Main-d’œuvre, outillage, déplacement en ville, pose et joints standards, retour pour joints si séchage nécessaire, nettoyage et regroupement des petits gravats sur place inclus. Carreaux, colle et joints fournis par le client. Support sec, sain et prêt, sol intérieur uniquement.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1"
+      ],
+      "safety_policy_refs": [],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
+        "transaction_backed": false,
+        "production_ready": true
+      },
+      "confidence": {
+        "price_confidence": "PILOT_NOT_FIELD_VALIDATED",
+        "scope_confidence": "DEFINED",
+        "evidence_confidence": "LIMITED"
+      },
+      "batch_policy": null,
+      "copy_keys": {},
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
     }
   }
 }

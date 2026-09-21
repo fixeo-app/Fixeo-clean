@@ -3,7 +3,8 @@ const {PGlite}=require('@electric-sql/pglite');
 test('VAP confirmation → mission → settlement retains centimes, identity and commission',async()=>{
  const db=new PGlite();try{
  await db.exec(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;
- CREATE TABLE service_requests(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),service_category text,city text,description text,client_phone text,urgency text,status text,idempotency_key text,tracking_ref text,guest_token_hash text);
+ CREATE TABLE artisans(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),city text,service_category text,work_zone text,availability text,review_count integer,rating numeric,updated_at timestamptz);
+ CREATE TABLE service_requests(target_artisan_id uuid,id uuid PRIMARY KEY DEFAULT gen_random_uuid(),service_category text,city text,description text,client_phone text,urgency text,status text,idempotency_key text,tracking_ref text,guest_token_hash text);
  CREATE TABLE estimator_context_redemptions(context_id text PRIMARY KEY,outcome_type text,service_code text,session_id text,amount_mad integer,state text,acquired_at timestamptz,service_request_id uuid,committed_at timestamptz,failed_at timestamptz,failure_reason text,booking_ref text,order_id text);
  CREATE TABLE missions(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),request_id text,artisan_profile_id uuid,status text,agreed_price numeric,final_price numeric,commission_amount numeric);
  CREATE FUNCTION set_commission_amount() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN NEW.commission_amount:=coalesce(round(coalesce(NEW.final_price,NEW.agreed_price)*0.15,2),0);RETURN NEW;END $$;
@@ -11,15 +12,19 @@ test('VAP confirmation → mission → settlement retains centimes, identity and
  INSERT INTO missions(request_id,agreed_price) VALUES('legacy',300);
  GRANT USAGE ON SCHEMA public TO anon,authenticated,service_role;
  GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role,authenticated;`);
- for(const file of ['20260921005143_vap_bp33_offers_foundation.sql','20260921012731_vap_booking_settlement_binding.sql','20260921090058_garden_vap_confirmation.sql']) await db.exec('BEGIN;'+fs.readFileSync(path.join(__dirname,'../../supabase/migrations',file),'utf8')+'COMMIT;');
- const id=(await db.query(`INSERT INTO fixeo_pricing_offers_v1(offer_key,pricing_version,currency,service_code,catalogue_version,city,scope,vap_minor,materials_minor,commission_minor,client_total_minor,expires_at) VALUES(gen_random_uuid(),'vap-bp33-v1','MAD','jardinage.entretien_courant','test','rabat','{"context_id":"fxctx-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","session_id":"session","outcome_type":"PRICE_READY"}',30001,0,6000,36001,now()+interval '15 minutes') RETURNING id`)).rows[0].id;
- const args=['fxctx-'+'a'.repeat(32),'PRICE_READY','jardinage.entretien_courant','session','360.01','rabat','0612345678','Test only','FX-TEST','a'.repeat(64),id];
+ for(const file of ['20260921005143_vap_bp33_offers_foundation.sql','20260921012731_vap_booking_settlement_binding.sql','20260921090058_garden_vap_confirmation.sql','20260921091341_tile_vap_confirmation.sql']) await db.exec('BEGIN;'+fs.readFileSync(path.join(__dirname,'../../supabase/migrations',file),'utf8')+'COMMIT;');
+ await db.exec(fs.readFileSync(path.join(__dirname,'fixtures/dispatch-request-live-20260921.sql'),'utf8'));
+ await db.exec("INSERT INTO artisans(city,service_category,availability,review_count,rating,updated_at) VALUES ('Rabat','Maçonnerie','available',500,5,now()),('Rabat','Carrelage','available',0,0,now());");
+ const id=(await db.query(`INSERT INTO fixeo_pricing_offers_v1(offer_key,pricing_version,currency,service_code,catalogue_version,city,scope,vap_minor,materials_minor,commission_minor,client_total_minor,expires_at) VALUES(gen_random_uuid(),'vap-bp33-v1','MAD','carrelage.remplacement_local','test','rabat','{"context_id":"fxctx-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","session_id":"session","outcome_type":"PRICE_READY"}',30001,0,6000,36001,now()+interval '15 minutes') RETURNING id`)).rows[0].id;
+ const args=['fxctx-'+'a'.repeat(32),'PRICE_READY','carrelage.remplacement_local','session','360.01','rabat','0612345678','Test only','FX-TEST','a'.repeat(64),id];
  const sql='SELECT confirm_estimator_request_vap_v1('+args.map((_,i)=>'$'+(i+1)).join(',')+') AS r';
  await db.exec('SET ROLE service_role');
- let result=(await db.query(sql,args)).rows[0].r;assert.equal(result.ok,true);const request=result.request_id;
+ let result=(await db.query(sql,args)).rows[0].r;assert.equal(result.ok,true);const request=result.request_id;assert.equal(result.service_category,'carrelage');
  assert.equal((await db.query(sql,args)).rows[0].r.replayed,true);
  const bad=[...args];bad[4]='360';assert.equal((await db.query(sql,bad)).rows[0].r.reason,'offer_mismatch');
- const mission=(await db.query("INSERT INTO missions(request_id,status) VALUES($1,'done') RETURNING *",[request])).rows[0];
+ const dispatched=(await db.query('SELECT dispatch_request_v1($1) AS r',[request])).rows[0].r;assert.equal(dispatched.ok,true);
+ const mission=(await db.query('SELECT * FROM missions WHERE id=$1',[dispatched.mission_id])).rows[0];
+ assert.equal((await db.query('SELECT service_category FROM artisans WHERE id=$1',[mission.artisan_profile_id])).rows[0].service_category,'Carrelage');
  assert.equal(mission.agreed_price,'360.0100000000000000');assert.equal(Number(mission.commission_amount),60);
  await db.query('UPDATE missions SET final_price=360.01 WHERE id=$1',[mission.id]);
  await db.query('UPDATE missions SET final_price=360.01 WHERE id=$1',[mission.id]);

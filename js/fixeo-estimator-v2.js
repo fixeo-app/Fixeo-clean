@@ -360,6 +360,15 @@
     garden_tasks: "Souhaitez-vous uniquement cette prestation, sans autre travail ni fourniture à acheter ?",
     GARDEN_UP_TO_100: "Quelle surface souhaitez-vous entretenir ?",
     HEDGE_WITHIN_LIMITS: "La haie respecte-t-elle ces trois limites : 10 m de longueur, 1,80 m de hauteur et 0,80 m de largeur maximum ?",
+    tile_support: "Le support est-il sain, sec et stable, sans humidité, fissure ni ragréage ou étanchéité à réaliser ?",
+    tile_format: "S’agit-il de carreaux standards jusqu’à 60 × 60 cm, hors marbre, zellige et mosaïque ?",
+    tile_supplies: "Disposez-vous des carreaux adaptés (identiques pour un remplacement), de la colle et des joints compatibles en quantité suffisante ?",
+    tile_access: "La zone intérieure est-elle dégagée, accessible avec les outils, avec eau et électricité sur place ?",
+    tile_finish: "Souhaitez-vous une finition standard, avec les joints et les gravats regroupés sur place, sans évacuation ni plinthes ?",
+    tile_count: "Combien de carreaux de sol faut-il remplacer ? Forfait de 1 à 4 carreaux.",
+    tile_area_m2: "Quelle surface de sol faut-il carreler, en m² ? De 10 à 30 m², avec deux décimales maximum.",
+    TILE_REPLACE_ONLY: "S’agit-il uniquement du remplacement local de ces carreaux de sol, sans autre travail ?",
+    TILE_INSTALL_ONLY: "S’agit-il uniquement de pose droite sur un sol intérieur déjà prêt, sans dépose, mur, escalier, motif ni autre travail ?",
     plumbing_scope: 'Le problème concerne-t-il un seul équipement accessible, sans canalisation encastrée ni réseau collectif ?',
 
     surface_m2:
@@ -409,6 +418,15 @@
       GARDEN_UP_TO_100: "De 1 à 100 m², jardin déjà entretenu",
       HEDGE_WITHIN_LIMITS: "Oui, dans ces limites, dessus et deux faces accessibles",
       GARDEN_OVERSIZE: "Dimensions supérieures ou accès aux faces incomplet",
+      TILE_SUPPORT_READY: "Oui, support sain, sec et prêt",
+      TILE_STANDARD: "Oui, carreaux standards ≤ 60 × 60 cm",
+      TILE_CLIENT_SUPPLIED: "Oui, carreaux, colle et joints disponibles",
+      TILE_SUPPLIES_MISSING: "Non, fournitures à prévoir",
+      TILE_ACCESS_READY: "Oui, zone dégagée et accessible",
+      TILE_STANDARD_FINISH: "Oui, finition standard et gravats sur place",
+      TILE_REPLACE_ONLY: "Oui, uniquement ce remplacement",
+      TILE_INSTALL_ONLY: "Oui, uniquement cette pose droite",
+      TILE_COMPLEX: "Non, mon besoin est différent",
       LOCAL_ACCESSIBLE:'Oui, un seul équipement accessible',
       COMPLEX:'Non, réseau collectif / canalisation encastrée / plusieurs équipements',
       UNKNOWN:'Je ne sais pas',
@@ -1037,6 +1055,15 @@
       GARDEN_UP_TO_100: "De 1 à 100 m², jardin déjà entretenu",
       HEDGE_WITHIN_LIMITS: "Oui, dans ces limites, dessus et deux faces accessibles",
       GARDEN_OVERSIZE: "Dimensions supérieures ou accès aux faces incomplet",
+      TILE_SUPPORT_READY: "Oui, support sain, sec et prêt",
+      TILE_STANDARD: "Oui, carreaux standards ≤ 60 × 60 cm",
+      TILE_CLIENT_SUPPLIED: "Oui, carreaux, colle et joints disponibles",
+      TILE_SUPPLIES_MISSING: "Non, fournitures à prévoir",
+      TILE_ACCESS_READY: "Oui, zone dégagée et accessible",
+      TILE_STANDARD_FINISH: "Oui, finition standard et gravats sur place",
+      TILE_REPLACE_ONLY: "Oui, uniquement ce remplacement",
+      TILE_INSTALL_ONLY: "Oui, uniquement cette pose droite",
+      TILE_COMPLEX: "Non, mon besoin est différent",
       LOCAL_ACCESSIBLE:'Oui, un seul équipement accessible',
       COMPLEX:'Non, réseau collectif / canalisation encastrée / plusieurs équipements',
       UNKNOWN:'Je ne sais pas',
@@ -1554,6 +1581,7 @@
     step
   ) {
     return [
+      'tile_area_m2',
       'painted_m2',
       'ceiling_m2',
       'surface_m2'
@@ -1943,13 +1971,13 @@
 
       inp.setAttribute(
         'step',
-        '1'
+        step.input_id === 'tile_area_m2' ? '0.01' : '1'
       );
 
 
       inp.setAttribute(
         'placeholder',
-        'Ex. 45'
+        step.input_id === 'tile_area_m2' ? 'Ex. 20,25' : 'Ex. 45'
       );
 
 
@@ -6381,7 +6409,7 @@ var cityInput =
       if(!city.value||!description.value.trim()){status.textContent='Précisez votre projet et votre ville.';return;}
       remember();
       var metier=STATE.session?.metier||ctx.metier_hint||'autre';
-      var accepted=['plomberie','electricite','serrurerie','climatisation','menuiserie','peinture','maconnerie','nettoyage','jardinage','demenagement'];
+      var accepted=['plomberie','electricite','serrurerie','climatisation','menuiserie','peinture','maconnerie','nettoyage','jardinage','demenagement','carrelage'];
       var payload={service_category:accepted.includes(metier)?metier:'autre',city:city.value==='Témara'?'Temara':city.value,description:('Demande de devis — aucun prix confirmé. '+(outcome.service_label||resolveClientLabel(outcome.service_code).primary)+' : '+description.value.trim()).slice(0,1000),client_phone:normalizedPhone,urgency:'normale'};
       var fingerprint=JSON.stringify(payload);
       if(self._quoteAttempt && self._quoteAttempt.fingerprint!==fingerprint && self._quoteAttempt.uncertain){status.textContent='Un envoi précédent reste à vérifier. Réessayez avec les mêmes informations avant de les modifier.';return;}

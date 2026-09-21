@@ -258,7 +258,9 @@
       "label": "Poser du carrelage",
       "universe": "travaux",
       "metier": "carrelage",
-      "candidate_services": []
+      "candidate_services": [
+        "carrelage.pose_sol_droite"
+      ]
     },
     "travaux.reparer-des-joints": {
       "label": "Réparer des joints",

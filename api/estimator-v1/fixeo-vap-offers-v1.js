@@ -1,6 +1,7 @@
 'use strict';
 const crypto=require('node:crypto');
 const {buildBreakdown,VERSION}=require('../../data/pricing/engine/vap-bp33-v1');
+const {tariffBreakdown,quantityUnits}=require('../../data/pricing/engine/vap-tariff-v1');
 const catalogue=require('../../data/pricing/canonical/vap-approved-v1.json');
 
 // Only exact, reviewed scope/zone matches qualify. No inference from legacy total.
@@ -8,11 +9,12 @@ function selectTariff(session,entries=catalogue.entries){
  return entries.find(t=>t.approved===true && t.service_code===session.service_code &&
   t.city_slug===session.entry_context?.city_slug && t.outcome_type===session.outcome?.outcome_type &&
   t.inputs && Object.keys(t.inputs).length>0 &&
+  (!t.quantity_guard || (()=>{try{quantityUnits(t.quantity_guard,session.known_inputs);return true;}catch{return false;}})()) &&
   Object.entries(t.inputs).every(([k,v])=>session.known_inputs?.[k]===v)) || null;
 }
 async function attachOffer(session,payload,{entries=catalogue.entries,fetchImpl=fetch,env=process.env}={}){
- const tariff=selectTariff(session,entries);if(!tariff){if(session.service_code?.startsWith('jardinage.'))throw Error('Garden scope or city not eligible for VAP');return null;}
- const breakdown=buildBreakdown({pricingVersion:VERSION,vapMinor:tariff.vap_minor,materialsMinor:tariff.materials_minor});
+ const tariff=selectTariff(session,entries);if(!tariff){if(/^(jardinage|carrelage)\./.test(session.service_code||''))throw Error('Service scope or city not eligible for VAP');return null;}
+ const breakdown=tariffBreakdown(tariff,session.known_inputs);
  if(!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY)throw Error('VAP persistence unavailable');
  const id=crypto.randomUUID();
  const row={id,offer_key:crypto.randomUUID(),pricing_version:VERSION,currency:'MAD',service_code:payload.service_code,
