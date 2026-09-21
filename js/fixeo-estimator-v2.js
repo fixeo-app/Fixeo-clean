@@ -655,8 +655,7 @@
     }
 
     return (
-      Math.round(n)
-        .toString() +
+      Number(n).toLocaleString("fr-MA", {maximumFractionDigits:2}) +
       ' MAD'
     );
   }
@@ -2405,9 +2404,7 @@
     var amtNum =
       amountMAD !== null &&
       amountMAD !== undefined
-        ? Math.round(
-            amountMAD
-          ).toString()
+        ? Number(amountMAD).toLocaleString("fr-MA", {maximumFractionDigits:2})
         : '—';
 
 
@@ -2764,9 +2761,7 @@
     var labAmtStr =
       labourAmt !== null &&
       labourAmt !== undefined
-        ? Math.round(
-            labourAmt
-          ).toString()
+        ? Number(labourAmt).toLocaleString("fr-MA", {maximumFractionDigits:2})
         : '—';
 
 
@@ -2998,9 +2993,7 @@
     var amtNum =
       amountMAD !== null &&
       amountMAD !== undefined
-        ? Math.round(
-            amountMAD
-          ).toString()
+        ? Number(amountMAD).toLocaleString("fr-MA", {maximumFractionDigits:2})
         : '—';
 
 
@@ -6004,14 +5997,16 @@ var cityInput =
       }
 
 
-      bodySlot.innerHTML =
-        '';
-
-
-      bodySlot.appendChild(
-        bodyEl
-      );
-
+      if (outcome.financial_breakdown) {
+        var financial = outcome.financial_breakdown;
+        var details = el('div', 'result-scope');
+        details.appendChild(el('p', '', 'Prestation artisan : ' + formatMAD(financial.vapMinor / 100)));
+        details.appendChild(el('p', '', 'Service FIXEO : ' + formatMAD(financial.commissionMinor / 100)));
+        details.appendChild(el('p', '', 'Fournitures incluses : ' + formatMAD(financial.materialsMinor / 100)));
+        bodyEl.appendChild(details);
+      }
+      bodySlot.innerHTML = '';
+      bodySlot.appendChild(bodyEl);
 
       var footerOpts =
         {};
@@ -6547,5 +6542,6 @@ var cityInput =
   };
 
 }());
+
 
 

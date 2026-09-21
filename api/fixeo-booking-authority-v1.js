@@ -37,6 +37,7 @@
  */
 'use strict';
 
+const {validateFinancialContext}=require('./estimator-v1/fixeo-vap-offers-v1');
 const { unsealToken } = require('./estimator-v1/fixeo-estimator-token-v1');
 
 /* ── Outcome types that are payable (may produce a booking amount) ── */
@@ -168,6 +169,13 @@ function resolveAuthoritativeBookingPricing({ estimatorContextToken, browserTota
     );
   }
 
+  // VAP must use the atomic offer confirmation RPC, never the legacy COD path.
+  try {
+    if(validateFinancialContext(ctx)) throw new BookingAuthorityError('VAP_CONFIRMATION_REQUIRED','Use estimator confirm_request for VAP offers');
+  } catch(e) {
+    if(e instanceof BookingAuthorityError)throw e;
+    throw new BookingAuthorityError('INVALID_FINANCIAL_CONTEXT',e.message);
+  }
   // Derive canonical amount based on outcome type
   let canonicalAmount;
   const isLabourPlusPart = outcomeType === 'LABOUR_PLUS_PART_READY';
@@ -234,3 +242,4 @@ module.exports = {
   PAYABLE_OUTCOMES,
   NON_PAYABLE_OUTCOMES,
 };
+

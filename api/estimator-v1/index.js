@@ -34,6 +34,7 @@
 'use strict';
 
 const crypto = require('crypto');
+const {attachOffer,validateFinancialContext}=require('./fixeo-vap-offers-v1');
 
 const orchestrator = require(
   '../../data/pricing/orchestrator/estimator-orchestrator-v1'
@@ -1020,7 +1021,7 @@ function handleSelectService(
 // Body: { action:'evaluate', session_token }
 // ─────────────────────────────────────────────────────────────────────────────
 
-function handleEvaluate(
+async function handleEvaluate(
   body,
   secret
 ) {
@@ -1125,6 +1126,14 @@ function handleEvaluate(
           evaluated
         );
 
+      const financial = await attachOffer(evaluated, pricingPayload);
+      if (financial) {
+        outcome.price = Object.assign({}, outcome.price, {amount_mad:pricingPayload.amount_mad});
+        if (pricingPayload.outcome_type === 'LABOUR_PLUS_PART_READY') outcome.price.labour_amount_mad=pricingPayload.amount_mad;
+        if (pricingPayload.outcome_type === 'DIAGNOSTIC_READY') outcome.diagnostic_price_mad=pricingPayload.amount_mad;
+        outcome.financial_breakdown=financial;
+        view.outcome=outcome;
+      }
       pricing_context_token =
         sealToken(
           pricingPayload,
@@ -1132,9 +1141,7 @@ function handleEvaluate(
         );
 
     } catch (_) {
-      // Fail closed.
-      pricing_context_token =
-        null;
+      return {status:503,body:{ok:false,error:'pricing_offer_unavailable'}};
     }
   }
 
@@ -1227,6 +1234,8 @@ function handleVerifyPricingContext(
     };
   }
 
+  try { validateFinancialContext(payload); }
+  catch (_) {return {status:200,body:{valid:false,reason:'invalid_financial_context'}};}
   let service_label =
     null;
 
@@ -1412,7 +1421,7 @@ async function callEstimatorConfirmationRpc(
     response =
       await fetch(
         cfg.url +
-        '/rest/v1/rpc/confirm_estimator_request_v1',
+        '/rest/v1/rpc/' + (rpcArgs.p_offer_id ? 'confirm_estimator_request_vap_v1' : 'confirm_estimator_request_v1'),
         {
           method: 'POST',
 
@@ -1428,6 +1437,7 @@ async function callEstimatorConfirmationRpc(
               cfg.serviceKey,
           },
 
+          signal: AbortSignal.timeout(15000),
           body:
             JSON.stringify(
               rpcArgs
@@ -1699,8 +1709,10 @@ async function handleConfirmRequest(
       ? payload.city_slug.trim().toLowerCase()
       : '';
 
-  const amountMad =
-    payload.amount_mad;
+  let financial;
+  try { financial=validateFinancialContext(payload); }
+  catch (_) {return {status:422,body:{ok:false,error:'invalid_financial_context'}};}
+  const amountMad = payload.amount_mad;
 
   if (
     !CONFIRM_CONTEXT_ID_RE.test(
@@ -1717,9 +1729,7 @@ async function handleConfirmRequest(
     !CONFIRM_CITY_SLUGS.has(
       citySlug
     ) ||
-    !Number.isInteger(
-      amountMad
-    ) ||
+    !(financial ? Number.isFinite(amountMad) : Number.isInteger(amountMad)) ||
     amountMad <= 0 ||
     (
       payload.currency &&
@@ -1792,6 +1802,7 @@ async function handleConfirmRequest(
   try {
     confirmation =
       await callEstimatorConfirmationRpc({
+        ...(financial ? {p_offer_id:payload.offer_id} : {}),
         p_context_id:
           contextId,
 
@@ -2333,7 +2344,7 @@ async function handler(
 
       case 'evaluate':
         result =
-          handleEvaluate(
+          await handleEvaluate(
             body,
             secret
           );
@@ -2393,4 +2404,5 @@ async function handler(
     result.body
   );
 };
+
 
