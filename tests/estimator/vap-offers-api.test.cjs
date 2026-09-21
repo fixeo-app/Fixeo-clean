@@ -5,8 +5,8 @@ const {resolveAuthoritativeBookingPricing}=require('../../api/fixeo-booking-auth
 const session={service_code:'plomberie.test',entry_context:{city_slug:'rabat'},known_inputs:{accessible:true},outcome:{outcome_type:'PRICE_READY'}};
 const entries=[{approved:true,service_code:'plomberie.test',city_slug:'rabat',outcome_type:'PRICE_READY',inputs:{accessible:true},vap_minor:30001,materials_minor:0,catalogue_version:'test-only'}];
 function context(){return {service_code:'plomberie.test',city_slug:'rabat',session_id:'s',context_id:'fxctx-'+'a'.repeat(32),outcome_type:'PRICE_READY',expires_at:Date.now()+60000,amount_mad:300};}
-test('No calibrated entry means no price change or network call',async()=>{
- const p=context();assert.equal(await attachOffer(session,p,{entries:[],fetchImpl:()=>{throw Error('unexpected')}}),null);assert.equal(p.amount_mad,300);
+test('Migrated plumbing fails closed without a calibrated entry',async()=>{
+ const p=context();await assert.rejects(attachOffer(session,p,{entries:[],fetchImpl:()=>{throw Error('unexpected')}}),/not eligible/);assert.equal(p.amount_mad,300);
  assert.equal(selectTariff({...session,known_inputs:{accessible:false}},entries),null);
  assert.equal(selectTariff({...session,entry_context:{city_slug:'fes'}},entries),null);
 });

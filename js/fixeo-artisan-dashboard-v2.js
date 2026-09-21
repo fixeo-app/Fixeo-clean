@@ -562,8 +562,10 @@ var available =
     var req   = mission._request || null;
     var st    = String((req && req.status) || mission.status || 'pending').toLowerCase().trim();
     var badge = _missionBadge(st);
-    var price = Number((req && req.final_price) || mission.agreed_price || 0);
-    var net   = price > 0 ? Math.round(price * 0.85) : 0;
+    var price = Number(mission.final_price || (req && req.final_price) || mission.agreed_price || 0);
+    var net = mission.pricing_offer_id
+      ? (mission.commission_amount != null && Number.isFinite(Number(mission.commission_amount)) ? Math.round((price-Number(mission.commission_amount))*100)/100 : null)
+      : price > 0 ? Math.round(price * 0.85) : 0;
     var mDate = (req && req.created_at) || mission.created_at || '';
 
     /* ── Header: category + badge ── */
@@ -595,8 +597,8 @@ var available =
         + '<span class="fxa-info-value">' + price.toLocaleString('fr-FR') + ' MAD</span>'
         + '</div>'
         + '<div class="fxa-info-row">'
-        + '<span class="fxa-info-label">Votre revenu (85 %)</span>'
-        + '<span class="fxa-info-value" style="color:#20c997">' + net.toLocaleString('fr-FR') + ' MAD</span>'
+        + '<span class="fxa-info-label">Votre montant après frais FIXEO</span>'
+        + '<span class="fxa-info-value" style="color:#20c997">' + (net === null ? 'À confirmer' : net.toLocaleString('fr-FR') + ' MAD') + '</span>'
         + '</div>';
     }
 
@@ -653,6 +655,9 @@ var available =
   function _missionActions(mission, st) {
     var reqId = (mission._request && mission._request.id) || mission.request_id || '';
     var html  = '<div class="fxa-actions">';
+    if (mission.pricing_offer_id && String(mission._request && mission._request.service_category).toLowerCase() === 'plomberie') {
+      html += '<button class="fxa-btn fxa-btn-primary" data-action="plumbing-repair" data-mission-id="' + esc(mission.id) + '">Diagnostic / réparation</button>';
+    }
 
     if (st === 'pending' || st === 'assigned') {
       html += '<button class="fxa-btn fxa-btn-primary" '
@@ -1443,6 +1448,9 @@ var missionId = btn.dataset.missionId || '';
         || action === 'edit-profile' || action === 'logout';
       if (_actionInFlight && !navAction) return; /* drop duplicate tap */
       switch (action) {
+        case 'plumbing-repair':
+          FS.getClient().then(function(sb) { return window.FixeoPlumbingRepair.openArtisan(sb, missionId, _refresh); }).catch(function() { _toast('Suivi de réparation indisponible.', 'error'); });
+          return;
             case 'accept-dispatch-offer':
   _doAcceptDispatchOffer(reqId, btn);
   return;

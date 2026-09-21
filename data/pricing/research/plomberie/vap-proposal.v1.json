@@ -1,0 +1,159 @@
+{
+  "version": "plumbing-vap-proposal-v1",
+  "created_at": "2026-09-21",
+  "base_commit": "1acfc1fe8ba7aa574c91662c3defde0c5a53189a",
+  "approval_status": "OWNER_APPROVED",
+  "runtime_integrated": true,
+  "production_ready": true,
+  "pricing_version": "vap-bp33-v1",
+  "currency": "MAD",
+  "proposed_city_slugs": [
+    "agadir",
+    "beni-mellal",
+    "casablanca",
+    "el-jadida",
+    "fes",
+    "kenitra",
+    "khouribga",
+    "marrakech",
+    "meknes",
+    "mohammedia",
+    "nador",
+    "ouarzazate",
+    "oujda",
+    "rabat",
+    "safi",
+    "sale",
+    "tanger",
+    "taza",
+    "temara",
+    "tetouan"
+  ],
+  "note": "Pilote commercial validé par le propriétaire le 21 septembre 2026 pour 20 villes. Tarifs VAP explicites, périmètres qualifiés et absorption du diagnostic avec accord client. Préservation des offres historiques. Publication après migration et tests.",
+  "services": [
+    {
+      "service_code": "plomberie.diagnostic",
+      "label_fr": "Diagnostic plomberie seul",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
+      "legacy_reference_total_mad": 180,
+      "proposed_outcome_type": "DIAGNOSTIC_READY",
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "expected_commission_minor": 6000,
+      "expected_client_total_minor": 22000,
+      "catalogue_version": "plumbing-pilot-v1"
+    },
+    {
+      "service_code": "plomberie.fuite_simple",
+      "label_fr": "Réparation d’une fuite simple visible",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
+      "legacy_reference_total_mad": 250,
+      "proposed_outcome_type": "PRICE_READY",
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "expected_commission_minor": 6000,
+      "expected_client_total_minor": 28000,
+      "catalogue_version": "plumbing-pilot-v1"
+    },
+    {
+      "service_code": "plomberie.debouchage_evier",
+      "label_fr": "Débouchage simple d’un évier ou lavabo",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
+      "legacy_reference_total_mad": 250,
+      "proposed_outcome_type": "PRICE_READY",
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "expected_commission_minor": 6000,
+      "expected_client_total_minor": 28000,
+      "catalogue_version": "plumbing-pilot-v1"
+    },
+    {
+      "service_code": "plomberie.debouchage_wc_simple",
+      "label_fr": "Débouchage simple d’un WC",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
+      "legacy_reference_total_mad": 300,
+      "proposed_outcome_type": "PRICE_READY",
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "expected_commission_minor": 6000,
+      "expected_client_total_minor": 33000,
+      "catalogue_version": "plumbing-pilot-v1"
+    },
+    {
+      "service_code": "plomberie.robinet_remplacement",
+      "label_fr": "Remplacement d’un robinet standard fourni par le client",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
+      "legacy_reference_total_mad": 250,
+      "proposed_outcome_type": "PRICE_READY",
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "expected_commission_minor": 6000,
+      "expected_client_total_minor": 28000,
+      "catalogue_version": "plumbing-pilot-v1"
+    },
+    {
+      "service_code": "plomberie.chasse_eau",
+      "label_fr": "Remplacement du mécanisme d’un WC à réservoir apparent, fourni par le client",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
+      "legacy_reference_total_mad": 300,
+      "proposed_outcome_type": "PRICE_READY",
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "expected_commission_minor": 6000,
+      "expected_client_total_minor": 33000,
+      "catalogue_version": "plumbing-pilot-v1"
+    }
+  ],
+  "materials_policy": {
+    "fixed_consumables_in_artisan_amount": true,
+    "leak_consumables_cap_mad": 50,
+    "tap_consumables_cap_mad": 50,
+    "cistern_consumables_cap_mad": 30,
+    "replacement_tap": "CLIENT_SUPPLIED",
+    "replacement_cistern_mechanism": "CLIENT_SUPPLIED",
+    "additional_parts": "SEPARATE_QUOTE_WITH_PRIOR_CLIENT_APPROVAL",
+    "zero_materials_minor_means": "NO_SEPARATE_MATERIALS_LINE_NOT_ZERO_ARTISAN_COST"
+  },
+  "diagnostic_absorption": {
+    "policy": "ONE_FINAL_REPAIR_TOTAL_ONE_FIXEO_FEE_SAME_VISIT",
+    "diagnostic_client_total_minor": 22000,
+    "examples": [
+      {
+        "repair_service_code": "plomberie.fuite_simple",
+        "repair_client_total_minor": 28000,
+        "diagnostic_already_paid_minor": 22000,
+        "remaining_due_minor": 6000,
+        "final_fixeo_fee_minor": 6000
+      },
+      {
+        "repair_service_code": "plomberie.chasse_eau",
+        "repair_client_total_minor": 33000,
+        "diagnostic_already_paid_minor": 22000,
+        "remaining_due_minor": 11000,
+        "final_fixeo_fee_minor": 6000
+      }
+    ],
+    "automatic_transition_implemented": true,
+    "historical_offers": "PRESERVE_EXISTING_APPROVED_TERMS",
+    "payment_credit_basis": "ARTISAN_CASH_DECLARATION_CONFIRMED_BY_CLIENT"
+  },
+  "release_gates": [
+    "OWNER_APPROVES_TARIFF_AND_SCOPE",
+    "SERVICE_SPECIFIC_QUALIFICATION",
+    "APPROVED_CATALOGUE_GATE_NO_LEGACY_FALLBACK",
+    "ATOMIC_SAME_VISIT_DIAGNOSTIC_TRANSITION",
+    "EXACT_RESERVATION_AND_SETTLEMENT_TESTS",
+    "POST_DEPLOYMENT_VERIFICATION"
+  ],
+  "approved_at": "2026-09-21",
+  "validation": {
+    "automated_tests_passed": 93,
+    "actual_production_bookings_created": 0
+  }
+}

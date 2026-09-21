@@ -38,7 +38,8 @@ test('plumbing unknown or complex scope does not receive a repair price',()=>{
   assert.equal(engine.evaluateFixeoPrice({service_code:code,inputs:{}}).ok,false);
   for(const scope of ['UNKNOWN','COMPLEX','LOCAL_ACCESSIBLE']){
    const next=o.answerEstimatorQuestion(s,o.getNextEstimatorStep(s).step.question_id,scope);assert.equal(next.ok,true);
-   const result=o.evaluateEstimator(next.session).session.outcome;assert.equal(result.outcome_type,scope==='LOCAL_ACCESSIBLE'?'PRICE_READY':'QUOTE_REQUIRED');
+   const inputs={...require('../../data/pricing/engine/plumbing-pilot-v1').services[code].inputs,plumbing_scope:scope};
+   const result=o.evaluateEstimator(o.startEstimator({service_hint:code,known_inputs:inputs}).session).session.outcome;assert.equal(result.outcome_type,scope==='LOCAL_ACCESSIBLE'?'PRICE_READY':'QUOTE_REQUIRED');
    if(scope==='LOCAL_ACCESSIBLE'){assert.ok(result.scope_summary.length);assert.ok(result.exclusions_summary.length);}
   }
  }

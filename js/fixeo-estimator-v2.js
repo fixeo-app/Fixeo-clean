@@ -400,7 +400,15 @@
     paint_supplies: "Fournissez-vous une peinture intérieure compatible avec le support, en quantité suffisante pour deux couches ?",
     paint_finish: "Souhaitez-vous deux couches de peinture standard sur les murs uniquement, dans une teinte identique ou proche, sans effet décoratif ni plafond ?",
     paint_area: "Quelle surface réelle de murs faut-il peindre ? De 20 à 100 m², hors portes et fenêtres. Deux couches incluses : ne doublez pas la surface.",
-    plumbing_scope: 'Le problème concerne-t-il un seul équipement accessible, sans canalisation encastrée ni réseau collectif ?',
+    plumbing_scope: "Le besoin concerne-t-il un seul équipement accessible, sans canalisation encastrée ni réseau collectif ?",
+    plumbing_access: "La zone est-elle accessible et sécurisée, sans inondation en cours ni risque électrique, avec arrivée d’eau pouvant être fermée sans difficulté ?",
+    plumbing_parts: "Disposez-vous déjà de la pièce neuve compatible (robinet ou mécanisme), sans achat ni adaptation à prévoir ?",
+    PLUMB_DIAGNOSTIC: "Contrôle visuel et vérifications simples d’un problème accessible, avec explication. Sans réparation, recherche instrumentée, démontage lourd, ouverture de mur, rapport certifié ni seconde visite. Est-ce bien votre besoin ?",
+    PLUMB_LEAK: "Un raccord sanitaire visible et accessible : resserrage ou joint standard, puis contrôle d’étanchéité. Petits consommables inclus jusqu’à 50 DH. Sans remplacement de tuyau, flexible ou robinet, corrosion, soudure, chauffe-eau, gaz ni réseau collectif. Est-ce bien votre besoin ?",
+    PLUMB_SINK: "Un évier ou lavabo : siphon accessible, nettoyage, remontage et débouchage manuel local avec essai d’écoulement. Sans remplacement de siphon, équipement motorisé, ouverture d’accès, colonne collective, plusieurs équipements refoulants ni échec préalable d’un professionnel. Est-ce bien votre besoin ?",
+    PLUMB_WC: "Un WC classique, sans broyeur : obstruction isolée traitable manuellement, avec essai d’écoulement. Sans dépose du WC, extraction spéciale d’objet, matériel motorisé, réseau collectif, plusieurs refoulements ni échec préalable d’un professionnel. Est-ce bien votre besoin ?",
+    PLUMB_TAP: "Un mitigeur standard posé sur évier ou lavabo, fourni compatible par le client : dépose, pose et essai. Raccordements existants compatibles, accessibles et non grippés ; petits consommables inclus jusqu’à 50 DH. Sans flexible ou vanne à remplacer, robinet mural ou thermostatique ni modification de tuyauterie. Est-ce bien votre besoin ?",
+    PLUMB_CISTERN: "Un WC au sol à réservoir apparent intact : mécanisme standard compatible fourni par le client, pose, réglage et essai. Alimentation et robinet d’arrêt en bon état ; petits consommables inclus jusqu’à 30 DH. Sans WC suspendu, réservoir encastré, fissure ni mécanisme propriétaire. Est-ce bien votre besoin ?",
 
     surface_m2:
       'Quelle est la surface concernée (m²) ?',
@@ -485,7 +493,15 @@
       PAINT_CLIENT_SUPPLIED: "Oui, peinture compatible pour deux couches",
       PAINT_TWO_COATS: "Oui, deux couches standard sur les murs",
       PAINT_COMPLEX: "Non, mon besoin est différent",
-      LOCAL_ACCESSIBLE:'Oui, un seul équipement accessible',
+      LOCAL_ACCESSIBLE: "Oui, un seul équipement accessible",
+      PLUMB_ACCESS_READY: "Oui, accès sûr et eau isolable",
+      PLUMB_CLIENT_PART: "Oui, pièce compatible déjà disponible",
+      PLUMB_DIAGNOSTIC: "Oui, ce périmètre correspond exactement",
+      PLUMB_LEAK: "Oui, ce périmètre correspond exactement",
+      PLUMB_SINK: "Oui, ce périmètre correspond exactement",
+      PLUMB_WC: "Oui, ce périmètre correspond exactement",
+      PLUMB_TAP: "Oui, ce périmètre correspond exactement",
+      PLUMB_CISTERN: "Oui, ce périmètre correspond exactement",
       COMPLEX:'Non, réseau collectif / canalisation encastrée / plusieurs équipements',
       UNKNOWN:'Je ne sais pas',
       APARTMENT:'Appartement F2/F3', VILLA:'Villa', studio_f1:'Studio / F1', f4_f5_large:'Grand appartement F4/F5 ou plus',
@@ -1149,7 +1165,15 @@
       PAINT_CLIENT_SUPPLIED: "Oui, peinture compatible pour deux couches",
       PAINT_TWO_COATS: "Oui, deux couches standard sur les murs",
       PAINT_COMPLEX: "Non, mon besoin est différent",
-      LOCAL_ACCESSIBLE:'Oui, un seul équipement accessible',
+      LOCAL_ACCESSIBLE: "Oui, un seul équipement accessible",
+      PLUMB_ACCESS_READY: "Oui, accès sûr et eau isolable",
+      PLUMB_CLIENT_PART: "Oui, pièce compatible déjà disponible",
+      PLUMB_DIAGNOSTIC: "Oui, ce périmètre correspond exactement",
+      PLUMB_LEAK: "Oui, ce périmètre correspond exactement",
+      PLUMB_SINK: "Oui, ce périmètre correspond exactement",
+      PLUMB_WC: "Oui, ce périmètre correspond exactement",
+      PLUMB_TAP: "Oui, ce périmètre correspond exactement",
+      PLUMB_CISTERN: "Oui, ce périmètre correspond exactement",
       COMPLEX:'Non, réseau collectif / canalisation encastrée / plusieurs équipements',
       UNKNOWN:'Je ne sais pas',
       APARTMENT:'Appartement F2/F3', VILLA:'Villa', studio_f1:'Studio / F1', f4_f5_large:'Grand appartement F4/F5 ou plus',
@@ -3297,11 +3321,15 @@
     );
 
 
+    if (outcome.service_code === 'plomberie.diagnostic') {
+      (outcome.scope_summary || []).forEach(function(text) { shell.appendChild(el('p', 'diagnostic-scope', text)); });
+    }
+
     shell.appendChild(
       el(
         'div',
         'diagnostic-absorption',
-        'Les conditions d’une éventuelle déduction sur réparation sont confirmées avant intervention.'
+        outcome.service_code === 'plomberie.diagnostic' ? 'Pour une réparation standard acceptée pendant la même visite : un seul total et un seul frais FIXEO ; le diagnostic déjà payé est déduit. Votre accord est recueilli dans le suivi avant les travaux.' : 'Les conditions d’une éventuelle déduction sur réparation sont confirmées avant intervention.'
       )
     );
 

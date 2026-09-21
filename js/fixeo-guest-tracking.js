@@ -126,7 +126,7 @@
         String(req.city || '')
       );
 
-      var publicDescription = String(req.description || '')
+      var publicDescription = String(req.public_description || req.description || '')
   .replace(
     /\s*\|\s*Ref:\s*FX-[A-Z0-9]+\s*\|\s*Source:\s*[^|]+$/i,
     ''
@@ -145,6 +145,11 @@ var description = _el(
       card.appendChild(description);
 
       root.appendChild(card);
+      if (window.FixeoPlumbingRepair) {
+        var registry = _readAccessRegistry();
+        var access = Object.keys(registry).map(function(k) { return registry[k]; }).find(function(a) { return a && a.tracking_ref === req.tracking_ref; });
+        window.FixeoPlumbingRepair.mountGuest(card, req, access);
+      }
     });
   }
 
@@ -191,6 +196,6 @@ var description = _el(
 
 /* Refresh guest request statuses while this page remains open. */
 setInterval(function () {
-  _load();
+  if (!document.querySelector('[data-fx-plumbing-review]')) _load();
 }, 60000);
 })();

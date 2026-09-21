@@ -956,9 +956,7 @@
         "COMPLEX",
         "UNKNOWN"
       ],
-      "required_when": "plomberie.fuite_simple / debouchage_evier / debouchage_wc_simple",
-      "client_question_fr": "Le problème est-il localisé sur un seul équipement accessible ?",
-      "semantic_definition": "LOCAL_ACCESSIBLE: one accessible fitting or fixture, no concealed piping or shared main network. COMPLEX or UNKNOWN require assessment before a repair price.",
+      "client_question_fr": "Le besoin concerne-t-il un seul équipement accessible, sans canalisation encastrée ni réseau collectif ?",
       "privacy_classification": "NON_SENSITIVE"
     },
     "garden_access": {
@@ -1331,6 +1329,44 @@
         "UNKNOWN"
       ],
       "client_question_fr": "Souhaitez-vous deux couches de blanc mat sur les murs uniquement, dans une teinte identique ou très proche, sans plafond ni changement marqué de couleur ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "plumbing_access": {
+      "input_id": "plumbing_access",
+      "data_type": "string",
+      "allowed_values": [
+        "PLUMB_ACCESS_READY",
+        "COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "La zone est-elle accessible et sécurisée, sans inondation en cours ni risque électrique, avec arrivée d’eau pouvant être fermée sans difficulté ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "plumbing_work": {
+      "input_id": "plumbing_work",
+      "data_type": "string",
+      "allowed_values": [
+        "PLUMB_DIAGNOSTIC",
+        "PLUMB_LEAK",
+        "PLUMB_SINK",
+        "PLUMB_WC",
+        "PLUMB_TAP",
+        "PLUMB_CISTERN",
+        "COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Contrôle visuel et vérifications simples d’un problème accessible, avec explication. Sans réparation, recherche instrumentée, démontage lourd, ouverture de mur, rapport certifié ni seconde visite. Est-ce bien votre besoin ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "plumbing_parts": {
+      "input_id": "plumbing_parts",
+      "data_type": "string",
+      "allowed_values": [
+        "PLUMB_CLIENT_PART",
+        "COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Disposez-vous déjà de la pièce neuve compatible (robinet ou mécanisme), sans achat ni adaptation à prévoir ?",
       "privacy_classification": "NON_SENSITIVE"
     }
   }

@@ -479,20 +479,23 @@
       var sr  = m._request;
       var st  = String((sr && sr.status) || m.status || '').toLowerCase();
       /* final_price = authoritative; agreed_price = admin-set post-COD; never infer from 0 */
-      var finalP   = sr && Number(sr.final_price)  > 0 ? Number(sr.final_price)  : null;
+      var finalP   = Number(m.final_price) > 0 ? Number(m.final_price) : sr && Number(sr.final_price) > 0 ? Number(sr.final_price) : null;
       var agreedP  = m.agreed_price !== null && m.agreed_price !== undefined && Number(m.agreed_price) > 0
                      ? Number(m.agreed_price) : null;
       var price = finalP || agreedP; /* prefer final_price; agreed_price if admin-set */
+      var net = m.pricing_offer_id
+        ? (m.commission_amount != null && Number.isFinite(Number(m.commission_amount)) ? Math.round((price-Number(m.commission_amount))*100)/100 : null)
+        : Math.round(price*0.85);
 
       if (st === 'validated' || st === 'done') {
         result.validatedCount++;
-        if (price) {
-          result.knownRevenue = (result.knownRevenue || 0) + Math.round(price * 0.85);
+        if (price && net !== null) {
+          result.knownRevenue = (result.knownRevenue || 0) + net;
         }
       } else if (st === 'completed') {
         result.completedCount++;
-        if (price) {
-          result.pendingRevenue = (result.pendingRevenue || 0) + Math.round(price * 0.85);
+        if (price && net !== null) {
+          result.pendingRevenue = (result.pendingRevenue || 0) + net;
         }
       }
     });
@@ -522,7 +525,7 @@
       + '<div class="fxck-fin-card">'
         + '<div class="fxck-fin-label">Revenus nets (validés)</div>'
         + moneyVal(fin.knownRevenue)
-        + '<div class="fxck-fin-sub">Après commission Fixeo (15%)</div>'
+        + '<div class="fxck-fin-sub">Après les frais FIXEO de chaque mission</div>'
       + '</div>'
       + (fin.completedCount > 0 ? '<div class="fxck-fin-card fxck-fin-card--pending">'
         + '<div class="fxck-fin-label">En attente de validation</div>'

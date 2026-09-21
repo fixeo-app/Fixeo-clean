@@ -657,7 +657,7 @@ function getNextEstimatorStep(session) {
         question_id: q.question_id,
         input_id: q.input_id,
         prompt_key: q.prompt_key,
-        prompt_fr: (getInputs().inputs[q.input_id]||{}).client_question_fr || null,
+        prompt_fr: q.prompt_fr || (getInputs().inputs[q.input_id]||{}).client_question_fr || null,
         answer_type: q.answer_type,
         options: q.options || null,
         priority: q.priority,
@@ -1716,4 +1716,3 @@ module.exports = {
   _normalizeEntryContext:
     normalizeEntryContext,
 };
-
