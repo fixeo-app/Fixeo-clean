@@ -275,7 +275,7 @@
 
     'peinture.mur_interieur.all_in': {
       primary: 'Peinture mur intérieur',
-      secondary: 'Fournitures incluses'
+      secondary: 'Blanc mat — peinture incluse'
     },
 
     'peinture.mur_interieur.labour_only': {
@@ -387,6 +387,10 @@
     moving_items: "S’agit-il de cartons et meubles courants manipulables à deux, sans piano, coffre-fort, objet exceptionnellement lourd, fragile ou nécessitant un équipement de levage ?",
     moving_preparation: "Les affaires seront-elles emballées et protégées, les meubles vidés, les appareils débranchés et les accès prêts avant l’arrivée de l’équipe ?",
     moving_duration: "Validez-vous un forfait de 2 intervenants pendant 2 heures, à compter du début sur place, sans garantie de terminer tout le déménagement ni prolongation automatique ?",
+    paint_included_support: "Les murs sont-ils déjà peints en blanc ou blanc cassé très clair, mats, lisses, secs, sains et compatibles avec une peinture à l’eau, sans fissure, moisissure, tache, écaillage, lessivage, enduit, ponçage ni sous-couche à réaliser ?",
+    paint_included_access: "Les murs sont-ils à 2,80 m maximum, avec sol plat et stable, zone dégagée, eau et électricité disponibles, sans escalier ni accès spécial ?",
+    paint_included_product: "Acceptez-vous la peinture Colorado Colovinyl 900 blanc mat fournie par l’artisan, sans teinte, finition satinée, effet décoratif ni exigence de peinture lessivable ?",
+    paint_included_finish: "Souhaitez-vous deux couches de blanc mat sur les murs uniquement, dans une teinte identique ou très proche, sans plafond ni changement marqué de couleur ?",
     ceiling_support: "Le plafond est-il plat, déjà peint, sec, sain et prêt à repeindre, sans fissure, moisissure, écaillage, enduit, ponçage ni sous-couche à réaliser ?",
     ceiling_access: "Le plafond est-il à 2,80 m maximum, avec un sol plat et stable, une zone dégagée, eau et électricité disponibles, sans cage d’escalier ni accès spécial ?",
     ceiling_finish: "Souhaitez-vous deux couches standard sur le plafond uniquement, dans une teinte identique ou proche, sans moulure, corniche, relief ni effet décoratif ?",
@@ -468,6 +472,10 @@
       MOVING_PREPARED: "Oui, tout sera préparé",
       MOVING_TWO_HOUR_TEAM: "Oui, 2 intervenants pendant 2 heures",
       MOVING_COMPLEX: "Non, mon besoin est différent",
+      PAINT_INCLUDED_READY: "Oui, murs blancs mats et prêts à repeindre",
+      PAINT_INCLUDED_ACCESS_READY: "Oui, accès simple et dégagé",
+      PAINT_COLOVINYL900_WHITE: "Oui, Colovinyl 900 blanc mat fourni",
+      PAINT_INCLUDED_TWO_COATS: "Oui, deux couches de blanc mat sur les murs",
       CEILING_READY: "Oui, plafond plat, déjà peint et prêt",
       CEILING_ACCESS_READY: "Oui, accès dégagé, sol stable et hauteur ≤ 2,80 m",
       CEILING_TWO_COATS: "Oui, deux couches standard sur le plafond",
@@ -1128,6 +1136,10 @@
       MOVING_PREPARED: "Oui, tout sera préparé",
       MOVING_TWO_HOUR_TEAM: "Oui, 2 intervenants pendant 2 heures",
       MOVING_COMPLEX: "Non, mon besoin est différent",
+      PAINT_INCLUDED_READY: "Oui, murs blancs mats et prêts à repeindre",
+      PAINT_INCLUDED_ACCESS_READY: "Oui, accès simple et dégagé",
+      PAINT_COLOVINYL900_WHITE: "Oui, Colovinyl 900 blanc mat fourni",
+      PAINT_INCLUDED_TWO_COATS: "Oui, deux couches de blanc mat sur les murs",
       CEILING_READY: "Oui, plafond plat, déjà peint et prêt",
       CEILING_ACCESS_READY: "Oui, accès dégagé, sol stable et hauteur ≤ 2,80 m",
       CEILING_TWO_COATS: "Oui, deux couches standard sur le plafond",

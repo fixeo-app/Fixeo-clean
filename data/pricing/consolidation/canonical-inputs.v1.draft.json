@@ -1288,6 +1288,50 @@
       ],
       "client_question_fr": "Souhaitez-vous deux couches standard sur le plafond uniquement, dans une teinte identique ou proche, sans moulure, corniche, relief ni effet décoratif ?",
       "privacy_classification": "NON_SENSITIVE"
+    },
+    "paint_included_support": {
+      "input_id": "paint_included_support",
+      "data_type": "string",
+      "allowed_values": [
+        "PAINT_INCLUDED_READY",
+        "PAINT_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Les murs sont-ils déjà peints en blanc ou blanc cassé très clair, mats, lisses, secs, sains et compatibles avec une peinture à l’eau, sans fissure, moisissure, tache, écaillage, lessivage, enduit, ponçage ni sous-couche à réaliser ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "paint_included_access": {
+      "input_id": "paint_included_access",
+      "data_type": "string",
+      "allowed_values": [
+        "PAINT_INCLUDED_ACCESS_READY",
+        "PAINT_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Les murs sont-ils à 2,80 m maximum, avec sol plat et stable, zone dégagée, eau et électricité disponibles, sans escalier ni accès spécial ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "paint_included_product": {
+      "input_id": "paint_included_product",
+      "data_type": "string",
+      "allowed_values": [
+        "PAINT_COLOVINYL900_WHITE",
+        "PAINT_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Acceptez-vous la peinture Colorado Colovinyl 900 blanc mat fournie par l’artisan, sans teinte, finition satinée, effet décoratif ni exigence de peinture lessivable ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "paint_included_finish": {
+      "input_id": "paint_included_finish",
+      "data_type": "string",
+      "allowed_values": [
+        "PAINT_INCLUDED_TWO_COATS",
+        "PAINT_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Souhaitez-vous deux couches de blanc mat sur les murs uniquement, dans une teinte identique ou très proche, sans plafond ni changement marqué de couleur ?",
+      "privacy_classification": "NON_SENSITIVE"
     }
   }
 }

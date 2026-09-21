@@ -3,10 +3,12 @@ const {PGlite}=require('@electric-sql/pglite');
 const o=require('../../data/pricing/orchestrator/estimator-orchestrator-v1');
 const {attachOffer}=require('../../api/estimator-v1/fixeo-vap-offers-v1');
 const catalogue=require('../../data/pricing/canonical/vap-approved-v1.json');
-for(const [serviceCode,inputs,amount,fee] of [
+for(const [serviceCode,inputs,amount,fee,materials=0] of [
  ['peinture.mur_interieur.labour_only',{active_moisture:false,paint_support:'PAINT_READY',paint_access:'PAINT_ACCESS_READY',paint_supplies:'PAINT_CLIENT_SUPPLIED',paint_finish:'PAINT_TWO_COATS',painted_m2:20.25},698.63,91.13],
+ ['peinture.mur_interieur.all_in',{active_moisture:false,paint_included_support:'PAINT_INCLUDED_READY',paint_included_access:'PAINT_INCLUDED_ACCESS_READY',paint_included_product:'PAINT_COLOVINYL900_WHITE',paint_included_finish:'PAINT_INCLUDED_TWO_COATS',painted_m2:20.25},1148.63,91.13,450],
+ ['peinture.mur_interieur.all_in',{active_moisture:false,paint_included_support:'PAINT_INCLUDED_READY',paint_included_access:'PAINT_INCLUDED_ACCESS_READY',paint_included_product:'PAINT_COLOVINYL900_WHITE',paint_included_finish:'PAINT_INCLUDED_TWO_COATS',painted_m2:66.67},3300.16,300.01,1000.05],
  ['peinture.plafond.labour_only',{active_moisture:false,ceiling_support:'CEILING_READY',ceiling_access:'CEILING_ACCESS_READY',paint_supplies:'PAINT_CLIENT_SUPPLIED',ceiling_finish:'CEILING_TWO_COATS',ceiling_m2:50.03},2301.32,300.12]
-]) test(serviceCode+': estimation, confirmation, dispatch and settlement retain exact amounts',async()=>{
+]) test(serviceCode+' '+(inputs.painted_m2||inputs.ceiling_m2)+' m2: estimation, confirmation, dispatch and settlement retain exact amounts',async()=>{
  const db=new PGlite();try{
  await db.exec(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;
  CREATE TABLE artisans(owner_user_id uuid,full_name text,name text,phone_public text,phone text,source text,claimed boolean,claim_status text,photo_url text,is_public boolean,id uuid PRIMARY KEY DEFAULT gen_random_uuid(),city text,service_category text,work_zone text,availability text,review_count integer,rating numeric,updated_at timestamptz);
@@ -24,11 +26,13 @@ for(const [serviceCode,inputs,amount,fee] of [
  await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921100804_masonry_vap_confirmation.sql'),'utf8'));
  await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921103223_moving_vap_confirmation.sql'),'utf8'));
  await db.exec("INSERT INTO artisans(city,service_category,availability,review_count,rating,updated_at) VALUES ('Rabat','Carrelage','available',500,5,now()),('Rabat','Peinture','available',0,0,now());");
- // Build the actual estimator offer using the owner-approved catalogue.
+ // Build the real estimator offer with the owner-approved catalogue.
+ const entries=catalogue.entries;
  const session=o.evaluateEstimator(o.startEstimator({service_hint:serviceCode,city_slug:'rabat',known_inputs:inputs}).session).session;
  assert.equal(session.outcome.price.amount_mad,amount);
  const payload={service_code:serviceCode,city_slug:'rabat',session_id:session.session_id,context_id:'fxctx-'+'a'.repeat(32),outcome_type:'PRICE_READY',expires_at:Date.now()+60000};let row;
- await attachOffer(session,payload,{entries:catalogue.entries,env:{SUPABASE_URL:'https://test.invalid',SUPABASE_SERVICE_ROLE_KEY:'test'},fetchImpl:async(_,opts)=>{row=JSON.parse(opts.body);return {ok:true};}});
+ await attachOffer(session,payload,{entries,env:{SUPABASE_URL:'https://test.invalid',SUPABASE_SERVICE_ROLE_KEY:'test'},fetchImpl:async(_,opts)=>{row=JSON.parse(opts.body);return {ok:true};}});
+ assert.equal(row.materials_minor,Math.round(materials*100));assert.equal(payload.financial_breakdown.artisanRetentionMinor,row.vap_minor+row.materials_minor);
  assert.equal(row.client_total_minor,Math.round(amount*100));assert.equal(row.commission_minor,Math.round(fee*100));
  const id=(await db.query(`INSERT INTO fixeo_pricing_offers_v1(id,offer_key,pricing_version,currency,service_code,catalogue_version,city,scope,vap_minor,materials_minor,commission_minor,client_total_minor,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id`,[row.id,row.offer_key,row.pricing_version,row.currency,row.service_code,row.catalogue_version,row.city,JSON.stringify(row.scope),row.vap_minor,row.materials_minor,row.commission_minor,row.client_total_minor,row.expires_at])).rows[0].id;
  const args=[payload.context_id,'PRICE_READY',serviceCode,session.session_id,String(amount),'rabat','0612345678','Test only','FX-TEST','a'.repeat(64),id];
@@ -41,7 +45,7 @@ for(const [serviceCode,inputs,amount,fee] of [
  const dispatched=(await db.query('SELECT dispatch_request_v1($1) AS r',[request])).rows[0].r;assert.equal(dispatched.ok,true);
  const mission=(await db.query('SELECT * FROM missions WHERE id=$1',[dispatched.mission_id])).rows[0];
  assert.equal((await db.query('SELECT service_category FROM artisans WHERE id=$1',[mission.artisan_profile_id])).rows[0].service_category,'Peinture');
- assert.equal(Number(mission.agreed_price),amount);assert.equal(Number(mission.commission_amount),fee);
+ assert.equal(mission.pricing_offer_id,id);assert.equal(Number(mission.agreed_price),amount);assert.equal(Number(mission.commission_amount),fee);
  await db.query('UPDATE missions SET final_price=$2 WHERE id=$1',[mission.id,amount]);
  await db.query('UPDATE missions SET final_price=$2 WHERE id=$1',[mission.id,amount]);
  await assert.rejects(db.query('UPDATE missions SET final_price=400 WHERE id=$1',[mission.id]));
