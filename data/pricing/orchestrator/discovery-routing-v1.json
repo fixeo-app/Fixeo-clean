@@ -243,7 +243,8 @@
       "metier": "peinture",
       "candidate_services": [
         "peinture.mur_interieur.labour_only",
-        "peinture.plafond.labour_only"
+        "peinture.plafond.labour_only",
+        "peinture.mur_interieur.all_in"
       ]
     },
     "travaux.peindre-une-facade": {

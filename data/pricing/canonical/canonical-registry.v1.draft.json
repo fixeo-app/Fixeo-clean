@@ -5837,9 +5837,9 @@
       ],
       "metier": "peinture",
       "service_family": "PEINTURE_MUR",
-      "label_fr": "Peinture mur intérieur — fournitures incluses — sur devis",
+      "label_fr": "Peinture mur intérieur — blanc mat, fournitures incluses, 20 à 100 m²",
       "label_ar_darija": "طلاء جدران — شامل المواد",
-      "short_label_fr": "Peinture mur (tout inclus)",
+      "short_label_fr": "Murs blanc mat — peinture incluse — 2 couches",
       "variant": "all_in",
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
@@ -5848,16 +5848,45 @@
       "active_in_reservation": false,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
+      "service_version": "paint-supplies-pilot-v1",
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "QUOTE_ONLY",
-        "commercial_output_type": "QUOTE_REQUIRED",
-        "currency": "MAD"
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": null,
+        "materials_minor": 0,
+        "vap_quantity": {
+          "field": "painted_m2",
+          "min": 20,
+          "max": 100,
+          "decimals": 2,
+          "unit_minor": 3000
+        },
+        "materials_quantity": {
+          "field": "painted_m2",
+          "min": 20,
+          "max": 100,
+          "decimals": 2,
+          "unit_minor": 1500,
+          "minimum_minor": 45000
+        },
+        "quantity_guard": {
+          "field": "painted_m2",
+          "min": 20,
+          "max": 100,
+          "decimals": 2
+        }
       },
       "minimum_floor": {
-        "enabled": false
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
       },
       "diagnostic": {
         "enabled": false,
@@ -5873,43 +5902,104 @@
         "consumables_cap_mad": null,
         "major_parts": "NOT_APPLICABLE",
         "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": null,
+        "parts_disclosure": "Colorado Colovinyl 900 blanc mat, quantité nécessaire pour deux couches. Achat et acheminement inclus. Pots identifiables ; reliquat laissé au client. Aucun remplacement de produit sans accord préalable.",
         "paint": "INCLUDED"
       },
-      "measurement": {},
+      "measurement": {
+        "basis": "SURFACE",
+        "quantity_field": "painted_m2",
+        "quantity_required": true,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE",
+        "engine_required_input": "painted_m2",
+        "engine_must_not_derive_from": "floor_area_m2"
+      },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "active_moisture",
+            "field": "active_moisture",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "paint_included_support",
+            "field": "paint_included_support",
+            "operator": "EQ",
+            "value": "PAINT_INCLUDED_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "paint_included_access",
+            "field": "paint_included_access",
+            "operator": "EQ",
+            "value": "PAINT_INCLUDED_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "paint_included_product",
+            "field": "paint_included_product",
+            "operator": "EQ",
+            "value": "PAINT_COLOVINYL900_WHITE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "paint_included_finish",
+            "field": "paint_included_finish",
+            "operator": "EQ",
+            "value": "PAINT_INCLUDED_TWO_COATS",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "paint_included_min",
+            "field": "painted_m2",
+            "operator": "GTE",
+            "value": 20,
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "paint_included_max",
+            "field": "painted_m2",
+            "operator": "LTE",
+            "value": 100,
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
         "prebooking_question_refs": [
-          "active_moisture"
+          "active_moisture",
+          "paint_included_support",
+          "paint_included_access",
+          "paint_included_product",
+          "paint_included_finish",
+          "painted_m2"
         ],
-        "supporting_prose": "Prestation sur devis. Périmètre et fournitures à confirmer avant tout prix."
+        "supporting_prose": "Proposition non activée : artisan 30 MAD/m² ; fournitures 15 MAD/m², minimum 450 MAD par intervention ; frais FIXEO BP3.3 sur l’artisan seul. Deux couches Colorado Colovinyl 900 blanc mat sur murs déjà peints blancs ou blanc cassé très clair, mats, lisses et prêts à repeindre. Hauteur ≤ 2,80 m, sol stable et accès dégagé. Protection, outils, achat, acheminement, déplacement en ville, retours de séchage et nettoyage inclus. Surface réelle, ouvertures déduites, comptée une seule fois. Préparation, sous-couche, taches, humidité, plafonds, teintes et changement de finition : devis.",
+        "human_review_required": true
       },
       "policy_refs": [
-        "POL-HORS-PERIMETRE-V1",
-        "POL-PAINTED-SURFACE-V1",
-        "POL-MINIMUM-NON-ADDITIVE-V1"
+        "POL-HORS-PERIMETRE-V1"
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
-        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
-        "research_phase": "7B.P",
-        "human_decision_phase": "7B",
-        "source_registry_refs": [
-          "data/pricing/research/peinture/registry.v0.3.json"
-        ],
+        "price_provenance": "FIXEO_PROPOSED_PILOT",
         "transaction_backed": false,
         "production_ready": false,
-        "batch_rule_experimental": null
+        "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
       },
       "confidence": {
-        "price_confidence": "MEDIUM",
-        "scope_confidence": "MEDIUM",
-        "evidence_confidence": "MEDIUM",
-        "conversion_confidence": "LOW",
-        "batch_confidence": null
+        "price_confidence": "PILOT_NOT_FIELD_VALIDATED",
+        "scope_confidence": "DEFINED",
+        "evidence_confidence": "RETAIL_REFERENCE_NOT_SUPPLIER_AGREEMENT"
       },
       "batch_policy": null,
       "copy_keys": {
@@ -5927,7 +6017,9 @@
         "active_in_pseo": false,
         "active_in_profiles": false
       },
-      "human_review_flags": [],
+      "human_review_flags": [
+        "PENDING_OWNER_PRICE_VALIDATION"
+      ],
       "semantic_corrections": []
     },
     "peinture.plafond.labour_only": {

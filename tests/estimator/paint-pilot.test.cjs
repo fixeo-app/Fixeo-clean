@@ -28,7 +28,7 @@ test('paint: limits, supplies, moisture and unsupported cities cannot receive fi
  await assert.rejects(attachOffer(evaluate(inputs,'unsupported').session,{}),/city not eligible/);
 });
 test('paint: old minimum, supplies and preparation codes cannot bypass new scope',()=>{
- for(const c of ['peinture.forfait_minimum','peinture.mur_interieur.all_in','peinture.mur_interieur.all_in_avec_prep','peinture.preparation_surface']){
+ for(const c of ['peinture.forfait_minimum','peinture.mur_interieur.all_in_avec_prep','peinture.preparation_surface']){
   const r=engine.evaluateFixeoPrice({service_code:c,inputs:{active_moisture:false,painted_m2:40,ceiling_m2:40,primary_service_code:code}});assert.equal(r.qualification?.status,'QUOTE_REQUIRED',JSON.stringify(r));
  }
 });
