@@ -1,6 +1,6 @@
 # VAP BP 3.3 — calcul commun et préparation de migration
 
-21 septembre 2026. Préparation uniquement : module non branché, aucune migration SQL exécutée, aucun changement de prix ou de mission.
+21 septembre 2026. Fondation SQL appliquée en production : module applicatif non branché, aucun changement de prix ou de mission.
 
 ## Livrable
 
@@ -32,4 +32,17 @@ Désactiver la création de nouvelles offres VAP si nécessaire, tout en conserv
 
 ## Vérification livrée
 
-Tests unitaires : exemples du business plan, seuils au centime, minimum/plafond, matériel hors assiette, six hypothèses de forfait, entrées invalides, total maximal, refus de versions inconnues, absence de modification d'une donnée historique et monotonie. Ces tests vérifient le calcul ; ils ne prouvent ni une migration appliquée ni la protection réelle des missions en base. La base de production n'a pas été consultée ou modifiée dans cette étape.
+Tests unitaires : exemples du business plan, seuils au centime, minimum/plafond, matériel hors assiette, six hypothèses de forfait, entrées invalides, total maximal, refus de versions inconnues, absence de modification d'une donnée historique et monotonie. Ces tests vérifient le calcul ; ils ne prouvent ni une migration appliquée ni la protection réelle des missions en base. La base de production a ensuite été auditée et étendue ; voir le compte rendu ci-dessous.
+
+
+## Fondation appliquée le 21 septembre 2026
+
+Migration `20260921005143_vap_bp33_offers_foundation.sql` appliquée au projet de production fixeo-mvp. Table interne `fixeo_pricing_offers_v1`, calcul SQL progressif identique au module JavaScript, contraintes de ventilation et immutabilité. Aucun changement du trigger historique de commission.
+
+Vérification locale : 8 tests réussis (module et PGlite), incluant comparaison SQL/JavaScript, droits anon/authenticated/service_role, refus de modification/suppression, doublons et conservation d'une mission historique. Pour reproduire, installer `@electric-sql/pglite@0.3.14` dans un répertoire temporaire puis lancer les deux fichiers de test avec NODE_PATH vers ce répertoire node_modules.
+
+Vérification production : 23 missions ; empreinte financière avant/après identique `f0b64550b324177ef843c44cb50ca96a`. Zéro offre créée. RLS actif. Aucune lecture/écriture ni exécution du calcul pour anon/authenticated ; service_role peut lire/créer et calculer, pas modifier. Références SQL : VAP 300 MAD donne 60 MAD de commission ; VAP 10 000 MAD donne 950 MAD. Aucun faux service_request ou mission créé.
+
+Les avis de sécurité Supabase restent identiques après retrait des horodatages d'observation. Les alertes existantes ne constituent pas un audit global résolu : notamment trois vues SECURITY DEFINER à examiner séparément. Documentation : https://supabase.com/docs/guides/database/database-linter?lint=0010_security_definer_view
+
+Les étapes 1 et 2 ci-dessus sont réalisées pour cette fondation. Les étapes 3 à 7 restent à implémenter : rattachement atomique de l'offre à la réservation, autorisation du demandeur, contrat signé, conservation des centimes, règlement versionné et affichage. La table interne seule ne constitue aucune autorité de réservation. Les six forfaits proposés restent des hypothèses non activées.
