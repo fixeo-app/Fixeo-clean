@@ -1211,6 +1211,50 @@
       ],
       "client_question_fr": "Validez-vous un forfait de 2 intervenants pendant 2 heures, à compter du début sur place, sans garantie de terminer tout le déménagement ni prolongation automatique ?",
       "privacy_classification": "NON_SENSITIVE"
+    },
+    "paint_support": {
+      "input_id": "paint_support",
+      "data_type": "string",
+      "allowed_values": [
+        "PAINT_READY",
+        "PAINT_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Les murs sont-ils secs, sains et prêts à peindre, sans fissure, humidité, peinture qui s’écaille, enduit ni ponçage à réaliser ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "paint_access": {
+      "input_id": "paint_access",
+      "data_type": "string",
+      "allowed_values": [
+        "PAINT_ACCESS_READY",
+        "PAINT_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Les murs sont-ils à 2,80 m de hauteur maximum, dans une zone dégagée avec eau et électricité disponibles ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "paint_supplies": {
+      "input_id": "paint_supplies",
+      "data_type": "string",
+      "allowed_values": [
+        "PAINT_CLIENT_SUPPLIED",
+        "PAINT_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Fournissez-vous une peinture intérieure compatible avec le support, en quantité suffisante pour deux couches ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "paint_finish": {
+      "input_id": "paint_finish",
+      "data_type": "string",
+      "allowed_values": [
+        "PAINT_TWO_COATS",
+        "PAINT_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Souhaitez-vous deux couches de peinture standard sur les murs uniquement, dans une teinte identique ou proche, sans effet décoratif ni plafond ?",
+      "privacy_classification": "NON_SENSITIVE"
     }
   }
 }

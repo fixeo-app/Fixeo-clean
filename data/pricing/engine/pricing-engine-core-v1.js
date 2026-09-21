@@ -780,6 +780,7 @@ function evaluateFixeoPrice({ service_code, inputs = {} } = {}) {
     if(!['LOCAL_ACCESSIBLE','COMPLEX','UNKNOWN'].includes(inputs.plumbing_scope))return errorResult('MISSING_REQUIRED_INPUT','Confirmez le périmètre accessible avant le prix.','plumbing_scope',canonicalCode);
     if(inputs.plumbing_scope!=='LOCAL_ACCESSIBLE')return ineligibleResult(canonicalCode,'QUOTE_REQUIRED','PLUMBING_SCOPE_UNCONFIRMED','Le périmètre doit être vérifié avant de chiffrer la réparation.');
   }
+  if(svc.metier==='peinture' && inputs.active_moisture===true)return ineligibleResult(canonicalCode,'STOP_SAFETY','PAINT_ACTIVE_MOISTURE','La source de l’humidité doit être résolue avant de peindre.');
   const pm = svc.price_model || {};
   const model = pm.calculation_model;
 

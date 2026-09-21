@@ -13,7 +13,7 @@ function selectTariff(session,entries=catalogue.entries){
   Object.entries(t.inputs).every(([k,v])=>session.known_inputs?.[k]===v)) || null;
 }
 async function attachOffer(session,payload,{entries=catalogue.entries,fetchImpl=fetch,env=process.env}={}){
- const tariff=selectTariff(session,entries);if(!tariff){if(/^(jardinage|carrelage|maconnerie|demenagement)\./.test(session.service_code||''))throw Error('Service scope or city not eligible for VAP');return null;}
+ const tariff=selectTariff(session,entries);if(!tariff){if(/^(jardinage|carrelage|maconnerie|demenagement|peinture)\./.test(session.service_code||''))throw Error('Service scope or city not eligible for VAP');return null;}
  const breakdown=tariffBreakdown(tariff,session.known_inputs);
  if(!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY)throw Error('VAP persistence unavailable');
  const id=crypto.randomUUID();
