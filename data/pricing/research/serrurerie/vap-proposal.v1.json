@@ -1,0 +1,604 @@
+{
+  "version": "serrurerie-pilot-v1",
+  "created_at": "2026-09-21",
+  "base_commit": "ad688e0e09a8e865995a91d42f302b0cf604f860",
+  "approval_status": "PENDING",
+  "runtime_integrated": false,
+  "production_ready": false,
+  "pricing_version": "vap-bp33-v1",
+  "currency": "MAD",
+  "proposed_city_slugs": [
+    "agadir",
+    "beni-mellal",
+    "casablanca",
+    "el-jadida",
+    "fes",
+    "kenitra",
+    "khouribga",
+    "marrakech",
+    "meknes",
+    "mohammedia",
+    "nador",
+    "ouarzazate",
+    "oujda",
+    "rabat",
+    "safi",
+    "sale",
+    "tanger",
+    "taza",
+    "temara",
+    "tetouan"
+  ],
+  "proposed_catalogue_entry_count": 120,
+  "note_fr": "Proposition commerciale à valider ; aucune activation, migration ou modification des offres historiques. Les champs proposés sont une spécification et ne sont pas consommés par le moteur actuel.",
+  "existing_missions_context": {
+    "owner_statement_fr": "Les missions existantes sont des missions de test.",
+    "transaction_backed_pricing_evidence": false,
+    "data_mutation_in_this_proposal": false
+  },
+  "common_scope": {
+    "units_per_booking": 1,
+    "travel_in_selected_city_included": true,
+    "city_multiplier": false,
+    "automatic_urgency_or_weekend_multiplier": false,
+    "appointment_start_local_hours": [
+      8,
+      20
+    ],
+    "appointment_start_window_end_exclusive": true,
+    "after_hours": "COMPLETE_QUOTE_BEFORE_TRAVEL",
+    "equipment_and_routine_consumables_in_vap": true,
+    "multiple_units_or_combined_work": "COMPLETE_QUOTE_REQUIRED",
+    "unknown_input": "QUALIFY_BEFORE_OFFER",
+    "contradictory_input": "BLOCK_AND_CLARIFY",
+    "customer_technical_attestations_forbidden": true,
+    "availability_guaranteed": false,
+    "limits_are_commercial_not_legal_standards": true,
+    "client_questions_fr": [
+      "Danger immédiat, situation d’accès contestée ou doute sur le droit d’accès ?",
+      "Êtes-vous autorisé à accéder au logement et pouvez-vous présenter les justificatifs au professionnel avant intervention ?",
+      "Un adulte autorisé sera-t-il présent ?",
+      "Une seule porte de logement ? Porte ouverte, simplement claquée ou verrouillée, si vous le savez ?",
+      "Porte standard, blindée ou modèle inconnu ?",
+      "Pour un remplacement : pièce déjà disponible et modèle à faire confirmer par le professionnel.",
+      "Pour extraction/remplacement : clé ou double fonctionnel disponible pour essais ?"
+    ]
+  },
+  "services": [
+    {
+      "service_code": "serrurerie.diagnostic",
+      "label_fr": "Diagnostic serrurerie — 30 minutes maximum",
+      "approval_status": "PENDING",
+      "vap_minor": 16000,
+      "commission_minor": 6000,
+      "materials_minor": 0,
+      "client_total_minor": 22000,
+      "artisan_retention_minor": 16000,
+      "previous_reference_amount_mad": null,
+      "previous_reference_kind": "NONE_NEW_SERVICE",
+      "scope_fr": "Une porte de logement, examen non destructif et explication des constats, jusqu’à 30 minutes sur place. Sans ouverture, réparation, fourniture, ni garantie de résolution. Commande explicite avant déplacement.",
+      "principal_part_policy": "NO_PART_SUPPLIED",
+      "proposed_inputs": {
+        "locksmith_count": 1,
+        "locksmith_access_right": "DECLARED_AUTHORIZED_NO_DISPUTE",
+        "locksmith_presence": "AUTHORIZED_ADULT_PRESENT",
+        "locksmith_safety": "NO_IMMEDIATE_DANGER",
+        "locksmith_property": "RESIDENTIAL_PRIVATE_DOOR",
+        "locksmith_slot": "DAY_08_20",
+        "locksmith_work": "DIAGNOSTIC"
+      },
+      "professional_before_acceptance": [
+        "competence_and_tools_confirmed",
+        "fixed_price_scope_and_availability_confirmed",
+        "diagnostic_limits_accepted"
+      ],
+      "professional_before_work": [
+        "identity_and_access_right_verified_before_work",
+        "mandate_verified_if_needed",
+        "no_occupancy_dispute",
+        "scope_and_safe_work_verified",
+        "diagnostic_limits_accepted"
+      ],
+      "professional_after_work": [
+        "assessment_performed",
+        "findings_and_next_steps_explained"
+      ],
+      "consumables_sensitivity_minor": 0
+    },
+    {
+      "service_code": "serrurerie.porte_claquee_ouverture",
+      "label_fr": "Ouverture porte standard simplement claquée",
+      "approval_status": "PENDING",
+      "vap_minor": 20000,
+      "commission_minor": 6000,
+      "materials_minor": 0,
+      "client_total_minor": 26000,
+      "artisan_retention_minor": 20000,
+      "previous_reference_amount_mad": 220,
+      "previous_reference_kind": "LEGACY_FIXED_TOTAL",
+      "scope_fr": "Une porte non blindée refermée sans verrouillage, mécanisme compatible et intact. Ouverture sans dégradation et essai. Sans remplacement ni réparation de porte ou bâti.",
+      "principal_part_policy": "NO_PART_SUPPLIED",
+      "proposed_inputs": {
+        "locksmith_count": 1,
+        "locksmith_access_right": "DECLARED_AUTHORIZED_NO_DISPUTE",
+        "locksmith_presence": "AUTHORIZED_ADULT_PRESENT",
+        "locksmith_safety": "NO_IMMEDIATE_DANGER",
+        "locksmith_property": "RESIDENTIAL_PRIVATE_DOOR",
+        "locksmith_slot": "DAY_08_20",
+        "locksmith_work": "OPEN_SLAMMED_STANDARD",
+        "locksmith_door_type": "STANDARD_MECHANICAL",
+        "locksmith_door_state": "SLAMMED_NOT_LOCKED"
+      },
+      "professional_before_acceptance": [
+        "competence_and_tools_confirmed",
+        "fixed_price_scope_and_availability_confirmed",
+        "non_destructive_opening_feasible",
+        "mechanism_intact_and_not_locked"
+      ],
+      "professional_before_work": [
+        "identity_and_access_right_verified_before_work",
+        "mandate_verified_if_needed",
+        "no_occupancy_dispute",
+        "scope_and_safe_work_verified",
+        "non_destructive_opening_feasible",
+        "mechanism_intact_and_not_locked"
+      ],
+      "professional_after_work": [
+        "door_opened_without_damage",
+        "operation_test_completed"
+      ],
+      "consumables_sensitivity_minor": 1000
+    },
+    {
+      "service_code": "serrurerie.porte_claquee_blindee.ouverture",
+      "label_fr": "Ouverture porte blindée simplement claquée — modèle compatible",
+      "approval_status": "PENDING",
+      "vap_minor": 30000,
+      "commission_minor": 6000,
+      "materials_minor": 0,
+      "client_total_minor": 36000,
+      "artisan_retention_minor": 30000,
+      "previous_reference_amount_mad": 350,
+      "previous_reference_kind": "LEGACY_FIXED_TOTAL",
+      "scope_fr": "Une porte blindée refermée, points de verrouillage non engagés et modèle compatible confirmé par le professionnel. Ouverture sans dégradation. Modèle inconnu, verrouillage automatique ou engagé, panne, équipement électrique/connecté : devis.",
+      "principal_part_policy": "NO_PART_SUPPLIED",
+      "proposed_inputs": {
+        "locksmith_count": 1,
+        "locksmith_access_right": "DECLARED_AUTHORIZED_NO_DISPUTE",
+        "locksmith_presence": "AUTHORIZED_ADULT_PRESENT",
+        "locksmith_safety": "NO_IMMEDIATE_DANGER",
+        "locksmith_property": "RESIDENTIAL_PRIVATE_DOOR",
+        "locksmith_slot": "DAY_08_20",
+        "locksmith_work": "OPEN_SLAMMED_SECURITY",
+        "locksmith_door_type": "SECURITY_MECHANICAL",
+        "locksmith_door_state": "SLAMMED_NOT_LOCKED"
+      },
+      "professional_before_acceptance": [
+        "competence_and_tools_confirmed",
+        "fixed_price_scope_and_availability_confirmed",
+        "model_and_non_destructive_feasibility_confirmed",
+        "locking_points_not_engaged",
+        "no_auto_lock_or_electronics"
+      ],
+      "professional_before_work": [
+        "identity_and_access_right_verified_before_work",
+        "mandate_verified_if_needed",
+        "no_occupancy_dispute",
+        "scope_and_safe_work_verified",
+        "model_and_non_destructive_feasibility_confirmed",
+        "locking_points_not_engaged",
+        "no_auto_lock_or_electronics"
+      ],
+      "professional_after_work": [
+        "door_opened_without_damage",
+        "operation_test_completed"
+      ],
+      "consumables_sensitivity_minor": 1000
+    },
+    {
+      "service_code": "serrurerie.cle_cassee_extraction",
+      "label_fr": "Extraction clé cassée — porte déjà ouverte",
+      "approval_status": "PENDING",
+      "vap_minor": 20000,
+      "commission_minor": 6000,
+      "materials_minor": 0,
+      "client_total_minor": 26000,
+      "artisan_retention_minor": 20000,
+      "previous_reference_amount_mad": 220,
+      "previous_reference_kind": "LEGACY_FIXED_TOTAL",
+      "scope_fr": "Un fragment dans un cylindre mécanique standard sur porte déjà ouverte. Extraction sans dommage et essai avec un double fonctionnel disponible. Sans ouverture ni reproduction de clé ; cylindre endommagé, porte fermée ou sécurité spéciale : qualification/devis.",
+      "principal_part_policy": "NO_PART_SUPPLIED",
+      "proposed_inputs": {
+        "locksmith_count": 1,
+        "locksmith_access_right": "DECLARED_AUTHORIZED_NO_DISPUTE",
+        "locksmith_presence": "AUTHORIZED_ADULT_PRESENT",
+        "locksmith_safety": "NO_IMMEDIATE_DANGER",
+        "locksmith_property": "RESIDENTIAL_PRIVATE_DOOR",
+        "locksmith_slot": "DAY_08_20",
+        "locksmith_work": "EXTRACT_BROKEN_KEY",
+        "locksmith_door_type": "STANDARD_MECHANICAL",
+        "locksmith_door_state": "ALREADY_OPEN",
+        "locksmith_test_key": "WORKING_DUPLICATE_AVAILABLE"
+      },
+      "professional_before_acceptance": [
+        "competence_and_tools_confirmed",
+        "fixed_price_scope_and_availability_confirmed",
+        "cylinder_condition_and_extraction_feasible",
+        "working_duplicate_available"
+      ],
+      "professional_before_work": [
+        "identity_and_access_right_verified_before_work",
+        "mandate_verified_if_needed",
+        "no_occupancy_dispute",
+        "scope_and_safe_work_verified",
+        "cylinder_condition_and_extraction_feasible",
+        "working_duplicate_available"
+      ],
+      "professional_after_work": [
+        "fragment_extracted_without_damage",
+        "operation_test_with_duplicate_completed"
+      ],
+      "consumables_sensitivity_minor": 1000
+    },
+    {
+      "service_code": "serrurerie.cylindre_remplacement.standard",
+      "label_fr": "Remplacement cylindre standard — pièce client",
+      "approval_status": "PENDING",
+      "vap_minor": 24000,
+      "commission_minor": 6000,
+      "materials_minor": 0,
+      "client_total_minor": 30000,
+      "artisan_retention_minor": 24000,
+      "previous_reference_amount_mad": 280,
+      "previous_reference_kind": "LABOUR_EXCLUDING_PART",
+      "scope_fr": "Un cylindre mécanique standard à l’identique, pièce compatible fournie par le client et validée avant réservation. Porte ouverte, ancien cylindre démontable normalement et clé disponible. Dépose, pose et essais ; sans ouverture, retrait forcé, modification de porte, mécanisme multipoints ou équipement spécial.",
+      "principal_part_policy": "CLIENT_SUPPLIED_COMPATIBILITY_VERIFIED",
+      "proposed_inputs": {
+        "locksmith_count": 1,
+        "locksmith_access_right": "DECLARED_AUTHORIZED_NO_DISPUTE",
+        "locksmith_presence": "AUTHORIZED_ADULT_PRESENT",
+        "locksmith_safety": "NO_IMMEDIATE_DANGER",
+        "locksmith_property": "RESIDENTIAL_PRIVATE_DOOR",
+        "locksmith_slot": "DAY_08_20",
+        "locksmith_work": "REPLACE_STANDARD_CYLINDER",
+        "locksmith_door_type": "STANDARD_MECHANICAL",
+        "locksmith_door_state": "ALREADY_OPEN",
+        "locksmith_part_supply": "CLIENT_PART_AVAILABLE",
+        "locksmith_test_key": "WORKING_KEY_AVAILABLE"
+      },
+      "professional_before_acceptance": [
+        "competence_and_tools_confirmed",
+        "fixed_price_scope_and_availability_confirmed",
+        "replacement_part_compatibility_verified",
+        "existing_cylinder_removable_normally",
+        "door_open_and_key_available"
+      ],
+      "professional_before_work": [
+        "identity_and_access_right_verified_before_work",
+        "mandate_verified_if_needed",
+        "no_occupancy_dispute",
+        "scope_and_safe_work_verified",
+        "replacement_part_compatibility_verified",
+        "existing_cylinder_removable_normally",
+        "door_open_and_key_available"
+      ],
+      "professional_after_work": [
+        "part_installed_and_tested",
+        "keys_handed_to_authorized_client",
+        "old_part_return_offered"
+      ],
+      "consumables_sensitivity_minor": 1000
+    },
+    {
+      "service_code": "serrurerie.serrure_remplacement.standard",
+      "label_fr": "Remplacement serrure monopoint à l’identique — pièce client",
+      "approval_status": "PENDING",
+      "vap_minor": 34000,
+      "commission_minor": 6000,
+      "materials_minor": 0,
+      "client_total_minor": 40000,
+      "artisan_retention_minor": 34000,
+      "previous_reference_amount_mad": 400,
+      "previous_reference_kind": "LABOUR_EXCLUDING_PART",
+      "scope_fr": "Une serrure mécanique monopoint, pièce client compatible, même format et fixations, porte ouverte. Dépose, pose, réglage simple et essais ; cylindre du nouvel ensemble posé sans seconde main-d’œuvre. Sans adaptation, soudure, nouvelle réservation dans la porte, multipoints ni motorisation.",
+      "principal_part_policy": "CLIENT_SUPPLIED_COMPATIBILITY_VERIFIED",
+      "proposed_inputs": {
+        "locksmith_count": 1,
+        "locksmith_access_right": "DECLARED_AUTHORIZED_NO_DISPUTE",
+        "locksmith_presence": "AUTHORIZED_ADULT_PRESENT",
+        "locksmith_safety": "NO_IMMEDIATE_DANGER",
+        "locksmith_property": "RESIDENTIAL_PRIVATE_DOOR",
+        "locksmith_slot": "DAY_08_20",
+        "locksmith_work": "REPLACE_MONOPOINT_LOCK",
+        "locksmith_door_type": "STANDARD_MECHANICAL",
+        "locksmith_door_state": "ALREADY_OPEN",
+        "locksmith_part_supply": "CLIENT_PART_AVAILABLE",
+        "locksmith_test_key": "WORKING_KEY_AVAILABLE"
+      },
+      "professional_before_acceptance": [
+        "competence_and_tools_confirmed",
+        "fixed_price_scope_and_availability_confirmed",
+        "replacement_part_compatibility_verified",
+        "same_format_and_fixings",
+        "monopoint_mechanical_only"
+      ],
+      "professional_before_work": [
+        "identity_and_access_right_verified_before_work",
+        "mandate_verified_if_needed",
+        "no_occupancy_dispute",
+        "scope_and_safe_work_verified",
+        "replacement_part_compatibility_verified",
+        "same_format_and_fixings",
+        "monopoint_mechanical_only"
+      ],
+      "professional_after_work": [
+        "part_installed_and_tested",
+        "keys_handed_to_authorized_client",
+        "old_part_return_offered"
+      ],
+      "consumables_sensitivity_minor": 1000
+    }
+  ],
+  "principal_parts_policy": {
+    "fixed_replacement_offers": "CLIENT_SUPPLIED_COMPATIBLE_PART_ONLY",
+    "compatibility_verified_before_booking": true,
+    "zero_materials_means_free_part": false,
+    "artisan_supplied_part": "COMPLETE_QUOTE_ACCEPTED_BEFORE_BOOKING",
+    "quote_requires": [
+      "part_reference",
+      "part_amount",
+      "service_amount",
+      "fixeo_fee",
+      "client_total",
+      "explicit_client_acceptance"
+    ],
+    "supersedes_legacy_supplier_rule_for_new_pilot_only": true,
+    "no_purchase_instruction_before_compatibility_check": true
+  },
+  "authorization_policy": {
+    "basis": "PROPOSED_FIXEO_INTERNAL_POLICY_NOT_LEGAL_ASSERTION",
+    "client_declaration_does_not_replace_professional_check": true,
+    "ownership_alone_overrides_occupancy_dispute": false,
+    "unknown_or_disputed_access": "BLOCK_ORDINARY_BOOKING",
+    "documents_inside_authorize_opening_to_retrieve": false,
+    "professional_visual_verification_before_any_opening_or_modification": true,
+    "store_only": [
+      "check_type",
+      "status",
+      "checked_at",
+      "artisan_id",
+      "mission_id",
+      "offer_id"
+    ],
+    "do_not_store": [
+      "identity_document_number",
+      "identity_document_copy",
+      "raw_occupancy_proof",
+      "key_photo"
+    ],
+    "public_proof_details": false,
+    "actual_check_is_professional_attestation_not_independent_certification": true,
+    "detailed_professional_protocol_required_before_activation": true
+  },
+  "safety_and_completion": {
+    "immediate_danger": "STOP_ORDINARY_BOOKING_AND_ROUTE_TO_APPROPRIATE_EMERGENCY_SERVICE",
+    "applies_to": [
+      "start",
+      "answers",
+      "prefilled_inputs",
+      "direct_engine",
+      "offer_persistence",
+      "booking",
+      "artisan_acceptance",
+      "before_work",
+      "completion",
+      "settlement"
+    ],
+    "completed_fixed_work_requires_delivered_result": true,
+    "failed_opening_auto_diagnostic_charge": false,
+    "uncommanded_travel_or_diagnostic_charge": false,
+    "changed_scope_requires_stop_and_explicit_quote": true
+  },
+  "same_visit_absorption": {
+    "source_service_code": "serrurerie.diagnostic",
+    "source_client_total_minor": 22000,
+    "qualified_target_service_codes": [
+      "serrurerie.porte_claquee_ouverture",
+      "serrurerie.porte_claquee_blindee.ouverture",
+      "serrurerie.cle_cassee_extraction",
+      "serrurerie.cylindre_remplacement.standard",
+      "serrurerie.serrure_remplacement.standard"
+    ],
+    "same_door_required": true,
+    "same_artisan_required": true,
+    "same_visit_required": true,
+    "replacement_part_already_available_and_verified": true,
+    "explicit_client_consent_before_work": true,
+    "one_mission_one_commission": true,
+    "replace_diagnostic_total_not_add": true,
+    "allowed_paid_credit_minor": [
+      0,
+      22000
+    ],
+    "credit_declared_by_artisan_confirmed_by_client": true,
+    "bank_payment_verified": false,
+    "partial_credit_or_disagreement": "RESOLVE_BEFORE_CONVERSION",
+    "proposal_expires_minutes": 45,
+    "original_offers_immutable": true,
+    "idempotence_and_latest_proposal_checks_required": true,
+    "settlement_uses_effective_total": true,
+    "balances_if_diagnostic_paid_minor": {
+      "serrurerie.porte_claquee_ouverture": 4000,
+      "serrurerie.porte_claquee_blindee.ouverture": 14000,
+      "serrurerie.cle_cassee_extraction": 4000,
+      "serrurerie.cylindre_remplacement.standard": 8000,
+      "serrurerie.serrure_remplacement.standard": 18000
+    },
+    "if_no_completed_conversion": "ONLY_ORDERED_AND_PERFORMED_DIAGNOSTIC_DUE",
+    "second_visit_or_combined_work": "QUOTE_WITH_EXPLICIT_DIAGNOSTIC_CREDIT_NO_AUTOMATIC_ABSORPTION"
+  },
+  "excluded_legacy_fixed_services": [
+    {
+      "service_code": "serrurerie.porte_verrouillee.ouverture",
+      "legacy_codes": [
+        "serrurerie.porte_verrouillee_ouverture"
+      ],
+      "previous_fixed_total_mad": 380,
+      "proposed_routing": "COMPLETE_QUOTE_REQUIRED",
+      "reason_fr": "Ouverture verrouillée ou besoin possible de pièce : total complet incluant la remise en fermeture sûre à accepter avant travaux."
+    }
+  ],
+  "other_quote_only": [
+    "multiple_doors",
+    "opening_plus_replacement",
+    "destructive_work",
+    "unknown_or_auto_lock_model",
+    "engaged_multipoint",
+    "special_or_connected_lock",
+    "vehicle",
+    "safe",
+    "roller_shutter",
+    "collective_access",
+    "professional_premises",
+    "door_or_frame_repair",
+    "lock_lubrication_not_in_standard_scope"
+  ],
+  "research": {
+    "checked_at": "2026-09-21",
+    "confidence": "LIMITED_EDITORIAL_CONTEXT",
+    "prices_are_internal_commercial_proposals": true,
+    "verified_hardware_purchase_prices": false,
+    "source_notes_location": "docs/calibration-serrurerie-vap-v1.md#repères-externes-et-limites",
+    "sources": [
+      {
+        "url": "https://allo-maison.ma/serrurier",
+        "resolved_url": "https://hanae.ma/serrurier",
+        "role": "EDITORIAL_CONTEXT_ONLY_OPERATOR_WITHDRAWN",
+        "methodology_verified": false
+      },
+      {
+        "url": "https://www.serrurierpro.ma/",
+        "role": "EXCLUDED_NO_USABLE_PRICE_TABLE_SITE_ADVERTISED_FOR_SALE"
+      },
+      {
+        "url": "https://mano.ma/prix-serrurier-au-maroc/",
+        "role": "HISTORICAL_REFERENCE_NOT_LOADABLE_DURING_CHECK"
+      }
+    ]
+  },
+  "economics_sensitivity": {
+    "assumptions_not_invoices": true,
+    "base_travel_minor": 4000,
+    "adverse_travel_minor": 6000,
+    "remaining_is_not_profit": true,
+    "excluded_costs": [
+      "labour_time",
+      "taxes_and_social_charges",
+      "insurance",
+      "full_tool_depreciation"
+    ],
+    "legacy_retention_ratio_for_arithmetic_comparison_only": 0.85,
+    "rows": [
+      {
+        "service_code": "serrurerie.diagnostic",
+        "base_remaining_minor": 12000,
+        "adverse_remaining_minor": 10000,
+        "legacy_theoretical_retention_minor": null
+      },
+      {
+        "service_code": "serrurerie.porte_claquee_ouverture",
+        "base_remaining_minor": 15000,
+        "adverse_remaining_minor": 13000,
+        "legacy_theoretical_retention_minor": 18700
+      },
+      {
+        "service_code": "serrurerie.porte_claquee_blindee.ouverture",
+        "base_remaining_minor": 25000,
+        "adverse_remaining_minor": 23000,
+        "legacy_theoretical_retention_minor": 29750
+      },
+      {
+        "service_code": "serrurerie.cle_cassee_extraction",
+        "base_remaining_minor": 15000,
+        "adverse_remaining_minor": 13000,
+        "legacy_theoretical_retention_minor": 18700
+      },
+      {
+        "service_code": "serrurerie.cylindre_remplacement.standard",
+        "base_remaining_minor": 19000,
+        "adverse_remaining_minor": 17000,
+        "legacy_theoretical_retention_minor": 23800
+      },
+      {
+        "service_code": "serrurerie.serrure_remplacement.standard",
+        "base_remaining_minor": 29000,
+        "adverse_remaining_minor": 27000,
+        "legacy_theoretical_retention_minor": 34000
+      }
+    ]
+  },
+  "audit": {
+    "approved_vap_serrurerie_entries_on_base": 0,
+    "observed_direct_engine_cases": [
+      {
+        "service_code": "serrurerie.porte_claquee_ouverture",
+        "inputs": {},
+        "status": "ELIGIBLE",
+        "amount_mad": 220
+      },
+      {
+        "service_code": "serrurerie.porte_claquee_ouverture",
+        "inputs": {
+          "security_door": false,
+          "door_locked_with_key": true
+        },
+        "status": "ELIGIBLE",
+        "amount_mad": 220
+      },
+      {
+        "service_code": "serrurerie.porte_claquee_ouverture",
+        "inputs": {
+          "security_door": false,
+          "property_occupied_status": "OCCUPIED_THIRD_PARTY"
+        },
+        "status": "ELIGIBLE",
+        "amount_mad": 220
+      },
+      {
+        "service_code": "serrurerie.cylindre_remplacement.standard",
+        "inputs": {
+          "security_door": false,
+          "cylinder_count": 2
+        },
+        "status": "ELIGIBLE",
+        "amount_mad": 280
+      }
+    ],
+    "fixes_required": [
+      "enforce_access_authorization_and_danger_gates",
+      "one_unit_and_explicit_scope_qualification",
+      "replace_variable_part_fixed_booking_with_client_supplied_or_complete_quote",
+      "locked_door_quote_only",
+      "serrurerie_vap_fail_closed_on_missing_tariff_or_city",
+      "separate_customer_inputs_from_professional_checks",
+      "professional_before_work_and_completion_attestations",
+      "same_visit_consent_and_credit",
+      "safe_public_diagnostic_route_allowlist",
+      "synchronize_all_public_and_partner_labels",
+      "preserve_historical_offers_and_test_missions"
+    ]
+  },
+  "verification_scope": [
+    "six_buildBreakdown_results",
+    "exact_twenty_approved_city_slugs",
+    "one_hundred_twenty_unique_candidate_pairs",
+    "five_absorption_balances_for_each_allowed_credit",
+    "economics_arithmetic",
+    "local_engine_audit_reproduction",
+    "only_two_proposal_files_changed",
+    "protected_reports_unchanged"
+  ],
+  "next_step": "OWNER_VALIDATES_GRID_AND_SCOPE_THEN_IMPLEMENTATION_AND_TESTS",
+  "production_authorization_for_this_proposal": false,
+  "commit_message": "docs(serrurerie): propose VAP tariffs and authorization-first scopes"
+}
