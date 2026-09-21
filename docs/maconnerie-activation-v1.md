@@ -1,6 +1,6 @@
 # Petite maçonnerie — pilote national FIXEO
 
-Statut : préparé et testé, NON ACTIVÉ EN PRODUCTION. Le contrôle automatique a refusé la migration modifiant les fonctions partagées de confirmation et de dispatch ; autorisation explicite de cette modification requise avant nouvelle tentative.
+Statut : modification des trois fonctions partagées explicitement autorisée par le propriétaire le 21/09/2026. Migration appliquée ; déploiement applicatif et contrôles de production en cours.
 
 Deux propositions validées par le propriétaire, préparées sous `masonry-pilot-v1` dans les 20 villes FIXEO. Prix pilotes à suivre sur les interventions terrain, sans garantie de disponibilité d'un artisan dans chaque ville.
 
