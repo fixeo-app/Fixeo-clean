@@ -1,7 +1,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const o=require('../../data/pricing/orchestrator/estimator-orchestrator-v1');
 const {attachOffer,validateFinancialContext}=require('../../api/estimator-v1/fixeo-vap-offers-v1');
-const entries=require('../../data/pricing/canonical/vap-approved-v1.json').entries;
+const entries=require('../../data/pricing/canonical/vap-approved-v1.json').entries.filter(x=>x.service_code.startsWith('jardinage.'));
 const common={garden_access:'GARDEN_ACCESS_OK',garden_state:'GARDEN_MAINTAINED',garden_waste:'GARDEN_WASTE_ONSITE',garden_tasks:'GARDEN_ROUTINE_ONLY'};
 const cases=[['jardinage.entretien_courant','GARDEN_UP_TO_100',360],['jardinage.taille_haie_basse','HEDGE_WITHIN_LIMITS',310]];
 test('two qualified gardening packages use the same approved price across all 20 cities',async()=>{

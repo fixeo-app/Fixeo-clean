@@ -1015,6 +1015,82 @@
         "UNKNOWN"
       ],
       "privacy_classification": "NON_SENSITIVE"
+    },
+    "tile_support": {
+      "input_id": "tile_support",
+      "data_type": "string",
+      "allowed_values": [
+        "TILE_SUPPORT_READY",
+        "TILE_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Le support est-il sain, sec et stable, sans humidité, fissure ni ragréage ou étanchéité à réaliser ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "tile_format": {
+      "input_id": "tile_format",
+      "data_type": "string",
+      "allowed_values": [
+        "TILE_STANDARD",
+        "TILE_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "S’agit-il de carreaux standards jusqu’à 60 × 60 cm, hors marbre, zellige et mosaïque ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "tile_supplies": {
+      "input_id": "tile_supplies",
+      "data_type": "string",
+      "allowed_values": [
+        "TILE_CLIENT_SUPPLIED",
+        "TILE_SUPPLIES_MISSING",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Disposez-vous des carreaux adaptés (identiques pour un remplacement), de la colle et des joints compatibles en quantité suffisante ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "tile_access": {
+      "input_id": "tile_access",
+      "data_type": "string",
+      "allowed_values": [
+        "TILE_ACCESS_READY",
+        "TILE_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "La zone intérieure est-elle dégagée, accessible avec les outils, avec eau et électricité sur place ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "tile_finish": {
+      "input_id": "tile_finish",
+      "data_type": "string",
+      "allowed_values": [
+        "TILE_STANDARD_FINISH",
+        "TILE_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Souhaitez-vous une finition standard, avec les joints et les gravats regroupés sur place, sans évacuation ni plinthes ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "tile_work": {
+      "input_id": "tile_work",
+      "data_type": "string",
+      "allowed_values": [
+        "TILE_REPLACE_ONLY",
+        "TILE_INSTALL_ONLY",
+        "TILE_COMPLEX",
+        "UNKNOWN"
+      ],
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "tile_count": {
+      "input_id": "tile_count",
+      "data_type": "integer",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "tile_area_m2": {
+      "input_id": "tile_area_m2",
+      "data_type": "number",
+      "privacy_classification": "NON_SENSITIVE"
     }
   }
 }

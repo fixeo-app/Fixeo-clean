@@ -1,6 +1,6 @@
 {
   "version": "vap-approved-v1",
-  "note": "Deux forfaits jardinage autorisés par le propriétaire pour les 20 villes FIXEO ; prix pilote à suivre, sans garantie de disponibilité artisan.",
+  "note": "Forfaits jardinage et carrelage autorisés par le propriétaire pour les 20 villes FIXEO. Prix pilotes à suivre ; disponibilité artisan à confirmer.",
   "entries": [
     {
       "approved": true,
@@ -641,6 +641,1066 @@
       "vap_minor": 25000,
       "materials_minor": 0,
       "catalogue_version": "garden-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.remplacement_local",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_REPLACE_ONLY"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_count",
+        "min": 1,
+        "max": 4,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "carrelage.pose_sol_droite",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "tile_support": "TILE_SUPPORT_READY",
+        "tile_format": "TILE_STANDARD",
+        "tile_supplies": "TILE_CLIENT_SUPPLIED",
+        "tile_access": "TILE_ACCESS_READY",
+        "tile_finish": "TILE_STANDARD_FINISH",
+        "tile_work": "TILE_INSTALL_ONLY"
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "tile-pilot-v1",
+      "quantity_guard": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "decimals": 2
+      },
+      "vap_quantity": {
+        "field": "tile_area_m2",
+        "min": 10,
+        "max": 30,
+        "unit_minor": 5000,
+        "decimals": 2
+      }
     }
   ]
 }

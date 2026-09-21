@@ -360,6 +360,13 @@ function calculate(svc, inputs, formulaIndex) {
     return r.value;
   };
 
+  if(pm.pricing_version==='vap-bp33-v1'){
+    const b=require('./vap-tariff-v1').tariffBreakdown(pm,inputs);
+    const amount=b.clientTotalMinor/100;
+    trace.result_mad=amount;trace.steps=['VAP + commission BP3.3 + fournitures déclarées'];
+    return {base_amount_mad:amount,calculated_amount_mad:amount,minimum_floor_mad:null,final_amount_mad:amount,labour_amount_mad:null,variable_part_separate:false,trace};
+  }
+
   switch (model) {
 
     // ─ FIXED ─────────────────────────────────────────────────────────────────
@@ -872,7 +879,7 @@ function evaluateFixeoPrice({ service_code, inputs = {} } = {}) {
   }
 
   // ── Non-integer MAD final check ────────────────────────────────────────────
-  if (!Number.isInteger(finalAmountMad)) {
+  if (pm.pricing_version!=='vap-bp33-v1' && !Number.isInteger(finalAmountMad)) {
     return errorResult('NON_INTEGER_MAD_RESULT',
       `EXACT_INTEGER_MAD policy violated: final_amount_mad = ${finalAmountMad}. Non-integer MAD result is not contractual.`,
       null, canonicalCode);
