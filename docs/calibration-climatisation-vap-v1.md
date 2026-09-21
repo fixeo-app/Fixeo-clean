@@ -1,6 +1,6 @@
 # Climatisation — calibrage VAP validé et intégré
 
-État au 21 septembre 2026 : **grille et périmètre validés pour les 20 villes ; intégration testée, migration préparée, production en attente d’autorisation**. Base auditée : `ce17ca7386e5f36ad8cc39bf2a6edc201de95c9d`, après la livraison électrique ([PR #39](https://github.com/fixeo-app/Fixeo-clean/pull/39)).
+État au 21 septembre 2026 : **grille et périmètre validés pour les 20 villes ; migration appliquée et déploiement autorisé réalisé**. Base auditée : `ce17ca7386e5f36ad8cc39bf2a6edc201de95c9d`, après la livraison électrique ([PR #39](https://github.com/fixeo-app/Fixeo-clean/pull/39)).
 
 Grille structurée : `data/pricing/research/climatisation/vap-proposal.v1.json` ; version intégrée : `climatisation-pilot-v1`.
 
@@ -23,7 +23,7 @@ Les frais suivent le calcul existant BP3.3 : ici 15 % de la VAP, avec minimum de
 
 Les 450/600 MAD de fournitures sont des **forfaits commerciaux proposés sur hypothèses internes**, pas des prix d'achat vérifiés. L'installation ne doit être acceptée au forfait que si un partenaire confirme pouvoir fournir le kit compatible et honorer le total. Le surcoût d'un kit ne devient jamais un supplément automatique après acceptation. Si le kit est déjà fourni par le client, établir une proposition adaptée avant réservation ; ne pas facturer un kit non fourni.
 
-Villes : Agadir, Béni Mellal, Casablanca, El Jadida, Fès, Kénitra, Khouribga, Marrakech, Meknès, Mohammedia, Nador, Ouarzazate, Oujda, Rabat, Safi, Salé, Tanger, Taza, Témara et Tétouan. Six services × 20 villes = **120 entrées approuvées dans cette branche** ; activation en production après migration puis déploiement autorisés.
+Villes : Agadir, Béni Mellal, Casablanca, El Jadida, Fès, Kénitra, Khouribga, Marrakech, Meknès, Mohammedia, Nador, Ouarzazate, Oujda, Rabat, Safi, Salé, Tanger, Taza, Témara et Tétouan. Six services × 20 villes = **120 entrées approuvées dans cette branche** ; activation en production autorisée et réalisée.
 
 ## Périmètres
 
@@ -109,7 +109,7 @@ Vérification de cette proposition : calcul des six décompositions par `buildBr
 
 ## Validation et résultat intégré
 
-Le 21 septembre 2026, le propriétaire a confirmé : « Je valide cette grille et ce périmètre pour les 20 villes ». La validation commerciale couvre les six forfaits ci-dessus. L’autorisation de migration et déploiement reste à recueillir sur cette intégration terminée.
+Le 21 septembre 2026, le propriétaire a confirmé : « Je valide cette grille et ce périmètre pour les 20 villes ». La validation commerciale couvre les six forfaits ci-dessus. Le propriétaire a ensuite autorisé explicitement la migration en production et le déploiement sur Fixeo.ma.
 
 Les huit corrections de l’audit initial sont intégrées : questions communes et protections dans chaque chemin du moteur, contrôle des réponses préremplies (y compris signaux de danger), 120 entrées VAP, code distinct pour la pose 5 m, arrêt des forfaits historiques recharge/cassette, libellé « Nettoyage approfondi », propositions d’entretien consenties et offres immuables. Aucun autre service du registre n’a été modifié ; les entrées VAP des métiers précédents sont inchangées.
 
@@ -121,12 +121,18 @@ Les deux entretiens peuvent remplacer un diagnostic pendant la même visite, apr
 
 Commande : `NODE_PATH=/workspace/scratch/7e6d7edda414/test-deps/node_modules node --test tests/estimator/*.test.cjs`.
 
-## Migration prête, non appliquée
+## Migration appliquée et déploiement
 
 Fichier : `supabase/migrations/20260921142222_climatisation_same_visit_service.sql`, créé avec la CLI Supabase. Précondition : empreinte de la fonction financière actuelle `cc844ebe2d4fe7d4f2a90182cca2adac`, vérifiée en lecture seule. Délai de verrouillage 3 s et délai d’exécution 30 s. Aucune mise à jour historique : création de cinq tables privées avec RLS, refus d’accès direct, écritures contrôlées et immuables ; quatre fonctions authentifiées artisan et deux fonctions serveur pour suivi client/administration ; extension du déclencheur financier existant.
 
 Les fonctions utilisent un `search_path` vide et des droits explicites. L’audit de sécurité Supabase lu avant livraison conserve les alertes préexistantes : 7 informations RLS sans politique (tables privées), 3 vues SECURITY DEFINER, 4 fonctions avec search_path mutable, 9 fonctions accessibles anonymement, 47 fonctions authentifiées signalées et 1 avertissement de protection des mots de passe. Ces alertes appartiennent à la base existante ; cette PR ne prétend pas les corriger. Les nouvelles tables privées n’ont volontairement aucune politique d’accès direct : seules les fonctions autorisées les utilisent.
 
-Après autorisation : appliquer la migration en transaction, contrôler droits/empreintes et invariants financiers historiques, puis fusionner et déployer la branche. Vérifier les ressources et parcours publics sans créer de mission. Les missions existantes restent des données de test selon la déclaration du propriétaire ; aucune suppression ni reclassification automatique. WhatsApp et paiement carte ne sont pas activés par cette livraison.
+Migration appliquée sous la version Supabase `20260921144905`, SHA256 `0f4dfb34bf87d68aea8bf81f80517a4f2db50e03b811fca147534d24fb4aea08`. Les dix fonctions correspondent exactement au SQL testé ; les cinq tables privées ont les droits et déclencheurs attendus. Les 23 missions, 118 demandes et 41 offres préexistantes sont préservées ; empreintes financières et liens demande/offre inchangés. PR #40 fusionnée au commit `210feaa97b7264860b8f0faf4cdf84fe1380b0f8`, compilation et déploiement Vercel réussis. Les 16 fichiers publics contrôlés et les 120 entrées du catalogue correspondent au code testé. Les vérifications de prix créent seulement des offres temporaires non réservées, sans mission ni dispatch. Les missions existantes restent des données de test selon la déclaration du propriétaire ; aucune suppression ni reclassification automatique. WhatsApp et paiement carte ne sont pas activés par cette livraison.
 
 Message de commit : `feat(climatisation): integrate approved VAP tariffs and verified service lifecycle`.
+
+## Correctif de la route publique vers le diagnostic
+
+Le contrôle de livraison a révélé que la normalisation de l’API supprimait les destinations structurées de diagnostic. Le moteur écartait bien la recharge ou l’entretien d’un appareil en panne, mais le bouton vers le diagnostic ne recevait plus sa destination. Le correctif conserve seulement la destination autorisée, l’éventuel opérateur électrique et le message public, sans exposer les données internes. Les routes historiques textuelles restent compatibles. Trois tests ajoutés contrôlent la liste blanche, les vrais appels API start/evaluate sans offre payable et le rendu navigateur ; suite complète portée à 125 tests.
+
+Message de commit du correctif : `fix(estimator): preserve public diagnostic routing after qualification`.

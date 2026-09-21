@@ -123,8 +123,19 @@ function normalizeOutcomeView(session) {
   }
 
   if (o.outcome_type === 'ROUTE_REQUIRED') {
-    // route is a string description, NOT an object
-    base.route = typeof o.route === 'string' ? o.route : null;
+    // Preserve only the public destination and explanation for diagnostic routes.
+    // Internal engine fields and arbitrary destinations are never exposed.
+    if (o.route && typeof o.route === 'object' && !Array.isArray(o.route)) {
+      base.route = {
+        target_service: ['climatisation.diagnostic', 'electricite.diagnostic'].includes(o.route.target_service)
+          ? o.route.target_service : null,
+        target_external: o.route.target_external === 'LOCAL_ELECTRICITY_OPERATOR'
+          ? o.route.target_external : null,
+        message: typeof o.route.message === 'string' ? o.route.message : '',
+      };
+    } else {
+      base.route = typeof o.route === 'string' ? o.route : null;
+    }
   }
 
   // Do NOT include engine_result_ref or raw engine internals
@@ -209,4 +220,3 @@ module.exports = {
   SESSION_TTL_MS,
   PRICING_CTX_TTL_MS,
 };
-
