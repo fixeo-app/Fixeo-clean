@@ -58,7 +58,7 @@ body {
     border-radius: 16px;
   }
 }
-:is(.fx-plumbing-repair, :is(.fx-electricity-repair,.fx-climatisation-repair)) { margin-top: 20px; padding-top: 16px; border-top: 1px solid #cbd5e1; }
-:is(.fx-plumbing-repair, :is(.fx-electricity-repair,.fx-climatisation-repair)) button { display: block; width: 100%; min-height: 44px; margin: 10px 0; padding: 10px 14px; border: 1px solid #0f766e; border-radius: 8px; color: #fff; background: #0f766e; cursor: pointer; }
-:is(.fx-plumbing-repair, :is(.fx-electricity-repair,.fx-climatisation-repair)) button:disabled { opacity: .45; cursor: not-allowed; }
-:is(.fx-plumbing-repair, :is(.fx-electricity-repair,.fx-climatisation-repair)) label { line-height: 1.6; }
+:is(.fx-plumbing-repair, :is(.fx-electricity-repair,.fx-climatisation-repair,.fx-serrurerie-repair)) { margin-top: 20px; padding-top: 16px; border-top: 1px solid #cbd5e1; }
+:is(.fx-plumbing-repair, :is(.fx-electricity-repair,.fx-climatisation-repair,.fx-serrurerie-repair)) button { display: block; width: 100%; min-height: 44px; margin: 10px 0; padding: 10px 14px; border: 1px solid #0f766e; border-radius: 8px; color: #fff; background: #0f766e; cursor: pointer; }
+:is(.fx-plumbing-repair, :is(.fx-electricity-repair,.fx-climatisation-repair,.fx-serrurerie-repair)) button:disabled { opacity: .45; cursor: not-allowed; }
+:is(.fx-plumbing-repair, :is(.fx-electricity-repair,.fx-climatisation-repair,.fx-serrurerie-repair)) label { line-height: 1.6; }

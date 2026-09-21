@@ -351,6 +351,19 @@
         "climatisation.desinfection_profonde"
       ],
       "description": "Même appareil, artisan et visite ; accord client avant entretien. Le total entretien remplace le diagnostic ; crédit déclaré 0/260 MAD confirmé par client. Une mission et un frais de 60 MAD. Installation, dépose, fluide, réparation et seconde visite : devis distinct explicite."
+    },
+    "POL-DIAGNOSTIC-ABSORPTION-SERR-VAP-V1": {
+      "policy_id": "POL-DIAGNOSTIC-ABSORPTION-SERR-VAP-V1",
+      "diagnostic_price_mad": 220,
+      "same_visit_absorption": true,
+      "qualifying_service_codes": [
+        "serrurerie.porte_claquee_ouverture",
+        "serrurerie.porte_claquee_blindee.ouverture",
+        "serrurerie.cle_cassee_extraction",
+        "serrurerie.cylindre_remplacement.standard",
+        "serrurerie.serrure_remplacement.standard"
+      ],
+      "description": "Même porte, artisan et visite ; accord client avant travaux. Total final remplace le diagnostic ; crédit déclaré 0/220 MAD confirmé par client. Une mission, un frais de 60 MAD. Pièce compatible déjà disponible pour remplacement ; autres travaux ou seconde visite sur devis explicite."
     }
   }
 }

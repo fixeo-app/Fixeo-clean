@@ -2083,149 +2083,27 @@
       ],
       "metier": "serrurerie",
       "service_family": "OUVERTURE",
-      "label_fr": "Ouverture porte claquée standard",
-      "label_ar_darija": "فتح باب مغلق",
-      "short_label_fr": "Porte claquée",
+      "label_fr": "Ouverture porte standard simplement claquée",
+      "label_ar_darija": null,
+      "short_label_fr": "Ouverture porte standard simplement claquée",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
-      "effective_to": null,
-      "price_model": {
-        "calculation_model": "FIXED",
-        "commercial_output_type": "FIXEO_PRICE",
-        "currency": "MAD",
-        "formula_id": "FORMULA-FIXED-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 220,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
-      },
-      "minimum_floor": {
-        "enabled": false,
-        "amount_mad": null,
-        "mode": null,
-        "scope": null,
-        "policy_ref": null,
-        "standalone_service_code": null
-      },
-      "diagnostic": {
-        "enabled": false,
-        "price_mad": null,
-        "mode": null,
-        "same_visit_absorption": null,
-        "qualifying_service_codes": [],
-        "conditions": [],
-        "policy_ref": null
-      },
-      "materials": {
-        "consumables": "NOT_APPLICABLE",
-        "consumables_cap_mad": null,
-        "major_parts": "NOT_APPLICABLE",
-        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": null
-      },
-      "measurement": {
-        "basis": "NONE",
-        "quantity_field": null,
-        "quantity_required": false,
-        "worker_count_required": null,
-        "worker_count_default": null,
-        "worker_count_semantics": null,
-        "hours_required": null,
-        "minimum_billing_hours": null,
-        "derived": false,
-        "conversion_model_id": null,
-        "conversion_status": "NOT_APPLICABLE"
-      },
-      "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
-      },
-      "policy_refs": [
-        "POL-HORS-PERIMETRE-V1",
-        "POL-SERRURERIE-AUTHORIZATION-V1"
-      ],
-      "safety_policy_refs": [
-        "POL-SERRURERIE-AUTHORIZATION-V1"
-      ],
-      "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
-        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
-        "research_phase": "7B.S",
-        "human_decision_phase": "7B",
-        "source_registry_refs": [
-          "data/pricing/research/serrurerie/registry.v0.3.json"
-        ],
-        "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
-      },
-      "confidence": {
-        "price_confidence": "MEDIUM",
-        "scope_confidence": "MEDIUM",
-        "evidence_confidence": "MEDIUM",
-        "conversion_confidence": null,
-        "batch_confidence": null
-      },
-      "batch_policy": null,
-      "copy_keys": {
-        "copy_key_price": "copy.fixeo_price.price",
-        "copy_key_scope": "copy.serrurerie.ouverture.scope",
-        "copy_key_materials": "copy.serrurerie.ouverture.materials",
-        "copy_key_parts": null,
-        "copy_key_escape": "copy.escape.hors_perimetre",
-        "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
-      },
-      "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
-        "active_in_pseo": false,
-        "active_in_profiles": false
-      },
-      "human_review_flags": [],
-      "semantic_corrections": []
-    },
-    "serrurerie.porte_claquee_blindee.ouverture": {
-      "canonical_service_code": "serrurerie.porte_claquee_blindee.ouverture",
-      "legacy_codes": [
-        "serrurerie.porte_claquee_blindee_ouverture"
-      ],
-      "metier": "serrurerie",
-      "service_family": "OUVERTURE",
-      "label_fr": "Ouverture porte claquée blindée",
-      "label_ar_darija": "فتح باب مدرع مغلق",
-      "short_label_fr": "Porte blindée claquée",
-      "variant": "ouverture",
-      "human_decision": "APPROVED",
-      "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
-      "active_in_pseo": false,
-      "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
+      "service_version": "serrurerie-pilot-v1",
+      "effective_from": "2026-09-21",
       "effective_to": null,
       "price_model": {
         "calculation_model": "CONDITIONAL_FIXED",
         "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-CONDITIONAL-FIXED-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 350,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 20000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -2245,8 +2123,7 @@
         "policy_ref": null
       },
       "materials": {
-        "consumables": "NOT_APPLICABLE",
-        "consumables_cap_mad": null,
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
         "major_parts": "NOT_APPLICABLE",
         "equipment": "ARTISAN_SUPPLIED_INCLUDED",
         "parts_disclosure": null
@@ -2269,48 +2146,82 @@
         "structured": true,
         "required_conditions": [
           {
-            "id": "E-SERR-BLINDEE-01",
-            "field": "security_door",
+            "id": "locksmith_safety",
+            "field": "locksmith_safety",
             "operator": "EQ",
-            "value": true,
-            "effect": "ELIGIBLE",
-            "description": "Must be confirmed security/armoured door (porte blindée or renforcée)"
+            "value": "NO_IMMEDIATE_DANGER",
+            "effect": "ELIGIBLE"
           },
           {
-            "id": "E-SERR-BLINDEE-02",
-            "field": "door_locked_with_key",
+            "id": "locksmith_access_right",
+            "field": "locksmith_access_right",
             "operator": "EQ",
-            "value": false,
-            "effect": "ELIGIBLE",
-            "description": "Door must be slammed only (not locked with key). Locked → serrurerie.porte_verrouillee_ouverture (380 MAD) instead"
+            "value": "DECLARED_AUTHORIZED_NO_DISPUTE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_presence",
+            "field": "locksmith_presence",
+            "operator": "EQ",
+            "value": "AUTHORIZED_ADULT_PRESENT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_property",
+            "field": "locksmith_property",
+            "operator": "EQ",
+            "value": "RESIDENTIAL_PRIVATE_DOOR",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_count",
+            "field": "locksmith_count",
+            "operator": "EQ",
+            "value": "ONE_DOOR",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_slot",
+            "field": "locksmith_slot",
+            "operator": "EQ",
+            "value": "DAY_08_20",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_door_type",
+            "field": "locksmith_door_type",
+            "operator": "EQ",
+            "value": "STANDARD_MECHANICAL",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_door_state",
+            "field": "locksmith_door_state",
+            "operator": "EQ",
+            "value": "SLAMMED_NOT_LOCKED",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_work",
+            "field": "locksmith_work",
+            "operator": "EQ",
+            "value": "OPEN_SLAMMED_STANDARD",
+            "effect": "ELIGIBLE"
           }
         ],
-        "hard_exclusions": [
-          {
-            "id": "X-SERR-BLINDEE-01",
-            "trigger": "security_door = False",
-            "action": "ROUTE",
-            "description": "Standard door (non-blind) slammed → serrurerie.porte_claquee_ouverture (220 MAD)"
-          },
-          {
-            "id": "X-SERR-BLINDEE-02",
-            "trigger": "door_locked_with_key = True AND security_door = True",
-            "action": "QUOTE_REQUIRED",
-            "description": "Blindée AND locked with key → complex case, serrurerie specialist assessment required"
-          },
-          {
-            "id": "X-SERR-BLINDEE-03",
-            "trigger": "part_replacement_required = True",
-            "action": "QUOTE_REQUIRED",
-            "description": "Any part or mechanism replacement on security door is outside this service scope"
-          }
-        ],
+        "hard_exclusions": [],
         "prebooking_question_refs": [
-          "Q-SERR-SECURITY-DOOR",
-          "Q-SERR-DOOR-SLAMMED-ONLY",
-          "Q-SERR-AUTHORIZATION"
+          "locksmith_safety",
+          "locksmith_access_right",
+          "locksmith_presence",
+          "locksmith_property",
+          "locksmith_count",
+          "locksmith_slot",
+          "locksmith_door_type",
+          "locksmith_door_state",
+          "locksmith_work"
         ],
-        "supporting_prose": "350 MAD covers non-destructive opening labour for security/armoured door that has slammed shut only. If door slammed AND locked, higher complexity assessment required.",
+        "supporting_prose": "Une porte non blindée refermée sans verrouillage, mécanisme compatible et intact. Ouverture sans dégradation et essai. Sans remplacement ni réparation de porte ou bâti.",
         "human_review_required": false
       },
       "policy_refs": [
@@ -2321,15 +2232,15 @@
         "POL-SERRURERIE-AUTHORIZATION-V1"
       ],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+        "price_provenance": "FIXEO_OWNER_APPROVED_VAP_PILOT",
         "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
         "research_phase": "7B.S",
         "human_decision_phase": "7B",
         "source_registry_refs": [
-          "data/pricing/research/serrurerie/registry.v0.3.json"
+          "data/pricing/research/serrurerie/vap-proposal.v1.json"
         ],
         "transaction_backed": false,
-        "production_ready": false,
+        "production_ready": true,
         "batch_rule_experimental": null
       },
       "confidence": {
@@ -2349,9 +2260,202 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
+    },
+    "serrurerie.porte_claquee_blindee.ouverture": {
+      "canonical_service_code": "serrurerie.porte_claquee_blindee.ouverture",
+      "legacy_codes": [
+        "serrurerie.porte_claquee_blindee_ouverture"
+      ],
+      "metier": "serrurerie",
+      "service_family": "OUVERTURE",
+      "label_fr": "Ouverture porte blindée simplement claquée — modèle compatible",
+      "label_ar_darija": null,
+      "short_label_fr": "Ouverture porte blindée simplement claquée — modèle compatible",
+      "variant": "ouverture",
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "serrurerie-pilot-v1",
+      "effective_from": "2026-09-21",
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 30000,
+        "materials_minor": 0
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": false,
+        "price_mad": null,
+        "mode": null,
+        "same_visit_absorption": null,
+        "qualifying_service_codes": [],
+        "conditions": [],
+        "policy_ref": null
+      },
+      "materials": {
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
+        "major_parts": "NOT_APPLICABLE",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "parts_disclosure": null
+      },
+      "measurement": {
+        "basis": "NONE",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "locksmith_safety",
+            "field": "locksmith_safety",
+            "operator": "EQ",
+            "value": "NO_IMMEDIATE_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_access_right",
+            "field": "locksmith_access_right",
+            "operator": "EQ",
+            "value": "DECLARED_AUTHORIZED_NO_DISPUTE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_presence",
+            "field": "locksmith_presence",
+            "operator": "EQ",
+            "value": "AUTHORIZED_ADULT_PRESENT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_property",
+            "field": "locksmith_property",
+            "operator": "EQ",
+            "value": "RESIDENTIAL_PRIVATE_DOOR",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_count",
+            "field": "locksmith_count",
+            "operator": "EQ",
+            "value": "ONE_DOOR",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_slot",
+            "field": "locksmith_slot",
+            "operator": "EQ",
+            "value": "DAY_08_20",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_door_type",
+            "field": "locksmith_door_type",
+            "operator": "EQ",
+            "value": "SECURITY_MECHANICAL",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_door_state",
+            "field": "locksmith_door_state",
+            "operator": "EQ",
+            "value": "SLAMMED_NOT_LOCKED",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_work",
+            "field": "locksmith_work",
+            "operator": "EQ",
+            "value": "OPEN_SLAMMED_SECURITY",
+            "effect": "ELIGIBLE"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "locksmith_safety",
+          "locksmith_access_right",
+          "locksmith_presence",
+          "locksmith_property",
+          "locksmith_count",
+          "locksmith_slot",
+          "locksmith_door_type",
+          "locksmith_door_state",
+          "locksmith_work"
+        ],
+        "supporting_prose": "Une porte blindée refermée, points de verrouillage non engagés et modèle compatible confirmé par le professionnel. Ouverture sans dégradation. Modèle inconnu, verrouillage automatique ou engagé, panne, équipement électrique/connecté : devis.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1",
+        "POL-SERRURERIE-AUTHORIZATION-V1"
+      ],
+      "safety_policy_refs": [
+        "POL-SERRURERIE-AUTHORIZATION-V1"
+      ],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_VAP_PILOT",
+        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+        "research_phase": "7B.S",
+        "human_decision_phase": "7B",
+        "source_registry_refs": [
+          "data/pricing/research/serrurerie/vap-proposal.v1.json"
+        ],
+        "transaction_backed": false,
+        "production_ready": true,
+        "batch_rule_experimental": null
+      },
+      "confidence": {
+        "price_confidence": "MEDIUM",
+        "scope_confidence": "MEDIUM",
+        "evidence_confidence": "MEDIUM",
+        "conversion_confidence": null,
+        "batch_confidence": null
+      },
+      "batch_policy": null,
+      "copy_keys": {
+        "copy_key_price": "copy.fixeo_price.price",
+        "copy_key_scope": "copy.serrurerie.ouverture.scope",
+        "copy_key_materials": "copy.serrurerie.ouverture.materials",
+        "copy_key_parts": null,
+        "copy_key_escape": "copy.escape.hors_perimetre",
+        "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
+      },
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -2370,7 +2474,7 @@
       "short_label_fr": "Porte verrouillée",
       "variant": "ouverture",
       "human_decision": "APPROVED",
-      "availability_status": "STANDARDIZED",
+      "availability_status": "QUOTE_REQUIRED",
       "production_ready": false,
       "active_in_estimator": false,
       "active_in_reservation": false,
@@ -2513,29 +2617,27 @@
       ],
       "metier": "serrurerie",
       "service_family": "DEPANNAGE",
-      "label_fr": "Extraction clé cassée",
-      "label_ar_darija": "استخراج مفتاح مكسور",
-      "short_label_fr": "Clé cassée",
+      "label_fr": "Extraction clé cassée — porte déjà ouverte",
+      "label_ar_darija": null,
+      "short_label_fr": "Extraction clé cassée — porte déjà ouverte",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
+      "service_version": "serrurerie-pilot-v1",
+      "effective_from": "2026-09-21",
       "effective_to": null,
       "price_model": {
         "calculation_model": "CONDITIONAL_FIXED",
         "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-CONDITIONAL-FIXED-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 220,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 20000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -2555,8 +2657,7 @@
         "policy_ref": null
       },
       "materials": {
-        "consumables": "NOT_APPLICABLE",
-        "consumables_cap_mad": null,
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
         "major_parts": "NOT_APPLICABLE",
         "equipment": "ARTISAN_SUPPLIED_INCLUDED",
         "parts_disclosure": null
@@ -2579,32 +2680,90 @@
         "structured": true,
         "required_conditions": [
           {
-            "id": "E-SERR-CLE-01",
-            "field": "security_door",
+            "id": "locksmith_safety",
+            "field": "locksmith_safety",
             "operator": "EQ",
-            "value": false,
-            "effect": "ELIGIBLE",
-            "description": "Standard cylinder barrel — not security door"
-          }
-        ],
-        "hard_exclusions": [
-          {
-            "id": "X-SERR-CLE-01",
-            "trigger": "barrel_previously_damaged = True",
-            "action": "QUOTE_REQUIRED",
-            "description": "Barrel already damaged from previous DIY extraction attempt → cylinder replacement scope, POL-PART-DISCLOSURE-V1 applies"
+            "value": "NO_IMMEDIATE_DANGER",
+            "effect": "ELIGIBLE"
           },
           {
-            "id": "X-SERR-CLE-02",
-            "trigger": "security_door = True",
-            "action": "QUOTE_REQUIRED",
-            "description": "Security door barrel extraction → specialist assessment required"
+            "id": "locksmith_access_right",
+            "field": "locksmith_access_right",
+            "operator": "EQ",
+            "value": "DECLARED_AUTHORIZED_NO_DISPUTE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_presence",
+            "field": "locksmith_presence",
+            "operator": "EQ",
+            "value": "AUTHORIZED_ADULT_PRESENT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_property",
+            "field": "locksmith_property",
+            "operator": "EQ",
+            "value": "RESIDENTIAL_PRIVATE_DOOR",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_count",
+            "field": "locksmith_count",
+            "operator": "EQ",
+            "value": "ONE_DOOR",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_slot",
+            "field": "locksmith_slot",
+            "operator": "EQ",
+            "value": "DAY_08_20",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_door_type",
+            "field": "locksmith_door_type",
+            "operator": "EQ",
+            "value": "STANDARD_MECHANICAL",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_door_state",
+            "field": "locksmith_door_state",
+            "operator": "EQ",
+            "value": "ALREADY_OPEN",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_test_key",
+            "field": "locksmith_test_key",
+            "operator": "EQ",
+            "value": "WORKING_DUPLICATE_AVAILABLE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_work",
+            "field": "locksmith_work",
+            "operator": "EQ",
+            "value": "EXTRACT_BROKEN_KEY",
+            "effect": "ELIGIBLE"
           }
         ],
+        "hard_exclusions": [],
         "prebooking_question_refs": [
-          "Q-SERR-AUTHORIZATION"
+          "locksmith_safety",
+          "locksmith_access_right",
+          "locksmith_presence",
+          "locksmith_property",
+          "locksmith_count",
+          "locksmith_slot",
+          "locksmith_door_type",
+          "locksmith_door_state",
+          "locksmith_test_key",
+          "locksmith_work"
         ],
-        "supporting_prose": "220 MAD for extraction of broken key fragment from standard cylinder barrel. The 'barrel non-damaged' condition cannot be verified at prebooking — artisan assesses on site. If barrel found damaged on arrival: artisan declares HORS PÉRIMÈTRE, explains, proposes cylinder replacement (POL-PART-DISCLOSURE-V1). Authorization verification mandatory (POL-SERRURERIE-AUTHORIZATION-V1).",
+        "supporting_prose": "Un fragment dans un cylindre mécanique standard sur porte déjà ouverte. Extraction sans dommage et essai avec un double fonctionnel disponible. Sans ouverture ni reproduction de clé ; cylindre endommagé, porte fermée ou sécurité spéciale : qualification/devis.",
         "human_review_required": false
       },
       "policy_refs": [
@@ -2615,15 +2774,15 @@
         "POL-SERRURERIE-AUTHORIZATION-V1"
       ],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+        "price_provenance": "FIXEO_OWNER_APPROVED_VAP_PILOT",
         "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
         "research_phase": "7B.S",
         "human_decision_phase": "7B",
         "source_registry_refs": [
-          "data/pricing/research/serrurerie/registry.v0.3.json"
+          "data/pricing/research/serrurerie/vap-proposal.v1.json"
         ],
         "transaction_backed": false,
-        "production_ready": false,
+        "production_ready": true,
         "batch_rule_experimental": null
       },
       "confidence": {
@@ -2643,9 +2802,9 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -2659,30 +2818,27 @@
       ],
       "metier": "serrurerie",
       "service_family": "REMPLACEMENT",
-      "label_fr": "Remplacement cylindre standard — main-d'œuvre",
-      "label_ar_darija": "تغيير الخرطوشة",
-      "short_label_fr": "Remplacement cylindre",
+      "label_fr": "Remplacement cylindre standard — pièce client",
+      "label_ar_darija": null,
+      "short_label_fr": "Remplacement cylindre standard — pièce client",
       "variant": "standard",
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
+      "service_version": "serrurerie-pilot-v1",
+      "effective_from": "2026-09-21",
       "effective_to": null,
       "price_model": {
-        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
-        "commercial_output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-LABOUR-PART-SEPARATE-V1",
-        "formula_params": {},
-        "labour_amount_mad": 280,
-        "fixed_amount_mad": null,
-        "unit_rate_mad": null,
-        "unit": "PER_ITEM"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 24000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -2702,57 +2858,148 @@
         "policy_ref": null
       },
       "materials": {
-        "consumables": "NOT_APPLICABLE",
-        "consumables_cap_mad": null,
-        "major_parts": "ARTISAN_DISCLOSED_SEPARATE",
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
+        "major_parts": "CLIENT_SUPPLIED",
         "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": {
-          "policy": "ARTISAN_DISCLOSED_SEPARATE",
-          "client_may_supply": false,
-          "approval_required_before_installation": true,
-          "return_old_part": null,
-          "price_disclosure_required": true,
-          "policy_ref": "POL-PART-DISCLOSURE-V1"
-        }
+        "parts_disclosure": "Pièce compatible fournie par le client, vérifiée avant réservation. Fourniture par l’artisan : devis complet préalable."
       },
       "measurement": {
-        "basis": "quantity",
-        "quantity_field": "cylinder_count",
-        "quantity_required": true,
-        "worker_count_required": false,
+        "basis": "NONE",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": null,
         "worker_count_default": null,
         "worker_count_semantics": null,
-        "hours_required": false,
+        "hours_required": null,
         "minimum_billing_hours": null,
         "derived": false,
         "conversion_model_id": null,
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "locksmith_safety",
+            "field": "locksmith_safety",
+            "operator": "EQ",
+            "value": "NO_IMMEDIATE_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_access_right",
+            "field": "locksmith_access_right",
+            "operator": "EQ",
+            "value": "DECLARED_AUTHORIZED_NO_DISPUTE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_presence",
+            "field": "locksmith_presence",
+            "operator": "EQ",
+            "value": "AUTHORIZED_ADULT_PRESENT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_property",
+            "field": "locksmith_property",
+            "operator": "EQ",
+            "value": "RESIDENTIAL_PRIVATE_DOOR",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_count",
+            "field": "locksmith_count",
+            "operator": "EQ",
+            "value": "ONE_DOOR",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_slot",
+            "field": "locksmith_slot",
+            "operator": "EQ",
+            "value": "DAY_08_20",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_door_type",
+            "field": "locksmith_door_type",
+            "operator": "EQ",
+            "value": "STANDARD_MECHANICAL",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_door_state",
+            "field": "locksmith_door_state",
+            "operator": "EQ",
+            "value": "ALREADY_OPEN",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_part_supply",
+            "field": "locksmith_part_supply",
+            "operator": "EQ",
+            "value": "CLIENT_PART_AVAILABLE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_test_key",
+            "field": "locksmith_test_key",
+            "operator": "EQ",
+            "value": "WORKING_KEY_AVAILABLE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_part_fit",
+            "field": "locksmith_part_fit",
+            "operator": "EQ",
+            "value": "PRO_CONFIRMED_COMPATIBLE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_work",
+            "field": "locksmith_work",
+            "operator": "EQ",
+            "value": "REPLACE_STANDARD_CYLINDER",
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "locksmith_safety",
+          "locksmith_access_right",
+          "locksmith_presence",
+          "locksmith_property",
+          "locksmith_count",
+          "locksmith_slot",
+          "locksmith_door_type",
+          "locksmith_door_state",
+          "locksmith_part_supply",
+          "locksmith_test_key",
+          "locksmith_part_fit",
+          "locksmith_work"
+        ],
+        "supporting_prose": "Un cylindre mécanique standard à l’identique, pièce compatible fournie par le client et validée avant réservation. Porte ouverte, ancien cylindre démontable normalement et clé disponible. Dépose, pose et essais ; sans ouverture, retrait forcé, modification de porte, mécanisme multipoints ou équipement spécial.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
-        "POL-SERRURERIE-AUTHORIZATION-V1",
-        "POL-PART-DISCLOSURE-V1"
+        "POL-SERRURERIE-AUTHORIZATION-V1"
       ],
       "safety_policy_refs": [
         "POL-SERRURERIE-AUTHORIZATION-V1"
       ],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+        "price_provenance": "FIXEO_OWNER_APPROVED_VAP_PILOT",
         "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
         "research_phase": "7B.S",
         "human_decision_phase": "7B",
         "source_registry_refs": [
-          "data/pricing/research/serrurerie/registry.v0.3.json"
+          "data/pricing/research/serrurerie/vap-proposal.v1.json"
         ],
         "transaction_backed": false,
-        "production_ready": false,
+        "production_ready": true,
         "batch_rule_experimental": null
       },
       "confidence": {
@@ -2772,9 +3019,9 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_labour_price_plus_part"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -2788,30 +3035,27 @@
       ],
       "metier": "serrurerie",
       "service_family": "REMPLACEMENT",
-      "label_fr": "Remplacement serrure standard — main-d'œuvre",
-      "label_ar_darija": "تغيير القفل",
-      "short_label_fr": "Remplacement serrure",
+      "label_fr": "Remplacement serrure monopoint à l’identique — pièce client",
+      "label_ar_darija": null,
+      "short_label_fr": "Remplacement serrure monopoint à l’identique — pièce client",
       "variant": "standard",
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
+      "service_version": "serrurerie-pilot-v1",
+      "effective_from": "2026-09-21",
       "effective_to": null,
       "price_model": {
-        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
-        "commercial_output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-LABOUR-PART-SEPARATE-V1",
-        "formula_params": {},
-        "labour_amount_mad": 400,
-        "fixed_amount_mad": null,
-        "unit_rate_mad": null,
-        "unit": "PER_ITEM"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 34000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -2831,57 +3075,148 @@
         "policy_ref": null
       },
       "materials": {
-        "consumables": "NOT_APPLICABLE",
-        "consumables_cap_mad": null,
-        "major_parts": "ARTISAN_DISCLOSED_SEPARATE",
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
+        "major_parts": "CLIENT_SUPPLIED",
         "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": {
-          "policy": "ARTISAN_DISCLOSED_SEPARATE",
-          "client_may_supply": false,
-          "approval_required_before_installation": true,
-          "return_old_part": null,
-          "price_disclosure_required": true,
-          "policy_ref": "POL-PART-DISCLOSURE-V1"
-        }
+        "parts_disclosure": "Pièce compatible fournie par le client, vérifiée avant réservation. Fourniture par l’artisan : devis complet préalable."
       },
       "measurement": {
-        "basis": "quantity",
-        "quantity_field": "lock_count",
-        "quantity_required": true,
-        "worker_count_required": false,
+        "basis": "NONE",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": null,
         "worker_count_default": null,
         "worker_count_semantics": null,
-        "hours_required": false,
+        "hours_required": null,
         "minimum_billing_hours": null,
         "derived": false,
         "conversion_model_id": null,
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "locksmith_safety",
+            "field": "locksmith_safety",
+            "operator": "EQ",
+            "value": "NO_IMMEDIATE_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_access_right",
+            "field": "locksmith_access_right",
+            "operator": "EQ",
+            "value": "DECLARED_AUTHORIZED_NO_DISPUTE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_presence",
+            "field": "locksmith_presence",
+            "operator": "EQ",
+            "value": "AUTHORIZED_ADULT_PRESENT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_property",
+            "field": "locksmith_property",
+            "operator": "EQ",
+            "value": "RESIDENTIAL_PRIVATE_DOOR",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_count",
+            "field": "locksmith_count",
+            "operator": "EQ",
+            "value": "ONE_DOOR",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_slot",
+            "field": "locksmith_slot",
+            "operator": "EQ",
+            "value": "DAY_08_20",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_door_type",
+            "field": "locksmith_door_type",
+            "operator": "EQ",
+            "value": "STANDARD_MECHANICAL",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_door_state",
+            "field": "locksmith_door_state",
+            "operator": "EQ",
+            "value": "ALREADY_OPEN",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_part_supply",
+            "field": "locksmith_part_supply",
+            "operator": "EQ",
+            "value": "CLIENT_PART_AVAILABLE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_test_key",
+            "field": "locksmith_test_key",
+            "operator": "EQ",
+            "value": "WORKING_KEY_AVAILABLE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_part_fit",
+            "field": "locksmith_part_fit",
+            "operator": "EQ",
+            "value": "PRO_CONFIRMED_COMPATIBLE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_work",
+            "field": "locksmith_work",
+            "operator": "EQ",
+            "value": "REPLACE_MONOPOINT_LOCK",
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "locksmith_safety",
+          "locksmith_access_right",
+          "locksmith_presence",
+          "locksmith_property",
+          "locksmith_count",
+          "locksmith_slot",
+          "locksmith_door_type",
+          "locksmith_door_state",
+          "locksmith_part_supply",
+          "locksmith_test_key",
+          "locksmith_part_fit",
+          "locksmith_work"
+        ],
+        "supporting_prose": "Une serrure mécanique monopoint, pièce client compatible, même format et fixations, porte ouverte. Dépose, pose, réglage simple et essais ; cylindre du nouvel ensemble posé sans seconde main-d’œuvre. Sans adaptation, soudure, nouvelle réservation dans la porte, multipoints ni motorisation.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
-        "POL-SERRURERIE-AUTHORIZATION-V1",
-        "POL-PART-DISCLOSURE-V1"
+        "POL-SERRURERIE-AUTHORIZATION-V1"
       ],
       "safety_policy_refs": [
         "POL-SERRURERIE-AUTHORIZATION-V1"
       ],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+        "price_provenance": "FIXEO_OWNER_APPROVED_VAP_PILOT",
         "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
         "research_phase": "7B.S",
         "human_decision_phase": "7B",
         "source_registry_refs": [
-          "data/pricing/research/serrurerie/registry.v0.3.json"
+          "data/pricing/research/serrurerie/vap-proposal.v1.json"
         ],
         "transaction_backed": false,
-        "production_ready": false,
+        "production_ready": true,
         "batch_rule_experimental": null
       },
       "confidence": {
@@ -2901,9 +3236,9 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_labour_price_plus_part"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -9373,6 +9708,191 @@
         "copy_key_parts": null,
         "copy_key_escape": "copy.escape.hors_perimetre",
         "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
+      },
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
+    },
+    "serrurerie.diagnostic": {
+      "canonical_service_code": "serrurerie.diagnostic",
+      "legacy_codes": [],
+      "metier": "serrurerie",
+      "service_family": "DIAGNOSTIC",
+      "label_fr": "Diagnostic serrurerie — 30 minutes maximum",
+      "label_ar_darija": null,
+      "short_label_fr": "Diagnostic serrurerie — 30 minutes maximum",
+      "variant": null,
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "serrurerie-pilot-v1",
+      "effective_from": "2026-09-21",
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "DIAGNOSTIC",
+        "commercial_output_type": "FIXEO_DIAGNOSTIC",
+        "currency": "MAD",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 16000,
+        "materials_minor": 0
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": true,
+        "price_mad": 220,
+        "mode": "STANDALONE_OR_ABSORBED",
+        "same_visit_absorption": true,
+        "qualifying_service_codes": [
+          "serrurerie.porte_claquee_ouverture",
+          "serrurerie.porte_claquee_blindee.ouverture",
+          "serrurerie.cle_cassee_extraction",
+          "serrurerie.cylindre_remplacement.standard",
+          "serrurerie.serrure_remplacement.standard"
+        ],
+        "conditions": [
+          "Même visite, même artisan, accord client préalable ; un total et une commission de 60 DH."
+        ],
+        "policy_ref": "POL-DIAGNOSTIC-ABSORPTION-SERR-VAP-V1"
+      },
+      "materials": {
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
+        "major_parts": "NOT_APPLICABLE",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "parts_disclosure": null
+      },
+      "measurement": {
+        "basis": "NONE",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "locksmith_safety",
+            "field": "locksmith_safety",
+            "operator": "EQ",
+            "value": "NO_IMMEDIATE_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_access_right",
+            "field": "locksmith_access_right",
+            "operator": "EQ",
+            "value": "DECLARED_AUTHORIZED_NO_DISPUTE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_presence",
+            "field": "locksmith_presence",
+            "operator": "EQ",
+            "value": "AUTHORIZED_ADULT_PRESENT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_property",
+            "field": "locksmith_property",
+            "operator": "EQ",
+            "value": "RESIDENTIAL_PRIVATE_DOOR",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_count",
+            "field": "locksmith_count",
+            "operator": "EQ",
+            "value": "ONE_DOOR",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_slot",
+            "field": "locksmith_slot",
+            "operator": "EQ",
+            "value": "DAY_08_20",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "locksmith_work",
+            "field": "locksmith_work",
+            "operator": "EQ",
+            "value": "DIAGNOSTIC",
+            "effect": "ELIGIBLE"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "locksmith_safety",
+          "locksmith_access_right",
+          "locksmith_presence",
+          "locksmith_property",
+          "locksmith_count",
+          "locksmith_slot",
+          "locksmith_work"
+        ],
+        "supporting_prose": "Une porte de logement, examen non destructif et explication des constats, jusqu’à 30 minutes sur place. Sans ouverture, réparation, fourniture, ni garantie de résolution. Commande explicite avant déplacement.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1",
+        "POL-SERRURERIE-AUTHORIZATION-V1",
+        "POL-DIAGNOSTIC-ABSORPTION-SERR-VAP-V1"
+      ],
+      "safety_policy_refs": [
+        "POL-SERRURERIE-AUTHORIZATION-V1"
+      ],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_VAP_PILOT",
+        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+        "research_phase": "7B.E",
+        "human_decision_phase": "7B",
+        "source_registry_refs": [
+          "data/pricing/research/serrurerie/vap-proposal.v1.json"
+        ],
+        "transaction_backed": false,
+        "production_ready": true,
+        "batch_rule_experimental": null,
+        "approval_status": "OWNER_APPROVED"
+      },
+      "confidence": {
+        "price_confidence": "MEDIUM",
+        "scope_confidence": "MEDIUM",
+        "evidence_confidence": "MEDIUM",
+        "conversion_confidence": null,
+        "batch_confidence": null
+      },
+      "batch_policy": null,
+      "copy_keys": {
+        "copy_key_price": "copy.fixeo_diagnostic.price",
+        "copy_key_scope": "copy.electricite.diagnostic.scope",
+        "copy_key_materials": "copy.electricite.diagnostic.materials",
+        "copy_key_parts": null,
+        "copy_key_escape": "copy.escape.hors_perimetre",
+        "copy_key_disclaimer": "copy.disclaimer.fixeo_diagnostic"
       },
       "status_flags": {
         "production_ready": true,

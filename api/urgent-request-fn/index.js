@@ -276,7 +276,7 @@ if (typeof body === 'string') {
  * guest_lookup is an authenticated read using tracking_ref + guest_token
  * and is polled by the Flagship client.
  */
-if (body.action !== 'guest_lookup' && body.action !== 'plumbing_repair_read' && body.action !== 'electricity_repair_read' && body.action !== 'climatisation_repair_read') {
+if (body.action !== 'guest_lookup' && body.action !== 'plumbing_repair_read' && body.action !== 'electricity_repair_read' && body.action !== 'climatisation_repair_read' && body.action !== 'serrurerie_repair_read') {
   var ip = String(
     req.headers['x-forwarded-for'] ||
     req.socket.remoteAddress ||
@@ -293,6 +293,9 @@ if (body.action !== 'guest_lookup' && body.action !== 'plumbing_repair_read' && 
   }
 }
   
+  if (['serrurerie_repair_read','serrurerie_repair_accept','serrurerie_repair_decline'].includes(body.action)) {
+    return require('./serrurerie-repair')(body,res);
+  }
   if (['climatisation_repair_read','climatisation_repair_accept','climatisation_repair_decline'].includes(body.action)) {
     return require('./climatisation-repair')(body,res);
   }

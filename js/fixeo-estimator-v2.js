@@ -228,6 +228,12 @@
       secondary: null
     },
 
+    'serrurerie.diagnostic': {primary: "Diagnostic serrurerie — 30 minutes maximum", secondary: null},
+    'serrurerie.porte_claquee_ouverture': {primary: "Ouverture porte standard simplement claquée", secondary: null},
+    'serrurerie.porte_claquee_blindee.ouverture': {primary: "Ouverture porte blindée simplement claquée — modèle compatible", secondary: null},
+    'serrurerie.cle_cassee_extraction': {primary: "Extraction clé cassée — porte déjà ouverte", secondary: null},
+    'serrurerie.cylindre_remplacement.standard': {primary: "Remplacement cylindre standard — pièce client", secondary: null},
+    'serrurerie.serrure_remplacement.standard': {primary: "Remplacement serrure monopoint à l’identique — pièce client", secondary: null},
     'climatisation.diagnostic': {primary: "Diagnostic climatisation — 45 minutes maximum", secondary: null},
     'climatisation.entretien_annuel': {primary: "Entretien courant — un climatiseur", secondary: null},
     'climatisation.desinfection_profonde': {primary: "Nettoyage approfondi — un climatiseur", secondary: null},
@@ -249,20 +255,8 @@
       secondary: null
     },
 
-    'serrurerie.cylindre_remplacement.standard': {
-      primary: 'Remplacement de cylindre',
-      secondary: 'Standard'
-    },
 
-    'serrurerie.serrure_remplacement.standard': {
-      primary: 'Remplacement de serrure',
-      secondary: 'Standard'
-    },
 
-    'serrurerie.porte_claquee_ouverture': {
-      primary: 'Ouverture porte claquée',
-      secondary: null
-    },
 
     'nettoyage.grand_menage': {
       primary: 'Grand ménage',
@@ -453,6 +447,7 @@
 
 
   function optionLabel(opt) {
+    if(window.FixeoSerrureriePilot&&window.FixeoSerrureriePilot.labels[opt])return window.FixeoSerrureriePilot.labels[opt];
     if(window.FixeoClimatisationPilot&&window.FixeoClimatisationPilot.labels[opt])return window.FixeoClimatisationPilot.labels[opt];
     if(window.FixeoElectricityPilot&&window.FixeoElectricityPilot.labels[opt])return window.FixeoElectricityPilot.labels[opt];
     var labels = {
@@ -3329,7 +3324,7 @@
     );
 
 
-    if (['plomberie.diagnostic','electricite.diagnostic','climatisation.diagnostic'].includes(outcome.service_code)) {
+    if (['plomberie.diagnostic','electricite.diagnostic','climatisation.diagnostic','serrurerie.diagnostic'].includes(outcome.service_code)) {
       (outcome.scope_summary || []).forEach(function(text) { shell.appendChild(el('p', 'diagnostic-scope', text)); });
     }
 
@@ -3337,7 +3332,7 @@
       el(
         'div',
         'diagnostic-absorption',
-        outcome.service_code==='climatisation.diagnostic' ? 'Si un entretien courant ou approfondi est accepté sur le même appareil, par le même artisan et pendant cette visite, son total remplace le diagnostic. Les 260 MAD déjà versés sont déduits ; un seul frais FIXEO. Votre accord est recueilli avant les travaux. Toute réparation, pose ou dépose nécessite un devis distinct.' : ['plomberie.diagnostic','electricite.diagnostic'].includes(outcome.service_code) ? 'Pour une réparation standard acceptée pendant la même visite : un seul total et un seul frais FIXEO ; le diagnostic déjà payé est déduit. Votre accord est recueilli dans le suivi avant les travaux.' : 'Les conditions d’une éventuelle déduction sur réparation sont confirmées avant intervention.'
+        outcome.service_code==='serrurerie.diagnostic' ? 'Si une intervention qualifiée est acceptée sur la même porte, par le même artisan et pendant cette visite, son total remplace le diagnostic. Les 220 MAD déjà versés sont déduits ; un seul frais FIXEO. Votre accord est recueilli avant travaux. Pièce compatible à fournir pour les remplacements ; autres travaux et seconde visite sur devis.' : outcome.service_code==='climatisation.diagnostic' ? 'Si un entretien courant ou approfondi est accepté sur le même appareil, par le même artisan et pendant cette visite, son total remplace le diagnostic. Les 260 MAD déjà versés sont déduits ; un seul frais FIXEO. Votre accord est recueilli avant les travaux. Toute réparation, pose ou dépose nécessite un devis distinct.' : ['plomberie.diagnostic','electricite.diagnostic'].includes(outcome.service_code) ? 'Pour une réparation standard acceptée pendant la même visite : un seul total et un seul frais FIXEO ; le diagnostic déjà payé est déduit. Votre accord est recueilli dans le suivi avant les travaux.' : 'Les conditions d’une éventuelle déduction sur réparation sont confirmées avant intervention.'
       )
     );
 
