@@ -228,6 +228,12 @@
       secondary: null
     },
 
+    'climatisation.diagnostic': {primary: "Diagnostic climatisation — 45 minutes maximum", secondary: null},
+    'climatisation.entretien_annuel': {primary: "Entretien courant — un climatiseur", secondary: null},
+    'climatisation.desinfection_profonde': {primary: "Nettoyage approfondi — un climatiseur", secondary: null},
+    'climatisation.installation.standard': {primary: "Pose mono-split — liaison jusqu’à 3 m, fournitures incluses", secondary: null},
+    'climatisation.installation.mono_split_5m': {primary: "Pose mono-split — liaison de plus de 3 m jusqu’à 5 m, fournitures incluses", secondary: null},
+    'climatisation.desinstallation': {primary: "Dépose complète — un mono-split accessible", secondary: null},
     'electricite.diagnostic': {
       primary: 'Diagnostic électrique',
       secondary: null
@@ -447,6 +453,7 @@
 
 
   function optionLabel(opt) {
+    if(window.FixeoClimatisationPilot&&window.FixeoClimatisationPilot.labels[opt])return window.FixeoClimatisationPilot.labels[opt];
     if(window.FixeoElectricityPilot&&window.FixeoElectricityPilot.labels[opt])return window.FixeoElectricityPilot.labels[opt];
     var labels = {
       GARDEN_ACCESS_OK: "Oui, accès direct et travail depuis le sol",
@@ -3322,7 +3329,7 @@
     );
 
 
-    if (['plomberie.diagnostic','electricite.diagnostic'].includes(outcome.service_code)) {
+    if (['plomberie.diagnostic','electricite.diagnostic','climatisation.diagnostic'].includes(outcome.service_code)) {
       (outcome.scope_summary || []).forEach(function(text) { shell.appendChild(el('p', 'diagnostic-scope', text)); });
     }
 
@@ -3330,7 +3337,7 @@
       el(
         'div',
         'diagnostic-absorption',
-        ['plomberie.diagnostic','electricite.diagnostic'].includes(outcome.service_code) ? 'Pour une réparation standard acceptée pendant la même visite : un seul total et un seul frais FIXEO ; le diagnostic déjà payé est déduit. Votre accord est recueilli dans le suivi avant les travaux.' : 'Les conditions d’une éventuelle déduction sur réparation sont confirmées avant intervention.'
+        outcome.service_code==='climatisation.diagnostic' ? 'Si un entretien courant ou approfondi est accepté sur le même appareil, par le même artisan et pendant cette visite, son total remplace le diagnostic. Les 260 MAD déjà versés sont déduits ; un seul frais FIXEO. Votre accord est recueilli avant les travaux. Toute réparation, pose ou dépose nécessite un devis distinct.' : ['plomberie.diagnostic','electricite.diagnostic'].includes(outcome.service_code) ? 'Pour une réparation standard acceptée pendant la même visite : un seul total et un seul frais FIXEO ; le diagnostic déjà payé est déduit. Votre accord est recueilli dans le suivi avant les travaux.' : 'Les conditions d’une éventuelle déduction sur réparation sont confirmées avant intervention.'
       )
     );
 
@@ -6235,9 +6242,9 @@ var cityInput =
           };
 
 
-      } else if (ot==='ROUTE_REQUIRED' && outcome.route && outcome.route.target_service==='electricite.diagnostic') {
-        footerOpts.primaryLabel='Préparer le diagnostic électrique';
-        footerOpts.onPrimary=function(){self._entryContext.service_hint='electricite.diagnostic';self._entryContext.metier_hint='electricite';self._entryContext.situation_id=null;self._entryContext.known_inputs={};self._pricingContextToken=null;self._startSession();};
+      } else if (ot==='ROUTE_REQUIRED' && outcome.route && ['electricite.diagnostic','climatisation.diagnostic'].includes(outcome.route.target_service)) {
+        footerOpts.primaryLabel=outcome.route.target_service==='climatisation.diagnostic'?'Préparer le diagnostic climatisation':'Préparer le diagnostic électrique';
+        footerOpts.onPrimary=function(){self._entryContext.service_hint=outcome.route.target_service;self._entryContext.metier_hint=outcome.route.target_service.split('.')[0];self._entryContext.situation_id=null;self._entryContext.known_inputs={};self._pricingContextToken=null;self._startSession();};
       } else if (
         ot ===
         'QUOTE_REQUIRED'

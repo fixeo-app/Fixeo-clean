@@ -513,7 +513,7 @@ function startEstimator(entryContext) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function electricalBoundarySession(session, inputs, now) {
-  var boundary=require('../engine/electricity-pilot-v1').guard(session.service_code,inputs,true);
+  var boundary=require('../engine/climatisation-pilot-v1').guard(session.service_code,inputs,true)||require('../engine/electricity-pilot-v1').guard(session.service_code,inputs,true);
   if(!boundary)return null;
   var outcome=mapper.mapEngineResultToOutcome({ok:false,qualification:boundary,pricing:null},session.service_code,session);
   return {ok:true,session:sessionModule.cloneSession(session,{known_inputs:inputs,pending_questions:[],outcome:outcome,qualification_status:outcome.outcome_type,state:mapper.outcomeTypeToState(outcome.outcome_type)},now)};

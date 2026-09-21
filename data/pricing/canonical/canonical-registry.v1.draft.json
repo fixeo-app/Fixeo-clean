@@ -2917,30 +2917,27 @@
       ],
       "metier": "climatisation",
       "service_family": "DIAGNOSTIC",
-      "label_fr": "Diagnostic climatisation",
+      "label_fr": "Diagnostic climatisation — 45 minutes maximum",
       "label_ar_darija": "تشخيص المكيف",
-      "short_label_fr": "Diagnostic climatisation",
+      "short_label_fr": "Diagnostic climatisation — 45 minutes maximum",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
+      "service_version": "climatisation-pilot-v1",
+      "effective_from": "2026-09-21",
       "effective_to": null,
       "price_model": {
         "calculation_model": "DIAGNOSTIC",
         "commercial_output_type": "FIXEO_DIAGNOSTIC",
         "currency": "MAD",
-        "formula_id": "FORMULA-DIAGNOSTIC-V1",
-        "formula_params": {},
-        "diagnostic_price_mad": 250,
-        "fixed_amount_mad": null,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 20000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -2952,24 +2949,24 @@
       },
       "diagnostic": {
         "enabled": true,
-        "price_mad": 250,
+        "price_mad": 260,
         "mode": "STANDALONE_OR_ABSORBED",
         "same_visit_absorption": true,
         "qualifying_service_codes": [
           "climatisation.entretien_annuel",
-          "climatisation.desinfection_profonde",
-          "climatisation.reparation_fuite_recharge"
+          "climatisation.desinfection_profonde"
         ],
-        "conditions": [],
-        "policy_ref": "POL-DIAGNOSTIC-ABSORPTION-CLIM-V1"
+        "conditions": [
+          "Même visite, même artisan, accord client préalable ; un total et une commission de 60 DH."
+        ],
+        "policy_ref": "POL-DIAGNOSTIC-ABSORPTION-CLIM-VAP-V1"
       },
       "materials": {
-        "consumables": "NOT_APPLICABLE",
-        "consumables_cap_mad": null,
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
         "major_parts": "NOT_APPLICABLE",
         "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": null,
-        "refrigerant": "NOT_APPLICABLE"
+        "refrigerant": "NOT_APPLICABLE",
+        "parts_disclosure": null
       },
       "measurement": {
         "basis": "NONE",
@@ -2985,19 +2982,71 @@
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "clim_safety",
+            "field": "clim_safety",
+            "operator": "EQ",
+            "value": "CLIM_NO_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_system",
+            "field": "clim_system",
+            "operator": "EQ",
+            "value": "CLIM_WALL_MONOSPLIT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_count",
+            "field": "clim_count",
+            "operator": "EQ",
+            "value": "CLIM_ONE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_capacity",
+            "field": "clim_capacity",
+            "operator": "EQ",
+            "value": "CLIM_7000_24000",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_access",
+            "field": "clim_access",
+            "operator": "EQ",
+            "value": "CLIM_SAFE_ACCESS",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_work",
+            "field": "clim_work",
+            "operator": "EQ",
+            "value": "CLIM_DIAGNOSTIC",
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "clim_safety",
+          "clim_system",
+          "clim_count",
+          "clim_capacity",
+          "clim_access",
+          "clim_work"
+        ],
+        "supporting_prose": "Un problème sur un mono-split mural résidentiel : examen non destructif, contrôles professionnels compatibles avec le matériel et compte rendu oral, jusqu’à 45 minutes sur place. Sans réparation, recharge, ouverture du circuit frigorifique ni garantie de localisation de la panne.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
-        "POL-DIAGNOSTIC-ABSORPTION-CLIM-V1"
+        "POL-DIAGNOSTIC-ABSORPTION-CLIM-VAP-V1"
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+        "price_provenance": "FIXEO_OWNER_APPROVED_VAP_PILOT",
         "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
         "research_phase": "7B.C",
         "human_decision_phase": "7B",
@@ -3005,7 +3054,7 @@
           "data/pricing/research/climatisation/registry.v0.3.json"
         ],
         "transaction_backed": false,
-        "production_ready": false,
+        "production_ready": true,
         "batch_rule_experimental": null
       },
       "confidence": {
@@ -3025,9 +3074,9 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_diagnostic"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -3041,29 +3090,27 @@
       ],
       "metier": "climatisation",
       "service_family": "ENTRETIEN",
-      "label_fr": "Nettoyage annuel climatiseur",
+      "label_fr": "Entretien courant — un climatiseur",
       "label_ar_darija": "تنظيف سنوي للمكيف",
-      "short_label_fr": "Entretien annuel",
+      "short_label_fr": "Entretien courant — un climatiseur",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
+      "service_version": "climatisation-pilot-v1",
+      "effective_from": "2026-09-21",
       "effective_to": null,
       "price_model": {
-        "calculation_model": "UNIT_MULTIPLICATION",
-        "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-UNIT-V1",
-        "formula_params": {},
-        "unit_rate_mad": 300,
-        "fixed_amount_mad": null,
-        "unit": "PER_AC_UNIT"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 24000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -3084,38 +3131,97 @@
       },
       "materials": {
         "consumables": "ARTISAN_SUPPLIED_INCLUDED",
-        "consumables_cap_mad": null,
         "major_parts": "NOT_APPLICABLE",
         "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": null,
-        "refrigerant": "NOT_APPLICABLE"
+        "refrigerant": "NOT_APPLICABLE",
+        "parts_disclosure": null
       },
       "measurement": {
-        "basis": "ac_count",
-        "quantity_field": "ac_count",
-        "quantity_required": true,
-        "worker_count_required": false,
+        "basis": "NONE",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": null,
         "worker_count_default": null,
         "worker_count_semantics": null,
-        "hours_required": false,
+        "hours_required": null,
         "minimum_billing_hours": null,
         "derived": false,
         "conversion_model_id": null,
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "clim_safety",
+            "field": "clim_safety",
+            "operator": "EQ",
+            "value": "CLIM_NO_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_system",
+            "field": "clim_system",
+            "operator": "EQ",
+            "value": "CLIM_WALL_MONOSPLIT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_count",
+            "field": "clim_count",
+            "operator": "EQ",
+            "value": "CLIM_ONE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_capacity",
+            "field": "clim_capacity",
+            "operator": "EQ",
+            "value": "CLIM_7000_24000",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_access",
+            "field": "clim_access",
+            "operator": "EQ",
+            "value": "CLIM_SAFE_ACCESS",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_condition",
+            "field": "clim_condition",
+            "operator": "EQ",
+            "value": "CLIM_FUNCTIONING",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_work",
+            "field": "clim_work",
+            "operator": "EQ",
+            "value": "CLIM_ROUTINE",
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "clim_safety",
+          "clim_system",
+          "clim_count",
+          "clim_capacity",
+          "clim_access",
+          "clim_condition",
+          "clim_work"
+        ],
+        "supporting_prose": "Un appareil fonctionnel : filtres lavables, surfaces et échangeurs accessibles sans dépose lourde, contrôle de l’évacuation accessible et essai. Produits compatibles et protection de la zone inclus. Sans recharge, réparation, extraction de turbine ni désinfection garantie.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1"
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+        "price_provenance": "FIXEO_OWNER_APPROVED_VAP_PILOT",
         "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
         "research_phase": "7B.C",
         "human_decision_phase": "7B",
@@ -3123,7 +3229,7 @@
           "data/pricing/research/climatisation/registry.v0.3.json"
         ],
         "transaction_backed": false,
-        "production_ready": false,
+        "production_ready": true,
         "batch_rule_experimental": null
       },
       "confidence": {
@@ -3133,15 +3239,7 @@
         "conversion_confidence": null,
         "batch_confidence": null
       },
-      "batch_policy": {
-        "status": "APPROVED",
-        "type": "UNIT_MULTIPLICATION",
-        "base_amount_mad": null,
-        "increment_mad": null,
-        "increment_trigger": "ac_count",
-        "scope": "Per AC unit — linear",
-        "promotion_status": "APPROVED_SERVICE_SPECIFIC"
-      },
+      "batch_policy": null,
       "copy_keys": {
         "copy_key_price": "copy.fixeo_calculated_price.price",
         "copy_key_scope": "copy.climatisation.entretien.scope",
@@ -3151,9 +3249,9 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_calculated_price"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -3167,29 +3265,27 @@
       ],
       "metier": "climatisation",
       "service_family": "ENTRETIEN",
-      "label_fr": "Désinfection climatiseur profonde",
+      "label_fr": "Nettoyage approfondi — un climatiseur",
       "label_ar_darija": "تعقيم عميق للمكيف",
-      "short_label_fr": "Désinfection profonde",
+      "short_label_fr": "Nettoyage approfondi — un climatiseur",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
+      "service_version": "climatisation-pilot-v1",
+      "effective_from": "2026-09-21",
       "effective_to": null,
       "price_model": {
-        "calculation_model": "UNIT_MULTIPLICATION",
-        "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-UNIT-V1",
-        "formula_params": {},
-        "unit_rate_mad": 450,
-        "fixed_amount_mad": null,
-        "unit": "PER_AC_UNIT"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 39000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -3210,38 +3306,97 @@
       },
       "materials": {
         "consumables": "ARTISAN_SUPPLIED_INCLUDED",
-        "consumables_cap_mad": null,
         "major_parts": "NOT_APPLICABLE",
         "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": null,
-        "refrigerant": "NOT_APPLICABLE"
+        "refrigerant": "NOT_APPLICABLE",
+        "parts_disclosure": null
       },
       "measurement": {
-        "basis": "ac_count",
-        "quantity_field": "ac_count",
-        "quantity_required": true,
-        "worker_count_required": false,
+        "basis": "NONE",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": null,
         "worker_count_default": null,
         "worker_count_semantics": null,
-        "hours_required": false,
+        "hours_required": null,
         "minimum_billing_hours": null,
         "derived": false,
         "conversion_model_id": null,
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "clim_safety",
+            "field": "clim_safety",
+            "operator": "EQ",
+            "value": "CLIM_NO_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_system",
+            "field": "clim_system",
+            "operator": "EQ",
+            "value": "CLIM_WALL_MONOSPLIT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_count",
+            "field": "clim_count",
+            "operator": "EQ",
+            "value": "CLIM_ONE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_capacity",
+            "field": "clim_capacity",
+            "operator": "EQ",
+            "value": "CLIM_7000_24000",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_access",
+            "field": "clim_access",
+            "operator": "EQ",
+            "value": "CLIM_SAFE_ACCESS",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_condition",
+            "field": "clim_condition",
+            "operator": "EQ",
+            "value": "CLIM_FUNCTIONING",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_work",
+            "field": "clim_work",
+            "operator": "EQ",
+            "value": "CLIM_DEEP_CLEAN",
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "clim_safety",
+          "clim_system",
+          "clim_count",
+          "clim_capacity",
+          "clim_access",
+          "clim_condition",
+          "clim_work"
+        ],
+        "supporting_prose": "Entretien courant plus nettoyage humide approfondi de l’échangeur intérieur, turbine en place et bac accessible, avec protection de collecte et produit compatible. Sans séparation du circuit frigorifique, extraction de turbine, démontage lourd ni promesse sanitaire ou de désinfection certifiée.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1"
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+        "price_provenance": "FIXEO_OWNER_APPROVED_VAP_PILOT",
         "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
         "research_phase": "7B.C",
         "human_decision_phase": "7B",
@@ -3249,7 +3404,7 @@
           "data/pricing/research/climatisation/registry.v0.3.json"
         ],
         "transaction_backed": false,
-        "production_ready": false,
+        "production_ready": true,
         "batch_rule_experimental": null
       },
       "confidence": {
@@ -3259,15 +3414,7 @@
         "conversion_confidence": null,
         "batch_confidence": null
       },
-      "batch_policy": {
-        "status": "APPROVED",
-        "type": "UNIT_MULTIPLICATION",
-        "base_amount_mad": null,
-        "increment_mad": null,
-        "increment_trigger": "ac_count",
-        "scope": "Per AC unit — linear",
-        "promotion_status": "APPROVED_SERVICE_SPECIFIC"
-      },
+      "batch_policy": null,
       "copy_keys": {
         "copy_key_price": "copy.fixeo_calculated_price.price",
         "copy_key_scope": "copy.climatisation.entretien.scope",
@@ -3277,9 +3424,9 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_calculated_price"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -3298,7 +3445,7 @@
       "short_label_fr": "Recharge gaz R22",
       "variant": null,
       "human_decision": "APPROVED",
-      "availability_status": "STANDARDIZED",
+      "availability_status": "QUOTE_REQUIRED",
       "production_ready": false,
       "active_in_estimator": false,
       "active_in_reservation": false,
@@ -3419,7 +3566,7 @@
       "short_label_fr": "Réparation fuite réfrigérant",
       "variant": null,
       "human_decision": "APPROVED",
-      "availability_status": "STANDARDIZED",
+      "availability_status": "QUOTE_REQUIRED",
       "production_ready": false,
       "active_in_estimator": false,
       "active_in_reservation": false,
@@ -3587,29 +3734,27 @@
       ],
       "metier": "climatisation",
       "service_family": "INSTALLATION",
-      "label_fr": "Installation climatiseur standard",
+      "label_fr": "Pose mono-split — liaison jusqu’à 3 m, fournitures incluses",
       "label_ar_darija": "تركيب مكيف عادي",
-      "short_label_fr": "Installation standard",
+      "short_label_fr": "Pose mono-split — liaison jusqu’à 3 m, fournitures incluses",
       "variant": "standard",
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
+      "service_version": "climatisation-pilot-v1",
+      "effective_from": "2026-09-21",
       "effective_to": null,
       "price_model": {
         "calculation_model": "CONDITIONAL_FIXED",
         "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-CONDITIONAL-FIXED-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 1000,
-        "unit_rate_mad": null,
-        "unit": "PER_INSTALLATION"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 50000,
+        "materials_minor": 45000
       },
       "minimum_floor": {
         "enabled": false,
@@ -3629,19 +3774,11 @@
         "policy_ref": null
       },
       "materials": {
-        "consumables": "NOT_APPLICABLE",
-        "consumables_cap_mad": null,
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
         "major_parts": "CLIENT_SUPPLIED",
         "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": {
-          "policy": "CLIENT_SUPPLIED",
-          "client_may_supply": true,
-          "approval_required_before_installation": false,
-          "return_old_part": null,
-          "price_disclosure_required": false,
-          "policy_ref": "POL-PART-DISCLOSURE-V1"
-        },
-        "refrigerant": "NOT_APPLICABLE"
+        "refrigerant": "NOT_APPLICABLE",
+        "parts_disclosure": "Climatiseur neuf fourni par le client ; kit de pose inclus au montant affiché."
       },
       "measurement": {
         "basis": "NONE",
@@ -3658,64 +3795,77 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
+        "structured": true,
         "required_conditions": [
           {
-            "id": "E-CLIM-020-01",
-            "field": "ac_capacity_btu",
-            "operator": "GTE",
-            "value": 7000,
-            "effect": "ELIGIBLE",
-            "description": "Minimum 7000 BTU residential mono-split"
+            "id": "clim_safety",
+            "field": "clim_safety",
+            "operator": "EQ",
+            "value": "CLIM_NO_DANGER",
+            "effect": "ELIGIBLE"
           },
           {
-            "id": "E-CLIM-020-02",
-            "field": "ac_capacity_btu",
-            "operator": "LTE",
-            "value": 24000,
-            "effect": "ELIGIBLE",
-            "description": "Maximum 24000 BTU standard residential"
+            "id": "clim_system",
+            "field": "clim_system",
+            "operator": "EQ",
+            "value": "CLIM_WALL_MONOSPLIT",
+            "effect": "ELIGIBLE"
           },
           {
-            "id": "E-CLIM-020-03",
-            "field": "installation_height_m",
-            "operator": "LTE",
-            "value": 2.5,
-            "effect": "ELIGIBLE",
-            "description": "Indoor unit ≤2.5m height"
+            "id": "clim_count",
+            "field": "clim_count",
+            "operator": "EQ",
+            "value": "CLIM_ONE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_capacity",
+            "field": "clim_capacity",
+            "operator": "EQ",
+            "value": "CLIM_9000_12000",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_access",
+            "field": "clim_access",
+            "operator": "EQ",
+            "value": "CLIM_SAFE_ACCESS",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_unit_supply",
+            "field": "clim_unit_supply",
+            "operator": "EQ",
+            "value": "CLIM_CLIENT_NEW_UNIT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_route",
+            "field": "clim_route",
+            "operator": "EQ",
+            "value": "CLIM_ROUTE_UP_TO_3M",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_work",
+            "field": "clim_work",
+            "operator": "EQ",
+            "value": "CLIM_INSTALL_3M",
+            "effect": "ELIGIBLE"
           }
         ],
-        "hard_exclusions": [
-          {
-            "id": "X-CLIM-020-01",
-            "trigger": "multi_split = True",
-            "action": "QUOTE_REQUIRED",
-            "description": "Multi-split system → CLIM-024 or DEVIS"
-          },
-          {
-            "id": "X-CLIM-020-02",
-            "trigger": "cassette_or_ducted = True",
-            "action": "QUOTE_REQUIRED",
-            "description": "Cassette/ducted → DEVIS (different architecture)"
-          },
-          {
-            "id": "X-CLIM-020-03",
-            "trigger": "facade_inaccessible = True",
-            "action": "QUOTE_REQUIRED",
-            "description": "Inaccessible façade → DEVIS"
-          },
-          {
-            "id": "X-CLIM-020-04",
-            "trigger": "reinforced_concrete_gt_25cm = True",
-            "action": "QUOTE_REQUIRED",
-            "description": "Thick reinforced concrete → core drill needed → DEVIS"
-          }
-        ],
-        "prebooking_questions": [],
-        "supporting_prose": "1000 MAD: travel, labour, wall bracket, up to 3m copper + insulation, inter-unit cable, condensate drain, first wall penetration. AC unit ALWAYS client-supplied. Copper >3m → CLIM-021 (up to 5m) or CLIM-025 (beyond 5m, deferred) or DEVIS.",
-        "structured": true,
+        "hard_exclusions": [],
         "prebooking_question_refs": [
-          "Q-CLIM-INSTALL-COPPER-LENGTH"
+          "clim_safety",
+          "clim_system",
+          "clim_count",
+          "clim_capacity",
+          "clim_access",
+          "clim_unit_supply",
+          "clim_route",
+          "clim_work"
         ],
+        "supporting_prose": "Un mono-split mural neuf de 9 000 à 12 000 BTU fourni par le client, R32 ou R410A, avec unités et notice disponibles. Pose des deux unités, support adapté, deux tubes cuivre isolés suivant le même parcours, câble inter-unités et évacuation gravitaire inclus. Un perçage simple d’une paroi non structurelle de 25 cm maximum, point intérieur à 2,80 m maximum, accès extérieur depuis une surface stable protégée sans travail en façade. Alimentation électrique adaptée existante. Contrôles professionnels, épreuve d’étanchéité adaptée, tirage au vide selon le fabricant et mise en service inclus. Sans appoint de réfrigérant : charge d’usine suffisante à confirmer avant travaux. Sans dépose de l’ancien appareil, circuit électrique neuf, pompe de relevage, goulotte décorative ni carottage structurel. Liaison jusqu’à 3 m de parcours, sans doubler la mesure pour les deux tubes.",
         "human_review_required": false
       },
       "policy_refs": [
@@ -3723,7 +3873,7 @@
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+        "price_provenance": "FIXEO_OWNER_APPROVED_VAP_PILOT",
         "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
         "research_phase": "7B.C",
         "human_decision_phase": "7B",
@@ -3731,7 +3881,7 @@
           "data/pricing/research/climatisation/registry.v0.3.json"
         ],
         "transaction_backed": false,
-        "production_ready": false,
+        "production_ready": true,
         "batch_rule_experimental": null
       },
       "confidence": {
@@ -3751,9 +3901,9 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -3772,7 +3922,7 @@
       "short_label_fr": "Installation cassette",
       "variant": "cassette",
       "human_decision": "APPROVED",
-      "availability_status": "STANDARDIZED",
+      "availability_status": "QUOTE_REQUIRED",
       "production_ready": false,
       "active_in_estimator": false,
       "active_in_reservation": false,
@@ -3941,29 +4091,27 @@
       ],
       "metier": "climatisation",
       "service_family": "DEPOSE",
-      "label_fr": "Désinstallation / dépose climatiseur",
+      "label_fr": "Dépose complète — un mono-split accessible",
       "label_ar_darija": "فك المكيف",
-      "short_label_fr": "Dépose climatiseur",
+      "short_label_fr": "Dépose complète — un mono-split accessible",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
+      "service_version": "climatisation-pilot-v1",
+      "effective_from": "2026-09-21",
       "effective_to": null,
       "price_model": {
-        "calculation_model": "FIXED",
+        "calculation_model": "CONDITIONAL_FIXED",
         "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-FIXED-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 550,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 40000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -3983,12 +4131,11 @@
         "policy_ref": null
       },
       "materials": {
-        "consumables": "NOT_APPLICABLE",
-        "consumables_cap_mad": null,
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
         "major_parts": "NOT_APPLICABLE",
         "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": null,
-        "refrigerant": "NOT_APPLICABLE"
+        "refrigerant": "NOT_APPLICABLE",
+        "parts_disclosure": null
       },
       "measurement": {
         "basis": "NONE",
@@ -4004,18 +4151,86 @@
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "clim_safety",
+            "field": "clim_safety",
+            "operator": "EQ",
+            "value": "CLIM_NO_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_system",
+            "field": "clim_system",
+            "operator": "EQ",
+            "value": "CLIM_WALL_MONOSPLIT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_count",
+            "field": "clim_count",
+            "operator": "EQ",
+            "value": "CLIM_ONE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_capacity",
+            "field": "clim_capacity",
+            "operator": "EQ",
+            "value": "CLIM_7000_24000",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_access",
+            "field": "clim_access",
+            "operator": "EQ",
+            "value": "CLIM_SAFE_ACCESS",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_condition",
+            "field": "clim_condition",
+            "operator": "EQ",
+            "value": "CLIM_FUNCTIONING",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_refrigerant",
+            "field": "clim_refrigerant",
+            "operator": "EQ",
+            "value": "CLIM_R32_OR_R410A",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_work",
+            "field": "clim_work",
+            "operator": "EQ",
+            "value": "CLIM_REMOVE",
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "clim_safety",
+          "clim_system",
+          "clim_count",
+          "clim_capacity",
+          "clim_access",
+          "clim_condition",
+          "clim_refrigerant",
+          "clim_work"
+        ],
+        "supporting_prose": "Dépose des deux unités d’un mono-split mural fonctionnel R32 ou R410A, conservation ou récupération du fluide selon le matériel et la procédure professionnelle adaptée, déconnexion sécurisée, obturation des raccords et de la traversée simple, appareils laissés sur place. Sans rejet volontaire de fluide. Sans transport, évacuation, réinstallation, reprise de peinture, compresseur hors service ou récupération complexe.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1"
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+        "price_provenance": "FIXEO_OWNER_APPROVED_VAP_PILOT",
         "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
         "research_phase": "7B.C",
         "human_decision_phase": "7B",
@@ -4023,7 +4238,7 @@
           "data/pricing/research/climatisation/registry.v0.3.json"
         ],
         "transaction_backed": false,
-        "production_ready": false,
+        "production_ready": true,
         "batch_rule_experimental": null
       },
       "confidence": {
@@ -4043,9 +4258,9 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -8978,6 +9193,187 @@
       },
       "batch_policy": null,
       "copy_keys": {},
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
+    },
+    "climatisation.installation.mono_split_5m": {
+      "canonical_service_code": "climatisation.installation.mono_split_5m",
+      "legacy_codes": [],
+      "metier": "climatisation",
+      "service_family": "INSTALLATION",
+      "label_fr": "Pose mono-split — liaison de plus de 3 m jusqu’à 5 m, fournitures incluses",
+      "label_ar_darija": "تركيب مكيف عادي",
+      "short_label_fr": "Pose mono-split — liaison de plus de 3 m jusqu’à 5 m, fournitures incluses",
+      "variant": "standard",
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "climatisation-pilot-v1",
+      "effective_from": "2026-09-21",
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 60000,
+        "materials_minor": 60000
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": false,
+        "price_mad": null,
+        "mode": null,
+        "same_visit_absorption": null,
+        "qualifying_service_codes": [],
+        "conditions": [],
+        "policy_ref": null
+      },
+      "materials": {
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
+        "major_parts": "CLIENT_SUPPLIED",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "refrigerant": "NOT_APPLICABLE",
+        "parts_disclosure": "Climatiseur neuf fourni par le client ; kit de pose inclus au montant affiché."
+      },
+      "measurement": {
+        "basis": "NONE",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "clim_safety",
+            "field": "clim_safety",
+            "operator": "EQ",
+            "value": "CLIM_NO_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_system",
+            "field": "clim_system",
+            "operator": "EQ",
+            "value": "CLIM_WALL_MONOSPLIT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_count",
+            "field": "clim_count",
+            "operator": "EQ",
+            "value": "CLIM_ONE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_capacity",
+            "field": "clim_capacity",
+            "operator": "EQ",
+            "value": "CLIM_9000_12000",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_access",
+            "field": "clim_access",
+            "operator": "EQ",
+            "value": "CLIM_SAFE_ACCESS",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_unit_supply",
+            "field": "clim_unit_supply",
+            "operator": "EQ",
+            "value": "CLIM_CLIENT_NEW_UNIT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_route",
+            "field": "clim_route",
+            "operator": "EQ",
+            "value": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "clim_work",
+            "field": "clim_work",
+            "operator": "EQ",
+            "value": "CLIM_INSTALL_5M",
+            "effect": "ELIGIBLE"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "clim_safety",
+          "clim_system",
+          "clim_count",
+          "clim_capacity",
+          "clim_access",
+          "clim_unit_supply",
+          "clim_route",
+          "clim_work"
+        ],
+        "supporting_prose": "Un mono-split mural neuf de 9 000 à 12 000 BTU fourni par le client, R32 ou R410A, avec unités et notice disponibles. Pose des deux unités, support adapté, deux tubes cuivre isolés suivant le même parcours, câble inter-unités et évacuation gravitaire inclus. Un perçage simple d’une paroi non structurelle de 25 cm maximum, point intérieur à 2,80 m maximum, accès extérieur depuis une surface stable protégée sans travail en façade. Alimentation électrique adaptée existante. Contrôles professionnels, épreuve d’étanchéité adaptée, tirage au vide selon le fabricant et mise en service inclus. Sans appoint de réfrigérant : charge d’usine suffisante à confirmer avant travaux. Sans dépose de l’ancien appareil, circuit électrique neuf, pompe de relevage, goulotte décorative ni carottage structurel. Liaison de plus de 3 m jusqu’à 5 m de parcours. Au-delà de 5 m : devis complet préalable.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1"
+      ],
+      "safety_policy_refs": [],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_VAP_PILOT",
+        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+        "research_phase": "7B.C",
+        "human_decision_phase": "7B",
+        "source_registry_refs": [
+          "data/pricing/research/climatisation/registry.v0.3.json"
+        ],
+        "transaction_backed": false,
+        "production_ready": true,
+        "batch_rule_experimental": null
+      },
+      "confidence": {
+        "price_confidence": "MEDIUM",
+        "scope_confidence": "MEDIUM",
+        "evidence_confidence": "MEDIUM",
+        "conversion_confidence": null,
+        "batch_confidence": null
+      },
+      "batch_policy": null,
+      "copy_keys": {
+        "copy_key_price": "copy.fixeo_price.price",
+        "copy_key_scope": "copy.climatisation.installation.scope",
+        "copy_key_materials": "copy.climatisation.installation.materials",
+        "copy_key_parts": null,
+        "copy_key_escape": "copy.escape.hors_perimetre",
+        "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
+      },
       "status_flags": {
         "production_ready": true,
         "active_in_estimator": true,

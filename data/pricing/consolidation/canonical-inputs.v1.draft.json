@@ -1504,6 +1504,256 @@
       "input_id": "fixture_height_m",
       "data_type": "number",
       "privacy_classification": "NON_SENSITIVE"
+    },
+    "clim_safety": {
+      "input_id": "clim_safety",
+      "data_type": "string",
+      "allowed_values": [
+        "CLIM_NO_DANGER",
+        "CLIM_DANGER",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Sans toucher ni ouvrir l’appareil : voyez-vous fumée, étincelles, eau sur les parties électriques, un support instable, ou sentez-vous une odeur de brûlé / suspectez-vous une fuite de fluide dangereuse ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "clim_system": {
+      "input_id": "clim_system",
+      "data_type": "string",
+      "allowed_values": [
+        "CLIM_WALL_MONOSPLIT",
+        "CLIM_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "S’agit-il d’un climatiseur mural avec une unité intérieure et une unité extérieure dédiées, dans un logement ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "clim_count": {
+      "input_id": "clim_count",
+      "data_type": "string",
+      "allowed_values": [
+        "CLIM_ONE",
+        "CLIM_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Cette demande concerne-t-elle un seul climatiseur (une unité intérieure et son unité extérieure) ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "clim_capacity": {
+      "input_id": "clim_capacity",
+      "data_type": "string",
+      "allowed_values": [
+        "CLIM_7000_24000",
+        "CLIM_COMPLEX",
+        "UNKNOWN",
+        "CLIM_9000_12000"
+      ],
+      "client_question_fr": "Quelle plage de puissance correspond à votre appareil ? Répondez seulement si vous la connaissez, sans grimper ni ouvrir l’appareil.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "clim_access": {
+      "input_id": "clim_access",
+      "data_type": "string",
+      "allowed_values": [
+        "CLIM_SAFE_ACCESS",
+        "CLIM_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Les deux unités sont-elles accessibles depuis une surface stable et protégée, sans travail en façade, cordes, nacelle ni manutention spéciale ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "clim_work": {
+      "input_id": "clim_work",
+      "data_type": "string",
+      "allowed_values": [
+        "CLIM_DIAGNOSTIC",
+        "CLIM_COMPLEX",
+        "UNKNOWN",
+        "CLIM_ROUTINE",
+        "CLIM_DEEP_CLEAN",
+        "CLIM_INSTALL_3M",
+        "CLIM_INSTALL_5M",
+        "CLIM_REMOVE"
+      ],
+      "client_question_fr": "Dépose des deux unités d’un mono-split mural fonctionnel R32 ou R410A, conservation ou récupération du fluide selon le matériel et la procédure professionnelle adaptée, déconnexion sécurisée, obturation des raccords et de la traversée simple, appareils laissés sur place. Sans rejet volontaire de fluide. Sans transport, évacuation, réinstallation, reprise de peinture, compresseur hors service ou récupération complexe. Est-ce votre besoin ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "clim_condition": {
+      "input_id": "clim_condition",
+      "data_type": "string",
+      "allowed_values": [
+        "CLIM_FUNCTIONING",
+        "CLIM_PROBLEM",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "L’appareil fonctionne-t-il normalement, sans perte de froid, fuite, givre ou bruit anormal ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "clim_unit_supply": {
+      "input_id": "clim_unit_supply",
+      "data_type": "string",
+      "allowed_values": [
+        "CLIM_CLIENT_NEW_UNIT",
+        "CLIM_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Disposez-vous du climatiseur neuf complet avec ses deux unités et sa notice ? Le kit de pose sera fourni par l’artisan.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "clim_route": {
+      "input_id": "clim_route",
+      "data_type": "string",
+      "allowed_values": [
+        "CLIM_ROUTE_UP_TO_3M",
+        "CLIM_COMPLEX",
+        "UNKNOWN",
+        "CLIM_ROUTE_OVER_3_UP_TO_5M"
+      ],
+      "client_question_fr": "Quelle longueur de parcours entre les deux unités est prévue ? La mesure définitive et la faisabilité seront vérifiées par le professionnel.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "clim_refrigerant": {
+      "input_id": "clim_refrigerant",
+      "data_type": "string",
+      "allowed_values": [
+        "CLIM_R32_OR_R410A",
+        "CLIM_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Le fluide R32 ou R410A est-il déjà identifié sur la notice ou une photo disponible ? Ne grimpez pas pour lire une étiquette.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "water_on_electrics": {
+      "input_id": "water_on_electrics",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: water_on_electrics",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "unstable_support": {
+      "input_id": "unstable_support",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: unstable_support",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "dangerous_refrigerant_leak": {
+      "input_id": "dangerous_refrigerant_leak",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: dangerous_refrigerant_leak",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "requires_lifting_equipment": {
+      "input_id": "requires_lifting_equipment",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: requires_lifting_equipment",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "no_cooling": {
+      "input_id": "no_cooling",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: no_cooling",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "abnormal_noise": {
+      "input_id": "abnormal_noise",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: abnormal_noise",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "icing": {
+      "input_id": "icing",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: icing",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "leak_suspected": {
+      "input_id": "leak_suspected",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: leak_suspected",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "compressor_dead": {
+      "input_id": "compressor_dead",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: compressor_dead",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "additional_refrigerant_required": {
+      "input_id": "additional_refrigerant_required",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: additional_refrigerant_required",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "client_supplied_kit": {
+      "input_id": "client_supplied_kit",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: client_supplied_kit",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "used_unit": {
+      "input_id": "used_unit",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: used_unit",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "new_electric_circuit_required": {
+      "input_id": "new_electric_circuit_required",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: new_electric_circuit_required",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "lifting_pump_required": {
+      "input_id": "lifting_pump_required",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: lifting_pump_required",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "copper_run_gt_3m": {
+      "input_id": "copper_run_gt_3m",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: copper_run_gt_3m",
+      "unknown_allowed": true,
+      "data_type": "boolean"
+    },
+    "indoor_unit_count": {
+      "input_id": "indoor_unit_count",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: indoor_unit_count",
+      "unknown_allowed": true,
+      "data_type": "number"
+    },
+    "outdoor_unit_count": {
+      "input_id": "outdoor_unit_count",
+      "unit": null,
+      "semantic_definition": "Climatisation qualification boundary: outdoor_unit_count",
+      "unknown_allowed": true,
+      "data_type": "number"
+    },
+    "wall_thickness_cm": {
+      "input_id": "wall_thickness_cm",
+      "unit": "cm",
+      "semantic_definition": "Climatisation qualification boundary: wall_thickness_cm",
+      "unknown_allowed": true,
+      "data_type": "number"
+    },
+    "copper_length_m": {
+      "input_id": "copper_length_m",
+      "unit": "m",
+      "semantic_definition": "Climatisation qualification boundary: copper_length_m",
+      "unknown_allowed": true,
+      "data_type": "number"
     }
   }
 }

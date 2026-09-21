@@ -1,0 +1,438 @@
+{
+  "version": "climatisation-pilot-v1",
+  "created_at": "2026-09-21",
+  "base_commit": "ce17ca7386e5f36ad8cc39bf2a6edc201de95c9d",
+  "approval_status": "APPROVED",
+  "runtime_integrated": true,
+  "production_ready": false,
+  "pricing_version": "vap-bp33-v1",
+  "currency": "MAD",
+  "proposed_city_slugs": [
+    "agadir",
+    "beni-mellal",
+    "casablanca",
+    "el-jadida",
+    "fes",
+    "kenitra",
+    "khouribga",
+    "marrakech",
+    "meknes",
+    "mohammedia",
+    "nador",
+    "ouarzazate",
+    "oujda",
+    "rabat",
+    "safi",
+    "sale",
+    "tanger",
+    "taza",
+    "temara",
+    "tetouan"
+  ],
+  "proposed_catalogue_entry_count": 120,
+  "note_fr": "Grille et périmètre validés par le propriétaire pour les 20 villes. Intégration et migration préparées, non appliquées en production. Les montants de fournitures restent des forfaits commerciaux issus d’hypothèses internes, pas des devis fournisseurs vérifiés ; confirmation artisan avant acceptation obligatoire.",
+  "existing_missions_context": {
+    "owner_statement_date": "2026-09-21",
+    "owner_statement_fr": "Les missions existantes sont des missions de test.",
+    "transaction_backed_pricing_evidence": false,
+    "data_mutation_in_this_proposal": false
+  },
+  "common_scope": {
+    "units_per_booking": 1,
+    "travel_in_selected_city_included": true,
+    "city_multiplier": false,
+    "automatic_urgency_multiplier": false,
+    "equipment_and_routine_consumables_in_vap": true,
+    "multiple_units": "QUOTE_REQUIRED",
+    "unknown_capacity_or_access": "QUALIFY_BEFORE_OFFER",
+    "customer_technical_attestations_forbidden": true,
+    "capacity_limits_are_commercial_not_standards": true,
+    "client_questions_fr": [
+      "Type et nombre d’appareils, puissance si déjà connue ou photo prise sans grimper ni démontage.",
+      "Entretien sur appareil fonctionnel ou problème à diagnostiquer ?",
+      "Accès visible aux deux unités et signes apparents de danger, sans manipulation.",
+      "Pour une pose : appareil neuf disponible, emplacement et distance estimée ; validation technique par le professionnel."
+    ]
+  },
+  "services": [
+    {
+      "service_code": "climatisation.diagnostic",
+      "label_fr": "Diagnostic climatisation — 45 minutes maximum",
+      "approval_status": "APPROVED",
+      "vap_minor": 20000,
+      "commission_minor": 6000,
+      "materials_minor": 0,
+      "client_total_minor": 26000,
+      "artisan_retention_minor": 20000,
+      "previous_reference_client_total_mad": 250,
+      "scope_fr": "Un problème sur un mono-split mural résidentiel : examen non destructif, contrôles professionnels compatibles avec le matériel et compte rendu oral, jusqu’à 45 minutes sur place. Sans réparation, recharge, ouverture du circuit frigorifique ni garantie de localisation de la panne.",
+      "proposed_inputs": {
+        "ac_count": 1,
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "capacity_btu": [
+        7000,
+        24000
+      ],
+      "professional_checks": [
+        "scope_verified",
+        "safe_access_verified",
+        "safe_work_verified",
+        "equipment_identified"
+      ]
+    },
+    {
+      "service_code": "climatisation.entretien_annuel",
+      "label_fr": "Entretien courant — un climatiseur",
+      "approval_status": "APPROVED",
+      "vap_minor": 24000,
+      "commission_minor": 6000,
+      "materials_minor": 0,
+      "client_total_minor": 30000,
+      "artisan_retention_minor": 24000,
+      "previous_reference_client_total_mad": 300,
+      "scope_fr": "Un appareil fonctionnel : filtres lavables, surfaces et échangeurs accessibles sans dépose lourde, contrôle de l’évacuation accessible et essai. Produits compatibles et protection de la zone inclus. Sans recharge, réparation, extraction de turbine ni désinfection garantie.",
+      "proposed_inputs": {
+        "ac_count": 1,
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_work": "CLIM_ROUTINE",
+        "clim_condition": "CLIM_FUNCTIONING"
+      },
+      "capacity_btu": [
+        7000,
+        24000
+      ],
+      "professional_checks": [
+        "scope_verified",
+        "safe_access_verified",
+        "safe_work_verified",
+        "equipment_identified",
+        "cleaning_products_compatible",
+        "electrical_components_protected"
+      ]
+    },
+    {
+      "service_code": "climatisation.desinfection_profonde",
+      "label_fr": "Nettoyage approfondi — un climatiseur",
+      "approval_status": "APPROVED",
+      "vap_minor": 39000,
+      "commission_minor": 6000,
+      "materials_minor": 0,
+      "client_total_minor": 45000,
+      "artisan_retention_minor": 39000,
+      "previous_reference_client_total_mad": 450,
+      "scope_fr": "Entretien courant plus nettoyage humide approfondi de l’échangeur intérieur, turbine en place et bac accessible, avec protection de collecte et produit compatible. Sans séparation du circuit frigorifique, extraction de turbine, démontage lourd ni promesse sanitaire ou de désinfection certifiée.",
+      "proposed_inputs": {
+        "ac_count": 1,
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_work": "CLIM_DEEP_CLEAN",
+        "clim_condition": "CLIM_FUNCTIONING"
+      },
+      "capacity_btu": [
+        7000,
+        24000
+      ],
+      "professional_checks": [
+        "scope_verified",
+        "safe_access_verified",
+        "safe_work_verified",
+        "equipment_identified",
+        "deep_clean_access_verified",
+        "cleaning_products_compatible",
+        "electrical_components_protected"
+      ]
+    },
+    {
+      "service_code": "climatisation.installation.standard",
+      "label_fr": "Pose mono-split — liaison jusqu’à 3 m, fournitures incluses",
+      "approval_status": "APPROVED",
+      "vap_minor": 50000,
+      "commission_minor": 7500,
+      "materials_minor": 45000,
+      "client_total_minor": 102500,
+      "artisan_retention_minor": 95000,
+      "previous_reference_client_total_mad": 1000,
+      "scope_fr": "Un mono-split mural neuf de 9 000 à 12 000 BTU fourni par le client, R32 ou R410A, avec unités et notice disponibles. Pose des deux unités, support adapté, deux tubes cuivre isolés suivant le même parcours, câble inter-unités et évacuation gravitaire inclus. Un perçage simple d’une paroi non structurelle de 25 cm maximum, point intérieur à 2,80 m maximum, accès extérieur depuis une surface stable protégée sans travail en façade. Alimentation électrique adaptée existante. Contrôles professionnels, épreuve d’étanchéité adaptée, tirage au vide selon le fabricant et mise en service inclus. Sans appoint de réfrigérant : charge d’usine suffisante à confirmer avant travaux. Sans dépose de l’ancien appareil, circuit électrique neuf, pompe de relevage, goulotte décorative ni carottage structurel. Liaison jusqu’à 3 m de parcours, sans doubler la mesure pour les deux tubes.",
+      "proposed_inputs": {
+        "ac_count": 1,
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_work": "CLIM_INSTALL_3M",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M"
+      },
+      "capacity_btu": [
+        9000,
+        12000
+      ],
+      "professional_checks": [
+        "scope_verified",
+        "safe_access_verified",
+        "safe_work_verified",
+        "equipment_identified",
+        "client_equipment_new_and_complete",
+        "manufacturer_requirements_verified",
+        "power_and_mounting_verified",
+        "pipe_length_and_diameter_verified",
+        "factory_charge_sufficient",
+        "refrigerant_skills_and_tools_verified",
+        "supply_package_confirmed_at_fixed_price"
+      ]
+    },
+    {
+      "service_code": "climatisation.installation.mono_split_5m",
+      "label_fr": "Pose mono-split — liaison de plus de 3 m jusqu’à 5 m, fournitures incluses",
+      "approval_status": "APPROVED",
+      "vap_minor": 60000,
+      "commission_minor": 9000,
+      "materials_minor": 60000,
+      "client_total_minor": 129000,
+      "artisan_retention_minor": 120000,
+      "previous_reference_client_total_mad": 1200,
+      "scope_fr": "Un mono-split mural neuf de 9 000 à 12 000 BTU fourni par le client, R32 ou R410A, avec unités et notice disponibles. Pose des deux unités, support adapté, deux tubes cuivre isolés suivant le même parcours, câble inter-unités et évacuation gravitaire inclus. Un perçage simple d’une paroi non structurelle de 25 cm maximum, point intérieur à 2,80 m maximum, accès extérieur depuis une surface stable protégée sans travail en façade. Alimentation électrique adaptée existante. Contrôles professionnels, épreuve d’étanchéité adaptée, tirage au vide selon le fabricant et mise en service inclus. Sans appoint de réfrigérant : charge d’usine suffisante à confirmer avant travaux. Sans dépose de l’ancien appareil, circuit électrique neuf, pompe de relevage, goulotte décorative ni carottage structurel. Liaison de plus de 3 m jusqu’à 5 m de parcours. Au-delà de 5 m : devis complet préalable.",
+      "proposed_inputs": {
+        "ac_count": 1,
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_work": "CLIM_INSTALL_5M",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M"
+      },
+      "capacity_btu": [
+        9000,
+        12000
+      ],
+      "professional_checks": [
+        "scope_verified",
+        "safe_access_verified",
+        "safe_work_verified",
+        "equipment_identified",
+        "client_equipment_new_and_complete",
+        "manufacturer_requirements_verified",
+        "power_and_mounting_verified",
+        "pipe_length_and_diameter_verified",
+        "factory_charge_sufficient",
+        "refrigerant_skills_and_tools_verified",
+        "supply_package_confirmed_at_fixed_price"
+      ]
+    },
+    {
+      "service_code": "climatisation.desinstallation",
+      "label_fr": "Dépose complète — un mono-split accessible",
+      "approval_status": "APPROVED",
+      "vap_minor": 40000,
+      "commission_minor": 6000,
+      "materials_minor": 0,
+      "client_total_minor": 46000,
+      "artisan_retention_minor": 40000,
+      "previous_reference_client_total_mad": 550,
+      "scope_fr": "Dépose des deux unités d’un mono-split mural fonctionnel R32 ou R410A, conservation ou récupération du fluide selon le matériel et la procédure professionnelle adaptée, déconnexion sécurisée, obturation des raccords et de la traversée simple, appareils laissés sur place. Sans rejet volontaire de fluide. Sans transport, évacuation, réinstallation, reprise de peinture, compresseur hors service ou récupération complexe.",
+      "proposed_inputs": {
+        "ac_count": 1,
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_work": "CLIM_REMOVE",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A"
+      },
+      "capacity_btu": [
+        7000,
+        24000
+      ],
+      "professional_checks": [
+        "scope_verified",
+        "safe_access_verified",
+        "safe_work_verified",
+        "equipment_identified",
+        "refrigerant_skills_and_tools_verified",
+        "safe_refrigerant_handling_verified",
+        "removal_scope_verified"
+      ]
+    }
+  ],
+  "routing_changes": [
+    {
+      "code": "climatisation.installation.cassette",
+      "action": "QUOTE_REQUIRED",
+      "reason_fr": "Le code et le libellé actuels disent cassette, mais la règle est une pose murale 5 m. Aucun alias automatique vers le nouveau forfait 5 m : requalification obligatoire."
+    },
+    {
+      "code": "climatisation.recharge_gaz_r22",
+      "action": "DIAGNOSTIC_THEN_QUOTE",
+      "reason_fr": "Le type de fluide, la cause du manque et la quantité ne sont pas bornés ; aucun forfait aveugle à 250 MAD. Aucun remplacement de fluide automatique."
+    },
+    {
+      "code": "climatisation.reparation_fuite_recharge",
+      "action": "DIAGNOSTIC_THEN_QUOTE",
+      "reason_fr": "Libellé et champ réfrigérant inclus contredisent la note : ancien 600 MAD de main-d’œuvre seulement. Fournir un devis unique détaillant recherche/réparation, contrôle, vide et fluide nécessaire."
+    },
+    {
+      "symptoms": [
+        "ne refroidit plus",
+        "fuite",
+        "bruit inhabituel",
+        "givre",
+        "panne électrique"
+      ],
+      "action": "DIAGNOSTIC",
+      "reason_fr": "Ne pas transformer une panne en entretien ou en recharge garantie."
+    },
+    {
+      "flags": [
+        "fumée",
+        "odeur de brûlé",
+        "étincelles",
+        "eau sur parties électriques",
+        "support instable",
+        "fuite de fluide suspectée présentant un danger"
+      ],
+      "action": "SAFETY_STOP",
+      "reason_fr": "Aucune offre ordinaire ; prise en charge adaptée. Aucune manipulation technique demandée au client."
+    }
+  ],
+  "same_visit_diagnostic_policy": {
+    "status": "PROPOSED_NOT_IMPLEMENTED",
+    "diagnostic_service_code": "climatisation.diagnostic",
+    "diagnostic_client_total_minor": 26000,
+    "qualifying_service_codes": [
+      "climatisation.entretien_annuel",
+      "climatisation.desinfection_profonde"
+    ],
+    "same_artisan_required": true,
+    "same_visit_required": true,
+    "same_equipment_required": true,
+    "professional_confirmation_required": true,
+    "explicit_customer_consent_required": true,
+    "original_offer_immutable": true,
+    "single_mission": true,
+    "single_fee_minor": 6000,
+    "allowed_paid_credit_minor": [
+      0,
+      26000
+    ],
+    "credit_is_declared_cash_not_bank_verified": true,
+    "proposal_expiry_minutes": 45,
+    "remaining_if_diagnostic_paid_minor": {
+      "climatisation.entretien_annuel": 4000,
+      "climatisation.desinfection_profonde": 19000
+    },
+    "refusal_or_no_followup": "Keep ordered and performed diagnostic only; no automatic supplement.",
+    "installation_removal_leak_or_second_visit": "Explicit separate quote; any diagnostic credit must be written, never assumed."
+  },
+  "materials_policy": {
+    "fixed_package_not_actual_invoice_reimbursement": true,
+    "commission_on_materials": false,
+    "client_supplied_equipment_only": true,
+    "kit_supplied_by_client": "Separate quote; no double billing of the included kit.",
+    "package_overrun": "No automatic surcharge. Confirm supply feasibility before accepting the fixed package; otherwise quote before booking/work.",
+    "package_costs_verified_by_supplier": false,
+    "installation_activation_gate": "Qualified partner confirms compatible kit, model, access and ability to honour the fixed total before accepting installation; unavailable capability/supply routes to quote.",
+    "proposed_cost_hypotheses_mad": {
+      "3m": {
+        "copper_and_insulation": 250,
+        "support": 90,
+        "cable": 50,
+        "drain": 30,
+        "small_materials": 30
+      },
+      "5m": {
+        "copper_and_insulation": 370,
+        "support": 90,
+        "cable": 65,
+        "drain": 45,
+        "small_materials": 30
+      }
+    }
+  },
+  "economics_assumptions": {
+    "all_costs_unverified_internal_scenarios": true,
+    "travel_mad": 40,
+    "adverse_travel_mad": 60,
+    "consumables_mad": {
+      "diagnostic": 0,
+      "routine": 20,
+      "deep": 40,
+      "installation_equipment_allowance": 20,
+      "removal": 20
+    },
+    "installation_material_overrun_scenario_pct": 20,
+    "vap_is_not_profit": true,
+    "no_revenue_inference_from_test_missions": true
+  },
+  "market_evidence": [
+    {
+      "url": "https://afous.ma/prix/climatisation-chauffage",
+      "checked_at": "2026-09-21",
+      "status": "READ",
+      "observed_ranges_mad": {
+        "filter_cleaning_per_unit": [
+          200,
+          280
+        ],
+        "gas_refill_unspecified": [
+          330,
+          410
+        ]
+      },
+      "limitations_fr": "Indications de plateforme ; pas de décomposition du déplacement, du type/poids de fluide ou du kit. Nettoyage de filtres plus étroit que notre entretien. Aucun tarif ferme de partenaire ni preuve locale sur 20 villes."
+    },
+    {
+      "url": "https://mano.ma/climatisation-a-casablanca/",
+      "checked_at": "2026-09-21",
+      "status": "READ_NO_NUMERIC_COMPARABLE_TARIFF",
+      "limitations_fr": "Page de services et devis, aucune grille de prix chiffrée exploitable pour ces six forfaits."
+    },
+    {
+      "url": "https://mano.ma/prix-climatiseur-maroc/",
+      "checked_at": "2026-09-21",
+      "status": "HTTP_404",
+      "limitations_fr": "Ancienne référence du dossier : ne pas présenter ses anciennes fourchettes comme vérifiées aujourd’hui."
+    }
+  ],
+  "audit_findings": [
+    "Aucune entrée climatisation dans vap-approved-v1.json à la base auditée.",
+    "Le moteur direct accepte entretien_annuel avec ac_count=1 et smoke=true, au prix de 300 MAD : garde de sécurité commune nécessaire.",
+    "Diagnostic, entretien et dépose arrivent READY_FOR_ENGINE avec seulement ac_count=1 au démarrage ; périmètre insuffisant.",
+    "Le moteur direct accepte recharge_gaz_r22 sans aucun input et produit 250 MAD.",
+    "Le code installation.cassette accepte les conditions murales 12000 BTU / 2.5 m et produit 1200 MAD.",
+    "Le moteur produit 600 MAD pour reparation_fuite_recharge alors que les champs inclusions et la note se contredisent.",
+    "Le diagnostic sort sans absorption exploitable ; il faut une conversion climatisation consentie, distincte des RPC plomberie et électricité.",
+    "Pas de preuve commerciale issue des 23 missions existantes : le propriétaire précise qu’il s’agit de tests."
+  ],
+  "activation_gates": [
+    "Owner approval of all six prices, supplies, city scope and quote routes.",
+    "Strict shared guards for start, answer, engine and offer persistence; no legacy price fallback.",
+    "New 5m canonical code with explicit requalification; real cassette/multisplit/ducted always quote.",
+    "Professional pre-work checks and installation partner/supply capability gate; no client certification checkbox.",
+    "Consented same-visit diagnostic conversion, immutable offers, exact credit, expiry and one mission/fee.",
+    "Meaningful tests of price/scopes, frontend, API and local PostgreSQL full lifecycle including existing trade regression.",
+    "Prepared migration reviewed, then explicit production migration and deployment authorization."
+  ],
+  "documentation": "docs/calibration-climatisation-vap-v1.md",
+  "commit_message": "docs(climatisation): propose VAP tariffs and bounded service scopes",
+  "approved_at": "2026-09-21",
+  "approval_statement_fr": "Je valide cette grille et ce périmètre pour les 20 villes",
+  "deployment_status": "AWAITING_PRODUCTION_AUTHORIZATION",
+  "implementation": {
+    "module": "data/pricing/engine/climatisation-pilot-v1.js",
+    "migration": "supabase/migrations/20260921142222_climatisation_same_visit_service.sql",
+    "catalogue_entries": 120,
+    "pre_acceptance_installation_checks": true,
+    "professional_prework_checks": true,
+    "installation_completion_checks": true,
+    "same_visit_customer_consent": true,
+    "test_environment": "Isolated local PostgreSQL (PGlite); mocked API and browser DOM",
+    "automated_tests_passed": 122,
+    "production_mutated": false
+  }
+}

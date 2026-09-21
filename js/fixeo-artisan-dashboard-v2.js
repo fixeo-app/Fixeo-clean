@@ -655,6 +655,9 @@ var available =
   function _missionActions(mission, st) {
     var reqId = (mission._request && mission._request.id) || mission.request_id || '';
     var html  = '<div class="fxa-actions">';
+    if (mission.pricing_offer_id && String(mission._request && mission._request.service_category).toLowerCase() === 'climatisation') {
+      html += '<button class="fxa-btn fxa-btn-primary" data-action="climatisation-repair" data-mission-id="' + esc(mission.id) + '">Vérifications / entretien climatisation</button>';
+    }
     if (mission.pricing_offer_id && String(mission._request && mission._request.service_category).toLowerCase() === 'electricite') {
       html += '<button class="fxa-btn fxa-btn-primary" data-action="electricity-repair" data-mission-id="' + esc(mission.id) + '">Vérifications / réparation électrique</button>';
     }
@@ -1451,6 +1454,9 @@ var missionId = btn.dataset.missionId || '';
         || action === 'edit-profile' || action === 'logout';
       if (_actionInFlight && !navAction) return; /* drop duplicate tap */
       switch (action) {
+        case 'climatisation-repair':
+          FS.getClient().then(function(sb) { return window.FixeoClimatisationRepair.openArtisan(sb, missionId, _refresh); }).catch(function() { _toast('Suivi climatisation indisponible.', 'error'); });
+          break;
         case 'electricity-repair':
           FS.getClient().then(function(sb) { return window.FixeoElectricityRepair.openArtisan(sb, missionId, _refresh); }).catch(function() { _toast('Suivi électrique indisponible.', 'error'); });
           return;
@@ -1538,6 +1544,7 @@ async function _doAcceptDispatchOffer(requestId, btn) {
 
     var sb = await FS.getClient();
 
+    if (window.FixeoClimatisationRepair && !(await window.FixeoClimatisationRepair.checkOffer(sb,requestId))) { _btnReset(btn); return; }
     var res = await sb.rpc('accept_my_dispatch_offer_v1', {
       p_request_id: requestId
     });
@@ -1616,6 +1623,9 @@ async function _doClaimOfferedMission(missionId, btn) {
 
     var sb = await FS.getClient();
 
+    var offeredMission = _state.myMissions.find(function(m) { return m.id === missionId; });
+    if (!offeredMission || !offeredMission.request_id) throw new Error('Demande associée introuvable.');
+    if (window.FixeoClimatisationRepair && !(await window.FixeoClimatisationRepair.checkOffer(sb,offeredMission.request_id))) { _btnReset(btn); return; }
     var res = await sb.rpc('claim_mission', {
       p_mission_id: missionId
     });
@@ -1798,6 +1808,11 @@ async function _doClaimOfferedMission(missionId, btn) {
       var electrical=await sb.rpc('electricity_repair_artisan_v1',{p_mission_id:mission.id});
       if(electrical.error)throw new Error('Vérification électrique indisponible. Réessayez avant de terminer.');
       if(electrical.data&&electrical.data.direct_service_code&&!electrical.data.prework_confirmed)throw new Error('Enregistrez vos contrôles dans « Vérifications / réparation électrique » avant de terminer.');
+    }
+    if (mission.pricing_offer_id && String(mission._request && mission._request.service_category).toLowerCase()==='climatisation') {
+      var clim=await sb.rpc('climatisation_repair_artisan_v1',{p_mission_id:mission.id});
+      if(clim.error)throw new Error('Vérification climatisation indisponible. Réessayez avant de terminer.');
+      if(clim.data&&clim.data.direct_service_code&&(!clim.data.prework_confirmed||(clim.data.completion_required&&!clim.data.completion_confirmed)))throw new Error('Enregistrez les vérifications et, pour une pose, la mise en service dans le suivi climatisation avant de terminer.');
     }
     var res = await sb.rpc('complete_mission', {
       p_mission_id: mission.id

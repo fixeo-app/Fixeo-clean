@@ -341,5 +341,16 @@
       ],
       "description": "Une mission, même artisan et visite, périmètre contrôlé et proposition acceptée avant travaux. Total réparation remplace diagnostic ; crédit 0/240 DH confirmé par client. Une commission 60 DH. Hors forfait ou seconde visite : devis distinct préalable."
     }
+,
+    "POL-DIAGNOSTIC-ABSORPTION-CLIM-VAP-V1": {
+      "policy_id": "POL-DIAGNOSTIC-ABSORPTION-CLIM-VAP-V1",
+      "diagnostic_price_mad": 260,
+      "same_visit_absorption": true,
+      "qualifying_service_codes": [
+        "climatisation.entretien_annuel",
+        "climatisation.desinfection_profonde"
+      ],
+      "description": "Même appareil, artisan et visite ; accord client avant entretien. Le total entretien remplace le diagnostic ; crédit déclaré 0/260 MAD confirmé par client. Une mission et un frais de 60 MAD. Installation, dépose, fluide, réparation et seconde visite : devis distinct explicite."
+    }
   }
 }
