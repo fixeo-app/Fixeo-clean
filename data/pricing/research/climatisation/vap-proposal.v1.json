@@ -4,7 +4,7 @@
   "base_commit": "ce17ca7386e5f36ad8cc39bf2a6edc201de95c9d",
   "approval_status": "APPROVED",
   "runtime_integrated": true,
-  "production_ready": false,
+  "production_ready": true,
   "pricing_version": "vap-bp33-v1",
   "currency": "MAD",
   "proposed_city_slugs": [
@@ -30,7 +30,7 @@
     "tetouan"
   ],
   "proposed_catalogue_entry_count": 120,
-  "note_fr": "Grille et périmètre validés par le propriétaire pour les 20 villes. Intégration et migration préparées, non appliquées en production. Les montants de fournitures restent des forfaits commerciaux issus d’hypothèses internes, pas des devis fournisseurs vérifiés ; confirmation artisan avant acceptation obligatoire.",
+  "note_fr": "Grille et périmètre validés pour les 20 villes. Migration et déploiement autorisés et réalisés le 21 septembre 2026. Les forfaits de fournitures reposent sur des hypothèses internes ; confirmation artisan du kit compatible et du prix fixe obligatoire avant acceptation.",
   "existing_missions_context": {
     "owner_statement_date": "2026-09-21",
     "owner_statement_fr": "Les missions existantes sont des missions de test.",
@@ -422,7 +422,7 @@
   "commit_message": "docs(climatisation): propose VAP tariffs and bounded service scopes",
   "approved_at": "2026-09-21",
   "approval_statement_fr": "Je valide cette grille et ce périmètre pour les 20 villes",
-  "deployment_status": "AWAITING_PRODUCTION_AUTHORIZATION",
+  "deployment_status": "DEPLOYED",
   "implementation": {
     "module": "data/pricing/engine/climatisation-pilot-v1.js",
     "migration": "supabase/migrations/20260921142222_climatisation_same_visit_service.sql",
@@ -432,7 +432,12 @@
     "installation_completion_checks": true,
     "same_visit_customer_consent": true,
     "test_environment": "Isolated local PostgreSQL (PGlite); mocked API and browser DOM",
-    "automated_tests_passed": 122,
-    "production_mutated": false
-  }
+    "automated_tests_passed": 125,
+    "production_mutated": true,
+    "historical_financial_data_unchanged": true
+  },
+  "production_authorization_statement_fr": "j'autorise l'application de la migration en production et le deploiement sur Fixeo.ma",
+  "production_migration_version": "20260921144905",
+  "production_migration_sha256": "0f4dfb34bf87d68aea8bf81f80517a4f2db50e03b811fca147534d24fb4aea08",
+  "initial_deployment_commit": "210feaa97b7264860b8f0faf4cdf84fe1380b0f8"
 }
