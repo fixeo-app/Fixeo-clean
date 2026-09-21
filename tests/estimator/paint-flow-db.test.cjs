@@ -1,6 +1,12 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const {PGlite}=require('@electric-sql/pglite');
-test('Painting confirmation, dispatch and settlement retain area-based amounts',async()=>{
+const o=require('../../data/pricing/orchestrator/estimator-orchestrator-v1');
+const {attachOffer}=require('../../api/estimator-v1/fixeo-vap-offers-v1');
+const catalogue=require('../../data/pricing/canonical/vap-approved-v1.json');
+for(const [serviceCode,inputs,amount,fee] of [
+ ['peinture.mur_interieur.labour_only',{active_moisture:false,paint_support:'PAINT_READY',paint_access:'PAINT_ACCESS_READY',paint_supplies:'PAINT_CLIENT_SUPPLIED',paint_finish:'PAINT_TWO_COATS',painted_m2:20.25},698.63,91.13],
+ ['peinture.plafond.labour_only',{active_moisture:false,ceiling_support:'CEILING_READY',ceiling_access:'CEILING_ACCESS_READY',paint_supplies:'PAINT_CLIENT_SUPPLIED',ceiling_finish:'CEILING_TWO_COATS',ceiling_m2:50.03},2301.32,300.12]
+]) test(serviceCode+': estimation, confirmation, dispatch and settlement retain exact amounts',async()=>{
  const db=new PGlite();try{
  await db.exec(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;
  CREATE TABLE artisans(owner_user_id uuid,full_name text,name text,phone_public text,phone text,source text,claimed boolean,claim_status text,photo_url text,is_public boolean,id uuid PRIMARY KEY DEFAULT gen_random_uuid(),city text,service_category text,work_zone text,availability text,review_count integer,rating numeric,updated_at timestamptz);
@@ -18,8 +24,14 @@ test('Painting confirmation, dispatch and settlement retain area-based amounts',
  await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921100804_masonry_vap_confirmation.sql'),'utf8'));
  await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921103223_moving_vap_confirmation.sql'),'utf8'));
  await db.exec("INSERT INTO artisans(city,service_category,availability,review_count,rating,updated_at) VALUES ('Rabat','Carrelage','available',500,5,now()),('Rabat','Peinture','available',0,0,now());");
- const id=(await db.query(`INSERT INTO fixeo_pricing_offers_v1(offer_key,pricing_version,currency,service_code,catalogue_version,city,scope,vap_minor,materials_minor,commission_minor,client_total_minor,expires_at) VALUES(gen_random_uuid(),'vap-bp33-v1','MAD','peinture.mur_interieur.labour_only','test','rabat','{"context_id":"fxctx-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","session_id":"session","outcome_type":"PRICE_READY"}',60750,0,9113,69863,now()+interval '15 minutes') RETURNING id`)).rows[0].id;
- const args=['fxctx-'+'a'.repeat(32),'PRICE_READY','peinture.mur_interieur.labour_only','session','698.63','rabat','0612345678','Test only','FX-TEST','a'.repeat(64),id];
+ // Build the actual estimator offer using the owner-approved catalogue.
+ const session=o.evaluateEstimator(o.startEstimator({service_hint:serviceCode,city_slug:'rabat',known_inputs:inputs}).session).session;
+ assert.equal(session.outcome.price.amount_mad,amount);
+ const payload={service_code:serviceCode,city_slug:'rabat',session_id:session.session_id,context_id:'fxctx-'+'a'.repeat(32),outcome_type:'PRICE_READY',expires_at:Date.now()+60000};let row;
+ await attachOffer(session,payload,{entries:catalogue.entries,env:{SUPABASE_URL:'https://test.invalid',SUPABASE_SERVICE_ROLE_KEY:'test'},fetchImpl:async(_,opts)=>{row=JSON.parse(opts.body);return {ok:true};}});
+ assert.equal(row.client_total_minor,Math.round(amount*100));assert.equal(row.commission_minor,Math.round(fee*100));
+ const id=(await db.query(`INSERT INTO fixeo_pricing_offers_v1(id,offer_key,pricing_version,currency,service_code,catalogue_version,city,scope,vap_minor,materials_minor,commission_minor,client_total_minor,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id`,[row.id,row.offer_key,row.pricing_version,row.currency,row.service_code,row.catalogue_version,row.city,JSON.stringify(row.scope),row.vap_minor,row.materials_minor,row.commission_minor,row.client_total_minor,row.expires_at])).rows[0].id;
+ const args=[payload.context_id,'PRICE_READY',serviceCode,session.session_id,String(amount),'rabat','0612345678','Test only','FX-TEST','a'.repeat(64),id];
  const sql='SELECT confirm_estimator_request_vap_v1('+args.map((_,i)=>'$'+(i+1)).join(',')+') AS r';
  await db.exec('SET ROLE service_role');
  let result=(await db.query(sql,args)).rows[0].r;assert.equal(result.ok,true);const request=result.request_id;assert.equal(result.service_category,'peinture');
@@ -29,9 +41,9 @@ test('Painting confirmation, dispatch and settlement retain area-based amounts',
  const dispatched=(await db.query('SELECT dispatch_request_v1($1) AS r',[request])).rows[0].r;assert.equal(dispatched.ok,true);
  const mission=(await db.query('SELECT * FROM missions WHERE id=$1',[dispatched.mission_id])).rows[0];
  assert.equal((await db.query('SELECT service_category FROM artisans WHERE id=$1',[mission.artisan_profile_id])).rows[0].service_category,'Peinture');
- assert.equal(mission.agreed_price,'698.6300000000000000');assert.equal(Number(mission.commission_amount),91.13);
- await db.query('UPDATE missions SET final_price=698.63 WHERE id=$1',[mission.id]);
- await db.query('UPDATE missions SET final_price=698.63 WHERE id=$1',[mission.id]);
+ assert.equal(Number(mission.agreed_price),amount);assert.equal(Number(mission.commission_amount),fee);
+ await db.query('UPDATE missions SET final_price=$2 WHERE id=$1',[mission.id,amount]);
+ await db.query('UPDATE missions SET final_price=$2 WHERE id=$1',[mission.id,amount]);
  await assert.rejects(db.query('UPDATE missions SET final_price=400 WHERE id=$1',[mission.id]));
  await assert.rejects(db.query('UPDATE missions SET pricing_offer_id=NULL WHERE id=$1',[mission.id]));
  await assert.rejects(db.query('UPDATE service_requests SET pricing_offer_id=NULL WHERE id=$1',[request]));
@@ -39,7 +51,7 @@ test('Painting confirmation, dispatch and settlement retain area-based amounts',
  await assert.rejects(db.query(sql,args));
  await assert.rejects(db.query("INSERT INTO missions(request_id,status) VALUES($1,'pending')",[request]));
  await db.query("UPDATE missions SET status='validated' WHERE id=$1",[mission.id]);
- assert.equal(Number((await db.query('SELECT commission_amount FROM missions WHERE id=$1',[mission.id])).rows[0].commission_amount),91.13);
+ assert.equal(Number((await db.query('SELECT commission_amount FROM missions WHERE id=$1',[mission.id])).rows[0].commission_amount),fee);
  await db.exec('RESET ROLE');
  const legacyRequest=(await db.query("INSERT INTO service_requests(service_category,city,status,description) VALUES('maconnerie','Rabat','new','Legacy compatibility') RETURNING id")).rows[0].id;
  const legacyDispatch=(await db.query('SELECT dispatch_request_v1($1) AS r',[legacyRequest])).rows[0].r;assert.equal(legacyDispatch.ok,true);
