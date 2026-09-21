@@ -1,5 +1,7 @@
 # Nouveaux métiers : dossier de calibration et contrôle production
 
+Mise à jour du 21 septembre 2026 : le business plan 3.3 a été retrouvé. Sa convention VAP et son barème progressif remplacent le modèle de calcul exploratoire ci-dessous. Voir `docs/audits/vap-bp33-reconciliation-2026-09-21.md` pour la règle exacte, les écarts du code et six hypothèses chiffrées non activées. La rémunération FIXEO est désormais documentée ; les coûts réels par prestation restent à mesurer.
+
 Date : 20 septembre 2026. Version production contrôlée : `b06faef066aa8857dbf6237cac2e9bab83422617` (PR #27).
 
 ## Statut
@@ -38,7 +40,7 @@ Toutes restent `DRAFT_NOT_PRICED`. Le périmètre définit un candidat au forfai
 
 Un champ inconnu qui modifie le coût doit provoquer une précision ou un devis, jamais la sélection silencieuse du cas le moins cher. Les seuils seront ajustés après les mesures terrain. Le cas « autre » n'obtient pas de forfait générique.
 
-## Modèle de calcul proposé
+## Modèle de calcul exploratoire initial — remplacé par la convention VAP
 
 1. Fixer une même ville/zone et un même périmètre pour comparer les relevés.
 2. Documenter pour chaque offre le montant net demandé par l'artisan, le temps d'équipe, les consommables, les matériaux, le déplacement, l'évacuation, le nombre de visites et les exclusions.
