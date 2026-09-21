@@ -17,7 +17,7 @@ test('all 62 displayed situations have stable server routes and only relevant se
   for(const c of step.candidate_services){const selected=o.selectService(start.session,c.service_code);assert.equal(selected.ok,true,c.service_code);if(c.service_code.startsWith('devis.')){assert.equal(selected.session.state,'QUOTE_REQUIRED');assert.equal(runtime.shouldIssuePricingContextToken(selected.session),false);assert.equal(selected.session.outcome.price,undefined);}}
  }
 });
-test('new métiers offer a quote route and never a fabricated tariff',()=>{for(const metier of ['jardinage','demenagement','carrelage','maconnerie']){assert.ok(resolver.VALID_METIERS.includes(metier));const s=o.startEstimator({metier_hint:metier}).session;const choices=o.getNextEstimatorStep(s).step.candidate_services;assert.equal(choices.length,1);assert.match(choices[0].service_code,/^devis\./);assert.equal(o.selectService(s,choices[0].service_code).session.state,'QUOTE_REQUIRED');}});
+test('new métiers offer a quote route and never a fabricated tariff',()=>{for(const metier of ['demenagement','carrelage','maconnerie']){assert.ok(resolver.VALID_METIERS.includes(metier));const s=o.startEstimator({metier_hint:metier}).session;const choices=o.getNextEstimatorStep(s).step.candidate_services;assert.equal(choices.length,1);assert.match(choices[0].service_code,/^devis\./);assert.equal(o.selectService(s,choices[0].service_code).session.state,'QUOTE_REQUIRED');}});
 test('unknown situation and non-candidate service cannot bypass server qualification',()=>{
  assert.equal(o.startEstimator({situation_id:'invented'}).ok,false);
  const id=Object.keys(routes).find(k=>routes[k].label==='Monter un meuble');const s=o.startEstimator({situation_id:id,service_hint:'plomberie.fuite_simple'}).session;
@@ -56,7 +56,7 @@ test('encrypted API roundtrip retains situation and exposes quote outcome withou
  try{
   const id=Object.keys(routes).find(k=>routes[k].label==='Entretien de jardin');
   const start=await api({action:'start',entry_context:{situation_id:id,description:'Mon jardin',city:'rabat'}});assert.equal(start.status,200,JSON.stringify(start));
-  const next=await api({action:'select_service',session_token:start.body.session.session_token,service_code:start.body.next_step.candidate_services[0].service_code});
+  const next=await api({action:'select_service',session_token:start.body.session.session_token,service_code:start.body.next_step.candidate_services.find(s=>s.service_code.startsWith("devis.")).service_code});
   assert.equal(next.status,200);assert.equal(next.body.session.outcome.service_label,'Entretien de jardin');assert.equal(next.body.session.outcome.outcome_type,'QUOTE_REQUIRED');assert.equal(next.body.pricing_context_token,undefined);
  }finally{if(old===undefined)delete process.env.FIXEO_ESTIMATOR_SECRET;else process.env.FIXEO_ESTIMATOR_SECRET=old;}
 });

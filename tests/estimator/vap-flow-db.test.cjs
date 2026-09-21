@@ -11,9 +11,9 @@ test('VAP confirmation → mission → settlement retains centimes, identity and
  INSERT INTO missions(request_id,agreed_price) VALUES('legacy',300);
  GRANT USAGE ON SCHEMA public TO anon,authenticated,service_role;
  GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role,authenticated;`);
- for(const file of ['20260921005143_vap_bp33_offers_foundation.sql','20260921012731_vap_booking_settlement_binding.sql']) await db.exec('BEGIN;'+fs.readFileSync(path.join(__dirname,'../../supabase/migrations',file),'utf8')+'COMMIT;');
- const id=(await db.query(`INSERT INTO fixeo_pricing_offers_v1(offer_key,pricing_version,currency,service_code,catalogue_version,city,scope,vap_minor,materials_minor,commission_minor,client_total_minor,expires_at) VALUES(gen_random_uuid(),'vap-bp33-v1','MAD','plomberie.test','test','rabat','{"context_id":"fxctx-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","session_id":"session","outcome_type":"PRICE_READY"}',30001,0,6000,36001,now()+interval '15 minutes') RETURNING id`)).rows[0].id;
- const args=['fxctx-'+'a'.repeat(32),'PRICE_READY','plomberie.test','session','360.01','rabat','0612345678','Test only','FX-TEST','a'.repeat(64),id];
+ for(const file of ['20260921005143_vap_bp33_offers_foundation.sql','20260921012731_vap_booking_settlement_binding.sql','20260921090058_garden_vap_confirmation.sql']) await db.exec('BEGIN;'+fs.readFileSync(path.join(__dirname,'../../supabase/migrations',file),'utf8')+'COMMIT;');
+ const id=(await db.query(`INSERT INTO fixeo_pricing_offers_v1(offer_key,pricing_version,currency,service_code,catalogue_version,city,scope,vap_minor,materials_minor,commission_minor,client_total_minor,expires_at) VALUES(gen_random_uuid(),'vap-bp33-v1','MAD','jardinage.entretien_courant','test','rabat','{"context_id":"fxctx-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","session_id":"session","outcome_type":"PRICE_READY"}',30001,0,6000,36001,now()+interval '15 minutes') RETURNING id`)).rows[0].id;
+ const args=['fxctx-'+'a'.repeat(32),'PRICE_READY','jardinage.entretien_courant','session','360.01','rabat','0612345678','Test only','FX-TEST','a'.repeat(64),id];
  const sql='SELECT confirm_estimator_request_vap_v1('+args.map((_,i)=>'$'+(i+1)).join(',')+') AS r';
  await db.exec('SET ROLE service_role');
  let result=(await db.query(sql,args)).rows[0].r;assert.equal(result.ok,true);const request=result.request_id;

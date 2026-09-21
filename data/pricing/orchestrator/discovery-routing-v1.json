@@ -391,13 +391,17 @@
       "label": "Entretien de jardin",
       "universe": "entretien",
       "metier": "jardinage",
-      "candidate_services": []
+      "candidate_services": [
+        "jardinage.entretien_courant"
+      ]
     },
     "entretien.taille-de-haie": {
       "label": "Taille de haie",
       "universe": "entretien",
       "metier": "jardinage",
-      "candidate_services": []
+      "candidate_services": [
+        "jardinage.taille_haie_basse"
+      ]
     },
     "entretien.probleme-darrosage": {
       "label": "Problème d’arrosage",
