@@ -47,42 +47,13 @@ var SERVICE_QUESTION_PLANS = {
   'plomberie.robinet_remplacement': {questions: require('../engine/plumbing-pilot-v1').questions('plomberie.robinet_remplacement')},
   'plomberie.chasse_eau': {questions: require('../engine/plumbing-pilot-v1').questions('plomberie.chasse_eau')},
 
-  // ── ELECTRICITE ────────────────────────────────────────────────────────────
-  'electricite.diagnostic': {
-    questions: [
-      { input_id: 'burning_smell', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'electricite.safety.burning_smell' },
-      { input_id: 'scorch_marks', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'electricite.safety.scorch_marks' },
-    ]
-  },
-  'electricite.prise_remplacement': {
-    questions: [
-      { input_id: 'burning_smell', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'electricite.safety.burning_smell' },
-    ]
-  },
-  'electricite.interrupteur_remplacement.simple': {
-    questions: [
-      { input_id: 'burning_smell', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'electricite.safety.burning_smell' },
-    ]
-  },
-  'electricite.interrupteur_remplacement.va_et_vient': {
-    questions: [
-      { input_id: 'burning_smell', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'electricite.safety.burning_smell' },
-    ]
-  },
-  'electricite.luminaire_installation': {
-    questions: [
-      { input_id: 'burning_smell', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'electricite.safety.burning_smell' },
-      { input_id: 'ddr_rcd_involved', priority: 'ROUTING_BOUNDARY', answer_type: 'boolean', prompt_key: 'electricite.routing.ddr_rcd' },
-    ]
-  },
-  'electricite.disjoncteur_remplacement': {
-    questions: [
-      { input_id: 'burning_smell', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'electricite.safety.burning_smell' },
-      { input_id: 'scorch_marks', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'electricite.safety.scorch_marks' },
-      { input_id: 'distributor_equipment_involved', priority: 'ROUTING_BOUNDARY', answer_type: 'boolean', prompt_key: 'electricite.routing.distributor' },
-      { input_id: 'mcb_defect_confirmed', priority: 'ELIGIBILITY', answer_type: 'enum', options: ['physically_broken', 'trips_repeatedly', 'not_confirmed'], prompt_key: 'electricite.eligibility.mcb_defect' },
-    ]
-  },
+  // Owner-approved electricity: customer scope, separate from professional pre-work checks.
+  'electricite.diagnostic': {questions: require('../engine/electricity-pilot-v1').questions('electricite.diagnostic')},
+  'electricite.prise_remplacement': {questions: require('../engine/electricity-pilot-v1').questions('electricite.prise_remplacement')},
+  'electricite.interrupteur_remplacement.simple': {questions: require('../engine/electricity-pilot-v1').questions('electricite.interrupteur_remplacement.simple')},
+  'electricite.interrupteur_remplacement.va_et_vient': {questions: require('../engine/electricity-pilot-v1').questions('electricite.interrupteur_remplacement.va_et_vient')},
+  'electricite.luminaire_installation': {questions: require('../engine/electricity-pilot-v1').questions('electricite.luminaire_installation')},
+  'electricite.disjoncteur_remplacement': {questions: require('../engine/electricity-pilot-v1').questions('electricite.disjoncteur_remplacement')},
 
   // ── SERRURERIE ─────────────────────────────────────────────────────────────
   'serrurerie.porte_claquee_ouverture': {

@@ -1368,6 +1368,142 @@
       ],
       "client_question_fr": "Disposez-vous déjà de la pièce neuve compatible (robinet ou mécanisme), sans achat ni adaptation à prévoir ?",
       "privacy_classification": "NON_SENSITIVE"
+    },
+    "electricity_safety": {
+      "input_id": "electricity_safety",
+      "data_type": "string",
+      "allowed_values": [
+        "ELEC_NO_DANGER",
+        "ELEC_DANGER",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Sans toucher ni ouvrir l’installation : voyez-vous de la fumée, des étincelles, des traces de chauffe, un fil dénudé accessible ou de l’eau près d’un équipement électrique, ou sentez-vous une odeur de brûlé ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "electricity_operator": {
+      "input_id": "electricity_operator",
+      "data_type": "string",
+      "allowed_values": [
+        "ELEC_PRIVATE",
+        "ELEC_DISTRIBUTOR",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Le besoin concerne-t-il l’installation privée du logement, hors compteur et équipement scellé du distributeur ? Ne démontez rien pour répondre.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "electricity_access": {
+      "input_id": "electricity_access",
+      "data_type": "string",
+      "allowed_values": [
+        "ELEC_ACCESS_READY",
+        "COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "S’agit-il d’un logement, avec zone intérieure accessible, sèche et dégagée, sans accès spécial ni travaux sur un réseau collectif ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "electricity_work": {
+      "input_id": "electricity_work",
+      "data_type": "string",
+      "allowed_values": [
+        "ELEC_DIAGNOSTIC",
+        "COMPLEX",
+        "UNKNOWN",
+        "ELEC_OUTLET",
+        "ELEC_SWITCH",
+        "ELEC_TWO_WAY",
+        "ELEC_LIGHT",
+        "ELEC_MCB"
+      ],
+      "client_question_fr": "Un problème électrique local dans un logement : recherche non invasive jusqu’à 45 minutes sur place, mesures appropriées et explication. Résultat non garanti. Sans réparation, pièce, audit complet, certification, rapport réglementaire, recherche destructive ni seconde visite. Est-ce votre besoin ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "electricity_parts": {
+      "input_id": "electricity_parts",
+      "data_type": "string",
+      "allowed_values": [
+        "ELEC_PART_AVAILABLE",
+        "COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "La pièce neuve est-elle déjà disponible chez vous, sans achat à prévoir ? Sa compatibilité sera vérifiée par l’artisan ; n’ouvrez rien pour la contrôler.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "electricity_light_limits": {
+      "input_id": "electricity_light_limits",
+      "data_type": "string",
+      "allowed_values": [
+        "ELEC_LIGHT_LIMITS",
+        "COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Le luminaire pèse-t-il au plus 3 kg et son point de pose est-il à 2,80 m maximum, sur fixation existante, sans escalier ? Répondez sans monter ni démonter.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "electricity_fault": {
+      "input_id": "electricity_fault",
+      "data_type": "string",
+      "allowed_values": [
+        "ELEC_BROKEN_DEVICE",
+        "ELEC_TRIPS_OR_UNKNOWN",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Sans ouvrir le tableau : le disjoncteur est-il manifestement cassé, ou saute-t-il de façon répétée / pour une raison inconnue ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "smoke": {
+      "input_id": "smoke",
+      "data_type": "boolean",
+      "safety_critical": true,
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "sparks": {
+      "input_id": "sparks",
+      "data_type": "boolean",
+      "safety_critical": true,
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "exposed_live_wires": {
+      "input_id": "exposed_live_wires",
+      "data_type": "boolean",
+      "safety_critical": true,
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "water_near_electricity": {
+      "input_id": "water_near_electricity",
+      "data_type": "boolean",
+      "safety_critical": true,
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "outlet_count": {
+      "input_id": "outlet_count",
+      "data_type": "number",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "fixture_count": {
+      "input_id": "fixture_count",
+      "data_type": "number",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "mcb_count": {
+      "input_id": "mcb_count",
+      "data_type": "number",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "switch_count": {
+      "input_id": "switch_count",
+      "data_type": "number",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "fixture_weight_kg": {
+      "input_id": "fixture_weight_kg",
+      "data_type": "number",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "fixture_height_m": {
+      "input_id": "fixture_height_m",
+      "data_type": "number",
+      "privacy_classification": "NON_SENSITIVE"
     }
   }
 }

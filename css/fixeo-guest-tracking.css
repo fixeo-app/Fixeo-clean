@@ -58,7 +58,7 @@ body {
     border-radius: 16px;
   }
 }
-.fx-plumbing-repair { margin-top: 20px; padding-top: 16px; border-top: 1px solid #cbd5e1; }
-.fx-plumbing-repair button { display: block; width: 100%; min-height: 44px; margin: 10px 0; padding: 10px 14px; border: 1px solid #0f766e; border-radius: 8px; color: #fff; background: #0f766e; cursor: pointer; }
-.fx-plumbing-repair button:disabled { opacity: .45; cursor: not-allowed; }
-.fx-plumbing-repair label { line-height: 1.6; }
+:is(.fx-plumbing-repair, .fx-electricity-repair) { margin-top: 20px; padding-top: 16px; border-top: 1px solid #cbd5e1; }
+:is(.fx-plumbing-repair, .fx-electricity-repair) button { display: block; width: 100%; min-height: 44px; margin: 10px 0; padding: 10px 14px; border: 1px solid #0f766e; border-radius: 8px; color: #fff; background: #0f766e; cursor: pointer; }
+:is(.fx-plumbing-repair, .fx-electricity-repair) button:disabled { opacity: .45; cursor: not-allowed; }
+:is(.fx-plumbing-repair, .fx-electricity-repair) label { line-height: 1.6; }

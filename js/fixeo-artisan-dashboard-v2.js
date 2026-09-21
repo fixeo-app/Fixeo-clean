@@ -655,6 +655,9 @@ var available =
   function _missionActions(mission, st) {
     var reqId = (mission._request && mission._request.id) || mission.request_id || '';
     var html  = '<div class="fxa-actions">';
+    if (mission.pricing_offer_id && String(mission._request && mission._request.service_category).toLowerCase() === 'electricite') {
+      html += '<button class="fxa-btn fxa-btn-primary" data-action="electricity-repair" data-mission-id="' + esc(mission.id) + '">Vérifications / réparation électrique</button>';
+    }
     if (mission.pricing_offer_id && String(mission._request && mission._request.service_category).toLowerCase() === 'plomberie') {
       html += '<button class="fxa-btn fxa-btn-primary" data-action="plumbing-repair" data-mission-id="' + esc(mission.id) + '">Diagnostic / réparation</button>';
     }
@@ -1448,6 +1451,9 @@ var missionId = btn.dataset.missionId || '';
         || action === 'edit-profile' || action === 'logout';
       if (_actionInFlight && !navAction) return; /* drop duplicate tap */
       switch (action) {
+        case 'electricity-repair':
+          FS.getClient().then(function(sb) { return window.FixeoElectricityRepair.openArtisan(sb, missionId, _refresh); }).catch(function() { _toast('Suivi électrique indisponible.', 'error'); });
+          return;
         case 'plumbing-repair':
           FS.getClient().then(function(sb) { return window.FixeoPlumbingRepair.openArtisan(sb, missionId, _refresh); }).catch(function() { _toast('Suivi de réparation indisponible.', 'error'); });
           return;
@@ -1788,6 +1794,11 @@ async function _doClaimOfferedMission(missionId, btn) {
       throw new Error('Mission associée introuvable.');
     }
 
+    if (mission.pricing_offer_id && String(mission._request && mission._request.service_category).toLowerCase()==='electricite') {
+      var electrical=await sb.rpc('electricity_repair_artisan_v1',{p_mission_id:mission.id});
+      if(electrical.error)throw new Error('Vérification électrique indisponible. Réessayez avant de terminer.');
+      if(electrical.data&&electrical.data.direct_service_code&&!electrical.data.prework_confirmed)throw new Error('Enregistrez vos contrôles dans « Vérifications / réparation électrique » avant de terminer.');
+    }
     var res = await sb.rpc('complete_mission', {
       p_mission_id: mission.id
     });

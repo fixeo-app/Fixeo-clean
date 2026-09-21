@@ -36,6 +36,8 @@ function mapEngineResultToOutcome(engineResult, serviceCode, session) {
     var excluded=[];
     var plumbing=require('../engine/plumbing-pilot-v1').services[serviceCode];
     if(plumbing){scope.push(plumbing.scope);scope.push('Déplacement dans la ville sélectionnée inclus, sans majoration automatique.');}
+    var electricity=require('../engine/electricity-pilot-v1').services[serviceCode];
+    if(electricity){scope.push(electricity.scope);scope.push('Déplacement en ville et petits consommables inclus. Compatibilité et sécurité contrôlées par l’artisan avant travaux ; aucun supplément automatique.');}
     var material=svc.materials||{};
     if(material.major_parts==='CLIENT_SUPPLIED')excluded.push('Pièces ou appareil à fournir par le client.');
     if(material.major_parts==='ARTISAN_DISCLOSED_SEPARATE'||svc.price_model.commercial_output_type==='FIXEO_LABOUR_PRICE_PLUS_PART')excluded.push('Pièces de remplacement facturées séparément, après votre accord.');
@@ -158,6 +160,11 @@ function mapEngineResultToOutcome(engineResult, serviceCode, session) {
  * Map engine error to outcome.
  */
 function mapErrorToOutcome(engineResult, serviceCode) {
+  var boundary=engineResult&&engineResult.qualification;
+  if(boundary&&boundary.status==='ROUTE'&&/^ELECTRIC_/.test(boundary.reason_code||'')){
+    var diagnostic=boundary.reason_code==='ELECTRIC_DIAGNOSTIC_FIRST';
+    return {outcome_type:'ROUTE_REQUIRED',service_code:serviceCode,commercial_output_type:null,price:{amount_mad:null,labour_amount_mad:null,currency:'MAD'},scope_summary:[],exclusions_summary:[],parts_notice_required:false,diagnostic_notice_required:diagnostic,route:{target_service:diagnostic?'electricite.diagnostic':null,target_external:boundary.reason_code==='ELECTRIC_DISTRIBUTOR'?'LOCAL_ELECTRICITY_OPERATOR':null,message:boundary.reason},next_action:'CHANGE_SERVICE',engine_result_ref:null};
+  }
   if(engineResult && !engineResult.error && engineResult.qualification){
     var q=engineResult.qualification;
     var codes={STOP_SAFETY:'STOP_SAFETY',SAFETY_STOP:'STOP_SAFETY',REQUALIFY:'REQUALIFY',ROUTE:'ROUTE_REQUIRED',QUOTE_REQUIRED:'EXCLUSION_TRIGGERED',INELIGIBLE:'EXCLUSION_TRIGGERED'};

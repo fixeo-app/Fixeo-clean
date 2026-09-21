@@ -2,8 +2,8 @@
   "version": "electricity-vap-proposal-v1",
   "created_at": "2026-09-21",
   "base_commit": "5391869683ee373714107656f525f9639370f36d",
-  "approval_status": "PENDING_OWNER_REVIEW",
-  "runtime_integrated": false,
+  "approval_status": "OWNER_APPROVED",
+  "runtime_integrated": true,
   "production_ready": false,
   "pricing_version": "vap-bp33-v1",
   "currency": "MAD",
@@ -29,7 +29,7 @@
     "temara",
     "tetouan"
   ],
-  "note_fr": "Choix commerciaux proposés à FIXEO ; aucune approbation, activation ou garantie de disponibilité partenaire. Les limites chiffrées sont des bornes de pilote, pas des normes techniques. La VAP est avant coûts et charges artisan.",
+  "note_fr": "Tarifs et périmètres approuvés par le propriétaire pour les 20 villes le 21 septembre 2026. Intégration sur branche ; migration et déploiement en attente.",
   "scope_definition_status": "PROPOSED_COMMERCIAL_CONTRACT_NOT_RUNTIME_INPUT_SCHEMA",
   "common_scope": {
     "private_residential_indoor_only": true,
@@ -51,8 +51,8 @@
     {
       "service_code": "electricite.diagnostic",
       "label_fr": "Diagnostic électrique local, jusqu’à 45 minutes sur place",
-      "approved": false,
-      "approval_status": "PENDING_OWNER_REVIEW",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
       "legacy_reference_total_mad": 200,
       "legacy_artisan_retention_at_15_percent_minor": 17000,
       "proposed_outcome_type": "DIAGNOSTIC_READY",
@@ -80,8 +80,8 @@
     {
       "service_code": "electricite.prise_remplacement",
       "label_fr": "Remplacement d’une prise intérieure standard",
-      "approved": false,
-      "approval_status": "PENDING_OWNER_REVIEW",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
       "legacy_reference_total_mad": 220,
       "legacy_artisan_retention_at_15_percent_minor": 18700,
       "proposed_outcome_type": "PRICE_READY",
@@ -108,8 +108,8 @@
     {
       "service_code": "electricite.interrupteur_remplacement.simple",
       "label_fr": "Remplacement d’un interrupteur simple",
-      "approved": false,
-      "approval_status": "PENDING_OWNER_REVIEW",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
       "legacy_reference_total_mad": 220,
       "legacy_artisan_retention_at_15_percent_minor": 18700,
       "proposed_outcome_type": "PRICE_READY",
@@ -137,8 +137,8 @@
     {
       "service_code": "electricite.interrupteur_remplacement.va_et_vient",
       "label_fr": "Remplacement des deux interrupteurs d’un va-et-vient",
-      "approved": false,
-      "approval_status": "PENDING_OWNER_REVIEW",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
       "legacy_reference_total_mad": 250,
       "legacy_artisan_retention_at_15_percent_minor": 21250,
       "proposed_outcome_type": "PRICE_READY",
@@ -166,8 +166,8 @@
     {
       "service_code": "electricite.luminaire_installation",
       "label_fr": "Pose d’un plafonnier ou d’une applique simple",
-      "approved": false,
-      "approval_status": "PENDING_OWNER_REVIEW",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
       "legacy_reference_total_mad": 220,
       "legacy_artisan_retention_at_15_percent_minor": 18700,
       "proposed_outcome_type": "PRICE_READY",
@@ -197,8 +197,8 @@
     {
       "service_code": "electricite.disjoncteur_remplacement",
       "label_fr": "Remplacement d’un disjoncteur divisionnaire simple",
-      "approved": false,
-      "approval_status": "PENDING_OWNER_REVIEW",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
       "legacy_reference_total_mad": 250,
       "legacy_artisan_retention_at_15_percent_minor": 21250,
       "proposed_outcome_type": "PRICE_READY",
@@ -231,7 +231,7 @@
     }
   ],
   "same_visit_diagnostic_policy": {
-    "status": "PROPOSED_NOT_IMPLEMENTED_FOR_ELECTRICITY",
+    "status": "IMPLEMENTED_PENDING_DEPLOYMENT",
     "diagnostic_service_code": "electricite.diagnostic",
     "diagnostic_total_minor": 24000,
     "qualifying_service_codes": [
@@ -361,5 +361,7 @@
     "INTEGRATION_TESTS_AND_DEPLOYMENT_VERIFICATION"
   ],
   "documentation": "docs/calibration-electricite-vap-v1.md",
-  "commit_message": "docs(electricity): propose scoped VAP calibration for owner review"
+  "commit_message": "docs(electricity): propose scoped VAP calibration for owner review",
+  "approved_at": "2026-09-21",
+  "deployment_status": "PENDING_MIGRATION_AND_DEPLOYMENT"
 }

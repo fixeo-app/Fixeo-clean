@@ -447,6 +447,7 @@
 
 
   function optionLabel(opt) {
+    if(window.FixeoElectricityPilot&&window.FixeoElectricityPilot.labels[opt])return window.FixeoElectricityPilot.labels[opt];
     var labels = {
       GARDEN_ACCESS_OK: "Oui, accès direct et travail depuis le sol",
       GARDEN_MAINTAINED: "Oui, entretien régulier",
@@ -3321,7 +3322,7 @@
     );
 
 
-    if (outcome.service_code === 'plomberie.diagnostic') {
+    if (['plomberie.diagnostic','electricite.diagnostic'].includes(outcome.service_code)) {
       (outcome.scope_summary || []).forEach(function(text) { shell.appendChild(el('p', 'diagnostic-scope', text)); });
     }
 
@@ -3329,7 +3330,7 @@
       el(
         'div',
         'diagnostic-absorption',
-        outcome.service_code === 'plomberie.diagnostic' ? 'Pour une réparation standard acceptée pendant la même visite : un seul total et un seul frais FIXEO ; le diagnostic déjà payé est déduit. Votre accord est recueilli dans le suivi avant les travaux.' : 'Les conditions d’une éventuelle déduction sur réparation sont confirmées avant intervention.'
+        ['plomberie.diagnostic','electricite.diagnostic'].includes(outcome.service_code) ? 'Pour une réparation standard acceptée pendant la même visite : un seul total et un seul frais FIXEO ; le diagnostic déjà payé est déduit. Votre accord est recueilli dans le suivi avant les travaux.' : 'Les conditions d’une éventuelle déduction sur réparation sont confirmées avant intervention.'
       )
     );
 
@@ -3475,6 +3476,12 @@
   function renderRouteResult(
     outcome
   ) {
+    if(outcome.route && typeof outcome.route==='object' && outcome.route.message){
+      var routeShell=el('div','outcome-surface');
+      routeShell.appendChild(el('h3','',outcome.route.target_service?'Diagnostic préalable':'Orientation adaptée'));
+      routeShell.appendChild(el('p','',outcome.route.message));
+      return routeShell;
+    }
     var targetMetier =
       (
         outcome &&
@@ -3611,7 +3618,7 @@
   // Safety
   // ───────────────────────────────────────────────────────────────────────────
 
-  function renderSafetyResult() {
+  function renderSafetyResult(outcome) {
     var body =
       el(
         'div',
@@ -3667,7 +3674,7 @@
       el(
         'div',
         'safety-recommendation',
-        'Une intervention par un professionnel qualifié est recommandée.'
+        outcome && /^electricite\./.test(outcome.service_code||'') ? 'Ne touchez pas l’installation. En cas de danger immédiat, éloignez-vous et contactez les secours ou le distributeur local.' : 'Une intervention par un professionnel qualifié est recommandée.'
       )
     );
 
@@ -6126,7 +6133,7 @@ var cityInput =
           );
 
           bodyEl =
-            renderSafetyResult();
+            renderSafetyResult(outcome);
           break;
 
 
@@ -6228,6 +6235,9 @@ var cityInput =
           };
 
 
+      } else if (ot==='ROUTE_REQUIRED' && outcome.route && outcome.route.target_service==='electricite.diagnostic') {
+        footerOpts.primaryLabel='Préparer le diagnostic électrique';
+        footerOpts.onPrimary=function(){self._entryContext.service_hint='electricite.diagnostic';self._entryContext.metier_hint='electricite';self._entryContext.situation_id=null;self._entryContext.known_inputs={};self._pricingContextToken=null;self._startSession();};
       } else if (
         ot ===
         'QUOTE_REQUIRED'

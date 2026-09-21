@@ -512,7 +512,16 @@ function startEstimator(entryContext) {
 // Internal — qualify session once service is known
 // ─────────────────────────────────────────────────────────────────────────────
 
+function electricalBoundarySession(session, inputs, now) {
+  var boundary=require('../engine/electricity-pilot-v1').guard(session.service_code,inputs,true);
+  if(!boundary)return null;
+  var outcome=mapper.mapEngineResultToOutcome({ok:false,qualification:boundary,pricing:null},session.service_code,session);
+  return {ok:true,session:sessionModule.cloneSession(session,{known_inputs:inputs,pending_questions:[],outcome:outcome,qualification_status:outcome.outcome_type,state:mapper.outcomeTypeToState(outcome.outcome_type)},now)};
+}
+
 function qualifyOrAdvance(session, now) {
+  var electrical=electricalBoundarySession(session,session.known_inputs,now);
+  if(electrical)return electrical;
   var pending = planner.planQuestions(
     session.service_code,
     session.known_inputs
@@ -846,6 +855,9 @@ function answerEstimatorQuestion(
     Array.isArray(session.question_history)
       ? session.question_history
       : [];
+
+  var electrical=electricalBoundarySession(sessionModule.cloneSession(session,{question_history:previousHistory.concat([historyEntry])},now),newKnownInputs,now);
+  if(electrical)return electrical;
 
   // Safety boundaries.
   if (q.priority === 'SAFETY') {

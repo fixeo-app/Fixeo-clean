@@ -1,10 +1,10 @@
-# Électricité — proposition de calibrage VAP v1
+# Électricité — pilote VAP validé, intégration prête à déployer
 
-État au 21 septembre 2026 : **proposition à valider par FIXEO**. Aucun tarif électrique VAP activé, aucune migration ni modification du parcours de production dans cette proposition.
+État au 21 septembre 2026 : **tarifs et périmètres approuvés par le propriétaire pour les 20 villes**. Intégration réalisée et testée sur la branche `docs/electricity-vap-calibration-v1`, PR #39. Migration et déploiement en production en attente ; le site public sert encore la version précédente.
 Base auditée : `5391869683ee373714107656f525f9639370f36d`, après livraison de la plomberie.
-Grille structurée : `data/pricing/research/electricite/vap-proposal.v1.json` ; version proposée : `electricity-pilot-v1`.
+Grille structurée : `data/pricing/research/electricite/vap-proposal.v1.json` ; version : `electricity-pilot-v1`.
 
-## Grille proposée
+## Grille validée
 
 Même prix dans les 20 villes du catalogue actuel, sous réserve de disponibilité d'un artisan qualifié. Les montants sont en MAD.
 
@@ -17,7 +17,7 @@ Même prix dans les 20 villes du catalogue actuel, sous réserve de disponibilit
 | Pose d'un plafonnier ou d'une applique simple | 220 | 60 | **280** | 220 |
 | Remplacement d'un disjoncteur divisionnaire simple confirmé défectueux | 250 | 60 | **310** | 250 |
 
-Les anciens montants sont des prix client globaux : les réutiliser comme VAP ajouterait mécaniquement des frais sans recalibrer la rémunération. La VAP proposée est la somme conservée par l'artisan après reversement des frais FIXEO, avant ses coûts, charges et impôts. Les frais suivent BP3.3 : le minimum de 60 MAD s'applique à ces six VAP. Aucun coefficient automatique de ville, d'urgence, de nuit ou de week-end.
+Les anciens montants sont des prix client globaux : les réutiliser comme VAP ajouterait mécaniquement des frais sans recalibrer la rémunération. La VAP validée est la somme conservée par l'artisan après reversement des frais FIXEO, avant ses coûts, charges et impôts. Les frais suivent BP3.3 : le minimum de 60 MAD s'applique à ces six VAP. Aucun coefficient automatique de ville, d'urgence, de nuit ou de week-end.
 
 Main-d'œuvre, déplacement dans la ville choisie, outillage, vérifications professionnelles liées au travail et petits consommables nécessaires au périmètre sont inclus. Budget interne de consommables : 15 MAD par réparation ; ce budget n'autorise aucun supplément. Les pièces principales sont fournies par le client, disponibles avant intervention et vérifiées par l'artisan. Une fourniture par l'artisan exige un devis distinct accepté au préalable ; aucun achat, remboursement ou seconde visite n'est inclus dans ce pilote. `materials_minor = 0` signifie absence de ligne de fourniture facturée, pas absence de coûts artisan.
 
@@ -42,7 +42,7 @@ Fumée, odeur de brûlé, traces de chauffe, étincelles, conducteurs accessible
 
 ## Diagnostic absorbé pendant la même visite
 
-Proposition commerciale à implémenter : si le diagnostic aboutit à l'une des cinq réparations ci-dessus, acceptée par le client et réalisée par le même artisan pendant la même visite, **le total de la réparation remplace celui du diagnostic**. Une seule mission et une seule commission FIXEO de 60 MAD ; pas de diagnostic ajouté au forfait.
+Règle validée, implémentée sur la branche : si le diagnostic aboutit à l'une des cinq réparations ci-dessus, acceptée par le client et réalisée par le même artisan pendant la même visite, **le total de la réparation remplace celui du diagnostic**. Une seule mission et une seule commission FIXEO de 60 MAD ; pas de diagnostic ajouté au forfait.
 
 | Réparation acceptée | Total final de la mission | Diagnostic déjà versé | Reste client |
 |---|---:|---:|---:|
@@ -61,13 +61,13 @@ Ces pages donnent des indications de marché, pas des offres partenaires fermes 
 - [Mano — prix électricien au Maroc](https://mano.ma/prix-electricien-au-maroc/) donne 200–500 MAD pour la recherche de panne, 150–300 MAD pour un plafonnier simple et 200–400 MAD pour une petite réparation. Le guide évoque un déplacement urbain de 50–100 MAD, parfois inclus. Les périmètres et fournitures restent hétérogènes ; ne pas additionner ce déplacement à tous les forfaits par défaut.
 - [Bnidari — tarifs électricien](https://www.bnidari.ma/tarifs/electricien) indique 150–500 MAD par point/intervention, avec un périmètre pouvant inclure gaines et câbles. Cette référence est trop large pour fixer un remplacement simple et ne sert pas d'ancrage chiffré.
 
-Les montants proposés sont des choix commerciaux FIXEO. Le diagnostic reste dans le repère Mano ; la prise et le simple sont au-dessus du repère unitaire Afous mais incluent une visite autonome et les frais FIXEO. Le va-et-vient couvre deux commandes. Le total disjoncteur de 310 MAD dépasse la borne Afous de 280 MAD, avec un écart de périmètre non résolu : son acceptation terrain doit être suivie, sans le présenter comme un consensus de marché. Aucune mesure de demande ou d'acceptation artisan n'a été réalisée pour cette proposition.
+Les montants validés sont des choix commerciaux FIXEO. Le diagnostic reste dans le repère Mano ; la prise et le simple sont au-dessus du repère unitaire Afous mais incluent une visite autonome et les frais FIXEO. Le va-et-vient couvre deux commandes. Le total disjoncteur de 310 MAD dépasse la borne Afous de 280 MAD, avec un écart de périmètre non résolu : son acceptation terrain doit être suivie, sans le présenter comme un consensus de marché. Aucune mesure de demande ou d'acceptation artisan n'a été réalisée pour cette proposition.
 
 ## Économie artisan : hypothèses, pas bénéfice net
 
 Comparaison de référence avec une retenue historique de 15 % du prix client ; ce calcul ne remplace pas les montants réellement enregistrés sur les anciennes missions. Les coûts ci-dessous sont des hypothèses internes reprises pour sensibilité, sans validation par devis artisan : 40 MAD de déplacement et jusqu'à 15 MAD de consommables par réparation.
 
-| Prestation | Ancienne retenue artisan théorique | VAP proposée | Écart | Reste après déplacement de 40 et consommables |
+| Prestation | Ancienne retenue artisan théorique | VAP validée | Écart | Reste après déplacement de 40 et consommables |
 |---|---:|---:|---:|---:|
 | Diagnostic | 170 | 180 | +10 | 140 |
 | Prise | 187 | 200 | +13 | 145 |
@@ -78,7 +78,7 @@ Comparaison de référence avec une retenue historique de 15 % du prix client ; 
 
 Avec 60 MAD de déplacement, ces restes diminuent de 20 MAD. Le temps de travail, les charges, l'outillage et l'assurance restent à couvrir. Les remplacements complexes sont exclus précisément pour garder un forfait borné. Suivre durée réelle, déplacement, consommables, acceptation client/artisan et sorties de périmètre avant d'élargir ; ne pas prétendre qu'un seuil de rentabilité est prouvé.
 
-## Audit technique et conditions d'activation
+## Audit initial de la base et corrections apportées
 
 L'audit local de la base indiquée confirme les six anciens montants. Aucune entrée `electricite.*` n'existe dans `vap-approved-v1.json`. Les drapeaux historiques de préparation dans le registre de recherche ne désactivent pas le parcours existant.
 
@@ -89,8 +89,35 @@ L'audit local de la base indiquée confirme les six anciens montants. Aucune ent
 5. Le dossier historique laisse au client un choix ambigu sur la terre d'un luminaire. Le pilote doit exclure une pose dont une protection nécessaire est absente. Harmoniser textes, qualification, notice artisan et restitution client, sans transformer une réparation en promesse de conformité globale.
 6. Après validation commerciale, ajouter les 120 entrées approuvées, bloquer tout retour au tarif historique lorsqu'une entrée ou condition manque, conserver les offres immuables et répercuter l'accord de réparation sur règlement et interfaces. Préserver intégralement les missions historiques et la plomberie déjà livrée.
 
-La future intégration devra vérifier les six services dans les 20 villes, les réponses absentes/inconnues/hors périmètre, les limites du luminaire et le va-et-vient à deux commandes. Elle devra aussi couvrir les arrêts par saisie interactive et pré-renseignée, l'orientation distributeur, les cinq absorptions avec crédit nul/intégral, le refus, l'expiration, les répétitions, la sécurité d'accès et le règlement unique. Ces tests d'intégration ne sont **pas encore réalisés** : cette branche contient uniquement la proposition et le présent document.
+## Parcours livré sur la branche
 
-Contrôles de cette proposition : JSON lisible, six services et 20 villes, calcul des frais et des soldes par le module BP3.3 existant, cohérence des prix et comparaison à la base. Les fichiers protégés `data/pricing/engine/engine-test-report.v1.json` et `data/pricing/shadow/shadow-results.v1.json`, le catalogue actif et le code de production ne sont pas modifiés.
+Les points 1 à 6 ci-dessus sont traités. Les questions et limites partagées sont dans `data/pricing/engine/electricity-pilot-v1.js`. L’estimateur dispose de 120 entrées approuvées, d’un arrêt serveur cohérent pour les réponses interactives ou pré-renseignées, et d’un blocage des anciens prix lorsque le périmètre ou la ville ne correspond pas. La situation « disjoncteur qui saute » propose désormais le diagnostic ; aucune offre n’est émise pour le distributeur ou un danger signalé.
 
-Message de commit : `docs(electricity): propose scoped VAP calibration for owner review`
+Le bouton artisan « Vérifications / réparation électrique » ouvre le suivi de la mission. Pour une réparation réservée directement, le professionnel confirme les contrôles de périmètre, sécurité, installation et pièce ; pour un disjoncteur, il confirme également le défaut de l’appareil. Les attestations sont conservées dans une table privée immuable. Une réparation ne peut être clôturée ou réglée sans cette confirmation. Le client ne remplit jamais ces attestations techniques.
+
+Pour une mission de diagnostic en cours, l’artisan vérifie le périmètre et les conditions professionnelles, confirme la même visite et déclare 0 ou 240 MAD encaissés. Le client accepte ou refuse la proposition dans son suivi. L’accord porte sur le total, le périmètre et le crédit déclaré. La proposition expire après 45 minutes ; toute nouvelle proposition remplace la précédente en attente. Un accord est irréversible par simple répétition d’une requête. Les montants initiaux restent immuables dans l’offre ; seule la réparation acceptée fixe le total effectif de la mission. Les refus, propositions expirées, crédits partiels ou litigieux ne déclenchent aucun supplément automatique.
+
+Le règlement et les interfaces artisan utilisent le total effectif et une commission de 60 MAD. Le mécanisme de plomberie reste inchangé et couvert par ses tests après la nouvelle migration. Les offres historiques et les autres métiers ne sont pas recalculés. Aucun paiement par carte, notification, nouveau dispatch ou envoi WhatsApp n’est ajouté au parcours de réparation.
+
+## Vérification réalisée
+
+Commande : `NODE_PATH=/workspace/scratch/7e6d7edda414/test-deps/node_modules node --test tests/estimator/*.test.cjs` — **106 tests réussis**. Les 13 tests propres à l’électricité couvrent les 120 entrées, la qualification et les textes affichés, les limites de hauteur/poids/quantité, les arrêts serveur, l’API réelle avec offres signées, les six chaînes offre → réservation atomique → dispatch → règlement dans PostgreSQL local, les cinq réparations avec crédit nul ou intégral, l’accord explicite, les vérifications artisan, les droits d’accès, les répétitions, refus, propositions remplacées et expirées. Un cas utilise volontairement le même identifiant de proposition dans les deux métiers pour vérifier que leurs montants ne se mélangent pas.
+
+La migration est exécutée dans PostgreSQL local via PGlite, après les migrations existantes, avec les fonctions de dispatch inspectées en production. Les tests plomberie passent avec le nouveau contrôle financier partagé. Un ancien test qui attendait un prix de prise sans aucune qualification a été adapté pour fournir le périmètre désormais obligatoire ; l’absence de réponses est couverte par les nouveaux tests de rejet. Les vérifications de routage ont été relancées après avoir restreint « disjoncteur qui saute » au diagnostic.
+
+Comparaison structurelle à la base : toutes les entrées tarifaires et fiches de service des autres métiers sont identiques. Les rapports protégés `data/pricing/engine/engine-test-report.v1.json` et `data/pricing/shadow/shadow-results.v1.json` restent inchangés. Aucun test n’a créé de demande, mission ou paiement en production.
+
+## Migration et ordre de publication
+
+Migration préparée : `supabase/migrations/20260921132727_electricity_same_visit_repair.sql`.
+SHA-256 : `6835152d453d6cee7d3488301108a1503ebc62cb0d75b3e472a27e3999c17721`.
+
+Appliquer la migration avant de déployer ce code. Elle crée trois tables privées (propositions, décisions, vérifications), des RPC artisan limitées au propriétaire de la mission et des RPC client/admin réservées au serveur. RLS et révocation des accès directs sont explicites. Elle étend le contrôle financier commun pour prendre en compte les réparations acceptées des deux métiers. Aucun `UPDATE` ou recalcul de mission historique n’est exécuté lors de la migration.
+
+Un contrôle préalable abortif exige la définition auditée du contrôle financier : MD5 `ccbf541b6dd0939a5ed54daff9b024a3`. Si elle a changé, réexaminer le changement avant application. L’inspection en production a relevé 23 missions, aucune mission VAP. Empreinte de contrôle des identifiants et montants, avec sérialisation séparée par `:` et `|` : `5d65622a767c61ef2affa823b9d6132e`.
+
+L’audit de sécurité Supabase lu avant déploiement présente des alertes préexistantes (notamment trois vues publiques en `SECURITY DEFINER` et des fonctions historiques exposées). Elles ne sont pas modifiées par cette livraison. [Référence des contrôles Supabase](https://supabase.com/docs/guides/database/database-linter). Les nouvelles tables privées sont volontairement sans politique d’accès client ; seules les fonctions autorisées y accèdent.
+
+Après migration et déploiement : vérifier la version publiée, les six montants dans les 20 villes, les arrêts sans offre, les ressources réellement servies, les permissions des nouvelles RPC et l’empreinte des missions historiques. Ne pas créer de réservation, de dispatch ou de paiement réel pour cette vérification. La publication en production n’est pas réalisée dans ce checkpoint.
+
+Message de commit : `feat(electricity): integrate approved VAP tariffs and consented same-visit repairs`

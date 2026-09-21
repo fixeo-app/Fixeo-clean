@@ -6681,6 +6681,1946 @@
       "materials_minor": 0,
       "catalogue_version": "plumbing-pilot-v1",
       "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "agadir",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "beni-mellal",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "casablanca",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "el-jadida",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "fes",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "kenitra",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "khouribga",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "marrakech",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "meknes",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "mohammedia",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "nador",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "ouarzazate",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "oujda",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "rabat",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "safi",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "sale",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "tanger",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "taza",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "temara",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.diagnostic",
+      "city_slug": "tetouan",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_DIAGNOSTIC"
+      },
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.prise_remplacement",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_OUTLET",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_SWITCH",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_TWO_WAY",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.luminaire_installation",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_work": "ELEC_LIGHT",
+        "electricity_light_limits": "ELEC_LIGHT_LIMITS",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "electricite.disjoncteur_remplacement",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "electricity_safety": "ELEC_NO_DANGER",
+        "electricity_operator": "ELEC_PRIVATE",
+        "electricity_access": "ELEC_ACCESS_READY",
+        "electricity_fault": "ELEC_BROKEN_DEVICE",
+        "electricity_work": "ELEC_MCB",
+        "electricity_parts": "ELEC_PART_AVAILABLE"
+      },
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "catalogue_version": "electricity-pilot-v1"
     }
   ]
 }

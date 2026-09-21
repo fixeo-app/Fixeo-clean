@@ -6,6 +6,7 @@ const catalogue=require('../../data/pricing/canonical/vap-approved-v1.json');
 
 // Only exact, reviewed scope/zone matches qualify. No inference from legacy total.
 function selectTariff(session,entries=catalogue.entries){
+ if(require('../../data/pricing/engine/electricity-pilot-v1').guard(session.service_code,session.known_inputs))return null;
  return entries.find(t=>t.approved===true && t.service_code===session.service_code &&
   t.city_slug===session.entry_context?.city_slug && t.outcome_type===session.outcome?.outcome_type &&
   t.inputs && Object.keys(t.inputs).length>0 &&
@@ -13,7 +14,7 @@ function selectTariff(session,entries=catalogue.entries){
   Object.entries(t.inputs).every(([k,v])=>session.known_inputs?.[k]===v)) || null;
 }
 async function attachOffer(session,payload,{entries=catalogue.entries,fetchImpl=fetch,env=process.env}={}){
- const tariff=selectTariff(session,entries);if(!tariff){if(/^(plomberie|jardinage|carrelage|maconnerie|demenagement|peinture)\./.test(session.service_code||''))throw Error('Service scope or city not eligible for VAP');return null;}
+ const tariff=selectTariff(session,entries);if(!tariff){if(/^(plomberie|electricite|jardinage|carrelage|maconnerie|demenagement|peinture)\./.test(session.service_code||''))throw Error('Service scope or city not eligible for VAP');return null;}
  const breakdown=tariffBreakdown(tariff,session.known_inputs);
  if(!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY)throw Error('VAP persistence unavailable');
  const id=crypto.randomUUID();
