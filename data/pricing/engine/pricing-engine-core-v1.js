@@ -776,6 +776,8 @@ function evaluateFixeoPrice({ service_code, inputs = {} } = {}) {
     return errorResult('SERVICE_NOT_FOUND', `Service '${service_code}' not found in canonical registry. Do not guess closest service.`, 'service_code', service_code);
   }
 
+  const climBoundary = require('./climatisation-pilot-v1').guard(canonicalCode,inputs);
+  if(climBoundary)return ineligibleResult(canonicalCode,climBoundary.status,climBoundary.reason_code,climBoundary.reason);
   const electricalBoundary = require('./electricity-pilot-v1').guard(canonicalCode,inputs);
   if(electricalBoundary)return ineligibleResult(canonicalCode,electricalBoundary.status,electricalBoundary.reason_code,electricalBoundary.reason);
   const plumbing = require('./plumbing-pilot-v1').services[canonicalCode];

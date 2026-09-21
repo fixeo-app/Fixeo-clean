@@ -94,48 +94,15 @@ var SERVICE_QUESTION_PLANS = {
   },
 
   // ── CLIMATISATION ──────────────────────────────────────────────────────────
-  'climatisation.diagnostic': {
-    questions: []
-  },
-  'climatisation.entretien_annuel': {
-    questions: [
-      { input_id: 'ac_count', priority: 'QUANTITY_MEASUREMENT', answer_type: 'integer', prompt_key: 'climatisation.quantity.ac_count' },
-    ]
-  },
-  'climatisation.desinfection_profonde': {
-    questions: [
-      { input_id: 'ac_count', priority: 'QUANTITY_MEASUREMENT', answer_type: 'integer', prompt_key: 'climatisation.quantity.ac_count' },
-    ]
-  },
-  'climatisation.recharge_gaz_r22': {
-    questions: [
-      { input_id: 'refrigerant_type', priority: 'SERVICE_IDENTITY', answer_type: 'enum', options: ['R22', 'R32', 'R410A', 'R290', 'R600A'], prompt_key: 'climatisation.identity.refrigerant_type' },
-    ]
-  },
-  'climatisation.reparation_fuite_recharge': {
-    questions: [
-      { input_id: 'refrigerant_type', priority: 'ROUTING_BOUNDARY', answer_type: 'enum', options: ['R22', 'R32', 'R410A', 'R290', 'R600A'], prompt_key: 'climatisation.identity.refrigerant_type' },
-      { input_id: 'leak_location_confirmed', priority: 'ELIGIBILITY', answer_type: 'enum', options: ['EXTERNAL_ACCESSIBLE_COPPER', 'INDOOR_EVAPORATOR', 'OUTDOOR_CONDENSER', 'COMPRESSOR', 'CONCEALED', 'UNKNOWN'], prompt_key: 'climatisation.eligibility.leak_location' },
-    ]
-  },
-  'climatisation.installation.standard': {
-    questions: [
-      { input_id: 'multi_split', priority: 'ROUTING_BOUNDARY', answer_type: 'boolean', prompt_key: 'climatisation.routing.multi_split' },
-      { input_id: 'cassette_or_ducted', priority: 'ROUTING_BOUNDARY', answer_type: 'boolean', prompt_key: 'climatisation.routing.cassette_or_ducted' },
-      { input_id: 'ac_capacity_btu', priority: 'ELIGIBILITY', answer_type: 'integer', prompt_key: 'climatisation.eligibility.capacity_btu' },
-      { input_id: 'installation_height_m', priority: 'ELIGIBILITY', answer_type: 'number', prompt_key: 'climatisation.eligibility.installation_height_m' },
-      { input_id: 'facade_inaccessible', priority: 'ELIGIBILITY', answer_type: 'boolean', prompt_key: 'climatisation.eligibility.facade_inaccessible' },
-    ]
-  },
-  'climatisation.installation.cassette': {
-    questions: [
-      { input_id: 'multi_split', priority: 'ROUTING_BOUNDARY', answer_type: 'boolean', prompt_key: 'climatisation.routing.multi_split' },
-      { input_id: 'ac_capacity_btu', priority: 'ELIGIBILITY', answer_type: 'integer', prompt_key: 'climatisation.eligibility.capacity_btu' },
-    ]
-  },
-  'climatisation.desinstallation': {
-    questions: []
-  },
+  'climatisation.diagnostic': {questions: require('../engine/climatisation-pilot-v1').questions('climatisation.diagnostic')},
+  'climatisation.entretien_annuel': {questions: require('../engine/climatisation-pilot-v1').questions('climatisation.entretien_annuel')},
+  'climatisation.desinfection_profonde': {questions: require('../engine/climatisation-pilot-v1').questions('climatisation.desinfection_profonde')},
+  'climatisation.installation.standard': {questions: require('../engine/climatisation-pilot-v1').questions('climatisation.installation.standard')},
+  'climatisation.installation.mono_split_5m': {questions: require('../engine/climatisation-pilot-v1').questions('climatisation.installation.mono_split_5m')},
+  'climatisation.desinstallation': {questions: require('../engine/climatisation-pilot-v1').questions('climatisation.desinstallation')},
+  'climatisation.installation.cassette': {questions: []},
+  'climatisation.recharge_gaz_r22': {questions: []},
+  'climatisation.reparation_fuite_recharge': {questions: []},
 
   // ── BRICOLAGE ──────────────────────────────────────────────────────────────
   'bricolage.visite_minimum': {

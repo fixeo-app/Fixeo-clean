@@ -2,8 +2,8 @@
   "version": "climatisation-pilot-v1",
   "created_at": "2026-09-21",
   "base_commit": "ce17ca7386e5f36ad8cc39bf2a6edc201de95c9d",
-  "approval_status": "PENDING",
-  "runtime_integrated": false,
+  "approval_status": "APPROVED",
+  "runtime_integrated": true,
   "production_ready": false,
   "pricing_version": "vap-bp33-v1",
   "currency": "MAD",
@@ -30,7 +30,7 @@
     "tetouan"
   ],
   "proposed_catalogue_entry_count": 120,
-  "note_fr": "Proposition commerciale à valider. Les anciens prix globaux ne sont pas traités comme VAP. Les montants de fournitures sont des forfaits proposés issus d’hypothèses internes, pas des devis fournisseurs vérifiés. Aucun changement de production dans cette proposition.",
+  "note_fr": "Grille et périmètre validés par le propriétaire pour les 20 villes. Intégration et migration préparées, non appliquées en production. Les montants de fournitures restent des forfaits commerciaux issus d’hypothèses internes, pas des devis fournisseurs vérifiés ; confirmation artisan avant acceptation obligatoire.",
   "existing_missions_context": {
     "owner_statement_date": "2026-09-21",
     "owner_statement_fr": "Les missions existantes sont des missions de test.",
@@ -58,7 +58,7 @@
     {
       "service_code": "climatisation.diagnostic",
       "label_fr": "Diagnostic climatisation — 45 minutes maximum",
-      "approval_status": "PENDING",
+      "approval_status": "APPROVED",
       "vap_minor": 20000,
       "commission_minor": 6000,
       "materials_minor": 0,
@@ -87,7 +87,7 @@
     {
       "service_code": "climatisation.entretien_annuel",
       "label_fr": "Entretien courant — un climatiseur",
-      "approval_status": "PENDING",
+      "approval_status": "APPROVED",
       "vap_minor": 24000,
       "commission_minor": 6000,
       "materials_minor": 0,
@@ -119,7 +119,7 @@
     {
       "service_code": "climatisation.desinfection_profonde",
       "label_fr": "Nettoyage approfondi — un climatiseur",
-      "approval_status": "PENDING",
+      "approval_status": "APPROVED",
       "vap_minor": 39000,
       "commission_minor": 6000,
       "materials_minor": 0,
@@ -152,7 +152,7 @@
     {
       "service_code": "climatisation.installation.standard",
       "label_fr": "Pose mono-split — liaison jusqu’à 3 m, fournitures incluses",
-      "approval_status": "PENDING",
+      "approval_status": "APPROVED",
       "vap_minor": 50000,
       "commission_minor": 7500,
       "materials_minor": 45000,
@@ -190,7 +190,7 @@
     {
       "service_code": "climatisation.installation.mono_split_5m",
       "label_fr": "Pose mono-split — liaison de plus de 3 m jusqu’à 5 m, fournitures incluses",
-      "approval_status": "PENDING",
+      "approval_status": "APPROVED",
       "vap_minor": 60000,
       "commission_minor": 9000,
       "materials_minor": 60000,
@@ -228,7 +228,7 @@
     {
       "service_code": "climatisation.desinstallation",
       "label_fr": "Dépose complète — un mono-split accessible",
-      "approval_status": "PENDING",
+      "approval_status": "APPROVED",
       "vap_minor": 40000,
       "commission_minor": 6000,
       "materials_minor": 0,
@@ -419,5 +419,20 @@
     "Prepared migration reviewed, then explicit production migration and deployment authorization."
   ],
   "documentation": "docs/calibration-climatisation-vap-v1.md",
-  "commit_message": "docs(climatisation): propose VAP tariffs and bounded service scopes"
+  "commit_message": "docs(climatisation): propose VAP tariffs and bounded service scopes",
+  "approved_at": "2026-09-21",
+  "approval_statement_fr": "Je valide cette grille et ce périmètre pour les 20 villes",
+  "deployment_status": "AWAITING_PRODUCTION_AUTHORIZATION",
+  "implementation": {
+    "module": "data/pricing/engine/climatisation-pilot-v1.js",
+    "migration": "supabase/migrations/20260921142222_climatisation_same_visit_service.sql",
+    "catalogue_entries": 120,
+    "pre_acceptance_installation_checks": true,
+    "professional_prework_checks": true,
+    "installation_completion_checks": true,
+    "same_visit_customer_consent": true,
+    "test_environment": "Isolated local PostgreSQL (PGlite); mocked API and browser DOM",
+    "automated_tests_passed": 122,
+    "production_mutated": false
+  }
 }

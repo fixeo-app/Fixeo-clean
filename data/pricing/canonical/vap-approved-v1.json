@@ -8621,6 +8621,2206 @@
       "vap_minor": 25000,
       "materials_minor": 0,
       "catalogue_version": "electricity-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "agadir",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "beni-mellal",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "casablanca",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "el-jadida",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "fes",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "kenitra",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "khouribga",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "marrakech",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "meknes",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "mohammedia",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "nador",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "ouarzazate",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "oujda",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "rabat",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "safi",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "sale",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "tanger",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "taza",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "temara",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.diagnostic",
+      "city_slug": "tetouan",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_work": "CLIM_DIAGNOSTIC"
+      },
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.entretien_annuel",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_ROUTINE"
+      },
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinfection_profonde",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_work": "CLIM_DEEP_CLEAN"
+      },
+      "vap_minor": 39000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.standard",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_UP_TO_3M",
+        "clim_work": "CLIM_INSTALL_3M"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 45000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.installation.mono_split_5m",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_9000_12000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_unit_supply": "CLIM_CLIENT_NEW_UNIT",
+        "clim_route": "CLIM_ROUTE_OVER_3_UP_TO_5M",
+        "clim_work": "CLIM_INSTALL_5M"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 60000,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "climatisation.desinstallation",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "clim_safety": "CLIM_NO_DANGER",
+        "clim_system": "CLIM_WALL_MONOSPLIT",
+        "clim_count": "CLIM_ONE",
+        "clim_capacity": "CLIM_7000_24000",
+        "clim_access": "CLIM_SAFE_ACCESS",
+        "clim_condition": "CLIM_FUNCTIONING",
+        "clim_refrigerant": "CLIM_R32_OR_R410A",
+        "clim_work": "CLIM_REMOVE"
+      },
+      "vap_minor": 40000,
+      "materials_minor": 0,
+      "catalogue_version": "climatisation-pilot-v1"
     }
   ]
 }

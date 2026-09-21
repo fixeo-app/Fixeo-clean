@@ -134,7 +134,7 @@
       "metier": "climatisation",
       "candidate_services": [
         "climatisation.installation.standard",
-        "climatisation.installation.cassette"
+        "climatisation.installation.mono_split_5m"
       ]
     },
     "confort.entretenir-une-climatisation": {

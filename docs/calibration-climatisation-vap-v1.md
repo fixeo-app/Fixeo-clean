@@ -1,14 +1,14 @@
-# Climatisation — proposition de calibrage VAP
+# Climatisation — calibrage VAP validé et intégré
 
-État au 21 septembre 2026 : **proposition à valider, non intégrée au moteur et non déployée**. Base auditée : `ce17ca7386e5f36ad8cc39bf2a6edc201de95c9d`, après la livraison électrique ([PR #39](https://github.com/fixeo-app/Fixeo-clean/pull/39)).
+État au 21 septembre 2026 : **grille et périmètre validés pour les 20 villes ; intégration testée, migration préparée, production en attente d’autorisation**. Base auditée : `ce17ca7386e5f36ad8cc39bf2a6edc201de95c9d`, après la livraison électrique ([PR #39](https://github.com/fixeo-app/Fixeo-clean/pull/39)).
 
-Grille structurée : `data/pricing/research/climatisation/vap-proposal.v1.json` ; version proposée : `climatisation-pilot-v1`.
+Grille structurée : `data/pricing/research/climatisation/vap-proposal.v1.json` ; version intégrée : `climatisation-pilot-v1`.
 
 Le propriétaire précise que les missions existantes sont des **missions de test**. Elles ne constituent donc pas une preuve de demande réelle, d'acceptation artisan ou de rentabilité. Cette proposition n'effectue aucune suppression, reclassification en base ou nouvelle mission.
 
-## Six forfaits proposés
+## Six forfaits validés
 
-Montants en MAD pour **un appareil par réservation**, déplacement dans la ville choisie compris. Même grille proposée dans les 20 villes, sous réserve de disponibilité d'un professionnel et de confirmation du périmètre. Aucun multiplicateur automatique de ville, d'urgence ou de week-end.
+Montants en MAD pour **un appareil par réservation**, déplacement dans la ville choisie compris. Même grille validée dans les 20 villes, sous réserve de disponibilité d'un professionnel et de confirmation du périmètre. Aucun multiplicateur automatique de ville, d'urgence ou de week-end.
 
 | Prestation | Prestation artisan VAP | Fournitures | Frais FIXEO | Total client |
 |---|---:|---:|---:|---:|
@@ -23,7 +23,7 @@ Les frais suivent le calcul existant BP3.3 : ici 15 % de la VAP, avec minimum de
 
 Les 450/600 MAD de fournitures sont des **forfaits commerciaux proposés sur hypothèses internes**, pas des prix d'achat vérifiés. L'installation ne doit être acceptée au forfait que si un partenaire confirme pouvoir fournir le kit compatible et honorer le total. Le surcoût d'un kit ne devient jamais un supplément automatique après acceptation. Si le kit est déjà fourni par le client, établir une proposition adaptée avant réservation ; ne pas facturer un kit non fourni.
 
-Villes : Agadir, Béni Mellal, Casablanca, El Jadida, Fès, Kénitra, Khouribga, Marrakech, Meknès, Mohammedia, Nador, Ouarzazate, Oujda, Rabat, Safi, Salé, Tanger, Taza, Témara et Tétouan. Six services × 20 villes = **120 entrées candidates**, aucune entrée activée par cette PR.
+Villes : Agadir, Béni Mellal, Casablanca, El Jadida, Fès, Kénitra, Khouribga, Marrakech, Meknès, Mohammedia, Nador, Ouarzazate, Oujda, Rabat, Safi, Salé, Tanger, Taza, Témara et Tétouan. Six services × 20 villes = **120 entrées approuvées dans cette branche** ; activation en production après migration puis déploiement autorisés.
 
 ## Périmètres
 
@@ -94,7 +94,7 @@ Coûts internes de sensibilité, non vérifiés par factures : déplacement 40 M
 
 Hypothèses du kit 3 m : cuivre/isolant 250, support 90, câble 50, évacuation 30, petits matériaux 30 = 450 MAD. Kit 5 m : 370 + 90 + 65 + 45 + 30 = 600 MAD. La différence de total entre poses, 265 MAD, se décompose en 100 de prestation, 15 de frais et 150 de fournitures. Aucun mètre supplémentaire ni dépassement n'est ajouté automatiquement.
 
-## Audit local et corrections à réaliser après validation
+## Audit initial — constats sur la base avant intégration
 
 1. Aucune entrée climatisation ne figure dans le catalogue VAP approuvé. Les indicateurs `production_ready=false` du registre ne suffisent pas à arrêter les chemins historiques du moteur.
 2. Diagnostic, entretien et dépose atteignent `READY_FOR_ENGINE` avec seulement `ac_count=1`. L'appel direct d'entretien avec `smoke=true` renvoie encore 300 MAD. Ajouter une qualification commune stricte et les mêmes protections à chaque point d'entrée.
@@ -107,8 +107,26 @@ Hypothèses du kit 3 m : cuivre/isolant 250, support 90, câble 50, évacuation 
 
 Vérification de cette proposition : calcul des six décompositions par `buildBreakdown`, couverture exacte des 20 villes existantes, 120 couples service/ville uniques, crédits de diagnostic et sommes des kits. Les constats moteur ci-dessus ont été reproduits localement sur la base auditée. Aucun nouveau test de production.
 
-## Décisions et prochaine étape
+## Validation et résultat intégré
 
-Valider les six tarifs, les forfaits de fournitures proposés, le périmètre d'un seul appareil, les limites des poses, les 20 villes, les sorties sur devis et l'absorption pour les deux nettoyages. Après validation : intégrer le parcours complet, préparer la migration et vérifier les chaînes offre → réservation → dispatch → règlement en PostgreSQL local, les droits d'accès, les interfaces et les régressions. La migration et le déploiement feront l'objet d'une autorisation sur ce résultat concret.
+Le 21 septembre 2026, le propriétaire a confirmé : « Je valide cette grille et ce périmètre pour les 20 villes ». La validation commerciale couvre les six forfaits ci-dessus. L’autorisation de migration et déploiement reste à recueillir sur cette intégration terminée.
 
-Message de commit : `docs(climatisation): propose VAP tariffs and bounded service scopes`.
+Les huit corrections de l’audit initial sont intégrées : questions communes et protections dans chaque chemin du moteur, contrôle des réponses préremplies (y compris signaux de danger), 120 entrées VAP, code distinct pour la pose 5 m, arrêt des forfaits historiques recharge/cassette, libellé « Nettoyage approfondi », propositions d’entretien consenties et offres immuables. Aucun autre service du registre n’a été modifié ; les entrées VAP des métiers précédents sont inchangées.
+
+La pose demande quatre confirmations professionnelles **avant acceptation** : périmètre et modèle, compétences/outillage, charge d’usine suffisante, kit disponible au prix fixe. Le contrôle est imposé aussi par le déclencheur financier des missions, sur les parcours d’acceptation V1 et V2. Puis l’artisan enregistre ses vérifications sur place avant travaux et, après pose, les contrôles d’étanchéité, tirage au vide et mise en service effectivement réalisés. La clôture et le règlement restent bloqués sans ces attestations. Il s’agit de déclarations professionnelles enregistrées, pas d’une certification indépendante du travail.
+
+Les deux entretiens peuvent remplacer un diagnostic pendant la même visite, après vérifications artisan et accord explicite du client. Un seul total, une seule mission, un seul frais de 60 MAD ; crédit de diagnostic 0 ou 260 MAD confirmé par les deux parties. Installation et dépose ne peuvent pas être proposées dans cette conversion.
+
+**Vérification : 122 tests automatisés réussis.** Exécution du moteur et des API avec réseau simulé, interfaces DOM et PostgreSQL isolé via PGlite. Les tests couvrent les 120 couples service/ville, les limites et refus, les offres signées, réservation et dispatch, les fonctions de production d’acceptation V1/V2 et de démarrage (copies en lecture seule), la mise en service, le règlement, les crédits 40/190 MAD, refus/expiration/répétition, propriété des missions, droits et audit immuable. Les tests existants plomberie/électricité s’exécutent également après la nouvelle migration pour contrôler le déclencheur partagé. Aucun appel de réservation, dispatch, paiement ou notification en production.
+
+Commande : `NODE_PATH=/workspace/scratch/7e6d7edda414/test-deps/node_modules node --test tests/estimator/*.test.cjs`.
+
+## Migration prête, non appliquée
+
+Fichier : `supabase/migrations/20260921142222_climatisation_same_visit_service.sql`, créé avec la CLI Supabase. Précondition : empreinte de la fonction financière actuelle `cc844ebe2d4fe7d4f2a90182cca2adac`, vérifiée en lecture seule. Délai de verrouillage 3 s et délai d’exécution 30 s. Aucune mise à jour historique : création de cinq tables privées avec RLS, refus d’accès direct, écritures contrôlées et immuables ; quatre fonctions authentifiées artisan et deux fonctions serveur pour suivi client/administration ; extension du déclencheur financier existant.
+
+Les fonctions utilisent un `search_path` vide et des droits explicites. L’audit de sécurité Supabase lu avant livraison conserve les alertes préexistantes : 7 informations RLS sans politique (tables privées), 3 vues SECURITY DEFINER, 4 fonctions avec search_path mutable, 9 fonctions accessibles anonymement, 47 fonctions authentifiées signalées et 1 avertissement de protection des mots de passe. Ces alertes appartiennent à la base existante ; cette PR ne prétend pas les corriger. Les nouvelles tables privées n’ont volontairement aucune politique d’accès direct : seules les fonctions autorisées les utilisent.
+
+Après autorisation : appliquer la migration en transaction, contrôler droits/empreintes et invariants financiers historiques, puis fusionner et déployer la branche. Vérifier les ressources et parcours publics sans créer de mission. Les missions existantes restent des données de test selon la déclaration du propriétaire ; aucune suppression ni reclassification automatique. WhatsApp et paiement carte ne sont pas activés par cette livraison.
+
+Message de commit : `feat(climatisation): integrate approved VAP tariffs and verified service lifecycle`.

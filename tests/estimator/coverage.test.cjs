@@ -47,7 +47,7 @@ test('plumbing unknown or complex scope does not receive a repair price',()=>{
 test('parts and diagnostic boundaries remain explicit, not a total repair price',()=>{
  const mapper=require(root+'/data/pricing/orchestrator/estimator-outcome-mapper-v1');
  for(const code of ['electricite.prise_remplacement','climatisation.diagnostic']){
-  const inputs=require(root+'/data/pricing/engine/electricity-pilot-v1').services[code]?.inputs||{};
+  const inputs=require(root+'/data/pricing/engine/electricity-pilot-v1').services[code]?.inputs||require(root+'/data/pricing/engine/climatisation-pilot-v1').services[code].inputs;
   const result=engine.evaluateFixeoPrice({service_code:code,inputs});assert.equal(result.ok,true);
   const out=mapper.mapEngineResultToOutcome(result,code,{known_inputs:{}});assert.ok(out.scope_summary.length);assert.ok(out.exclusions_summary.some(x=>/fournir|réparations/.test(x)));
  }
