@@ -382,6 +382,11 @@
     moving_items: "S’agit-il de cartons et meubles courants manipulables à deux, sans piano, coffre-fort, objet exceptionnellement lourd, fragile ou nécessitant un équipement de levage ?",
     moving_preparation: "Les affaires seront-elles emballées et protégées, les meubles vidés, les appareils débranchés et les accès prêts avant l’arrivée de l’équipe ?",
     moving_duration: "Validez-vous un forfait de 2 intervenants pendant 2 heures, à compter du début sur place, sans garantie de terminer tout le déménagement ni prolongation automatique ?",
+    paint_support: "Les murs sont-ils secs, sains et prêts à peindre, sans fissure, humidité, peinture qui s’écaille, enduit ni ponçage à réaliser ?",
+    paint_access: "Les murs sont-ils à 2,80 m de hauteur maximum, dans une zone dégagée avec eau et électricité disponibles ?",
+    paint_supplies: "Fournissez-vous une peinture intérieure compatible avec le support, en quantité suffisante pour deux couches ?",
+    paint_finish: "Souhaitez-vous deux couches de peinture standard sur les murs uniquement, dans une teinte identique ou proche, sans effet décoratif ni plafond ?",
+    paint_area: "Quelle surface réelle de murs faut-il peindre ? De 20 à 100 m², hors portes et fenêtres. Deux couches incluses : ne doublez pas la surface.",
     plumbing_scope: 'Le problème concerne-t-il un seul équipement accessible, sans canalisation encastrée ni réseau collectif ?',
 
     surface_m2:
@@ -454,6 +459,11 @@
       MOVING_PREPARED: "Oui, tout sera préparé",
       MOVING_TWO_HOUR_TEAM: "Oui, 2 intervenants pendant 2 heures",
       MOVING_COMPLEX: "Non, mon besoin est différent",
+      PAINT_READY: "Oui, murs sains et prêts",
+      PAINT_ACCESS_READY: "Oui, accès dégagé et hauteur ≤ 2,80 m",
+      PAINT_CLIENT_SUPPLIED: "Oui, peinture compatible pour deux couches",
+      PAINT_TWO_COATS: "Oui, deux couches standard sur les murs",
+      PAINT_COMPLEX: "Non, mon besoin est différent",
       LOCAL_ACCESSIBLE:'Oui, un seul équipement accessible',
       COMPLEX:'Non, réseau collectif / canalisation encastrée / plusieurs équipements',
       UNKNOWN:'Je ne sais pas',
@@ -1105,6 +1115,11 @@
       MOVING_PREPARED: "Oui, tout sera préparé",
       MOVING_TWO_HOUR_TEAM: "Oui, 2 intervenants pendant 2 heures",
       MOVING_COMPLEX: "Non, mon besoin est différent",
+      PAINT_READY: "Oui, murs sains et prêts",
+      PAINT_ACCESS_READY: "Oui, accès dégagé et hauteur ≤ 2,80 m",
+      PAINT_CLIENT_SUPPLIED: "Oui, peinture compatible pour deux couches",
+      PAINT_TWO_COATS: "Oui, deux couches standard sur les murs",
+      PAINT_COMPLEX: "Non, mon besoin est différent",
       LOCAL_ACCESSIBLE:'Oui, un seul équipement accessible',
       COMPLEX:'Non, réseau collectif / canalisation encastrée / plusieurs équipements',
       UNKNOWN:'Je ne sais pas',
@@ -1981,7 +1996,7 @@
         el(
           'p',
           'diagnostic-intro',
-          'Indiquez uniquement la surface concernée par cette intervention.'
+          step.input_id === 'painted_m2' ? 'Additionnez longueur × hauteur de chaque mur, puis retirez portes et fenêtres. Exemple : 10 m de murs × 2,5 m − 3 m² d’ouvertures = 22 m². Ce n’est pas la surface au sol ; les deux couches ne doublent pas la surface.' : 'Indiquez uniquement la surface concernée par cette intervention.'
         )
       );
 
@@ -2013,7 +2028,7 @@
 
       inp.setAttribute(
         'step',
-        ['tile_area_m2','masonry_area_m2'].includes(step.input_id) ? '0.01' : '1'
+        ['tile_area_m2','masonry_area_m2','painted_m2'].includes(step.input_id) ? '0.01' : '1'
       );
 
 

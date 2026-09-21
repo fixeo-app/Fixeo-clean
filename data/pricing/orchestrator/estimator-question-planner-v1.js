@@ -248,47 +248,7 @@ var SERVICE_QUESTION_PLANS = {
   },
 
   // ── PEINTURE ───────────────────────────────────────────────────────────────
-  'peinture.forfait_minimum': {
-    questions: [
-      { input_id: 'active_moisture', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'peinture.safety.active_moisture' },
-    ]
-  },
-  'peinture.mur_interieur.labour_only': {
-    questions: [
-      { input_id: 'active_moisture', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'peinture.safety.active_moisture' },
-      { input_id: 'surface_condition', priority: 'ELIGIBILITY', answer_type: 'enum', options: ['GOOD', 'MINOR_PREPARATION', 'MAJOR_PREPARATION', 'STRUCTURAL_CRACK'], prompt_key: 'peinture.eligibility.surface_condition' },
-      { input_id: 'painted_m2', priority: 'QUANTITY_MEASUREMENT', answer_type: 'number', prompt_key: 'peinture.quantity.painted_m2', measurement_note: 'GUIDED_MEASUREMENT_ASSISTANT_REQUIRED_IF_UNKNOWN' },
-    ]
-  },
-  'peinture.mur_interieur.all_in': {
-    questions: [
-      { input_id: 'active_moisture', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'peinture.safety.active_moisture' },
-      { input_id: 'surface_condition', priority: 'ELIGIBILITY', answer_type: 'enum', options: ['GOOD', 'MINOR_PREPARATION', 'MAJOR_PREPARATION', 'STRUCTURAL_CRACK'], prompt_key: 'peinture.eligibility.surface_condition' },
-      { input_id: 'painted_m2', priority: 'QUANTITY_MEASUREMENT', answer_type: 'number', prompt_key: 'peinture.quantity.painted_m2', measurement_note: 'GUIDED_MEASUREMENT_ASSISTANT_REQUIRED_IF_UNKNOWN' },
-    ]
-  },
-  'peinture.plafond.labour_only': {
-    questions: [
-      { input_id: 'active_moisture', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'peinture.safety.active_moisture' },
-      { input_id: 'surface_condition', priority: 'ELIGIBILITY', answer_type: 'enum', options: ['GOOD', 'MINOR_PREPARATION', 'MAJOR_PREPARATION', 'STRUCTURAL_CRACK'], prompt_key: 'peinture.eligibility.surface_condition' },
-      { input_id: 'ceiling_m2', priority: 'QUANTITY_MEASUREMENT', answer_type: 'number', prompt_key: 'peinture.quantity.ceiling_m2', measurement_note: 'GUIDED_MEASUREMENT_ASSISTANT_REQUIRED_IF_UNKNOWN' },
-    ]
-  },
-  'peinture.mur_interieur.all_in_avec_prep': {
-    questions: [
-      { input_id: 'active_moisture', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'peinture.safety.active_moisture' },
-      { input_id: 'surface_condition', priority: 'ELIGIBILITY', answer_type: 'enum', options: ['GOOD', 'MINOR_PREPARATION', 'MAJOR_PREPARATION', 'STRUCTURAL_CRACK'], prompt_key: 'peinture.eligibility.surface_condition' },
-      { input_id: 'painted_m2', priority: 'QUANTITY_MEASUREMENT', answer_type: 'number', prompt_key: 'peinture.quantity.painted_m2', measurement_note: 'GUIDED_MEASUREMENT_ASSISTANT_REQUIRED_IF_UNKNOWN' },
-    ]
-  },
-  'peinture.preparation_surface': {
-    questions: [
-      { input_id: 'active_moisture', priority: 'SAFETY', answer_type: 'boolean', prompt_key: 'peinture.safety.active_moisture' },
-      { input_id: 'primary_service_code', priority: 'ELIGIBILITY', answer_type: 'enum', options: ['peinture.mur_interieur.all_in', 'peinture.mur_interieur.labour_only', 'peinture.mur_interieur.all_in_avec_prep', 'peinture.plafond.labour_only'], prompt_key: 'peinture.eligibility.primary_service_code' },
-      { input_id: 'painted_m2', priority: 'QUANTITY_MEASUREMENT', answer_type: 'number', prompt_key: 'peinture.quantity.painted_m2', measurement_note: 'GUIDED_MEASUREMENT_ASSISTANT_REQUIRED_IF_UNKNOWN' },
-    ]
-  },
-
+"peinture.forfait_minimum": {"questions": [{"input_id": "active_moisture", "priority": "SAFETY", "answer_type": "boolean", "prompt_key": "peinture.safety.active_moisture"}]}, "peinture.mur_interieur.all_in": {"questions": [{"input_id": "active_moisture", "priority": "SAFETY", "answer_type": "boolean", "prompt_key": "peinture.safety.active_moisture"}]}, "peinture.plafond.labour_only": {"questions": [{"input_id": "active_moisture", "priority": "SAFETY", "answer_type": "boolean", "prompt_key": "peinture.safety.active_moisture"}]}, "peinture.mur_interieur.all_in_avec_prep": {"questions": [{"input_id": "active_moisture", "priority": "SAFETY", "answer_type": "boolean", "prompt_key": "peinture.safety.active_moisture"}]}, "peinture.preparation_surface": {"questions": [{"input_id": "active_moisture", "priority": "SAFETY", "answer_type": "boolean", "prompt_key": "peinture.safety.active_moisture"}]}, "peinture.mur_interieur.labour_only": {"questions": [{"input_id": "active_moisture", "priority": "SAFETY", "answer_type": "boolean", "prompt_key": "peinture.safety.active_moisture"}, {"input_id": "paint_support", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["PAINT_READY", "PAINT_COMPLEX", "UNKNOWN"], "prompt_key": "paint_support"}, {"input_id": "paint_access", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["PAINT_ACCESS_READY", "PAINT_COMPLEX", "UNKNOWN"], "prompt_key": "paint_access"}, {"input_id": "paint_supplies", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["PAINT_CLIENT_SUPPLIED", "PAINT_COMPLEX", "UNKNOWN"], "prompt_key": "paint_supplies"}, {"input_id": "paint_finish", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["PAINT_TWO_COATS", "PAINT_COMPLEX", "UNKNOWN"], "prompt_key": "paint_finish"}, {"input_id": "painted_m2", "priority": "QUANTITY_MEASUREMENT", "answer_type": "number", "prompt_key": "paint_area"}]},
   // ── MENUISERIE ─────────────────────────────────────────────────────────────
   'menuiserie.reglage_porte.sans_rabotage': {
     questions: [

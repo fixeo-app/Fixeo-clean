@@ -2901,6 +2901,586 @@
       "vap_minor": 60000,
       "materials_minor": 0,
       "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "peinture.mur_interieur.labour_only",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "paint_support": "PAINT_READY",
+        "paint_access": "PAINT_ACCESS_READY",
+        "paint_supplies": "PAINT_CLIENT_SUPPLIED",
+        "paint_finish": "PAINT_TWO_COATS",
+        "active_moisture": false
+      },
+      "vap_minor": null,
+      "materials_minor": 0,
+      "catalogue_version": "paint-pilot-v1",
+      "vap_quantity": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "unit_minor": 3000,
+        "decimals": 2
+      },
+      "quantity_guard": {
+        "field": "painted_m2",
+        "min": 20,
+        "max": 100,
+        "decimals": 2
+      }
     }
   ]
 }

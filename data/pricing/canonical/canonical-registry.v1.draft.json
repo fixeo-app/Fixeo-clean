@@ -5563,12 +5563,12 @@
       ],
       "metier": "peinture",
       "service_family": "MINIMUM",
-      "label_fr": "Forfait minimum projet peinture",
+      "label_fr": "Forfait minimum projet peinture — sur devis",
       "label_ar_darija": "عرض حد أدنى للطلاء",
       "short_label_fr": "Forfait minimum",
       "variant": null,
       "human_decision": "APPROVED",
-      "availability_status": "STANDARDIZED",
+      "availability_status": "DEPRECATED",
       "production_ready": false,
       "active_in_estimator": false,
       "active_in_reservation": false,
@@ -5578,22 +5578,12 @@
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "MINIMUM_FLOOR",
-        "commercial_output_type": "FIXEO_PRICE",
-        "currency": "MAD",
-        "formula_id": "FORMULA-MINIMUM-FLOOR-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 800,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
+        "calculation_model": "QUOTE_ONLY",
+        "commercial_output_type": "QUOTE_REQUIRED",
+        "currency": "MAD"
       },
       "minimum_floor": {
-        "enabled": true,
-        "amount_mad": 800,
-        "mode": "NON_ADDITIVE",
-        "scope": "FIXEO_POLICY — peinture minimum floor",
-        "policy_ref": "POL-MINIMUM-NON-ADDITIVE-V1",
-        "standalone_service_code": "peinture.forfait_minimum"
+        "enabled": false
       },
       "diagnostic": {
         "enabled": false,
@@ -5612,25 +5602,15 @@
         "parts_disclosure": null,
         "paint": "NOT_APPLICABLE"
       },
-      "measurement": {
-        "basis": "NONE",
-        "quantity_field": null,
-        "quantity_required": false,
-        "worker_count_required": null,
-        "worker_count_default": null,
-        "worker_count_semantics": null,
-        "hours_required": null,
-        "minimum_billing_hours": null,
-        "derived": false,
-        "conversion_model_id": null,
-        "conversion_status": "NOT_APPLICABLE"
-      },
+      "measurement": {},
       "eligibility": {
         "qualification_status": "OPEN",
         "required_conditions": [],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "active_moisture"
+        ],
+        "supporting_prose": "Prestation sur devis. Périmètre et fournitures à confirmer avant tout prix."
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -5682,38 +5662,49 @@
         "PEIN-002"
       ],
       "metier": "peinture",
-      "service_family": "PEINTURE_MUR",
-      "label_fr": "Peinture mur intérieur — main-d'œuvre seule",
-      "label_ar_darija": "طلاء جدران — يد عاملة فقط",
-      "short_label_fr": "Peinture mur (MDO)",
-      "variant": "labour_only",
+      "service_family": "PEINTURE_INTERIEURE",
+      "label_fr": "Peinture murs intérieurs — 20 à 100 m², peinture fournie par le client",
+      "label_ar_darija": null,
+      "short_label_fr": "Murs prêts à peindre — 2 couches",
+      "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
+      "service_version": "paint-pilot-v1",
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
-        "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-UNIT-WITH-FLOOR-V1",
-        "formula_params": {},
-        "unit_rate_mad": 35,
-        "fixed_amount_mad": null,
-        "unit": "PER_PAINTED_M2"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": null,
+        "materials_minor": 0,
+        "vap_quantity": {
+          "field": "painted_m2",
+          "min": 20,
+          "max": 100,
+          "unit_minor": 3000,
+          "decimals": 2
+        },
+        "quantity_guard": {
+          "field": "painted_m2",
+          "min": 20,
+          "max": 100,
+          "decimals": 2
+        }
       },
       "minimum_floor": {
-        "enabled": true,
-        "amount_mad": 800,
-        "mode": "NON_ADDITIVE",
-        "scope": "FIXEO_POLICY — peinture minimum floor",
-        "policy_ref": "POL-MINIMUM-NON-ADDITIVE-V1",
-        "standalone_service_code": "peinture.forfait_minimum"
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
       },
       "diagnostic": {
         "enabled": false,
@@ -5733,98 +5724,106 @@
         "paint": "CLIENT_SUPPLIED"
       },
       "measurement": {
-        "basis": "painted_m2",
+        "basis": "SURFACE",
         "quantity_field": "painted_m2",
         "quantity_required": true,
-        "worker_count_required": false,
+        "worker_count_required": null,
         "worker_count_default": null,
         "worker_count_semantics": null,
-        "hours_required": false,
+        "hours_required": null,
         "minimum_billing_hours": null,
         "derived": false,
-        "conversion_model_id": "floor_to_painted_UNVALIDATED",
-        "conversion_status": "RESEARCH_ESTIMATION_ONLY",
-        "engine_measurement_strategy": "DIRECT_CANONICAL_MEASUREMENT",
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE",
         "engine_required_input": "painted_m2",
-        "engine_must_not_derive_from": "floor_area_m2",
-        "floor_to_painted_conversion": {
-          "status": "RESEARCH_ESTIMATION_ONLY",
-          "production_allowed": false,
-          "engine_v1_use": false,
-          "note": "HRQ-002 RESOLVED: Engine V1 receives painted_m2 directly. Conversion factors (1.6x, 2.0x, room perimeter) are NOT canonical. GUIDED_PAINTED_SURFACE_CALCULATOR is future UX only — separate from engine contract."
-        },
-        "hrq_002_resolution": {
-          "resolved_for_engine": true,
-          "production_ux_review_remains": true,
-          "phase": "7C.3.1",
-          "date": "2026-08-09"
-        }
+        "engine_must_not_derive_from": "floor_area_m2"
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [
+        "structured": true,
+        "required_conditions": [
           {
-            "id": "X-PEIN-MOISTURE-01",
-            "trigger": "active_moisture = True",
-            "action": "STOP_SAFETY",
-            "description": "Active moisture present → HORS PÉRIMÈTRE ABSOLU. Resolve plumbing/roofing source before any painting. POL-PAINTED-SURFACE-V1."
+            "id": "paint_support",
+            "field": "paint_support",
+            "operator": "EQ",
+            "value": "PAINT_READY",
+            "effect": "ELIGIBLE"
           },
           {
-            "id": "X-PEIN-COND-01",
-            "trigger": "surface_condition IN [MAJOR_PREPARATION, STRUCTURAL_CRACK]",
-            "action": "QUOTE_REQUIRED",
-            "description": "Major preparation or structural crack → HORS PÉRIMÈTRE / QUOTE_REQUIRED"
+            "id": "paint_access",
+            "field": "paint_access",
+            "operator": "EQ",
+            "value": "PAINT_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "paint_supplies",
+            "field": "paint_supplies",
+            "operator": "EQ",
+            "value": "PAINT_CLIENT_SUPPLIED",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "paint_finish",
+            "field": "paint_finish",
+            "operator": "EQ",
+            "value": "PAINT_TWO_COATS",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "active_moisture",
+            "field": "active_moisture",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "paint_min",
+            "field": "painted_m2",
+            "operator": "GTE",
+            "value": 20,
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "paint_max",
+            "field": "painted_m2",
+            "operator": "LTE",
+            "value": 100,
+            "effect": "ELIGIBLE"
           }
         ],
-        "prebooking_questions": [],
-        "supporting_prose": "35 MAD/m² labour only. Client supplies paint. max(800, 35 × painted_m2). READY_TO_PAINT condition required. active_moisture = HORS PÉRIMÈTRE absolute. Surface MINOR_PREPARATION → route to PEIN-005. painted_m2 requested directly — no floor_m2 conversion.",
-        "structured": true,
+        "hard_exclusions": [],
         "prebooking_question_refs": [
-          "Q-PEIN-ACTIVE-MOISTURE",
-          "Q-PEIN-SURFACE-CONDITION",
-          "Q-PEIN-CLIENT-SUPPLIES-PAINT"
+          "active_moisture",
+          "paint_support",
+          "paint_access",
+          "paint_supplies",
+          "paint_finish",
+          "painted_m2"
         ],
+        "supporting_prose": "30 MAD/m² de murs pour l’artisan, plus frais FIXEO BP3.3. Deux couches, peinture client compatible, murs secs sains prêts à peindre, teinte proche, hauteur ≤ 2,80 m. Protection, outils, déplacement en ville, retours nécessaires au séchage et nettoyage inclus. Surface réelle des murs, ouvertures déduites, comptée une seule fois.",
         "human_review_required": false
       },
       "policy_refs": [
-        "POL-HORS-PERIMETRE-V1",
-        "POL-PAINTED-SURFACE-V1",
-        "POL-MINIMUM-NON-ADDITIVE-V1"
+        "POL-HORS-PERIMETRE-V1"
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
-        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
-        "research_phase": "7B.P",
-        "human_decision_phase": "7B",
-        "source_registry_refs": [
-          "data/pricing/research/peinture/registry.v0.3.json"
-        ],
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
         "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
+        "production_ready": true
       },
       "confidence": {
-        "price_confidence": "MEDIUM",
-        "scope_confidence": "MEDIUM",
-        "evidence_confidence": "MEDIUM",
-        "conversion_confidence": "LOW",
-        "batch_confidence": null
+        "price_confidence": "PILOT_NOT_FIELD_VALIDATED",
+        "scope_confidence": "DEFINED",
+        "evidence_confidence": "LIMITED"
       },
       "batch_policy": null,
-      "copy_keys": {
-        "copy_key_price": "copy.fixeo_calculated_price.price",
-        "copy_key_scope": "copy.peinture.peinture_mur.scope",
-        "copy_key_materials": "copy.peinture.peinture_mur.materials",
-        "copy_key_parts": null,
-        "copy_key_escape": "copy.escape.hors_perimetre",
-        "copy_key_disclaimer": "copy.disclaimer.fixeo_calculated_price"
-      },
+      "copy_keys": {},
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -5838,7 +5837,7 @@
       ],
       "metier": "peinture",
       "service_family": "PEINTURE_MUR",
-      "label_fr": "Peinture mur intérieur — fournitures incluses",
+      "label_fr": "Peinture mur intérieur — fournitures incluses — sur devis",
       "label_ar_darija": "طلاء جدران — شامل المواد",
       "short_label_fr": "Peinture mur (tout inclus)",
       "variant": "all_in",
@@ -5853,22 +5852,12 @@
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
-        "commercial_output_type": "FIXEO_CALCULATED_PRICE",
-        "currency": "MAD",
-        "formula_id": "FORMULA-UNIT-WITH-FLOOR-V1",
-        "formula_params": {},
-        "unit_rate_mad": 65,
-        "fixed_amount_mad": null,
-        "unit": "PER_PAINTED_M2"
+        "calculation_model": "QUOTE_ONLY",
+        "commercial_output_type": "QUOTE_REQUIRED",
+        "currency": "MAD"
       },
       "minimum_floor": {
-        "enabled": true,
-        "amount_mad": 800,
-        "mode": "NON_ADDITIVE",
-        "scope": "FIXEO_POLICY — peinture minimum floor",
-        "policy_ref": "POL-MINIMUM-NON-ADDITIVE-V1",
-        "standalone_service_code": "peinture.forfait_minimum"
+        "enabled": false
       },
       "diagnostic": {
         "enabled": false,
@@ -5887,60 +5876,15 @@
         "parts_disclosure": null,
         "paint": "INCLUDED"
       },
-      "measurement": {
-        "basis": "painted_m2",
-        "quantity_field": "painted_m2",
-        "quantity_required": true,
-        "worker_count_required": false,
-        "worker_count_default": null,
-        "worker_count_semantics": null,
-        "hours_required": false,
-        "minimum_billing_hours": null,
-        "derived": false,
-        "conversion_model_id": "floor_to_painted_UNVALIDATED",
-        "conversion_status": "RESEARCH_ESTIMATION_ONLY",
-        "engine_measurement_strategy": "DIRECT_CANONICAL_MEASUREMENT",
-        "engine_required_input": "painted_m2",
-        "engine_must_not_derive_from": "floor_area_m2",
-        "floor_to_painted_conversion": {
-          "status": "RESEARCH_ESTIMATION_ONLY",
-          "production_allowed": false,
-          "engine_v1_use": false,
-          "note": "HRQ-002 RESOLVED: Engine V1 receives painted_m2 directly. Conversion factors (1.6x, 2.0x, room perimeter) are NOT canonical. GUIDED_PAINTED_SURFACE_CALCULATOR is future UX only — separate from engine contract."
-        },
-        "hrq_002_resolution": {
-          "resolved_for_engine": true,
-          "production_ux_review_remains": true,
-          "phase": "7C.3.1",
-          "date": "2026-08-09"
-        }
-      },
+      "measurement": {},
       "eligibility": {
-        "qualification_status": "CONDITIONAL",
+        "qualification_status": "OPEN",
         "required_conditions": [],
-        "hard_exclusions": [
-          {
-            "id": "X-PEIN-MOISTURE-01",
-            "trigger": "active_moisture = True",
-            "action": "STOP_SAFETY",
-            "description": "Active moisture present → HORS PÉRIMÈTRE ABSOLU. Resolve plumbing/roofing source before any painting. POL-PAINTED-SURFACE-V1."
-          },
-          {
-            "id": "X-PEIN-COND-01",
-            "trigger": "surface_condition IN [MAJOR_PREPARATION, STRUCTURAL_CRACK]",
-            "action": "QUOTE_REQUIRED",
-            "description": "Major preparation or structural crack → HORS PÉRIMÈTRE / QUOTE_REQUIRED"
-          }
-        ],
-        "prebooking_questions": [],
-        "supporting_prose": "65 MAD/m² all-in. Artisan supplies standard paint. max(800, 65 × painted_m2). READY_TO_PAINT. Same exclusions as PEIN-002.",
-        "structured": true,
+        "hard_exclusions": [],
         "prebooking_question_refs": [
-          "Q-PEIN-ACTIVE-MOISTURE",
-          "Q-PEIN-SURFACE-CONDITION",
-          "Q-PEIN-CLIENT-SUPPLIES-PAINT"
+          "active_moisture"
         ],
-        "human_review_required": false
+        "supporting_prose": "Prestation sur devis. Périmètre et fournitures à confirmer avant tout prix."
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -5993,7 +5937,7 @@
       ],
       "metier": "peinture",
       "service_family": "PEINTURE_PLAFOND",
-      "label_fr": "Peinture plafond — main-d'œuvre seule",
+      "label_fr": "Peinture plafond — main-d'œuvre seule — sur devis",
       "label_ar_darija": "طلاء السقف — يد عاملة فقط",
       "short_label_fr": "Peinture plafond (MDO)",
       "variant": "labour_only",
@@ -6008,22 +5952,12 @@
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
-        "commercial_output_type": "FIXEO_CALCULATED_PRICE",
-        "currency": "MAD",
-        "formula_id": "FORMULA-UNIT-WITH-FLOOR-V1",
-        "formula_params": {},
-        "unit_rate_mad": 45,
-        "fixed_amount_mad": null,
-        "unit": "PER_CEILING_M2"
+        "calculation_model": "QUOTE_ONLY",
+        "commercial_output_type": "QUOTE_REQUIRED",
+        "currency": "MAD"
       },
       "minimum_floor": {
-        "enabled": true,
-        "amount_mad": 800,
-        "mode": "NON_ADDITIVE",
-        "scope": "FIXEO_POLICY — peinture minimum floor",
-        "policy_ref": "POL-MINIMUM-NON-ADDITIVE-V1",
-        "standalone_service_code": "peinture.forfait_minimum"
+        "enabled": false
       },
       "diagnostic": {
         "enabled": false,
@@ -6042,44 +5976,15 @@
         "parts_disclosure": null,
         "paint": "CLIENT_SUPPLIED"
       },
-      "measurement": {
-        "basis": "ceiling_m2",
-        "quantity_field": "ceiling_m2",
-        "quantity_required": true,
-        "worker_count_required": false,
-        "worker_count_default": null,
-        "worker_count_semantics": null,
-        "hours_required": false,
-        "minimum_billing_hours": null,
-        "derived": false,
-        "conversion_model_id": null,
-        "conversion_status": "NOT_APPLICABLE"
-      },
+      "measurement": {},
       "eligibility": {
-        "qualification_status": "CONDITIONAL",
+        "qualification_status": "OPEN",
         "required_conditions": [],
-        "hard_exclusions": [
-          {
-            "id": "X-PEIN-MOISTURE-01",
-            "trigger": "active_moisture = True",
-            "action": "STOP_SAFETY",
-            "description": "Active moisture present → HORS PÉRIMÈTRE ABSOLU. Resolve plumbing/roofing source before any painting. POL-PAINTED-SURFACE-V1."
-          },
-          {
-            "id": "X-PEIN-COND-01",
-            "trigger": "surface_condition IN [MAJOR_PREPARATION, STRUCTURAL_CRACK]",
-            "action": "QUOTE_REQUIRED",
-            "description": "Major preparation or structural crack → HORS PÉRIMÈTRE / QUOTE_REQUIRED"
-          }
-        ],
-        "prebooking_questions": [],
-        "supporting_prose": "45 MAD/ceiling_m2 all-in. ceiling_m2 = floor area of room. max(800, 45 × ceiling_m2). Active moisture on ceiling (leak from above) → HORS PÉRIMÈTRE — resolve source first.",
-        "structured": true,
+        "hard_exclusions": [],
         "prebooking_question_refs": [
-          "Q-PEIN-ACTIVE-MOISTURE",
-          "Q-PEIN-SURFACE-CONDITION"
+          "active_moisture"
         ],
-        "human_review_required": false
+        "supporting_prose": "Prestation sur devis. Périmètre et fournitures à confirmer avant tout prix."
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -6132,7 +6037,7 @@
       ],
       "metier": "peinture",
       "service_family": "PEINTURE_MUR",
-      "label_fr": "Peinture mur — fournitures + préparation légère",
+      "label_fr": "Peinture mur — fournitures + préparation légère — sur devis",
       "label_ar_darija": "طلاء جدران — شامل التحضير",
       "short_label_fr": "Peinture mur + prep",
       "variant": "all_in_avec_prep",
@@ -6147,22 +6052,12 @@
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
-        "commercial_output_type": "FIXEO_CALCULATED_PRICE",
-        "currency": "MAD",
-        "formula_id": "FORMULA-UNIT-WITH-FLOOR-V1",
-        "formula_params": {},
-        "unit_rate_mad": 75,
-        "fixed_amount_mad": null,
-        "unit": "PER_PAINTED_M2"
+        "calculation_model": "QUOTE_ONLY",
+        "commercial_output_type": "QUOTE_REQUIRED",
+        "currency": "MAD"
       },
       "minimum_floor": {
-        "enabled": true,
-        "amount_mad": 800,
-        "mode": "NON_ADDITIVE",
-        "scope": "FIXEO_POLICY — peinture minimum floor",
-        "policy_ref": "POL-MINIMUM-NON-ADDITIVE-V1",
-        "standalone_service_code": "peinture.forfait_minimum"
+        "enabled": false
       },
       "diagnostic": {
         "enabled": false,
@@ -6181,59 +6076,15 @@
         "parts_disclosure": null,
         "paint": "INCLUDED"
       },
-      "measurement": {
-        "basis": "painted_m2",
-        "quantity_field": "painted_m2",
-        "quantity_required": true,
-        "worker_count_required": false,
-        "worker_count_default": null,
-        "worker_count_semantics": null,
-        "hours_required": false,
-        "minimum_billing_hours": null,
-        "derived": false,
-        "conversion_model_id": "floor_to_painted_UNVALIDATED",
-        "conversion_status": "RESEARCH_ESTIMATION_ONLY",
-        "engine_measurement_strategy": "DIRECT_CANONICAL_MEASUREMENT",
-        "engine_required_input": "painted_m2",
-        "engine_must_not_derive_from": "floor_area_m2",
-        "floor_to_painted_conversion": {
-          "status": "RESEARCH_ESTIMATION_ONLY",
-          "production_allowed": false,
-          "engine_v1_use": false,
-          "note": "HRQ-002 RESOLVED: Engine V1 receives painted_m2 directly. Conversion factors (1.6x, 2.0x, room perimeter) are NOT canonical. GUIDED_PAINTED_SURFACE_CALCULATOR is future UX only — separate from engine contract."
-        },
-        "hrq_002_resolution": {
-          "resolved_for_engine": true,
-          "production_ux_review_remains": true,
-          "phase": "7C.3.1",
-          "date": "2026-08-09"
-        }
-      },
+      "measurement": {},
       "eligibility": {
-        "qualification_status": "CONDITIONAL",
+        "qualification_status": "OPEN",
         "required_conditions": [],
-        "hard_exclusions": [
-          {
-            "id": "X-PEIN-MOISTURE-01",
-            "trigger": "active_moisture = True",
-            "action": "STOP_SAFETY",
-            "description": "Active moisture present → HORS PÉRIMÈTRE ABSOLU. Resolve plumbing/roofing source before any painting. POL-PAINTED-SURFACE-V1."
-          },
-          {
-            "id": "X-PEIN-COND-01",
-            "trigger": "surface_condition IN [MAJOR_PREPARATION, STRUCTURAL_CRACK]",
-            "action": "QUOTE_REQUIRED",
-            "description": "Major preparation or structural crack → HORS PÉRIMÈTRE / QUOTE_REQUIRED"
-          }
-        ],
-        "prebooking_questions": [],
-        "supporting_prose": "75 MAD/m² all-in with minor preparation. Artisan supplies paint. max(800, 75 × painted_m2). MINOR_PREPARATION condition. Major prep → QUOTE_REQUIRED.",
-        "structured": true,
+        "hard_exclusions": [],
         "prebooking_question_refs": [
-          "Q-PEIN-ACTIVE-MOISTURE",
-          "Q-PEIN-SURFACE-CONDITION"
+          "active_moisture"
         ],
-        "human_review_required": false
+        "supporting_prose": "Prestation sur devis. Périmètre et fournitures à confirmer avant tout prix."
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -6286,7 +6137,7 @@
       ],
       "metier": "peinture",
       "service_family": "PREPARATION",
-      "label_fr": "Supplément préparation surface (enduit/ponçage)",
+      "label_fr": "Supplément préparation surface (enduit/ponçage) — sur devis",
       "label_ar_darija": "مكمل تحضير السطح",
       "short_label_fr": "Préparation surface",
       "variant": null,
@@ -6301,22 +6152,12 @@
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "ADD_ON",
-        "commercial_output_type": "FIXEO_ADD_ON",
-        "currency": "MAD",
-        "formula_id": "FORMULA-ADDON-V1",
-        "formula_params": {},
-        "unit_rate_mad": 25,
-        "fixed_amount_mad": null,
-        "unit": "PER_PAINTED_M2"
+        "calculation_model": "QUOTE_ONLY",
+        "commercial_output_type": "QUOTE_REQUIRED",
+        "currency": "MAD"
       },
       "minimum_floor": {
-        "enabled": false,
-        "amount_mad": null,
-        "mode": null,
-        "scope": null,
-        "policy_ref": null,
-        "standalone_service_code": null
+        "enabled": false
       },
       "diagnostic": {
         "enabled": false,
@@ -6335,55 +6176,15 @@
         "parts_disclosure": null,
         "paint": "INCLUDED"
       },
-      "measurement": {
-        "basis": "painted_m2",
-        "quantity_field": "painted_m2",
-        "quantity_required": true,
-        "worker_count_required": false,
-        "worker_count_default": null,
-        "worker_count_semantics": null,
-        "hours_required": false,
-        "minimum_billing_hours": null,
-        "derived": true,
-        "conversion_model_id": null,
-        "conversion_status": "NOT_APPLICABLE",
-        "engine_measurement_strategy": "DIRECT_CANONICAL_MEASUREMENT",
-        "engine_required_input": "painted_m2",
-        "engine_must_not_derive_from": "floor_area_m2",
-        "floor_to_painted_conversion": {
-          "status": "RESEARCH_ESTIMATION_ONLY",
-          "production_allowed": false,
-          "engine_v1_use": false,
-          "note": "HRQ-002 RESOLVED: Engine V1 receives painted_m2 directly. Conversion factors (1.6x, 2.0x, room perimeter) are NOT canonical. GUIDED_PAINTED_SURFACE_CALCULATOR is future UX only — separate from engine contract."
-        },
-        "hrq_002_resolution": {
-          "resolved_for_engine": true,
-          "production_ux_review_remains": true,
-          "phase": "7C.3.1",
-          "date": "2026-08-09"
-        }
-      },
+      "measurement": {},
       "eligibility": {
-        "qualification_status": "ADD_ON_ONLY",
-        "structured": true,
+        "qualification_status": "OPEN",
         "required_conditions": [],
-        "hard_exclusions": [
-          {
-            "id": "X-PEIN-008-01",
-            "trigger": "primary_painting_service_booked = False",
-            "action": "UNAVAILABLE",
-            "description": "Cannot be booked standalone. Requires qualifying primary peinture service (PEIN-002, PEIN-003, or PEIN-004)."
-          }
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "active_moisture"
         ],
-        "prebooking_question_refs": [],
-        "supporting_prose": "PEIN-008 is an add-on for enduit de lissage preparation. 25 MAD/m² of painted surface. Must accompany PEIN-002, PEIN-003, or PEIN-004. Maximum repair depth: 5mm. Deeper substrate repair → HORS PÉRIMÈTRE maçonnerie.",
-        "human_review_required": false,
-        "primary_service_required": true,
-        "allowed_primary_service_codes": [
-          "peinture.mur_interieur.labour_only",
-          "peinture.mur_interieur.all_in",
-          "peinture.plafond.labour_only"
-        ]
+        "supporting_prose": "Prestation sur devis. Périmètre et fournitures à confirmer avant tout prix."
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
