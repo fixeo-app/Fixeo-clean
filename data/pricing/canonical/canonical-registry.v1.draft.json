@@ -8240,6 +8240,340 @@
       },
       "human_review_flags": [],
       "semantic_corrections": []
+    },
+    "maconnerie.rebouchage_local": {
+      "canonical_service_code": "maconnerie.rebouchage_local",
+      "legacy_codes": [],
+      "metier": "maconnerie",
+      "service_family": "PETITE_MACONNERIE",
+      "label_fr": "Reboucher 1 à 5 petits trous",
+      "label_ar_darija": null,
+      "short_label_fr": "Reboucher 1 à 5 petits trous",
+      "variant": null,
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "masonry-pilot-v1",
+      "effective_from": null,
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 30000,
+        "materials_minor": 0,
+        "quantity_guard": {
+          "field": "masonry_hole_count",
+          "min": 1,
+          "max": 5,
+          "decimals": 0
+        }
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": false,
+        "price_mad": null,
+        "mode": null,
+        "same_visit_absorption": null,
+        "qualifying_service_codes": [],
+        "conditions": [],
+        "policy_ref": null
+      },
+      "materials": {
+        "consumables": "CLIENT_SUPPLIED",
+        "consumables_cap_mad": null,
+        "major_parts": "CLIENT_SUPPLIED",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "parts_disclosure": null
+      },
+      "measurement": {
+        "basis": "COUNT",
+        "quantity_field": "masonry_hole_count",
+        "quantity_required": true,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "masonry_support",
+            "field": "masonry_support",
+            "operator": "EQ",
+            "value": "MASONRY_SOUND_DRY",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre petite maçonnerie confirmé"
+          },
+          {
+            "id": "masonry_access",
+            "field": "masonry_access",
+            "operator": "EQ",
+            "value": "MASONRY_ACCESSIBLE",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre petite maçonnerie confirmé"
+          },
+          {
+            "id": "masonry_supplies",
+            "field": "masonry_supplies",
+            "operator": "EQ",
+            "value": "MASONRY_CLIENT_SUPPLIED",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre petite maçonnerie confirmé"
+          },
+          {
+            "id": "masonry_finish",
+            "field": "masonry_finish",
+            "operator": "EQ",
+            "value": "MASONRY_STANDARD_FINISH",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre petite maçonnerie confirmé"
+          },
+          {
+            "id": "masonry_scope",
+            "field": "masonry_scope",
+            "operator": "EQ",
+            "value": "MASONRY_SMALL_HOLES",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre petite maçonnerie confirmé"
+          },
+          {
+            "id": "masonry_hole_count_min",
+            "field": "masonry_hole_count",
+            "operator": "GTE",
+            "value": 1,
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "masonry_hole_count_max",
+            "field": "masonry_hole_count",
+            "operator": "LTE",
+            "value": 5,
+            "effect": "ELIGIBLE"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "masonry_hole_count",
+          "masonry_support",
+          "masonry_access",
+          "masonry_supplies",
+          "masonry_finish",
+          "masonry_scope"
+        ],
+        "supporting_prose": "Réparation superficielle de mur intérieur dans une pièce, support sain et sec, sans fissure, humidité ou intervention structurelle. Main-d’œuvre, outillage, déplacement en ville, finition locale et retour nécessaire inclus. Fournitures compatibles à fournir par le client. Peinture et évacuation exclues.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1"
+      ],
+      "safety_policy_refs": [],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
+        "transaction_backed": false,
+        "production_ready": true
+      },
+      "confidence": {
+        "price_confidence": "PILOT_NOT_FIELD_VALIDATED",
+        "scope_confidence": "DEFINED",
+        "evidence_confidence": "LIMITED"
+      },
+      "batch_policy": null,
+      "copy_keys": {},
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
+    },
+    "maconnerie.reprise_enduit": {
+      "canonical_service_code": "maconnerie.reprise_enduit",
+      "legacy_codes": [],
+      "metier": "maconnerie",
+      "service_family": "PETITE_MACONNERIE",
+      "label_fr": "Reprise locale d’enduit — 1 à 3 m²",
+      "label_ar_darija": null,
+      "short_label_fr": "Reprise locale d’enduit — 1 à 3 m²",
+      "variant": null,
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "masonry-pilot-v1",
+      "effective_from": null,
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 50000,
+        "materials_minor": 0,
+        "quantity_guard": {
+          "field": "masonry_area_m2",
+          "min": 1,
+          "max": 3,
+          "decimals": 2
+        }
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": false,
+        "price_mad": null,
+        "mode": null,
+        "same_visit_absorption": null,
+        "qualifying_service_codes": [],
+        "conditions": [],
+        "policy_ref": null
+      },
+      "materials": {
+        "consumables": "CLIENT_SUPPLIED",
+        "consumables_cap_mad": null,
+        "major_parts": "CLIENT_SUPPLIED",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "parts_disclosure": null
+      },
+      "measurement": {
+        "basis": "SURFACE",
+        "quantity_field": "masonry_area_m2",
+        "quantity_required": true,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "masonry_support",
+            "field": "masonry_support",
+            "operator": "EQ",
+            "value": "MASONRY_SOUND_DRY",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre petite maçonnerie confirmé"
+          },
+          {
+            "id": "masonry_access",
+            "field": "masonry_access",
+            "operator": "EQ",
+            "value": "MASONRY_ACCESSIBLE",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre petite maçonnerie confirmé"
+          },
+          {
+            "id": "masonry_supplies",
+            "field": "masonry_supplies",
+            "operator": "EQ",
+            "value": "MASONRY_CLIENT_SUPPLIED",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre petite maçonnerie confirmé"
+          },
+          {
+            "id": "masonry_finish",
+            "field": "masonry_finish",
+            "operator": "EQ",
+            "value": "MASONRY_STANDARD_FINISH",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre petite maçonnerie confirmé"
+          },
+          {
+            "id": "masonry_scope",
+            "field": "masonry_scope",
+            "operator": "EQ",
+            "value": "MASONRY_THIN_RENDER",
+            "effect": "ELIGIBLE",
+            "description": "Périmètre petite maçonnerie confirmé"
+          },
+          {
+            "id": "masonry_area_m2_min",
+            "field": "masonry_area_m2",
+            "operator": "GTE",
+            "value": 1,
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "masonry_area_m2_max",
+            "field": "masonry_area_m2",
+            "operator": "LTE",
+            "value": 3,
+            "effect": "ELIGIBLE"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "masonry_area_m2",
+          "masonry_support",
+          "masonry_access",
+          "masonry_supplies",
+          "masonry_finish",
+          "masonry_scope"
+        ],
+        "supporting_prose": "Réparation superficielle de mur intérieur dans une pièce, support sain et sec, sans fissure, humidité ou intervention structurelle. Main-d’œuvre, outillage, déplacement en ville, finition locale et retour nécessaire inclus. Fournitures compatibles à fournir par le client. Peinture et évacuation exclues.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1"
+      ],
+      "safety_policy_refs": [],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
+        "transaction_backed": false,
+        "production_ready": true
+      },
+      "confidence": {
+        "price_confidence": "PILOT_NOT_FIELD_VALIDATED",
+        "scope_confidence": "DEFINED",
+        "evidence_confidence": "LIMITED"
+      },
+      "batch_policy": null,
+      "copy_keys": {},
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
     }
   }
 }

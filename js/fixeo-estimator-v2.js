@@ -369,6 +369,14 @@
     tile_area_m2: "Quelle surface de sol faut-il carreler, en m² ? De 10 à 30 m², avec deux décimales maximum.",
     TILE_REPLACE_ONLY: "S’agit-il uniquement du remplacement local de ces carreaux de sol, sans autre travail ?",
     TILE_INSTALL_ONLY: "S’agit-il uniquement de pose droite sur un sol intérieur déjà prêt, sans dépose, mur, escalier, motif ni autre travail ?",
+    masonry_support: "Le mur est-il sain, sec et stable, sans fissure, humidité, déformation ni élément structurel à réparer ?",
+    masonry_access: "La zone est-elle dégagée, dans une seule pièce intérieure, à 2 m de hauteur maximum, avec eau et électricité disponibles ?",
+    masonry_supplies: "Fournissez-vous le produit de rebouchage ou l’enduit adapté au support, avec les fournitures nécessaires en quantité suffisante ?",
+    masonry_finish: "Souhaitez-vous uniquement cette réparation et sa finition locale, sans peinture ni évacuation des gravats ?",
+    masonry_hole_count: "Combien de petits trous faut-il reboucher ? Forfait de 1 à 5 trous.",
+    masonry_area_m2: "Quelle surface totale d’enduit faut-il reprendre, en m² ? Forfait de 1 à 3 m².",
+    MASONRY_SMALL_HOLES: "Chaque trou mesure-t-il au maximum 10 cm de diamètre et 3 cm de profondeur, sans traverser le mur ni toucher une canalisation ou un câble ?",
+    MASONRY_THIN_RENDER: "S’agit-il uniquement d’une reprise superficielle d’enduit, jusqu’à 1 cm d’épaisseur, sans maçonnerie à reconstruire ?",
     plumbing_scope: 'Le problème concerne-t-il un seul équipement accessible, sans canalisation encastrée ni réseau collectif ?',
 
     surface_m2:
@@ -427,6 +435,14 @@
       TILE_REPLACE_ONLY: "Oui, uniquement ce remplacement",
       TILE_INSTALL_ONLY: "Oui, uniquement cette pose droite",
       TILE_COMPLEX: "Non, mon besoin est différent",
+      MASONRY_SOUND_DRY: "Oui, support sain, sec et sans fissure",
+      MASONRY_ACCESSIBLE: "Oui, dans ces conditions",
+      MASONRY_CLIENT_SUPPLIED: "Oui, fournitures adaptées disponibles",
+      MASONRY_SUPPLIES_MISSING: "Non, fournitures à prévoir",
+      MASONRY_STANDARD_FINISH: "Oui, réparation et finition locale uniquement",
+      MASONRY_SMALL_HOLES: "Oui, chaque trou respecte ces limites",
+      MASONRY_THIN_RENDER: "Oui, enduit superficiel ≤ 1 cm",
+      MASONRY_COMPLEX: "Non, mon besoin est différent",
       LOCAL_ACCESSIBLE:'Oui, un seul équipement accessible',
       COMPLEX:'Non, réseau collectif / canalisation encastrée / plusieurs équipements',
       UNKNOWN:'Je ne sais pas',
@@ -1064,6 +1080,14 @@
       TILE_REPLACE_ONLY: "Oui, uniquement ce remplacement",
       TILE_INSTALL_ONLY: "Oui, uniquement cette pose droite",
       TILE_COMPLEX: "Non, mon besoin est différent",
+      MASONRY_SOUND_DRY: "Oui, support sain, sec et sans fissure",
+      MASONRY_ACCESSIBLE: "Oui, dans ces conditions",
+      MASONRY_CLIENT_SUPPLIED: "Oui, fournitures adaptées disponibles",
+      MASONRY_SUPPLIES_MISSING: "Non, fournitures à prévoir",
+      MASONRY_STANDARD_FINISH: "Oui, réparation et finition locale uniquement",
+      MASONRY_SMALL_HOLES: "Oui, chaque trou respecte ces limites",
+      MASONRY_THIN_RENDER: "Oui, enduit superficiel ≤ 1 cm",
+      MASONRY_COMPLEX: "Non, mon besoin est différent",
       LOCAL_ACCESSIBLE:'Oui, un seul équipement accessible',
       COMPLEX:'Non, réseau collectif / canalisation encastrée / plusieurs équipements',
       UNKNOWN:'Je ne sais pas',
@@ -1581,6 +1605,7 @@
     step
   ) {
     return [
+      'masonry_area_m2',
       'tile_area_m2',
       'painted_m2',
       'ceiling_m2',
@@ -1971,13 +1996,13 @@
 
       inp.setAttribute(
         'step',
-        step.input_id === 'tile_area_m2' ? '0.01' : '1'
+        ['tile_area_m2','masonry_area_m2'].includes(step.input_id) ? '0.01' : '1'
       );
 
 
       inp.setAttribute(
         'placeholder',
-        step.input_id === 'tile_area_m2' ? 'Ex. 20,25' : 'Ex. 45'
+        step.input_id === 'masonry_area_m2' ? 'Ex. 2,5' : (step.input_id === 'tile_area_m2' ? 'Ex. 20,25' : 'Ex. 45')
       );
 
 

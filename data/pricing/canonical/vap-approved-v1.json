@@ -1,6 +1,6 @@
 {
   "version": "vap-approved-v1",
-  "note": "Forfaits jardinage et carrelage autorisés par le propriétaire pour les 20 villes FIXEO. Prix pilotes à suivre ; disponibilité artisan à confirmer.",
+  "note": "Forfaits jardinage, carrelage et petite maçonnerie validés par FIXEO dans les 20 villes. Disponibilité artisan à confirmer.",
   "entries": [
     {
       "approved": true,
@@ -1699,6 +1699,886 @@
         "min": 10,
         "max": 30,
         "unit_minor": 5000,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.rebouchage_local",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_SMALL_HOLES"
+      },
+      "vap_minor": 30000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_hole_count",
+        "min": 1,
+        "max": 5,
+        "decimals": 0
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
+        "decimals": 2
+      }
+    },
+    {
+      "approved": true,
+      "service_code": "maconnerie.reprise_enduit",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "masonry_support": "MASONRY_SOUND_DRY",
+        "masonry_access": "MASONRY_ACCESSIBLE",
+        "masonry_supplies": "MASONRY_CLIENT_SUPPLIED",
+        "masonry_finish": "MASONRY_STANDARD_FINISH",
+        "masonry_scope": "MASONRY_THIN_RENDER"
+      },
+      "vap_minor": 50000,
+      "materials_minor": 0,
+      "catalogue_version": "masonry-pilot-v1",
+      "quantity_guard": {
+        "field": "masonry_area_m2",
+        "min": 1,
+        "max": 3,
         "decimals": 2
       }
     }
