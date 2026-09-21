@@ -4,7 +4,7 @@
   "base_commit": "ad688e0e09a8e865995a91d42f302b0cf604f860",
   "approval_status": "APPROVED",
   "runtime_integrated": true,
-  "production_ready": false,
+  "production_ready": true,
   "pricing_version": "vap-bp33-v1",
   "currency": "MAD",
   "proposed_city_slugs": [
@@ -30,7 +30,7 @@
     "tetouan"
   ],
   "proposed_catalogue_entry_count": 120,
-  "note_fr": "Grille et périmètre validés pour les 20 villes. Intégration préparée dans cette branche ; migration non appliquée, déploiement non autorisé pour ce métier.",
+  "note_fr": "Grille et périmètre validés pour les 20 villes. Migration appliquée après autorisation explicite du propriétaire ; déploiement Fixeo.ma et contrôles de production réussis.",
   "existing_missions_context": {
     "owner_statement_fr": "Les missions existantes sont des missions de test.",
     "transaction_backed_pricing_evidence": false,
@@ -669,26 +669,48 @@
     "only_two_proposal_files_changed",
     "protected_reports_unchanged"
   ],
-  "next_step": "OWNER_AUTHORIZES_PRODUCTION_MIGRATION_AND_DEPLOYMENT",
-  "production_authorization_for_this_proposal": false,
+  "next_step": "NEXT_PARTNER_TRADE_CALIBRATION",
+  "production_authorization_for_this_proposal": true,
   "commit_message": "feat(serrurerie): integrate approved VAP tariffs and verified access lifecycle",
   "owner_approval_date": "2026-09-21",
   "owner_approval_fr": "Oui je valide cette grille et ce périmètre pour les 20 villes.",
   "implementation_status": "VERIFIED",
-  "deployment_status": "AWAITING_PRODUCTION_AUTHORIZATION",
+  "deployment_status": "DEPLOYED_VERIFIED",
   "migration": {
     "path": "supabase/migrations/20260921154406_serrurerie_same_visit_service.sql",
     "sha256": "9bd631815d3e39cf3252d29a6ebeab3da16c37e5562ec09f96fc06f53673f6c7",
-    "production_applied": false,
-    "financial_trigger_expected_md5": "04c2261556061bc8f1ae80f1bf51e40e"
+    "production_applied": true,
+    "financial_trigger_expected_md5": "04c2261556061bc8f1ae80f1bf51e40e",
+    "production_version": "20260921162453",
+    "financial_trigger_deployed_md5": "fa1dd89e2ad8f1ad7b8409abe689e4df"
   },
   "verification": {
     "automated_tests_passed": 140,
     "isolated_database": "PGlite",
     "browser_interface": "JSDOM",
-    "production_writes": false,
+    "production_writes": true,
     "legacy_other_trade_vap_entries_preserved": 560,
     "candidate_city_service_pairs_verified": 120,
-    "same_visit_credit_cases_verified": 10
+    "same_visit_credit_cases_verified": 10,
+    "public_production_checks_passed": 35,
+    "temporary_unreserved_pricing_offers_created": 6,
+    "new_missions_created": 0,
+    "existing_mission_amounts_and_offer_bindings_preserved": true,
+    "sql_function_sources_matching_migration": 11,
+    "production_report": "data/pricing/research/serrurerie/production-verification.v1.json"
+  },
+  "production_authorization_date": "2026-09-21",
+  "production_authorization_fr": "J'autorises maintenant la migration en production puis le déploiement sur Fixeo.ma",
+  "deployment": {
+    "pr": 42,
+    "merge_commit": "9385c3a7b369951accf38ae400a8dd94df86afbb",
+    "implementation_commit": "8e36f3d6a7d276318770c83cbf8812a0352d69cb",
+    "vercel_status": [
+      {
+        "context": "Vercel",
+        "state": "success",
+        "target_url": "https://vercel.com/elalaouibiz-3410s-projects/fixeo-clean/2thAt1jJ5Gx5xLyXNMZz2F5hRg2L"
+      }
+    ]
   }
 }

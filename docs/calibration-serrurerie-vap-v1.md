@@ -1,8 +1,8 @@
-# Serrurerie — grille validée et intégration vérifiée
+# Serrurerie — grille validée et déployée
 
-État au 21 septembre 2026 : **grille et périmètre validés pour les 20 villes ; intégration testée, migration et déploiement en attente d’autorisation**. Base auditée : `ad688e0e09a8e865995a91d42f302b0cf604f860`, après le déploiement climatisation. Proposition structurée : `data/pricing/research/serrurerie/vap-proposal.v1.json`.
+État au 21 septembre 2026 : **grille et périmètre validés pour les 20 villes ; migration appliquée et déploiement sur Fixeo.ma vérifié après autorisation explicite**. Base auditée : `ad688e0e09a8e865995a91d42f302b0cf604f860`, après le déploiement climatisation. Proposition structurée : `data/pricing/research/serrurerie/vap-proposal.v1.json`.
 
-Cette branche intègre les six forfaits validés, les contrôles professionnels et l’absorption consentie du diagnostic. La migration est préparée et testée en base isolée ; elle n’a pas été appliquée en production et cette branche n’est pas fusionnée. Les missions existantes sont des **missions de test**, selon le propriétaire : elles ne prouvent ni demande réelle, ni acceptation artisan, ni rentabilité. Elles restent inchangées.
+Les six forfaits validés, les contrôles professionnels et l’absorption consentie du diagnostic sont intégrés. La migration est appliquée en production ; la PR nº42 est fusionnée et le déploiement Vercel a réussi. Les missions existantes sont des **missions de test**, selon le propriétaire : elles ne prouvent ni demande réelle, ni acceptation artisan, ni rentabilité. Elles restent inchangées.
 
 ## Six forfaits validés
 
@@ -108,7 +108,7 @@ Corrections désormais intégrées : la qualification commune, les six périmèt
 
 Vérification de la proposition : six décompositions par `buildBreakdown`, couverture exacte des 20 villes, 120 couples uniques, cinq conversions avec crédits 0/220 MAD, comparaisons historiques et scénarios de coûts. Contrôle du diff limité aux deux fichiers de proposition. Les rapports `data/pricing/engine/engine-test-report.v1.json` et `data/pricing/shadow/shadow-results.v1.json` restent protégés et inchangés.
 
-Prochaine décision : **valider ou ajuster cette grille et ce périmètre**, notamment pièce client, créneau 8 h–20 h et contrôle préalable du droit d'accès. L'intégration et ses essais viendront ensuite ; aucune nouvelle autorisation de production n'est déduite des validations des métiers précédents.
+Décision prise : le propriétaire a validé cette grille et ce périmètre, notamment pièce client, créneau 8 h–20 h et contrôle préalable du droit d’accès. Il a ensuite autorisé explicitement la migration en production puis le déploiement de ce métier.
 
 Message de commit de la proposition : `docs(serrurerie): propose VAP tariffs and authorization-first scopes`.
 
@@ -127,7 +127,7 @@ Le résultat réel de chaque prestation doit être attesté séparément avant c
 
 Commande : `NODE_PATH=/workspace/scratch/7e6d7edda414/test-deps/node_modules node --test tests/estimator/*.test.cjs`.
 
-## Migration prête à appliquer
+## Migration appliquée et déploiement vérifié
 
 Fichier créé avec la CLI Supabase : `supabase/migrations/20260921154406_serrurerie_same_visit_service.sql`.
 
@@ -137,8 +137,20 @@ Fichier créé avec la CLI Supabase : `supabase/migrations/20260921154406_serrur
 - Extension du déclencheur financier partagé et contrôle des nouvelles offres serrurerie. Verrouillage limité à 3 secondes et exécution à 30 secondes ; aucune mise à jour de mission ou offre historique.
 - SHA256 : `9bd631815d3e39cf3252d29a6ebeab3da16c37e5562ec09f96fc06f53673f6c7`.
 
-Au dernier contrôle en lecture seule : les nouvelles tables et RPC serrurerie sont absentes en production ; 23 missions, 118 demandes et 48 offres sont présentes. Aucun appel de réservation, dispatch, règlement, notification ou migration de production n’a été effectué pour cette intégration. Les deux rapports protégés sont inchangés.
+Avant migration, les nouvelles tables et RPC serrurerie étaient absentes ; la base contenait 23 missions, 118 demandes et 48 offres. Après autorisation explicite du propriétaire le 21 septembre 2026, la migration a été appliquée sous la version Supabase `20260921162453`. Les sources des onze fonctions installées correspondent exactement au SQL testé ; les cinq tables privées, leurs droits et leurs déclencheurs sont conformes. Nouvelle empreinte du déclencheur financier : `fa1dd89e2ad8f1ad7b8409abe689e4df`. Les deux rapports protégés sont inchangés.
 
 La revue des privilèges et les essais de la migration sont terminés en base isolée. La disponibilité réelle des partenaires et les contrôles physiques restent à confirmer par les professionnels, comme prévu dans le périmètre validé. Les anciennes pages éditoriales de prix restent indicatives ; cette intégration porte sur le parcours transactionnel de l’estimateur et des missions.
 
 Message de commit : `feat(serrurerie): integrate approved VAP tariffs and verified access lifecycle`.
+
+
+La [PR nº42](https://github.com/fixeo-app/Fixeo-clean/pull/42) a été fusionnée au commit `9385c3a7b369951accf38ae400a8dd94df86afbb`. Le [déploiement Vercel](https://vercel.com/elalaouibiz-3410s-projects/fixeo-clean/2thAt1jJ5Gx5xLyXNMZz2F5hRg2L) a réussi. Les 16 fichiers publics contrôlés correspondent octet pour octet à la version testée ; le catalogue publié comprend les 120 couples serrurerie et préserve les 560 entrées des autres métiers.
+
+**35 contrôles publics réussis** : six tarifs et contextes de prix signés, limites de périmètre, droit d’accès, danger, pièces, créneau, porte verrouillée et accès au suivi. Ces vérifications ont créé six offres temporaires non réservées. La base contient ensuite 54 offres, toujours 23 missions et 118 demandes. Les empreintes financières des missions et les liens demande/offre sont inchangés. Aucun appel de réservation, dispatch, règlement ou notification ; aucun changement de l’activation WhatsApp ou carte.
+
+L’audit Supabase après migration ajoute les cinq informations attendues de [RLS sans politique](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) pour des tables privées sans accès direct, et quatre signalements de [fonctions authentifiées SECURITY DEFINER](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable) intentionnelles, contrôlées par `auth.uid()` et la propriété de la mission/opportunité. Les autres alertes préexistantes sont inchangées : trois vues SECURITY DEFINER, quatre search_path mutables, neuf fonctions anonymes et une alerte de protection des mots de passe. Cette livraison ne prétend pas corriger ces éléments historiques.
+
+Preuves structurées : `data/pricing/research/serrurerie/production-verification.v1.json`. La disponibilité effective des partenaires dans chaque ville reste soumise à leur acceptation ; les missions existantes sont des tests.
+
+Message de commit de livraison : `feat(serrurerie): deploy approved VAP tariffs and verified access lifecycle (#42)`.
+Message de commit du compte rendu : `docs(serrurerie): record authorized production deployment and verification`.

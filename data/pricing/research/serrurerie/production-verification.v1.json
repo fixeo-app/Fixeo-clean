@@ -1,0 +1,820 @@
+{
+  "result": "PASS",
+  "checked_at_utc": "2026-09-21T16:27:43Z",
+  "database": {
+    "authorization": {
+      "date": "2026-09-21",
+      "text": "J'autorises maintenant la migration en production puis le déploiement sur Fixeo.ma"
+    },
+    "migration": {
+      "path": "supabase/migrations/20260921154406_serrurerie_same_visit_service.sql",
+      "sha256": "9bd631815d3e39cf3252d29a6ebeab3da16c37e5562ec09f96fc06f53673f6c7",
+      "version": "20260921162453",
+      "name": "serrurerie_same_visit_service"
+    },
+    "baseline": {
+      "trigger_md5": "04c2261556061bc8f1ae80f1bf51e40e",
+      "serrurerie_table": null,
+      "missions": 23,
+      "requests": 118,
+      "offers": 48,
+      "mission_financial_fingerprint": "62ee32d566e7f7e5a9e8ffbbcabda78c",
+      "request_binding_fingerprint": "8306560e548f30e079f634d96b4e88e9"
+    },
+    "post_migration": {
+      "counts": {
+        "offers": 48,
+        "missions": 23,
+        "requests": 118
+      },
+      "tables": [
+        {
+          "acl": [
+            "postgres=arwdDxtm/postgres"
+          ],
+          "rls": true,
+          "name": "serrurerie_completion_v1",
+          "anon_select": false,
+          "server_select": false,
+          "authenticated_select": false
+        },
+        {
+          "acl": [
+            "postgres=arwdDxtm/postgres"
+          ],
+          "rls": true,
+          "name": "serrurerie_decisions_v1",
+          "anon_select": false,
+          "server_select": false,
+          "authenticated_select": false
+        },
+        {
+          "acl": [
+            "postgres=arwdDxtm/postgres"
+          ],
+          "rls": true,
+          "name": "serrurerie_offer_checks_v1",
+          "anon_select": false,
+          "server_select": false,
+          "authenticated_select": false
+        },
+        {
+          "acl": [
+            "postgres=arwdDxtm/postgres"
+          ],
+          "rls": true,
+          "name": "serrurerie_prework_v1",
+          "anon_select": false,
+          "server_select": false,
+          "authenticated_select": false
+        },
+        {
+          "acl": [
+            "postgres=arwdDxtm/postgres"
+          ],
+          "rls": true,
+          "name": "serrurerie_proposals_v1",
+          "anon_select": false,
+          "server_select": false,
+          "authenticated_select": false
+        }
+      ],
+      "triggers": [
+        {
+          "name": "z_vap_mission_amounts",
+          "table": "missions",
+          "enabled": "O"
+        },
+        {
+          "name": "serrurerie_proposal_immutable",
+          "table": "fixeo_private.serrurerie_proposals_v1",
+          "enabled": "O"
+        },
+        {
+          "name": "serrurerie_decision_immutable",
+          "table": "fixeo_private.serrurerie_decisions_v1",
+          "enabled": "O"
+        },
+        {
+          "name": "serrurerie_prework_immutable",
+          "table": "fixeo_private.serrurerie_prework_v1",
+          "enabled": "O"
+        },
+        {
+          "name": "serrurerie_offer_checks_immutable",
+          "table": "fixeo_private.serrurerie_offer_checks_v1",
+          "enabled": "O"
+        },
+        {
+          "name": "serrurerie_completion_immutable",
+          "table": "fixeo_private.serrurerie_completion_v1",
+          "enabled": "O"
+        },
+        {
+          "name": "serrurerie_offer_guard",
+          "table": "fixeo_pricing_offers_v1",
+          "enabled": "O"
+        }
+      ],
+      "functions": [
+        {
+          "acl": [
+            "postgres=X/postgres"
+          ],
+          "args": "",
+          "name": "mission_vap_amounts",
+          "config": [
+            "search_path=\"\""
+          ],
+          "schema": "fixeo_private",
+          "anon_execute": false,
+          "server_execute": false,
+          "security_definer": true,
+          "authenticated_execute": false
+        },
+        {
+          "acl": [
+            "postgres=X/postgres"
+          ],
+          "args": "",
+          "name": "serrurerie_immutable_v1",
+          "config": [
+            "search_path=\"\""
+          ],
+          "schema": "fixeo_private",
+          "anon_execute": false,
+          "server_execute": false,
+          "security_definer": false,
+          "authenticated_execute": false
+        },
+        {
+          "acl": [
+            "postgres=X/postgres"
+          ],
+          "args": "",
+          "name": "serrurerie_offer_guard_v1",
+          "config": [
+            "search_path=\"\""
+          ],
+          "schema": "fixeo_private",
+          "anon_execute": false,
+          "server_execute": false,
+          "security_definer": true,
+          "authenticated_execute": false
+        },
+        {
+          "acl": [
+            "postgres=X/postgres"
+          ],
+          "args": "mid uuid",
+          "name": "serrurerie_state_v1",
+          "config": [
+            "search_path=\"\""
+          ],
+          "schema": "fixeo_private",
+          "anon_execute": false,
+          "server_execute": false,
+          "security_definer": true,
+          "authenticated_execute": false
+        },
+        {
+          "acl": [
+            "postgres=X/postgres"
+          ],
+          "args": "code text",
+          "name": "serrurerie_tariff_v1",
+          "config": [
+            "search_path=\"\""
+          ],
+          "schema": "fixeo_private",
+          "anon_execute": false,
+          "server_execute": false,
+          "security_definer": false,
+          "authenticated_execute": false
+        },
+        {
+          "acl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres"
+          ],
+          "args": "p_mission_id uuid, p_professional_checks jsonb",
+          "name": "serrurerie_completion_artisan_v1",
+          "config": [
+            "search_path=\"\""
+          ],
+          "schema": "public",
+          "anon_execute": false,
+          "server_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        },
+        {
+          "acl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres"
+          ],
+          "args": "p_request_id uuid, p_professional_checks jsonb",
+          "name": "serrurerie_offer_artisan_v1",
+          "config": [
+            "search_path=\"\""
+          ],
+          "schema": "public",
+          "anon_execute": false,
+          "server_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        },
+        {
+          "acl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres"
+          ],
+          "args": "p_mission_id uuid, p_professional_checks jsonb, p_access_check_type text",
+          "name": "serrurerie_prework_artisan_v1",
+          "config": [
+            "search_path=\"\""
+          ],
+          "schema": "public",
+          "anon_execute": false,
+          "server_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        },
+        {
+          "acl": [
+            "postgres=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "args": "p_mission_id uuid",
+          "name": "serrurerie_repair_admin_v1",
+          "config": [
+            "search_path=\"\""
+          ],
+          "schema": "public",
+          "anon_execute": false,
+          "server_execute": true,
+          "security_definer": true,
+          "authenticated_execute": false
+        },
+        {
+          "acl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres"
+          ],
+          "args": "p_mission_id uuid, p_service_code text, p_inputs jsonb, p_paid_minor bigint, p_proposal_id uuid, p_same_visit boolean, p_professional_checks jsonb",
+          "name": "serrurerie_repair_artisan_v1",
+          "config": [
+            "search_path=\"\""
+          ],
+          "schema": "public",
+          "anon_execute": false,
+          "server_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        },
+        {
+          "acl": [
+            "postgres=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "args": "p_tracking_ref text, p_guest_hash text, p_action text, p_proposal_id uuid, p_expected_paid_minor bigint",
+          "name": "serrurerie_repair_guest_v1",
+          "config": [
+            "search_path=\"\""
+          ],
+          "schema": "public",
+          "anon_execute": false,
+          "server_execute": true,
+          "security_definer": true,
+          "authenticated_execute": false
+        }
+      ],
+      "migrations": [
+        {
+          "name": "serrurerie_same_visit_service",
+          "version": "20260921162453"
+        }
+      ],
+      "trigger_md5": "fa1dd89e2ad8f1ad7b8409abe689e4df",
+      "request_binding_fingerprint": "8306560e548f30e079f634d96b4e88e9",
+      "mission_financial_fingerprint": "62ee32d566e7f7e5a9e8ffbbcabda78c"
+    },
+    "function_sources": [
+      {
+        "schema": "fixeo_private",
+        "name": "mission_vap_amounts",
+        "source_md5": "9c237c9416c81e00268f2857b26ad649"
+      },
+      {
+        "schema": "fixeo_private",
+        "name": "serrurerie_immutable_v1",
+        "source_md5": "e89a93bd109ce40da2765469a89f52b4"
+      },
+      {
+        "schema": "fixeo_private",
+        "name": "serrurerie_offer_guard_v1",
+        "source_md5": "e1088b3c194e40e63adca259dfca5b81"
+      },
+      {
+        "schema": "fixeo_private",
+        "name": "serrurerie_state_v1",
+        "source_md5": "bce42feee706cdd91216696c53703210"
+      },
+      {
+        "schema": "fixeo_private",
+        "name": "serrurerie_tariff_v1",
+        "source_md5": "b6c76f6be3b80de1af7a3e4b83d7093b"
+      },
+      {
+        "schema": "public",
+        "name": "serrurerie_completion_artisan_v1",
+        "source_md5": "7321bb4b9ea1918f1c5cd26b5383062c"
+      },
+      {
+        "schema": "public",
+        "name": "serrurerie_offer_artisan_v1",
+        "source_md5": "92a78db1a3561809efd35ec62493cd93"
+      },
+      {
+        "schema": "public",
+        "name": "serrurerie_prework_artisan_v1",
+        "source_md5": "5ca56fadc2f105252a7503c10f26ca4c"
+      },
+      {
+        "schema": "public",
+        "name": "serrurerie_repair_admin_v1",
+        "source_md5": "8769506743c1b8627f0c79e04b557bc2"
+      },
+      {
+        "schema": "public",
+        "name": "serrurerie_repair_artisan_v1",
+        "source_md5": "291d250dc39dd37d9dd87fda71c72f01"
+      },
+      {
+        "schema": "public",
+        "name": "serrurerie_repair_guest_v1",
+        "source_md5": "f175c5bb55ea1759dd5bdea62cc7ce6c"
+      }
+    ],
+    "function_sources_match_tested_migration": true,
+    "advisors": [
+      {
+        "name": "rls_enabled_no_policy",
+        "before": 12,
+        "after": 17,
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+        "new_findings": [
+          {
+            "detail": "Table \\`fixeo_private.serrurerie_completion_v1\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "serrurerie_completion_v1",
+              "type": "table",
+              "schema": "fixeo_private"
+            }
+          },
+          {
+            "detail": "Table \\`fixeo_private.serrurerie_decisions_v1\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "serrurerie_decisions_v1",
+              "type": "table",
+              "schema": "fixeo_private"
+            }
+          },
+          {
+            "detail": "Table \\`fixeo_private.serrurerie_offer_checks_v1\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "serrurerie_offer_checks_v1",
+              "type": "table",
+              "schema": "fixeo_private"
+            }
+          },
+          {
+            "detail": "Table \\`fixeo_private.serrurerie_prework_v1\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "serrurerie_prework_v1",
+              "type": "table",
+              "schema": "fixeo_private"
+            }
+          },
+          {
+            "detail": "Table \\`fixeo_private.serrurerie_proposals_v1\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "serrurerie_proposals_v1",
+              "type": "table",
+              "schema": "fixeo_private"
+            }
+          }
+        ]
+      },
+      {
+        "name": "security_definer_view",
+        "before": 3,
+        "after": 3,
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0010_security_definer_view",
+        "new_findings": []
+      },
+      {
+        "name": "function_search_path_mutable",
+        "before": 4,
+        "after": 4,
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0011_function_search_path_mutable",
+        "new_findings": []
+      },
+      {
+        "name": "anon_security_definer_function_executable",
+        "before": 9,
+        "after": 9,
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable",
+        "new_findings": []
+      },
+      {
+        "name": "authenticated_security_definer_function_executable",
+        "before": 51,
+        "after": 55,
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable",
+        "new_findings": [
+          {
+            "detail": "Function `public.serrurerie_completion_artisan_v1(p_mission_id uuid, p_professional_checks jsonb)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/serrurerie_completion_artisan_v1`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+            "metadata": {
+              "name": "serrurerie_completion_artisan_v1",
+              "schema": "public",
+              "language": "plpgsql",
+              "arguments": "p_mission_id uuid, p_professional_checks jsonb",
+              "security_definer": true
+            }
+          },
+          {
+            "detail": "Function `public.serrurerie_offer_artisan_v1(p_request_id uuid, p_professional_checks jsonb)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/serrurerie_offer_artisan_v1`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+            "metadata": {
+              "name": "serrurerie_offer_artisan_v1",
+              "schema": "public",
+              "language": "plpgsql",
+              "arguments": "p_request_id uuid, p_professional_checks jsonb",
+              "security_definer": true
+            }
+          },
+          {
+            "detail": "Function `public.serrurerie_prework_artisan_v1(p_mission_id uuid, p_professional_checks jsonb, p_access_check_type text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/serrurerie_prework_artisan_v1`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+            "metadata": {
+              "name": "serrurerie_prework_artisan_v1",
+              "schema": "public",
+              "language": "plpgsql",
+              "arguments": "p_mission_id uuid, p_professional_checks jsonb, p_access_check_type text",
+              "security_definer": true
+            }
+          },
+          {
+            "detail": "Function `public.serrurerie_repair_artisan_v1(p_mission_id uuid, p_service_code text, p_inputs jsonb, p_paid_minor bigint, p_proposal_id uuid, p_same_visit boolean, p_professional_checks jsonb)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/serrurerie_repair_artisan_v1`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+            "metadata": {
+              "name": "serrurerie_repair_artisan_v1",
+              "schema": "public",
+              "language": "plpgsql",
+              "arguments": "p_mission_id uuid, p_service_code text, p_inputs jsonb, p_paid_minor bigint, p_proposal_id uuid, p_same_visit boolean, p_professional_checks jsonb",
+              "security_definer": true
+            }
+          }
+        ]
+      },
+      {
+        "name": "auth_leaked_password_protection",
+        "before": 1,
+        "after": 1,
+        "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection",
+        "new_findings": []
+      }
+    ],
+    "deployment": {
+      "pr": 42,
+      "merge_commit": "9385c3a7b369951accf38ae400a8dd94df86afbb",
+      "implementation_commit": "8e36f3d6a7d276318770c83cbf8812a0352d69cb",
+      "vercel_status": [
+        {
+          "context": "Vercel",
+          "state": "success",
+          "target_url": "https://vercel.com/elalaouibiz-3410s-projects/fixeo-clean/2thAt1jJ5Gx5xLyXNMZz2F5hRg2L"
+        }
+      ]
+    },
+    "final_data_verification": {
+      "counts": {
+        "offers": 54,
+        "missions": 23,
+        "requests": 118
+      },
+      "serrurerie_offers": [
+        {
+          "city": "fes",
+          "service": "serrurerie.diagnostic",
+          "fee_minor": 6000,
+          "total_minor": 22000
+        },
+        {
+          "city": "casablanca",
+          "service": "serrurerie.porte_claquee_ouverture",
+          "fee_minor": 6000,
+          "total_minor": 26000
+        },
+        {
+          "city": "rabat",
+          "service": "serrurerie.porte_claquee_blindee.ouverture",
+          "fee_minor": 6000,
+          "total_minor": 36000
+        },
+        {
+          "city": "marrakech",
+          "service": "serrurerie.cle_cassee_extraction",
+          "fee_minor": 6000,
+          "total_minor": 26000
+        },
+        {
+          "city": "tanger",
+          "service": "serrurerie.cylindre_remplacement.standard",
+          "fee_minor": 6000,
+          "total_minor": 30000
+        },
+        {
+          "city": "agadir",
+          "service": "serrurerie.serrure_remplacement.standard",
+          "fee_minor": 6000,
+          "total_minor": 40000
+        }
+      ],
+      "private_row_counts": {
+        "prework": 0,
+        "decisions": 0,
+        "proposals": 0,
+        "completion": 0,
+        "offer_checks": 0
+      },
+      "request_binding_fingerprint": "8306560e548f30e079f634d96b4e88e9",
+      "mission_financial_fingerprint": "62ee32d566e7f7e5a9e8ffbbcabda78c"
+    }
+  },
+  "public_site": {
+    "checked_at_utc": "2026-09-21T16:27:43Z",
+    "merge_commit": "9385c3a7b369951accf38ae400a8dd94df86afbb",
+    "checks": [
+      {
+        "test": "deployed_file",
+        "path": "/",
+        "matches_tested_version": true,
+        "sha256": "897ee939c0076bdf81f656fac891e9641da3f83ba93c181ce0afb4dec6cb007d"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/estimation.html",
+        "matches_tested_version": true,
+        "sha256": "6b67cfca8899c814007350ff517367537ad360f93d8333dc89f4cc90800ef1f5"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/suivi-demande.html",
+        "matches_tested_version": true,
+        "sha256": "65136abeda8119bbd456d7b7d4eddae9a5d87ea239d007f650f32f0e75a56a11"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/dashboard-artisan-v2.html",
+        "matches_tested_version": true,
+        "sha256": "80d9f4dd88beb11ef34cb1d27594f4ad2fc13ed69d49942a37ee9106f4066c71"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/js/fixeo-estimator-v2.js?v=serrurerie-pilot-v1",
+        "matches_tested_version": true,
+        "sha256": "eb78a1e15ea9d574e4d579a764223022512defb421202065884c50561cfed4fd"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/js/fixeo-serrurerie-repair-ui.js?v=serrurerie-pilot-v1",
+        "matches_tested_version": true,
+        "sha256": "a6c6f4a23ed269a7eeee7014dc6bbcd2f719b11fbe55a10dd35b0b8be8e2c256"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/js/fixeo-electricity-repair-ui.js?v=serrurerie-pilot-v1",
+        "matches_tested_version": true,
+        "sha256": "c7f3e14a54860b2ad75d419ffde37957a4bdccaaf6bbb7287f0d632bf055728d"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/js/fixeo-plumbing-repair-ui.js?v=serrurerie-pilot-v1",
+        "matches_tested_version": true,
+        "sha256": "f9b029b71bf20933aeb5d488008bf8d8084a9fac401de928388917e8780ce85f"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/js/fixeo-artisan-dashboard-v2.js?v=serrurerie-pilot-v1",
+        "matches_tested_version": true,
+        "sha256": "600300af053be91863f414eb11cb693afe20714e6c80a4e36c1bd92b054711d4"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/js/fixeo-artisan-cockpit-v1.js?v=serrurerie-pilot-v1",
+        "matches_tested_version": true,
+        "sha256": "4f4d30e9aac5c36d95567204096961b98016f693276471fcb68bc3c481779197"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/js/fixeo-guest-tracking.js?v=serrurerie-pilot-v1",
+        "matches_tested_version": true,
+        "sha256": "e384fc71c38b1b1338caa1d0ed0683b88f8337d7d9e4d588d46b641c00fd3dab"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/data/pricing/engine/serrurerie-pilot-v1.js?v=serrurerie-pilot-v1",
+        "matches_tested_version": true,
+        "sha256": "ef8f56587c732ca40188db127ac406b8ee87f60b066bd617ed52a538094e8782"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/data/pricing/engine/electricity-pilot-v1.js?v=serrurerie-pilot-v1",
+        "matches_tested_version": true,
+        "sha256": "63e8bcece25da48bedcae9371ee7793d974abb896a7ad01261e0f19a8ec06489"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/data/pricing/engine/plumbing-pilot-v1.js?v=serrurerie-pilot-v1",
+        "matches_tested_version": true,
+        "sha256": "73f964cf73d0464a27352167ef2b93f0d2393284f1a551bdecd6e3a60dbcd93b"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/data/pricing/canonical/vap-approved-v1.json?v=serrurerie-pilot-v1",
+        "matches_tested_version": true,
+        "sha256": "8a61b84862be5e0d97542e1844147b807cf9ce517d08ee402586af95660d14ab"
+      },
+      {
+        "test": "deployed_file",
+        "path": "/css/fixeo-guest-tracking.css?v=serrurerie-pilot-v1",
+        "matches_tested_version": true,
+        "sha256": "b4fb111bb8c55aea2cb037a03ef72821b181151bb4d29812d5bc6143c836b6e3"
+      },
+      {
+        "test": "approved_catalogue",
+        "serrurerie_entries": 120,
+        "cities": 20,
+        "other_trades_unchanged": true
+      },
+      {
+        "test": "approved_tariff",
+        "service": "serrurerie.diagnostic",
+        "city": "fes",
+        "outcome": "DIAGNOSTIC_READY",
+        "total_mad": 220.0,
+        "materials_mad": 0.0,
+        "fee_mad": 60.0,
+        "signed_context_valid": true
+      },
+      {
+        "test": "approved_tariff",
+        "service": "serrurerie.porte_claquee_ouverture",
+        "city": "casablanca",
+        "outcome": "PRICE_READY",
+        "total_mad": 260.0,
+        "materials_mad": 0.0,
+        "fee_mad": 60.0,
+        "signed_context_valid": true
+      },
+      {
+        "test": "approved_tariff",
+        "service": "serrurerie.porte_claquee_blindee.ouverture",
+        "city": "rabat",
+        "outcome": "PRICE_READY",
+        "total_mad": 360.0,
+        "materials_mad": 0.0,
+        "fee_mad": 60.0,
+        "signed_context_valid": true
+      },
+      {
+        "test": "approved_tariff",
+        "service": "serrurerie.cle_cassee_extraction",
+        "city": "marrakech",
+        "outcome": "PRICE_READY",
+        "total_mad": 260.0,
+        "materials_mad": 0.0,
+        "fee_mad": 60.0,
+        "signed_context_valid": true
+      },
+      {
+        "test": "approved_tariff",
+        "service": "serrurerie.cylindre_remplacement.standard",
+        "city": "tanger",
+        "outcome": "PRICE_READY",
+        "total_mad": 300.0,
+        "materials_mad": 0.0,
+        "fee_mad": 60.0,
+        "signed_context_valid": true
+      },
+      {
+        "test": "approved_tariff",
+        "service": "serrurerie.serrure_remplacement.standard",
+        "city": "agadir",
+        "outcome": "PRICE_READY",
+        "total_mad": 400.0,
+        "materials_mad": 0.0,
+        "fee_mad": 60.0,
+        "signed_context_valid": true
+      },
+      {
+        "test": "qualification_guard",
+        "service": "serrurerie.porte_claquee_ouverture",
+        "condition": {
+          "locksmith_safety": "IMMEDIATE_DANGER"
+        },
+        "outcome": "SAFETY_STOP",
+        "signed_context_issued": false
+      },
+      {
+        "test": "qualification_guard",
+        "service": "serrurerie.porte_claquee_ouverture",
+        "condition": {
+          "locksmith_access_right": "DISPUTED_OR_UNAUTHORIZED"
+        },
+        "outcome": "SAFETY_STOP",
+        "signed_context_issued": false
+      },
+      {
+        "test": "qualification_guard",
+        "service": "serrurerie.porte_claquee_ouverture",
+        "condition": {
+          "property_occupied_status": "OCCUPIED_THIRD_PARTY"
+        },
+        "outcome": "SAFETY_STOP",
+        "signed_context_issued": false
+      },
+      {
+        "test": "qualification_guard",
+        "service": "serrurerie.porte_claquee_ouverture",
+        "condition": {
+          "door_count": 2
+        },
+        "outcome": "QUOTE_REQUIRED",
+        "signed_context_issued": false
+      },
+      {
+        "test": "qualification_guard",
+        "service": "serrurerie.porte_claquee_ouverture",
+        "condition": {
+          "appointment_hour": 20
+        },
+        "outcome": "QUOTE_REQUIRED",
+        "signed_context_issued": false
+      },
+      {
+        "test": "qualification_guard",
+        "service": "serrurerie.porte_claquee_ouverture",
+        "condition": {
+          "combined_opening_replacement": true
+        },
+        "outcome": "QUOTE_REQUIRED",
+        "signed_context_issued": false
+      },
+      {
+        "test": "qualification_guard",
+        "service": "serrurerie.cylindre_remplacement.standard",
+        "condition": {
+          "locksmith_part_fit": "UNKNOWN"
+        },
+        "outcome": "QUOTE_REQUIRED",
+        "signed_context_issued": false
+      },
+      {
+        "test": "qualification_guard",
+        "service": "serrurerie.serrure_remplacement.standard",
+        "condition": {
+          "locksmith_part_supply": "UNKNOWN"
+        },
+        "outcome": "QUOTE_REQUIRED",
+        "signed_context_issued": false
+      },
+      {
+        "test": "qualification_guard",
+        "service": "serrurerie.porte_verrouillee.ouverture",
+        "condition": {},
+        "outcome": "QUOTE_REQUIRED",
+        "signed_context_issued": false
+      },
+      {
+        "test": "interactive_safety_stop",
+        "outcome": "SAFETY_STOP",
+        "signed_context_issued": false
+      },
+      {
+        "test": "guest_repair_access_guard",
+        "expected_http": 404,
+        "actual_http": 404
+      },
+      {
+        "test": "guest_repair_access_guard",
+        "expected_http": 400,
+        "actual_http": 400
+      }
+    ],
+    "temporary_pricing_offers": 6,
+    "booking_confirmation_calls": 0,
+    "dispatch_calls": 0,
+    "settlement_calls": 0,
+    "result": "PASS"
+  }
+}
