@@ -268,6 +268,11 @@
       secondary: null
     },
 
+    'peinture.plafond.labour_only': {
+      primary: 'Peinture plafond',
+      secondary: 'Peinture fournie par le client'
+    },
+
     'peinture.mur_interieur.all_in': {
       primary: 'Peinture mur intérieur',
       secondary: 'Fournitures incluses'
@@ -382,6 +387,10 @@
     moving_items: "S’agit-il de cartons et meubles courants manipulables à deux, sans piano, coffre-fort, objet exceptionnellement lourd, fragile ou nécessitant un équipement de levage ?",
     moving_preparation: "Les affaires seront-elles emballées et protégées, les meubles vidés, les appareils débranchés et les accès prêts avant l’arrivée de l’équipe ?",
     moving_duration: "Validez-vous un forfait de 2 intervenants pendant 2 heures, à compter du début sur place, sans garantie de terminer tout le déménagement ni prolongation automatique ?",
+    ceiling_support: "Le plafond est-il plat, déjà peint, sec, sain et prêt à repeindre, sans fissure, moisissure, écaillage, enduit, ponçage ni sous-couche à réaliser ?",
+    ceiling_access: "Le plafond est-il à 2,80 m maximum, avec un sol plat et stable, une zone dégagée, eau et électricité disponibles, sans cage d’escalier ni accès spécial ?",
+    ceiling_finish: "Souhaitez-vous deux couches standard sur le plafond uniquement, dans une teinte identique ou proche, sans moulure, corniche, relief ni effet décoratif ?",
+    ceiling_area: "Quelle surface réelle de plafond faut-il repeindre ? De 20 à 100 m². Deux couches incluses : ne doublez pas la surface.",
     paint_support: "Les murs sont-ils secs, sains et prêts à peindre, sans fissure, humidité, peinture qui s’écaille, enduit ni ponçage à réaliser ?",
     paint_access: "Les murs sont-ils à 2,80 m de hauteur maximum, dans une zone dégagée avec eau et électricité disponibles ?",
     paint_supplies: "Fournissez-vous une peinture intérieure compatible avec le support, en quantité suffisante pour deux couches ?",
@@ -459,6 +468,10 @@
       MOVING_PREPARED: "Oui, tout sera préparé",
       MOVING_TWO_HOUR_TEAM: "Oui, 2 intervenants pendant 2 heures",
       MOVING_COMPLEX: "Non, mon besoin est différent",
+      CEILING_READY: "Oui, plafond plat, déjà peint et prêt",
+      CEILING_ACCESS_READY: "Oui, accès dégagé, sol stable et hauteur ≤ 2,80 m",
+      CEILING_TWO_COATS: "Oui, deux couches standard sur le plafond",
+      CEILING_COMPLEX: "Non, mon besoin est différent",
       PAINT_READY: "Oui, murs sains et prêts",
       PAINT_ACCESS_READY: "Oui, accès dégagé et hauteur ≤ 2,80 m",
       PAINT_CLIENT_SUPPLIED: "Oui, peinture compatible pour deux couches",
@@ -1115,6 +1128,10 @@
       MOVING_PREPARED: "Oui, tout sera préparé",
       MOVING_TWO_HOUR_TEAM: "Oui, 2 intervenants pendant 2 heures",
       MOVING_COMPLEX: "Non, mon besoin est différent",
+      CEILING_READY: "Oui, plafond plat, déjà peint et prêt",
+      CEILING_ACCESS_READY: "Oui, accès dégagé, sol stable et hauteur ≤ 2,80 m",
+      CEILING_TWO_COATS: "Oui, deux couches standard sur le plafond",
+      CEILING_COMPLEX: "Non, mon besoin est différent",
       PAINT_READY: "Oui, murs sains et prêts",
       PAINT_ACCESS_READY: "Oui, accès dégagé et hauteur ≤ 2,80 m",
       PAINT_CLIENT_SUPPLIED: "Oui, peinture compatible pour deux couches",
@@ -1996,7 +2013,7 @@
         el(
           'p',
           'diagnostic-intro',
-          step.input_id === 'painted_m2' ? 'Additionnez longueur × hauteur de chaque mur, puis retirez portes et fenêtres. Exemple : 10 m de murs × 2,5 m − 3 m² d’ouvertures = 22 m². Ce n’est pas la surface au sol ; les deux couches ne doublent pas la surface.' : 'Indiquez uniquement la surface concernée par cette intervention.'
+          step.input_id === 'painted_m2' ? 'Additionnez longueur × hauteur de chaque mur, puis retirez portes et fenêtres. Exemple : 10 m de murs × 2,5 m − 3 m² d’ouvertures = 22 m². Ce n’est pas la surface au sol ; les deux couches ne doublent pas la surface.' : step.input_id === 'ceiling_m2' ? 'Mesurez longueur × largeur de chaque plafond plat à repeindre et additionnez les surfaces. Exemple : 4 m × 5 m = 20 m². Ne comptez ni les murs ni les autres pièces ; les deux couches ne doublent pas la surface.' : 'Indiquez uniquement la surface concernée par cette intervention.'
         )
       );
 
@@ -2028,7 +2045,7 @@
 
       inp.setAttribute(
         'step',
-        ['tile_area_m2','masonry_area_m2','painted_m2'].includes(step.input_id) ? '0.01' : '1'
+        ['tile_area_m2','masonry_area_m2','painted_m2','ceiling_m2'].includes(step.input_id) ? '0.01' : '1'
       );
 
 

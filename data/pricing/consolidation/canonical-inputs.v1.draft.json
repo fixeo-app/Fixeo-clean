@@ -1255,6 +1255,39 @@
       ],
       "client_question_fr": "Souhaitez-vous deux couches de peinture standard sur les murs uniquement, dans une teinte identique ou proche, sans effet décoratif ni plafond ?",
       "privacy_classification": "NON_SENSITIVE"
+    },
+    "ceiling_support": {
+      "input_id": "ceiling_support",
+      "data_type": "string",
+      "allowed_values": [
+        "CEILING_READY",
+        "CEILING_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Le plafond est-il plat, déjà peint, sec, sain et prêt à repeindre, sans fissure, moisissure, écaillage, enduit, ponçage ni sous-couche à réaliser ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "ceiling_access": {
+      "input_id": "ceiling_access",
+      "data_type": "string",
+      "allowed_values": [
+        "CEILING_ACCESS_READY",
+        "CEILING_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Le plafond est-il à 2,80 m maximum, avec un sol plat et stable, une zone dégagée, eau et électricité disponibles, sans cage d’escalier ni accès spécial ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "ceiling_finish": {
+      "input_id": "ceiling_finish",
+      "data_type": "string",
+      "allowed_values": [
+        "CEILING_TWO_COATS",
+        "CEILING_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Souhaitez-vous deux couches standard sur le plafond uniquement, dans une teinte identique ou proche, sans moulure, corniche, relief ni effet décoratif ?",
+      "privacy_classification": "NON_SENSITIVE"
     }
   }
 }

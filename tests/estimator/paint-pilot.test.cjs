@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const o=require('../../data/pricing/orchestrator/estimator-orchestrator-v1');
 const engine=require('../../data/pricing/engine/pricing-engine-core-v1');
 const {attachOffer,selectTariff,validateFinancialContext}=require('../../api/estimator-v1/fixeo-vap-offers-v1');
-const entries=require('../../data/pricing/canonical/vap-approved-v1.json').entries.filter(x=>x.service_code.startsWith('peinture.'));
+const entries=require('../../data/pricing/canonical/vap-approved-v1.json').entries.filter(x=>x.service_code==='peinture.mur_interieur.labour_only');
 const code='peinture.mur_interieur.labour_only';
 const inputs={active_moisture:false,paint_support:'PAINT_READY',paint_access:'PAINT_ACCESS_READY',paint_supplies:'PAINT_CLIENT_SUPPLIED',paint_finish:'PAINT_TWO_COATS',painted_m2:20};
 function evaluate(values,city='rabat'){return o.evaluateEstimator(o.startEstimator({service_hint:code,city_slug:city,known_inputs:values}).session);}
@@ -27,8 +27,8 @@ test('paint: limits, supplies, moisture and unsupported cities cannot receive fi
  const floor={...inputs,floor_area_m2:40};delete floor.painted_m2;assert.equal(evaluate(floor).ok,false);
  await assert.rejects(attachOffer(evaluate(inputs,'unsupported').session,{}),/city not eligible/);
 });
-test('paint: old minimum, supplies, ceiling and preparation codes cannot bypass new scope',()=>{
- for(const c of ['peinture.forfait_minimum','peinture.mur_interieur.all_in','peinture.plafond.labour_only','peinture.mur_interieur.all_in_avec_prep','peinture.preparation_surface']){
+test('paint: old minimum, supplies and preparation codes cannot bypass new scope',()=>{
+ for(const c of ['peinture.forfait_minimum','peinture.mur_interieur.all_in','peinture.mur_interieur.all_in_avec_prep','peinture.preparation_surface']){
   const r=engine.evaluateFixeoPrice({service_code:c,inputs:{active_moisture:false,painted_m2:40,ceiling_m2:40,primary_service_code:code}});assert.equal(r.qualification?.status,'QUOTE_REQUIRED',JSON.stringify(r));
  }
 });
