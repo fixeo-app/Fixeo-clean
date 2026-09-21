@@ -28,6 +28,7 @@ async function setup(){const db=new PGlite();
  await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921122543_plumbing_same_visit_repair.sql'),'utf8'));
  await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921132727_electricity_same_visit_repair.sql'),'utf8'));
  await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921142222_climatisation_same_visit_service.sql'),'utf8'));
+ await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921154406_serrurerie_same_visit_service.sql'),'utf8'));
  return db;
 }
 async function mission(db,code='electricite.diagnostic'){

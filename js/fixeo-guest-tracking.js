@@ -145,10 +145,11 @@ var description = _el(
       card.appendChild(description);
 
       root.appendChild(card);
-      if (window.FixeoPlumbingRepair || window.FixeoElectricityRepair || window.FixeoClimatisationRepair) {
+      if (window.FixeoPlumbingRepair || window.FixeoElectricityRepair || window.FixeoClimatisationRepair || window.FixeoSerrurerieRepair) {
         var registry = _readAccessRegistry();
         var access = Object.keys(registry).map(function(k) { return registry[k]; }).find(function(a) { return a && a.tracking_ref === req.tracking_ref; });
         if(window.FixeoPlumbingRepair)window.FixeoPlumbingRepair.mountGuest(card, req, access);
+        if(window.FixeoSerrurerieRepair)window.FixeoSerrurerieRepair.mountGuest(card, req, access);
         if(window.FixeoClimatisationRepair)window.FixeoClimatisationRepair.mountGuest(card, req, access);
         if(window.FixeoElectricityRepair)window.FixeoElectricityRepair.mountGuest(card, req, access);
       }
@@ -198,6 +199,6 @@ var description = _el(
 
 /* Refresh guest request statuses while this page remains open. */
 setInterval(function () {
-  if (!document.querySelector('[data-fx-plumbing-review],[data-fx-electricity-review],[data-fx-climatisation-review]')) _load();
+  if (!document.querySelector('[data-fx-plumbing-review],[data-fx-electricity-review],[data-fx-climatisation-review],[data-fx-serrurerie-review]')) _load();
 }, 60000);
 })();

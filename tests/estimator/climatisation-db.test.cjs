@@ -28,6 +28,7 @@ async function setup(){const db=new PGlite();
  await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921122543_plumbing_same_visit_repair.sql'),'utf8'));
  await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921132727_electricity_same_visit_repair.sql'),'utf8'));
  await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921142222_climatisation_same_visit_service.sql'),'utf8'));
+ await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921154406_serrurerie_same_visit_service.sql'),'utf8'));
  await db.exec('ALTER TABLE missions ADD accepted_at timestamptz; CREATE TABLE dispatch_execution_queue(request_id uuid,artisan_id uuid,execution_status text,updated_at timestamptz); GRANT ALL ON dispatch_execution_queue TO service_role,authenticated;');
  await db.exec(fs.readFileSync(path.join(__dirname,'fixtures/clim-lifecycle-live-20260921.sql'),'utf8'));
  return db;

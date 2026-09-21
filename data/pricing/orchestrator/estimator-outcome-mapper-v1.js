@@ -36,6 +36,8 @@ function mapEngineResultToOutcome(engineResult, serviceCode, session) {
     var excluded=[];
     var plumbing=require('../engine/plumbing-pilot-v1').services[serviceCode];
     if(plumbing){scope.push(plumbing.scope);scope.push('Déplacement dans la ville sélectionnée inclus, sans majoration automatique.');}
+    var locksmith=require('../engine/serrurerie-pilot-v1').services[serviceCode];
+    if(locksmith){scope.push(locksmith.scope);scope.push('Une porte, début entre 8 h et 20 h, déplacement en ville inclus. Droit d’accès vérifié avant intervention. Disponibilité et périmètre à confirmer par le professionnel.');if(locksmith.client_part)excluded.push('Pièce compatible fournie par le client, vérifiée avant réservation. Fourniture par l’artisan : devis complet préalable.');}
     var clim=require('../engine/climatisation-pilot-v1').services[serviceCode];
     if(clim){scope.push(clim.scope);scope.push('Déplacement dans la ville sélectionnée inclus. Vérifications techniques par le professionnel.');if(clim.materials_minor)scope.push('Kit de pose fourni par l’artisan : '+(clim.materials_minor/100)+' MAD inclus dans le total. Les frais FIXEO portent uniquement sur la prestation.');}
     var electricity=require('../engine/electricity-pilot-v1').services[serviceCode];

@@ -2,8 +2,8 @@
   "version": "serrurerie-pilot-v1",
   "created_at": "2026-09-21",
   "base_commit": "ad688e0e09a8e865995a91d42f302b0cf604f860",
-  "approval_status": "PENDING",
-  "runtime_integrated": false,
+  "approval_status": "APPROVED",
+  "runtime_integrated": true,
   "production_ready": false,
   "pricing_version": "vap-bp33-v1",
   "currency": "MAD",
@@ -30,7 +30,7 @@
     "tetouan"
   ],
   "proposed_catalogue_entry_count": 120,
-  "note_fr": "Proposition commerciale à valider ; aucune activation, migration ou modification des offres historiques. Les champs proposés sont une spécification et ne sont pas consommés par le moteur actuel.",
+  "note_fr": "Grille et périmètre validés pour les 20 villes. Intégration préparée dans cette branche ; migration non appliquée, déploiement non autorisé pour ce métier.",
   "existing_missions_context": {
     "owner_statement_fr": "Les missions existantes sont des missions de test.",
     "transaction_backed_pricing_evidence": false,
@@ -68,7 +68,7 @@
     {
       "service_code": "serrurerie.diagnostic",
       "label_fr": "Diagnostic serrurerie — 30 minutes maximum",
-      "approval_status": "PENDING",
+      "approval_status": "APPROVED",
       "vap_minor": 16000,
       "commission_minor": 6000,
       "materials_minor": 0,
@@ -103,12 +103,21 @@
         "assessment_performed",
         "findings_and_next_steps_explained"
       ],
-      "consumables_sensitivity_minor": 0
+      "consumables_sensitivity_minor": 0,
+      "runtime_inputs": {
+        "locksmith_safety": "NO_IMMEDIATE_DANGER",
+        "locksmith_access_right": "DECLARED_AUTHORIZED_NO_DISPUTE",
+        "locksmith_presence": "AUTHORIZED_ADULT_PRESENT",
+        "locksmith_property": "RESIDENTIAL_PRIVATE_DOOR",
+        "locksmith_count": "ONE_DOOR",
+        "locksmith_slot": "DAY_08_20",
+        "locksmith_work": "DIAGNOSTIC"
+      }
     },
     {
       "service_code": "serrurerie.porte_claquee_ouverture",
       "label_fr": "Ouverture porte standard simplement claquée",
-      "approval_status": "PENDING",
+      "approval_status": "APPROVED",
       "vap_minor": 20000,
       "commission_minor": 6000,
       "materials_minor": 0,
@@ -147,12 +156,23 @@
         "door_opened_without_damage",
         "operation_test_completed"
       ],
-      "consumables_sensitivity_minor": 1000
+      "consumables_sensitivity_minor": 1000,
+      "runtime_inputs": {
+        "locksmith_safety": "NO_IMMEDIATE_DANGER",
+        "locksmith_access_right": "DECLARED_AUTHORIZED_NO_DISPUTE",
+        "locksmith_presence": "AUTHORIZED_ADULT_PRESENT",
+        "locksmith_property": "RESIDENTIAL_PRIVATE_DOOR",
+        "locksmith_count": "ONE_DOOR",
+        "locksmith_slot": "DAY_08_20",
+        "locksmith_door_type": "STANDARD_MECHANICAL",
+        "locksmith_door_state": "SLAMMED_NOT_LOCKED",
+        "locksmith_work": "OPEN_SLAMMED_STANDARD"
+      }
     },
     {
       "service_code": "serrurerie.porte_claquee_blindee.ouverture",
       "label_fr": "Ouverture porte blindée simplement claquée — modèle compatible",
-      "approval_status": "PENDING",
+      "approval_status": "APPROVED",
       "vap_minor": 30000,
       "commission_minor": 6000,
       "materials_minor": 0,
@@ -193,12 +213,23 @@
         "door_opened_without_damage",
         "operation_test_completed"
       ],
-      "consumables_sensitivity_minor": 1000
+      "consumables_sensitivity_minor": 1000,
+      "runtime_inputs": {
+        "locksmith_safety": "NO_IMMEDIATE_DANGER",
+        "locksmith_access_right": "DECLARED_AUTHORIZED_NO_DISPUTE",
+        "locksmith_presence": "AUTHORIZED_ADULT_PRESENT",
+        "locksmith_property": "RESIDENTIAL_PRIVATE_DOOR",
+        "locksmith_count": "ONE_DOOR",
+        "locksmith_slot": "DAY_08_20",
+        "locksmith_door_type": "SECURITY_MECHANICAL",
+        "locksmith_door_state": "SLAMMED_NOT_LOCKED",
+        "locksmith_work": "OPEN_SLAMMED_SECURITY"
+      }
     },
     {
       "service_code": "serrurerie.cle_cassee_extraction",
       "label_fr": "Extraction clé cassée — porte déjà ouverte",
-      "approval_status": "PENDING",
+      "approval_status": "APPROVED",
       "vap_minor": 20000,
       "commission_minor": 6000,
       "materials_minor": 0,
@@ -238,12 +269,24 @@
         "fragment_extracted_without_damage",
         "operation_test_with_duplicate_completed"
       ],
-      "consumables_sensitivity_minor": 1000
+      "consumables_sensitivity_minor": 1000,
+      "runtime_inputs": {
+        "locksmith_safety": "NO_IMMEDIATE_DANGER",
+        "locksmith_access_right": "DECLARED_AUTHORIZED_NO_DISPUTE",
+        "locksmith_presence": "AUTHORIZED_ADULT_PRESENT",
+        "locksmith_property": "RESIDENTIAL_PRIVATE_DOOR",
+        "locksmith_count": "ONE_DOOR",
+        "locksmith_slot": "DAY_08_20",
+        "locksmith_door_type": "STANDARD_MECHANICAL",
+        "locksmith_door_state": "ALREADY_OPEN",
+        "locksmith_test_key": "WORKING_DUPLICATE_AVAILABLE",
+        "locksmith_work": "EXTRACT_BROKEN_KEY"
+      }
     },
     {
       "service_code": "serrurerie.cylindre_remplacement.standard",
       "label_fr": "Remplacement cylindre standard — pièce client",
-      "approval_status": "PENDING",
+      "approval_status": "APPROVED",
       "vap_minor": 24000,
       "commission_minor": 6000,
       "materials_minor": 0,
@@ -287,12 +330,26 @@
         "keys_handed_to_authorized_client",
         "old_part_return_offered"
       ],
-      "consumables_sensitivity_minor": 1000
+      "consumables_sensitivity_minor": 1000,
+      "runtime_inputs": {
+        "locksmith_safety": "NO_IMMEDIATE_DANGER",
+        "locksmith_access_right": "DECLARED_AUTHORIZED_NO_DISPUTE",
+        "locksmith_presence": "AUTHORIZED_ADULT_PRESENT",
+        "locksmith_property": "RESIDENTIAL_PRIVATE_DOOR",
+        "locksmith_count": "ONE_DOOR",
+        "locksmith_slot": "DAY_08_20",
+        "locksmith_door_type": "STANDARD_MECHANICAL",
+        "locksmith_door_state": "ALREADY_OPEN",
+        "locksmith_part_supply": "CLIENT_PART_AVAILABLE",
+        "locksmith_test_key": "WORKING_KEY_AVAILABLE",
+        "locksmith_part_fit": "PRO_CONFIRMED_COMPATIBLE",
+        "locksmith_work": "REPLACE_STANDARD_CYLINDER"
+      }
     },
     {
       "service_code": "serrurerie.serrure_remplacement.standard",
       "label_fr": "Remplacement serrure monopoint à l’identique — pièce client",
-      "approval_status": "PENDING",
+      "approval_status": "APPROVED",
       "vap_minor": 34000,
       "commission_minor": 6000,
       "materials_minor": 0,
@@ -336,7 +393,21 @@
         "keys_handed_to_authorized_client",
         "old_part_return_offered"
       ],
-      "consumables_sensitivity_minor": 1000
+      "consumables_sensitivity_minor": 1000,
+      "runtime_inputs": {
+        "locksmith_safety": "NO_IMMEDIATE_DANGER",
+        "locksmith_access_right": "DECLARED_AUTHORIZED_NO_DISPUTE",
+        "locksmith_presence": "AUTHORIZED_ADULT_PRESENT",
+        "locksmith_property": "RESIDENTIAL_PRIVATE_DOOR",
+        "locksmith_count": "ONE_DOOR",
+        "locksmith_slot": "DAY_08_20",
+        "locksmith_door_type": "STANDARD_MECHANICAL",
+        "locksmith_door_state": "ALREADY_OPEN",
+        "locksmith_part_supply": "CLIENT_PART_AVAILABLE",
+        "locksmith_test_key": "WORKING_KEY_AVAILABLE",
+        "locksmith_part_fit": "PRO_CONFIRMED_COMPATIBLE",
+        "locksmith_work": "REPLACE_MONOPOINT_LOCK"
+      }
     }
   ],
   "principal_parts_policy": {
@@ -598,7 +669,26 @@
     "only_two_proposal_files_changed",
     "protected_reports_unchanged"
   ],
-  "next_step": "OWNER_VALIDATES_GRID_AND_SCOPE_THEN_IMPLEMENTATION_AND_TESTS",
+  "next_step": "OWNER_AUTHORIZES_PRODUCTION_MIGRATION_AND_DEPLOYMENT",
   "production_authorization_for_this_proposal": false,
-  "commit_message": "docs(serrurerie): propose VAP tariffs and authorization-first scopes"
+  "commit_message": "feat(serrurerie): integrate approved VAP tariffs and verified access lifecycle",
+  "owner_approval_date": "2026-09-21",
+  "owner_approval_fr": "Oui je valide cette grille et ce périmètre pour les 20 villes.",
+  "implementation_status": "VERIFIED",
+  "deployment_status": "AWAITING_PRODUCTION_AUTHORIZATION",
+  "migration": {
+    "path": "supabase/migrations/20260921154406_serrurerie_same_visit_service.sql",
+    "sha256": "9bd631815d3e39cf3252d29a6ebeab3da16c37e5562ec09f96fc06f53673f6c7",
+    "production_applied": false,
+    "financial_trigger_expected_md5": "04c2261556061bc8f1ae80f1bf51e40e"
+  },
+  "verification": {
+    "automated_tests_passed": 140,
+    "isolated_database": "PGlite",
+    "browser_interface": "JSDOM",
+    "production_writes": false,
+    "legacy_other_trade_vap_entries_preserved": 560,
+    "candidate_city_service_pairs_verified": 120,
+    "same_visit_credit_cases_verified": 10
+  }
 }

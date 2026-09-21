@@ -1,12 +1,12 @@
-# Serrurerie — proposition de calibrage VAP
+# Serrurerie — grille validée et intégration vérifiée
 
-État au 21 septembre 2026 : **grille et périmètre proposés, en attente de validation**. Base auditée : `ad688e0e09a8e865995a91d42f302b0cf604f860`, après le déploiement climatisation. Proposition structurée : `data/pricing/research/serrurerie/vap-proposal.v1.json`.
+État au 21 septembre 2026 : **grille et périmètre validés pour les 20 villes ; intégration testée, migration et déploiement en attente d’autorisation**. Base auditée : `ad688e0e09a8e865995a91d42f302b0cf604f860`, après le déploiement climatisation. Proposition structurée : `data/pricing/research/serrurerie/vap-proposal.v1.json`.
 
-Cette branche contient uniquement la proposition. Elle n'active aucun forfait, ne modifie aucun parcours public et n'applique aucune migration. Les missions existantes sont des **missions de test**, selon le propriétaire : elles ne prouvent ni demande réelle, ni acceptation artisan, ni rentabilité. Elles restent inchangées.
+Cette branche intègre les six forfaits validés, les contrôles professionnels et l’absorption consentie du diagnostic. La migration est préparée et testée en base isolée ; elle n’a pas été appliquée en production et cette branche n’est pas fusionnée. Les missions existantes sont des **missions de test**, selon le propriétaire : elles ne prouvent ni demande réelle, ni acceptation artisan, ni rentabilité. Elles restent inchangées.
 
-## Six forfaits proposés
+## Six forfaits validés
 
-Montants en MAD pour **une porte de logement et une prestation par réservation**, déplacement dans la ville choisie, outillage et petits consommables compris. Créneau pilote proposé : **8 h–20 h**, sous réserve de disponibilité et de confirmation du périmètre par le professionnel. Même grille dans les 20 villes, sans majoration automatique de ville, d'urgence ou de week-end. Hors créneau : devis accepté avant déplacement.
+Montants en MAD pour **une porte de logement et une prestation par réservation**, déplacement dans la ville choisie, outillage et petits consommables compris. Créneau pilote validé : **8 h–20 h**, sous réserve de disponibilité et de confirmation du périmètre par le professionnel. Même grille dans les 20 villes, sans majoration automatique de ville, d'urgence ou de week-end. Hors créneau : devis accepté avant déplacement.
 
 | Prestation | VAP artisan | Pièce facturée dans le forfait | Frais FIXEO | Total FIXEO |
 |---|---:|---:|---:|---:|
@@ -21,7 +21,7 @@ Les frais suivent BP3.3 : à ces niveaux de VAP, le minimum de 60 MAD s'applique
 
 **Zéro sur la ligne pièce ne signifie pas pièce gratuite ou incluse.** Pour les deux remplacements, le client fournit une pièce dont le professionnel a confirmé la compatibilité avant réservation. Ne pas inviter le client à acheter un modèle non vérifié. Si l'artisan fournit la pièce, établir un **devis complet préalable** avec référence, fourniture, prestation, frais et total accepté ; aucun prix variable ajouté à une réservation au forfait. Cette proposition modifie explicitement l'ancienne doctrine « pièce fournie par l'artisan, facturée séparément » pour les seuls nouveaux forfaits pilotes.
 
-Villes : Agadir, Béni Mellal, Casablanca, El Jadida, Fès, Kénitra, Khouribga, Marrakech, Meknès, Mohammedia, Nador, Ouarzazate, Oujda, Rabat, Safi, Salé, Tanger, Taza, Témara et Tétouan. Six services × 20 villes = **120 couples candidats**, sans présumer une disponibilité effective dans chaque ville.
+Villes : Agadir, Béni Mellal, Casablanca, El Jadida, Fès, Kénitra, Khouribga, Marrakech, Meknès, Mohammedia, Nador, Ouarzazate, Oujda, Rabat, Safi, Salé, Tanger, Taza, Témara et Tétouan. Six services × 20 villes = **120 couples approuvés dans cette branche**, sans présumer une disponibilité effective dans chaque ville.
 
 ## Périmètre de chaque forfait
 
@@ -55,7 +55,7 @@ Le forfait d'ouverture, d'extraction ou de remplacement rémunère le résultat 
 
 ## Diagnostic absorbé pendant la même visite
 
-Proposition : un diagnostic commandé peut être remplacé par l'un des cinq services qualifiés, sur **la même porte, avec le même artisan, pendant la même visite**, après vérification professionnelle et accord explicite du client. Pour un remplacement, la pièce compatible doit déjà être disponible. Le total final remplace celui du diagnostic : une mission et un seul frais FIXEO de 60 MAD.
+Un diagnostic commandé peut être remplacé par l'un des cinq services qualifiés, sur **la même porte, avec le même artisan, pendant la même visite**, après vérification professionnelle et accord explicite du client. Pour un remplacement, la pièce compatible doit déjà être disponible. Le total final remplace celui du diagnostic : une mission et un seul frais FIXEO de 60 MAD.
 
 | Suite acceptée | Total final | Diagnostic déjà payé | Solde client |
 |---|---:|---:|---:|
@@ -92,7 +92,7 @@ Hypothèses internes, non issues de factures : déplacement 40 MAD, puis 60 MAD 
 
 Une retenue historique théorique de 15 % sur les anciens montants 220/350/220/280/400 donnerait 187/297,50/187/238/340 MAD à l'artisan. Les nouvelles VAP correspondantes ajoutent respectivement 13/2,50/13/2/0 MAD avant coûts. Ce sont des comparaisons arithmétiques, pas des revenus constatés ; les périmètres sont désormais plus stricts et les remplacements changent de règle de fourniture.
 
-## Audit initial et travaux requis après validation
+## Audit initial — constats avant intégration
 
 Constats reproduits localement sur la base citée, sans appel de réservation ni écriture en production :
 
@@ -104,10 +104,41 @@ Constats reproduits localement sur la base citée, sans appel de réservation ni
 - L'extraction actuelle ne vérifie pas que la porte est déjà ouverte. Le nouveau forfait doit demander l'état observable, puis laisser au professionnel la vérification du mécanisme et du double.
 - Le refus de création d'offre en l'absence de tarif VAP dans `api/estimator-v1/fixeo-vap-offers-v1.js` couvre les huit métiers déjà intégrés, mais pas la serrurerie. Étendre ce refus pour éviter un retour à l'ancien prix, y compris pour une ville ou un code non autorisé.
 
-Après validation commerciale : intégrer la qualification commune, les six périmètres, les 120 entrées, les contrôles professionnels et la conversion du diagnostic ; harmoniser estimateur, cartes de service, suivi et interfaces partenaires. Prévoir les chemins historiques, les liens directs, les réponses inconnues/contradictoires et les tentatives de contournement côté API/DB. Aucune promesse 24 h/24, de pièce incluse ou de réussite universelle sur porte blindée.
+Corrections désormais intégrées : la qualification commune, les six périmètres, les 120 entrées, les contrôles professionnels et la conversion du diagnostic ; harmoniser estimateur, cartes de service, suivi et interfaces partenaires. Prévoir les chemins historiques, les liens directs, les réponses inconnues/contradictoires et les tentatives de contournement côté API/DB. Aucune promesse 24 h/24, de pièce incluse ou de réussite universelle sur porte blindée.
 
 Vérification de la proposition : six décompositions par `buildBreakdown`, couverture exacte des 20 villes, 120 couples uniques, cinq conversions avec crédits 0/220 MAD, comparaisons historiques et scénarios de coûts. Contrôle du diff limité aux deux fichiers de proposition. Les rapports `data/pricing/engine/engine-test-report.v1.json` et `data/pricing/shadow/shadow-results.v1.json` restent protégés et inchangés.
 
 Prochaine décision : **valider ou ajuster cette grille et ce périmètre**, notamment pièce client, créneau 8 h–20 h et contrôle préalable du droit d'accès. L'intégration et ses essais viendront ensuite ; aucune nouvelle autorisation de production n'est déduite des validations des métiers précédents.
 
-Message de commit : `docs(serrurerie): propose VAP tariffs and authorization-first scopes`.
+Message de commit de la proposition : `docs(serrurerie): propose VAP tariffs and authorization-first scopes`.
+
+
+## Résultat intégré et vérifié
+
+Le propriétaire a validé la grille et le périmètre pour les 20 villes le 21 septembre 2026. Les 120 entrées ont été ajoutées ; les 560 entrées VAP des métiers précédents et leurs services canoniques sont inchangés.
+
+L’estimation demande explicitement danger, droit d’accès non contesté, adulte autorisé présent, porte privative de logement, quantité, créneau et périmètre. Les réponses inconnues, contradictoires et les signaux préremplis passent par les mêmes contrôles que les réponses successives. Les remplacements demandent une pièce disponible dont la compatibilité a déjà été confirmée par un professionnel. Porte verrouillée et cas complexes restent sur devis. Les anciens contextes de prix serrurerie ne peuvent pas réserver au tarif historique ; une nouvelle qualification est nécessaire. Les nouvelles offres en base sont aussi limitées aux villes, prix et périmètres exacts autorisés.
+
+Les six prestations exigent une confirmation de compétence, de périmètre et de prix avant acceptation partenaire, sur les parcours existants V1 et V2. Sur place, avant intervention, l’artisan enregistre les vérifications et choisit le type de contrôle effectué : identité et justificatif nominatif d’occupation, ou identité, droit du mandant et mandat. Aucun champ de document, numéro d’identité ou texte libre de justificatif n’est accepté. Les informations détaillées du contrôle ne figurent pas dans le suivi client.
+
+Le résultat réel de chaque prestation doit être attesté séparément avant clôture et règlement, y compris le diagnostic. Pour proposer une conversion, le diagnostic et son contrôle d’accès doivent déjà avoir été effectués. L’artisan atteste le périmètre de la suite ; le client confirme le total et le crédit 0/220 MAD. Les offres restent immuables. Le résultat de l’intervention acceptée doit ensuite être attesté ; l’attestation du diagnostic ne suffit pas à clôturer la réparation. Le logiciel enregistre les déclarations professionnelles, sans certifier indépendamment les actes physiques.
+
+**140 tests automatisés réussis.** La suite couvre les 120 couples service/ville, les offres signées, la réservation atomique et le dispatch dans PostgreSQL isolé, l’acceptation V1/V2, les vérifications d’accès, les pièces, les limites, les droits et l’audit immuable, le consentement et les dix conversions (cinq prestations × deux crédits). Les fonctions réelles de production d’acceptation, démarrage et clôture sont reproduites en lecture seule dans les fixtures. Les tests vérifient le total effectif au règlement, le refus des soldes utilisés comme prix final et l’absence de double frais. Les interfaces sont exercées avec JSDOM et les API avec réseau simulé. Les suites plomberie, électricité et climatisation appliquent aussi la nouvelle migration pour vérifier le déclencheur partagé.
+
+Commande : `NODE_PATH=/workspace/scratch/7e6d7edda414/test-deps/node_modules node --test tests/estimator/*.test.cjs`.
+
+## Migration prête à appliquer
+
+Fichier créé avec la CLI Supabase : `supabase/migrations/20260921154406_serrurerie_same_visit_service.sql`.
+
+- Précondition : fonction financière actuelle d’empreinte MD5 `04c2261556061bc8f1ae80f1bf51e40e`, confirmée en production en lecture seule avant préparation de la PR.
+- Cinq tables privées avec RLS, aucun accès direct pour PUBLIC/anon/authenticated/service_role, attestations et décisions immuables ; aucun stockage de justificatif brut.
+- Quatre fonctions authentifiées réservées au professionnel propriétaire de la mission ou de l’opportunité ; deux fonctions serveur pour suivi client et administration. Fonctions avec `search_path` vide et privilèges explicites.
+- Extension du déclencheur financier partagé et contrôle des nouvelles offres serrurerie. Verrouillage limité à 3 secondes et exécution à 30 secondes ; aucune mise à jour de mission ou offre historique.
+- SHA256 : `9bd631815d3e39cf3252d29a6ebeab3da16c37e5562ec09f96fc06f53673f6c7`.
+
+Au dernier contrôle en lecture seule : les nouvelles tables et RPC serrurerie sont absentes en production ; 23 missions, 118 demandes et 48 offres sont présentes. Aucun appel de réservation, dispatch, règlement, notification ou migration de production n’a été effectué pour cette intégration. Les deux rapports protégés sont inchangés.
+
+La revue des privilèges et les essais de la migration sont terminés en base isolée. La disponibilité réelle des partenaires et les contrôles physiques restent à confirmer par les professionnels, comme prévu dans le périmètre validé. Les anciennes pages éditoriales de prix restent indicatives ; cette intégration porte sur le parcours transactionnel de l’estimateur et des missions.
+
+Message de commit : `feat(serrurerie): integrate approved VAP tariffs and verified access lifecycle`.

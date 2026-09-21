@@ -1754,6 +1754,242 @@
       "semantic_definition": "Climatisation qualification boundary: copper_length_m",
       "unknown_allowed": true,
       "data_type": "number"
+    },
+    "locksmith_safety": {
+      "input_id": "locksmith_safety",
+      "data_type": "string",
+      "allowed_values": [
+        "NO_IMMEDIATE_DANGER",
+        "IMMEDIATE_DANGER",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Y a-t-il un danger immédiat pour une personne, un incendie, de la violence ou une intrusion en cours ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "locksmith_access_right": {
+      "input_id": "locksmith_access_right",
+      "data_type": "string",
+      "allowed_values": [
+        "DECLARED_AUTHORIZED_NO_DISPUTE",
+        "DISPUTED_OR_UNAUTHORIZED",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Êtes-vous autorisé à accéder à ce logement, sans litige d’occupation, et pouvez-vous faire vérifier votre identité et ce droit avant intervention ? La propriété seule ne permet pas un accès contesté.",
+      "privacy_classification": "SENSITIVE"
+    },
+    "locksmith_presence": {
+      "input_id": "locksmith_presence",
+      "data_type": "string",
+      "allowed_values": [
+        "AUTHORIZED_ADULT_PRESENT",
+        "SERR_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Serez-vous présent, ou un adulte autorisé avec un mandat vérifiable, pendant l’intervention ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "locksmith_property": {
+      "input_id": "locksmith_property",
+      "data_type": "string",
+      "allowed_values": [
+        "RESIDENTIAL_PRIVATE_DOOR",
+        "SERR_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "La demande concerne-t-elle une porte privative de logement, hors accès collectif, coffre, véhicule et local professionnel ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "locksmith_count": {
+      "input_id": "locksmith_count",
+      "data_type": "string",
+      "allowed_values": [
+        "ONE_DOOR",
+        "SERR_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Cette demande concerne-t-elle une seule porte et une seule prestation ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "locksmith_slot": {
+      "input_id": "locksmith_slot",
+      "data_type": "string",
+      "allowed_values": [
+        "DAY_08_20",
+        "SERR_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Acceptez-vous une intervention en journée, avec un début prévu entre 8 h et 20 h, selon disponibilité du partenaire ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "locksmith_work": {
+      "input_id": "locksmith_work",
+      "data_type": "string",
+      "allowed_values": [
+        "DIAGNOSTIC",
+        "SERR_COMPLEX",
+        "UNKNOWN",
+        "OPEN_SLAMMED_STANDARD",
+        "OPEN_SLAMMED_SECURITY",
+        "EXTRACT_BROKEN_KEY",
+        "REPLACE_STANDARD_CYLINDER",
+        "REPLACE_MONOPOINT_LOCK"
+      ],
+      "client_question_fr": "Une serrure mécanique monopoint, pièce client compatible, même format et fixations, porte ouverte. Dépose, pose, réglage simple et essais ; cylindre du nouvel ensemble posé sans seconde main-d’œuvre. Sans adaptation, soudure, nouvelle réservation dans la porte, multipoints ni motorisation. Est-ce votre besoin ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "locksmith_door_type": {
+      "input_id": "locksmith_door_type",
+      "data_type": "string",
+      "allowed_values": [
+        "STANDARD_MECHANICAL",
+        "SERR_COMPLEX",
+        "UNKNOWN",
+        "SECURITY_MECHANICAL"
+      ],
+      "client_question_fr": "Quel type de porte et de serrure avez-vous, si vous le savez ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "locksmith_door_state": {
+      "input_id": "locksmith_door_state",
+      "data_type": "string",
+      "allowed_values": [
+        "ALREADY_OPEN",
+        "SLAMMED_NOT_LOCKED",
+        "LOCKED",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "La porte est-elle déjà ouverte, simplement claquée sans verrouillage, ou verrouillée ? Répondez seulement si vous le savez.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "locksmith_test_key": {
+      "input_id": "locksmith_test_key",
+      "data_type": "string",
+      "allowed_values": [
+        "WORKING_DUPLICATE_AVAILABLE",
+        "SERR_COMPLEX",
+        "UNKNOWN",
+        "WORKING_KEY_AVAILABLE"
+      ],
+      "client_question_fr": "Disposez-vous d’une clé ou d’un double fonctionnel pour les vérifications et essais prévus ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "locksmith_part_supply": {
+      "input_id": "locksmith_part_supply",
+      "data_type": "string",
+      "allowed_values": [
+        "CLIENT_PART_AVAILABLE",
+        "SERR_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Disposez-vous déjà de la pièce neuve à poser ? La pièce n’est pas comprise dans ce forfait.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "locksmith_part_fit": {
+      "input_id": "locksmith_part_fit",
+      "data_type": "string",
+      "allowed_values": [
+        "PRO_CONFIRMED_COMPATIBLE",
+        "SERR_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Un professionnel a-t-il déjà confirmé que votre pièce convient pour un remplacement à l’identique ? N’achetez pas de pièce avant cette vérification.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "immediate_danger": {
+      "input_id": "immediate_danger",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "fire": {
+      "input_id": "fire",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "violence": {
+      "input_id": "violence",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "intrusion_in_progress": {
+      "input_id": "intrusion_in_progress",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "person_in_danger": {
+      "input_id": "person_in_danger",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "occupancy_dispute": {
+      "input_id": "occupancy_dispute",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "unauthorized_access": {
+      "input_id": "unauthorized_access",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "eviction_request": {
+      "input_id": "eviction_request",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "authorization_verified": {
+      "input_id": "authorization_verified",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "destructive_work_required": {
+      "input_id": "destructive_work_required",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "auto_lock": {
+      "input_id": "auto_lock",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "connected_lock": {
+      "input_id": "connected_lock",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "multipoint_engaged": {
+      "input_id": "multipoint_engaged",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "combined_opening_replacement": {
+      "input_id": "combined_opening_replacement",
+      "data_type": "boolean",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "door_count": {
+      "input_id": "door_count",
+      "data_type": "number",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "appointment_hour": {
+      "input_id": "appointment_hour",
+      "data_type": "number",
+      "semantic_definition": "Known prefilled signal checked by the serrurerie pilot before pricing; not a professional attestation.",
+      "privacy_classification": "NON_SENSITIVE"
     }
   }
 }

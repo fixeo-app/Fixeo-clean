@@ -56,42 +56,13 @@ var SERVICE_QUESTION_PLANS = {
   'electricite.disjoncteur_remplacement': {questions: require('../engine/electricity-pilot-v1').questions('electricite.disjoncteur_remplacement')},
 
   // ── SERRURERIE ─────────────────────────────────────────────────────────────
-  'serrurerie.porte_claquee_ouverture': {
-    questions: [
-      { input_id: 'security_door', priority: 'SERVICE_IDENTITY', answer_type: 'boolean', prompt_key: 'serrurerie.identity.security_door' },
-    ]
-  },
-  'serrurerie.porte_claquee_blindee.ouverture': {
-    questions: [
-      { input_id: 'security_door', priority: 'SERVICE_IDENTITY', answer_type: 'boolean', prompt_key: 'serrurerie.identity.security_door' },
-      { input_id: 'door_locked_with_key', priority: 'ELIGIBILITY', answer_type: 'boolean', prompt_key: 'serrurerie.eligibility.locked_with_key' },
-      { input_id: 'part_replacement_required', priority: 'ROUTING_BOUNDARY', answer_type: 'boolean', prompt_key: 'serrurerie.routing.part_required' },
-    ]
-  },
-  'serrurerie.porte_verrouillee.ouverture': {
-    questions: [
-      { input_id: 'security_door', priority: 'SERVICE_IDENTITY', answer_type: 'boolean', prompt_key: 'serrurerie.identity.security_door' },
-      { input_id: 'part_replacement_required', priority: 'ROUTING_BOUNDARY', answer_type: 'boolean', prompt_key: 'serrurerie.routing.part_required' },
-    ]
-  },
-  'serrurerie.cle_cassee_extraction': {
-    questions: [
-      { input_id: 'security_door', priority: 'SERVICE_IDENTITY', answer_type: 'boolean', prompt_key: 'serrurerie.identity.security_door' },
-      { input_id: 'barrel_previously_damaged', priority: 'ELIGIBILITY', answer_type: 'boolean', prompt_key: 'serrurerie.eligibility.barrel_damaged' },
-    ]
-  },
-  'serrurerie.cylindre_remplacement.standard': {
-    questions: [
-      { input_id: 'security_door', priority: 'SERVICE_IDENTITY', answer_type: 'boolean', prompt_key: 'serrurerie.identity.security_door' },
-      { input_id: 'cylinder_count', priority: 'QUANTITY_MEASUREMENT', answer_type: 'integer', prompt_key: 'serrurerie.quantity.cylinder_count' },
-    ]
-  },
-  'serrurerie.serrure_remplacement.standard': {
-    questions: [
-      { input_id: 'security_door', priority: 'SERVICE_IDENTITY', answer_type: 'boolean', prompt_key: 'serrurerie.identity.security_door' },
-      { input_id: 'lock_count', priority: 'QUANTITY_MEASUREMENT', answer_type: 'integer', prompt_key: 'serrurerie.quantity.lock_count' },
-    ]
-  },
+  'serrurerie.diagnostic': {questions: require('../engine/serrurerie-pilot-v1').questions('serrurerie.diagnostic')},
+  'serrurerie.porte_claquee_ouverture': {questions: require('../engine/serrurerie-pilot-v1').questions('serrurerie.porte_claquee_ouverture')},
+  'serrurerie.porte_claquee_blindee.ouverture': {questions: require('../engine/serrurerie-pilot-v1').questions('serrurerie.porte_claquee_blindee.ouverture')},
+  'serrurerie.cle_cassee_extraction': {questions: require('../engine/serrurerie-pilot-v1').questions('serrurerie.cle_cassee_extraction')},
+  'serrurerie.cylindre_remplacement.standard': {questions: require('../engine/serrurerie-pilot-v1').questions('serrurerie.cylindre_remplacement.standard')},
+  'serrurerie.serrure_remplacement.standard': {questions: require('../engine/serrurerie-pilot-v1').questions('serrurerie.serrure_remplacement.standard')},
+  'serrurerie.porte_verrouillee.ouverture': {questions: []},
 
   // ── CLIMATISATION ──────────────────────────────────────────────────────────
   'climatisation.diagnostic': {questions: require('../engine/climatisation-pilot-v1').questions('climatisation.diagnostic')},
