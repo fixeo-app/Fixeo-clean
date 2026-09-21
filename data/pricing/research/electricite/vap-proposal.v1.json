@@ -1,0 +1,367 @@
+{
+  "version": "electricity-vap-proposal-v1",
+  "created_at": "2026-09-21",
+  "base_commit": "5391869683ee373714107656f525f9639370f36d",
+  "approval_status": "OWNER_APPROVED",
+  "runtime_integrated": true,
+  "production_ready": false,
+  "pricing_version": "vap-bp33-v1",
+  "currency": "MAD",
+  "proposed_city_slugs": [
+    "agadir",
+    "beni-mellal",
+    "casablanca",
+    "el-jadida",
+    "fes",
+    "kenitra",
+    "khouribga",
+    "marrakech",
+    "meknes",
+    "mohammedia",
+    "nador",
+    "ouarzazate",
+    "oujda",
+    "rabat",
+    "safi",
+    "sale",
+    "tanger",
+    "taza",
+    "temara",
+    "tetouan"
+  ],
+  "note_fr": "Tarifs et périmètres approuvés par le propriétaire pour les 20 villes le 21 septembre 2026. Intégration sur branche ; migration et déploiement en attente.",
+  "scope_definition_status": "PROPOSED_COMMERCIAL_CONTRACT_NOT_RUNTIME_INPUT_SCHEMA",
+  "common_scope": {
+    "private_residential_indoor_only": true,
+    "urban_travel_in_selected_city_included": true,
+    "labour_tools_and_routine_consumables_included": true,
+    "major_parts_included": false,
+    "automatic_city_multiplier": false,
+    "automatic_urgency_surcharge": false,
+    "automatic_night_weekend_surcharge": false,
+    "batch_price_defined": false,
+    "client_must_not_open_or_test_equipment": true,
+    "professional_prework_check_required": true,
+    "no_live_work": true,
+    "missing_or_unknown_answers": "NO_UNCONDITIONAL_REPAIR_PRICE",
+    "material_or_scope_change": "PRIOR_EXPLICIT_QUOTE_ACCEPTANCE",
+    "distributor_equipment_known_before_booking": "LOCAL_OPERATOR_ROUTE_WITHOUT_FIXEO_DIAGNOSTIC_SALE"
+  },
+  "services": [
+    {
+      "service_code": "electricite.diagnostic",
+      "label_fr": "Diagnostic électrique local, jusqu’à 45 minutes sur place",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
+      "legacy_reference_total_mad": 200,
+      "legacy_artisan_retention_at_15_percent_minor": 17000,
+      "proposed_outcome_type": "DIAGNOSTIC_READY",
+      "vap_minor": 18000,
+      "materials_minor": 0,
+      "expected_commission_minor": 6000,
+      "expected_client_total_minor": 24000,
+      "catalogue_version": "electricity-pilot-v1",
+      "parts_policy": "NO_PARTS",
+      "consumables_cost_assumption_minor": 0,
+      "consumables_extra_charge_allowed": false,
+      "proposed_scope_limits": {
+        "max_onsite_minutes": 45,
+        "fault_scope_count": 1,
+        "repair_included": false,
+        "non_invasive_only": true
+      },
+      "scope_fr": [
+        "Recherche locale et explication des constats ; résultat non garanti.",
+        "Hors audit complet, rapport réglementaire, certification, réparation, pièce ou seconde visite."
+      ],
+      "same_visit_repair_eligible": false,
+      "expected_balance_after_paid_diagnostic_minor": null
+    },
+    {
+      "service_code": "electricite.prise_remplacement",
+      "label_fr": "Remplacement d’une prise intérieure standard",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
+      "legacy_reference_total_mad": 220,
+      "legacy_artisan_retention_at_15_percent_minor": 18700,
+      "proposed_outcome_type": "PRICE_READY",
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "expected_commission_minor": 6000,
+      "expected_client_total_minor": 26000,
+      "catalogue_version": "electricity-pilot-v1",
+      "parts_policy": "CLIENT_SUPPLIED_COMPATIBLE",
+      "consumables_cost_assumption_minor": 1500,
+      "consumables_extra_charge_allowed": false,
+      "proposed_scope_limits": {
+        "outlet_count": 1,
+        "same_location": true,
+        "existing_box_and_wiring": true
+      },
+      "scope_fr": [
+        "Prise standard compatible fournie par le client.",
+        "Boîtier et câblage existants réutilisables après contrôle professionnel ; aucune création de circuit."
+      ],
+      "same_visit_repair_eligible": true,
+      "expected_balance_after_paid_diagnostic_minor": 2000
+    },
+    {
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "label_fr": "Remplacement d’un interrupteur simple",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
+      "legacy_reference_total_mad": 220,
+      "legacy_artisan_retention_at_15_percent_minor": 18700,
+      "proposed_outcome_type": "PRICE_READY",
+      "vap_minor": 20000,
+      "materials_minor": 0,
+      "expected_commission_minor": 6000,
+      "expected_client_total_minor": 26000,
+      "catalogue_version": "electricity-pilot-v1",
+      "parts_policy": "CLIENT_SUPPLIED_COMPATIBLE",
+      "consumables_cost_assumption_minor": 1500,
+      "consumables_extra_charge_allowed": false,
+      "proposed_scope_limits": {
+        "switch_count": 1,
+        "circuit_count": 1,
+        "control_position_count": 1,
+        "same_location": true
+      },
+      "scope_fr": [
+        "Interrupteur standard compatible fourni par le client.",
+        "Hors variateur, appareil connecté, programmation ou modification de circuit."
+      ],
+      "same_visit_repair_eligible": true,
+      "expected_balance_after_paid_diagnostic_minor": 2000
+    },
+    {
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "label_fr": "Remplacement des deux interrupteurs d’un va-et-vient",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
+      "legacy_reference_total_mad": 250,
+      "legacy_artisan_retention_at_15_percent_minor": 21250,
+      "proposed_outcome_type": "PRICE_READY",
+      "vap_minor": 24000,
+      "materials_minor": 0,
+      "expected_commission_minor": 6000,
+      "expected_client_total_minor": 30000,
+      "catalogue_version": "electricity-pilot-v1",
+      "parts_policy": "CLIENT_SUPPLIED_COMPATIBLE",
+      "consumables_cost_assumption_minor": 1500,
+      "consumables_extra_charge_allowed": false,
+      "proposed_scope_limits": {
+        "switch_count": 2,
+        "circuit_count": 1,
+        "control_position_count": 2,
+        "existing_two_way_circuit": true
+      },
+      "scope_fr": [
+        "Deux interrupteurs compatibles fournis par le client ; remplacement et essais des deux commandes inclus.",
+        "Hors création, recâblage, télérupteur et ajout de point ; ce n’est pas un prix par interrupteur."
+      ],
+      "same_visit_repair_eligible": true,
+      "expected_balance_after_paid_diagnostic_minor": 6000
+    },
+    {
+      "service_code": "electricite.luminaire_installation",
+      "label_fr": "Pose d’un plafonnier ou d’une applique simple",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
+      "legacy_reference_total_mad": 220,
+      "legacy_artisan_retention_at_15_percent_minor": 18700,
+      "proposed_outcome_type": "PRICE_READY",
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "expected_commission_minor": 6000,
+      "expected_client_total_minor": 28000,
+      "catalogue_version": "electricity-pilot-v1",
+      "parts_policy": "CLIENT_SUPPLIED_COMPATIBLE",
+      "consumables_cost_assumption_minor": 1500,
+      "consumables_extra_charge_allowed": false,
+      "proposed_scope_limits": {
+        "fixture_count": 1,
+        "max_fixture_weight_kg": 3,
+        "max_mounting_height_m": 2.8,
+        "existing_suitable_mount": true,
+        "existing_functional_point": true
+      },
+      "scope_fr": [
+        "Luminaire fourni par le client ; dépose simple incluse ; fixation existante réutilisable après contrôle.",
+        "Sol stable et dégagé ; hors escalier, lustre, spots, nouvelle fixation structurelle, extérieur ou programmation.",
+        "Protection nécessaire absente : pose exclue même avec accord du client."
+      ],
+      "same_visit_repair_eligible": true,
+      "expected_balance_after_paid_diagnostic_minor": 4000
+    },
+    {
+      "service_code": "electricite.disjoncteur_remplacement",
+      "label_fr": "Remplacement d’un disjoncteur divisionnaire simple",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
+      "legacy_reference_total_mad": 250,
+      "legacy_artisan_retention_at_15_percent_minor": 21250,
+      "proposed_outcome_type": "PRICE_READY",
+      "vap_minor": 25000,
+      "materials_minor": 0,
+      "expected_commission_minor": 6000,
+      "expected_client_total_minor": 31000,
+      "catalogue_version": "electricity-pilot-v1",
+      "parts_policy": "CLIENT_SUPPLIED_COMPATIBLE",
+      "consumables_cost_assumption_minor": 1500,
+      "consumables_extra_charge_allowed": false,
+      "proposed_scope_limits": {
+        "mcb_count": 1,
+        "private_residential_board": true,
+        "single_phase": true,
+        "professional_confirms_defective_device": true,
+        "professional_confirms_compatible_part": true,
+        "unexplained_tripping": false,
+        "distributor_equipment": false,
+        "rcd_device": false,
+        "busbar_or_wiring_repair": false
+      },
+      "scope_fr": [
+        "Disjoncteur compatible fourni par le client, vérifié par l’artisan ; aucun changement de calibre pour masquer une panne.",
+        "Déclenchements répétés ou cause incertaine : diagnostic d’abord.",
+        "Hors différentiel, tableau complet, triphasé, installation commerciale ou équipement du distributeur."
+      ],
+      "same_visit_repair_eligible": true,
+      "expected_balance_after_paid_diagnostic_minor": 7000
+    }
+  ],
+  "same_visit_diagnostic_policy": {
+    "status": "IMPLEMENTED_PENDING_DEPLOYMENT",
+    "diagnostic_service_code": "electricite.diagnostic",
+    "diagnostic_total_minor": 24000,
+    "qualifying_service_codes": [
+      "electricite.prise_remplacement",
+      "electricite.interrupteur_remplacement.simple",
+      "electricite.interrupteur_remplacement.va_et_vient",
+      "electricite.luminaire_installation",
+      "electricite.disjoncteur_remplacement"
+    ],
+    "same_artisan_same_visit_required": true,
+    "explicit_client_consent_required": true,
+    "single_mission": true,
+    "single_commission_minor": 6000,
+    "repair_total_replaces_diagnostic_total": true,
+    "accepted_cash_credit_minor": [
+      0,
+      24000
+    ],
+    "cash_credit_requires_client_confirmation": true,
+    "cash_credit_is_bank_verified": false,
+    "partial_or_disputed_credit": "RESOLVE_BEFORE_CONVERSION",
+    "refusal_expiry_or_no_repair": "ACCEPTED_DIAGNOSTIC_ONLY",
+    "second_visit_or_out_of_scope": "SEPARATE_ACCEPTED_QUOTE_NO_AUTOMATIC_ABSORPTION",
+    "settlement_basis": "FULL_FINAL_MISSION_TOTAL_NOT_CASH_BALANCE"
+  },
+  "economics_assumptions": {
+    "historical_commission_reference_percent": 15,
+    "historical_retention_is_mission_observation": false,
+    "urban_travel_cost_minor": [
+      4000,
+      6000
+    ],
+    "consumables_budget_minor_diagnostic": 0,
+    "consumables_budget_minor_repair": 1500,
+    "partner_costs_observed": false,
+    "remaining_amount_excludes": [
+      "labour_time",
+      "taxes_and_charges",
+      "tools",
+      "insurance"
+    ],
+    "field_review_metrics": [
+      "customer_acceptance",
+      "artisan_acceptance",
+      "onsite_duration",
+      "travel_cost",
+      "consumables_cost",
+      "out_of_scope_rate"
+    ]
+  },
+  "market_evidence": [
+    {
+      "publisher": "Afous",
+      "url": "https://afous.ma/prix/electricien",
+      "checked_at": "2026-09-21",
+      "type": "PUBLISHER_INDICATIVE_PRICE_GUIDE",
+      "observations": [
+        {
+          "label": "Prise/interrupteur par unité",
+          "low_mad": 90,
+          "high_mad": 160,
+          "publisher_reported_observations": 13
+        },
+        {
+          "label": "Disjoncteur au forfait",
+          "low_mad": 190,
+          "high_mad": 280,
+          "publisher_reported_observations": 12
+        }
+      ],
+      "limitations_fr": "Matériel et déplacement non décomposés ; périmètre non équivalent garanti. Ne pas réutiliser les anciennes valeurs ou les 480 relevés du dossier historique. Total FIXEO disjoncteur 310 supérieur à cette borne haute ; acceptation à mesurer."
+    },
+    {
+      "publisher": "Mano",
+      "url": "https://mano.ma/prix-electricien-au-maroc/",
+      "checked_at": "2026-09-21",
+      "type": "PUBLISHER_EDITORIAL_PRICE_GUIDE",
+      "observations": [
+        {
+          "label": "Recherche et diagnostic",
+          "low_mad": 200,
+          "high_mad": 500
+        },
+        {
+          "label": "Plafonnier simple",
+          "low_mad": 150,
+          "high_mad": 300
+        },
+        {
+          "label": "Petite réparation",
+          "low_mad": 200,
+          "high_mad": 400
+        },
+        {
+          "label": "Déplacement urbain parfois inclus",
+          "low_mad": 50,
+          "high_mad": 100
+        }
+      ],
+      "limitations_fr": "Périmètres et fournitures hétérogènes ; ne pas additionner automatiquement le déplacement. Aucun devis partenaire."
+    },
+    {
+      "publisher": "Bnidari",
+      "url": "https://www.bnidari.ma/tarifs/electricien",
+      "checked_at": "2026-09-21",
+      "type": "PUBLISHER_INDICATIVE_PRICE_GUIDE",
+      "observations": [
+        {
+          "label": "Point/intervention",
+          "low_mad": 150,
+          "high_mad": 500
+        }
+      ],
+      "used_as_numeric_anchor": false,
+      "limitations_fr": "Périmètre plus large pouvant comprendre gaines et câbles ; pas de comparaison directe au remplacement simple."
+    }
+  ],
+  "activation_gates": [
+    "OWNER_PRICE_AND_SCOPE_APPROVAL",
+    "PROFESSIONAL_PREWORK_CHECK_AND_CUSTOMER_SCOPE_QUESTIONS",
+    "SERVER_SAFETY_FOR_INTERACTIVE_PREFILLED_AND_DIRECT_ENGINE_INPUTS",
+    "LOCAL_DISTRIBUTOR_ROUTE_NO_AUTOMATIC_DIAGNOSTIC_CHARGE",
+    "REPEATED_TRIPPING_ROUTES_TO_DIAGNOSTIC_BEFORE_REPLACEMENT",
+    "120_EXACT_APPROVED_ENTRIES_NO_LEGACY_FALLBACK",
+    "ELECTRICITY_SAME_VISIT_PROPOSAL_CONSENT_AND_SETTLEMENT",
+    "PRESERVE_HISTORICAL_OFFERS_MISSIONS_AND_PLUMBING",
+    "INTEGRATION_TESTS_AND_DEPLOYMENT_VERIFICATION"
+  ],
+  "documentation": "docs/calibration-electricite-vap-v1.md",
+  "commit_message": "docs(electricity): propose scoped VAP calibration for owner review",
+  "approved_at": "2026-09-21",
+  "deployment_status": "PENDING_MIGRATION_AND_DEPLOYMENT"
+}

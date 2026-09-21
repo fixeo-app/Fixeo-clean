@@ -89,8 +89,7 @@
       "universe": "electricite",
       "metier": "electricite",
       "candidate_services": [
-        "electricite.diagnostic",
-        "electricite.disjoncteur_remplacement"
+        "electricite.diagnostic"
       ]
     },
     "electricite.installer-un-luminaire": {

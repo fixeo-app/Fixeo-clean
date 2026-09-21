@@ -314,6 +314,32 @@
         "minimum_floor_mad": 200,
         "formula_ref_hourly": "FORMULA-TIME-SINGLE-V1"
       }
+    },
+    "POL-ELECTRICAL-SAFETY-VAP-V1": {
+      "policy_id": "POL-ELECTRICAL-SAFETY-VAP-V1",
+      "safety_critical": true,
+      "scope": [
+        "electricite.diagnostic",
+        "electricite.prise_remplacement",
+        "electricite.interrupteur_remplacement.simple",
+        "electricite.interrupteur_remplacement.va_et_vient",
+        "electricite.luminaire_installation",
+        "electricite.disjoncteur_remplacement"
+      ],
+      "description": "Danger apparent : arrêt du forfait. Équipement distributeur identifié : opérateur local, aucun diagnostic vendu automatiquement. Contrôles techniques et travail hors tension par professionnel ; protection nécessaire absente : aucune pose. Le client ne démonte ni ne teste l’installation. Aucun supplément automatique."
+    },
+    "POL-DIAGNOSTIC-ABSORPTION-ELECTRICITE-VAP-V1": {
+      "policy_id": "POL-DIAGNOSTIC-ABSORPTION-ELECTRICITE-VAP-V1",
+      "diagnostic_price_mad": 240,
+      "same_visit_absorption": true,
+      "qualifying_service_codes": [
+        "electricite.prise_remplacement",
+        "electricite.interrupteur_remplacement.simple",
+        "electricite.interrupteur_remplacement.va_et_vient",
+        "electricite.luminaire_installation",
+        "electricite.disjoncteur_remplacement"
+      ],
+      "description": "Une mission, même artisan et visite, périmètre contrôlé et proposition acceptée avant travaux. Total réparation remplace diagnostic ; crédit 0/240 DH confirmé par client. Une commission 60 DH. Hors forfait ou seconde visite : devis distinct préalable."
     }
   }
 }

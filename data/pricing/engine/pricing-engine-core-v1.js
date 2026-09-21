@@ -776,6 +776,8 @@ function evaluateFixeoPrice({ service_code, inputs = {} } = {}) {
     return errorResult('SERVICE_NOT_FOUND', `Service '${service_code}' not found in canonical registry. Do not guess closest service.`, 'service_code', service_code);
   }
 
+  const electricalBoundary = require('./electricity-pilot-v1').guard(canonicalCode,inputs);
+  if(electricalBoundary)return ineligibleResult(canonicalCode,electricalBoundary.status,electricalBoundary.reason_code,electricalBoundary.reason);
   const plumbing = require('./plumbing-pilot-v1').services[canonicalCode];
   if(plumbing){
     for(const [field,value] of Object.entries(plumbing.inputs)){

@@ -1088,30 +1088,27 @@
       ],
       "metier": "electricite",
       "service_family": "DIAGNOSTIC",
-      "label_fr": "Diagnostic électrique",
+      "label_fr": "Diagnostic électrique local — 45 minutes maximum",
       "label_ar_darija": "تشخيص كهربائي",
-      "short_label_fr": "Diagnostic électrique",
+      "short_label_fr": "Diagnostic électrique local — 45 minutes maximum",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
+      "service_version": "electricity-pilot-v1",
       "effective_from": null,
       "effective_to": null,
       "price_model": {
         "calculation_model": "DIAGNOSTIC",
         "commercial_output_type": "FIXEO_DIAGNOSTIC",
         "currency": "MAD",
-        "formula_id": "FORMULA-DIAGNOSTIC-V1",
-        "formula_params": {},
-        "diagnostic_price_mad": 200,
-        "fixed_amount_mad": null,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 18000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -1123,7 +1120,7 @@
       },
       "diagnostic": {
         "enabled": true,
-        "price_mad": 200,
+        "price_mad": 240,
         "mode": "STANDALONE_OR_ABSORBED",
         "same_visit_absorption": true,
         "qualifying_service_codes": [
@@ -1133,8 +1130,10 @@
           "electricite.luminaire_installation",
           "electricite.disjoncteur_remplacement"
         ],
-        "conditions": [],
-        "policy_ref": "POL-DIAGNOSTIC-ABSORPTION-ELECTRICITE-V1"
+        "conditions": [
+          "Même visite, même artisan, accord client préalable ; un total et une commission de 60 DH."
+        ],
+        "policy_ref": "POL-DIAGNOSTIC-ABSORPTION-ELECTRICITE-VAP-V1"
       },
       "materials": {
         "consumables": "NOT_APPLICABLE",
@@ -1157,22 +1156,58 @@
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "electricity_safety",
+            "field": "electricity_safety",
+            "operator": "EQ",
+            "value": "ELEC_NO_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_operator",
+            "field": "electricity_operator",
+            "operator": "EQ",
+            "value": "ELEC_PRIVATE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_access",
+            "field": "electricity_access",
+            "operator": "EQ",
+            "value": "ELEC_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_work",
+            "field": "electricity_work",
+            "operator": "EQ",
+            "value": "ELEC_DIAGNOSTIC",
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "electricity_safety",
+          "electricity_operator",
+          "electricity_access",
+          "electricity_work"
+        ],
+        "supporting_prose": "Un problème électrique local dans un logement : recherche non invasive jusqu’à 45 minutes sur place, mesures appropriées et explication. Résultat non garanti. Sans réparation, pièce, audit complet, certification, rapport réglementaire, recherche destructive ni seconde visite. Déplacement en ville et petits consommables inclus. Vérifications techniques par le professionnel avant travaux.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
-        "POL-ELECTRICAL-SAFETY-V1",
-        "POL-DIAGNOSTIC-ABSORPTION-ELECTRICITE-V1"
+        "POL-ELECTRICAL-SAFETY-VAP-V1",
+        "POL-DIAGNOSTIC-ABSORPTION-ELECTRICITE-VAP-V1"
       ],
       "safety_policy_refs": [
-        "POL-ELECTRICAL-SAFETY-V1"
+        "POL-ELECTRICAL-SAFETY-VAP-V1"
       ],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
         "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
         "research_phase": "7B.E",
         "human_decision_phase": "7B",
@@ -1180,8 +1215,9 @@
           "data/pricing/research/electricite/registry.v0.3.json"
         ],
         "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
+        "production_ready": true,
+        "batch_rule_experimental": null,
+        "approval_status": "OWNER_APPROVED"
       },
       "confidence": {
         "price_confidence": "MEDIUM",
@@ -1200,9 +1236,9 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_diagnostic"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -1216,537 +1252,27 @@
       ],
       "metier": "electricite",
       "service_family": "REMPLACEMENT",
-      "label_fr": "Remplacement prise — main-d'œuvre",
+      "label_fr": "Remplacement d’une prise standard fournie par le client",
       "label_ar_darija": "تغيير البريزة",
-      "short_label_fr": "Remplacement prise",
+      "short_label_fr": "Remplacement d’une prise standard fournie par le client",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
-      "effective_to": null,
-      "price_model": {
-        "calculation_model": "FIXED",
-        "commercial_output_type": "FIXEO_PRICE",
-        "currency": "MAD",
-        "formula_id": "FORMULA-FIXED-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 220,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
-      },
-      "minimum_floor": {
-        "enabled": false,
-        "amount_mad": null,
-        "mode": null,
-        "scope": null,
-        "policy_ref": null,
-        "standalone_service_code": null
-      },
-      "diagnostic": {
-        "enabled": false,
-        "price_mad": null,
-        "mode": null,
-        "same_visit_absorption": null,
-        "qualifying_service_codes": [],
-        "conditions": [],
-        "policy_ref": null
-      },
-      "materials": {
-        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
-        "consumables_cap_mad": 15,
-        "major_parts": "CLIENT_SUPPLIED",
-        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": {
-          "policy": "CLIENT_SUPPLIED",
-          "client_may_supply": true,
-          "approval_required_before_installation": false,
-          "return_old_part": null,
-          "price_disclosure_required": false,
-          "policy_ref": "POL-PART-DISCLOSURE-V1"
-        }
-      },
-      "measurement": {
-        "basis": "NONE",
-        "quantity_field": null,
-        "quantity_required": false,
-        "worker_count_required": null,
-        "worker_count_default": null,
-        "worker_count_semantics": null,
-        "hours_required": null,
-        "minimum_billing_hours": null,
-        "derived": false,
-        "conversion_model_id": null,
-        "conversion_status": "NOT_APPLICABLE"
-      },
-      "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
-      },
-      "policy_refs": [
-        "POL-HORS-PERIMETRE-V1",
-        "POL-ELECTRICAL-SAFETY-V1"
-      ],
-      "safety_policy_refs": [
-        "POL-ELECTRICAL-SAFETY-V1"
-      ],
-      "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
-        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
-        "research_phase": "7B.E",
-        "human_decision_phase": "7B",
-        "source_registry_refs": [
-          "data/pricing/research/electricite/registry.v0.3.json"
-        ],
-        "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
-      },
-      "confidence": {
-        "price_confidence": "MEDIUM",
-        "scope_confidence": "MEDIUM",
-        "evidence_confidence": "MEDIUM",
-        "conversion_confidence": null,
-        "batch_confidence": null
-      },
-      "batch_policy": null,
-      "copy_keys": {
-        "copy_key_price": "copy.fixeo_price.price",
-        "copy_key_scope": "copy.electricite.remplacement.scope",
-        "copy_key_materials": "copy.electricite.remplacement.materials",
-        "copy_key_parts": null,
-        "copy_key_escape": "copy.escape.hors_perimetre",
-        "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
-      },
-      "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
-        "active_in_pseo": false,
-        "active_in_profiles": false
-      },
-      "human_review_flags": [],
-      "semantic_corrections": []
-    },
-    "electricite.interrupteur_remplacement.simple": {
-      "canonical_service_code": "electricite.interrupteur_remplacement.simple",
-      "legacy_codes": [
-        "electricite.interrupteur_remplacement.simple"
-      ],
-      "metier": "electricite",
-      "service_family": "REMPLACEMENT",
-      "label_fr": "Remplacement interrupteur simple",
-      "label_ar_darija": "تغيير المفتاح البسيط",
-      "short_label_fr": "Interrupteur simple",
-      "variant": "simple",
-      "human_decision": "APPROVED",
-      "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
-      "active_in_pseo": false,
-      "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
-      "effective_to": null,
-      "price_model": {
-        "calculation_model": "FIXED",
-        "commercial_output_type": "FIXEO_PRICE",
-        "currency": "MAD",
-        "formula_id": "FORMULA-FIXED-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 220,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
-      },
-      "minimum_floor": {
-        "enabled": false,
-        "amount_mad": null,
-        "mode": null,
-        "scope": null,
-        "policy_ref": null,
-        "standalone_service_code": null
-      },
-      "diagnostic": {
-        "enabled": false,
-        "price_mad": null,
-        "mode": null,
-        "same_visit_absorption": null,
-        "qualifying_service_codes": [],
-        "conditions": [],
-        "policy_ref": null
-      },
-      "materials": {
-        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
-        "consumables_cap_mad": 15,
-        "major_parts": "CLIENT_SUPPLIED",
-        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": {
-          "policy": "CLIENT_SUPPLIED",
-          "client_may_supply": true,
-          "approval_required_before_installation": false,
-          "return_old_part": null,
-          "price_disclosure_required": false,
-          "policy_ref": "POL-PART-DISCLOSURE-V1"
-        }
-      },
-      "measurement": {
-        "basis": "NONE",
-        "quantity_field": null,
-        "quantity_required": false,
-        "worker_count_required": null,
-        "worker_count_default": null,
-        "worker_count_semantics": null,
-        "hours_required": null,
-        "minimum_billing_hours": null,
-        "derived": false,
-        "conversion_model_id": null,
-        "conversion_status": "NOT_APPLICABLE"
-      },
-      "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
-      },
-      "policy_refs": [
-        "POL-HORS-PERIMETRE-V1",
-        "POL-ELECTRICAL-SAFETY-V1"
-      ],
-      "safety_policy_refs": [
-        "POL-ELECTRICAL-SAFETY-V1"
-      ],
-      "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
-        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
-        "research_phase": "7B.E",
-        "human_decision_phase": "7B",
-        "source_registry_refs": [
-          "data/pricing/research/electricite/registry.v0.3.json"
-        ],
-        "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
-      },
-      "confidence": {
-        "price_confidence": "MEDIUM",
-        "scope_confidence": "MEDIUM",
-        "evidence_confidence": "MEDIUM",
-        "conversion_confidence": null,
-        "batch_confidence": null
-      },
-      "batch_policy": null,
-      "copy_keys": {
-        "copy_key_price": "copy.fixeo_price.price",
-        "copy_key_scope": "copy.electricite.remplacement.scope",
-        "copy_key_materials": "copy.electricite.remplacement.materials",
-        "copy_key_parts": null,
-        "copy_key_escape": "copy.escape.hors_perimetre",
-        "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
-      },
-      "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
-        "active_in_pseo": false,
-        "active_in_profiles": false
-      },
-      "human_review_flags": [],
-      "semantic_corrections": []
-    },
-    "electricite.interrupteur_remplacement.va_et_vient": {
-      "canonical_service_code": "electricite.interrupteur_remplacement.va_et_vient",
-      "legacy_codes": [
-        "electricite.interrupteur_remplacement.va_et_vient"
-      ],
-      "metier": "electricite",
-      "service_family": "REMPLACEMENT",
-      "label_fr": "Remplacement interrupteur va-et-vient",
-      "label_ar_darija": "تغيير مفتاح رايح وجاي",
-      "short_label_fr": "Va-et-vient",
-      "variant": "va_et_vient",
-      "human_decision": "APPROVED",
-      "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
-      "active_in_pseo": false,
-      "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
-      "effective_to": null,
-      "price_model": {
-        "calculation_model": "FIXED",
-        "commercial_output_type": "FIXEO_PRICE",
-        "currency": "MAD",
-        "formula_id": "FORMULA-FIXED-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 250,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
-      },
-      "minimum_floor": {
-        "enabled": false,
-        "amount_mad": null,
-        "mode": null,
-        "scope": null,
-        "policy_ref": null,
-        "standalone_service_code": null
-      },
-      "diagnostic": {
-        "enabled": false,
-        "price_mad": null,
-        "mode": null,
-        "same_visit_absorption": null,
-        "qualifying_service_codes": [],
-        "conditions": [],
-        "policy_ref": null
-      },
-      "materials": {
-        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
-        "consumables_cap_mad": 15,
-        "major_parts": "CLIENT_SUPPLIED",
-        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": {
-          "policy": "CLIENT_SUPPLIED",
-          "client_may_supply": true,
-          "approval_required_before_installation": false,
-          "return_old_part": null,
-          "price_disclosure_required": false,
-          "policy_ref": "POL-PART-DISCLOSURE-V1"
-        }
-      },
-      "measurement": {
-        "basis": "NONE",
-        "quantity_field": null,
-        "quantity_required": false,
-        "worker_count_required": null,
-        "worker_count_default": null,
-        "worker_count_semantics": null,
-        "hours_required": null,
-        "minimum_billing_hours": null,
-        "derived": false,
-        "conversion_model_id": null,
-        "conversion_status": "NOT_APPLICABLE"
-      },
-      "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
-      },
-      "policy_refs": [
-        "POL-HORS-PERIMETRE-V1",
-        "POL-ELECTRICAL-SAFETY-V1"
-      ],
-      "safety_policy_refs": [
-        "POL-ELECTRICAL-SAFETY-V1"
-      ],
-      "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
-        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
-        "research_phase": "7B.E",
-        "human_decision_phase": "7B",
-        "source_registry_refs": [
-          "data/pricing/research/electricite/registry.v0.3.json"
-        ],
-        "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
-      },
-      "confidence": {
-        "price_confidence": "MEDIUM",
-        "scope_confidence": "MEDIUM",
-        "evidence_confidence": "MEDIUM",
-        "conversion_confidence": null,
-        "batch_confidence": null
-      },
-      "batch_policy": null,
-      "copy_keys": {
-        "copy_key_price": "copy.fixeo_price.price",
-        "copy_key_scope": "copy.electricite.remplacement.scope",
-        "copy_key_materials": "copy.electricite.remplacement.materials",
-        "copy_key_parts": null,
-        "copy_key_escape": "copy.escape.hors_perimetre",
-        "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
-      },
-      "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
-        "active_in_pseo": false,
-        "active_in_profiles": false
-      },
-      "human_review_flags": [],
-      "semantic_corrections": []
-    },
-    "electricite.luminaire_installation": {
-      "canonical_service_code": "electricite.luminaire_installation",
-      "legacy_codes": [
-        "electricite.luminaire_installation"
-      ],
-      "metier": "electricite",
-      "service_family": "INSTALLATION",
-      "label_fr": "Installation luminaire — main-d'œuvre",
-      "label_ar_darija": "تركيب الإضاءة",
-      "short_label_fr": "Installation luminaire",
-      "variant": null,
-      "human_decision": "APPROVED",
-      "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
-      "active_in_pseo": false,
-      "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
-      "effective_from": null,
-      "effective_to": null,
-      "price_model": {
-        "calculation_model": "FIXED",
-        "commercial_output_type": "FIXEO_PRICE",
-        "currency": "MAD",
-        "formula_id": "FORMULA-FIXED-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 220,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
-      },
-      "minimum_floor": {
-        "enabled": false,
-        "amount_mad": null,
-        "mode": null,
-        "scope": null,
-        "policy_ref": null,
-        "standalone_service_code": null
-      },
-      "diagnostic": {
-        "enabled": false,
-        "price_mad": null,
-        "mode": null,
-        "same_visit_absorption": null,
-        "qualifying_service_codes": [],
-        "conditions": [],
-        "policy_ref": null
-      },
-      "materials": {
-        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
-        "consumables_cap_mad": 15,
-        "major_parts": "CLIENT_SUPPLIED",
-        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": {
-          "policy": "CLIENT_SUPPLIED",
-          "client_may_supply": true,
-          "approval_required_before_installation": false,
-          "return_old_part": null,
-          "price_disclosure_required": false,
-          "policy_ref": "POL-PART-DISCLOSURE-V1"
-        }
-      },
-      "measurement": {
-        "basis": "NONE",
-        "quantity_field": null,
-        "quantity_required": false,
-        "worker_count_required": null,
-        "worker_count_default": null,
-        "worker_count_semantics": null,
-        "hours_required": null,
-        "minimum_billing_hours": null,
-        "derived": false,
-        "conversion_model_id": null,
-        "conversion_status": "NOT_APPLICABLE"
-      },
-      "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
-      },
-      "policy_refs": [
-        "POL-HORS-PERIMETRE-V1",
-        "POL-ELECTRICAL-SAFETY-V1"
-      ],
-      "safety_policy_refs": [
-        "POL-ELECTRICAL-SAFETY-V1"
-      ],
-      "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
-        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
-        "research_phase": "7B.E",
-        "human_decision_phase": "7B",
-        "source_registry_refs": [
-          "data/pricing/research/electricite/registry.v0.3.json"
-        ],
-        "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
-      },
-      "confidence": {
-        "price_confidence": "MEDIUM",
-        "scope_confidence": "MEDIUM",
-        "evidence_confidence": "MEDIUM",
-        "conversion_confidence": null,
-        "batch_confidence": null
-      },
-      "batch_policy": null,
-      "copy_keys": {
-        "copy_key_price": "copy.fixeo_price.price",
-        "copy_key_scope": "copy.electricite.installation.scope",
-        "copy_key_materials": "copy.electricite.installation.materials",
-        "copy_key_parts": null,
-        "copy_key_escape": "copy.escape.hors_perimetre",
-        "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
-      },
-      "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
-        "active_in_pseo": false,
-        "active_in_profiles": false
-      },
-      "human_review_flags": [],
-      "semantic_corrections": []
-    },
-    "electricite.disjoncteur_remplacement": {
-      "canonical_service_code": "electricite.disjoncteur_remplacement",
-      "legacy_codes": [
-        "electricite.disjoncteur_remplacement"
-      ],
-      "metier": "electricite",
-      "service_family": "REMPLACEMENT",
-      "label_fr": "Remplacement disjoncteur",
-      "label_ar_darija": "تغيير الديجونكتور",
-      "short_label_fr": "Remplacement disjoncteur",
-      "variant": null,
-      "human_decision": "APPROVED",
-      "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
-      "active_in_pseo": false,
-      "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
+      "service_version": "electricity-pilot-v1",
       "effective_from": null,
       "effective_to": null,
       "price_model": {
         "calculation_model": "CONDITIONAL_FIXED",
         "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-CONDITIONAL-FIXED-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 250,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 20000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -1767,17 +1293,10 @@
       },
       "materials": {
         "consumables": "ARTISAN_SUPPLIED_INCLUDED",
-        "consumables_cap_mad": 15,
+        "consumables_cap_mad": null,
         "major_parts": "CLIENT_SUPPLIED",
         "equipment": "ARTISAN_SUPPLIED_INCLUDED",
-        "parts_disclosure": {
-          "policy": "CLIENT_SUPPLIED",
-          "client_may_supply": true,
-          "approval_required_before_installation": false,
-          "return_old_part": null,
-          "price_disclosure_required": false,
-          "policy_ref": "POL-PART-DISCLOSURE-V1"
-        }
+        "parts_disclosure": "Pièce disponible fournie par le client ; compatibilité vérifiée par l’artisan. Achat ou adaptation : devis accepté avant intervention."
       },
       "measurement": {
         "basis": "NONE",
@@ -1797,79 +1316,61 @@
         "structured": true,
         "required_conditions": [
           {
-            "id": "E-ELEC-DISJ-01",
-            "field": "distributor_equipment_involved",
+            "id": "electricity_safety",
+            "field": "electricity_safety",
             "operator": "EQ",
-            "value": false,
-            "effect": "ELIGIBLE",
-            "description": "Must be private residential distribution board, not distributor-controlled equipment"
+            "value": "ELEC_NO_DANGER",
+            "effect": "ELIGIBLE"
           },
           {
-            "id": "E-ELEC-DISJ-02",
-            "field": "mcb_defect_confirmed",
+            "id": "electricity_operator",
+            "field": "electricity_operator",
             "operator": "EQ",
-            "value": "physically_broken",
-            "effect": "ELIGIBLE",
-            "description": "MCB must be physically defective — broken toggle, cracked housing, or non-latching. Repeated tripping without clear cause = DIAGNOSTIC_FIRST"
+            "value": "ELEC_PRIVATE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_access",
+            "field": "electricity_access",
+            "operator": "EQ",
+            "value": "ELEC_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_work",
+            "field": "electricity_work",
+            "operator": "EQ",
+            "value": "ELEC_OUTLET",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_parts",
+            "field": "electricity_parts",
+            "operator": "EQ",
+            "value": "ELEC_PART_AVAILABLE",
+            "effect": "ELIGIBLE"
           }
         ],
-        "hard_exclusions": [
-          {
-            "id": "X-ELEC-DISJ-01",
-            "trigger": "distributor_equipment_involved = True",
-            "action": "ROUTE",
-            "description": "Distributor-controlled equipment (disjoncteur de branchement, utility seal present) is absolutely excluded. Charge 200 MAD diagnostic, direct client to ONEE or territory operator.",
-            "route_ref": "ROUTE-ELEC-ONEE-001",
-            "target_metier": "onee_distributor"
-          },
-          {
-            "id": "X-ELEC-DISJ-02",
-            "trigger": "burning_smell OR scorch_marks = True",
-            "action": "STOP_SAFETY",
-            "description": "Burning smell or scorch marks in tableau = SAFETY_OVERRIDE → HORS PÉRIMÈTRE. Full tableau assessment required. Quote."
-          },
-          {
-            "id": "X-ELEC-DISJ-03",
-            "trigger": "mcb_trips_repeatedly = True AND cause_unknown = True",
-            "action": "ROUTE",
-            "description": "Repeated tripping without clear assigned cause → DIAGNOSTIC_FIRST. Book electricite.diagnostic (200 MAD) first. May absorb into disjoncteur_remplacement if same-visit diagnosis confirms single defective MCB."
-          },
-          {
-            "id": "X-ELEC-DISJ-04",
-            "trigger": "multiple_mcbs_defective = True",
-            "action": "QUOTE_REQUIRED",
-            "description": "More than one MCB requiring replacement → full tableau assessment quote."
-          },
-          {
-            "id": "X-ELEC-DISJ-05",
-            "trigger": "ddr_rcd_involved = True",
-            "action": "QUOTE_REQUIRED",
-            "description": "DDR/RCD device replacement is a different, higher-cost service."
-          },
-          {
-            "id": "X-ELEC-DISJ-06",
-            "trigger": "three_phase_circuit = True",
-            "action": "QUOTE_REQUIRED",
-            "description": "Three-phase circuits are outside this service scope."
-          }
-        ],
+        "hard_exclusions": [],
         "prebooking_question_refs": [
-          "Q-ELEC-DISTRIBUTOR",
-          "Q-ELEC-MCB-DEFECT",
-          "Q-ELEC-BURNING-SMELL"
+          "electricity_safety",
+          "electricity_operator",
+          "electricity_access",
+          "electricity_work",
+          "electricity_parts"
         ],
-        "supporting_prose": "If MCB is physically defective and all exclusion conditions are absent: proceed to replacement. Client supplies MCB of identical specification (same current rating, pole count, type). Artisan may supply certified MCB (Schneider, Legrand, ABB, Hager) with prior client approval — POL-PART-DISCLOSURE-V1 applies.",
+        "supporting_prose": "Une prise intérieure standard au même emplacement, fournie par le client. Boîtier et câblage existants réutilisables après contrôle professionnel. Sans prise spécialisée, circuit neuf, saignée, déplacement de prise ni réparation de terre ou de câblage. Déplacement en ville et petits consommables inclus. Vérifications techniques par le professionnel avant travaux.",
         "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
-        "POL-ELECTRICAL-SAFETY-V1"
+        "POL-ELECTRICAL-SAFETY-VAP-V1"
       ],
       "safety_policy_refs": [
-        "POL-ELECTRICAL-SAFETY-V1"
+        "POL-ELECTRICAL-SAFETY-VAP-V1"
       ],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
         "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
         "research_phase": "7B.E",
         "human_decision_phase": "7B",
@@ -1877,8 +1378,9 @@
           "data/pricing/research/electricite/registry.v0.3.json"
         ],
         "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
+        "production_ready": true,
+        "batch_rule_experimental": null,
+        "approval_status": "OWNER_APPROVED"
       },
       "confidence": {
         "price_confidence": "MEDIUM",
@@ -1897,9 +1399,677 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
+    },
+    "electricite.interrupteur_remplacement.simple": {
+      "canonical_service_code": "electricite.interrupteur_remplacement.simple",
+      "legacy_codes": [
+        "electricite.interrupteur_remplacement.simple"
+      ],
+      "metier": "electricite",
+      "service_family": "REMPLACEMENT",
+      "label_fr": "Remplacement d’un interrupteur simple fourni par le client",
+      "label_ar_darija": "تغيير المفتاح البسيط",
+      "short_label_fr": "Remplacement d’un interrupteur simple fourni par le client",
+      "variant": "simple",
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "electricity-pilot-v1",
+      "effective_from": null,
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 20000,
+        "materials_minor": 0
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": false,
+        "price_mad": null,
+        "mode": null,
+        "same_visit_absorption": null,
+        "qualifying_service_codes": [],
+        "conditions": [],
+        "policy_ref": null
+      },
+      "materials": {
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
+        "consumables_cap_mad": null,
+        "major_parts": "CLIENT_SUPPLIED",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "parts_disclosure": "Pièce disponible fournie par le client ; compatibilité vérifiée par l’artisan. Achat ou adaptation : devis accepté avant intervention."
+      },
+      "measurement": {
+        "basis": "NONE",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "electricity_safety",
+            "field": "electricity_safety",
+            "operator": "EQ",
+            "value": "ELEC_NO_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_operator",
+            "field": "electricity_operator",
+            "operator": "EQ",
+            "value": "ELEC_PRIVATE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_access",
+            "field": "electricity_access",
+            "operator": "EQ",
+            "value": "ELEC_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_work",
+            "field": "electricity_work",
+            "operator": "EQ",
+            "value": "ELEC_SWITCH",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_parts",
+            "field": "electricity_parts",
+            "operator": "EQ",
+            "value": "ELEC_PART_AVAILABLE",
+            "effect": "ELIGIBLE"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "electricity_safety",
+          "electricity_operator",
+          "electricity_access",
+          "electricity_work",
+          "electricity_parts"
+        ],
+        "supporting_prose": "Un interrupteur standard commandant un circuit depuis un seul point, fourni par le client et remplacé au même emplacement. Sans variateur, appareil connecté, programmation ni modification de circuit. Déplacement en ville et petits consommables inclus. Vérifications techniques par le professionnel avant travaux.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1",
+        "POL-ELECTRICAL-SAFETY-VAP-V1"
+      ],
+      "safety_policy_refs": [
+        "POL-ELECTRICAL-SAFETY-VAP-V1"
+      ],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
+        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+        "research_phase": "7B.E",
+        "human_decision_phase": "7B",
+        "source_registry_refs": [
+          "data/pricing/research/electricite/registry.v0.3.json"
+        ],
+        "transaction_backed": false,
+        "production_ready": true,
+        "batch_rule_experimental": null,
+        "approval_status": "OWNER_APPROVED"
+      },
+      "confidence": {
+        "price_confidence": "MEDIUM",
+        "scope_confidence": "MEDIUM",
+        "evidence_confidence": "MEDIUM",
+        "conversion_confidence": null,
+        "batch_confidence": null
+      },
+      "batch_policy": null,
+      "copy_keys": {
+        "copy_key_price": "copy.fixeo_price.price",
+        "copy_key_scope": "copy.electricite.remplacement.scope",
+        "copy_key_materials": "copy.electricite.remplacement.materials",
+        "copy_key_parts": null,
+        "copy_key_escape": "copy.escape.hors_perimetre",
+        "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
+      },
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
+    },
+    "electricite.interrupteur_remplacement.va_et_vient": {
+      "canonical_service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "legacy_codes": [
+        "electricite.interrupteur_remplacement.va_et_vient"
+      ],
+      "metier": "electricite",
+      "service_family": "REMPLACEMENT",
+      "label_fr": "Va-et-vient — remplacement des deux interrupteurs",
+      "label_ar_darija": "تغيير مفتاح رايح وجاي",
+      "short_label_fr": "Va-et-vient — remplacement des deux interrupteurs",
+      "variant": "va_et_vient",
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "electricity-pilot-v1",
+      "effective_from": null,
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 24000,
+        "materials_minor": 0
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": false,
+        "price_mad": null,
+        "mode": null,
+        "same_visit_absorption": null,
+        "qualifying_service_codes": [],
+        "conditions": [],
+        "policy_ref": null
+      },
+      "materials": {
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
+        "consumables_cap_mad": null,
+        "major_parts": "CLIENT_SUPPLIED",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "parts_disclosure": "Pièce disponible fournie par le client ; compatibilité vérifiée par l’artisan. Achat ou adaptation : devis accepté avant intervention."
+      },
+      "measurement": {
+        "basis": "NONE",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "electricity_safety",
+            "field": "electricity_safety",
+            "operator": "EQ",
+            "value": "ELEC_NO_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_operator",
+            "field": "electricity_operator",
+            "operator": "EQ",
+            "value": "ELEC_PRIVATE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_access",
+            "field": "electricity_access",
+            "operator": "EQ",
+            "value": "ELEC_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_work",
+            "field": "electricity_work",
+            "operator": "EQ",
+            "value": "ELEC_TWO_WAY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_parts",
+            "field": "electricity_parts",
+            "operator": "EQ",
+            "value": "ELEC_PART_AVAILABLE",
+            "effect": "ELIGIBLE"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "electricity_safety",
+          "electricity_operator",
+          "electricity_access",
+          "electricity_work",
+          "electricity_parts"
+        ],
+        "supporting_prose": "Les deux interrupteurs existants commandant un même éclairage, fournis par le client : remplacement et essai des deux commandes. Sans création de va-et-vient, ajout de point, recâblage, télérupteur ni commande depuis plus de deux endroits. Déplacement en ville et petits consommables inclus. Vérifications techniques par le professionnel avant travaux.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1",
+        "POL-ELECTRICAL-SAFETY-VAP-V1"
+      ],
+      "safety_policy_refs": [
+        "POL-ELECTRICAL-SAFETY-VAP-V1"
+      ],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
+        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+        "research_phase": "7B.E",
+        "human_decision_phase": "7B",
+        "source_registry_refs": [
+          "data/pricing/research/electricite/registry.v0.3.json"
+        ],
+        "transaction_backed": false,
+        "production_ready": true,
+        "batch_rule_experimental": null,
+        "approval_status": "OWNER_APPROVED"
+      },
+      "confidence": {
+        "price_confidence": "MEDIUM",
+        "scope_confidence": "MEDIUM",
+        "evidence_confidence": "MEDIUM",
+        "conversion_confidence": null,
+        "batch_confidence": null
+      },
+      "batch_policy": null,
+      "copy_keys": {
+        "copy_key_price": "copy.fixeo_price.price",
+        "copy_key_scope": "copy.electricite.remplacement.scope",
+        "copy_key_materials": "copy.electricite.remplacement.materials",
+        "copy_key_parts": null,
+        "copy_key_escape": "copy.escape.hors_perimetre",
+        "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
+      },
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
+    },
+    "electricite.luminaire_installation": {
+      "canonical_service_code": "electricite.luminaire_installation",
+      "legacy_codes": [
+        "electricite.luminaire_installation"
+      ],
+      "metier": "electricite",
+      "service_family": "INSTALLATION",
+      "label_fr": "Pose d’un plafonnier ou d’une applique simple",
+      "label_ar_darija": "تركيب الإضاءة",
+      "short_label_fr": "Pose d’un plafonnier ou d’une applique simple",
+      "variant": null,
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "electricity-pilot-v1",
+      "effective_from": null,
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 22000,
+        "materials_minor": 0
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": false,
+        "price_mad": null,
+        "mode": null,
+        "same_visit_absorption": null,
+        "qualifying_service_codes": [],
+        "conditions": [],
+        "policy_ref": null
+      },
+      "materials": {
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
+        "consumables_cap_mad": null,
+        "major_parts": "CLIENT_SUPPLIED",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "parts_disclosure": "Pièce disponible fournie par le client ; compatibilité vérifiée par l’artisan. Achat ou adaptation : devis accepté avant intervention."
+      },
+      "measurement": {
+        "basis": "NONE",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "electricity_safety",
+            "field": "electricity_safety",
+            "operator": "EQ",
+            "value": "ELEC_NO_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_operator",
+            "field": "electricity_operator",
+            "operator": "EQ",
+            "value": "ELEC_PRIVATE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_access",
+            "field": "electricity_access",
+            "operator": "EQ",
+            "value": "ELEC_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_work",
+            "field": "electricity_work",
+            "operator": "EQ",
+            "value": "ELEC_LIGHT",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_light_limits",
+            "field": "electricity_light_limits",
+            "operator": "EQ",
+            "value": "ELEC_LIGHT_LIMITS",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_parts",
+            "field": "electricity_parts",
+            "operator": "EQ",
+            "value": "ELEC_PART_AVAILABLE",
+            "effect": "ELIGIBLE"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "electricity_safety",
+          "electricity_operator",
+          "electricity_access",
+          "electricity_work",
+          "electricity_light_limits",
+          "electricity_parts"
+        ],
+        "supporting_prose": "Un plafonnier ou une applique simple fourni par le client, de 3 kg maximum, posé à 2,80 m maximum sur fixation existante adaptée et réutilisable et point électrique fonctionnel. Dépose simple incluse. Sol stable et dégagé, sans escalier. Sans lustre, spots encastrés, fixation structurelle nouvelle, extérieur ni programmation. Déplacement en ville et petits consommables inclus. Vérifications techniques par le professionnel avant travaux.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1",
+        "POL-ELECTRICAL-SAFETY-VAP-V1"
+      ],
+      "safety_policy_refs": [
+        "POL-ELECTRICAL-SAFETY-VAP-V1"
+      ],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
+        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+        "research_phase": "7B.E",
+        "human_decision_phase": "7B",
+        "source_registry_refs": [
+          "data/pricing/research/electricite/registry.v0.3.json"
+        ],
+        "transaction_backed": false,
+        "production_ready": true,
+        "batch_rule_experimental": null,
+        "approval_status": "OWNER_APPROVED"
+      },
+      "confidence": {
+        "price_confidence": "MEDIUM",
+        "scope_confidence": "MEDIUM",
+        "evidence_confidence": "MEDIUM",
+        "conversion_confidence": null,
+        "batch_confidence": null
+      },
+      "batch_policy": null,
+      "copy_keys": {
+        "copy_key_price": "copy.fixeo_price.price",
+        "copy_key_scope": "copy.electricite.installation.scope",
+        "copy_key_materials": "copy.electricite.installation.materials",
+        "copy_key_parts": null,
+        "copy_key_escape": "copy.escape.hors_perimetre",
+        "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
+      },
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
+    },
+    "electricite.disjoncteur_remplacement": {
+      "canonical_service_code": "electricite.disjoncteur_remplacement",
+      "legacy_codes": [
+        "electricite.disjoncteur_remplacement"
+      ],
+      "metier": "electricite",
+      "service_family": "REMPLACEMENT",
+      "label_fr": "Remplacement d’un disjoncteur divisionnaire simple",
+      "label_ar_darija": "تغيير الديجونكتور",
+      "short_label_fr": "Remplacement d’un disjoncteur divisionnaire simple",
+      "variant": null,
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "electricity-pilot-v1",
+      "effective_from": null,
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 25000,
+        "materials_minor": 0
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": false,
+        "price_mad": null,
+        "mode": null,
+        "same_visit_absorption": null,
+        "qualifying_service_codes": [],
+        "conditions": [],
+        "policy_ref": null
+      },
+      "materials": {
+        "consumables": "ARTISAN_SUPPLIED_INCLUDED",
+        "consumables_cap_mad": null,
+        "major_parts": "CLIENT_SUPPLIED",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "parts_disclosure": "Pièce disponible fournie par le client ; compatibilité vérifiée par l’artisan. Achat ou adaptation : devis accepté avant intervention."
+      },
+      "measurement": {
+        "basis": "NONE",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": null,
+        "worker_count_default": null,
+        "worker_count_semantics": null,
+        "hours_required": null,
+        "minimum_billing_hours": null,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "electricity_safety",
+            "field": "electricity_safety",
+            "operator": "EQ",
+            "value": "ELEC_NO_DANGER",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_operator",
+            "field": "electricity_operator",
+            "operator": "EQ",
+            "value": "ELEC_PRIVATE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_access",
+            "field": "electricity_access",
+            "operator": "EQ",
+            "value": "ELEC_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_fault",
+            "field": "electricity_fault",
+            "operator": "EQ",
+            "value": "ELEC_BROKEN_DEVICE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_work",
+            "field": "electricity_work",
+            "operator": "EQ",
+            "value": "ELEC_MCB",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "electricity_parts",
+            "field": "electricity_parts",
+            "operator": "EQ",
+            "value": "ELEC_PART_AVAILABLE",
+            "effect": "ELIGIBLE"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "electricity_safety",
+          "electricity_operator",
+          "electricity_access",
+          "electricity_fault",
+          "electricity_work",
+          "electricity_parts"
+        ],
+        "supporting_prose": "Un disjoncteur divisionnaire modulaire simple fourni par le client, dans un tableau résidentiel privé monophasé. Défaut propre à l’appareil et compatibilité à confirmer par l’artisan avant travaux. Sans différentiel, câblage ou peigne à réparer, tableau complet, triphasé ni équipement du distributeur. Déclenchements répétés ou cause incertaine : diagnostic préalable. Déplacement en ville et petits consommables inclus. Vérifications techniques par le professionnel avant travaux.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1",
+        "POL-ELECTRICAL-SAFETY-VAP-V1"
+      ],
+      "safety_policy_refs": [
+        "POL-ELECTRICAL-SAFETY-VAP-V1"
+      ],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
+        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+        "research_phase": "7B.E",
+        "human_decision_phase": "7B",
+        "source_registry_refs": [
+          "data/pricing/research/electricite/registry.v0.3.json"
+        ],
+        "transaction_backed": false,
+        "production_ready": true,
+        "batch_rule_experimental": null,
+        "approval_status": "OWNER_APPROVED"
+      },
+      "confidence": {
+        "price_confidence": "MEDIUM",
+        "scope_confidence": "MEDIUM",
+        "evidence_confidence": "MEDIUM",
+        "conversion_confidence": null,
+        "batch_confidence": null
+      },
+      "batch_policy": null,
+      "copy_keys": {
+        "copy_key_price": "copy.fixeo_price.price",
+        "copy_key_scope": "copy.electricite.remplacement.scope",
+        "copy_key_materials": "copy.electricite.remplacement.materials",
+        "copy_key_parts": null,
+        "copy_key_escape": "copy.escape.hors_perimetre",
+        "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
+      },
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
