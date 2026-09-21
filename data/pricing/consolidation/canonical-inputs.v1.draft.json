@@ -1091,6 +1091,71 @@
       "input_id": "tile_area_m2",
       "data_type": "number",
       "privacy_classification": "NON_SENSITIVE"
+    },
+    "masonry_support": {
+      "input_id": "masonry_support",
+      "data_type": "string",
+      "allowed_values": [
+        "MASONRY_SOUND_DRY",
+        "MASONRY_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Le mur est-il sain, sec et stable, sans fissure, humidité, déformation ni élément structurel à réparer ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "masonry_access": {
+      "input_id": "masonry_access",
+      "data_type": "string",
+      "allowed_values": [
+        "MASONRY_ACCESSIBLE",
+        "MASONRY_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "La zone est-elle dégagée, dans une seule pièce intérieure, à 2 m de hauteur maximum, avec eau et électricité disponibles ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "masonry_supplies": {
+      "input_id": "masonry_supplies",
+      "data_type": "string",
+      "allowed_values": [
+        "MASONRY_CLIENT_SUPPLIED",
+        "MASONRY_SUPPLIES_MISSING",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Fournissez-vous le produit de rebouchage ou l’enduit adapté au support, avec les fournitures nécessaires en quantité suffisante ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "masonry_finish": {
+      "input_id": "masonry_finish",
+      "data_type": "string",
+      "allowed_values": [
+        "MASONRY_STANDARD_FINISH",
+        "MASONRY_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Souhaitez-vous uniquement cette réparation et sa finition locale, sans peinture ni évacuation des gravats ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "masonry_scope": {
+      "input_id": "masonry_scope",
+      "data_type": "string",
+      "allowed_values": [
+        "MASONRY_SMALL_HOLES",
+        "MASONRY_THIN_RENDER",
+        "MASONRY_COMPLEX",
+        "UNKNOWN"
+      ],
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "masonry_hole_count": {
+      "input_id": "masonry_hole_count",
+      "data_type": "integer",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "masonry_area_m2": {
+      "input_id": "masonry_area_m2",
+      "data_type": "number",
+      "privacy_classification": "NON_SENSITIVE"
     }
   }
 }

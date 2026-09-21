@@ -290,7 +290,10 @@
       "label": "Petits travaux de maçonnerie",
       "universe": "travaux",
       "metier": "maconnerie",
-      "candidate_services": []
+      "candidate_services": [
+        "maconnerie.rebouchage_local",
+        "maconnerie.reprise_enduit"
+      ]
     },
     "travaux.amenager-une-cloison": {
       "label": "Aménager une cloison",
