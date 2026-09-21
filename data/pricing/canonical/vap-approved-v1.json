@@ -4083,7 +4083,7 @@
       "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "agadir",
       "outcome_type": "PRICE_READY",
@@ -4118,10 +4118,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "beni-mellal",
       "outcome_type": "PRICE_READY",
@@ -4156,10 +4156,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "casablanca",
       "outcome_type": "PRICE_READY",
@@ -4194,10 +4194,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "el-jadida",
       "outcome_type": "PRICE_READY",
@@ -4232,10 +4232,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "fes",
       "outcome_type": "PRICE_READY",
@@ -4270,10 +4270,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "kenitra",
       "outcome_type": "PRICE_READY",
@@ -4308,10 +4308,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "khouribga",
       "outcome_type": "PRICE_READY",
@@ -4346,10 +4346,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "marrakech",
       "outcome_type": "PRICE_READY",
@@ -4384,10 +4384,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "meknes",
       "outcome_type": "PRICE_READY",
@@ -4422,10 +4422,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "mohammedia",
       "outcome_type": "PRICE_READY",
@@ -4460,10 +4460,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "nador",
       "outcome_type": "PRICE_READY",
@@ -4498,10 +4498,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "ouarzazate",
       "outcome_type": "PRICE_READY",
@@ -4536,10 +4536,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "oujda",
       "outcome_type": "PRICE_READY",
@@ -4574,10 +4574,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "rabat",
       "outcome_type": "PRICE_READY",
@@ -4612,10 +4612,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "safi",
       "outcome_type": "PRICE_READY",
@@ -4650,10 +4650,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "sale",
       "outcome_type": "PRICE_READY",
@@ -4688,10 +4688,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "tanger",
       "outcome_type": "PRICE_READY",
@@ -4726,10 +4726,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "taza",
       "outcome_type": "PRICE_READY",
@@ -4764,10 +4764,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "temara",
       "outcome_type": "PRICE_READY",
@@ -4802,10 +4802,10 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     },
     {
-      "approved": false,
+      "approved": true,
       "service_code": "peinture.mur_interieur.all_in",
       "city_slug": "tetouan",
       "outcome_type": "PRICE_READY",
@@ -4840,7 +4840,7 @@
         "max": 100,
         "decimals": 2
       },
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+      "approval_status": "OWNER_APPROVED"
     }
   ]
 }

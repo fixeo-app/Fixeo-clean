@@ -26,8 +26,8 @@ for(const [serviceCode,inputs,amount,fee,materials=0] of [
  await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921100804_masonry_vap_confirmation.sql'),'utf8'));
  await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260921103223_moving_vap_confirmation.sql'),'utf8'));
  await db.exec("INSERT INTO artisans(city,service_category,availability,review_count,rating,updated_at) VALUES ('Rabat','Carrelage','available',500,5,now()),('Rabat','Peinture','available',0,0,now());");
- // Build the real estimator offer. Simulate approval ONLY for the new supplies proposal.
- const entries=catalogue.entries.map(t=>t.service_code==='peinture.mur_interieur.all_in'?{...t,approved:true}:t);
+ // Build the real estimator offer with the owner-approved catalogue.
+ const entries=catalogue.entries;
  const session=o.evaluateEstimator(o.startEstimator({service_hint:serviceCode,city_slug:'rabat',known_inputs:inputs}).session).session;
  assert.equal(session.outcome.price.amount_mad,amount);
  const payload={service_code:serviceCode,city_slug:'rabat',session_id:session.session_id,context_id:'fxctx-'+'a'.repeat(32),outcome_type:'PRICE_READY',expires_at:Date.now()+60000};let row;

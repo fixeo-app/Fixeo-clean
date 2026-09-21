@@ -5,18 +5,18 @@ const {attachOffer,selectTariff,validateFinancialContext}=require('../../api/est
 const {tariffBreakdown}=require('../../data/pricing/engine/vap-tariff-v1');
 const catalogue=require('../../data/pricing/canonical/vap-approved-v1.json');
 const code='peinture.mur_interieur.all_in';
-const draft=catalogue.entries.filter(x=>x.service_code===code);
-// Approval is simulated only in tests; the proposed tariff cannot create a real offer.
-const entries=draft.map(t=>({...t,approved:true}));
+const entries=catalogue.entries.filter(x=>x.service_code===code);
 const inputs={active_moisture:false,paint_included_support:'PAINT_INCLUDED_READY',paint_included_access:'PAINT_INCLUDED_ACCESS_READY',paint_included_product:'PAINT_COLOVINYL900_WHITE',paint_included_finish:'PAINT_INCLUDED_TWO_COATS',painted_m2:20};
 function evaluate(values=inputs,city='rabat'){return o.evaluateEstimator(o.startEstimator({service_hint:code,city_slug:city,known_inputs:values}).session);}
 
-test('included paint: pending owner approval prevents persistence and publication of an offer',async()=>{
- assert.equal(draft.length,20);assert.ok(draft.every(t=>t.approved===false&&t.approval_status==='PENDING_OWNER_PRICE_VALIDATION'));
- const session=evaluate().session;assert.equal(selectTariff(session),null);
- let calls=0;await assert.rejects(attachOffer(session,{}, {fetchImpl:()=>{calls++;throw Error('unexpected network');}}),/not eligible/);assert.equal(calls,0);
+test('included paint: approved catalogue is active while disabled entries cannot persist an offer',async()=>{
+ assert.equal(entries.length,20);assert.ok(entries.every(t=>t.approved===true&&t.approval_status==='OWNER_APPROVED'));
+ const disabled=entries.map(t=>({...t,approved:false}));
+ const session=evaluate().session;assert.equal(selectTariff(session,disabled),null);
+ let calls=0;await assert.rejects(attachOffer(session,{}, {entries:disabled,fetchImpl:()=>{calls++;throw Error('unexpected network');}}),/not eligible/);assert.equal(calls,0);
  const svc=require('../../data/pricing/canonical/canonical-registry.v1.draft.json').services[code];
- for(const k of ['production_ready','active_in_estimator','active_in_reservation'])assert.equal(svc[k],false);
+ for(const k of ['production_ready','active_in_estimator','active_in_reservation']){assert.equal(svc[k],true);assert.equal(svc.status_flags[k],true);}
+ assert.equal(svc.provenance.approval_status,'OWNER_APPROVED');
 });
 
 test('included paint: quantities, supplies floor and progressive fees agree in every city',async()=>{
@@ -74,19 +74,20 @@ test('included paint: real API gates approval, signs supplies and confirms the e
  const handler=require('../../api/estimator-v1/index'),{normalizeSessionView}=require('../../api/estimator-v1/fixeo-estimator-runtime-v1');
  const keys=['FIXEO_ESTIMATOR_SECRET','SUPABASE_URL','SUPABASE_SERVICE_ROLE_KEY'],old=keys.map(k=>process.env[k]),oldFetch=global.fetch;
  async function api(body){let payload,status;await handler({method:'POST',headers:{host:'localhost'},body,socket:{remoteAddress:'paint-supplies-test'}},{setHeader(){},status(n){status=n;return this;},json(p){payload=p;return this;},end(){}});return {status,body:payload};}
- const approvals=draft.map(t=>t.approved),calls=[];process.env.FIXEO_ESTIMATOR_SECRET='paint-supplies-test-only';process.env.SUPABASE_URL='https://test.invalid';process.env.SUPABASE_SERVICE_ROLE_KEY='test';
+ const approvals=entries.map(t=>t.approved),calls=[];process.env.FIXEO_ESTIMATOR_SECRET='paint-supplies-test-only';process.env.SUPABASE_URL='https://test.invalid';process.env.SUPABASE_SERVICE_ROLE_KEY='test';
  global.fetch=async(url,options)=>{calls.push({url,body:JSON.parse(options.body)});return {ok:true,json:async()=>({ok:false,reason:'test_stop_before_dispatch'})};};
  try{
+  entries.forEach(t=>t.approved=false);
   const session=o.startEstimator({service_hint:code,city_slug:'rabat',known_inputs:{...inputs,painted_m2:66.67}}).session;
   const view=normalizeSessionView(session,process.env.FIXEO_ESTIMATOR_SECRET);
   const blocked=await api({action:'evaluate',session_token:view.session_token});assert.equal(blocked.body.pricing_context_token,undefined);assert.equal(calls.length,0);
-  draft.forEach(t=>t.approved=true);
+  entries.forEach(t=>t.approved=true);
   const r=await api({action:'evaluate',session_token:view.session_token});assert.equal(r.status,200,JSON.stringify(r));assert.equal(r.body.outcome.price.amount_mad,3300.16);assert.equal(calls.length,1);
   assert.equal(r.body.outcome.financial_breakdown.materialsMinor,100005);assert.equal(r.body.outcome.financial_breakdown.commissionMinor,30001);
   const verified=await api({action:'verify_pricing_context',pricing_context_token:r.body.pricing_context_token});assert.equal(verified.body.amount_mad,3300.16);
   const confirmed=await api({action:'confirm_request',pricing_context_token:r.body.pricing_context_token,client_phone:'0612345678'});assert.equal(confirmed.status,409);
   assert.match(calls[1].url,/confirm_estimator_request_vap_v1$/);assert.equal(calls[1].body.p_amount_mad,3300.16);assert.equal(calls[1].body.p_service_code,code);assert.equal(calls[1].body.p_offer_id,calls[0].body.id);
- }finally{draft.forEach((t,i)=>t.approved=approvals[i]);global.fetch=oldFetch;keys.forEach((k,i)=>{if(old[i]===undefined)delete process.env[k];else process.env[k]=old[i];});}
+ }finally{entries.forEach((t,i)=>t.approved=approvals[i]);global.fetch=oldFetch;keys.forEach((k,i)=>{if(old[i]===undefined)delete process.env[k];else process.env[k]=old[i];});}
 });
 
 test('included paint: rendered questions name the supplied paint and accept exact wall area',()=>{

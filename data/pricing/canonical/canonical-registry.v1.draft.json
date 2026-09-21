@@ -5843,9 +5843,9 @@
       "variant": "all_in",
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
       "service_version": "paint-supplies-pilot-v1",
@@ -5983,18 +5983,18 @@
           "paint_included_finish",
           "painted_m2"
         ],
-        "supporting_prose": "Proposition non activée : artisan 30 MAD/m² ; fournitures 15 MAD/m², minimum 450 MAD par intervention ; frais FIXEO BP3.3 sur l’artisan seul. Deux couches Colorado Colovinyl 900 blanc mat sur murs déjà peints blancs ou blanc cassé très clair, mats, lisses et prêts à repeindre. Hauteur ≤ 2,80 m, sol stable et accès dégagé. Protection, outils, achat, acheminement, déplacement en ville, retours de séchage et nettoyage inclus. Surface réelle, ouvertures déduites, comptée une seule fois. Préparation, sous-couche, taches, humidité, plafonds, teintes et changement de finition : devis.",
-        "human_review_required": true
+        "supporting_prose": "Tarif pilote validé par FIXEO : artisan 30 MAD/m² ; fournitures 15 MAD/m², minimum 450 MAD par intervention ; frais FIXEO BP3.3 sur l’artisan seul. Deux couches Colorado Colovinyl 900 blanc mat sur murs déjà peints blancs ou blanc cassé très clair, mats, lisses et prêts à repeindre. Hauteur ≤ 2,80 m, sol stable et accès dégagé. Protection, outils, achat, acheminement, déplacement en ville, retours de séchage et nettoyage inclus. Surface réelle, ouvertures déduites, comptée une seule fois. Préparation, sous-couche, taches, humidité, plafonds, teintes et changement de finition : devis.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1"
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_PROPOSED_PILOT",
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
         "transaction_backed": false,
-        "production_ready": false,
-        "approval_status": "PENDING_OWNER_PRICE_VALIDATION"
+        "production_ready": true,
+        "approval_status": "OWNER_APPROVED"
       },
       "confidence": {
         "price_confidence": "PILOT_NOT_FIELD_VALIDATED",
@@ -6011,15 +6011,13 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_calculated_price"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
-      "human_review_flags": [
-        "PENDING_OWNER_PRICE_VALIDATION"
-      ],
+      "human_review_flags": [],
       "semantic_corrections": []
     },
     "peinture.plafond.labour_only": {
