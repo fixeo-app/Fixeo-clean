@@ -17,7 +17,7 @@ test('all 62 displayed situations have stable server routes and only relevant se
   for(const c of step.candidate_services){const selected=o.selectService(start.session,c.service_code);assert.equal(selected.ok,true,c.service_code);if(c.service_code.startsWith('devis.')){assert.equal(selected.session.state,'QUOTE_REQUIRED');assert.equal(runtime.shouldIssuePricingContextToken(selected.session),false);assert.equal(selected.session.outcome.price,undefined);}}
  }
 });
-test('new métiers offer a quote route and never a fabricated tariff',()=>{for(const metier of ['demenagement']){assert.ok(resolver.VALID_METIERS.includes(metier));const s=o.startEstimator({metier_hint:metier}).session;const choices=o.getNextEstimatorStep(s).step.candidate_services;assert.equal(choices.length,1);assert.match(choices[0].service_code,/^devis\./);assert.equal(o.selectService(s,choices[0].service_code).session.state,'QUOTE_REQUIRED');}});
+test('moving situations outside handling remain quote-only',()=>{for(const [id,route] of Object.entries(routes).filter(([id,r])=>id.startsWith('demenagement.')&&!r.candidate_services.length)){const s=o.startEstimator({situation_id:id}).session;const choices=o.getNextEstimatorStep(s).step.candidate_services;assert.equal(choices.length,1);assert.match(choices[0].service_code,/^devis\./);assert.equal(o.selectService(s,choices[0].service_code).session.state,'QUOTE_REQUIRED');}});
 test('unknown situation and non-candidate service cannot bypass server qualification',()=>{
  assert.equal(o.startEstimator({situation_id:'invented'}).ok,false);
  const id=Object.keys(routes).find(k=>routes[k].label==='Monter un meuble');const s=o.startEstimator({situation_id:id,service_hint:'plomberie.fuite_simple'}).session;

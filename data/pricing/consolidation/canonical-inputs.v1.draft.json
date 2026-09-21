@@ -1156,6 +1156,61 @@
       "input_id": "masonry_area_m2",
       "data_type": "number",
       "privacy_classification": "NON_SENSITIVE"
+    },
+    "moving_task": {
+      "input_id": "moving_task",
+      "data_type": "string",
+      "allowed_values": [
+        "MOVING_HANDLING_ONLY",
+        "MOVING_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Avez-vous besoin uniquement de manutention sur un même site, sans camion, transport, démontage ni remontage ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "moving_access": {
+      "input_id": "moving_access",
+      "data_type": "string",
+      "allowed_values": [
+        "MOVING_ACCESS_READY",
+        "MOVING_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Tout le parcours est-il dégagé, au rez-de-chaussée ou avec un ascenseur adapté aux objets, sans escalier à porter, et le véhicule accessible à proximité si nécessaire ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "moving_items": {
+      "input_id": "moving_items",
+      "data_type": "string",
+      "allowed_values": [
+        "MOVING_STANDARD_ITEMS",
+        "MOVING_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "S’agit-il de cartons et meubles courants manipulables à deux, sans piano, coffre-fort, objet exceptionnellement lourd, fragile ou nécessitant un équipement de levage ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "moving_preparation": {
+      "input_id": "moving_preparation",
+      "data_type": "string",
+      "allowed_values": [
+        "MOVING_PREPARED",
+        "MOVING_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Les affaires seront-elles emballées et protégées, les meubles vidés, les appareils débranchés et les accès prêts avant l’arrivée de l’équipe ?",
+      "privacy_classification": "NON_SENSITIVE"
+    },
+    "moving_duration": {
+      "input_id": "moving_duration",
+      "data_type": "string",
+      "allowed_values": [
+        "MOVING_TWO_HOUR_TEAM",
+        "MOVING_COMPLEX",
+        "UNKNOWN"
+      ],
+      "client_question_fr": "Validez-vous un forfait de 2 intervenants pendant 2 heures, à compter du début sur place, sans garantie de terminer tout le déménagement ni prolongation automatique ?",
+      "privacy_classification": "NON_SENSITIVE"
     }
   }
 }
