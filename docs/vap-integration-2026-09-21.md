@@ -20,7 +20,7 @@ Pour activer une prestation : entrée avec approved=true, service_code, city_slu
 
 ## Vérification
 
-48 tests de l'estimateur passent : parcours historiques, dictée, retour, demandes de devis, calcul, stockage, confirmation→mission→règlement en PostgreSQL embarqué PGlite, refus des accès navigateur, conflit de montant et réponse idempotente. Référence avec centimes : VAP 300,01 + FIXEO 60 = total 360,01 MAD conservé jusqu'au règlement.
+49 tests de l'estimateur passent : parcours historiques, dictée, retour, demandes de devis, calcul, stockage, confirmation→mission→règlement en PostgreSQL embarqué PGlite, refus des accès navigateur, conflit de montant et réponse idempotente. Référence avec centimes : VAP 300,01 + FIXEO 60 = total 360,01 MAD conservé jusqu'au règlement.
 
 Commande : NODE_PATH vers @electric-sql/pglite@0.3.14 et jsdom@26.1.0 puis `node --test tests/estimator/*.test.cjs`. Tests financiers avec doubles réseau ; pas de réservation réelle de production ni de test terrain iPhone pour cette livraison.
 

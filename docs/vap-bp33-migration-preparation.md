@@ -50,4 +50,4 @@ Les étapes 1 et 2 ci-dessus sont réalisées pour cette fondation. Les étapes 
 
 ## Mise à jour : branchement applicatif
 
-Voir `vap-integration-2026-09-21.md` pour la liaison estimation/réservation/règlement, la deuxième migration appliquée et les 48 tests. Le registre des forfaits approuvés reste vide ; la calibration commerciale reste distincte de la livraison technique.
+Voir `vap-integration-2026-09-21.md` pour la liaison estimation/réservation/règlement, la deuxième migration appliquée et les 49 tests. Le registre des forfaits approuvés reste vide ; la calibration commerciale reste distincte de la livraison technique.
