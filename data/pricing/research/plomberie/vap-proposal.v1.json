@@ -2,9 +2,9 @@
   "version": "plumbing-vap-proposal-v1",
   "created_at": "2026-09-21",
   "base_commit": "1acfc1fe8ba7aa574c91662c3defde0c5a53189a",
-  "approval_status": "PENDING_OWNER_PRICE_VALIDATION",
-  "runtime_integrated": false,
-  "production_ready": false,
+  "approval_status": "OWNER_APPROVED",
+  "runtime_integrated": true,
+  "production_ready": true,
   "pricing_version": "vap-bp33-v1",
   "currency": "MAD",
   "proposed_city_slugs": [
@@ -29,13 +29,13 @@
     "temara",
     "tetouan"
   ],
-  "note": "Proposition commerciale séparée du catalogue actif. Aucun ancien prix global n’est assimilé automatiquement à une VAP. Aucune activation avant validation et intégration testée du parcours financier, y compris absorption du diagnostic.",
+  "note": "Pilote commercial validé par le propriétaire le 21 septembre 2026 pour 20 villes. Tarifs VAP explicites, périmètres qualifiés et absorption du diagnostic avec accord client. Préservation des offres historiques. Publication après migration et tests.",
   "services": [
     {
       "service_code": "plomberie.diagnostic",
       "label_fr": "Diagnostic plomberie seul",
-      "approved": false,
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
       "legacy_reference_total_mad": 180,
       "proposed_outcome_type": "DIAGNOSTIC_READY",
       "vap_minor": 16000,
@@ -47,8 +47,8 @@
     {
       "service_code": "plomberie.fuite_simple",
       "label_fr": "Réparation d’une fuite simple visible",
-      "approved": false,
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
       "legacy_reference_total_mad": 250,
       "proposed_outcome_type": "PRICE_READY",
       "vap_minor": 22000,
@@ -60,8 +60,8 @@
     {
       "service_code": "plomberie.debouchage_evier",
       "label_fr": "Débouchage simple d’un évier ou lavabo",
-      "approved": false,
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
       "legacy_reference_total_mad": 250,
       "proposed_outcome_type": "PRICE_READY",
       "vap_minor": 22000,
@@ -73,8 +73,8 @@
     {
       "service_code": "plomberie.debouchage_wc_simple",
       "label_fr": "Débouchage simple d’un WC",
-      "approved": false,
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
       "legacy_reference_total_mad": 300,
       "proposed_outcome_type": "PRICE_READY",
       "vap_minor": 27000,
@@ -86,8 +86,8 @@
     {
       "service_code": "plomberie.robinet_remplacement",
       "label_fr": "Remplacement d’un robinet standard fourni par le client",
-      "approved": false,
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
       "legacy_reference_total_mad": 250,
       "proposed_outcome_type": "PRICE_READY",
       "vap_minor": 22000,
@@ -99,8 +99,8 @@
     {
       "service_code": "plomberie.chasse_eau",
       "label_fr": "Remplacement du mécanisme d’un WC à réservoir apparent, fourni par le client",
-      "approved": false,
-      "approval_status": "PENDING_OWNER_PRICE_VALIDATION",
+      "approved": true,
+      "approval_status": "OWNER_APPROVED",
       "legacy_reference_total_mad": 300,
       "proposed_outcome_type": "PRICE_READY",
       "vap_minor": 27000,
@@ -139,8 +139,9 @@
         "final_fixeo_fee_minor": 6000
       }
     ],
-    "automatic_transition_implemented": false,
-    "historical_offers": "PRESERVE_EXISTING_APPROVED_TERMS"
+    "automatic_transition_implemented": true,
+    "historical_offers": "PRESERVE_EXISTING_APPROVED_TERMS",
+    "payment_credit_basis": "ARTISAN_CASH_DECLARATION_CONFIRMED_BY_CLIENT"
   },
   "release_gates": [
     "OWNER_APPROVES_TARIFF_AND_SCOPE",
@@ -149,5 +150,10 @@
     "ATOMIC_SAME_VISIT_DIAGNOSTIC_TRANSITION",
     "EXACT_RESERVATION_AND_SETTLEMENT_TESTS",
     "POST_DEPLOYMENT_VERIFICATION"
-  ]
+  ],
+  "approved_at": "2026-09-21",
+  "validation": {
+    "automated_tests_passed": 93,
+    "actual_production_bookings_created": 0
+  }
 }

@@ -4841,6 +4841,1846 @@
         "decimals": 2
       },
       "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "agadir",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "beni-mellal",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "casablanca",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "el-jadida",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "fes",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "kenitra",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "khouribga",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "marrakech",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "meknes",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "mohammedia",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "nador",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "ouarzazate",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "oujda",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "rabat",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "safi",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "sale",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "tanger",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "taza",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "temara",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.diagnostic",
+      "city_slug": "tetouan",
+      "outcome_type": "DIAGNOSTIC_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_DIAGNOSTIC"
+      },
+      "vap_minor": 16000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.fuite_simple",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_LEAK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_SINK"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.debouchage_wc_simple",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_WC"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.robinet_remplacement",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_TAP",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 22000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
+    },
+    {
+      "approved": true,
+      "service_code": "plomberie.chasse_eau",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "plumbing_scope": "LOCAL_ACCESSIBLE",
+        "plumbing_access": "PLUMB_ACCESS_READY",
+        "plumbing_work": "PLUMB_CISTERN",
+        "plumbing_parts": "PLUMB_CLIENT_PART"
+      },
+      "vap_minor": 27000,
+      "materials_minor": 0,
+      "catalogue_version": "plumbing-pilot-v1",
+      "approval_status": "OWNER_APPROVED"
     }
   ]
 }

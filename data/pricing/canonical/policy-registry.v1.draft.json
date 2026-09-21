@@ -121,6 +121,34 @@
       }
     },
 
+    "POL-DIAGNOSTIC-ABSORPTION-PLOMBERIE-VAP-V1": {
+      "policy_id": "POL-DIAGNOSTIC-ABSORPTION-PLOMBERIE-VAP-V1",
+      "policy_version": "1",
+      "title": "Diagnostic plomberie VAP : même visite, un total et une commission",
+      "scope": "Nouvelles offres plumbing-pilot-v1 uniquement",
+      "applies_to_metiers": [
+        "plomberie"
+      ],
+      "safety_critical": false,
+      "content": {
+        "diagnostic_price_mad": 220,
+        "absorption_conditions": {
+          "same_visit_required": true,
+          "qualifying_repair_must_follow": true,
+          "qualifying_service_codes": [
+            "plomberie.fuite_simple",
+            "plomberie.debouchage_evier",
+            "plomberie.debouchage_wc_simple",
+            "plomberie.robinet_remplacement",
+            "plomberie.chasse_eau"
+          ],
+          "absorption_mechanism": "Un total réparation de 280 ou 330 MAD, une seule commission de 60 MAD. Crédit encaissé de 0 ou 220 MAD déclaré par l’artisan et confirmé par le client dans la même mission avant travaux."
+        },
+        "is_minimum_floor": false,
+        "source": "docs/calibration-plomberie-vap-v1.md — OWNER_APPROVED"
+      }
+    },
+
     "POL-DIAGNOSTIC-ABSORPTION-ELECTRICITE-V1": {
       "policy_id": "POL-DIAGNOSTIC-ABSORPTION-ELECTRICITE-V1",
       "policy_version": "1",

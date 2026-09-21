@@ -34,6 +34,8 @@ function mapEngineResultToOutcome(engineResult, serviceCode, session) {
   if(svc){
     var scope=[svc.label_fr];
     var excluded=[];
+    var plumbing=require('../engine/plumbing-pilot-v1').services[serviceCode];
+    if(plumbing){scope.push(plumbing.scope);scope.push('Déplacement dans la ville sélectionnée inclus, sans majoration automatique.');}
     var material=svc.materials||{};
     if(material.major_parts==='CLIENT_SUPPLIED')excluded.push('Pièces ou appareil à fournir par le client.');
     if(material.major_parts==='ARTISAN_DISCLOSED_SEPARATE'||svc.price_model.commercial_output_type==='FIXEO_LABOUR_PRICE_PLUS_PART')excluded.push('Pièces de remplacement facturées séparément, après votre accord.');

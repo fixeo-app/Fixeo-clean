@@ -364,7 +364,7 @@ function calculate(svc, inputs, formulaIndex) {
     const b=require('./vap-tariff-v1').tariffBreakdown(pm,inputs);
     const amount=b.clientTotalMinor/100;
     trace.result_mad=amount;trace.steps=['VAP + commission BP3.3 + fournitures déclarées'];
-    return {base_amount_mad:amount,calculated_amount_mad:amount,minimum_floor_mad:null,final_amount_mad:amount,labour_amount_mad:null,variable_part_separate:false,trace};
+    return {base_amount_mad:amount,calculated_amount_mad:amount,minimum_floor_mad:null,final_amount_mad:amount,labour_amount_mad:null,variable_part_separate:false,absorption_possible:svc.diagnostic?.same_visit_absorption===true,absorption_policy_ref:svc.diagnostic?.policy_ref||null,qualifying_service_codes:svc.diagnostic?.qualifying_service_codes||[],trace};
   }
 
   switch (model) {
@@ -776,9 +776,12 @@ function evaluateFixeoPrice({ service_code, inputs = {} } = {}) {
     return errorResult('SERVICE_NOT_FOUND', `Service '${service_code}' not found in canonical registry. Do not guess closest service.`, 'service_code', service_code);
   }
 
-  if(['plomberie.fuite_simple','plomberie.debouchage_evier','plomberie.debouchage_wc_simple'].includes(canonicalCode)){
-    if(!['LOCAL_ACCESSIBLE','COMPLEX','UNKNOWN'].includes(inputs.plumbing_scope))return errorResult('MISSING_REQUIRED_INPUT','Confirmez le périmètre accessible avant le prix.','plumbing_scope',canonicalCode);
-    if(inputs.plumbing_scope!=='LOCAL_ACCESSIBLE')return ineligibleResult(canonicalCode,'QUOTE_REQUIRED','PLUMBING_SCOPE_UNCONFIRMED','Le périmètre doit être vérifié avant de chiffrer la réparation.');
+  const plumbing = require('./plumbing-pilot-v1').services[canonicalCode];
+  if(plumbing){
+    for(const [field,value] of Object.entries(plumbing.inputs)){
+      if(inputs[field]===undefined)return errorResult('MISSING_REQUIRED_INPUT','Confirmez le périmètre avant le prix.',field,canonicalCode);
+      if(inputs[field]!==value)return ineligibleResult(canonicalCode,'QUOTE_REQUIRED','PLUMBING_SCOPE_UNCONFIRMED','Ce besoin nécessite un devis avant travaux.');
+    }
   }
   if(svc.metier==='peinture' && inputs.active_moisture===true)return ineligibleResult(canonicalCode,'STOP_SAFETY','PAINT_ACTIVE_MOISTURE','La source de l’humidité doit être résolue avant de peindre.');
   const pm = svc.price_model || {};
@@ -914,6 +917,8 @@ function evaluateFixeoPrice({ service_code, inputs = {} } = {}) {
       labour_amount_mad:     calcResult.labour_amount_mad !== undefined ? calcResult.labour_amount_mad : null,
       variable_part_separate: calcResult.variable_part_separate || false,
       diagnostic_price_mad:  calcResult.diagnostic_price_mad  || null,
+      absorption_possible: calcResult.absorption_possible || false,
+      absorption_policy_ref: calcResult.absorption_policy_ref || null,
       absorption_eligible_if_followup: calcResult.absorption_eligible_if_followup !== undefined ? calcResult.absorption_eligible_if_followup : null,
       qualifying_service_codes: calcResult.qualifying_service_codes || null,
       add_on_amount_mad:     calcResult.add_on_amount_mad || null,
@@ -951,4 +956,3 @@ module.exports = {
     collectPolicies
   }
 };
-

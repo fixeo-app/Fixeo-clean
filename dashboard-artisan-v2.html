@@ -231,13 +231,15 @@
 <script src="js/fixeo-supabase-core.js?v=sc-v3b"></script>
 <script src="js/fixeo-logout-global.js?v=v2c4a"></script>
 <!-- fixeo-claim-system.js REMOVED: localStorage identity authority; no V2 dependency -->
-<script src="js/fixeo-artisan-dashboard-v2.js?v=v2i" defer></script>
+<script src="data/pricing/engine/plumbing-pilot-v1.js?v=plumbing-pilot-v1" defer></script>
+<script src="js/fixeo-plumbing-repair-ui.js?v=plumbing-pilot-v1" defer></script>
+<script src="js/fixeo-artisan-dashboard-v2.js?v=plumbing-pilot-v1" defer></script>
 <!-- Real notification stack (notifications table exists in Supabase) -->
 <script src="js/fixeo-notifications-real-v1.js?v=1" defer></script>
 <script src="js/fixeo-notification-engine.js?v=v1b" defer></script>
 <script src="js/fixeo-notification-center-v1.js?v=fnc-v1b" defer></script>
 
-<script src="js/fixeo-artisan-cockpit-v1.js?v=v1b" defer></script>
+<script src="js/fixeo-artisan-cockpit-v1.js?v=plumbing-pilot-v1" defer></script>
 <!-- Bell badge wired to FixeoNotificationsV1 (no v3 dependency) -->
 <script defer>
   window.addEventListener('fixeo:notifications:updated', function() {

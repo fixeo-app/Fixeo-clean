@@ -40,30 +40,12 @@ var SERVICE_QUESTION_PLANS = {
 "carrelage.remplacement_local": {"questions": [{"input_id": "tile_count", "priority": "QUANTITY_MEASUREMENT", "answer_type": "integer", "prompt_key": "tile_count"}, {"input_id": "tile_support", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["TILE_SUPPORT_READY", "TILE_COMPLEX", "UNKNOWN"], "prompt_key": "tile_support"}, {"input_id": "tile_format", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["TILE_STANDARD", "TILE_COMPLEX", "UNKNOWN"], "prompt_key": "tile_format"}, {"input_id": "tile_supplies", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["TILE_CLIENT_SUPPLIED", "TILE_SUPPLIES_MISSING", "UNKNOWN"], "prompt_key": "tile_supplies"}, {"input_id": "tile_access", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["TILE_ACCESS_READY", "TILE_COMPLEX", "UNKNOWN"], "prompt_key": "tile_access"}, {"input_id": "tile_finish", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["TILE_STANDARD_FINISH", "TILE_COMPLEX", "UNKNOWN"], "prompt_key": "tile_finish"}, {"input_id": "tile_work", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["TILE_REPLACE_ONLY", "TILE_COMPLEX", "UNKNOWN"], "prompt_key": "TILE_REPLACE_ONLY"}]}, "carrelage.pose_sol_droite": {"questions": [{"input_id": "tile_area_m2", "priority": "QUANTITY_MEASUREMENT", "answer_type": "number", "prompt_key": "tile_area_m2"}, {"input_id": "tile_support", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["TILE_SUPPORT_READY", "TILE_COMPLEX", "UNKNOWN"], "prompt_key": "tile_support"}, {"input_id": "tile_format", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["TILE_STANDARD", "TILE_COMPLEX", "UNKNOWN"], "prompt_key": "tile_format"}, {"input_id": "tile_supplies", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["TILE_CLIENT_SUPPLIED", "TILE_SUPPLIES_MISSING", "UNKNOWN"], "prompt_key": "tile_supplies"}, {"input_id": "tile_access", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["TILE_ACCESS_READY", "TILE_COMPLEX", "UNKNOWN"], "prompt_key": "tile_access"}, {"input_id": "tile_finish", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["TILE_STANDARD_FINISH", "TILE_COMPLEX", "UNKNOWN"], "prompt_key": "tile_finish"}, {"input_id": "tile_work", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["TILE_INSTALL_ONLY", "TILE_COMPLEX", "UNKNOWN"], "prompt_key": "TILE_INSTALL_ONLY"}]},
 "jardinage.entretien_courant": {"questions": [{"input_id": "garden_dimensions", "priority": "QUANTITY_MEASUREMENT", "answer_type": "enum", "options": ["GARDEN_UP_TO_100", "GARDEN_OVERSIZE", "UNKNOWN"], "prompt_key": "GARDEN_UP_TO_100"}, {"input_id": "garden_access", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["GARDEN_ACCESS_OK", "GARDEN_COMPLEX", "UNKNOWN"], "prompt_key": "garden_access"}, {"input_id": "garden_state", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["GARDEN_MAINTAINED", "GARDEN_COMPLEX", "UNKNOWN"], "prompt_key": "garden_state"}, {"input_id": "garden_waste", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["GARDEN_WASTE_ONSITE", "GARDEN_WASTE_REMOVE", "UNKNOWN"], "prompt_key": "garden_waste"}, {"input_id": "garden_tasks", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["GARDEN_ROUTINE_ONLY", "GARDEN_COMPLEX", "UNKNOWN"], "prompt_key": "garden_tasks"}]}, "jardinage.taille_haie_basse": {"questions": [{"input_id": "garden_dimensions", "priority": "QUANTITY_MEASUREMENT", "answer_type": "enum", "options": ["HEDGE_WITHIN_LIMITS", "GARDEN_OVERSIZE", "UNKNOWN"], "prompt_key": "HEDGE_WITHIN_LIMITS"}, {"input_id": "garden_access", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["GARDEN_ACCESS_OK", "GARDEN_COMPLEX", "UNKNOWN"], "prompt_key": "garden_access"}, {"input_id": "garden_state", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["GARDEN_MAINTAINED", "GARDEN_COMPLEX", "UNKNOWN"], "prompt_key": "garden_state"}, {"input_id": "garden_waste", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["GARDEN_WASTE_ONSITE", "GARDEN_WASTE_REMOVE", "UNKNOWN"], "prompt_key": "garden_waste"}, {"input_id": "garden_tasks", "priority": "ELIGIBILITY", "answer_type": "enum", "options": ["GARDEN_ROUTINE_ONLY", "GARDEN_COMPLEX", "UNKNOWN"], "prompt_key": "garden_tasks"}]},
   // ── PLOMBERIE ──────────────────────────────────────────────────────────────
-  'plomberie.diagnostic': {
-    questions: []
-  },
-  'plomberie.fuite_simple': {
-    questions: [
-      {input_id:'plumbing_scope',priority:'ROUTING_BOUNDARY',answer_type:'enum',options:['LOCAL_ACCESSIBLE','COMPLEX','UNKNOWN'],prompt_key:'plumbing_scope'},
-    ]
-  },
-  'plomberie.debouchage_evier': {
-    questions: [{input_id:'plumbing_scope',priority:'ROUTING_BOUNDARY',answer_type:'enum',options:['LOCAL_ACCESSIBLE','COMPLEX','UNKNOWN'],prompt_key:'plumbing_scope'}]
-  },
-  'plomberie.debouchage_wc_simple': {
-    questions: [{input_id:'plumbing_scope',priority:'ROUTING_BOUNDARY',answer_type:'enum',options:['LOCAL_ACCESSIBLE','COMPLEX','UNKNOWN'],prompt_key:'plumbing_scope'}]
-  },
-  'plomberie.robinet_remplacement': {
-    questions: [
-      { input_id: 'part_replacement_required', priority: 'PARTS_MATERIAL', answer_type: 'boolean', prompt_key: 'plomberie.robinet.part_required' },
-    ]
-  },
-  'plomberie.chasse_eau': {
-    questions: [
-      { input_id: 'part_replacement_required', priority: 'PARTS_MATERIAL', answer_type: 'boolean', prompt_key: 'plomberie.chasse_eau.part_required' },
-    ]
-  },
+  'plomberie.diagnostic': {questions: require('../engine/plumbing-pilot-v1').questions('plomberie.diagnostic')},
+  'plomberie.fuite_simple': {questions: require('../engine/plumbing-pilot-v1').questions('plomberie.fuite_simple')},
+  'plomberie.debouchage_evier': {questions: require('../engine/plumbing-pilot-v1').questions('plomberie.debouchage_evier')},
+  'plomberie.debouchage_wc_simple': {questions: require('../engine/plumbing-pilot-v1').questions('plomberie.debouchage_wc_simple')},
+  'plomberie.robinet_remplacement': {questions: require('../engine/plumbing-pilot-v1').questions('plomberie.robinet_remplacement')},
+  'plomberie.chasse_eau': {questions: require('../engine/plumbing-pilot-v1').questions('plomberie.chasse_eau')},
 
   // ── ELECTRICITE ────────────────────────────────────────────────────────────
   'electricite.diagnostic': {
@@ -314,6 +296,7 @@ function planQuestions(serviceCode, knownInputs) {
         question_id: q.input_id + '@' + serviceCode,
         input_id: q.input_id,
         prompt_key: q.prompt_key,
+        prompt_fr: q.prompt_fr || null,
         answer_type: q.answer_type,
         options: q.options || null,
         priority: q.priority,
@@ -357,4 +340,3 @@ module.exports = {
   computeUIRecommendation: computeUIRecommendation,
   getServiceQuestionPlan: getServiceQuestionPlan,
 };
-

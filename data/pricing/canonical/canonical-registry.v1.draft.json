@@ -201,30 +201,27 @@
       ],
       "metier": "plomberie",
       "service_family": "DIAGNOSTIC",
-      "label_fr": "Diagnostic plomberie",
+      "label_fr": "Diagnostic plomberie seul",
       "label_ar_darija": "تشخيص السباكة",
       "short_label_fr": "Diagnostic plomberie",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
+      "service_version": "plumbing-pilot-v1",
       "effective_from": null,
       "effective_to": null,
       "price_model": {
         "calculation_model": "DIAGNOSTIC",
         "commercial_output_type": "FIXEO_DIAGNOSTIC",
         "currency": "MAD",
-        "formula_id": "FORMULA-DIAGNOSTIC-V1",
-        "formula_params": {},
-        "diagnostic_price_mad": 180,
-        "fixed_amount_mad": null,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 16000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -236,7 +233,7 @@
       },
       "diagnostic": {
         "enabled": true,
-        "price_mad": 180,
+        "price_mad": 220,
         "mode": "STANDALONE_OR_ABSORBED",
         "same_visit_absorption": true,
         "qualifying_service_codes": [
@@ -246,8 +243,10 @@
           "plomberie.robinet_remplacement",
           "plomberie.chasse_eau"
         ],
-        "conditions": [],
-        "policy_ref": "POL-DIAGNOSTIC-ABSORPTION-PLOMBERIE-V1"
+        "conditions": [
+          "Même visite, réparation standard acceptée avant travaux, une mission et une seule commission FIXEO."
+        ],
+        "policy_ref": "POL-DIAGNOSTIC-ABSORPTION-PLOMBERIE-VAP-V1"
       },
       "materials": {
         "consumables": "NOT_APPLICABLE",
@@ -270,28 +269,50 @@
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "plumbing_scope",
+            "field": "plumbing_scope",
+            "operator": "EQ",
+            "value": "LOCAL_ACCESSIBLE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_access",
+            "field": "plumbing_access",
+            "operator": "EQ",
+            "value": "PLUMB_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_work",
+            "field": "plumbing_work",
+            "operator": "EQ",
+            "value": "PLUMB_DIAGNOSTIC",
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "plumbing_scope",
+          "plumbing_access",
+          "plumbing_work"
+        ],
+        "supporting_prose": "Contrôle visuel et vérifications simples d’un problème accessible, avec explication. Sans réparation, recherche instrumentée, démontage lourd, ouverture de mur, rapport certifié ni seconde visite. Déplacement dans la ville choisie inclus. Tout dépassement nécessite un devis accepté avant intervention.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
-        "POL-DIAGNOSTIC-ABSORPTION-PLOMBERIE-V1"
+        "POL-DIAGNOSTIC-ABSORPTION-PLOMBERIE-VAP-V1"
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
-        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
-        "research_phase": "7B.P",
-        "human_decision_phase": "7B",
-        "source_registry_refs": [
-          "data/pricing/research/plomberie/registry.v0.3.json"
-        ],
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
         "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
+        "production_ready": true,
+        "approval_status": "OWNER_APPROVED"
       },
       "confidence": {
         "price_confidence": "MEDIUM",
@@ -310,9 +331,9 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_diagnostic"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -326,29 +347,27 @@
       ],
       "metier": "plomberie",
       "service_family": "DEPANNAGE",
-      "label_fr": "Réparation fuite simple",
+      "label_fr": "Fuite simple visible",
       "label_ar_darija": "إصلاح تسريب بسيط",
       "short_label_fr": "Réparation fuite",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
+      "service_version": "plumbing-pilot-v1",
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "FIXED",
+        "calculation_model": "CONDITIONAL_FIXED",
         "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-FIXED-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 250,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 22000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -388,27 +407,49 @@
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "plumbing_scope",
+            "field": "plumbing_scope",
+            "operator": "EQ",
+            "value": "LOCAL_ACCESSIBLE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_access",
+            "field": "plumbing_access",
+            "operator": "EQ",
+            "value": "PLUMB_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_work",
+            "field": "plumbing_work",
+            "operator": "EQ",
+            "value": "PLUMB_LEAK",
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "plumbing_scope",
+          "plumbing_access",
+          "plumbing_work"
+        ],
+        "supporting_prose": "Un raccord sanitaire visible et accessible : resserrage ou joint standard, puis contrôle d’étanchéité. Petits consommables inclus jusqu’à 50 DH. Sans remplacement de tuyau, flexible ou robinet, corrosion, soudure, chauffe-eau, gaz ni réseau collectif. Déplacement dans la ville choisie inclus. Tout dépassement nécessite un devis accepté avant intervention.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1"
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
-        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
-        "research_phase": "7B.P",
-        "human_decision_phase": "7B",
-        "source_registry_refs": [
-          "data/pricing/research/plomberie/registry.v0.3.json"
-        ],
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
         "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
+        "production_ready": true,
+        "approval_status": "OWNER_APPROVED"
       },
       "confidence": {
         "price_confidence": "MEDIUM",
@@ -427,9 +468,9 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -443,29 +484,27 @@
       ],
       "metier": "plomberie",
       "service_family": "DEPANNAGE",
-      "label_fr": "Débouchage évier standard",
+      "label_fr": "Débouchage simple évier ou lavabo",
       "label_ar_darija": "تسليك حوض المطبخ",
       "short_label_fr": "Débouchage évier",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
+      "service_version": "plumbing-pilot-v1",
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "FIXED",
+        "calculation_model": "CONDITIONAL_FIXED",
         "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-FIXED-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 250,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 22000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -505,27 +544,49 @@
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "plumbing_scope",
+            "field": "plumbing_scope",
+            "operator": "EQ",
+            "value": "LOCAL_ACCESSIBLE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_access",
+            "field": "plumbing_access",
+            "operator": "EQ",
+            "value": "PLUMB_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_work",
+            "field": "plumbing_work",
+            "operator": "EQ",
+            "value": "PLUMB_SINK",
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "plumbing_scope",
+          "plumbing_access",
+          "plumbing_work"
+        ],
+        "supporting_prose": "Un évier ou lavabo : siphon accessible, nettoyage, remontage et débouchage manuel local avec essai d’écoulement. Sans remplacement de siphon, équipement motorisé, ouverture d’accès, colonne collective, plusieurs équipements refoulants ni échec préalable d’un professionnel. Déplacement dans la ville choisie inclus. Tout dépassement nécessite un devis accepté avant intervention.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1"
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
-        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
-        "research_phase": "7B.P",
-        "human_decision_phase": "7B",
-        "source_registry_refs": [
-          "data/pricing/research/plomberie/registry.v0.3.json"
-        ],
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
         "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
+        "production_ready": true,
+        "approval_status": "OWNER_APPROVED"
       },
       "confidence": {
         "price_confidence": "MEDIUM",
@@ -544,9 +605,9 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -560,29 +621,27 @@
       ],
       "metier": "plomberie",
       "service_family": "DEPANNAGE",
-      "label_fr": "Débouchage WC simple",
+      "label_fr": "Débouchage simple WC",
       "label_ar_darija": "تسليك المرحاض",
       "short_label_fr": "Débouchage WC",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
+      "service_version": "plumbing-pilot-v1",
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "FIXED",
+        "calculation_model": "CONDITIONAL_FIXED",
         "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-FIXED-V1",
-        "formula_params": {},
-        "fixed_amount_mad": 300,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 27000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -622,27 +681,49 @@
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "plumbing_scope",
+            "field": "plumbing_scope",
+            "operator": "EQ",
+            "value": "LOCAL_ACCESSIBLE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_access",
+            "field": "plumbing_access",
+            "operator": "EQ",
+            "value": "PLUMB_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_work",
+            "field": "plumbing_work",
+            "operator": "EQ",
+            "value": "PLUMB_WC",
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "plumbing_scope",
+          "plumbing_access",
+          "plumbing_work"
+        ],
+        "supporting_prose": "Un WC classique, sans broyeur : obstruction isolée traitable manuellement, avec essai d’écoulement. Sans dépose du WC, extraction spéciale d’objet, matériel motorisé, réseau collectif, plusieurs refoulements ni échec préalable d’un professionnel. Déplacement dans la ville choisie inclus. Tout dépassement nécessite un devis accepté avant intervention.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1"
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
-        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
-        "research_phase": "7B.P",
-        "human_decision_phase": "7B",
-        "source_registry_refs": [
-          "data/pricing/research/plomberie/registry.v0.3.json"
-        ],
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
         "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
+        "production_ready": true,
+        "approval_status": "OWNER_APPROVED"
       },
       "confidence": {
         "price_confidence": "MEDIUM",
@@ -661,9 +742,9 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_price"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
@@ -677,30 +758,27 @@
       ],
       "metier": "plomberie",
       "service_family": "REMPLACEMENT",
-      "label_fr": "Remplacement robinet — main-d'œuvre",
+      "label_fr": "Remplacement robinet fourni par le client",
       "label_ar_darija": "تغيير الصنبور",
       "short_label_fr": "Remplacement robinet",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
+      "service_version": "plumbing-pilot-v1",
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
-        "commercial_output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-LABOUR-PART-SEPARATE-V1",
-        "formula_params": {},
-        "labour_amount_mad": 250,
-        "fixed_amount_mad": null,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 22000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -747,11 +825,47 @@
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "plumbing_scope",
+            "field": "plumbing_scope",
+            "operator": "EQ",
+            "value": "LOCAL_ACCESSIBLE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_access",
+            "field": "plumbing_access",
+            "operator": "EQ",
+            "value": "PLUMB_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_work",
+            "field": "plumbing_work",
+            "operator": "EQ",
+            "value": "PLUMB_TAP",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_parts",
+            "field": "plumbing_parts",
+            "operator": "EQ",
+            "value": "PLUMB_CLIENT_PART",
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "plumbing_scope",
+          "plumbing_access",
+          "plumbing_work",
+          "plumbing_parts"
+        ],
+        "supporting_prose": "Un mitigeur standard posé sur évier ou lavabo, fourni compatible par le client : dépose, pose et essai. Raccordements existants compatibles, accessibles et non grippés ; petits consommables inclus jusqu’à 50 DH. Sans flexible ou vanne à remplacer, robinet mural ou thermostatique ni modification de tuyauterie. Déplacement dans la ville choisie inclus. Tout dépassement nécessite un devis accepté avant intervention.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -759,16 +873,10 @@
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
-        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
-        "research_phase": "7B.P",
-        "human_decision_phase": "7B",
-        "source_registry_refs": [
-          "data/pricing/research/plomberie/registry.v0.3.json"
-        ],
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
         "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
+        "production_ready": true,
+        "approval_status": "OWNER_APPROVED"
       },
       "confidence": {
         "price_confidence": "MEDIUM",
@@ -787,15 +895,13 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_labour_price_plus_part"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
-      "human_review_flags": [
-        "CONFIRM_LABOUR_PART_SEPARATE_FROM_V03_HUMAN_DECISION"
-      ],
+      "human_review_flags": [],
       "semantic_corrections": [
         "CANONICAL_SEMANTIC_CORRECTION: V0.3 pricing_architecture=FIXEO_FIXED_PRICE does not capture that part (robinet/mecanisme) is excluded. Canonical model = LABOUR_FIXED_PART_SEPARATE. Confirmed from V0.3 excluded_scope and part_supply_policy. Price unchanged."
       ],
@@ -817,30 +923,27 @@
       ],
       "metier": "plomberie",
       "service_family": "REMPLACEMENT",
-      "label_fr": "Remplacement mécanisme chasse d'eau",
+      "label_fr": "Mécanisme de chasse fourni par le client",
       "label_ar_darija": "إصلاح آلية الدش",
       "short_label_fr": "Réparation chasse d'eau",
       "variant": null,
       "human_decision": "APPROVED",
       "availability_status": "STANDARDIZED",
-      "production_ready": false,
-      "active_in_estimator": false,
-      "active_in_reservation": false,
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
       "active_in_pseo": false,
       "active_in_profiles": false,
-      "service_version": "1.0.0-draft",
+      "service_version": "plumbing-pilot-v1",
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
-        "commercial_output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-LABOUR-PART-SEPARATE-V1",
-        "formula_params": {},
-        "labour_amount_mad": 300,
-        "fixed_amount_mad": null,
-        "unit_rate_mad": null,
-        "unit": "FLAT_INTERVENTION"
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 27000,
+        "materials_minor": 0
       },
       "minimum_floor": {
         "enabled": false,
@@ -887,11 +990,47 @@
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
-        "required_conditions": [],
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "plumbing_scope",
+            "field": "plumbing_scope",
+            "operator": "EQ",
+            "value": "LOCAL_ACCESSIBLE",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_access",
+            "field": "plumbing_access",
+            "operator": "EQ",
+            "value": "PLUMB_ACCESS_READY",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_work",
+            "field": "plumbing_work",
+            "operator": "EQ",
+            "value": "PLUMB_CISTERN",
+            "effect": "ELIGIBLE"
+          },
+          {
+            "id": "plumbing_parts",
+            "field": "plumbing_parts",
+            "operator": "EQ",
+            "value": "PLUMB_CLIENT_PART",
+            "effect": "ELIGIBLE"
+          }
+        ],
         "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "prebooking_question_refs": [
+          "plumbing_scope",
+          "plumbing_access",
+          "plumbing_work",
+          "plumbing_parts"
+        ],
+        "supporting_prose": "Un WC au sol à réservoir apparent intact : mécanisme standard compatible fourni par le client, pose, réglage et essai. Alimentation et robinet d’arrêt en bon état ; petits consommables inclus jusqu’à 30 DH. Sans WC suspendu, réservoir encastré, fissure ni mécanisme propriétaire. Déplacement dans la ville choisie inclus. Tout dépassement nécessite un devis accepté avant intervention.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -899,16 +1038,10 @@
       ],
       "safety_policy_refs": [],
       "provenance": {
-        "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
-        "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
-        "research_phase": "7B.P",
-        "human_decision_phase": "7B",
-        "source_registry_refs": [
-          "data/pricing/research/plomberie/registry.v0.3.json"
-        ],
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
         "transaction_backed": false,
-        "production_ready": false,
-        "batch_rule_experimental": null
+        "production_ready": true,
+        "approval_status": "OWNER_APPROVED"
       },
       "confidence": {
         "price_confidence": "MEDIUM",
@@ -927,15 +1060,13 @@
         "copy_key_disclaimer": "copy.disclaimer.fixeo_labour_price_plus_part"
       },
       "status_flags": {
-        "production_ready": false,
-        "active_in_estimator": false,
-        "active_in_reservation": false,
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
         "active_in_pseo": false,
         "active_in_profiles": false
       },
-      "human_review_flags": [
-        "CONFIRM_LABOUR_PART_SEPARATE_FROM_V03_HUMAN_DECISION"
-      ],
+      "human_review_flags": [],
       "semantic_corrections": [
         "CANONICAL_SEMANTIC_CORRECTION: V0.3 pricing_architecture=FIXEO_FIXED_PRICE does not capture that part (robinet/mecanisme) is excluded. Canonical model = LABOUR_FIXED_PART_SEPARATE. Confirmed from V0.3 excluded_scope and part_supply_policy. Price unchanged."
       ],

@@ -276,7 +276,7 @@ if (typeof body === 'string') {
  * guest_lookup is an authenticated read using tracking_ref + guest_token
  * and is polled by the Flagship client.
  */
-if (body.action !== 'guest_lookup') {
+if (body.action !== 'guest_lookup' && body.action !== 'plumbing_repair_read') {
   var ip = String(
     req.headers['x-forwarded-for'] ||
     req.socket.remoteAddress ||
@@ -293,6 +293,9 @@ if (body.action !== 'guest_lookup') {
   }
 }
   
+  if (['plumbing_repair_read','plumbing_repair_accept','plumbing_repair_decline'].includes(body.action)) {
+    return require('./plumbing-repair')(body,res);
+  }
   /* ── Secure anonymous guest lookup ── */
 if (body.action === 'guest_lookup') {
   var lookupTrackingRef = _str(body.tracking_ref, 32).toUpperCase();

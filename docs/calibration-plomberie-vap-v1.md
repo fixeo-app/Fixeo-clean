@@ -1,20 +1,20 @@
-# Plomberie — calibrage VAP proposé
+# Plomberie — calibrage VAP validé et intégration
 
-État au 21 septembre 2026 : **audit et proposition commerciale terminés ; tarifs non approuvés, non intégrés et non déployés**.
+État au 21 septembre 2026 : **six tarifs validés par le propriétaire pour les 20 villes ; intégration et 93 tests validés, prêts à publier**.
 Base vérifiée : `1acfc1fe8ba7aa574c91662c3defde0c5a53189a` (production après peinture avec fournitures).
 Proposition structurée : `data/pricing/research/plomberie/vap-proposal.v1.json`.
 
-## Pourquoi ce métier maintenant
+## Point de départ avant cette intégration
 
 Le catalogue VAP actif couvre jardinage, carrelage, maçonnerie, manutention et trois forfaits peinture. Les six prestations plomberie existent dans le registre historique, mais aucune n’a d’entrée approuvée dans `vap-approved-v1.json`. Elles peuvent encore suivre le calcul historique : l’absence d’entrée VAP ne signifie pas que la plomberie est absente du site.
 
 La plomberie est proposée comme prochaine priorité parce que ces six situations sont déjà reliées au parcours RAFI et que leurs frontières sont auditables : fuite visible, appareil bouché isolé, remplacement d’un équipement standard et diagnostic. Cette priorité est une décision de produit ; aucune statistique récente de demandes n’a été consultée pour prétendre qu’il s’agit du métier le plus demandé.
 
-## Grille proposée à la validation du propriétaire
+## Grille validée par le propriétaire
 
 Les anciens montants sont des totaux client issus du document `human-decision.v0.3.md`, approuvé le 9 août 2026. Ils ne constituent pas une rémunération artisan sous BP3.3. La nouvelle proposition reconstruit les trois composantes explicitement.
 
-| Service, une intervention | Ancien total de référence | Prestation artisan proposée | Frais FIXEO BP3.3 | Nouveau total proposé |
+| Service, une intervention | Ancien total de référence | Prestation artisan proposée | Frais FIXEO BP3.3 | Total validé |
 |---|---:|---:|---:|---:|
 | Diagnostic seul | 180 MAD | 160 MAD | 60 MAD | **220 MAD** |
 | Fuite simple visible | 250 MAD | 220 MAD | 60 MAD | **280 MAD** |
@@ -44,9 +44,9 @@ Le robinet ou mécanisme neuf compatible est fourni par le client. Si l’artisa
 
 Le forfait réparation comprend sa vérification initiale. Aucune deuxième ligne diagnostic ne doit être ajoutée. Si le périmètre réel est différent ou si le débouchage simple échoue : arrêt, explication et prix accepté avant toute suite. Le montant dû pour une prestation effectivement réalisée doit être annoncé avant engagement ; on ne transforme pas après coup un échec en diagnostic payant sans accord préalable.
 
-## Diagnostic suivi d’une réparation : décision financière à intégrer
+## Diagnostic suivi d’une réparation : règle intégrée
 
-Règle proposée, conforme au principe historique de non-cumul : **une réparation standard acceptée pendant la même visite remplace le diagnostic ; un seul total final et un seul frais FIXEO**.
+Règle validée, conforme au principe historique de non-cumul : **une réparation standard acceptée pendant la même visite remplace le diagnostic ; un seul total final et un seul frais FIXEO**.
 
 | Exemple, même visite | Total final client | Diagnostic déjà payé | Solde client | Frais FIXEO totaux |
 |---|---:|---:|---:|---:|
@@ -55,9 +55,9 @@ Règle proposée, conforme au principe historique de non-cumul : **une réparati
 
 Si rien n’a été payé, seul le total final de réparation est dû. Si aucune réparation n’est réalisée, le diagnostic explicitement accepté demeure dû à 220 MAD. Retour un autre jour, matériel spécialisé ou réparation hors forfait : nouvelle proposition, sans absorption automatique promise.
 
-Ce tableau est une règle commerciale et un contrôle arithmétique, **pas une fonctionnalité déjà livrée**. Le changement doit être atomique, lié à la même demande/mission et au consentement client, avec conservation des offres et des paiements passés. Une répétition ne doit pas créer un second solde ou une seconde commission. Les anciennes offres et missions conservent leurs conditions acceptées.
+La transition est atomique et liée à la même demande, à la même mission et à l’accord client. L’offre initiale reste immuable. Une proposition de réparation et une décision client immuables rendent le tarif de réparation effectif sur cette seule mission. Une répétition renvoie le même résultat, sans nouvelle facture ni nouvelle commission. Les anciennes offres et missions conservent leurs conditions acceptées.
 
-## Résultat de l’audit technique
+## Audit initial ayant motivé les corrections
 
 1. `estimator-question-planner-v1.js` : aucune question pour le diagnostic ; une seule qualification générique `plumbing_scope` pour fuite/évier/WC ; seule question sur une pièce pour robinet/chasse. Ces réponses ne suffisent pas à garantir les périmètres ci-dessus.
 2. `canonical-registry.v1.draft.json` : qualifications plomberie `OPEN`, prix historiques 180/250/300 MAD, aucun modèle plomberie versionné BP3.3. Les indicateurs historiques sont faux, mais ils ne constituent pas à eux seuls une désactivation du parcours courant.
@@ -70,12 +70,24 @@ Ce tableau est une règle commerciale et un contrôle arithmétique, **pas une f
 
 Consultation du 21 septembre 2026 : [Hanæ, plombier Casablanca](https://hanae.ma/plombier-casablanca) présente des repères indicatifs, mis à jour en avril 2026, et précise qu’il ne s’agit pas de sa grille de vente. Fourchettes annoncées : fuite de robinet/joint 150–350 MAD, évier/lavabo 200–450 MAD, WC 250–500 MAD, remplacement de mitigeur 200–500 MAD. Les forfaits proposés sont à l’intérieur de ces repères ; les périmètres ne sont toutefois pas identiques et aucune moyenne transactionnelle FIXEO n’en est déduite.
 
-[Mano, guide plomberie Maroc](https://mano.ma/prix-plombier-au-maroc/) affiche également des fourchettes larges et précise que les pièces sont généralement séparées. Cette source est utilisée comme contexte, pas comme preuve d’un tarif national ou comme base de majorations automatiques. Les prix 220/280/330 MAD restent une proposition commerciale FIXEO à approuver et à mesurer sur le terrain.
+[Mano, guide plomberie Maroc](https://mano.ma/prix-plombier-au-maroc/) affiche également des fourchettes larges et précise que les pièces sont généralement séparées. Cette source est utilisée comme contexte, pas comme preuve d’un tarif national ou comme base de majorations automatiques. Les prix 220/280/330 MAD constituent un pilote commercial FIXEO validé par le propriétaire, à mesurer sur le terrain.
 
-## Livraison de cette étape
+## Parcours livré
 
-La grille structurée comporte six candidats non approuvés et les 20 villes proposées. Les totaux et frais sont calculés avec le module BP3.3 existant ; les deux exemples de solde respectent l’égalité diagnostic payé + solde = réparation et une seule commission de 60 MAD.
+- L’estimateur qualifie un équipement accessible, l’accès sûr, le périmètre propre à la prestation et, pour robinet/chasse, la disponibilité d’une pièce compatible fournie par le client. Une réponse absente, inconnue ou hors périmètre ne délivre aucun prix de réparation. Les 120 entrées approuvées couvrent six services dans 20 villes. Une entrée absente interdit le retour au prix historique.
+- Depuis la mission en cours dans le tableau artisan V2 : « Diagnostic / réparation ». L’artisan choisit le forfait, confirme chaque condition et la même visite, puis déclare 0 ou 220 DH déjà reçus. La proposition est valable 45 minutes. Une nouvelle proposition remplace la précédente en attente ; elle ne modifie pas l’offre initiale.
+- Depuis « Mes demandes FIXEO » : le client voit le périmètre, le total, les 60 DH de frais, le diagnostic déjà versé et le reste à payer. Il doit cocher son accord avant d’accepter. Il peut refuser, notamment si le montant déclaré est incorrect. Le diagnostic demeure la prestation acceptée en cas de refus ou d’expiration.
+- Le paiement est en espèces sur place. Le crédit de diagnostic est une déclaration de l’artisan confirmée par le client, **pas un paiement bancaire vérifié**. Aucun débit en ligne, message, notification ou nouveau dispatch n’est lancé par ce parcours. Montant partiel, désaccord, seconde visite ou besoin hors périmètre : intervention de FIXEO avant nouvelle proposition.
+- Le règlement administratif porte sur le total final de la mission (280 ou 330 DH), pas sur le seul solde en espèces (60 ou 110 DH). `missions.commission_amount` reste 60 DH. Le tableau artisan déduit la commission enregistrée au lieu de calculer 85 % du total pour une offre VAP.
 
-Cette étape ajoute uniquement ce dossier et la proposition JSON de recherche. Aucun catalogue actif, code serveur, interface, SQL, prix en production ou rapport JSON protégé n’est modifié. Il n’y a donc pas de résultat E2E nouveau à annoncer. Après validation commerciale : intégration, tests de qualification et d’absorption, réservation→affectation→règlement, puis activation et contrôles en ligne.
+## Vérification et ordre de publication
 
-Message de commit : `docs(pricing): propose plumbing calibration and diagnostic settlement rules`
+Commande : `NODE_PATH=/workspace/scratch/7e6d7edda414/test-deps/node_modules node --test tests/estimator/*.test.cjs` — **93 tests réussis**.
+
+Les tests couvrent les 120 tarifs, les questions réellement rendues, les six parcours offre/réservation/dispatch/règlement, les cinq réparations avec crédit nul ou intégral, les répétitions, le refus, l’expiration, les propositions remplacées, les droits d’accès, l’accord client, les limites du cycle de mission et les calculs de revenu. La migration est exécutée dans PostgreSQL local via PGlite avec les fonctions de dispatch inspectées en production. Les métiers déjà calibrés conservent leurs tests.
+
+Appliquer d’abord `20260921122543_plumbing_same_visit_repair.sql`, puis déployer le code testé. Cette migration ajoute des tables d’audit privées et des RPC à droits limités ; elle remplace le contrôle financier pour reconnaître uniquement une réparation acceptée, sans modifier les offres, les demandes ni les montants historiques. Les liaisons initiales restent verrouillées. Vérifier ensuite les tarifs et les ressources effectivement servis en production, sans créer de réservation réelle.
+
+Contrôle préalable en production : 23 missions, aucune mission VAP ; empreinte des identifiants et montants financiers `41bd96be7601fb71aa49709df736c486`. Les rapports protégés `engine-test-report.v1.json` et `shadow-results.v1.json` restent inchangés.
+
+Message de commit : `feat(plumbing): activate approved VAP tariffs and consented same-visit repairs`
