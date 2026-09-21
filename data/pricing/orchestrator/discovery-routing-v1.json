@@ -454,7 +454,9 @@
       "label": "Charger ou décharger un véhicule",
       "universe": "demenagement",
       "metier": "demenagement",
-      "candidate_services": []
+      "candidate_services": [
+        "demenagement.manutention_2h"
+      ]
     },
     "demenagement.preparer-un-demenagement-de-bureau": {
       "label": "Préparer un déménagement de bureau",

@@ -1,6 +1,6 @@
 {
   "version": "vap-approved-v1",
-  "note": "Forfaits jardinage, carrelage et petite maçonnerie validés par FIXEO dans les 20 villes. Disponibilité artisan à confirmer.",
+  "note": "Forfaits validés par FIXEO dans les 20 villes. Prix pilote, disponibilité artisan ou équipe à confirmer.",
   "entries": [
     {
       "approved": true,
@@ -2581,6 +2581,326 @@
         "max": 3,
         "decimals": 2
       }
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "agadir",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "beni-mellal",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "casablanca",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "el-jadida",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "fes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "kenitra",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "khouribga",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "marrakech",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "meknes",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "mohammedia",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "nador",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "ouarzazate",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "oujda",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "rabat",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "safi",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "sale",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "tanger",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "taza",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "temara",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
+    },
+    {
+      "approved": true,
+      "service_code": "demenagement.manutention_2h",
+      "city_slug": "tetouan",
+      "outcome_type": "PRICE_READY",
+      "inputs": {
+        "moving_task": "MOVING_HANDLING_ONLY",
+        "moving_access": "MOVING_ACCESS_READY",
+        "moving_items": "MOVING_STANDARD_ITEMS",
+        "moving_preparation": "MOVING_PREPARED",
+        "moving_duration": "MOVING_TWO_HOUR_TEAM"
+      },
+      "vap_minor": 60000,
+      "materials_minor": 0,
+      "catalogue_version": "moving-pilot-v1"
     }
   ]
 }

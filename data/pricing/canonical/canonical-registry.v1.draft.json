@@ -8574,6 +8574,152 @@
       },
       "human_review_flags": [],
       "semantic_corrections": []
+    },
+    "demenagement.manutention_2h": {
+      "canonical_service_code": "demenagement.manutention_2h",
+      "legacy_codes": [],
+      "metier": "demenagement",
+      "service_family": "MANUTENTION",
+      "label_fr": "Manutention sans camion — 2 intervenants, 2 heures",
+      "label_ar_darija": null,
+      "short_label_fr": "Manutention sans camion — 2 intervenants, 2 heures",
+      "variant": null,
+      "human_decision": "APPROVED",
+      "availability_status": "STANDARDIZED",
+      "production_ready": true,
+      "active_in_estimator": true,
+      "active_in_reservation": true,
+      "active_in_pseo": false,
+      "active_in_profiles": false,
+      "service_version": "moving-pilot-v1",
+      "effective_from": null,
+      "effective_to": null,
+      "price_model": {
+        "calculation_model": "CONDITIONAL_FIXED",
+        "commercial_output_type": "FIXEO_PRICE",
+        "currency": "MAD",
+        "pricing_version": "vap-bp33-v1",
+        "vap_minor": 60000,
+        "materials_minor": 0
+      },
+      "minimum_floor": {
+        "enabled": false,
+        "amount_mad": null,
+        "mode": null,
+        "scope": null,
+        "policy_ref": null,
+        "standalone_service_code": null
+      },
+      "diagnostic": {
+        "enabled": false,
+        "price_mad": null,
+        "mode": null,
+        "same_visit_absorption": null,
+        "qualifying_service_codes": [],
+        "conditions": [],
+        "policy_ref": null
+      },
+      "materials": {
+        "consumables": "CLIENT_SUPPLIED",
+        "consumables_cap_mad": null,
+        "major_parts": null,
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "parts_disclosure": null
+      },
+      "measurement": {
+        "basis": "FIXED",
+        "quantity_field": null,
+        "quantity_required": false,
+        "worker_count_required": false,
+        "worker_count_default": 2,
+        "worker_count_semantics": "TEAM_TOTAL",
+        "hours_required": false,
+        "minimum_billing_hours": 2,
+        "derived": false,
+        "conversion_model_id": null,
+        "conversion_status": "NOT_APPLICABLE"
+      },
+      "eligibility": {
+        "qualification_status": "CONDITIONAL",
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "moving_task",
+            "field": "moving_task",
+            "operator": "EQ",
+            "value": "MOVING_HANDLING_ONLY",
+            "effect": "ELIGIBLE",
+            "description": "Avez-vous besoin uniquement de manutention sur un même site, sans camion, transport, démontage ni remontage ?"
+          },
+          {
+            "id": "moving_access",
+            "field": "moving_access",
+            "operator": "EQ",
+            "value": "MOVING_ACCESS_READY",
+            "effect": "ELIGIBLE",
+            "description": "Tout le parcours est-il dégagé, au rez-de-chaussée ou avec un ascenseur adapté aux objets, sans escalier à porter, et le véhicule accessible à proximité si nécessaire ?"
+          },
+          {
+            "id": "moving_items",
+            "field": "moving_items",
+            "operator": "EQ",
+            "value": "MOVING_STANDARD_ITEMS",
+            "effect": "ELIGIBLE",
+            "description": "S’agit-il de cartons et meubles courants manipulables à deux, sans piano, coffre-fort, objet exceptionnellement lourd, fragile ou nécessitant un équipement de levage ?"
+          },
+          {
+            "id": "moving_preparation",
+            "field": "moving_preparation",
+            "operator": "EQ",
+            "value": "MOVING_PREPARED",
+            "effect": "ELIGIBLE",
+            "description": "Les affaires seront-elles emballées et protégées, les meubles vidés, les appareils débranchés et les accès prêts avant l’arrivée de l’équipe ?"
+          },
+          {
+            "id": "moving_duration",
+            "field": "moving_duration",
+            "operator": "EQ",
+            "value": "MOVING_TWO_HOUR_TEAM",
+            "effect": "ELIGIBLE",
+            "description": "Validez-vous un forfait de 2 intervenants pendant 2 heures, à compter du début sur place, sans garantie de terminer tout le déménagement ni prolongation automatique ?"
+          }
+        ],
+        "hard_exclusions": [],
+        "prebooking_question_refs": [
+          "moving_task",
+          "moving_access",
+          "moving_items",
+          "moving_preparation",
+          "moving_duration"
+        ],
+        "supporting_prose": "Forfait de temps : équipe de 2 intervenants pendant 2 heures sur un même site. VAP 600 MAD pour toute l’équipe, frais FIXEO 90 MAD, total 690 MAD. Sans camion, transport, démontage, emballage, escalier à porter ni objet exceptionnel. Accès et affaires préparés. Toute prolongation nécessite un accord préalable distinct. Disponibilité de l’équipe à confirmer.",
+        "human_review_required": false
+      },
+      "policy_refs": [
+        "POL-HORS-PERIMETRE-V1"
+      ],
+      "safety_policy_refs": [],
+      "provenance": {
+        "price_provenance": "FIXEO_OWNER_APPROVED_PILOT",
+        "transaction_backed": false,
+        "production_ready": true
+      },
+      "confidence": {
+        "price_confidence": "PILOT_NOT_FIELD_VALIDATED",
+        "scope_confidence": "DEFINED",
+        "evidence_confidence": "LIMITED"
+      },
+      "batch_policy": null,
+      "copy_keys": {},
+      "status_flags": {
+        "production_ready": true,
+        "active_in_estimator": true,
+        "active_in_reservation": true,
+        "active_in_pseo": false,
+        "active_in_profiles": false
+      },
+      "human_review_flags": [],
+      "semantic_corrections": []
     }
   }
 }
