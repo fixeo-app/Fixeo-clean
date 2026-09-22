@@ -36,10 +36,10 @@
  */
 
 'use strict';
+require('../supabase-environment').assertServerTarget();
 
-/* ── Supabase public credentials (same as js/supabase-client.js — anon key, public) ── */
-const SUPABASE_URL  = 'https://ztwtbgoqanqzvwiibtuh.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_OGW8g7fM5ct1_ZFUxFIs-g_UzXuQPSk';
+/* Public credentials follow the deployment's isolated Supabase environment. */
+const { publicConfig } = require('../supabase-environment');
 
 /* ── PUBLIC field allowlist ── */
 /* Only these fields are fetched from Supabase. Any field not listed here
@@ -1519,6 +1519,7 @@ module.exports = async function handler(req, res) {
   /* ── Supabase fetch — anon key, explicit field list ── */
   let artisan = null;
   try {
+    const { SUPABASE_URL, SUPABASE_ANON_KEY: SUPABASE_ANON } = publicConfig();
     const supabaseUrl =
       `${SUPABASE_URL}/rest/v1/artisans` +
       `?select=${encodeURIComponent(PUBLIC_FIELDS)}` +

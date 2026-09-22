@@ -47,6 +47,7 @@
  *   SUPABASE_SERVICE_ROLE_KEY — service_role JWT (secret, server-side only)
  */
 'use strict';
+require('../supabase-environment').assertServerTarget();
 var crypto = require('crypto');
 
 /* ── In-memory rate limiter (per Vercel instance) ── */

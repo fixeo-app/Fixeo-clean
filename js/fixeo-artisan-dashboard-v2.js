@@ -622,6 +622,7 @@ var available =
       + descHtml
       + fallbackHtml
       + priceHtml
+      + (['pending','done','validated'].includes(mission.status) ? '<button type="button" class="fxa-btn fxa-btn-ghost" data-fixeo-diagnostic-mission="' + esc(mission.id) + '">Contexte Diagnostic FIXEO</button>' : '')
       + _missionActions(mission, st)
       + '</div>';
   }

@@ -67,6 +67,7 @@
  */
 
 'use strict';
+require('../supabase-environment').assertServerTarget();
 
 /* ── Constants ─────────────────────────────────────────────── */
 var MAX_FIELD_LEN = 500;

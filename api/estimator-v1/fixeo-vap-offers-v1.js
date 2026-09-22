@@ -22,7 +22,8 @@ async function attachOffer(session,payload,{entries=catalogue.entries,fetchImpl=
  const id=crypto.randomUUID();
  const row={id,offer_key:crypto.randomUUID(),pricing_version:VERSION,currency:'MAD',service_code:payload.service_code,
  catalogue_version:tariff.catalogue_version,city:payload.city_slug,
- scope:{context_id:payload.context_id,session_id:payload.session_id,outcome_type:payload.outcome_type,inputs:/^serrurerie\./.test(session.service_code)?tariff.inputs:session.known_inputs},
+  scope:{context_id:payload.context_id,session_id:payload.session_id,outcome_type:payload.outcome_type,inputs:/^serrurerie\./.test(session.service_code)?tariff.inputs:session.known_inputs,
+    ...(session.entry_context?.diagnostic ? {diagnostic:session.entry_context.diagnostic} : {})},
  vap_minor:breakdown.vapMinor,materials_minor:breakdown.materialsMinor,commission_minor:breakdown.commissionMinor,
  client_total_minor:breakdown.clientTotalMinor,expires_at:new Date(payload.expires_at).toISOString()};
  const r=await fetchImpl(env.SUPABASE_URL+'/rest/v1/fixeo_pricing_offers_v1',{method:'POST',headers:{'Content-Type':'application/json',apikey:env.SUPABASE_SERVICE_ROLE_KEY,Authorization:'Bearer '+env.SUPABASE_SERVICE_ROLE_KEY,Prefer:'return=minimal'},body:JSON.stringify(row),signal:AbortSignal.timeout(10000)});

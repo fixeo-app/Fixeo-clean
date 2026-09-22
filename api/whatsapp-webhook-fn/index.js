@@ -1,3 +1,4 @@
+require('../supabase-environment').assertServerTarget();
 module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
     const baseUrl = 'https://' + (req.headers.host || 'www.fixeo.ma');
