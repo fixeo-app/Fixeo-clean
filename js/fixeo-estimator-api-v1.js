@@ -11,13 +11,27 @@
   window._fxEstApiLoaded = true;
 
   var BASE = (window.FixeoEstimatorConfig && window.FixeoEstimatorConfig.estimatorApiBase) || '/api/estimator-v1';
+  var diagnosticTokens = new Set();
 
   function _call(body) {
-    return fetch(BASE, {
+    var diagnostic = !!(body.entry_context && body.entry_context.diagnostic_token)
+      || diagnosticTokens.has(body.session_token || body.pricing_context_token);
+    var headers = diagnostic && window.FixeoDiagnostic && window.FixeoDiagnostic.authHeaders
+      ? window.FixeoDiagnostic.authHeaders(true) : Promise.resolve({'Content-Type':'application/json'});
+    return headers.then(function(h) { return fetch(BASE, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: h,
+      credentials: 'same-origin',
       body: JSON.stringify(body),
-    }).then(function(r) { return r.json(); });
+    }); }).then(function(r) { return r.json(); }).then(function(result) {
+      if (diagnostic && result && result.ok) {
+        [result.session && result.session.session_token, result.pricing_context_token].forEach(function(token) {
+          if (typeof token === 'string') diagnosticTokens.add(token);
+        });
+        while (diagnosticTokens.size > 128) diagnosticTokens.delete(diagnosticTokens.values().next().value);
+      }
+      return result;
+    });
   }
 
   window.FixeoEstimatorAPI = {

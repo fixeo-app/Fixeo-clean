@@ -32,9 +32,10 @@
  *   server-side pricing context instead of trusting a browser-supplied amount.
  */
 'use strict';
+require('../supabase-environment').assertServerTarget();
 
 const crypto = require('crypto');
-const {attachOffer,validateFinancialContext}=require('./fixeo-vap-offers-v1');
+const {attachOffer,validateFinancialContext,selectTariff}=require('./fixeo-vap-offers-v1');
 
 const orchestrator = require(
   '../../data/pricing/orchestrator/estimator-orchestrator-v1'
@@ -574,7 +575,8 @@ function sanitizeServiceCandidates(
 
 function handleStart(
   body,
-  secret
+  secret,
+  diagnosticReference
 ) {
   const ctx =
     (
@@ -607,6 +609,8 @@ function handleStart(
 
   const session =
     result.session;
+
+  if (diagnosticReference) session.entry_context.diagnostic = diagnosticReference;
 
   const view =
     normalizeSessionView(
@@ -1100,6 +1104,15 @@ async function handleEvaluate(
   const evaluated =
     result.session;
 
+  // Diagnostic can confirm only a persisted, approved FIXEO offer.
+  // Other canonical scopes continue through the existing quote journey.
+  if (evaluated.entry_context?.diagnostic && shouldIssuePricingContextToken(evaluated) && !selectTariff(evaluated)) {
+    evaluated.outcome = require('../../data/pricing/orchestrator/estimator-outcome-mapper-v1')
+      .mapQuoteRequired(evaluated.service_code,'Un devis est nécessaire pour ce périmètre.');
+    evaluated.state = 'QUOTE_REQUIRED';
+    evaluated.qualification_status = 'QUOTE_REQUIRED';
+  }
+
   const view =
     normalizeSessionView(
       evaluated,
@@ -1421,7 +1434,7 @@ async function callEstimatorConfirmationRpc(
     response =
       await fetch(
         cfg.url +
-        '/rest/v1/rpc/' + (rpcArgs.p_offer_id ? 'confirm_estimator_request_vap_v1' : 'confirm_estimator_request_v1'),
+        '/rest/v1/rpc/' + (rpcArgs.p_diagnostic ? 'confirm_estimator_request_diagnostic_v1' : rpcArgs.p_offer_id ? 'confirm_estimator_request_vap_v1' : 'confirm_estimator_request_v1'),
         {
           method: 'POST',
 
@@ -1712,6 +1725,7 @@ async function handleConfirmRequest(
   let financial;
   try { financial=validateFinancialContext(payload); }
   catch (_) {return {status:422,body:{ok:false,error:'invalid_financial_context'}};}
+  if (payload.diagnostic && !financial) return {status:422,body:{ok:false,error:'diagnostic_requires_persisted_offer'}};
   const amountMad = payload.amount_mad;
 
   if (
@@ -1802,6 +1816,8 @@ async function handleConfirmRequest(
   try {
     confirmation =
       await callEstimatorConfirmationRpc({
+        ...(payload.diagnostic ? {p_diagnostic:{...payload.diagnostic,
+          qualification_answers:payload.diagnostic_qualification_answers || []}} : {}),
         ...(financial ? {p_offer_id:payload.offer_id} : {}),
         p_context_id:
           contextId,
@@ -2317,12 +2333,15 @@ async function handler(
   let result;
 
   try {
+    const diagnosticReference = await require('../diagnostic/estimator-bridge')
+      .beforeAction(req, res, body, secret);
     switch (action) {
       case 'start':
         result =
           handleStart(
             body,
-            secret
+            secret,
+            diagnosticReference
           );
         break;
 
@@ -2379,6 +2398,9 @@ async function handler(
     }
 
   } catch (e) {
+    if (e && e.name === 'Error' && e.code && /^DIAGNOSTIC_|^AUTH_|^ORIGIN_|^CLIENT_CONTEXT_|^DEPENDENCY_/.test(e.code)) {
+      return jsonResponse(res, e.status || 409, {ok:false,error:e.code});
+    }
     console.error(
       '[estimator-v1] Internal error:',
       e &&
@@ -2404,5 +2426,4 @@ async function handler(
     result.body
   );
 };
-
 

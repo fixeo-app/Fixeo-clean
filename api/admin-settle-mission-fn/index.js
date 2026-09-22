@@ -69,6 +69,7 @@
  */
 
 'use strict';
+require('../supabase-environment').assertServerTarget();
 
 /* ── Constants ─────────────────────────────────────────────── */
 var COMMISSION_RATE    = 0.15;  /* 15% — canonical FIXEO commission */

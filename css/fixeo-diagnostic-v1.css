@@ -1,0 +1,736 @@
+/* Scoped Diagnostic design. Shares FIXEO's navy/orange/pink visual language. */
+.fxdiag-section[hidden],
+.fxdiag-modal [hidden] {
+  display: none !important;
+}
+.fxdiag-section {
+  max-width: 1160px;
+  margin: 34px auto 70px;
+  padding: 0 18px;
+  color: #f7f8fc;
+}
+.fxdiag-signature {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid #30394d;
+  border-radius: 28px;
+  background: linear-gradient(120deg, #121a2d, #0c1220 68%);
+  padding: 48px;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 38px;
+  align-items: center;
+  box-shadow: 0 24px 80px #03061130;
+}
+.fxdiag-signature:before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  right: -180px;
+  top: -230px;
+  background: radial-gradient(circle, #fd784029, transparent 65%);
+}
+.fxdiag-eyebrow {
+  color: #ffb784;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin: 0 0 18px;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+.fxdiag-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff965f;
+  box-shadow: 0 0 14px #ff804c80;
+}
+.fxdiag-signature h2 {
+  font-size: clamp(27px, 3vw, 39px);
+  font-weight: 750;
+  line-height: 1.17;
+  letter-spacing: -0.04em;
+  color: #fff;
+  margin: 0 0 18px;
+  max-width: 640px;
+}
+.fxdiag-signature h2 span {
+  color: #ffb281;
+}
+.fxdiag-signature p.fxdiag-copy {
+  color: #b6bed1;
+  line-height: 1.7;
+  font-size: 15px;
+  max-width: 540px;
+  margin: 0 0 25px;
+}
+.fxdiag-button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 14px;
+  padding: 15px 22px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 750;
+  cursor: pointer;
+  color: #151725;
+  background: linear-gradient(105deg, #ffb572, #ff865d);
+  box-shadow: 0 8px 24px #ff85351a;
+  text-decoration: none;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+  min-height: 48px;
+}
+.fxdiag-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px #ff85352b;
+}
+.fxdiag-button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+  transform: none;
+}
+.fxdiag-button.secondary {
+  background: #ffffff09;
+  border: 1px solid #ffffff24;
+  color: #e4e7f0;
+  box-shadow: none;
+}
+.fxdiag-button.quiet {
+  background: transparent;
+  color: #bdc5d7;
+  box-shadow: none;
+  padding: 10px 14px;
+}
+.fxdiag-button:focus-visible,
+.fxdiag-modal :focus-visible {
+  outline: 3px solid #89b7ff;
+  outline-offset: 4px;
+}
+.fxdiag-signature small {
+  display: block;
+  color: #8c97af;
+  font-size: 12px;
+  margin-top: 14px;
+  line-height: 1.5;
+}
+.fxdiag-visual {
+  padding: 26px 22px 20px;
+  background: linear-gradient(145deg, #ffffff0c, #ffffff03);
+  border: 1px solid #ffffff1a;
+  border-radius: 22px;
+  transform: rotate(2deg);
+  box-shadow: 0 22px 50px #0003;
+}
+.fxdiag-visual-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #a7b2c9;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.fxdiag-visual-frame {
+  position: relative;
+  margin: 18px 0;
+  padding: 26px 15px;
+  border-radius: 15px;
+  border: 1px solid #63779e50;
+  background: radial-gradient(ellipse at center, #33578540, #13213615);
+  text-align: center;
+  color: #d3e5ff;
+}
+.fxdiag-visual-frame svg {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 10px;
+  stroke: #bbd7ff;
+}
+.fxdiag-visual-frame span {
+  display: block;
+  font-size: 13px;
+  color: #bcc8de;
+  letter-spacing: 0.02em;
+}
+.fxdiag-visual-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  transform: rotate(-2deg);
+}
+.fxdiag-visual-tags span {
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: #ffffff08;
+  border: 1px solid #ffffff12;
+  font-size: 11px;
+  color: #c4cede;
+}
+.fxdiag-launch-status {
+  font-size: 13px;
+  color: #ffc38d;
+  margin: 10px 0 0;
+}
+dialog.fxdiag-modal {
+  margin: auto;
+  --fd-muted: #a8b4cc;
+  --fd-line: #ffffff1a;
+  color: #f7f8fc;
+  background: #0f1728;
+  border: 1px solid #53617a;
+  border-radius: 26px;
+  padding: 0;
+  width: min(940px, calc(100vw - 36px));
+  max-width: none;
+  max-height: calc(100dvh - 48px);
+  box-shadow: 0 35px 140px #000a;
+  overflow: hidden;
+  font-family: inherit;
+}
+.fxdiag-modal::backdrop {
+  background: #050b18c9;
+  backdrop-filter: blur(9px);
+}
+.fxdiag-shell {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 50px);
+}
+.fxdiag-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 30px;
+  border-bottom: 1px solid var(--fd-line);
+  background: linear-gradient(110deg, #ff945c08, #b478ff06);
+}
+.fxdiag-brand {
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.fxdiag-brand span:last-child {
+  color: #a9b6cd;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.fxdiag-close {
+  color: #cad3e4;
+  background: #ffffff08;
+  border: 1px solid #ffffff16;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+}
+.fxdiag-progress {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #8d9cb7;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  margin-bottom: 22px;
+}
+.fxdiag-progress i {
+  width: 26px;
+  height: 3px;
+  background: #33415a;
+  border-radius: 4px;
+}
+.fxdiag-progress i.done {
+  background: #ffad78;
+}
+.fxdiag-body {
+  padding: 28px 34px 32px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: #485979 transparent;
+  min-height: 220px;
+}
+.fxdiag-body h2 {
+  font-size: clamp(25px, 3vw, 33px);
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+  margin: 0 0 10px;
+  color: #fff;
+}
+.fxdiag-intro {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--fd-muted);
+  margin: 0 0 26px;
+  max-width: 680px;
+}
+.fxdiag-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 25px;
+}
+.fxdiag-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 650;
+  color: #d3dcec;
+  margin: 0 0 9px;
+}
+.fxdiag-input {
+  box-sizing: border-box;
+  width: 100%;
+  font: inherit;
+  color: #f0f4fc;
+  background: #0a1120;
+  border: 1px solid #3a4963;
+  border-radius: 12px;
+  padding: 13px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  outline: none;
+}
+.fxdiag-input:focus {
+  border-color: #ffb281;
+  box-shadow: 0 0 0 3px #ffaf6b12;
+}
+.fxdiag-input::placeholder {
+  color: #7b8ca9;
+}
+textarea.fxdiag-input {
+  resize: vertical;
+  min-height: 143px;
+  max-height: 260px;
+}
+.fxdiag-field {
+  margin-bottom: 18px;
+}
+.fxdiag-drop {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 182px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 11px;
+  border: 1px dashed #6a82a66b;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #24406335, #19253d40);
+  color: #d9e8ff;
+  cursor: pointer;
+  padding: 20px;
+  text-align: center;
+  font: inherit;
+}
+.fxdiag-drop:hover,
+.fxdiag-drop.drag {
+  border-color: #ffb281;
+  background: #ff9c6b08;
+}
+.fxdiag-drop svg {
+  width: 30px;
+  height: 30px;
+  color: #ffba8c;
+}
+.fxdiag-drop strong {
+  font-size: 14px;
+  font-weight: 650;
+}
+.fxdiag-drop small {
+  font-size: 11px;
+  color: #96a9c7;
+  line-height: 1.6;
+}
+.fxdiag-photos {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.fxdiag-photo {
+  position: relative;
+  width: 83px;
+  height: 83px;
+  border-radius: 11px;
+  background: #263550;
+  overflow: hidden;
+  border: 1px solid #4f638340;
+}
+.fxdiag-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.fxdiag-photo button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid #ffffff60;
+  background: #111c33c9;
+  color: white;
+  cursor: pointer;
+}
+.fxdiag-photo span {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background: #0c142be6;
+  font-size: 10px;
+  padding: 3px;
+  color: #cfdaf0;
+}
+.fxdiag-privacy {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #93a2bd;
+  margin-top: 16px;
+}
+.fxdiag-consent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  color: #b4c1d7;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 15px;
+  background: #ffffff03;
+  border-radius: 12px;
+  border: 1px solid #ffffff0b;
+  margin-top: 18px;
+}
+.fxdiag-consent input {
+  accent-color: #ff9c69;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+}
+.fxdiag-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 30px;
+  border-top: 1px solid var(--fd-line);
+  background: #10182a;
+  flex-shrink: 0;
+}
+.fxdiag-footnote {
+  font-size: 11px;
+  color: #8e9db9;
+  max-width: 310px;
+  line-height: 1.5;
+}
+.fxdiag-error {
+  color: #ffd5b7;
+  background: #a2472626;
+  border: 1px solid #b67b5140;
+  border-radius: 11px;
+  padding: 12px 15px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 16px;
+}
+.fxdiag-hazards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.fxdiag-hazard {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  padding: 15px 16px;
+  border: 1px solid #3a465d;
+  border-radius: 13px;
+  background: #ffffff03;
+  cursor: pointer;
+  color: #ced8ea;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.fxdiag-hazard:has(input:checked) {
+  border-color: #ee9c66;
+  background: #ff90440a;
+  color: #ffe0c4;
+}
+.fxdiag-hazard input {
+  accent-color: #ffa36e;
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+.fxdiag-note {
+  margin-top: 20px;
+  border-radius: 12px;
+  background: #202d44;
+  padding: 15px 17px;
+  font-size: 12px;
+  color: #bac9df;
+  line-height: 1.6;
+}
+.fxdiag-analyzing {
+  padding: 45px 20px 50px;
+  text-align: center;
+}
+.fxdiag-orbit {
+  width: 83px;
+  height: 83px;
+  margin: 0 auto 28px;
+  border: 1px solid #4c587350;
+  border-radius: 25px;
+  background: radial-gradient(circle, #fd9b6540, #c48cff09);
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+.fxdiag-orbit:after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border: 1px solid transparent;
+  border-top-color: #ffab78;
+  border-right-color: #8faef150;
+  border-radius: 30px;
+  animation: fxdiag-spin 3s linear infinite;
+}
+.fxdiag-orbit svg {
+  width: 33px;
+  height: 33px;
+  stroke: #ffd1ad;
+}
+@keyframes fxdiag-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.fxdiag-result-top {
+  padding: 23px;
+  border: 1px solid #42638266;
+  border-radius: 18px;
+  background: linear-gradient(125deg, #223e573d, #19283b20);
+  margin-bottom: 17px;
+}
+.fxdiag-result-top h3 {
+  font-size: 23px;
+  color: #eff7ff;
+  margin: 12px 0 8px;
+  letter-spacing: -0.025em;
+}
+.fxdiag-result-top p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #b8cbe0;
+  margin: 0;
+}
+.fxdiag-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 20px;
+  padding: 6px 10px;
+  background: #ffffff08;
+  border: 1px solid #ffffff19;
+  font-size: 10px;
+  color: #b0c1da;
+  letter-spacing: 0.02em;
+}
+.fxdiag-tag.urgent {
+  color: #ffd3a6;
+  border-color: #dfab6b50;
+  background: #ad651810;
+}
+.fxdiag-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.fxdiag-card {
+  padding: 18px;
+  border: 1px solid #ffffff10;
+  border-radius: 14px;
+  background: #ffffff03;
+}
+.fxdiag-card h3 {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a9bbd3;
+  margin: 0 0 12px;
+}
+.fxdiag-card ul {
+  margin: 0;
+  padding-left: 17px;
+  color: #d1dced;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.fxdiag-card li + li {
+  margin-top: 8px;
+}
+.fxdiag-source {
+  display: block;
+  font-size: 10px;
+  color: #849bb9;
+  margin-top: 2px;
+}
+.fxdiag-caution {
+  border: 1px solid #ca845955;
+  background: #a44d1915;
+  padding: 20px;
+  border-radius: 16px;
+  color: #ffd8b9;
+  margin-bottom: 16px;
+  line-height: 1.7;
+  font-size: 14px;
+}
+.fxdiag-caution h3 {
+  color: #ffe6d1;
+  margin: 0 0 10px;
+  font-size: 17px;
+}
+.fxdiag-choice {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.fxdiag-choice label {
+  border: 1px solid #52647d;
+  border-radius: 11px;
+  padding: 11px 16px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+}
+.fxdiag-choice label:has(input:checked) {
+  border-color: #ffb281;
+  background: #ff9c6912;
+}
+.fxdiag-choice input {
+  accent-color: #ff9c69;
+}
+@media (max-width: 700px) {
+  .fxdiag-section {
+    padding: 0 14px;
+    margin: 24px auto 45px;
+  }
+  .fxdiag-signature {
+    grid-template-columns: 1fr;
+    padding: 28px 23px;
+    gap: 26px;
+    border-radius: 23px;
+  }
+  .fxdiag-signature h2 {
+    font-size: 29px;
+  }
+  .fxdiag-signature p.fxdiag-copy {
+    font-size: 14px;
+  }
+  .fxdiag-visual {
+    padding: 18px;
+    transform: none;
+  }
+  .fxdiag-visual-frame {
+    padding: 16px;
+    margin: 12px 0;
+  }
+  .fxdiag-visual-frame svg {
+    width: 35px;
+    height: 35px;
+  }
+  .fxdiag-visual-tags {
+    transform: none;
+  }
+  .fxdiag-signature .fxdiag-button {
+    width: 100%;
+  }
+  dialog.fxdiag-modal {
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+  }
+  .fxdiag-shell {
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+  .fxdiag-head {
+    padding: 16px 20px;
+    padding-top: max(16px, env(safe-area-inset-top));
+  }
+  .fxdiag-body {
+    flex: 1;
+    padding: 24px 20px;
+  }
+  .fxdiag-grid {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+  .fxdiag-body h2 {
+    font-size: 28px;
+  }
+  .fxdiag-drop {
+    min-height: 135px;
+    padding: 17px;
+  }
+  .fxdiag-hazards {
+    grid-template-columns: 1fr;
+  }
+  .fxdiag-hazard {
+    padding: 12px 14px;
+  }
+  .fxdiag-footer {
+    padding: 14px 20px;
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
+    flex-wrap: wrap;
+  }
+  .fxdiag-footer .fxdiag-button {
+    flex: 1;
+  }
+  .fxdiag-footnote {
+    display: none;
+  }
+  .fxdiag-cards {
+    grid-template-columns: 1fr;
+  }
+  .fxdiag-analyzing {
+    padding: 55px 8px;
+  }
+  .fxdiag-result-top {
+    padding: 19px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fxdiag-orbit:after {
+    animation: none;
+  }
+  .fxdiag-button {
+    transition: none;
+  }
+}

@@ -9,17 +9,19 @@
     "test": "echo 'No tests yet'"
   },
   "dependencies": {
+    "ajv": "8.20.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.18.3",
     "multer": "^1.4.5-lts.1",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^2.7.0",
+    "sharp": "0.35.4"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.9.0"
   }
 }

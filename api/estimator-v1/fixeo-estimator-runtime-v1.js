@@ -62,6 +62,7 @@ function normalizeSessionView(session, secret) {
     metier:        session.metier,
     service_code:  session.service_code,
     known_inputs:  session.known_inputs,
+    ...(session.entry_context?.diagnostic ? {question_history: session.question_history || []} : {}),
     state:         session.state,
     ui_recommendation: session.ui_recommendation,
     pending_questions: session.pending_questions,
@@ -186,6 +187,10 @@ function buildPricingContextPayload(session) {
     // Cryptographic nonce — server-generated, prevents client-side context_id forgery.
     // Uniquely identifies this pricing evaluation event.
     context_id:    generateContextId(),
+    ...(session.entry_context?.diagnostic ? {
+      diagnostic: session.entry_context.diagnostic,
+      diagnostic_qualification_answers: (session.question_history || []).map(q => ({...q, provenance:'user_confirmed'}))
+    } : {}),
     // Price fields — canonical
     amount_mad:         (o.price && o.price.amount_mad)         !== undefined ? (o.price.amount_mad)        : null,
     labour_amount_mad:  (o.price && o.price.labour_amount_mad)  !== undefined ? (o.price.labour_amount_mad) : null,

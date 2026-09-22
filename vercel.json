@@ -113,6 +113,28 @@
   ],
   "routes": [
     {
+      "src": "^/js/supabase-client\\.js$",
+      "dest": "/api/server.js",
+      "headers": {
+        "Cache-Control": "private, no-store"
+      }
+    },
+    {
+      "src": "^/api/env(?:\\.js)?$",
+      "dest": "/api/server.js",
+      "headers": {
+        "Cache-Control": "private, no-store"
+      }
+    },
+    {
+      "src": "^/api/diagnostic-maintenance$",
+      "dest": "/api/server.js"
+    },
+    {
+      "src": "^/api/diagnostic-v1$",
+      "dest": "/api/server.js"
+    },
+    {
       "src": "^/api/estimator-v1$",
       "dest": "/api/estimator-v1/index.js"
     },
@@ -716,7 +738,7 @@
       ]
     },
     {
-      "source": "/(.*)\\.js",
+      "source": "/((?!js/supabase-client\\.js$|api/env\\.js$).*)\\.js",
       "headers": [
         {
           "key": "Cache-Control",
@@ -737,5 +759,10 @@
         }
       ]
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "feat/diagnostic-v1": false
+    }
+  }
 }

@@ -1,24 +1,24 @@
 /**
- * FIXEO — Supabase Client Layer v1.0
+ * FIXEO — Supabase Client Layer v1.1
  * ====================================
- * Usage: paste your project credentials at the top of this file.
- *
- * MANUAL STEP REQUIRED (once only):
- *   Replace FIXEO_SUPABASE_URL  with your project URL  (e.g. https://xxxx.supabase.co)
- *   Replace FIXEO_SUPABASE_ANON with your anon/public key
- *
- * Everything else is wired automatically.
+ * Vercel serves this file through the existing server function, preceded by
+ * public environment configuration. Static fallback is restricted to fixeo.ma.
  */
 
 (function (window) {
   'use strict';
 
-  /* ══════════════════════════════════════════════════════════
-   *  ❶  PASTE YOUR CREDENTIALS HERE
-   * ══════════════════════════════════════════════════════════ */
-  var SUPABASE_URL  = 'https://ztwtbgoqanqzvwiibtuh.supabase.co';
-  var SUPABASE_ANON = 'sb_publishable_OGW8g7fM5ct1_ZFUxFIs-g_UzXuQPSk';
-  /* ══════════════════════════════════════════════════════════ */
+  var env = window.FIXEO_ENV;
+  var productionHost = /^(www\.)?fixeo\.ma$/.test(window.location.hostname);
+  var SUPABASE_URL = env ? String(env.SUPABASE_URL || '') :
+    (productionHost ? 'https://ztwtbgoqanqzvwiibtuh.supabase.co' : '');
+  var SUPABASE_ANON = env ? String(env.SUPABASE_ANON_KEY || '') :
+    (productionHost ? 'sb_publishable_OGW8g7fM5ct1_ZFUxFIs-g_UzXuQPSk' : '');
+  if (!productionHost && (!env || env.FIXEO_DEPLOYMENT_ENV !== 'production') &&
+      /^https:\/\/(ztwtbgoqanqzvwiibtuh|avzawlissxfdjgxfeaxu)\.supabase\.co\/?$/.test(SUPABASE_URL)) {
+    SUPABASE_URL = '';
+    SUPABASE_ANON = '';
+  }
 
   var CONFIGURED = (
     SUPABASE_URL  !== 'FIXEO_SUPABASE_URL'  && SUPABASE_URL  !== '' &&
@@ -41,6 +41,7 @@
   var _client = null;
 
   function _getClient() {
+    if (!CONFIGURED) return null;
     if (_client) return _client;
     if (!window.supabase || !window.supabase.createClient) {
       console.error('[FixeoSupabaseClient] SDK not loaded yet. Use FixeoSupabaseClient.ready().');
@@ -82,7 +83,7 @@
 
   /* ── Public API ─────────────────────────────────────────── */
   window.FixeoSupabaseClient = {
-    version:    '1.0',
+    version:    '1.1',
     CONFIGURED: CONFIGURED,
     URL:        SUPABASE_URL,
     ready:      ready,

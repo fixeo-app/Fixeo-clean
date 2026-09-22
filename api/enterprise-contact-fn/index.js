@@ -23,6 +23,7 @@
  *   SUPABASE_SERVICE_ROLE_KEY — service_role JWT (secret)
  */
 'use strict';
+require('../supabase-environment').assertServerTarget();
 
 /* ── In-memory rate limiter ── */
 var _rateMap = {};

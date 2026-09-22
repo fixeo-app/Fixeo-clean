@@ -31,6 +31,7 @@
  */
 
 'use strict';
+require('../supabase-environment').assertServerTarget();
 
 
 /* ── UUID guard ────────────────────────────────────────────── */

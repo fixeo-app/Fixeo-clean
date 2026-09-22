@@ -39,6 +39,7 @@
  *   SUPABASE_SERVICE_ROLE_KEY — service_role JWT (secret, server-side only)
  */
 'use strict';
+require('../supabase-environment').assertServerTarget();
 
 /* ── CORS headers ── */
 var CORS_HEADERS = {
@@ -357,6 +358,10 @@ module.exports = async function handler(req, res) {
   var body = req.body || {};
   if (typeof body === 'string') {
     try { body = JSON.parse(body); } catch (_) { body = {}; }
+  }
+
+  if (body.diagnostic_estimator_token) {
+    return require('../diagnostic/estimator-bridge').confirmQuote(req, res, body, {dispatch:_callDispatch});
   }
 
   /* Extract fields */

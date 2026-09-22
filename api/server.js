@@ -40,6 +40,7 @@ const fs         = require('fs');
 require('dotenv').config({
   path: path.resolve(__dirname, '../.env')
 });
+require('./supabase-environment').assertServerTarget();
 
 /* ── Phase 7C.9C — Server-Authoritative Booking Price Resolver ──────────── */
 /* Resolves the canonical booking price from an encrypted estimator context   */
@@ -62,6 +63,22 @@ const {
 
 const app  = express();
 const PORT = process.env.PORT || 3001;
+
+app.get('/js/supabase-client.js', require('./public-supabase-client').serveClient);
+
+/* Diagnostic is isolated from legacy multipart parsing and permissive CORS.
+ * Reuse this deployed function; load media/provider modules only when requested. */
+app.all('/api/diagnostic-v1', express.json({limit: '32kb', strict: true}), function(req, res) {
+  return require('./diagnostic').createHandler()(req, res);
+});
+app.use('/api/diagnostic-v1', function(err, req, res, next) {
+  res.set('Cache-Control', 'no-store');
+  return res.status(err && err.type === 'entity.too.large' ? 413 : 400)
+    .json({ok: false, error: 'INVALID_BODY'});
+});
+app.all('/api/diagnostic-maintenance', function(req, res) {
+  return require('./diagnostic/maintenance').createMaintenance()(req, res);
+});
 
 /* ── Config PayPal ─────────────────────────────────────────── */
 const PAYPAL_MODE      = process.env.PAYPAL_MODE      || 'sandbox';
@@ -374,18 +391,17 @@ if (requestedLanguage === 'fr-FR') {
 
 /* ── Exposer les variables frontend publiques ─────────────── */
 app.get('/api/env.js', (req, res) => {
+  res.setHeader('Cache-Control', 'private, no-store');
   res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-  res.send(`window.FIXEO_ENV = Object.assign({}, window.FIXEO_ENV || {}, {
-    SUPABASE_URL: ${JSON.stringify(SUPABASE_URL)},
-    SUPABASE_ANON_KEY: ${JSON.stringify(SUPABASE_ANON_KEY)}
-  });`);
+  try {
+    res.send('window.FIXEO_ENV = ' + JSON.stringify(require('./supabase-environment').publicConfig()) + ';');
+  } catch (_) { res.status(503).send('/* Public configuration unavailable. */'); }
 });
 
 app.get('/api/env', (req, res) => {
-  res.json({
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  });
+  res.setHeader('Cache-Control', 'private, no-store');
+  try { res.json(require('./supabase-environment').publicConfig()); }
+  catch (_) { res.status(503).json({error: 'PUBLIC_CONFIG_UNAVAILABLE'}); }
 });
 
 /* Servir les avatars artisans statiquement */

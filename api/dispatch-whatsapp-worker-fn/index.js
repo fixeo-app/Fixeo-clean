@@ -1,3 +1,4 @@
+require('../supabase-environment').assertServerTarget();
 // FIXEO Dispatch WhatsApp Worker — V1 DRY RUN
 // No real WhatsApp message is sent by this version.
 

@@ -369,15 +369,13 @@ var priceHint = 'Avant intervention';
       };
       return true;
     }
-    if (window.supabase && window.supabase.createClient && !fsc._retried) {
+    if (fsc.CONFIGURED && typeof fsc.ready === 'function' && !fsc._retried) {
       fsc._retried = true;
-      var c = window.supabase.createClient(
-        'https://ztwtbgoqanqzvwiibtuh.supabase.co',
-        'sb_publishable_OGW8g7fM5ct1_ZFUxFIs-g_UzXuQPSk'
-      );
       fsc.query = function (fn) {
-        try { return Promise.resolve(fn(c)); }
-        catch (e) { return Promise.reject(e); }
+        return fsc.ready().then(function (ready) {
+          if (!ready || !ready.client) throw new Error('Supabase unavailable');
+          return fn(ready.client);
+        });
       };
       return true;
     }

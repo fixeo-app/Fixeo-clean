@@ -621,7 +621,8 @@
     'urgency_context',
     'urgency',
 
-    'known_inputs'
+    'known_inputs',
+    'diagnostic_token'
   ];
 
 
@@ -3951,6 +3952,31 @@
   var _activeModal =
     null;
 
+  // Keep an unfinished journey in memory only. Never persist form text or prices.
+  var _pausedModal = null;
+  function _cityKey(value) {
+    return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase().replace(/[-_\s]+/g, ' ').trim();
+  }
+  function _sameJourney(ctx, modal) {
+    if (!modal || modal._quoteAttempt?.completed) return false;
+    var initial = modal._initialContext, current = modal._entryContext;
+    return Object.keys(ctx).every(function(key) {
+      var value = ctx[key];
+      if (value === '' || value === null || value === undefined) return true;
+      if (key === 'city' || key === 'city_slug') {
+        return [initial.city || initial.city_slug, current.city || current.city_slug]
+          .some(function(city) { return _cityKey(value) === _cityKey(city); });
+      }
+      if (key === 'description' || key === 'free_text') {
+        return [initial.description || initial.free_text, current.description || current.free_text]
+          .some(function(text) { return _cleanText(value, 2000) === _cleanText(text, 2000); });
+      }
+      return JSON.stringify(value) === JSON.stringify(initial[key]) ||
+        JSON.stringify(value) === JSON.stringify(current[key]);
+    }) && !!ctx.diagnostic_token === !!current.diagnostic_token;
+  }
+
 
   var _activeContainer =
     null;
@@ -3989,11 +4015,27 @@
 
 
   function _destroyContainer() {
+    // An in-flight quote may already have dispatched. Keep its one live attempt.
+    if (_activeModal && _activeModal._quoteAttempt?.pending) return;
     if (
       !_activeContainer &&
       !_activeModal
     ) {
       return;
+    }
+
+    if (_activeModal) {
+      var need = document.getElementById('estimator-need-input');
+      var city = document.getElementById('estimator-city-input');
+      if (need && city) {
+        _activeModal._entryContext.description = _activeModal._entryContext.free_text = need.value;
+        _activeModal._entryContext.city = _activeModal._entryContext.city_slug = city.value;
+        if (_activeModal._view) _activeModal._view.context = copyJourney(_activeModal._entryContext);
+      }
+      if (_activeModal._view?.step?.type === 'QUESTION' && STATE.pendingAnswer !== null)
+        _activeModal._view.answer = STATE.pendingAnswer;
+      ++_activeModal._requestEpoch; // Late responses cannot change a reopened journey.
+      _pausedModal = _activeModal;
     }
 
 
@@ -4100,6 +4142,8 @@
     this._entryContext =
       opts.entryContext ||
       {};
+
+    this._initialContext = copyJourney(this._entryContext);
 
 
     this._pricingContextToken =
@@ -4267,7 +4311,13 @@
       );
 
 
-      this._renderUnderstand();
+      if (this._resuming) {
+        this._resuming = false;
+        this._restoreView();
+        if (this._quoteOpen && this._view?.outcome) this._renderQuoteRequest(this._view.outcome);
+      }
+      else if (this._entryContext.diagnostic_token) this._startSession();
+      else this._renderUnderstand();
     };
 
 
@@ -4654,8 +4704,8 @@ var cityInput =
           if (
             city &&
             currentCity &&
-            city.toLowerCase() ===
-              currentCity.toLowerCase()
+            _cityKey(city) ===
+              _cityKey(currentCity)
           ) {
             option.selected =
               true;
@@ -6430,16 +6480,21 @@ var cityInput =
     ++this._requestEpoch;
     var previous = this._history.pop();
     this._view = previous;
+    this._restoreView(true);
+  };
+  EstimatorModal.prototype._restoreView = function(back) {
+    var previous = this._view;
+    if (!previous) return this._renderUnderstand();
     this._entryContext = copyJourney(previous.context);
     STATE.session = previous.session;
     STATE.sessionToken = previous.token;
     STATE.pendingAnswer = null;
-    this._pricingContextToken = null;
+    this._pricingContextToken = back ? null : previous.pricingToken;
     var modal = document.querySelector('.estimator-modal');
     if (modal) modal.classList.remove('result-active');
     this._restoring = true;
     try {
-      if (previous.kind === 'understand') this._renderUnderstand();
+      if (previous.kind === 'understand' || previous.kind === 'error') this._renderUnderstand();
       else if (previous.kind === 'outcome') {
         this._pricingContextToken = previous.pricingToken;
         this._renderOutcome(previous.session, previous.outcome);
@@ -6465,12 +6520,20 @@ var cityInput =
     var old = document.getElementById('rafi-step-back');
     if (old) old.remove();
     var slot = document.getElementById('progress-slot');
-    if (!slot || !this._history.length) return;
+    var diagnosticBack = !this._history.length && this._entryContext && this._entryContext.diagnostic_token && window.FixeoDiagnostic;
+    if (!slot || (!this._history.length && !diagnosticBack)) return;
     var self = this;
-    var back = el('button', 'btn-back', '← Étape précédente');
+    var back = el('button', 'btn-back', diagnosticBack ? '← Retour au diagnostic' : '← Étape précédente');
     back.id = 'rafi-step-back'; back.type = 'button';
     back.style.cssText = 'margin:8px 20px;padding:10px 14px;min-height:44px;color:#e8efff;background:#24334a;border:1px solid #617699;border-radius:12px;cursor:pointer';
-    back.addEventListener('click', function() { self._back(); });
+    back.addEventListener('click', function() {
+      if (self._quoteOpen) return self._back();
+      if (diagnosticBack) {
+        window.FixeoDiagnostic.open().catch(function() {
+          self._showError('Le diagnostic est momentanément indisponible. Réessayez.');
+        });
+      } else self._back();
+    });
     slot.insertBefore(back, slot.firstChild);
     var ctx = document.getElementById('ctx-slot');
     if (ctx && !ctx.querySelector('.rafi-need-summary')) {
@@ -6515,8 +6578,9 @@ var cityInput =
     var empty=el('option','','Choisir une ville');empty.value='';city.appendChild(empty);
     (window.FIXEO_CITIES_MAP||[]).forEach(function(c){var o=el('option','',c.label);o.value=c.label;city.appendChild(o);});
     var cityValue=self._quoteDraft?.city||ctx.city||ctx.city_slug||'';
-    var match=(window.FIXEO_CITIES_MAP||[]).find(function(c){return c.value===cityValue||c.label===cityValue;});
+    var match=(window.FIXEO_CITIES_MAP||[]).find(function(c){return c.value===cityValue||c.label===cityValue||(ctx.diagnostic_token&&c.value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,'-')===cityValue);});
     city.value=match?match.label:'';city.required=true;
+    if(ctx.diagnostic_token){description.readOnly=true;city.disabled=true;}
     var phone=field('Votre numéro pour être recontacté','rafi-quote-phone',el('input',''));
     phone.type='tel';phone.inputMode='tel';phone.autocomplete='tel';phone.placeholder='06 XX XX XX XX';phone.required=true;phone.value=self._quoteDraft?.phone||'';
     var status=el('p','estimator-quote-status');status.setAttribute('role','status');
@@ -6537,6 +6601,10 @@ var cityInput =
       var metier=STATE.session?.metier||ctx.metier_hint||'autre';
       var accepted=['plomberie','electricite','serrurerie','climatisation','menuiserie','peinture','maconnerie','nettoyage','jardinage','demenagement','carrelage'];
       var payload={service_category:accepted.includes(metier)?metier:'autre',city:city.value==='Témara'?'Temara':city.value,description:('Demande de devis — aucun prix confirmé. '+(outcome.service_label||resolveClientLabel(outcome.service_code).primary)+' : '+description.value.trim()).slice(0,1000),client_phone:normalizedPhone,urgency:'normale'};
+      if(ctx.diagnostic_token){
+        payload.diagnostic_estimator_token=STATE.sessionToken;
+        if(/^212/.test(payload.client_phone))payload.client_phone='+'+payload.client_phone;
+      }
       var fingerprint=JSON.stringify(payload);
       if(self._quoteAttempt && self._quoteAttempt.fingerprint!==fingerprint && self._quoteAttempt.uncertain){status.textContent='Un envoi précédent reste à vérifier. Réessayez avec les mêmes informations avant de les modifier.';return;}
       send.disabled=true;
@@ -6557,14 +6625,17 @@ var cityInput =
       var controller=new window.AbortController();
       var timeout=window.setTimeout(function(){controller.abort();},20000);
       try{
-        var response=await fetch('/api/create-request-fn',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
+        var headers=ctx.diagnostic_token&&window.FixeoDiagnostic ? await window.FixeoDiagnostic.authHeaders(true) : {'Content-Type':'application/json'};
+        var response=await fetch('/api/create-request-fn',{method:'POST',headers:headers,credentials:'same-origin',body:JSON.stringify(payload),signal:controller.signal});
         var result=await response.json();
         if(!response.ok||!result.ok||!result.id)throw new Error('request_failed');
+        if(ctx.diagnostic_token&&window.FixeoDiagnostic){window.FixeoDiagnostic.saveTracking(result);}
         attempt.uncertain=false;attempt.completed=true;self._quoteOpen=false;self._history=[];
         var headerBack=document.getElementById('rafi-step-back');if(headerBack)headerBack.remove();
         form.replaceChildren(el('h3','','Votre demande de devis est enregistrée'),el('p','','Référence : '+(result.ref||result.id)),el('p','','Le périmètre et le prix restent à confirmer. Aucune intervention n’est réservée à ce stade.'));
+        if(ctx.diagnostic_token&&result.tracking_ref){var tracking=el('a','btn-primary','Suivre ma demande');tracking.href='/suivi?ref='+encodeURIComponent(result.tracking_ref);form.appendChild(tracking);}
         var done=el('button','btn-primary','Fermer');done.type='button';done.onclick=function(){if(STATE.onClose)STATE.onClose();};form.appendChild(done);
-      }catch(_){status.textContent='La confirmation n’a pas été reçue. Réessayez : le même envoi sera réutilisé pour éviter un doublon.';send.disabled=false;back.disabled=false;description.disabled=false;city.disabled=false;phone.disabled=false;}
+      }catch(_){status.textContent='La confirmation n’a pas été reçue. Réessayez : le même envoi sera réutilisé pour éviter un doublon.';send.disabled=false;back.disabled=false;description.disabled=false;city.disabled=!!ctx.diagnostic_token;phone.disabled=false;}
       finally{window.clearTimeout(timeout);attempt.pending=false;}
     });
   };
@@ -6608,8 +6679,12 @@ var cityInput =
             _createContainer();
 
 
-          _activeModal =
-            new EstimatorModal(
+          if (_sameJourney(normalizedCtx, _pausedModal)) {
+            _activeModal = _pausedModal;
+            _activeModal._root = _activeContainer;
+            _activeModal._resuming = true;
+            STATE.onClose = _destroyContainer;
+          } else _activeModal = new EstimatorModal(
               _activeContainer,
               {
                 entryContext:
@@ -6621,7 +6696,7 @@ var cityInput =
                   }
               }
             );
-
+          _pausedModal = null;
 
           _activeModal.render();
 
@@ -6720,6 +6795,3 @@ var cityInput =
   };
 
 }());
-
-
-
