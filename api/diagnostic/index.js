@@ -407,6 +407,7 @@ function createHandler({
           action: ACTIONS.has(action) ? action : 'unknown',
           code,
           latency_ms: Date.now() - started,
+          ...(error.diagnosticTransport ? { transport: error.diagnosticTransport } : {}),
         }),
       );
       return send(res, error instanceof DiagnosticError ? error.status : 502, {

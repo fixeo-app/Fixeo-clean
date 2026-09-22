@@ -1,0 +1,50 @@
+'use strict';
+const { AsyncLocalStorage } = require('node:async_hooks');
+const { channel } = require('node:diagnostics_channel');
+const scope = new AsyncLocalStorage();
+const requests = new WeakMap();
+const NAMES = new Set(['Error', 'TypeError', 'AbortError', 'TimeoutError', 'AggregateError', 'ConnectTimeoutError', 'SocketError']);
+const CODES = new Set(['ECONNRESET', 'ECONNREFUSED', 'ENOTFOUND', 'EAI_AGAIN', 'ENETUNREACH', 'EHOSTUNREACH', 'ETIMEDOUT', 'EPIPE', 'ABORT_ERR', 'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT', 'UND_ERR_BODY_TIMEOUT', 'UND_ERR_SOCKET', 'UND_ERR_ABORTED', 'CERT_HAS_EXPIRED', 'UNABLE_TO_VERIFY_LEAF_SIGNATURE']);
+function safeError(error) {
+  const chain = [];
+  for (let e = error, n = 0; e && n < 4; e = e.cause, n++) {
+    chain.push({ name: NAMES.has(e.name) ? e.name : 'OtherError', ...(CODES.has(e.code) ? { code: e.code } : {}) });
+  }
+  return chain;
+}
+function mark(trace, phase) {
+  if (trace && !trace.finished && trace.events.length < 16)
+    trace.events.push({ phase, ms: Date.now() - trace.started });
+}
+channel('undici:request:create').subscribe(({ request }) => {
+  const trace = scope.getStore();
+  if (trace) { requests.set(request, trace); mark(trace, 'created'); }
+});
+for (const [name, phase] of [
+  ['undici:client:sendHeaders', 'sending'],
+  ['undici:request:bodySent', 'body_sent'],
+  ['undici:request:headers', 'response_headers'],
+  ['undici:request:trailers', 'response_complete'],
+]) channel(name).subscribe(({ request }) => mark(requests.get(request), phase));
+channel('undici:request:error').subscribe(({ request, error }) => {
+  const trace = requests.get(request);
+  if (trace && !trace.finished) { trace.network_error = safeError(error); mark(trace, 'request_error'); }
+});
+for (const [name, phase] of [
+  ['undici:client:beforeConnect', 'connecting'],
+  ['undici:client:connected', 'connected'],
+  ['undici:client:connectError', 'connect_error'],
+]) channel(name).subscribe(() => mark(scope.getStore(), phase));
+
+async function tracedRequest(operation, fn) {
+  const trace = { started: Date.now(), events: [], finished: false };
+  try { return await scope.run(trace, fn); }
+  catch (error) {
+    // Never include raw errors, URLs, paths, headers, payloads or socket details.
+    error.diagnosticTransport = { operation, elapsed_ms: Date.now() - trace.started,
+      events: trace.events, errors: safeError(error),
+      ...(trace.network_error ? { network_error: trace.network_error } : {}) };
+    throw error;
+  } finally { trace.finished = true; }
+}
+module.exports = { tracedRequest, safeError };

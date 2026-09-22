@@ -1,4 +1,5 @@
 'use strict';
+const { tracedRequest } = require('./http-trace');
 class DiagnosticError extends Error {
   constructor(code, status = 400) {
     super(code);
@@ -55,7 +56,7 @@ function createTransport({
     const remaining = deadline - Date.now();
     if (remaining < 500) throw new DiagnosticError('DEPENDENCY_TIMEOUT', 504);
     try {
-      response = await fetchImpl(root + path, {
+      response = await tracedRequest(path === '/rest/v1/rpc/diagnostic_quota_v1' ? 'quota' : path.startsWith('/rest/v1/rpc/') ? 'rpc' : 'storage', () => fetchImpl(root + path, {
         method,
         headers: {
           apikey: key,
@@ -69,9 +70,11 @@ function createTransport({
           Math.max(1, Math.min(requestTimeout, remaining)),
         ),
         redirect: 'error',
-      });
-    } catch (_) {
-      throw new DiagnosticError('DEPENDENCY_UNAVAILABLE', 503);
+      }));
+    } catch (cause) {
+      const error = new DiagnosticError('DEPENDENCY_UNAVAILABLE', 503);
+      error.diagnosticTransport = cause.diagnosticTransport;
+      throw error;
     }
     const buffer = await boundedBody(response, maxBytes);
     if (!response.ok) {
