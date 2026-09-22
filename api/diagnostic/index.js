@@ -7,6 +7,7 @@ const { sameOrigin, principal, ipHash, hash } = require('./auth');
 const { createMedia, sanitizePhoto } = require('./media');
 const { createOpenAIAdapter } = require('./providers/openai');
 const { analyze } = require('./engine');
+const { confirmCritical } = require('./critical-request');
 const { sealToken } = require('../estimator-v1/fixeo-estimator-token-v1');
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const ACTIONS = new Set([
@@ -19,6 +20,7 @@ const ACTIONS = new Set([
   'media_url',
   'analyze',
   'handoff',
+  'confirm_critical',
   'mission_context',
 ]);
 function validatedInput(value) {
@@ -68,6 +70,8 @@ function publicView(data) {
     input: s.input,
     expires_at: s.expires_at,
     request_id: s.service_request_id,
+    request_ref: s.booking_context?.kind === 'critical' ? s.booking_context.tracking_ref : null,
+    result_run_id: data.run?.state === 'complete' ? data.run.id : null,
     analysis_retry_after:
       data.run?.state === 'running' ? data.run.lease_until : null,
     media: (data.media || []).map((m) => ({
@@ -362,6 +366,10 @@ function createHandler({
             throw error;
           }
         }
+      } else if (action === 'confirm_critical') {
+        data = await call('get');
+        const confirmation = await confirmCritical({ body, data, actor, transport, env });
+        return send(res, 200, confirmation);
       } else if (action === 'handoff') {
         data = await call('get');
         if (

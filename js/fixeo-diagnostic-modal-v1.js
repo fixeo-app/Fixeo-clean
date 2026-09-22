@@ -65,7 +65,7 @@
       'Étincelles, odeur de brûlé, choc électrique ou eau sur l’installation électrique',
     gas: 'Odeur de gaz',
     fire: 'Flammes ou fumée importante',
-    major_leak: 'Fuite d’eau importante',
+    major_leak: 'Fuite d’eau incontrôlable',
     flood: 'Eau qui se propage / inondation',
     structure: 'Affaissement ou risque de chute',
     immediate_danger: 'Autre danger immédiat',
@@ -270,6 +270,14 @@
     queueLayout();
   }
   function updateComposeAvailability() {
+    if (current === 'critical' && node('fxdiag-next')) {
+      var phone = node('fxdiag-critical-phone').value.replace(/[\s().-]+/g, '');
+      node('fxdiag-next').disabled =
+        busy ||
+        !node('fxdiag-critical-ack').checked ||
+        !/^(\+212|0)[5-7][0-9]{8}$/.test(phone);
+      return;
+    }
     if (current !== 'compose' || !node('fxdiag-next')) return;
     var hasMedia =
       pending.length ||
@@ -302,6 +310,8 @@
     if (/MEDIA|IMAGE|MIME|PHOTO|PIXEL|UPLOAD/.test(code))
       return 'Cette photo n’a pas pu être validée. Utilisez une image JPEG, PNG ou WebP de moins de 8 Mio.';
     if (/VALIDATION:/.test(code)) return code.slice(11);
+    if (/SAFETY_ACKNOWLEDGEMENT_REQUIRED/.test(code))
+      return 'Confirmez avoir pris connaissance des consignes de sécurité avant d’enregistrer votre demande.';
     return 'L’opération n’a pas abouti. Vos informations restent dans ce dossier. Réessayez dans un instant.';
   }
   function showError(error) {
@@ -939,6 +949,10 @@
       4,
     );
     if (r.safety.stop) {
+      var canAcknowledge =
+        r.safety.version === 'fixeo-risk-routing-v2' &&
+        r.safety.level === 'CRITICAL' &&
+        session.result_run_id;
       body.insertAdjacentHTML(
         'beforeend',
         '<section class="fxdiag-caution"><h3>Un danger potentiel a été signalé</h3><ul>' +
@@ -947,8 +961,55 @@
               return '<li>' + esc(t) + '</li>';
             })
             .join('') +
-          '</ul><p>Le parcours de réservation est interrompu pour cette situation.</p></section>',
+          '</ul><p>' +
+          (canAcknowledge
+            ? 'FIXEO ne remplace jamais les secours. Mettez-vous à l’abri et contactez les services d’urgence locaux si nécessaire. N’attendez pas une réponse FIXEO pour agir face au danger.'
+            : 'Le parcours de réservation est interrompu pour cette situation.') +
+          '</p></section>',
       );
+      if (canAcknowledge) {
+        current = 'critical';
+        body.insertAdjacentHTML(
+          'beforeend',
+          '<p class="fxdiag-note">Vous pouvez ensuite enregistrer une demande professionnelle, classée CRITICAL. Cela ne confirme ni la sécurité des lieux ni la disponibilité d’un intervenant.</p>' +
+            '<div class="fxdiag-field"><label for="fxdiag-critical-phone">Téléphone pour le suivi</label><input class="fxdiag-input" id="fxdiag-critical-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="24" placeholder="06 XX XX XX XX"></div>' +
+            '<label class="fxdiag-consent"><input type="checkbox" id="fxdiag-critical-ack"><span>J’ai pris connaissance des consignes de mise à distance et je comprends que FIXEO ne remplace pas les secours.</span></label>',
+        );
+        actions(
+          'Enregistrer une demande FIXEO',
+          async function () {
+            if (!node('fxdiag-critical-ack').checked)
+              throw new Error('SAFETY_ACKNOWLEDGEMENT_REQUIRED');
+            var confirmation = await API.api({
+              action: 'confirm_critical',
+              session_id: session.id,
+              revision: session.revision,
+              client_phone: node('fxdiag-critical-phone').value,
+              acknowledgement: {
+                accepted: true,
+                version: 'fixeo-critical-ack-v1',
+                run_id: session.result_run_id,
+              },
+            });
+            session.state = 'bound';
+            session.request_id = confirmation.request_id;
+            session.request_ref = confirmation.tracking_ref;
+            renderState();
+          },
+          'Fermer',
+          close,
+        );
+        node('fxdiag-critical-phone').addEventListener(
+          'input',
+          updateComposeAvailability,
+        );
+        node('fxdiag-critical-ack').addEventListener(
+          'change',
+          updateComposeAvailability,
+        );
+        updateComposeAvailability();
+        return;
+      }
       actions('Fermer', close);
       return;
     }
@@ -956,10 +1017,12 @@
       { low: 'Faible', moderate: 'Modérée', high: 'Élevée' }[r.urgency.value] ||
       'À confirmer';
     var electricalRisk = (r.safety.signals || []).includes('electrical_risk');
-    if (electricalRisk) {
+    if (electricalRisk || r.safety.level === 'URGENT') {
       body.insertAdjacentHTML(
         'beforeend',
-        '<section class="fxdiag-caution" role="alert"><h3>Risque électrique — intervention rapide recommandée</h3><ul>' +
+        '<section class="fxdiag-caution" role="alert"><h3>' +
+          (electricalRisk ? 'Risque électrique' : 'Urgence technique élevée') +
+          ' — intervention rapide recommandée</h3><ul>' +
           (r.safety.messages || [])
             .map(function (message) {
               return '<li>' + esc(message) + '</li>';
@@ -968,6 +1031,11 @@
           '</ul></section>',
       );
     }
+    if (r.safety.level === 'TECHNICAL')
+      body.insertAdjacentHTML(
+        'beforeend',
+        '<p class="fxdiag-note">Une intervention professionnelle est recommandée pour confirmer le diagnostic.</p>',
+      );
     body.insertAdjacentHTML(
       'beforeend',
       '<section class="fxdiag-result-top"><span class="fxdiag-tag">Métier recommandé · hypothèse FIXEO</span><h3>' +
@@ -1015,11 +1083,25 @@
   function renderState() {
     if (session && session.state === 'bound') {
       current = 'bound';
+      var criticalRequest =
+        session.result?.safety?.version === 'fixeo-risk-routing-v2' &&
+        session.result.safety.level === 'CRITICAL';
       frame(
         'Votre demande a été enregistrée',
-        'Ce diagnostic accompagne maintenant votre intervention.',
+        criticalRequest
+          ? 'Priorité CRITICAL. La prise en charge par un professionnel reste à confirmer.'
+          : 'Ce diagnostic accompagne maintenant votre intervention.',
         4,
       );
+      if (criticalRequest)
+        body.insertAdjacentHTML(
+          'beforeend',
+          '<section class="fxdiag-caution" role="alert"><h3>Votre sécurité reste prioritaire</h3><p>FIXEO ne remplace jamais les secours. Gardez vos distances et contactez les services d’urgence locaux si nécessaire. N’attendez pas une réponse FIXEO face au danger.</p>' +
+            (session.request_ref
+              ? '<p>Référence : ' + esc(session.request_ref) + '</p>'
+              : '') +
+            '</section>',
+        );
       actions('Fermer', close, 'Nouveau diagnostic', reset);
       return;
     }

@@ -1,6 +1,6 @@
 "use strict";
 const { VERSION, QUESTIONS, validateProviderResult } = require("./contract");
-const { evaluateSafety } = require("./safety");
+const { evaluateSafety, safetyTrade } = require("./safety");
 const { hash } = require("./auth");
 const { DiagnosticError } = require("./transport");
 const {
@@ -42,8 +42,15 @@ async function analyze(snapshot, { provider, mediaStore }) {
       result: {
         version: VERSION,
         indicative,
-        trade: null,
-        problem: null,
+        trade: {
+          value: safetyTrade(input, before.signals),
+          provenance: "ai_inferred",
+        },
+        problem: {
+          value:
+            "Danger immédiat signalé — évaluation professionnelle nécessaire après mise en sécurité.",
+          provenance: "ai_inferred",
+        },
         facts: declarations,
         hypotheses: [],
         possible_parts: [],
@@ -53,7 +60,7 @@ async function analyze(snapshot, { provider, mediaStore }) {
         urgency: {
           value: "critical",
           provenance: "ai_inferred",
-          basis: "fixeo-safety-v1",
+          basis: before.version,
         },
         duration: null,
         pricing: null,
@@ -134,9 +141,11 @@ async function analyze(snapshot, { provider, mediaStore }) {
       })),
       checks: [
         ...photoLimitations(photos),
-        ...(electricalRisk
+        ...(safety.level === "URGENT"
           ? [
-              "Intervention rapide d’un électricien recommandée. L’installation doit être vérifiée sur place par un professionnel.",
+              electricalRisk
+                ? "Intervention rapide d’un électricien recommandée. L’installation doit être vérifiée sur place par un professionnel."
+                : "Intervention professionnelle rapide recommandée pour vérifier la situation sur place.",
             ]
           : []),
         ...model.checks,
@@ -150,13 +159,13 @@ async function analyze(snapshot, { provider, mediaStore }) {
       urgency: {
         value: safety.stop
           ? "critical"
-          : electricalRisk
+          : safety.level === "URGENT"
             ? "high"
             : model.urgency,
         provenance: "ai_inferred",
         reason:
-          electricalRisk && !safety.stop
-            ? "Risque électrique à traiter rapidement par un professionnel. L’absence de signe actif ne garantit pas l’absence de danger."
+          safety.level === "URGENT" && !safety.stop
+            ? "Situation à traiter rapidement par un professionnel. L’absence de signe actif ne garantit pas l’absence de danger."
             : model.urgency_reason,
       },
       duration: null,

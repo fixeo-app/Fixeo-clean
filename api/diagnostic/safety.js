@@ -1,6 +1,20 @@
 "use strict";
 const { HAZARDS, QUESTIONS } = require("./contract");
+const RISK_VERSION = "fixeo-risk-routing-v2";
+const LEVELS = Object.freeze({ TECHNICAL: 0, URGENT: 1, CRITICAL: 2 });
+const SIGNAL_LEVELS = Object.freeze(
+  Object.fromEntries(
+    HAZARDS.map((signal) => [
+      signal,
+      ["electrical_risk", "technical_urgency"].includes(signal)
+        ? "URGENT"
+        : "CRITICAL",
+    ]),
+  ),
+);
 const MESSAGES = Object.freeze({
+  technical_urgency:
+    "Gardez vos distances avec la zone concernée et ne tentez pas de réparer. Une intervention professionnelle rapide est recommandée.",
   gas: "Éloignez-vous de la zone. Évitez toute flamme et toute manipulation électrique. Contactez les services d’urgence locaux depuis un lieu sûr.",
   electricity:
     "Gardez vos distances avec les équipements et l’eau à proximité. Ne touchez pas aux fils ni au tableau. En cas de danger immédiat, contactez les services d’urgence locaux.",
@@ -24,10 +38,12 @@ const PATTERNS = Object.freeze({
     /\b(?:prise|interrupteur|equipement electrique|installation electrique).{0,40}(?:cass|endommag|deterior|abim|cache.{0,12}(?:manquant|absent))|\b(?:fils?|cables?|conducteurs?).{0,20}(?:apparent|expose|denude)|\bcache.{0,12}(?:manquant|absent).{0,25}(?:prise|interrupteur)|\b(?:broken|damaged) (?:socket|outlet|switch)|\bexposed (?:wire|wiring|cable)/u,
   fire: /incendie|flammes?|fumee|\bfire\b|\bsmoke\b|حريق|دخان/u,
   major_leak:
-    /fuite.{0,16}(importante|majeure|incontrol)|eau.{0,20}coule.{0,16}(fort|partout)/u,
+    /fuite.{0,16}(importante|majeure|incontrol)|(?:grosse|importante|majeure) fuite|eau.{0,20}coule.{0,16}(fort|partout)/u,
+  technical_urgency:
+    /serrure.{0,16}bloquee|porte.{0,16}bloquee|fissure.{0,20}(?:s'agrandit|evolue)|(?:toiture|toit).{0,25}infiltration importante/u,
   flood: /inond|flood|غرق|فيضان/u,
   structure:
-    /effondr|affaisse|plafond.{0,15}tombe|collapse|انهيار|سقف.{0,15}طيح/u,
+    /effondr|affaisse|plafond.{0,15}tombe|(?:tuiles?|toiture|mur).{0,25}menac.{0,15}tomber|collapse|انهيار|سقف.{0,15}طيح/u,
   immediate_danger: /\bdanger immediat\b|\bimmediate danger\b/u,
 });
 // Only explicit French noun-phrase negations are exempted from text detection.
@@ -104,8 +120,25 @@ function textSignals(fields) {
             match.index + match[0].length <= range.end,
         )
       ) {
-        signals.push(signal);
-        break;
+        // Only an explicit, unambiguous statement that THIS leak is controlled
+        // can use urgent routing. Other critical signs are evaluated separately.
+        const tail = text.slice(
+          Math.max(
+            ...[".", "!", "?", ";", "\n"].map((c) =>
+              text.lastIndexOf(c, match.index - 1),
+            ),
+          ) + 1,
+        );
+        const boundary = tail.search(/[.!?;\n]/u);
+        const clause = boundary < 0 ? tail : tail.slice(0, boundary + 1);
+        const controlledLeak =
+          signal === "major_leak" &&
+          /\b(?:maitrisable|maitrisee?|contenue?|controlee?)\b/u.test(clause) &&
+          !UNCERTAIN.test(clause) &&
+          !OTHER_NEGATION.test(clause) &&
+          !/\bincontrol\w*\b/u.test(clause);
+        signals.push(controlledLeak ? "technical_urgency" : signal);
+        if (!controlledLeak) break;
       }
     }
   }
@@ -132,21 +165,59 @@ function evaluateSafety(input, model = null, previousSignals = []) {
     if (model.urgency === "critical") signals.add("immediate_danger");
   }
   const list = [...signals].sort();
-  // Never downgrade a legacy/confirmed electricity signal. Only the explicit
-  // technical-risk category may continue, and any critical source overrides it.
-  const stop = list.some((signal) => signal !== "electrical_risk");
+  // Severity is independent of the trade. Previously recorded critical signals
+  // stay critical; acknowledgement never downgrades an analysis or its evidence.
+  const level = list.reduce(
+    (highest, signal) => {
+      const candidate = SIGNAL_LEVELS[signal] || "CRITICAL";
+      return LEVELS[candidate] > LEVELS[highest] ? candidate : highest;
+    },
+    model?.urgency === "high" ? "URGENT" : "TECHNICAL",
+  );
+  const stop = level === "CRITICAL";
   return {
-    version: "fixeo-safety-v1",
+    version: RISK_VERSION,
+    level,
     signals: list,
     stop,
-    urgency: stop
-      ? "now"
-      : signals.has("electrical_risk") || model?.urgency === "high"
-        ? "urgent"
-        : "normale",
-    messages: list.map((s) => MESSAGES[s]),
+    urgency: stop ? "now" : level === "URGENT" ? "urgent" : "normale",
+    messages: list.length
+      ? list
+          .filter((s) => !stop || SIGNAL_LEVELS[s] === "CRITICAL")
+          .map((s) => MESSAGES[s])
+      : [
+          level === "URGENT"
+            ? MESSAGES.technical_urgency
+            : "Une intervention professionnelle est recommandée pour confirmer le diagnostic.",
+        ],
     // "none" is a client declaration, never proof that an installation is safe.
     safety_cleared: false,
   };
 }
-module.exports = { evaluateSafety, MESSAGES };
+// Trade classification is separate from severity. It only supplies a conservative
+// destination when a critical sign stops the provider before it can classify.
+function safetyTrade(input, signals) {
+  const text = [input.description || "", ...Object.values(input.answers || {})]
+    .join(" ")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  if (signals.includes("gas")) return "plomberie";
+  if (signals.includes("electricity")) return "electricite";
+  if (/clim|chauffage/u.test(text)) return "climatisation";
+  if (/chauffe.eau|chaudiere|robinet|canalis|plomb|fuite|gaz/u.test(text))
+    return "plomberie";
+  if (/prise|interrupteur|electri|cable|fil\b/u.test(text))
+    return "electricite";
+  if (/serrur|porte/u.test(text)) return "serrurerie";
+  if (signals.includes("structure") || /toiture|toit|mur|fissure/u.test(text))
+    return "maconnerie";
+  return "autre";
+}
+module.exports = {
+  evaluateSafety,
+  MESSAGES,
+  RISK_VERSION,
+  LEVELS,
+  safetyTrade,
+};

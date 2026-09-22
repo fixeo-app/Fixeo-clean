@@ -1,0 +1,165 @@
+'use strict';
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const { analyze } = require('../../api/diagnostic/engine');
+const { evaluateSafety, RISK_VERSION } = require('../../api/diagnostic/safety');
+const { TRADES } = require('../../api/diagnostic/contract');
+const fixture = (trade) => ({
+  trade,
+  problem: 'Situation à vérifier par un professionnel.',
+  observations: [],
+  hypotheses: [],
+  urgency: 'moderate',
+  urgency_reason: 'Contrôle professionnel recommandé.',
+  checks: [],
+  possible_parts: [],
+  question_ids: [],
+  safety_signals: [],
+});
+const matrix = [
+  [
+    'électricité',
+    'Prise cassée avec un fil apparent.',
+    'electricite',
+    'URGENT',
+  ],
+  [
+    'électricité',
+    'Des étincelles actives sortent de la prise.',
+    'electricite',
+    'CRITICAL',
+  ],
+  ['plomberie', 'Petite fuite sous le lavabo.', 'plomberie', 'TECHNICAL'],
+  ['plomberie', 'Grosse fuite maîtrisable.', 'plomberie', 'URGENT'],
+  ['plomberie', 'Une fuite importante est contenue.', 'plomberie', 'URGENT'],
+  ['plomberie', 'Une fuite incontrôlable.', 'plomberie', 'CRITICAL'],
+  [
+    'plomberie/électricité',
+    'Eau en contact avec l’installation électrique.',
+    'electricite',
+    'CRITICAL',
+  ],
+  [
+    'gaz',
+    'Appareil à gaz en panne, pas de fuite de gaz.',
+    'plomberie',
+    'TECHNICAL',
+  ],
+  ['gaz', 'Odeur de gaz près de la chaudière.', 'plomberie', 'CRITICAL'],
+  ['serrurerie', 'Serrure bloquée.', 'serrurerie', 'URGENT'],
+  [
+    'serrurerie',
+    'Serrure bloquée, danger immédiat explicite.',
+    'serrurerie',
+    'CRITICAL',
+  ],
+  ['climatisation', 'Clim en panne.', 'climatisation', 'TECHNICAL'],
+  [
+    'climatisation',
+    'Une fumée active sort de la climatisation.',
+    'climatisation',
+    'CRITICAL',
+  ],
+  ['maçonnerie', 'Une fissure simple sur le mur.', 'maconnerie', 'TECHNICAL'],
+  ['maçonnerie', 'Une fissure s’agrandit.', 'maconnerie', 'URGENT'],
+  ['structure', 'Effondrement en cours.', 'maconnerie', 'CRITICAL'],
+  ['toiture', 'Petite infiltration de la toiture.', 'maconnerie', 'TECHNICAL'],
+  ['toiture', 'Toiture avec infiltration importante.', 'maconnerie', 'URGENT'],
+  ['toiture', 'Des tuiles menacent de tomber.', 'maconnerie', 'CRITICAL'],
+  ['chauffage', 'Chauffage en panne.', 'climatisation', 'TECHNICAL'],
+  [
+    'chauffage',
+    'Chauffage en panne avec fumée active.',
+    'climatisation',
+    'CRITICAL',
+  ],
+  ['chauffe-eau', 'Chauffe-eau en panne.', 'plomberie', 'TECHNICAL'],
+  // No new appliance/pricing trade: unknown specialities retain the existing autre route.
+  ['électroménager / autre', 'Un lave-linge en panne.', 'autre', 'TECHNICAL'],
+  [
+    'électroménager / autre',
+    'Un lave-linge avec fumée active.',
+    'autre',
+    'CRITICAL',
+  ],
+];
+for (const [family, description, trade, level] of matrix)
+  test(`risk matrix: ${family} — ${description} → ${level}`, async () => {
+    const { result, providerCalled } = await analyze(
+      { input: { description, answers: {}, safety_signals: [] }, media: [] },
+      {
+        provider: {
+          analyze: async () => ({ result: fixture(trade), usage: {} }),
+        },
+        mediaStore: {},
+      },
+    );
+    assert.equal(result.safety.version, RISK_VERSION);
+    assert.equal(result.safety.level, level);
+    assert.equal(result.safety.stop, level === 'CRITICAL');
+    assert.equal(result.safety.safety_cleared, false);
+    assert.equal(result.trade.value, trade);
+    assert.equal(
+      result.next,
+      level === 'CRITICAL' ? 'safety_stop' : 'qualification',
+    );
+    assert.equal(providerCalled, level !== 'CRITICAL');
+    assert.equal(
+      result.urgency.value,
+      { TECHNICAL: 'moderate', URGENT: 'high', CRITICAL: 'critical' }[level],
+    );
+    assert.equal(
+      result.safety.urgency,
+      { TECHNICAL: 'normale', URGENT: 'urgent', CRITICAL: 'now' }[level],
+    );
+    assert.ok(result.safety.messages.length);
+  });
+
+for (const trade of TRADES)
+  for (const [urgency, level] of [
+    ['moderate', 'TECHNICAL'],
+    ['high', 'URGENT'],
+    ['critical', 'CRITICAL'],
+  ]) {
+    test(`severity is independent of trade: ${trade} / ${level}`, () => {
+      const safety = evaluateSafety(
+        { description: 'Besoin professionnel.' },
+        { ...fixture(trade), urgency },
+      );
+      assert.equal(safety.level, level);
+      assert.equal(safety.stop, level === 'CRITICAL');
+      assert.equal(safety.safety_cleared, false);
+    });
+  }
+
+test('a controlled leak never cancels a different active danger or uncertainty', () => {
+  for (const description of [
+    'Grosse fuite maîtrisable ?',
+    'Grosse fuite non maîtrisable.',
+    'Grosse fuite maîtrisable. Fuite incontrôlable ailleurs.',
+    'Grosse fuite maîtrisable mais des étincelles actives.',
+    'Grosse fuite maîtrisable. Odeur de gaz.',
+    'Fuite importante contenue. De l’eau en contact avec une prise.',
+    'Fuite importante peut-être maîtrisée.',
+  ])
+    assert.equal(
+      evaluateSafety({ description }).level,
+      'CRITICAL',
+      description,
+    );
+  // Never reinterpret an old recorded major leak as controlled.
+  assert.equal(
+    evaluateSafety({ description: 'Grosse fuite maîtrisable.' }, null, [
+      'major_leak',
+    ]).level,
+    'CRITICAL',
+  );
+});
+
+test('critical guidance contains no technical handling instruction even when urgent evidence is also present', () => {
+  const safety = evaluateSafety({ description: 'Un fil apparent avec des flammes.' });
+  assert.equal(safety.level, 'CRITICAL');
+  assert.ok(safety.signals.includes('electrical_risk'));
+  assert.doesNotMatch(safety.messages.join(' '), /coupez|démontez|réparez/i);
+  assert.match(safety.messages.join(' '), /services d’urgence/);
+});

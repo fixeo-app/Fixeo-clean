@@ -185,6 +185,37 @@ test('electrical warning stays visible with the existing continuation; critical 
   }
 });
 
+test('new critical screen requires acknowledgement and phone, prevents double submission and retains emergency guidance after recording', async t => {
+  let session, release;
+  const gate = new Promise(resolve => { release = resolve; });
+  const s = setup(t, async r => {
+    if (r.action === 'create') session = { id: r.session_id, revision: 1, input: r.input, city_slug: r.city_slug, media: [], state: 'draft' };
+    if (r.action === 'analyze') session = { ...session, state: 'ready', result_run_id: 'critical-run-fixture', result: {
+      questions: [], safety: { version: 'fixeo-risk-routing-v2', level: 'CRITICAL', stop: true, signals: ['gas'], messages: ['Éloignez-vous de la zone et contactez les secours depuis un lieu sûr.'] },
+      trade: { value: 'plomberie' }, problem: { value: 'Odeur de gaz' }, facts: [], hypotheses: [], possible_parts: [], checks: [], urgency: { value: 'critical' },
+    } };
+    if (r.action === 'confirm_critical') { await gate; return { ok: true, request_id: 'critical-request-fixture', tracking_ref: 'FX-CRITICAL', risk_level: 'CRITICAL', urgency: 'now' }; }
+    return { session };
+  });
+  s.w.FixeoEstimatorV2 = { open() { assert.fail('Critical recording must not enter normal pricing'); } };
+  await s.open(); s.fill(); s.change('fxdiag-description','Odeur de gaz.');
+  s.q('fxdiag-next').click(); await tick(); s.q('fxdiag-next').click(); await tick(); await tick();
+  assert.match(s.w.document.querySelector('.fxdiag-body').textContent,/FIXEO ne remplace jamais les secours/);
+  assert.equal(s.q('fxdiag-next').disabled,true);
+  s.change('fxdiag-critical-phone','0600000000'); assert.equal(s.q('fxdiag-next').disabled,true);
+  s.q('fxdiag-critical-ack').checked=true; s.q('fxdiag-critical-ack').dispatchEvent(new s.w.Event('change'));
+  assert.equal(s.q('fxdiag-next').disabled,false);
+  s.q('fxdiag-next').click(); s.q('fxdiag-next').click();
+  assert.equal(s.calls.filter(c=>c.action==='confirm_critical').length,1);
+  const sent=s.calls.find(c=>c.action==='confirm_critical');
+  assert.equal(sent.acknowledgement.accepted,true); assert.equal(sent.acknowledgement.run_id,'critical-run-fixture');
+  release(); await tick(); await tick();
+  const text=s.w.document.querySelector('.fxdiag-body').textContent;
+  assert.match(text,/demande a été enregistrée/); assert.match(text,/Priorité CRITICAL/);
+  assert.match(text,/FIXEO ne remplace jamais les secours/); assert.match(text,/FX-CRITICAL/);
+  assert.equal(session.result.safety.stop,true);
+});
+
 test('footer measurement reserves its full height and keeps the city above actions after safe-area/keyboard changes', async t => {
   const s = setup(t), frames = new Map(); let next = 0, observer;
   s.w.requestAnimationFrame = fn => { frames.set(++next, fn); return next; };

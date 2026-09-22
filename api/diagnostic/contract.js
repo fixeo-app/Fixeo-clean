@@ -47,6 +47,7 @@ const CITIES = Object.freeze([
 const HAZARDS = Object.freeze([
   'electricity',
   'electrical_risk',
+  'technical_urgency',
   'gas',
   'fire',
   'major_leak',
