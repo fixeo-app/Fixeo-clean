@@ -4,6 +4,8 @@ const MESSAGES = Object.freeze({
   gas: "Éloignez-vous de la zone. Évitez toute flamme et toute manipulation électrique. Contactez les services d’urgence locaux depuis un lieu sûr.",
   electricity:
     "Gardez vos distances avec les équipements et l’eau à proximité. Ne touchez pas aux fils ni au tableau. En cas de danger immédiat, contactez les services d’urgence locaux.",
+  electrical_risk:
+    "Ne touchez pas à l’installation et coupez l’alimentation si cela peut être fait sans risque.",
   fire: "Mettez-vous à l’abri, éloignez les personnes et contactez les services d’urgence locaux. Ne tentez pas de réparer.",
   major_leak:
     "Éloignez-vous des zones inondées et des équipements électriques. Faites intervenir un professionnel rapidement.",
@@ -17,19 +19,22 @@ const MESSAGES = Object.freeze({
 const PATTERNS = Object.freeze({
   gas: /odeur.{0,20}gaz|fuite.{0,20}gaz|gas\s*(leak|smell)|ريحة.{0,15}(غاز|البوطا)|تسرب.{0,15}غاز/u,
   electricity:
-    /electrocut|etincell|fil.{0,16}(denude|sous tension)|odeur.{0,20}brule|electric\s*shock|شرار|صعق/u,
+    /electrocut|electrisat|etincell|(?:fil|cable|conducteur).{0,16}sous tension|odeur.{0,20}brule|electric\s*shock|\bsparks?\b|\blive (?:wire|cable)|شرار|صعق|eau.{0,35}(?:contact|sur |dans |touche).{0,25}(?:electri|prise|interrupteur|tableau|fil|cable)|(?:prise|interrupteur|tableau electrique).{0,16}(?:mouille|dans l'eau)|water.{0,30}(?:contact|on |touch).{0,25}(?:electric|socket|wire)/u,
+  electrical_risk:
+    /\b(?:prise|interrupteur|equipement electrique|installation electrique).{0,40}(?:cass|endommag|deterior|abim|cache.{0,12}(?:manquant|absent))|\b(?:fils?|cables?|conducteurs?).{0,20}(?:apparent|expose|denude)|\bcache.{0,12}(?:manquant|absent).{0,25}(?:prise|interrupteur)|\b(?:broken|damaged) (?:socket|outlet|switch)|\bexposed (?:wire|wiring|cable)/u,
   fire: /incendie|flammes?|fumee|\bfire\b|\bsmoke\b|حريق|دخان/u,
   major_leak:
     /fuite.{0,16}(importante|majeure|incontrol)|eau.{0,20}coule.{0,16}(fort|partout)/u,
   flood: /inond|flood|غرق|فيضان/u,
   structure:
     /effondr|affaisse|plafond.{0,15}tombe|collapse|انهيار|سقف.{0,15}طيح/u,
+  immediate_danger: /\bdanger immediat\b|\bimmediate danger\b/u,
 });
 // Only explicit French noun-phrase negations are exempted from text detection.
 // This is not a safety clearance: uncertain wording and every other source of
 // danger (checkbox, previous result, model) still take precedence.
 const NEGATED_MENTION =
-  /\b(?:sans(?: aucune?)?\s+|aucun(?:e|s|es)?\s+|pas\s+(?:de\s+|d'))(?:(?:traces?|signes?) (?:de |d'))?(?:inondations?|fumees?|flammes?|incendies?|fuites? de gaz|odeurs? de gaz|etincelles?|fils? (?:denudes?|sous tension)|odeurs? de brule|fuites? (?:importantes?|majeures?|incontrolables?)|effondrements?|affaissements?)\b/gu;
+  /\b(?:sans(?: aucune?)?\s+|aucun(?:e|s|es)?\s+|pas\s+(?:de\s+|d'))(?:(?:traces?|signes?) (?:de |d'))?(?:inondations?|fumees?|flammes?|incendies?|fuites? de gaz|odeurs? de gaz|etincelles?|(?:fils?|cables?) (?:denudes?|apparents?|exposes?|sous tension)|(?:prises?|interrupteurs?) (?:casse[es]*|endommage[es]*|deteriore[es]*)|danger immediat|odeurs? de brule|fuites? (?:importantes?|majeures?|incontrolables?)|effondrements?|affaissements?)\b/gu;
 const UNCERTAIN =
   /\?|\b(?:dout\w*|incertain\w*|incertitude|exclu\w*|impossible|possible|peut|peuvent|pourrait|pourraient|semble\w*|suppos\w*|probable\w*|eventuel\w*|sauf|hormis|excepte|si|vrai|faux|seulement|uniquement|forcement|necessairement)\b/u;
 const OTHER_NEGATION = /\b(?:pas|non|jamais|sans|aucun(?:e|s|es)?|ne)\b|\bn'/u;
@@ -127,13 +132,16 @@ function evaluateSafety(input, model = null, previousSignals = []) {
     if (model.urgency === "critical") signals.add("immediate_danger");
   }
   const list = [...signals].sort();
+  // Never downgrade a legacy/confirmed electricity signal. Only the explicit
+  // technical-risk category may continue, and any critical source overrides it.
+  const stop = list.some((signal) => signal !== "electrical_risk");
   return {
     version: "fixeo-safety-v1",
     signals: list,
-    stop: list.length > 0,
-    urgency: list.length
+    stop,
+    urgency: stop
       ? "now"
-      : model?.urgency === "high"
+      : signals.has("electrical_risk") || model?.urgency === "high"
         ? "urgent"
         : "normale",
     messages: list.map((s) => MESSAGES[s]),

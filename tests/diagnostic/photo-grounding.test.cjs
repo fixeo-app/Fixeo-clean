@@ -259,6 +259,31 @@ test("isolated visual danger cannot be cancelled by the text synthesis or a user
   assert.equal(result.result.safety.safety_cleared, false);
 });
 
+test("isolated technical electrical risk survives synthesis and keeps photo-only routing open with fixed guidance", async () => {
+  // Provider fixtures test contract/routing propagation, not model perception.
+  const evidence = {
+    ...photo(),
+    observations: [
+      {
+        text: "Un cache de prise est cassé avec un câble apparent.",
+        location: "au centre",
+      },
+    ],
+    safety_signals: ["electrical_risk"],
+  };
+  const result = await run(
+    await informative(),
+    adapter({ photos: [evidence] }),
+    "",
+  );
+  assert.equal(result.result.safety.stop, false);
+  assert.deepEqual(result.result.safety.signals, ["electrical_risk"]);
+  assert.equal(result.result.trade.value, "electricite");
+  assert.equal(result.result.urgency.value, "high");
+  assert.match(result.result.safety.messages[0], /Ne touchez pas/);
+  assert.equal(result.result.next, "qualification");
+});
+
 test("multiple photos keep separate evidence; a uniform photo cannot inherit findings from an informative photo", async () => {
   const calls = [],
     bytes = await informative();

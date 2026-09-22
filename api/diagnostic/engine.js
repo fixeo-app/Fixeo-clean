@@ -93,7 +93,11 @@ async function analyze(snapshot, { provider, mediaStore }) {
     JSON.stringify(photoObservations(photos))
   )
     throw new DiagnosticError("UNGROUNDED_PROVIDER_OBSERVATION", 502);
-  const safety = evaluateSafety(input, model, before.signals);
+  const safety = evaluateSafety(input, model, [
+    ...before.signals,
+    ...photos.flatMap((photo) => photo.safety_signals),
+  ]);
+  const electricalRisk = safety.signals.includes("electrical_risk");
   const answered = input.answers || {};
   const questions = safety.stop
     ? []
@@ -105,7 +109,10 @@ async function analyze(snapshot, { provider, mediaStore }) {
     result: {
       version: VERSION,
       indicative,
-      trade: { value: model.trade, provenance: "ai_inferred" },
+      trade: {
+        value: electricalRisk ? "electricite" : model.trade,
+        provenance: "ai_inferred",
+      },
       problem: { value: model.problem, provenance: "ai_inferred" },
       facts: [
         ...declarations,
@@ -125,7 +132,15 @@ async function analyze(snapshot, { provider, mediaStore }) {
         provenance: "ai_inferred",
         certain: false,
       })),
-      checks: [...photoLimitations(photos), ...model.checks],
+      checks: [
+        ...photoLimitations(photos),
+        ...(electricalRisk
+          ? [
+              "Intervention rapide d’un électricien recommandée. L’installation doit être vérifiée sur place par un professionnel.",
+            ]
+          : []),
+        ...model.checks,
+      ],
       photo_assessments: photos.map(({ media_id, status }) => ({
         media_id,
         status,
@@ -133,9 +148,16 @@ async function analyze(snapshot, { provider, mediaStore }) {
       questions,
       safety,
       urgency: {
-        value: safety.stop ? "critical" : model.urgency,
+        value: safety.stop
+          ? "critical"
+          : electricalRisk
+            ? "high"
+            : model.urgency,
         provenance: "ai_inferred",
-        reason: model.urgency_reason,
+        reason:
+          electricalRisk && !safety.stop
+            ? "Risque électrique à traiter rapidement par un professionnel. L’absence de signe actif ne garantit pas l’absence de danger."
+            : model.urgency_reason,
       },
       duration: null,
       pricing: null,

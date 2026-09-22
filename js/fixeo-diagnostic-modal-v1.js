@@ -61,7 +61,8 @@
     autre: 'Métier à préciser',
   };
   var hazards = {
-    electricity: 'Étincelles, fils exposés ou odeur de brûlé',
+    electricity:
+      'Étincelles, odeur de brûlé, choc électrique ou eau sur l’installation électrique',
     gas: 'Odeur de gaz',
     fire: 'Flammes ou fumée importante',
     major_leak: 'Fuite d’eau importante',
@@ -954,10 +955,27 @@
     var urgency =
       { low: 'Faible', moderate: 'Modérée', high: 'Élevée' }[r.urgency.value] ||
       'À confirmer';
+    var electricalRisk = (r.safety.signals || []).includes('electrical_risk');
+    if (electricalRisk) {
+      body.insertAdjacentHTML(
+        'beforeend',
+        '<section class="fxdiag-caution" role="alert"><h3>Risque électrique — intervention rapide recommandée</h3><ul>' +
+          (r.safety.messages || [])
+            .map(function (message) {
+              return '<li>' + esc(message) + '</li>';
+            })
+            .join('') +
+          '</ul></section>',
+      );
+    }
     body.insertAdjacentHTML(
       'beforeend',
       '<section class="fxdiag-result-top"><span class="fxdiag-tag">Métier recommandé · hypothèse FIXEO</span><h3>' +
-        esc(trades[r.trade.value] || r.trade.value) +
+        esc(
+          electricalRisk
+            ? 'Électricien'
+            : trades[r.trade.value] || r.trade.value,
+        ) +
         '</h3><p>' +
         esc(r.problem.value) +
         '</p></section><div class="fxdiag-cards">' +

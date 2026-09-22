@@ -46,6 +46,7 @@ const CITIES = Object.freeze([
 ]);
 const HAZARDS = Object.freeze([
   'electricity',
+  'electrical_risk',
   'gas',
   'fire',
   'major_leak',
@@ -164,7 +165,7 @@ const providerSchema = {
     },
     safety_signals: {
       type: 'array',
-      maxItems: 7,
+      maxItems: HAZARDS.length,
       uniqueItems: true,
       items: { type: 'string', enum: HAZARDS },
     },

@@ -147,6 +147,44 @@ test('homepage CTA and camera use the same guarded launcher and preserve the foc
   assert.equal(a.disabled, false); assert.equal(b.disabled, false);
 });
 
+test('electrical warning stays visible with the existing continuation; critical danger still removes it', async t => {
+  for (const stop of [false, true]) {
+    let session, opened;
+    const s = setup(t, async r => {
+      if (r.action === 'create') session = { id: r.session_id, revision: 1, input: r.input, city_slug: r.city_slug, media: [], state: 'draft' };
+      if (r.action === 'analyze') session = { ...session, state: 'ready', result: {
+        questions: [], safety: { stop, signals: stop ? ['electrical_risk', 'electricity'] : ['electrical_risk'], messages: ['Ne touchez pas à l’installation et coupez l’alimentation si cela peut être fait sans risque.'] },
+        trade: { value: 'electricite' }, problem: { value: 'Interrupteur endommagé' }, facts: [], hypotheses: [], possible_parts: [], checks: [], urgency: { value: stop ? 'critical' : 'high' },
+      } };
+      if (r.action === 'handoff') { assert.equal(stop, false); return { entry_context: { source: 'diagnostic', metier_hint: 'electricite', city_slug: 'rabat' } }; }
+      return { session };
+    });
+    s.w.FixeoEstimatorV2 = { open(context) { opened = context; } };
+    await s.open(); s.fill(); s.change('fxdiag-description', 'Interrupteur cassé.');
+    s.q('fxdiag-next').click(); await tick();
+    const hazard = s.w.document.querySelector('.fxdiag-hazard input[value="electricity"]').parentElement.textContent;
+    assert.doesNotMatch(hazard, /fils exposés/);
+    assert.match(hazard, /Étincelles/);
+    s.q('fxdiag-next').click(); await tick(); await tick();
+    const body = s.w.document.querySelector('.fxdiag-body');
+    assert.match(body.textContent, /Ne touchez pas à l’installation/);
+    if (stop) {
+      assert.match(body.textContent, /réservation est interrompu/);
+      assert.match(s.q('fxdiag-next').textContent.trim(), /^Fermer(?:→)?$/);
+      assert.equal(s.calls.some(c => c.action === 'handoff'), false);
+    } else {
+      assert.match(body.querySelector('[role="alert"]').textContent, /Risque électrique/);
+      assert.match(body.textContent, /Électricien/);
+      assert.match(body.textContent, /Élevée/);
+      assert.equal(s.q('fxdiag-next').disabled, false);
+      assert.match(s.q('fxdiag-next').textContent, /Continuer vers mon estimation FIXEO/);
+      s.q('fxdiag-next').click(); await tick();
+      assert.equal(opened.metier_hint, 'electricite');
+      assert.equal(opened.city_slug, 'rabat');
+    }
+  }
+});
+
 test('footer measurement reserves its full height and keeps the city above actions after safe-area/keyboard changes', async t => {
   const s = setup(t), frames = new Map(); let next = 0, observer;
   s.w.requestAnimationFrame = fn => { frames.set(++next, fn); return next; };

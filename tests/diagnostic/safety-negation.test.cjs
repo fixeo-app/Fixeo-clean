@@ -42,7 +42,7 @@ test("affirmative hazards and a second positive mention remain blocked", () => {
     ["De la fumée", "fire"],
     ["Des flammes", "fire"],
     ["Des étincelles", "electricity"],
-    ["Un fil dénudé", "electricity"],
+    ["Un fil sous tension", "electricity"],
     ["Une fuite importante", "major_leak"],
     ["Un affaissement", "structure"],
     ["ريحة الغاز", "gas"],

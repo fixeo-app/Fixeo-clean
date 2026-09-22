@@ -55,7 +55,8 @@
     if (!loaded)
       loaded = new Promise(function (resolve, reject) {
         var script = document.createElement('script');
-        script.src = '/js/fixeo-diagnostic-modal-v1.js?v=diagnostic-mobile-v3';
+        script.src =
+          '/js/fixeo-diagnostic-modal-v1.js?v=diagnostic-electrical-safety-v1';
         script.onload = resolve;
         script.onerror = function () {
           loaded = null;
