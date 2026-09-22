@@ -190,6 +190,7 @@ function setup(t, opts = {}) {
     open: async (ctx) => opened.push({ estimation: ctx }),
   };
   w.FixeoAIRE = { detect: () => ({ cat: "plomberie" }) };
+  opts.configure?.(w);
   w.eval(read("js/fixeo-intake-v1.js"));
   w.eval(read("js/fixeo-hero-flagship-v1.js"));
   w.FixeoHeroFlagship.mount();
@@ -275,6 +276,8 @@ test("Hero native camera/library selection stays inline and keeps private-media 
   assert.equal(s.q("fxhf-camera-file").getAttribute("capture"), "environment");
   assert.equal(s.q("fxhf-files").hasAttribute("capture"), false);
   s.photo("fxhf-camera-file");
+  assert.equal(s.q("fxhf-photo-choices").hidden, true);
+  assert.equal(s.q("fxhf-show").getAttribute("aria-expanded"), "false");
   assert.equal(s.opened.length, 0);
   await s.analyze();
   assert.deepEqual(
@@ -512,19 +515,17 @@ test("Hero NEED controls receive focus/click before consent; only analysis is ga
 });
 for (const [width, height] of [
   [320, 568],
+  [360, 780],
   [390, 844],
+  [412, 915],
+  [320, 340],
   [390, 340],
 ]) {
   test(`Hero decorative layer cannot intercept NEED controls at ${width}x${height}`, (t) => {
     const s = setup(t),
       doc = s.w.document;
     const source = doc.createElement("style");
-    // The historical stylesheet contains a stray closing brace that browsers
-    // recover from but JSDOM rejects. Test the universal-intake overrides only.
-    const stylesheet = read("css/fixeo-hero-flagship-v1.css");
-    source.textContent = stylesheet.slice(
-      stylesheet.indexOf("/* Universal intake"),
-    );
+    source.textContent = read("css/fixeo-hero-flagship-v1.css");
     doc.head.append(source);
     // JSDOM has no layout/hit-testing. Apply the real viewport rules explicitly
     // to test containment and inherited pointer-events, not simulated geometry.
@@ -587,7 +588,286 @@ test("Hero legal details, native controls and static mobile footer reserve safe-
   );
   assert.ok(s.q("fxhf-root").querySelector("details.fxhf-privacy"));
   assert.match(css, /env\(safe-area-inset-bottom\)/);
-  assert.match(css, /\.fxhf-actions \{ position: static; \}/);
+  assert.match(css, /\.fxhf-actions \{ position: static;/);
   assert.match(css, /max-width: 360px/);
   assert.match(css, /prefers-reduced-motion/);
+});
+
+// UI timers are deterministic; no provider, camera or physical device is used.
+function promptClock(w, reduced = false) {
+  let now = 0,
+    seq = 0;
+  const timers = new Map(),
+    changes = new Set();
+  w.FIXEO_DETECTED_CITY = "fes";
+  w.setTimeout = (fn, delay = 0) => {
+    const id = ++seq;
+    timers.set(id, { at: now + delay, fn });
+    return id;
+  };
+  w.clearTimeout = (id) => timers.delete(id);
+  const motion = {
+    matches: reduced,
+    addEventListener: (_, fn) => changes.add(fn),
+    removeEventListener: (_, fn) => changes.delete(fn),
+  };
+  w.matchMedia = () => motion;
+  return {
+    tick(ms) {
+      const target = now + ms;
+      for (let count = 0; count < 10000; count++) {
+        const next = [...timers].sort((a, b) => a[1].at - b[1].at)[0];
+        if (!next || next[1].at > target) {
+          now = target;
+          return;
+        }
+        timers.delete(next[0]);
+        now = next[1].at;
+        next[1].fn();
+      }
+      throw Error("UI timer runaway");
+    },
+    reduce(value) {
+      motion.matches = value;
+      changes.forEach((fn) => fn());
+    },
+    pending: () => timers.size,
+  };
+}
+test("Smart RAFI rotates FR/Darija as aria-hidden decoration, never draft/API content", async (t) => {
+  let clock;
+  const s = setup(t, {
+    configure(w) {
+      clock = promptClock(w);
+    },
+  });
+  await new Promise((r) => setTimeout(r, 0));
+  const prompt = s.q("fxhf-root").querySelector(".fxhf-smart-prompt"),
+    input = s.q("fxhf-need-input");
+  const langs = new Set(),
+    texts = new Set();
+  for (let i = 0; i < 160; i++) {
+    clock.tick(100);
+    if (!prompt.hidden) {
+      langs.add(prompt.querySelector("span").lang);
+      texts.add(prompt.textContent);
+    }
+    assert.equal(input.value, "");
+  }
+  assert.deepEqual([...langs].sort(), ["ary-Latn", "fr"]);
+  assert.ok(texts.size > 20, "typing changes the decorative copy");
+  assert.equal(prompt.getAttribute("aria-hidden"), "true");
+  assert.equal(
+    input.getAttribute("aria-label"),
+    "Décrivez votre problème ou votre besoin",
+  );
+  assert.equal(s.calls.length, 0);
+  assert.equal(s.q("fxhf-submit").disabled, true);
+  s.photo();
+  s.change("fxhf-consent", true);
+  await s.analyze();
+  const creation = s.calls.find((call) => call.action === "create");
+  assert.equal(
+    creation.input.description,
+    "",
+    "animated phrases are never submitted",
+  );
+});
+test("Smart RAFI stops immediately for touch, focus, paste, input and speech; resumes only empty and blurred", async (t) => {
+  let clock;
+  const s = setup(t, {
+    configure(w) {
+      clock = promptClock(w);
+    },
+  });
+  await new Promise((r) => setTimeout(r, 0));
+  const input = s.q("fxhf-need-input"),
+    prompt = s.q("fxhf-root").querySelector(".fxhf-smart-prompt");
+  clock.tick(900);
+  assert.equal(prompt.hidden, false);
+  for (const event of [
+    "pointerdown",
+    "touchstart",
+    "paste",
+    "beforeinput",
+    "compositionstart",
+  ]) {
+    input.dispatchEvent(new s.w.Event(event));
+    assert.equal(prompt.hidden, true, event);
+    clock.tick(4000);
+    assert.equal(prompt.hidden, true, event);
+    input.focus();
+    input.blur();
+    clock.tick(900);
+    assert.equal(prompt.hidden, false);
+  }
+  input.focus();
+  clock.tick(5000);
+  assert.equal(prompt.hidden, true);
+  s.change("fxhf-need-input", "Mon propre besoin");
+  input.blur();
+  clock.tick(5000);
+  assert.equal(prompt.hidden, true);
+  assert.equal(input.value, "Mon propre besoin");
+  input.focus();
+  s.change("fxhf-need-input", "");
+  input.blur();
+  clock.tick(600);
+  assert.equal(prompt.hidden, true);
+  clock.tick(150);
+  assert.equal(prompt.hidden, false);
+  s.w.MediaRecorder = function () {};
+  Object.defineProperty(s.w.navigator, "mediaDevices", {
+    value: { getUserMedia: () => new Promise(() => {}) },
+  });
+  s.q("fxhf-mic").click();
+  clock.tick(10000);
+  assert.equal(
+    prompt.hidden,
+    true,
+    "permission prompt stops decorative typing",
+  );
+  assert.equal(s.calls.length, 0);
+});
+test("Smart RAFI reduced-motion stays static, reacts to preference changes, and stops on pagehide", async (t) => {
+  let clock;
+  const s = setup(t, {
+    configure(w) {
+      clock = promptClock(w, true);
+    },
+  });
+  await new Promise((r) => setTimeout(r, 0));
+  const input = s.q("fxhf-need-input"),
+    prompt = s.q("fxhf-root").querySelector(".fxhf-smart-prompt");
+  clock.tick(10000);
+  assert.equal(prompt.hidden, true);
+  assert.equal(input.placeholder, "Décrivez votre problème…");
+  assert.equal(clock.pending(), 0);
+  clock.reduce(false);
+  clock.tick(1000);
+  assert.equal(prompt.hidden, false);
+  clock.reduce(true);
+  assert.equal(prompt.hidden, true);
+  assert.equal(clock.pending(), 0);
+  clock.reduce(false);
+  clock.tick(1000);
+  s.w.dispatchEvent(new s.w.Event("pagehide"));
+  assert.equal(prompt.hidden, true);
+  assert.equal(clock.pending(), 0);
+  assert.equal(input.value, "");
+});
+test("Hero viewport manager reserves visible keyboard height and restores floating controls on leaving Hero", async (t) => {
+  const s = setup(t, {
+    configure(w) {
+      const viewport = new w.EventTarget();
+      viewport.height = 844;
+      viewport.offsetTop = 0;
+      Object.defineProperty(w, "visualViewport", { value: viewport });
+      Object.defineProperty(w, "innerWidth", { value: 390 });
+      Object.defineProperty(w, "innerHeight", { value: 844 });
+      const header = w.document.createElement("header");
+      header.className = "fixeo-gh-universal-shell";
+      header.getBoundingClientRect = () => ({ top: 0, bottom: 64, height: 64 });
+      w.document.body.prepend(header);
+      w.document.getElementById("fxhf-root").getBoundingClientRect = () => ({
+        top: 64,
+        bottom: 844,
+        width: 390,
+      });
+    },
+  });
+  await wait(() => s.w.document.body.classList.contains("fxhf-immersive"));
+  assert.equal(
+    s.q("fxhf-root").style.getPropertyValue("--fxhf-header-height"),
+    "64px",
+  );
+  s.q("fxhf-need-input").focus();
+  s.w.visualViewport.height = 340;
+  s.w.visualViewport.offsetTop = 20;
+  s.w.visualViewport.dispatchEvent(new s.w.Event("resize"));
+  await wait(() => s.w.document.body.classList.contains("fxhf-keyboard"));
+  assert.equal(
+    s.q("fxhf-root").style.getPropertyValue("--fxhf-keyboard-top"),
+    "64px",
+  );
+  assert.equal(
+    s.q("fxhf-root").style.getPropertyValue("--fxhf-keyboard-height"),
+    "296px",
+  );
+  assert.equal(s.q("fxhf-need-input").matches(":disabled"), false);
+  s.q("outside").focus();
+  s.w.visualViewport.height = 844;
+  s.w.visualViewport.offsetTop = 0;
+  s.q("fxhf-root").getBoundingClientRect = () => ({
+    top: -900,
+    bottom: -56,
+    width: 390,
+  });
+  s.w.dispatchEvent(new s.w.Event("scroll"));
+  await wait(() => !s.w.document.body.classList.contains("fxhf-immersive"));
+  assert.equal(s.w.document.body.classList.contains("fxhf-keyboard"), false);
+  assert.equal(s.q("fixeo-urgent-fab").hasAttribute("style"), false);
+  assert.equal(
+    s.w.document.querySelector(".chat-widget").hasAttribute("style"),
+    false,
+  );
+});
+test("Hero premium preserves three photos, safety signals and primary footer through result/confirmation/success", async (t) => {
+  const s = setup(t);
+  s.fill();
+  s.photo();
+  s.photo();
+  s.photo();
+  assert.equal(s.q("fxhf-photos").querySelectorAll("figure").length, 3);
+  assert.match(s.q("fxhf-photos").textContent, /3 photos prêtes/);
+  s.q("fxhf-submit").click();
+  await s.until(() => s.q("fxhf-root").dataset.fxhfState === "safety");
+  assert.equal(
+    s.q("fxhf-panel").querySelectorAll(".fxhf-hazards input").length,
+    7,
+  );
+  assert.match(s.q("fxhf-panel").textContent, /aucune manipulation/);
+  function footer() {
+    const actions = s.q("fxhf-actions"),
+      scroll = s.q("fxhf-root").querySelector(".fxhf-scroll");
+    assert.equal(
+      scroll.contains(actions),
+      false,
+      "CTA must occupy its own grid row",
+    );
+    assert.equal(actions.querySelectorAll(".fxhf-submit").length, 1);
+  }
+  footer();
+  s.click("Retour");
+  await s.until(() => s.q("fxhf-submit"));
+  assert.equal(s.q("fxhf-photos").querySelectorAll("figure").length, 3);
+  assert.equal(s.q("fxhf-location").value, "rabat");
+  await s.analyze();
+  footer();
+  const optional = s.q("fxhf-root").querySelector(".fxhf-optional");
+  assert.equal(optional.open, false);
+  optional.open = true;
+  assert.equal(optional.contains(s.q("fxhf-diagnostic")), true);
+  assert.equal(optional.contains(s.q("fxhf-estimation")), true);
+  s.q("fxhf-entrust").click();
+  await s.until(() => s.q("fxhf-phone"));
+  footer();
+  assert.match(
+    s.q("fxhf-panel").querySelector(".fxhf-recap summary").textContent,
+    /Plombier.*Rabat/,
+  );
+  s.change("fxhf-phone", "0600000000");
+  s.q("fxhf-confirm").click();
+  await s.until(() => s.q("fxhf-root").dataset.fxhfState === "matching");
+  footer();
+  assert.equal(s.counts().confirmCount, 1);
+  assert.equal(
+    s.q("fxhf-root").querySelectorAll(".fxhf-lifecycle .done").length,
+    2,
+    "no fabricated matching/dispatch success",
+  );
+  assert.match(
+    s.q("fxhf-root").querySelector(".fxhf-reference").textContent,
+    /FX-FIXTURE/,
+  );
 });

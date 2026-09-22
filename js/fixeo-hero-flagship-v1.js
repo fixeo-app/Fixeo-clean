@@ -21,6 +21,8 @@
     stream,
     recordingTimer,
     transcribing = false;
+  var layoutFrame = 0,
+    stopPrompt = function () {};
   var STATES = Object.freeze({
     NEED: "need",
     ANALYSIS: "analysis",
@@ -107,16 +109,236 @@
     var el = node("fxhf-status");
     if (el) el.textContent = text;
   }
+  // UI-only viewport and floating-action coordination. No dossier/API writes.
+  function queueLayout() {
+    if (layoutFrame) return;
+    layoutFrame = window.requestAnimationFrame(function () {
+      layoutFrame = 0;
+      var viewport = window.visualViewport,
+        height = viewport?.height || window.innerHeight,
+        top = viewport?.offsetTop || 0,
+        headerBottom = 0;
+      document
+        .querySelectorAll(".fixeo-gh-universal-shell, .navbar")
+        .forEach(function (header) {
+          var rect = header.getBoundingClientRect();
+          if (
+            rect.height &&
+            rect.bottom > 0 &&
+            rect.top < 120 &&
+            window.getComputedStyle(header).visibility !== "hidden"
+          )
+            headerBottom = Math.max(headerBottom, Math.min(rect.bottom, 120));
+        });
+      var host = root.closest("#home") || root;
+      host.style.setProperty(
+        "--fxhf-viewport-height",
+        Math.round(height) + "px",
+      );
+      host.style.setProperty(
+        "--fxhf-header-height",
+        Math.round(headerBottom) + "px",
+      );
+      var focused = root.contains(document.activeElement),
+        keyboard =
+          window.innerWidth <= 820 &&
+          (viewport?.scale || 1) === 1 &&
+          focused &&
+          /^(TEXTAREA|INPUT)$/.test(document.activeElement.tagName) &&
+          document.activeElement.type !== "checkbox" &&
+          window.innerHeight - height > 140;
+      document.body.classList.toggle("fxhf-keyboard", keyboard);
+      root.style.setProperty(
+        "--fxhf-keyboard-top",
+        Math.round(Math.max(top, headerBottom)) + "px",
+      );
+      root.style.setProperty(
+        "--fxhf-keyboard-height",
+        Math.max(180, Math.round(height - Math.max(0, headerBottom - top))) +
+          "px",
+      );
+      var rect = root.getBoundingClientRect();
+      document.body.classList.toggle(
+        "fxhf-immersive",
+        rect.width > 0 &&
+          rect.bottom > Math.max(headerBottom, top) + 16 &&
+          rect.top < top + height,
+      );
+      if (keyboard)
+        document.activeElement.scrollIntoView?.({
+          block: "nearest",
+          inline: "nearest",
+        });
+    });
+  }
+  function setupLayout() {
+    window.addEventListener("resize", queueLayout, { passive: true });
+    window.addEventListener("scroll", queueLayout, { passive: true });
+    window.visualViewport?.addEventListener("resize", queueLayout, {
+      passive: true,
+    });
+    window.visualViewport?.addEventListener("scroll", queueLayout, {
+      passive: true,
+    });
+    root.addEventListener("focusin", queueLayout);
+    root.addEventListener("focusout", queueLayout);
+    if (window.ResizeObserver) {
+      var observer = new ResizeObserver(queueLayout);
+      document
+        .querySelectorAll(".fixeo-gh-universal-shell, .navbar")
+        .forEach(function (header) {
+          observer.observe(header);
+        });
+    }
+    window.addEventListener("pageshow", function () {
+      queueLayout();
+      if (state === "need") startPrompt();
+    });
+    queueLayout();
+  }
+  function startPrompt() {
+    stopPrompt();
+    var input = node("fxhf-need-input"),
+      layer = root.querySelector(".fxhf-smart-prompt");
+    if (!input || !layer) return;
+    var label = layer.querySelector("span"),
+      fallback = "Décrivez votre problème…",
+      motion = window.matchMedia?.("(prefers-reduced-motion: reduce)"),
+      timer,
+      index = 0,
+      length = 0,
+      visible = true,
+      disposed = false;
+    // Calm FR / Moroccan Darija blocks. Decorative copy never enters input.value.
+    var phrases = [
+      ["fr", "Décrivez ce qui se passe…"],
+      ["fr", "Quelques mots suffisent."],
+      ["ary-Latn", "Chno waqe3 ? Goul lia…"],
+      ["ary-Latn", "Kayn chi tserrab dyal lma ?"],
+      ["fr", "Une porte bloquée ? Je vous écoute."],
+      ["fr", "Une panne ? Montrez-moi."],
+      ["ary-Latn", "Clim ma bqat katberredch ?"],
+      ["ary-Latn", "Goulha l RAFI, nkemmel lik lbaqi."],
+    ];
+    function pause() {
+      clearTimeout(timer);
+      layer.hidden = true;
+      layer.classList.remove("fxhf-prompt-pause");
+      input.placeholder = fallback;
+    }
+    function eligible() {
+      return (
+        !disposed &&
+        input.isConnected &&
+        !input.value &&
+        document.activeElement !== input &&
+        !motion?.matches &&
+        !document.hidden &&
+        visible &&
+        !transcribing &&
+        recorder?.state !== "recording"
+      );
+    }
+    function type() {
+      if (!eligible()) return pause();
+      input.placeholder = "";
+      layer.hidden = false;
+      layer.classList.remove("fxhf-prompt-pause");
+      label.lang = phrases[index][0];
+      label.textContent = phrases[index][1].slice(0, ++length);
+      if (length < phrases[index][1].length)
+        timer = window.setTimeout(type, 55);
+      else {
+        layer.classList.add("fxhf-prompt-pause");
+        timer = window.setTimeout(function () {
+          index = (index + 1) % phrases.length;
+          length = 0;
+          type();
+        }, 2400);
+      }
+    }
+    function resume() {
+      pause();
+      if (eligible()) {
+        length = 0;
+        timer = window.setTimeout(type, 700);
+      }
+    }
+    [
+      "pointerdown",
+      "touchstart",
+      "focus",
+      "beforeinput",
+      "input",
+      "paste",
+      "compositionstart",
+    ].forEach(function (event) {
+      input.addEventListener(event, pause, { passive: true });
+    });
+    input.addEventListener("blur", resume);
+    document.addEventListener("visibilitychange", resume);
+    motion?.addEventListener?.("change", resume);
+    var observer;
+    if (window.IntersectionObserver) {
+      observer = new IntersectionObserver(function (entries) {
+        visible = entries[0].isIntersecting;
+        resume();
+      });
+      observer.observe(input);
+    }
+    stopPrompt = function () {
+      disposed = true;
+      pause();
+      observer?.disconnect();
+      [
+        "pointerdown",
+        "touchstart",
+        "focus",
+        "beforeinput",
+        "input",
+        "paste",
+        "compositionstart",
+      ].forEach(function (event) {
+        input.removeEventListener(event, pause);
+      });
+      input.removeEventListener("blur", resume);
+      document.removeEventListener("visibilitychange", resume);
+      motion?.removeEventListener?.("change", resume);
+    };
+    resume();
+  }
   function frame(next, title, subtitle) {
     clearTimeout(cityTimer);
+    stopPrompt();
     state = next;
     root.dataset.fxhfState = next;
+    var step = ["need", "safety"].includes(next)
+      ? 0
+      : ["analysis", "questions", "retry"].includes(next)
+        ? 1
+        : ["result", "confirmation"].includes(next)
+          ? 2
+          : 3;
     content.innerHTML =
-      '<div class="fxhf-eyebrow">RAFI · Assistant FIXEO</div><h2 class="fxhf-title" tabindex="-1">' +
+      '<header class="fxhf-heading"><div class="fxhf-eyebrow"><span class="fxhf-presence" aria-hidden="true"></span>RAFI · Assistant FIXEO</div><h2 class="fxhf-title" tabindex="-1">' +
       esc(title) +
       "</h2>" +
       (subtitle ? '<p class="fxhf-subtitle">' + esc(subtitle) + "</p>" : "") +
-      '<div id="fxhf-panel"></div><p id="fxhf-status" class="fxhf-status" role="status"></p><div id="fxhf-actions" class="fxhf-actions"></div>';
+      '<ol class="fxhf-progress" aria-label="Votre parcours">' +
+      ["Votre besoin", "RAFI analyse", "Votre solution"]
+        .map(function (label, i) {
+          return (
+            "<li" +
+            (i === Math.min(step, 2) ? ' aria-current="step"' : "") +
+            (i < step ? ' class="done"' : "") +
+            '><span aria-hidden="true"></span>' +
+            label +
+            "</li>"
+          );
+        })
+        .join("") +
+      '</ol></header><div class="fxhf-scroll" tabindex="-1" aria-label="Détails de votre besoin"><div id="fxhf-panel"></div><p id="fxhf-status" class="fxhf-status" role="status"></p></div><div id="fxhf-actions" class="fxhf-actions"></div>';
+    queueLayout();
   }
   function panel(html) {
     node("fxhf-panel").insertAdjacentHTML("beforeend", html);
@@ -159,7 +381,8 @@
     el.textContent =
       errors[error.message] ||
       "L’opération n’a pas abouti. Vos informations sont conservées. Réessayez.";
-    node("fxhf-actions").before(el);
+    root.querySelector(".fxhf-scroll").appendChild(el);
+    el.scrollIntoView?.({ block: "nearest" });
   }
   async function execute(task) {
     if (busy || transcribing || recorder?.state === "recording") return;
@@ -231,7 +454,7 @@
     frame(
       "need",
       "Que se passe-t-il ?",
-      "Décrivez, dites ou montrez votre problème. FIXEO s’occupe de la suite.",
+      "Écrivez, parlez ou montrez. RAFI vous guide.",
     );
     panel(
       '<div class="fxhf-location"><label for="fxhf-location">Ville d’intervention</label><select id="fxhf-location" class="fxhf-location-select" aria-label="Choisir ou modifier la ville"><option value="">Choisir ma ville</option>' +
@@ -249,14 +472,14 @@
           })
           .join("") +
         "</select></div>" +
-        '<div class="fxhf-need-field"><textarea id="fxhf-need-input" class="fxhf-need-input" rows="3" maxlength="2000" placeholder="Décrivez votre problème…" aria-label="Décrivez votre problème ou votre besoin">' +
+        '<div class="fxhf-need-field"><div class="fxhf-writing"><textarea id="fxhf-need-input" class="fxhf-need-input" rows="3" maxlength="2000" placeholder="Décrivez votre problème…" aria-label="Décrivez votre problème ou votre besoin">' +
         esc(intake.draft.description) +
-        '</textarea><div class="fxhf-voice-bar"><button type="button" class="fxhf-mic" id="fxhf-mic">' +
+        '</textarea><div class="fxhf-smart-prompt" aria-hidden="true" hidden><span></span><i></i></div></div><div class="fxhf-voice-bar"><button type="button" class="fxhf-mic" id="fxhf-mic">' +
         micIcon +
         'Parler à RAFI</button><button type="button" class="fxhf-mic" id="fxhf-show" aria-expanded="false" aria-controls="fxhf-photo-choices">' +
         cameraIcon +
         'Montrer à RAFI</button><select id="fxhf-speech-lang" class="fxhf-speech-lang" aria-label="Langue de reconnaissance vocale"><option value="fr-FR">FR</option><option value="ar-MA">الدارجة</option></select></div></div>' +
-        '<div id="fxhf-photo-choices" class="fxhf-photo-choices" hidden><button type="button" id="fxhf-camera" class="fxhf-secondary">Prendre une photo</button><button type="button" id="fxhf-library" class="fxhf-secondary">Photothèque / fichiers</button><input id="fxhf-files" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden><input id="fxhf-camera-file" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden><p>3 photos max. · 8 Mio / photo · JPEG, PNG, WebP.<br>Évitez visages, papiers d’identité et informations personnelles.</p></div><div id="fxhf-photos" class="fxhf-photos"></div><p id="fxhf-understanding" class="fxhf-understanding"></p>' +
+        '<div id="fxhf-photo-choices" class="fxhf-photo-choices" hidden><button type="button" id="fxhf-camera" class="fxhf-secondary">Prendre une photo</button><button type="button" id="fxhf-library" class="fxhf-secondary">Photothèque / fichiers</button><input id="fxhf-files" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden><input id="fxhf-camera-file" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden><details class="fxhf-photo-help"><summary>Formats et conseils photo</summary><p>3 photos max. · 8 Mio / photo · JPEG, PNG, WebP.<br>Évitez visages, papiers d’identité et informations personnelles.</p></details></div><div id="fxhf-photos" class="fxhf-photos" aria-live="polite"></div><p id="fxhf-understanding" class="fxhf-understanding"></p>' +
         '<label class="fxhf-consent"><input type="checkbox" id="fxhf-consent"' +
         (intake.draft.consent ? " checked" : "") +
         '><span>J’accepte l’analyse par FIXEO et son fournisseur IA.</span></label><details class="fxhf-privacy"><summary>Comment mes informations sont protégées</summary><p>Ma description et mes photos servent à préparer mon intervention. Les photos sont envoyées uniquement après mon accord et le lancement de l’analyse.</p><p>Suppression programmée : dossier sans réservation après 24 h ; photos liées à une intervention après 90 jours au plus, ou 30 jours après clôture ; contexte de l’intervention après 180 jours.</p><a href="/confidentialite.html" target="_blank" rel="noopener">Politique de confidentialité</a></details>',
@@ -299,6 +522,10 @@
         }
         e.target.value = "";
         renderPhotos();
+        if (intake.pending.length || readyPhotos().length) {
+          node("fxhf-photo-choices").hidden = true;
+          node("fxhf-show").setAttribute("aria-expanded", "false");
+        }
         availability();
       };
     });
@@ -312,9 +539,15 @@
       false,
       "fxhf-submit",
     );
-    panel('<p class="fxhf-note">Aucune demande n’est créée à cette étape.</p>');
+    root
+      .querySelector(".fxhf-privacy")
+      .insertAdjacentHTML(
+        "beforeend",
+        "<p>Aucune demande n’est créée à cette étape.</p>",
+      );
     renderPhotos();
     availability();
+    startPrompt();
     var attempts = 0;
     function detectCity() {
       if (state !== "need" || intake.draft.city) return;
@@ -384,6 +617,7 @@
         (count === 1 ? " photo prête à analyser" : " photos prêtes à analyser");
       target.appendChild(label);
     }
+    root.dataset.fxhfPhotos = String(count);
   }
   function renderSafety() {
     frame(
@@ -434,6 +668,9 @@
       "RAFI comprend votre besoin…",
       "Vos informations restent dans le même dossier sécurisé.",
     );
+    panel(
+      '<div class="fxhf-analysis-art" aria-hidden="true"><span></span><img src="rafi/RAFI_V2_HeadCollar_Core.webp" alt="" width="144" height="144"></div><p class="fxhf-analysis-caption">Un besoin. Une solution adaptée.</p>',
+    );
     await intake.analyze();
     questionIndex = 0;
     renderState();
@@ -447,7 +684,7 @@
       "Une réponse en un tap, uniquement à partir de ce que vous savez déjà.",
     );
     panel(
-      '<p class="fxhf-note">Question ' +
+      '<p class="fxhf-question-count">Question ' +
         (questionIndex + 1) +
         " / " +
         questions.length +
@@ -514,13 +751,13 @@
     var s = intake.session,
       r = s.result;
     return (
-      '<dl class="fxhf-summary"><div><dt>Métier recommandé</dt><dd>' +
+      '<dl class="fxhf-summary"><div class="fxhf-summary-trade"><dt>Métier recommandé</dt><dd>' +
       esc(trades[r.trade.value] || r.trade.value) +
-      "</dd></div><div><dt>Ville</dt><dd>" +
+      '</dd></div><div class="fxhf-summary-city"><dt>Ville</dt><dd>' +
       esc(cities[s.city_slug] || s.city_slug) +
-      '</dd></div><div class="fxhf-summary-wide"><dt>Besoin · analyse indicative</dt><dd>' +
+      '</dd></div><div class="fxhf-summary-wide fxhf-summary-problem"><dt>Besoin · analyse indicative</dt><dd>' +
       esc(r.problem.value) +
-      '</dd></div><div class="fxhf-summary-wide"><dt>Priorité</dt><dd>' +
+      '</dd></div><div class="fxhf-summary-wide fxhf-summary-priority"><dt>Priorité</dt><dd>' +
       esc(priority()) +
       "</dd></div></dl>"
     );
@@ -614,6 +851,16 @@
         true,
         "fxhf-estimation",
       );
+    // Optional tools stay available without competing with the primary action.
+    var optional = document.createElement("details");
+    optional.className = "fxhf-optional";
+    optional.innerHTML = "<summary>Diagnostic et options</summary><div></div>";
+    [node("fxhf-diagnostic"), node("fxhf-estimation")]
+      .filter(Boolean)
+      .forEach(function (b) {
+        optional.lastElementChild.appendChild(b);
+      });
+    node("fxhf-panel").appendChild(optional);
     button("Modifier mon besoin", renderNeed, true);
     availability();
   }
@@ -640,7 +887,16 @@
       "Tout est déjà dans votre dossier. FIXEO organise la suite.",
     );
     panel(
-      summary() +
+      '<details class="fxhf-recap"><summary><strong>' +
+        esc(
+          trades[intake.session.result.trade.value] ||
+            intake.session.result.trade.value,
+        ) +
+        " · " +
+        esc(cities[intake.session.city_slug] || intake.session.city_slug) +
+        "</strong><span>Voir le besoin et la priorité</span></summary>" +
+        summary() +
+        "</details>" +
         safetyNotice() +
         '<div class="fxhf-contact"><label for="fxhf-phone">Téléphone pour le suivi</label>' +
         (known
@@ -738,13 +994,13 @@
             );
           })
           .join("") +
-        '</ol><p class="fxhf-note">Référence : ' +
+        '</ol><p class="fxhf-reference"><span>Référence de votre demande</span><strong>' +
         esc(
           p.tracking_ref ||
             intake.session.request_ref ||
             "enregistrée dans votre dossier",
         ) +
-        "</p>" +
+        "</strong></p>" +
         (p.sync_pending
           ? '<p class="fxhf-note">Le suivi est momentanément indisponible. Votre demande reste enregistrée.</p>'
           : "") +
@@ -810,6 +1066,7 @@
   }
   async function record() {
     if (busy || transcribing) return;
+    stopPrompt();
     if (recorder?.state === "recording") {
       recorder.stop();
       return;
@@ -819,6 +1076,7 @@
       status(
         "Micro non disponible. Vous pouvez écrire votre besoin ou ajouter une photo.",
       );
+      startPrompt();
       return;
     }
     mic.disabled = true;
@@ -872,6 +1130,7 @@
           mic.disabled = false;
           mic.innerHTML = micIcon + "Parler à RAFI";
           availability();
+          startPrompt();
         }
       });
       recorder.start();
@@ -888,6 +1147,7 @@
         "Le micro n’est pas autorisé. Vous pouvez écrire votre besoin ou ajouter une photo.",
       );
       availability();
+      startPrompt();
     }
   }
   function mount() {
@@ -895,6 +1155,7 @@
     root = document.getElementById("fxhf-root");
     if (!root || !window.FixeoIntake || !window.FixeoDiagnostic) return false;
     mounted = true;
+    root.closest("#home")?.classList.add("fxhf-premium-home");
     root.innerHTML =
       '<div class="fxhf-shell fxhf-shell--need fxhf-universal"><div class="fxhf-content"></div><div class="fxhf-visual"><div class="fxhf-rafi-sphere"><div class="fxhf-rafi-halo"></div><div class="fxhf-rafi-core"><img src="rafi/RAFI_V2_HeadCollar_Core.webp" alt="RAFI, votre assistant FIXEO" class="fxhf-rafi-face" width="150" height="150"></div></div><p class="fxhf-rafi-caption">Vous montrez. RAFI comprend.<br>FIXEO s’occupe de la suite.</p></div></div>';
     content = root.querySelector(".fxhf-content");
@@ -909,7 +1170,11 @@
       if (!root.contains(e.relatedTarget))
         document.body.classList.remove("fxhf-focused");
     });
-    window.addEventListener("pagehide", stopTracks);
+    setupLayout();
+    window.addEventListener("pagehide", function () {
+      stopTracks();
+      stopPrompt();
+    });
     if (intake.id)
       execute(async function () {
         frame(
@@ -945,7 +1210,7 @@
     return true;
   }
   window.FixeoHeroFlagship = {
-    VERSION: "universal-intake-v1",
+    VERSION: "hero-premium-v1",
     STATES: STATES,
     mount: mount,
     getState: function () {
