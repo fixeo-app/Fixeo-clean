@@ -32,6 +32,7 @@ function config(env = process.env) {
     env.SUPABASE_SERVICE_ROLE_KEY &&
     env.FIXEO_ESTIMATOR_SECRET?.length >= 32 &&
     env.FIXEO_DIAGNOSTIC_SECRET?.length >= 32 &&
+    env.CRON_SECRET?.length >= 32 &&
     env.OPENAI_API_KEY &&
     env.FIXEO_DIAGNOSTIC_MODEL &&
     env.FIXEO_DIAGNOSTIC_COST_REVIEWED === '1' &&

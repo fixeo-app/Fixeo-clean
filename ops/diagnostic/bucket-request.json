@@ -1,0 +1,7 @@
+{
+  "id": "diagnostic-private-v1",
+  "name": "diagnostic-private-v1",
+  "public": false,
+  "file_size_limit": 8388608,
+  "allowed_mime_types": ["image/jpeg", "image/png", "image/webp"]
+}

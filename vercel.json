@@ -760,6 +760,7 @@
       ]
     }
   ],
+  "crons": [{ "path": "/api/diagnostic-maintenance", "schedule": "0 * * * *" }],
   "git": {
     "deploymentEnabled": {
       "feat/diagnostic-v1": false
