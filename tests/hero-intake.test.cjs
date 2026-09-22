@@ -593,6 +593,76 @@ test("Hero legal details, native controls and static mobile footer reserve safe-
   assert.match(css, /prefers-reduced-motion/);
 });
 
+// Cascade contracts, not pixel/physical-keyboard verification: JSDOM has no
+// layout engine. Include the real RAFI OS sibling that isolated Hero tests missed.
+for (const width of [320, 390]) {
+  test(`Mobile NEED uses intrinsic rows and one keyboard scroll surface at ${width}px`, async (t) => {
+    const s = setup(t, {
+      configure(w) {
+        const hero = w.document.createElement("section");
+        hero.id = "home";
+        hero.className = "hero hero-section rfos-hero-recomposed";
+        const content = w.document.createElement("div");
+        content.className = "hero-content";
+        hero.append(content);
+        w.document.body.prepend(hero);
+        content.append(w.document.getElementById("fxhf-root"));
+        const legacy = w.document.createElement("div");
+        legacy.className = "rfos-stage-wrap";
+        legacy.textContent = "RAFI — Même quelques mots me suffisent.";
+        content.append(legacy);
+        const estimation = w.document.createElement("section");
+        estimation.id = "fixeo-estimation-signature";
+        hero.after(estimation);
+        Object.defineProperty(w, "innerWidth", { value: width });
+      },
+    });
+    const doc = s.w.document;
+    const style = doc.createElement("style");
+    style.textContent = read("css/fixeo-rafi-os-v1.css") + read("css/fixeo-hero-flagship-v1.css");
+    doc.head.append(style);
+    function viewportRules(rules) {
+      return [...rules].map((rule) => {
+        if (!rule.media) return rule.cssText;
+        const query = rule.media.mediaText;
+        if (query.includes("prefers-reduced-motion")) return "";
+        const matches = [...query.matchAll(/(min|max)-(width|height):\s*(\d+)px/g)].every(([, bound, axis, n]) => {
+          const size = axis === "width" ? width : 568;
+          return bound === "max" ? size <= +n : size >= +n;
+        });
+        return matches ? viewportRules(rule.cssRules) : "";
+      }).join("\n");
+    }
+    style.textContent = viewportRules(style.sheet.cssRules);
+    const computed = (selector) => s.w.getComputedStyle(doc.querySelector(selector));
+    for (const filled of [false, true]) {
+      if (filled) s.fill();
+      assert.equal(computed(".fxhf-content").gridTemplateRows, "auto auto auto");
+      assert.equal(computed(".fxhf-content").alignSelf, "start");
+      assert.equal(computed(".fxhf-universal").height, "auto");
+      assert.equal(computed(".fxhf-universal").alignContent, "start");
+      assert.equal(computed(".fxhf-scroll").overflow, "visible");
+      assert.equal(computed(".rfos-stage-wrap").display, "none");
+      assert.equal(computed(".fxhf-actions").position, "static");
+      assert.equal(s.q("fxhf-submit").disabled, !filled);
+    }
+    s.q("fxhf-need-input").focus();
+    assert.equal(doc.activeElement, s.q("fxhf-need-input"));
+    doc.body.classList.add("fxhf-keyboard");
+    assert.equal(computed("#fxhf-root").overflowY, "auto");
+    assert.equal(computed(".fxhf-universal").minHeight, "0");
+    assert.equal(computed(".fxhf-actions").position, "static");
+    assert.ok(s.q("fxhf-root").contains(s.q("fxhf-submit")));
+    assert.equal(doc.querySelector("#home").nextElementSibling.id, "fixeo-estimation-signature");
+    assert.notEqual(computed("#fixeo-estimation-signature").display, "none");
+    doc.body.classList.remove("fxhf-keyboard");
+    s.q("fxhf-submit").click();
+    await s.until(() => s.q("fxhf-root").dataset.fxhfState === "safety");
+    assert.equal(computed(".fxhf-content").gridTemplateRows, "auto minmax(0, 1fr) auto");
+    assert.notEqual(computed(".rfos-stage-wrap").display, "none", "legacy visibility outside NEED is untouched");
+  });
+}
+
 // UI timers are deterministic; no provider, camera or physical device is used.
 function promptClock(w, reduced = false) {
   let now = 0,

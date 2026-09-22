@@ -201,6 +201,48 @@ body.fxhf-immersive #fixeo-urgent-fab, body.fxhf-immersive .chat-widget { visibi
   body.fxhf-keyboard .fxhf-title { font-size: 22px; padding: 0; }
   body.fxhf-keyboard .fxhf-eyebrow { display: none; }
   body.fxhf-keyboard .fxhf-actions { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+
+  /* NEED is a compact document, not a stretched three-row workspace.
+     Keep spare viewport space AFTER the CTA, never between consent and CTA.
+     Other journey states retain their existing workspace layout. */
+  #fxhf-root[data-fxhf-state=need] .fxhf-universal {
+    height: auto;
+    min-height: calc(var(--fxhf-viewport-height, 100svh) - var(--fxhf-header-height, 64px));
+    align-content: start;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  #fxhf-root[data-fxhf-state=need] .fxhf-content {
+    grid-template-rows: auto auto auto;
+    align-content: start;
+    align-self: start;
+    gap: 8px;
+  }
+  #fxhf-root[data-fxhf-state=need] .fxhf-scroll {
+    overflow: visible;
+    padding-bottom: 0;
+  }
+  #fxhf-root[data-fxhf-state=need] .fxhf-actions {
+    padding-bottom: 0;
+  }
+  /* RAFI OS still mounts for legacy consumers. Hide only its decorative
+     homepage stage while mobile Premium NEED owns the presentation. */
+  section#home.fxhf-premium-home:has(#fxhf-root[data-fxhf-state=need]) > .hero-content > .rfos-stage-wrap,
+  section#home.fxhf-premium-home:has(#fxhf-root[data-fxhf-state=need]) + .rfos-h1-band {
+    display: none !important;
+  }
+  /* One scroll surface includes heading, fields AND CTA. No fixed footer
+     can cover a field, including when Safari pans the visual viewport. */
+  body.fxhf-keyboard #fxhf-root[data-fxhf-state=need] {
+    height: var(--fxhf-keyboard-height, 100svh);
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-padding-block: 12px;
+  }
+  body.fxhf-keyboard #fxhf-root[data-fxhf-state=need] .fxhf-universal {
+    height: auto;
+    min-height: 0;
+  }
 }
 @media (max-width: 360px) {
   .fxhf-universal { padding: 12px 12px 0; --fxhf-gap: 8px; }
