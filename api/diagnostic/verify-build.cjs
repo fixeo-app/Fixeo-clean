@@ -22,7 +22,7 @@ function response() {
     json(v) { this.body = v; return this; },
   };
 }
-async function verify({ runtime = false } = {}) {
+async function verify({ runtime = false, client = 'native' } = {}) {
   if (process.env.VERCEL_ENV !== 'production') {
     console.log('Diagnostic release gate: local/preview build, no production access.');
     return;
@@ -55,9 +55,9 @@ async function verify({ runtime = false } = {}) {
   const quiet = runtime ? console : { info() {}, warn() {} };
   // Test-only dependency injection. The deployed public handler still reads its
   // unchanged OFF flag; this script is never routed as an HTTP endpoint.
-  const handler = createHandler({ logger: quiet, cfg: { ...cfg, enabled: true } });
-  const maintenance = createMaintenance({ logger: quiet });
-  const transport = createTransport();
+  const transport = createTransport({ fetchImpl: client === 'node_fetch' ? require('node-fetch') : fetch });
+  const handler = createHandler({ logger: quiet, cfg: { ...cfg, enabled: true }, transport });
+  const maintenance = createMaintenance({ logger: quiet, transport });
   const storage = createMedia(transport, cfg);
   const id = randomUUID();
   let cookie = '', session, mediaId, ticket;

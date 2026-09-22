@@ -1,6 +1,5 @@
 'use strict';
 const { tracedRequest } = require('./http-trace');
-const nodeFetch = require('node-fetch');
 class DiagnosticError extends Error {
   constructor(code, status = 400) {
     super(code);
@@ -36,7 +35,7 @@ async function boundedBody(response, maximum) {
 }
 function createTransport({
   env = process.env,
-  fetchImpl = nodeFetch,
+  fetchImpl = fetch,
   requestTimeout = 12000,
   deadline = Infinity,
 } = {}) {

@@ -106,7 +106,7 @@ function createHandler({
       if (req.method === 'POST' && req.body?.action === 'verify_runtime') {
         if (!require('./runtime-check').authorized(req, env))
           throw new DiagnosticError('FORBIDDEN', 403);
-        await require('./verify-build.cjs').verify({ runtime: true });
+        await require('./verify-build.cjs').verify({ runtime: true, client: req.body.client });
         return send(res, 200, { ok: true, verification: 'PASS' });
       }
       if (req.method === 'GET')
