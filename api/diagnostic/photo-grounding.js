@@ -1,6 +1,6 @@
 "use strict";
 const { HAZARDS, MEDIA } = require("./contract");
-const { DiagnosticError } = require("./transport");
+const { groundingError } = require("./grounding-errors");
 
 // This pass receives pixels and opaque media IDs only, never the customer's
 // description, answers, filename, diagnosis or an earlier model response.
@@ -57,18 +57,22 @@ let validate;
 function validatePhotoEvidence(value, ids) {
   if (!validate)
     validate = new (require("ajv"))({ strict: true }).compile(photoSchema);
-  if (!validate(value) || value.photos.length !== ids.length)
-    throw new DiagnosticError("PHOTO_EVIDENCE_INVALID", 502);
+  if (!validate(value)) throw groundingError("photo_evidence", "schema");
+  if (value.photos.length !== ids.length)
+    throw groundingError("photo_evidence", "photo_count");
   const remaining = new Set(ids);
   for (const photo of value.photos) {
-    if (
-      !remaining.delete(photo.media_id) ||
-      (photo.status === "inconclusive" && photo.observations.length) ||
-      (photo.status === "informative" && !photo.observations.length)
-    )
-      throw new DiagnosticError("PHOTO_EVIDENCE_INVALID", 502);
+    if (!remaining.delete(photo.media_id))
+      throw groundingError("photo_evidence", "media_id");
+    if (photo.status === "inconclusive" && photo.observations.length)
+      throw groundingError("photo_evidence", "inconclusive_observations");
+    if (photo.status === "informative" && !photo.observations.length)
+      throw groundingError(
+        "photo_evidence",
+        "informative_without_observations",
+      );
   }
-  if (remaining.size) throw new DiagnosticError("PHOTO_EVIDENCE_INVALID", 502);
+  if (remaining.size) throw groundingError("photo_evidence", "missing_media");
   return value.photos;
 }
 
@@ -111,27 +115,106 @@ function photoLimitations(photos) {
   );
 }
 
-function assertTextSynthesis(result) {
-  // Only the isolated photo pass may author visual facts. The synthesis pass
-  // cannot upgrade the user's text to photographic evidence, in any field.
-  if (!Array.isArray(result?.observations) || result.observations.length)
-    throw new DiagnosticError("UNGROUNDED_PROVIDER_OBSERVATION", 502);
-  const prose = JSON.stringify([
-    result.problem,
-    result.hypotheses,
-    result.urgency_reason,
-    result.checks,
-    result.possible_parts,
-  ])
+const proseFields = [
+  "problem",
+  "hypotheses",
+  "urgency_reason",
+  "checks",
+  "possible_parts",
+];
+const normalized = (text) =>
+  text
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
-  if (
-    /\b(?:photos?|photograph\w*|images?|cliches?|visib\w*|visuel\w*|observ\w*)\b/u.test(
-      prose,
+    .toLowerCase()
+    .replace(/[’‘]/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+const trimStatement = (text) =>
+  text.replace(/^[\s:,.!?;«»"'()]+|[\s:,.!?;«»"'()]+$/g, "");
+
+// Photo facts have a closed source: the isolated vision pass. These wrappers
+// permit a literal reference to an existing fact, never an invented paraphrase.
+const visualPrefix =
+  /^(?:(?:la|les|cette|ces|l')\s*)?(?:photos?|photographies?|images?|cliches?)\s+(?:montre(?:nt)?|revele(?:nt)?|confirme(?:nt)?|prouve(?:nt)?|indique(?:nt)?|presente(?:nt)?|fait appara[iî]tre|met en evidence)\s*:?\s*|^(?:sur|dans|d'apres|selon)\s+(?:(?:la|les|cette|ces|l')\s*)?(?:photos?|images?|cliches?)\s*[:,]?\s*|^(?:on|nous|je)\s+(?:y\s+)?(?:voit|vois|voyons|observe|observons|constate|constatons|distingue|distinguons)\s*(?:sur (?:la photo|l'image))?\s*:?\s*/;
+const visualAssertion =
+  /\b(?:photos?|photographies?|images?|cliches?)\s+(?:(?:fournie|jointe|transmise|fournies|jointes|transmises)\s+)?(?:ne\s+|n\x27)?(?:montre\w*|revele\w*|confirme\w*|prouve\w*|indique\w*|presente\w*)\b|\b(?:photos?|photographies?|images?|cliches?)\s*:\s*\S|\b(?:on|nous|je)\s+(?:y\s+)?(?:voit|vois|voyons|observe|observons|constate|constatons|distingue|distinguons)\b|\b(?:visible(?:s)?|visiblement|observe(?:e|es|s)?|constate(?:e|es|s)?|photographiee(?:s)?)\b|\b(?:sur|dans|d'apres|selon)\s+(?:(?:la|les|cette|ces|l')\s*)?(?:photos?|images?|cliches?)\b/;
+
+function assertProseGrounding(result, photos) {
+  const facts = new Set(
+    photos.flatMap((photo) =>
+      photo.status === "informative"
+        ? photo.observations.flatMap((item) => [
+            trimStatement(normalized(item.text)),
+            trimStatement(normalized(`${item.text} (${item.location})`)),
+          ])
+        : [],
+    ),
+  );
+  for (const field of proseFields) {
+    for (const value of Array.isArray(result[field])
+      ? result[field]
+      : [result[field]]) {
+      if (typeof value !== "string") continue; // Runtime schema validation follows.
+      for (const sentence of normalized(value).split(
+        /[.!?;\n]+|,\s*(?:mais|et|cependant|pourtant)\s+/u,
+      )) {
+        const claim = trimStatement(sentence);
+        if (!claim) continue;
+        // A whole statement must match an isolated fact; substring matching
+        // would let a genuine observation conceal a second invented claim.
+        const literal = trimStatement(claim.replace(visualPrefix, ""));
+        if (facts.has(claim) || facts.has(literal)) continue;
+        // A latent defect or a question for an on-site professional is not an
+        // assertion that the photo proves it. No generic vocabulary blacklist.
+        let inference = claim.replace(/\bnon visible(?:s)?\b/g, "non apparent");
+        if (
+          /^(?:a verifier|a confirmer|verification|confirmation)\b[^.]{0,65}\bsi\b/.test(
+            inference,
+          ) &&
+          !/\b(?:photo|image|cliche)\b/.test(inference)
+        )
+          continue;
+        // An explicit limitation describes the evidence boundary, not a
+        // physical fact (e.g. "L'image ne permet pas de confirmer l'état").
+        inference = inference.replace(
+          /^(?:(?:la|les|cette|ces|l')\s*)?(?:photos?|images?|cliches?)\s+ne\s+(?:permet|permettent)\s+pas\s+de\b/,
+          "",
+        );
+        if (visualAssertion.test(inference))
+          throw groundingError("synthesis", "unbound_visual_claim", field);
+      }
+    }
+  }
+}
+
+function assertTextSynthesis(result, photos = []) {
+  // Only the isolated photo pass may author visual facts. The synthesis pass
+  // cannot upgrade the user's text to photographic evidence, in any field.
+  if (!Array.isArray(result?.observations))
+    throw groundingError("synthesis", "observations_missing");
+  if (result.observations.length)
+    throw groundingError("synthesis", "observations_not_empty");
+  assertProseGrounding(result, photos);
+}
+
+function assertPhotoObservations(observations, photos) {
+  const expected = photoObservations(photos);
+  if (observations.length !== expected.length)
+    throw groundingError("engine", "observation_count");
+  for (let i = 0; i < expected.length; i++) {
+    const actual = observations[i],
+      fact = expected[i];
+    if (actual.text !== fact.text)
+      throw groundingError("engine", "observation_text");
+    if (actual.provenance !== fact.provenance)
+      throw groundingError("engine", "observation_provenance");
+    if (
+      actual.media_ids.length !== fact.media_ids.length ||
+      actual.media_ids.some((id, n) => id !== fact.media_ids[n])
     )
-  )
-    throw new DiagnosticError("UNGROUNDED_PROVIDER_OBSERVATION", 502);
+      throw groundingError("engine", "observation_media_ids");
+  }
 }
 
 module.exports = {
@@ -142,4 +225,6 @@ module.exports = {
   photoObservations,
   photoLimitations,
   assertTextSynthesis,
+  assertProseGrounding,
+  assertPhotoObservations,
 };

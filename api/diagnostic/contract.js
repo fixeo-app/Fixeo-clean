@@ -1,4 +1,5 @@
 'use strict';
+const { markGroundingError } = require('./grounding-errors');
 
 const VERSION = 'fixeo-diagnostic-v1';
 const PROVENANCE = Object.freeze([
@@ -178,13 +179,20 @@ function validateProviderResult(value, mediaIds) {
     validate = new (require('ajv'))({ allErrors: false, strict: true }).compile(
       providerSchema,
     );
-  if (!validate(value)) throw new Error('PROVIDER_SCHEMA_INVALID');
+  if (!validate(value))
+    throw markGroundingError(
+      new Error('PROVIDER_SCHEMA_INVALID'), 'provider_result', 'schema',
+    );
   const allowed = new Set(mediaIds);
   for (const item of value.observations) {
     if (item.provenance === 'observed' && !item.media_ids.length)
-      throw new Error('OBSERVATION_WITHOUT_MEDIA');
+      throw markGroundingError(
+        new Error('OBSERVATION_WITHOUT_MEDIA'), 'provider_result', 'observation_without_media',
+      );
     if (item.media_ids.some((id) => !allowed.has(id)))
-      throw new Error('UNKNOWN_MEDIA_EVIDENCE');
+      throw markGroundingError(
+        new Error('UNKNOWN_MEDIA_EVIDENCE'), 'provider_result', 'unknown_media',
+      );
   }
   // Do not display model-authored repair procedures, even in another result field.
   const content = JSON.stringify(value)

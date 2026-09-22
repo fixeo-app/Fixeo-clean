@@ -5,7 +5,8 @@ const { hash } = require("./auth");
 const { DiagnosticError } = require("./transport");
 const {
   validatePhotoEvidence,
-  photoObservations,
+  assertPhotoObservations,
+  assertProseGrounding,
   photoLimitations,
 } = require("./photo-grounding");
 const indicative =
@@ -95,11 +96,8 @@ async function analyze(snapshot, { provider, mediaStore }) {
         media.map((m) => m.id),
       )
     : [];
-  if (
-    JSON.stringify(model.observations) !==
-    JSON.stringify(photoObservations(photos))
-  )
-    throw new DiagnosticError("UNGROUNDED_PROVIDER_OBSERVATION", 502);
+  assertPhotoObservations(model.observations, photos);
+  assertProseGrounding(model, photos);
   const safety = evaluateSafety(input, model, [
     ...before.signals,
     ...photos.flatMap((photo) => photo.safety_signals),

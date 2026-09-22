@@ -7,6 +7,7 @@ const { sameOrigin, principal, ipHash, hash } = require('./auth');
 const { createMedia, sanitizePhoto } = require('./media');
 const { createOpenAIAdapter } = require('./providers/openai');
 const { analyze } = require('./engine');
+const { groundingLogDetails } = require('./grounding-errors');
 const { confirmCritical } = require('./critical-request');
 const { sealToken } = require('../estimator-v1/fixeo-estimator-token-v1');
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -416,6 +417,7 @@ function createHandler({
           code,
           latency_ms: Date.now() - started,
           ...(error.diagnosticTransport ? { transport: error.diagnosticTransport } : {}),
+          ...(groundingLogDetails(error) ? { grounding: groundingLogDetails(error) } : {}),
         }),
       );
       return send(res, error instanceof DiagnosticError ? error.status : 502, {
