@@ -156,6 +156,14 @@ function assertProseGrounding(result, photos) {
       ? result[field]
       : [result[field]]) {
       if (typeof value !== "string") continue; // Runtime schema validation follows.
+      // A valid isolated observation can itself contain multiple sentences.
+      // Bind the entire value before examining individual unsupported claims.
+      const whole = trimStatement(normalized(value));
+      if (
+        facts.has(whole) ||
+        facts.has(trimStatement(whole.replace(visualPrefix, "")))
+      )
+        continue;
       for (const sentence of normalized(value).split(
         /[.!?;\n]+|,\s*(?:mais|et|cependant|pourtant)\s+/u,
       )) {

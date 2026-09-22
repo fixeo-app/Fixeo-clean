@@ -265,6 +265,39 @@ test("normalization log metadata contains only known field labels", () => {
   );
 });
 
+test("a multi-sentence isolated observation remains valid when used as the grounded replacement", () => {
+  const photos = [
+    {
+      ...evidence()[0],
+      observations: [
+        {
+          text: "Un cache est cassé. Un câble est visible.",
+          location: "au centre",
+        },
+      ],
+    },
+  ];
+  const out = groundTextSynthesis(
+    { ...synthesis(), problem: "Fils visibles dans une prise cassée." },
+    photos,
+  );
+  assert.equal(out.result.problem, photos[0].observations[0].text);
+  assert.doesNotThrow(() => assertTextSynthesis(out.result, photos));
+  rejectsWith(
+    () =>
+      assertTextSynthesis(
+        {
+          ...out.result,
+          problem: out.result.problem + " Du métal fondu est visible.",
+        },
+        photos,
+      ),
+    "synthesis",
+    "unbound_visual_claim",
+    "problem",
+  );
+});
+
 test("inconclusive photo supports useful text analysis, never a visual finding", async () => {
   const out = await run({
     photos: [
