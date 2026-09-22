@@ -7,7 +7,7 @@ const { sameOrigin, principal, ipHash, hash } = require('./auth');
 const { createMedia, sanitizePhoto } = require('./media');
 const { createOpenAIAdapter } = require('./providers/openai');
 const { analyze } = require('./engine');
-const { groundingLogDetails } = require('./grounding-errors');
+const { groundingLogDetails, groundingNormalizationDetails } = require('./grounding-errors');
 const { confirmCritical } = require('./critical-request');
 const { sealToken } = require('../estimator-v1/fixeo-estimator-token-v1');
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -345,6 +345,11 @@ function createHandler({
               provider,
               mediaStore,
             });
+            const grounding = groundingNormalizationDetails(output.usage?.grounding_normalized_fields);
+            if (grounding) logger.info?.(JSON.stringify({
+              event: 'diagnostic_grounding_normalized', request_id: requestId,
+              action: 'analyze', grounding,
+            }));
             data = await call('run_finish', {
               revision: body.revision,
               run_id: body.run_id,

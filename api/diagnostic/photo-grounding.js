@@ -1,6 +1,6 @@
 "use strict";
 const { HAZARDS, MEDIA } = require("./contract");
-const { groundingError } = require("./grounding-errors");
+const { groundingError, groundingLogDetails } = require("./grounding-errors");
 
 // This pass receives pixels and opaque media IDs only, never the customer's
 // description, answers, filename, diagnosis or an earlier model response.
@@ -198,6 +198,53 @@ function assertTextSynthesis(result, photos = []) {
   assertProseGrounding(result, photos);
 }
 
+function groundTextSynthesis(result, photos = []) {
+  // Provenance violations remain fatal. Prose is never a source of observed
+  // facts: project unsupported photographic assertions out of the synthesis,
+  // rather than aborting an otherwise valid diagnostic with HTTP 502.
+  if (!Array.isArray(result?.observations) || result.observations.length)
+    assertTextSynthesis(result, photos);
+  const grounded = { ...result };
+  const normalizedFields = [];
+  const fallback = {
+    problem:
+      photos.find((photo) => photo.status === "informative")?.observations[0]
+        ?.text ||
+      "Problème à préciser par une évaluation professionnelle sur place.",
+    urgency_reason:
+      "Priorité évaluée à partir des éléments disponibles ; confirmation professionnelle nécessaire.",
+  };
+  for (const field of proseFields) {
+    const values = Array.isArray(result[field])
+      ? result[field]
+      : [result[field]];
+    const kept = [];
+    for (const value of values) {
+      try {
+        assertProseGrounding({ [field]: value }, photos);
+        kept.push(value);
+      } catch (error) {
+        const detail = groundingLogDetails(error);
+        if (
+          detail?.stage !== "synthesis" ||
+          detail.condition !== "unbound_visual_claim"
+        )
+          throw error;
+        if (!normalizedFields.includes(field)) normalizedFields.push(field);
+      }
+    }
+    if (normalizedFields.includes(field)) {
+      grounded[field] = Array.isArray(result[field]) ? kept : fallback[field];
+      if (field === "checks" && !kept.length)
+        grounded.checks = [
+          "Vérification sur place par un professionnel recommandée.",
+        ];
+    }
+  }
+  assertTextSynthesis(grounded, photos);
+  return { result: grounded, normalizedFields };
+}
+
 function assertPhotoObservations(observations, photos) {
   const expected = photoObservations(photos);
   if (observations.length !== expected.length)
@@ -225,6 +272,7 @@ module.exports = {
   photoObservations,
   photoLimitations,
   assertTextSynthesis,
+  groundTextSynthesis,
   assertProseGrounding,
   assertPhotoObservations,
 };

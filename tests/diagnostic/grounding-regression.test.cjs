@@ -16,10 +16,12 @@ const {
   assertPhotoObservations,
   photoObservations,
   validatePhotoEvidence,
+  groundTextSynthesis,
 } = require("../../api/diagnostic/photo-grounding");
 const {
   groundingLogDetails,
   groundingError,
+  groundingNormalizationDetails,
 } = require("../../api/diagnostic/grounding-errors");
 const id = "dc986e10-b315-4000-8000-2d458b457704";
 const otherId = "ed986e10-b315-4000-8000-2d458b457705";
@@ -170,6 +172,96 @@ test("photo-only inference retains isolated facts without manufacturing a custom
   assert.equal(
     out.result.facts.filter((f) => f.provenance === "observed").length,
     1,
+  );
+});
+
+test("valid electrical-photo paraphrase cannot trigger a false 502: only literal isolated findings become photo proof", async () => {
+  const out = await run({
+    result: {
+      ...synthesis(),
+      problem: "Prise endommagée avec des fils visibles.",
+      hypotheses: ["Protection électrique possiblement détériorée."],
+    },
+  });
+  assert.equal(out.result.next, "qualification");
+  assert.equal(out.result.safety.stop, false);
+  assert.equal(out.result.trade.value, "electricite");
+  assert.deepEqual(out.usage.grounding_normalized_fields, ["problem"]);
+  assert.equal(out.result.problem.value, evidence()[0].observations[0].text);
+  assert.equal(out.result.problem.provenance, "ai_inferred");
+  assert.equal(
+    out.result.facts.find((f) => f.provenance === "observed").value,
+    photoObservations(evidence())[0].text,
+  );
+});
+
+test("unsupported photographic prose is removed in all fields without inventing replacements or losing danger signals", () => {
+  const raw = {
+    ...synthesis(),
+    problem: "La photo montre du métal fondu.",
+    hypotheses: ["Fuite visible au lavabo.", "Défaut de protection possible."],
+    checks: ["Du métal fondu est visible."],
+    urgency_reason: "La photo montre des flammes.",
+    possible_parts: ["Tuyau brûlé visible."],
+    safety_signals: ["fire"],
+    urgency: "critical",
+  };
+  const out = groundTextSynthesis(raw, evidence());
+  assert.deepEqual(
+    out.normalizedFields.sort(),
+    [
+      "problem",
+      "hypotheses",
+      "checks",
+      "urgency_reason",
+      "possible_parts",
+    ].sort(),
+  );
+  assert.doesNotMatch(
+    JSON.stringify(out.result),
+    /métal fondu|Fuite visible|Tuyau brûlé|montre des flammes/,
+  );
+  assert.deepEqual(out.result.hypotheses, ["Défaut de protection possible."]);
+  assert.deepEqual(out.result.possible_parts, []);
+  assert.deepEqual(out.result.safety_signals, ["fire"]);
+  assert.equal(out.result.urgency, "critical");
+  assert.equal(
+    raw.problem,
+    "La photo montre du métal fondu.",
+    "No mutation of the original provider response",
+  );
+  rejectsWith(
+    () =>
+      groundTextSynthesis(
+        { ...raw, observations: photoObservations(evidence()) },
+        evidence(),
+      ),
+    "synthesis",
+    "observations_not_empty",
+  );
+});
+
+test("normalization log metadata contains only known field labels", () => {
+  assert.deepEqual(
+    groundingNormalizationDetails([
+      "checks",
+      "private-fixture-description",
+      id,
+      "checks",
+    ]),
+    {
+      stage: "synthesis",
+      condition: "unbound_visual_claim",
+      fields: ["checks"],
+    },
+  );
+  assert.equal(
+    groundingNormalizationDetails(["private-fixture-description"]),
+    undefined,
+  );
+  assert.equal(
+    groundingNormalizationDetails("private-fixture-description"),
+    undefined,
   );
 });
 
@@ -328,7 +420,8 @@ test("a real visible finding can be referenced literally; generic photography an
 test("analyze HTTP action finishes and returns 200 for the valid electrical-photo regression", async () => {
   const image = await bytes(),
     cfg = { ...config(env), enabled: true },
-    calls = [];
+    calls = [],
+    logs = [];
   const handler = createHandler({
     env,
     cfg,
@@ -336,8 +429,14 @@ test("analyze HTTP action finishes and returns 200 for the valid electrical-phot
       warn() {
         assert.fail("No grounding error for valid result");
       },
+      info(line) {
+        logs.push(JSON.parse(line));
+      },
     },
-    provider: provider(evidence(), synthesis()),
+    provider: provider(evidence(), {
+      ...synthesis(),
+      problem: "Prise endommagée avec des fils visibles.",
+    }),
     mediaStore: { download: async () => image },
     transport: {
       rpc: async (name, args) => {
@@ -401,6 +500,16 @@ test("analyze HTTP action finishes and returns 200 for the valid electrical-phot
   assert.equal(res.body.session.result.next, "qualification");
   assert.equal(res.body.session.result.safety.stop, false);
   assert.deepEqual(calls, ["run_start", "run_finish"]);
+  assert.deepEqual(logs[0].grounding, {
+    stage: "synthesis",
+    condition: "unbound_visual_claim",
+    fields: ["problem"],
+  });
+  assert.equal(logs[0].event, "diagnostic_grounding_normalized");
+  assert.doesNotMatch(
+    JSON.stringify(logs),
+    /dc986|ed986|Prise|visibles|câble|fixture/,
+  );
 });
 
 test("missing/nonempty synthesis observations have distinct instrumentation and fail closed even when copied correctly", () => {

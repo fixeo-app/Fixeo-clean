@@ -11,7 +11,7 @@ const {
   validatePhotoEvidence,
   isUniformPhoto,
   photoObservations,
-  assertTextSynthesis,
+  groundTextSynthesis,
 } = require("../photo-grounding");
 const instructions = `You are the indicative FIXEO home-services diagnostic classifier in Morocco.
 Return French descriptive hypotheses, never instructions for repair.
@@ -145,7 +145,7 @@ function createOpenAIAdapter({
         photos.forEach((photo) => evidence.set(photo.media_id, photo));
       }
       const photos = input.media.map((media) => evidence.get(media.id));
-      const result = await request(
+      const synthesis = await request(
         [
           {
             type: "input_text",
@@ -163,7 +163,10 @@ function createOpenAIAdapter({
         "fixeo_diagnostic_v1",
         2048,
       );
-      assertTextSynthesis(result, photos);
+      const { result, normalizedFields } = groundTextSynthesis(
+        synthesis,
+        photos,
+      );
       // Strict validation applies to synthesis AND isolated visual facts before
       // anything is persisted or rendered. Preserve both sources of danger.
       validateProviderResult(result, []);
@@ -187,6 +190,7 @@ function createOpenAIAdapter({
         usage: {
           ...usage,
           photo_grounding: "isolated-vision-v1",
+          grounding_normalized_fields: normalizedFields,
           inconclusive_photos: photos.filter(
             (photo) => photo.status === "inconclusive",
           ).length,

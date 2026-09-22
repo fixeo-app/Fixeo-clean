@@ -62,4 +62,20 @@ function groundingError(stage, condition, field) {
 function groundingLogDetails(error) {
   return metadata.get(error);
 }
-module.exports = { groundingError, markGroundingError, groundingLogDetails };
+function groundingNormalizationDetails(value) {
+  if (!Array.isArray(value)) return undefined;
+  const affected = [...new Set(value.filter((field) => fields.has(field)))];
+  return affected.length
+    ? {
+        stage: "synthesis",
+        condition: "unbound_visual_claim",
+        fields: affected,
+      }
+    : undefined;
+}
+module.exports = {
+  groundingError,
+  markGroundingError,
+  groundingLogDetails,
+  groundingNormalizationDetails,
+};

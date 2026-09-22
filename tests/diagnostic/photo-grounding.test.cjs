@@ -177,7 +177,7 @@ test("useful description survives an inconclusive photo and retains its own prov
   assert.match(result.result.checks[0], /non concluante/);
 });
 
-test("synthesis cannot invent photographic evidence in observations or in another result field", async () => {
+test("synthesis cannot invent photographic evidence: forged provenance fails, unsupported prose never reaches the result", async () => {
   const bytes = await flat();
   for (const forged of [
     {
@@ -193,11 +193,26 @@ test("synthesis cannot invent photographic evidence in observations or in anothe
     { ...sample(), problem: "La photo montre de l’eau qui coule." },
     { ...sample(), hypotheses: ["Fuite visible sous le lavabo"] },
     { ...sample(), urgency_reason: "Une fuite a été observée." },
-  ])
-    await assert.rejects(
-      run(bytes, adapter(null, forged)),
-      /UNGROUNDED_PROVIDER_OBSERVATION/,
-    );
+  ]) {
+    if (forged.observations.length) {
+      await assert.rejects(
+        run(bytes, adapter(null, forged)),
+        /UNGROUNDED_PROVIDER_OBSERVATION/,
+      );
+    } else {
+      const out = await run(bytes, adapter(null, forged));
+      assert.equal(out.result.next, "qualification");
+      assert.equal(
+        out.result.facts.some((f) => f.provenance === "observed"),
+        false,
+      );
+      assert.doesNotMatch(
+        JSON.stringify(out.result),
+        /La photo montre|Fuite visible|Une fuite a été observée/,
+      );
+      assert.equal(out.usage.grounding_normalized_fields.length, 1);
+    }
+  }
 });
 
 test("missing, duplicate, unknown or contradictory photo evidence fails closed", () => {
