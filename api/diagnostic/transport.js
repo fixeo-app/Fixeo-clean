@@ -53,6 +53,7 @@ function createTransport({
     } = {},
   ) {
     let response;
+    const payload = body === undefined ? undefined : binary ? body : JSON.stringify(body);
     const remaining = deadline - Date.now();
     if (remaining < 500) throw new DiagnosticError('DEPENDENCY_TIMEOUT', 504);
     try {
@@ -64,14 +65,13 @@ function createTransport({
           ...(!binary ? { 'Content-Type': 'application/json' } : {}),
           ...headers,
         },
-        body:
-          body === undefined ? undefined : binary ? body : JSON.stringify(body),
+        body: payload,
         signal: AbortSignal.timeout(
           Math.max(1, Math.min(requestTimeout, remaining)),
         ),
         redirect: 'error',
         size: maxBytes,
-      }));
+      }), payload === undefined ? 0 : Buffer.byteLength(payload));
     } catch (cause) {
       const error = new DiagnosticError('DEPENDENCY_UNAVAILABLE', 503);
       error.diagnosticTransport = cause.diagnosticTransport;
