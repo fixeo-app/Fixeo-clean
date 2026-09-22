@@ -55,7 +55,7 @@
     if (!loaded)
       loaded = new Promise(function (resolve, reject) {
         var script = document.createElement('script');
-        script.src = '/js/fixeo-diagnostic-modal-v1.js?v=diagnostic-v1.1';
+        script.src = '/js/fixeo-diagnostic-modal-v1.js?v=diagnostic-ux-v2';
         script.onload = resolve;
         script.onerror = function () {
           loaded = null;
@@ -125,9 +125,16 @@
     } catch (_) {
       return;
     }
-    var trigger = document.getElementById('fxdiag-open');
-    trigger.addEventListener('click', async function () {
-      trigger.disabled = true;
+    var triggers = section.querySelectorAll('[data-fxdiag-open]');
+    var launching = false;
+    async function launch(event) {
+      if (launching) return;
+      launching = true;
+      triggers.forEach(function (trigger) {
+        trigger.disabled = true;
+        trigger.setAttribute('aria-busy', 'true');
+      });
+      document.getElementById('fxdiag-launch-status').textContent = '';
       var city = document.getElementById('fxhf-location');
       var description =
         document.getElementById('fxhf-need-input') ||
@@ -142,6 +149,7 @@
       } catch (_) {}
       try {
         await open({
+          opener: event.currentTarget,
           city: selectedCity,
           description: description ? description.value : '',
         });
@@ -149,8 +157,15 @@
         document.getElementById('fxdiag-launch-status').textContent =
           'Le diagnostic est momentanément indisponible. Réessayez dans un instant.';
       } finally {
-        trigger.disabled = false;
+        launching = false;
+        triggers.forEach(function (trigger) {
+          trigger.disabled = false;
+          trigger.removeAttribute('aria-busy');
+        });
       }
+    }
+    triggers.forEach(function (trigger) {
+      trigger.addEventListener('click', launch);
     });
   }
   if ('requestIdleCallback' in window)

@@ -121,21 +121,43 @@
   }
   function close() {
     capture();
-    pausedDraft = !busy && ['compose', 'safety', 'questions'].includes(current)
-      ? { id: session && session.id, revision: session && session.revision,
-          page: current, draft: JSON.parse(JSON.stringify(draft)) }
-      : null;
+    pausedDraft =
+      !busy && ['compose', 'safety', 'questions'].includes(current)
+        ? {
+            id: session && session.id,
+            revision: session && session.revision,
+            page: current,
+            draft: JSON.parse(JSON.stringify(draft)),
+          }
+        : null;
     dialog.close();
+    document.body.classList.remove('fxdiag-is-open');
+    if (window.visualViewport) {
+      window.visualViewport.removeEventListener('resize', fitViewport);
+      window.visualViewport.removeEventListener('scroll', fitViewport);
+    }
     API.setActive(false);
     if (opener && opener.isConnected) opener.focus();
+  }
+  function fitViewport() {
+    if (!dialog || !dialog.open) return;
+    var viewport = window.visualViewport;
+    if (viewport && window.innerWidth <= 700) {
+      dialog.style.setProperty('--fxdiag-vv-height', viewport.height + 'px');
+      dialog.style.setProperty('--fxdiag-vv-top', viewport.offsetTop + 'px');
+    } else {
+      dialog.style.removeProperty('--fxdiag-vv-height');
+      dialog.style.removeProperty('--fxdiag-vv-top');
+    }
   }
   function build() {
     if (dialog) return;
     dialog = document.createElement('dialog');
     dialog.className = 'fxdiag-modal';
+    dialog.id = 'fxdiag-dialog';
     dialog.setAttribute('aria-labelledby', 'fxdiag-title');
     dialog.innerHTML =
-      '<div class="fxdiag-shell"><header class="fxdiag-head"><div class="fxdiag-brand"><i class="fxdiag-dot"></i>FIXEO <span>Diagnostic</span></div><button type="button" class="fxdiag-close" aria-label="Fermer le diagnostic">×</button></header><div class="fxdiag-body"></div><div class="fxdiag-footer"></div></div>';
+      '<div class="fxdiag-shell"><header class="fxdiag-head"><div class="fxdiag-brand"><i class="fxdiag-dot" aria-hidden="true"></i>FIXEO <span>Diagnostic</span></div><button type="button" class="fxdiag-close" aria-label="Fermer le diagnostic">×</button></header><div class="fxdiag-body"></div><div class="fxdiag-footer"></div></div>';
     document.body.appendChild(dialog);
     body = dialog.querySelector('.fxdiag-body');
     footer = dialog.querySelector('.fxdiag-footer');
@@ -146,22 +168,36 @@
     });
   }
   function frame(title, intro, step) {
+    dialog.dataset.step = current;
     body.innerHTML =
-      '<div class="fxdiag-progress" aria-label="Étape ' +
-      step +
-      ' sur 4">' +
-      [1, 2, 3, 4]
-        .map(function (i) {
-          return '<i class="' + (i <= step ? 'done' : '') + '"></i>';
+      '<ol class="fxdiag-progress" aria-label="Progression du diagnostic">' +
+      ['Problème', 'Sécurité', 'Analyse', 'Résultat']
+        .map(function (label, index) {
+          var i = index + 1;
+          return (
+            '<li class="' +
+            (i < step ? 'done' : '') +
+            '"' +
+            (i === step ? ' aria-current="step"' : '') +
+            '><span class="fxdiag-step-number" aria-hidden="true">' +
+            (i < step ? '✓' : '0' + i) +
+            '</span><span>' +
+            label +
+            '</span></li>'
+          );
         })
         .join('') +
-      '<span>Votre problème, pas à pas</span></div><h2 id="fxdiag-title" tabindex="-1">' +
+      '</ol><h2 id="fxdiag-title" tabindex="-1">' +
       esc(title) +
       '</h2><p class="fxdiag-intro">' +
       esc(intro) +
       '</p>';
     body.scrollTop = 0;
     footer.innerHTML = '';
+    window.requestAnimationFrame(function () {
+      var title = node('fxdiag-title');
+      if (dialog.open && title) title.focus({ preventScroll: true });
+    });
   }
   function actions(primary, fn, secondary, back) {
     footer.innerHTML =
@@ -169,11 +205,11 @@
         ? '<button type="button" class="fxdiag-button quiet" id="fxdiag-back">' +
           esc(secondary) +
           '</button>'
-        : '<span class="fxdiag-footnote">Diagnostic indicatif, confirmé par l’artisan si nécessaire.</span>') +
+        : '<span class="fxdiag-footnote" id="fxdiag-next-hint">Diagnostic indicatif, confirmé par l’artisan si nécessaire.</span>') +
       (primary
         ? '<button type="button" class="fxdiag-button" id="fxdiag-next">' +
           esc(primary) +
-          '</button>'
+          '<span aria-hidden="true">→</span></button>'
         : '');
     if (primary)
       node('fxdiag-next').onclick = function () {
@@ -183,6 +219,28 @@
       node('fxdiag-back').onclick = function () {
         execute(back);
       };
+    updateComposeAvailability();
+  }
+  function updateComposeAvailability() {
+    if (current !== 'compose' || !node('fxdiag-next')) return;
+    var hasMedia =
+      pending.length ||
+      (session &&
+        session.media.some(function (m) {
+          return m.state === 'ready';
+        }));
+    var hasContent = node('fxdiag-description').value.trim() || hasMedia;
+    var hasCity = !!cities[node('fxdiag-city').value];
+    var consent = node('fxdiag-consent').checked;
+    node('fxdiag-next').disabled = busy || !hasContent || !hasCity || !consent;
+    node('fxdiag-next').setAttribute('aria-describedby', 'fxdiag-next-hint');
+    node('fxdiag-next-hint').textContent = !hasContent
+      ? 'Ajoutez une photo ou une description.'
+      : !hasCity
+        ? 'Choisissez votre ville.'
+        : !consent
+          ? 'Donnez votre accord pour continuer.'
+          : 'Prochaine étape : votre sécurité.';
   }
   function message(error) {
     var code = (error && error.message) || '';
@@ -211,6 +269,11 @@
   async function execute(fn) {
     if (busy) return;
     busy = true;
+    footer.setAttribute('aria-busy', 'true');
+    var clicked = document.activeElement;
+    var previousLabel =
+      clicked && footer.contains(clicked) ? clicked.innerHTML : null;
+    if (previousLabel) clicked.textContent = 'Un instant…';
     footer.querySelectorAll('button').forEach(function (b) {
       b.disabled = true;
     });
@@ -232,9 +295,13 @@
       showError(error);
     } finally {
       busy = false;
+      footer.removeAttribute('aria-busy');
+      if (previousLabel && clicked.isConnected)
+        clicked.innerHTML = previousLabel;
       footer.querySelectorAll('button').forEach(function (b) {
         b.disabled = false;
       });
+      updateComposeAvailability();
     }
   }
   function capture() {
@@ -244,15 +311,20 @@
       draft.consent = node('fxdiag-consent').checked;
     }
     if (current === 'safety') {
-      draft.safety = Array.from(body.querySelectorAll('.fxdiag-hazards input:checked'))
-        .map(function (el) { return el.value; });
+      draft.safety = Array.from(
+        body.querySelectorAll('.fxdiag-hazards input:checked'),
+      ).map(function (el) {
+        return el.value;
+      });
     }
     if (current === 'questions' && session && session.result) {
       session.result.questions.forEach(function (q) {
-        var field = q.type === 'choice'
-          ? body.querySelector('input[name="q-' + q.id + '"]:checked')
-          : node('fxdiag-q-' + q.id);
-        if (field && field.value.trim()) draft.answers[q.id] = field.value.trim();
+        var field =
+          q.type === 'choice'
+            ? body.querySelector('input[name="q-' + q.id + '"]:checked')
+            : node('fxdiag-q-' + q.id);
+        if (field && field.value.trim())
+          draft.answers[q.id] = field.value.trim();
         else delete draft.answers[q.id];
       });
     }
@@ -264,15 +336,26 @@
   function renderCompose() {
     current = 'compose';
     frame(
-      'Montrez-nous le problème',
-      'Une photo ou quelques mots suffisent pour commencer. FIXEO vous aide à trouver le bon métier.',
+      'Montrez le problème.',
+      'Une photo ou quelques mots. FIXEO vous guide vers le bon métier et évalue l’urgence.',
       1,
     );
     body.insertAdjacentHTML(
       'beforeend',
-      '<div class="fxdiag-grid"><div><div class="fxdiag-field"><label class="fxdiag-label" for="fxdiag-description">Que constatez-vous ?</label><textarea id="fxdiag-description" class="fxdiag-input" maxlength="2000" placeholder="Par exemple : de l’eau coule sous mon lavabo quand j’ouvre le robinet…">' +
+      '<div class="fxdiag-grid"><div class="fxdiag-media-column"><div class="fxdiag-label-row"><span class="fxdiag-label">Montrez ce que vous voyez</span><span class="fxdiag-optional">Facultatif</span></div><div class="fxdiag-media-well" id="fxdiag-media"><button type="button" class="fxdiag-drop" id="fxdiag-add" aria-describedby="fxdiag-photo-help">' +
+        '<span class="fxdiag-upload-icon">' +
+        icon +
+        '</span>' +
+        '<strong>Une photo pour mieux comprendre</strong><small>Touchez pour ajouter vos photos</small></button><div class="fxdiag-photos" id="fxdiag-photos"></div></div>' +
+        '<div class="fxdiag-media-actions"><button type="button" class="fxdiag-media-button" id="fxdiag-camera">' +
+        icon +
+        'Prendre une photo</button><button type="button" class="fxdiag-media-button" id="fxdiag-library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="m4 18 5-5 4 3 3-4 5 6"/></svg>Photothèque / fichiers</button></div>' +
+        '<input type="file" id="fxdiag-files" accept="image/jpeg,image/png,image/webp" multiple hidden><input type="file" id="fxdiag-camera-file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden>' +
+        '<p class="fxdiag-photo-status" id="fxdiag-photo-status" role="status" aria-live="polite">Aucune photo sélectionnée</p><p class="fxdiag-photo-help" id="fxdiag-photo-help">3 photos max. · 8 Mio / photo · JPEG, PNG, WebP</p>' +
+        '<p class="fxdiag-privacy">Uniquement le problème : évitez visages, papiers d’identité et informations personnelles.</p></div>' +
+        '<div class="fxdiag-description-column"><div class="fxdiag-field"><label class="fxdiag-label" for="fxdiag-description">Que constatez-vous ?</label><textarea id="fxdiag-description" class="fxdiag-input" maxlength="2000" rows="3" placeholder="Par exemple : de l’eau coule sous mon lavabo…">' +
         esc(draft.description) +
-        '</textarea></div><div class="fxdiag-field"><label class="fxdiag-label" for="fxdiag-city">Ville d’intervention</label><select id="fxdiag-city" class="fxdiag-input"><option value="">Choisir ma ville</option>' +
+        '</textarea><span class="fxdiag-field-help">Quelques mots suffisent. Vous pouvez aussi commencer sans photo.</span></div><div class="fxdiag-field"><label class="fxdiag-label" for="fxdiag-city">Ville d’intervention</label><select id="fxdiag-city" class="fxdiag-input"><option value="">Choisir ma ville</option>' +
         Object.keys(cities)
           .map(function (c) {
             return (
@@ -286,20 +369,34 @@
             );
           })
           .join('') +
-        '</select></div></div><div><button type="button" class="fxdiag-drop" id="fxdiag-add">' +
-        icon +
-        '<strong>Ajouter des photos</strong><small>Jusqu’à 3 photos · 8 Mio par photo<br>JPEG, PNG ou WebP</small></button><input type="file" id="fxdiag-files" accept="image/jpeg,image/png,image/webp" multiple hidden><div class="fxdiag-photos" id="fxdiag-photos"></div><p class="fxdiag-privacy">Photographiez uniquement le problème. Évitez visages, papiers d’identité et informations personnelles.</p></div></div><label class="fxdiag-consent"><input type="checkbox" id="fxdiag-consent"' +
+        '</select></div><div class="fxdiag-outcome"><span class="fxdiag-outcome-icon" aria-hidden="true">↗</span><p><strong>Et ensuite ?</strong>Le métier adapté, un diagnostic indicatif et le niveau d’urgence.</p></div></div></div>' +
+        '<div class="fxdiag-consent-area"><label class="fxdiag-consent"><input type="checkbox" id="fxdiag-consent" aria-describedby="fxdiag-consent-details"' +
         (draft.consent ? ' checked' : '') +
-        '><span>J’accepte l’analyse de ma description et de mes photos par FIXEO et son fournisseur IA pour préparer mon intervention. Suppression programmée : dossier sans réservation après 24 h ; photos liées à une intervention après 90 jours au plus, ou 30 jours après clôture ; contexte de l’intervention après 180 jours. <a href="/confidentialite.html" target="_blank" rel="noopener">Confidentialité</a></span></label>',
+        '><span>J’accepte l’analyse par FIXEO et son fournisseur IA.</span></label>' +
+        '<details class="fxdiag-consent-details" id="fxdiag-consent-details"><summary>En savoir plus sur mes données</summary><div><p>Ma description et mes photos sont analysées pour préparer mon intervention.</p><p>Suppression programmée : dossier sans réservation après 24 h ; photos liées à une intervention après 90 jours au plus, ou 30 jours après clôture ; contexte de l’intervention après 180 jours.</p><a href="/confidentialite.html" target="_blank" rel="noopener">Politique de confidentialité <span aria-hidden="true">↗</span></a></div></details></div>' +
+        '<p class="fxdiag-disclaimer">Diagnostic indicatif, confirmé par l’artisan si nécessaire.</p>',
     );
-    node('fxdiag-add').onclick = function () {
+    function chooseFiles() {
       node('fxdiag-files').click();
+    }
+    node('fxdiag-add').onclick = chooseFiles;
+    node('fxdiag-library').onclick = chooseFiles;
+    node('fxdiag-camera').onclick = function () {
+      node('fxdiag-camera-file').click();
     };
-    node('fxdiag-files').onchange = function (e) {
-      addFiles(e.target.files);
-      e.target.value = '';
-    };
-    var drop = node('fxdiag-add');
+    ['fxdiag-files', 'fxdiag-camera-file'].forEach(function (id) {
+      node(id).onchange = function (e) {
+        addFiles(e.target.files);
+        e.target.value = '';
+      };
+    });
+    ['fxdiag-description', 'fxdiag-city', 'fxdiag-consent'].forEach(
+      function (id) {
+        node(id).addEventListener('input', updateComposeAvailability);
+        node(id).addEventListener('change', updateComposeAvailability);
+      },
+    );
+    var drop = node('fxdiag-media');
     drop.ondragover = function (e) {
       e.preventDefault();
       drop.classList.add('drag');
@@ -338,7 +435,10 @@
     });
   }
   function addFiles(files) {
+    if (busy) return;
     capture();
+    var oldError = node('fxdiag-error');
+    if (oldError) oldError.remove();
     var count =
       (session
         ? session.media.filter(function (m) {
@@ -402,6 +502,11 @@
       };
       box.appendChild(remove);
       target.appendChild(box);
+      if (local || item.state === 'ready') {
+        var stateLabel = document.createElement('span');
+        stateLabel.textContent = local ? 'Sélectionnée' : 'Enregistrée';
+        box.appendChild(stateLabel);
+      }
       if (!local) {
         if (item.state === 'ready')
           API.api({
@@ -433,6 +538,20 @@
     pending.forEach(function (p) {
       thumbnail(p, true);
     });
+    var count = target.children.length;
+    target.hidden = !count;
+    target.dataset.count = count;
+    node('fxdiag-add').hidden = !!count;
+    node('fxdiag-camera').disabled = count >= 3;
+    node('fxdiag-library').disabled = count >= 3;
+    node('fxdiag-photo-status').textContent = count
+      ? count +
+        (count > 1 ? ' photos prêtes' : ' photo prête') +
+        (pending.length
+          ? ' · envoi après confirmation'
+          : ' · enregistrée' + (count > 1 ? 's' : ''))
+      : 'Aucune photo sélectionnée';
+    updateComposeAvailability();
   }
   function renderSafety() {
     current = 'safety';
@@ -483,7 +602,7 @@
     );
     body.insertAdjacentHTML(
       'beforeend',
-      '<div class="fxdiag-analyzing"><div class="fxdiag-orbit">' +
+      '<div class="fxdiag-analyzing"><div class="fxdiag-orbit" aria-hidden="true">' +
         icon +
         '</div><p id="fxdiag-work-status" role="status" aria-live="polite">' +
         esc(label) +
@@ -687,7 +806,9 @@
                 esc(q.id) +
                 '" value="' +
                 pair[0] +
-                '"' + (draft.answers[q.id] === pair[0] ? ' checked' : '') + '>' +
+                '"' +
+                (draft.answers[q.id] === pair[0] ? ' checked' : '') +
+                '>' +
                 pair[1] +
                 '</label>'
               );
@@ -698,7 +819,9 @@
         html +=
           '<input class="fxdiag-input" id="fxdiag-q-' +
           esc(q.id) +
-          '" maxlength="500" placeholder="Votre réponse" value="' + esc(draft.answers[q.id] || '') + '">';
+          '" maxlength="500" placeholder="Votre réponse" value="' +
+          esc(draft.answers[q.id] || '') +
+          '">';
       body.insertAdjacentHTML('beforeend', html + '</div>');
     });
     actions(
@@ -851,20 +974,33 @@
   }
   async function open(context) {
     build();
-    opener = document.activeElement;
+    opener = context.opener || document.activeElement;
     API.setActive(true);
     if (!dialog.open) dialog.showModal();
+    document.body.classList.add('fxdiag-is-open');
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', fitViewport);
+      window.visualViewport.addEventListener('scroll', fitViewport);
+    }
+    fitViewport();
     if (busy) return;
     var id = session ? session.id : remembered();
     if (id) {
       working('Ouverture de votre dossier…');
       try {
         restore((await API.api({ action: 'get', session_id: id })).session);
-        var resume = pausedDraft && pausedDraft.id === session.id &&
-          pausedDraft.revision === session.revision && !['bound', 'analyzing'].includes(session.state);
+        var resume =
+          pausedDraft &&
+          pausedDraft.id === session.id &&
+          pausedDraft.revision === session.revision &&
+          !['bound', 'analyzing'].includes(session.state);
         if (resume) {
           draft = pausedDraft.draft;
-          if (pausedDraft.page === 'questions' && session.result?.questions.length) renderQuestions();
+          if (
+            pausedDraft.page === 'questions' &&
+            session.result?.questions.length
+          )
+            renderQuestions();
           else if (pausedDraft.page === 'safety') renderSafety();
           else renderCompose();
         } else renderState();

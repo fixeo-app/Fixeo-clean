@@ -2908,7 +2908,7 @@ box-shadow:
   <script src="js/fixeo-estimator-config.js" defer></script>
   <!-- 7C.9D: Estimator V2 dormant production assets — inactive until flag ON -->
   <link rel="stylesheet" href="css/fixeo-estimator-v2.css?v=coverage1">
-  <script src="js/fixeo-diagnostic-v1.js?v=diagnostic-v1.1" defer></script>
+  <script src="js/fixeo-diagnostic-v1.js?v=diagnostic-ux-v2" defer></script>
   <script src="js/fixeo-estimator-api-v1.js?v=diagnostic-v1" defer></script>
   <script src="js/fixeo-estimator-reservation-bridge-v1.js?v=7c9m4-continuity2" defer></script>
   <link rel="stylesheet" href="css/fixeo-estimation-voice-v1.css?v=voice1">
@@ -2925,7 +2925,7 @@ box-shadow:
 <link
   rel="stylesheet"
   href="css/fixeo-estimation-signature-v1.css?v=fxes-v1a">
-<link rel="stylesheet" href="css/fixeo-diagnostic-v1.css?v=diagnostic-v1">
+<link rel="stylesheet" href="css/fixeo-diagnostic-v1.css?v=diagnostic-ux-v2">
   <style id="fixeo-ios-focus-zoom-guard">
   /*
    * FIXEO — Mobile focus zoom guard
@@ -3331,22 +3331,24 @@ box-shadow:
 <!-- FIXEO Diagnostic: enabled only by the verified server feature flag. -->
 <section id="fixeo-diagnostic-signature" class="fxdiag-section" aria-labelledby="fxdiag-signature-title" hidden>
   <div class="fxdiag-signature">
-    <div>
-      <p class="fxdiag-eyebrow"><span class="fxdiag-dot" aria-hidden="true"></span>FIXEO DIAGNOSTIC</p>
-      <h2 id="fxdiag-signature-title">Vous ne savez pas exactement<br>ce qui ne va pas ?<br><span>Montrez le problème à FIXEO.</span></h2>
-      <p class="fxdiag-copy">Une photo, quelques mots. FIXEO vous aide à comprendre le problème, à identifier le métier adapté et à préparer la bonne intervention.</p>
-      <button id="fxdiag-open" type="button" class="fxdiag-button">Diagnostiquer mon problème <span aria-hidden="true">↗</span></button>
+    <div class="fxdiag-story">
+      <p class="fxdiag-eyebrow"><span class="fxdiag-dot" aria-hidden="true"></span>FIXEO DIAGNOSTIC <span class="fxdiag-ai-label">Assisté par IA</span></p>
+      <h2 id="fxdiag-signature-title">Vous ne savez pas exactement ce qui ne va pas ?<span>Montrez le problème à FIXEO.</span></h2>
+      <p class="fxdiag-copy">Une photo, quelques mots. Faites le premier pas vers la bonne intervention.</p>
+      <ul class="fxdiag-visual-tags" aria-label="Votre diagnostic en trois points"><li>Photo ou description</li><li>Métier adapté</li><li>Urgence évaluée</li></ul>
+      <button id="fxdiag-open" type="button" class="fxdiag-button" data-fxdiag-open aria-haspopup="dialog">Diagnostiquer mon problème <span aria-hidden="true">↗</span></button>
       <small>Diagnostic indicatif. L’artisan confirme sur place si nécessaire.</small>
       <p id="fxdiag-launch-status" class="fxdiag-launch-status" role="status"></p>
     </div>
-    <div class="fxdiag-visual" aria-hidden="true">
-      <div class="fxdiag-visual-top"><span>Du doute à la bonne intervention</span><span class="fxdiag-dot"></span></div>
-      <div class="fxdiag-visual-frame">
-        <svg viewBox="0 0 48 48" fill="none" stroke-width="1.6"><path d="M7 17h8l4-6h10l4 6h8v23H7z"/><circle cx="24" cy="27" r="7"/><path d="M5 11V6h6M37 6h6v5M5 39v5h6M37 44h6v-5"/></svg>
-        <span>Votre problème devient plus clair.</span>
-      </div>
-      <div class="fxdiag-visual-tags"><span>Photo ou description</span><span>Métier adapté</span><span>Urgence évaluée</span></div>
-    </div>
+    <button id="fxdiag-camera-open" type="button" class="fxdiag-visual" data-fxdiag-open aria-haspopup="dialog" aria-label="Ouvrir le Diagnostic : montrer mon problème">
+      <span class="fxdiag-visual-top"><span>Du doute à la clarté</span><span class="fxdiag-visual-arrow" aria-hidden="true">↗</span></span>
+      <span class="fxdiag-visual-frame">
+        <span class="fxdiag-camera-orb"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M7 17h8l4-6h10l4 6h8v23H7z"/><circle cx="24" cy="27" r="7"/><path d="M5 11V6h6M37 6h6v5M5 39v5h6M37 44h6v-5"/></svg></span>
+        <strong>Votre problème devient plus clair.</strong>
+        <span>Commencer avec une photo ou quelques mots <b aria-hidden="true">→</b></span>
+      </span>
+      <span class="fxdiag-visual-bottom"><span aria-hidden="true">01</span> Vous montrez. FIXEO vous guide.</span>
+    </button>
   </div>
 </section>
 
