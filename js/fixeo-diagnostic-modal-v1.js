@@ -1,4 +1,4 @@
-/* Lazy Diagnostic UI. All booking remains in FixeoEstimatorV2. */
+/* Lazy Diagnostic UI. One canonical intervention, with no Estimation handoff. */
 (function () {
   'use strict';
   if (window.FixeoDiagnosticModal) return;
@@ -14,7 +14,13 @@
     pausedDraft,
     runId,
     footerObserver,
-    layoutFrame;
+    layoutFrame,
+    questionIndex = 0,
+    confirmationPhone = '',
+    criticalAcknowledgement = null,
+    confirmationFailed = false,
+    progress,
+    progressRequestedFor;
   var draft = {
       description: '',
       city: '',
@@ -106,6 +112,12 @@
     }
   }
   function restore(s) {
+    if (session && session.id !== s.id) {
+      confirmationPhone = '';
+      criticalAcknowledgement = null;
+      progress = null;
+      progressRequestedFor = null;
+    }
     session = s;
     draft = {
       description: s.input.description,
@@ -125,7 +137,8 @@
   function close() {
     capture();
     pausedDraft =
-      !busy && ['compose', 'safety', 'questions'].includes(current)
+      !busy &&
+      ['compose', 'safety', 'questions', 'confirmation'].includes(current)
         ? {
             id: session && session.id,
             revision: session && session.revision,
@@ -133,6 +146,7 @@
             draft: JSON.parse(JSON.stringify(draft)),
           }
         : null;
+    criticalAcknowledgement = null;
     dialog.close();
     document.body.classList.remove('fxdiag-is-open');
     if (window.visualViewport) {
@@ -271,11 +285,14 @@
   }
   function updateComposeAvailability() {
     if (current === 'critical' && node('fxdiag-next')) {
-      var phone = node('fxdiag-critical-phone').value.replace(/[\s().-]+/g, '');
       node('fxdiag-next').disabled =
-        busy ||
-        !node('fxdiag-critical-ack').checked ||
-        !/^(\+212|0)[5-7][0-9]{8}$/.test(phone);
+        busy || !node('fxdiag-critical-ack').checked;
+      return;
+    }
+    if (current === 'confirmation' && node('fxdiag-next')) {
+      var phone = phoneField().value.replace(/[\s().-]+/g, '');
+      node('fxdiag-next').disabled =
+        busy || !/^(\+212|0)[5-7][0-9]{8}$/.test(phone);
       return;
     }
     if (current !== 'compose' || !node('fxdiag-next')) return;
@@ -309,6 +326,8 @@
       return 'Ce dossier n’est plus accessible avec cette session. Reconnectez-vous ou démarrez un nouveau diagnostic.';
     if (/MEDIA|IMAGE|MIME|PHOTO|PIXEL|UPLOAD/.test(code))
       return 'Cette photo n’a pas pu être validée. Utilisez une image JPEG, PNG ou WebP de moins de 8 Mio.';
+    if (/INVALID_PHONE/.test(code))
+      return 'Indiquez un numéro marocain valide pour le suivi.';
     if (/VALIDATION:/.test(code)) return code.slice(11);
     if (/SAFETY_ACKNOWLEDGEMENT_REQUIRED/.test(code))
       return 'Confirmez avoir pris connaissance des consignes de sécurité avant d’enregistrer votre demande.';
@@ -351,6 +370,7 @@
           renderCompose();
         });
       }
+      if (current === 'confirmation') confirmationFailed = true;
       showError(error);
     } finally {
       busy = false;
@@ -360,6 +380,12 @@
       footer.querySelectorAll('button').forEach(function (b) {
         b.disabled = false;
       });
+      if (
+        current === 'confirmation' &&
+        confirmationFailed &&
+        node('fxdiag-next')
+      )
+        node('fxdiag-next').textContent = 'Réessayer';
       updateComposeAvailability();
     }
   }
@@ -377,16 +403,12 @@
       });
     }
     if (current === 'questions' && session && session.result) {
-      session.result.questions.forEach(function (q) {
-        var field =
-          q.type === 'choice'
-            ? body.querySelector('input[name="q-' + q.id + '"]:checked')
-            : node('fxdiag-q-' + q.id);
-        if (field && field.value.trim())
-          draft.answers[q.id] = field.value.trim();
-        else delete draft.answers[q.id];
-      });
+      var q = session.result.questions[questionIndex];
+      var field = q && node('fxdiag-q-' + q.id);
+      if (field && field.value.trim()) draft.answers[q.id] = field.value.trim();
     }
+    if (current === 'confirmation' && phoneField())
+      confirmationPhone = phoneField().value;
   }
   function backToCompose() {
     capture();
@@ -845,74 +867,118 @@
     }
     throw new Error('ANALYSIS_RUNNING');
   }
-  function renderQuestions() {
+  var quickAnswers = {
+    onset: ['Aujourd’hui', 'Quelques jours', 'Plus longtemps'],
+    affected_area: ['Mur', 'Plafond', 'Sol', 'Équipement'],
+    occurrence: ['En continu', 'Par moments', 'À l’utilisation'],
+  };
+  function renderQuestions(index) {
     current = 'questions';
+    var questions = session.result.questions;
+    questionIndex = Math.max(
+      0,
+      Math.min(
+        typeof index === 'number' ? index : questionIndex,
+        questions.length - 1,
+      ),
+    );
+    var q = questions[questionIndex],
+      answered = false;
     frame(
-      'Précisons ensemble',
-      'Ces réponses aideront FIXEO à vous orienter. Répondez uniquement à partir de ce que vous constatez déjà.',
+      'Un détail peut nous aider',
+      'Répondez en un tap, uniquement à partir de ce que vous savez déjà. Vous pouvez passer.',
       3,
     );
-    var questions = session.result.questions;
-    questions.forEach(function (q) {
-      var html =
-        '<div class="fxdiag-field"><label class="fxdiag-label" for="fxdiag-q-' +
-        esc(q.id) +
-        '">' +
+    body.insertAdjacentHTML(
+      'beforeend',
+      '<p class="fxdiag-tag">Question ' +
+        (questionIndex + 1) +
+        ' / ' +
+        questions.length +
+        ' · facultatif</p><h3 class="fxdiag-question-title">' +
         esc(q.label) +
-        '</label>';
-      if (q.type === 'choice') {
-        html +=
-          '<div class="fxdiag-choice" role="group" aria-label="' +
-          esc(q.label) +
-          '">' +
-          [
+        '</h3><div class="fxdiag-quick-answers" role="group" aria-label="' +
+        esc(q.label) +
+        '"></div>',
+    );
+    var choices =
+      q.type === 'choice'
+        ? [
             ['yes', 'Oui'],
             ['no', 'Non'],
             ['unknown', 'Je ne sais pas'],
           ]
-            .map(function (pair) {
-              return (
-                '<label><input type="radio" name="q-' +
-                esc(q.id) +
-                '" value="' +
-                pair[0] +
-                '"' +
-                (draft.answers[q.id] === pair[0] ? ' checked' : '') +
-                '>' +
-                pair[1] +
-                '</label>'
-              );
+        : (quickAnswers[q.id] || [])
+            .map(function (label) {
+              return [label, label];
             })
-            .join('') +
-          '</div>';
-      } else
-        html +=
-          '<input class="fxdiag-input" id="fxdiag-q-' +
-          esc(q.id) +
-          '" maxlength="500" placeholder="Votre réponse" value="' +
-          esc(draft.answers[q.id] || '') +
-          '">';
-      body.insertAdjacentHTML('beforeend', html + '</div>');
-    });
-    actions(
-      'Préciser le diagnostic',
-      async function () {
-        questions.forEach(function (q) {
-          var el =
-            q.type === 'choice'
-              ? body.querySelector('input[name="q-' + q.id + '"]:checked')
-              : node('fxdiag-q-' + q.id);
-          if (!el || !el.value.trim())
-            throw new Error(
-              'VALIDATION:Répondez à chaque question, ou indiquez « Je ne sais pas ».',
-            );
-          draft.answers[q.id] = el.value.trim();
-        });
+            .concat([['unknown', 'Je ne sais pas']]);
+    async function answer(value) {
+      if (answered) return;
+      answered = true;
+      draft.answers[q.id] = value || 'unknown';
+      if (questionIndex + 1 < questions.length)
+        renderQuestions(questionIndex + 1);
+      else {
+        questionIndex = 0;
         runId = null;
         await startAnalysis();
+      }
+    }
+    choices.forEach(function (pair) {
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'fxdiag-quick-answer';
+      button.textContent = pair[1];
+      button.dataset.answer = pair[0];
+      button.setAttribute(
+        'aria-pressed',
+        String(draft.answers[q.id] === pair[0]),
+      );
+      button.onclick = function () {
+        execute(function () {
+          return answer(pair[0]);
+        });
+      };
+      body.querySelector('.fxdiag-quick-answers').appendChild(button);
+    });
+    if (q.type !== 'choice') {
+      body.insertAdjacentHTML(
+        'beforeend',
+        '<button type="button" class="fxdiag-button quiet" id="fxdiag-other">Autre / Préciser</button><div class="fxdiag-field" id="fxdiag-optional-answer" hidden><label for="fxdiag-q-' +
+          esc(q.id) +
+          '">Votre précision (facultatif)</label><input class="fxdiag-input" id="fxdiag-q-' +
+          esc(q.id) +
+          '" maxlength="500"><button type="button" class="fxdiag-button quiet" id="fxdiag-save-answer">Valider cette précision</button></div>',
+      );
+      node('fxdiag-other').onclick = function () {
+        if (busy) return;
+        node('fxdiag-optional-answer').hidden = false;
+        var field = node('fxdiag-q-' + q.id);
+        field.value =
+          draft.answers[q.id] && draft.answers[q.id] !== 'unknown'
+            ? draft.answers[q.id]
+            : '';
+        field.focus();
+        queueLayout();
+      };
+      node('fxdiag-save-answer').onclick = function () {
+        execute(function () {
+          return answer(node('fxdiag-q-' + q.id).value.trim());
+        });
+      };
+    }
+    actions(
+      'Passer',
+      function () {
+        return answer('unknown');
       },
-      'Modifier',
-      backToCompose,
+      'Retour',
+      function () {
+        capture();
+        if (questionIndex > 0) renderQuestions(questionIndex - 1);
+        else backToCompose();
+      },
     );
   }
   function card(title, items) {
@@ -938,171 +1004,359 @@
       '</ul></section>'
     );
   }
+  function riskLabel(r) {
+    return r.safety.level === 'CRITICAL'
+      ? 'Priorité CRITICAL'
+      : r.safety.level === 'URGENT' || r.urgency.value === 'high'
+        ? 'Intervention rapide recommandée'
+        : 'Intervention professionnelle recommandée';
+  }
+  function professional(r) {
+    return (
+      {
+        plomberie: 'Plombier',
+        electricite: 'Électricien',
+        serrurerie: 'Serrurier',
+        climatisation: 'Technicien climatisation / chauffage',
+        menuiserie: 'Menuisier',
+        peinture: 'Peintre',
+        maconnerie: 'Maçon',
+        jardinage: 'Jardinier',
+        carrelage: 'Carreleur',
+      }[r.trade.value] ||
+      trades[r.trade.value] ||
+      'Professionnel FIXEO'
+    );
+  }
+  function safetyNotice(r) {
+    return (
+      '<section class="fxdiag-caution" role="alert"><h3>' +
+      esc(riskLabel(r)) +
+      '</h3><ul>' +
+      (r.safety.messages || [])
+        .map(function (text) {
+          return '<li>' + esc(text) + '</li>';
+        })
+        .join('') +
+      '</ul>' +
+      (r.safety.stop
+        ? '<p>FIXEO ne remplace jamais les secours. Mettez-vous à l’abri et contactez les services d’urgence locaux si nécessaire. N’attendez pas une réponse FIXEO face au danger.</p>'
+        : '') +
+      '</section>'
+    );
+  }
+  function summary(r) {
+    return (
+      '<section class="fxdiag-result-top"><span class="fxdiag-tag">Métier recommandé · hypothèse FIXEO</span><h3>' +
+      esc(professional(r)) +
+      '</h3><p class="fxdiag-result-level">' +
+      esc(riskLabel(r)) +
+      '</p><p>' +
+      esc(r.problem.value) +
+      '</p></section>'
+    );
+  }
+  function details(title, items) {
+    if (!items.length) return '';
+    return (
+      '<details class="fxdiag-result-detail"><summary>' +
+      esc(title) +
+      '</summary>' +
+      card(title, items) +
+      '</details>'
+    );
+  }
   function renderResult() {
     current = 'result';
     var r = session.result;
     frame(
       r.safety.stop
         ? 'Votre sécurité passe en premier'
-        : 'Voici ce que FIXEO peut vous dire',
-      'Diagnostic indicatif — à confirmer par l’artisan si nécessaire.',
+        : 'Votre diagnostic FIXEO',
+      'Diagnostic indicatif, à confirmer par le professionnel.',
       4,
     );
     if (r.safety.stop) {
+      body.insertAdjacentHTML('beforeend', safetyNotice(r));
       var canAcknowledge =
         r.safety.version === 'fixeo-risk-routing-v2' &&
         r.safety.level === 'CRITICAL' &&
         session.result_run_id;
-      body.insertAdjacentHTML(
-        'beforeend',
-        '<section class="fxdiag-caution"><h3>Un danger potentiel a été signalé</h3><ul>' +
-          (r.safety.messages || [])
-            .map(function (t) {
-              return '<li>' + esc(t) + '</li>';
-            })
-            .join('') +
-          '</ul><p>' +
-          (canAcknowledge
-            ? 'FIXEO ne remplace jamais les secours. Mettez-vous à l’abri et contactez les services d’urgence locaux si nécessaire. N’attendez pas une réponse FIXEO pour agir face au danger.'
-            : 'Le parcours de réservation est interrompu pour cette situation.') +
-          '</p></section>',
-      );
-      if (canAcknowledge) {
-        current = 'critical';
+      if (!canAcknowledge) {
         body.insertAdjacentHTML(
           'beforeend',
-          '<p class="fxdiag-note">Vous pouvez ensuite enregistrer une demande professionnelle, classée CRITICAL. Cela ne confirme ni la sécurité des lieux ni la disponibilité d’un intervenant.</p>' +
-            '<div class="fxdiag-field"><label for="fxdiag-critical-phone">Téléphone pour le suivi</label><input class="fxdiag-input" id="fxdiag-critical-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="24" placeholder="06 XX XX XX XX"></div>' +
-            '<label class="fxdiag-consent"><input type="checkbox" id="fxdiag-critical-ack"><span>J’ai pris connaissance des consignes de mise à distance et je comprends que FIXEO ne remplace pas les secours.</span></label>',
+          '<p class="fxdiag-note">Le parcours de réservation est interrompu pour cette situation.</p>',
         );
-        actions(
-          'Enregistrer une demande FIXEO',
-          async function () {
-            if (!node('fxdiag-critical-ack').checked)
-              throw new Error('SAFETY_ACKNOWLEDGEMENT_REQUIRED');
-            var confirmation = await API.api({
-              action: 'confirm_critical',
-              session_id: session.id,
-              revision: session.revision,
-              client_phone: node('fxdiag-critical-phone').value,
-              acknowledgement: {
-                accepted: true,
-                version: 'fixeo-critical-ack-v1',
-                run_id: session.result_run_id,
-              },
-            });
-            session.state = 'bound';
-            session.request_id = confirmation.request_id;
-            session.request_ref = confirmation.tracking_ref;
-            renderState();
-          },
-          'Fermer',
-          close,
-        );
-        node('fxdiag-critical-phone').addEventListener(
-          'input',
-          updateComposeAvailability,
-        );
-        node('fxdiag-critical-ack').addEventListener(
-          'change',
-          updateComposeAvailability,
-        );
-        updateComposeAvailability();
+        actions('Fermer', close);
         return;
       }
-      actions('Fermer', close);
+      current = 'critical';
+      body.insertAdjacentHTML(
+        'beforeend',
+        summary(r) +
+          '<p class="fxdiag-note">Une demande FIXEO peut être enregistrée après lecture de ces consignes. La sécurité des lieux et la disponibilité d’un intervenant restent à confirmer.</p><label class="fxdiag-consent"><input type="checkbox" id="fxdiag-critical-ack"><span>J’ai pris connaissance des consignes de mise à distance et je comprends que FIXEO ne remplace pas les secours.</span></label>',
+      );
+      node('fxdiag-critical-ack').checked =
+        criticalAcknowledgement === session.result_run_id;
+      actions(
+        'Demander l’intervention FIXEO',
+        function () {
+          if (!node('fxdiag-critical-ack').checked)
+            throw new Error('SAFETY_ACKNOWLEDGEMENT_REQUIRED');
+          criticalAcknowledgement = session.result_run_id;
+          return beginConfirmation();
+        },
+        'Fermer',
+        close,
+      );
+      node('fxdiag-critical-ack').addEventListener(
+        'change',
+        updateComposeAvailability,
+      );
+      updateComposeAvailability();
       return;
     }
-    var urgency =
-      { low: 'Faible', moderate: 'Modérée', high: 'Élevée' }[r.urgency.value] ||
-      'À confirmer';
-    var electricalRisk = (r.safety.signals || []).includes('electrical_risk');
-    if (electricalRisk || r.safety.level === 'URGENT') {
-      body.insertAdjacentHTML(
-        'beforeend',
-        '<section class="fxdiag-caution" role="alert"><h3>' +
-          (electricalRisk ? 'Risque électrique' : 'Urgence technique élevée') +
-          ' — intervention rapide recommandée</h3><ul>' +
-          (r.safety.messages || [])
-            .map(function (message) {
-              return '<li>' + esc(message) + '</li>';
-            })
-            .join('') +
-          '</ul></section>',
-      );
-    }
-    if (r.safety.level === 'TECHNICAL')
-      body.insertAdjacentHTML(
-        'beforeend',
-        '<p class="fxdiag-note">Une intervention professionnelle est recommandée pour confirmer le diagnostic.</p>',
-      );
+    body.insertAdjacentHTML('beforeend', summary(r));
+    if (
+      r.safety.level === 'URGENT' ||
+      (r.safety.signals || []).includes('electrical_risk')
+    )
+      body.insertAdjacentHTML('beforeend', safetyNotice(r));
     body.insertAdjacentHTML(
       'beforeend',
-      '<section class="fxdiag-result-top"><span class="fxdiag-tag">Métier recommandé · hypothèse FIXEO</span><h3>' +
-        esc(
-          electricalRisk
-            ? 'Électricien'
-            : trades[r.trade.value] || r.trade.value,
-        ) +
-        '</h3><p>' +
-        esc(r.problem.value) +
-        '</p></section><div class="fxdiag-cards">' +
-        card(
-          'Observations et précisions',
-          r.facts.filter(function (x) {
-            return x.key !== 'description';
+      '<div class="fxdiag-cards">' +
+        details(
+          'Observé sur la photo',
+          r.facts.filter(function (f) {
+            return f.provenance === 'observed';
           }),
         ) +
-        card('Causes possibles', r.hypotheses) +
-        card('Pièces éventuellement nécessaires', r.possible_parts) +
-        card('À vérifier par le professionnel', r.checks) +
-        '</div><p class="fxdiag-note"><span class="fxdiag-tag ' +
-        (r.urgency.value === 'high' ? 'urgent' : '') +
-        '">Urgence indicative : ' +
-        esc(urgency) +
-        '</span><br>' +
-        esc(r.urgency.reason || 'À confirmer par le professionnel.') +
-        '</p><p class="fxdiag-privacy">Les pièces restent des possibilités. Le prix et une éventuelle durée seront précisés uniquement si un scénario FIXEO validé correspond à votre situation.</p>',
+        details(
+          'Votre description et vos réponses',
+          r.facts.filter(function (f) {
+            return ['user_declared', 'user_confirmed'].includes(f.provenance);
+          }),
+        ) +
+        details('Hypothèses FIXEO', r.hypotheses) +
+        details('Pièces éventuellement concernées', r.possible_parts) +
+        details('Précautions et limites', r.checks) +
+        '</div>',
     );
     actions(
-      'Continuer vers mon estimation FIXEO',
-      async function () {
-        var handoff = await API.api({
-          action: 'handoff',
-          session_id: session.id,
-          revision: session.revision,
-        });
-        if (!window.FixeoEstimatorV2) throw new Error('ESTIMATOR_UNAVAILABLE');
-        close();
-        window.FixeoEstimatorV2.open(handoff.entry_context);
-      },
+      'Demander l’intervention FIXEO',
+      beginConfirmation,
       'Modifier',
       backToCompose,
     );
   }
+  function phoneField() {
+    return node('fxdiag-confirm-phone') || node('fxdiag-critical-phone');
+  }
+  async function beginConfirmation() {
+    var context = await API.api({
+      action: 'confirmation_context',
+      session_id: session.id,
+      revision: session.revision,
+      run_id: session.result_run_id,
+    });
+    if (context.progress) {
+      session.state = 'bound';
+      session.request_id = context.progress.request_id;
+      progress = context.progress;
+      renderBound();
+      return;
+    }
+    if (!confirmationPhone) confirmationPhone = context.client_phone || '';
+    renderConfirmation(!!context.client_phone);
+  }
+  function renderConfirmation(knownContact) {
+    var r = session.result;
+    if (r.safety.stop && criticalAcknowledgement !== session.result_run_id)
+      return renderResult();
+    current = 'confirmation';
+    confirmationFailed = false;
+    frame(
+      'Confirmez votre intervention',
+      'Tout est déjà dans votre dossier. Il reste seulement à confirmer votre demande.',
+      4,
+    );
+    body.insertAdjacentHTML(
+      'beforeend',
+      summary(r) +
+        '<p class="fxdiag-confirm-city"><span>Ville d’intervention</span><strong>' +
+        esc(cities[session.city_slug] || session.city_slug) +
+        '</strong></p>',
+    );
+    if (r.safety.stop) body.insertAdjacentHTML('beforeend', safetyNotice(r));
+    var phoneId = r.safety.stop
+      ? 'fxdiag-critical-phone'
+      : 'fxdiag-confirm-phone';
+    body.insertAdjacentHTML(
+      'beforeend',
+      '<div class="fxdiag-field"><label for="' +
+        phoneId +
+        '">Téléphone pour le suivi</label>' +
+        (knownContact
+          ? '<p id="fxdiag-known-phone">' +
+            esc(confirmationPhone) +
+            '</p><button type="button" class="fxdiag-button quiet" id="fxdiag-edit-phone">Modifier le numéro</button>'
+          : '') +
+        '<input class="fxdiag-input" id="' +
+        phoneId +
+        '" type="tel" inputmode="tel" autocomplete="tel" maxlength="24" placeholder="06 XX XX XX XX" value="' +
+        esc(confirmationPhone) +
+        '"' +
+        (knownContact ? ' hidden' : '') +
+        '></div><p class="fxdiag-privacy">Votre diagnostic et vos photos accompagnent cette demande. Le professionnel confirmera l’intervention et son prix avec vous.</p>',
+    );
+    phoneField().addEventListener('input', function () {
+      confirmationPhone = phoneField().value;
+      updateComposeAvailability();
+    });
+    if (node('fxdiag-edit-phone'))
+      node('fxdiag-edit-phone').onclick = function () {
+        phoneField().hidden = false;
+        node('fxdiag-known-phone').hidden = true;
+        node('fxdiag-edit-phone').hidden = true;
+        phoneField().focus();
+        queueLayout();
+      };
+    actions(
+      'Confirmer ma demande',
+      async function () {
+        capture();
+        var response = await API.api({
+          action: 'confirm_intervention',
+          session_id: session.id,
+          revision: session.revision,
+          run_id: session.result_run_id,
+          client_phone: confirmationPhone,
+          ...(r.safety.stop
+            ? {
+                acknowledgement: {
+                  accepted: criticalAcknowledgement === session.result_run_id,
+                  version: 'fixeo-critical-ack-v1',
+                  run_id: session.result_run_id,
+                },
+              }
+            : {}),
+        });
+        if (API.saveTracking) API.saveTracking(response);
+        session.state = 'bound';
+        session.request_id = response.request_id;
+        session.request_ref = response.tracking_ref;
+        progress = response.progress;
+        renderBound();
+      },
+      'Retour',
+      function () {
+        capture();
+        renderResult();
+      },
+    );
+  }
+  async function refreshProgress() {
+    var response = await API.api({
+      action: 'intervention_status',
+      session_id: session.id,
+    });
+    progress = response.progress;
+    renderBound();
+  }
+  function renderBound() {
+    current = 'bound';
+    var r = session.result,
+      critical = r && r.safety.level === 'CRITICAL';
+    var state = progress || { stage: 'registered', sync_pending: true };
+    var messages = {
+      registered: state.sync_pending
+        ? 'Votre demande est enregistrée. Le suivi est momentanément indisponible ; votre demande reste conservée.'
+        : 'Votre demande est enregistrée. La recherche d’un artisan adapté doit être poursuivie.',
+      dispatch_prepared:
+        'Des artisans ont été identifiés. La notification reste à envoyer ; aucun artisan n’est encore confirmé.',
+      notification_sent:
+        'Une notification a été envoyée. L’acceptation d’un artisan reste à confirmer.',
+      artisan_confirmed: 'Un artisan a confirmé votre demande.',
+      intervention: 'Votre intervention est en cours.',
+      completed: 'Votre intervention est terminée.',
+      cancelled: 'Cette demande est annulée.',
+    };
+    frame(
+      critical
+        ? 'Demande critique enregistrée'
+        : 'FIXEO prend en charge votre intervention',
+      messages[state.stage] || messages.registered,
+      4,
+    );
+    if (critical) body.insertAdjacentHTML('beforeend', safetyNotice(r));
+    if (r)
+      body.insertAdjacentHTML(
+        'beforeend',
+        '<p class="fxdiag-tag">' + esc(riskLabel(r)) + '</p>',
+      );
+    var confirmed = ['artisan_confirmed', 'intervention', 'completed'].includes(
+      state.stage,
+    );
+    var inProgress = ['intervention', 'completed'].includes(state.stage);
+    var steps = [
+      ['Demande enregistrée', true],
+      ['Recherche d’un artisan', confirmed],
+      ['Artisan confirmé', confirmed],
+      ['Intervention', state.stage === 'completed'],
+    ];
+    body.insertAdjacentHTML(
+      'beforeend',
+      '<ol class="fxdiag-lifecycle" aria-label="Suivi de votre intervention">' +
+        steps
+          .map(function (step, i) {
+            var active = !step[1] && (i === 1 || (i === 3 && inProgress));
+            return (
+              '<li class="' +
+              (step[1] ? 'done' : '') +
+              '"' +
+              (active ? ' aria-current="step"' : '') +
+              '><span aria-hidden="true">' +
+              (step[1] ? '✓' : i + 1) +
+              '</span>' +
+              esc(step[0]) +
+              '</li>'
+            );
+          })
+          .join('') +
+        '</ol>' +
+        (state.tracking_ref || session.request_ref
+          ? '<p class="fxdiag-note">Référence : ' +
+            esc(state.tracking_ref || session.request_ref) +
+            '</p>'
+          : '') +
+        (state.notification === 'failed'
+          ? '<p class="fxdiag-note">L’envoi de la notification a échoué. Votre demande reste enregistrée.</p>'
+          : '') +
+        '<p class="fxdiag-privacy">Une préparation de notification ne signifie pas qu’un artisan a été contacté. L’intervention est confirmée uniquement après acceptation.</p>',
+    );
+    body.insertAdjacentHTML(
+      'beforeend',
+      '<button type="button" class="fxdiag-button quiet" id="fxdiag-new-diagnostic">Nouveau diagnostic</button>',
+    );
+    node('fxdiag-new-diagnostic').onclick = function () {
+      execute(reset);
+    };
+    actions('Actualiser le suivi', refreshProgress, 'Fermer', close);
+    if (!progress && progressRequestedFor !== session.id) {
+      progressRequestedFor = session.id;
+      API.api({ action: 'intervention_status', session_id: session.id })
+        .then(function (response) {
+          if (current === 'bound' && dialog.open) {
+            progress = response.progress;
+            renderBound();
+          }
+        })
+        .catch(function () {});
+    }
+  }
   function renderState() {
     if (session && session.state === 'bound') {
-      current = 'bound';
-      var criticalRequest =
-        session.result?.safety?.version === 'fixeo-risk-routing-v2' &&
-        session.result.safety.level === 'CRITICAL';
-      frame(
-        'Votre demande a été enregistrée',
-        criticalRequest
-          ? 'Priorité CRITICAL. La prise en charge par un professionnel reste à confirmer.'
-          : 'Ce diagnostic accompagne maintenant votre intervention.',
-        4,
-      );
-      if (criticalRequest)
-        body.insertAdjacentHTML(
-          'beforeend',
-          '<section class="fxdiag-caution" role="alert"><h3>Votre sécurité reste prioritaire</h3><p>FIXEO ne remplace jamais les secours. Gardez vos distances et contactez les services d’urgence locaux si nécessaire. N’attendez pas une réponse FIXEO face au danger.</p>' +
-            (session.request_ref
-              ? '<p>Référence : ' + esc(session.request_ref) + '</p>'
-              : '') +
-            '</section>',
-        );
-      actions('Fermer', close, 'Nouveau diagnostic', reset);
+      renderBound();
       return;
     }
     if (session && session.state === 'analyzing') {
@@ -1110,13 +1364,20 @@
       return;
     }
     if (session && session.result) {
-      if (session.result.questions.length) renderQuestions();
-      else renderResult();
+      if (session.result.questions.length) {
+        questionIndex = 0;
+        renderQuestions();
+      } else renderResult();
       return;
     }
     renderCompose();
   }
   function reset() {
+    confirmationPhone = '';
+    criticalAcknowledgement = null;
+    progress = null;
+    progressRequestedFor = null;
+    questionIndex = 0;
     pausedDraft = null;
     remember(null);
     session = null;
@@ -1162,6 +1423,8 @@
             session.result?.questions.length
           )
             renderQuestions();
+          else if (pausedDraft.page === 'confirmation' && session.result)
+            renderConfirmation(false);
           else if (pausedDraft.page === 'safety') renderSafety();
           else renderCompose();
         } else renderState();

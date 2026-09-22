@@ -156,7 +156,7 @@ test('electrical warning stays visible with the existing continuation; critical 
         questions: [], safety: { stop, signals: stop ? ['electrical_risk', 'electricity'] : ['electrical_risk'], messages: ['Ne touchez pas à l’installation et coupez l’alimentation si cela peut être fait sans risque.'] },
         trade: { value: 'electricite' }, problem: { value: 'Interrupteur endommagé' }, facts: [], hypotheses: [], possible_parts: [], checks: [], urgency: { value: stop ? 'critical' : 'high' },
       } };
-      if (r.action === 'handoff') { assert.equal(stop, false); return { entry_context: { source: 'diagnostic', metier_hint: 'electricite', city_slug: 'rabat' } }; }
+      if (r.action === 'confirmation_context') { assert.equal(stop, false); return { ok: true, client_phone: '' }; }
       return { session };
     });
     s.w.FixeoEstimatorV2 = { open(context) { opened = context; } };
@@ -173,14 +173,15 @@ test('electrical warning stays visible with the existing continuation; critical 
       assert.match(s.q('fxdiag-next').textContent.trim(), /^Fermer(?:→)?$/);
       assert.equal(s.calls.some(c => c.action === 'handoff'), false);
     } else {
-      assert.match(body.querySelector('[role="alert"]').textContent, /Risque électrique/);
+      assert.match(body.querySelector('[role="alert"]').textContent, /Intervention rapide recommandée/);
       assert.match(body.textContent, /Électricien/);
-      assert.match(body.textContent, /Élevée/);
+      assert.match(body.textContent, /Intervention rapide recommandée/);
       assert.equal(s.q('fxdiag-next').disabled, false);
-      assert.match(s.q('fxdiag-next').textContent, /Continuer vers mon estimation FIXEO/);
+      assert.match(s.q('fxdiag-next').textContent, /Demander l’intervention FIXEO/);
       s.q('fxdiag-next').click(); await tick();
-      assert.equal(opened.metier_hint, 'electricite');
-      assert.equal(opened.city_slug, 'rabat');
+      assert.equal(opened, undefined);
+      assert.equal(s.q('fxdiag-dialog').dataset.step, 'confirmation');
+      assert.match(s.w.document.querySelector('.fxdiag-body').textContent, /Rabat/);
     }
   }
 });
@@ -194,7 +195,8 @@ test('new critical screen requires acknowledgement and phone, prevents double su
       questions: [], safety: { version: 'fixeo-risk-routing-v2', level: 'CRITICAL', stop: true, signals: ['gas'], messages: ['Éloignez-vous de la zone et contactez les secours depuis un lieu sûr.'] },
       trade: { value: 'plomberie' }, problem: { value: 'Odeur de gaz' }, facts: [], hypotheses: [], possible_parts: [], checks: [], urgency: { value: 'critical' },
     } };
-    if (r.action === 'confirm_critical') { await gate; return { ok: true, request_id: 'critical-request-fixture', tracking_ref: 'FX-CRITICAL', risk_level: 'CRITICAL', urgency: 'now' }; }
+    if (r.action === 'confirmation_context') return { ok: true, client_phone: '' };
+    if (r.action === 'confirm_intervention') { await gate; return { ok: true, request_id: 'critical-request-fixture', tracking_ref: 'FX-CRITICAL', risk_level: 'CRITICAL', urgency: 'now' }; }
     return { session };
   });
   s.w.FixeoEstimatorV2 = { open() { assert.fail('Critical recording must not enter normal pricing'); } };
@@ -202,16 +204,19 @@ test('new critical screen requires acknowledgement and phone, prevents double su
   s.q('fxdiag-next').click(); await tick(); s.q('fxdiag-next').click(); await tick(); await tick();
   assert.match(s.w.document.querySelector('.fxdiag-body').textContent,/FIXEO ne remplace jamais les secours/);
   assert.equal(s.q('fxdiag-next').disabled,true);
-  s.change('fxdiag-critical-phone','0600000000'); assert.equal(s.q('fxdiag-next').disabled,true);
   s.q('fxdiag-critical-ack').checked=true; s.q('fxdiag-critical-ack').dispatchEvent(new s.w.Event('change'));
   assert.equal(s.q('fxdiag-next').disabled,false);
+  s.q('fxdiag-next').click(); await tick();
+  assert.equal(s.q('fxdiag-dialog').dataset.step, 'confirmation');
+  assert.equal(s.q('fxdiag-next').disabled, true);
+  s.change('fxdiag-critical-phone','0600000000');
   s.q('fxdiag-next').click(); s.q('fxdiag-next').click();
-  assert.equal(s.calls.filter(c=>c.action==='confirm_critical').length,1);
-  const sent=s.calls.find(c=>c.action==='confirm_critical');
+  assert.equal(s.calls.filter(c=>c.action==='confirm_intervention').length,1);
+  const sent=s.calls.find(c=>c.action==='confirm_intervention');
   assert.equal(sent.acknowledgement.accepted,true); assert.equal(sent.acknowledgement.run_id,'critical-run-fixture');
   release(); await tick(); await tick();
   const text=s.w.document.querySelector('.fxdiag-body').textContent;
-  assert.match(text,/demande a été enregistrée/); assert.match(text,/Priorité CRITICAL/);
+  assert.match(text,/Demande critique enregistrée/); assert.match(text,/Priorité CRITICAL/);
   assert.match(text,/FIXEO ne remplace jamais les secours/); assert.match(text,/FX-CRITICAL/);
   assert.equal(session.result.safety.stop,true);
 });

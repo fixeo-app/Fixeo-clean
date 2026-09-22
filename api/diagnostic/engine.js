@@ -1,6 +1,7 @@
 "use strict";
 const { VERSION, QUESTIONS, validateProviderResult } = require("./contract");
 const { evaluateSafety, safetyTrade } = require("./safety");
+const { qualificationQuestions } = require("./question-routing");
 const { hash } = require("./auth");
 const { DiagnosticError } = require("./transport");
 const {
@@ -103,13 +104,7 @@ async function analyze(snapshot, { provider, mediaStore }) {
     ...photos.flatMap((photo) => photo.safety_signals),
   ]);
   const electricalRisk = safety.signals.includes("electrical_risk");
-  const answered = input.answers || {};
-  const questions = safety.stop
-    ? []
-    : model.question_ids
-        .filter((id) => !Object.hasOwn(answered, id))
-        .slice(0, 3)
-        .map((id) => ({ id, ...QUESTIONS[id] }));
+  const questions = qualificationQuestions(input, model, photos, safety);
   return {
     result: {
       version: VERSION,

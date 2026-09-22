@@ -9,6 +9,7 @@ const { createOpenAIAdapter } = require('./providers/openai');
 const { analyze } = require('./engine');
 const { groundingLogDetails, groundingNormalizationDetails } = require('./grounding-errors');
 const { confirmCritical } = require('./critical-request');
+const { confirmationContext, confirmIntervention, interventionStatus } = require('./intervention');
 const { sealToken } = require('../estimator-v1/fixeo-estimator-token-v1');
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const ACTIONS = new Set([
@@ -22,6 +23,9 @@ const ACTIONS = new Set([
   'analyze',
   'handoff',
   'confirm_critical',
+  'confirmation_context',
+  'confirm_intervention',
+  'intervention_status',
   'mission_context',
 ]);
 function validatedInput(value) {
@@ -141,6 +145,7 @@ function createHandler({
           'media_remove',
           'mission_context',
           'handoff',
+          'intervention_status',
         ].includes(action)
       )
         throw new DiagnosticError('DIAGNOSTIC_UNAVAILABLE', 503);
@@ -372,6 +377,13 @@ function createHandler({
             throw error;
           }
         }
+      } else if (['confirmation_context', 'confirm_intervention', 'intervention_status'].includes(action)) {
+        data = await call('get');
+        if (action === 'intervention_status')
+          return send(res, 200, { ok: true, progress: await interventionStatus(data, transport) });
+        if (action === 'confirmation_context')
+          return send(res, 200, await confirmationContext({ data, body, transport }));
+        return send(res, 200, await confirmIntervention({ body, data, actor, transport, env }));
       } else if (action === 'confirm_critical') {
         data = await call('get');
         const confirmation = await confirmCritical({ body, data, actor, transport, env });

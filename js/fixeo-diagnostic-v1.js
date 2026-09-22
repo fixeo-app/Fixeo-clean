@@ -56,7 +56,7 @@
       loaded = new Promise(function (resolve, reject) {
         var script = document.createElement('script');
         script.src =
-          '/js/fixeo-diagnostic-modal-v1.js?v=diagnostic-risk-routing-v2';
+          '/js/fixeo-diagnostic-modal-v1.js?v=diagnostic-intervention-v1';
         script.onload = resolve;
         script.onerror = function () {
           loaded = null;

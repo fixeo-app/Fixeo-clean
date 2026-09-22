@@ -1377,3 +1377,110 @@ textarea.fxdiag-input {
     scroll-behavior: auto !important;
   }
 }
+
+/* Diagnostic qualification and canonical intervention confirmation. */
+.fxdiag-modal .fxdiag-quick-answers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+.fxdiag-modal .fxdiag-quick-answer {
+  min-height: 52px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.045);
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.fxdiag-modal .fxdiag-quick-answer:hover,
+.fxdiag-modal .fxdiag-quick-answer:active,
+.fxdiag-modal .fxdiag-quick-answer[aria-pressed="true"] {
+  background: rgba(255, 132, 68, 0.13);
+  border-color: rgba(255, 154, 92, 0.7);
+}
+.fxdiag-modal .fxdiag-quick-answer:focus-visible,
+.fxdiag-modal .fxdiag-result-detail summary:focus-visible {
+  outline: 2px solid #ffad79;
+  outline-offset: 3px;
+}
+.fxdiag-modal .fxdiag-question-title {
+  font-size: 20px;
+  line-height: 1.4;
+  margin: 12px 0;
+}
+.fxdiag-modal .fxdiag-result-level {
+  color: #ffbd96;
+  font-size: 14px;
+  font-weight: 700;
+}
+.fxdiag-modal .fxdiag-result-detail {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.fxdiag-modal .fxdiag-result-detail summary {
+  padding: 16px 2px;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.fxdiag-modal .fxdiag-result-detail .fxdiag-card {
+  background: transparent;
+  border: 0;
+  padding: 0 2px 16px;
+}
+.fxdiag-modal .fxdiag-result-detail .fxdiag-card h3 {
+  display: none;
+}
+.fxdiag-modal .fxdiag-confirm-city {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 16px 0 24px;
+  font-size: 14px;
+}
+.fxdiag-modal .fxdiag-lifecycle {
+  list-style: none;
+  padding: 8px 0;
+  margin: 12px 0;
+}
+.fxdiag-modal .fxdiag-lifecycle li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  color: #aeb6c4;
+  font-size: 14px;
+}
+.fxdiag-modal .fxdiag-lifecycle li > span {
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+}
+.fxdiag-modal .fxdiag-lifecycle li.done {
+  color: #dcebe3;
+}
+.fxdiag-modal .fxdiag-lifecycle li.done > span {
+  background: rgba(98, 198, 149, 0.15);
+  color: #a0dfbc;
+}
+.fxdiag-modal .fxdiag-lifecycle li[aria-current="step"] {
+  color: #ffd0b3;
+}
+.fxdiag-modal [hidden] {
+  display: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fxdiag-modal .fxdiag-quick-answer {
+    transition: none;
+  }
+}
