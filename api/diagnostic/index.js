@@ -103,6 +103,12 @@ function createHandler({
     let action = 'unknown';
     try {
       const cfg = injectedConfig || config(env);
+      if (req.method === 'POST' && req.body?.action === 'verify_runtime') {
+        if (!require('./runtime-check').authorized(req, env))
+          throw new DiagnosticError('FORBIDDEN', 403);
+        await require('./verify-build.cjs').verify({ runtime: true });
+        return send(res, 200, { ok: true, verification: 'PASS' });
+      }
       if (req.method === 'GET')
         return send(res, 200, {
           ok: true,

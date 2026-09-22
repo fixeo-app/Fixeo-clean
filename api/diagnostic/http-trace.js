@@ -3,7 +3,7 @@ const { AsyncLocalStorage } = require('node:async_hooks');
 const { channel } = require('node:diagnostics_channel');
 const scope = new AsyncLocalStorage();
 const requests = new WeakMap();
-const NAMES = new Set(['Error', 'TypeError', 'AbortError', 'TimeoutError', 'AggregateError', 'ConnectTimeoutError', 'SocketError']);
+const NAMES = new Set(['Error', 'TypeError', 'AbortError', 'TimeoutError', 'AggregateError', 'ConnectTimeoutError', 'SocketError', 'FetchError']);
 const CODES = new Set(['ECONNRESET', 'ECONNREFUSED', 'ENOTFOUND', 'EAI_AGAIN', 'ENETUNREACH', 'EHOSTUNREACH', 'ETIMEDOUT', 'EPIPE', 'ABORT_ERR', 'UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT', 'UND_ERR_BODY_TIMEOUT', 'UND_ERR_SOCKET', 'UND_ERR_ABORTED', 'CERT_HAS_EXPIRED', 'UNABLE_TO_VERIFY_LEAF_SIGNATURE']);
 function safeError(error) {
   const chain = [];
@@ -16,6 +16,16 @@ function mark(trace, phase) {
   if (trace && !trace.finished && trace.events.length < 16)
     trace.events.push({ phase, ms: Date.now() - trace.started });
 }
+channel('http.client.request.start').subscribe(({ request }) => {
+  const trace = scope.getStore();
+  if (!trace) return;
+  mark(trace, 'http_started');
+  request.once('finish', () => mark(trace, 'body_sent'));
+  request.once('response', () => mark(trace, 'response_headers'));
+  request.once('error', error => {
+    if (!trace.finished) { trace.network_error = safeError(error); mark(trace, 'request_error'); }
+  });
+});
 channel('undici:request:create').subscribe(({ request }) => {
   const trace = scope.getStore();
   if (trace) { requests.set(request, trace); mark(trace, 'created'); }

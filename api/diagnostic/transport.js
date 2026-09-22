@@ -1,5 +1,6 @@
 'use strict';
 const { tracedRequest } = require('./http-trace');
+const nodeFetch = require('node-fetch');
 class DiagnosticError extends Error {
   constructor(code, status = 400) {
     super(code);
@@ -35,7 +36,7 @@ async function boundedBody(response, maximum) {
 }
 function createTransport({
   env = process.env,
-  fetchImpl = fetch,
+  fetchImpl = nodeFetch,
   requestTimeout = 12000,
   deadline = Infinity,
 } = {}) {
@@ -70,6 +71,7 @@ function createTransport({
           Math.max(1, Math.min(requestTimeout, remaining)),
         ),
         redirect: 'error',
+        size: maxBytes,
       }));
     } catch (cause) {
       const error = new DiagnosticError('DEPENDENCY_UNAVAILABLE', 503);
@@ -113,6 +115,7 @@ function createTransport({
           headers: { apikey: key, Authorization: 'Bearer ' + token },
           signal: AbortSignal.timeout(8000),
           redirect: 'error',
+          size: 64 * 1024,
         });
       } catch (_) {
         throw new DiagnosticError('AUTH_UNAVAILABLE', 503);
