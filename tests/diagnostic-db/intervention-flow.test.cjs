@@ -239,7 +239,7 @@ test("A–O Diagnostic intervention controlled E2E matrix", async (t) => {
         const ambiguous =
           opts.ambiguous && !Object.keys(d.session.input.answers).length;
         const model = {
-          trade: ambiguous ? "autre" : "menuiserie",
+          trade: ambiguous ? "autre" : opts.trade || "menuiserie",
           problem: ambiguous
             ? "Nature à préciser"
             : "Poignée à faire vérifier par un professionnel.",
@@ -353,6 +353,12 @@ test("A–O Diagnostic intervention controlled E2E matrix", async (t) => {
         el.dispatchEvent(new w.Event("change", { bubbles: true }));
       };
     const clickNext = () => q("fxdiag-next").click();
+    if (opts.headless) return {
+      w, q, change, id, calls, api, transport,
+      text: () => w.document.body.textContent,
+      session: () => session,
+      release: async () => { await wait(() => !!held); held(); },
+    };
     await w.FixeoDiagnosticModal.open({ opener: q("opener") });
     change(
       "fxdiag-description",
@@ -661,4 +667,122 @@ test("A–O Diagnostic intervention controlled E2E matrix", async (t) => {
       assert.match(read("api/diagnostic/intervention.js"), /confirmCritical/);
     },
   );
+
+  async function hero(st, opts = {}) {
+    const s = await setup(st, { ...opts, headless: true });
+    s.w.document.body.insertAdjacentHTML('beforeend', '<div id="fxhf-root"></div>');
+    s.w.FixeoDiagnostic.open = ctx => s.w.FixeoDiagnosticModal.open(ctx);
+    s.w.eval(read('js/fixeo-intake-v1.js'));
+    s.w.eval(read('js/fixeo-hero-flagship-v1.js'));
+    s.w.FixeoHeroFlagship.mount();
+    const click = label => {
+      const el = [...s.q('fxhf-root').querySelectorAll('button')].find(b => b.textContent === label);
+      assert.ok(el, 'button: ' + label); el.click();
+    };
+    const until = pred => wait(() => !s.q('fxhf-root').hasAttribute('aria-busy') && pred());
+    const fill = async () => {
+      assert.equal(s.q('fxhf-phone'), null, 'phone requested only after analysis');
+      s.change('fxhf-need-input', opts.description ?? 'Une petite fuite sous mon lavabo depuis ce matin.');
+      s.change('fxhf-location', 'rabat'); s.change('fxhf-consent', true);
+      if (opts.photo) {
+        const input = s.q('fxhf-camera-file');
+        Object.defineProperty(input, 'files', { value: [new s.w.File([new Uint8Array(100)], 'photo.jpg', { type: 'image/jpeg' })] });
+        input.dispatchEvent(new s.w.Event('change'));
+        assert.match(s.text(), /1 photo prête à analyser/);
+        assert.equal(s.w.document.querySelector('dialog[open]'), null);
+      }
+      s.q('fxhf-submit').click(); await until(() => s.q('fxhf-root').dataset.fxhfState === 'safety');
+      click('RAFI comprend mon besoin');
+      await until(() => ['result', 'questions'].includes(s.q('fxhf-root').dataset.fxhfState));
+    };
+    const confirmScreen = async () => { s.q('fxhf-entrust').click(); await until(() => s.q('fxhf-phone')); };
+    const confirm = async () => { await confirmScreen(); s.change('fxhf-phone', '0600000000'); s.q('fxhf-confirm').click(); await until(() => /Demande confirmée|L’opération n’a pas abouti/.test(s.text())); };
+    return { ...s, click, until, fill, confirmScreen, confirm };
+  }
+  for (const [label, options] of [
+    ['A texte clair', { trade: 'plomberie' }],
+    ['C photo informative', { photo: true, description: '' }],
+    ['D photo + texte avec provenance distincte', { photo: true, description: 'La poignée est intacte selon moi.' }],
+  ]) await t.test('Hero ' + label + ' → qualification → confirmation → une seule demande', async st => {
+    const s = await hero(st, options); await s.fill();
+    assert.equal(await count(s.id), 0, 'analysis never creates a request');
+    assert.ok(s.q('fxhf-entrust'));
+    if (options.trade) assert.match(s.text(), /Plombier/);
+    if (options.photo) {
+      const r = (await dataFor(s.id)).run.result;
+      assert.ok(r.facts.some(f => f.provenance === 'observed'));
+      if (options.description) assert.ok(r.facts.some(f => f.provenance === 'user_declared'));
+    }
+    await s.confirm(); assert.equal(await count(s.id), 1);
+    assert.equal(s.q('fxhf-root').dataset.fxhfState, 'dispatching');
+    assert.match(s.text(), /n’a pas encore été envoyée/);
+    assert.doesNotMatch(s.text(), /artisans contactés|artisan a confirmé/);
+    assert.ok(!s.calls.some(c => c.action === 'handoff'));
+  });
+  await t.test('Hero E/F questions utiles en un tap, retour et réponses préservées', async st => {
+    const s = await hero(st, { ambiguous: true, description: 'Un problème difficile à identifier.' }); await s.fill();
+    assert.equal(s.q('fxhf-root').dataset.fxhfState, 'questions');
+    s.click('Je ne sais pas'); await s.until(() => /Question 2/.test(s.text()));
+    s.click('Retour'); await s.until(() => /Question 1/.test(s.text()));
+    assert.equal(s.q('fxhf-root').querySelector('[aria-pressed=true]').textContent, 'Je ne sais pas');
+    s.click('Je ne sais pas'); await s.until(() => /Question 2/.test(s.text()));
+    s.click('Équipement'); await s.until(() => !!s.q('fxhf-entrust'));
+    assert.equal(await count(s.id), 0);
+    assert.deepEqual((await dataFor(s.id)).session.input.answers, { onset: 'unknown', affected_area: 'Équipement' });
+  });
+  await t.test('Hero I double clic confirmation → une seule insertion et un seul dispatch SQL', async st => {
+    const s = await hero(st, { hold: true }); await s.fill(); await s.confirmScreen(); s.change('fxhf-phone', '0600000000');
+    const b = s.q('fxhf-confirm'); b.click(); b.click();
+    await s.release(); await s.until(() => /Demande confirmée/.test(s.text()));
+    assert.equal(s.calls.filter(c => c.action === 'confirm_intervention').length, 1);
+    assert.equal(await count(s.id), 1);
+    assert.equal((await db.query('SELECT count(*)::int n FROM dispatch_execution_queue WHERE request_id=$1', [(await dataFor(s.id)).session.service_request_id])).rows[0].n, 1);
+  });
+  await t.test('Hero M perte de réponse après commit → retry même demande; refresh la reprend', async st => {
+    const s = await hero(st, { lost: true }); await s.fill(); await s.confirm();
+    assert.equal(await count(s.id), 1);
+    s.q('fxhf-confirm').click(); await s.until(() => /Demande confirmée/.test(s.text()));
+    assert.equal(await count(s.id), 1);
+    const ids = s.calls.filter(c => c.action === 'confirm_intervention').map(c => c.session_id);
+    assert.deepEqual(ids, [s.id, s.id]);
+    const resumed = s.w.FixeoIntake.create(() => {}); await resumed.load();
+    assert.equal(resumed.session.state, 'bound');
+    await resumed.confirm('0600000000'); assert.equal(await count(s.id), 1);
+  });
+  await t.test('Hero H outil Diagnostic reprend exactement le dossier; confirmation partagée et retour', async st => {
+    const s = await hero(st, { photo: true }); await s.fill();
+    s.q('fxhf-diagnostic').click(); await s.until(() => !!s.q('fxdiag-next'));
+    assert.match(s.text(), /Observé sur la photo/);
+    s.q('fxdiag-next').click(); await wait(() => !!s.q('fxdiag-confirm-phone'));
+    s.change('fxdiag-confirm-phone', '0600000000'); s.q('fxdiag-next').click();
+    await wait(() => /FIXEO prend en charge/.test(s.text()));
+    s.w.document.querySelector('.fxdiag-close').click(); await s.until(() => /Demande confirmée/.test(s.q('fxhf-root').textContent));
+    assert.equal(await count(s.id), 1);
+    assert.equal(s.calls.filter(c => c.action === 'create').length, 1);
+    assert.equal(s.calls.filter(c => c.action === 'analyze').length, 1);
+  });
+  await t.test('Hero danger critique conserve toutes les consignes et impose acknowledgement lié au run', async st => {
+    const s = await hero(st, { description: 'Des flammes et de la fumée active.' }); await s.fill();
+    assert.equal(s.q('fxhf-entrust').disabled, true);
+    assert.match(s.text(), /FIXEO ne remplace jamais les secours/);
+    const ack = s.q('fxhf-critical-ack'); ack.checked = true; ack.dispatchEvent(new s.w.Event('change'));
+    await s.confirm();
+    assert.equal(await count(s.id), 1);
+    assert.equal((await dataFor(s.id)).session.booking_context.risk_level, 'CRITICAL');
+    assert.match(s.text(), /N’attendez pas une réponse FIXEO/);
+  });
+  await t.test('Hero J/K/L états réels : candidat/queue ≠ envoyé ≠ accepté', async st => {
+    const s = await hero(st); await s.fill(); await s.confirm();
+    const id = (await dataFor(s.id)).session.service_request_id;
+    assert.equal(s.q('fxhf-root').dataset.fxhfState, 'dispatching');
+    await db.query("INSERT INTO dispatch_notification_outbox VALUES($1,'DISPATCH_REQUEST','SENT',now(),'fixture-delivered')", [id]);
+    s.click('Actualiser le suivi'); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'acceptance');
+    assert.doesNotMatch(s.text(), /Un artisan a confirmé/);
+    await db.query("UPDATE service_requests SET status='assigned' WHERE id=$1", [id]);
+    s.click('Actualiser le suivi'); await s.until(() => !s.q('fxhf-root').hasAttribute('aria-busy'));
+    assert.doesNotMatch(s.text(), /Un artisan a confirmé/);
+    await db.query("INSERT INTO missions VALUES($1,'pending')", [id]);
+    s.click('Actualiser le suivi'); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'mission');
+    assert.match(s.text(), /Un artisan a confirmé/);
+  });
 });

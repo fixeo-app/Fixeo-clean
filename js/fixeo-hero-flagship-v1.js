@@ -1,1586 +1,961 @@
-/*!
- * js/fixeo-hero-flagship-v1.js
- * FIXEO Hero Flagship V1
- *
- * State-driven client experience.
- *
- * States:
- *   need
- *   analysis
- *   dispatching
- *   mission_active
- *   in_progress
- *   completed
- *
- * IMPORTANT:
- *   - presentation/orchestration layer only
- *   - does not implement matching
- *   - does not implement dispatch
- *   - does not modify mission lifecycle
- *   - does not infer backend state from DOM
- *   - does not modify RAFI OS / Estimator / Reservation
- *
- * Namespace:
- *   JS  : window.FixeoHeroFlagship
- *   DOM : fxhf-*
- */
+/* FIXEO universal intake: one existing Diagnostic dossier, one canonical request.
+ * This controller renders the Hero only. It never classifies risk, prices work,
+ * creates a parallel request, selects artisans or fabricates lifecycle events. */
 (function () {
-  'use strict';
-
-  /* ── Idempotency guard ─────────────────────────────────────── */
+  "use strict";
   if (window.FixeoHeroFlagship) return;
-
-  /* ── Constants ─────────────────────────────────────────────── */
-  var ROOT_ID = 'fxhf-root';
-
+  var root,
+    content,
+    intake,
+    state = "need",
+    busy = false,
+    phone = "",
+    acknowledgedRun = null;
+  var questionIndex = 0,
+    optionalOpen = false,
+    estimateContext,
+    estimateRevision,
+    cityTimer,
+    mounted = false;
+  var recorder,
+    stream,
+    recordingTimer,
+    transcribing = false;
   var STATES = Object.freeze({
-    NEED:           'need',
-    ANALYSIS:       'analysis',
-    DISPATCHING:    'dispatching',
-    MISSION_ACTIVE: 'mission_active',
-    IN_PROGRESS:    'in_progress',
-    COMPLETED:      'completed'
+    NEED: "need",
+    ANALYSIS: "analysis",
+    CONFIRMATION: "confirmation",
+    MATCHING: "matching",
+    DISPATCHING: "dispatching",
+    ACCEPTANCE: "acceptance",
+    MISSION: "mission",
   });
-
-  var VALID_STATES = Object.freeze([
-    STATES.NEED,
-    STATES.ANALYSIS,
-    STATES.DISPATCHING,
-    STATES.MISSION_ACTIVE,
-    STATES.IN_PROGRESS,
-    STATES.COMPLETED
-  ]);
-
-  /* ── Internal state ────────────────────────────────────────── */
-  var _root = null;
-  var _mounted = false;
-  var _state = STATES.NEED;
-  var _activeTrackingRef = null;
-  var _activeGuestToken = null;
-  var _pollTimer = null;
-  
-  /* ── Helpers ───────────────────────────────────────────────── */
-  function _el(id) {
-    return document.getElementById(id);
-  }
-
-  function _isValidState(state) {
-    return VALID_STATES.indexOf(state) !== -1;
-  }
-async function _fetchGuestState() {
-  if (!_activeTrackingRef || !_activeGuestToken) {
-    return null;
-  }
-
-  try {
-    var response = await fetch('/api/guest-request', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        action: 'guest_lookup',
-        tracking_ref: _activeTrackingRef,
-        guest_token: _activeGuestToken
-      })
+  var cities = {
+    casablanca: "Casablanca",
+    rabat: "Rabat",
+    marrakech: "Marrakech",
+    fes: "Fès",
+    tanger: "Tanger",
+    agadir: "Agadir",
+    meknes: "Meknès",
+    oujda: "Oujda",
+    kenitra: "Kénitra",
+    tetouan: "Tétouan",
+    sale: "Salé",
+    temara: "Témara",
+    "el-jadida": "El Jadida",
+    "beni-mellal": "Béni Mellal",
+    nador: "Nador",
+    khouribga: "Khouribga",
+    safi: "Safi",
+    taza: "Taza",
+    ouarzazate: "Ouarzazate",
+    mohammedia: "Mohammedia",
+  };
+  var trades = {
+    plomberie: "Plombier",
+    electricite: "Électricien",
+    serrurerie: "Serrurier",
+    climatisation: "Technicien climatisation / chauffage",
+    bricolage: "Professionnel du bricolage",
+    menuiserie: "Menuisier",
+    peinture: "Peintre",
+    maconnerie: "Maçon",
+    nettoyage: "Professionnel du nettoyage",
+    jardinage: "Jardinier",
+    demenagement: "Déménageur",
+    carrelage: "Carreleur",
+    autre: "Professionnel FIXEO · métier à préciser",
+  };
+  var hazards = {
+    electricity:
+      "Étincelles, odeur de brûlé, choc électrique ou eau sur l’installation électrique",
+    gas: "Odeur de gaz",
+    fire: "Flammes ou fumée importante",
+    major_leak: "Fuite d’eau incontrôlable",
+    flood: "Eau qui se propage / inondation",
+    structure: "Affaissement ou risque de chute",
+    immediate_danger: "Autre danger immédiat",
+  };
+  var micIcon =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="8" y="3" width="8" height="12" rx="4"/><path d="M6 12a6 6 0 0 0 12 0M12 18v3M9 21h6"/></svg>';
+  var cameraIcon =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></svg>';
+  function esc(v) {
+    return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) {
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      }[c];
     });
-
-    var data = await response.json().catch(function () {
-      return null;
+  }
+  function node(id) {
+    return root.querySelector("#" + id);
+  }
+  function slug(value) {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-");
+  }
+  function status(text) {
+    var el = node("fxhf-status");
+    if (el) el.textContent = text;
+  }
+  function frame(next, title, subtitle) {
+    clearTimeout(cityTimer);
+    state = next;
+    root.dataset.fxhfState = next;
+    content.innerHTML =
+      '<div class="fxhf-eyebrow">RAFI · Assistant FIXEO</div><h2 class="fxhf-title" tabindex="-1">' +
+      esc(title) +
+      "</h2>" +
+      (subtitle ? '<p class="fxhf-subtitle">' + esc(subtitle) + "</p>" : "") +
+      '<div id="fxhf-panel"></div><p id="fxhf-status" class="fxhf-status" role="status"></p><div id="fxhf-actions" class="fxhf-actions"></div>';
+  }
+  function panel(html) {
+    node("fxhf-panel").insertAdjacentHTML("beforeend", html);
+  }
+  function button(label, callback, secondary, id) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = secondary ? "fxhf-secondary" : "fxhf-submit";
+    b.textContent = label;
+    if (id) b.id = id;
+    b.onclick = function () {
+      execute(callback);
+    };
+    node("fxhf-actions").appendChild(b);
+    return b;
+  }
+  var errors = {
+    INVALID_PHOTO: "Choisissez une photo JPEG, PNG ou WebP de 8 Mio maximum.",
+    PHOTO_LIMIT: "Vous pouvez ajouter 3 photos maximum.",
+    DIAGNOSTIC_QUOTA_EXCEEDED:
+      "La limite d’analyse est atteinte. Votre besoin est conservé ; réessayez après son renouvellement.",
+    DIAGNOSTIC_NOT_FOUND:
+      "Ce dossier n’est plus disponible dans cette session. Vous pouvez commencer un nouveau besoin.",
+    AUTH_REQUIRED:
+      "Reconnectez-vous avec le même compte pour retrouver ce dossier.",
+    UPLOAD_FAILED:
+      "L’envoi de la photo a été interrompu. Elle est conservée ; réessayez.",
+    ANALYSIS_RUNNING:
+      "L’analyse continue. Réessayez pour retrouver son résultat.",
+    INVALID_PHONE:
+      "Saisissez un numéro marocain valide, par exemple 06 XX XX XX XX.",
+  };
+  function showError(error) {
+    var old = node("fxhf-error");
+    if (old) old.remove();
+    var el = document.createElement("p");
+    el.id = "fxhf-error";
+    el.className = "fxhf-error";
+    el.setAttribute("role", "alert");
+    el.textContent =
+      errors[error.message] ||
+      "L’opération n’a pas abouti. Vos informations sont conservées. Réessayez.";
+    node("fxhf-actions").before(el);
+  }
+  async function execute(task) {
+    if (busy || transcribing || recorder?.state === "recording") return;
+    busy = true;
+    root.setAttribute("aria-busy", "true");
+    root.querySelectorAll("button").forEach(function (b) {
+      b.disabled = true;
     });
-
-    if (!response.ok || !data || data.ok !== true) {
-      console.warn(
-        '[FXHF] guest lookup failed',
-        data && (data.code || data.error)
-      );
-      return null;
+    try {
+      await task();
+    } catch (error) {
+      if (state === "analysis") {
+        frame(
+          "retry",
+          "Votre besoin est conservé.",
+          "Reprenons exactement là où nous en étions.",
+        );
+        button("Réessayer", analyze);
+        button("Modifier mon besoin", renderNeed, true);
+      }
+      showError(error);
+    } finally {
+      busy = false;
+      root.removeAttribute("aria-busy");
+      root.querySelectorAll("button").forEach(function (b) {
+        b.disabled = false;
+      });
+      availability();
     }
-
-    return data;
-  } catch (err) {
-    console.warn(
-      '[FXHF] guest lookup error:',
-      err && err.message
+  }
+  function capture() {
+    if (node("fxhf-need-input"))
+      intake.draft.description = node("fxhf-need-input").value.trim();
+    if (node("fxhf-location")) intake.draft.city = node("fxhf-location").value;
+    if (node("fxhf-consent"))
+      intake.draft.consent = node("fxhf-consent").checked;
+    if (node("fxhf-phone")) phone = node("fxhf-phone").value;
+  }
+  function readyPhotos() {
+    return (intake.session?.media || []).filter(function (m) {
+      return m.state === "ready";
+    });
+  }
+  function availability() {
+    var submit = node("fxhf-submit");
+    if (submit)
+      submit.disabled =
+        busy ||
+        transcribing ||
+        recorder?.state === "recording" ||
+        !cities[intake.draft.city] ||
+        !intake.draft.consent ||
+        (!intake.draft.description &&
+          !intake.pending.length &&
+          !readyPhotos().length);
+    var confirm = node("fxhf-confirm");
+    if (confirm)
+      confirm.disabled =
+        busy ||
+        !/^(\+212|0)[5-7][0-9]{8}$/.test(phone.replace(/[\s().-]+/g, ""));
+    var entrust = node("fxhf-entrust");
+    if (entrust)
+      entrust.disabled =
+        busy ||
+        (intake.session.result.safety.stop &&
+          acknowledgedRun !== intake.session.result_run_id);
+  }
+  function renderNeed() {
+    frame(
+      "need",
+      "Que se passe-t-il ?",
+      "Décrivez, dites ou montrez votre problème. FIXEO s’occupe de la suite.",
     );
-    return null;
+    panel(
+      '<div class="fxhf-location"><label for="fxhf-location">Ville d’intervention</label><select id="fxhf-location" class="fxhf-location-select" aria-label="Choisir ou modifier la ville"><option value="">Choisir ma ville</option>' +
+        Object.keys(cities)
+          .map(function (c) {
+            return (
+              '<option value="' +
+              c +
+              '"' +
+              (c === intake.draft.city ? " selected" : "") +
+              ">" +
+              cities[c] +
+              "</option>"
+            );
+          })
+          .join("") +
+        "</select></div>" +
+        '<div class="fxhf-need-field"><textarea id="fxhf-need-input" class="fxhf-need-input" rows="3" maxlength="2000" placeholder="Décrivez votre problème…" aria-label="Décrivez votre problème ou votre besoin">' +
+        esc(intake.draft.description) +
+        '</textarea><div class="fxhf-voice-bar"><button type="button" class="fxhf-mic" id="fxhf-mic">' +
+        micIcon +
+        'Parler à RAFI</button><button type="button" class="fxhf-mic" id="fxhf-show" aria-expanded="false" aria-controls="fxhf-photo-choices">' +
+        cameraIcon +
+        'Montrer à RAFI</button><select id="fxhf-speech-lang" class="fxhf-speech-lang" aria-label="Langue de reconnaissance vocale"><option value="fr-FR">FR</option><option value="ar-MA">الدارجة</option></select></div></div>' +
+        '<div id="fxhf-photo-choices" class="fxhf-photo-choices" hidden><button type="button" id="fxhf-camera" class="fxhf-secondary">Prendre une photo</button><button type="button" id="fxhf-library" class="fxhf-secondary">Photothèque / fichiers</button><input id="fxhf-files" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden><input id="fxhf-camera-file" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden><p>3 photos max. · 8 Mio / photo · JPEG, PNG, WebP.<br>Évitez visages, papiers d’identité et informations personnelles.</p></div><div id="fxhf-photos" class="fxhf-photos"></div><p id="fxhf-understanding" class="fxhf-understanding"></p>' +
+        '<label class="fxhf-consent"><input type="checkbox" id="fxhf-consent"' +
+        (intake.draft.consent ? " checked" : "") +
+        '><span>J’accepte l’analyse par FIXEO et son fournisseur IA.</span></label><details class="fxhf-privacy"><summary>Comment mes informations sont protégées</summary><p>Ma description et mes photos servent à préparer mon intervention. Les photos sont envoyées uniquement après mon accord et le lancement de l’analyse.</p><p>Suppression programmée : dossier sans réservation après 24 h ; photos liées à une intervention après 90 jours au plus, ou 30 jours après clôture ; contexte de l’intervention après 180 jours.</p><a href="/confidentialite.html" target="_blank" rel="noopener">Politique de confidentialité</a></details>',
+    );
+    ["fxhf-need-input", "fxhf-location", "fxhf-consent"].forEach(function (id) {
+      node(id).oninput = node(id).onchange = function () {
+        capture();
+        availability();
+      };
+    });
+    node("fxhf-need-input").addEventListener("input", function () {
+      var text = intake.draft.description;
+      var normalized = window.FixeoRafiLanguage?.normalize
+        ? window.FixeoRafiLanguage.normalize(text)
+        : text;
+      var hint = window.FixeoAIRE?.detect?.(normalized);
+      node("fxhf-understanding").textContent = hint?.cat
+        ? "Besoin évoqué : " +
+          (trades[hint.cat] || hint.cat) +
+          " · à confirmer par RAFI"
+        : "";
+    });
+    node("fxhf-show").onclick = function () {
+      var choices = node("fxhf-photo-choices");
+      choices.hidden = !choices.hidden;
+      this.setAttribute("aria-expanded", String(!choices.hidden));
+    };
+    node("fxhf-camera").onclick = function () {
+      node("fxhf-camera-file").click();
+    };
+    node("fxhf-library").onclick = function () {
+      node("fxhf-files").click();
+    };
+    ["fxhf-files", "fxhf-camera-file"].forEach(function (id) {
+      node(id).onchange = function (e) {
+        try {
+          intake.addFiles(e.target.files);
+        } catch (error) {
+          showError(error);
+        }
+        e.target.value = "";
+        renderPhotos();
+        availability();
+      };
+    });
+    node("fxhf-mic").onclick = record;
+    button(
+      "Laisser RAFI comprendre",
+      function () {
+        capture();
+        renderSafety();
+      },
+      false,
+      "fxhf-submit",
+    );
+    panel('<p class="fxhf-note">Aucune demande n’est créée à cette étape.</p>');
+    renderPhotos();
+    availability();
+    var attempts = 0;
+    function detectCity() {
+      if (state !== "need" || intake.draft.city) return;
+      var city = slug(
+        window.FIXEO_DETECTED_CITY ||
+          document.getElementById("qsm-select-city")?.value,
+      );
+      if (cities[city]) {
+        intake.draft.city = city;
+        node("fxhf-location").value = city;
+        availability();
+      } else if (++attempts < 40)
+        cityTimer = window.setTimeout(detectCity, 200);
+    }
+    detectCity();
   }
-}
-function _startGuestPolling() {
-  if (_pollTimer) {
-    clearTimeout(_pollTimer);
-    _pollTimer = null;
+  function renderPhotos() {
+    var target = node("fxhf-photos");
+    if (!target) return;
+    target.replaceChildren();
+    function photo(item, index, remote) {
+      var figure = document.createElement("figure");
+      figure.className = "fxhf-photo";
+      var image = document.createElement("img");
+      image.alt = "Photo du problème";
+      image.width = 96;
+      image.height = 80;
+      if (!remote) image.src = item.url;
+      else
+        window.FixeoDiagnostic.api({
+          action: "media_url",
+          session_id: intake.id,
+          media_id: item.id,
+        })
+          .then(function (response) {
+            if (image.isConnected) image.src = response.url;
+          })
+          .catch(function () {
+            image.alt = "Photo privée conservée";
+          });
+      var remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "fxhf-photo-remove";
+      remove.textContent = "×";
+      remove.setAttribute("aria-label", "Retirer la photo " + (index + 1));
+      remove.onclick = function () {
+        execute(async function () {
+          await intake.remove(index, remote ? item.id : null);
+          renderPhotos();
+        });
+      };
+      figure.append(image, remove);
+      target.appendChild(figure);
+    }
+    intake.pending.forEach(function (item, index) {
+      photo(item, index, false);
+    });
+    readyPhotos().forEach(function (item, index) {
+      photo(item, index, true);
+    });
+    var count = intake.pending.length + readyPhotos().length;
+    if (count) {
+      var label = document.createElement("p");
+      label.className = "fxhf-photo-ready";
+      label.textContent =
+        count +
+        (count === 1 ? " photo prête à analyser" : " photos prêtes à analyser");
+      target.appendChild(label);
+    }
   }
-
-  var analysisStartedAt = Date.now();
-  var MIN_ANALYSIS_MS = 5000;
-
-  var dispatchStartedAt = null;
-  var coordinationShown = false;
-  
-  async function poll() {
-    if (!_activeTrackingRef || !_activeGuestToken) {
+  function renderSafety() {
+    frame(
+      "safety",
+      "D’abord, votre sécurité.",
+      "Sans vous approcher du danger, avez-vous déjà constaté l’un de ces signes ?",
+    );
+    panel(
+      '<div class="fxhf-hazards">' +
+        Object.keys(hazards)
+          .map(function (key) {
+            return (
+              '<label><input type="checkbox" value="' +
+              key +
+              '"' +
+              (intake.draft.safety_signals.includes(key) ? " checked" : "") +
+              "><span>" +
+              hazards[key] +
+              "</span></label>"
+            );
+          })
+          .join("") +
+        '</div><p class="fxhf-note">Ne faites aucune manipulation pour vérifier. En cas de doute, gardez vos distances. L’absence de signe déclaré ne garantit pas l’absence de danger.</p>',
+    );
+    function captureSafety() {
+      intake.draft.safety_signals = Array.from(
+        root.querySelectorAll(".fxhf-hazards input:checked"),
+      ).map(function (el) {
+        return el.value;
+      });
+    }
+    button("RAFI comprend mon besoin", function () {
+      captureSafety();
+      return analyze();
+    });
+    button(
+      "Retour",
+      function () {
+        captureSafety();
+        renderNeed();
+      },
+      true,
+    );
+  }
+  async function analyze() {
+    frame(
+      "analysis",
+      "RAFI comprend votre besoin…",
+      "Vos informations restent dans le même dossier sécurisé.",
+    );
+    await intake.analyze();
+    questionIndex = 0;
+    renderState();
+  }
+  function renderQuestions() {
+    var questions = intake.session.result.questions,
+      q = questions[questionIndex];
+    frame(
+      "questions",
+      "Un détail peut nous aider.",
+      "Une réponse en un tap, uniquement à partir de ce que vous savez déjà.",
+    );
+    panel(
+      '<p class="fxhf-note">Question ' +
+        (questionIndex + 1) +
+        " / " +
+        questions.length +
+        ' · facultatif</p><h3 class="fxhf-question">' +
+        esc(q.label) +
+        '</h3><div class="fxhf-answers"></div>',
+    );
+    var choices =
+      q.type === "choice"
+        ? [
+            ["yes", "Oui"],
+            ["no", "Non"],
+            ["unknown", "Je ne sais pas"],
+          ]
+        : (
+            {
+              onset: ["Aujourd’hui", "Quelques jours", "Plus longtemps"],
+              affected_area: ["Mur", "Plafond", "Sol", "Équipement"],
+              occurrence: ["En continu", "Par moments", "À l’utilisation"],
+            }[q.id] || []
+          )
+            .map(function (x) {
+              return [x, x];
+            })
+            .concat([["unknown", "Je ne sais pas"]]);
+    choices.forEach(function (pair) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "fxhf-answer";
+      b.textContent = pair[1];
+      b.dataset.answer = pair[0];
+      b.setAttribute(
+        "aria-pressed",
+        String(intake.draft.answers[q.id] === pair[0]),
+      );
+      b.onclick = function () {
+        execute(async function () {
+          intake.draft.answers[q.id] = pair[0];
+          if (++questionIndex < questions.length) renderQuestions();
+          else await analyze();
+        });
+      };
+      root.querySelector(".fxhf-answers").appendChild(b);
+    });
+    button(
+      "Retour",
+      function () {
+        if (questionIndex) {
+          questionIndex--;
+          renderQuestions();
+        } else renderNeed();
+      },
+      true,
+    );
+  }
+  function priority() {
+    return {
+      TECHNICAL: "Intervention professionnelle recommandée",
+      URGENT: "Urgente · intervention rapide recommandée",
+      CRITICAL: "Critique · sécurité immédiate prioritaire",
+    }[intake.session.result.safety.level];
+  }
+  function summary() {
+    var s = intake.session,
+      r = s.result;
+    return (
+      '<dl class="fxhf-summary"><div><dt>Métier recommandé</dt><dd>' +
+      esc(trades[r.trade.value] || r.trade.value) +
+      "</dd></div><div><dt>Ville</dt><dd>" +
+      esc(cities[s.city_slug] || s.city_slug) +
+      '</dd></div><div class="fxhf-summary-wide"><dt>Besoin · analyse indicative</dt><dd>' +
+      esc(r.problem.value) +
+      '</dd></div><div class="fxhf-summary-wide"><dt>Priorité</dt><dd>' +
+      esc(priority()) +
+      "</dd></div></dl>"
+    );
+  }
+  function safetyNotice() {
+    var safety = intake.session.result.safety;
+    if (
+      !safety.stop &&
+      safety.level !== "URGENT" &&
+      !safety.signals?.includes("electrical_risk")
+    )
+      return "";
+    return (
+      '<section class="fxhf-caution" role="alert"><strong>' +
+      esc(priority()) +
+      "</strong><ul>" +
+      (safety.messages || [])
+        .map(function (message) {
+          return "<li>" + esc(message) + "</li>";
+        })
+        .join("") +
+      "</ul>" +
+      (safety.stop
+        ? "<p>FIXEO ne remplace jamais les secours. Mettez-vous à l’abri et contactez les services d’urgence locaux si nécessaire. N’attendez pas une réponse FIXEO face au danger.</p>"
+        : "") +
+      "</section>"
+    );
+  }
+  function renderResult() {
+    var s = intake.session,
+      critical = s.result.safety.stop;
+    frame(
+      "result",
+      critical ? "Votre sécurité passe en premier." : "RAFI a compris.",
+      critical
+        ? ""
+        : "Voici ce que FIXEO a compris. Le professionnel confirmera sur place.",
+    );
+    if (critical) panel(safetyNotice());
+    panel(summary());
+    if (!critical) panel(safetyNotice());
+    if (critical) {
+      panel(
+        '<label class="fxhf-consent"><input type="checkbox" id="fxhf-critical-ack"' +
+          (acknowledgedRun === s.result_run_id ? " checked" : "") +
+          "><span>J’ai pris connaissance des consignes de mise à distance et je comprends que FIXEO ne remplace pas les secours.</span></label>",
+      );
+      node("fxhf-critical-ack").onchange = function () {
+        acknowledgedRun = this.checked ? s.result_run_id : null;
+        availability();
+      };
+      if (
+        s.result.safety.version !== "fixeo-risk-routing-v2" ||
+        s.result.safety.level !== "CRITICAL" ||
+        !s.result_run_id
+      )
+        return;
+    }
+    button(
+      "Confier cette intervention à FIXEO",
+      beginConfirmation,
+      false,
+      "fxhf-entrust",
+    );
+    button(
+      "Voir le diagnostic",
+      async function () {
+        optionalOpen = true;
+        await window.FixeoDiagnostic.open({
+          session_id: intake.id,
+          opener: node("fxhf-diagnostic"),
+        });
+      },
+      true,
+      "fxhf-diagnostic",
+    );
+    if (!critical)
+      button(
+        "Voir une estimation",
+        async function () {
+          if (
+            !estimateContext ||
+            estimateRevision !== intake.session.revision
+          ) {
+            estimateContext = await intake.estimation();
+            estimateRevision = intake.session.revision;
+          }
+          optionalOpen = true;
+          await window.FixeoEstimatorV2.open(estimateContext);
+        },
+        true,
+        "fxhf-estimation",
+      );
+    button("Modifier mon besoin", renderNeed, true);
+    availability();
+  }
+  async function beginConfirmation() {
+    if (
+      intake.session.result.safety.stop &&
+      acknowledgedRun !== intake.session.result_run_id
+    )
+      return renderResult();
+    var context = await intake.confirmation();
+    if (context.progress) return renderBound();
+    if (!phone) phone = context.client_phone || "";
+    if (
+      intake.session.result.safety.stop &&
+      acknowledgedRun !== intake.session.result_run_id
+    )
+      return renderResult();
+    renderConfirmation(!!context.client_phone);
+  }
+  function renderConfirmation(known) {
+    frame(
+      "confirmation",
+      "Confirmez votre demande.",
+      "Tout est déjà dans votre dossier. FIXEO organise la suite.",
+    );
+    panel(
+      summary() +
+        safetyNotice() +
+        '<div class="fxhf-contact"><label for="fxhf-phone">Téléphone pour le suivi</label>' +
+        (known
+          ? '<p id="fxhf-known-phone">' +
+            esc(phone) +
+            '</p><button type="button" class="fxhf-secondary" id="fxhf-edit-phone">Modifier le numéro</button>'
+          : "") +
+        '<input type="tel" inputmode="tel" autocomplete="tel" id="fxhf-phone" maxlength="24" placeholder="06 XX XX XX XX" value="' +
+        esc(phone) +
+        '"' +
+        (known ? " hidden" : "") +
+        '></div><p class="fxhf-note">Votre besoin et vos photos accompagnent cette demande. Le professionnel confirmera l’intervention et son prix avec vous.</p>',
+    );
+    node("fxhf-phone").oninput = function () {
+      capture();
+      availability();
+    };
+    if (known)
+      node("fxhf-edit-phone").onclick = function () {
+        node("fxhf-phone").hidden = false;
+        node("fxhf-known-phone").hidden = true;
+        this.hidden = true;
+        node("fxhf-phone").focus();
+      };
+    button(
+      "Confirmer ma demande",
+      async function () {
+        capture();
+        status("Enregistrement de votre demande…");
+        await intake.confirm(phone, acknowledgedRun);
+        renderBound();
+      },
+      false,
+      "fxhf-confirm",
+    );
+    button(
+      "Retour",
+      function () {
+        capture();
+        renderResult();
+      },
+      true,
+    );
+    availability();
+  }
+  function renderBound() {
+    var p = intake.progress || { stage: "registered", sync_pending: true };
+    var labels = {
+      registered:
+        "Votre demande est enregistrée. FIXEO poursuit la sélection des artisans adaptés.",
+      dispatch_prepared:
+        "Des artisans sont présélectionnés. La notification est préparée ; elle n’a pas encore été envoyée.",
+      notification_sent:
+        "Une notification a été envoyée. L’acceptation d’un artisan reste à confirmer.",
+      artisan_confirmed: "Un artisan a confirmé votre demande.",
+      intervention: "Votre intervention est en cours.",
+      completed: "Votre intervention est terminée.",
+      cancelled: "Cette demande a été annulée.",
+    };
+    var stage = p.stage,
+      accepted = ["artisan_confirmed", "intervention", "completed"].includes(
+        stage,
+      );
+    frame(
+      accepted
+        ? "mission"
+        : stage === "notification_sent"
+          ? "acceptance"
+          : stage === "dispatch_prepared"
+            ? "dispatching"
+            : "matching",
+      stage === "cancelled" ? "Demande annulée." : "Demande confirmée.",
+      labels[stage] || labels.registered,
+    );
+    panel(safetyNotice());
+    var steps = [
+      ["Demande enregistrée", true],
+      ["Besoin analysé", true],
+      ["Sélection des artisans adaptés", p.matching === "matched" || accepted],
+      ["Mise en relation", stage === "notification_sent" || accepted],
+      ["Artisan confirmé", accepted],
+    ];
+    panel(
+      '<ol class="fxhf-lifecycle">' +
+        steps
+          .map(function (step) {
+            return (
+              '<li class="' +
+              (step[1] ? "done" : "") +
+              '"><span aria-hidden="true">' +
+              (step[1] ? "✓" : "○") +
+              "</span>" +
+              step[0] +
+              "</li>"
+            );
+          })
+          .join("") +
+        '</ol><p class="fxhf-note">Référence : ' +
+        esc(
+          p.tracking_ref ||
+            intake.session.request_ref ||
+            "enregistrée dans votre dossier",
+        ) +
+        "</p>" +
+        (p.sync_pending
+          ? '<p class="fxhf-note">Le suivi est momentanément indisponible. Votre demande reste enregistrée.</p>'
+          : "") +
+        (p.notification === "failed"
+          ? '<p class="fxhf-note">L’envoi de la notification a échoué. FIXEO doit poursuivre la mise en relation ; votre demande reste enregistrée.</p>'
+          : "") +
+        (stage !== "cancelled"
+          ? '<p class="fxhf-handled">Votre demande est prise en charge par FIXEO.<br>Aucune action n’est nécessaire de votre côté. FIXEO organise la suite.</p>'
+          : ""),
+    );
+    button("Actualiser le suivi", async function () {
+      await intake.follow();
+      renderBound();
+    });
+    button(
+      "Un nouveau besoin",
+      function () {
+        intake.reset();
+        phone = "";
+        acknowledgedRun = null;
+        estimateContext = null;
+        renderNeed();
+      },
+      true,
+    );
+  }
+  function renderState() {
+    if (intake.session?.state === "bound") {
+      renderBound();
       return;
     }
-
-    var data = await _fetchGuestState();
-
-    if (data && data.ui_state) {
-     if (data.ui_state === STATES.DISPATCHING) {
-  var elapsed = Date.now() - analysisStartedAt;
-
-  /*
-   * Preserve the existing minimum RAFI analysis duration.
-   */
-  if (elapsed < MIN_ANALYSIS_MS) {
-    _pollTimer = setTimeout(
-      poll,
-      MIN_ANALYSIS_MS - elapsed
-    );
-    return;
-  }
-
-  /*
-   * Start the 10-second coordination window only when
-   * DISPATCHING is actually shown to the client.
-   */
-  if (dispatchStartedAt === null) {
-    dispatchStartedAt = Date.now();
-    renderDispatching(data);
-  } else if (
-    !coordinationShown &&
-    Date.now() - dispatchStartedAt >= 10000
-  ) {
-    coordinationShown = true;
-    renderCoordination(data);
-  } else if (!coordinationShown) {
-    /*
-     * Keep State 3 live while candidates / contacted count
-     * may still evolve during the first 10 seconds.
-     */
-    renderDispatching(data);
-  }
-}
-
-      /*
-       * States mission_active / in_progress / completed
-       * will be connected only after their dedicated renderers exist.
-       * Until then, keep polling the real backend state.
-       */
+    if (intake.session?.state === "analyzing") {
+      frame(
+        "retry",
+        "RAFI analyse votre besoin.",
+        "Le dossier est conservé. Retrouvez ici le résultat de l’analyse en cours.",
+      );
+      button("Retrouver mon analyse", analyze);
+      return;
     }
-
-    _pollTimer = setTimeout(poll, 2500);
+    if (intake.session?.result) {
+      if (intake.session.result.questions.length) renderQuestions();
+      else renderResult();
+    } else renderNeed();
   }
-
-  poll();
-}
-  
-  /* ── Mount ───────────────────────────────────────────────────
-   * Passive in this first implementation.
-   * It only binds the JS controller to #fxhf-root.
-   * No visual takeover yet.
-   */
-  function mount() {
-    if (_mounted) return true;
-
-    _root = _el(ROOT_ID);
-    if (!_root) return false;
-
-    var initialState = _root.getAttribute('data-fxhf-state');
-
-    if (_isValidState(initialState)) {
-      _state = initialState;
-    } else {
-      _state = STATES.NEED;
-    }
-
-    _mounted = true;
-    return true;
-  }
-  
-  /* ── Mount ───────────────────────────────────────────────────
-   * Passive in this first implementation.
-   * It only binds the JS controller to #fxhf-root.
-   * No visual takeover yet.
-   */
-  function mount() {
-    if (_mounted) return true;
-
-    _root = _el(ROOT_ID);
-    if (!_root) return false;
-
-    var initialState = _root.getAttribute('data-fxhf-state');
-
-    if (_isValidState(initialState)) {
-      _state = initialState;
-    } else {
-      _state = STATES.NEED;
-    }
-
-    _mounted = true;
-    return true;
-  }
-
-  /* ── Read-only state API for now ───────────────────────────── */
-  function getState() {
-    return _state;
-  }
-
-  function isMounted() {
-    return _mounted;
-  }
-  /* ── State 1 renderer — NEED ───────────────────────────────── */
-  function renderNeed() {
-    if (!_mounted || !_root) return false;
-
-    _state = STATES.NEED;
-    _root.setAttribute('data-fxhf-state', STATES.NEED);
-
-    /* Clear only Flagship-owned content. */
-    _root.replaceChildren();
-
-    /* ── Main layout ─────────────────────────────────────────── */
-    var shell = document.createElement('div');
-    shell.className = 'fxhf-shell fxhf-shell--need';
-
-    /* ── Client interaction side ─────────────────────────────── */
-    var content = document.createElement('div');
-    content.className = 'fxhf-content';
-
-    var eyebrow = document.createElement('div');
-    eyebrow.className = 'fxhf-eyebrow';
-    eyebrow.textContent = 'RAFI · Assistant FIXEO';
-
-    var title = document.createElement('h2');
-    title.className = 'fxhf-title';
-    title.textContent = 'Que se passe-t-il ?';
-
-    var subtitle = document.createElement('p');
-    subtitle.className = 'fxhf-subtitle';
-    subtitle.textContent =
-      'Décrivez votre besoin. FIXEO s’occupe de trouver qui peut intervenir.';
-
-    /* Need field */
-    var field = document.createElement('div');
-    field.className = 'fxhf-need-field';
-
-    var textarea = document.createElement('textarea');
-    textarea.id = 'fxhf-need-input';
-    textarea.className = 'fxhf-need-input';
-    textarea.rows = 4;
-    textarea.placeholder = 'Décrivez votre problème…';
-    textarea.setAttribute(
-      'aria-label',
-      'Décrivez votre problème ou votre besoin'
-    );
-    
- /* RAFI live understanding — visual feedback only */
-var rafiUnderstanding = document.createElement('div');
-rafiUnderstanding.className = 'fxhf-rafi-understanding';
-rafiUnderstanding.hidden = true;
-
-var rafiUnderstandingStatus = document.createElement('span');
-rafiUnderstandingStatus.className = 'fxhf-rafi-understanding-status';
-rafiUnderstandingStatus.textContent = '● Besoin identifié';
-
-var rafiUnderstandingTrade = document.createElement('span');
-rafiUnderstandingTrade.className = 'fxhf-rafi-understanding-trade';
-
-rafiUnderstanding.appendChild(rafiUnderstandingStatus);
-rafiUnderstanding.appendChild(rafiUnderstandingTrade);
-    
-    var fieldFooter = document.createElement('div');
-    fieldFooter.className = 'fxhf-field-footer';
-
-    var example = document.createElement('span');
-    example.className = 'fxhf-example';
-    example.textContent =
-      'Ex. : J’ai une fuite sous l’évier depuis ce matin';
-
-  var speechLangSelect = document.createElement('select');
-speechLangSelect.id = 'fxhf-speech-lang';
-speechLangSelect.className = 'fxhf-speech-lang';
-speechLangSelect.setAttribute(
-  'aria-label',
-  'Langue de reconnaissance vocale'
-);
-
-var speechLangFr = document.createElement('option');
-speechLangFr.value = 'fr-FR';
-speechLangFr.textContent = 'FR';
-
-var speechLangDarija = document.createElement('option');
-speechLangDarija.value = 'ar-MA';
-speechLangDarija.textContent = 'الدارجة';
-
-speechLangSelect.appendChild(speechLangFr);
-speechLangSelect.appendChild(speechLangDarija);
-
-/* French remains the default validated speech mode. */
-speechLangSelect.value = 'fr-FR';
-
-var mic = document.createElement('button');
-mic.type = 'button';
-mic.id = 'fxhf-mic';
-mic.className = 'fxhf-mic';
-mic.setAttribute('aria-label', 'Parler à RAFI');
-mic.innerHTML = "<svg\n      class=\"rafi-mic-icon\" aria-hidden=\"true\" focusable=\"false\" style=\"display:inline-block;vertical-align:-3px;margin-right:8px;flex-shrink:0\"\n      viewBox=\"0 0 24 24\"\n      width=\"18\"\n      height=\"18\"\n      fill=\"none\"\n      xmlns=\"http://www.w3.org/2000/svg\">\n\n      <rect\n        x=\"8\"\n        y=\"3\"\n        width=\"8\"\n        height=\"12\"\n        rx=\"4\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"/>\n\n      <path\n        d=\"M5.8 11.5C5.8 15 8.55 17.7 12 17.7C15.45 17.7 18.2 15 18.2 11.5\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n      <path\n        d=\"M12 17.7V21\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n      <path\n        d=\"M9.5 21H14.5\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n    </svg>Parler à RAFI";
-
-/*
- * RAFI Voice V2
- * Records the user's real voice and delegates transcription
- * to the FIXEO server endpoint.
- *
- * Safari / Web Speech is intentionally no longer responsible
- * for transcription quality.
- */
-var mediaRecorder = null;
-var mediaStream = null;
-var audioChunks = [];
-var recordingTimer = null;
-var isRecording = false;
-
-function resetRafiMic() {
-  clearTimeout(recordingTimer);
-  recordingTimer = null;
-  isRecording = false;
-
-  if (mediaStream) {
-    mediaStream.getTracks().forEach(function (track) {
-      track.stop();
+  async function resumeOptional() {
+    if (!optionalOpen) return;
+    optionalOpen = false;
+    await execute(async function () {
+      await intake.load();
+      if (intake.session.state === "bound") await intake.follow();
+      questionIndex = 0;
+      renderState();
     });
-    mediaStream = null;
   }
-
-  mic.disabled = false;
-  mic.innerHTML = "<svg\n      class=\"rafi-mic-icon\" aria-hidden=\"true\" focusable=\"false\" style=\"display:inline-block;vertical-align:-3px;margin-right:8px;flex-shrink:0\"\n      viewBox=\"0 0 24 24\"\n      width=\"18\"\n      height=\"18\"\n      fill=\"none\"\n      xmlns=\"http://www.w3.org/2000/svg\">\n\n      <rect\n        x=\"8\"\n        y=\"3\"\n        width=\"8\"\n        height=\"12\"\n        rx=\"4\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"/>\n\n      <path\n        d=\"M5.8 11.5C5.8 15 8.55 17.7 12 17.7C15.45 17.7 18.2 15 18.2 11.5\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n      <path\n        d=\"M12 17.7V21\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n      <path\n        d=\"M9.5 21H14.5\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n    </svg>Parler à RAFI";
-}
-
-async function transcribeRafiAudio(audioBlob) {
-  var form = new FormData();
-
-  var extension =
-    audioBlob.type &&
-    audioBlob.type.indexOf('mp4') !== -1
-      ? 'm4a'
-      : 'webm';
-
-  form.append(
-    'audio',
-    audioBlob,
-    'rafi-voice.' + extension
-  );
-
-  form.append(
-    'language',
-    speechLangSelect.value === 'ar-MA'
-      ? 'ar-MA'
-      : 'fr-FR'
-  );
-
-  var response = await fetch('/api/rafi-transcribe', {
-    method: 'POST',
-    body: form
-  });
-
-  var data = await response.json();
-
-  if (
-    !response.ok ||
-    !data ||
-    !data.ok ||
-    !data.text
-  ) {
-    throw new Error(
-      (data && data.error) ||
-      'transcription_failed'
-    );
-  }
-
-  return String(data.text).trim();
-}
-
-async function startRafiRecording() {
-  if (
-    !navigator.mediaDevices ||
-    typeof navigator.mediaDevices.getUserMedia !== 'function' ||
-    typeof window.MediaRecorder !== 'function'
-  ) {
-    mic.innerHTML = "<svg\n      class=\"rafi-mic-icon\" aria-hidden=\"true\" focusable=\"false\" style=\"display:inline-block;vertical-align:-3px;margin-right:8px;flex-shrink:0\"\n      viewBox=\"0 0 24 24\"\n      width=\"18\"\n      height=\"18\"\n      fill=\"none\"\n      xmlns=\"http://www.w3.org/2000/svg\">\n\n      <rect\n        x=\"8\"\n        y=\"3\"\n        width=\"8\"\n        height=\"12\"\n        rx=\"4\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"/>\n\n      <path\n        d=\"M5.8 11.5C5.8 15 8.55 17.7 12 17.7C15.45 17.7 18.2 15 18.2 11.5\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n      <path\n        d=\"M12 17.7V21\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n      <path\n        d=\"M9.5 21H14.5\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n    </svg>Micro non disponible";
-    return;
-  }
-
-  try {
-    mediaStream =
-      await navigator.mediaDevices.getUserMedia({
-        audio: true
-      });
-
-    audioChunks = [];
-
-    mediaRecorder = new MediaRecorder(mediaStream);
-
-    mediaRecorder.addEventListener(
-      'dataavailable',
-      function (event) {
-        if (event.data && event.data.size > 0) {
-          audioChunks.push(event.data);
-        }
-      }
-    );
-
-    mediaRecorder.addEventListener(
-      'stop',
-      async function () {
-        try {
-          mic.disabled = true;
-          mic.textContent = 'RAFI transcrit…';
-
-          var audioBlob = new Blob(
-            audioChunks,
-            {
-              type:
-                mediaRecorder.mimeType ||
-                'audio/webm'
-            }
-          );
-
-          var transcript =
-            await transcribeRafiAudio(audioBlob);
-
-          if (transcript) {
-            textarea.value = transcript;
-
-            textarea.dispatchEvent(
-              new Event('input', {
-                bubbles: true
-              })
-            );
-          }
-        } catch (error) {
-          console.error(
-            '[FXHF] RAFI transcription failed',
-            error
-          );
-
-          mic.innerHTML = "<svg\n      class=\"rafi-mic-icon\" aria-hidden=\"true\" focusable=\"false\" style=\"display:inline-block;vertical-align:-3px;margin-right:8px;flex-shrink:0\"\n      viewBox=\"0 0 24 24\"\n      width=\"18\"\n      height=\"18\"\n      fill=\"none\"\n      xmlns=\"http://www.w3.org/2000/svg\">\n\n      <rect\n        x=\"8\"\n        y=\"3\"\n        width=\"8\"\n        height=\"12\"\n        rx=\"4\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"/>\n\n      <path\n        d=\"M5.8 11.5C5.8 15 8.55 17.7 12 17.7C15.45 17.7 18.2 15 18.2 11.5\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n      <path\n        d=\"M12 17.7V21\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n      <path\n        d=\"M9.5 21H14.5\"\n        stroke=\"currentColor\"\n        stroke-width=\"1.7\"\n        stroke-linecap=\"round\"/>\n\n    </svg>Réessayer";
-        } finally {
-          resetRafiMic();
-        }
-      }
-    );
-
-    var rafiUnderstandingTimer = null;
-
-function syncRafiUnderstanding() {
-  var need = (textarea.value || '').trim();
-
-  if (need.length < 3) return;
-
-  var needForDetection =
-    window.FixeoRafiLanguage &&
-    typeof window.FixeoRafiLanguage.normalize === 'function'
-      ? window.FixeoRafiLanguage.normalize(need)
-      : need;
-
-  if (
-    !window.FixeoAIRE ||
-    typeof window.FixeoAIRE.detect !== 'function'
-  ) {
-    return;
-  }
-
-  var detected = window.FixeoAIRE.detect(needForDetection);
-
-
-  if (!detected || !detected.cat) {
-  rafiUnderstanding.hidden = true;
-  rafiUnderstandingTrade.textContent = '';
-  return;
-}
-
-var tradeLabels = {
-  plomberie: '🔧 Plomberie',
-  peinture: '🎨 Peinture',
-  electricite: '⚡ Électricité',
-  serrurerie: '🔑 Serrurerie',
-  climatisation: '❄️ Climatisation',
-  menuiserie: '🪚 Menuiserie',
-  bricolage: '🛠️ Bricolage',
-  maconnerie: '🧱 Maçonnerie',
-  nettoyage: '🧹 Nettoyage',
-  carrelage: '◻️ Carrelage',
-  jardinage: '🌿 Jardinage',
-  demenagement: '📦 Déménagement'
-};
-
-rafiUnderstandingTrade.textContent =
-  tradeLabels[detected.cat] || detected.cat;
-
-rafiUnderstanding.hidden = false;
-
-if (
-  typeof window.FixeoSelectServiceCategory === 'function'
-) {
-  window.FixeoSelectServiceCategory(detected.cat);
-}
-}
-
-textarea.addEventListener('input', function () {
-  clearTimeout(rafiUnderstandingTimer);
-
-  rafiUnderstandingTimer = setTimeout(
-    syncRafiUnderstanding,
-    350
-  );
-});
-
-    mediaRecorder.start();
-
-    isRecording = true;
-    mic.textContent = '⏹️ Terminer';
-
-    /*
-     * Safety limit:
-     * short service requests do not need long recordings.
-     */
-    recordingTimer = setTimeout(function () {
-      if (
-        mediaRecorder &&
-        mediaRecorder.state === 'recording'
-      ) {
-        mediaRecorder.stop();
-      }
-    }, 12000);
-  } catch (error) {
-    console.error(
-      '[FXHF] microphone unavailable',
-      error
-    );
-
-    resetRafiMic();
-  }
-}
-
-mic.addEventListener('click', function () {
-  if (
-    isRecording &&
-    mediaRecorder &&
-    mediaRecorder.state === 'recording'
-  ) {
+  function stopTracks() {
     clearTimeout(recordingTimer);
-    recordingTimer = null;
-
-    isRecording = false;
-    mediaRecorder.stop();
-    return;
+    if (stream)
+      stream.getTracks().forEach(function (track) {
+        track.stop();
+      });
+    stream = null;
   }
-
-  startRafiRecording();
-});    
-
-fieldFooter.appendChild(example);
-
-/*
- * RAFI Voice Bar
- * Mic and language selector share one visual row
- * while remaining independent interactive controls.
- */
-var voiceBar = document.createElement('div');
-voiceBar.className = 'fxhf-voice-bar';
-
-voiceBar.appendChild(mic);
-voiceBar.appendChild(speechLangSelect);
-
-fieldFooter.appendChild(voiceBar);
-
-    field.appendChild(textarea);
-    field.appendChild(rafiUnderstanding);
-    field.appendChild(fieldFooter);
-
-   /* Location — Flagship-owned picker.
-   Reads existing city options as data only.
-   Never focuses/clicks/changes the legacy QSM select. */
-var location = document.createElement('select');
-location.id = 'fxhf-location';
-location.className = 'fxhf-location';
-location.setAttribute('aria-label', 'Choisir ou modifier la ville');
-
-var defaultCity = document.createElement('option');
-defaultCity.value = '';
-defaultCity.textContent = '📍 Choisir la ville';
-location.appendChild(defaultCity);
-
-    var locationRow = document.createElement('div');
-locationRow.className = 'fxhf-location-row';
-
-var detectedBadge = document.createElement('span');
-detectedBadge.className = 'fxhf-location-detected-badge';
-detectedBadge.textContent = 'Détectée';
-detectedBadge.hidden = true;
-
-locationRow.appendChild(location);
-locationRow.appendChild(detectedBadge);
-    
-function populateFlagshipCities(attempt) {
-  var legacyCitySelect = document.getElementById('qsm-select-city');
-
-  if (
-    legacyCitySelect &&
-    legacyCitySelect.options &&
-    legacyCitySelect.options.length > 1
-  ) {
-    /* Keep only the Flagship placeholder before rebuilding. */
-    while (location.options.length > 1) {
-      location.remove(1);
+  async function record() {
+    if (busy || transcribing) return;
+    if (recorder?.state === "recording") {
+      recorder.stop();
+      return;
     }
-
-    Array.from(legacyCitySelect.options).forEach(function (option) {
-      if (!option.value) return;
-
-      var cityOption = document.createElement('option');
-      cityOption.value = option.value;
-      cityOption.textContent = option.textContent.trim();
-
-      location.appendChild(cityOption);
-    });
-
-    return;
-  }
-
-  /* QSM may populate asynchronously after Flagship renders. */
-  if (attempt < 20) {
-    setTimeout(function () {
-      populateFlagshipCities(attempt + 1);
-    }, 150);
-  }
-}
-
-populateFlagshipCities(0);
-    /* Sync trusted city detected by the existing FIXEO geo flow.
-   No new geolocation request is made here. */
-function syncFlagshipDetectedCity(attempt) {
-  var detectedCity = '';
-
-  try {
-    detectedCity = window.FIXEO_DETECTED_CITY || '';
-  } catch (_) {}
-
-  if (!detectedCity) {
-    var legacyCitySelect = document.getElementById('qsm-select-city');
-
-    if (legacyCitySelect && legacyCitySelect.value) {
-      detectedCity = legacyCitySelect.value;
-    }
-  }
-
-  if (detectedCity && location.options.length > 1) {
-    var normalized = detectedCity.toLowerCase().trim();
-
-    for (var i = 0; i < location.options.length; i++) {
-      if (
-        location.options[i].value &&
-        location.options[i].value.toLowerCase().trim() === normalized
-      ) {
-        location.value = location.options[i].value;
-
-/* Mark city as geo-detected without adding vertical space. */
-location.classList.add('fxhf-location--detected');
-detectedBadge.hidden = false;
-
-return;
-        
-      }
-    }
-  }
-
-  /* Existing geo flow can resolve asynchronously (timeout up to 5s). */
-  if (attempt < 40) {
-    setTimeout(function () {
-      syncFlagshipDetectedCity(attempt + 1);
-    }, 150);
-  }
-}
-
-syncFlagshipDetectedCity(0);
-
-    /* Phone — required before request creation / dispatch */
-var phoneWrap = document.createElement('div');
-phoneWrap.className = 'fxhf-phone-wrap';
-
-var phoneLabel = document.createElement('label');
-phoneLabel.className = 'fxhf-phone-label';
-phoneLabel.setAttribute('for', 'fxhf-phone');
-phoneLabel.textContent = 'Votre numéro pour organiser l’intervention';
-
-var phone = document.createElement('input');
-phone.type = 'tel';
-phone.id = 'fxhf-phone';
-phone.className = 'fxhf-phone';
-phone.placeholder = '06 XX XX XX XX';
-phone.autocomplete = 'tel';
-phone.inputMode = 'tel';
-phone.setAttribute('aria-label', 'Votre numéro de téléphone');
-
-
-phoneWrap.appendChild(phoneLabel);
-phoneWrap.appendChild(phone);
-    
-    /* Main CTA */
-    var cta = document.createElement('button');
-    cta.type = 'button';
-    cta.id = 'fxhf-submit';
-    cta.className = 'fxhf-submit';
-    cta.textContent = 'Trouver une solution →';
-  cta.addEventListener('click', async function () {
-  var need = (textarea.value || '').trim();
-  var city = location.value || '';
-  var phoneValue = (phone.value || '').trim();
-
-  textarea.setCustomValidity('');
-
-  if (need.length < 3) {
-    textarea.focus();
-    return;
-  }
-
-  if (!city) {
-    location.focus();
-    return;
-  }
-    var normalizedPhone = phoneValue.replace(/\s+/g, '');
-
-if (
-  !/^(\+212|0)[5-7][0-9]{8}$/.test(normalizedPhone)
-) {
-  phone.setCustomValidity(
-    'Veuillez saisir un numéro marocain valide.'
-  );
-  phone.reportValidity();
-  phone.focus();
-  return;
-}
-
-phone.setCustomValidity('');
-
-  /* RAFI must understand the need before starting matching. */
-  if (
-    !window.FixeoAIRE ||
-    typeof window.FixeoAIRE.detect !== 'function'
-  ) {
-    console.warn('[FXHF] RAFI detection engine unavailable');
-    return;
-  }
-
-  var needForDetection =
-  window.FixeoRafiLanguage &&
-  typeof window.FixeoRafiLanguage.normalize === 'function'
-    ? window.FixeoRafiLanguage.normalize(need)
-    : need;
-
-var detected = window.FixeoAIRE.detect(needForDetection);
-
-  if (!detected || !detected.cat) {
-    textarea.setCustomValidity(
-      'Pouvez-vous préciser un peu votre besoin pour que RAFI identifie le bon métier ?'
-    );
-    textarea.reportValidity();
-    textarea.focus();
-    return;
-  }
-
-  var isUrgent = false;
-
-  if (typeof window.FixeoAIRE.detectUrgency === 'function') {
-    isUrgent = !!window.FixeoAIRE.detectUrgency(
-  needForDetection,
-  detected
-);
-  }
-
-  cta.disabled = true;
-  cta.textContent = 'RAFI prépare votre demande…';
-
-  try {
-    var response = await fetch('/api/urgent-request', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        service: detected.cat,
-        problem: need,
-        description: '',
-        city: city,
-        phone: normalizedPhone,
-        urgency: isUrgent ? 'urgent' : 'normale',
-        mode: 'flagship',
-        source: 'hero-flagship-v1'
-      })
-    });
-
-    var data = await response.json().catch(function () {
-      return null;
-    });
-
-    if (
-      !response.ok ||
-      !data ||
-      data.ok !== true ||
-      !data.ref ||
-      !data.id ||
-      !data.guest_token
-    ) {
-      throw new Error(
-        (data && (data.error || data.code)) ||
-        'FLAGSHIP_CREATE_FAILED'
+    var mic = node("fxhf-mic");
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+      status(
+        "Micro non disponible. Vous pouvez écrire votre besoin ou ajouter une photo.",
       );
+      return;
     }
-
-    if (
-      !window.FixeoClientRequestsStore ||
-      typeof window.FixeoClientRequestsStore.saveGuestAccess !== 'function'
-    ) {
-      throw new Error('GUEST_ACCESS_STORE_UNAVAILABLE');
-    }
-
-    var guestSaved =
-      window.FixeoClientRequestsStore.saveGuestAccess(
-        data.ref,
-        data.id,
-        data.guest_token
+    mic.disabled = true;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      var chunks = [],
+        language = node("fxhf-speech-lang").value;
+      recorder = new MediaRecorder(stream);
+      recorder.addEventListener("dataavailable", function (event) {
+        if (event.data?.size) chunks.push(event.data);
+      });
+      recorder.addEventListener("stop", async function () {
+        stopTracks();
+        transcribing = true;
+        mic.disabled = true;
+        mic.textContent = "RAFI transcrit…";
+        availability();
+        try {
+          var blob = new Blob(chunks, {
+            type: recorder.mimeType || "audio/webm",
+          });
+          var form = new FormData();
+          form.append(
+            "audio",
+            blob,
+            "rafi-voice." + (blob.type.includes("mp4") ? "m4a" : "webm"),
+          );
+          form.append("language", language);
+          var response = await fetch("/api/rafi-transcribe", {
+            method: "POST",
+            body: form,
+          });
+          var data = await response.json();
+          if (!response.ok || !data.ok || !data.text)
+            throw new Error("TRANSCRIPTION_FAILED");
+          node("fxhf-need-input").value = String(data.text)
+            .trim()
+            .slice(0, 2000);
+          node("fxhf-need-input").dispatchEvent(
+            new Event("input", { bubbles: true }),
+          );
+          status(
+            "Votre message est prêt. Vous pouvez le corriger avant de continuer.",
+          );
+        } catch (_) {
+          status(
+            "La transcription a échoué. Vous pouvez réessayer ou écrire votre besoin.",
+          );
+        } finally {
+          transcribing = false;
+          mic.disabled = false;
+          mic.innerHTML = micIcon + "Parler à RAFI";
+          availability();
+        }
+      });
+      recorder.start();
+      mic.disabled = false;
+      mic.textContent = "Terminer l’enregistrement";
+      availability();
+      recordingTimer = window.setTimeout(function () {
+        if (recorder.state === "recording") recorder.stop();
+      }, 12000);
+    } catch (_) {
+      stopTracks();
+      mic.disabled = false;
+      status(
+        "Le micro n’est pas autorisé. Vous pouvez écrire votre besoin ou ajouter une photo.",
       );
-
-    if (!guestSaved) {
-      throw new Error('GUEST_ACCESS_SAVE_FAILED');
+      availability();
     }
-    _activeTrackingRef = data.ref;
-    _activeGuestToken = data.guest_token;
-
-    /* State 2 begins only after canonical server creation succeeded. */
-    renderAnalysis({
-      need: need,
-      categoryLabel: detected.label || detected.cat,
-      city: city,
-      urgencyLabel: isUrgent ? 'Urgent' : null,
-      trackingRef: data.ref,
-      serverRequestId: data.id
+  }
+  function mount() {
+    if (mounted) return true;
+    root = document.getElementById("fxhf-root");
+    if (!root || !window.FixeoIntake || !window.FixeoDiagnostic) return false;
+    mounted = true;
+    root.innerHTML =
+      '<div class="fxhf-shell fxhf-shell--need fxhf-universal"><div class="fxhf-content"></div><div class="fxhf-visual"><div class="fxhf-rafi-sphere"><div class="fxhf-rafi-halo"></div><div class="fxhf-rafi-core"><img src="rafi/RAFI_V2_HeadCollar_Core.webp" alt="RAFI, votre assistant FIXEO" class="fxhf-rafi-face" width="150" height="150"></div></div><p class="fxhf-rafi-caption">Vous montrez. RAFI comprend.<br>FIXEO s’occupe de la suite.</p></div></div>';
+    content = root.querySelector(".fxhf-content");
+    intake = window.FixeoIntake.create(status);
+    renderNeed();
+    document.addEventListener("fixeo:diagnostic-closed", resumeOptional);
+    document.addEventListener("fixeo:estimator-closed", resumeOptional);
+    root.addEventListener("focusin", function () {
+      document.body.classList.add("fxhf-focused");
     });
-   _startGuestPolling();
-    
-  } catch (err) {
-    console.error(
-      '[FXHF] Flagship request creation failed:',
-      err && err.message
-    );
-
-    cta.disabled = false;
-    cta.textContent = 'Trouver une solution →';
-  }
-});
-
-    /* Truthful reassurance */
-    var trust = document.createElement('p');
-    trust.className = 'fxhf-trust';
-    trust.textContent =
-      'Gratuit pour le client · Paiement après intervention';
-
-    /* Secondary directory path */
-    var directory = document.createElement('button');
-    directory.type = 'button';
-    directory.id = 'fxhf-directory-link';
-    directory.className = 'fxhf-directory-link';
-    directory.textContent =
-      'Vous préférez choisir vous-même ? Voir les artisans';
-
-    content.appendChild(locationRow);
-content.appendChild(title);
-content.appendChild(subtitle);
-content.appendChild(field);
- content.appendChild(phoneWrap);  
-content.appendChild(cta);
-content.appendChild(trust);
-content.appendChild(directory);
-    
-    /* ── RAFI visual side ────────────────────────────────────── */
-    var visual = document.createElement('div');
-    visual.className = 'fxhf-visual';
-    visual.setAttribute('aria-hidden', 'true');
-
-    var sphere = document.createElement('div');
-    sphere.className = 'fxhf-rafi-sphere';
-
-    var halo = document.createElement('div');
-    halo.className = 'fxhf-rafi-halo';
-
-    var core = document.createElement('div');
-    core.className = 'fxhf-rafi-core';
-
-    var rafiImg = document.createElement('img');
-    rafiImg.className = 'fxhf-rafi-image';
-    rafiImg.src = 'rafi/RAFI_V2_HeadCollar_Core.webp';
-    rafiImg.alt = '';
-    rafiImg.width = 150;
-    rafiImg.height = 150;
-    rafiImg.loading = 'eager';
-
-    core.appendChild(rafiImg);
-    sphere.appendChild(halo);
-    sphere.appendChild(core);
-
-    var visualLabel = document.createElement('div');
-    visualLabel.className = 'fxhf-visual-label';
-    visualLabel.textContent = 'RAFI · ASSISTANT FIXEO';
-    /* RAFI ambient conversation — NEED state */
-var rafiMessage = document.createElement('p');
-rafiMessage.className = 'fxhf-rafi-message';
-rafiMessage.setAttribute('aria-live', 'polite');
-
-var rafiMessages = [
-  'Décrivez-moi ce qui se passe.',
-  'Même quelques mots me suffisent.',
-  'Je peux identifier le bon métier.',
-  'Vous pouvez aussi simplement me parler.',
-  'Je tiens compte de votre ville.',
-  'Je cherche les artisans les plus adaptés.',
-  'Besoin urgent ? Dites-le-moi.',
-  'Prêt ? Je m’occupe de la suite.'
-];
-
-var rafiMessageIndex = 0;
-
-rafiMessage.textContent = rafiMessages[rafiMessageIndex];
-
-var rafiMessageTimer = setInterval(function () {
-  /* Ambient conversation only belongs to NEED state. */
-  
-  if (
-  !_root ||
-  _root.getAttribute('data-fxhf-state') !== 'need'
-) {
-  return;
-}
-
- rafiMessage.classList.add('is-changing');
-
-setTimeout(function () {
-  rafiMessageIndex =
-    (rafiMessageIndex + 1) % rafiMessages.length;
-
-  rafiMessage.textContent =
-    rafiMessages[rafiMessageIndex];
-
-  rafiMessage.classList.remove('is-changing');
-}, 180);
-}, 2500);
-
-    visual.appendChild(sphere);
-    visual.appendChild(visualLabel);
-    visual.appendChild(rafiMessage);
-
-    shell.appendChild(content);
-    shell.appendChild(visual);
-
-    _root.appendChild(shell);
-
-    return true;
-  }
-/* ── State 2 renderer — ANALYSIS ───────────────────────────── */
-  function renderAnalysis(data) {
-    if (!_mounted || !_root) return false;
-
-    data = data || {};
-
-    _state = STATES.ANALYSIS;
-    _root.setAttribute('data-fxhf-state', STATES.ANALYSIS);
-
-    _root.replaceChildren();
-
-    var shell = document.createElement('div');
-    shell.className = 'fxhf-shell fxhf-shell--analysis';
-
-    var content = document.createElement('div');
-    content.className = 'fxhf-content';
-
-    var eyebrow = document.createElement('div');
-    eyebrow.className = 'fxhf-eyebrow';
-    eyebrow.textContent = 'RAFI · Assistant FIXEO';
-
-    var title = document.createElement('h2');
-    title.className = 'fxhf-title';
-    title.textContent = 'RAFI analyse votre demande';
-
-    var subtitle = document.createElement('p');
-    subtitle.className = 'fxhf-subtitle';
-    subtitle.textContent =
-      'Je prépare le matching avec les artisans les plus adaptés.';
-
-    var summary = document.createElement('div');
-    summary.className = 'fxhf-analysis-summary';
-
-    if (data.need) {
-      var quote = document.createElement('p');
-      quote.className = 'fxhf-analysis-quote';
-      quote.textContent = '“' + String(data.need) + '”';
-      summary.appendChild(quote);
-    }
-
-    var facts = document.createElement('div');
-    facts.className = 'fxhf-analysis-facts';
-
-    if (data.categoryLabel) {
-      var category = document.createElement('div');
-      category.className = 'fxhf-analysis-fact';
-      category.textContent =
-        'Besoin identifié · ' + String(data.categoryLabel) + ' ✓';
-      facts.appendChild(category);
-    }
-
-    if (data.city) {
-      var city = document.createElement('div');
-      city.className = 'fxhf-analysis-fact';
-      city.textContent =
-        'Zone · ' + String(data.city) + ' ✓';
-      facts.appendChild(city);
-    }
-
-    if (data.urgencyLabel) {
-      var urgency = document.createElement('div');
-      urgency.className = 'fxhf-analysis-fact';
-      urgency.textContent =
-        'Urgence · ' + String(data.urgencyLabel) + ' ✓';
-      facts.appendChild(urgency);
-    }
-
-    summary.appendChild(facts);
-
-    var status = document.createElement('div');
-    status.className = 'fxhf-analysis-status';
-    status.textContent = 'Préparation du matching…';
-
-    content.appendChild(eyebrow);
-    content.appendChild(title);
-    content.appendChild(subtitle);
-    content.appendChild(summary);
-    content.appendChild(status);
-
-    /* RAFI visual — active analysis state */
-    var visual = document.createElement('div');
-    visual.className = 'fxhf-visual fxhf-visual--analysis';
-    visual.setAttribute('aria-hidden', 'true');
-
-    var sphere = document.createElement('div');
-    sphere.className =
-      'fxhf-rafi-sphere fxhf-rafi-sphere--analysis';
-
-    var halo = document.createElement('div');
-    halo.className = 'fxhf-rafi-halo';
-
-    var core = document.createElement('div');
-    core.className = 'fxhf-rafi-core';
-
-    var rafiImg = document.createElement('img');
-    rafiImg.className = 'fxhf-rafi-image';
-    rafiImg.src = 'rafi/RAFI_V2_HeadCollar_Core.webp';
-    rafiImg.alt = '';
-    rafiImg.width = 150;
-    rafiImg.height = 150;
-    rafiImg.loading = 'eager';
-
-    core.appendChild(rafiImg);
-    sphere.appendChild(halo);
-    sphere.appendChild(core);
-    visual.appendChild(sphere);
-
-    shell.appendChild(content);
-    shell.appendChild(visual);
-
-    _root.appendChild(shell);
-
-    return true;
-  }
-/* ── State 3 renderer — DISPATCHING ───────────────────────── */
-/* ── State 3 renderer — DISPATCHING ───────────────────────── */
-function renderDispatching(data) {
-  if (!_mounted || !_root) return false;
-
-  data = data || {};
-
-  _state = STATES.DISPATCHING;
-  _root.setAttribute('data-fxhf-state', STATES.DISPATCHING);
-  _root.replaceChildren();
-
-  var shell = document.createElement('div');
-  shell.className = 'fxhf-shell fxhf-shell--dispatching';
-
-  /* ── LEFT — live dispatch narrative ─────────────────────── */
-
-  var content = document.createElement('div');
-  content.className = 'fxhf-content fxhf-content--dispatching';
-
-  var eyebrow = document.createElement('div');
-  eyebrow.className = 'fxhf-eyebrow';
-  eyebrow.textContent = 'RAFI · Assistant FIXEO';
-
-  var title = document.createElement('h2');
-  title.className = 'fxhf-title';
-  title.textContent =
-    'RAFI a trouvé les artisans les plus adaptés.';
-
-  var subtitle = document.createElement('p');
-  subtitle.className = 'fxhf-subtitle';
-  subtitle.textContent =
-    'FIXEO contacte le premier groupe pour vous.';
-
-  var progress = document.createElement('div');
-  progress.className = 'fxhf-dispatch-progress';
-
-  var stepNeed = document.createElement('span');
-  stepNeed.className =
-    'fxhf-dispatch-step fxhf-dispatch-step--done';
-  stepNeed.textContent = 'Besoin ✓';
-
-  var arrow1 = document.createElement('span');
-  arrow1.className = 'fxhf-dispatch-arrow';
-  arrow1.textContent = '→';
-
-  var stepMatching = document.createElement('span');
-  stepMatching.className =
-    'fxhf-dispatch-step fxhf-dispatch-step--done';
-  stepMatching.textContent = 'Matching ✓';
-
-  var arrow2 = document.createElement('span');
-  arrow2.className = 'fxhf-dispatch-arrow';
-  arrow2.textContent = '→';
-
-  var stepDispatch = document.createElement('span');
-  stepDispatch.className =
-    'fxhf-dispatch-step fxhf-dispatch-step--active';
-  stepDispatch.textContent = 'Dispatch';
-
-  var dispatchPulse = document.createElement('span');
-  dispatchPulse.className = 'fxhf-dispatch-live-dot';
-  dispatchPulse.setAttribute('aria-hidden', 'true');
-
-  stepDispatch.appendChild(dispatchPulse);
-
-  progress.appendChild(stepNeed);
-  progress.appendChild(arrow1);
-  progress.appendChild(stepMatching);
-  progress.appendChild(arrow2);
-  progress.appendChild(stepDispatch);
-
-  var contactedCount =
-    data.dispatch &&
-    Number.isFinite(Number(data.dispatch.contacted_count))
-      ? Number(data.dispatch.contacted_count)
-      : 0;
-
-  var count = document.createElement('div');
-  count.className = 'fxhf-dispatch-count';
-
-  var countNumber = document.createElement('strong');
-  countNumber.className = 'fxhf-dispatch-count-number';
-  countNumber.textContent = String(contactedCount);
-
-  var countLabel = document.createElement('span');
-  countLabel.className = 'fxhf-dispatch-count-label';
-  countLabel.textContent =
-    ' artisan' +
-    (contactedCount > 1 ? 's' : '') +
-    ' contacté' +
-    (contactedCount > 1 ? 's' : '');
-
-  count.appendChild(countNumber);
-  count.appendChild(countLabel);
-
-  var continuation = document.createElement('p');
-  continuation.className = 'fxhf-dispatch-continuation';
-  continuation.textContent =
-    'Si aucun artisan n’accepte, FIXEO poursuit automatiquement la recherche.';
-
-  content.appendChild(eyebrow);
-  content.appendChild(title);
-  content.appendChild(subtitle);
-  content.appendChild(progress);
-  content.appendChild(count);
-  content.appendChild(continuation);
-
-  /* ── RIGHT — RAFI + REAL CANDIDATE NETWORK ──────────────── */
-
-  var visual = document.createElement('div');
-  visual.className = 'fxhf-visual fxhf-visual--dispatching';
-
-  var network = document.createElement('div');
-  network.className = 'fxhf-dispatch-network';
-
-  var sphere = document.createElement('div');
-  sphere.className =
-    'fxhf-rafi-sphere fxhf-rafi-sphere--dispatching';
-
-  var halo = document.createElement('div');
-  halo.className = 'fxhf-rafi-halo';
-
-  var core = document.createElement('div');
-  core.className = 'fxhf-rafi-core';
-
-  var rafiImg = document.createElement('img');
-  rafiImg.className = 'fxhf-rafi-image';
-  rafiImg.src = 'rafi/RAFI_V2_HeadCollar_Core.webp';
-  rafiImg.alt = 'RAFI';
-  rafiImg.width = 150;
-  rafiImg.height = 150;
-  rafiImg.loading = 'eager';
-
-  core.appendChild(rafiImg);
-  sphere.appendChild(halo);
-  sphere.appendChild(core);
-
-visual.appendChild(sphere);
-  var rows =
-    data.dispatch &&
-    Array.isArray(data.dispatch.candidates)
-      ? data.dispatch.candidates.slice(0, 3)
-      : [];
- 
-  
-var cardsRail = document.createElement('div');
-cardsRail.className = 'fxhf-dispatch-cards';
-
-rows.forEach(function(candidate) {
-  if (!candidate) return;
-
-  var displayName =
-    candidate.display_name || 'Artisan FIXEO';
-
-  /*
-   * Dispatch candidates intentionally contain a minimal payload.
-   * Enrich presentation only from the artisan dataset already
-   * loaded on the page. Matching / dispatch remain untouched.
-   */
-  var artisan = (window.ARTISANS || []).find(function(item) {
-    if (!item) return false;
-
-    return (
-      item.name === displayName ||
-      item.full_name === displayName
-    );
-  }) || null;
-
-  var card = document.createElement('article');
-  card.className = 'fxhf-dispatch-card';
-
-  /* ── Avatar ─────────────────────────────────────────── */
-
-  var avatar = document.createElement('div');
-  avatar.className = 'fxhf-dispatch-card-avatar';
-
-  var photoUrl =
-    candidate.photo_url ||
-    (artisan && artisan.photo_url) ||
-    (artisan && artisan.photo) ||
-    '';
-
-  if (photoUrl) {
-    var img = document.createElement('img');
-    img.className = 'fxhf-dispatch-card-photo';
-    img.src = photoUrl;
-    img.alt = '';
-    img.loading = 'eager';
-
-    avatar.appendChild(img);
-  } else {
-    var fallback = document.createElement('span');
-fallback.className = 'fxhf-dispatch-card-fallback fxhf-dispatch-card-trade-avatar';
-
-var tradeRaw =
-  (artisan && (
-    artisan.service_category ||
-    artisan.category ||
-    artisan.metier ||
-    artisan.trade
-  )) ||
-  candidate.service_category ||
-  candidate.category ||
-  '';
-
-var trade = String(tradeRaw).toLowerCase();
-
-var tradeIcons = {
-  plomberie: '🔧',
-  electricite: '⚡',
-  électricité: '⚡',
-  serrurerie: '🔑',
-  climatisation: '❄️',
-  menuiserie: '🪚',
-  peinture: '🖌️',
-  maconnerie: '🧱',
-  maçonnerie: '🧱',
-  carrelage: '◈',
-  jardinage: '🌿',
-  bricolage: '🛠️'
-};
-
-var tradeIcon = '🛠️';
-
-Object.keys(tradeIcons).some(function(key) {
-  if (trade.indexOf(key) !== -1) {
-    tradeIcon = tradeIcons[key];
-    return true;
-  }
-  return false;
-});
-
-fallback.textContent = tradeIcon;
-fallback.setAttribute('aria-hidden', 'true');
-
-avatar.appendChild(fallback);
-    
-  }
-
-  /* ── Name ───────────────────────────────────────────── */
-
-  var name = document.createElement('strong');
-  name.className = 'fxhf-dispatch-card-name';
-  name.textContent = displayName;
-
-  /* ── Métier + ville ─────────────────────────────────── */
-
-  var meta = document.createElement('div');
-  meta.className = 'fxhf-dispatch-card-meta';
-
-  var service =
-    artisan &&
-    (artisan.service || artisan.category);
-
-  var city =
-    artisan &&
-    (artisan.city || artisan.ville);
-
-  var metaParts = [];
-
-  if (service) {
-    metaParts.push(
-      String(service).charAt(0).toUpperCase() +
-      String(service).slice(1)
-    );
-  }
-
-  if (city) {
-    metaParts.push(city);
-  }
-
-  meta.textContent = metaParts.join(' · ');
-
-  /* ── Services ───────────────────────────────────────── */
-
-  var services = document.createElement('div');
-  services.className = 'fxhf-dispatch-card-services';
-
-  if (
-    artisan &&
-    Array.isArray(artisan.services)
-  ) {
-    services.textContent = artisan.services
-      .filter(function(label) {
-        return (
-          label &&
-          String(label).toLowerCase() !==
-            String(service || '').toLowerCase()
+    root.addEventListener("focusout", function (e) {
+      if (!root.contains(e.relatedTarget))
+        document.body.classList.remove("fxhf-focused");
+    });
+    window.addEventListener("pagehide", stopTracks);
+    if (intake.id)
+      execute(async function () {
+        frame(
+          "analysis",
+          "Retrouvons votre besoin.",
+          "Votre dossier reste le même après un retour ou une actualisation.",
         );
-      })
-      .slice(0, 3)
-      .join(' · ');
+        try {
+          await intake.load();
+          if (intake.session.state === "bound") await intake.follow();
+          renderState();
+        } catch (error) {
+          frame(
+            "retry",
+            "Retrouvons votre besoin.",
+            "La demande existante ne sera pas recréée.",
+          );
+          button("Réessayer", async function () {
+            await intake.load();
+            renderState();
+          });
+          button(
+            "Commencer un nouveau besoin",
+            function () {
+              intake.reset();
+              renderNeed();
+            },
+            true,
+          );
+          showError(error);
+        }
+      });
+    return true;
   }
-
-  /* ── Prix indicatif ─────────────────────────────────── */
-
-  var price = document.createElement('div');
-  price.className = 'fxhf-dispatch-card-price';
-
-  if (artisan) {
-    price.textContent =
-      artisan.priceLabel ||
-      artisan.marketPriceLabel ||
-      '';
-  }
-
-  /* ── Dispatch status ────────────────────────────────── */
-
-  var waiting = document.createElement('div');
-  waiting.className = 'fxhf-dispatch-card-status';
-
-  var waitingDot = document.createElement('span');
-  waitingDot.className = 'fxhf-dispatch-card-status-dot';
-  waitingDot.setAttribute('aria-hidden', 'true');
-
-  var waitingText = document.createElement('span');
-  waitingText.textContent = 'En attente';
-
-  waiting.appendChild(waitingDot);
-  waiting.appendChild(waitingText);
-
-  /* ── Assemble card ──────────────────────────────────── */
-
-  card.appendChild(avatar);
-  card.appendChild(name);
-
-  if (meta.textContent) {
-    card.appendChild(meta);
-  }
-
-  if (services.textContent) {
-    card.appendChild(services);
-  }
-
-  if (price.textContent) {
-    card.appendChild(price);
-  }
-
-  card.appendChild(waiting);
-
-  cardsRail.appendChild(card);
-});
-
-/* Cards belong to the dispatch narrative, after the explanation
-   and before the live dispatch progress. */
-content.insertBefore(cardsRail, progress);
-
-/* Mobile-safe natural document flow:
-   RAFI → dispatch content → candidate cards → progress/status */
-shell.appendChild(visual);
-shell.appendChild(content);
-
-_root.appendChild(shell);
-
-  return true;
-}
-
-/* ── State 3B — FIXEO coordination / request taken in charge ─ */
-function renderCoordination(data) {
-  if (!_mounted || !_root) return false;
-
-  data = data || {};
-
-  /*
-   * IMPORTANT:
-   * This is intentionally still the real DISPATCHING state.
-   * No backend state is invented here.
-   * Guest polling / winner / mission lifecycle remain authoritative.
-   */
-  _state = STATES.DISPATCHING;
-  _root.setAttribute('data-fxhf-state', STATES.DISPATCHING);
-  _root.replaceChildren();
-
-  var shell = document.createElement('div');
-  shell.className =
-    'fxhf-shell fxhf-shell--dispatching fxhf-shell--coordination';
-
-  /* ── RAFI visual ─────────────────────────────────────── */
-
-  var visual = document.createElement('div');
-  visual.className =
-    'fxhf-visual fxhf-visual--dispatching fxhf-visual--coordination';
-
-  var sphere = document.createElement('div');
-  sphere.className =
-    'fxhf-rafi-sphere fxhf-rafi-sphere--dispatching';
-
-  var halo = document.createElement('div');
-  halo.className = 'fxhf-rafi-halo';
-
-  var core = document.createElement('div');
-  core.className = 'fxhf-rafi-core';
-
-  var rafiImg = document.createElement('img');
-  rafiImg.className = 'fxhf-rafi-image';
-  rafiImg.src = 'rafi/RAFI_V2_HeadCollar_Core.webp';
-  rafiImg.alt = 'RAFI';
-  rafiImg.width = 150;
-  rafiImg.height = 150;
-  rafiImg.loading = 'eager';
-
-  core.appendChild(rafiImg);
-  sphere.appendChild(halo);
-  sphere.appendChild(core);
-  visual.appendChild(sphere);
-
-  /* ── Confirmation content ────────────────────────────── */
-
-  var content = document.createElement('div');
-  content.className =
-    'fxhf-content fxhf-content--dispatching fxhf-content--coordination';
-
-  var eyebrow = document.createElement('div');
-  eyebrow.className = 'fxhf-eyebrow';
- eyebrow.textContent = '✓ DEMANDE CONFIRMÉE';
-
-  var title = document.createElement('h2');
-  title.className = 'fxhf-title';
-  title.textContent =
-    'Votre demande est prise en charge par FIXEO.';
-
-  var subtitle = document.createElement('p');
-  subtitle.className = 'fxhf-subtitle';
-  subtitle.textContent =
-    'Nous coordonnons actuellement avec les artisans disponibles afin de confirmer la meilleure prise en charge.';
-
-  var reference = document.createElement('div');
-  reference.className = 'fxhf-coordination-reference';
-
-  var referenceLabel = document.createElement('span');
-  referenceLabel.className = 'fxhf-coordination-reference-label';
-  referenceLabel.textContent = 'Référence de votre demande';
-
-  var referenceValue = document.createElement('strong');
-  referenceValue.className = 'fxhf-coordination-reference-value';
-  referenceValue.textContent =
-    data.request && data.request.tracking_ref
-      ? data.request.tracking_ref
-      : '—';
-
-  reference.appendChild(referenceLabel);
-  reference.appendChild(referenceValue);
-
-  var followUp = document.createElement('p');
-  followUp.className = 'fxhf-coordination-follow-up';
-  followUp.textContent =
-  'Aucune action n’est nécessaire de votre côté. Vous serez contacté dans les plus brefs délais par l’artisan retenu pour votre intervention.';
-
-  content.appendChild(eyebrow);
-  content.appendChild(title);
-  content.appendChild(subtitle);
-  content.appendChild(reference);
-  content.appendChild(followUp);
-
-  /* Mobile-first natural flow */
-  shell.appendChild(visual);
-  shell.appendChild(content);
-
-  _root.appendChild(shell);
-
-  return true;
-}
-  
-  /* ── Init ──────────────────────────────────────────────────── */
- function _init() {
-  if (!mount()) return;
-  renderNeed();
-}
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _init, { once: true });
-  } else {
-    _init();
-  }
-
-  /* ── Public API ────────────────────────────────────────────── */
   window.FixeoHeroFlagship = {
-    VERSION: 'fxhf-v1a',
+    VERSION: "universal-intake-v1",
     STATES: STATES,
     mount: mount,
-    getState: getState,
-    isMounted: isMounted
+    getState: function () {
+      return state;
+    },
+    isMounted: function () {
+      return mounted;
+    },
   };
-
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", mount);
+  else mount();
 })();

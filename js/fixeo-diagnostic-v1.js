@@ -56,7 +56,7 @@
       loaded = new Promise(function (resolve, reject) {
         var script = document.createElement('script');
         script.src =
-          '/js/fixeo-diagnostic-modal-v1.js?v=diagnostic-intervention-v1';
+          '/js/fixeo-diagnostic-modal-v1.js?v=hero-dossier-v1';
         script.onload = resolve;
         script.onerror = function () {
           loaded = null;
@@ -77,12 +77,16 @@
     return settings;
   }
   async function open(context) {
+    context = Object.assign({}, context || {});
+    if (!context.session_id) {
+      try { context.session_id = sessionStorage.getItem('fixeo_diagnostic_dossier_v1') || undefined; } catch (_) {}
+    }
     var cfg = settings || (await getConfig());
     if (!cfg.enabled) throw new Error('DIAGNOSTIC_UNAVAILABLE');
     await loadModal();
     active = true;
     if (window.FixeoEstimatorV2) window.FixeoEstimatorV2.close();
-    return window.FixeoDiagnosticModal.open(context || {});
+    return window.FixeoDiagnosticModal.open(context);
   }
   function saveTracking(result) {
     if (

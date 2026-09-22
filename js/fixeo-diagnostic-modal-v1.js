@@ -159,6 +159,7 @@
     layoutFrame = null;
     API.setActive(false);
     if (opener && opener.isConnected) opener.focus();
+    document.dispatchEvent(new CustomEvent('fixeo:diagnostic-closed'));
   }
   function fitViewport() {
     if (!dialog || !dialog.open) return;
@@ -1394,6 +1395,15 @@
   }
   async function open(context) {
     build();
+    // An optional Hero view opens the exact existing dossier, never a clone.
+    // Authorization, ownership and the latest revision are checked by get.
+    if (!busy && /^[0-9a-f-]{36}$/.test(context.session_id || '') &&
+        context.session_id !== session?.id) {
+      clearFiles();
+      session = null;
+      pausedDraft = null;
+      remember(context.session_id);
+    }
     opener = context.opener || document.activeElement;
     API.setActive(true);
     if (!dialog.open) dialog.showModal();
