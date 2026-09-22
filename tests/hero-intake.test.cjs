@@ -442,6 +442,142 @@ test("Hero focus hides interfering floating actions and restores their state out
   s.q("outside").focus();
   assert.equal(s.w.document.body.classList.contains("fxhf-focused"), false);
 });
+test("Hero NEED controls receive focus/click before consent; only analysis is gated", async (t) => {
+  const s = setup(t);
+  for (const id of [
+    "fxhf-location",
+    "fxhf-need-input",
+    "fxhf-mic",
+    "fxhf-show",
+    "fxhf-speech-lang",
+    "fxhf-consent",
+  ]) {
+    const control = s.q(id);
+    assert.equal(control.matches(":disabled"), false, id);
+    assert.equal(control.closest('[inert], [aria-busy="true"]'), null, id);
+    control.focus();
+    assert.equal(s.w.document.activeElement, control, id);
+  }
+  assert.equal(s.q("fxhf-consent").checked, false);
+  assert.equal(s.q("fxhf-submit").disabled, true);
+  s.change("fxhf-location", "fes");
+  s.change("fxhf-need-input", "Une petite fuite sous mon lavabo.");
+  s.change("fxhf-speech-lang", "ar-MA");
+  let microphoneRequested = false;
+  s.w.MediaRecorder = function () {};
+  Object.defineProperty(s.w.navigator, "mediaDevices", {
+    value: {
+      getUserMedia: async () => {
+        microphoneRequested = true;
+        throw Error("NotAllowedError");
+      },
+    },
+  });
+  s.q("fxhf-mic").click();
+  await wait(() => microphoneRequested && !s.q("fxhf-mic").disabled);
+  s.q("fxhf-show").click();
+  assert.equal(s.q("fxhf-photo-choices").hidden, false);
+  for (const [button, input] of [
+    ["fxhf-camera", "fxhf-camera-file"],
+    ["fxhf-library", "fxhf-files"],
+  ]) {
+    let chooserRequested = false;
+    s.q(input).addEventListener(
+      "click",
+      (event) => {
+        chooserRequested = true;
+        event.preventDefault(); // Simulate closing the native chooser without a file.
+      },
+      { once: true },
+    );
+    s.q(button).click();
+    assert.equal(chooserRequested, true, button);
+  }
+  s.q("fxhf-show").click();
+  s.q("outside").focus();
+  s.q("fxhf-need-input").focus();
+  assert.equal(s.q("fxhf-location").value, "fes");
+  assert.match(s.q("fxhf-need-input").value, /lavabo/);
+  assert.equal(s.q("fxhf-speech-lang").value, "ar-MA");
+  assert.equal(s.q("fxhf-submit").disabled, true);
+  s.q("fxhf-consent").click();
+  assert.equal(s.q("fxhf-submit").disabled, false);
+  s.q("fxhf-consent").click();
+  assert.equal(s.q("fxhf-submit").disabled, true);
+  assert.equal(
+    s.calls.length,
+    0,
+    "input interactions must not create a dossier",
+  );
+});
+for (const [width, height] of [
+  [320, 568],
+  [390, 844],
+  [390, 340],
+]) {
+  test(`Hero decorative layer cannot intercept NEED controls at ${width}x${height}`, (t) => {
+    const s = setup(t),
+      doc = s.w.document;
+    const source = doc.createElement("style");
+    // The historical stylesheet contains a stray closing brace that browsers
+    // recover from but JSDOM rejects. Test the universal-intake overrides only.
+    const stylesheet = read("css/fixeo-hero-flagship-v1.css");
+    source.textContent = stylesheet.slice(
+      stylesheet.indexOf("/* Universal intake"),
+    );
+    doc.head.append(source);
+    // JSDOM has no layout/hit-testing. Apply the real viewport rules explicitly
+    // to test containment and inherited pointer-events, not simulated geometry.
+    const active = (rules) =>
+      [...rules]
+        .map((rule) => {
+          if (rule.media) {
+            const query = rule.media.mediaText;
+            if (query.includes("prefers-reduced-motion")) return "";
+            const matches = [
+              ...query.matchAll(/(min|max)-(width|height):\s*(\d+)px/g),
+            ].every(([, bound, axis, limit]) => {
+              const size = axis === "width" ? width : height;
+              return bound === "max" ? size <= +limit : size >= +limit;
+            });
+            return matches ? active(rule.cssRules) : "";
+          }
+          return rule.cssText;
+        })
+        .join("\n");
+    const css = active(source.sheet.cssRules);
+    source.textContent = css;
+    const visual = doc.querySelector(".fxhf-visual");
+    const style = s.w.getComputedStyle(visual);
+    assert.notEqual(
+      style.position,
+      "static",
+      "absolute glow must stay within RAFI",
+    );
+    assert.equal(
+      style.top,
+      "0px",
+      "mobile decoration must not retain desktop sticky offset",
+    );
+    for (const node of [visual, ...visual.querySelectorAll("*")]) {
+      assert.equal(
+        s.w.getComputedStyle(node).pointerEvents,
+        "none",
+        node.className,
+      );
+    }
+    for (const id of [
+      "fxhf-location",
+      "fxhf-need-input",
+      "fxhf-mic",
+      "fxhf-show",
+      "fxhf-speech-lang",
+      "fxhf-consent",
+    ]) {
+      assert.notEqual(s.w.getComputedStyle(s.q(id)).pointerEvents, "none", id);
+    }
+  });
+}
 test("Hero legal details, native controls and static mobile footer reserve safe-area without overlap", (t) => {
   const s = setup(t),
     css = read("css/fixeo-hero-flagship-v1.css");

@@ -4161,7 +4161,8 @@
 .fxhf-universal .fxhf-content, #fxhf-panel, #fxhf-actions { width: 100%; }
 .fxhf-universal .fxhf-title { font-size: clamp(2rem, 4.4vw, 4rem); line-height: 1.08; }
 .fxhf-universal .fxhf-subtitle { margin: 16px 0 24px; line-height: 1.55; color: #afb4cd; }
-.fxhf-universal .fxhf-visual { position: sticky; top: 90px; }
+/* RAFI is decorative: its absolute glow must never capture input taps. */
+.fxhf-universal .fxhf-visual { position: sticky; top: 90px; pointer-events: none; }
 .fxhf-universal .fxhf-location { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin: 0 0 14px; color: #b8c3d5; font-size: 13px; }
 .fxhf-universal .fxhf-location-select { max-width: 100%; width: auto; font-size: 16px; padding: 9px 30px 9px 12px; border-radius: 12px; background: #141829; color: #eef4ff; border: 1px solid #ffffff20; }
 .fxhf-universal .fxhf-need-input { min-height: 106px; font-size: 16px; padding: 18px 18px 8px; }
@@ -4219,7 +4220,7 @@
 .fxhf-universal .fxhf-rafi-caption { color: #bdc9e0; font-size: 16px; text-align: center; line-height: 1.8; }
 @media (max-width: 820px) {
   .fxhf-universal { display: flex; flex-direction: column; gap: 18px; padding: 26px 18px max(42px, env(safe-area-inset-bottom)); }
-  .fxhf-universal .fxhf-visual { position: static; order: -1; min-height: 100px; height: 110px; width: 100%; }
+  .fxhf-universal .fxhf-visual { position: relative; top: 0; order: -1; min-height: 100px; height: 110px; width: 100%; }
   .fxhf-universal .fxhf-rafi-sphere { width: 115px; }
   .fxhf-universal .fxhf-rafi-face { width: 84px; height: 84px; }
   .fxhf-universal .fxhf-rafi-caption { display: none; }
