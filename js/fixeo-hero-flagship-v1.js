@@ -110,6 +110,30 @@
     if (el) el.textContent = text;
   }
   // UI-only viewport and floating-action coordination. No dossier/API writes.
+  function protectFloatingActions() {
+    var mobile = window.innerWidth <= 820,
+      immersive = document.body.classList.contains("fxhf-immersive"),
+      controls = [
+        [document.getElementById("fixeo-urgent-fab"), "fxhf-urgent-obscured"],
+        [document.querySelector(".chat-widget"), "fxhf-chat-obscured"],
+      ],
+      targets = mobile && !immersive
+        ? Array.from(document.querySelectorAll(
+            ":is(main, footer) :is(h1, h2, h3, h4, p, li, label, summary, a, button, input, select, textarea, article, [role=button], [class*=card])",
+          )).filter(function (el) {
+            return !el.closest("#fixeo-urgent-fab, .chat-widget, [hidden]");
+          }).map(function (el) { return el.getBoundingClientRect(); })
+        : [];
+    controls.forEach(function (entry) {
+      var control = entry[0], rect = control?.getBoundingClientRect();
+      var collision = !!rect && rect.width > 0 && rect.height > 0 && targets.some(function (target) {
+        return target.width > 0 && target.height > 0 &&
+          rect.left < target.right + 8 && rect.right > target.left - 8 &&
+          rect.top < target.bottom + 8 && rect.bottom > target.top - 8;
+      });
+      document.body.classList.toggle(entry[1], collision);
+    });
+  }
   function queueLayout() {
     if (layoutFrame) return;
     layoutFrame = window.requestAnimationFrame(function () {
@@ -164,6 +188,7 @@
           rect.bottom > Math.max(headerBottom, top) + 16 &&
           rect.top < top + height,
       );
+      protectFloatingActions();
       if (keyboard)
         document.activeElement.scrollIntoView?.({
           block: "nearest",
@@ -185,7 +210,7 @@
     if (window.ResizeObserver) {
       var observer = new ResizeObserver(queueLayout);
       document
-        .querySelectorAll(".fixeo-gh-universal-shell, .navbar")
+        .querySelectorAll(".fixeo-gh-universal-shell, .navbar, main")
         .forEach(function (header) {
           observer.observe(header);
         });
@@ -209,16 +234,33 @@
       length = 0,
       visible = true,
       disposed = false;
-    // Calm FR / Moroccan Darija blocks. Decorative copy never enters input.value.
+    // Short alternating FR / Moroccan Darija examples, never input.value.
+    // Intentionally silent: native Safari audio has not been validated.
     var phrases = [
-      ["fr", "Décrivez ce qui se passe…"],
-      ["fr", "Quelques mots suffisent."],
+      ["fr", "J’ai une fuite sous l’évier…"],
       ["ary-Latn", "Chno waqe3 ? Goul lia…"],
-      ["ary-Latn", "Kayn chi tserrab dyal lma ?"],
-      ["fr", "Une porte bloquée ? Je vous écoute."],
-      ["fr", "Une panne ? Montrez-moi."],
-      ["ary-Latn", "Clim ma bqat katberredch ?"],
-      ["ary-Latn", "Goulha l RAFI, nkemmel lik lbaqi."],
+      ["fr", "Ma clim ne refroidit plus…"],
+      ["ary-Latn", "Kayn tsrib d lma…"],
+      ["fr", "Une prise fait des étincelles…"],
+      ["ary-Latn", "Clim ma katberredch…"],
+      ["fr", "Ma porte est bloquée…"],
+      ["ary-Latn", "Priza ma katkhdemch…"],
+      ["fr", "Mon chauffe-eau ne chauffe plus…"],
+      ["ary-Latn", "Bab tsedd, ma bghach yt7ell…"],
+      ["fr", "J’ai de l’humidité sur le mur…"],
+      ["ary-Latn", "Chauffe-eau ma kayskhench…"],
+      ["fr", "Mon volet ne remonte plus…"],
+      ["ary-Latn", "Kayna rtouba f l7it…"],
+      ["fr", "Je veux repeindre une pièce…"],
+      ["ary-Latn", "Bghit nsbegh bit…"],
+      ["fr", "Un carreau s’est cassé…"],
+      ["ary-Latn", "Zlija tkersat…"],
+      ["fr", "Je dois déplacer des meubles…"],
+      ["ary-Latn", "Bghit n7errek chi moubliyat…"],
+      ["fr", "Mon lavabo est bouché…"],
+      ["ary-Latn", "Lavabo msdoud…"],
+      ["fr", "Une lampe ne s’allume plus…"],
+      ["ary-Latn", "Kayn mochkil f ddo…"],
     ];
     function pause() {
       clearTimeout(timer);
@@ -236,6 +278,7 @@
         !document.hidden &&
         visible &&
         !transcribing &&
+        node("fxhf-photo-choices")?.hidden !== false &&
         recorder?.state !== "recording"
       );
     }
@@ -254,7 +297,7 @@
           index = (index + 1) % phrases.length;
           length = 0;
           type();
-        }, 2400);
+        }, 2800);
       }
     }
     function resume() {
@@ -503,9 +546,11 @@
         : "";
     });
     node("fxhf-show").onclick = function () {
+      stopPrompt();
       var choices = node("fxhf-photo-choices");
       choices.hidden = !choices.hidden;
       this.setAttribute("aria-expanded", String(!choices.hidden));
+      if (choices.hidden) startPrompt();
     };
     node("fxhf-camera").onclick = function () {
       node("fxhf-camera-file").click();
@@ -527,6 +572,7 @@
           node("fxhf-show").setAttribute("aria-expanded", "false");
         }
         availability();
+        startPrompt();
       };
     });
     node("fxhf-mic").onclick = record;

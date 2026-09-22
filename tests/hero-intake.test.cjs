@@ -799,6 +799,82 @@ test("Smart RAFI stops immediately for touch, focus, paste, input and speech; re
   );
   assert.equal(s.calls.length, 0);
 });
+test("Smart RAFI offers 24 alternating trade examples without changing draft or safety", async (t) => {
+  let clock;
+  const s = setup(t, { configure(w) { clock = promptClock(w); } });
+  await new Promise((r) => setTimeout(r, 0));
+  const prompt = s.q("fxhf-root").querySelector(".fxhf-smart-prompt");
+  const seen = new Map();
+  for (let i = 0; i < 1150; i++) {
+    clock.tick(100);
+    if (prompt.classList.contains("fxhf-prompt-pause"))
+      seen.set(prompt.textContent, prompt.querySelector("span").lang);
+    assert.equal(s.q("fxhf-need-input").value, "");
+    assert.equal(s.q("fxhf-root").dataset.fxhfState, "need");
+  }
+  assert.equal(seen.size, 24);
+  assert.deepEqual([...seen.values()], Array.from({ length: 24 }, (_, i) => i % 2 ? "ary-Latn" : "fr"));
+  for (const [phrase, lang] of seen) {
+    assert.ok(phrase.length <= 34, phrase);
+    if (lang === "ary-Latn") assert.equal(/\p{Script=Arabic}/u.test(phrase), false);
+  }
+  assert.match([...seen.keys()].join(" "), /étincelles/);
+  assert.equal(s.calls.length, 0, "even a decorative danger example never reaches the API");
+});
+test("Smart RAFI stops for photo choices and returns only to empty blurred input", async (t) => {
+  let clock;
+  const s = setup(t, { configure(w) { clock = promptClock(w); } });
+  await new Promise((r) => setTimeout(r, 0));
+  const prompt = s.q("fxhf-root").querySelector(".fxhf-smart-prompt");
+  clock.tick(1000);
+  assert.equal(prompt.hidden, false);
+  s.q("fxhf-show").click();
+  assert.equal(prompt.hidden, true);
+  s.w.document.dispatchEvent(new s.w.Event("visibilitychange"));
+  clock.tick(15000);
+  assert.equal(prompt.hidden, true);
+  assert.equal(clock.pending(), 0);
+  s.q("fxhf-show").click();
+  clock.tick(1000);
+  assert.equal(prompt.hidden, false);
+  s.change("fxhf-need-input", "Ma propre description");
+  s.q("fxhf-show").click();
+  s.photo();
+  clock.tick(15000);
+  assert.equal(prompt.hidden, true);
+  assert.equal(s.q("fxhf-need-input").value, "Ma propre description");
+  assert.equal(s.calls.length, 0);
+});
+for (const width of [320, 390]) {
+  test(`Floating actions avoid CTA, heading and cards after Hero at ${width}px`, async (t) => {
+    let targetRect;
+    const s = setup(t, {
+      configure(w) {
+        Object.defineProperty(w, "innerWidth", { value: width });
+        const main = w.document.createElement("main");
+        main.innerHTML = '<h2>Titre important</h2><button>Continuer</button><article class="feature-card">Contenu</article>';
+        w.document.body.append(main);
+        for (const el of main.children) el.getBoundingClientRect = () => targetRect;
+        targetRect = { left: 0, right: width, top: 400, bottom: 500, width, height: 100 };
+        w.document.getElementById("fxhf-root").getBoundingClientRect = () => ({ top: -600, bottom: -10, width });
+        w.document.getElementById("fixeo-urgent-fab").getBoundingClientRect = () => ({ left: 14, right: 114, top: 470, bottom: 518, width: 100, height: 48 });
+        w.document.querySelector(".chat-widget").getBoundingClientRect = () => ({ left: width - 68, right: width - 14, top: 470, bottom: 524, width: 54, height: 54 });
+      },
+    });
+    const body = s.w.document.body;
+    await wait(() => body.classList.contains("fxhf-urgent-obscured"));
+    assert.equal(body.classList.contains("fxhf-chat-obscured"), true);
+    assert.equal(body.classList.contains("fxhf-immersive"), false);
+    targetRect = { left: 0, right: width, top: 100, bottom: 300, width, height: 200 };
+    s.w.dispatchEvent(new s.w.Event("scroll"));
+    await wait(() => !body.classList.contains("fxhf-urgent-obscured"));
+    assert.equal(body.classList.contains("fxhf-chat-obscured"), false);
+    s.q("fxhf-root").getBoundingClientRect = () => ({ top: 0, bottom: 568, width });
+    s.w.dispatchEvent(new s.w.Event("scroll"));
+    await wait(() => body.classList.contains("fxhf-immersive"));
+    assert.equal(s.calls.length, 0);
+  });
+}
 test("Smart RAFI reduced-motion stays static, reacts to preference changes, and stops on pagehide", async (t) => {
   let clock;
   const s = setup(t, {
