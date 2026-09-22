@@ -683,7 +683,7 @@ textarea.fxdiag-input {
   background: transparent;
 }
 .fxdiag-photo-status {
-  min-height: 16px;
+  min-height: 19px;
   margin: 9px 0 2px;
   color: #d1dccd;
   font-size: 10px;
@@ -694,6 +694,48 @@ textarea.fxdiag-input {
   color: #98a9c2;
   font-size: 9px;
   line-height: 1.6;
+}
+.fxdiag-photo-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+}
+.fxdiag-photo-details {
+  color: #adbbd0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.fxdiag-photo-details summary {
+  cursor: pointer;
+  padding: 7px 0;
+  color: #c2cfe1;
+}
+.fxdiag-photo-details[open] {
+  flex-basis: 100%;
+}
+.fxdiag-photo-details p {
+  margin: 5px 0;
+}
+.fxdiag-photo-details .fxdiag-privacy {
+  font-size: inherit;
+  line-height: inherit;
+}
+.fxdiag-media-well.has-photos {
+  border-color: #ffc49b66;
+  box-shadow:
+    0 0 0 3px #ffc49b07,
+    inset 0 1px 0 #ffdfc521;
+}
+.fxdiag-photo[data-state="selected"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 1px 0 #ffffff38;
+  background: linear-gradient(140deg, #ffffff08, transparent 36%);
 }
 .fxdiag-photos {
   position: absolute;
@@ -741,14 +783,18 @@ textarea.fxdiag-input {
 }
 .fxdiag-photo span {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  text-align: center;
-  background: linear-gradient(transparent, #091121ed);
-  font-size: 9px;
-  padding: 15px 4px 7px;
-  color: #e1e9f7;
+  bottom: 8px;
+  left: 8px;
+  max-width: calc(100% - 16px);
+  border-radius: 8px;
+  background: #101c2be8;
+  border: 1px solid #ffffff20;
+  font-size: 10px;
+  line-height: 1.4;
+  padding: 5px 7px;
+  color: #e2eddf;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 .fxdiag-privacy {
   font-size: 10px;
@@ -1112,8 +1158,12 @@ textarea.fxdiag-input {
     border-radius: 0;
   }
   .fxdiag-shell {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
     height: 100%;
     max-height: 100%;
+    min-height: 0;
+    overflow: hidden;
   }
   .fxdiag-head {
     padding: 5px 16px;
@@ -1127,11 +1177,16 @@ textarea.fxdiag-input {
     height: 44px;
   }
   .fxdiag-body {
-    padding: 18px 20px 16px;
+    padding: 14px 20px calc(12px + var(--fxdiag-actions-height, 88px));
+    scroll-padding-bottom: calc(12px + var(--fxdiag-actions-height, 88px));
+    -webkit-overflow-scrolling: touch;
+  }
+  .fxdiag-field {
+    scroll-margin-block: 12px;
   }
   .fxdiag-progress {
     gap: 6px;
-    margin-bottom: 19px;
+    margin-bottom: 13px;
     font-size: 9px;
   }
   .fxdiag-progress li {
@@ -1149,16 +1204,16 @@ textarea.fxdiag-input {
     font-size: 27px;
   }
   .fxdiag-intro {
-    font-size: 11px;
-    line-height: 1.65;
-    margin-bottom: 20px;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 14px;
   }
   .fxdiag-grid {
     grid-template-columns: 1fr;
-    gap: 19px;
+    gap: 13px;
   }
   .fxdiag-media-well {
-    height: 160px;
+    height: 150px;
   }
   .fxdiag-media-actions {
     margin-top: 8px;
@@ -1168,11 +1223,28 @@ textarea.fxdiag-input {
     min-height: 44px;
   }
   .fxdiag-photo-status {
-    margin-top: 7px;
+    margin-top: 6px;
+    font-size: 12px;
+    line-height: 1.5;
   }
-  .fxdiag-media-column .fxdiag-privacy {
+  .fxdiag-photo-help {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .fxdiag-photo-details {
+    font-size: 12px;
+  }
+  .fxdiag-photo-details summary {
+    font-size: 11px;
+  }
+  .fxdiag-field-help {
+    font-size: 12px;
+    line-height: 1.45;
     margin-top: 5px;
-    font-size: 9px;
+  }
+  .fxdiag-privacy {
+    font-size: 12px;
+    line-height: 1.5;
   }
   .fxdiag-label,
   .fxdiag-label-row {
@@ -1184,12 +1256,16 @@ textarea.fxdiag-input {
     padding: 10px 12px;
   }
   textarea.fxdiag-input {
-    min-height: 82px;
-    height: 82px;
+    min-height: 80px;
+    height: 80px;
     max-height: 160px;
   }
   .fxdiag-field {
-    margin-bottom: 13px;
+    margin-bottom: 11px;
+  }
+  #fxdiag-city {
+    min-height: 44px;
+    padding-block: 9px;
   }
   .fxdiag-outcome {
     display: none;
@@ -1199,14 +1275,20 @@ textarea.fxdiag-input {
     padding-top: 10px;
   }
   .fxdiag-consent {
-    font-size: 11px;
+    font-size: 12px;
     min-height: 44px;
   }
+  .fxdiag-consent-details {
+    font-size: 12px;
+    line-height: 1.5;
+  }
   .fxdiag-consent-details summary {
+    font-size: 11px;
     min-height: 36px;
     padding-top: 6px;
   }
   .fxdiag-disclaimer {
+    font-size: 11px;
     margin-top: 6px;
   }
   .fxdiag-hazards {
@@ -1220,8 +1302,10 @@ textarea.fxdiag-input {
   }
   .fxdiag-footer {
     padding: 12px 20px;
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
-    gap: 10px;
+    padding-bottom: calc(
+      10px + var(--fxdiag-safe-bottom, env(safe-area-inset-bottom, 0px))
+    );
+    gap: 8px;
     flex-wrap: wrap;
   }
   .fxdiag-footer .fxdiag-button {
@@ -1275,7 +1359,9 @@ textarea.fxdiag-input {
   }
   .fxdiag-footer {
     padding-top: 8px;
-    padding-bottom: max(8px, env(safe-area-inset-bottom));
+    padding-bottom: calc(
+      8px + var(--fxdiag-safe-bottom, env(safe-area-inset-bottom, 0px))
+    );
   }
   .fxdiag-footnote {
     display: none;

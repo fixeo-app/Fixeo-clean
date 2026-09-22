@@ -12,7 +12,9 @@
     busy = false,
     current = 'compose',
     pausedDraft,
-    runId;
+    runId,
+    footerObserver,
+    layoutFrame;
   var draft = {
       description: '',
       city: '',
@@ -136,6 +138,10 @@
       window.visualViewport.removeEventListener('resize', fitViewport);
       window.visualViewport.removeEventListener('scroll', fitViewport);
     }
+    window.removeEventListener('resize', fitViewport);
+    if (footerObserver) footerObserver.disconnect();
+    if (layoutFrame) window.cancelAnimationFrame(layoutFrame);
+    layoutFrame = null;
     API.setActive(false);
     if (opener && opener.isConnected) opener.focus();
   }
@@ -149,6 +155,43 @@
       dialog.style.removeProperty('--fxdiag-vv-height');
       dialog.style.removeProperty('--fxdiag-vv-top');
     }
+    queueLayout();
+  }
+  function queueLayout() {
+    if (!dialog || !dialog.open || layoutFrame) return;
+    layoutFrame = window.requestAnimationFrame(function () {
+      layoutFrame = null;
+      if (!dialog.open || window.innerWidth > 700) return;
+      // Measure the actual actions, including Safari's safe-area padding.
+      // The footer stays outside the scroller; this extra clearance lets the
+      // last field and native selects scroll fully above it, even with a keyboard.
+      var footerRect = footer.getBoundingClientRect();
+      if (footerRect.height > 0) {
+        dialog.style.setProperty(
+          '--fxdiag-actions-height',
+          Math.ceil(footerRect.height) + 'px',
+        );
+      }
+      var focused = document.activeElement;
+      if (
+        !focused ||
+        !body.contains(focused) ||
+        !focused.matches('input, select, textarea')
+      )
+        return;
+      var bodyRect = body.getBoundingClientRect();
+      var top = bodyRect.top + 12;
+      var bottom = Math.min(bodyRect.bottom, footerRect.top) - 12;
+      if (bottom <= top) return;
+      var field = focused.closest('.fxdiag-field') || focused;
+      var rect = field.getBoundingClientRect();
+      if (rect.height > bottom - top) rect = focused.getBoundingClientRect();
+      // If the keyboard leaves less room than the input itself, keep its top
+      // stable instead of alternating between top and bottom on each resize.
+      if (rect.height > bottom - top) body.scrollTop += rect.top - top;
+      else if (rect.bottom > bottom) body.scrollTop += rect.bottom - bottom;
+      else if (rect.top < top) body.scrollTop -= top - rect.top;
+    });
   }
   function build() {
     if (dialog) return;
@@ -161,6 +204,9 @@
     document.body.appendChild(dialog);
     body = dialog.querySelector('.fxdiag-body');
     footer = dialog.querySelector('.fxdiag-footer');
+    if (window.ResizeObserver)
+      footerObserver = new window.ResizeObserver(queueLayout);
+    dialog.addEventListener('focusin', queueLayout);
     dialog.querySelector('.fxdiag-close').onclick = close;
     dialog.addEventListener('cancel', function (e) {
       e.preventDefault();
@@ -220,6 +266,7 @@
         execute(back);
       };
     updateComposeAvailability();
+    queueLayout();
   }
   function updateComposeAvailability() {
     if (current !== 'compose' || !node('fxdiag-next')) return;
@@ -241,6 +288,7 @@
         : !consent
           ? 'Donnez votre accord pour continuer.'
           : 'Prochaine étape : votre sécurité.';
+    queueLayout();
   }
   function message(error) {
     var code = (error && error.message) || '';
@@ -351,11 +399,11 @@
         icon +
         'Prendre une photo</button><button type="button" class="fxdiag-media-button" id="fxdiag-library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="m4 18 5-5 4 3 3-4 5 6"/></svg>Photothèque / fichiers</button></div>' +
         '<input type="file" id="fxdiag-files" accept="image/jpeg,image/png,image/webp" multiple hidden><input type="file" id="fxdiag-camera-file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden>' +
-        '<p class="fxdiag-photo-status" id="fxdiag-photo-status" role="status" aria-live="polite">Aucune photo sélectionnée</p><p class="fxdiag-photo-help" id="fxdiag-photo-help">3 photos max. · 8 Mio / photo · JPEG, PNG, WebP</p>' +
-        '<p class="fxdiag-privacy">Uniquement le problème : évitez visages, papiers d’identité et informations personnelles.</p></div>' +
+        '<p class="fxdiag-photo-status" id="fxdiag-photo-status" role="status" aria-live="polite">Aucune photo sélectionnée</p><div class="fxdiag-photo-meta"><p class="fxdiag-photo-help" id="fxdiag-photo-help">3 photos max. · 8 Mio / photo</p><details class="fxdiag-photo-details"><summary>Formats et vie privée</summary><div><p>Formats acceptés : JPEG, PNG ou WebP.</p>' +
+        '<p class="fxdiag-privacy">Uniquement le problème : évitez visages, papiers d’identité et informations personnelles.</p><p>Les photos sélectionnées sont envoyées uniquement après votre accord et la confirmation de l’analyse.</p></div></details></div></div>' +
         '<div class="fxdiag-description-column"><div class="fxdiag-field"><label class="fxdiag-label" for="fxdiag-description">Que constatez-vous ?</label><textarea id="fxdiag-description" class="fxdiag-input" maxlength="2000" rows="3" placeholder="Par exemple : de l’eau coule sous mon lavabo…">' +
         esc(draft.description) +
-        '</textarea><span class="fxdiag-field-help">Quelques mots suffisent. Vous pouvez aussi commencer sans photo.</span></div><div class="fxdiag-field"><label class="fxdiag-label" for="fxdiag-city">Ville d’intervention</label><select id="fxdiag-city" class="fxdiag-input"><option value="">Choisir ma ville</option>' +
+        '</textarea><span class="fxdiag-field-help">Quelques mots suffisent, même sans photo.</span></div><div class="fxdiag-field"><label class="fxdiag-label" for="fxdiag-city">Ville d’intervention</label><select id="fxdiag-city" class="fxdiag-input"><option value="">Choisir ma ville</option>' +
         Object.keys(cities)
           .map(function (c) {
             return (
@@ -470,6 +518,7 @@
     function thumbnail(item, local) {
       var box = document.createElement('div');
       box.className = 'fxdiag-photo';
+      box.dataset.state = local ? 'selected' : item.state;
       var img = document.createElement('img');
       img.alt = 'Photo du problème';
       img.referrerPolicy = 'no-referrer';
@@ -504,7 +553,7 @@
       target.appendChild(box);
       if (local || item.state === 'ready') {
         var stateLabel = document.createElement('span');
-        stateLabel.textContent = local ? 'Sélectionnée' : 'Enregistrée';
+        stateLabel.textContent = local ? '✓ Sélectionnée' : '✓ Enregistrée';
         box.appendChild(stateLabel);
       }
       if (!local) {
@@ -544,13 +593,23 @@
     node('fxdiag-add').hidden = !!count;
     node('fxdiag-camera').disabled = count >= 3;
     node('fxdiag-library').disabled = count >= 3;
-    node('fxdiag-photo-status').textContent = count
-      ? count +
-        (count > 1 ? ' photos prêtes' : ' photo prête') +
-        (pending.length
-          ? ' · envoi après confirmation'
-          : ' · enregistrée' + (count > 1 ? 's' : ''))
-      : 'Aucune photo sélectionnée';
+    node('fxdiag-media').classList.toggle('has-photos', !!count);
+    var readyCount =
+      pending.length +
+      (session
+        ? session.media.filter(function (m) {
+            return m.state === 'ready';
+          }).length
+        : 0);
+    node('fxdiag-photo-status').textContent = readyCount
+      ? readyCount +
+        (readyCount > 1
+          ? ' photos prêtes à analyser'
+          : ' photo prête à analyser') +
+        (count > readyCount ? ' · photo à renvoyer' : '')
+      : count
+        ? 'Photo à renvoyer'
+        : 'Aucune photo sélectionnée';
     updateComposeAvailability();
   }
   function renderSafety() {
@@ -982,6 +1041,8 @@
       window.visualViewport.addEventListener('resize', fitViewport);
       window.visualViewport.addEventListener('scroll', fitViewport);
     }
+    window.addEventListener('resize', fitViewport);
+    if (footerObserver) footerObserver.observe(footer);
     fitViewport();
     if (busy) return;
     var id = session ? session.id : remembered();

@@ -146,3 +146,51 @@ test('homepage CTA and camera use the same guarded launcher and preserve the foc
   a.click(); await tick(); assert.equal(opened, 2); assert.equal(focusTarget, a);
   assert.equal(a.disabled, false); assert.equal(b.disabled, false);
 });
+
+test('footer measurement reserves its full height and keeps the city above actions after safe-area/keyboard changes', async t => {
+  const s = setup(t), frames = new Map(); let next = 0, observer;
+  s.w.requestAnimationFrame = fn => { frames.set(++next, fn); return next; };
+  s.w.cancelAnimationFrame = id => frames.delete(id);
+  const flush = () => { for (let round = 0; frames.size && round < 5; round++) { const pending = [...frames.values()]; frames.clear(); pending.forEach(fn => fn()); } assert.equal(frames.size, 0); };
+  s.w.ResizeObserver = class { constructor(fn) { this.notify = fn; observer = this; } observe(el) { this.target = el; } disconnect() { this.target = null; } };
+  s.w.innerWidth = 390;
+  await s.open();
+  const modal = s.q('fxdiag-dialog'), body = modal.querySelector('.fxdiag-body'), footer = modal.querySelector('.fxdiag-footer');
+  const city = s.q('fxdiag-city'), field = city.closest('.fxdiag-field');
+  let footerHeight = 88, footerTop = 632;
+  footer.getBoundingClientRect = () => ({ height: footerHeight, top: footerTop, bottom: footerTop + footerHeight });
+  body.getBoundingClientRect = () => ({ top: 54, bottom: footerTop, height: footerTop - 54 });
+  field.getBoundingClientRect = () => ({ top: 610 - body.scrollTop, bottom: 680 - body.scrollTop, height: 70 });
+  flush(); city.focus(); flush();
+  assert.equal(modal.style.getPropertyValue('--fxdiag-actions-height'), '88px');
+  assert.equal(field.getBoundingClientRect().bottom, footerTop - 12);
+  // 34px bottom safe-area is part of the measured footer, not counted twice.
+  footerHeight = 122; footerTop = 598; observer.notify(); flush();
+  assert.equal(modal.style.getPropertyValue('--fxdiag-actions-height'), '122px');
+  assert.equal(field.getBoundingClientRect().bottom, footerTop - 12);
+  // Reduced keyboard viewport: focused city remains usable above actions.
+  footerHeight = 98; footerTop = 242; s.w.dispatchEvent(new s.w.Event('resize')); flush();
+  assert.equal(field.getBoundingClientRect().bottom, 230);
+  assert.ok(field.getBoundingClientRect().top >= 66);
+  const unchangedScroll = body.scrollTop; observer.notify(); flush();
+  assert.equal(body.scrollTop, unchangedScroll, 'No unnecessary layout/scroll jump');
+  observer.notify(); assert.ok(frames.size > 0);
+  modal.querySelector('.fxdiag-close').click();
+  assert.equal(observer.target, null); assert.equal(frames.size, 0);
+});
+
+test('photo selected state and ready count are explicit while technical/privacy details remain available', async t => {
+  const s = setup(t); await s.open();
+  s.select([s.file()]);
+  assert.equal(s.q('fxdiag-photo-status').textContent, '1 photo prête à analyser');
+  assert.equal(s.q('fxdiag-photos').firstChild.dataset.state, 'selected');
+  assert.equal(s.q('fxdiag-media').classList.contains('has-photos'), true);
+  const details = s.w.document.querySelector('.fxdiag-photo-details');
+  for (const text of ['JPEG', 'PNG', 'WebP', 'visages', 'papiers d’identité', 'informations personnelles', 'accord']) assert.ok(details.textContent.includes(text));
+  assert.equal(details.open, false);
+  s.select([s.file()]); assert.equal(s.q('fxdiag-photo-status').textContent, '2 photos prêtes à analyser');
+  s.q('fxdiag-photos').querySelector('button').click(); await tick();
+  s.q('fxdiag-photos').querySelector('button').click(); await tick();
+  assert.equal(s.q('fxdiag-media').classList.contains('has-photos'), false);
+  assert.equal(s.q('fxdiag-photo-status').textContent, 'Aucune photo sélectionnée');
+});
