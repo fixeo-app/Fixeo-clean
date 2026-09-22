@@ -70,7 +70,6 @@ function createTransport({
           Math.max(1, Math.min(requestTimeout, remaining)),
         ),
         redirect: 'error',
-        size: maxBytes,
       }), payload === undefined ? 0 : Buffer.byteLength(payload));
     } catch (cause) {
       const error = new DiagnosticError('DEPENDENCY_UNAVAILABLE', 503);
@@ -114,7 +113,6 @@ function createTransport({
           headers: { apikey: key, Authorization: 'Bearer ' + token },
           signal: AbortSignal.timeout(8000),
           redirect: 'error',
-          size: 64 * 1024,
         });
       } catch (_) {
         throw new DiagnosticError('AUTH_UNAVAILABLE', 503);

@@ -13,6 +13,7 @@ test('transport records request milestones and never retries uncertain quota mut
     await assert.rejects(transport.rpc('diagnostic_quota_v1', { secret_payload: 'private-payload' }), error => {
       assert.equal(error.code, 'DEPENDENCY_UNAVAILABLE');
       assert.equal(error.diagnosticTransport.operation, 'quota');
+      assert.equal(error.diagnosticTransport.wire.content_length, error.diagnosticTransport.expected_bytes);
       assert.ok(error.diagnosticTransport.events.some(e => e.phase === 'body_sent'));
       assert.ok(!/sensitive|private|127\.0|Authorization/i.test(JSON.stringify(error.diagnosticTransport)));
       return true;

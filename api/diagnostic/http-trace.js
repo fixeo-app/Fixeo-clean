@@ -16,16 +16,6 @@ function mark(trace, phase) {
   if (trace && !trace.finished && trace.events.length < 16)
     trace.events.push({ phase, ms: Date.now() - trace.started });
 }
-channel('http.client.request.start').subscribe(({ request }) => {
-  const trace = scope.getStore();
-  if (!trace) return;
-  mark(trace, 'http_started');
-  request.once('finish', () => mark(trace, 'body_sent'));
-  request.once('response', () => mark(trace, 'response_headers'));
-  request.once('error', error => {
-    if (!trace.finished) { trace.network_error = safeError(error); mark(trace, 'request_error'); }
-  });
-});
 channel('undici:request:create').subscribe(({ request }) => {
   const trace = scope.getStore();
   if (trace) { requests.set(request, trace); mark(trace, 'created'); }
@@ -45,7 +35,8 @@ channel('undici:client:sendHeaders').subscribe(({ request, headers, socket }) =>
   if (!trace || trace.finished) return;
   const length = typeof headers === 'string' && headers.match(/^content-length:\s*(\d+)\s*$/im);
   trace.wire = {
-    content_length: length ? Number(length[1]) : null,
+    // Undici appends Content-Length after publishing sendHeaders on Node 24.
+    content_length: Number.isSafeInteger(request.contentLength) ? request.contentLength : length ? Number(length[1]) : null,
     chunked: typeof headers === 'string' && /^transfer-encoding:\s*chunked\s*$/im.test(headers),
     peer_family: ['IPv4', 'IPv6'].includes(socket?.remoteFamily) ? socket.remoteFamily : 'unknown',
     tls_session_reused: !!socket?.isSessionReused?.(),
