@@ -99,7 +99,7 @@
         status.textContent = 'RAFI vous écoute… 20 secondes maximum.';
         timer = setTimeout(function () { if (recorder.state === 'recording') recorder.stop(); }, 20000);
       } catch (_) {
-        if (ticket === generation) { release(); idle(); status.textContent = 'Micro inaccessible. Autorisez-le dans votre navigateur ou écrivez votre besoin.'; }
+        if (ticket === generation) { release(); idle(); status.textContent = input.id === 'estimator-need-input' ? 'Micro non autorisé — vous pouvez continuer par écrit.' : 'Micro inaccessible. Autorisez-le dans votre navigateur ou écrivez votre besoin.'; }
       }
     });
     input._rafiCancelDictation = cancel;

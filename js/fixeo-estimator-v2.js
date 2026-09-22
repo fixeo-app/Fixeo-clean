@@ -1690,6 +1690,126 @@
   // Question renderer — RAFI verification console
   // ───────────────────────────────────────────────────────────────────────────
 
+  // Presentation ranking only: never creates a service or answers a pricing question.
+  function rankServiceChoices(candidates, context) {
+    function words(text) {
+      var normalized = String(text || '')
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+      if (window.FixeoRafiLanguage) normalized = window.FixeoRafiLanguage.normalize(normalized);
+      var ignored = new Set([
+        'une',
+        'des',
+        'les',
+        'pour',
+        'avec',
+        'sans',
+        'dans',
+        'mon',
+        'mes',
+        'sur',
+        'sous',
+        'par',
+        'client',
+        'fourni',
+        'fournie',
+        'standard',
+        'simple',
+        'seul',
+        'besoin',
+        'faire',
+        'avoir',
+        'intervention',
+      ]);
+      return Array.from(
+        new Set(
+          normalized
+            .split(/[^a-z0-9]+/)
+            .map(function (w) {
+              return (
+                {
+                  fuit: 'fuite',
+                  fuites: 'fuite',
+                  remplacer: 'remplacement',
+                  changer: 'remplacement',
+                  deboucher: 'debouchage',
+                  bouche: 'debouchage',
+                }[w] || w.replace(/s$/, '')
+              );
+            })
+            .filter(function (w) {
+              return w.length > 2 && !ignored.has(w);
+            }),
+        ),
+      );
+    }
+    var description = context.description || context.free_text || '';
+    var tokens = words(description);
+    var ranked = candidates
+      .map(function (service, i) {
+        var keys = words(service.label_fr || service.short_label_fr || service.service_code);
+        var hits = keys.filter(function (k) {
+          return tokens.includes(k);
+        }).length;
+        return { service: service, score: hits, index: i, keys: keys.length };
+      })
+      .sort(function (a, b) {
+        return b.score - a.score || a.index - b.index;
+      });
+    var first = ranked[0],
+      second = ranked[1];
+    // Negation/alternatives and tied labels remain choices, never an assertion.
+    var uncertain = /\b(?:pas|aucun|sans|ou|peut.être)\b/i.test(description);
+    var confident =
+      !uncertain && first && first.score >= 2 && (!second || first.score >= second.score + 1);
+    return {
+      items: ranked.map(function (x) {
+        return x.service;
+      }),
+      recommended: confident ? first.service : null,
+    };
+  }
+  function conciseQuestion(step, prompt) {
+    var titles = {
+      plumbing_scope: 'Un seul équipement est-il concerné ?',
+      plumbing_access: 'L’accès permet-il une intervention sûre ?',
+      plumbing_parts: 'La pièce compatible est-elle déjà disponible ?',
+      plumbing_work: 'Ce périmètre correspond-il à votre besoin ?',
+      electricity_scope: 'L’installation correspond-elle à ce périmètre ?',
+      electricity_access: 'L’électricien peut-il accéder sans risque ?',
+      garden_access: 'Le jardin est-il facilement accessible ?',
+      garden_state: 'Est-ce un entretien courant ?',
+      garden_waste: 'Les déchets peuvent-ils rester sur place ?',
+      garden_tasks: 'Uniquement cette prestation ?',
+      tile_support: 'Le sol est-il prêt à être carrelé ?',
+      tile_supplies: 'Avez-vous les fournitures nécessaires ?',
+      tile_access: 'La zone est-elle prête pour l’artisan ?',
+      tile_work: 'Ce travail correspond-il à votre besoin ?',
+      masonry_support: 'Le mur est-il sain et prêt ?',
+      masonry_access: 'L’accès est-il simple ?',
+      moving_access: 'Le parcours est-il accessible ?',
+      moving_items: 'Que faut-il déplacer ?',
+      moving_preparation: 'Tout sera-t-il prêt à l’arrivée ?',
+      moving_duration: 'Le forfait convient-il à votre besoin ?',
+      paint_support: 'Les murs sont-ils prêts à peindre ?',
+      paint_access: 'L’accès aux murs est-il simple ?',
+      paint_supplies: 'Fournissez-vous la peinture ?',
+      paint_finish: 'Quelle finition souhaitez-vous ?',
+      ceiling_support: 'Le plafond est-il prêt à repeindre ?',
+      ceiling_access: 'Le plafond est-il facilement accessible ?',
+      ceiling_finish: 'Cette finition vous convient-elle ?',
+      paint_included_support: 'Ces murs peuvent-ils être repeints directement ?',
+      paint_included_access: 'L’accès aux murs est-il simple ?',
+      paint_included_product: 'Cette peinture vous convient-elle ?',
+      paint_included_finish: 'Cette finition vous convient-elle ?',
+    };
+    return (
+      titles[step.input_id] ||
+      (prompt.length > 160 ? 'Ces conditions correspondent-elles à votre situation ?' : prompt)
+    );
+  }
+
   function isSurfaceMeasurement(
     step
   ) {
@@ -1789,18 +1909,7 @@
       );
 
 
-    var remaining =
-      Number(
-        step.questions_remaining ||
-        1
-      );
-
-
-    questionNumber.textContent =
-      remaining > 1
-        ? remaining +
-          ' précisions maximum restantes'
-        : 'Dernière précision avant l’évaluation';
+    questionNumber.textContent = 'Le prix dépend de ce point';
 
 
     consoleWrap.appendChild(
@@ -1821,24 +1930,22 @@
     );
 
 
-    heading.textContent =
-      step.prompt_fr || promptFromKey(
-        step.prompt_key,
-        step.question_id
-      );
+    var fullPrompt = step.prompt_fr || promptFromKey(step.prompt_key, step.question_id);
+    heading.textContent = conciseQuestion(step, fullPrompt);
 
 
-    consoleWrap.appendChild(
-      heading
-    );
-
-
+    consoleWrap.appendChild(heading);
+    if (heading.textContent !== fullPrompt) {
+      var conditions = el('p', 'rafi-question-conditions', fullPrompt);
+      conditions.id = 'question-conditions';
+      consoleWrap.appendChild(conditions);
+    }
     if (!isSafety) {
       consoleWrap.appendChild(
         el(
           'p',
           'question-intelligence-copy rafi-verification-copy',
-          'Une seule précision à la fois. RAFI vérifie uniquement ce qui peut changer le périmètre ou le tarif.'
+          'Un tap suffit. Votre réponse précise le prix.'
         )
       );
     }
@@ -1937,7 +2044,6 @@
 
 
         if (
-          isBoolean &&
           onAutoAdvance
         ) {
           autoAdvanceLocked =
@@ -1958,14 +2064,7 @@
             );
 
 
-          setTimeout(
-            function() {
-              onAutoAdvance(
-                val
-              );
-            },
-            260
-          );
+          onAutoAdvance(val);
         }
       };
 
@@ -1975,13 +2074,13 @@
         {
           value: true,
           label: 'Oui',
-          meta: 'Ce point est confirmé'
+          meta: ''
         },
 
         {
           value: false,
           label: 'Non',
-          meta: 'Ce point ne s’applique pas'
+          meta: ''
         }
       ];
 
@@ -2370,9 +2469,7 @@
                     opt
                   ),
 
-                eyebrow:
-                  'Option ' +
-                  String(idx + 1),
+                eyebrow: '',
 
                 indexLabel:
                   String(idx + 1)
@@ -2633,7 +2730,7 @@
       el(
         'div',
         'price-certificate__analysis',
-        'Analyse RAFI terminée'
+        'Prix FIXEO trouvé'
       )
     );
 
@@ -2783,7 +2880,7 @@
       el(
         'span',
         'price-proof-item__text',
-        'Périmètre analysé'
+        'Intervention définie'
       )
     );
 
@@ -4034,6 +4131,8 @@
       }
       if (_activeModal._view?.step?.type === 'QUESTION' && STATE.pendingAnswer !== null)
         _activeModal._view.answer = STATE.pendingAnswer;
+      _activeModal._answerPending=false;
+      if(_activeModal._cleanupViewport)_activeModal._cleanupViewport();
       ++_activeModal._requestEpoch; // Late responses cannot change a reopened journey.
       _pausedModal = _activeModal;
     }
@@ -4191,13 +4290,13 @@
       var modal =
         el(
           'div',
-          'estimator-modal estimator-modal--raficore-v3'
+          'estimator-modal estimator-modal--raficore-v3 estimator-modal--premium-v4'
         );
 
 
       modal.setAttribute(
         'data-ux-version',
-        'raficore-v3'
+        'frictionless-v4'
       );
 
 
@@ -4306,9 +4405,8 @@
       );
 
 
-      trapFocus(
-        modal
-      );
+      trapFocus(modal);
+      this._installViewport(modal,bodySlot,footerSlot);
 
 
       if (this._resuming) {
@@ -4324,6 +4422,56 @@
   // ───────────────────────────────────────────────────────────────────────────
   // STATE 1 — COMPRENDRE
   // ───────────────────────────────────────────────────────────────────────────
+
+  EstimatorModal.prototype._installViewport = function (modal, body, footer) {
+    if (this._cleanupViewport) this._cleanupViewport();
+    var frame = 0,
+      observer,
+      viewport = window.visualViewport;
+    function fit() {
+      if (frame) window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(function () {
+        frame = 0;
+        modal.style.setProperty(
+          '--rafi-viewport-height',
+          (viewport ? viewport.height : window.innerHeight) + 'px',
+        );
+        modal.style.setProperty('--rafi-viewport-top', (viewport ? viewport.offsetTop : 0) + 'px');
+        modal.style.setProperty(
+          '--rafi-actions-height',
+          Math.ceil(footer.getBoundingClientRect().height) + 'px',
+        );
+        var field = document.activeElement;
+        if (field && body.contains(field) && /^(INPUT|TEXTAREA|SELECT)$/.test(field.tagName)) {
+          var bounds = body.getBoundingClientRect(),
+            rect = field.getBoundingClientRect();
+          if (rect.bottom > bounds.bottom - 12) body.scrollTop += rect.bottom - bounds.bottom + 12;
+          else if (rect.top < bounds.top + 12) body.scrollTop -= bounds.top + 12 - rect.top;
+        }
+      });
+    }
+    if (window.ResizeObserver) {
+      observer = new window.ResizeObserver(fit);
+      observer.observe(footer);
+    }
+    window.addEventListener('resize', fit);
+    body.addEventListener('focusin', fit);
+    if (viewport) {
+      viewport.addEventListener('resize', fit);
+      viewport.addEventListener('scroll', fit);
+    }
+    this._cleanupViewport = function () {
+      if (frame) window.cancelAnimationFrame(frame);
+      if (observer) observer.disconnect();
+      window.removeEventListener('resize', fit);
+      body.removeEventListener('focusin', fit);
+      if (viewport) {
+        viewport.removeEventListener('resize', fit);
+        viewport.removeEventListener('scroll', fit);
+      }
+    };
+    fit();
+  };
 
   EstimatorModal.prototype._renderUnderstand =
     function() {
@@ -4431,7 +4579,7 @@
 
 
       title.textContent =
-        'Expliquez simplement ce qui se passe';
+        'Décrivez. RAFI s’occupe de la suite.';
 
 
       hero.appendChild(
@@ -4447,7 +4595,7 @@
 
 
       intro.textContent =
-        'RAFI transforme votre besoin en un périmètre clair, puis vérifie uniquement les détails nécessaires avant d’établir le prix FIXEO.';
+        'Votre besoin, quelques précisions utiles, un prix clair.';
 
 
       hero.appendChild(
@@ -4534,7 +4682,7 @@
         el(
           'div',
           'rafi-capture-card__status',
-          'RAFI écoute'
+          'À l’écrit ou à la voix'
         )
       );
 
@@ -4800,7 +4948,7 @@ var cityInput =
       var footer =
         renderFooter({
           primaryLabel:
-            'Lancer l’analyse RAFI →',
+            'Comprendre mon besoin →',
 
           primaryDisabled:
             !canContinue(),
@@ -4915,9 +5063,8 @@ var cityInput =
       );
 
 
-      focusSoon(
-        '#estimator-need-input'
-      );
+      title.tabIndex = -1;
+      title.focus({preventScroll:true});
     };
 
 
@@ -5183,15 +5330,14 @@ var cityInput =
 
 
         var stepEpoch = self._requestEpoch;
-        var isBoolean =
-          nextStep.answer_type ===
-          'boolean';
+        var isBoolean = nextStep.answer_type === 'boolean';
+        var quickChoice = isBoolean || (Array.isArray(nextStep.options) && nextStep.options.length > 0);
 
 
         var body =
           renderQuestion(
             nextStep,
-            isBoolean
+            quickChoice
               ? function(val) {
                   if (self !== _activeModal || stepEpoch !== self._requestEpoch) return;
                   self._submitAnswer(
@@ -5211,16 +5357,20 @@ var cityInput =
           body
         );
 
-
+        var questionTitle = body.querySelector('.question-heading');
+        if (questionTitle) {
+          questionTitle.tabIndex = -1;
+          questionTitle.focus({preventScroll: true});
+        }
         footerSlot.innerHTML =
           '';
 
 
-        if (!isBoolean) {
+        if (!quickChoice) {
           var footer =
             renderFooter({
               primaryLabel:
-                'Confirmer',
+                'Continuer',
 
               primaryDisabled:
                 STATE.pendingAnswer ===
@@ -5605,277 +5755,129 @@ var cityInput =
   // STATE 2 — Service selection
   // ───────────────────────────────────────────────────────────────────────────
 
-  EstimatorModal.prototype._renderServiceSelection =
-    function(nextStep) {
-      var self =
-        this;
-
-
-      var bodySlot =
-        document.getElementById(
-          'body-slot'
-        );
-
-
-      var footerSlot =
-        document.getElementById(
-          'footer-slot'
-        );
-
-
-      if (
-        !bodySlot ||
-        !footerSlot
-      ) {
-        return;
-      }
-
-
-      var candidates =
-        (
-          nextStep &&
-          nextStep.candidate_services
-        ) ||
-        [];
-
-
-      if (
-        candidates.length ===
-        0
-      ) {
-        return self._showError(
-          'Aucun service disponible pour ce métier.'
-        );
-      }
-
-
-      var pending =
-        false;
-
-
-      var body =
-        el(
-          'div',
-          'estimator-body step-enter estimator-service-selection'
-        );
-
-
-      var selector =
-        el(
-          'div',
-          'rafi-selector-console rafi-selector-console--service'
-        );
-
-
+  EstimatorModal.prototype._renderServiceSelection = function (nextStep) {
+    var self = this,
+      bodySlot = document.getElementById('body-slot'),
+      footerSlot = document.getElementById('footer-slot');
+    if (!bodySlot || !footerSlot) return;
+    var candidates = (nextStep && nextStep.candidate_services) || [];
+    if (!candidates.length) return self._showError('Aucune intervention disponible pour ce besoin.');
+    var ranked = rankServiceChoices(candidates, self._entryContext),
+      pending = false;
+    var expanded = !!(self._view && self._view.catalogueExpanded);
+    function select(serviceCode) {
+      if (pending) return;
+      pending = true;
+      if (self._view) self._view.selectedService = serviceCode;
+      bodySlot.querySelectorAll('button').forEach(function (c) {
+        c.disabled = true;
+        c.setAttribute('aria-busy', 'true');
+      });
+      var cta = document.getElementById('cta-primary');
+      if (cta) cta.disabled = true;
+      setRAFIState('analyzing');
+      triggerIntelligenceLine();
+      var epoch = ++self._requestEpoch;
+      window.FixeoEstimatorAPI.selectService(STATE.sessionToken, serviceCode)
+        .then(function (r) {
+          if (self !== _activeModal || epoch !== self._requestEpoch) return;
+          if (!r || !r.ok) return self._showError('Impossible de sélectionner cette intervention.');
+          STATE.sessionToken = r.session.session_token;
+          STATE.session = r.session;
+          self._renderStep(r.session, r.next_step);
+        })
+        .catch(function () {
+          if (self === _activeModal && epoch === self._requestEpoch)
+            self._showError('Problème de connexion. Veuillez réessayer.');
+        });
+    }
+    function render() {
+      var recommendation = !expanded && ranked.recommended;
+      var body = el('div', 'estimator-body step-enter estimator-service-selection');
+      var selector = el('div', 'rafi-selector-console rafi-selector-console--service');
       selector.appendChild(
         el(
           'div',
           'rafi-selector-kicker',
-          'RAFI · INTERVENTION'
-        )
+          recommendation ? 'RAFI · PROPOSITION À CONFIRMER' : 'RAFI · PRÉCISONS VOTRE BESOIN',
+        ),
       );
-
-
-      var title =
+      selector.appendChild(
         el(
           'h2',
-          'question-heading rafi-selector-title'
-        );
-
-
-      title.textContent =
-        'Quelle intervention décrit le mieux la situation ?';
-
-
-      selector.appendChild(
-        title
+          'question-heading rafi-selector-title',
+          recommendation
+            ? 'Cela ressemble à…'
+            : expanded
+              ? 'Toutes les interventions'
+              : 'Quelle situation vous ressemble ?',
+        ),
       );
-
-
-      selector.appendChild(
-        el(
-          'p',
-          'question-intelligence-copy rafi-selector-copy',
-          'Choisissez le périmètre le plus proche. RAFI vérifiera ensuite les seuls détails qui peuvent changer l’estimation.'
-        )
-      );
-
-
-      var cards =
-        el(
-          'div',
-          'answer-cards rafi-choice-stack rafi-choice-stack--services'
+      var cards = el('div', 'answer-cards rafi-choice-stack rafi-choice-stack--services');
+      if (recommendation) {
+        var suggestion = el('section', 'rafi-recommendation');
+        suggestion.appendChild(el('span', 'rafi-recommendation-mark', '↗'));
+        suggestion.appendChild(
+          el('h3', '', recommendation.label_fr || recommendation.short_label_fr),
         );
-
-
-      candidates.forEach(
-        function(svc, idx) {
-          var label =
-            svc.label_fr ||
-            svc.short_label_fr ||
-            svc.service_code;
-
-
-          var card =
-            renderAnswerCard(
-              {
-                label:
-                  label,
-
-                value:
-                  svc.service_code,
-
-                eyebrow:
-                  'Intervention ' +
-                  String(idx + 1)
-                    .padStart(
-                      2,
-                      '0'
-                    ),
-
-                meta:
-                  'Sélectionner ce périmètre',
-
-                indexLabel:
-                  String(idx + 1)
-                    .padStart(
-                      2,
-                      '0'
-                    ),
-
-                variant:
-                  'service'
-              },
-              false,
-              function(serviceCode) {
-                if (
-                  pending
-                ) {
-                  return;
-                }
-
-
-                pending =
-                  true;
-
-
-                cards
-                  .querySelectorAll(
-                    '.answer-card'
-                  )
-                  .forEach(
-                    function(c) {
-                      c.setAttribute(
-                        'aria-disabled',
-                        'true'
-                      );
-
-                      c.classList.add(
-                        'is-pending'
-                      );
-                    }
-                  );
-
-
-                setRAFIState(
-                  'analyzing'
-                );
-
-
-                triggerIntelligenceLine();
-
-
-                var requestEpoch = ++self._requestEpoch;
-                window.FixeoEstimatorAPI
-                  .selectService(
-                    STATE.sessionToken,
-                    serviceCode
-                  )
-                  .then(
-                    function(r) {
-                      if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
-                      if (
-                        !r ||
-                        !r.ok
-                      ) {
-                        pending =
-                          false;
-
-                        return self._showError(
-                          'Impossible de sélectionner cette intervention.'
-                        );
-                      }
-
-
-                      STATE.sessionToken =
-                        r.session
-                          .session_token;
-
-
-                      STATE.session =
-                        r.session;
-
-
-                      self._renderStep(
-                        r.session,
-                        r.next_step
-                      );
-                    }
-                  )
-                  .catch(
-                    function() {
-                      if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
-                      pending =
-                        false;
-
-
-                      self._showError(
-                        'Problème de connexion. Veuillez réessayer.'
-                      );
-                    }
-                  );
-              }
-            );
-
-
-          card.__indexLabel =
-            String(idx + 1)
-              .padStart(
-                2,
-                '0'
-              );
-
-
-          cards.appendChild(
-            card
+        suggestion.appendChild(
+          el('p', '', 'Vous confirmez l’intervention. RAFI vérifie ensuite son périmètre.'),
+        );
+        selector.appendChild(suggestion);
+      } else {
+        (expanded ? ranked.items : ranked.items.slice(0, 3)).forEach(function (svc) {
+          var selected = self._view && self._view.selectedService === svc.service_code;
+          var card = renderAnswerCard(
+            {
+              value: svc.service_code,
+              label: svc.label_fr || svc.short_label_fr || svc.service_code,
+              variant: 'service',
+            },
+            selected,
+            select,
           );
-        }
-      );
-
-
-      selector.appendChild(
-        cards
-      );
-
-
-      body.appendChild(
-        selector
-      );
-
-
-      bodySlot.innerHTML =
-        '';
-
-
-      bodySlot.appendChild(
-        body
-      );
-
-
-      footerSlot.innerHTML =
-        '';
-    };
-
+          card.setAttribute('role', 'button');
+          card.removeAttribute('aria-checked');
+          if (selected) card.setAttribute('aria-pressed', 'true');
+          cards.appendChild(card);
+        });
+        selector.appendChild(cards);
+      }
+      if (!expanded && (recommendation || candidates.length > 3)) {
+        var more = el(
+          'button',
+          'rafi-more-interventions',
+          recommendation ? 'Modifier · voir d’autres interventions' : 'Voir d’autres interventions',
+        );
+        more.type = 'button';
+        more.onclick = function () {
+          if (pending) return;
+          expanded = true;
+          if (self._view) self._view.catalogueExpanded = true;
+          render();
+        };
+        selector.appendChild(more);
+      }
+      body.appendChild(selector);
+      bodySlot.replaceChildren(body);
+      footerSlot.replaceChildren();
+      var title = selector.querySelector('.question-heading');
+      title.tabIndex = -1;
+      title.focus({ preventScroll: true });
+      if (recommendation)
+        footerSlot.appendChild(
+          renderFooter({
+            primaryLabel: 'Oui, c’est ça',
+            onPrimary: function () {
+              select(recommendation.service_code);
+            },
+          }),
+        );
+      else
+        footerSlot.appendChild(el('p', 'rafi-tap-hint', 'Touchez une intervention pour continuer.'));
+    }
+    render();
+  };
 
   // ───────────────────────────────────────────────────────────────────────────
   // STATE 3 — qualification
@@ -5886,20 +5888,13 @@ var cityInput =
       questionId,
       answer
     ) {
-      var self =
-        this;
-      var requestEpoch = ++self._requestEpoch;
-
-
-      setRAFIState(
-        'analyzing'
-      );
-
-
-      triggerIntelligenceLine();
-
-
-      if (self._view) self._view.answer = answer;
+      var self=this;
+      if(self._answerPending)return;
+      self._answerPending=true;
+      var requestEpoch=++self._requestEpoch;
+      var cta=document.getElementById('cta-primary');if(cta)cta.disabled=true;
+      setRAFIState('analyzing');triggerIntelligenceLine();
+      if(self._view)self._view.answer=answer;
       window.FixeoEstimatorAPI
         .answer(
           STATE.sessionToken,
@@ -5909,6 +5904,7 @@ var cityInput =
         .then(
           function(r) {
             if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
+            self._answerPending=false;
             if (
               !r ||
               !r.ok
@@ -5937,6 +5933,7 @@ var cityInput =
         .catch(
           function() {
             if (self !== _activeModal || requestEpoch !== self._requestEpoch) return;
+            self._answerPending=false;
             self._showError(
               'Problème de connexion. Veuillez réessayer.'
             );
@@ -6222,14 +6219,20 @@ var cityInput =
       }
 
 
+      var priceDetails = el('details','rafi-price-details');
+      priceDetails.appendChild(el('summary','','Voir le détail du prix'));
+      if (['PRICE_READY','LABOUR_PLUS_PART_READY','DIAGNOSTIC_READY'].includes(ot)) {
+        bodyEl.querySelectorAll('.price-certificate__scope').forEach(function(section){priceDetails.appendChild(section);});
+      }
       if (outcome.financial_breakdown) {
         var financial = outcome.financial_breakdown;
         var details = el('div', 'result-scope');
         details.appendChild(el('p', '', 'Prestation artisan : ' + formatMAD(financial.vapMinor / 100)));
         details.appendChild(el('p', '', 'Service FIXEO : ' + formatMAD(financial.commissionMinor / 100)));
         details.appendChild(el('p', '', 'Fournitures incluses : ' + formatMAD(financial.materialsMinor / 100)));
-        bodyEl.appendChild(details);
+        priceDetails.appendChild(details);
       }
+      if(priceDetails.children.length>1)bodyEl.appendChild(priceDetails);
       bodySlot.innerHTML = '';
       bodySlot.appendChild(bodyEl);
 
@@ -6454,6 +6457,7 @@ var cityInput =
       this._entryContext.metier_hint = null;
       this._entryContext.service_hint = null;
       this._entryContext.situation_id = null;
+      this._entryContext.known_inputs = {};
     }
     this._lastAnalyzedDescription = description;
     if (!this._entryContext.metier_hint && !this._entryContext.service_hint) {
@@ -6468,7 +6472,11 @@ var cityInput =
   function copyJourney(value) { return JSON.parse(JSON.stringify(value)); }
   EstimatorModal.prototype._rememberView = function(kind, session, step, outcome) {
     if (this._restoring) return;
-    if (this._view) this._history.push(this._view);
+    if (this._view) {
+      var scroll=document.getElementById('body-slot');
+      if(scroll)this._view.scrollTop=scroll.scrollTop;
+      this._history.push(this._view);
+    }
     this._view = {kind: kind, session: session && copyJourney(session),
       step: step && copyJourney(step), outcome: outcome && copyJourney(outcome),
       context: copyJourney(this._entryContext), token: STATE.sessionToken,
@@ -6478,6 +6486,7 @@ var cityInput =
     if(this._quoteOpen)return this._leaveQuote();
     if (!this._history.length) return;
     ++this._requestEpoch;
+    this._answerPending=false;
     var previous = this._history.pop();
     this._view = previous;
     this._restoreView(true);
@@ -6514,6 +6523,8 @@ var cityInput =
         updateCTA(true);
       }
     } finally { this._restoring = false; }
+    var scroll=document.getElementById('body-slot');
+    if(scroll)scroll.scrollTop=previous.scrollTop||0;
     this._renderBack();
   };
   EstimatorModal.prototype._renderBack = function() {
@@ -6525,7 +6536,7 @@ var cityInput =
     var self = this;
     var back = el('button', 'btn-back', diagnosticBack ? '← Retour au diagnostic' : '← Étape précédente');
     back.id = 'rafi-step-back'; back.type = 'button';
-    back.style.cssText = 'margin:8px 20px;padding:10px 14px;min-height:44px;color:#e8efff;background:#24334a;border:1px solid #617699;border-radius:12px;cursor:pointer';
+    back.setAttribute('aria-label','Retour à l’étape précédente');
     back.addEventListener('click', function() {
       if (self._quoteOpen) return self._back();
       if (diagnosticBack) {
@@ -6539,7 +6550,7 @@ var cityInput =
     if (ctx && !ctx.querySelector('.rafi-need-summary')) {
       var summary = el('p', 'rafi-need-summary');
       summary.textContent = self._entryContext.description || self._entryContext.free_text || '';
-      summary.style.cssText = 'margin:8px 20px;color:#bdcbe1;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere';
+      summary.title=summary.textContent;
       ctx.appendChild(summary);
     }
   };
