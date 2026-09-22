@@ -1,0 +1,22 @@
+<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Diagnostic mobile · UI uniquement</title><link rel="stylesheet" href="/css/fixeo-diagnostic-v1.css?v=diagnostic-mobile-v3"><style>body{margin:0;background:#f4f5f8}#fixeo-urgent-fab,.chat-widget{position:fixed;bottom:16px;padding:12px;border-radius:24px;background:#d34038;color:white;font:12px system-ui}#fixeo-urgent-fab{left:16px}.chat-widget{right:16px;background:#286c54}</style><body><section id="fixeo-diagnostic-signature" class="fxdiag-section" aria-labelledby="fxdiag-signature-title" hidden>
+  <div class="fxdiag-signature">
+    <div class="fxdiag-story">
+      <p class="fxdiag-eyebrow"><span class="fxdiag-dot" aria-hidden="true"></span>FIXEO DIAGNOSTIC <span class="fxdiag-ai-label">Assisté par IA</span></p>
+      <h2 id="fxdiag-signature-title">Vous ne savez pas exactement ce qui ne va pas ?<span>Montrez le problème à FIXEO.</span></h2>
+      <p class="fxdiag-copy">Une photo, quelques mots. Faites le premier pas vers la bonne intervention.</p>
+      <ul class="fxdiag-visual-tags" aria-label="Votre diagnostic en trois points"><li>Photo ou description</li><li>Métier adapté</li><li>Urgence évaluée</li></ul>
+      <button id="fxdiag-open" type="button" class="fxdiag-button" data-fxdiag-open aria-haspopup="dialog">Diagnostiquer mon problème <span aria-hidden="true">↗</span></button>
+      <small>Diagnostic indicatif. L’artisan confirme sur place si nécessaire.</small>
+      <p id="fxdiag-launch-status" class="fxdiag-launch-status" role="status"></p>
+    </div>
+    <button id="fxdiag-camera-open" type="button" class="fxdiag-visual" data-fxdiag-open aria-haspopup="dialog" aria-label="Ouvrir le Diagnostic : montrer mon problème">
+      <span class="fxdiag-visual-top"><span>Du doute à la clarté</span><span class="fxdiag-visual-arrow" aria-hidden="true">↗</span></span>
+      <span class="fxdiag-visual-frame">
+        <span class="fxdiag-camera-orb"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M7 17h8l4-6h10l4 6h8v23H7z"/><circle cx="24" cy="27" r="7"/><path d="M5 11V6h6M37 6h6v5M5 39v5h6M37 44h6v-5"/></svg></span>
+        <strong>Votre problème devient plus clair.</strong>
+        <span>Commencer avec une photo ou quelques mots <b aria-hidden="true">→</b></span>
+      </span>
+      <span class="fxdiag-visual-bottom"><span aria-hidden="true">01</span> Vous montrez. FIXEO vous guide.</span>
+    </button>
+  </div>
+</section><button id="fixeo-urgent-fab">Urgence</button><div class="chat-widget">WhatsApp</div><script>window.fetch=async function(url,options){if(url!='/api/diagnostic-v1'||(options&&options.method==='POST'))throw new Error('UI_CHECK_NO_NETWORK_WRITES');return {ok:true,json:async()=>({enabled:true})}};</script><script src="/js/fixeo-diagnostic-v1.js?v=diagnostic-mobile-v3"></script></body></html>
