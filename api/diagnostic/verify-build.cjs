@@ -108,6 +108,11 @@ async function verify() {
     ok(await request({ action: 'analyze', revision: session.revision, run_id: randomUUID() }));
     assert.ok(session.result?.problem);
     assert.ok(['ready', 'questions'].includes(session.state));
+    // Regression: this flat synthetic photo must never support physical claims.
+    assert.equal(session.result.photo_assessments?.[0]?.status, 'inconclusive');
+    assert.equal(session.result.facts.some(f => f.provenance === 'observed'), false);
+    assert.ok(session.result.checks.some(text => /Photo 1 non concluante/.test(text)));
+    assert.ok(session.result.facts.some(f => f.key === 'user_description' && f.provenance === 'user_declared'));
     assert.equal(session.request_id, null);
     // Remove our media, then replay its still-valid upload ticket to prove maintenance
     // deletes actual Storage bytes as well as maintaining persistent tombstones.

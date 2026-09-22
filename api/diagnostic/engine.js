@@ -1,10 +1,15 @@
-'use strict';
-const { VERSION, QUESTIONS, validateProviderResult } = require('./contract');
-const { evaluateSafety } = require('./safety');
-const { hash } = require('./auth');
-const { DiagnosticError } = require('./transport');
+"use strict";
+const { VERSION, QUESTIONS, validateProviderResult } = require("./contract");
+const { evaluateSafety } = require("./safety");
+const { hash } = require("./auth");
+const { DiagnosticError } = require("./transport");
+const {
+  validatePhotoEvidence,
+  photoObservations,
+  photoLimitations,
+} = require("./photo-grounding");
 const indicative =
-  'Diagnostic indicatif — à confirmer par l’artisan si nécessaire.';
+  "Diagnostic indicatif — à confirmer par l’artisan si nécessaire.";
 async function analyze(snapshot, { provider, mediaStore }) {
   const input = snapshot.input;
   const before = evaluateSafety(
@@ -14,20 +19,22 @@ async function analyze(snapshot, { provider, mediaStore }) {
   );
   const declarations = [
     {
-      key: 'description',
+      // Render the exact customer declaration with its existing provenance label
+      // (the legacy modal hides only the old "description" key).
+      key: "user_description",
       value: input.description,
-      provenance: 'user_declared',
+      provenance: "user_declared",
     },
     ...(input.safety_signals || []).map((value) => ({
-      key: 'safety_signal',
+      key: "safety_signal",
       value,
-      provenance: 'user_confirmed',
+      provenance: "user_confirmed",
     })),
     ...Object.entries(input.answers || {}).map(([key, value]) => ({
       key,
       value,
       provenance:
-        QUESTIONS[key]?.type === 'choice' ? 'user_confirmed' : 'user_declared',
+        QUESTIONS[key]?.type === "choice" ? "user_confirmed" : "user_declared",
     })),
   ];
   if (before.stop)
@@ -44,13 +51,13 @@ async function analyze(snapshot, { provider, mediaStore }) {
         questions: [],
         safety: before,
         urgency: {
-          value: 'critical',
-          provenance: 'ai_inferred',
-          basis: 'fixeo-safety-v1',
+          value: "critical",
+          provenance: "ai_inferred",
+          basis: "fixeo-safety-v1",
         },
         duration: null,
         pricing: null,
-        next: 'safety_stop',
+        next: "safety_stop",
       },
       usage: {},
       providerCalled: false,
@@ -59,7 +66,7 @@ async function analyze(snapshot, { provider, mediaStore }) {
   for (const item of snapshot.media) {
     const bytes = await mediaStore.download(item.path);
     if (hash(bytes) !== item.sha256)
-      throw new DiagnosticError('MEDIA_INTEGRITY_FAILURE', 409);
+      throw new DiagnosticError("MEDIA_INTEGRITY_FAILURE", 409);
     media.push({ id: item.id, bytes });
   }
   const output = await provider.analyze({
@@ -75,6 +82,17 @@ async function analyze(snapshot, { provider, mediaStore }) {
     output.result,
     media.map((m) => m.id),
   );
+  const photos = media.length
+    ? validatePhotoEvidence(
+        { photos: output.photoEvidence },
+        media.map((m) => m.id),
+      )
+    : [];
+  if (
+    JSON.stringify(model.observations) !==
+    JSON.stringify(photoObservations(photos))
+  )
+    throw new DiagnosticError("UNGROUNDED_PROVIDER_OBSERVATION", 502);
   const safety = evaluateSafety(input, model, before.signals);
   const answered = input.answers || {};
   const questions = safety.stop
@@ -87,12 +105,12 @@ async function analyze(snapshot, { provider, mediaStore }) {
     result: {
       version: VERSION,
       indicative,
-      trade: { value: model.trade, provenance: 'ai_inferred' },
-      problem: { value: model.problem, provenance: 'ai_inferred' },
+      trade: { value: model.trade, provenance: "ai_inferred" },
+      problem: { value: model.problem, provenance: "ai_inferred" },
       facts: [
         ...declarations,
         ...model.observations.map((x, i) => ({
-          key: 'observation_' + i,
+          key: "observation_" + i,
           value: x.text,
           provenance: x.provenance,
           media_ids: x.media_ids,
@@ -100,28 +118,32 @@ async function analyze(snapshot, { provider, mediaStore }) {
       ],
       hypotheses: model.hypotheses.map((value) => ({
         value,
-        provenance: 'ai_inferred',
+        provenance: "ai_inferred",
       })),
       possible_parts: model.possible_parts.map((value) => ({
         value,
-        provenance: 'ai_inferred',
+        provenance: "ai_inferred",
         certain: false,
       })),
-      checks: model.checks,
+      checks: [...photoLimitations(photos), ...model.checks],
+      photo_assessments: photos.map(({ media_id, status }) => ({
+        media_id,
+        status,
+      })),
       questions,
       safety,
       urgency: {
-        value: safety.stop ? 'critical' : model.urgency,
-        provenance: 'ai_inferred',
+        value: safety.stop ? "critical" : model.urgency,
+        provenance: "ai_inferred",
         reason: model.urgency_reason,
       },
       duration: null,
       pricing: null,
       next: safety.stop
-        ? 'safety_stop'
+        ? "safety_stop"
         : questions.length
-          ? 'questions'
-          : 'qualification',
+          ? "questions"
+          : "qualification",
     },
     usage: output.usage,
     providerCalled: true,
