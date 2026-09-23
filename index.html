@@ -2911,7 +2911,7 @@ box-shadow:
   <!-- Estimator V2 config bootstrap — dormant (estimatorV2Enabled: false) -->
   <script src="js/fixeo-estimator-config.js" defer></script>
   <!-- 7C.9D: Estimator V2 dormant production assets — inactive until flag ON -->
-  <link rel="stylesheet" href="css/fixeo-estimator-v2.css?v=ultra-premium-v3">
+  <link rel="stylesheet" href="css/fixeo-estimator-v2.css?v=flagship-final-v1">
   <script src="js/fixeo-diagnostic-v1.js?v=hero-dossier-v1" defer></script>
   <script src="js/fixeo-intake-v1.js?v=hero-intake-v1" defer></script>
   <script src="js/fixeo-estimator-api-v1.js?v=diagnostic-v1" defer></script>
@@ -2929,7 +2929,7 @@ box-shadow:
   <!-- FIXEO Estimation Signature Gateway -->
 <link
   rel="stylesheet"
-  href="css/fixeo-estimation-signature-v1.css?v=ultra-premium-v1">
+  href="css/fixeo-estimation-signature-v1.css?v=flagship-final-v1">
 <link rel="stylesheet" href="css/fixeo-diagnostic-v1.css?v=diagnostic-intervention-v1">
   <style id="fixeo-ios-focus-zoom-guard">
   /*
@@ -3248,8 +3248,8 @@ box-shadow:
 
         <p class="fxes__description">
           Décrivez votre besoin. RAFI identifie l’intervention,
-          vérifie les quelques détails utiles et affiche le prix FIXEO
-          lorsqu’il peut être établi.
+          vérifie les détails utiles et affiche le prix FIXEO
+          quand il peut être établi.
         </p>
 
       </div>
@@ -3297,6 +3297,31 @@ box-shadow:
   var trigger = document.getElementById('fxes-open-estimator');
 
   if (!trigger) return;
+
+  // Presentation only: keep the homepage entry clear of floating actions.
+  var entry = document.getElementById('fixeo-estimation-signature');
+  function entryVisible(visible) {
+    document.body.classList.toggle('fx-estimation-entry-visible', visible);
+  }
+  if (entry && window.IntersectionObserver) {
+    var entryObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (item) { entryVisible(item.isIntersecting); });
+    });
+    entryObserver.observe(entry);
+  } else if (entry) {
+    var entryFrame = 0;
+    function updateEntry() {
+      if (entryFrame) return;
+      entryFrame = requestAnimationFrame(function () {
+        entryFrame = 0;
+        var rect = entry.getBoundingClientRect();
+        entryVisible(rect.height > 0 && rect.bottom > 0 && rect.top < window.innerHeight);
+      });
+    }
+    window.addEventListener('scroll', updateEntry, {passive: true});
+    window.addEventListener('resize', updateEntry);
+    updateEntry();
+  }
 
   trigger.addEventListener('click', function () {
     if (

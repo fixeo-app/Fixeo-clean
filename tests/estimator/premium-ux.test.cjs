@@ -511,7 +511,7 @@ test('measured same-input friction benchmark: no tariff questions silently remov
 // Resolve screen media rules so these checks exercise the shipped cascade.
 function screenStyles(w, width, height, reduced = false) {
   const raw = w.document.createElement('style');
-  raw.textContent = read('css/fixeo-estimator-v2.css');
+  raw.textContent = read('css/main.css').match(/select\{\n\s*color:#fff!important;[\s\S]*?\}/)[0] + '\n' + read('css/fixeo-estimator-v2.css');
   w.document.head.appendChild(raw);
   function applies(query) {
     return query.split(',').some((part) => {
@@ -626,7 +626,7 @@ test('homepage gateway retains the existing city-aware opening action and access
   const section = html.match(/<section\s+id="fixeo-estimation-signature"[\s\S]*?<\/section>/)[0];
   const script = html.slice(html.indexOf(section) + section.length).match(/<script>([\s\S]*?)<\/script>/)[1];
   const dom = new JSDOM('<select id="fxhf-location"><option selected>Fès</option></select>' + section,
-    { runScripts: 'outside-only' });
+    { runScripts: 'outside-only', pretendToBeVisual: true });
   try {
     let context;
     dom.window.FixeoEstimatorV2 = { open: (value) => { context = value; return Promise.resolve(); } };
@@ -808,7 +808,8 @@ for (const width of [320, 360, 390, 412]) {
     assert.match(dialog.querySelector('.fx-est-confirm-summary').textContent, /Fès — 220 MAD pour le diagnostic/);
     assert.match(dialog.textContent, /Téléphone pour organiser l’intervention/);
     const button = dialog.querySelector('.fx-est-confirm-primary');
-    assert.match(style(button).backgroundImage, /linear-gradient\(112deg/);
+    assert.equal(style(button).background, 'var(--fx-est-cta)');
+    assert.match(style(dialog).getPropertyValue('--fx-est-cta'), /linear-gradient\(112deg/);
     assert.equal(style(button).minHeight, '52px');
     assert.equal(style(dialog).overflowY, 'auto');
     assert.equal(style(s.q('fixeo-urgent-fab')).visibility, 'hidden');
@@ -858,4 +859,120 @@ test('clean homepage return preserves an old price token and opens a new estimat
   await wait(() => s.calls.filter(c => c.action === 'start').length === 2);
   assert.equal(s.calls.filter(c => c.action === 'start')[1].ctx.description, 'Mon lavabo est bouché');
   assert.equal(s.w.document.getElementById('fxhro-card'), null);
+});
+
+for (const width of [320, 360, 390, 412]) {
+  test('final flagship ' + width + ': airy header, restrained native controls and full-color CTA states', async (t) => {
+    const s = fixture(t, {width});
+    officialHeader(s);
+    await s.open({description: '', city: 'Fès', metier_hint: null});
+    s.w.MediaRecorder = class {};
+    s.w.navigator.mediaDevices = {getUserMedia: async () => {throw Error('Fixture: permission not granted');}};
+    s.w.eval(read('js/fixeo-estimation-voice-v1.js'));
+    screenStyles(s.w, width, 844);
+    const style = el => s.w.getComputedStyle(el);
+    const header = s.q('estimator-header'), modal = s.w.document.querySelector('.estimator-modal');
+    assert.equal(style(header).minHeight, '76px');
+    // JSDOM retains unresolved shorthand tokens; the browser resolves the gutter.
+    assert.equal(style(header).padding, '16px var(--rafi-gutter)');
+    assert.equal(style(s.q('modal-close')).height, '44px');
+    assert.match(style(modal).animation, /fx-estimation-open .22s/);
+    assert.equal(style(s.q('body-slot')).flexGrow, '0');
+    assert.equal(style(s.q('footer-slot')).position, 'static');
+    assert.equal(style(s.q('footer-slot')).marginTop, '24px');
+    const city = s.q('estimator-city-input'), language = s.w.document.querySelector('.rafi-dictation select');
+    assert.equal(city.tagName, 'SELECT');
+    assert.equal(language.tagName, 'SELECT');
+    assert.equal(city.value, 'Fès');
+    assert.deepEqual([...language.options].map(o => o.value), ['fr-FR', 'ar-MA']);
+    for (const control of [city, language]) {
+      assert.equal(control.disabled, false);
+      assert.equal(style(control).appearance, 'none');
+      assert.equal(style(control).minHeight, '44px');
+      assert.equal(style(control).fontSize, '16px', 'no Safari focus zoom');
+      assert.equal(style(control).backgroundColor, 'rgba(255, 255, 255, 0.016)', 'global select fill must not leak');
+      assert.match(style(control).backgroundImage, /svg/);
+      assert.ok(control.getAttribute('aria-label'));
+      control.focus(); assert.equal(s.w.document.activeElement, control);
+    }
+    assert.equal(style(city.parentElement).borderTopWidth, '0px');
+    assert.equal(style(city.parentElement).backgroundColor, 'rgba(0, 0, 0, 0)');
+    assert.equal(style(s.w.document.querySelector('.rafi-dictation button')).borderTopWidth, '0px');
+    assert.equal(style(s.w.document.querySelector('.rafi-dictation-status')).fontWeight, '400');
+    const cta = s.q('cta-primary');
+    assert.equal(cta.disabled, true);
+    assert.equal(style(cta).filter, 'none');
+    assert.equal(style(cta).appearance, 'none');
+    assert.equal(style(cta).background, 'var(--fx-est-cta-muted)');
+    const field = s.q('estimator-need-input');
+    field.value = 'Une fuite sous mon évier. '.repeat(15);
+    field.dispatchEvent(new s.w.Event('input', {bubbles: true}));
+    assert.equal(cta.disabled, false);
+    assert.equal(style(cta).background, 'var(--fx-est-cta)');
+    assert.equal(style(cta).filter, 'none');
+    language.value = 'ar-MA'; language.dispatchEvent(new s.w.Event('change', {bubbles: true}));
+    assert.equal(language.value, 'ar-MA'); assert.equal(city.value, 'Fès');
+    s.viewport.height = 340; field.focus();
+    s.viewport.dispatchEvent(new s.w.Event('resize'));
+    await new Promise(r => s.w.requestAnimationFrame(r));
+    assert.equal(style(header).minHeight, '60px');
+    assert.equal(s.q('estimator-scroll').contains(cta), true);
+    s.viewport.height = 844; s.viewport.dispatchEvent(new s.w.Event('resize'));
+    await new Promise(r => s.w.requestAnimationFrame(r));
+    assert.equal(style(header).minHeight, '76px');
+    screenStyles(s.w, width, 844, true);
+    assert.equal(style(modal).animation, 'none');
+  });
+}
+
+test('flagship service rows keep the exact choices and remove the inherited inner padding', async t => {
+  const s = fixture(t);
+  await s.open({description: 'Un problème de plomberie'}); await s.start();
+  screenStyles(s.w, 390, 844);
+  const cards = [...s.w.document.querySelectorAll('.rafi-choice-card--service')];
+  assert.equal(cards.length, 3);
+  assert.deepEqual(cards.map(c => c.querySelector('.rafi-choice-card__label').textContent), s.step.candidate_services.slice(0, 3).map(c => c.label_fr));
+  for (const card of cards) {
+    assert.equal(s.w.getComputedStyle(card).minHeight, '60px');
+    assert.equal(s.w.getComputedStyle(card.querySelector('.rafi-choice-card__content')).padding, '0px');
+    const arrow = s.w.getComputedStyle(card.querySelector('.rafi-choice-card__arrow'));
+    assert.equal(arrow.backgroundColor, 'rgba(0, 0, 0, 0)'); assert.equal(arrow.borderTopWidth, '0px');
+  }
+});
+
+test('one canonical gradient spans entry, modal and confirmation without editing the assistant', () => {
+  const hero = read('css/fixeo-hero-flagship-v1.css').match(/--fxhf-cta-gradient:\s*([^;]+);/)[1];
+  const css = read('css/fixeo-estimator-v2.css');
+  assert.equal(css.match(/--fx-est-cta:\s*([^;]+);/)[1], hero);
+  assert.match(read('css/fixeo-estimation-signature-v1.css'), /--fxes-cta: var\(--fx-est-cta,/);
+  assert.match(css, /dialog\.fx-est-confirm \.fx-est-confirm-primary \{[\s\S]*?background: var\(--fx-est-cta\)/);
+});
+
+test('entry visibility protects its content from both floating actions and restores them on leaving', () => {
+  const html = read('index.html');
+  const section = html.match(/<section\s+id="fixeo-estimation-signature"[\s\S]*?<\/section>/)[0];
+  const script = html.slice(html.indexOf(section) + section.length).match(/<script>([\s\S]*?)<\/script>/)[1];
+  const dom = new JSDOM('<style>' + read('css/fixeo-estimation-signature-v1.css') + '</style>' + section +
+    '<button id="fixeo-urgent-fab">Urgence</button><a class="chat-widget" href="/whatsapp.html">WhatsApp</a>',
+    {runScripts: 'outside-only', pretendToBeVisual: true});
+  try {
+    const w = dom.window; let visibility, observed, opened;
+    w.IntersectionObserver = class { constructor(callback) {visibility = callback;} observe(node) {observed = node;} };
+    w.FixeoEstimatorV2 = {open: ctx => {opened = ctx;}};
+    w.eval(script);
+    assert.equal(observed.id, 'fixeo-estimation-signature');
+    visibility([{isIntersecting:true}]);
+    for (const el of w.document.querySelectorAll('#fixeo-urgent-fab,.chat-widget')) {
+      assert.equal(w.getComputedStyle(el).visibility, 'hidden');
+      assert.equal(w.getComputedStyle(el).pointerEvents, 'none');
+    }
+    w.document.getElementById('fxes-open-estimator').click();
+    assert.equal(opened.source, 'homepage_estimation_signature');
+    visibility([{isIntersecting:false}]);
+    assert.equal(w.document.body.classList.contains('fx-estimation-entry-visible'), false);
+    assert.equal(w.document.querySelector('.chat-widget').getAttribute('href'), '/whatsapp.html');
+    const dot = w.document.querySelector('.fxes__signal-dot');
+    assert.equal(w.getComputedStyle(dot).pointerEvents, 'none');
+    assert.equal(w.getComputedStyle(dot).width, '12px');
+  } finally {dom.window.close();}
 });

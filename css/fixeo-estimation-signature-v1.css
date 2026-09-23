@@ -2,24 +2,26 @@
 #fixeo-estimation-signature {
   --fxes-text: #f5f5fa;
   --fxes-muted: #b6bdd0;
-  --fxes-cta: linear-gradient(112deg, #c35426, #c13470 48%, #7443b7);
+  --fxes-cta: var(--fx-est-cta, linear-gradient(112deg, #c35426, #c13470 48%, #7443b7));
   position: relative;
   isolation: isolate;
   padding: 48px 24px;
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--fxes-text);
-  background: radial-gradient(ellipse at 84% 50%, #51334a18, transparent 65%), #080d18;
+  background: radial-gradient(ellipse at 10% 24%, #4e456d1c, transparent 62%), #080d18;
 }
 #fixeo-estimation-signature *,
 #fixeo-estimation-signature *::before,
 #fixeo-estimation-signature *::after { box-sizing: border-box; }
 #fixeo-estimation-signature .fxes__shell { width: min(1080px, 100%); margin: 0 auto; }
 #fixeo-estimation-signature .fxes__signal {
-  display: flex; align-items: center; gap: 9px; margin-bottom: 26px;
-  color: #d5cfdf; font-size: 11px; font-weight: 650; letter-spacing: .09em;
+  display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+  color: #c5c6d7; font-size: 11px; font-weight: 600; letter-spacing: .08em;
 }
 #fixeo-estimation-signature .fxes__signal-dot {
-  width: 5px; height: 5px; border-radius: 50%; background: #eab4cb;
-  box-shadow: 0 0 12px #eab4cb38;
+  width: 12px; height: 12px; flex: 0 0 12px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle at 35% 30%, #d8eeff, #8fb9d6 30%, #556d9c 65%, #273855);
+  box-shadow: inset 0 0 0 1px #d2e4ff30, 0 0 0 4px #a4c4ef06, 0 0 16px #a1bce530;
 }
 #fixeo-estimation-signature .fxes__content {
   display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr);
@@ -28,11 +30,11 @@
 #fixeo-estimation-signature .fxes__copy,
 #fixeo-estimation-signature .fxes__action { min-width: 0; }
 #fixeo-estimation-signature .fxes__eyebrow {
-  margin: 0 0 10px; color: #aeb7c9; font-size: 11px; font-weight: 600; letter-spacing: .09em;
+  margin: 0 0 8px; color: #aeb7c9; font-size: 11px; font-weight: 600; letter-spacing: .09em;
 }
 #fixeo-estimation-signature .fxes__title {
-  margin: 0; max-width: 18ch; font-size: clamp(28px, 3.2vw, 38px);
-  line-height: 1.13; font-weight: 700; letter-spacing: -.035em; text-wrap: balance;
+  margin: 0; max-width: 20ch; font-size: clamp(28px, 3.2vw, 38px);
+  line-height: 1.16; font-weight: 650; letter-spacing: -.035em; text-wrap: balance;
   color: var(--fxes-text);
 }
 #fixeo-estimation-signature .fxes__description {
@@ -42,31 +44,33 @@
 #fixeo-estimation-signature .fxes__cta {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   width: 100%; min-height: 54px; padding: 14px 18px; margin: 0;
-  border: 1px solid #ffffff20; border-radius: 15px;
+  border: 1px solid #e5d9ff30; border-radius: 16px;
+  appearance: none; -webkit-appearance: none;
   background: var(--fxes-cta); color: #fff; font: inherit; cursor: pointer;
-  box-shadow: inset 0 1px #ffffff24, 0 5px 20px #b4416d14;
+  box-shadow: inset 0 1px #ffffff30, inset 0 -1px #24204240, 0 5px 20px #ce487a24;
   transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
   -webkit-tap-highlight-color: transparent;
 }
 #fixeo-estimation-signature .fxes__cta-copy { min-width: 0; text-align: left; }
-#fixeo-estimation-signature .fxes__cta-label { font-size: 15px; font-weight: 700; line-height: 1.3; }
+#fixeo-estimation-signature .fxes__cta-label { font-size: 15px; font-weight: 600; line-height: 1.3; }
 #fixeo-estimation-signature .fxes__cta-meta { display: none; }
-#fixeo-estimation-signature .fxes__cta-arrow { flex: 0 0 auto; font-size: 22px; line-height: 1; }
+#fixeo-estimation-signature .fxes__cta-arrow { display: inline-flex; align-items: center; flex: 0 0 auto; width: 20px; height: 20px;
+  font-size: 22px; line-height: 1; }
 #fixeo-estimation-signature .fxes__cta:focus-visible { outline: 2px solid #f0bdd6; outline-offset: 4px; }
 #fixeo-estimation-signature .fxes__cta:active { transform: scale(.985); }
 #fixeo-estimation-signature .fxes__proof {
   display: flex; justify-content: center; align-items: center; gap: 10px;
-  flex-wrap: wrap; margin: 14px 0 0; color: #b6bdce; font-size: 12px; line-height: 1.5;
+  flex-wrap: wrap; margin: 16px 0 0; color: #b6bdce; font-size: 12px; line-height: 1.5;
 }
 #fixeo-estimation-signature .fxes__proof [aria-hidden] { color: #727c93; }
 @media (hover: hover) {
   #fixeo-estimation-signature .fxes__cta:hover { filter: brightness(1.08); box-shadow: inset 0 1px #ffffff28, 0 6px 24px #b4416d22; }
 }
 @media (max-width: 700px) {
-  #fixeo-estimation-signature { padding: 34px 20px 38px; }
-  #fixeo-estimation-signature .fxes__signal { margin-bottom: 22px; }
-  #fixeo-estimation-signature .fxes__content { grid-template-columns: minmax(0, 1fr); gap: 22px; }
-  #fixeo-estimation-signature .fxes__title { font-size: 29px; }
+  #fixeo-estimation-signature { padding: 32px 24px 40px; }
+  #fixeo-estimation-signature .fxes__signal { margin-bottom: 24px; }
+  #fixeo-estimation-signature .fxes__content { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  #fixeo-estimation-signature .fxes__title { font-size: 30px; }
   #fixeo-estimation-signature .fxes__description { font-size: 14px; margin-top: 12px; line-height: 1.6; }
 }
 @media (max-width: 350px) {
@@ -77,3 +81,7 @@
 @media (prefers-reduced-motion: reduce) {
   #fixeo-estimation-signature .fxes__cta { transition: none; transform: none; }
 }
+
+/* This entry borrows the existing floating-action visibility policy only. */
+body.fx-estimation-entry-visible #fixeo-urgent-fab,
+body.fx-estimation-entry-visible .chat-widget { visibility: hidden !important; pointer-events: none !important; }
