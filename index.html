@@ -2415,280 +2415,133 @@ section#home.hero.hero-section {
   html body #recommended-artisan-section {
     display: none !important;
   }
-/* ARTISAN GATEWAY — homepage */
-.fxag-section {
-  padding: 34px 20px;
+/* ARTISAN GATEWAY — homepage-only editorial entry. */
+#artisan-gateway {
+  padding: 34px 24px 40px;
+  color: #f5f5fa;
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(ellipse at 14% 24%, #bc3d7610, transparent 64%);
 }
-
-.fxag-inner {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 30px 26px;
-  position: relative;
-  overflow: hidden;
-
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 24px;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255,77,141,0.08) 0%,
-      rgba(124,58,237,0.10) 48%,
-      rgba(72,100,255,0.06) 100%
-    ),
-    rgba(8,12,24,0.88);
-
-  box-shadow:
-    0 18px 50px rgba(0,0,0,0.34),
-    inset 0 1px 0 rgba(255,255,255,0.04);
-
+#artisan-gateway *,
+#artisan-gateway *::before,
+#artisan-gateway *::after { box-sizing: border-box; }
+#artisan-gateway > .container { max-width: 1080px; padding: 0; }
+#artisan-gateway .fxag-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  column-gap: 64px;
+  row-gap: 24px;
   text-align: left;
 }
-
-.fxag-inner::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-
-  background-image:
-    linear-gradient(rgba(72,100,255,0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(72,100,255,0.035) 1px, transparent 1px);
-
-  background-size: 34px 34px;
-  opacity: 0.65;
+#artisan-gateway .fxag-intro,
+#artisan-gateway .fxag-action { min-width: 0; }
+#main-content #artisan-gateway .fxag-eyebrow {
+  margin-bottom: 20px;
+  border-color: #e9a3c25c;
+  background: linear-gradient(110deg, #c8508420, #b05c9910), #101522d9;
+  color: #f0d5e3;
+  box-shadow: inset 0 1px #ffe0ec20, 0 0 12px #ce739526, 0 0 22px #b867af18;
 }
-
-.fxag-inner > * {
-  position: relative;
-  z-index: 1;
+#main-content #artisan-gateway .fxhome-chapter-dot {
+  background: #efb0ce;
+  box-shadow: 0 0 0 3px #e8a4c416, 0 0 8px #eb95bd70;
 }
-
-.fxag-eyebrow {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  color: #ff4d8d;
-}
-
-.fxag-title {
+#artisan-gateway .fxag-title {
+  max-width: 20ch;
   margin: 0;
-  font-size: clamp(2rem, 7vw, 3rem);
-  line-height: 1;
-  color: #fff;
+  font-size: clamp(28px, 3.2vw, 38px);
+  font-weight: 700;
+  line-height: 1.16;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+  color: #f8f4fa;
 }
-
-.fxag-copy {
-  margin: 12px 0 20px;
-  color: rgba(255,255,255,0.72);
-  font-size: 1rem;
+#artisan-gateway .fxag-copy {
+  max-width: 54ch;
+  margin: 16px 0 0;
+  color: #bfc0d0;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+#artisan-gateway .fxag-benefits {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+#artisan-gateway .fxag-benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+  padding: 18px 0;
+  border-bottom: 1px solid #dfb8ce1c;
+}
+#artisan-gateway .fxag-benefit:first-child { padding-top: 0; }
+#artisan-gateway .fxag-benefit:last-child { padding-bottom: 0; border-bottom: 0; }
+#artisan-gateway .fxag-benefit-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 10px;
+  color: #e9b0ce;
+  background: radial-gradient(circle, #c8598c18, transparent 72%);
+}
+#artisan-gateway .fxag-benefit-icon svg { width: 20px; height: 20px; }
+#artisan-gateway .fxag-benefit-copy { min-width: 0; }
+#artisan-gateway .fxag-benefit h3 {
+  margin: 0 0 6px;
+  color: #eae2ee;
+  font: 600 11px/1.45 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: .055em;
+}
+#artisan-gateway .fxag-benefit h3 span { color: #cc9bb5; font-variant-numeric: tabular-nums; }
+#artisan-gateway .fxag-benefit p {
+  margin: 0;
+  color: #bfc0d0;
+  font-size: 14px;
   line-height: 1.5;
 }
-
-.fxag-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 20px;
-  border-radius: 14px;
-  border: none;
-background: linear-gradient(
-  135deg,
-  #ff8a3d 0%,
-  #ff4f9a 50%,
-  #8b5cff 100%
-);
-box-shadow:
-  0 3px 10px rgba(225,48,108,0.14),
-  0 1px 3px rgba(0,0,0,0.30),
-  inset 0 1px 0 rgba(255,255,255,0.04);
-  color: #fff;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-/* Artisan product preview */
-.fxag-product {
-  margin: 4px 0 20px;
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 18px;
-  overflow: hidden;
-  background: rgba(6,10,22,0.62);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.03),
-    0 14px 34px rgba(0,0,0,0.18);
-}
-
-.fxag-product-head {
-  min-height: 44px;
-  padding: 10px 14px;
+#artisan-gateway .fxag-action { grid-column: 1; max-width: 440px; }
+#artisan-gateway .fxag-cta {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.025);
-
-  font-size: 0.74rem;
-  font-weight: 800;
+  gap: 12px;
+  width: 100%;
+  min-height: 54px;
+  padding: 14px 18px;
+  border: 1px solid #e5d9ff30;
+  border-radius: 16px;
+  background: linear-gradient(112deg, #c35426, #c13470 48%, #7443b7);
   color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-decoration: none;
+  box-shadow: inset 0 1px #ffffff30, inset 0 -1px #24204240, 0 5px 20px #ce487a24;
+  -webkit-tap-highlight-color: transparent;
 }
-
-.fxag-product-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-
-  border-radius: 999px;
-  border: 1px solid rgba(16,185,129,0.24);
-  background: rgba(16,185,129,0.08);
-
-  color: #7df0bd;
-  font-size: 0.58rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
+#artisan-gateway .fxag-cta > span:last-child { flex: 0 0 auto; font-size: 22px; line-height: 1; }
+#artisan-gateway .fxag-cta:focus-visible { outline: 2px solid #f0bdd6; outline-offset: 4px; }
+#artisan-gateway .fxag-microcopy {
+  margin: 12px 0 0;
+  color: #a9acbd;
+  font-size: 12px;
+  line-height: 1.5;
 }
-
-.fxag-product-status > span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #34d399;
-  box-shadow: 0 0 8px rgba(52,211,153,0.75);
-}
-
-.fxag-product-row {
-  display: grid;
-  grid-template-columns: 34px minmax(0,1fr) auto;
-  align-items: center;
-  gap: 10px;
-
-  padding: 11px 13px;
-  border-bottom: 1px solid rgba(255,255,255,0.065);
-}
-
-.fxag-product-row:last-child {
-  border-bottom: 0;
-}
-
-.fxag-product-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: 1px solid rgba(72,100,255,0.22);
-  background: rgba(72,100,255,0.10);
-
-  color: #9aadff;
-  font-size: 0.85rem;
-}
-
-.fxag-product-icon--mission {
-  color: #fbbf24;
-  border-color: rgba(245,158,11,0.22);
-  background: rgba(245,158,11,0.08);
-}
-
-.fxag-product-icon--activity {
-  color: #6ee7b7;
-  border-color: rgba(16,185,129,0.22);
-  background: rgba(16,185,129,0.08);
-}
-
-.fxag-product-body {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.fxag-product-body strong {
-  color: #fff;
-  font-size: 0.76rem;
-  line-height: 1.25;
-}
-
-.fxag-product-body span {
-  color: rgba(255,255,255,0.48);
-  font-size: 0.66rem;
-  line-height: 1.3;
-}
-
-.fxag-product-tag {
-  padding: 4px 7px;
-  border-radius: 999px;
-
-  border: 1px solid rgba(72,100,255,0.22);
-  background: rgba(72,100,255,0.10);
-
-  color: #9aadff;
-  font-size: 0.55rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-}
-
-.fxag-product-tag--mission {
-  color: #fbbf24;
-  border-color: rgba(245,158,11,0.22);
-  background: rgba(245,158,11,0.08);
-}
-
-.fxag-product-tag--activity {
-  color: #6ee7b7;
-  border-color: rgba(16,185,129,0.22);
-  background: rgba(16,185,129,0.08);
-}
-  
-@media (max-width: 640px) {
-  .fxag-section {
-    padding: 28px 14px;
-  }
-
-  .fxag-product-head {
-  padding: 9px 11px;
-}
-
-.fxag-product-row {
-  grid-template-columns: 30px minmax(0,1fr) auto;
-  gap: 8px;
-  padding: 10px 11px;
-}
-
-.fxag-product-icon {
-  width: 30px;
-  height: 30px;
-}
-
-.fxag-product-body strong {
-  font-size: 0.72rem;
-}
-
-.fxag-product-body span {
-  font-size: 0.62rem;
-}
-
-.fxag-product-tag {
-  font-size: 0.50rem;
-  padding: 3px 6px;
-}
-  .fxag-inner {
-    padding: 24px 20px;
-  }
-
-  .fxag-cta {
-    width: 100%;
-    justify-content: center;
-  }
+@media (max-width: 767px) {
+  #artisan-gateway { padding: 28px 24px 36px; }
+  #artisan-gateway .fxag-inner { display: block; }
+  #artisan-gateway .fxag-benefits { margin: 24px 0; }
+  #artisan-gateway .fxag-benefit { padding: 14px 0; }
+  #artisan-gateway .fxag-action { max-width: none; }
 }
   .fhp-network-filter {
   display: flex;
@@ -3863,68 +3716,36 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
      ARTISAN GATEWAY - Homepage
 ══════════════════════════════════════════════════════════ -->
 
-  <section class="fxag-section" id="artisan-gateway" aria-labelledby="fxag-title">
+<section class="fxag-section" id="artisan-gateway" aria-labelledby="fxag-title">
   <div class="container">
     <div class="fxag-inner">
-
-      <span class="fxag-eyebrow">ESPACE ARTISAN · FIXEO</span>
-
-      <h2 class="fxag-title" id="fxag-title">
-        Votre métier. Vos missions. Votre activité.
-      </h2>
-
-      <p class="fxag-copy">
-        Recevez des opportunités adaptées à votre métier et votre zone,
-        construisez votre profil professionnel et développez votre activité avec FIXEO.
-      </p>
-
-<div class="fxag-product" aria-label="Aperçu de l'espace artisan FIXEO">
-
-  <div class="fxag-product-head">
-    <span>FIXEO Artisan</span>
-    <span class="fxag-product-status">
-      <span aria-hidden="true"></span>
-      ESPACE PROFESSIONNEL
-    </span>
-  </div>
-
-  <div class="fxag-product-row">
-    <div class="fxag-product-icon" aria-hidden="true">●</div>
-    <div class="fxag-product-body">
-      <strong>Votre profil professionnel</strong>
-      <span>Métier · zone · disponibilité</span>
-    </div>
-    <span class="fxag-product-tag">PROFIL</span>
-  </div>
-
-  <div class="fxag-product-row">
-    <div class="fxag-product-icon fxag-product-icon--mission" aria-hidden="true">⚡</div>
-    <div class="fxag-product-body">
-      <strong>Opportunités adaptées</strong>
-      <span>Des demandes correspondant à votre activité</span>
-    </div>
-    <span class="fxag-product-tag fxag-product-tag--mission">MISSIONS</span>
-  </div>
-
-  <div class="fxag-product-row">
-    <div class="fxag-product-icon fxag-product-icon--activity" aria-hidden="true">✓</div>
-    <div class="fxag-product-body">
-      <strong>Votre activité FIXEO</strong>
-      <span>Missions · avis · historique</span>
-    </div>
-    <span class="fxag-product-tag fxag-product-tag--activity">SUIVI</span>
-  </div>
-
-</div>
-      
-      <a href="rejoindre-fixeo.html" class="fxag-cta">
-        Rejoindre FIXEO comme artisan
-        <span aria-hidden="true">→</span>
-      </a>
-
+      <div class="fxag-intro">
+        <p class="fxag-eyebrow fxhome-chapter-badge"><span class="fxhome-chapter-dot" aria-hidden="true"></span>ESPACE ARTISAN · FIXEO</p>
+        <h2 class="fxag-title" id="fxag-title">Votre métier. Vos missions. Votre activité.</h2>
+        <p class="fxag-copy">Recevez des opportunités adaptées à votre métier et votre zone. Construisez votre présence professionnelle et développez votre activité avec FIXEO.</p>
+      </div>
+      <ol class="fxag-benefits" aria-label="Les bénéfices de l’espace Artisan">
+        <li class="fxag-benefit">
+          <span class="fxag-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M6 16c0-3 6-3 6 0m3-7h3m-3 4h3"/></svg></span>
+          <div class="fxag-benefit-copy"><h3><span>01 —</span> PROFIL PROFESSIONNEL</h3><p>Une présence claire dans le réseau FIXEO.</p></div>
+        </li>
+        <li class="fxag-benefit">
+          <span class="fxag-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12a24 24 0 0 0 18 0m-9 0v3"/></svg></span>
+          <div class="fxag-benefit-copy"><h3><span>02 —</span> MISSIONS ADAPTÉES</h3><p>Des opportunités selon votre métier et votre zone.</p></div>
+        </li>
+        <li class="fxag-benefit">
+          <span class="fxag-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="m8 9 1 1 2-2m2 1h3m-8 6 1 1 2-2m2 1h3"/></svg></span>
+          <div class="fxag-benefit-copy"><h3><span>03 —</span> ACTIVITÉ STRUCTURÉE</h3><p>Missions, suivi et historique au même endroit.</p></div>
+        </li>
+      </ol>
+      <div class="fxag-action">
+        <a href="rejoindre-fixeo.html" class="fxag-cta"><span>Découvrir l’espace Artisan</span><span aria-hidden="true">→</span></a>
+        <p class="fxag-microcopy">Nouveau sur FIXEO ou déjà référencé ? Vous choisissez votre point d’entrée ensuite.</p>
+      </div>
     </div>
   </div>
 </section>
+<p class="fxhome-chapter-divider fxhome-chapter-divider--closing" aria-hidden="true"></p>
 
   <!-- ══════════════════════════════════════════════════════════
      FIXEO ENTREPRISES - Homepage teaser block (fxet-v1a)

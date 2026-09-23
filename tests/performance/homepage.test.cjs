@@ -44,6 +44,11 @@ test('homepage boots without marketplace and preserves current entry points',asy
   assert.ok(d.querySelector('footer.fxf-canonical'),'canonical full footer mounts');
   assert.ok(d.querySelector('footer a[href*="artisans"]'),'directory remains accessible');
   assert.ok(d.getElementById('fxhf-need-input'),'current hero mounts');
+  const artisanEntry=d.querySelector('#artisan-gateway a.fxag-cta');
+  assert.ok(artisanEntry,'Artisan gateway remains available after startup');
+  assert.equal(new URL(artisanEntry.href).pathname,'/rejoindre-fixeo.html','gateway opens the dedicated Artisan page before onboarding');
+  assert.equal(artisanEntry.textContent.replace('→','').trim(),'Découvrir l’espace Artisan');
+  assert.equal(d.querySelectorAll('#artisan-gateway a[href*="onboarding"],#artisan-gateway a[href*="auth"]').length,0,'Homepage does not bypass the dedicated entry choice');
   assert.equal(w.FixeoDB,undefined,'no local artisan database bootstrap');
   assert.equal(w.FixeoSupabaseLoader,undefined,'no global Supabase artisan loader');
   assert.equal(w.searchEngine,undefined,'no legacy search engine');
