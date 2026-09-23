@@ -4665,3 +4665,202 @@ body.fx-estimator-tunnel-active .chat-widget { visibility: hidden !important; po
   #fixeo-estimator-v2-root .estimator-modal--premium-v4 .rafi-stage-label { font-size: 10px; }
   #fixeo-estimator-v2-root .estimator-modal--premium-v4 .rafi-stage-index { display: none; }
 }
+
+/* Estimation ultra premium v1 — presentation only, existing modal hooks. */
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 {
+  --rafi-estimation-cta: linear-gradient(112deg, #c35426, #c13470 48%, #7443b7);
+  background: radial-gradient(ellipse at 100% 0, #56344820, transparent 48%), #101521;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 > .estimator-header {
+  min-height: 64px; padding: 10px 24px; gap: 12px;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .header-left,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .header-text { min-width: 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-sphere-wrap,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-sphere {
+  width: 34px; height: 34px; min-width: 34px; flex-shrink: 0;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-sphere {
+  animation: none; box-shadow: inset 0 1px 4px #ffffff24, 0 0 14px #b38dcb18;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-sphere::before,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-sphere::after { animation: none; pointer-events: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-state { line-height: 1.4; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-state-bar {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;
+  padding: 8px 0 10px; min-height: 0;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
+  padding: 8px 0 0; min-width: 0; border-top: 2px solid #ffffff17;
+  color: #aeb8cc; font-weight: 600;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage-label {
+  font-size: 11px; line-height: 1.25; letter-spacing: 0;
+  overflow: visible; white-space: normal; text-overflow: clip;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage-index {
+  display: inline-flex; width: 19px; height: 19px; min-width: 19px;
+  color: inherit; font-size: 11px; font-weight: 600;
+  background: #ffffff04; border: 1px solid #ffffff14; box-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage.active {
+  color: #f1c3d6; border-top-color: #ce799f;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage.active .rafi-stage-index {
+  color: #f7dcea; background: #be638925; border-color: #d494b33d; box-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage.done {
+  color: #a3c6b9; border-top-color: #709988;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage.done .rafi-stage-index {
+  color: #b1d5c7; background: #9dbfaa0a; border-color: #9dbfaa24;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage-sep { display: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 #rafi-step-back {
+  min-height: 44px; font-size: 13px; color: #c3cbdc;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-understand-hero { margin-bottom: 18px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-understand-eyebrow,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-selector-kicker,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-verification-meta,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-verification-copy { display: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .question-heading {
+  font-size: clamp(23px, 4vw, 29px); font-weight: 650; line-height: 1.2;
+  letter-spacing: -.03em; margin: 4px 0 10px; text-wrap: balance;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-understand-copy { font-size: 14px; line-height: 1.5; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-capture-card__head { margin-bottom: 8px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-capture-card__status::before { display: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-need-input {
+  height: 100px; min-height: 100px; padding: 14px; font-size: 16px;
+  border-color: #8493b22d; background: #090f1c; line-height: 1.5;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-need-input::placeholder { color: #a1adc3; opacity: 1; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-dictation { gap: 8px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-dictation button,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-dictation select {
+  background: #ffffff04; border: 1px solid #ffffff16; box-shadow: none; color: #d8deeb;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-dictation select { font-size: 16px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-capture-card__city { margin-top: 12px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-city-label { margin-bottom: 6px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-city-input { min-height: 46px; font-size: 16px; border-color: #ffffff1c; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-capture-card__trust { margin-top: 10px; line-height: 1.45; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-verification-kicker { margin: 0 0 12px; color: #c2c8d8; font-size: 11px; letter-spacing: .06em; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-verification-kicker::before { box-shadow: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-question-conditions {
+  font-size: 14px; line-height: 1.55; margin-bottom: 14px; color: #bac5d9;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-question-details { margin: 0 0 8px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-question-details > summary {
+  min-height: 44px; padding: 10px 0; color: #c6bace; font-size: 13px; line-height: 1.6;
+  cursor: pointer; list-style-position: inside;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-question-details[open] > summary { margin-bottom: 4px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .answer-cards { margin-top: 14px; gap: 9px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card {
+  min-height: 60px; padding: 13px 14px; border-color: #ffffff18;
+  border-radius: 15px; background: #ffffff04; box-shadow: none;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card::before,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card::after { display: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card.selected {
+  border-color: #ce94b36b; background: #b2668720; box-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card__marker {
+  color: #afbacd; background: #ffffff04; border-color: #ffffff14; box-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card__label {
+  font-size: 15px; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card__meta { font-size: 12px; line-height: 1.5; color: #b2bed2; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card__arrow { color: #b8c1d2; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-recommendation {
+  margin-top: 18px; padding: 20px; border-color: #ffffff1a; border-radius: 18px;
+  background: linear-gradient(140deg, #a4789210, #ffffff03);
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-recommendation h3 { font-size: 22px; line-height: 1.3; font-weight: 650; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-recommendation-mark { width: 30px; height: 30px; font-size: 21px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-more-interventions { font-size: 13px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate {
+  padding: 22px 0 0; border: 0; border-radius: 0; background: none; box-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate__amount .price-hero-inner {
+  min-height: 0; padding: 8px 0; border: 0; border-radius: 0;
+  background: none; box-shadow: none; text-align: center;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate__amount .price-eyebrow { display: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate__seal { padding: 0; border: 0; background: none; border-radius: 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate__service-label,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .scope-section-label { font-size: 11px; color: #acb6c9; letter-spacing: .07em; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-proof-item__text { font-size: 13px; line-height: 1.5; font-weight: 500; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate__seal { color: #d5c0d0; font-size: 12px; letter-spacing: .08em; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate__seal-dot { box-shadow: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate__service { margin-top: 18px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate__service h2 { font-size: 21px; line-height: 1.3; font-weight: 600; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate__amount { margin: 22px 0; padding: 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-display {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 8px; max-width: 100%;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-display .amount {
+  min-width: 0; max-width: 100%; font-size: clamp(48px, 14vw, 80px); font-weight: 650;
+  line-height: 1.05; letter-spacing: -.065em; color: #f8f5f8;
+  background: none; -webkit-text-fill-color: currentColor; text-shadow: none; filter: none; overflow-wrap: anywhere;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-display .currency { font-size: 17px; letter-spacing: 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-sublabel { color: #bac5d8; font-size: 13px; line-height: 1.5; margin-top: 12px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-proof-item { padding: 0; background: none; border: 0; font-size: 13px; line-height: 1.5; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-proof-item__icon { color: #aacbbb; background: none; box-shadow: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate__doctrine { margin-top: 18px; padding: 12px 0 0; background: none; border: 0; border-top: 1px solid #ffffff12; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .scope-doctrine { font-size: 12px; line-height: 1.6; color: #b0bbce; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-details > summary { padding: 14px 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-details .scope-section,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-details .result-scope { padding: 0 0 12px; background: none; border-radius: 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .scope-chip { max-width: 100%; white-space: normal; overflow-wrap: anywhere; font-size: 13px; line-height: 1.5; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-footer .btn-primary {
+  min-height: 52px; border-radius: 15px; color: #fff; background: var(--rafi-estimation-cta);
+  border-color: #ffffff20; box-shadow: inset 0 1px #ffffff24, 0 4px 18px #b4416d14;
+  font-size: 16px; font-weight: 700; line-height: 1.35; padding: 13px 16px;
+  white-space: normal; height: auto; transition: transform .18s ease, filter .18s ease;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-footer .btn-primary:disabled {
+  background: linear-gradient(112deg, #79422f, #773251 48%, #514075);
+  color: #ffffffb3; opacity: .7; box-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 :is(button, summary, select, textarea):focus-visible {
+  outline: 2px solid #e6b6d1; outline-offset: 3px;
+}
+@media (hover: hover) {
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card:hover { border-color: #b794ad60; background: #b2668710; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-footer .btn-primary:not(:disabled):hover { filter: brightness(1.08); }
+}
+@media (max-width: 768px) {
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 > .estimator-header {
+    min-height: 60px; padding: calc(8px + env(safe-area-inset-top, 0px)) 16px 8px;
+  }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-header-brandline { gap: 6px; flex-wrap: wrap; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .question-heading { font-size: 25px; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 #body-slot { padding-top: 10px; padding-bottom: 16px; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate { padding: 12px 0 0; }
+}
+@media (max-width: 350px) {
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .question-heading { font-size: 23px; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage { gap: 6px; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage-label { font-size: 11px; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-dictation button { padding-inline: 10px; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-recommendation { padding: 16px; }
+}
+@media (max-height: 520px) {
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-state-bar { padding: 4px 0 6px; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage { gap: 3px; padding-top: 6px; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage-index { width: 15px; height: 15px; min-width: 15px; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage-label { font-size: 10px; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-understand-hero { margin-bottom: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 *,
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 *::before,
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 *::after { animation: none !important; transition: none !important; }
+}

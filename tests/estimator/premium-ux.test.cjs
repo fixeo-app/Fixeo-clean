@@ -295,7 +295,7 @@ test('failed answer can be retried after back without losing context', async (t)
   assert.equal(s.step.input_id, 'plumbing_access');
   assert.equal(s.w.__ux.modal._entryContext.city, 'Rabat');
 });
-for (const width of [320, 390])
+for (const width of [320, 360, 390, 412])
   test(
     'G/H/I/J/K viewport ' +
       width +
@@ -344,6 +344,10 @@ test('M server price and all scope details stay available in a closed disclosure
   assert.match(detail.textContent, /raccord sanitaire visible/);
   assert.equal(s.w.document.querySelector('.price-display .amount').textContent, '280');
   assert.ok(!detail.contains(s.w.document.querySelector('.price-display')));
+  detail.open = true;
+  assert.match(detail.textContent, /raccord sanitaire visible/);
+  assert.equal(s.w.document.querySelector('.price-display .amount').textContent, '280');
+  assert.ok(s.q('rafi-step-back'));
 });
 test('editing the need clears prior eligibility, while an unchanged need preserves explicit inputs', async (t) => {
   const s = fixture(t);
@@ -501,4 +505,127 @@ test('measured same-input friction benchmark: no tariff questions silently remov
   }
   if (process.env.FIXEO_UX_METRICS)
     fs.writeFileSync(process.env.FIXEO_UX_METRICS, JSON.stringify(metrics, null, 2) + '\n');
+});
+
+// CSS contracts only: JSDOM does not lay out pixels or emulate native Safari.
+// Resolve screen media rules so these checks exercise the shipped cascade.
+function screenStyles(w, width, height, reduced = false) {
+  const raw = w.document.createElement('style');
+  raw.textContent = read('css/fixeo-estimator-v2.css');
+  w.document.head.appendChild(raw);
+  function applies(query) {
+    return query.split(',').some((part) => {
+      if (/prefers-reduced-motion:\s*reduce/.test(part) && !reduced) return false;
+      if (/hover:\s*hover/.test(part)) return false;
+      return [...part.matchAll(/(min|max)-(width|height):\s*([\d.]+)px/g)].every((m) => {
+        const actual = m[2] === 'width' ? width : height;
+        return m[1] === 'max' ? actual <= Number(m[3]) : actual >= Number(m[3]);
+      });
+    });
+  }
+  function flatten(rules) {
+    return [...rules].map((rule) => rule.media
+      ? (applies(rule.conditionText) ? flatten(rule.cssRules) : '')
+      : rule.cssText).join('\n');
+  }
+  const resolved = flatten(raw.sheet.cssRules);
+  raw.remove();
+  w.document.querySelector('#fixture-screen-css')?.remove();
+  const style = w.document.createElement('style');
+  style.id = 'fixture-screen-css';
+  style.textContent = resolved;
+  w.document.head.appendChild(style);
+}
+
+test('premium choice list preserves server order and labels, including when recommendation ranking differs', async (t) => {
+  const s = fixture(t);
+  await s.open({ description: 'Remplacement robinet fourni par le client' });
+  await s.start();
+  const original = JSON.parse(JSON.stringify(s.step.candidate_services));
+  const ranked = s.w.__ux.rankServiceChoices(s.step.candidate_services, {
+    description: 'Remplacement robinet fourni par le client',
+  });
+  assert.deepEqual(JSON.parse(JSON.stringify(ranked.items)), original);
+  if (s.w.document.querySelector('.rafi-more-interventions'))
+    s.click(s.w.document.querySelector('.rafi-more-interventions'));
+  const cards = [...s.w.document.querySelectorAll('.rafi-choice-card')];
+  assert.deepEqual(cards.map((c) => c.querySelector('.rafi-choice-card__label').textContent), original.map((c) => c.label_fr));
+  assert.deepEqual(cards.map((c) => c.querySelector('.rafi-choice-card__marker').textContent), original.map((_, i) => String(i + 1)));
+  assert.deepEqual(JSON.parse(JSON.stringify(s.step.candidate_services)), original);
+  cards[4].click();
+  assert.equal(s.calls.find((call) => call.action === 'select_service').code, original[4].service_code);
+});
+
+test('scope disclosure preserves exact tariff conditions; safety and access precautions never fold', async (t) => {
+  const s = fixture(t);
+  await s.open({ service_hint: 'plomberie.fuite_simple' });
+  await s.start();
+  const question = s.step;
+  const disclosure = s.w.document.querySelector('.rafi-question-details');
+  assert.ok(disclosure);
+  assert.equal(disclosure.open, false);
+  assert.equal(disclosure.querySelector('.rafi-question-conditions').textContent, question.prompt_fr);
+  const options = [...s.w.document.querySelectorAll('.answer-card')].map((c) => c.__optValue);
+  disclosure.open = true;
+  assert.deepEqual([...s.w.document.querySelectorAll('.answer-card')].map((c) => c.__optValue), options);
+  await s.choose('LOCAL_ACCESSIBLE');
+  assert.equal(s.q('question-conditions').closest('details'), null);
+  assert.equal(s.q('question-conditions').textContent, s.step.prompt_fr);
+  const safety = s.w.__ux.renderQuestion({
+    input_id: 'plumbing_scope', question_id: 'safety@fixture', priority: 'SAFETY',
+    answer_type: 'boolean', prompt_fr: 'Danger immédiat : éloignez-vous de la zone et contactez les secours.',
+  }, () => {});
+  assert.equal(safety.querySelector('.rafi-question-conditions').closest('details'), null);
+  assert.equal(safety.querySelectorAll('.answer-card').length, 2);
+});
+
+for (const width of [320, 360, 390, 412]) {
+  test('premium CSS contract ' + width + ': all four labels, scroll body, separate footer, long copy and keyboard', async (t) => {
+    const s = fixture(t, { width });
+    await s.open();
+    for (const height of [844, 480, 340]) {
+      screenStyles(s.w, width, height);
+      const style = (selector) => s.w.getComputedStyle(s.w.document.querySelector(selector));
+      assert.equal(style('.rafi-state-bar').gridTemplateColumns, 'repeat(4, minmax(0, 1fr))');
+      assert.deepEqual([...s.w.document.querySelectorAll('.rafi-stage-label')].map((el) => el.textContent), ['Comprendre', 'Identifier', 'Vérifier', 'Prix FIXEO']);
+      assert.notEqual(style('.rafi-stage-index').display, 'none');
+      assert.equal(style('.rafi-stage-label').textOverflow, 'clip');
+      assert.equal(style('.rafi-stage-label').whiteSpace, 'normal');
+      assert.equal(style('#body-slot').minHeight, '0');
+      assert.equal(style('#body-slot').overflowY, 'auto');
+      assert.equal(style('#footer-slot').position, 'relative');
+      assert.equal(style('#footer-slot').flexShrink, '0');
+      assert.equal(style('.estimator-need-input').fontSize, '16px');
+      assert.equal(style('#fixeo-urgent-fab').visibility, 'hidden');
+      assert.equal(style('.chat-widget').visibility, 'hidden');
+    }
+    s.q('estimator-need-input').value = 'Un besoin détaillé avec plusieurs précisions utiles. '.repeat(15);
+    s.q('estimator-need-input').focus();
+    assert.equal(s.w.document.activeElement.id, 'estimator-need-input');
+    const draft = s.q('estimator-need-input').value.trim();
+    s.w.FixeoEstimatorV2.close();
+    await s.w.FixeoEstimatorV2.open({});
+    assert.equal(s.q('estimator-need-input').value, draft);
+    screenStyles(s.w, width, 844, true);
+    assert.equal(s.w.getComputedStyle(s.q('cta-primary')).getPropertyValue('transition'), 'none');
+  });
+}
+
+test('homepage gateway retains the existing city-aware opening action and accessible label', () => {
+  const html = read('index.html');
+  const section = html.match(/<section\s+id="fixeo-estimation-signature"[\s\S]*?<\/section>/)[0];
+  const script = html.slice(html.indexOf(section) + section.length).match(/<script>([\s\S]*?)<\/script>/)[1];
+  const dom = new JSDOM('<select id="fxhf-location"><option selected>Fès</option></select>' + section,
+    { runScripts: 'outside-only' });
+  try {
+    let context;
+    dom.window.FixeoEstimatorV2 = { open: (value) => { context = value; return Promise.resolve(); } };
+    dom.window.eval(script);
+    const button = dom.window.document.getElementById('fxes-open-estimator');
+    assert.equal(button.type, 'button');
+    assert.match(button.getAttribute('aria-label'), /Estimer mon intervention/);
+    button.click();
+    assert.equal(context.city, 'Fès');
+    assert.match(dom.window.document.getElementById('fxes-title').textContent, /Sachez combien ça devrait coûter/);
+  } finally { dom.window.close(); }
 });

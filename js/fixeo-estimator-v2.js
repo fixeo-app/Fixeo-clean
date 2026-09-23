@@ -1764,9 +1764,8 @@
     var confident =
       !uncertain && first && first.score >= 2 && (!second || first.score >= second.score + 1);
     return {
-      items: ranked.map(function (x) {
-        return x.service;
-      }),
+      // Recommendation is optional; the choice list keeps the server's order.
+      items: candidates.slice(),
       recommended: confident ? first.service : null,
     };
   }
@@ -1938,7 +1937,15 @@
     if (heading.textContent !== fullPrompt) {
       var conditions = el('p', 'rafi-question-conditions', fullPrompt);
       conditions.id = 'question-conditions';
-      consoleWrap.appendChild(conditions);
+      // Safety and access precautions stay visible. Only scope detail folds.
+      if (isSafety || /access/.test(step.input_id || '')) {
+        consoleWrap.appendChild(conditions);
+      } else {
+        var conditionDetails = el('details', 'rafi-question-details');
+        conditionDetails.appendChild(el('summary', '', 'Voir les conditions du périmètre'));
+        conditionDetails.appendChild(conditions);
+        consoleWrap.appendChild(conditionDetails);
+      }
     }
     if (!isSafety) {
       consoleWrap.appendChild(
@@ -5810,7 +5817,7 @@ var cityInput =
             ? 'Cela ressemble à…'
             : expanded
               ? 'Toutes les interventions'
-              : 'Quelle situation vous ressemble ?',
+              : 'Quelle situation vous ressemble le plus ?',
         ),
       );
       var cards = el('div', 'answer-cards rafi-choice-stack rafi-choice-stack--services');
@@ -5825,13 +5832,14 @@ var cityInput =
         );
         selector.appendChild(suggestion);
       } else {
-        (expanded ? ranked.items : ranked.items.slice(0, 3)).forEach(function (svc) {
+        (expanded ? ranked.items : ranked.items.slice(0, 3)).forEach(function (svc, index) {
           var selected = self._view && self._view.selectedService === svc.service_code;
           var card = renderAnswerCard(
             {
               value: svc.service_code,
               label: svc.label_fr || svc.short_label_fr || svc.service_code,
               variant: 'service',
+              indexLabel: String(index + 1),
             },
             selected,
             select,
