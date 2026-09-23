@@ -1,0 +1,13 @@
+BEGIN READ ONLY;
+SELECT jsonb_build_object(
+'policies',(SELECT jsonb_agg(to_jsonb(p) ORDER BY schemaname,tablename,policyname) FROM pg_policies p WHERE schemaname='public' AND (tablename IN ('users','profiles','enterprise_members','enterprise_accounts') OR policyname IN ('admin_all_service_requests','admin_all_missions','admin_all_notifications','enterprise_leads_admin_select','enterprise_leads_admin_update','ecr_admin_select'))),
+'triggers',(SELECT jsonb_agg(jsonb_build_object('name',t.tgname,'enabled',t.tgenabled,'definition',pg_get_triggerdef(t.oid))) FROM pg_trigger t WHERE t.tgrelid='public.profiles'::regclass AND NOT t.tgisinternal),
+'privileges',(SELECT jsonb_agg(jsonb_build_object('role',r,'table',t,'privilege',p,'allowed',has_table_privilege(r,'public.'||t,p))) FROM unnest(ARRAY['anon','authenticated','service_role']) r CROSS JOIN unnest(ARRAY['users','profiles','enterprise_members','enterprise_accounts']) t CROSS JOIN unnest(ARRAY['SELECT','INSERT','UPDATE','DELETE','TRUNCATE','REFERENCES','TRIGGER','MAINTAIN']) p),
+'rls',(SELECT jsonb_agg(jsonb_build_object('table',c.relname,'rls',c.relrowsecurity,'force_rls',c.relforcerowsecurity)) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relname IN ('users','enterprise_members','enterprise_accounts')),
+'columns',(SELECT jsonb_agg(jsonb_build_object('table',table_name,'column',column_name,'type',data_type,'nullable',is_nullable) ORDER BY table_name,ordinal_position) FROM information_schema.columns WHERE table_schema='public' AND table_name IN ('enterprise_members','enterprise_accounts')),
+'constraints',(SELECT jsonb_agg(jsonb_build_object('table',c.conrelid::regclass::text,'name',c.conname,'definition',pg_get_constraintdef(c.oid))) FROM pg_constraint c WHERE c.conrelid IN ('public.users'::regclass,'public.enterprise_members'::regclass,'public.enterprise_accounts'::regclass)),
+'helpers',(SELECT jsonb_agg(jsonb_build_object('schema',n.nspname,'name',p.proname,'definition',pg_get_functiondef(p.oid),'owner',pg_get_userbyid(p.proowner),'acl',p.proacl)) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE (n.nspname='fixeo_private' AND p.proname IN ('_fixeo_is_enterprise_member','_fixeo_is_admin','enforce_profile_canonical_role_p0')) OR (n.nspname='public' AND p.proname='is_admin')),
+'counts',jsonb_build_object('auth_users',(SELECT count(*) FROM auth.users),'users',(SELECT count(*) FROM public.users),'profiles',(SELECT count(*) FROM public.profiles),'missing_profiles',(SELECT count(*) FROM public.users u LEFT JOIN public.profiles p USING(id) WHERE p.id IS NULL)),
+'is_admin_md5',md5(pg_get_functiondef('public.is_admin()'::regprocedure))
+) evidence;
+ROLLBACK;

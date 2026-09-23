@@ -1,0 +1,1079 @@
+{
+  "captured_at": "2026-09-23T22:14:08.133Z",
+  "project_id": "ztwtbgoqanqzvwiibtuh",
+  "main_sha": "bab8d3d1fcfe8e970d0c3d358268bb42413ddccd",
+  "production_sha": "bab8d3d1fcfe8e970d0c3d358268bb42413ddccd",
+  "mode": "Production catalog SELECT only; no user rows exported",
+  "evidence": {
+    "rls": [
+      {
+        "rls": true,
+        "table": "enterprise_accounts",
+        "force_rls": false
+      },
+      {
+        "rls": true,
+        "table": "enterprise_members",
+        "force_rls": false
+      },
+      {
+        "rls": true,
+        "table": "users",
+        "force_rls": false
+      }
+    ],
+    "counts": {
+      "users": 47,
+      "profiles": 46,
+      "auth_users": 47,
+      "missing_profiles": 1
+    },
+    "columns": [
+      {
+        "type": "uuid",
+        "table": "enterprise_accounts",
+        "column": "id",
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "enterprise_accounts",
+        "column": "name",
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "enterprise_accounts",
+        "column": "legal_name",
+        "nullable": "YES"
+      },
+      {
+        "type": "text",
+        "table": "enterprise_accounts",
+        "column": "status",
+        "nullable": "NO"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "enterprise_accounts",
+        "column": "created_at",
+        "nullable": "NO"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "enterprise_accounts",
+        "column": "updated_at",
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "table": "enterprise_members",
+        "column": "id",
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "table": "enterprise_members",
+        "column": "enterprise_id",
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "table": "enterprise_members",
+        "column": "user_id",
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "enterprise_members",
+        "column": "role",
+        "nullable": "NO"
+      },
+      {
+        "type": "text",
+        "table": "enterprise_members",
+        "column": "status",
+        "nullable": "NO"
+      },
+      {
+        "type": "uuid",
+        "table": "enterprise_members",
+        "column": "invited_by",
+        "nullable": "YES"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "enterprise_members",
+        "column": "created_at",
+        "nullable": "NO"
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "enterprise_members",
+        "column": "updated_at",
+        "nullable": "NO"
+      }
+    ],
+    "helpers": [
+      {
+        "acl": [
+          "=X/postgres",
+          "postgres=X/postgres",
+          "anon=X/postgres",
+          "authenticated=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "name": "is_admin",
+        "owner": "postgres",
+        "schema": "public",
+        "definition": "CREATE OR REPLACE FUNCTION public.is_admin()\n RETURNS boolean\n LANGUAGE sql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n$function$\n"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres"
+        ],
+        "name": "enforce_profile_canonical_role_p0",
+        "owner": "postgres",
+        "schema": "fixeo_private",
+        "definition": "CREATE OR REPLACE FUNCTION fixeo_private.enforce_profile_canonical_role_p0()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE\n  canonical_role text;\nBEGIN\n  SELECT u.role INTO canonical_role FROM public.users u WHERE u.id = NEW.id;\n  IF NOT FOUND OR canonical_role IS NULL\n     OR canonical_role NOT IN ('admin','artisan','client') THEN\n    RAISE EXCEPTION 'canonical_identity_missing_or_invalid' USING ERRCODE='23514';\n  END IF;\n  NEW.role := canonical_role;\n  RETURN NEW;\nEND;\n$function$\n"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "name": "_fixeo_is_admin",
+        "owner": "postgres",
+        "schema": "fixeo_private",
+        "definition": "CREATE OR REPLACE FUNCTION fixeo_private._fixeo_is_admin()\n RETURNS boolean\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n$function$\n"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "name": "_fixeo_is_enterprise_member",
+        "owner": "postgres",
+        "schema": "fixeo_private",
+        "definition": "CREATE OR REPLACE FUNCTION fixeo_private._fixeo_is_enterprise_member(p_enterprise_id uuid)\n RETURNS boolean\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.enterprise_members em\r\n    WHERE  em.enterprise_id = p_enterprise_id\r\n      AND  em.user_id       = v_caller_id\r\n      AND  em.status        = 'active'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n$function$\n"
+      }
+    ],
+    "policies": [
+      {
+        "cmd": "ALL",
+        "qual": "false",
+        "roles": [
+          "anon"
+        ],
+        "tablename": "enterprise_accounts",
+        "permissive": "PERMISSIVE",
+        "policyname": "ea_deny_anon",
+        "schemaname": "public",
+        "with_check": "false"
+      },
+      {
+        "cmd": "ALL",
+        "qual": "fixeo_private._fixeo_is_admin()",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "enterprise_accounts",
+        "permissive": "PERMISSIVE",
+        "policyname": "ea_fixeo_admin_all",
+        "schemaname": "public",
+        "with_check": "fixeo_private._fixeo_is_admin()"
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "fixeo_private._fixeo_is_enterprise_member(id)",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "enterprise_accounts",
+        "permissive": "PERMISSIVE",
+        "policyname": "ea_members_select",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "is_admin()",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "enterprise_leads",
+        "permissive": "PERMISSIVE",
+        "policyname": "enterprise_leads_admin_select",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "qual": "is_admin()",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "enterprise_leads",
+        "permissive": "PERMISSIVE",
+        "policyname": "enterprise_leads_admin_update",
+        "schemaname": "public",
+        "with_check": "is_admin()"
+      },
+      {
+        "cmd": "ALL",
+        "qual": "false",
+        "roles": [
+          "anon"
+        ],
+        "tablename": "enterprise_members",
+        "permissive": "PERMISSIVE",
+        "policyname": "em_deny_anon",
+        "schemaname": "public",
+        "with_check": "false"
+      },
+      {
+        "cmd": "ALL",
+        "qual": "fixeo_private._fixeo_is_admin()",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "enterprise_members",
+        "permissive": "PERMISSIVE",
+        "policyname": "em_fixeo_admin_all",
+        "schemaname": "public",
+        "with_check": "fixeo_private._fixeo_is_admin()"
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "fixeo_private._fixeo_is_enterprise_member(enterprise_id)",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "enterprise_members",
+        "permissive": "PERMISSIVE",
+        "policyname": "em_members_select",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "(user_id = auth.uid())",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "enterprise_members",
+        "permissive": "PERMISSIVE",
+        "policyname": "em_self_select",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "is_admin()",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "estimator_context_redemptions",
+        "permissive": "PERMISSIVE",
+        "policyname": "ecr_admin_select",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "ALL",
+        "qual": "is_admin()",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "missions",
+        "permissive": "PERMISSIVE",
+        "policyname": "admin_all_missions",
+        "schemaname": "public",
+        "with_check": "is_admin()"
+      },
+      {
+        "cmd": "ALL",
+        "qual": "is_admin()",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "notifications",
+        "permissive": "PERMISSIVE",
+        "policyname": "admin_all_notifications",
+        "schemaname": "public",
+        "with_check": "is_admin()"
+      },
+      {
+        "cmd": "ALL",
+        "qual": "is_admin()",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "profiles",
+        "permissive": "PERMISSIVE",
+        "policyname": "profiles_admin_all",
+        "schemaname": "public",
+        "with_check": "is_admin()"
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "profiles",
+        "permissive": "PERMISSIVE",
+        "policyname": "profiles_insert_own",
+        "schemaname": "public",
+        "with_check": "((auth.uid() = id) AND (role = ( SELECT u.role\n   FROM users u\n  WHERE (u.id = auth.uid()))))"
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "(auth.uid() = id)",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "profiles",
+        "permissive": "PERMISSIVE",
+        "policyname": "profiles_select_own",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "qual": "(auth.uid() = id)",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "profiles",
+        "permissive": "PERMISSIVE",
+        "policyname": "profiles_update_own",
+        "schemaname": "public",
+        "with_check": "(auth.uid() = id)"
+      },
+      {
+        "cmd": "ALL",
+        "qual": "is_admin()",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "service_requests",
+        "permissive": "PERMISSIVE",
+        "policyname": "admin_all_service_requests",
+        "schemaname": "public",
+        "with_check": "is_admin()"
+      },
+      {
+        "cmd": "ALL",
+        "qual": "is_admin()",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "users",
+        "permissive": "PERMISSIVE",
+        "policyname": "users_admin_all",
+        "schemaname": "public",
+        "with_check": "is_admin()"
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "users",
+        "permissive": "PERMISSIVE",
+        "policyname": "users_insert_own",
+        "schemaname": "public",
+        "with_check": "((auth.uid() = id) AND (role = 'client'::text))"
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "(auth.uid() = id)",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "users",
+        "permissive": "PERMISSIVE",
+        "policyname": "users_select_own",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "qual": "(auth.uid() = id)",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "users",
+        "permissive": "PERMISSIVE",
+        "policyname": "users_update_own",
+        "schemaname": "public",
+        "with_check": "(auth.uid() = id)"
+      }
+    ],
+    "triggers": [
+      {
+        "name": "enforce_profiles_canonical_role_p0",
+        "enabled": "O",
+        "definition": "CREATE TRIGGER enforce_profiles_canonical_role_p0 BEFORE INSERT OR UPDATE OF id, role ON public.profiles FOR EACH ROW EXECUTE FUNCTION fixeo_private.enforce_profile_canonical_role_p0()"
+      },
+      {
+        "name": "protect_profiles_role",
+        "enabled": "O",
+        "definition": "CREATE TRIGGER protect_profiles_role BEFORE UPDATE OF role ON public.profiles FOR EACH ROW EXECUTE FUNCTION prevent_non_admin_role_change()"
+      }
+    ],
+    "privileges": [
+      {
+        "role": "anon",
+        "table": "users",
+        "allowed": true,
+        "privilege": "SELECT"
+      },
+      {
+        "role": "anon",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "SELECT"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "SELECT"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "SELECT"
+      },
+      {
+        "role": "authenticated",
+        "table": "users",
+        "allowed": true,
+        "privilege": "SELECT"
+      },
+      {
+        "role": "authenticated",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "SELECT"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_members",
+        "allowed": true,
+        "privilege": "SELECT"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_accounts",
+        "allowed": true,
+        "privilege": "SELECT"
+      },
+      {
+        "role": "service_role",
+        "table": "users",
+        "allowed": true,
+        "privilege": "SELECT"
+      },
+      {
+        "role": "service_role",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "SELECT"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_members",
+        "allowed": true,
+        "privilege": "SELECT"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_accounts",
+        "allowed": true,
+        "privilege": "SELECT"
+      },
+      {
+        "role": "anon",
+        "table": "users",
+        "allowed": true,
+        "privilege": "INSERT"
+      },
+      {
+        "role": "anon",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "INSERT"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "INSERT"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "INSERT"
+      },
+      {
+        "role": "authenticated",
+        "table": "users",
+        "allowed": true,
+        "privilege": "INSERT"
+      },
+      {
+        "role": "authenticated",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "INSERT"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "INSERT"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "INSERT"
+      },
+      {
+        "role": "service_role",
+        "table": "users",
+        "allowed": true,
+        "privilege": "INSERT"
+      },
+      {
+        "role": "service_role",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "INSERT"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_members",
+        "allowed": true,
+        "privilege": "INSERT"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_accounts",
+        "allowed": true,
+        "privilege": "INSERT"
+      },
+      {
+        "role": "anon",
+        "table": "users",
+        "allowed": true,
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "anon",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "authenticated",
+        "table": "users",
+        "allowed": true,
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "authenticated",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "service_role",
+        "table": "users",
+        "allowed": true,
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "service_role",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_members",
+        "allowed": true,
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_accounts",
+        "allowed": true,
+        "privilege": "UPDATE"
+      },
+      {
+        "role": "anon",
+        "table": "users",
+        "allowed": true,
+        "privilege": "DELETE"
+      },
+      {
+        "role": "anon",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "DELETE"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "DELETE"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "DELETE"
+      },
+      {
+        "role": "authenticated",
+        "table": "users",
+        "allowed": true,
+        "privilege": "DELETE"
+      },
+      {
+        "role": "authenticated",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "DELETE"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "DELETE"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "DELETE"
+      },
+      {
+        "role": "service_role",
+        "table": "users",
+        "allowed": true,
+        "privilege": "DELETE"
+      },
+      {
+        "role": "service_role",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "DELETE"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_members",
+        "allowed": true,
+        "privilege": "DELETE"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_accounts",
+        "allowed": true,
+        "privilege": "DELETE"
+      },
+      {
+        "role": "anon",
+        "table": "users",
+        "allowed": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "anon",
+        "table": "profiles",
+        "allowed": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "authenticated",
+        "table": "users",
+        "allowed": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "authenticated",
+        "table": "profiles",
+        "allowed": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "service_role",
+        "table": "users",
+        "allowed": true,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "service_role",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_members",
+        "allowed": true,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_accounts",
+        "allowed": true,
+        "privilege": "TRUNCATE"
+      },
+      {
+        "role": "anon",
+        "table": "users",
+        "allowed": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "anon",
+        "table": "profiles",
+        "allowed": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "authenticated",
+        "table": "users",
+        "allowed": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "authenticated",
+        "table": "profiles",
+        "allowed": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "service_role",
+        "table": "users",
+        "allowed": true,
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "service_role",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_members",
+        "allowed": true,
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_accounts",
+        "allowed": true,
+        "privilege": "REFERENCES"
+      },
+      {
+        "role": "anon",
+        "table": "users",
+        "allowed": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "anon",
+        "table": "profiles",
+        "allowed": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "authenticated",
+        "table": "users",
+        "allowed": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "authenticated",
+        "table": "profiles",
+        "allowed": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "service_role",
+        "table": "users",
+        "allowed": true,
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "service_role",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_members",
+        "allowed": true,
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_accounts",
+        "allowed": true,
+        "privilege": "TRIGGER"
+      },
+      {
+        "role": "anon",
+        "table": "users",
+        "allowed": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "role": "anon",
+        "table": "profiles",
+        "allowed": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "role": "anon",
+        "table": "enterprise_accounts",
+        "allowed": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "role": "authenticated",
+        "table": "users",
+        "allowed": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "role": "authenticated",
+        "table": "profiles",
+        "allowed": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_members",
+        "allowed": false,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "role": "authenticated",
+        "table": "enterprise_accounts",
+        "allowed": true,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "role": "service_role",
+        "table": "users",
+        "allowed": true,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "role": "service_role",
+        "table": "profiles",
+        "allowed": true,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_members",
+        "allowed": true,
+        "privilege": "MAINTAIN"
+      },
+      {
+        "role": "service_role",
+        "table": "enterprise_accounts",
+        "allowed": true,
+        "privilege": "MAINTAIN"
+      }
+    ],
+    "constraints": [
+      {
+        "name": "users_id_fkey",
+        "table": "users",
+        "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "users_pkey",
+        "table": "users",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "users_role_check",
+        "table": "users",
+        "definition": "CHECK ((role = ANY (ARRAY['admin'::text, 'artisan'::text, 'client'::text])))"
+      },
+      {
+        "name": "enterprise_accounts_legal_name_length",
+        "table": "enterprise_accounts",
+        "definition": "CHECK (((legal_name IS NULL) OR ((char_length(legal_name) >= 1) AND (char_length(legal_name) <= 300))))"
+      },
+      {
+        "name": "enterprise_accounts_name_length",
+        "table": "enterprise_accounts",
+        "definition": "CHECK (((char_length(name) >= 1) AND (char_length(name) <= 200)))"
+      },
+      {
+        "name": "enterprise_accounts_pkey",
+        "table": "enterprise_accounts",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "enterprise_accounts_status_values",
+        "table": "enterprise_accounts",
+        "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'suspended'::text, 'closed'::text])))"
+      },
+      {
+        "name": "enterprise_members_enterprise_fk",
+        "table": "enterprise_members",
+        "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+      },
+      {
+        "name": "enterprise_members_invited_by_fk",
+        "table": "enterprise_members",
+        "definition": "FOREIGN KEY (invited_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL"
+      },
+      {
+        "name": "enterprise_members_pkey",
+        "table": "enterprise_members",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "enterprise_members_role_values",
+        "table": "enterprise_members",
+        "definition": "CHECK ((role = ANY (ARRAY['owner'::text, 'admin'::text, 'operations_manager'::text, 'site_manager'::text, 'reporter'::text, 'viewer'::text])))"
+      },
+      {
+        "name": "enterprise_members_status_values",
+        "table": "enterprise_members",
+        "definition": "CHECK ((status = ANY (ARRAY['invited'::text, 'active'::text, 'suspended'::text, 'removed'::text])))"
+      },
+      {
+        "name": "enterprise_members_unique_membership",
+        "table": "enterprise_members",
+        "definition": "UNIQUE (enterprise_id, user_id)"
+      },
+      {
+        "name": "enterprise_members_user_fk",
+        "table": "enterprise_members",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE"
+      }
+    ],
+    "is_admin_md5": "1986929dce09806c133d90b1bf480e1d"
+  }
+}
