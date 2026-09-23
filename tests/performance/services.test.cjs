@@ -43,7 +43,7 @@ function journeys(t) {
 test('Services keeps the exact Homepage universe component and a single editorial page',t=>{
   const {w,d}=journeys(t);const home=new JSDOM(read('index.html'));t.after(()=>home.window.close());
   assert.equal(d.querySelector('.fxd-home .fxd-grid').outerHTML,home.window.document.querySelector('.fxd-home .fxd-grid').outerHTML);
-  assert.ok(home.window.document.querySelector('.fxd-bottom a[href="services.html"]'));
+  assert.equal(home.window.document.querySelector('.fxd-bottom a[href="services.html"]'),null,'no redundant catalogue link after the Homepage universes');
   assert.equal(d.querySelector('.fxs-primary').hash,'#rafi-discovery');
   assert.equal(d.querySelectorAll('main form,main dialog').length,0);
   assert.equal(d.querySelectorAll('.fxs-preview,.fxd-open').length,0);

@@ -51,4 +51,6 @@
 }
 /* Replace the previous wide separator; do not stack two lines. */
 #main-content #rafi-discovery::before { content: none; }
+/* The closing line uses the existing spacing of Possibilities and Artisan. */
+#main-content .fxhome-chapter-divider--closing { margin: 0 auto; }
 /* Markers are static, including when reduced motion is requested. */

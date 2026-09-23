@@ -50,7 +50,9 @@ test('homepage boots without marketplace and preserves current entry points',asy
   assert.equal(scripts.some(p=>/\/(reservation|payment|slot-lock|cod-payment)(?:-v2)?\.js$/.test(p)),false,'no idle reservation preload');
   assert.equal(requests.some(u=>/artisans|marketplace/.test(u)),false);
 
-  assert.equal(d.querySelectorAll('[data-discovery]').length,9);
+  assert.equal(d.querySelectorAll('[data-discovery]').length,8);
+  assert.equal(d.querySelectorAll('#rafi-discovery .fxd-open,#rafi-discovery .fxd-bottom').length,0,'no redundant fallback after the eight universes');
+  assert.ok(d.querySelector('#rafi-discovery .fxd-load-status'),'launcher load errors remain visible when needed');
   assert.equal(scripts.some(p=>p.includes('fixeo-discovery-v1')),false,'details are not loaded on startup');
   w.QuickSearchModal.focusInline();
   assert.equal(d.activeElement.id,'fxhf-need-input');
