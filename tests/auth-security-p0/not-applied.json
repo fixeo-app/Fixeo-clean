@@ -1,0 +1,10 @@
+{
+  "read_only": true,
+  "auth_users": 47,
+  "public_users": 47,
+  "public_profiles": 46,
+  "profile_role_dependent_policies": 6,
+  "excessive_identity_grants": 16,
+  "candidate_function_absent": true,
+  "users_without_profiles": 1
+}

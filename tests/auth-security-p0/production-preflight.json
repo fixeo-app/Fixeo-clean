@@ -1,0 +1,4917 @@
+{
+  "repository": "fixeo-app/Fixeo-clean",
+  "production_sha": "bc927b9c24d709ab76e55cd2c82210194da30026",
+  "main_sha": "bc927b9c24d709ab76e55cd2c82210194da30026",
+  "production_project": "ztwtbgoqanqzvwiibtuh",
+  "read_only": true,
+  "sections": [
+    {
+      "section": "baseline",
+      "evidence": {
+        "database": "postgres",
+        "captured_at": "2026-09-23T20:20:09.225952+00:00",
+        "server_version": "17.6",
+        "server_version_num": "170006"
+      }
+    },
+    {
+      "section": "identity_counts",
+      "evidence": {
+        "auth_users": 47,
+        "public_users": 47,
+        "public_profiles": 46,
+        "role_mismatches": 0,
+        "auth_without_users": 0,
+        "missing_profile_roles": [
+          {
+            "role": "artisan",
+            "count": 1
+          }
+        ],
+        "profiles_without_users": 0,
+        "users_without_profiles": 1
+      }
+    },
+    {
+      "section": "identity_tables",
+      "evidence": [
+        {
+          "owner": "postgres",
+          "relacl": [
+            "postgres=arwdDxtm/postgres",
+            "anon=arwdDxtm/postgres",
+            "authenticated=arwdDxtm/postgres",
+            "service_role=arwdDxtm/postgres"
+          ],
+          "nspname": "public",
+          "relname": "profiles",
+          "relrowsecurity": true,
+          "relforcerowsecurity": false
+        },
+        {
+          "owner": "postgres",
+          "relacl": [
+            "postgres=arwdDxtm/postgres",
+            "anon=arwdDxtm/postgres",
+            "authenticated=arwdDxtm/postgres",
+            "service_role=arwdDxtm/postgres"
+          ],
+          "nspname": "public",
+          "relname": "users",
+          "relrowsecurity": true,
+          "relforcerowsecurity": false
+        }
+      ]
+    },
+    {
+      "section": "identity_acl",
+      "evidence": [
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "INSERT"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "SELECT"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "UPDATE"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "DELETE"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "MAINTAIN"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "INSERT"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "SELECT"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "UPDATE"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "DELETE"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "MAINTAIN"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "INSERT"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "SELECT"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "UPDATE"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "DELETE"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "MAINTAIN"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "INSERT"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "SELECT"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "UPDATE"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "DELETE"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "profiles",
+          "is_grantable": false,
+          "privilege_type": "MAINTAIN"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "INSERT"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "SELECT"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "UPDATE"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "DELETE"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "MAINTAIN"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "INSERT"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "SELECT"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "UPDATE"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "DELETE"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "grantee": "anon",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "MAINTAIN"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "INSERT"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "SELECT"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "UPDATE"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "DELETE"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "MAINTAIN"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "INSERT"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "SELECT"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "UPDATE"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "DELETE"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "TRUNCATE"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "REFERENCES"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "TRIGGER"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "relname": "users",
+          "is_grantable": false,
+          "privilege_type": "MAINTAIN"
+        }
+      ]
+    },
+    {
+      "section": "identity_column_acl",
+      "evidence": []
+    },
+    {
+      "section": "identity_effective_grants",
+      "evidence": [
+        {
+          "allowed": true,
+          "privilege": "SELECT",
+          "role_name": "anon",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "SELECT",
+          "role_name": "authenticated",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "SELECT",
+          "role_name": "service_role",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "SELECT",
+          "role_name": "anon",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "SELECT",
+          "role_name": "authenticated",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "SELECT",
+          "role_name": "service_role",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "INSERT",
+          "role_name": "anon",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "INSERT",
+          "role_name": "authenticated",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "INSERT",
+          "role_name": "service_role",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "INSERT",
+          "role_name": "anon",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "INSERT",
+          "role_name": "authenticated",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "INSERT",
+          "role_name": "service_role",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "UPDATE",
+          "role_name": "anon",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "UPDATE",
+          "role_name": "authenticated",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "UPDATE",
+          "role_name": "service_role",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "UPDATE",
+          "role_name": "anon",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "UPDATE",
+          "role_name": "authenticated",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "UPDATE",
+          "role_name": "service_role",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "DELETE",
+          "role_name": "anon",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "DELETE",
+          "role_name": "authenticated",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "DELETE",
+          "role_name": "service_role",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "DELETE",
+          "role_name": "anon",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "DELETE",
+          "role_name": "authenticated",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "DELETE",
+          "role_name": "service_role",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "TRUNCATE",
+          "role_name": "anon",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "TRUNCATE",
+          "role_name": "authenticated",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "TRUNCATE",
+          "role_name": "service_role",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "TRUNCATE",
+          "role_name": "anon",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "TRUNCATE",
+          "role_name": "authenticated",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "TRUNCATE",
+          "role_name": "service_role",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "REFERENCES",
+          "role_name": "anon",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "REFERENCES",
+          "role_name": "authenticated",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "REFERENCES",
+          "role_name": "service_role",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "REFERENCES",
+          "role_name": "anon",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "REFERENCES",
+          "role_name": "authenticated",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "REFERENCES",
+          "role_name": "service_role",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "TRIGGER",
+          "role_name": "anon",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "TRIGGER",
+          "role_name": "authenticated",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "TRIGGER",
+          "role_name": "service_role",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "TRIGGER",
+          "role_name": "anon",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "TRIGGER",
+          "role_name": "authenticated",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "TRIGGER",
+          "role_name": "service_role",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "MAINTAIN",
+          "role_name": "anon",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "MAINTAIN",
+          "role_name": "authenticated",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "MAINTAIN",
+          "role_name": "service_role",
+          "table_name": "users"
+        },
+        {
+          "allowed": true,
+          "privilege": "MAINTAIN",
+          "role_name": "anon",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "MAINTAIN",
+          "role_name": "authenticated",
+          "table_name": "profiles"
+        },
+        {
+          "allowed": true,
+          "privilege": "MAINTAIN",
+          "role_name": "service_role",
+          "table_name": "profiles"
+        }
+      ]
+    },
+    {
+      "section": "identity_columns",
+      "evidence": [
+        {
+          "data_type": "uuid",
+          "table_name": "profiles",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "data_type": "text",
+          "table_name": "profiles",
+          "column_name": "role",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "data_type": "text",
+          "table_name": "profiles",
+          "column_name": "full_name",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "data_type": "text",
+          "table_name": "profiles",
+          "column_name": "phone",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "data_type": "text",
+          "table_name": "profiles",
+          "column_name": "city",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "data_type": "timestamp with time zone",
+          "table_name": "profiles",
+          "column_name": "created_at",
+          "is_nullable": "YES",
+          "column_default": "now()"
+        },
+        {
+          "data_type": "text",
+          "table_name": "profiles",
+          "column_name": "email",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "data_type": "uuid",
+          "table_name": "users",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "data_type": "text",
+          "table_name": "users",
+          "column_name": "role",
+          "is_nullable": "NO",
+          "column_default": "'client'::text"
+        },
+        {
+          "data_type": "text",
+          "table_name": "users",
+          "column_name": "email",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "data_type": "text",
+          "table_name": "users",
+          "column_name": "full_name",
+          "is_nullable": "NO",
+          "column_default": "''::text"
+        },
+        {
+          "data_type": "text",
+          "table_name": "users",
+          "column_name": "phone",
+          "is_nullable": "YES",
+          "column_default": "''::text"
+        },
+        {
+          "data_type": "text",
+          "table_name": "users",
+          "column_name": "city",
+          "is_nullable": "YES",
+          "column_default": "''::text"
+        },
+        {
+          "data_type": "timestamp with time zone",
+          "table_name": "users",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()"
+        }
+      ]
+    },
+    {
+      "section": "identity_constraints",
+      "evidence": [
+        {
+          "conname": "profiles_id_fkey",
+          "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE",
+          "table_name": "profiles"
+        },
+        {
+          "conname": "profiles_pkey",
+          "definition": "PRIMARY KEY (id)",
+          "table_name": "profiles"
+        },
+        {
+          "conname": "profiles_role_check",
+          "definition": "CHECK (role = ANY (ARRAY['client'::text, 'artisan'::text, 'admin'::text]))",
+          "table_name": "profiles"
+        },
+        {
+          "conname": "users_id_fkey",
+          "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE",
+          "table_name": "users"
+        },
+        {
+          "conname": "users_pkey",
+          "definition": "PRIMARY KEY (id)",
+          "table_name": "users"
+        },
+        {
+          "conname": "users_role_check",
+          "definition": "CHECK (role = ANY (ARRAY['admin'::text, 'artisan'::text, 'client'::text]))",
+          "table_name": "users"
+        }
+      ]
+    },
+    {
+      "section": "all_policies",
+      "evidence": [
+        {
+          "cmd": "DELETE",
+          "qual": "is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "artisan_profiles",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_profiles_delete_admin",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "artisan_profiles",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_profiles_insert_own",
+          "schemaname": "public",
+          "with_check": "((profile_id = auth.uid()) OR is_admin())"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "true",
+          "roles": [
+            "public"
+          ],
+          "tablename": "artisan_profiles",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_profiles_public_read",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "((profile_id = auth.uid()) OR is_admin())",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "artisan_profiles",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_profiles_update_own_admin",
+          "schemaname": "public",
+          "with_check": "((profile_id = auth.uid()) OR is_admin())"
+        },
+        {
+          "cmd": "DELETE",
+          "qual": "is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "artisans",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisans_admin_delete",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "artisans",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisans_admin_insert",
+          "schemaname": "public",
+          "with_check": "is_admin()"
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "anon"
+          ],
+          "tablename": "artisans",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisans_block_public_insert",
+          "schemaname": "public",
+          "with_check": "false"
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "(owner_user_id = auth.uid())",
+          "roles": [
+            "public"
+          ],
+          "tablename": "artisans",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisans_owner_update",
+          "schemaname": "public",
+          "with_check": "(owner_user_id = auth.uid())"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "true",
+          "roles": [
+            "public"
+          ],
+          "tablename": "artisans",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisans_public_read",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "public"
+          ],
+          "tablename": "artisans",
+          "permissive": "PERMISSIVE",
+          "policyname": "block_insert_all",
+          "schemaname": "public",
+          "with_check": "false"
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "claim_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "7c12a1_auth_insert_own",
+          "schemaname": "public",
+          "with_check": "(requester_user_id = auth.uid())"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "((requester_user_id = auth.uid()) OR (EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::text)))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "claim_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "7c12a1_auth_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "false",
+          "roles": [
+            "anon"
+          ],
+          "tablename": "claim_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "7c12a1_deny_anon_all",
+          "schemaname": "public",
+          "with_check": "false"
+        },
+        {
+          "cmd": "ALL",
+          "qual": "true",
+          "roles": [
+            "public"
+          ],
+          "tablename": "claims",
+          "permissive": "PERMISSIVE",
+          "policyname": "open",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "false",
+          "roles": [
+            "anon"
+          ],
+          "tablename": "enterprise_accounts",
+          "permissive": "PERMISSIVE",
+          "policyname": "ea_deny_anon",
+          "schemaname": "public",
+          "with_check": "false"
+        },
+        {
+          "cmd": "ALL",
+          "qual": "fixeo_private._fixeo_is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_accounts",
+          "permissive": "PERMISSIVE",
+          "policyname": "ea_fixeo_admin_all",
+          "schemaname": "public",
+          "with_check": "fixeo_private._fixeo_is_admin()"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "fixeo_private._fixeo_is_enterprise_member(id)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_accounts",
+          "permissive": "PERMISSIVE",
+          "policyname": "ea_members_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "fixeo_private._fixeo_is_enterprise_manager(enterprise_id)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_audit_events",
+          "permissive": "PERMISSIVE",
+          "policyname": "enterprise_audit_events_manager_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "false",
+          "roles": [
+            "anon"
+          ],
+          "tablename": "enterprise_invitations",
+          "permissive": "PERMISSIVE",
+          "policyname": "ei_deny_anon",
+          "schemaname": "public",
+          "with_check": "false"
+        },
+        {
+          "cmd": "ALL",
+          "qual": "fixeo_private._fixeo_is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_invitations",
+          "permissive": "PERMISSIVE",
+          "policyname": "ei_fixeo_admin_all",
+          "schemaname": "public",
+          "with_check": "fixeo_private._fixeo_is_admin()"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "fixeo_private._fixeo_is_enterprise_manager(enterprise_id)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_invitations",
+          "permissive": "PERMISSIVE",
+          "policyname": "ei_managers_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(target_user_id = auth.uid())",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_invitations",
+          "permissive": "PERMISSIVE",
+          "policyname": "ei_self_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin'::text))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_leads",
+          "permissive": "PERMISSIVE",
+          "policyname": "enterprise_leads_admin_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin'::text))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_leads",
+          "permissive": "PERMISSIVE",
+          "policyname": "enterprise_leads_admin_update",
+          "schemaname": "public",
+          "with_check": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin'::text))))"
+        },
+        {
+          "cmd": "DELETE",
+          "qual": "false",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_leads",
+          "permissive": "PERMISSIVE",
+          "policyname": "enterprise_leads_deny_delete",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "fixeo_private._fixeo_is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_member_sites",
+          "permissive": "PERMISSIVE",
+          "policyname": "enterprise_member_sites_fixeo_admin_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(EXISTS ( SELECT 1\n   FROM enterprise_members caller\n  WHERE ((caller.enterprise_id = enterprise_member_sites.enterprise_id) AND (caller.user_id = auth.uid()) AND (caller.status = 'active'::text) AND ((caller.role = ANY (ARRAY['owner'::text, 'admin'::text])) OR (caller.id = enterprise_member_sites.member_id)))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_member_sites",
+          "permissive": "PERMISSIVE",
+          "policyname": "enterprise_member_sites_members_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "false",
+          "roles": [
+            "anon"
+          ],
+          "tablename": "enterprise_members",
+          "permissive": "PERMISSIVE",
+          "policyname": "em_deny_anon",
+          "schemaname": "public",
+          "with_check": "false"
+        },
+        {
+          "cmd": "ALL",
+          "qual": "fixeo_private._fixeo_is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_members",
+          "permissive": "PERMISSIVE",
+          "policyname": "em_fixeo_admin_all",
+          "schemaname": "public",
+          "with_check": "fixeo_private._fixeo_is_admin()"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "fixeo_private._fixeo_is_enterprise_member(enterprise_id)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_members",
+          "permissive": "PERMISSIVE",
+          "policyname": "em_members_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(user_id = auth.uid())",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_members",
+          "permissive": "PERMISSIVE",
+          "policyname": "em_self_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "false",
+          "roles": [
+            "anon"
+          ],
+          "tablename": "enterprise_request_context",
+          "permissive": "PERMISSIVE",
+          "policyname": "erc_deny_anon",
+          "schemaname": "public",
+          "with_check": "false"
+        },
+        {
+          "cmd": "ALL",
+          "qual": "fixeo_private._fixeo_is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_request_context",
+          "permissive": "PERMISSIVE",
+          "policyname": "erc_fixeo_admin_all",
+          "schemaname": "public",
+          "with_check": "fixeo_private._fixeo_is_admin()"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "fixeo_private._fixeo_can_access_enterprise_site(enterprise_id, site_id)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_request_context",
+          "permissive": "PERMISSIVE",
+          "policyname": "erc_members_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "false",
+          "roles": [
+            "anon"
+          ],
+          "tablename": "enterprise_request_sla",
+          "permissive": "PERMISSIVE",
+          "policyname": "ers_deny_anon",
+          "schemaname": "public",
+          "with_check": "false"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "fixeo_private._fixeo_is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_request_sla",
+          "permissive": "PERMISSIVE",
+          "policyname": "ers_fixeo_admin_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "fixeo_private._fixeo_can_access_enterprise_site(enterprise_id, site_id)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_request_sla",
+          "permissive": "PERMISSIVE",
+          "policyname": "ers_members_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "false",
+          "roles": [
+            "anon"
+          ],
+          "tablename": "enterprise_sites",
+          "permissive": "PERMISSIVE",
+          "policyname": "es_deny_anon",
+          "schemaname": "public",
+          "with_check": "false"
+        },
+        {
+          "cmd": "ALL",
+          "qual": "fixeo_private._fixeo_is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_sites",
+          "permissive": "PERMISSIVE",
+          "policyname": "es_fixeo_admin_all",
+          "schemaname": "public",
+          "with_check": "fixeo_private._fixeo_is_admin()"
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "fixeo_private._fixeo_is_enterprise_manager(enterprise_id)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_sites",
+          "permissive": "PERMISSIVE",
+          "policyname": "es_manager_update",
+          "schemaname": "public",
+          "with_check": "(fixeo_private._fixeo_is_enterprise_manager(enterprise_id) AND (status = ANY (ARRAY['active'::text, 'inactive'::text])))"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "fixeo_private._fixeo_can_access_enterprise_site(enterprise_id, id)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_sites",
+          "permissive": "PERMISSIVE",
+          "policyname": "es_members_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "false",
+          "roles": [
+            "anon"
+          ],
+          "tablename": "enterprise_sla_policies",
+          "permissive": "PERMISSIVE",
+          "policyname": "esp_deny_anon",
+          "schemaname": "public",
+          "with_check": "false"
+        },
+        {
+          "cmd": "ALL",
+          "qual": "fixeo_private._fixeo_is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_sla_policies",
+          "permissive": "PERMISSIVE",
+          "policyname": "esp_fixeo_admin_all",
+          "schemaname": "public",
+          "with_check": "fixeo_private._fixeo_is_admin()"
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_sla_policies",
+          "permissive": "PERMISSIVE",
+          "policyname": "esp_manager_insert",
+          "schemaname": "public",
+          "with_check": "(fixeo_private._fixeo_is_enterprise_manager(enterprise_id) AND (status = ANY (ARRAY['active'::text, 'inactive'::text])))"
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "fixeo_private._fixeo_is_enterprise_manager(enterprise_id)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_sla_policies",
+          "permissive": "PERMISSIVE",
+          "policyname": "esp_manager_update",
+          "schemaname": "public",
+          "with_check": "(fixeo_private._fixeo_is_enterprise_manager(enterprise_id) AND (status = ANY (ARRAY['active'::text, 'inactive'::text])))"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(((site_id IS NULL) AND fixeo_private._fixeo_is_enterprise_member(enterprise_id)) OR ((site_id IS NOT NULL) AND fixeo_private._fixeo_can_access_enterprise_site(enterprise_id, site_id)))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "enterprise_sla_policies",
+          "permissive": "PERMISSIVE",
+          "policyname": "esp_members_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin'::text))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "estimator_context_redemptions",
+          "permissive": "PERMISSIVE",
+          "policyname": "ecr_admin_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "service_role"
+          ],
+          "tablename": "fixeo_pricing_offers_v1",
+          "permissive": "PERMISSIVE",
+          "policyname": "vap_offers_server_insert",
+          "schemaname": "public",
+          "with_check": "true"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "true",
+          "roles": [
+            "service_role"
+          ],
+          "tablename": "fixeo_pricing_offers_v1",
+          "permissive": "PERMISSIVE",
+          "policyname": "vap_offers_server_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE (((u.id)::text = (auth.uid())::text) AND (u.role = 'admin'::text)))) OR (EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE (((p.id)::text = (auth.uid())::text) AND (p.role = 'admin'::text)))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "missions",
+          "permissive": "PERMISSIVE",
+          "policyname": "admin_all_missions",
+          "schemaname": "public",
+          "with_check": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE (((u.id)::text = (auth.uid())::text) AND (u.role = 'admin'::text)))) OR (EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE (((p.id)::text = (auth.uid())::text) AND (p.role = 'admin'::text)))))"
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "missions",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_insert_own_missions",
+          "schemaname": "public",
+          "with_check": "((auth.uid() IS NOT NULL) AND ((artisan_profile_id)::text IN ( SELECT (a.id)::text AS id\n   FROM artisans a\n  WHERE ((a.owner_user_id)::text = (auth.uid())::text))))"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "((artisan_profile_id)::text IN ( SELECT (a.id)::text AS id\n   FROM artisans a\n  WHERE (((a.owner_user_id)::text = (auth.uid())::text) OR ((a.phone_public IS NOT NULL) AND (a.phone_public <> ''::text) AND (a.phone_public = ( SELECT p.phone\n           FROM profiles p\n          WHERE (((p.id)::text = (auth.uid())::text) AND (p.phone IS NOT NULL) AND (p.phone <> ''::text))\n         LIMIT 1))))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "missions",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_select_own_missions",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "((artisan_profile_id)::text IN ( SELECT (a.id)::text AS id\n   FROM artisans a\n  WHERE ((a.owner_user_id)::text = (auth.uid())::text)))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "missions",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_update_own_missions",
+          "schemaname": "public",
+          "with_check": "((artisan_profile_id)::text IN ( SELECT (a.id)::text AS id\n   FROM artisans a\n  WHERE ((a.owner_user_id)::text = (auth.uid())::text)))"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "((client_profile_id)::text = (auth.uid())::text)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "missions",
+          "permissive": "PERMISSIVE",
+          "policyname": "client_select_own_missions",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "false",
+          "roles": [
+            "anon"
+          ],
+          "tablename": "missions",
+          "permissive": "PERMISSIVE",
+          "policyname": "missions_deny_anon",
+          "schemaname": "public",
+          "with_check": "false"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(EXISTS ( SELECT 1\n   FROM enterprise_request_context erc\n  WHERE ((missions.request_id = (erc.service_request_id)::text) AND fixeo_private._fixeo_can_access_enterprise_site(erc.enterprise_id, erc.site_id))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "missions",
+          "permissive": "PERMISSIVE",
+          "policyname": "missions_enterprise_members_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "(EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE (((p.id)::text = (auth.uid())::text) AND (p.role = 'admin'::text))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "notifications",
+          "permissive": "PERMISSIVE",
+          "policyname": "admin_all_notifications",
+          "schemaname": "public",
+          "with_check": "(EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE (((p.id)::text = (auth.uid())::text) AND (p.role = 'admin'::text))))"
+        },
+        {
+          "cmd": "ALL",
+          "qual": "false",
+          "roles": [
+            "anon"
+          ],
+          "tablename": "notifications",
+          "permissive": "PERMISSIVE",
+          "policyname": "anon_deny_notifications",
+          "schemaname": "public",
+          "with_check": "false"
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "notifications",
+          "permissive": "PERMISSIVE",
+          "policyname": "user_insert_notifications",
+          "schemaname": "public",
+          "with_check": "true"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "((recipient_user_id)::text = (auth.uid())::text)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "notifications",
+          "permissive": "PERMISSIVE",
+          "policyname": "user_read_own_notifications",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "((recipient_user_id)::text = (auth.uid())::text)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "notifications",
+          "permissive": "PERMISSIVE",
+          "policyname": "user_update_own_notifications",
+          "schemaname": "public",
+          "with_check": "((recipient_user_id)::text = (auth.uid())::text)"
+        },
+        {
+          "cmd": "DELETE",
+          "qual": "is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "payments",
+          "permissive": "PERMISSIVE",
+          "policyname": "payments_delete_admin",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "payments",
+          "permissive": "PERMISSIVE",
+          "policyname": "payments_insert_admin",
+          "schemaname": "public",
+          "with_check": "is_admin()"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(is_admin() OR (mission_id IN ( SELECT m.id\n   FROM missions m\n  WHERE ((m.client_profile_id = auth.uid()) OR (m.artisan_profile_id IN ( SELECT ap.id\n           FROM artisan_profiles ap\n          WHERE (ap.profile_id = auth.uid())))))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "payments",
+          "permissive": "PERMISSIVE",
+          "policyname": "payments_select_related_admin",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "payments",
+          "permissive": "PERMISSIVE",
+          "policyname": "payments_update_admin",
+          "schemaname": "public",
+          "with_check": "is_admin()"
+        },
+        {
+          "cmd": "DELETE",
+          "qual": "(artisan_id = (auth.uid())::text)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "portfolio_items",
+          "permissive": "PERMISSIVE",
+          "policyname": "portfolio_artisan_delete",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "portfolio_items",
+          "permissive": "PERMISSIVE",
+          "policyname": "portfolio_artisan_insert",
+          "schemaname": "public",
+          "with_check": "(artisan_id = (auth.uid())::text)"
+        },
+        {
+          "cmd": "DELETE",
+          "qual": "(artisan_id = (auth.uid())::text)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "portfolio_items",
+          "permissive": "PERMISSIVE",
+          "policyname": "portfolio_delete_own",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "portfolio_items",
+          "permissive": "PERMISSIVE",
+          "policyname": "portfolio_insert_own",
+          "schemaname": "public",
+          "with_check": "(artisan_id = (auth.uid())::text)"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "true",
+          "roles": [
+            "public"
+          ],
+          "tablename": "portfolio_items",
+          "permissive": "PERMISSIVE",
+          "policyname": "portfolio_public_read",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "profiles",
+          "permissive": "PERMISSIVE",
+          "policyname": "profiles_admin_all",
+          "schemaname": "public",
+          "with_check": "is_admin()"
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "profiles",
+          "permissive": "PERMISSIVE",
+          "policyname": "profiles_insert_own",
+          "schemaname": "public",
+          "with_check": "(auth.uid() = id)"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(auth.uid() = id)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "profiles",
+          "permissive": "PERMISSIVE",
+          "policyname": "profiles_select_own",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "(auth.uid() = id)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "profiles",
+          "permissive": "PERMISSIVE",
+          "policyname": "profiles_update_own",
+          "schemaname": "public",
+          "with_check": "(auth.uid() = id)"
+        },
+        {
+          "cmd": "DELETE",
+          "qual": "is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "quotes",
+          "permissive": "PERMISSIVE",
+          "policyname": "quotes_delete_admin",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "quotes",
+          "permissive": "PERMISSIVE",
+          "policyname": "quotes_insert_artisan_admin",
+          "schemaname": "public",
+          "with_check": "(is_admin() OR (artisan_profile_id IN ( SELECT ap.id\n   FROM artisan_profiles ap\n  WHERE (ap.profile_id = auth.uid()))))"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(is_admin() OR (request_id IN ( SELECT sr.id\n   FROM service_requests sr\n  WHERE (sr.client_profile_id = auth.uid()))) OR (artisan_profile_id IN ( SELECT ap.id\n   FROM artisan_profiles ap\n  WHERE (ap.profile_id = auth.uid()))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "quotes",
+          "permissive": "PERMISSIVE",
+          "policyname": "quotes_select_related_admin",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "(is_admin() OR (artisan_profile_id IN ( SELECT ap.id\n   FROM artisan_profiles ap\n  WHERE (ap.profile_id = auth.uid()))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "quotes",
+          "permissive": "PERMISSIVE",
+          "policyname": "quotes_update_related_admin",
+          "schemaname": "public",
+          "with_check": "(is_admin() OR (artisan_profile_id IN ( SELECT ap.id\n   FROM artisan_profiles ap\n  WHERE (ap.profile_id = auth.uid()))))"
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "public"
+          ],
+          "tablename": "reviews",
+          "permissive": "PERMISSIVE",
+          "policyname": "reviews_anon_insert",
+          "schemaname": "public",
+          "with_check": "((auth.uid() IS NULL) AND (client_phone IS NOT NULL) AND (char_length(client_phone) >= 8))"
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "public"
+          ],
+          "tablename": "reviews",
+          "permissive": "PERMISSIVE",
+          "policyname": "reviews_client_insert",
+          "schemaname": "public",
+          "with_check": "((auth.uid() IS NOT NULL) AND (client_profile_id = auth.uid()))"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "true",
+          "roles": [
+            "public"
+          ],
+          "tablename": "reviews",
+          "permissive": "PERMISSIVE",
+          "policyname": "reviews_public_read",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::text)))) OR (EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE ((p.id = auth.uid()) AND (p.role = 'admin'::text)))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "service_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "admin_all_service_requests",
+          "schemaname": "public",
+          "with_check": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::text)))) OR (EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE ((p.id = auth.uid()) AND (p.role = 'admin'::text)))))"
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "anon"
+          ],
+          "tablename": "service_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "anon_insert",
+          "schemaname": "public",
+          "with_check": "true"
+        },
+        {
+          "cmd": "DELETE",
+          "qual": "false",
+          "roles": [
+            "anon"
+          ],
+          "tablename": "service_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "anon_service_requests_deny_delete",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "false",
+          "roles": [
+            "anon"
+          ],
+          "tablename": "service_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "anon_service_requests_deny_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "false",
+          "roles": [
+            "anon"
+          ],
+          "tablename": "service_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "anon_service_requests_deny_update",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "anon"
+          ],
+          "tablename": "service_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "anon_service_requests_insert",
+          "schemaname": "public",
+          "with_check": "true"
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "(status = 'new'::text)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "service_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_assign_new_requests",
+          "schemaname": "public",
+          "with_check": "(status = 'assigned'::text)"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(EXISTS ( SELECT 1\n   FROM (missions m\n     JOIN artisans a ON ((a.id = m.artisan_profile_id)))\n  WHERE ((m.request_id = (service_requests.id)::text) AND (m.status = 'pending'::text) AND (a.owner_user_id = auth.uid()))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "service_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_read_own_linked_requests",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "(EXISTS ( SELECT 1\n   FROM (missions m\n     JOIN artisans a ON (((m.artisan_profile_id)::text = (a.id)::text)))\n  WHERE ((m.request_id = (service_requests.id)::text) AND (((a.owner_user_id)::text = (auth.uid())::text) OR (a.phone_public = ( SELECT p.phone\n           FROM profiles p\n          WHERE ((p.id)::text = (auth.uid())::text)\n         LIMIT 1))))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "service_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_update_assigned_requests",
+          "schemaname": "public",
+          "with_check": "(EXISTS ( SELECT 1\n   FROM (missions m\n     JOIN artisans a ON (((m.artisan_profile_id)::text = (a.id)::text)))\n  WHERE ((m.request_id = (service_requests.id)::text) AND (((a.owner_user_id)::text = (auth.uid())::text) OR (a.phone_public = ( SELECT p.phone\n           FROM profiles p\n          WHERE ((p.id)::text = (auth.uid())::text)\n         LIMIT 1))))))"
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "service_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "client_own_requests_insert",
+          "schemaname": "public",
+          "with_check": "(client_profile_id = auth.uid())"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(client_profile_id = auth.uid())",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "service_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "client_own_requests_read",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "(client_profile_id = auth.uid())",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "service_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "client_own_requests_update",
+          "schemaname": "public",
+          "with_check": "(client_profile_id = auth.uid())"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(EXISTS ( SELECT 1\n   FROM enterprise_request_context erc\n  WHERE ((erc.service_request_id = service_requests.id) AND fixeo_private._fixeo_can_access_enterprise_site(erc.enterprise_id, erc.site_id))))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "service_requests",
+          "permissive": "PERMISSIVE",
+          "policyname": "service_requests_enterprise_members_select",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "ALL",
+          "qual": "is_admin()",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "users",
+          "permissive": "PERMISSIVE",
+          "policyname": "users_admin_all",
+          "schemaname": "public",
+          "with_check": "is_admin()"
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "users",
+          "permissive": "PERMISSIVE",
+          "policyname": "users_insert_own",
+          "schemaname": "public",
+          "with_check": "(auth.uid() = id)"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(auth.uid() = id)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "users",
+          "permissive": "PERMISSIVE",
+          "policyname": "users_select_own",
+          "schemaname": "public",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "(auth.uid() = id)",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "users",
+          "permissive": "PERMISSIVE",
+          "policyname": "users_update_own",
+          "schemaname": "public",
+          "with_check": "(auth.uid() = id)"
+        },
+        {
+          "cmd": "DELETE",
+          "qual": "((bucket_id = 'artisan-media'::text) AND ((storage.foldername(name))[1] = 'profiles'::text) AND ((storage.foldername(name))[2] = (auth.uid())::text))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "objects",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_media_owner_delete",
+          "schemaname": "storage",
+          "with_check": null
+        },
+        {
+          "cmd": "UPDATE",
+          "qual": "((bucket_id = 'artisan-media'::text) AND ((storage.foldername(name))[1] = 'profiles'::text) AND ((storage.foldername(name))[2] = (auth.uid())::text))",
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "objects",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_media_owner_update",
+          "schemaname": "storage",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "objects",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_media_owner_upload",
+          "schemaname": "storage",
+          "with_check": "((bucket_id = 'artisan-media'::text) AND ((storage.foldername(name))[1] = 'profiles'::text) AND ((storage.foldername(name))[2] = (auth.uid())::text))"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(bucket_id = 'artisan-media'::text)",
+          "roles": [
+            "anon",
+            "authenticated"
+          ],
+          "tablename": "objects",
+          "permissive": "PERMISSIVE",
+          "policyname": "artisan_media_public_read",
+          "schemaname": "storage",
+          "with_check": null
+        },
+        {
+          "cmd": "INSERT",
+          "qual": null,
+          "roles": [
+            "authenticated"
+          ],
+          "tablename": "objects",
+          "permissive": "PERMISSIVE",
+          "policyname": "portfolio_authenticated_upload",
+          "schemaname": "storage",
+          "with_check": "(bucket_id = 'portfolio'::text)"
+        },
+        {
+          "cmd": "SELECT",
+          "qual": "(bucket_id = 'portfolio'::text)",
+          "roles": [
+            "anon",
+            "authenticated"
+          ],
+          "tablename": "objects",
+          "permissive": "PERMISSIVE",
+          "policyname": "portfolio_public_read",
+          "schemaname": "storage",
+          "with_check": null
+        }
+      ]
+    },
+    {
+      "section": "identity_triggers",
+      "evidence": [
+        {
+          "tgname": "on_auth_user_created",
+          "tgenabled": "O",
+          "definition": "CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION handle_new_user()",
+          "table_name": "auth.users",
+          "function_name": "handle_new_user()"
+        },
+        {
+          "tgname": "protect_profiles_role",
+          "tgenabled": "O",
+          "definition": "CREATE TRIGGER protect_profiles_role BEFORE UPDATE OF role ON profiles FOR EACH ROW EXECUTE FUNCTION prevent_non_admin_role_change()",
+          "table_name": "profiles",
+          "function_name": "prevent_non_admin_role_change()"
+        },
+        {
+          "tgname": "protect_users_role",
+          "tgenabled": "O",
+          "definition": "CREATE TRIGGER protect_users_role BEFORE UPDATE OF role ON users FOR EACH ROW EXECUTE FUNCTION prevent_non_admin_role_change()",
+          "table_name": "users",
+          "function_name": "prevent_non_admin_role_change()"
+        }
+      ]
+    },
+    {
+      "section": "authority_functions",
+      "evidence": [
+        {
+          "owner": "postgres",
+          "proacl": [
+            "=X/postgres",
+            "postgres=X/postgres",
+            "anon=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "is_admin",
+          "arguments": "",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "definition": "CREATE OR REPLACE FUNCTION public.is_admin()\n RETURNS boolean\n LANGUAGE sql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n$function$\n"
+        },
+        {
+          "owner": "postgres",
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "approve_artisan_claim",
+          "arguments": "p_claim_id uuid",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "definition": "CREATE OR REPLACE FUNCTION public.approve_artisan_claim(p_claim_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE\r\n  v_caller_uid        uuid;\r\n  v_caller_role       text;\r\n  v_pre               record;   -- non-locking pre-read of claim\r\n  v_claim             record;   -- locked re-read of claim\r\n  v_artisan_id        uuid;     -- resolved canonical artisan UUID\r\n  v_artisan_owner     uuid;     -- owner read under artisan lock\r\n  v_requester_id      uuid;\r\n  v_rows_updated      integer;\r\n  v_reread_owner      uuid;\r\nBEGIN\r\n\r\n  -- ── AUTH 1: Identify caller ─────────────────────────────────\r\n  v_caller_uid := auth.uid();\r\n  IF v_caller_uid IS NULL THEN\r\n    RETURN jsonb_build_object('ok', false, 'reason', 'unauthenticated');\r\n  END IF;\r\n\r\n  -- ── AUTH 2: Verify admin role from DB ───────────────────────\r\n  SELECT role INTO v_caller_role\r\n  FROM public.users\r\n  WHERE id = v_caller_uid;\r\n\r\n  IF v_caller_role IS NULL OR v_caller_role != 'admin' THEN\r\n    RETURN jsonb_build_object('ok', false, 'reason', 'not_admin');\r\n  END IF;\r\n\r\n  -- ══════════════════════════════════════════════════════════════\r\n  -- PRE-READ: read claim WITHOUT FOR UPDATE — purpose: resolve\r\n  -- artisan_id only so we can acquire the artisan lock first.\r\n  -- DO NOT trust this snapshot for business decisions. All critical\r\n  -- checks (status, requester) are performed on the re-locked read.\r\n  -- ══════════════════════════════════════════════════════════════\r\n  SELECT * INTO v_pre\r\n  FROM public.claim_requests\r\n  WHERE id = p_claim_id;\r\n\r\n  IF NOT FOUND THEN\r\n    RETURN jsonb_build_object('ok', false, 'reason', 'claim_not_found');\r\n  END IF;\r\n\r\n  -- Early-exit on obvious pre-read invalids (avoid pointless artisan lock)\r\n  IF v_pre.status != 'pending' THEN\r\n    RETURN jsonb_build_object(\r\n      'ok',     false,\r\n      'reason', 'claim_not_pending_preread',\r\n      'status', v_pre.status\r\n    );\r\n  END IF;\r\n  IF v_pre.requester_user_id IS NULL THEN\r\n    RETURN jsonb_build_object('ok', false, 'reason', 'requester_missing_preread');\r\n  END IF;\r\n\r\n  -- ── RESOLVE artisan UUID from pre-read claim fields ──────────\r\n  -- Primary:  artisan_id UUID FK\r\n  -- Fallback: artisan_legacy_id cast to UUID\r\n  -- Final:    artisan_legacy_id text match on artisans.legacy_id\r\n  IF v_pre.artisan_id IS NOT NULL THEN\r\n    SELECT a.id INTO v_artisan_id\r\n    FROM public.artisans a\r\n    WHERE a.id = v_pre.artisan_id\r\n    LIMIT 1;\r\n  END IF;\r\n\r\n  IF v_artisan_id IS NULL AND v_pre.artisan_legacy_id IS NOT NULL THEN\r\n    SELECT a.id INTO v_artisan_id\r\n    FROM public.artisans a\r\n    WHERE a.id::text = v_pre.artisan_legacy_id\r\n    LIMIT 1;\r\n  END IF;\r\n\r\n  IF v_artisan_id IS NULL AND v_pre.artisan_legacy_id IS NOT NULL THEN\r\n    SELECT a.id INTO v_artisan_id\r\n    FROM public.artisans a\r\n    WHERE a.legacy_id = v_pre.artisan_legacy_id\r\n    LIMIT 1;\r\n  END IF;\r\n\r\n  IF v_artisan_id IS NULL THEN\r\n    RETURN jsonb_build_object(\r\n      'ok',                false,\r\n      'reason',            'artisan_not_found',\r\n      'artisan_id',        v_pre.artisan_id,\r\n      'artisan_legacy_id', v_pre.artisan_legacy_id\r\n    );\r\n  END IF;\r\n\r\n  -- ══════════════════════════════════════════════════════════════\r\n  -- LOCK A: Acquire ARTISAN row FOR UPDATE — THE GLOBAL ORDERING POINT.\r\n  --\r\n  -- All concurrent approvals targeting the same artisan (regardless of\r\n  -- which claim row they arrived from) will contend here. Exactly one\r\n  -- transaction acquires this lock. The loser blocks here and will later\r\n  -- re-read a non-pending claim status.\r\n  --\r\n  -- Owner read happens AFTER this lock — never before.\r\n  -- ══════════════════════════════════════════════════════════════\r\n  SELECT a.owner_user_id INTO v_artisan_owner\r\n  FROM public.artisans a\r\n  WHERE a.id = v_artisan_id\r\n  FOR UPDATE;\r\n\r\n  -- ══════════════════════════════════════════════════════════════\r\n  -- LOCK B: Acquire TARGET CLAIM row FOR UPDATE — after artisan lock.\r\n  --\r\n  -- The claim may have been superseded between the pre-read and here\r\n  -- (if a concurrent approval for this artisan won the artisan lock\r\n  -- first, it would have updated this claim to superseded_by_approval).\r\n  -- Re-read and re-validate all critical fields.\r\n  -- ══════════════════════════════════════════════════════════════\r\n  SELECT * INTO v_claim\r\n  FROM public.claim_requests\r\n  WHERE id = p_claim_id\r\n  FOR UPDATE;\r\n\r\n  IF NOT FOUND THEN\r\n    RETURN jsonb_build_object('ok', false, 'reason', 'claim_not_found_locked');\r\n  END IF;\r\n\r\n  -- Re-validate claim status (may now be superseded_by_approval if we lost a race)\r\n  IF v_claim.status != 'pending' THEN\r\n    RETURN jsonb_build_object(\r\n      'ok',     false,\r\n      'reason', 'claim_not_pending',\r\n      'status', v_claim.status\r\n    );\r\n  END IF;\r\n\r\n  -- Extract requester from locked claim\r\n  v_requester_id := v_claim.requester_user_id;\r\n  IF v_requester_id IS NULL THEN\r\n    RETURN jsonb_build_object('ok', false, 'reason', 'requester_missing');\r\n  END IF;\r\n\r\n  -- Detect requester mismatch between pre-read and locked read (paranoid guard)\r\n  IF v_requester_id != v_pre.requester_user_id THEN\r\n    RETURN jsonb_build_object('ok', false, 'reason', 'requester_mismatch');\r\n  END IF;\r\n\r\n  -- ══════════════════════════════════════════════════════════════\r\n  -- OWNERSHIP CHECKS (under both artisan lock and claim lock)\r\n  -- ══════════════════════════════════════════════════════════════\r\n\r\n  -- Case A: artisan already owned by a DIFFERENT user → hard business failure\r\n  IF v_artisan_owner IS NOT NULL AND v_artisan_owner != v_requester_id THEN\r\n    RETURN jsonb_build_object(\r\n      'ok',         false,\r\n      'reason',     'artisan_has_owner',\r\n      'artisan_id', v_artisan_id\r\n    );\r\n  END IF;\r\n\r\n  -- Case B: artisan already owned by THIS same requester → idempotent\r\n  IF v_artisan_owner IS NOT NULL AND v_artisan_owner = v_requester_id THEN\r\n    -- Artisan ownership is already consistent. Mark claim approved idempotently.\r\n    -- Do NOT rewrite owner_user_id, onboarding_completed, verified, availability.\r\n    UPDATE public.claim_requests\r\n    SET status      = 'approved',\r\n        reviewed_at = now()\r\n    WHERE id = p_claim_id;\r\n\r\n    -- Supersede competing pending claims using canonical artisan UUID.\r\n    -- See SUPERSESSION LOGIC below for cross-representation coverage.\r\n    PERFORM public._supersede_competing_claims(v_artisan_id, p_claim_id, v_claim.artisan_legacy_id);\r\n\r\n    RETURN jsonb_build_object(\r\n      'ok',           true,\r\n      'reason',       'already_owned_consistent',\r\n      'artisan_id',   v_artisan_id,\r\n      'requester_id', v_requester_id\r\n    );\r\n  END IF;\r\n\r\n  -- Case C: owner_user_id IS NULL → proceed with ownership transfer\r\n\r\n  -- ══════════════════════════════════════════════════════════════\r\n  -- CONDITIONAL ATOMIC OWNERSHIP TRANSFER\r\n  --\r\n  -- WHERE owner_user_id IS NULL is the final defensive guard.\r\n  -- Even if the FOR UPDATE lock above somehow allowed two transactions\r\n  -- through (impossible under standard PostgreSQL serialization, but\r\n  -- defensive-in-depth), only ONE will match the IS NULL predicate.\r\n  --\r\n  -- INVARIANTS (7C.12A.1 contract):\r\n  --   onboarding_completed: NOT SET — remains false until 7C.12A.3 RPC\r\n  --   verified:             NOT SET — separate admin judgment\r\n  --   availability:         NOT SET — artisan sets post-onboarding\r\n  -- ══════════════════════════════════════════════════════════════\r\n  UPDATE public.artisans\r\n  SET owner_user_id  = v_requester_id,\r\n      claimed        = true,\r\n      claim_status   = 'approved',\r\n      updated_at     = now()\r\n      -- onboarding_completed: intentionally NOT SET (7C.12A.1)\r\n      -- verified:             intentionally NOT SET (7C.12A.1)\r\n      -- availability:         intentionally NOT SET (7C.12A.1)\r\n  WHERE id             = v_artisan_id\r\n    AND owner_user_id IS NULL;  -- defensive guard: never overwrite a non-null owner\r\n\r\n  GET DIAGNOSTICS v_rows_updated = ROW_COUNT;\r\n\r\n  -- ROW_COUNT check — re-read if conditional UPDATE matched 0 rows\r\n  IF v_rows_updated = 0 THEN\r\n    SELECT a.owner_user_id INTO v_reread_owner\r\n    FROM public.artisans a\r\n    WHERE a.id = v_artisan_id;\r\n\r\n    IF v_reread_owner IS NULL THEN\r\n      RAISE WARNING '[approve_artisan_claim] conditional_update_miss: artisan % owner still NULL after 0-row update', v_artisan_id;\r\n      RETURN jsonb_build_object(\r\n        'ok',         false,\r\n        'reason',     'conditional_update_miss',\r\n        'artisan_id', v_artisan_id\r\n      );\r\n    ELSIF v_reread_owner = v_requester_id THEN\r\n      RETURN jsonb_build_object(\r\n        'ok',           true,\r\n        'reason',       'already_owned_consistent',\r\n        'artisan_id',   v_artisan_id,\r\n        'requester_id', v_requester_id\r\n      );\r\n    ELSE\r\n      RETURN jsonb_build_object(\r\n        'ok',         false,\r\n        'reason',     'artisan_has_owner',\r\n        'artisan_id', v_artisan_id\r\n      );\r\n    END IF;\r\n  END IF;\r\n\r\n  -- Mark THIS claim approved\r\n  UPDATE public.claim_requests\r\n  SET status      = 'approved',\r\n      reviewed_at = now()\r\n  WHERE id = p_claim_id;\r\n\r\n  -- Supersede competing pending claims (canonical cross-representation)\r\n  PERFORM public._supersede_competing_claims(v_artisan_id, p_claim_id, v_claim.artisan_legacy_id);\r\n\r\n  -- Promote user role\r\n  UPDATE public.users\r\n  SET role = 'artisan'\r\n  WHERE id = v_requester_id\r\n    AND role != 'admin';\r\n\r\n  UPDATE public.profiles\r\n  SET role = 'artisan'\r\n  WHERE id = v_requester_id\r\n    AND (role IS NULL OR role NOT IN ('admin'));\r\n\r\n  RETURN jsonb_build_object(\r\n    'ok',           true,\r\n    'reason',       'approved',\r\n    'artisan_id',   v_artisan_id,\r\n    'requester_id', v_requester_id,\r\n    'claim_id',     p_claim_id\r\n  );\r\n\r\nEXCEPTION\r\n  WHEN OTHERS THEN\r\n    RAISE WARNING '[approve_artisan_claim] unexpected error: %', SQLERRM;\r\n    RETURN jsonb_build_object('ok', false, 'reason', 'internal_error');\r\nEND;\r\n$function$\n"
+        },
+        {
+          "owner": "postgres",
+          "proacl": [
+            "=X/postgres",
+            "postgres=X/postgres",
+            "anon=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "handle_new_user",
+          "arguments": "",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "definition": "CREATE OR REPLACE FUNCTION public.handle_new_user()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public'\nAS $function$\r\nDECLARE\r\n  v_role text;\r\n  v_name text;\r\n  v_phone text;\r\n  v_city text;\r\nBEGIN\r\n  /*\r\n   * SECURITY:\r\n   * A signup may create only CLIENT or ARTISAN.\r\n   * ADMIN can never be granted from user_metadata.\r\n   */\r\n  v_role :=\r\n    CASE lower(coalesce(new.raw_user_meta_data->>'role', 'client'))\r\n      WHEN 'artisan' THEN 'artisan'\r\n      WHEN 'client'  THEN 'client'\r\n      ELSE 'client'\r\n    END;\r\n\r\n  v_name  := coalesce(nullif(new.raw_user_meta_data->>'full_name', ''), 'Utilisateur');\r\n  v_phone := nullif(new.raw_user_meta_data->>'phone', '');\r\n  v_city  := nullif(new.raw_user_meta_data->>'city', '');\r\n\r\n  /* Canonical application identity + role */\r\n  INSERT INTO public.users (\r\n    id,\r\n    email,\r\n    full_name,\r\n    phone,\r\n    role,\r\n    city\r\n  )\r\n  VALUES (\r\n    new.id,\r\n    new.email,\r\n    v_name,\r\n    v_phone,\r\n    v_role,\r\n    v_city\r\n  )\r\n  ON CONFLICT (id) DO NOTHING;\r\n\r\n  /* Profile mirror */\r\n  INSERT INTO public.profiles (\r\n    id,\r\n    full_name,\r\n    email,\r\n    phone,\r\n    role,\r\n    city\r\n  )\r\n  VALUES (\r\n    new.id,\r\n    v_name,\r\n    new.email,\r\n    v_phone,\r\n    v_role,\r\n    v_city\r\n  )\r\n  ON CONFLICT (id) DO NOTHING;\r\n\r\n  RETURN new;\r\nEND;\r\n$function$\n"
+        },
+        {
+          "owner": "postgres",
+          "proacl": [
+            "=X/postgres",
+            "postgres=X/postgres",
+            "anon=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "prevent_non_admin_role_change",
+          "arguments": "",
+          "proconfig": [
+            "search_path=public, auth"
+          ],
+          "prosecdef": true,
+          "definition": "CREATE OR REPLACE FUNCTION public.prevent_non_admin_role_change()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'auth'\nAS $function$\r\nbegin\r\n  if new.role is distinct from old.role\r\n     and auth.uid() is not null\r\n     and not public.is_admin()\r\n  then\r\n    raise exception 'role_change_forbidden'\r\n      using errcode = '42501';\r\n  end if;\r\n\r\n  return new;\r\nend;\r\n$function$\n"
+        },
+        {
+          "owner": "postgres",
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "register_new_artisan",
+          "arguments": "p_full_name text, p_service_category text, p_city text, p_phone text, p_description text",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "definition": "CREATE OR REPLACE FUNCTION public.register_new_artisan(p_full_name text, p_service_category text, p_city text, p_phone text DEFAULT ''::text, p_description text DEFAULT ''::text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE\r\n  v_uid           uuid;\r\n  v_artisan_id    uuid;\r\n  v_existing_id   uuid;\r\n  v_full_name     text;\r\n  v_service_cat   text;\r\n  v_city          text;\r\n  v_description   text;\r\n  v_phone         text;\r\n  v_users_updated integer;\r\n  v_prof_updated  integer;\r\nBEGIN\r\n\r\n  v_uid := auth.uid();\r\n\r\n  IF v_uid IS NULL THEN\r\n    RETURN jsonb_build_object(\r\n      'ok', false,\r\n      'reason', 'unauthenticated'\r\n    );\r\n  END IF;\r\n\r\n  v_full_name   := trim(COALESCE(p_full_name, ''));\r\n  v_service_cat := trim(COALESCE(p_service_category, ''));\r\n  v_city        := trim(COALESCE(p_city, ''));\r\n  v_description := trim(COALESCE(p_description, ''));\r\n  v_phone       := trim(COALESCE(p_phone, ''));\r\n\r\n  IF length(v_full_name) < 3 THEN\r\n    RETURN jsonb_build_object(\r\n      'ok', false,\r\n      'reason', 'name_required',\r\n      'message', 'Nom complet requis (3 caractères minimum).'\r\n    );\r\n  END IF;\r\n\r\n  IF v_service_cat = '' THEN\r\n    RETURN jsonb_build_object(\r\n      'ok', false,\r\n      'reason', 'category_required',\r\n      'message', 'Métier requis.'\r\n    );\r\n  END IF;\r\n\r\n  IF v_city = '' THEN\r\n    RETURN jsonb_build_object(\r\n      'ok', false,\r\n      'reason', 'city_required',\r\n      'message', 'Ville requise.'\r\n    );\r\n  END IF;\r\n\r\n  IF length(v_description) > 500 THEN\r\n    RETURN jsonb_build_object(\r\n      'ok', false,\r\n      'reason', 'description_too_long',\r\n      'message', 'Description limitée à 500 caractères.'\r\n    );\r\n  END IF;\r\n\r\n  SELECT a.id\r\n  INTO v_existing_id\r\n  FROM public.artisans a\r\n  WHERE a.owner_user_id = v_uid\r\n  LIMIT 1\r\n  FOR UPDATE;\r\n\r\n  IF v_existing_id IS NOT NULL THEN\r\n    RETURN jsonb_build_object(\r\n      'ok', true,\r\n      'reason', 'already_registered',\r\n      'artisan_id', v_existing_id\r\n    );\r\n  END IF;\r\n\r\n  IF NOT EXISTS (\r\n    SELECT 1\r\n    FROM public.users\r\n    WHERE id = v_uid\r\n  ) THEN\r\n    RETURN jsonb_build_object(\r\n      'ok', false,\r\n      'reason', 'identity_broken',\r\n      'message', 'Votre compte n''est pas entièrement configuré. Veuillez vous reconnecter.'\r\n    );\r\n  END IF;\r\n\r\n  INSERT INTO public.artisans (\r\n    owner_user_id,\r\n    full_name,\r\n    service_category,\r\n    city,\r\n    description,\r\n    phone,\r\n    claimed,\r\n    claim_status,\r\n    onboarding_completed,\r\n    availability,\r\n    verified,\r\n    created_at,\r\n    updated_at\r\n  )\r\n  VALUES (\r\n    v_uid,\r\n    v_full_name,\r\n    v_service_cat,\r\n    v_city,\r\n    v_description,\r\n    NULLIF(v_phone, ''),\r\n    true,\r\n    'approved',\r\n    false,\r\n    'unavailable',\r\n    false,\r\n    now(),\r\n    now()\r\n  )\r\n  RETURNING id INTO v_artisan_id;\r\n\r\n  UPDATE public.users\r\n  SET\r\n    role  = 'artisan',\r\n    phone = CASE\r\n      WHEN v_phone != '' THEN v_phone\r\n      ELSE phone\r\n    END\r\n  WHERE id = v_uid\r\n    AND role != 'admin';\r\n\r\n  GET DIAGNOSTICS v_users_updated = ROW_COUNT;\r\n\r\n  UPDATE public.profiles\r\n  SET\r\n    role  = 'artisan',\r\n    phone = CASE\r\n      WHEN v_phone != '' THEN v_phone\r\n      ELSE phone\r\n    END\r\n  WHERE id = v_uid\r\n    AND (role IS NULL OR role NOT IN ('admin'));\r\n\r\n  GET DIAGNOSTICS v_prof_updated = ROW_COUNT;\r\n\r\n  RETURN jsonb_build_object(\r\n    'ok', true,\r\n    'reason', 'registered',\r\n    'artisan_id', v_artisan_id,\r\n    'owner_uid', v_uid,\r\n    'profiles_updated', v_prof_updated\r\n  );\r\n\r\nEXCEPTION\r\n  WHEN unique_violation THEN\r\n\r\n    SELECT a.id\r\n    INTO v_existing_id\r\n    FROM public.artisans a\r\n    WHERE a.owner_user_id = v_uid\r\n    LIMIT 1;\r\n\r\n    RETURN jsonb_build_object(\r\n      'ok', true,\r\n      'reason', 'already_registered',\r\n      'artisan_id', COALESCE(v_existing_id, v_artisan_id)\r\n    );\r\n\r\n  WHEN OTHERS THEN\r\n\r\n    RAISE WARNING\r\n      '[register_new_artisan] unexpected error for uid %: %',\r\n      v_uid,\r\n      SQLERRM;\r\n\r\n    RETURN jsonb_build_object(\r\n      'ok', false,\r\n      'reason', 'internal_error'\r\n    );\r\n\r\nEND;\r\n$function$\n"
+        },
+        {
+          "owner": "postgres",
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres"
+          ],
+          "nspname": "fixeo_private",
+          "proname": "_fixeo_is_admin",
+          "arguments": "",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "definition": "CREATE OR REPLACE FUNCTION fixeo_private._fixeo_is_admin()\n RETURNS boolean\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n$function$\n"
+        }
+      ]
+    },
+    {
+      "section": "role_membership",
+      "evidence": []
+    },
+    {
+      "section": "policy_function_dependencies",
+      "evidence": [
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "artisan_profiles_delete_admin",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "artisan_profiles",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "artisan_profiles_insert_own",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "artisan_profiles",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "artisan_profiles_update_own_admin",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "artisan_profiles",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "artisan_profiles_update_own_admin",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "artisan_profiles",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "artisans_admin_delete",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "artisans",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "artisans_admin_insert",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "artisans",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "ea_fixeo_admin_all",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_accounts",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "ea_fixeo_admin_all",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_accounts",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.enterprise_members em\r\n    WHERE  em.enterprise_id = p_enterprise_id\r\n      AND  em.user_id       = v_caller_id\r\n      AND  em.status        = 'active'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "ea_members_select",
+          "proname": "_fixeo_is_enterprise_member",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_accounts",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.enterprise_members em\r\n    WHERE  em.enterprise_id = p_enterprise_id\r\n      AND  em.user_id       = v_caller_id\r\n      AND  em.role          IN ('owner', 'admin')\r\n      AND  em.status        = 'active'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "enterprise_audit_events_manager_select",
+          "proname": "_fixeo_is_enterprise_manager",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_audit_events",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "ei_fixeo_admin_all",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_invitations",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "ei_fixeo_admin_all",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_invitations",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.enterprise_members em\r\n    WHERE  em.enterprise_id = p_enterprise_id\r\n      AND  em.user_id       = v_caller_id\r\n      AND  em.role          IN ('owner', 'admin')\r\n      AND  em.status        = 'active'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "ei_managers_select",
+          "proname": "_fixeo_is_enterprise_manager",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_invitations",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "enterprise_member_sites_fixeo_admin_select",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_member_sites",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "em_fixeo_admin_all",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_members",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "em_fixeo_admin_all",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_members",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.enterprise_members em\r\n    WHERE  em.enterprise_id = p_enterprise_id\r\n      AND  em.user_id       = v_caller_id\r\n      AND  em.status        = 'active'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "em_members_select",
+          "proname": "_fixeo_is_enterprise_member",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_members",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "erc_fixeo_admin_all",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_request_context",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "erc_fixeo_admin_all",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_request_context",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\n  SELECT\r\n    CASE\r\n      WHEN auth.uid() IS NULL\r\n        OR p_enterprise_id IS NULL\r\n        OR p_site_id IS NULL\r\n      THEN false\r\n\r\n      WHEN fixeo_private._fixeo_is_admin()\r\n      THEN EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_sites es\r\n        WHERE es.id = p_site_id\r\n          AND es.enterprise_id = p_enterprise_id\r\n      )\r\n\r\n      ELSE EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_members em\r\n        JOIN public.enterprise_sites es\r\n          ON es.id = p_site_id\r\n         AND es.enterprise_id = em.enterprise_id\r\n        WHERE em.enterprise_id = p_enterprise_id\r\n          AND em.user_id = auth.uid()\r\n          AND em.status = 'active'\r\n          AND (\r\n            em.role IN (\r\n              'owner',\r\n              'admin',\r\n              'operations_manager',\r\n              'reporter',\r\n              'viewer'\r\n            )\r\n            OR (\r\n              em.role = 'site_manager'\r\n              AND EXISTS (\r\n                SELECT 1\r\n                FROM public.enterprise_member_sites ems\r\n                WHERE ems.enterprise_id = p_enterprise_id\r\n                  AND ems.member_id = em.id\r\n                  AND ems.site_id = p_site_id\r\n              )\r\n            )\r\n          )\r\n      )\r\n    END;\r\n",
+          "polname": "erc_members_select",
+          "proname": "_fixeo_can_access_enterprise_site",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_request_context",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "ers_fixeo_admin_select",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_request_sla",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\n  SELECT\r\n    CASE\r\n      WHEN auth.uid() IS NULL\r\n        OR p_enterprise_id IS NULL\r\n        OR p_site_id IS NULL\r\n      THEN false\r\n\r\n      WHEN fixeo_private._fixeo_is_admin()\r\n      THEN EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_sites es\r\n        WHERE es.id = p_site_id\r\n          AND es.enterprise_id = p_enterprise_id\r\n      )\r\n\r\n      ELSE EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_members em\r\n        JOIN public.enterprise_sites es\r\n          ON es.id = p_site_id\r\n         AND es.enterprise_id = em.enterprise_id\r\n        WHERE em.enterprise_id = p_enterprise_id\r\n          AND em.user_id = auth.uid()\r\n          AND em.status = 'active'\r\n          AND (\r\n            em.role IN (\r\n              'owner',\r\n              'admin',\r\n              'operations_manager',\r\n              'reporter',\r\n              'viewer'\r\n            )\r\n            OR (\r\n              em.role = 'site_manager'\r\n              AND EXISTS (\r\n                SELECT 1\r\n                FROM public.enterprise_member_sites ems\r\n                WHERE ems.enterprise_id = p_enterprise_id\r\n                  AND ems.member_id = em.id\r\n                  AND ems.site_id = p_site_id\r\n              )\r\n            )\r\n          )\r\n      )\r\n    END;\r\n",
+          "polname": "ers_members_select",
+          "proname": "_fixeo_can_access_enterprise_site",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_request_sla",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "es_fixeo_admin_all",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_sites",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "es_fixeo_admin_all",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_sites",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.enterprise_members em\r\n    WHERE  em.enterprise_id = p_enterprise_id\r\n      AND  em.user_id       = v_caller_id\r\n      AND  em.role          IN ('owner', 'admin')\r\n      AND  em.status        = 'active'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "es_manager_update",
+          "proname": "_fixeo_is_enterprise_manager",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_sites",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.enterprise_members em\r\n    WHERE  em.enterprise_id = p_enterprise_id\r\n      AND  em.user_id       = v_caller_id\r\n      AND  em.role          IN ('owner', 'admin')\r\n      AND  em.status        = 'active'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "es_manager_update",
+          "proname": "_fixeo_is_enterprise_manager",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_sites",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\n  SELECT\r\n    CASE\r\n      WHEN auth.uid() IS NULL\r\n        OR p_enterprise_id IS NULL\r\n        OR p_site_id IS NULL\r\n      THEN false\r\n\r\n      WHEN fixeo_private._fixeo_is_admin()\r\n      THEN EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_sites es\r\n        WHERE es.id = p_site_id\r\n          AND es.enterprise_id = p_enterprise_id\r\n      )\r\n\r\n      ELSE EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_members em\r\n        JOIN public.enterprise_sites es\r\n          ON es.id = p_site_id\r\n         AND es.enterprise_id = em.enterprise_id\r\n        WHERE em.enterprise_id = p_enterprise_id\r\n          AND em.user_id = auth.uid()\r\n          AND em.status = 'active'\r\n          AND (\r\n            em.role IN (\r\n              'owner',\r\n              'admin',\r\n              'operations_manager',\r\n              'reporter',\r\n              'viewer'\r\n            )\r\n            OR (\r\n              em.role = 'site_manager'\r\n              AND EXISTS (\r\n                SELECT 1\r\n                FROM public.enterprise_member_sites ems\r\n                WHERE ems.enterprise_id = p_enterprise_id\r\n                  AND ems.member_id = em.id\r\n                  AND ems.site_id = p_site_id\r\n              )\r\n            )\r\n          )\r\n      )\r\n    END;\r\n",
+          "polname": "es_members_select",
+          "proname": "_fixeo_can_access_enterprise_site",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_sites",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "esp_fixeo_admin_all",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_sla_policies",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.users u\r\n    WHERE  u.id   = v_caller_id\r\n      AND  u.role = 'admin'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "esp_fixeo_admin_all",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_sla_policies",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.enterprise_members em\r\n    WHERE  em.enterprise_id = p_enterprise_id\r\n      AND  em.user_id       = v_caller_id\r\n      AND  em.role          IN ('owner', 'admin')\r\n      AND  em.status        = 'active'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "esp_manager_insert",
+          "proname": "_fixeo_is_enterprise_manager",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_sla_policies",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.enterprise_members em\r\n    WHERE  em.enterprise_id = p_enterprise_id\r\n      AND  em.user_id       = v_caller_id\r\n      AND  em.role          IN ('owner', 'admin')\r\n      AND  em.status        = 'active'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "esp_manager_update",
+          "proname": "_fixeo_is_enterprise_manager",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_sla_policies",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.enterprise_members em\r\n    WHERE  em.enterprise_id = p_enterprise_id\r\n      AND  em.user_id       = v_caller_id\r\n      AND  em.role          IN ('owner', 'admin')\r\n      AND  em.status        = 'active'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "esp_manager_update",
+          "proname": "_fixeo_is_enterprise_manager",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_sla_policies",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\n  SELECT\r\n    CASE\r\n      WHEN auth.uid() IS NULL\r\n        OR p_enterprise_id IS NULL\r\n        OR p_site_id IS NULL\r\n      THEN false\r\n\r\n      WHEN fixeo_private._fixeo_is_admin()\r\n      THEN EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_sites es\r\n        WHERE es.id = p_site_id\r\n          AND es.enterprise_id = p_enterprise_id\r\n      )\r\n\r\n      ELSE EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_members em\r\n        JOIN public.enterprise_sites es\r\n          ON es.id = p_site_id\r\n         AND es.enterprise_id = em.enterprise_id\r\n        WHERE em.enterprise_id = p_enterprise_id\r\n          AND em.user_id = auth.uid()\r\n          AND em.status = 'active'\r\n          AND (\r\n            em.role IN (\r\n              'owner',\r\n              'admin',\r\n              'operations_manager',\r\n              'reporter',\r\n              'viewer'\r\n            )\r\n            OR (\r\n              em.role = 'site_manager'\r\n              AND EXISTS (\r\n                SELECT 1\r\n                FROM public.enterprise_member_sites ems\r\n                WHERE ems.enterprise_id = p_enterprise_id\r\n                  AND ems.member_id = em.id\r\n                  AND ems.site_id = p_site_id\r\n              )\r\n            )\r\n          )\r\n      )\r\n    END;\r\n",
+          "polname": "esp_members_select",
+          "proname": "_fixeo_can_access_enterprise_site",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_sla_policies",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.enterprise_members em\r\n    WHERE  em.enterprise_id = p_enterprise_id\r\n      AND  em.user_id       = v_caller_id\r\n      AND  em.status        = 'active'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n",
+          "polname": "esp_members_select",
+          "proname": "_fixeo_is_enterprise_member",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "enterprise_sla_policies",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\n  SELECT\r\n    CASE\r\n      WHEN auth.uid() IS NULL\r\n        OR p_enterprise_id IS NULL\r\n        OR p_site_id IS NULL\r\n      THEN false\r\n\r\n      WHEN fixeo_private._fixeo_is_admin()\r\n      THEN EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_sites es\r\n        WHERE es.id = p_site_id\r\n          AND es.enterprise_id = p_enterprise_id\r\n      )\r\n\r\n      ELSE EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_members em\r\n        JOIN public.enterprise_sites es\r\n          ON es.id = p_site_id\r\n         AND es.enterprise_id = em.enterprise_id\r\n        WHERE em.enterprise_id = p_enterprise_id\r\n          AND em.user_id = auth.uid()\r\n          AND em.status = 'active'\r\n          AND (\r\n            em.role IN (\r\n              'owner',\r\n              'admin',\r\n              'operations_manager',\r\n              'reporter',\r\n              'viewer'\r\n            )\r\n            OR (\r\n              em.role = 'site_manager'\r\n              AND EXISTS (\r\n                SELECT 1\r\n                FROM public.enterprise_member_sites ems\r\n                WHERE ems.enterprise_id = p_enterprise_id\r\n                  AND ems.member_id = em.id\r\n                  AND ems.site_id = p_site_id\r\n              )\r\n            )\r\n          )\r\n      )\r\n    END;\r\n",
+          "polname": "missions_enterprise_members_select",
+          "proname": "_fixeo_can_access_enterprise_site",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "missions",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "payments_delete_admin",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "payments",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "payments_insert_admin",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "payments",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "payments_select_related_admin",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "payments",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "payments_update_admin",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "payments",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "payments_update_admin",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "payments",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "profiles_admin_all",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "profiles",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "profiles_admin_all",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "profiles",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "quotes_delete_admin",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "quotes",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "quotes_insert_artisan_admin",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "quotes",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "quotes_select_related_admin",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "quotes",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "quotes_update_related_admin",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "quotes",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "quotes_update_related_admin",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "quotes",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT\r\n    CASE\r\n      WHEN auth.uid() IS NULL\r\n        OR p_enterprise_id IS NULL\r\n        OR p_site_id IS NULL\r\n      THEN false\r\n\r\n      WHEN fixeo_private._fixeo_is_admin()\r\n      THEN EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_sites es\r\n        WHERE es.id = p_site_id\r\n          AND es.enterprise_id = p_enterprise_id\r\n      )\r\n\r\n      ELSE EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_members em\r\n        JOIN public.enterprise_sites es\r\n          ON es.id = p_site_id\r\n         AND es.enterprise_id = em.enterprise_id\r\n        WHERE em.enterprise_id = p_enterprise_id\r\n          AND em.user_id = auth.uid()\r\n          AND em.status = 'active'\r\n          AND (\r\n            em.role IN (\r\n              'owner',\r\n              'admin',\r\n              'operations_manager',\r\n              'reporter',\r\n              'viewer'\r\n            )\r\n            OR (\r\n              em.role = 'site_manager'\r\n              AND EXISTS (\r\n                SELECT 1\r\n                FROM public.enterprise_member_sites ems\r\n                WHERE ems.enterprise_id = p_enterprise_id\r\n                  AND ems.member_id = em.id\r\n                  AND ems.site_id = p_site_id\r\n              )\r\n            )\r\n          )\r\n      )\r\n    END;\r\n",
+          "polname": "service_requests_enterprise_members_select",
+          "proname": "_fixeo_can_access_enterprise_site",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "table_name": "service_requests",
+          "function_schema": "fixeo_private"
+        },
+        {
+          "prosrc": "\nDECLARE\n    _parts text[];\nBEGIN\n    -- Split on \"/\" to get path segments\n    SELECT string_to_array(name, '/') INTO _parts;\n    -- Return everything except the last segment\n    RETURN _parts[1 : array_length(_parts,1) - 1];\nEND\n",
+          "polname": "artisan_media_owner_delete",
+          "proname": "foldername",
+          "proconfig": null,
+          "prosecdef": false,
+          "table_name": "storage.objects",
+          "function_schema": "storage"
+        },
+        {
+          "prosrc": "\nDECLARE\n    _parts text[];\nBEGIN\n    -- Split on \"/\" to get path segments\n    SELECT string_to_array(name, '/') INTO _parts;\n    -- Return everything except the last segment\n    RETURN _parts[1 : array_length(_parts,1) - 1];\nEND\n",
+          "polname": "artisan_media_owner_update",
+          "proname": "foldername",
+          "proconfig": null,
+          "prosecdef": false,
+          "table_name": "storage.objects",
+          "function_schema": "storage"
+        },
+        {
+          "prosrc": "\nDECLARE\n    _parts text[];\nBEGIN\n    -- Split on \"/\" to get path segments\n    SELECT string_to_array(name, '/') INTO _parts;\n    -- Return everything except the last segment\n    RETURN _parts[1 : array_length(_parts,1) - 1];\nEND\n",
+          "polname": "artisan_media_owner_upload",
+          "proname": "foldername",
+          "proconfig": null,
+          "prosecdef": false,
+          "table_name": "storage.objects",
+          "function_schema": "storage"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "users_admin_all",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "users",
+          "function_schema": "public"
+        },
+        {
+          "prosrc": "\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM public.users u\r\n    WHERE u.id = auth.uid()\r\n      AND u.role = 'admin'\r\n  );\r\n",
+          "polname": "users_admin_all",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "table_name": "users",
+          "function_schema": "public"
+        }
+      ]
+    },
+    {
+      "section": "function_security",
+      "evidence": [
+        {
+          "args": "",
+          "owner": "postgres",
+          "proacl": [
+            "=X/postgres",
+            "postgres=X/postgres",
+            "anon=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "is_admin",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "definition_md5": "1986929dce09806c133d90b1bf480e1d"
+        },
+        {
+          "args": "p_claim_id uuid",
+          "owner": "postgres",
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "approve_artisan_claim",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "definition_md5": "72afcdfb27594805ae23507a52132160"
+        },
+        {
+          "args": "",
+          "owner": "postgres",
+          "proacl": [
+            "=X/postgres",
+            "postgres=X/postgres",
+            "anon=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "handle_new_user",
+          "proconfig": [
+            "search_path=public"
+          ],
+          "prosecdef": true,
+          "definition_md5": "75b3739d38ea4ae3bdfd9f8ea4db2a8d"
+        },
+        {
+          "args": "p_enterprise_id uuid, p_member_id uuid, p_new_role text",
+          "owner": "postgres",
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "update_enterprise_member_role",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "definition_md5": "c800ff723928efae9b36710084688f1a"
+        },
+        {
+          "args": "p_mission_id uuid",
+          "owner": "postgres",
+          "proacl": [
+            "postgres=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "plumbing_repair_admin_v1",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "definition_md5": "7e018acf12b5b691e3fdad9ecc59f9c6"
+        },
+        {
+          "args": "p_mission_id uuid",
+          "owner": "postgres",
+          "proacl": [
+            "postgres=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "electricity_repair_admin_v1",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "definition_md5": "385cd11bc6266ccbc93141362a8418b3"
+        },
+        {
+          "args": "p_mission_id uuid",
+          "owner": "postgres",
+          "proacl": [
+            "postgres=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "climatisation_repair_admin_v1",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "definition_md5": "ae0f2b61f7afa3ba4909ea1a347828be"
+        },
+        {
+          "args": "",
+          "owner": "postgres",
+          "proacl": [
+            "=X/postgres",
+            "postgres=X/postgres",
+            "anon=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "prevent_non_admin_role_change",
+          "proconfig": [
+            "search_path=public, auth"
+          ],
+          "prosecdef": true,
+          "definition_md5": "19cecb13800d2ebbe7f7881b7f9ef8be"
+        },
+        {
+          "args": "p_full_name text, p_service_category text, p_city text, p_phone text, p_description text",
+          "owner": "postgres",
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "register_new_artisan",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "definition_md5": "f9b2e6abbd9cca298cbcb8d0934a0bbb"
+        },
+        {
+          "args": "p_request_id uuid, p_artisan_id uuid",
+          "owner": "postgres",
+          "proacl": [
+            "postgres=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "admin_targeted_dispatch_v1",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "definition_md5": "3997ba68de5e98391c379e43f1a97a0d"
+        },
+        {
+          "args": "p_mission_id uuid",
+          "owner": "postgres",
+          "proacl": [
+            "postgres=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "serrurerie_repair_admin_v1",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "definition_md5": "2e1377a99a2b06e5134e9541db671022"
+        },
+        {
+          "args": "",
+          "owner": "postgres",
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres"
+          ],
+          "nspname": "fixeo_private",
+          "proname": "_fixeo_is_admin",
+          "proconfig": [
+            "search_path=\"\""
+          ],
+          "prosecdef": true,
+          "definition_md5": "ef9854600afab8856cea9628f507e6e9"
+        }
+      ]
+    },
+    {
+      "section": "schema_privileges",
+      "evidence": [
+        {
+          "nspacl": [
+            "pg_database_owner=UC/pg_database_owner",
+            "=U/pg_database_owner",
+            "postgres=U/pg_database_owner",
+            "anon=U/pg_database_owner",
+            "authenticated=U/pg_database_owner",
+            "service_role=U/pg_database_owner"
+          ],
+          "can_use": true,
+          "nspname": "public",
+          "rolname": "authenticated",
+          "can_create": false
+        },
+        {
+          "nspacl": [
+            "postgres=UC/postgres",
+            "authenticated=U/postgres",
+            "service_role=U/postgres"
+          ],
+          "can_use": true,
+          "nspname": "fixeo_private",
+          "rolname": "authenticated",
+          "can_create": false
+        },
+        {
+          "nspacl": [
+            "pg_database_owner=UC/pg_database_owner",
+            "=U/pg_database_owner",
+            "postgres=U/pg_database_owner",
+            "anon=U/pg_database_owner",
+            "authenticated=U/pg_database_owner",
+            "service_role=U/pg_database_owner"
+          ],
+          "can_use": true,
+          "nspname": "public",
+          "rolname": "anon",
+          "can_create": false
+        },
+        {
+          "nspacl": [
+            "postgres=UC/postgres",
+            "authenticated=U/postgres",
+            "service_role=U/postgres"
+          ],
+          "can_use": false,
+          "nspname": "fixeo_private",
+          "rolname": "anon",
+          "can_create": false
+        },
+        {
+          "nspacl": [
+            "pg_database_owner=UC/pg_database_owner",
+            "=U/pg_database_owner",
+            "postgres=U/pg_database_owner",
+            "anon=U/pg_database_owner",
+            "authenticated=U/pg_database_owner",
+            "service_role=U/pg_database_owner"
+          ],
+          "can_use": true,
+          "nspname": "public",
+          "rolname": "service_role",
+          "can_create": false
+        },
+        {
+          "nspacl": [
+            "postgres=UC/postgres",
+            "authenticated=U/postgres",
+            "service_role=U/postgres"
+          ],
+          "can_use": true,
+          "nspname": "fixeo_private",
+          "rolname": "service_role",
+          "can_create": false
+        }
+      ]
+    },
+    {
+      "section": "authority_dependents",
+      "evidence": []
+    },
+    {
+      "section": "profile_role_policy_dependencies",
+      "evidence": [
+        {
+          "table_name": "enterprise_leads",
+          "polname": "enterprise_leads_admin_select",
+          "attname": "role",
+          "using_expr": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin'::text))))",
+          "check_expr": null
+        },
+        {
+          "table_name": "enterprise_leads",
+          "polname": "enterprise_leads_admin_update",
+          "attname": "role",
+          "using_expr": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin'::text))))",
+          "check_expr": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin'::text))))"
+        },
+        {
+          "table_name": "enterprise_leads",
+          "polname": "enterprise_leads_admin_update",
+          "attname": "role",
+          "using_expr": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin'::text))))",
+          "check_expr": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin'::text))))"
+        },
+        {
+          "table_name": "estimator_context_redemptions",
+          "polname": "ecr_admin_select",
+          "attname": "role",
+          "using_expr": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = auth.uid()) AND (profiles.role = 'admin'::text))))",
+          "check_expr": null
+        },
+        {
+          "table_name": "missions",
+          "polname": "admin_all_missions",
+          "attname": "role",
+          "using_expr": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE (((u.id)::text = (auth.uid())::text) AND (u.role = 'admin'::text)))) OR (EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE (((p.id)::text = (auth.uid())::text) AND (p.role = 'admin'::text)))))",
+          "check_expr": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE (((u.id)::text = (auth.uid())::text) AND (u.role = 'admin'::text)))) OR (EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE (((p.id)::text = (auth.uid())::text) AND (p.role = 'admin'::text)))))"
+        },
+        {
+          "table_name": "missions",
+          "polname": "admin_all_missions",
+          "attname": "role",
+          "using_expr": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE (((u.id)::text = (auth.uid())::text) AND (u.role = 'admin'::text)))) OR (EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE (((p.id)::text = (auth.uid())::text) AND (p.role = 'admin'::text)))))",
+          "check_expr": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE (((u.id)::text = (auth.uid())::text) AND (u.role = 'admin'::text)))) OR (EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE (((p.id)::text = (auth.uid())::text) AND (p.role = 'admin'::text)))))"
+        },
+        {
+          "table_name": "notifications",
+          "polname": "admin_all_notifications",
+          "attname": "role",
+          "using_expr": "(EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE (((p.id)::text = (auth.uid())::text) AND (p.role = 'admin'::text))))",
+          "check_expr": "(EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE (((p.id)::text = (auth.uid())::text) AND (p.role = 'admin'::text))))"
+        },
+        {
+          "table_name": "notifications",
+          "polname": "admin_all_notifications",
+          "attname": "role",
+          "using_expr": "(EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE (((p.id)::text = (auth.uid())::text) AND (p.role = 'admin'::text))))",
+          "check_expr": "(EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE (((p.id)::text = (auth.uid())::text) AND (p.role = 'admin'::text))))"
+        },
+        {
+          "table_name": "service_requests",
+          "polname": "admin_all_service_requests",
+          "attname": "role",
+          "using_expr": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::text)))) OR (EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE ((p.id = auth.uid()) AND (p.role = 'admin'::text)))))",
+          "check_expr": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::text)))) OR (EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE ((p.id = auth.uid()) AND (p.role = 'admin'::text)))))"
+        },
+        {
+          "table_name": "service_requests",
+          "polname": "admin_all_service_requests",
+          "attname": "role",
+          "using_expr": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::text)))) OR (EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE ((p.id = auth.uid()) AND (p.role = 'admin'::text)))))",
+          "check_expr": "((EXISTS ( SELECT 1\n   FROM users u\n  WHERE ((u.id = auth.uid()) AND (u.role = 'admin'::text)))) OR (EXISTS ( SELECT 1\n   FROM profiles p\n  WHERE ((p.id = auth.uid()) AND (p.role = 'admin'::text)))))"
+        }
+      ]
+    },
+    {
+      "section": "test_table_columns",
+      "evidence": [
+        {
+          "sql_type": "uuid",
+          "table_name": "artisan_profiles",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "artisan_profiles",
+          "column_name": "profile_id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisan_profiles",
+          "column_name": "service_category"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisan_profiles",
+          "column_name": "description"
+        },
+        {
+          "sql_type": "integer",
+          "table_name": "artisan_profiles",
+          "column_name": "years_experience"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisan_profiles",
+          "column_name": "city"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisan_profiles",
+          "column_name": "availability"
+        },
+        {
+          "sql_type": "boolean",
+          "table_name": "artisan_profiles",
+          "column_name": "is_verified"
+        },
+        {
+          "sql_type": "numeric(2,1)",
+          "table_name": "artisan_profiles",
+          "column_name": "rating"
+        },
+        {
+          "sql_type": "integer",
+          "table_name": "artisan_profiles",
+          "column_name": "jobs_completed"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "artisan_profiles",
+          "column_name": "created_at"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "artisans",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "name"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "city"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "category"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "phone"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "description"
+        },
+        {
+          "sql_type": "numeric",
+          "table_name": "artisans",
+          "column_name": "rating"
+        },
+        {
+          "sql_type": "timestamp without time zone",
+          "table_name": "artisans",
+          "column_name": "created_at"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "legacy_id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "public_slug"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "full_name"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "experience"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "photo_url"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "service_category"
+        },
+        {
+          "sql_type": "jsonb",
+          "table_name": "artisans",
+          "column_name": "services"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "work_zone"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "phone_public"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "availability"
+        },
+        {
+          "sql_type": "boolean",
+          "table_name": "artisans",
+          "column_name": "verified"
+        },
+        {
+          "sql_type": "boolean",
+          "table_name": "artisans",
+          "column_name": "claimed"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "claim_status"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "artisans",
+          "column_name": "owner_user_id"
+        },
+        {
+          "sql_type": "boolean",
+          "table_name": "artisans",
+          "column_name": "onboarding_completed"
+        },
+        {
+          "sql_type": "integer",
+          "table_name": "artisans",
+          "column_name": "review_count"
+        },
+        {
+          "sql_type": "integer",
+          "table_name": "artisans",
+          "column_name": "price_from"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "price_label"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "source"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "artisans",
+          "column_name": "updated_at"
+        },
+        {
+          "sql_type": "integer",
+          "table_name": "artisans",
+          "column_name": "starting_price"
+        },
+        {
+          "sql_type": "boolean",
+          "table_name": "artisans",
+          "column_name": "is_verified"
+        },
+        {
+          "sql_type": "boolean",
+          "table_name": "artisans",
+          "column_name": "is_featured"
+        },
+        {
+          "sql_type": "boolean",
+          "table_name": "artisans",
+          "column_name": "claimable"
+        },
+        {
+          "sql_type": "integer",
+          "table_name": "artisans",
+          "column_name": "response_time_min"
+        },
+        {
+          "sql_type": "integer",
+          "table_name": "artisans",
+          "column_name": "completed_missions"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "badge_label"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "artisans",
+          "column_name": "avatar_color"
+        },
+        {
+          "sql_type": "boolean",
+          "table_name": "artisans",
+          "column_name": "is_public"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_accounts",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_accounts",
+          "column_name": "name"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_accounts",
+          "column_name": "legal_name"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_accounts",
+          "column_name": "status"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "enterprise_accounts",
+          "column_name": "created_at"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "enterprise_accounts",
+          "column_name": "updated_at"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_leads",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_leads",
+          "column_name": "nom"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_leads",
+          "column_name": "prenom"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_leads",
+          "column_name": "entreprise"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_leads",
+          "column_name": "fonction"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_leads",
+          "column_name": "telephone"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_leads",
+          "column_name": "email"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_leads",
+          "column_name": "ville"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_leads",
+          "column_name": "org_type"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_leads",
+          "column_name": "needs"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_leads",
+          "column_name": "batiments"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_leads",
+          "column_name": "message"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_leads",
+          "column_name": "source"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_leads",
+          "column_name": "page"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "enterprise_leads",
+          "column_name": "submitted_at"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "enterprise_leads",
+          "column_name": "created_at"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_member_sites",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_member_sites",
+          "column_name": "enterprise_id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_member_sites",
+          "column_name": "member_id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_member_sites",
+          "column_name": "site_id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_member_sites",
+          "column_name": "assigned_by"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "enterprise_member_sites",
+          "column_name": "created_at"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_members",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_members",
+          "column_name": "enterprise_id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_members",
+          "column_name": "user_id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_members",
+          "column_name": "role"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_members",
+          "column_name": "status"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_members",
+          "column_name": "invited_by"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "enterprise_members",
+          "column_name": "created_at"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "enterprise_members",
+          "column_name": "updated_at"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_request_context",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_request_context",
+          "column_name": "enterprise_id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_request_context",
+          "column_name": "site_id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_request_context",
+          "column_name": "service_request_id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_request_context",
+          "column_name": "created_by"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "enterprise_request_context",
+          "column_name": "created_at"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_sites",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "enterprise_sites",
+          "column_name": "enterprise_id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_sites",
+          "column_name": "name"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_sites",
+          "column_name": "site_code"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_sites",
+          "column_name": "address_line"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_sites",
+          "column_name": "city"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "enterprise_sites",
+          "column_name": "status"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "enterprise_sites",
+          "column_name": "created_at"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "enterprise_sites",
+          "column_name": "updated_at"
+        },
+        {
+          "sql_type": "bigint",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "context_id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "outcome_type"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "service_code"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "session_id"
+        },
+        {
+          "sql_type": "numeric(12,2)",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "amount_mad"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "state"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "booking_ref"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "order_id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "failure_reason"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "acquired_at"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "committed_at"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "failed_at"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "estimator_context_redemptions",
+          "column_name": "service_request_id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "missions",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "missions",
+          "column_name": "request_id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "missions",
+          "column_name": "client_profile_id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "missions",
+          "column_name": "artisan_profile_id"
+        },
+        {
+          "sql_type": "numeric(10,2)",
+          "table_name": "missions",
+          "column_name": "agreed_price"
+        },
+        {
+          "sql_type": "numeric(10,2)",
+          "table_name": "missions",
+          "column_name": "commission_amount"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "missions",
+          "column_name": "status"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "missions",
+          "column_name": "created_at"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "missions",
+          "column_name": "accepted_at"
+        },
+        {
+          "sql_type": "numeric(10,2)",
+          "table_name": "missions",
+          "column_name": "final_price"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "missions",
+          "column_name": "pricing_offer_id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "notifications",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "notifications",
+          "column_name": "recipient_user_id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "notifications",
+          "column_name": "recipient_role"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "notifications",
+          "column_name": "type"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "notifications",
+          "column_name": "title"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "notifications",
+          "column_name": "message"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "notifications",
+          "column_name": "related_entity_type"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "notifications",
+          "column_name": "related_entity_id"
+        },
+        {
+          "sql_type": "boolean",
+          "table_name": "notifications",
+          "column_name": "read"
+        },
+        {
+          "sql_type": "jsonb",
+          "table_name": "notifications",
+          "column_name": "metadata"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "notifications",
+          "column_name": "created_at"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "profiles",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "profiles",
+          "column_name": "role"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "profiles",
+          "column_name": "full_name"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "profiles",
+          "column_name": "phone"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "profiles",
+          "column_name": "city"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "profiles",
+          "column_name": "created_at"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "profiles",
+          "column_name": "email"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "service_requests",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "service_requests",
+          "column_name": "client_profile_id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "service_requests",
+          "column_name": "service_category"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "service_requests",
+          "column_name": "city"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "service_requests",
+          "column_name": "description"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "service_requests",
+          "column_name": "budget_range"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "service_requests",
+          "column_name": "status"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "service_requests",
+          "column_name": "created_at"
+        },
+        {
+          "sql_type": "numeric",
+          "table_name": "service_requests",
+          "column_name": "commission_amount"
+        },
+        {
+          "sql_type": "boolean",
+          "table_name": "service_requests",
+          "column_name": "commission_paid"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "service_requests",
+          "column_name": "commission_status"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "service_requests",
+          "column_name": "commission_paid_at"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "service_requests",
+          "column_name": "commission_paid_by"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "service_requests",
+          "column_name": "idempotency_key"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "service_requests",
+          "column_name": "client_phone"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "service_requests",
+          "column_name": "urgency"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "service_requests",
+          "column_name": "target_artisan_id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "service_requests",
+          "column_name": "tracking_ref"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "service_requests",
+          "column_name": "guest_token_hash"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "service_requests",
+          "column_name": "pricing_offer_id"
+        },
+        {
+          "sql_type": "uuid",
+          "table_name": "users",
+          "column_name": "id"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "users",
+          "column_name": "role"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "users",
+          "column_name": "email"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "users",
+          "column_name": "full_name"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "users",
+          "column_name": "phone"
+        },
+        {
+          "sql_type": "text",
+          "table_name": "users",
+          "column_name": "city"
+        },
+        {
+          "sql_type": "timestamp with time zone",
+          "table_name": "users",
+          "column_name": "created_at"
+        }
+      ]
+    },
+    {
+      "section": "enterprise_and_onboarding_function_fingerprints",
+      "evidence": [
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "approve_artisan_claim",
+          "arguments": "p_claim_id uuid",
+          "definition_md5": "72afcdfb27594805ae23507a52132160"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "update_enterprise_member_role",
+          "arguments": "p_enterprise_id uuid, p_member_id uuid, p_new_role text",
+          "definition_md5": "c800ff723928efae9b36710084688f1a"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres"
+          ],
+          "nspname": "fixeo_private",
+          "proname": "_write_enterprise_audit_event",
+          "arguments": "p_enterprise_id uuid, p_event_type text, p_target_type text, p_target_id uuid, p_before_state jsonb, p_after_state jsonb, p_metadata jsonb",
+          "definition_md5": "ffe6b07b73f4f60d47bcbde0c117295f"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "set_enterprise_member_status",
+          "arguments": "p_enterprise_id uuid, p_member_id uuid, p_new_status text",
+          "definition_md5": "f05124957f882311d54da254c8643170"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "create_enterprise_request",
+          "arguments": "p_enterprise_id uuid, p_site_id uuid, p_service_category text, p_description text, p_urgency text",
+          "definition_md5": "d905cc8e09e2797b532672aadfec87d0"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "create_enterprise_invitation",
+          "arguments": "p_enterprise_id uuid, p_email text, p_role text, p_expires_at timestamp with time zone",
+          "definition_md5": "48938f3fd8d11dfba349e6c2bd688f95"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "accept_enterprise_invitation",
+          "arguments": "p_token text",
+          "definition_md5": "5af9d1f2dd26295e8cc9c46e0df7963b"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "set_enterprise_account_status",
+          "arguments": "p_enterprise_id uuid, p_status text",
+          "definition_md5": "2df753a1daec00bb010f0e68f5a670bc"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "update_enterprise_account",
+          "arguments": "p_enterprise_id uuid, p_name text, p_legal_name text",
+          "definition_md5": "df85e8908f8fe8ff0065a075ba109b03"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "update_enterprise_site",
+          "arguments": "p_enterprise_id uuid, p_site_id uuid, p_name text, p_city text, p_site_code text, p_address_line text",
+          "definition_md5": "44675842ba7a34f782b48fa8bc902a28"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "set_enterprise_site_status",
+          "arguments": "p_enterprise_id uuid, p_site_id uuid, p_status text",
+          "definition_md5": "056c5ceb9cd3948ffc98252c4faf4778"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "revoke_enterprise_invitation",
+          "arguments": "p_enterprise_id uuid, p_invitation_id uuid",
+          "definition_md5": "31b0fa1b5812be0fbadc5e8c2f987bba"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "transfer_enterprise_ownership",
+          "arguments": "p_enterprise_id uuid, p_target_member_id uuid",
+          "definition_md5": "595e0f4157c0efa7b891a829d96f15de"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "get_enterprise_sla_summary",
+          "arguments": "p_enterprise_id uuid, p_from timestamp with time zone, p_to timestamp with time zone",
+          "definition_md5": "c2f9ed4972b00bd37f29d7a65abfa457"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "list_enterprise_audit_events",
+          "arguments": "p_enterprise_id uuid, p_limit integer, p_cursor_created_at timestamp with time zone, p_cursor_id uuid, p_from timestamp with time zone, p_to timestamp with time zone, p_event_type text, p_target_type text, p_target_id uuid, p_actor_user_id uuid",
+          "definition_md5": "c699bf2ba2257eb5b0bc43d8f46af977"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "export_enterprise_audit_events",
+          "arguments": "p_enterprise_id uuid, p_from timestamp with time zone, p_to timestamp with time zone, p_event_type text, p_target_type text, p_target_id uuid, p_actor_user_id uuid, p_limit integer",
+          "definition_md5": "aa055e31192a35bce0599a91e1139827"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "register_new_artisan",
+          "arguments": "p_full_name text, p_service_category text, p_city text, p_phone text, p_description text",
+          "definition_md5": "f9b2e6abbd9cca298cbcb8d0934a0bbb"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "get_enterprise_operational_summary",
+          "arguments": "p_enterprise_id uuid, p_from timestamp with time zone, p_to timestamp with time zone, p_site_id uuid",
+          "definition_md5": "dd9a3ee09134d693723312afb47f2188"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres"
+          ],
+          "nspname": "fixeo_private",
+          "proname": "_fixeo_is_enterprise_member",
+          "arguments": "p_enterprise_id uuid",
+          "definition_md5": "a6e8f9c9f0ce21aed2a26e5264a747c0"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres"
+          ],
+          "nspname": "fixeo_private",
+          "proname": "_fixeo_is_enterprise_manager",
+          "arguments": "p_enterprise_id uuid",
+          "definition_md5": "0d3d1b4c56baa24b70dd803415187131"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres"
+          ],
+          "nspname": "fixeo_private",
+          "proname": "_fixeo_can_access_enterprise_site",
+          "arguments": "p_enterprise_id uuid, p_site_id uuid",
+          "definition_md5": "1ed7826161a15f78399d99d45ee47a8d"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "assign_enterprise_member_site",
+          "arguments": "p_enterprise_id uuid, p_member_id uuid, p_site_id uuid",
+          "definition_md5": "87391fed2697ca4cf8f40afb536292cf"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "unassign_enterprise_member_site",
+          "arguments": "p_enterprise_id uuid, p_member_id uuid, p_site_id uuid",
+          "definition_md5": "2fe46651aac9acdade9c4a05086ec1b9"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "get_enterprise_site_summary",
+          "arguments": "p_enterprise_id uuid, p_from timestamp with time zone, p_to timestamp with time zone",
+          "definition_md5": "8ce2af8a8a11aa5a9354d50acbff89c1"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "create_enterprise_account",
+          "arguments": "p_name text, p_legal_name text",
+          "definition_md5": "fc87cb65a400576c3b04c4b4e74d1d59"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "get_enterprise_request_breakdown",
+          "arguments": "p_enterprise_id uuid, p_from timestamp with time zone, p_to timestamp with time zone, p_site_id uuid",
+          "definition_md5": "fe883d22b8d78ded855d558c10f444ab"
+        },
+        {
+          "proacl": [
+            "postgres=X/postgres",
+            "authenticated=X/postgres",
+            "service_role=X/postgres"
+          ],
+          "nspname": "public",
+          "proname": "create_enterprise_site",
+          "arguments": "p_enterprise_id uuid, p_name text, p_city text, p_site_code text, p_address_line text",
+          "definition_md5": "003d484cb7317b0ff2a19621fa0b7d41"
+        }
+      ]
+    },
+    {
+      "section": "test_table_grants",
+      "evidence": [
+        {
+          "table_name": "artisan_profiles",
+          "role_name": "anon",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "artisan_profiles",
+          "role_name": "authenticated",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "artisan_profiles",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "artisans",
+          "role_name": "anon",
+          "privileges": [
+            "MAINTAIN",
+            "SELECT"
+          ]
+        },
+        {
+          "table_name": "artisans",
+          "role_name": "authenticated",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "SELECT"
+          ]
+        },
+        {
+          "table_name": "artisans",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "enterprise_accounts",
+          "role_name": "anon",
+          "privileges": null
+        },
+        {
+          "table_name": "enterprise_accounts",
+          "role_name": "authenticated",
+          "privileges": [
+            "MAINTAIN",
+            "SELECT"
+          ]
+        },
+        {
+          "table_name": "enterprise_accounts",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "enterprise_leads",
+          "role_name": "anon",
+          "privileges": null
+        },
+        {
+          "table_name": "enterprise_leads",
+          "role_name": "authenticated",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "SELECT",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "enterprise_leads",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "enterprise_member_sites",
+          "role_name": "anon",
+          "privileges": null
+        },
+        {
+          "table_name": "enterprise_member_sites",
+          "role_name": "authenticated",
+          "privileges": [
+            "SELECT"
+          ]
+        },
+        {
+          "table_name": "enterprise_member_sites",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "enterprise_members",
+          "role_name": "anon",
+          "privileges": null
+        },
+        {
+          "table_name": "enterprise_members",
+          "role_name": "authenticated",
+          "privileges": [
+            "SELECT"
+          ]
+        },
+        {
+          "table_name": "enterprise_members",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "enterprise_request_context",
+          "role_name": "anon",
+          "privileges": null
+        },
+        {
+          "table_name": "enterprise_request_context",
+          "role_name": "authenticated",
+          "privileges": [
+            "SELECT"
+          ]
+        },
+        {
+          "table_name": "enterprise_request_context",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "enterprise_sites",
+          "role_name": "anon",
+          "privileges": null
+        },
+        {
+          "table_name": "enterprise_sites",
+          "role_name": "authenticated",
+          "privileges": [
+            "SELECT"
+          ]
+        },
+        {
+          "table_name": "enterprise_sites",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "estimator_context_redemptions",
+          "role_name": "anon",
+          "privileges": null
+        },
+        {
+          "table_name": "estimator_context_redemptions",
+          "role_name": "authenticated",
+          "privileges": [
+            "SELECT"
+          ]
+        },
+        {
+          "table_name": "estimator_context_redemptions",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "missions",
+          "role_name": "anon",
+          "privileges": [
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE"
+          ]
+        },
+        {
+          "table_name": "missions",
+          "role_name": "authenticated",
+          "privileges": [
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE"
+          ]
+        },
+        {
+          "table_name": "missions",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "notifications",
+          "role_name": "anon",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "notifications",
+          "role_name": "authenticated",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "notifications",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "profiles",
+          "role_name": "anon",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "profiles",
+          "role_name": "authenticated",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "profiles",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "service_requests",
+          "role_name": "anon",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "service_requests",
+          "role_name": "authenticated",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "service_requests",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "users",
+          "role_name": "anon",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "users",
+          "role_name": "authenticated",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        },
+        {
+          "table_name": "users",
+          "role_name": "service_role",
+          "privileges": [
+            "DELETE",
+            "INSERT",
+            "MAINTAIN",
+            "REFERENCES",
+            "SELECT",
+            "TRIGGER",
+            "TRUNCATE",
+            "UPDATE"
+          ]
+        }
+      ]
+    },
+    {
+      "section": "enterprise_helper_definitions",
+      "evidence": [
+        {
+          "proname": "_fixeo_can_access_enterprise_site",
+          "definition": "CREATE OR REPLACE FUNCTION fixeo_private._fixeo_can_access_enterprise_site(p_enterprise_id uuid, p_site_id uuid)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\n  SELECT\r\n    CASE\r\n      WHEN auth.uid() IS NULL\r\n        OR p_enterprise_id IS NULL\r\n        OR p_site_id IS NULL\r\n      THEN false\r\n\r\n      WHEN fixeo_private._fixeo_is_admin()\r\n      THEN EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_sites es\r\n        WHERE es.id = p_site_id\r\n          AND es.enterprise_id = p_enterprise_id\r\n      )\r\n\r\n      ELSE EXISTS (\r\n        SELECT 1\r\n        FROM public.enterprise_members em\r\n        JOIN public.enterprise_sites es\r\n          ON es.id = p_site_id\r\n         AND es.enterprise_id = em.enterprise_id\r\n        WHERE em.enterprise_id = p_enterprise_id\r\n          AND em.user_id = auth.uid()\r\n          AND em.status = 'active'\r\n          AND (\r\n            em.role IN (\r\n              'owner',\r\n              'admin',\r\n              'operations_manager',\r\n              'reporter',\r\n              'viewer'\r\n            )\r\n            OR (\r\n              em.role = 'site_manager'\r\n              AND EXISTS (\r\n                SELECT 1\r\n                FROM public.enterprise_member_sites ems\r\n                WHERE ems.enterprise_id = p_enterprise_id\r\n                  AND ems.member_id = em.id\r\n                  AND ems.site_id = p_site_id\r\n              )\r\n            )\r\n          )\r\n      )\r\n    END;\r\n$function$\n"
+        },
+        {
+          "proname": "_fixeo_is_enterprise_manager",
+          "definition": "CREATE OR REPLACE FUNCTION fixeo_private._fixeo_is_enterprise_manager(p_enterprise_id uuid)\n RETURNS boolean\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.enterprise_members em\r\n    WHERE  em.enterprise_id = p_enterprise_id\r\n      AND  em.user_id       = v_caller_id\r\n      AND  em.role          IN ('owner', 'admin')\r\n      AND  em.status        = 'active'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n$function$\n"
+        },
+        {
+          "proname": "_fixeo_is_enterprise_member",
+          "definition": "CREATE OR REPLACE FUNCTION fixeo_private._fixeo_is_enterprise_member(p_enterprise_id uuid)\n RETURNS boolean\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\r\nDECLARE\r\n  v_caller_id uuid;\r\n  v_result    boolean;\r\nBEGIN\r\n  v_caller_id := auth.uid();\r\n  IF v_caller_id IS NULL OR p_enterprise_id IS NULL THEN\r\n    RETURN false;\r\n  END IF;\r\n\r\n  SELECT EXISTS (\r\n    SELECT 1\r\n    FROM   public.enterprise_members em\r\n    WHERE  em.enterprise_id = p_enterprise_id\r\n      AND  em.user_id       = v_caller_id\r\n      AND  em.status        = 'active'\r\n  ) INTO v_result;\r\n\r\n  RETURN COALESCE(v_result, false);\r\nEND;\r\n$function$\n"
+        }
+      ]
+    }
+  ]
+}

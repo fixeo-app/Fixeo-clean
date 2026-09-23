@@ -1,0 +1,7 @@
+{
+  "name": "fixeo-auth-security-p0-tests",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": { "test": "node --test *.test.cjs" },
+  "devDependencies": { "@electric-sql/pglite": "0.3.14" }
+}

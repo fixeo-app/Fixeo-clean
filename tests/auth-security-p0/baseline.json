@@ -1,0 +1,30 @@
+{
+  "repository": "fixeo-app/Fixeo-clean",
+  "production": {
+    "domain": "fixeo.ma",
+    "sha": "bc927b9c24d709ab76e55cd2c82210194da30026",
+    "deployment_id": "dpl_DowSGanvWC9rGYeuaL9qgNjT1RrF",
+    "state": "READY",
+    "target": "production",
+    "aliases": [
+      "www.fixeo.ma",
+      "fixeo-clean.vercel.app",
+      "fixeo.ma",
+      "fixeo-clean-elalaouibiz-3410s-projects.vercel.app",
+      "fixeo-clean-git-main-elalaouibiz-3410s-projects.vercel.app"
+    ]
+  },
+  "remote_main": {
+    "ref": "refs/heads/main",
+    "sha": "bc927b9c24d709ab76e55cd2c82210194da30026"
+  },
+  "review_worktree": {
+    "path": "/workspace/scratch/d8dc2a419925/fixeo-auth-security-p0",
+    "head": "bc927b9c24d709ab76e55cd2c82210194da30026",
+    "branch": "detached (isolated proposal)",
+    "initial_tracked_status": "clean"
+  },
+  "production_writes_performed": 0,
+  "commits_created": 0,
+  "pushes": 0
+}

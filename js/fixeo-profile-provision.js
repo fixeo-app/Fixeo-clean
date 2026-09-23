@@ -13,10 +13,8 @@
  * violated and the INSERT fails silently — the reservation stays
  * localStorage-only and is never visible cross-device.
  *
- * This file guarantees a profiles row exists for every authenticated
- * user, regardless of whether they signed up through the Fixeo form
- * (which creates the row) or arrived via OAuth / admin creation / test
- * account (which do not).
+ * A missing profile is provisioned only when public.users supplies a
+ * valid canonical role. Missing/invalid identities fail closed.
  *
  * WHAT IT DOES
  * ------------
@@ -27,7 +25,8 @@
  * 3. _ensureProfileRow:
  *    a. SELECT profiles WHERE id = auth.uid  (maybeSingle)
  *    b. If row exists → done (truly idempotent, zero writes)
- *    c. If row missing → INSERT minimal safe row
+ *    c. If row missing → SELECT canonical role from public.users;
+ *       only then INSERT minimal safe row
  *       { id, full_name, role, phone:'', city:'', created_at }
  *    d. On any error → single console.warn, no throw
  *
@@ -74,16 +73,6 @@
   }
 
   /**
-   * Derive the role from user_metadata. Falls back to 'client'.
-   * Only 'client' and 'artisan' are valid data roles.
-   */
-  function _role(user) {
-    var meta = (user && user.user_metadata) || {};
-    var r = String(meta.role || '').toLowerCase().trim();
-    return (r === 'artisan' || r === 'admin') ? r : 'client';
-  }
-
-  /**
    * Core async provision. Checks if a profiles row exists for userId;
    * if not, inserts one with minimal safe fields.
    *
@@ -103,9 +92,8 @@
         .maybeSingle();
 
       if (checkRes.error) {
-        /* RLS may block the SELECT — this is non-fatal; attempt INSERT
-         * anyway (upsert will be a no-op if row exists) */
         console.warn(LOG, 'profile check error:', checkRes.error.message || checkRes.error.code);
+        return;
       }
 
       if (checkRes.data && checkRes.data.id) {
@@ -113,13 +101,27 @@
         return;
       }
 
-      /* ── Step 2: Row missing — INSERT minimal safe defaults ── */
+      /* public.users is the only role authority. Never use user_metadata
+       * for permissions, including when repairing a missing profile. */
+      var canonicalRes = await sb
+        .from('users')
+        .select('role')
+        .eq('id', userId)
+        .maybeSingle();
+      var canonicalRole = canonicalRes.data && canonicalRes.data.role;
+      if (canonicalRes.error ||
+          ['admin', 'artisan', 'client'].indexOf(canonicalRole) === -1) {
+        console.warn(LOG, 'canonical role unavailable; profile not provisioned');
+        return;
+      }
+
+      /* ── Step 2: Row missing — INSERT canonical profile mirror ── */
       var insertRes = await sb
         .from('profiles')
         .insert({
           id         : userId,
           full_name  : _displayName(user),
-          role       : _role(user),
+          role       : canonicalRole,
           phone      : '',
           city       : '',
           created_at : new Date().toISOString()
