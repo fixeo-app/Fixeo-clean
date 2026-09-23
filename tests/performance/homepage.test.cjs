@@ -54,16 +54,17 @@ test('homepage boots without marketplace and preserves current entry points',asy
   assert.equal(scripts.some(p=>p.includes('fixeo-discovery-v1')),false,'details are not loaded on startup');
   w.QuickSearchModal.focusInline();
   assert.equal(d.activeElement.id,'fxhf-need-input');
-  const city=d.getElementById('fxhf-location');city.value='Rabat';
+  // Native Hero options use slugs; selecting a display label clears the select.
+  const city=d.getElementById('fxhf-location');city.value='rabat';
   city.dispatchEvent(new w.Event('change',{bubbles:true}));
-  assert.equal(w.sessionStorage.getItem('fxrf4_trusted_city_session'),'Rabat');
+  assert.equal(w.sessionStorage.getItem('fxrf4_trusted_city_session'),'rabat');
   // Estimate gateway carries the visible description instead of hidden legacy text.
   let estimate;w.FixeoEstimatorV2.open=opts=>{estimate=opts;};
   // A stale detected/session city must not override the user's visible choice.
   w.sessionStorage.setItem('fxrf4_trusted_city_session','Casablanca');
   d.getElementById('fxhf-need-input').value='Une fuite sous mon évier';
   d.getElementById('fxes-open-estimator').click();
-  assert.equal(estimate.description,'Une fuite sous mon évier');assert.equal(estimate.city,'Rabat');
+  assert.equal(estimate.description,'Une fuite sous mon évier');assert.equal(estimate.city,'rabat');
   assert.deepEqual(errors,[],'no interaction errors');
  } finally {dom.window.close();}
 });

@@ -45,7 +45,7 @@
 .fxd-home .fxd-header>.fxd-eyebrow{padding:0;border:0;border-radius:0;background:none;box-shadow:none;font-size:10px;letter-spacing:.15em;color:#c9c8d8}
 .fxd-home .fxd-header h2{font-size:clamp(30px,3.8vw,46px);line-height:1.13;margin:18px 0 14px;letter-spacing:-.04em}
 .fxd-home .fxd-header p{font-size:15px;line-height:1.65;margin:0;max-width:510px;color:#b6bdd0}
-.fxd-home .fxd-grid{gap:14px}
+.fxd-home .fxd-grid{gap:14px;align-items:stretch}
 .fxd-home .fxd-card{min-width:0;min-height:188px;padding:20px;gap:9px;border-radius:19px;border:1px solid rgba(var(--fxd-accent),.18);background:linear-gradient(145deg,#192031,#101624);box-shadow:inset 0 1px #ffffff05;isolation:isolate;transition:transform .18s,border-color .18s,box-shadow .18s}
 .fxd-home .fxd-card[data-discovery=portes]{--fxd-accent:142,221,190}.fxd-home .fxd-card[data-discovery=travaux]{--fxd-accent:255,168,128}.fxd-home .fxd-card[data-discovery=installation]{--fxd-accent:137,206,255}.fxd-home .fxd-card[data-discovery=entretien]{--fxd-accent:155,217,150}.fxd-home .fxd-card[data-discovery=demenagement]{--fxd-accent:220,170,255}
 .fxd-home .fxd-card::before{background:radial-gradient(ellipse at 0 0,rgba(var(--fxd-accent),.13),transparent 72%);z-index:-1}
@@ -55,17 +55,17 @@
 .fxd-home .fxd-number{font-size:11px;font-weight:500;letter-spacing:.08em;top:24px;right:20px;color:#9da7bb}
 .fxd-home .fxd-card strong{font-size:17px;line-height:1.3;letter-spacing:-.02em;overflow-wrap:normal}
 .fxd-home .fxd-examples{font-size:12px;line-height:1.5;color:#b2bdd0}
-.fxd-home .fxd-explore{padding-top:10px;border:0;font-size:11px;font-weight:400;color:#aeb8cb;gap:8px}
+.fxd-home .fxd-explore{padding-top:10px;border:0;font-size:11px;font-weight:400;line-height:1.4;color:#aeb8cb;gap:8px;white-space:nowrap}
 .fxd-home .fxd-arrow{height:19px;width:19px;flex:0 0 19px;color:rgb(var(--fxd-accent,235,199,226));transition:transform .18s}
 .fxd-home .fxd-open{margin-top:30px;padding:30px 0 8px;gap:24px;border:0;border-top:1px solid #b8c5e021;border-radius:0;background:radial-gradient(ellipse at 0 0,#a3506420,transparent 68%);box-shadow:none;overflow:visible}
-.fxd-home .fxd-open::after{display:none}.fxd-home .fxd-open .fxd-eyebrow{font-size:10px;letter-spacing:.13em;color:#e8b1c7}
-.fxd-home .fxd-open h3{font-size:27px;line-height:1.22;margin:12px 0;color:#f8f4fa;max-width:430px}
-.fxd-home .fxd-open p{font-size:14px;line-height:1.65;margin:0;max-width:430px}
+.fxd-home .fxd-open::after{display:none}.fxd-home .fxd-open .fxd-eyebrow{display:block;font-size:10px;font-weight:600;line-height:1.4;letter-spacing:.1em;color:#c5b6c8}
+.fxd-home .fxd-open h3{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:27px;font-weight:700;line-height:1.16;letter-spacing:-.035em;text-wrap:balance;margin:10px 0 12px;color:#f8f4fa;max-width:22ch}
+.fxd-home .fxd-open p{font-size:14px;font-weight:400;line-height:1.65;color:#aeb7c9;margin:0;max-width:40ch}
 .fxd-home .fxd-open button{display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:54px;border:1px solid #ffffff24;background:linear-gradient(112deg,#c35426,#c13470 48%,#7443b7);color:#fff;box-shadow:inset 0 1px #ffffff25,0 8px 24px #b6397024;transition:filter .18s,transform .18s}
-.fxd-home .fxd-open button .fxd-arrow{color:currentColor}.fxd-home .fxd-bottom{margin-top:22px;font-size:12px;line-height:1.6;align-items:center}.fxd-home .fxd-bottom a{display:inline-flex;align-items:center;min-height:44px}.fxd-home .fxd-load-status:empty{display:none}
+.fxd-home .fxd-open button .fxd-arrow{color:currentColor}.fxd-home .fxd-bottom{margin-top:20px;font-size:11px;font-weight:400;line-height:1.6;color:#9ca8bd;align-items:center}.fxd-home .fxd-bottom a{display:inline-flex;align-items:center;min-height:44px;color:#adb8ca;font-weight:400;text-decoration-thickness:1px;text-underline-offset:3px}.fxd-home .fxd-load-status:empty{display:none}
 @media(hover:hover){.fxd-home .fxd-card:hover{transform:translateY(-2px);border-color:rgba(var(--fxd-accent),.5);box-shadow:0 10px 24px #0003}.fxd-home .fxd-card:hover .fxd-arrow{transform:translateX(3px)}.fxd-home .fxd-open button:hover{filter:brightness(1.08)}}
 .fxd-home .fxd-card:active,.fxd-home .fxd-open button:active{transform:scale(.985)}
-@media(max-width:540px){.fxd-home{padding:36px 18px}.fxd-home .fxd-header{margin-bottom:24px}.fxd-home .fxd-header h2{font-size:31px}.fxd-home .fxd-header p{font-size:14px}.fxd-home .fxd-grid{gap:10px}.fxd-home .fxd-card{padding:16px 13px;min-height:182px;gap:8px;border-radius:17px}.fxd-home .fxd-card strong{font-size:15px;line-height:1.32}.fxd-home .fxd-examples{font-size:11px;line-height:1.5}.fxd-home .fxd-number{right:14px;top:21px}.fxd-home .fxd-explore{font-size:10px;padding-top:9px;gap:4px}.fxd-home .fxd-arrow{width:17px;height:17px;flex-basis:17px}.fxd-home .fxd-open{padding-top:28px;gap:20px;margin-top:24px}.fxd-home .fxd-open h3{font-size:26px}.fxd-home .fxd-open button{font-size:15px}.fxd-home .fxd-bottom{align-items:flex-start;gap:5px}}
+@media(max-width:540px){.fxd-home{padding:36px 18px}.fxd-home .fxd-header{margin-bottom:24px}.fxd-home .fxd-header h2{font-size:31px}.fxd-home .fxd-header p{font-size:14px}.fxd-home .fxd-grid{gap:10px}.fxd-home .fxd-card{padding:14px 13px;min-height:170px;gap:7px;border-radius:17px}.fxd-home .fxd-icon{margin-bottom:3px}.fxd-home .fxd-card strong{font-size:15px;line-height:1.32}.fxd-home .fxd-examples{font-size:11px;line-height:1.5}.fxd-home .fxd-number{right:14px;top:21px}.fxd-home .fxd-explore{font-size:10px;padding-top:6px;gap:4px}.fxd-home .fxd-arrow{width:17px;height:17px;flex-basis:17px}.fxd-home .fxd-open{padding-top:28px;gap:22px;margin-top:24px}.fxd-home .fxd-open h3{font-size:26px}.fxd-home .fxd-open button{font-size:15px}.fxd-home .fxd-bottom{align-items:flex-start;gap:5px}}
 @media(max-width:350px){.fxd-home{padding-inline:14px}.fxd-home .fxd-grid{gap:8px}.fxd-home .fxd-card{padding-inline:11px}.fxd-home .fxd-card strong{font-size:14px}.fxd-home .fxd-header h2{font-size:29px}}
 @media(prefers-reduced-motion:reduce){.fxd-home .fxd-card,.fxd-home .fxd-arrow,.fxd-home .fxd-open button{transition:none}.fxd-home .fxd-card:hover,.fxd-home .fxd-card:active,.fxd-home .fxd-open button:active,.fxd-home .fxd-card:hover .fxd-arrow{transform:none}}
 
