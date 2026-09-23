@@ -218,6 +218,54 @@
     });
   }
 
+  // Display labels only: the verified city slug and submission payload stay untouched.
+  function cityLabel(value) {
+    var text = String(value || '').replace(/-/g, ' ');
+    var accents = {fes: 'Fès', 'fès': 'Fès', meknes: 'Meknès', sale: 'Salé', tetouan: 'Tétouan'};
+    return accents[text.toLowerCase()] || text.replace(/(^|\s)\S/g, function(letter) { return letter.toUpperCase(); });
+  }
+
+  // Keep the native focus trap, but reserve the actual FIXEO header and the
+  // visual viewport. Phone and CTA share one natural scroll surface.
+  function fitConfirmation(dialog, shade) {
+    var viewport = window.visualViewport;
+    var frame = null;
+    function measure() {
+      frame = null;
+      var headerBottom = 0;
+      document.querySelectorAll('.fixeo-gh-mobile-bar, nav.navbar, header.site-header').forEach(function(header) {
+        var box = header.getBoundingClientRect();
+        if (box.height > 0 && box.bottom > 0) headerBottom = Math.max(headerBottom, box.bottom);
+      });
+      var offset = viewport ? viewport.offsetTop : 0;
+      var height = viewport ? viewport.height : window.innerHeight;
+      var top = Math.max(headerBottom, offset);
+      dialog.style.setProperty('--fx-confirm-top', top + 'px');
+      dialog.style.setProperty('--fx-confirm-height', Math.max(0, height + offset - top) + 'px');
+      shade.style.top = top + 'px';
+      var field = document.activeElement;
+      if (dialog.contains(field) && field.tagName === 'INPUT') {
+        var box = field.getBoundingClientRect();
+        if (box.bottom > offset + height - 16) dialog.scrollTop += box.bottom - (offset + height - 16);
+        else if (box.top < top + 16) dialog.scrollTop -= top + 16 - box.top;
+      }
+    }
+    function schedule() { if (frame === null) frame = window.requestAnimationFrame(measure); }
+    window.addEventListener('resize', schedule);
+    if (viewport) { viewport.addEventListener('resize', schedule); viewport.addEventListener('scroll', schedule); }
+    var observer = window.ResizeObserver ? new window.ResizeObserver(schedule) : null;
+    if (observer) document.querySelectorAll('.fixeo-gh-mobile-bar, nav.navbar, header.site-header').forEach(function(header) { observer.observe(header); });
+    dialog.addEventListener('focusin', schedule);
+    measure();
+    return function () {
+      if (frame !== null) window.cancelAnimationFrame(frame);
+      window.removeEventListener('resize', schedule);
+      if (viewport) { viewport.removeEventListener('resize', schedule); viewport.removeEventListener('scroll', schedule); }
+      if (observer) observer.disconnect();
+      shade.remove();
+    };
+  }
+
   function verify(view) {
     view.message.textContent = 'Vérification de votre estimation…';
     view.retryVerify.hidden = true;
@@ -233,13 +281,13 @@
       }
       view.verified = true;
       view.summary.textContent = (context.service_label || 'Intervention FIXEO') +
-        (context.city_slug ? ' · ' + context.city_slug : '') + ' — ' + amount + ' MAD' +
+        (context.city_slug ? ' · ' + cityLabel(context.city_slug) : '') + ' — ' + amount + ' MAD' +
         (context.outcome_type === 'LABOUR_PLUS_PART_READY' ? ' de main-d’œuvre (pièces en supplément)' : '') +
         (context.outcome_type === 'DIAGNOSTIC_READY' ? ' pour le diagnostic' : '');
       // Retain this verified display in memory for an uncertain attempt's reopen.
       // No amount is persisted or sent back as pricing authority.
       view.attempt.summary = view.summary.textContent;
-      view.message.textContent = 'Indiquez votre téléphone pour organiser l’intervention. Paiement après intervention.';
+      view.message.textContent = '';
       updateBusy(view);
       view.phone.focus();
     }).catch(function () {
@@ -273,7 +321,7 @@
     message.setAttribute('role', 'status');
     message.setAttribute('aria-live', 'polite');
     var form = node('form');
-    var label = node('label', 'Votre numéro de téléphone');
+    var label = node('label', 'Téléphone pour organiser l’intervention');
     label.htmlFor = 'fx-est-confirm-phone';
     var phone = node('input');
     phone.id = 'fx-est-confirm-phone';
@@ -302,9 +350,11 @@
       form: form, phone: phone, submit: button, back: back, success: success,
       retryVerify: retryVerify, attempt: attempt, verified: attempt.verified };
     active = view;
+    var disposeLayout = function () {};
     function close() {
       if (attempt.pending) return;
       attempt.verified = view.verified;
+      disposeLayout();
       dialog.close();
       dialog.remove();
       active = null;
@@ -317,7 +367,11 @@
     back.addEventListener('click', close);
     form.addEventListener('submit', function (event) { event.preventDefault(); submit(view); });
     retryVerify.addEventListener('click', function () { verify(view); });
+    var shade = node('div', '', 'fx-est-confirm-shade');
+    shade.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(shade);
     document.body.appendChild(dialog);
+    disposeLayout = fitConfirmation(dialog, shade);
     dialog.showModal();
     var estimator = window.FixeoEstimatorV2;
     if (estimator && typeof estimator.hide === 'function') estimator.hide();

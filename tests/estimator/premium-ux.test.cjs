@@ -736,3 +736,104 @@ test('keyboard scrolls the focused field in the same surface as the CTA, with no
   assert.equal(s.w.document.querySelector('.estimator-modal').style.getPropertyValue('--rafi-actions-height'), '');
   assert.equal(field.value, 'Fuite simple visible');
 });
+
+for (const outcomeType of ['PRICE_READY', 'LABOUR_PLUS_PART_READY', 'DIAGNOSTIC_READY']) {
+  test('flagship price decision ' + outcomeType + ': amount first, complete terms folded, identical CTA authority', async (t) => {
+    const s = fixture(t);
+    await s.open({ service_hint: 'plomberie.fuite_simple', known_inputs: safeInputs });
+    await s.start();
+    await wait(() => !!s.outcome);
+    const outcome = { ...s.outcome, outcome_type: outcomeType,
+      service_code: outcomeType === 'DIAGNOSTIC_READY' ? 'serrurerie.diagnostic' : s.outcome.service_code,
+      price: { amount_mad: 220, labour_amount_mad: 150 },
+      scope_summary: ['Déplacement pour une seule visite', 'Contrôle du périmètre sans remplacement de pièce'],
+      exclusions_summary: ['Toute pièce est exclue'],
+      financial_breakdown: {vapMinor: 14000, commissionMinor: 8000, materialsMinor: 0} };
+    const original = JSON.stringify(outcome);
+    s.w.__ux.modal._renderOutcome(s.w.__ux.STATE.session, outcome);
+    const detail = s.w.document.querySelector('.rafi-price-details');
+    const amount = s.w.document.querySelector('.price-display .amount, .labour-card-amount .amount');
+    const name = s.w.document.querySelector('.price-certificate__service-name, .result-service-name');
+    assert.equal(detail.open, false);
+    assert.equal(amount.textContent, outcomeType === 'LABOUR_PLUS_PART_READY' ? '150' : '220');
+    assert.ok(amount.compareDocumentPosition(name) & s.w.Node.DOCUMENT_POSITION_FOLLOWING);
+    assert.equal(amount.closest('details'), null);
+    assert.ok(s.q('cta-primary').textContent.includes(outcomeType === 'LABOUR_PLUS_PART_READY' ? '150' : '220'));
+    if (outcomeType === 'PRICE_READY') {
+      assert.match(detail.textContent, /Toute pièce est exclue/);
+      assert.match(detail.textContent, /Si la situation réelle est différente, aucun supplément/);
+    } else if (outcomeType === 'DIAGNOSTIC_READY') {
+      for (const scope of outcome.scope_summary) assert.ok(detail.textContent.includes(scope));
+      assert.match(detail.textContent, /Les 220 MAD déjà versés sont déduits ; un seul frais FIXEO/);
+      assert.match(detail.textContent, /autres travaux et seconde visite sur devis/);
+    } else {
+      assert.match(detail.textContent, /Pièce \/ matériel/);
+      assert.match(detail.textContent, /approuvé avant installation/);
+    }
+    assert.match(detail.textContent, /Prestation artisan : 140/);
+    detail.open = true;
+    assert.equal(JSON.stringify(outcome), original, 'presentation must not mutate the verified outcome');
+    let handoff;
+    s.w.document.addEventListener('fixeo:estimator-reserve', e => { handoff = e.detail; });
+    s.q('cta-primary').click();
+    assert.deepEqual(JSON.parse(JSON.stringify(handoff)), {pricing_context_token: 'fixture-price-token'});
+  });
+}
+
+for (const width of [320, 360, 390, 412]) {
+  test('flagship confirmation ' + width + ': FIXEO shell, Fès, gradient, keyboard and unchanged return', async (t) => {
+    const s = fixture(t, {width});
+    const h = officialHeader(s, 84), headerBefore = h.header.outerHTML;
+    const calls = [];
+    s.w.FixeoEstimatorAPI.verifyPricingContext = async token => {
+      calls.push(token);
+      return {valid: true, outcome_type: 'DIAGNOSTIC_READY', amount_mad: 220,
+        city_slug: 'fes', service_label: 'Diagnostic serrurerie sur place'};
+    };
+    s.w.FixeoEstimatorAPI.confirmRequest = () => { throw Error('No reservation allowed in presentation tests'); };
+    s.w.HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', ''); };
+    s.w.HTMLDialogElement.prototype.close = function () { this.removeAttribute('open'); };
+    s.w.eval(read('js/fixeo-estimator-reservation-bridge-v1.js'));
+    await s.open();
+    const draft = s.q('estimator-need-input').value;
+    const bridge = s.w.FixeoEstimatorReservationBridge;
+    bridge.prepareContext('fixture-price-token');
+    bridge.openConfirmation('fixture-price-token');
+    await wait(() => !s.w.document.querySelector('.fx-est-confirm-primary').disabled);
+    screenStyles(s.w, width, 844);
+    const dialog = s.w.document.querySelector('dialog.fx-est-confirm');
+    const style = node => s.w.getComputedStyle(node);
+    assert.equal(dialog.style.getPropertyValue('--fx-confirm-top'), '84px');
+    assert.equal(dialog.style.getPropertyValue('--fx-confirm-height'), '760px');
+    assert.match(dialog.querySelector('.fx-est-confirm-summary').textContent, /Fès — 220 MAD pour le diagnostic/);
+    assert.match(dialog.textContent, /Téléphone pour organiser l’intervention/);
+    const button = dialog.querySelector('.fx-est-confirm-primary');
+    assert.match(style(button).backgroundImage, /linear-gradient\(112deg/);
+    assert.equal(style(button).minHeight, '52px');
+    assert.equal(style(dialog).overflowY, 'auto');
+    assert.equal(style(s.q('fixeo-urgent-fab')).visibility, 'hidden');
+    assert.equal(style(s.w.document.querySelector('.chat-widget')).visibility, 'hidden');
+    assert.equal(s.q('fx-est-confirm-phone').type, 'tel');
+    const phone = s.q('fx-est-confirm-phone');
+    phone.getBoundingClientRect = () => ({top: 350 - dialog.scrollTop, bottom: 398 - dialog.scrollTop});
+    phone.focus();
+    s.viewport.height = 340; s.viewport.offsetTop = 0;
+    s.viewport.dispatchEvent(new s.w.Event('resize'));
+    await new Promise(r => s.w.requestAnimationFrame(r));
+    assert.equal(dialog.style.getPropertyValue('--fx-confirm-height'), '256px');
+    assert.equal(dialog.scrollTop, 74);
+    assert.equal(phone.getBoundingClientRect().bottom, 324);
+    s.viewport.height = 844;
+    s.viewport.dispatchEvent(new s.w.Event('resize'));
+    await new Promise(r => s.w.requestAnimationFrame(r));
+    assert.equal(dialog.style.getPropertyValue('--fx-confirm-height'), '760px');
+    dialog.querySelector('.fx-est-confirm-back').click();
+    assert.equal(s.w.document.querySelector('dialog.fx-est-confirm'), null);
+    assert.equal(s.w.document.querySelector('.fx-est-confirm-shade'), null);
+    assert.equal(s.q('estimator-need-input').value, draft);
+    assert.equal(s.q('fixeo-estimator-v2-root').style.visibility, '');
+    assert.equal(bridge.getContext(), 'fixture-price-token');
+    assert.deepEqual(calls, ['fixture-price-token']);
+    assert.equal(h.header.outerHTML, headerBefore);
+  });
+}

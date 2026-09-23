@@ -4279,7 +4279,7 @@
 
       modal.setAttribute(
         'data-ux-version',
-        'ultra-premium-v2'
+        'ultra-premium-v3'
       );
 
 
@@ -6219,7 +6219,26 @@ var cityInput =
       var priceDetails = el('details','rafi-price-details');
       priceDetails.appendChild(el('summary','','Voir le détail du prix'));
       if (['PRICE_READY','LABOUR_PLUS_PART_READY','DIAGNOSTIC_READY'].includes(ot)) {
-        bodyEl.querySelectorAll('.price-certificate__scope').forEach(function(section){priceDetails.appendChild(section);});
+        // Presentation only: retain every canonical condition in the closed detail.
+        // Move the existing amount nodes; never derive a price or an inclusion.
+        bodyEl.classList.add('rafi-price-decision');
+        var certificate = bodyEl.querySelector('.price-certificate');
+        if (certificate) {
+          var service = certificate.querySelector('.price-certificate__service');
+          certificate.insertBefore(certificate.querySelector('.price-certificate__service-label'), service);
+          certificate.insertBefore(certificate.querySelector('.price-certificate__amount'), service);
+        } else {
+          var amount = bodyEl.querySelector('.price-hero, .labour-split');
+          bodyEl.insertBefore(amount, bodyEl.querySelector('.result-service-row'));
+          bodyEl.insertBefore(el('div', 'rafi-price-seal', 'PRIX FIXEO'), amount);
+          if (ot === 'DIAGNOSTIC_READY') {
+            bodyEl.insertBefore(bodyEl.querySelector('.diagnostic-tag-new'), amount);
+          }
+        }
+        bodyEl.querySelectorAll('.price-certificate__scope, .price-certificate__service-secondary, ' +
+          '.price-certificate__doctrine, .result-service-secondary, .result-header, ' +
+          '.diagnostic-scope, .diagnostic-absorption, .labour-disclosure, .labour-card-new:nth-child(2)')
+          .forEach(function(section){priceDetails.appendChild(section);});
       }
       if (outcome.financial_breakdown) {
         var financial = outcome.financial_breakdown;

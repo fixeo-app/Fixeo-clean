@@ -5045,3 +5045,105 @@ body.fx-estimator-tunnel-active .chat-widget { visibility: hidden !important; po
 @media (prefers-reduced-motion: reduce) {
   #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .step-enter { animation: none !important; }
 }
+
+/* Estimation v3 — quieter decisions, unchanged fields and pricing authority. */
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 > .estimator-header {
+  min-height: 52px; padding-block: 4px;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage {
+  display: grid; grid-template-columns: 12px minmax(0, 1fr); align-items: baseline; gap: 4px;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage.done .rafi-stage-index { color: #94c4b0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-need-input {
+  border-color: #b2c3df1c; box-shadow: inset 0 1px #ffffff05, inset 0 8px 24px #080e181a;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-capture-card__trust { color: #aab4c8; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card--service {
+  min-height: 60px; padding: 12px 8px;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card:not(.rafi-choice-card--service) {
+  min-height: 54px; padding: 12px; border-color: #ffffff14;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-question-details .rafi-question-conditions {
+  font-size: 13px; line-height: 1.5; color: #aeb9cb;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .price-certificate {
+  display: flex; flex-direction: column; gap: 16px; padding: 0; margin: 0;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-seal {
+  font-size: 12px; letter-spacing: .08em; color: #d5c0d0;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .price-hero,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .price-hero-inner,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .labour-card-new {
+  min-height: 0; padding: 0; margin: 0; background: none; border: 0; border-radius: 0; box-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .price-hero::before,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .labour-card-new::before { display: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .diagnostic-tag-new {
+  align-self: flex-start; padding: 0; margin: 0; border: 0; background: none; color: #acb6c9; font-size: 12px;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .price-display,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .labour-card-amount { justify-content: flex-start; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .price-hero-inner { text-align: left; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .labour-split { display: block; margin: 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .labour-card-amount .amount {
+  font-size: clamp(48px, 14vw, 80px); color: #f8f5f8; line-height: 1.05;
+  background: none; -webkit-text-fill-color: currentColor; text-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .result-service-row { margin: 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .result-service-name { font-size: 21px; line-height: 1.3; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .price-sublabel { margin-top: 8px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-decision .rafi-price-details { margin: 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-details > summary { padding: 12px 0; min-height: 44px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-details > :not(summary) {
+  margin: 0 0 16px; padding: 0; font-size: 13px; line-height: 1.5; color: #bac5d8;
+  border: 0; border-radius: 0; background: none; box-shadow: none;
+}
+
+/* Native confirmation stays in FIXEO's shell, with the same intrinsic flow. */
+dialog.fx-est-confirm {
+  position: fixed; inset: var(--fx-confirm-top, 0px) 0 auto;
+  width: min(520px, 100vw); max-width: 100%; margin: 0 auto;
+  max-height: var(--fx-confirm-height, 100dvh); overflow-y: auto; overscroll-behavior: contain;
+  padding: 24px; padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  background: #101521; border: 1px solid #ffffff14; border-radius: 0 0 24px 24px;
+  color: #f5f7ff; font: 16px/1.5 system-ui, sans-serif; overflow-wrap: anywhere;
+  scroll-padding-block: 16px; -webkit-text-size-adjust: 100%;
+}
+dialog.fx-est-confirm::backdrop { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.fx-est-confirm-shade {
+  position: fixed; inset: 0; z-index: 2147482000; background: #080d18eb; pointer-events: none;
+}
+dialog.fx-est-confirm .fx-est-confirm-eyebrow { margin: 0 0 12px; color: #d5c0d0; font-size: 11px; letter-spacing: .08em; font-weight: 600; }
+dialog.fx-est-confirm h2 { margin: 0 0 16px; font-size: 25px; line-height: 1.2; font-weight: 600; }
+dialog.fx-est-confirm .fx-est-confirm-summary {
+  padding: 0 0 16px; margin: 0 0 24px; border: 0; border-bottom: 1px solid #ffffff12;
+  background: none; border-radius: 0; color: #dce2ed; font-size: 16px; line-height: 1.5; font-weight: 500;
+}
+dialog.fx-est-confirm .fx-est-confirm-message { margin: 0 0 16px; font-size: 13px; line-height: 1.5; }
+dialog.fx-est-confirm .fx-est-confirm-message:empty { display: none; }
+dialog.fx-est-confirm label { margin: 0 0 8px; font-size: 13px; color: #c6cfe0; font-weight: 500; }
+dialog.fx-est-confirm input {
+  min-height: 48px; padding: 12px 16px; margin: 0 0 12px; font-size: 16px;
+  border: 1px solid #b2c3df24; border-radius: 12px; background: #ffffff04; color: #fff;
+}
+dialog.fx-est-confirm .fx-est-confirm-reassurance { margin: 0 0 24px; font-size: 12px; line-height: 1.5; color: #aeb9cb; }
+dialog.fx-est-confirm .fx-est-confirm-primary {
+  min-height: 52px; padding: 12px 16px; border-radius: 16px; font-size: 15px; line-height: 1.35; font-weight: 600;
+  color: #fff; background: linear-gradient(112deg, #c35426, #c13470 48%, #7443b7); border: 1px solid #e5d9ff30;
+  box-shadow: inset 0 1px #ffffff40, inset 0 -1px #24204240, 0 4px 16px #d0447926;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+dialog.fx-est-confirm .fx-est-confirm-primary:disabled {
+  opacity: 1; color: #d9c5d3; background: linear-gradient(112deg, #79422f, #773251 48%, #514075);
+  border-color: #e7bfd326; box-shadow: inset 0 1px #ffffff15;
+}
+dialog.fx-est-confirm .fx-est-confirm-primary:active:not(:disabled) { transform: translateY(1px); box-shadow: inset 0 2px 6px #291b4430; }
+dialog.fx-est-confirm .fx-est-confirm-back { margin: 12px auto 0; min-height: 44px; padding: 8px; font-size: 13px; }
+body:has(dialog.fx-est-confirm[open]) #fixeo-urgent-fab,
+body:has(dialog.fx-est-confirm[open]) .chat-widget { visibility: hidden !important; pointer-events: none !important; }
+@media (max-width: 540px) { dialog.fx-est-confirm { border: 0; border-radius: 0; box-shadow: none; } }
+@media (max-width: 350px) { dialog.fx-est-confirm { padding-inline: 16px; } }
+@media (prefers-reduced-motion: reduce) { dialog.fx-est-confirm * { transition: none !important; animation: none !important; } }

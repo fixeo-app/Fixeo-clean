@@ -8,7 +8,7 @@ const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 
 // Minimal DOM double. No browser, live URL, production credentials or network.
 class Element {
-  constructor(tag) { this.tag = tag; this.children = []; this.listeners = {}; this.attributes = {}; this.isConnected = true; this.hidden = false; this.value = ''; }
+  constructor(tag) { this.tag = tag; this.children = []; this.listeners = {}; this.attributes = {}; this.isConnected = true; this.hidden = false; this.value = ''; this.style = {setProperty() {}}; }
   append(...nodes) { this.children.push(...nodes); }
   appendChild(n) { this.append(n); return n; }
   replaceChildren(...nodes) { this.children = nodes; }
@@ -16,6 +16,7 @@ class Element {
   addEventListener(k, fn) { (this.listeners[k] ||= []).push(fn); }
   fire(k, extra = {}) { for (const fn of this.listeners[k] || []) fn({preventDefault() {}, ...extra}); }
   focus() { this.focused = true; }
+  contains(n) { return !!this.find(c=>c===n); }
   showModal() { this.open = true; }
   close() { this.open = false; }
   remove() { this.isConnected = false; }
@@ -30,9 +31,9 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
 const validContext = {valid:true, outcome_type:'PRICE_READY', amount_mad:250, service_label:'Réparation fuite', city_slug:'rabat'};
 const confirmed = {ok:true, replayed:false, request_id:'test-request', tracking_ref:'FX-TEST', guest_token:'a'.repeat(64), dispatch_ok:true};
 function setup({context=validContext, confirm=()=>confirmed, flag=true} = {}) {
-  const document = new Element('document'); document.body = new Element('body'); document.activeElement = new Element('button'); document.createElement = tag=>new Element(tag);
+  const document = new Element('document'); document.body = new Element('body'); document.activeElement = new Element('button'); document.createElement = tag=>new Element(tag); document.querySelectorAll = ()=>[];
   const localStorage = storage(), sessionStorage = storage(), calls=[];
-  const window = {FixeoEstimatorConfig:{estimatorV2Enabled:flag}, FixeoEstimatorV2:{hide(){},reveal(){}}};
+  const window = {innerHeight:844, addEventListener(){},removeEventListener(){},FixeoEstimatorConfig:{estimatorV2Enabled:flag}, FixeoEstimatorV2:{hide(){},reveal(){}}};
   const runtime = vm.createContext({window,document,localStorage,sessionStorage,Map,Set,Promise,Number,Date,console,
     fetch: async (url, options) => {
       assert.equal(url, '/api/estimator-v1');
@@ -51,7 +52,7 @@ function setup({context=validContext, confirm=()=>confirmed, flag=true} = {}) {
 }
 
 test('opening verifies only; double CTA opens one dialog and never confirms', async()=>{
-  const x=setup();x.open();x.open();await flush();assert.equal(x.document.body.children.length,1);
+  const x=setup();x.open();x.open();await flush();assert.equal(x.document.body.children.filter(n=>n.tag==='dialog').length,1);
   assert.deepEqual(x.calls.map(c=>c.action),['verify_pricing_context']);assert.match(x.text(),/250 MAD/);
 });
 test('confirmation sends only action/token/phone and blocks repeated submit', async()=>{
@@ -71,7 +72,7 @@ test('lost response and reopen retry the identical payload; replay stores same a
   let count=0;const x=setup({confirm:()=>{if(++count===1)throw Error('lost');return {...confirmed,replayed:true};}});
   x.open();await flush();x.field().value='0600000000';x.submit();await flush();assert.match(x.text(),/peut-être été enregistrée/);
   x.dialog().fire('cancel');x.open();await flush();assert.equal(x.field().readOnly,true);
-  assert.match(x.text(),/Réparation fuite · rabat — 250 MAD/);
+  assert.match(x.text(),/Réparation fuite · Rabat — 250 MAD/);
   x.field().value='0700000000';x.submit();await flush();assert.deepEqual(x.calls[1],x.calls[2]);assert.equal(x.calls.length,3);
   x.dialog().fire('cancel');x.open();await flush();assert.equal(x.calls.length,3);assert.match(x.text(),/enregistrée/);
   assert.equal(Object.keys(JSON.parse(x.localStorage.getItem('fixeo_guest_access_v1'))).length,1);
@@ -108,7 +109,7 @@ test('disabled feature and missing token never open or send',async()=>{
 test('both entry points delegate to the shared bridge; resume cannot open picker',()=>{
   for(const p of ['index.html','js/fixeo-estimation-page-v1.js'])assert.ok(!/addEventListener\('fixeo:estimator-reserve'/.test(read(p)));
   assert.match(read('js/fixeo-estimation-page-v1.js'),/bridge.openConfirmation\(bridge.getContext\(\)\)/);
-  for(const p of ['index.html','estimation.html'])assert.match(read(p),/fixeo-estimator-reservation-bridge-v1.js\?v=7c9m4-continuity2/);
+  for(const p of ['index.html','estimation.html'])assert.match(read(p),/fixeo-estimator-reservation-bridge-v1.js\?v=ultra-premium-v3/);
 });
 
 
