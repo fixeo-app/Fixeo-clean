@@ -622,7 +622,7 @@ for (const width of [320, 390]) {
     });
     const doc = s.w.document;
     const style = doc.createElement("style");
-    style.textContent = read("css/fixeo-rafi-os-v1.css") + read("css/fixeo-hero-flagship-v1.css");
+    style.textContent = read("css/homepage-conversion-optimizer.css") + read("css/fixeo-rafi-os-v1.css") + read("css/fixeo-hero-flagship-v1.css");
     doc.head.append(style);
     function viewportRules(rules) {
       return [...rules].map((rule) => {
@@ -653,6 +653,9 @@ for (const width of [320, 390]) {
     assert.equal(computed('.fxhf-rafi-face').left, '50%');
     assert.equal(computed('.fxhf-rafi-face').top, '50%');
     assert.equal(computed('.fxhf-rafi-face').maxWidth, 'none', 'transparent canvas must not be constrained to the slot');
+    assert.equal(computed('.fxhf-rafi-halo').maxWidth, 'none', 'legacy 100% cap must not squash and offset the halo');
+    assert.equal(computed('.fxhf-rafi-halo').width, computed('.fxhf-rafi-halo').height, 'halo must be square');
+    assert.equal(computed('.fxhf-actions').backgroundColor, 'rgba(0, 0, 0, 0)', 'no dark rectangle behind CTA');
     for (const filled of [false, true]) {
       if (filled) s.fill();
       assert.equal(computed(".fxhf-content").gridTemplateRows, "auto auto auto");
