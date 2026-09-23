@@ -6232,7 +6232,11 @@ var cityInput =
           bodyEl.insertBefore(amount, bodyEl.querySelector('.result-service-row'));
           bodyEl.insertBefore(el('div', 'rafi-price-seal', 'PRIX FIXEO'), amount);
           if (ot === 'DIAGNOSTIC_READY') {
-            bodyEl.insertBefore(bodyEl.querySelector('.diagnostic-tag-new'), amount);
+            // Keep one service label above the verified amount. Preserve the
+            // secondary diagnostic labels in the closed price detail.
+            bodyEl.insertBefore(bodyEl.querySelector('.result-service-row'), amount);
+            priceDetails.appendChild(bodyEl.querySelector('.diagnostic-tag-new'));
+            priceDetails.appendChild(amount.querySelector('.price-eyebrow'));
           }
         }
         bodyEl.querySelectorAll('.price-certificate__scope, .price-certificate__service-secondary, ' +

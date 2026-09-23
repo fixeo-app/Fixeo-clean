@@ -756,13 +756,16 @@ for (const outcomeType of ['PRICE_READY', 'LABOUR_PLUS_PART_READY', 'DIAGNOSTIC_
     const name = s.w.document.querySelector('.price-certificate__service-name, .result-service-name');
     assert.equal(detail.open, false);
     assert.equal(amount.textContent, outcomeType === 'LABOUR_PLUS_PART_READY' ? '150' : '220');
-    assert.ok(amount.compareDocumentPosition(name) & s.w.Node.DOCUMENT_POSITION_FOLLOWING);
+    assert.ok(amount.compareDocumentPosition(name) & (outcomeType === 'DIAGNOSTIC_READY'
+      ? s.w.Node.DOCUMENT_POSITION_PRECEDING : s.w.Node.DOCUMENT_POSITION_FOLLOWING));
     assert.equal(amount.closest('details'), null);
     assert.ok(s.q('cta-primary').textContent.includes(outcomeType === 'LABOUR_PLUS_PART_READY' ? '150' : '220'));
     if (outcomeType === 'PRICE_READY') {
       assert.match(detail.textContent, /Toute pièce est exclue/);
       assert.match(detail.textContent, /Si la situation réelle est différente, aucun supplément/);
     } else if (outcomeType === 'DIAGNOSTIC_READY') {
+      assert.equal(detail.querySelector('.diagnostic-tag-new').textContent, 'Diagnostic FIXEO');
+      assert.equal(detail.querySelector('.price-eyebrow').textContent, 'Tarif diagnostic');
       for (const scope of outcome.scope_summary) assert.ok(detail.textContent.includes(scope));
       assert.match(detail.textContent, /Les 220 MAD déjà versés sont déduits ; un seul frais FIXEO/);
       assert.match(detail.textContent, /autres travaux et seconde visite sur devis/);
@@ -975,4 +978,69 @@ test('entry visibility protects its content from both floating actions and resto
     assert.equal(w.getComputedStyle(dot).pointerEvents, 'none');
     assert.equal(w.getComputedStyle(dot).width, '12px');
   } finally {dom.window.close();}
+});
+
+for (const width of [320, 360, 390, 412]) {
+  test('diagnostic price micro-polish ' + width + ': one visible hierarchy, complete detail and canonical handoff', async t => {
+    const s = fixture(t, {width});
+    officialHeader(s);
+    const service = plumbing.services['plomberie.diagnostic'];
+    await s.open({city: 'Fès', service_hint: 'plomberie.diagnostic', known_inputs: service.inputs});
+    await s.start(); await wait(() => !!s.outcome);
+    const outcomeBefore = JSON.stringify(s.outcome);
+    assert.equal(s.outcome.outcome_type, 'DIAGNOSTIC_READY');
+    assert.equal(s.outcome.price.amount_mad, service.total_minor / 100);
+    screenStyles(s.w, width, 844);
+    const decision = s.w.document.querySelector('.rafi-price-decision');
+    const detail = decision.querySelector('.rafi-price-details');
+    const amount = decision.querySelector('.price-display .amount');
+    assert.deepEqual([...decision.children].filter(n => n !== detail).map(n => n.className),
+      ['rafi-price-seal', 'result-service-row', 'price-hero']);
+    assert.equal(decision.querySelector('.rafi-price-seal').textContent, 'PRIX FIXEO');
+    assert.equal(decision.querySelector('.result-service-name').textContent, 'Diagnostic plomberie');
+    assert.equal(amount.textContent, '220');
+    assert.equal(decision.querySelector('.price-sublabel').textContent, 'Diagnostic sur place');
+    assert.equal(detail.open, false);
+    assert.equal(detail.querySelector('.diagnostic-tag-new').textContent, 'Diagnostic FIXEO');
+    assert.equal(detail.querySelector('.price-eyebrow').textContent, 'Tarif diagnostic');
+    for (const scope of s.outcome.scope_summary || []) assert.ok(detail.textContent.includes(scope));
+    assert.match(detail.textContent, /diagnostic déjà payé est déduit/);
+    // This engine fixture has no signed financial breakdown. The existing
+    // three outcome tests above cover preserving that breakdown when supplied.
+    assert.equal(!!detail.querySelector('.result-scope'), !!s.outcome.financial_breakdown);
+    const cta = s.q('cta-primary'), style = s.w.getComputedStyle(cta);
+    assert.equal(cta.textContent, 'Réserver le diagnostic — 220 MAD');
+    assert.equal(style.background, 'var(--fx-est-cta)');
+    assert.equal(style.borderRadius, '16px');
+    assert.equal(style.minHeight, '52px');
+    assert.equal(s.q('estimator-scroll').contains(cta), true);
+    detail.open = true;
+    assert.equal(JSON.stringify(s.outcome), outcomeBefore);
+    detail.open = false;
+    let handoff;
+    s.w.document.addEventListener('fixeo:estimator-reserve', e => {handoff = e.detail;});
+    cta.click();
+    assert.deepEqual(JSON.parse(JSON.stringify(handoff)), {pricing_context_token: 'fixture-price-token'});
+  });
+}
+
+test('secondary helper copy keeps its wording, readable size and AA contrast', async t => {
+  const s = fixture(t);
+  await s.open();
+  s.w.eval(read('js/fixeo-estimation-voice-v1.js'));
+  screenStyles(s.w, 390, 844);
+  const helper = s.w.document.querySelector('.rafi-capture-card__trust');
+  assert.equal(helper.textContent, 'Aucune demande n’est envoyée à un artisan à cette étape.');
+  for (const node of [helper, s.w.document.querySelector('.rafi-dictation-status')]) {
+    const style = s.w.getComputedStyle(node);
+    assert.equal(style.fontSize, '12px');
+    assert.equal(style.fontWeight, '400');
+    assert.equal(style.lineHeight, '1.5');
+    assert.equal(style.color, 'rgb(160, 172, 192)');
+    const luminance = rgb => rgb.reduce((sum, byte, i) => {
+      const x = byte / 255;
+      return sum + [0.2126, 0.7152, 0.0722][i] * (x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4);
+    }, 0);
+    assert.ok((luminance([160,172,192]) + .05) / (luminance([16,21,33]) + .05) >= 4.5);
+  }
 });
