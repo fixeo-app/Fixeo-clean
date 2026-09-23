@@ -1,0 +1,56 @@
+/* Homepage chapter markers only. Shared sections, CTAs and journeys stay intact. */
+#main-content .fxhome-chapter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0 0 24px;
+  padding: 8px 12px;
+  border: 1px solid #d7b8d12b;
+  border-radius: 999px;
+  background: linear-gradient(110deg, #d889a309, #a699d809), #101522b3;
+  color: #d1cbd8;
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: .08em;
+  white-space: nowrap;
+  box-shadow: inset 0 1px #ffffff07, 0 0 14px #bd718d0c;
+}
+#main-content .fxhome-chapter-badge::before { content: none; }
+#main-content .fxhome-chapter-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: linear-gradient(120deg, #e7b291, #d9a6c4, #b4a5d4);
+  box-shadow: 0 0 0 3px #dba6be09, 0 0 8px #dba6be38;
+  pointer-events: none;
+}
+/* The existing title margin provides this badge's spacing below. */
+#main-content #rafi-discovery .fxhome-chapter-badge { margin-bottom: 0; }
+
+/* Forty pixels on either side on mobile, with no viewport-height reservation. */
+#main-content #fixeo-diagnostic-signature,
+#main-content #rafi-discovery { padding-top: 0; }
+#main-content .fxhome-chapter-divider {
+  display: block;
+  width: min(420px, 82%);
+  height: 1px;
+  margin: 0 auto 48px;
+  padding: 0;
+  border: 0;
+  background: linear-gradient(90deg, transparent, #d68e626b 22%, #c97eab80 50%, #9984ca6b 78%, transparent);
+  box-shadow: 0 0 7px #c786ab14;
+  pointer-events: none;
+}
+/* Replace the previous wide separator; do not stack two lines. */
+#main-content #rafi-discovery::before { content: none; }
+@media (max-width: 700px) {
+  #main-content .fxhome-chapter-divider { margin-bottom: 40px; }
+}
+/* Markers are static, including when reduced motion is requested. */
