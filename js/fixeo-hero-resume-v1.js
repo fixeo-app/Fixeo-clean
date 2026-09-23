@@ -56,6 +56,12 @@
   function _el(id)  { return document.getElementById(id); }
   function _qs(sel) { return document.querySelector(sel); }
 
+  // Homepage presentation policy only. Opaque context, completion and explicit
+  // resume/reset APIs keep their existing authority and storage semantics.
+  function _homepageDisplaySuppressed() {
+    return document.documentElement.hasAttribute('data-fixeo-clean-home');
+  }
+
   /* Safe city display — slugs arrive as server-side city identifiers
      like "Casablanca", "Marrakech", "Fes". Title-case only if needed.
      City MUST NOT affect price — display only. */
@@ -172,6 +178,7 @@
 
   /* ── Render PRICE_READY state ────────────────────────── */
   function _renderPriceReady(ctx) {
+    if (_homepageDisplaySuppressed()) { _dismissPriceReady(); return; }
     var homeEl = _el(HOME_ID);
     if (!homeEl) return;
 
@@ -361,6 +368,11 @@
 
   /* ── Core verification flow ─────────────────────────────── */
   function _runVerification() {
+    if (_homepageDisplaySuppressed()) {
+      ++_gen; // Ignore any pre-existing verification callback after a return.
+      _dismissPriceReady();
+      return; // Never clear or re-verify stored context just to paint the homepage.
+    }
     /* Guard: profile-return flow owns restoration — do not compete */
     if (_profileReturnActive()) return;
 
@@ -515,6 +527,7 @@
 
   /* ── Init ─────────────────────────────────────────────── */
   function _init() {
+    if (_homepageDisplaySuppressed()) _dismissPriceReady();
     /* Run on pageshow covers fresh load + bfcache restore */
     window.addEventListener('pageshow', function () {
       /* Small delay: let RFOS init start, let QSM inject, let bridge load */
@@ -548,4 +561,3 @@
   };
 
 }());
-

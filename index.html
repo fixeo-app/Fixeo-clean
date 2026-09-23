@@ -1,6 +1,10 @@
 <!DOCTYPE html>
-<html lang="fr" dir="ltr" data-theme="dark">
+<html lang="fr" dir="ltr" data-theme="dark" data-fixeo-clean-home>
 <head>
+  <!-- Hide only the legacy estimator resume card before any deferred script. -->
+  <style id="fixeo-clean-home-display">
+    html[data-fixeo-clean-home] #fxhro-card { display: none !important; }
+  </style>
   
   <script defer src="js/supabase-client.js?v=sc3"></script>
   <script defer src="js/fixeo-logout-global.js?v=v2c4a"></script>
@@ -4424,7 +4428,7 @@ window._fixeoAvatarNav = function () {
 <script src="js/fixeo-trust-score.js?v=fts-v2a" defer></script>
 <script src="js/fixeo-tracking-engine.js?v=ftrk-v1b" defer></script>
 <script src="js/fixeo-rafi-os-v1.js?v=rfos-v2d-reentry" defer></script>
-<script src="js/fixeo-hero-resume-v1.js?v=7c9m4-continuity2" defer></script>
+<script src="js/fixeo-hero-resume-v1.js?v=clean-home-v3" defer></script>
 <script src="js/fixeo-hero-flagship-v1.js?v=hero-rafi-presence-v1" defer></script>
 
 <script>

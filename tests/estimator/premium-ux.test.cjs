@@ -837,3 +837,25 @@ for (const width of [320, 360, 390, 412]) {
     assert.equal(h.header.outerHTML, headerBefore);
   });
 }
+
+test('clean homepage return preserves an old price token and opens a new estimation normally', async (t) => {
+  const s = fixture(t);
+  s.w.document.documentElement.setAttribute('data-fixeo-clean-home', '');
+  s.w.eval(read('js/fixeo-estimator-reservation-bridge-v1.js'));
+  s.w.eval(read('js/fixeo-hero-resume-v1.js'));
+  await s.open({service_hint: 'plomberie.fuite_simple', known_inputs: safeInputs});
+  await s.start(); await wait(() => !!s.outcome);
+  const bridge = s.w.FixeoEstimatorReservationBridge;
+  bridge.prepareContext('fixture-price-token');
+  s.w.FixeoEstimatorV2.close();
+  s.w.FixeoHeroResume.refresh();
+  assert.equal(s.w.document.getElementById('fxhro-card'), null);
+  assert.equal(bridge.getContext(), 'fixture-price-token');
+  await s.open({description: 'Mon lavabo est bouché', service_hint: null, known_inputs: {}});
+  assert.equal(s.q('estimator-need-input').value, 'Mon lavabo est bouché');
+  assert.equal(s.q('cta-primary').disabled, false);
+  await s.start();
+  await wait(() => s.calls.filter(c => c.action === 'start').length === 2);
+  assert.equal(s.calls.filter(c => c.action === 'start')[1].ctx.description, 'Mon lavabo est bouché');
+  assert.equal(s.w.document.getElementById('fxhro-card'), null);
+});
