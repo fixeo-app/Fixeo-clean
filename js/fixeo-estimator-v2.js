@@ -797,70 +797,45 @@
   }
 
 
-  function trapFocus(
-    container
-  ) {
-    container.addEventListener(
-      'keydown',
-      function(e) {
-        if (
-          e.key ===
-          'Escape'
-        ) {
-          if (
-            STATE.onClose
-          ) {
-            STATE.onClose();
-          }
+  // Use the real FIXEO bar: never clone, move or restyle the global header.
+  function visibleFixeoHeader() {
+    var headers = document.querySelectorAll('.fixeo-gh-mobile-bar, nav.navbar, header.site-header');
+    for (var i = 0; i < headers.length; i++) {
+      var rect = headers[i].getBoundingClientRect();
+      if (rect.height > 0 && rect.bottom > 0) return headers[i];
+    }
+    return null;
+  }
 
-          return;
-        }
-
-        if (
-          e.key !==
-          'Tab'
-        ) {
-          return;
-        }
-
-        var focusable =
-          getFocusable(
-            container
-          );
-
-        if (
-          !focusable.length
-        ) {
-          e.preventDefault();
-          return;
-        }
-
-        var first =
-          focusable[0];
-
-        var last =
-          focusable[
-            focusable.length - 1
-          ];
-
-        if (
-          e.shiftKey &&
-          document.activeElement ===
-            first
-        ) {
-          e.preventDefault();
-          last.focus();
-
-        } else if (
-          !e.shiftKey &&
-          document.activeElement ===
-            last
-        ) {
-          e.preventDefault();
-          first.focus();
+  function trapFocus(container) {
+    function onKeydown(e) {
+      var header = visibleFixeoHeader();
+      if (!container.contains(e.target) && !(header && header.contains(e.target))) return;
+      if (e.key === 'Escape') {
+        if (STATE.onClose) STATE.onClose();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      // The visible site controls remain keyboard-accessible with the panel.
+      var headerControls = header ? getFocusable(header) : [];
+      var panelControls = getFocusable(container);
+      var focusable = headerControls.concat(panelControls);
+      if (!focusable.length) { e.preventDefault(); return; }
+      var first = focusable[0], last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      } else if (headerControls.length && panelControls.length) {
+        if (e.shiftKey && document.activeElement === panelControls[0]) {
+          e.preventDefault(); headerControls[headerControls.length - 1].focus();
+        } else if (!e.shiftKey && document.activeElement === headerControls[headerControls.length - 1]) {
+          e.preventDefault(); panelControls[0].focus();
         }
       }
-    );
+    }
+    document.addEventListener('keydown', onKeydown);
+    return function () { document.removeEventListener('keydown', onKeydown); };
   }
 
 
@@ -4140,6 +4115,7 @@
         _activeModal._view.answer = STATE.pendingAnswer;
       _activeModal._answerPending=false;
       if(_activeModal._cleanupViewport)_activeModal._cleanupViewport();
+      if(_activeModal._cleanupFocus)_activeModal._cleanupFocus();
       ++_activeModal._requestEpoch; // Late responses cannot change a reopened journey.
       _pausedModal = _activeModal;
     }
@@ -4303,7 +4279,7 @@
 
       modal.setAttribute(
         'data-ux-version',
-        'frictionless-v4'
+        'ultra-premium-v2'
       );
 
 
@@ -4315,7 +4291,7 @@
 
       modal.setAttribute(
         'aria-modal',
-        'true'
+        visibleFixeoHeader() ? 'false' : 'true'
       );
 
 
@@ -4328,6 +4304,11 @@
       modal.appendChild(
         renderHeader()
       );
+
+      // One intrinsic content flow: the action follows the last useful block.
+      var scrollSurface = el('div', 'estimator-scroll');
+      scrollSurface.id = 'estimator-scroll';
+      modal.appendChild(scrollSurface);
 
 
       var progressSlot =
@@ -4343,7 +4324,7 @@
       );
 
 
-      modal.appendChild(
+      scrollSurface.appendChild(
         progressSlot
       );
 
@@ -4361,7 +4342,7 @@
       );
 
 
-      modal.appendChild(
+      scrollSurface.appendChild(
         ctxSlot
       );
 
@@ -4379,7 +4360,7 @@
       );
 
 
-      modal.appendChild(
+      scrollSurface.appendChild(
         bodySlot
       );
 
@@ -4397,7 +4378,7 @@
       );
 
 
-      modal.appendChild(
+      scrollSurface.appendChild(
         footerSlot
       );
 
@@ -4412,8 +4393,8 @@
       );
 
 
-      trapFocus(modal);
-      this._installViewport(modal,bodySlot,footerSlot);
+      this._cleanupFocus = trapFocus(modal);
+      this._installViewport(modal,scrollSurface,footerSlot);
 
 
       if (this._resuming) {
@@ -4430,30 +4411,38 @@
   // STATE 1 — COMPRENDRE
   // ───────────────────────────────────────────────────────────────────────────
 
-  EstimatorModal.prototype._installViewport = function (modal, body, footer) {
+  EstimatorModal.prototype._installViewport = function (modal, surface, footer) {
     if (this._cleanupViewport) this._cleanupViewport();
-    var frame = 0,
-      observer,
+    var frame = 0, observer, observedHeader, root = this._root,
       viewport = window.visualViewport;
     function fit() {
       if (frame) window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(function () {
         frame = 0;
-        modal.style.setProperty(
-          '--rafi-viewport-height',
-          (viewport ? viewport.height : window.innerHeight) + 'px',
-        );
-        modal.style.setProperty('--rafi-viewport-top', (viewport ? viewport.offsetTop : 0) + 'px');
-        modal.style.setProperty(
-          '--rafi-actions-height',
-          Math.ceil(footer.getBoundingClientRect().height) + 'px',
-        );
+        var height = viewport ? viewport.height : window.innerHeight;
+        var top = viewport ? viewport.offsetTop : 0;
+        var header = visibleFixeoHeader();
+        // Safari may pan the visual viewport above the keyboard. Reserve only
+        // the header portion that actually intersects it, never a second inset.
+        var panelTop = Math.max(top, header ? header.getBoundingClientRect().bottom : 0);
+        var panelHeight = Math.max(0, top + height - panelTop);
+        root.style.setProperty('--rafi-panel-top', panelTop + 'px');
+        root.style.setProperty('--rafi-panel-height', panelHeight + 'px');
+        root.dataset.compactViewport = String(panelHeight < 480);
+        root.dataset.siteHeader = String(!!header);
+        modal.setAttribute('aria-modal', header ? 'false' : 'true');
+        modal.style.setProperty('--rafi-viewport-height', height + 'px');
+        modal.style.setProperty('--rafi-viewport-top', top + 'px');
+        if (observer && header !== observedHeader) {
+          if (observedHeader) observer.unobserve(observedHeader);
+          if (header) observer.observe(header);
+          observedHeader = header;
+        }
         var field = document.activeElement;
-        if (field && body.contains(field) && /^(INPUT|TEXTAREA|SELECT)$/.test(field.tagName)) {
-          var bounds = body.getBoundingClientRect(),
-            rect = field.getBoundingClientRect();
-          if (rect.bottom > bounds.bottom - 12) body.scrollTop += rect.bottom - bounds.bottom + 12;
-          else if (rect.top < bounds.top + 12) body.scrollTop -= bounds.top + 12 - rect.top;
+        if (field && surface.contains(field) && /^(INPUT|TEXTAREA|SELECT)$/.test(field.tagName)) {
+          var bounds = surface.getBoundingClientRect(), rect = field.getBoundingClientRect();
+          if (rect.bottom > bounds.bottom - 16) surface.scrollTop += rect.bottom - bounds.bottom + 16;
+          else if (rect.top < bounds.top + 16) surface.scrollTop -= bounds.top + 16 - rect.top;
         }
       });
     }
@@ -4462,7 +4451,7 @@
       observer.observe(footer);
     }
     window.addEventListener('resize', fit);
-    body.addEventListener('focusin', fit);
+    surface.addEventListener('focusin', fit);
     if (viewport) {
       viewport.addEventListener('resize', fit);
       viewport.addEventListener('scroll', fit);
@@ -4471,7 +4460,7 @@
       if (frame) window.cancelAnimationFrame(frame);
       if (observer) observer.disconnect();
       window.removeEventListener('resize', fit);
-      body.removeEventListener('focusin', fit);
+      surface.removeEventListener('focusin', fit);
       if (viewport) {
         viewport.removeEventListener('resize', fit);
         viewport.removeEventListener('scroll', fit);
@@ -6481,7 +6470,7 @@ var cityInput =
   EstimatorModal.prototype._rememberView = function(kind, session, step, outcome) {
     if (this._restoring) return;
     if (this._view) {
-      var scroll=document.getElementById('body-slot');
+      var scroll=document.getElementById('estimator-scroll') || document.getElementById('body-slot');
       if(scroll)this._view.scrollTop=scroll.scrollTop;
       this._history.push(this._view);
     }
@@ -6531,7 +6520,7 @@ var cityInput =
         updateCTA(true);
       }
     } finally { this._restoring = false; }
-    var scroll=document.getElementById('body-slot');
+    var scroll=document.getElementById('estimator-scroll') || document.getElementById('body-slot');
     if(scroll)scroll.scrollTop=previous.scrollTop||0;
     this._renderBack();
   };
@@ -6572,6 +6561,10 @@ var cityInput =
       if (method === '_showError') this._rememberView('error');
       if (method === '_renderOutcome') this._rememberView('outcome', session, null, step);
       var result = original.apply(this, arguments);
+      if (!this._restoring) {
+        var scroll = document.getElementById('estimator-scroll');
+        if (scroll) scroll.scrollTop = 0;
+      }
       this._renderBack();
       return result;
     };

@@ -4864,3 +4864,184 @@ body.fx-estimator-tunnel-active .chat-widget { visibility: hidden !important; po
   #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 *::before,
   #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 *::after { animation: none !important; transition: none !important; }
 }
+
+/* Estimation v2 — shared FIXEO shell and intrinsic vertical rhythm.
+   The viewport limits the scroll surface; it never stretches the form. */
+#fixeo-estimator-v2-root {
+  z-index: 2147482000;
+  --rafi-space-1: 8px;
+  --rafi-space-2: 12px;
+  --rafi-space-3: 16px;
+  --rafi-space-4: 24px;
+  --rafi-space-5: 32px;
+  --rafi-gutter: 24px;
+}
+#fixeo-estimator-v2-root #estimator-backdrop {
+  top: var(--rafi-panel-top, 0px); bottom: auto;
+  height: var(--rafi-panel-height, 100dvh);
+  z-index: 2147482000; align-items: flex-start; padding: 16px;
+  background: #080d18eb; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 {
+  top: 0; height: auto; min-height: 0;
+  max-height: min(790px, calc(var(--rafi-panel-height, 100dvh) - 32px)) !important;
+  background: #101521; border-radius: 24px;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4::before,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4::after { display: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 > .estimator-header {
+  min-height: 60px; padding: 8px var(--rafi-gutter); gap: 12px;
+  background: none; border: 0; box-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-sphere-wrap { display: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .header-left { gap: 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-header-brandline { gap: 8px; line-height: 1.4; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-header-brand { font-size: 13px; font-weight: 650; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-header-product { font-size: 11px; color: #bcc4d4; letter-spacing: .055em; font-weight: 500; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-state {
+  margin-top: 0; min-height: 0; font-size: 12px; line-height: 1.5; color: #a7b2c8;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .modal-close {
+  flex-basis: 44px; width: 44px; height: 44px; border-radius: 12px;
+  background: none; color: #d0d8e8; font-size: 24px;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 #estimator-scroll {
+  flex: 0 1 auto; min-height: 0; min-width: 0;
+  overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch; scroll-padding-block: 16px;
+  scrollbar-width: thin; scrollbar-color: #8794ba40 transparent;
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 #progress-slot,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 #ctx-slot { padding: 0 var(--rafi-gutter); }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-state-bar {
+  padding: 0; gap: 8px; min-height: 0;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage {
+  position: relative; gap: 0; padding: 8px 0 0; border-top-width: 1px;
+  color: #9aa6bf; background: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage-index {
+  display: inline-flex; width: 12px; height: 12px; min-width: 12px;
+  border: 0; background: none; font-size: 10px; line-height: 1; box-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage-label { font-size: 11px; line-height: 1.4; font-weight: 500; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage.active { color: #f1d1e1; border-top-color: transparent; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage.active::before {
+  content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, #d88b64, #cf739c 48%, #a48bc3); pointer-events: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage.active .rafi-stage-index,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-stage.done .rafi-stage-index { background: none; border: 0; box-shadow: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 #rafi-step-back { min-height: 44px; margin: 0; padding: 8px 0; font-size: 13px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-need-summary { margin: 12px 0 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-context-bar { padding: 12px 0 0; gap: 8px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 #body-slot {
+  display: flow-root; flex: 0 0 auto; min-height: 0;
+  overflow: visible; padding: 24px var(--rafi-gutter) 0;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 #footer-slot {
+  position: static; flex: 0 0 auto; margin: 24px 0 0; padding: 0 var(--rafi-gutter);
+  background: none; border: 0; box-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-footer {
+  position: static !important; padding: 0; margin: 0; min-height: 0;
+  background: none; border: 0; box-shadow: none; gap: 12px;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-understand-hero { margin: 0 0 24px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-understand-hero,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-capture-card,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-selector-console,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-verification-console {
+  display: block; min-height: 0; padding: 0; border: 0; border-radius: 0;
+  overflow: visible; background: none; box-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-understand-hero::before,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-capture-card::before,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-verification-console::before { display: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .question-heading {
+  margin: 0 0 16px; font-size: 25px; line-height: 1.2; font-weight: 600;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-understand-title { margin-bottom: 8px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-understand-copy { font-size: 14px; line-height: 1.5; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-capture-card__head { display: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-need-input {
+  height: 88px; min-height: 88px; padding: 16px; border-radius: 16px;
+  border: 1px solid #b2c3df24; background: linear-gradient(145deg, #25304766, #11182780);
+  box-shadow: inset 0 1px #ffffff06; line-height: 1.5;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-need-input:focus {
+  border-color: #d3abc668; box-shadow: 0 0 0 3px #c393bb0a;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-dictation { margin: 8px 0 0; gap: 8px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-dictation button,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-dictation select {
+  min-height: 44px; border-radius: 12px; border: 1px solid #ffffff0a;
+  padding: 8px 12px; background: #ffffff04; box-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-dictation button { font-size: 13px; font-weight: 500; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-dictation button[aria-pressed=true] { background: #aa668822; border-color: #d0a8b844; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-dictation-status { font-size: 12px; line-height: 1.5; color: #aab6cd; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-capture-card__city {
+  display: grid; grid-template-columns: minmax(104px, .9fr) minmax(0, 1.1fr);
+  align-items: center; gap: 12px; margin: 16px 0 0;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-city-label { margin: 0; font-size: 13px; line-height: 1.4; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-city-input {
+  width: 100%; min-width: 0; min-height: 44px; border-radius: 12px;
+  padding: 8px 12px; border-color: #ffffff14; background: #ffffff04;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-capture-card__trust { margin: 12px 0 0; font-size: 12px; line-height: 1.5; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-footer .btn-primary,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-quote-form .btn-primary {
+  min-height: 52px; padding: 12px 16px; border-radius: 16px; font-size: 15px;
+  line-height: 1.35; font-weight: 600; color: #fff; background: var(--rafi-estimation-cta);
+  border: 1px solid #e5d9ff30; box-shadow: inset 0 1px #ffffff40, inset 0 -1px #24204240, 0 4px 16px #d0447926;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .btn-primary:active:not(:disabled) {
+  transform: translateY(1px); box-shadow: inset 0 2px 6px #291b4430;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-footer .btn-primary:disabled,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .estimator-quote-form .btn-primary:disabled {
+  opacity: 1; color: #d9c5d3; background: linear-gradient(112deg, #79422f, #773251 48%, #514075);
+  border-color: #e7bfd326; box-shadow: inset 0 1px #ffffff15;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-stack--services { gap: 0; margin: 16px 0 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card--service {
+  min-height: 68px; padding: 16px 8px; border: 0; border-bottom: 1px solid #ffffff12;
+  border-radius: 0; background: none; box-shadow: none;
+}
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card--service .rafi-choice-card__marker { background: none; border: 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card--service.selected,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-choice-card--service:active { background: #b58da510; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-more-interventions { margin-top: 12px; padding: 8px 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-recommendation { margin: 16px 0 0; padding: 0; background: none; border: 0; box-shadow: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-recommendation-mark { display: none; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-recommendation h3 { margin: 0 0 12px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-verification-kicker { margin-bottom: 12px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-question-conditions { margin-bottom: 16px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .answer-cards:not(.rafi-choice-stack--services) { gap: 12px; margin-top: 16px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate { padding: 0; gap: 16px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate__service,
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate__amount { margin: 0; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .price-certificate__doctrine { margin-top: 0; padding-top: 16px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .rafi-price-details { margin-top: 16px; }
+#fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .step-enter { animation: rafi-premium-reveal .22s ease-out both; }
+@media (max-width: 768px) {
+  #fixeo-estimator-v2-root #estimator-backdrop { padding: 0 !important; background: #101521; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 {
+    width: 100%; border: 0; border-radius: 0;
+    max-height: var(--rafi-panel-height, 100dvh) !important;
+    box-shadow: none;
+  }
+}
+@media (max-width: 350px) {
+  #fixeo-estimator-v2-root { --rafi-gutter: 16px; }
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .question-heading { font-size: 23px; }
+}
+#fixeo-estimator-v2-root[data-compact-viewport=true] .estimator-modal.estimator-modal--premium-v4 .rafi-state,
+#fixeo-estimator-v2-root[data-compact-viewport=true] .estimator-modal.estimator-modal--premium-v4 .rafi-need-summary { display: none; }
+#fixeo-estimator-v2-root[data-compact-viewport=true] .estimator-modal.estimator-modal--premium-v4 > .estimator-header { min-height: 52px; padding-block: 0; }
+@media (prefers-reduced-motion: reduce) {
+  #fixeo-estimator-v2-root .estimator-modal.estimator-modal--premium-v4 .step-enter { animation: none !important; }
+}

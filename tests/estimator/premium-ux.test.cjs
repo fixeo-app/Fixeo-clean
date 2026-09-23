@@ -238,12 +238,12 @@ test('F back keeps answers, description, city and scroll; editing forks the exis
   await s.open({ service_hint: 'plomberie.fuite_simple' });
   await s.start();
   const first = s.step.question_id;
-  s.q('body-slot').scrollTop = 90;
+  s.q('estimator-scroll').scrollTop = 90;
   await s.choose('LOCAL_ACCESSIBLE');
   s.click(s.q('rafi-step-back'));
   assert.equal(s.w.__ux.modal._view.step.question_id, first);
   assert.equal(s.w.__ux.STATE.pendingAnswer, 'LOCAL_ACCESSIBLE');
-  assert.equal(s.q('body-slot').scrollTop, 90);
+  assert.equal(s.q('estimator-scroll').scrollTop, 90);
   assert.equal(s.w.__ux.modal._entryContext.city, 'Rabat');
   assert.equal(s.w.__ux.modal._entryContext.description, 'Fuite simple visible');
   await s.choose('LOCAL_ACCESSIBLE');
@@ -299,7 +299,7 @@ for (const width of [320, 360, 390, 412])
   test(
     'G/H/I/J/K viewport ' +
       width +
-      ' keeps keyboard resize listeners, reserved footer, draft and focus intact',
+      ' keeps keyboard resize listeners, intrinsic footer, draft and focus intact',
     async (t) => {
       const s = fixture(t, { width });
       await s.open();
@@ -580,7 +580,7 @@ test('scope disclosure preserves exact tariff conditions; safety and access prec
 });
 
 for (const width of [320, 360, 390, 412]) {
-  test('premium CSS contract ' + width + ': all four labels, scroll body, separate footer, long copy and keyboard', async (t) => {
+  test('premium CSS contract ' + width + ': all four labels, intrinsic action flow, long copy and keyboard', async (t) => {
     const s = fixture(t, { width });
     await s.open();
     for (const height of [844, 480, 340]) {
@@ -592,8 +592,18 @@ for (const width of [320, 360, 390, 412]) {
       assert.equal(style('.rafi-stage-label').textOverflow, 'clip');
       assert.equal(style('.rafi-stage-label').whiteSpace, 'normal');
       assert.equal(style('#body-slot').minHeight, '0');
-      assert.equal(style('#body-slot').overflowY, 'auto');
-      assert.equal(style('#footer-slot').position, 'relative');
+      assert.equal(style('#estimator-scroll').overflowY, 'auto');
+      assert.equal(style('#body-slot').flexGrow, '0');
+      assert.equal(style('#body-slot').overflow, 'visible');
+      assert.equal(style('.estimator-modal').height, 'auto');
+      assert.equal(s.q('footer-slot').parentElement, s.q('estimator-scroll'));
+      assert.equal(s.q('body-slot').nextElementSibling, s.q('footer-slot'));
+      assert.equal(style('#footer-slot').marginTop, '24px');
+      assert.equal(style('.rafi-understand-hero').borderTopWidth, '0px');
+      assert.equal(style('.rafi-understand-hero').minHeight, '0');
+      assert.equal(style('.rafi-sphere-wrap').display, 'none');
+      assert.equal(style('.rafi-stage-index').height, '12px');
+      assert.equal(style('#footer-slot').position, 'static');
       assert.equal(style('#footer-slot').flexShrink, '0');
       assert.equal(style('.estimator-need-input').fontSize, '16px');
       assert.equal(style('#fixeo-urgent-fab').visibility, 'hidden');
@@ -628,4 +638,101 @@ test('homepage gateway retains the existing city-aware opening action and access
     assert.equal(context.city, 'Fès');
     assert.match(dom.window.document.getElementById('fxes-title').textContent, /Sachez combien ça devrait coûter/);
   } finally { dom.window.close(); }
+});
+
+function officialHeader(s, initialHeight = 84) {
+  const header = s.w.document.createElement('header');
+  header.className = 'fixeo-gh-universal-shell';
+  header.innerHTML = '<div class="fixeo-gh-mobile-bar"><a href="/" id="fixture-logo">FIXEO</a><button id="fixture-menu">Menu</button></div>';
+  s.w.document.body.prepend(header);
+  const bar = header.firstElementChild;
+  let height = initialHeight;
+  bar.getBoundingClientRect = () => ({ top: 0, bottom: height, height, left: 0, width: s.w.innerWidth });
+  return { header, bar, setHeight(value) { height = value; } };
+}
+
+for (const width of [320, 360, 390, 412]) {
+  test('FIXEO header reservation ' + width + ': measured safe area once, keyboard pan and short viewport', async (t) => {
+    const s = fixture(t, { width });
+    const h = officialHeader(s);
+    const originalHeader = h.header.outerHTML;
+    let resize, disconnected = false;
+    const observed = new Set();
+    s.w.ResizeObserver = class {
+      constructor(callback) { resize = callback; }
+      observe(node) { observed.add(node); }
+      unobserve(node) { observed.delete(node); }
+      disconnect() { disconnected = true; }
+    };
+    await s.open();
+    await new Promise((r) => s.w.requestAnimationFrame(r));
+    const root = s.q('fixeo-estimator-v2-root');
+    assert.equal(root.style.getPropertyValue('--rafi-panel-top'), '84px');
+    assert.equal(root.style.getPropertyValue('--rafi-panel-height'), '760px');
+    assert.equal(root.querySelector('[role=dialog]').getAttribute('aria-modal'), 'false');
+    assert.ok(observed.has(h.bar));
+    assert.ok(s.q('estimator-scroll').contains(s.q('cta-primary')));
+    s.viewport.height = 340; s.viewport.offsetTop = 50;
+    s.viewport.dispatchEvent(new s.w.Event('resize'));
+    await new Promise((r) => s.w.requestAnimationFrame(r));
+    assert.equal(root.style.getPropertyValue('--rafi-panel-top'), '84px');
+    assert.equal(root.style.getPropertyValue('--rafi-panel-height'), '306px');
+    assert.equal(root.dataset.compactViewport, 'true');
+    h.setHeight(108); resize();
+    await new Promise((r) => s.w.requestAnimationFrame(r));
+    assert.equal(root.style.getPropertyValue('--rafi-panel-height'), '282px');
+    s.viewport.offsetTop = 130;
+    s.viewport.dispatchEvent(new s.w.Event('scroll'));
+    await new Promise((r) => s.w.requestAnimationFrame(r));
+    assert.equal(root.style.getPropertyValue('--rafi-panel-top'), '130px');
+    assert.equal(root.style.getPropertyValue('--rafi-panel-height'), '340px');
+    assert.equal(h.header.outerHTML, originalHeader, 'global header is never cloned, moved or restyled');
+    s.w.FixeoEstimatorV2.close();
+    assert.equal(disconnected, true);
+    assert.equal(h.header.outerHTML, originalHeader);
+  });
+}
+
+test('header controls remain interactive and keyboard navigation skips the obscured homepage', async (t) => {
+  const s = fixture(t);
+  const h = officialHeader(s);
+  let menuClicks = 0;
+  s.q('fixture-menu').onclick = () => menuClicks++;
+  await s.open();
+  for (const node of s.w.document.querySelectorAll('button,a,input,select,textarea'))
+    Object.defineProperty(node, 'offsetWidth', { get: () => 44 });
+  s.click(s.q('fixture-menu'));
+  assert.equal(menuClicks, 1);
+  const tab = (id, shiftKey = false) => {
+    s.q(id).focus();
+    const event = new s.w.KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true });
+    s.q(id).dispatchEvent(event);
+    return event;
+  };
+  tab('fixture-menu'); assert.equal(s.w.document.activeElement.id, 'modal-close');
+  tab('modal-close', true); assert.equal(s.w.document.activeElement.id, 'fixture-menu');
+  tab('cta-primary'); assert.equal(s.w.document.activeElement.id, 'fixture-logo');
+  tab('fixture-logo', true); assert.equal(s.w.document.activeElement.id, 'cta-primary');
+  s.click(s.q('modal-close'));
+  assert.equal(tab('fixture-menu').defaultPrevented, false, 'no stale focus handler after close');
+  assert.equal(h.header.hasAttribute('inert'), false);
+});
+
+test('keyboard scrolls the focused field in the same surface as the CTA, with no reserved footer gap', async (t) => {
+  const s = fixture(t);
+  officialHeader(s, 60);
+  await s.open();
+  const surface = s.q('estimator-scroll'), field = s.q('estimator-need-input');
+  surface.getBoundingClientRect = () => ({ top: 120, bottom: 390, height: 270 });
+  field.getBoundingClientRect = () => ({ top: 410 - surface.scrollTop, bottom: 498 - surface.scrollTop, height: 88 });
+  field.focus();
+  s.viewport.height = 400;
+  s.viewport.dispatchEvent(new s.w.Event('resize'));
+  await new Promise((r) => s.w.requestAnimationFrame(r));
+  assert.equal(surface.scrollTop, 124);
+  assert.equal(field.getBoundingClientRect().bottom, 374);
+  assert.equal(s.q('footer-slot').parentElement, surface);
+  assert.equal(s.q('body-slot').nextElementSibling, s.q('footer-slot'));
+  assert.equal(s.w.document.querySelector('.estimator-modal').style.getPropertyValue('--rafi-actions-height'), '');
+  assert.equal(field.value, 'Fuite simple visible');
 });
