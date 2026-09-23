@@ -599,7 +599,7 @@ test("Hero legal details, native controls and static mobile footer reserve safe-
 // Cascade contracts, not pixel/physical-keyboard verification: JSDOM has no
 // layout engine. Include the real RAFI OS sibling that isolated Hero tests missed.
 for (const width of [320, 360, 390, 412]) {
-  test(`Mobile NEED uses intrinsic rows and one keyboard scroll surface at ${width}px`, async (t) => {
+  test(`Mobile NEED keeps its heading and natural photo flow at ${width}px, including keyboard recovery`, async (t) => {
     const s = setup(t, {
       configure(w) {
         const hero = w.document.createElement("section");
@@ -656,6 +656,13 @@ for (const width of [320, 360, 390, 412]) {
     assert.equal(computed('.fxhf-rafi-halo').maxWidth, 'none', 'legacy 100% cap must not squash and offset the halo');
     assert.equal(computed('.fxhf-rafi-halo').width, computed('.fxhf-rafi-halo').height, 'halo must be square');
     assert.equal(computed('.fxhf-actions').backgroundColor, 'rgba(0, 0, 0, 0)', 'no dark rectangle behind CTA');
+    assert.equal(computed('.fxhf-title').fontWeight, '700');
+    assert.equal(computed('.fxhf-subtitle').fontWeight, '500');
+    assert.equal(computed('.fxhf-rafi-sphere').transform, 'scale(.94)', 'uniform 6% reduction, including face and halo');
+    assert.equal(computed('.fxhf-rafi-sphere').transformOrigin, 'center');
+    assert.equal(computed('.fxhf-rafi-sphere').width, '60px', 'keep the existing decoration slot');
+    assert.equal(computed('.fxhf-rafi-face').transform, 'translate(-50%, -50%)');
+    assert.equal(computed('.fxhf-rafi-halo').animation, 'fxhf-rafi-atmosphere 6s ease-in-out infinite');
     for (const filled of [false, true]) {
       if (filled) s.fill();
       assert.equal(computed(".fxhf-content").gridTemplateRows, "auto auto auto");
@@ -669,6 +676,56 @@ for (const width of [320, 360, 390, 412]) {
       assert.equal(computed(".fxhf-actions").position, "static");
       assert.equal(s.q("fxhf-submit").disabled, !filled);
     }
+
+    // The real file-input handler sets data-fxhf-photos. Previously that alone
+    // hid the subtitle and pulled the stepper towards the stationary RAFI orb.
+    // Assert CSS/DOM stability, not pixels: physical Safari remains a manual gate.
+    const heading = doc.querySelector('.fxhf-heading');
+    const headingStyles = () => ['.fxhf-heading', '.fxhf-title', '.fxhf-subtitle',
+      '.fxhf-progress', '.fxhf-visual', '.fxhf-rafi-sphere'].map(selector => {
+      const css = computed(selector);
+      return ['display', 'position', 'height', 'minHeight', 'maxHeight', 'transform',
+        'marginTop', 'marginBottom', 'paddingTop', 'paddingBottom', 'fontSize',
+        'lineHeight', 'fontWeight'].map(property => css[property]);
+    });
+    const headingBeforePhotos = headingStyles();
+    s.change('fxhf-need-input', '');
+    s.change('fxhf-consent', false);
+    for (let count = 1; count <= 3; count++) {
+      // Photo-only first, then add another photo after entering text.
+      if (count === 2) s.change('fxhf-need-input', 'Une fuite à vérifier.');
+      s.photo(count === 1 ? 'fxhf-camera-file' : 'fxhf-files');
+      const photos = s.q('fxhf-photos');
+      assert.equal(s.q('fxhf-root').dataset.fxhfPhotos, String(count));
+      assert.equal(photos.querySelectorAll('figure').length, count);
+      assert.match(photos.textContent, new RegExp(count + ' photo'));
+      assert.equal(photos.parentElement, s.q('fxhf-panel'));
+      assert.equal(computed('.fxhf-photos').display, 'flex');
+      assert.equal(computed('.fxhf-photos').flexWrap, 'wrap');
+      assert.equal(computed('.fxhf-photos').gap, '8px');
+      assert.equal(computed('.fxhf-photos').marginTop, '12px');
+      assert.ok(['', 'static'].includes(computed('.fxhf-photos').position));
+      assert.ok(['', 'none'].includes(computed('.fxhf-photos').transform));
+      assert.equal(computed('.fxhf-subtitle').display, 'block', 'photo must not collapse the heading');
+      assert.equal(computed('.fxhf-universal').height, 'auto');
+      assert.equal(computed('.fxhf-universal').minHeight, '0');
+      assert.equal(computed('#home').minHeight, '0');
+      assert.equal(computed('.fxhf-scroll').overflow, 'visible');
+      assert.equal(doc.querySelector('.fxhf-heading'), heading, 'no heading rebuild');
+      assert.deepEqual(headingStyles(), headingBeforePhotos, 'photo must not compress or shift heading styles');
+      const order = ['.fxhf-need-field', '.fxhf-photos', '.fxhf-consent', '.fxhf-privacy', '.fxhf-actions']
+        .map(selector => doc.querySelector(selector));
+      for (let i = 1; i < order.length; i++)
+        assert.ok(order[i - 1].compareDocumentPosition(order[i]) & s.w.Node.DOCUMENT_POSITION_FOLLOWING);
+      for (const consent of [false, true]) {
+        s.change('fxhf-consent', consent);
+        assert.equal(s.q('fxhf-submit').disabled, !consent);
+        assert.deepEqual(headingStyles(), headingBeforePhotos);
+      }
+    }
+    assert.equal(s.q('fxhf-need-input').value, 'Une fuite à vérifier.');
+    assert.equal(s.calls.length, 0, 'local preview and consent must not create a server dossier');
+    assert.equal(s.uploads.length, 0, 'photos are not uploaded before analysis');
     s.q("fxhf-need-input").focus();
     assert.equal(doc.activeElement, s.q("fxhf-need-input"));
     doc.body.classList.add("fxhf-keyboard");
@@ -676,16 +733,30 @@ for (const width of [320, 360, 390, 412]) {
     assert.equal(computed("#fxhf-root").overflowY, "auto");
     assert.equal(computed(".fxhf-universal").minHeight, "0");
     assert.equal(computed(".fxhf-actions").position, "static");
+    assert.equal(computed('.fxhf-subtitle').display, 'none', 'retain intentional keyboard compaction');
+    assert.equal(computed('.fxhf-visual').display, 'none');
+    assert.equal(computed('.fxhf-photos').display, 'flex');
     assert.ok(s.q("fxhf-root").contains(s.q("fxhf-submit")));
     assert.equal(doc.querySelector("#home").nextElementSibling.id, "fixeo-estimation-signature");
     assert.notEqual(computed("#fixeo-estimation-signature").display, "none");
     doc.body.classList.remove("fxhf-keyboard");
     assert.equal(computed("#home").minHeight, "0", "no empty viewport tail returns after keyboard closes");
+    assert.deepEqual(headingStyles(), headingBeforePhotos, 'photo heading recovers after keyboard closes');
+    for (let remaining = 2; remaining >= 0; remaining--) {
+      s.q('fxhf-photos').querySelector('button').click();
+      await s.until(() => s.q('fxhf-root').dataset.fxhfPhotos === String(remaining));
+      assert.deepEqual(headingStyles(), headingBeforePhotos, 'removing photos keeps the heading stable');
+    }
+    assert.equal(computed('.fxhf-photos').display, 'none');
+    assert.equal(s.revoked.length, 3);
+    assert.equal(s.calls.length, 0);
     s.q("fxhf-submit").click();
     await s.until(() => s.q("fxhf-root").dataset.fxhfState === "safety");
     assert.equal(computed(".fxhf-content").gridTemplateRows, "auto minmax(0, 1fr) auto");
     assert.equal(computed("#home").minHeight, "var(--fxhf-viewport-height, 100svh)", "SAFETY keeps its viewport workspace");
     assert.equal(computed(".fxhf-universal").minHeight, "220px");
+    assert.equal(computed('.fxhf-title').fontWeight, '600', 'NEED weight does not leak to SAFETY');
+    assert.ok(['', 'none'].includes(computed('.fxhf-rafi-sphere').transform), 'NEED orb reduction does not leak to SAFETY');
     assert.equal(computed('.fxhf-title').textShadow, '', 'NEED title treatment must not leak to SAFETY');
     assert.notEqual(computed(".rfos-stage-wrap").display, "none", "legacy visibility outside NEED is untouched");
     // Exercise only CSS state matching here; the functional suite covers the
