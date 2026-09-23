@@ -1,0 +1,19 @@
+PAGE,FOOTER BEFORE,FOOTER AFTER,STATUS
+admin.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+artisan.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+auth.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+confirmation.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+dashboard-artisan-v2.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+dashboard-artisan.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+dashboard-client-v1.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+dashboard-client-v2.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+dashboard-client.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+data/pricing/ux/prototype/estimation-page-prototype.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+data/pricing/ux/prototype/estimator-prototype.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+demandes/index.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+onboarding-artisan.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+payment-cancel.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+payment-success.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+rafi-v2-preview.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+suivi-demande.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical
+suivi.html,Existing application/redirect/prototype UI,Unchanged,EXCLUDED — tracked file byte-identical

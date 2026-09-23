@@ -404,6 +404,7 @@ function buildArticlePage(article) {
   <script src="/js/fixeo-consent-v1.js?v=fcv1c"></script>
   <script src="/js/fixeo-analytics-config.js?v=fac1b" defer></script>
   <script src="/js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
+  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf5a">
 </head>
 <body class="blog-page blog-v2 blog-authority" data-theme="dark">
 <div id="ba-progress-wrap" aria-hidden="true"><div id="ba-progress"></div></div>
@@ -504,7 +505,7 @@ function buildArticlePage(article) {
     </aside>
   </main>
   <script src="/js/fixeo-header-global.js" defer></script>
-  <script src="/js/fixeo-footer-global.js?v=gf3a" defer></script>
+  <script src="/js/fixeo-footer-global.js?v=gf5a" defer></script>
   <script src="/js/auth-global.js" defer></script>
   <script src="/js/blog-article-v3.js?v=1" defer></script>
 </body>

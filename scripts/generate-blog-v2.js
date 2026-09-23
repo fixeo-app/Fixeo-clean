@@ -407,6 +407,7 @@ function buildArticlePage(article, allArticles) {
     .navbar-brand .logo-text, .logo-wrap .logo-text  { display:none !important; }
     img.fixeo-logo-img { display:block !important; height:32px !important; width:auto !important; }
   </style>
+  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf5a">
 </head>
 <body class="blog-page blog-v2" data-theme="dark">
   <a href="#main-content" class="skip-link">Aller au contenu</a>
@@ -524,7 +525,7 @@ function buildArticlePage(article, allArticles) {
   </main>
 
   <script src="/js/fixeo-header-global.js" defer></script>
-  <script src="/js/fixeo-footer-global.js?v=gf3a" defer></script>
+  <script src="/js/fixeo-footer-global.js?v=gf5a" defer></script>
   <script src="/js/auth-global.js" defer></script>
 
 </body>
@@ -633,6 +634,7 @@ function buildIndexPage(articles) {
     .navbar-brand .logo-text, .logo-wrap .logo-text  { display:none !important; }
     img.fixeo-logo-img { display:block !important; height:32px !important; width:auto !important; }
   </style>
+  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf5a">
 </head>
 <body class="blog-index-page blog-v2" data-theme="dark">
   <a href="#main-content" class="skip-link">Aller au contenu</a>
@@ -661,7 +663,7 @@ function buildIndexPage(articles) {
     <p>Vous avez déjà fait une demande ? <a href="/suivi" class="blog-footer-link">Suivez votre intervention →</a></p>
   </footer>
   <script src="/js/fixeo-header-global.js" defer></script>
-  <script src="/js/fixeo-footer-global.js?v=gf3a" defer></script>
+  <script src="/js/fixeo-footer-global.js?v=gf5a" defer></script>
   <script src="/js/auth-global.js" defer></script>
 </body>
 </html>`,

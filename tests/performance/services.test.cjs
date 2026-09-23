@@ -58,7 +58,9 @@ test('Services keeps the exact Homepage universe component and a single editoria
   assert.equal(d.querySelectorAll('script[src*="diagnostic"],script[src*="estimator"]').length,0);
   w.eval(read('js/fixeo-footer-global.js'));
   assert.equal(d.querySelectorAll('.fxf-canonical').length,1);
-  assert.equal(d.querySelectorAll('.fxf-trust-badge').length,2);
+  assert.equal(d.querySelectorAll('#fixeo-public-footer').length,1);
+  assert.equal(d.querySelectorAll('.fxf-trust-badge').length,0);
+  assert.equal(d.querySelectorAll('#fixeo-public-footer .fxf-group').length,3);
   assert.ok(d.querySelector('.fxf-logo'));
 });
 
@@ -145,7 +147,8 @@ for(const width of [320,360,390,412])test(`Services ${width}: responsive grids, 
  assert.equal(css('.fxs-primary').minHeight,'54px');assert.equal(css('.fxs-text').minHeight,'44px');
  assert.equal(css('.fxs-final .fxs-primary').minWidth,'0');assert.equal(css('.fxs-final .fxs-primary').width,'100%');
  assert.equal(css('.fxs-faq summary').minHeight,'56px');assert.equal(css('.fxs-hero h1').fontWeight,'700');
- assert.equal(css('.fxf-trust-badge').whiteSpace,'normal');
+ assert.equal(d.querySelectorAll('#fixeo-public-footer .fxf-trust-badge').length,0,'canonical footer stays free of trust chips');
+ assert.ok(d.querySelector('#fixeo-public-footer .fxf-local'),'local navigation remains available');
  assert.match(read('css/fixeo-services-page-v2.css'),/safe-area-inset-bottom/);
  assert.match(d.querySelector('meta[name=viewport]').content,/viewport-fit=cover/);
  assert.match(read('css/fixeo-services-page-v2.css'),/prefers-reduced-motion:reduce/);

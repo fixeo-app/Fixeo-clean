@@ -1045,6 +1045,7 @@ ${safeJsonLD(jsonLdObj)}
 
   <!-- RAFI CSS (for hero fallback) -->
   <link rel="stylesheet" href="/css/fixeo-rafi-v2.css?v=rfv2a">
+  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf5a">
 
   <!-- SSR Profile styles — self-contained, no JS required -->
   <style>
@@ -1391,6 +1392,7 @@ ${safeJsonLD(jsonLdObj)}
   </footer>
 
 </main>
+  <script src="/js/fixeo-footer-global.js?v=gf5a" defer></script>
 </body>
 </html>`;
 }

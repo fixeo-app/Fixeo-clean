@@ -1,5 +1,5 @@
 /*!
- * fixeo-footer-global.js — v gf4b
+ * fixeo-footer-global.js — v gf5a
  * Canonical Public Footer Authority
  *
  * Single source of truth for all Fixeo public-facing pages.
@@ -81,6 +81,14 @@
     document.body.appendChild(authFooter);
     return;
   }
+
+  /* Existing application footers keep their current presentation. */
+  var isApplication = /\/(?:onboarding-artisan|payment-cancel|payment-success)(?:\.html)?\/?$/.test(window.location.pathname);
+  var legacyFooters = Array.from(document.querySelectorAll(
+    'footer.fixeo-footer-v1, footer.fixeo-footer, .seo-footer, .seo-footer-card, .blog-index-footer, footer.ssp-footer'
+  ));
+  var localSources = Array.from(document.querySelectorAll('nav.seo-authority-links'));
+  var legacyLinks = legacyFooters.flatMap(function (el) { return Array.from(el.querySelectorAll('a[href]')); });
 
   /* ── Build canonical footer HTML ─────────────────────── */
   var yr = new Date().getFullYear();
@@ -255,6 +263,8 @@
      */
     var legacySelectors = [
       'footer.fixeo-footer-v1',
+      'footer.fixeo-footer',
+      'footer.ssp-footer',
       '.seo-footer',
       '.seo-footer-card',
       '.blog-index-footer'
@@ -273,7 +283,9 @@
 
     if (anchor) {
 
-      anchor.insertAdjacentHTML('afterend', html);
+      /* The server-rendered public profile owns a narrow main, not the site footer. */
+      var insertionAnchor = anchor.matches('footer.ssp-footer') ? anchor.closest('main') || anchor : anchor;
+      insertionAnchor.insertAdjacentHTML('afterend', html);
       anchor.parentNode.removeChild(anchor);
 
     } else {
@@ -294,6 +306,7 @@
 
   var remaining = document.querySelectorAll(
     'footer.fixeo-footer-v1:not(.fxf-canonical), ' +
+    'footer.fixeo-footer, footer.ssp-footer, ' +
     '.seo-footer, ' +
     '.seo-footer-card, ' +
     '.blog-index-footer'
@@ -321,5 +334,138 @@
       groups[k].setAttribute('open', '');
     }
   }
+
+
+  if (isApplication) return;
+
+  /* Presentation is scoped to this public footer, away from page/application CSS. */
+  var footer = document.querySelector('footer.fxf-canonical');
+  footer.id = 'fixeo-public-footer';
+  footer.setAttribute('data-footer-version', 'gf5a');
+  var shell = footer.querySelector('.container');
+  shell.className = 'fxf-shell';
+  footer.querySelector('.fxf-trust-row').remove();
+  footer.querySelectorAll('.footer-grid, .footer-brand, .footer-desc, .footer-links, .footer-bottom').forEach(function (el) {
+    ['footer-grid', 'footer-brand', 'footer-desc', 'footer-links', 'footer-bottom'].forEach(function (name) { el.classList.remove(name); });
+  });
+  var logoWrap = footer.querySelector('.fxf-logo-wrap');
+  var logoLink = document.createElement('a');
+  logoLink.className = 'fxf-logo-wrap';
+  logoLink.href = '/index.html';
+  logoLink.setAttribute('aria-label', 'Fixeo — Accueil');
+  while (logoWrap.firstChild) logoLink.appendChild(logoWrap.firstChild);
+  logoWrap.replaceWith(logoLink);
+  footer.querySelector('.fxf-logo').setAttribute('decoding', 'async');
+
+  /* Keep all existing contextual links, including static SEO links, without duplicates. */
+  function linkKey(href) {
+    var url = new URL(href, window.location.href);
+    var host = url.hostname.replace(/^www\./, '');
+    var path = url.pathname.replace(/\.html$/, '').replace(/\/$/, '').replace(/^\/index$/, '');
+    return host + path + url.search + url.hash;
+  }
+  var seen = new Set(Array.from(footer.querySelectorAll('a[href]')).map(function (a) { return linkKey(a.href); }));
+  var local = [], related = [];
+  function remember(a, collection) {
+    var key = linkKey(a.href);
+    if (seen.has(key)) return;
+    seen.add(key);
+    collection.push({ href: a.getAttribute('href'), text: a.textContent.trim() });
+  }
+  localSources.forEach(function (nav) { nav.querySelectorAll('a[href]').forEach(function (a) { remember(a, local); }); });
+  legacyLinks.forEach(function (a) {
+    var path = new URL(a.href, window.location.href).pathname;
+    remember(a, /^\/(?:plombier|electricien|serrurier|climatisation|peintre|menuisier|macon|nettoyage)\//.test(path) ? local : related);
+  });
+  if (!local.length) {
+    [
+      ['/plombier/casablanca', 'Plombier Casablanca'],
+      ['/electricien/casablanca', 'Électricien Casablanca'],
+      ['/serrurier/rabat', 'Serrurier Rabat'],
+      ['/climatisation/marrakech', 'Climatisation Marrakech'],
+      ['/plombier/fes', 'Plombier Fès'],
+      ['/electricien/tanger', 'Électricien Tanger']
+    ].forEach(function (entry) { local.push({ href: entry[0], text: entry[1] }); });
+  }
+  function linkStrip(links, className, label) {
+    if (!links.length) return;
+    var nav = document.createElement('nav'), list = document.createElement('ul');
+    nav.className = className;
+    nav.setAttribute('aria-label', label);
+    links.forEach(function (item) {
+      var li = document.createElement('li'), a = document.createElement('a');
+      a.setAttribute('href', item.href);
+      a.textContent = item.text;
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+    nav.appendChild(list);
+    shell.appendChild(nav);
+  }
+  linkStrip(related, 'fxf-related', 'Autres liens utiles');
+  linkStrip(local, 'fxf-local', 'Services par ville');
+  localSources.forEach(function (nav) { nav.remove(); });
+
+  /* Native details: accessible mobile accordions, visible links on desktop. */
+  var publicGroups = Array.from(footer.querySelectorAll('.fxf-group'));
+  var desktop = window.matchMedia('(min-width: 769px)');
+  function syncGroups() {
+    publicGroups.forEach(function (group) {
+      group.open = desktop.matches;
+      var summary = group.querySelector('summary');
+      summary.tabIndex = desktop.matches ? -1 : 0;
+      summary.setAttribute('aria-expanded', String(group.open));
+      if (desktop.matches) summary.setAttribute('aria-disabled', 'true');
+      else summary.removeAttribute('aria-disabled');
+    });
+  }
+  publicGroups.forEach(function (group) {
+    group.addEventListener('toggle', function () {
+      group.querySelector('summary').setAttribute('aria-expanded', String(group.open));
+    });
+  });
+  syncGroups();
+  if (desktop.addEventListener) desktop.addEventListener('change', syncGroups);
+  else if (desktop.addListener) desktop.addListener(syncGroups);
+
+  /* Use the existing consent UI; load it only on demand on pages without it. */
+  var cookieButton = footer.querySelector('.footer-cookie-btn');
+  cookieButton.removeAttribute('onclick');
+  var consentLoading = false;
+  cookieButton.addEventListener('click', function () {
+    if (window.FixeoConsent) { window.FixeoConsent.open(); return; }
+    if (consentLoading) return;
+    consentLoading = true;
+    cookieButton.setAttribute('aria-busy', 'true');
+    var message = footer.querySelector('.fxf-cookie-status');
+    if (!message) {
+      message = document.createElement('p');
+      message.className = 'fxf-cookie-status';
+      message.setAttribute('role', 'status');
+      footer.querySelector('.fxf-bottom').appendChild(message);
+    }
+    message.textContent = '';
+    if (!document.querySelector('link[href*="fixeo-consent-v1.css"]')) {
+      var css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = '/css/fixeo-consent-v1.css?v=fcv1b';
+      document.head.appendChild(css);
+    }
+    var script = document.createElement('script');
+    script.src = '/js/fixeo-consent-v1.js?v=fcv1c';
+    script.onload = function () {
+      consentLoading = false;
+      cookieButton.removeAttribute('aria-busy');
+      if (window.FixeoConsent) window.FixeoConsent.open();
+      else message.textContent = 'Préférences indisponibles. Réessayez.';
+    };
+    script.onerror = function () {
+      consentLoading = false;
+      cookieButton.removeAttribute('aria-busy');
+      script.remove();
+      message.textContent = 'Préférences indisponibles. Réessayez.';
+    };
+    document.head.appendChild(script);
+  });
 
 }());

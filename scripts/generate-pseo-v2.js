@@ -582,6 +582,7 @@ function generateProblemPages() {
     .internal-link{display:block;color:#93c5fd;margin:.3rem 0;font-size:.9rem}
     .problem-icon{font-size:3rem;margin-bottom:1rem;display:block}
   </style>
+  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf5a">
 </head>
 <body class="seo-service-page" data-theme="dark">
   <div class="bg-animated seo-bg"></div>
@@ -668,6 +669,7 @@ function generateProblemPages() {
     </div>
   </main>
   ${footerHTML()}
+  <script src="/js/fixeo-footer-global.js?v=gf5a" defer></script>
 </body>
 </html>`;
 
@@ -780,7 +782,7 @@ function generatePricePages() {
   <link rel="stylesheet" href="/css/variables.css">
   <link rel="stylesheet" href="/css/header-unified.css">
   <link rel="stylesheet" href="/css/fixeo-header-global.css">
-  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf4a">
+  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf5a">
   <link rel="stylesheet" href="/css/artisan-card-conversion-v1.css?v=fxhome-artisan-card-v3b2">
   <link rel="stylesheet" href="/css/fixeo-artisan-card-premium-v2.css?v=facp-v2c">
   <link rel="stylesheet" href="/css/fixeo-artisan-section-v1.css?v=fxhome-artisan-section-v1a2-int11">
@@ -945,7 +947,7 @@ function generatePricePages() {
   <script src="/js/fx-request-flow-v4.js?v=fxrf4-v5a1" defer></script>
   <script src="/js/fixeo-header-global.js?v=gfnav5"></script>
   <script src="/js/header-unified.js?v=modalfix3"></script>
-  <script src="/js/fixeo-footer-global.js?v=gf4a" defer></script>
+  <script src="/js/fixeo-footer-global.js?v=gf5a" defer></script>
   <script src="/js/fixeo-local-flagship-v1.js?v=fxlp-v12" defer></script>
 </body>
 </html>`;
@@ -1189,7 +1191,7 @@ function generateQuartierPages() {
   <link rel="stylesheet" href="/css/variables.css">
   <link rel="stylesheet" href="/css/header-unified.css">
   <link rel="stylesheet" href="/css/fixeo-header-global.css">
-  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf4a">
+  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf5a">
   <link rel="stylesheet" href="/css/artisan-card-conversion-v1.css?v=fxhome-artisan-card-v3b2">
   <link rel="stylesheet" href="/css/fixeo-artisan-card-premium-v2.css?v=facp-v2c">
   <link rel="stylesheet" href="/css/fixeo-artisan-section-v1.css?v=fxhome-artisan-section-v1a2-int11">
@@ -1369,7 +1371,7 @@ function generateQuartierPages() {
   <script src="/js/fx-request-flow-v4.js?v=fxrf4-v5a1" defer></script>
   <script src="/js/fixeo-header-global.js?v=gfnav5"></script>
   <script src="/js/header-unified.js?v=modalfix3"></script>
-  <script src="/js/fixeo-footer-global.js?v=gf4a" defer></script>
+  <script src="/js/fixeo-footer-global.js?v=gf5a" defer></script>
   <script src="/js/fixeo-local-flagship-v1.js?v=fxlp-v12" defer></script>
 </body>
 </html>`;

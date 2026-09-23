@@ -1,110 +1,58 @@
 #!/usr/bin/env python3
-"""
-gf2 — Global Footer Unification
-Replaces all non-canonical footer variants with global footer JS injection.
-Strategy:
-  1. Remove existing <footer>...</footer> block
-  2. Add <link> for fixeo-footer-global.css in <head> (after last CSS link)
-  3. Add <script defer> for fixeo-footer-global.js before </body>
-  Guard: JS already checks for .fixeo-footer-v1 and injects canonical footer.
-"""
+"""Keep public footer assets canonical without rewriting page content or SEO fallbacks.
 
+The shared runtime owns the footer markup. Static legacy footers and local links
+remain available before enhancement and with JavaScript disabled.
+Run after generating public HTML; --check verifies without writing.
+"""
+from pathlib import Path
+import argparse
 import re
-import sys
-import os
 
-FOOTER_CSS_TAG = '  <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf2">\n'
-FOOTER_JS_TAG  = '  <script src="js/fixeo-footer-global.js?v=gf2" defer></script>\n'
+ROOT = Path(__file__).resolve().parent.parent
+VERSION = 'gf5a'
+# Application, authentication and redirect screens deliberately retain their UI.
+EXCLUDED = {
+    'admin.html', 'auth.html', 'artisan.html', 'confirmation.html',
+    'dashboard-artisan.html', 'dashboard-artisan-v2.html',
+    'dashboard-client.html', 'dashboard-client-v1.html', 'dashboard-client-v2.html',
+    'onboarding-artisan.html', 'payment-cancel.html', 'payment-success.html',
+    'rafi-v2-preview.html', 'suivi.html', 'suivi-demande.html',
+}
+CSS = f'  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v={VERSION}">\n'
+JS = f'  <script src="/js/fixeo-footer-global.js?v={VERSION}" defer></script>\n'
 
-# Pages to process: (filename, remove_footer: bool, css_anchor, js_anchor)
-# css_anchor: the CSS link line after which we inject footer CSS
-# js_anchor: pattern before which we inject footer JS
 
-PAGES = [
-    # Public pages with old native footer
-    'artisans.html',
-    'services.html',
-    'comment-ca-marche.html',
-    'rejoindre-fixeo.html',
-    'faq.html',
-    'cgu.html',
-    'confidentialite.html',
-    'contact.html',
-    'whatsapp.html',
-    # Pages without any footer, need global footer
-    'service-seo.html',
-    'onboarding-artisan.html',
-    'payment-cancel.html',
-    'payment-success.html',
-]
+def public_pages():
+    return sorted(p for p in [*ROOT.glob('*.html'), *ROOT.glob('blog/*.html')]
+                  if p.name not in EXCLUDED)
 
-def process_file(path):
-    with open(path, 'r', encoding='utf-8') as f:
-        content = f.read()
 
-    original = content
-    changes = []
-
-    # 1. Remove existing <footer>...</footer> block (any variant)
-    footer_pattern = re.compile(r'[ \t]*<footer\b[^>]*>.*?</footer>', re.DOTALL)
-    if footer_pattern.search(content):
-        content = footer_pattern.sub('', content)
-        changes.append('removed old footer')
-
-    # 2. Add fixeo-footer-global.css if not already present
-    if 'fixeo-footer-global.css' not in content:
-        # Insert after auth-global.css or fixeo-header-global.css or last stylesheet
-        css_anchors = [
-            'css/auth-global.css',
-            'css/fixeo-header-global.css',
-            'css/header-unified.css',
-            'css/main.css',
-        ]
-        inserted = False
-        for anchor in css_anchors:
-            if anchor in content:
-                # Find end of the line containing this anchor
-                idx = content.index(anchor)
-                line_end = content.index('\n', idx)
-                content = content[:line_end+1] + FOOTER_CSS_TAG + content[line_end+1:]
-                changes.append(f'added footer CSS after {anchor}')
-                inserted = True
-                break
-        if not inserted:
-            # Insert before </head>
-            content = content.replace('</head>', FOOTER_CSS_TAG + '</head>', 1)
-            changes.append('added footer CSS before </head>')
-
-    # 3. Add fixeo-footer-global.js before </body> if not already present
-    if 'fixeo-footer-global.js' not in content:
-        content = content.replace('</body>', FOOTER_JS_TAG + '</body>', 1)
-        changes.append('added footer JS before </body>')
-
-    # 4. Remove stale .fx-footer CSS references (if present inline)
-    # Nothing to do here — .fx-footer in main.css is harmless
-
-    if content != original:
-        with open(path, 'w', encoding='utf-8') as f:
-            f.write(content)
-        print(f'  ✅  {path}: {", ".join(changes)}')
-    else:
-        print(f'  ⚠️  {path}: no changes needed')
-
-    return content != original
+def canonical_assets(text):
+    text = re.sub(r'(fixeo-footer-global\.(?:css|js)\?v=)[A-Za-z0-9-]+', r'\g<1>' + VERSION, text)
+    if 'fixeo-footer-global.css' not in text:
+        text = text.replace('</head>', CSS + '</head>', 1)
+    if 'fixeo-footer-global.js' not in text:
+        text = text.replace('</body>', JS + '</body>', 1)
+    return text
 
 
 def main():
-    os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    print(f'Working in: {os.getcwd()}')
-    total_changed = 0
-    for page in PAGES:
-        if os.path.exists(page):
-            changed = process_file(page)
-            if changed:
-                total_changed += 1
-        else:
-            print(f'  ❌  {page}: NOT FOUND')
-    print(f'\nDone: {total_changed}/{len(PAGES)} files updated')
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--check', action='store_true')
+    args = parser.parse_args()
+    stale = []
+    for path in public_pages():
+        before = path.read_text()
+        after = canonical_assets(before)
+        if before != after:
+            stale.append(str(path.relative_to(ROOT)))
+            if not args.check:
+                path.write_text(after)
+    print(f'{len(public_pages())} public pages checked; {len(stale)} ' + ('outdated' if args.check else 'updated'))
+    if args.check and stale:
+        print('\n'.join(stale))
+        raise SystemExit(1)
 
 
 if __name__ == '__main__':
