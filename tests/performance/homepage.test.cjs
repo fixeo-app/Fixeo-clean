@@ -49,6 +49,11 @@ test('homepage boots without marketplace and preserves current entry points',asy
   assert.equal(new URL(artisanEntry.href).pathname,'/rejoindre-fixeo.html','gateway opens the dedicated Artisan page before onboarding');
   assert.equal(artisanEntry.textContent.replace('→','').trim(),'Découvrir l’espace Artisan');
   assert.equal(d.querySelectorAll('#artisan-gateway a[href*="onboarding"],#artisan-gateway a[href*="auth"]').length,0,'Homepage does not bypass the dedicated entry choice');
+  const enterpriseEntry=d.querySelector('#enterprise-teaser a.fxet-cta');
+  assert.ok(enterpriseEntry,'Enterprise gateway remains available after startup');
+  assert.equal(new URL(enterpriseEntry.href).pathname,'/entreprises.html','gateway opens the existing Enterprise discovery page');
+  assert.equal(enterpriseEntry.textContent.replace('→','').trim(),'Découvrir FIXEO Entreprise');
+  assert.equal(d.querySelectorAll('#enterprise-teaser a').length,1,'Enterprise gateway keeps a single discovery destination');
   assert.equal(w.FixeoDB,undefined,'no local artisan database bootstrap');
   assert.equal(w.FixeoSupabaseLoader,undefined,'no global Supabase artisan loader');
   assert.equal(w.searchEngine,undefined,'no legacy search engine');

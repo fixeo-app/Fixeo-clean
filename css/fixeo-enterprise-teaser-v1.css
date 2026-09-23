@@ -1,1497 +1,194 @@
-/*
- * FIXEO Enterprise Teaser — fixeo-enterprise-teaser-v1.css
- * Version: fxet-v1a — 2026-07-18
- * Namespace: fxet-* exclusively
- *
- * Homepage-only block: #enterprise-teaser
- * Inserted between #services and #service-artisans-section.
- * Self-contained: no dependency on fixeo-entreprises-v1.css.
- * Reuses Enterprise design identity (indigo palette, dark surface).
- * Zero impact on artisan cards, hero, or any other homepage section.
- */
-
-/* ── Design tokens (local — no dependency on enterprise page tokens) ── */
-.fxet-section {
-  --fxet-indigo:        rgb(72, 100, 255);
-  --fxet-indigo-20:     rgba(72, 100, 255, 0.20);
-  --fxet-indigo-10:     rgba(72, 100, 255, 0.10);
-  --fxet-indigo-06:     rgba(72, 100, 255, 0.06);
-  --fxet-pink:          #FF4D8D;
-  --fxet-green:         #10B981;
-  --fxet-amber:         #F59E0B;
-  --fxet-bg:            #0D0D1A;
-  --fxet-surface:       rgba(255,255,255,0.04);
-  --fxet-border:        rgba(255,255,255,0.08);
-  --fxet-text-1:        #FFFFFF;
-  --fxet-text-2:        rgba(255,255,255,0.72);
-  --fxet-text-3:        rgba(255,255,255,0.45);
-  --fxet-radius-sm:     8px;
-  --fxet-radius-md:     14px;
-  --fxet-radius-lg:     20px;
-  --fxet-radius-xl:     28px;
+/* Homepage Enterprise gateway only; no dedicated-page or portal styles. */
+#enterprise-teaser {
+  padding: 48px 24px;
+  color: #f1f5fa;
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
-
-/* ── Section shell ──────────────────────────────────────────────────────── */
-.fxet-section {
-  background: var(--fxet-bg);
-  padding: 72px 0 80px;
-  position: relative;
-  overflow: hidden;
-  contain: layout style;
-}
-
-/* Subtle grid background (matches enterprise LP hero) */
-.fxet-section::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(72,100,255,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(72,100,255,0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* ── Container ──────────────────────────────────────────────────────────── */
-.fxet-container {
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 0 24px;
-  position: relative;
-  z-index: 1;
+#enterprise-teaser *,
+#enterprise-teaser *::before,
+#enterprise-teaser *::after { box-sizing: border-box; }
+#enterprise-teaser .fxet-shell {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 64px;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  column-gap: 48px;
+  row-gap: 24px;
+  max-width: 1080px;
+  margin: 0 auto;
 }
-
-/* ── Left: text content ─────────────────────────────────────────────────── */
-.fxet-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+#enterprise-teaser .fxet-intro,
+#enterprise-teaser .fxet-action { min-width: 0; }
+#main-content #enterprise-teaser .fxet-eyebrow {
+  border-color: #83d5e45c;
+  background: linear-gradient(110deg, #74c7df16, #6a99d916), #101a26e6;
+  color: #d8f2f7;
+  box-shadow: inset 0 1px #c0f2ff21, 0 0 12px #70c8df30, 0 0 24px #588cce26;
 }
-
-.fxet-eyebrow {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--fxet-indigo);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+#main-content #enterprise-teaser .fxhome-chapter-dot {
+  background: #a0e3ed;
+  box-shadow: 0 0 0 3px #83cfe519, 0 0 8px #8fe2f080, 0 0 14px #78bce840;
 }
-
-/* Enterprise gateway badge */
-#enterprise-teaser .fxet-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  gap: 8px;
-
-padding: 7px 14px;
-font-size: 12px;
-font-weight: 800;
-letter-spacing: 0.13em;
-
-  border: 1px solid rgba(72, 100, 255, 0.38);
-  border-radius: 999px;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(72, 100, 255, 0.16),
-      rgba(139, 92, 255, 0.08)
-    );
-
-  color: #8fdcff;
-
-  box-shadow:
-    0 0 18px rgba(72, 100, 255, 0.16),
-    inset 0 1px 0 rgba(255,255,255,0.06);
-}
-
-#enterprise-teaser .fxet-eyebrow::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  flex: 0 0 6px;
-
-  border-radius: 50%;
-  background: #68e4ff;
-
-  box-shadow:
-    0 0 6px rgba(104, 228, 255, 0.95),
-    0 0 12px rgba(72, 100, 255, 0.55);
-}
-
-.fxet-title {
-  font-size: clamp(26px, 3vw, 40px);
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--fxet-text-1);
+#enterprise-teaser .fxet-title {
+  max-width: 22ch;
   margin: 0;
-  /* Gradient text on first line */
-  background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.80) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-size: clamp(28px, 3.2vw, 38px);
+  font-weight: 700;
+  line-height: 1.16;
+  letter-spacing: -.035em;
+  text-wrap: balance;
 }
-
-.fxet-subtitle {
-  font-size: 16px;
+#enterprise-teaser .fxet-title span { color: #b4dbe9; }
+#enterprise-teaser .fxet-subtitle {
+  max-width: 54ch;
+  margin: 16px 0 0;
+  color: #bdc9d8;
+  font-size: 15px;
+  font-weight: 400;
   line-height: 1.65;
-  color: var(--fxet-text-2);
-  margin: 0;
-  max-width: 480px;
 }
-
-/* ── Industry tags ──────────────────────────────────────────────────────── */
-.fxet-tags {
+#enterprise-teaser .fxet-preview {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid #8bc9df42;
+  border-radius: 22px;
+  background: radial-gradient(ellipse at 100% 0, #3884b323, transparent 65%), linear-gradient(145deg, #172738ee, #101b2aee);
+  box-shadow: inset 0 1px #d1efff15, 0 16px 44px #030b1538, 0 0 36px #4386ae12;
+}
+#enterprise-teaser .fxet-preview-heading { margin: 0 0 16px; }
+#enterprise-teaser .fxet-label {
+  margin: 0 0 6px;
+  color: #a7cedf;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: .08em;
+}
+#enterprise-teaser .fxet-preview-heading h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.02em;
+}
+#enterprise-teaser .fxet-pillars,
+#enterprise-teaser .fxet-flow,
+#enterprise-teaser .fxet-examples ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+#enterprise-teaser .fxet-pillars li {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 14px 0;
+  border-top: 1px solid #b3d5e31a;
+}
+#enterprise-teaser .fxet-pillar-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  color: #a2d2e5;
+  filter: drop-shadow(0 0 5px #78bce830);
+}
+#enterprise-teaser .fxet-pillars h4 {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0;
 }
-
-.fxet-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
-  background: var(--fxet-indigo-10);
-  border: 1px solid var(--fxet-indigo-20);
-  border-radius: 100px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--fxet-text-2);
-  white-space: nowrap;
+#enterprise-teaser .fxet-pillars h4 span {
+  color: #a7cedf;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: .06em;
 }
-
-/* ── CTA ────────────────────────────────────────────────────────────────── */
-.fxet-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 28px;
-  background: linear-gradient(
-  135deg,
-  #ff8a3d 0%,
-  #ff4f9a 50%,
-  #8b5cff 100%
-);
-  color: #ffffff;
+#enterprise-teaser .fxet-pillars h4 strong {
+  color: #edf4fa;
   font-size: 15px;
   font-weight: 600;
-  text-decoration: none;
-  border-radius: var(--fxet-radius-md);
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  align-self: flex-start;
- box-shadow:
-  0 3px 10px rgba(225,48,108,0.14),
-  0 1px 3px rgba(0,0,0,0.30),
-  inset 0 1px 0 rgba(255,255,255,0.04);
+  line-height: 1.4;
 }
-
-.fxet-cta:hover {
-  opacity: 0.88;
-  transform: translateY(-1px);
-}
-
-.fxet-cta:active {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.fxet-cta-arrow {
-  font-size: 18px;
-  line-height: 1;
-  transition: transform 0.2s ease;
-}
-
-.fxet-cta:hover .fxet-cta-arrow {
-  transform: translateX(3px);
-}
-
-/* ── Right: dashboard illustration ─────────────────────────────────────── */
-.fxet-visual {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.fxet-dash {
-  width: 100%;
-  max-width: 460px;
-  background: var(--fxet-surface);
-  border: 1px solid var(--fxet-border);
-  border-radius: var(--fxet-radius-lg);
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.50), 0 0 0 1px rgba(72,100,255,0.12);
-}
-
-/* Top bar */
-.fxet-dash-bar {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--fxet-border);
-  background: rgba(255,255,255,0.03);
-}
-
-.fxet-dash-brand {
-  grid-column: 2;
-  justify-self: center;
-
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #f4f7ff;
-  letter-spacing: 0.035em;
-
-  text-shadow:
-    0 0 8px rgba(104, 228, 255, 0.20),
-    0 0 18px rgba(72, 100, 255, 0.16);
-}
-
-.fxet-dash-badge {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--fxet-green);
-  letter-spacing: 0.04em;
-  grid-column: 3;
-  justify-self: end;
-}
-
-/* ── Orchestration flow illustration ────────────────────────────────────── */
-
-.fxet-orch-flow {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  padding: 20px 20px 4px;
-  gap: 0;
-}
-
-/* Step card */
-.fxet-orch-step {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 11px 14px;
-  border-radius: 10px;
-  border: 1px solid var(--fxet-border);
-  background: rgba(255,255,255,0.03);
-}
-
-.fxet-orch-step--request  { border-color: rgba(72,100,255,0.20); }
-.fxet-orch-step--assigned { border-color: rgba(245,158,11,0.22); }
-.fxet-orch-step--done     { border-color: rgba(16,185,129,0.22); background: rgba(16,185,129,0.04); }
-
-.fxet-orch-icon {
-  font-size: 18px;
-  line-height: 1;
-  flex-shrink: 0;
-  width: 32px;
-  text-align: center;
-}
-
-/* Done step: show as a circle check */
-.fxet-orch-step--done .fxet-orch-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(16,185,129,0.18);
-  color: var(--fxet-green);
-  font-size: 14px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.fxet-orch-step-body {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
-}
-
-.fxet-orch-label {
+#enterprise-teaser .fxet-pillars p {
+  margin: 4px 0 0;
+  color: #acbdce;
   font-size: 12px;
-  font-weight: 600;
-  color: var(--fxet-text-1);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.5;
 }
-
-.fxet-orch-detail {
-  font-size: 11px;
-  color: var(--fxet-text-3);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Status tag */
-.fxet-orch-tag {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 100px;
-  letter-spacing: 0.04em;
-  flex-shrink: 0;
-  text-transform: uppercase;
-}
-
-.fxet-orch-tag--new    { background: rgba(72,100,255,0.15); color: var(--fxet-indigo); }
-.fxet-orch-tag--active { background: rgba(245,158,11,0.15); color: var(--fxet-amber); }
-.fxet-orch-tag--done   { background: rgba(16,185,129,0.15); color: var(--fxet-green); }
-
-/* Connector arrow */
-.fxet-orch-arrow {
+#enterprise-teaser .fxet-flow {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0;
-  padding: 2px 0;
-  position: relative;
-}
-
-.fxet-orch-arrow-line {
-  display: block;
-  width: 1px;
-  height: 12px;
-  background: linear-gradient(to bottom, rgba(72,100,255,0.30), rgba(72,100,255,0.50));
-  margin: 0 auto;
-}
-
-.fxet-orch-arrow-tip {
-  font-size: 11px;
-  color: rgba(72,100,255,0.55);
-  line-height: 1;
-  margin-top: -1px;
-}
-
-/* FIXEO Intelligence Engine (center node) */
-.fxet-orch-engine {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 0 10px;
-}
-
-.fxet-orch-engine-ring {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, rgba(72,100,255,0.22) 0%, rgba(72,100,255,0.08) 60%, transparent 100%);
-  border: 1px solid rgba(72,100,255,0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-/* Subtle outer pulse ring — CSS only, no animation */
-.fxet-orch-engine-ring::before {
-  content: '';
-  position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  border: 1px solid rgba(72,100,255,0.14);
-}
-
-.fxet-orch-engine-ring::after {
-  content: '';
-  position: absolute;
-  inset: -12px;
-  border-radius: 50%;
-  border: 1px solid rgba(72,100,255,0.07);
-}
-
-.fxet-orch-engine-core {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-}
-
-.fxet-orch-engine-icon {
-  font-size: 20px;
-  line-height: 1;
-}
-
-.fxet-orch-engine-name {
-  font-size: 8px;
-  font-weight: 800;
-  color: var(--fxet-indigo);
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
-}
-
-.fxet-orch-engine-meta {
-  display: flex;
   gap: 6px;
-  align-items: center;
+  padding: 16px 0;
+  border-top: 1px solid #b3d5e326;
+  border-bottom: 1px solid #b3d5e326;
+  color: #d5e9f3;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
 }
-
-.fxet-orch-chip {
-  font-size: 10px;
-  font-weight: 600;
-  color: rgba(72,100,255,0.75);
-  background: rgba(72,100,255,0.10);
-  border: 1px solid rgba(72,100,255,0.18);
-  padding: 2px 7px;
-  border-radius: 100px;
-  letter-spacing: 0.03em;
+#enterprise-teaser .fxet-flow li { display: inline-flex; align-items: center; gap: 6px; }
+#enterprise-teaser .fxet-flow li + li::before { content: "→"; color: #82afc5; }
+#enterprise-teaser .fxet-examples { margin-top: 18px; }
+#enterprise-teaser .fxet-examples h4 {
+  margin: 0 0 6px;
+  color: #acbdce;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
 }
-
-/* Illustration label */
-.fxet-dash-label {
-  font-size: 10px;
-  color: var(--fxet-text-3);
-  text-align: center;
-  padding: 10px 16px 14px;
-  border-top: 1px solid var(--fxet-border);
-  margin: 0;
-}
-
-/* ── Tablet (769px – 1024px): narrower gap ─────────────────────────────── */
-@media (max-width: 1024px) {
-  .fxet-container {
-    gap: 40px;
-  }
-
-  .fxet-title {
-    font-size: clamp(22px, 3vw, 34px);
-  }
-}
-
-/* ── Mobile (<= 768px): stack vertically ──────────────────────────────── */
-@media (max-width: 768px) {
-
-  .fxet-section {
-    padding: 48px 0 54px;
-  }
-
-  /*
-   * Mobile narrative:
-   * titre → preuve produit → CTA
-   *
-   * display: contents permet aux éléments de .fxet-content
-   * de participer directement au flux de .fxet-container,
-   * sans modifier le HTML ni le desktop.
-   */
-  .fxet-container {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .fxet-content {
-    display: contents;
-  }
-
-  .fxet-eyebrow {
-    order: 1;
-  }
-
-  .fxet-title {
-    order: 2;
-    font-size: clamp(22px, 6vw, 30px);
-  }
-
-  .fxet-subtitle {
-    order: 3;
-    font-size: 15px;
-    max-width: none;
-    margin-bottom: 8px;
-  }
-
-  .fxet-visual {
-    order: 4;
-    margin-top: 6px;
-  }
-
-  .fxet-cta {
-    order: 5;
-    align-self: stretch;
-    justify-content: center;
-    margin-top: 4px;
-    padding: 15px 22px;
-    font-size: 15px;
-  }
-
-  .fxet-dash {
-    max-width: 100%;
-  }
-
-  .fxet-dash-bar {
-    padding: 11px 14px;
-  }
-
-  .fxet-orch-flow {
-    padding: 12px 12px 2px;
-  }
-
-  .fxet-orch-step {
-    padding: 8px 10px;
-    gap: 8px;
-  }
-
-  .fxet-orch-arrow-line {
-    height: 8px;
-  }
-
-  .fxet-orch-engine {
-    padding: 9px 0 7px;
-    gap: 6px;
-  }
-
-  .fxet-orch-engine-ring {
-    width: 46px;
-    height: 46px;
-  }
-
-  .fxet-orch-engine-icon {
-    font-size: 16px;
-  }
-
-  .fxet-dash-label {
-    padding: 7px 12px 10px;
-  }
-}
-
-/* ── Small mobile (<= 480px) ───────────────────────────────────────────── */
-@media (max-width: 480px) {
-  .fxet-section {
-    padding: 48px 0 56px;
-  }
-
-  .fxet-container {
-    padding: 0 16px;
-    gap: 18px;
-  }
-
-  .fxet-orch-flow {
-    padding: 14px 12px 4px;
-  }
-
-  .fxet-orch-step {
-    padding: 9px 10px;
-    gap: 8px;
-  }
-
-  .fxet-orch-label {
-    font-size: 11px;
-  }
-
-  .fxet-orch-detail {
-    font-size: 10px;
-  }
-
-  .fxet-orch-chip {
-    font-size: 9px;
-    padding: 2px 5px;
-  }
-}
-
-/* ── Reduced motion ─────────────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  .fxet-cta,
-  .fxet-cta:hover,
-  .fxet-cta-arrow,
-  .fxet-cta:hover .fxet-cta-arrow {
-    transition: none;
-    transform: none;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
- * FIXEO Enterprise — Chapter Transition  (fxet-transition-v1a)
- * Namespace: fxet-transition-* exclusively
- * Inserted immediately before #enterprise-teaser.
- * Zero animation. Pure CSS. No JS.
- * ═══════════════════════════════════════════════════════════════════════════ */
-
-/* ── Wrapper ──────────────────────────────────────────────────────────────── */
-.fxet-transition {
-  background: #0D0E14;          /* same dark surface as teaser */
-  text-align: center;
-  padding: 0;
-  contain: layout style;        /* no CLS */
-}
-
-/* ── Separators ─────────────────────────────────────────────────────────── */
-.fxet-transition-sep {
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(72, 100, 255, 0.25) 30%,
-    rgba(72, 100, 255, 0.45) 50%,
-    rgba(72, 100, 255, 0.25) 70%,
-    transparent 100%
-  );
-  margin: 0 auto;
-  max-width: 960px;
-}
-
-.fxet-transition-sep--top  { margin-bottom: 0; }
-.fxet-transition-sep--bottom { margin-top: 0; }
-
-/* ── Inner content ──────────────────────────────────────────────────────── */
-.fxet-transition-inner {
-  padding: 52px 24px 44px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-}
-
-/* ── Badge ──────────────────────────────────────────────────────────────── */
-.fxet-transition-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 14px;
-  border-radius: 100px;
-  border: 1px solid rgba(72, 100, 255, 0.35);
-  background: rgba(72, 100, 255, 0.10);
-  color: rgba(72, 100, 255, 0.90);
-  font-size: 0.70rem;
-  font-weight: 700;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  line-height: 1;
-}
-
-/* ── Title ──────────────────────────────────────────────────────────────── */
-.fxet-transition-title {
-  margin: 0;
-  font-size: clamp(1.35rem, 3vw, 2rem);
-  font-weight: 700;
-  color: #FFFFFF;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  max-width: 540px;
-}
-
-/* ── Subtitle ───────────────────────────────────────────────────────────── */
-.fxet-transition-sub {
-  margin: 0;
-  font-size: clamp(0.875rem, 1.5vw, 1rem);
-  color: rgba(255, 255, 255, 0.48);
-  line-height: 1.55;
-  max-width: 480px;
-}
-
-/* ── Responsive ─────────────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-  .fxet-transition-inner {
-    padding: 44px 20px 36px;
-    gap: 12px;
-  }
-
-  .fxet-transition-title {
-    font-size: 1.35rem;
-  }
-
-  .fxet-transition-sub {
-    font-size: 0.875rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .fxet-transition-inner {
-    padding: 36px 16px 28px;
-    gap: 10px;
-  }
-}
-/* Homepage enterprise teaser — centered luminous eyebrow */
-@media (max-width: 640px) {
-  #enterprise-teaser .fxet-eyebrow {
-    width: fit-content;
-    margin: 0 auto 24px;
-    padding: 9px 18px;
-
-    font-size: 13.5px;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-align: center;
-
-    color: #e8fbff;
-
-    border: 1px solid rgba(104, 228, 255, 0.42);
-    border-radius: 999px;
-
-    background: linear-gradient(
-      135deg,
-      rgba(72, 100, 255, 0.14),
-      rgba(104, 228, 255, 0.08)
-    );
-
-    box-shadow:
-      0 0 24px rgba(104, 228, 255, 0.28),
-      0 0 52px rgba(72, 100, 255, 0.20),
-      0 0 72px rgba(104, 228, 255, 0.10),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  }
-}
-
-/* Homepage enterprise teaser — center heading copy on mobile */
-@media (max-width: 640px) {
-  #enterprise-teaser .fxet-title,
-  #enterprise-teaser .fxet-subtitle {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-/* ============================================================
-   FIXEO ENTERPRISE TEASER — COCKPIT DESIGN TOKENS
-   Scoped copy of the enterprise visual system
-   ============================================================ */
-
-#enterprise-teaser {
-  --fxe2-indigo: rgb(72, 100, 255);
-  --fxe2-pink: #FFA6BD;
-  --fxe2-green: #10B981;
-  --fxe2-amber: #F59E0B;
-
-  --fxe2-bg-2: #111128;
-
-  --fxe2-border: rgba(255,255,255,0.08);
-  --fxe2-border-h: rgba(255,255,255,0.15);
-
-  --fxe2-text-1: #FFFFFF;
-  --fxe2-text-2: rgba(255,255,255,0.72);
-  --fxe2-text-3: rgba(255,255,255,0.45);
-
-  --fxe2-shadow-md: 0 8px 30px rgba(0,0,0,0.4);
-  --fxe2-shadow-lg: 0 20px 60px rgba(0,0,0,0.5);
-}
-
-
-/* ============================================================
-   FIXEO ENTERPRISE TEASER — OPERATIONS COCKPIT BASE
-   Shared visual language with entreprises.html
-   ============================================================ */
-
-#enterprise-teaser .fxe2-hero-visual {
-  position: relative;
-}
-
-#enterprise-teaser .fxe2-hero-dashboard {
-  background: var(--fxe2-bg-2);
-  border: 1px solid var(--fxe2-border);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow:
-    var(--fxe2-shadow-lg),
-    0 0 60px rgba(72,100,255,0.07);
-  animation: fxe2-hero-float 6s ease-in-out infinite;
-}
-
-@keyframes fxe2-hero-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-7px);
-  }
-}
-
-#enterprise-teaser .fxe2-hd-topbar {
-  padding: 12px 18px;
-  border-bottom: 1px solid var(--fxe2-border);
-  display: flex;
-  align-items: center;
+#enterprise-teaser .fxet-examples li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
   gap: 10px;
-  background: rgba(255,255,255,0.02);
+  padding: 8px 0;
+  color: #d5e0ec;
+  font-size: 13px;
+  line-height: 1.5;
 }
-
-#enterprise-teaser .fxe2-hd-dots {
-  display: flex;
-  gap: 5px;
+#enterprise-teaser .fxet-examples li:last-child { padding-bottom: 0; }
+#enterprise-teaser .fxet-examples strong {
+  color: #b5dbe5;
+  font-size: 12px;
+  font-weight: 500;
 }
-
-#enterprise-teaser .fxe2-hd-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-}
-
-#enterprise-teaser .fxe2-hd-dot-r {
-  background: #FF5F57;
-}
-
-#enterprise-teaser .fxe2-hd-dot-y {
-  background: #FFBD2E;
-}
-
-#enterprise-teaser .fxe2-hd-dot-g {
-  background: #28C840;
-}
-
-#enterprise-teaser .fxe2-hd-title {
-  margin-left: 4px;
-  color: var(--fxe2-text-3);
-  font-size: 11px;
-  font-weight: 600;
-}
-
-#enterprise-teaser .fxe2-hd-body {
-  padding: 18px;
-}
-
-#enterprise-teaser .fxe2-hd-kpi-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 9px;
-  margin-bottom: 14px;
-}
-
-#enterprise-teaser .fxe2-hd-kpi {
-  padding: 10px;
-  border: 1px solid var(--fxe2-border);
-  border-radius: 10px;
-  background: rgba(255,255,255,0.04);
-}
-
-#enterprise-teaser .fxe2-hd-kpi-label {
-  margin-bottom: 3px;
-  color: var(--fxe2-text-3);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-#enterprise-teaser .fxe2-hd-kpi-value {
-  font-size: 20px;
-  font-weight: 800;
-}
-
-#enterprise-teaser .fxe2-hd-kpi-value.green {
-  color: var(--fxe2-green);
-}
-
-#enterprise-teaser .fxe2-hd-kpi-value.indigo {
-  color: var(--fxe2-indigo);
-}
-
-#enterprise-teaser .fxe2-hd-kpi-value.pink {
-  color: var(--fxe2-pink);
-}
-
-#enterprise-teaser .fxe2-hd-activity {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-#enterprise-teaser .fxe2-hd-activity-row {
+#enterprise-teaser .fxet-cta {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 7px 9px;
-  border: 1px solid var(--fxe2-border);
-  border-radius: 7px;
-  background: rgba(255,255,255,0.03);
-  color: var(--fxe2-text-2);
-  font-size: 11px;
-}
-
-#enterprise-teaser .fxe2-hd-act-dot {
-  width: 7px;
-  height: 7px;
-  flex-shrink: 0;
-  border-radius: 50%;
-}
-
-#enterprise-teaser .fxe2-hd-act-dot.active {
-  background: var(--fxe2-green);
-  box-shadow: 0 0 6px var(--fxe2-green);
-}
-
-#enterprise-teaser .fxe2-hd-act-dot.pending {
-  background: var(--fxe2-amber);
-}
-
-#enterprise-teaser .fxe2-hd-act-dot.done {
-  background: var(--fxe2-indigo);
-}
-
-/* ══════════════════════════════════════════════════════════════
-   FIXEO ENTERPRISE TEASER — PREMIUM OPERATIONS COCKPIT
-   RAFI → MATCHING → PILOTAGE → INTERVENTIONS
-   Homepage-scoped version
-   ══════════════════════════════════════════════════════════════ */
-
-#enterprise-teaser .fxe2-hero-cockpit {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-
-  border: 1px solid rgba(117,132,255,0.30);
-  border-radius: 24px;
-
-  background:
-    radial-gradient(
-      circle at 12% 0%,
-      rgba(72,100,255,0.20),
-      transparent 34%
-    ),
-    radial-gradient(
-      circle at 92% 12%,
-      rgba(255,79,154,0.10),
-      transparent 28%
-    ),
-    linear-gradient(
-      155deg,
-      rgba(25,31,62,0.98) 0%,
-      rgba(15,19,42,0.98) 48%,
-      rgba(17,20,45,0.98) 100%
-    );
-
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.09),
-    inset 0 0 42px rgba(72,100,255,0.085),
-    0 24px 70px rgba(0,0,0,0.34),
-    0 0 54px rgba(72,100,255,0.14);
-
-  animation:
-    fxe2-hero-float 6s ease-in-out infinite;
-}
-
-
-/* ── Top bar ───────────────────────────────────────────── */
-
-#enterprise-teaser .fxe2-hero-cockpit .fxe2-hd-topbar {
-  min-height: 46px;
-
-  display: grid;
-  grid-template-columns: auto minmax(0,1fr) auto;
-  align-items: center;
-
-  gap: 10px;
-  padding: 12px 18px;
-
-  border-bottom: 1px solid rgba(255,255,255,0.075);
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(255,255,255,0.035),
-      rgba(72,100,255,0.025)
-    );
-}
-
-#enterprise-teaser .fxe2-hd-dots {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-#enterprise-teaser .fxe2-hd-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-}
-
-#enterprise-teaser .fxe2-hd-title {
-  min-width: 0;
-
-  color: rgba(255,255,255,0.78);
-
-  font-size: 11px;
-  font-weight: 750;
-  letter-spacing: 0.01em;
-}
-
-#enterprise-teaser .fxe2-hd-status {
-  display: inline-flex;
-  align-items: center;
-
-  gap: 5px;
-  padding: 5px 8px;
-
-  border: 1px solid rgba(16,185,129,0.20);
-  border-radius: 999px;
-
-  background: rgba(16,185,129,0.06);
-
-  color: rgba(110,231,183,0.90);
-
-  font-size: 7px;
-  font-weight: 850;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-
-  white-space: nowrap;
-}
-
-#enterprise-teaser .fxe2-hd-status-dot {
-  width: 5px;
-  height: 5px;
-  flex: 0 0 5px;
-
-  border-radius: 50%;
-
-  background: #6ee7b7;
-
-  box-shadow:
-    0 0 8px rgba(110,231,183,0.75);
-}
-
-
-/* ── Cockpit body ──────────────────────────────────────── */
-
-#enterprise-teaser .fxe2-hero-cockpit .fxe2-hd-body {
-  position: relative;
-  z-index: 1;
-
-  padding: 18px;
-}
-
-#enterprise-teaser .fxe2-hd-product-label {
-  position: relative;
-
-  margin-bottom: 12px;
-  padding-left: 18px;
-
-  color: rgba(210,220,255,0.74);
-
-  font-size: 8px;
-  font-weight: 850;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-
-#enterprise-teaser .fxe2-hd-product-label::before {
-  content: '';
-
-  position: absolute;
-  left: 0;
-  top: 50%;
-
-  width: 11px;
-  height: 2px;
-
-  border-radius: 999px;
-
-  background: rgba(111,150,255,0.85);
-
-  transform: translateY(-50%);
-
-  box-shadow:
-    0 0 9px rgba(111,150,255,0.50);
-}
-
-
-/* ── KPI modules ───────────────────────────────────────── */
-
-#enterprise-teaser .fxe2-hero-cockpit .fxe2-hd-kpi-row {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0,1fr));
-
-  gap: 9px;
-  margin-bottom: 14px;
-}
-
-#enterprise-teaser .fxe2-hero-cockpit .fxe2-hd-kpi {
-  position: relative;
-  overflow: hidden;
-
-  min-width: 0;
-
-  padding: 11px 10px;
-
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 11px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255,255,255,0.06),
-      rgba(255,255,255,0.025)
-    );
-}
-
-#enterprise-teaser .fxe2-hero-cockpit .fxe2-hd-kpi--rafi {
-  box-shadow:
-    inset 0 0 22px rgba(72,100,255,0.06);
-}
-
-#enterprise-teaser .fxe2-hero-cockpit .fxe2-hd-kpi--matching {
-  box-shadow:
-    inset 0 0 22px rgba(255,79,154,0.055);
-}
-
-#enterprise-teaser .fxe2-hero-cockpit .fxe2-hd-kpi--pilotage {
-  box-shadow:
-    inset 0 0 22px rgba(16,185,129,0.055);
-}
-
-#enterprise-teaser .fxe2-hd-kpi-label {
-  margin-bottom: 4px;
-
-  color: rgba(255,255,255,0.43);
-
-  font-size: 8px;
-  font-weight: 850;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
-}
-
-#enterprise-teaser .fxe2-hd-kpi-value {
-  margin-bottom: 3px;
-
-  font-size: 14px;
-  line-height: 1.12;
-  font-weight: 850;
-}
-
-#enterprise-teaser .fxe2-hd-kpi-value.indigo {
-  color: #8ea2ff;
-
-  text-shadow:
-    0 0 14px rgba(72,100,255,0.18);
-}
-
-#enterprise-teaser .fxe2-hd-kpi-value.pink {
-  color: #ff9fc6;
-
-  text-shadow:
-    0 0 14px rgba(255,79,154,0.16);
-}
-
-#enterprise-teaser .fxe2-hd-kpi-value.green {
-  color: #72e7b3;
-
-  text-shadow:
-    0 0 14px rgba(16,185,129,0.16);
-}
-
-#enterprise-teaser .fxe2-hd-kpi-meta {
-  color: rgba(255,255,255,0.37);
-
-  font-size: 7px;
-  line-height: 1.35;
-}
-
-
-/* ── Operational flow ──────────────────────────────────── */
-
-#enterprise-teaser .fxe2-hd-flow {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-
+  justify-content: space-between;
+  gap: 12px;
   width: 100%;
-
-  margin-bottom: 14px;
-  padding: 10px 8px 8px;
-
-  border: 1px solid rgba(117,132,255,0.13);
-  border-radius: 12px;
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(72,100,255,0.045),
-      rgba(255,255,255,0.025),
-      rgba(72,100,255,0.045)
-    );
-}
-
-#enterprise-teaser .fxe2-hd-flow-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  min-width: 44px;
-
-  gap: 5px;
-}
-
-#enterprise-teaser .fxe2-hd-flow-node {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 27px;
-  height: 27px;
-
-  border: 1px solid rgba(117,132,255,0.25);
-  border-radius: 8px;
-
-  background: rgba(72,100,255,0.08);
-
-  color: rgba(225,232,255,0.90);
-
-  font-size: 10px;
-  font-weight: 850;
-
-  box-shadow:
-    inset 0 0 14px rgba(72,100,255,0.055);
-}
-
-#enterprise-teaser .fxe2-hd-flow-step.is-done .fxe2-hd-flow-node {
-  border-color: rgba(16,185,129,0.28);
-
-  background: rgba(16,185,129,0.10);
-
-  color: #72e7b3;
-
-  box-shadow:
-    0 0 12px rgba(16,185,129,0.09);
-}
-
-#enterprise-teaser .fxe2-hd-flow-step.is-active .fxe2-hd-flow-node {
-  border-color: rgba(255,126,190,0.34);
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255,166,189,0.88),
-      rgba(201,79,255,0.74)
-    );
-
+  max-width: 440px;
+  min-height: 54px;
+  padding: 14px 18px;
+  border: 1px solid #e5d9ff30;
+  border-radius: 16px;
+  background: linear-gradient(112deg, #c35426, #c13470 48%, #7443b7);
+  box-shadow: inset 0 1px #fff3, 0 5px 20px #b53a7626;
   color: #fff;
-
-  box-shadow:
-    0 0 18px rgba(255,79,154,0.22);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
 }
-
-#enterprise-teaser .fxe2-hd-flow-label {
-  color: rgba(255,255,255,0.52);
-
-  font-size: 7px;
-  font-weight: 700;
-
-  white-space: nowrap;
+#enterprise-teaser .fxet-cta-arrow { flex: 0 0 auto; font-size: 22px; line-height: 1; }
+#enterprise-teaser .fxet-cta:focus-visible { outline: 2px solid #b7e8f0; outline-offset: 4px; }
+@media (max-width: 760px) {
+  #enterprise-teaser .fxet-shell { display: block; }
+  #enterprise-teaser .fxet-preview { margin-top: 24px; padding: 18px; }
+  #enterprise-teaser .fxet-action { margin-top: 24px; }
 }
-
-#enterprise-teaser .fxe2-hd-flow-line {
-  flex: 1 1 auto;
-
-  min-width: 8px;
-  height: 1px;
-
-  margin: 13px 4px 0;
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(117,132,255,0.12),
-      rgba(117,132,255,0.60),
-      rgba(117,132,255,0.12)
-    );
+@media (max-width: 360px) {
+  #enterprise-teaser .fxet-preview { padding: 16px; }
+  #enterprise-teaser .fxet-cta { padding-inline: 14px; }
+  #enterprise-teaser .fxet-flow { gap: 4px; }
+  #enterprise-teaser .fxet-flow li { gap: 4px; }
 }
-
-
-/* ── Activity feed ─────────────────────────────────────── */
-
-#enterprise-teaser .fxe2-hd-activity {
-  display: flex;
-  flex-direction: column;
-
-  gap: 7px;
-}
-
-#enterprise-teaser .fxe2-hd-activity-head {
-  margin-bottom: 2px;
-
-  color: rgba(255,255,255,0.50);
-
-  font-size: 8px;
-  font-weight: 850;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
-}
-
-#enterprise-teaser .fxe2-hero-cockpit .fxe2-hd-activity-row {
-  display: grid;
-  grid-template-columns: 7px minmax(0,1fr) auto;
-
-  gap: 8px;
-  align-items: center;
-
-  padding: 7px 9px;
-
-  border: 1px solid rgba(255,255,255,0.075);
-  border-radius: 8px;
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(255,255,255,0.035),
-      rgba(72,100,255,0.015)
-    );
-
-  font-size: 10px;
-}
-
-#enterprise-teaser .fxe2-hero-cockpit .fxe2-hd-activity-row span {
-  min-width: 0;
-
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-
-  color: rgba(255,255,255,0.72);
-}
-
-#enterprise-teaser .fxe2-hero-cockpit .fxe2-hd-activity-row strong {
-  color: rgba(255,255,255,0.46);
-
-  font-size: 8px;
-  line-height: 1;
-  font-weight: 700;
-
-  white-space: nowrap;
-}
-
-
-/* ══════════════════════════════════════════════════════════════
-   MOBILE — HERO COCKPIT
-   ══════════════════════════════════════════════════════════════ */
-
-@media (max-width: 768px) {
-
-  #enterprise-teaser .fxe2-hero-cockpit {
-    border-radius: 20px;
-
-    animation:
-      fxe2-hero-float 6s ease-in-out infinite;
-  }
-
-  #enterprise-teaser .fxe2-hero-cockpit .fxe2-hd-topbar {
-    min-height: 42px;
-
-    padding: 10px 12px;
-
-    grid-template-columns:
-      auto minmax(0,1fr) auto;
-  }
-
-  #enterprise-teaser .fxe2-hd-status {
-    display: inline-flex;
-
-    padding: 4px 6px;
-    gap: 4px;
-
-    font-size: 6px;
-    letter-spacing: 0.045em;
-  }
-
-  #enterprise-teaser .fxe2-hd-status-dot {
-    width: 5px;
-    height: 5px;
-    flex-basis: 5px;
-  }
-
-  #enterprise-teaser
-  .fxe2-hero-cockpit
-  .fxe2-hd-title {
-    font-size: 10px;
-  }
-
-  #enterprise-teaser
-  .fxe2-hero-cockpit
-  .fxe2-hd-body {
-    padding: 13px;
-  }
-
-  #enterprise-teaser .fxe2-hd-product-label {
-    margin-bottom: 9px;
-
-    font-size: 7px;
-  }
-
-  #enterprise-teaser
-  .fxe2-hero-cockpit
-  .fxe2-hd-kpi-row {
-    gap: 6px;
-    margin-bottom: 11px;
-  }
-
-  #enterprise-teaser
-  .fxe2-hero-cockpit
-  .fxe2-hd-kpi {
-    padding: 9px 8px;
-
-    border-radius: 10px;
-  }
-
-  #enterprise-teaser
-  .fxe2-hero-cockpit
-  .fxe2-hd-kpi-label {
-    font-size: 7px;
-  }
-
-  #enterprise-teaser
-  .fxe2-hero-cockpit
-  .fxe2-hd-kpi-value {
-    font-size: 11px;
-  }
-
-  #enterprise-teaser .fxe2-hd-kpi-meta {
-    font-size: 6.5px;
-  }
-
-  #enterprise-teaser .fxe2-hd-flow {
-    margin-bottom: 11px;
-
-    padding: 9px 6px 7px;
-  }
-
-  #enterprise-teaser .fxe2-hd-flow-step {
-    min-width: 31px;
-  }
-
-  #enterprise-teaser .fxe2-hd-flow-node {
-    width: 22px;
-    height: 22px;
-
-    border-radius: 7px;
-
-    font-size: 9px;
-  }
-
-  #enterprise-teaser .fxe2-hd-flow-label {
-    font-size: 6px;
-  }
-
-  #enterprise-teaser .fxe2-hd-flow-line {
-    min-width: 4px;
-
-    margin:
-      10px 2px 0;
-  }
-
-  #enterprise-teaser
-  .fxe2-hero-cockpit
-  .fxe2-hd-activity-row {
-    padding: 6px 7px;
-
-    font-size: 9px;
-  }
-
-  #enterprise-teaser
-  .fxe2-hero-cockpit
-  .fxe2-hd-activity-row strong {
-    font-size: 7px;
-  }
-}
+/* Static depth and light: no animation, including with reduced motion enabled. */
