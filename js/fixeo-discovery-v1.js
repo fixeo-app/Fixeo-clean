@@ -62,7 +62,7 @@
     const header = el('header'), brand = el('div', null, 'fxd-brand'); brand.append(el('strong', 'RAFI'), el('small', 'Votre point de départ'));
     const x = el('button', '✕', 'fxd-close'); x.type = 'button'; x.setAttribute('aria-label', 'Fermer les situations'); x.onclick = () => close(); header.append(brand, x);
     progress = el('p', 'Situation → Précision éventuelle → RAFI reprend', 'fxd-progress');
-    body = el('div', null, 'fxd-body'); footer = el('footer', null, 'fxd-footer'); backdropStyle = el('style');
+    body = el('div', null, 'fxd-body'); footer = el('div', null, 'fxd-footer'); backdropStyle = el('style');
     dialog.append(header, progress, body, footer, backdropStyle);
     dialog.addEventListener('cancel', event => { event.preventDefault(); close(); });
     dialog.addEventListener('close', () => { if (!dialog.open) release(); });

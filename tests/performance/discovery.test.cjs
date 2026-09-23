@@ -82,7 +82,7 @@ for(const [width,height] of [[320,568],[360,780],[390,844],[412,915]]){
   assert.equal(dialog.style.getPropertyValue('--fxd-panel-top'),'72px');assert.equal(dialog.style.getPropertyValue('--fxd-panel-height'),height-72+'px');
   assert.equal(computed('.fxd-home .fxd-grid').gridTemplateColumns,'repeat(2,minmax(0,1fr))');assert.equal(computed('.fxd-home .fxd-card').minWidth,'0');
   assert.equal(computed('.fxd-choices').gridTemplateColumns,'minmax(0,1fr)');assert.equal(computed('.fxd-choices button').minHeight,'49px');assert.equal(computed('.fxd-close').width,'44px');
-  assert.equal(computed('.fxd-body').overflow,'auto');assert.equal(computed('.fxd-body').minHeight,'0');assert.equal(computed('#fixeo-urgent-fab').visibility,'hidden');
+  assert.equal(d.querySelector('.fxd-footer').tagName,'DIV','Launcher actions must not inherit the site-wide footer rules');assert.equal(computed('.fxd-body').overflow,'auto');assert.equal(computed('.fxd-body').minHeight,'0');assert.equal(computed('#fixeo-urgent-fab').visibility,'hidden');
   click(d,'WC bouché');assert.equal(d.getElementById('fxd-city').tagName,'SELECT');assert.equal(computed('#fxd-city').fontSize,'16px');assert.equal(computed('#fxd-city').minHeight,'44px');
   vp.height=340;vp.offsetTop=0;vp.dispatchEvent(new w.Event('resize'));assert.equal(dialog.dataset.compactViewport,'true');assert.equal(dialog.style.getPropertyValue('--fxd-panel-height'),'268px');
   vp.offsetTop=180;vp.dispatchEvent(new w.Event('scroll'));assert.equal(dialog.style.getPropertyValue('--fxd-panel-top'),'180px');assert.equal(dialog.style.getPropertyValue('--fxd-panel-height'),'340px');
