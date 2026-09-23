@@ -1,0 +1,138 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { JSDOM } = require('jsdom');
+const { mount } = require('../../js/fixeo-enterprise-workspace.js');
+const guard = require('../../js/fixeo-enterprise-guard.js');
+const { fixture, member, account, uuid } = require('../auth-resolver/fixture.cjs');
+const root = path.join(__dirname, '../..');
+const read = p => fs.readFileSync(path.join(root, p), 'utf8');
+const html = read('dashboard-enterprise.html');
+const tick = () => new Promise(resolve => setImmediate(resolve));
+async function setup(t, options = {}, search = `?enterprise_id=${uuid(101)}`, mountOptions = {}) {
+  const dom = new JSDOM(html, { url: 'https://fixture.invalid/dashboard-enterprise.html' + search,
+    pretendToBeVisual: true, runScripts: 'outside-only' });
+  const w = dom.window;
+  const f = fixture({ enterprise_members: [member(1)], enterprise_accounts: [account(1)], ...options });
+  let listener;
+  f.client.auth.onAuthStateChange = fn => { listener = fn; return { data: { subscription: { unsubscribe() { listener = null; } } } }; };
+  f.client.auth.signOut = async () => {
+    f.calls.push({ method: 'signOut' });
+    if (f.state.signOutError) return { error: { message: 'offline' } };
+    f.state.session = null;
+    listener('SIGNED_OUT', null);
+    return { error: null };
+  };
+  w.FixeoSupabaseClient = { CONFIGURED: true, ready: async () => ({ client: f.client }) };
+  w.FixeoEnterpriseGuard = guard;
+  w.eval(read('js/fixeo-logout-global.js'));
+  const navigations = [];
+  const app = mount(w, { navigate: p => navigations.push(p), ...mountOptions });
+  t.after(() => { app.destroy(); w.close(); });
+  await tick();
+  return { ...f, w, app, navigations, q: id => w.document.getElementById(id), event: (...args) => listener(...args) };
+}
+test('U01 Successful shell renders only selected company; untrusted name is plain text', async t => {
+  const unsafe = '<img src=x onerror=alert(1)>';
+  const s = await setup(t, { enterprise_accounts: [account(1, 'active', unsafe), account(2)], enterprise_members: [member(1), member(2)] });
+  assert.equal(s.q('enterprise-workspace').hidden, false);
+  assert.equal(s.q('enterprise-name').textContent, unsafe);
+  assert.equal(s.q('enterprise-name').children.length, 0);
+  assert.equal(s.q('enterprise-role').textContent, 'Propriétaire');
+  assert.equal(s.w.document.activeElement, s.q('enterprise-name'));
+  assert.equal(s.w.document.body.textContent.includes('Entreprise 2'), false);
+});
+test('U02 Guest redirects only to fixed Auth despite malicious return URL', async t => {
+  const s = await setup(t, { session: null }, `?enterprise_id=${uuid(101)}&returnTo=https://evil.invalid`);
+  assert.deepEqual(s.navigations, ['auth.html']); assert.equal(s.q('enterprise-workspace').hidden, true);
+});
+test('U03 Denied and malformed links expose no company data', async t => {
+  for (const search of [`?enterprise_id=${uuid(999)}`, '?enterprise_id=malformed']) {
+    const s = await setup(t, {}, search);
+    assert.equal(s.q('enterprise-workspace').hidden, true);
+    assert.equal(s.q('enterprise-name').textContent, '');
+    assert.equal(s.q('enterprise-retry').hidden, true);
+    assert.equal(s.q('main').getAttribute('aria-busy'), 'false');
+  }
+});
+test('U04 Read error stays closed; retry uses fresh reads and recovers', async t => {
+  const s = await setup(t, { errorTable: 'enterprise_accounts' });
+  assert.equal(s.q('enterprise-workspace').hidden, true); assert.equal(s.q('enterprise-retry').hidden, false);
+  s.state.errorTable = null; s.q('enterprise-retry').click(); await tick();
+  assert.equal(s.q('enterprise-workspace').hidden, false);
+});
+test('U05 Canonical logout removes SDK session and auth cache, preserves operational data', async t => {
+  const s = await setup(t);
+  s.w.localStorage.setItem('fixeo_role', 'admin'); s.w.localStorage.setItem('fixeo_supabase_session', 'fixture');
+  s.w.localStorage.setItem('fixeo_client_requests', 'preserved');
+  s.w.sessionStorage.setItem('fixeo_admin_auth', 'forged');
+  s.q('enterprise-logout').click(); await tick();
+  assert.equal(s.state.session, null); assert.deepEqual(s.navigations, ['index.html']);
+  assert.equal(s.w.localStorage.getItem('fixeo_role'), null);
+  assert.equal(s.w.localStorage.getItem('fixeo_supabase_session'), null);
+  assert.equal(s.w.sessionStorage.getItem('fixeo_admin_auth'), null);
+  assert.equal(s.w.localStorage.getItem('fixeo_client_requests'), 'preserved');
+  assert.equal(s.calls.filter(c => c.method === 'signOut').length, 1);
+  assert.equal(s.q('enterprise-name').textContent, '');
+});
+test('U06 Masked canonical signOut error cannot become a successful logout', async t => {
+  const s = await setup(t, { signOutError: true });
+  s.q('enterprise-logout').click(); await tick();
+  assert.deepEqual(s.navigations, []); assert.ok(s.state.session);
+  assert.equal(s.q('state-title').textContent, 'Déconnexion non confirmée');
+  assert.equal(s.q('enterprise-workspace').hidden, true);
+  await s.app.refresh(); assert.equal(s.q('enterprise-workspace').hidden, true);
+  s.state.signOutError = false; s.q('enterprise-logout').click(); await tick();
+  assert.deepEqual(s.navigations, ['index.html']);
+});
+test('U07 Logout from another tab immediately clears and sends to Auth', async t => {
+  const s = await setup(t); s.event('SIGNED_OUT');
+  assert.equal(s.q('enterprise-name').textContent, ''); assert.deepEqual(s.navigations, ['auth.html']);
+});
+test('U08 Hidden/bfcache page never retains company text and revalidates on return', async t => {
+  const s = await setup(t);
+  s.w.dispatchEvent(new s.w.Event('pagehide'));
+  assert.equal(s.q('enterprise-name').textContent, '');
+  s.state.enterprise_members = [];
+  s.w.dispatchEvent(new s.w.PageTransitionEvent('pageshow', { persisted: true })); await tick();
+  assert.equal(s.q('enterprise-workspace').hidden, true);
+  assert.equal(s.q('state-title').textContent, 'Cet espace n’est pas accessible');
+});
+test('U09 Auth changes invalidate pending resolution and stale company output', async t => {
+  const s = await setup(t);
+  let resolve;
+  s.w.FixeoEnterpriseGuard = { ...guard, check: () => new Promise(r => { resolve = r; }) };
+  const pending = s.app.refresh(); await tick();
+  s.event('SIGNED_OUT');
+  resolve({ allowed: true, status: 'OK', enterprise: { id: uuid(101), name: 'STALE', role: 'owner' } });
+  await pending;
+  assert.equal(s.q('enterprise-name').textContent, ''); assert.equal(s.q('enterprise-workspace').hidden, true);
+});
+test('U10 Offline SDK / hung reads cannot become local authority', async t => {
+  const s = await setup(t);
+  s.w.localStorage.setItem('fixeo_role', 'admin');
+  s.w.FixeoSupabaseClient.ready = () => new Promise(() => {});
+  s.app.destroy();
+  const second = mount(s.w, { waitMs: 10, navigate: p => s.navigations.push(p) });
+  t.after(() => second.destroy());
+  assert.equal(s.q('main').getAttribute('aria-busy'), 'true');
+  assert.equal(s.q('enterprise-workspace').hidden, true);
+  await new Promise(r => setTimeout(r, 25));
+  assert.equal(s.q('state-title').textContent, 'Accès momentanément indisponible');
+  assert.deepEqual(s.navigations, []);
+});
+test('U11 New page has isolated scripts, unique IDs, local links and no operational imports', () => {
+  const dom = new JSDOM(html); const d = dom.window.document;
+  assert.deepEqual([...d.scripts].map(s => s.getAttribute('src').split('?')[0]), [
+    'js/supabase-client.js', 'js/fixeo-logout-global.js', 'js/fixeo-auth-resolver.js',
+    'js/fixeo-enterprise-guard.js', 'js/fixeo-enterprise-workspace.js']);
+  const ids = [...d.querySelectorAll('[id]')].map(n => n.id);
+  assert.equal(ids.length, new Set(ids).size);
+  assert.ok([...d.querySelectorAll('a')].every(a => ['index.html', '#main', 'auth.html'].includes(a.getAttribute('href'))));
+  for (const p of ['js/fixeo-enterprise-workspace.js', 'js/fixeo-enterprise-guard.js']) {
+    assert.doesNotMatch(read(p), /\.(insert|update|delete|upsert|rpc|signOut)\s*\(|service_role|user_metadata|raw_user_meta_data|\.from\(['"]profiles/);
+  }
+  assert.equal(d.querySelector('meta[name=robots]').content, 'noindex, nofollow');
+  dom.window.close();
+});

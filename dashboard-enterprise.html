@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="same-origin">
+  <title>Espace entreprise | FIXEO</title>
+  <link rel="icon" href="img/logo-fixeo-icon.png">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=2b-1">
+  <script defer src="js/supabase-client.js"></script>
+  <script defer src="js/fixeo-logout-global.js"></script>
+  <script defer src="js/fixeo-auth-resolver.js"></script>
+  <script defer src="js/fixeo-enterprise-guard.js?v=2b-1"></script>
+  <script defer src="js/fixeo-enterprise-workspace.js?v=2b-1"></script>
+</head>
+<body class="fxew">
+  <a class="fxew-skip" href="#main">Aller au contenu</a>
+  <header class="fxew-header">
+    <a class="fxew-brand" href="index.html" aria-label="FIXEO — accueil"><img src="img/logo-fixeo-header.png" alt="FIXEO" width="126" height="42"></a>
+    <span class="fxew-header-label">Espace entreprise</span>
+    <button id="enterprise-logout" class="fxew-button" type="button" hidden>Se déconnecter</button>
+  </header>
+  <main id="main" class="fxew-main" tabindex="-1" aria-busy="true">
+    <p class="fxew-eyebrow"><span aria-hidden="true"></span> FIXEO ENTREPRISE</p>
+    <section id="enterprise-state" class="fxew-state" aria-labelledby="state-title">
+      <div class="fxew-symbol" aria-hidden="true">↗</div>
+      <h1 id="state-title" tabindex="-1">Ouverture de votre espace</h1>
+      <p id="state-message" role="status" aria-live="polite">Vérification de votre accès en cours…</p>
+      <div class="fxew-actions">
+        <button id="enterprise-retry" class="fxew-button" type="button" hidden>Réessayer</button>
+        <a id="enterprise-home" class="fxew-link" href="index.html" hidden>Retour à l’accueil <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+    <section id="enterprise-workspace" aria-labelledby="enterprise-name" hidden>
+      <div class="fxew-intro">
+        <p class="fxew-overline">Votre espace de travail</p>
+        <h1 id="enterprise-name" tabindex="-1"></h1>
+        <p class="fxew-lead">Bienvenue dans votre espace FIXEO Entreprise.</p>
+      </div>
+      <section class="fxew-overview" aria-labelledby="overview-title">
+        <div class="fxew-card-heading"><h2 id="overview-title">Vue d’ensemble</h2><span class="fxew-tag">Accès actif</span></div>
+        <dl class="fxew-details">
+          <div><dt>Entreprise</dt><dd id="enterprise-company"></dd></div>
+          <div><dt>Votre rôle</dt><dd id="enterprise-role"></dd></div>
+          <div><dt>État de l’entreprise</dt><dd><span class="fxew-dot" aria-hidden="true"></span>Active</dd></div>
+        </dl>
+      </section>
+      <aside class="fxew-note" aria-label="À venir"><span class="fxew-note-icon" aria-hidden="true">＋</span><div><h2>La suite se prépare</h2><p>Les outils de gestion de votre entreprise seront disponibles prochainement.</p></div></aside>
+    </section>
+    <noscript><p>JavaScript est nécessaire pour vérifier votre accès. <a href="auth.html">Se connecter</a></p></noscript>
+  </main>
+  <footer class="fxew-footer"><span>FIXEO</span><span>Votre espace entreprise.</span></footer>
+</body>
+</html>
