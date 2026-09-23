@@ -257,16 +257,16 @@ body.fxhf-immersive #fixeo-urgent-fab, body.fxhf-immersive .chat-widget { visibi
   #fxhf-root[data-fxhf-state=need] .fxhf-presence { background: #b8edeb; pointer-events: none; animation: fxhf-live-dot 5s ease-in-out infinite; }
   #fxhf-root[data-fxhf-state=need] .fxhf-title { font-size: clamp(26px, 7.7vw, 30px); font-weight: 650; letter-spacing: -.035em; line-height: 1.08; color: #ffffff; text-shadow: 0 1px 14px #b0d6ef1a; }
   #fxhf-root[data-fxhf-state=need] .fxhf-subtitle { max-width: 40ch; margin-top: 7px; color: #c9d5e4; font-size: 13px; line-height: 1.4; text-wrap: pretty; }
-  #fxhf-root[data-fxhf-state=need] .fxhf-visual { transform: translate(-8px, 8px); }
+  #fxhf-root[data-fxhf-state=need] .fxhf-visual { transform: translate(-12px, 8px); }
   #fxhf-root[data-fxhf-state=need] .fxhf-rafi-sphere { flex: 0 0 60px; width: 60px; height: 60px; aspect-ratio: 1; }
   /* Asset alpha bounds: 99x154 inside 296x296. Size the visible silhouette,
      not its transparent canvas; absolute centering prevents grid track growth. */
   #fxhf-root[data-fxhf-state=need] .fxhf-rafi-core { position: absolute; inset: 0; pointer-events: none; }
   #fxhf-root[data-fxhf-state=need] .fxhf-rafi-core::before { content: ''; position: absolute; inset: 7px; border-radius: 50%; background: radial-gradient(circle, #b5f1ff40, #74cced16 55%, transparent 72%); filter: blur(4px); pointer-events: none; }
   #fxhf-root[data-fxhf-state=need] .fxhf-rafi-face { position: absolute; left: 50%; top: 50%; width: 136px; height: 136px; max-width: none; transform: translate(-50%, -50%); filter: drop-shadow(0 2px 8px #79cfe94d); pointer-events: none; }
-  /* Legacy .hero-content * caps width at 100%: a 92px halo became 60x92
-     and shifted left. Preserve its square geometry around the 60px sphere. */
-  #fxhf-root[data-fxhf-state=need] .fxhf-rafi-halo { inset: -16px; width: 92px; height: 92px; max-width: none; aspect-ratio: 1; border-color: transparent; background: radial-gradient(circle, #b5efff4a 7%, #61c5ea3d 31%, #497fbe24 52%, transparent 72%); box-shadow: 0 0 18px #76cce542, 0 0 34px #589ada2b; animation: fxhf-rafi-atmosphere 6s ease-in-out infinite; }
+  /* Legacy .hero-content * caps width at 100%, squashing and shifting the halo.
+     Preserve concentric square geometry around the unchanged 60px artwork slot. */
+  #fxhf-root[data-fxhf-state=need] .fxhf-rafi-halo { inset: -13px; width: 86px; height: 86px; max-width: none; aspect-ratio: 1; border-color: transparent; background: radial-gradient(circle, #b5efff4a 7%, #61c5ea3d 31%, #497fbe24 52%, transparent 72%); box-shadow: 0 0 18px #76cce542, 0 0 34px #589ada2b; animation: fxhf-rafi-atmosphere 6s ease-in-out infinite; }
   #fxhf-root[data-fxhf-state=need] .fxhf-rafi-halo::after { inset: -6px; border: 0; background: radial-gradient(circle, transparent 30%, #8addf619 48%, transparent 69%); filter: blur(3px); }
   #fxhf-root[data-fxhf-state=need] .fxhf-need-field { border-color: #bfd6f230; background: linear-gradient(150deg, #23324670, #141a2b90); box-shadow: inset 0 1px #ffffff0e, 0 8px 24px #00000012; }
   #fxhf-root[data-fxhf-state=need] .fxhf-need-field:focus-within { border-color: #a3cee280; box-shadow: 0 0 0 3px #abd7eb0c, inset 0 1px #ffffff0b; }
