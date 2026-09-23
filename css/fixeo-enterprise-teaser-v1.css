@@ -10,6 +10,7 @@
 #enterprise-teaser .fxet-shell {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: min-content 1fr;
   align-items: start;
   column-gap: 48px;
   row-gap: 24px;
