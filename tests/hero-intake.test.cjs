@@ -598,7 +598,7 @@ test("Hero legal details, native controls and static mobile footer reserve safe-
 
 // Cascade contracts, not pixel/physical-keyboard verification: JSDOM has no
 // layout engine. Include the real RAFI OS sibling that isolated Hero tests missed.
-for (const width of [320, 390]) {
+for (const width of [320, 360, 390, 412]) {
   test(`Mobile NEED uses intrinsic rows and one keyboard scroll surface at ${width}px`, async (t) => {
     const s = setup(t, {
       configure(w) {
@@ -661,6 +661,8 @@ for (const width of [320, 390]) {
       assert.equal(computed(".fxhf-content").gridTemplateRows, "auto auto auto");
       assert.equal(computed(".fxhf-content").alignSelf, "start");
       assert.equal(computed(".fxhf-universal").height, "auto");
+      assert.equal(computed(".fxhf-universal").minHeight, "0");
+      assert.equal(computed("#home").minHeight, "0");
       assert.equal(computed(".fxhf-universal").alignContent, "start");
       assert.equal(computed(".fxhf-scroll").overflow, "visible");
       assert.equal(computed(".rfos-stage-wrap").display, "none");
@@ -670,6 +672,7 @@ for (const width of [320, 390]) {
     s.q("fxhf-need-input").focus();
     assert.equal(doc.activeElement, s.q("fxhf-need-input"));
     doc.body.classList.add("fxhf-keyboard");
+    assert.equal(computed("#home").minHeight, "var(--fxhf-viewport-height, 100svh)", "keyboard document anchoring is retained");
     assert.equal(computed("#fxhf-root").overflowY, "auto");
     assert.equal(computed(".fxhf-universal").minHeight, "0");
     assert.equal(computed(".fxhf-actions").position, "static");
@@ -677,11 +680,21 @@ for (const width of [320, 390]) {
     assert.equal(doc.querySelector("#home").nextElementSibling.id, "fixeo-estimation-signature");
     assert.notEqual(computed("#fixeo-estimation-signature").display, "none");
     doc.body.classList.remove("fxhf-keyboard");
+    assert.equal(computed("#home").minHeight, "0", "no empty viewport tail returns after keyboard closes");
     s.q("fxhf-submit").click();
     await s.until(() => s.q("fxhf-root").dataset.fxhfState === "safety");
     assert.equal(computed(".fxhf-content").gridTemplateRows, "auto minmax(0, 1fr) auto");
+    assert.equal(computed("#home").minHeight, "var(--fxhf-viewport-height, 100svh)", "SAFETY keeps its viewport workspace");
+    assert.equal(computed(".fxhf-universal").minHeight, "220px");
     assert.equal(computed('.fxhf-title').textShadow, '', 'NEED title treatment must not leak to SAFETY');
     assert.notEqual(computed(".rfos-stage-wrap").display, "none", "legacy visibility outside NEED is untouched");
+    // Exercise only CSS state matching here; the functional suite covers the
+    // corresponding transitions without changing the real journey state.
+    for (const state of ['analysis', 'questions', 'result', 'confirmation', 'matching', 'dispatching', 'acceptance', 'mission', 'retry']) {
+      s.q('fxhf-root').dataset.fxhfState = state;
+      assert.equal(computed('#home').minHeight, 'var(--fxhf-viewport-height, 100svh)', state);
+      assert.equal(computed('.fxhf-universal').minHeight, '220px', state);
+    }
   });
 }
 

@@ -228,11 +228,14 @@ body.fxhf-immersive #fixeo-urgent-fab, body.fxhf-immersive .chat-widget { visibi
   body.fxhf-keyboard .fxhf-actions { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
 
   /* NEED is a compact document, not a stretched three-row workspace.
-     Keep spare viewport space AFTER the CTA, never between consent and CTA.
-     Other journey states retain their existing workspace layout. */
+     End after the CTA without reserving an empty viewport tail. The fixed
+     keyboard surface and all other states keep their existing anchoring. */
+  body:not(.fxhf-keyboard) section#home.hero.hero-section.fxhf-premium-home:has(#fxhf-root[data-fxhf-state=need]) {
+    min-height: 0 !important;
+  }
   #fxhf-root[data-fxhf-state=need] .fxhf-universal {
     height: auto;
-    min-height: calc(var(--fxhf-viewport-height, 100svh) - var(--fxhf-header-height, 64px));
+    min-height: 0;
     align-content: start;
     padding-top: 4px;
     padding-bottom: max(12px, env(safe-area-inset-bottom));
