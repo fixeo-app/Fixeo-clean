@@ -497,7 +497,7 @@
     frame(
       "need",
       "Que se passe-t-il ?",
-      "Écrivez, parlez ou montrez. RAFI vous guide.",
+      "Écrivez, parlez ou montrez. RAFI comprend et vous guide.",
     );
     panel(
       '<div class="fxhf-location"><label for="fxhf-location">Ville d’intervention</label><select id="fxhf-location" class="fxhf-location-select" aria-label="Choisir ou modifier la ville"><option value="">Choisir ma ville</option>' +

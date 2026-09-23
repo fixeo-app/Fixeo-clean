@@ -635,6 +635,16 @@ for (const width of [320, 390]) {
     }
     style.textContent = viewportRules(style.sheet.cssRules);
     const computed = (selector) => s.w.getComputedStyle(doc.querySelector(selector));
+    assert.equal(doc.querySelector('.fxhf-subtitle').textContent,
+      'Écrivez, parlez ou montrez. RAFI comprend et vous guide.');
+    // Presentation may become finer, but the native touch surfaces must not.
+    for (const selector of ['.fxhf-mic', '.fxhf-speech-lang', '.fxhf-consent']) {
+      assert.ok(parseFloat(computed(selector).minHeight) >= 44, selector);
+    }
+    assert.ok(parseFloat(computed('.fxhf-need-input').height) >= 80);
+    assert.notEqual(computed('.fxhf-smart-prompt').color, computed('.fxhf-need-input').color);
+    assert.equal(computed('.fxhf-smart-prompt').pointerEvents, 'none');
+    assert.equal(computed('.fxhf-submit').minHeight, '52px');
     for (const filled of [false, true]) {
       if (filled) s.fill();
       assert.equal(computed(".fxhf-content").gridTemplateRows, "auto auto auto");
@@ -659,6 +669,7 @@ for (const width of [320, 390]) {
     s.q("fxhf-submit").click();
     await s.until(() => s.q("fxhf-root").dataset.fxhfState === "safety");
     assert.equal(computed(".fxhf-content").gridTemplateRows, "auto minmax(0, 1fr) auto");
+    assert.equal(computed('.fxhf-title').textShadow, '', 'NEED title treatment must not leak to SAFETY');
     assert.notEqual(computed(".rfos-stage-wrap").display, "none", "legacy visibility outside NEED is untouched");
   });
 }
