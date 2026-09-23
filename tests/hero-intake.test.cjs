@@ -587,6 +587,9 @@ test("Hero legal details, native controls and static mobile footer reserve safe-
     /24 h.*90 jours.*30 jours.*180 jours/s,
   );
   assert.ok(s.q("fxhf-root").querySelector("details.fxhf-privacy"));
+  assert.equal(s.q('fxhf-consent').closest('label').textContent, 'J’accepte l’analyse par FIXEO.');
+  assert.match(s.q('fxhf-root').querySelector('details.fxhf-privacy').textContent,
+    /FIXEO et son fournisseur IA/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
   assert.match(css, /\.fxhf-actions \{ position: static;/);
   assert.match(css, /max-width: 360px/);
@@ -645,6 +648,11 @@ for (const width of [320, 390]) {
     assert.notEqual(computed('.fxhf-smart-prompt').color, computed('.fxhf-need-input').color);
     assert.equal(computed('.fxhf-smart-prompt').pointerEvents, 'none');
     assert.equal(computed('.fxhf-submit').minHeight, '52px');
+    assert.equal(computed('.fxhf-rafi-core').position, 'absolute', 'artwork must not grow the grid slot');
+    assert.equal(computed('.fxhf-rafi-face').position, 'absolute');
+    assert.equal(computed('.fxhf-rafi-face').left, '50%');
+    assert.equal(computed('.fxhf-rafi-face').top, '50%');
+    assert.equal(computed('.fxhf-rafi-face').maxWidth, 'none', 'transparent canvas must not be constrained to the slot');
     for (const filled of [false, true]) {
       if (filled) s.fill();
       assert.equal(computed(".fxhf-content").gridTemplateRows, "auto auto auto");
