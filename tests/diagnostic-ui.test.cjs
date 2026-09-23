@@ -268,3 +268,135 @@ test('photo selected state and ready count are explicit while technical/privacy 
   assert.equal(s.q('fxdiag-media').classList.contains('has-photos'), false);
   assert.equal(s.q('fxdiag-photo-status').textContent, 'Aucune photo sélectionnée');
 });
+
+// JSDOM checks responsive CSS/DOM contracts and viewport arithmetic, not pixels.
+// Final Safari rendering and the native keyboard are verified on a real iPhone.
+for (const [width, height] of [[320, 568], [360, 780], [390, 844], [412, 915]]) {
+  test(`Diagnostic ${width}: real header, natural height, keyboard pan and safe-area contracts`, async t => {
+    const s = setup(t), w = s.w, doc = w.document;
+    w.innerWidth = width; w.innerHeight = height;
+    const viewport = new w.EventTarget();
+    viewport.height = height; viewport.offsetTop = 0;
+    Object.defineProperty(w, 'visualViewport', { value: viewport });
+    const header = doc.createElement('header');
+    header.className = 'site-header'; header.innerHTML = '<a href="/">Fixeo</a>';
+    doc.body.prepend(header);
+    let headerBottom = 72, observations = 0;
+    header.getBoundingClientRect = () => ({ top: 0, bottom: headerBottom, height: headerBottom });
+    const initialHeader = header.outerHTML, observers = [];
+    w.ResizeObserver = class {
+      constructor(fn) { this.notify = fn; this.targets = []; observers.push(this); }
+      observe(el) { this.targets.push(el); observations++; }
+      disconnect() { this.targets = []; }
+    };
+    await s.open();
+    const modal = s.q('fxdiag-dialog');
+    assert.equal(modal.style.getPropertyValue('--fxdiag-panel-top'), '72px');
+    assert.equal(modal.style.getPropertyValue('--fxdiag-panel-height'), height - 72 + 'px');
+    assert.equal(modal.dataset.siteHeader, 'true');
+    assert.match(modal.querySelector('style').textContent, /inset: 72px 0 0/);
+    assert.equal(header.outerHTML, initialHeader, 'Brand header is never cloned, moved or restyled');
+    const before = observations;
+    observers[0].notify();
+    assert.equal(observations, before, 'Resize observation must not re-arm itself in a loop');
+    headerBottom = 80; observers[0].notify();
+    assert.equal(modal.style.getPropertyValue('--fxdiag-panel-top'), '80px');
+    viewport.height = 340; viewport.offsetTop = 24;
+    viewport.dispatchEvent(new w.Event('resize'));
+    assert.equal(modal.style.getPropertyValue('--fxdiag-panel-height'), '284px');
+    assert.equal(modal.dataset.compactViewport, 'true');
+    viewport.offsetTop = 120;
+    viewport.dispatchEvent(new w.Event('scroll'));
+    assert.equal(modal.style.getPropertyValue('--fxdiag-panel-top'), '120px');
+    assert.equal(modal.style.getPropertyValue('--fxdiag-panel-height'), '340px', 'No second header inset when Safari pans past it');
+
+    const style = doc.createElement('style');
+    style.textContent = fs.readFileSync(path.join(root, 'css/fixeo-diagnostic-v1.css'), 'utf8');
+    doc.head.append(style);
+    const activeRules = rules => [...rules].map(rule => {
+      if (!rule.media) return rule.cssText;
+      const query = rule.media.mediaText;
+      if (/prefers-reduced-motion|hover:/.test(query)) return '';
+      const matches = [...query.matchAll(/(min|max)-(width|height):\s*(\d+)px/g)].every(([, bound, axis, limit]) => {
+        const size = axis === 'width' ? width : height;
+        return bound === 'max' ? size <= +limit : size >= +limit;
+      });
+      return matches ? activeRules(rule.cssRules) : '';
+    }).join('\n');
+    style.textContent = activeRules(style.sheet.cssRules);
+    const computed = selector => w.getComputedStyle(doc.querySelector(selector));
+    assert.equal(computed('.fxdiag-shell').height, 'auto');
+    assert.equal(computed('.fxdiag-body').flexGrow, '0', 'No artificial gap between content and actions');
+    assert.equal(computed('.fxdiag-body').paddingBottom, '24px', 'Footer is outside the scroller: no duplicate footer padding');
+    assert.equal(computed('.fxdiag-body').overflow, 'auto');
+    assert.equal(computed('#fxdiag-description').fontSize, '16px', 'Avoid iOS input auto-zoom');
+    assert.equal(computed('#fxdiag-city').minHeight, '44px');
+    assert.equal(computed('.fxdiag-close').width, '44px');
+    assert.equal(computed('.fxdiag-media-well').height, '124px');
+    assert.equal(computed('#fixeo-urgent-fab').visibility, 'hidden');
+    assert.equal(computed('.chat-widget').visibility, 'hidden');
+    assert.match(style.textContent, /safe-area-inset-bottom/);
+    s.fill(); s.q('fxdiag-next').click(); await tick();
+    assert.equal(doc.querySelectorAll('.fxdiag-hazard').length, 7);
+    assert.equal(computed('.fxdiag-hazards').gridTemplateColumns, '1fr');
+    assert.equal(s.q('fxdiag-stage-label').textContent, 'Vérifions la sécurité');
+    modal.querySelector('.fxdiag-close').click();
+    assert.ok(observers.every(observer => observer.targets.length === 0));
+    assert.equal(header.outerHTML, initialHeader);
+    assert.deepEqual(s.calls, [], 'Viewport and Safety UI checks do not create a dossier');
+  });
+}
+
+test('two optional questions, skip, custom answer, result accordions and Modify retain the same dossier flow', async t => {
+  let session, analyses = 0;
+  const result = {
+    questions: [], safety: { stop: false, level: 'TECHNICAL', messages: [] },
+    trade: { value: 'plomberie' }, problem: { value: 'Fuite à vérifier sur place' },
+    facts: [{ value: 'Trace sous le lavabo', provenance: 'user_declared' }],
+    hypotheses: [{ value: 'Raccord à vérifier', provenance: 'ai_inferred' }],
+    possible_parts: [{ value: 'Joint éventuel', provenance: 'ai_inferred' }],
+    checks: [{ value: 'À confirmer par le professionnel', provenance: 'ai_inferred' }],
+    urgency: { value: 'moderate' },
+  };
+  const s = setup(t, async r => {
+    if (r.action === 'create') session = { id: r.session_id, revision: 1, input: r.input, city_slug: r.city_slug, media: [], state: 'draft' };
+    if (r.action === 'update') session = { ...session, revision: session.revision + 1, input: r.input };
+    if (r.action === 'analyze') session = { ...session, state: 'ready', result_run_id: 'fixture-run', result: { ...result, questions: ++analyses === 1 ? [
+      { id: 'duration', type: 'text', label: 'Depuis quand constatez-vous ce problème ?' },
+      { id: 'affected_area', type: 'text', label: 'Où constatez-vous le problème ?' },
+    ] : [] } };
+    if (r.action === 'confirmation_context') return { client_phone: '' };
+    return { session };
+  });
+  await s.open(); s.fill();
+  assert.equal(s.q('fxdiag-stage-label').textContent, 'Montrez le problème');
+  s.q('fxdiag-next').click(); await tick(); s.q('fxdiag-next').click(); await tick(); await tick();
+  assert.match(s.w.document.querySelector('.fxdiag-tag').textContent, /Question 1 \/ 2 · facultatif/);
+  assert.equal(s.q('fxdiag-stage-label').textContent, 'RAFI affine son analyse');
+  assert.equal(s.q('fxdiag-next').textContent, 'Passer→');
+  s.q('fxdiag-next').click(); await tick();
+  assert.match(s.w.document.querySelector('.fxdiag-tag').textContent, /Question 2 \/ 2 · facultatif/);
+  s.q('fxdiag-other').click();
+  s.change('fxdiag-q-affected_area', 'Sous le lavabo');
+  s.q('fxdiag-save-answer').click(); await tick(); await tick();
+  assert.equal(s.q('fxdiag-dialog').dataset.step, 'result');
+  assert.equal(s.q('fxdiag-stage-label').textContent, 'Votre diagnostic est prêt');
+  assert.equal(session.input.answers.duration, 'unknown');
+  assert.equal(session.input.answers.affected_area, 'Sous le lavabo');
+  assert.equal(analyses, 2);
+  const accordions = [...s.w.document.querySelectorAll('.fxdiag-result-detail')];
+  assert.equal(accordions.length, 4);
+  for (const accordion of accordions) {
+    assert.equal(accordion.open, false);
+    accordion.querySelector('summary').click(); assert.equal(accordion.open, true);
+    assert.ok(accordion.querySelector('.fxdiag-card').textContent.trim());
+    accordion.querySelector('summary').click(); assert.equal(accordion.open, false);
+  }
+  assert.match(s.w.document.querySelector('.fxdiag-intro').textContent, /Diagnostic indicatif, à confirmer par le professionnel/);
+  s.q('fxdiag-back').click(); await tick();
+  assert.equal(s.q('fxdiag-description').value, 'Une trace sous le lavabo.');
+  assert.equal(s.q('fxdiag-city').value, 'rabat');
+  assert.equal(s.q('fxdiag-consent').checked, true);
+  assert.equal(s.calls.filter(r => r.action === 'create').length, 1);
+  assert.equal(s.calls.filter(r => r.action === 'confirm_intervention').length, 0);
+});

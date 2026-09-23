@@ -14,6 +14,9 @@
     pausedDraft,
     runId,
     footerObserver,
+    headerObserver,
+    observedHeader,
+    backdropStyle,
     layoutFrame,
     questionIndex = 0,
     confirmationPhone = '',
@@ -155,6 +158,8 @@
     }
     window.removeEventListener('resize', fitViewport);
     if (footerObserver) footerObserver.disconnect();
+    if (headerObserver) headerObserver.disconnect();
+    observedHeader = null;
     if (layoutFrame) window.cancelAnimationFrame(layoutFrame);
     layoutFrame = null;
     API.setActive(false);
@@ -164,6 +169,28 @@
   function fitViewport() {
     if (!dialog || !dialog.open) return;
     var viewport = window.visualViewport;
+    var top = viewport ? viewport.offsetTop : 0;
+    var height = viewport ? viewport.height : window.innerHeight;
+    // Keep the real brand bar visible above the native dialog. Its native
+    // focus isolation remains intact; no cloned header or global restyling.
+    var headers = document.querySelectorAll('.fixeo-gh-mobile-bar, nav.navbar, header.site-header');
+    var header = Array.from(headers).find(function (el) {
+      var rect = el.getBoundingClientRect();
+      return rect.height > 0 && rect.bottom > top && rect.top < top + height;
+    });
+    var panelTop = Math.max(top, header ? header.getBoundingClientRect().bottom : 0);
+    var panelHeight = Math.max(0, top + height - panelTop);
+    dialog.style.setProperty('--fxdiag-panel-top', panelTop + 'px');
+    dialog.style.setProperty('--fxdiag-panel-height', panelHeight + 'px');
+    dialog.dataset.siteHeader = String(!!header);
+    dialog.dataset.compactViewport = String(panelHeight < 480);
+    // ::backdrop does not inherit custom properties from its dialog.
+    backdropStyle.textContent = '#fxdiag-dialog::backdrop { inset: ' + panelTop + 'px 0 0; }';
+    if (headerObserver && header !== observedHeader) {
+      headerObserver.disconnect();
+      if (header) headerObserver.observe(header);
+      observedHeader = header;
+    }
     if (viewport && window.innerWidth <= 700) {
       dialog.style.setProperty('--fxdiag-vv-height', viewport.height + 'px');
       dialog.style.setProperty('--fxdiag-vv-top', viewport.offsetTop + 'px');
@@ -216,12 +243,16 @@
     dialog.id = 'fxdiag-dialog';
     dialog.setAttribute('aria-labelledby', 'fxdiag-title');
     dialog.innerHTML =
-      '<div class="fxdiag-shell"><header class="fxdiag-head"><div class="fxdiag-brand"><i class="fxdiag-dot" aria-hidden="true"></i>FIXEO <span>Diagnostic</span></div><button type="button" class="fxdiag-close" aria-label="Fermer le diagnostic">×</button></header><div class="fxdiag-body"></div><div class="fxdiag-footer"></div></div>';
+      '<div class="fxdiag-shell"><header class="fxdiag-head"><div class="fxdiag-brand"><div class="fxdiag-brand-line"><i class="fxdiag-dot" aria-hidden="true"></i>RAFI · DIAGNOSTIC FIXEO</div><p id="fxdiag-stage-label"></p></div><button type="button" class="fxdiag-close" aria-label="Fermer le diagnostic">×</button></header><div class="fxdiag-body"></div><div class="fxdiag-footer"></div></div>';
+    backdropStyle = document.createElement('style');
+    dialog.appendChild(backdropStyle);
     document.body.appendChild(dialog);
     body = dialog.querySelector('.fxdiag-body');
     footer = dialog.querySelector('.fxdiag-footer');
-    if (window.ResizeObserver)
+    if (window.ResizeObserver) {
+      headerObserver = new window.ResizeObserver(fitViewport);
       footerObserver = new window.ResizeObserver(queueLayout);
+    }
     dialog.addEventListener('focusin', queueLayout);
     dialog.querySelector('.fxdiag-close').onclick = close;
     dialog.addEventListener('cancel', function (e) {
@@ -231,6 +262,13 @@
   }
   function frame(title, intro, step) {
     dialog.dataset.step = current;
+    node('fxdiag-stage-label').textContent = [
+      'Montrez le problème', 'Vérifions la sécurité',
+      'RAFI affine son analyse', 'Votre diagnostic est prêt',
+    ][step - 1];
+    if (current === 'confirmation') node('fxdiag-stage-label').textContent = 'Confirmez votre intervention';
+    if (current === 'bound') node('fxdiag-stage-label').textContent = 'Le suivi de votre intervention';
+    if (title === 'Votre sécurité passe en premier') node('fxdiag-stage-label').textContent = title;
     body.innerHTML =
       '<ol class="fxdiag-progress" aria-label="Progression du diagnostic">' +
       ['Problème', 'Sécurité', 'Analyse', 'Résultat']
@@ -418,8 +456,8 @@
   function renderCompose() {
     current = 'compose';
     frame(
-      'Montrez le problème.',
-      'Une photo ou quelques mots. FIXEO vous guide vers le bon métier et évalue l’urgence.',
+      'Montrez ou décrivez le problème.',
+      'Une photo ou quelques mots suffisent pour commencer.',
       1,
     );
     body.insertAdjacentHTML(
@@ -437,7 +475,7 @@
         '<p class="fxdiag-privacy">Uniquement le problème : évitez visages, papiers d’identité et informations personnelles.</p><p>Les photos sélectionnées sont envoyées uniquement après votre accord et la confirmation de l’analyse.</p></div></details></div></div>' +
         '<div class="fxdiag-description-column"><div class="fxdiag-field"><label class="fxdiag-label" for="fxdiag-description">Que constatez-vous ?</label><textarea id="fxdiag-description" class="fxdiag-input" maxlength="2000" rows="3" placeholder="Par exemple : de l’eau coule sous mon lavabo…">' +
         esc(draft.description) +
-        '</textarea><span class="fxdiag-field-help">Quelques mots suffisent, même sans photo.</span></div><div class="fxdiag-field"><label class="fxdiag-label" for="fxdiag-city">Ville d’intervention</label><select id="fxdiag-city" class="fxdiag-input"><option value="">Choisir ma ville</option>' +
+        '</textarea><span class="fxdiag-field-help">Quelques mots suffisent, même sans photo.</span></div><div class="fxdiag-field fxdiag-city-field"><label class="fxdiag-label" for="fxdiag-city">Ville d’intervention</label><select id="fxdiag-city" class="fxdiag-input"><option value="">Choisir ma ville</option>' +
         Object.keys(cities)
           .map(function (c) {
             return (
