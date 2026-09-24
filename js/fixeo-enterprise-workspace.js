@@ -305,7 +305,21 @@
       'account.ownership_transferred':'Propriété transférée',
       'sla.policy_created':'Politique SLA créée',
       'sla.policy_updated':'Politique SLA modifiée',
-      'sla.snapshot_created':'Snapshot SLA créé'
+      'sla.snapshot_created':'Snapshot SLA créé',
+      'workforce.worker_created':'Technicien interne créé',
+      'workforce.worker_updated':'Technicien interne modifié',
+      'workforce.skills_updated':'Compétences Workforce modifiées',
+      'workforce.sites_updated':'Périmètre Workforce modifié',
+      'workforce.availability_updated':'Disponibilité Workforce modifiée',
+      'dispatch.policy_created':'Règle de dispatch créée',
+      'dispatch.policy_updated':'Règle de dispatch modifiée',
+      'dispatch.internal_offered':'Offres internes envoyées',
+      'dispatch.internal_accepted':'Mission interne acceptée',
+      'dispatch.internal_declined':'Offre interne refusée',
+      'dispatch.internal_assignment_updated':'Mission interne mise à jour',
+      'dispatch.external_started':'Dispatch externe lancé',
+      'dispatch.external_fallback':'Fallback externe lancé',
+      'dispatch.no_internal_candidate':'Aucun technicien interne éligible'
     });
     function canViewAudit() {
       return !!(win.FixeoEnterpriseAudit &&
