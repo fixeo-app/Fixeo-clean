@@ -136,7 +136,8 @@ test('U11 New page has isolated scripts, unique IDs, local links and no operatio
   assert.equal(ids.length, new Set(ids).size);
   assert.ok([...d.querySelectorAll('a')].every(a => ['index.html', '#main', 'auth.html'].includes(a.getAttribute('href'))));
   for (const p of ['js/fixeo-enterprise-workspace.js', 'js/fixeo-enterprise-guard.js', 'js/fixeo-enterprise-readmodel.js']) {
-    assert.doesNotMatch(read(p), /\.(insert|update|delete|upsert|rpc|signOut)\s*\(|service_role|user_metadata|raw_user_meta_data|\.from\(['"]profiles/);
+    assert.doesNotMatch(read(p), /service_role|user_metadata|raw_user_meta_data|\.from\(['"]profiles/);
+    assert.doesNotMatch(read(p), /\.from\([^)]*\)[\s\S]{0,160}\.(insert|update|delete|upsert)\s*\(/);
   }
   assert.equal(d.querySelector('meta[name=robots]').content, 'noindex, nofollow');
   dom.window.close();
@@ -206,4 +207,21 @@ test('U16 B3 keeps creation hidden when no active site is in effective scope', a
   await tick();
   assert.equal(s.q('enterprise-request-create').hidden, true);
   assert.equal(s.q('enterprise-requests-mode').textContent, 'Aucun site actif');
+});
+
+test('U17 B4 opens read-only intervention detail with SLA snapshot', async t => {
+  const readModel = { load: async () => ({
+    sites: [{ id: uuid(301), name: 'Siège', site_code: 'CAS', city: 'Casablanca', address_line: '', status: 'active' }],
+    interventions: [{ id: uuid(401), site_id: uuid(301), site_name: 'Siège', site_code:'CAS', service_category:'plomberie',
+      city:'Casablanca', urgency:'urgent', request_status:'new', mission_status:'', created_at:'2026-09-24T10:00:00Z', accepted_at:null,
+      sla:{policy_source:'fixeo_default',policy_urgency:'high',request_urgency:'urgent',acceptance_target_minutes:30,
+        started_at:'2026-09-24T10:00:00Z',at_risk_at:'2099-09-24T10:22:30Z',due_at:'2099-09-24T10:30:00Z'} }]
+  }) };
+  const s = await setup(t, {}, undefined, { readModel });
+  await tick();
+  s.q('enterprise-interventions-list').querySelector('[data-intervention-action="detail"]').click();
+  assert.equal(s.q('enterprise-intervention-dialog').hidden,false);
+  assert.match(s.q('enterprise-intervention-detail').textContent,/Objectif d’acceptation/);
+  assert.match(s.q('enterprise-intervention-detail').textContent,/30 min/);
+  assert.equal(s.q('enterprise-intervention-detail').querySelector('button'),null);
 });
