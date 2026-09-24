@@ -276,3 +276,11 @@
 .fxew-maintenance-run strong{display:block;font-size:13px}
 .fxew-maintenance-run span:not(.fxew-status),.fxew-maintenance-run small{display:block;color:var(--muted);font-size:11px;overflow-wrap:anywhere}
 @media(max-width:760px){.fxew-maintenance-grid{grid-template-columns:1fr;padding:14px}.fxew-maintenance-run{grid-template-columns:1fr}}
+
+.fxew-maintenance-calendar-card{margin:0 18px 18px}
+.fxew-maintenance-calendar{display:grid}
+.fxew-maintenance-calendar-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 14px;align-items:center;padding:12px 14px}
+.fxew-maintenance-calendar-row+.fxew-maintenance-calendar-row{border-top:1px solid var(--line)}
+.fxew-maintenance-calendar-row strong{display:block;font-size:12px}
+.fxew-maintenance-calendar-row span:not(.fxew-status){display:block;margin-top:3px;color:var(--muted);font-size:11px}
+@media(max-width:560px){.fxew-maintenance-calendar-card{margin:0 14px 14px}.fxew-maintenance-calendar-row{grid-template-columns:1fr}}
