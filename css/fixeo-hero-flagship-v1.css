@@ -347,3 +347,12 @@ body.fxhf-immersive #fixeo-urgent-fab, body.fxhf-immersive .chat-widget { visibi
   body:has(#fxhf-root) #fixeo-urgent-fab, body:has(#fxhf-root) .chat-widget { transition: none !important; }
   .fxhf-universal *, .fxhf-universal *::before, .fxhf-universal *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* V2.3 micro polish: slightly larger RAFI badge, aligned to the heading copy.
+   Paint-only treatment; no journey/sphere/layout logic changes. */
+@media (max-width: 820px) {
+  #fxhf-root .fxhf-eyebrow {
+    font-size: 10.5px;
+    transform: translateX(2px);
+  }
+}
