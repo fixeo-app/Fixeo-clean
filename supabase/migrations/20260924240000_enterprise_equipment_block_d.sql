@@ -178,12 +178,41 @@ AS $function$
   );
 $function$;
 
+CREATE OR REPLACE FUNCTION fixeo_private._fixeo_can_access_enterprise_equipment_path(
+  p_enterprise_id_text text,p_equipment_id_text text,p_manage boolean DEFAULT false
+)
+RETURNS boolean
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path=''
+AS $function$
+DECLARE
+  v_enterprise_id uuid;
+  v_equipment_id uuid;
+BEGIN
+  BEGIN
+    v_enterprise_id:=p_enterprise_id_text::uuid;
+    v_equipment_id:=p_equipment_id_text::uuid;
+  EXCEPTION WHEN invalid_text_representation THEN
+    RETURN false;
+  END;
+
+  IF p_manage THEN
+    RETURN fixeo_private._fixeo_can_manage_enterprise_equipment_id(v_enterprise_id,v_equipment_id);
+  END IF;
+  RETURN fixeo_private._fixeo_can_access_enterprise_equipment(v_enterprise_id,v_equipment_id);
+END;
+$function$;
+
 REVOKE ALL ON FUNCTION fixeo_private._fixeo_can_manage_enterprise_equipment(uuid,uuid) FROM PUBLIC,anon;
 REVOKE ALL ON FUNCTION fixeo_private._fixeo_can_access_enterprise_equipment(uuid,uuid) FROM PUBLIC,anon;
 REVOKE ALL ON FUNCTION fixeo_private._fixeo_can_manage_enterprise_equipment_id(uuid,uuid) FROM PUBLIC,anon;
+REVOKE ALL ON FUNCTION fixeo_private._fixeo_can_access_enterprise_equipment_path(text,text,boolean) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION fixeo_private._fixeo_can_manage_enterprise_equipment(uuid,uuid) TO authenticated,service_role;
 GRANT EXECUTE ON FUNCTION fixeo_private._fixeo_can_access_enterprise_equipment(uuid,uuid) TO authenticated,service_role;
 GRANT EXECUTE ON FUNCTION fixeo_private._fixeo_can_manage_enterprise_equipment_id(uuid,uuid) TO authenticated,service_role;
+GRANT EXECUTE ON FUNCTION fixeo_private._fixeo_can_access_enterprise_equipment_path(text,text,boolean) TO authenticated,service_role;
 
 -- 4) RLS / table grants.
 ALTER TABLE public.enterprise_equipment ENABLE ROW LEVEL SECURITY;
@@ -232,9 +261,10 @@ USING (
   bucket_id='enterprise-equipment-private'
   AND (storage.foldername(name))[1]='enterprise'
   AND (storage.foldername(name))[3]='equipment'
-  AND fixeo_private._fixeo_can_access_enterprise_equipment(
-    ((storage.foldername(name))[2])::uuid,
-    ((storage.foldername(name))[4])::uuid
+  AND fixeo_private._fixeo_can_access_enterprise_equipment_path(
+    (storage.foldername(name))[2],
+    (storage.foldername(name))[4],
+    false
   )
 );
 
@@ -245,9 +275,10 @@ WITH CHECK (
   bucket_id='enterprise-equipment-private'
   AND (storage.foldername(name))[1]='enterprise'
   AND (storage.foldername(name))[3]='equipment'
-  AND fixeo_private._fixeo_can_manage_enterprise_equipment_id(
-    ((storage.foldername(name))[2])::uuid,
-    ((storage.foldername(name))[4])::uuid
+  AND fixeo_private._fixeo_can_access_enterprise_equipment_path(
+    (storage.foldername(name))[2],
+    (storage.foldername(name))[4],
+    true
   )
 );
 
@@ -258,9 +289,10 @@ USING (
   bucket_id='enterprise-equipment-private'
   AND (storage.foldername(name))[1]='enterprise'
   AND (storage.foldername(name))[3]='equipment'
-  AND fixeo_private._fixeo_can_manage_enterprise_equipment_id(
-    ((storage.foldername(name))[2])::uuid,
-    ((storage.foldername(name))[4])::uuid
+  AND fixeo_private._fixeo_can_access_enterprise_equipment_path(
+    (storage.foldername(name))[2],
+    (storage.foldername(name))[4],
+    true
   )
 );
 
