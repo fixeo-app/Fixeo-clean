@@ -186,3 +186,16 @@
 .fxew-member-site-row + .fxew-member-site-row{border-top:1px solid var(--line)}
 .fxew-member-site-row input{margin-top:2px}
 @media(max-width:700px){.fxew-team-list{grid-template-columns:1fr;padding:14px}}
+
+/* B7 — invitation lifecycle */
+.fxew-invitation-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:18px}
+.fxew-invitation-card{border:1px solid rgba(255,255,255,.09);border-radius:15px;background:rgba(255,255,255,.025);padding:18px;min-width:0}
+.fxew-invitation-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.fxew-invitation-head strong{display:block;font-size:14px;overflow-wrap:anywhere}
+.fxew-invitation-head span:not(.fxew-status){display:block;margin-top:4px;color:var(--muted);font-size:12px}
+.fxew-invitation-meta{display:flex;flex-wrap:wrap;gap:7px 14px;margin-top:12px;color:var(--muted);font-size:11px}
+.fxew-invitation-created{display:grid;gap:14px}
+.fxew-invitation-created p{color:var(--muted);font-size:13px}
+.fxew-invitation-created label{display:grid;gap:7px;color:var(--muted);font-size:12px;font-weight:650}
+.fxew-invitation-created input{width:100%;min-height:46px;border:1px solid var(--line);border-radius:11px;background:#191927;color:var(--text);padding:10px 12px;font:inherit}
+@media(max-width:700px){.fxew-invitation-list{grid-template-columns:1fr;padding:14px}}
