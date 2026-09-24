@@ -7,7 +7,7 @@
   <meta name="referrer" content="same-origin">
   <title>Espace entreprise | FIXEO</title>
   <link rel="icon" href="img/logo-fixeo-icon.png">
-  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=block-f1">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=block-g1">
   <script defer src="js/supabase-client.js"></script>
   <script defer src="js/fixeo-logout-global.js"></script>
   <script defer src="js/fixeo-auth-resolver.js"></script>
@@ -32,7 +32,9 @@
   <script defer src="js/fixeo-enterprise-finance-ui.js?v=block-e1"></script>
   <script defer src="js/fixeo-enterprise-governance.js?v=block-f1"></script>
   <script defer src="js/fixeo-enterprise-governance-ui.js?v=block-f1"></script>
-  <script defer src="js/fixeo-enterprise-workspace.js?v=block-f1"></script>
+  <script defer src="js/fixeo-enterprise-rafi.js?v=block-g1"></script>
+  <script defer src="js/fixeo-enterprise-rafi-ui.js?v=block-g1"></script>
+  <script defer src="js/fixeo-enterprise-workspace.js?v=block-g1"></script>
 </head>
 <body class="fxew">
   <a class="fxew-skip" href="#main">Aller au contenu</a>
@@ -76,6 +78,39 @@
         <span id="enterprise-data-message">Chargement des opérations…</span>
         <button id="enterprise-data-retry" class="fxew-button" type="button" hidden>Réessayer</button>
       </div>
+
+      <section id="enterprise-rafi-module" class="fxew-module fxew-rafi" aria-labelledby="enterprise-rafi-title" hidden>
+        <div class="fxew-module-heading">
+          <div><p class="fxew-module-kicker">RAFI Intelligence</p><h2 id="enterprise-rafi-title">Votre copilote Enterprise</h2></div>
+          <span class="fxew-module-meta">Lecture & analyse</span>
+        </div>
+        <div class="fxew-rafi-suggestions">
+          <button type="button" data-rafi-question="Quelles interventions nécessitent mon attention maintenant ?">À traiter maintenant</button>
+          <button type="button" data-rafi-question="Quels sites ont le plus de problèmes ou de SLA à risque ?">Sites à risque</button>
+          <button type="button" data-rafi-question="Quels équipements présentent des pannes récurrentes ?">Pannes récurrentes</button>
+          <button type="button" data-rafi-question="Résume mes coûts internes et externes et les écarts de budget.">Finance</button>
+        </div>
+        <div id="enterprise-rafi-messages" class="fxew-rafi-messages" aria-live="polite"></div>
+        <div id="enterprise-rafi-photo" class="fxew-rafi-photo" hidden>
+          <button id="enterprise-rafi-photo-remove" class="fxew-site-action" type="button">Retirer</button>
+        </div>
+        <form id="enterprise-rafi-form" class="fxew-rafi-form">
+          <label class="fxew-sr-only" for="enterprise-rafi-input">Question pour RAFI</label>
+          <textarea id="enterprise-rafi-input" rows="3" maxlength="2000" required placeholder="Ex. Quels sites dépassent leur SLA et pourquoi ?"></textarea>
+          <div class="fxew-rafi-actions">
+            <button id="enterprise-rafi-speak" class="fxew-button" type="button">Parler à RAFI</button>
+            <select id="enterprise-rafi-language" class="fxew-rafi-language" aria-label="Langue de transcription">
+              <option value="fr-FR">FR</option><option value="ar-MA">الدارجة</option>
+            </select>
+            <button id="enterprise-rafi-show" class="fxew-button" type="button">Montrer à RAFI</button>
+            <button id="enterprise-rafi-camera-button" class="fxew-button" type="button">Caméra</button>
+            <button id="enterprise-rafi-send" class="fxew-button fxew-button--primary" type="submit">Demander à RAFI</button>
+          </div>
+          <input id="enterprise-rafi-file" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+          <input id="enterprise-rafi-camera" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden>
+        </form>
+        <p id="enterprise-rafi-status" class="fxew-module-meta" aria-live="polite"></p>
+      </section>
 
       <section id="enterprise-control-tower" class="fxew-module fxew-control-tower" aria-labelledby="control-tower-title" hidden>
         <div class="fxew-module-heading">

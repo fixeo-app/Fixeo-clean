@@ -80,6 +80,45 @@ app.all('/api/diagnostic-maintenance', function(req, res) {
   return require('./diagnostic/maintenance').createMaintenance()(req, res);
 });
 
+/* RAFI Enterprise — authenticated read-only intelligence on authorized tenant data. */
+const enterpriseRafiImageUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 3 * 1024 * 1024 },
+  fileFilter: function(req, file, cb) {
+    if (!['image/jpeg','image/png','image/webp'].includes(file.mimetype))
+      return cb(new Error('INVALID_IMAGE_TYPE'));
+    cb(null, true);
+  }
+}).single('image');
+
+const enterpriseRafiJson = express.json({ limit: '24kb', strict: true });
+
+app.get('/api/enterprise-rafi', function(req, res) {
+  return require('./enterprise-rafi').createHandler()(req, res);
+});
+
+app.post('/api/enterprise-rafi', function(req, res, next) {
+  const type = String(req.headers['content-type'] || '').toLowerCase();
+  if (type.startsWith('multipart/form-data')) {
+    return enterpriseRafiImageUpload(req, res, function(err) {
+      if (err) {
+        res.set('Cache-Control', 'no-store');
+        return res.status(err.code === 'LIMIT_FILE_SIZE' ? 413 : 415)
+          .json({ ok:false, error: err.code === 'LIMIT_FILE_SIZE' ? 'INVALID_IMAGE_SIZE' : 'INVALID_IMAGE_TYPE' });
+      }
+      return require('./enterprise-rafi').createHandler()(req, res);
+    });
+  }
+  return enterpriseRafiJson(req, res, function(err) {
+    if (err) {
+      res.set('Cache-Control', 'no-store');
+      return res.status(err.type === 'entity.too.large' ? 413 : 400)
+        .json({ ok:false, error:'INVALID_BODY' });
+    }
+    return require('./enterprise-rafi').createHandler()(req, res);
+  });
+});
+
 /* ── Config PayPal ─────────────────────────────────────────── */
 const PAYPAL_MODE      = process.env.PAYPAL_MODE      || 'sandbox';
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;

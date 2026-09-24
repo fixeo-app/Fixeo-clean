@@ -159,6 +159,10 @@
       "dest": "/api/server.js"
     },
     {
+      "src": "^/api/enterprise-rafi$",
+      "dest": "/api/server.js"
+    },
+    {
       "src": "^/api/guest-request$",
       "dest": "/api/urgent-request-fn/index.js"
     },
