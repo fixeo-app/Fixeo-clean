@@ -43,6 +43,11 @@
     var reportContent = byId('enterprise-report-content'), reportKpis = byId('enterprise-report-kpis');
     var reportSla = byId('enterprise-report-sla'), reportStatuses = byId('enterprise-report-statuses');
     var reportSites = byId('enterprise-report-sites');
+    var auditModule = byId('enterprise-audit-module'), auditPeriod = byId('enterprise-audit-period');
+    var auditState = byId('enterprise-audit-state'), auditMessage = byId('enterprise-audit-message');
+    var auditRetry = byId('enterprise-audit-retry'), auditExport = byId('enterprise-audit-export');
+    var auditList = byId('enterprise-audit-list'), auditCount = byId('enterprise-audit-count');
+    var auditMore = byId('enterprise-audit-more');
     var teamList = byId('enterprise-team-list'), teamEmpty = byId('enterprise-team-empty'), teamMode = byId('enterprise-team-mode');
     var invitationsList = byId('enterprise-invitations-list'), invitationsEmpty = byId('enterprise-invitations-empty');
     var invitationsMode = byId('enterprise-invitations-mode'), invitationCreate = byId('enterprise-invitation-create');
@@ -57,7 +62,7 @@
     var memberClose = byId('enterprise-member-close'), memberDismiss = byId('enterprise-member-dismiss');
     var memberDetail = byId('enterprise-member-detail'), memberError = byId('enterprise-member-error');
     var currentEnterpriseId = '', currentEnterpriseRole = '', currentSites = [], currentInterventions = [], currentMembers = [], currentInvitations = [];
-    var currentReportPeriod = '30';
+    var currentReportPeriod = '30', currentAuditPeriod = '30', currentAuditEvents = [], currentAuditCursor = null;
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
     var client = null, subscription = null, generation = 0, stopped = false, logoutPending = false;
@@ -88,6 +93,16 @@
       if (reportState) reportState.hidden = false;
       if (reportMessage) reportMessage.textContent = 'Chargement des indicateurs…';
       if (reportRetry) reportRetry.hidden = true;
+      currentAuditEvents = [];
+      currentAuditCursor = null;
+      if (auditModule) auditModule.hidden = true;
+      if (auditList) auditList.replaceChildren();
+      if (auditCount) auditCount.textContent = '';
+      if (auditMore) { auditMore.hidden = true; auditMore.disabled = false; }
+      if (auditState) auditState.hidden = false;
+      if (auditMessage) auditMessage.textContent = 'Chargement de l’historique…';
+      if (auditRetry) auditRetry.hidden = true;
+      if (auditExport) auditExport.disabled = false;
       if (teamList) teamList.replaceChildren();
       if (teamEmpty) teamEmpty.hidden = true;
       if (teamMode) teamMode.textContent = 'Lecture seule';
@@ -252,6 +267,168 @@
         if (run === generation && !stopped && !doc.hidden) {
           setReportState('Impossible de charger la synthèse opérationnelle. Réessayez.', true);
         }
+      }
+    }
+
+    var AUDIT_LABELS = Object.freeze({
+      'member.role_updated':'Rôle membre modifié',
+      'member.status_updated':'Statut membre modifié',
+      'member.site_assigned':'Site affecté au membre',
+      'member.site_unassigned':'Site retiré du membre',
+      'member.invited':'Invitation créée',
+      'member.invitation_accepted':'Invitation acceptée',
+      'member.invitation_revoked':'Invitation révoquée',
+      'member.invitation_expired':'Invitation expirée',
+      'site.created':'Site créé',
+      'site.updated':'Site modifié',
+      'site.status_updated':'Statut du site modifié',
+      'request.created':'Intervention créée',
+      'account.created':'Compte entreprise créé',
+      'account.updated':'Compte entreprise modifié',
+      'account.status_updated':'Statut entreprise modifié',
+      'account.ownership_transferred':'Propriété transférée',
+      'sla.policy_created':'Politique SLA créée',
+      'sla.policy_updated':'Politique SLA modifiée',
+      'sla.snapshot_created':'Snapshot SLA créé'
+    });
+    function canViewAudit() {
+      return !!(win.FixeoEnterpriseAudit &&
+        typeof win.FixeoEnterpriseAudit.canView === 'function' &&
+        win.FixeoEnterpriseAudit.canView(currentEnterpriseRole));
+    }
+    function shortId(value, fallback) {
+      var clean = String(value || '').replace(/-/g, '');
+      return clean ? clean.slice(-6) : (fallback || '—');
+    }
+    function auditValue(value) {
+      if (value == null) return '—';
+      if (typeof value === 'boolean') return value ? 'Oui' : 'Non';
+      if (typeof value === 'number') return String(value);
+      return label(String(value));
+    }
+    function auditDetailBlock(titleText, object) {
+      var section = el('div', 'fxew-audit-detail-block');
+      section.append(el('strong', '', titleText));
+      Object.keys(object || {}).forEach(function (key) {
+        var row = el('div', 'fxew-audit-detail-row');
+        row.append(el('span', '', label(key)), el('b', '', auditValue(object[key])));
+        section.append(row);
+      });
+      return section;
+    }
+    function renderAuditEvents() {
+      auditList.replaceChildren();
+      currentAuditEvents.forEach(function (event) {
+        var card = el('article', 'fxew-audit-event');
+        var head = el('div', 'fxew-audit-event-head');
+        var copy = el('div');
+        copy.append(el('strong', '', AUDIT_LABELS[event.event_type] || label(event.event_type)));
+        copy.append(el('span', '', [label(event.target_type), 'Réf. ' + shortId(event.target_id)].join(' · ')));
+        head.append(copy, el('span', 'fxew-audit-time', dateTimeLabel(event.created_at)));
+        card.append(head);
+
+        var meta = el('div', 'fxew-audit-meta');
+        meta.append(el('span', '', 'Acteur • ' + shortId(event.actor_user_id, 'système')));
+        meta.append(el('span', '', 'Événement • ' + String(event.event_type || '—')));
+        card.append(meta);
+
+        var safe = win.FixeoEnterpriseAudit && typeof win.FixeoEnterpriseAudit.safeDetails === 'function'
+          ? win.FixeoEnterpriseAudit.safeDetails(event) : {};
+        var names = Object.keys(safe);
+        if (names.length) {
+          var details = doc.createElement('details');
+          details.className = 'fxew-audit-details';
+          var summary = doc.createElement('summary');
+          summary.textContent = 'Détails';
+          details.append(summary);
+          names.forEach(function (name) {
+            var heading = name === 'before_state' ? 'Avant' : name === 'after_state' ? 'Après' : 'Contexte';
+            details.append(auditDetailBlock(heading, safe[name]));
+          });
+          card.append(details);
+        }
+        auditList.append(card);
+      });
+      auditCount.textContent = currentAuditEvents.length
+        ? String(currentAuditEvents.length) + ' événement' + (currentAuditEvents.length > 1 ? 's' : '') + ' chargé' + (currentAuditEvents.length > 1 ? 's' : '')
+        : 'Aucun événement sur cette période';
+    }
+    function setAuditState(messageText, retryable) {
+      auditState.hidden = false;
+      auditMessage.textContent = messageText;
+      auditRetry.hidden = !retryable;
+    }
+    async function loadAudit(enterpriseId, run, append) {
+      if (!canViewAudit()) {
+        auditModule.hidden = true;
+        return;
+      }
+      auditModule.hidden = false;
+      if (!win.FixeoEnterpriseAudit || typeof win.FixeoEnterpriseAudit.listPage !== 'function') {
+        setAuditState('L’historique est momentanément indisponible.', true);
+        return;
+      }
+      if (!append) {
+        currentAuditEvents = [];
+        currentAuditCursor = null;
+        renderAuditEvents();
+      }
+      auditMore.disabled = true;
+      setAuditState(append ? 'Chargement de la suite…' : 'Chargement de l’historique…', false);
+      try {
+        var result = await bounded(win.FixeoEnterpriseAudit.listPage(client, enterpriseId, {
+          period: currentAuditPeriod,
+          limit: 50,
+          cursor: append ? currentAuditCursor : null
+        }));
+        if (run !== generation || stopped || doc.hidden || currentEnterpriseId !== enterpriseId) return;
+        var rows = Array.isArray(result.events) ? result.events : [];
+        currentAuditEvents = append ? currentAuditEvents.concat(rows) : rows.slice();
+        currentAuditCursor = result.has_more && result.next_cursor ? result.next_cursor : null;
+        renderAuditEvents();
+        auditMore.hidden = !currentAuditCursor;
+        auditState.hidden = true;
+      } catch (_) {
+        if (run === generation && !stopped && !doc.hidden) {
+          setAuditState('Impossible de charger l’historique. Réessayez.', true);
+        }
+      } finally {
+        auditMore.disabled = false;
+      }
+    }
+    async function exportAuditPeriod() {
+      if (!canViewAudit() || !currentEnterpriseId || !win.FixeoEnterpriseAudit) return;
+      auditExport.disabled = true;
+      try {
+        var result = await bounded(win.FixeoEnterpriseAudit.exportPeriod(client, currentEnterpriseId, currentAuditPeriod));
+        var payload = JSON.stringify({
+          exported_at: new Date().toISOString(),
+          enterprise_id: currentEnterpriseId,
+          period: currentAuditPeriod,
+          returned_count: result.returned_count || 0,
+          truncated: !!result.truncated,
+          events: Array.isArray(result.events) ? result.events : []
+        }, null, 2);
+        if (!win.Blob || !win.URL || typeof win.URL.createObjectURL !== 'function') throw new Error('DOWNLOAD_UNAVAILABLE');
+        var blob = new win.Blob([payload], { type: 'application/json;charset=utf-8' });
+        var url = win.URL.createObjectURL(blob);
+        var a = doc.createElement('a');
+        a.href = url;
+        a.download = 'fixeo-enterprise-audit-' + new Date().toISOString().slice(0,10) + '.json';
+        a.hidden = true;
+        doc.body.append(a);
+        a.click();
+        a.remove();
+        win.setTimeout(function () { win.URL.revokeObjectURL(url); }, 0);
+        auditMessage.textContent = result.truncated
+          ? 'Export créé. Le résultat a atteint la limite de 5 000 événements.'
+          : 'Export créé avec succès.';
+        auditState.hidden = false;
+        auditRetry.hidden = true;
+      } catch (_) {
+        setAuditState('Impossible de créer l’export. Réessayez.', true);
+      } finally {
+        auditExport.disabled = false;
       }
     }
     function canManageSites() {
@@ -872,7 +1049,8 @@
         main.setAttribute('aria-busy', 'false'); name.focus();
         await Promise.all([
           loadOperational(result.enterprise.id, run),
-          loadReporting(result.enterprise.id, run)
+          loadReporting(result.enterprise.id, run),
+          canViewAudit() ? loadAudit(result.enterprise.id, run, false) : Promise.resolve()
         ]);
       } catch (_) { if (run === generation && !stopped && !doc.hidden) failure(); }
     }
@@ -923,6 +1101,17 @@
       currentReportPeriod = reportPeriod.value || '30';
       if (currentEnterpriseId) loadReporting(currentEnterpriseId, generation);
     });
+    auditRetry.addEventListener('click', function () {
+      if (currentEnterpriseId) loadAudit(currentEnterpriseId, generation, false);
+    });
+    auditPeriod.addEventListener('change', function () {
+      currentAuditPeriod = auditPeriod.value || '30';
+      if (currentEnterpriseId) loadAudit(currentEnterpriseId, generation, false);
+    });
+    auditMore.addEventListener('click', function () {
+      if (currentEnterpriseId && currentAuditCursor) loadAudit(currentEnterpriseId, generation, true);
+    });
+    auditExport.addEventListener('click', exportAuditPeriod);
     siteCreate.addEventListener('click', function () { openSiteDialog(null); });
     siteClose.addEventListener('click', closeSiteDialog);
     siteCancel.addEventListener('click', closeSiteDialog);
@@ -963,6 +1152,7 @@
       requestCreate.removeEventListener('click', openRequestDialog);
       requestClose.removeEventListener('click', closeRequestDialog); requestCancel.removeEventListener('click', closeRequestDialog);
       requestForm.removeEventListener('submit', submitRequest);
+      auditExport.removeEventListener('click', exportAuditPeriod);
       invitationCreate.removeEventListener('click', openInvitationDialog);
       invitationClose.removeEventListener('click', closeInvitationDialog);
       invitationCancel.removeEventListener('click', closeInvitationDialog);
