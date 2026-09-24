@@ -14,7 +14,8 @@
     'policy_urgency','policy_source','member_id','worker_id','service_request_id',
     'availability','all_sites','max_concurrent_jobs','mode','offer_count',
     'remaining_offers','skill_count','site_count','internal_offer_limit',
-    'offer_ttl_minutes','fallback_after_minutes','source'
+    'offer_ttl_minutes','fallback_after_minutes','source',
+    'priority','note_present'
   ]);
 
   function canView(role){ return role==='owner'||role==='admin'; }
