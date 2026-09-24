@@ -7,7 +7,7 @@
   <meta name="referrer" content="same-origin">
   <title>Espace entreprise | FIXEO</title>
   <link rel="icon" href="img/logo-fixeo-icon.png">
-  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=block-c1">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=block-d1">
   <script defer src="js/supabase-client.js"></script>
   <script defer src="js/fixeo-logout-global.js"></script>
   <script defer src="js/fixeo-auth-resolver.js"></script>
@@ -26,7 +26,9 @@
   <script defer src="js/fixeo-enterprise-control-tower-ui.js?v=block-b1"></script>
   <script defer src="js/fixeo-enterprise-preventive-maintenance.js?v=block-c1"></script>
   <script defer src="js/fixeo-enterprise-preventive-maintenance-ui.js?v=block-c1"></script>
-  <script defer src="js/fixeo-enterprise-workspace.js?v=block-c1"></script>
+  <script defer src="js/fixeo-enterprise-equipment.js?v=block-d1"></script>
+  <script defer src="js/fixeo-enterprise-equipment-ui.js?v=block-d1"></script>
+  <script defer src="js/fixeo-enterprise-workspace.js?v=block-d1"></script>
 </head>
 <body class="fxew">
   <a class="fxew-skip" href="#main">Aller au contenu</a>
@@ -120,6 +122,24 @@
           <div class="fxew-report-card-head"><h3 id="maintenance-history-title">Historique des exécutions</h3><span>Générations automatiques</span></div>
           <div id="enterprise-maintenance-runs" class="fxew-maintenance-runs"></div>
         </section>
+      </section>
+
+      <section id="enterprise-equipment-module" class="fxew-module fxew-equipment" aria-labelledby="equipment-title" hidden>
+        <div class="fxew-module-heading">
+          <div><p class="fxew-module-kicker">Parc</p><h2 id="equipment-title">Équipements</h2></div>
+          <div class="fxew-module-actions">
+            <span id="enterprise-equipment-mode" class="fxew-module-meta">Lecture seule</span>
+            <button id="enterprise-equipment-create" class="fxew-button fxew-button--primary" type="button" hidden>Nouvel équipement</button>
+          </div>
+        </div>
+        <div id="enterprise-equipment-state" class="fxew-report-state" role="status" aria-live="polite">
+          <span class="fxew-data-spinner" aria-hidden="true"></span>
+          <span id="enterprise-equipment-message">Chargement du parc d’équipements…</span>
+          <button id="enterprise-equipment-retry" class="fxew-button" type="button" hidden>Réessayer</button>
+        </div>
+        <div id="enterprise-equipment-summary" class="fxew-kpi-grid"></div>
+        <div id="enterprise-equipment-list" class="fxew-equipment-grid" aria-live="polite"></div>
+        <p id="enterprise-equipment-empty" class="fxew-empty" hidden>Aucun équipement enregistré.</p>
       </section>
 
       <section class="fxew-module fxew-reporting" aria-labelledby="reporting-title">
@@ -289,6 +309,89 @@
         <p id="enterprise-interventions-empty" class="fxew-empty" hidden>Aucune intervention visible pour les sites auxquels vous avez accès.</p>
       </section>
     </section>
+
+    <div id="enterprise-equipment-dialog" class="fxew-dialog-backdrop" hidden>
+      <section class="fxew-dialog" role="dialog" aria-modal="true" aria-labelledby="enterprise-equipment-dialog-title">
+        <div class="fxew-dialog-head">
+          <div><p class="fxew-module-kicker">Parc d’équipements</p><h2 id="enterprise-equipment-dialog-title">Nouvel équipement</h2></div>
+          <button id="enterprise-equipment-close" class="fxew-dialog-close" type="button" aria-label="Fermer">×</button>
+        </div>
+        <form id="enterprise-equipment-form" class="fxew-form">
+          <input id="enterprise-equipment-id" type="hidden">
+          <label>Site<select id="enterprise-equipment-site" required></select></label>
+          <label>Nom<input id="enterprise-equipment-name" maxlength="200" required placeholder="Ex. Groupe froid cuisine"></label>
+          <label>Catégorie<input id="enterprise-equipment-category" maxlength="160" required placeholder="Ex. climatisation"></label>
+          <label>Code équipement<input id="enterprise-equipment-code" maxlength="100" placeholder="Optionnel"></label>
+          <label>Fabricant<input id="enterprise-equipment-manufacturer" maxlength="160" placeholder="Optionnel"></label>
+          <label>Modèle<input id="enterprise-equipment-model" maxlength="160" placeholder="Optionnel"></label>
+          <label>N° de série<input id="enterprise-equipment-serial" maxlength="160" placeholder="Optionnel"></label>
+          <label>Date d’installation<input id="enterprise-equipment-installed" type="date"></label>
+          <label>Criticité
+            <select id="enterprise-equipment-criticality">
+              <option value="low">Faible</option><option value="medium" selected>Moyenne</option>
+              <option value="high">Haute</option><option value="critical">Critique</option>
+            </select>
+          </label>
+          <label>Statut
+            <select id="enterprise-equipment-status">
+              <option value="active">Actif</option><option value="out_of_service">Hors service</option><option value="retired">Retiré</option>
+            </select>
+          </label>
+          <label>Notes<textarea id="enterprise-equipment-notes" rows="4" maxlength="2000"></textarea></label>
+          <p id="enterprise-equipment-error" class="fxew-form-error" role="alert" hidden></p>
+          <div class="fxew-dialog-actions">
+            <button id="enterprise-equipment-cancel" class="fxew-button" type="button">Annuler</button>
+            <button id="enterprise-equipment-submit" class="fxew-button fxew-button--primary" type="submit">Enregistrer</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div id="enterprise-equipment-detail-dialog" class="fxew-dialog-backdrop" hidden>
+      <section class="fxew-dialog fxew-dialog--detail" role="dialog" aria-modal="true" aria-labelledby="enterprise-equipment-detail-title">
+        <div class="fxew-dialog-head">
+          <div><p class="fxew-module-kicker">Fiche équipement</p><h2 id="enterprise-equipment-detail-title">Historique & maintenance</h2></div>
+          <button id="enterprise-equipment-detail-close" class="fxew-dialog-close" type="button" aria-label="Fermer">×</button>
+        </div>
+        <div id="enterprise-equipment-detail" class="fxew-detail"></div>
+
+        <section class="fxew-equipment-link-box">
+          <h3>Lier une intervention</h3>
+          <div class="fxew-inline-control">
+            <select id="enterprise-equipment-request-select"></select>
+            <button id="enterprise-equipment-request-link" class="fxew-button" type="button">Lier</button>
+          </div>
+        </section>
+
+        <section class="fxew-equipment-link-box">
+          <h3>Lier un plan préventif</h3>
+          <div class="fxew-inline-control">
+            <select id="enterprise-equipment-plan-select"></select>
+            <button id="enterprise-equipment-plan-link" class="fxew-button" type="button">Lier</button>
+          </div>
+        </section>
+
+        <section class="fxew-equipment-link-box">
+          <h3>Ajouter une photo ou un document privé</h3>
+          <div class="fxew-form">
+            <label>Type
+              <select id="enterprise-equipment-asset-type">
+                <option value="photo">Photo</option><option value="document">Document</option><option value="manual">Manuel</option>
+                <option value="warranty">Garantie</option><option value="invoice">Facture</option><option value="other">Autre</option>
+              </select>
+            </label>
+            <label>Titre<input id="enterprise-equipment-asset-title" maxlength="200" placeholder="Ex. Plaque signalétique"></label>
+            <label>Fichier<input id="enterprise-equipment-asset-file" type="file" accept="image/jpeg,image/png,image/webp,application/pdf"></label>
+            <p id="enterprise-equipment-asset-error" class="fxew-form-error" role="alert" hidden></p>
+            <button id="enterprise-equipment-asset-upload" class="fxew-button fxew-button--primary" type="button">Ajouter</button>
+          </div>
+        </section>
+
+        <div class="fxew-dialog-actions">
+          <button id="enterprise-equipment-detail-dismiss" class="fxew-button" type="button">Fermer</button>
+        </div>
+      </section>
+    </div>
 
     <div id="enterprise-maintenance-dialog" class="fxew-dialog-backdrop" hidden>
       <section class="fxew-dialog" role="dialog" aria-modal="true" aria-labelledby="enterprise-maintenance-dialog-title">
