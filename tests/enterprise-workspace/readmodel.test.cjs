@@ -45,13 +45,18 @@ test('B1 read model maps tenant sites, requests and latest mission without sensi
     missions:[
       {id:mid,request_id:rid,status:'pending',created_at:'2026-09-24T10:10:00Z',accepted_at:null},
       {id:'00000000-0000-4000-8000-000000000502',request_id:rid,status:'accepted',created_at:'2026-09-24T10:20:00Z',accepted_at:'2026-09-24T10:21:00Z'}
-    ]
+    ],
+    enterprise_request_sla:[{id:'00000000-0000-4000-8000-000000000701',service_request_id:rid,enterprise_id:eid,site_id:sid,
+      policy_id:null,policy_urgency:'high',request_urgency:'urgent',acceptance_target_minutes:30,
+      started_at:'2026-09-24T10:00:00Z',at_risk_at:'2026-09-24T10:22:30Z',due_at:'2026-09-24T10:30:00Z'}]
   });
   const out=await model.load(f.client,eid);
   assert.equal(out.sites.length,1);
   assert.equal(out.interventions.length,1);
   assert.equal(out.interventions[0].site_name,'Siège');
   assert.equal(out.interventions[0].mission_status,'accepted');
+  assert.equal(out.interventions[0].sla.acceptance_target_minutes,30);
+  assert.equal(out.interventions[0].sla.policy_source,'fixeo_default');
   const requestCall=f.calls.find(c=>c.table==='service_requests');
   assert.equal(requestCall.columns.includes('client_phone'),false);
   assert.equal(requestCall.columns.includes('guest_token_hash'),false);
@@ -65,6 +70,7 @@ test('B1 empty tenant returns empty arrays without request or mission reads',asy
   assert.deepEqual(out.interventions,[]);
   assert.equal(f.calls.some(c=>c.table==='service_requests'),false);
   assert.equal(f.calls.some(c=>c.table==='missions'),false);
+  assert.equal(f.calls.some(c=>c.table==='enterprise_request_sla'),false);
 });
 
 test('B1 applies enterprise_id filter to site and context reads',async()=>{
