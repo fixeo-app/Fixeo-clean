@@ -323,7 +323,15 @@
       'control_tower.escalation_created':'Escalade Control Tower créée',
       'control_tower.escalation_updated':'Escalade Control Tower modifiée',
       'maintenance.plan_created':'Plan de maintenance créé',
-      'maintenance.plan_updated':'Plan de maintenance modifié'
+      'maintenance.plan_updated':'Plan de maintenance modifié',
+      'equipment.created':'Équipement créé',
+      'equipment.updated':'Équipement modifié',
+      'equipment.request_linked':'Intervention liée à un équipement',
+      'equipment.request_unlinked':'Intervention retirée de l’équipement',
+      'equipment.maintenance_linked':'Plan préventif lié à un équipement',
+      'equipment.maintenance_unlinked':'Plan préventif retiré de l’équipement',
+      'equipment.asset_registered':'Média équipement ajouté',
+      'equipment.asset_removed':'Média équipement supprimé'
     });
     function canViewAudit() {
       return !!(win.FixeoEnterpriseAudit &&
