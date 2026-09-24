@@ -31,6 +31,12 @@ async function setup(t, options = {}, search = `?enterprise_id=${uuid(101)}`, mo
   w.FixeoEnterpriseRequestActions = mountOptions.requestActions || { canCreate: () => false };
   w.FixeoEnterpriseMemberActions = mountOptions.memberActions || { canManage: () => false };
   w.FixeoEnterpriseInvitationActions = mountOptions.invitationActions || { canManage: () => false };
+  w.FixeoEnterpriseAudit = mountOptions.audit || {
+    canView: role => role === 'owner' || role === 'admin',
+    listPage: async () => ({ status:'ok',events:[],returned_count:0,has_more:false,next_cursor:null }),
+    exportPeriod: async () => ({ status:'ok',events:[],returned_count:0,truncated:false }),
+    safeDetails: () => ({})
+  };
   w.FixeoEnterpriseReporting = mountOptions.reporting || { load: async () => ({
     operational: { request_count: 0, accepted_request_count: 0, acceptance_rate_percent: null,
       avg_first_acceptance_minutes: null, completed_mission_request_count: 0 },
@@ -142,7 +148,8 @@ test('U11 New page has isolated scripts, unique IDs, local links and no operatio
     'js/fixeo-enterprise-guard.js', 'js/fixeo-enterprise-readmodel.js',
     'js/fixeo-enterprise-site-actions.js', 'js/fixeo-enterprise-request-actions.js',
     'js/fixeo-enterprise-reporting.js', 'js/fixeo-enterprise-member-actions.js',
-    'js/fixeo-enterprise-invitation-actions.js', 'js/fixeo-enterprise-workspace.js']);
+    'js/fixeo-enterprise-invitation-actions.js', 'js/fixeo-enterprise-audit.js',
+    'js/fixeo-enterprise-workspace.js']);
   const ids = [...d.querySelectorAll('[id]')].map(n => n.id);
   assert.equal(ids.length, new Set(ids).size);
   assert.ok([...d.querySelectorAll('a')].every(a => ['index.html', '#main', 'auth.html'].includes(a.getAttribute('href'))));
@@ -337,4 +344,72 @@ test('U23 B7 creation surfaces one-time share link and states no email was sent'
   assert.equal(s.q('enterprise-invitation-created').hidden,false);
   assert.match(s.q('enterprise-invitation-link').value,/enterprise-invitation\.html\?token=/);
   assert.match(s.q('enterprise-invitation-created').textContent,/Aucun email automatique n’a été envoyé/);
+});
+
+test('U24 B8 audit is visible to owner and renders safe event labels', async t => {
+  const eventId=uuid(841), targetId=uuid(301), actorId=uuid(901);
+  const audit = {
+    canView: role => role === 'owner' || role === 'admin',
+    listPage: async () => ({status:'ok',events:[{
+      id:eventId,enterprise_id:uuid(101),actor_user_id:actorId,event_type:'site.updated',
+      target_type:'enterprise_site',target_id:targetId,
+      before_state:{status:'active',secret:'hidden'},
+      after_state:{status:'inactive',secret:'hidden'},
+      metadata:{site_id:targetId,raw_secret:'hidden'},
+      created_at:'2026-09-24T12:00:00Z'
+    }],returned_count:1,has_more:false,next_cursor:null}),
+    exportPeriod: async () => ({status:'ok',events:[],returned_count:0,truncated:false}),
+    safeDetails: event => ({
+      before_state:{status:event.before_state.status},
+      after_state:{status:event.after_state.status},
+      metadata:{site_id:event.metadata.site_id}
+    })
+  };
+  const s = await setup(t, {}, undefined, { audit });
+  await tick(); await tick();
+  assert.equal(s.q('enterprise-audit-module').hidden,false);
+  assert.match(s.q('enterprise-audit-list').textContent,/Site modifié/);
+  assert.equal(s.q('enterprise-audit-list').textContent.includes('hidden'),false);
+  assert.match(s.q('enterprise-audit-count').textContent,/1 événement/);
+});
+
+test('U25 B8 audit stays hidden for non-manager roles', async t => {
+  const audit = {
+    canView: () => false,
+    listPage: async () => { throw new Error('must not call'); },
+    exportPeriod: async () => { throw new Error('must not call'); },
+    safeDetails: () => ({})
+  };
+  const s = await setup(t, {
+    enterprise_members:[member(1,'viewer','active')]
+  }, undefined, { audit });
+  await tick(); await tick();
+  assert.equal(s.q('enterprise-audit-module').hidden,true);
+});
+
+test('U26 B8 pagination appends the next server page without replacing prior events', async t => {
+  let page=0;
+  const audit = {
+    canView: () => true,
+    listPage: async (_client,_eid,opts) => {
+      page++;
+      if(!opts.cursor) return {status:'ok',events:[{
+        id:uuid(851),actor_user_id:uuid(901),event_type:'site.created',
+        target_type:'enterprise_site',target_id:uuid(301),created_at:'2026-09-24T12:00:00Z'
+      }],returned_count:1,has_more:true,next_cursor:{created_at:'2026-09-24T12:00:00Z',id:uuid(851)}};
+      return {status:'ok',events:[{
+        id:uuid(852),actor_user_id:uuid(902),event_type:'request.created',
+        target_type:'service_request',target_id:uuid(401),created_at:'2026-09-23T12:00:00Z'
+      }],returned_count:1,has_more:false,next_cursor:null};
+    },
+    exportPeriod: async () => ({status:'ok',events:[],returned_count:0,truncated:false}),
+    safeDetails: () => ({})
+  };
+  const s = await setup(t, {}, undefined, { audit });
+  await tick(); await tick();
+  assert.equal(s.q('enterprise-audit-list').children.length,1);
+  s.q('enterprise-audit-more').click();
+  await tick(); await tick();
+  assert.equal(s.q('enterprise-audit-list').children.length,2);
+  assert.equal(page,2);
 });
