@@ -81,17 +81,60 @@ async function optional(call){
   }
 }
 
+function compactContext(raw){
+  function arr(v,n){return Array.isArray(v)?v.slice(0,n):[];}
+  const context={
+    control_tower:raw.control_tower?{
+      summary:raw.control_tower.summary||{},
+      attention:arr(raw.control_tower.attention,60),
+      site_load:arr(raw.control_tower.site_load,50),
+      worker_load:arr(raw.control_tower.worker_load,50)
+    }:null,
+    maintenance:raw.maintenance?{
+      summary:raw.maintenance.summary||{},
+      plans:arr(raw.maintenance.plans,60),
+      runs:arr(raw.maintenance.runs,40)
+    }:null,
+    equipment:raw.equipment?{
+      summary:raw.equipment.summary||{},
+      equipment:arr(raw.equipment.equipment,100)
+    }:null,
+    finance:raw.finance?{
+      summary:raw.finance.summary||{},
+      rows:arr(raw.finance.rows,100),
+      cost_centers:arr(raw.finance.cost_centers,80),
+      budgets:arr(raw.finance.budgets,80),
+      purchase_orders:arr(raw.finance.purchase_orders,80),
+      worker_rates:arr(raw.finance.worker_rates,50)
+    }:null,
+    governance:raw.governance?{
+      role:raw.governance.role||'',
+      pending_for_me:Number(raw.governance.pending_for_me)||0,
+      policies:arr(raw.governance.policies,50),
+      cases:arr(raw.governance.cases,80)
+    }:null
+  };
+  if(Buffer.byteLength(JSON.stringify(context))>220000){
+    if(context.control_tower){context.control_tower.attention=context.control_tower.attention.slice(0,25);context.control_tower.worker_load=context.control_tower.worker_load.slice(0,25);}
+    if(context.maintenance){context.maintenance.plans=context.maintenance.plans.slice(0,25);context.maintenance.runs=context.maintenance.runs.slice(0,20);}
+    if(context.equipment)context.equipment.equipment=context.equipment.equipment.slice(0,40);
+    if(context.finance){context.finance.rows=context.finance.rows.slice(0,40);context.finance.cost_centers=context.finance.cost_centers.slice(0,30);context.finance.budgets=context.finance.budgets.slice(0,30);context.finance.purchase_orders=context.finance.purchase_orders.slice(0,30);}
+    if(context.governance){context.governance.policies=context.governance.policies.slice(0,20);context.governance.cases=context.governance.cases.slice(0,30);}
+  }
+  return context;
+}
+
 async function enterpriseContext(supa,enterpriseId){
   const [control,maintenance,equipment,finance,governance]=await Promise.all([
-    optional(()=>supa.rpc('get_enterprise_control_tower_v1',{p_enterprise_id:enterpriseId,p_limit:100})),
-    optional(()=>supa.rpc('get_enterprise_preventive_maintenance_v1',{p_enterprise_id:enterpriseId,p_history_limit:100})),
+    optional(()=>supa.rpc('get_enterprise_control_tower_v1',{p_enterprise_id:enterpriseId,p_limit:80})),
+    optional(()=>supa.rpc('get_enterprise_preventive_maintenance_v1',{p_enterprise_id:enterpriseId,p_history_limit:80})),
     optional(()=>supa.rpc('get_enterprise_equipment_fleet_v1',{p_enterprise_id:enterpriseId})),
-    optional(()=>supa.rpc('get_enterprise_finance_v1',{p_enterprise_id:enterpriseId,p_from:null,p_to:null,p_limit:500})),
+    optional(()=>supa.rpc('get_enterprise_finance_v1',{p_enterprise_id:enterpriseId,p_from:null,p_to:null,p_limit:200})),
     optional(()=>supa.rpc('get_enterprise_governance_v1',{p_enterprise_id:enterpriseId})),
   ]);
   if(!control && !maintenance && !equipment && !finance && !governance)
     throw new RafiEnterpriseError('FORBIDDEN',403);
-  return {control_tower:control,maintenance,equipment,finance,governance};
+  return compactContext({control_tower:control,maintenance,equipment,finance,governance});
 }
 
 const schema={
@@ -203,11 +246,11 @@ function createHandler({env=process.env,logger=console}={}){
       const token=bearer(req);
       const input=validateBody(req);
       const supa=supabaseClient(env,token);
-      const user=await supa.user();
+      await supa.user();
       const context=await enterpriseContext(supa,input.enterpriseId);
       const output=await callOpenAI(env,input.question,input.history,context,req.file||null);
       logger.info?.(JSON.stringify({
-        event:'enterprise_rafi_complete',user_id:user.id,enterprise_id:input.enterpriseId,
+        event:'enterprise_rafi_complete',enterprise_id:input.enterpriseId,
         image:!!req.file,latency_ms:Date.now()-started,model:output.model
       }));
       return send(res,200,{ok:true,...output.result,meta:{model:output.model,generated_at:new Date().toISOString()}});
