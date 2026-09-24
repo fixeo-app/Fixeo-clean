@@ -123,13 +123,13 @@ ALTER TABLE public.enterprise_approval_policy_steps ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.enterprise_approval_cases ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.enterprise_approval_decisions ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY eap_members_select ON public.enterprise_approval_policies
+CREATE POLICY eap_managers_select ON public.enterprise_approval_policies
 FOR SELECT TO authenticated
-USING(fixeo_private._fixeo_is_enterprise_member(enterprise_id));
+USING(fixeo_private._fixeo_is_enterprise_manager(enterprise_id));
 
-CREATE POLICY eaps_members_select ON public.enterprise_approval_policy_steps
+CREATE POLICY eaps_managers_select ON public.enterprise_approval_policy_steps
 FOR SELECT TO authenticated
-USING(fixeo_private._fixeo_is_enterprise_member(enterprise_id));
+USING(fixeo_private._fixeo_is_enterprise_manager(enterprise_id));
 
 CREATE POLICY eac_members_select ON public.enterprise_approval_cases
 FOR SELECT TO authenticated
@@ -184,6 +184,21 @@ BEGIN
   IF p_status NOT IN ('active','inactive') THEN RETURN jsonb_build_object('ok',false,'reason','invalid_status'); END IF;
   IF p_steps IS NULL OR jsonb_typeof(p_steps)<>'array' OR jsonb_array_length(p_steps)<1 OR jsonb_array_length(p_steps)>10 THEN RETURN jsonb_build_object('ok',false,'reason','invalid_steps'); END IF;
 
+  v_count:=0;
+  FOR v_item IN SELECT value FROM jsonb_array_elements(p_steps)
+  LOOP
+    v_count:=v_count+1;
+    BEGIN
+      v_order:=COALESCE((v_item->>'step_order')::integer,v_count);
+    EXCEPTION WHEN OTHERS THEN
+      RETURN jsonb_build_object('ok',false,'reason','invalid_step_order');
+    END;
+    v_role:=v_item->>'approver_role';
+    IF v_order<>v_count OR v_role NOT IN ('owner','admin','operations_manager','site_manager') THEN
+      RETURN jsonb_build_object('ok',false,'reason','invalid_step');
+    END IF;
+  END LOOP;
+
   IF p_policy_id IS NULL THEN
     INSERT INTO public.enterprise_approval_policies(
       enterprise_id,name,site_id,service_category,urgency,requester_role,min_amount,max_amount,priority,status,created_by,updated_by
@@ -203,18 +218,12 @@ BEGIN
     v_event:='governance.policy_updated';
   END IF;
 
+  v_count:=0;
   FOR v_item IN SELECT value FROM jsonb_array_elements(p_steps)
   LOOP
     v_count:=v_count+1;
-    BEGIN
-      v_order:=COALESCE((v_item->>'step_order')::integer,v_count);
-    EXCEPTION WHEN OTHERS THEN
-      RETURN jsonb_build_object('ok',false,'reason','invalid_step_order');
-    END;
+    v_order:=v_count;
     v_role:=v_item->>'approver_role';
-    IF v_order NOT BETWEEN 1 AND 10 OR v_role NOT IN ('owner','admin','operations_manager','site_manager') THEN
-      RETURN jsonb_build_object('ok',false,'reason','invalid_step');
-    END IF;
     INSERT INTO public.enterprise_approval_policy_steps(enterprise_id,policy_id,step_order,approver_role)
     VALUES(p_enterprise_id,v_id,v_order,v_role);
   END LOOP;
@@ -401,15 +410,19 @@ BEGIN
   WHERE em.enterprise_id=p_enterprise_id AND em.user_id=auth.uid() AND em.status='active';
   IF NOT FOUND THEN RAISE EXCEPTION 'forbidden'; END IF;
 
-  SELECT COALESCE(jsonb_agg(jsonb_build_object(
-    'id',p.id,'name',p.name,'site_id',p.site_id,'service_category',p.service_category,'urgency',p.urgency,
-    'requester_role',p.requester_role,'min_amount',p.min_amount,'max_amount',p.max_amount,'priority',p.priority,'status',p.status,
-    'steps',COALESCE((SELECT jsonb_agg(jsonb_build_object('step_order',s.step_order,'approver_role',s.approver_role) ORDER BY s.step_order)
-      FROM public.enterprise_approval_policy_steps s WHERE s.policy_id=p.id),'[]'::jsonb)
-  ) ORDER BY p.priority,p.created_at),'[]'::jsonb)
-  INTO v_policies
-  FROM public.enterprise_approval_policies p
-  WHERE p.enterprise_id=p_enterprise_id;
+  IF v_role IN ('owner','admin') THEN
+    SELECT COALESCE(jsonb_agg(jsonb_build_object(
+      'id',p.id,'name',p.name,'site_id',p.site_id,'service_category',p.service_category,'urgency',p.urgency,
+      'requester_role',p.requester_role,'min_amount',p.min_amount,'max_amount',p.max_amount,'priority',p.priority,'status',p.status,
+      'steps',COALESCE((SELECT jsonb_agg(jsonb_build_object('step_order',s.step_order,'approver_role',s.approver_role) ORDER BY s.step_order)
+        FROM public.enterprise_approval_policy_steps s WHERE s.policy_id=p.id),'[]'::jsonb)
+    ) ORDER BY p.priority,p.created_at),'[]'::jsonb)
+    INTO v_policies
+    FROM public.enterprise_approval_policies p
+    WHERE p.enterprise_id=p_enterprise_id;
+  ELSE
+    v_policies:='[]'::jsonb;
+  END IF;
 
   SELECT COALESCE(jsonb_agg(jsonb_build_object(
     'id',c.id,'site_id',c.site_id,'policy_id',c.policy_id,'requested_by',c.requested_by,'requester_role',c.requester_role,
