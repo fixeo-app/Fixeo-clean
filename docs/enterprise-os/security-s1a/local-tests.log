@@ -1,0 +1,30 @@
+▶ S1A exact authorized patch on isolated PostgreSQL 17
+  ✔ G01 drift guard refuses a changed anon policy (32.114982ms)
+  ✔ G02 viewer assignment is reproducible before S1A (31.82084ms)
+  ✔ A01 actual guest bridge emits four columns and INSERT succeeds (14.044066ms)
+  ✔ A02 guest status other than new is denied by RLS (2.758702ms)
+  ✔ A03 guest client_profile_id write is denied (2.336597ms)
+  ✔ A04 guest financial field is denied by column privilege (2.625962ms)
+  ✔ A05 guest SELECT sees no rows (11.54901ms)
+  ✔ A06 guest UPDATE affects no rows (10.407263ms)
+  ✔ A07 guest DELETE affects no rows (10.401314ms)
+  ✔ A08 authenticated personal request INSERT succeeds (11.283943ms)
+  ✔ A09 Enterprise RPC creates request, ERC, SLA and audit (14.528445ms)
+  ✔ A10 Enterprise viewer can read but cannot assign new request (23.426176ms)
+  ✔ A11 linked artisan owner retains UPDATE (16.435885ms)
+  ✔ A12 same phone without artisan ownership cannot UPDATE (26.095472ms)
+  ✔ A13 canonical Artisan acceptance RPC succeeds (14.062894ms)
+  ✔ A14 guest INSERT still triggers unchanged historical dispatch locally (16.79139ms)
+  ✔ A15 P0 canonical role authority is preserved (7.042539ms)
+  ✔ A16 S0 ACLs, functions, triggers, constraints and other tables preserved (27.583452ms)
+  ✔ A17 DDL changes no business rows; all scenario writes remain local (14.782397ms)
+  ✔ G03 reapply is blocked atomically (25.576151ms)
+✔ S1A exact authorized patch on isolated PostgreSQL 17 (1628.983101ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1753.641992

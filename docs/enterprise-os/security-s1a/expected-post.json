@@ -1,0 +1,14 @@
+{
+  "roles": "d31d75f5a6351088c9f7332a1d20cc6d",
+  "table": "88ae00956afbe43734916c0ad0d7c4f2",
+  "columns": "ad813ed6e8d4fa4343ed7744a16a3a20",
+  "indexes": "025a1f7171a9ace4eac8ab21c055f1ee",
+  "policies": "c8bf9bef1a542f220405995848d95d7c",
+  "triggers": "22372421c7e3155bc217a71b31a110d9",
+  "table_acl": "256e15d5bb98169a47bd9446c86f8012",
+  "column_acl": "94912e9c608a33c7b688477ab65564ca",
+  "constraints": "0ea55a572f8abae879fc6f57749033df",
+  "memberships": "d751713988987e9331980363e24189ce",
+  "effective_table": "f4aee00edc65e07b1596583b69957311",
+  "effective_columns": "2e0a16dc3c5782506e67c6a55aa4ea4a"
+}

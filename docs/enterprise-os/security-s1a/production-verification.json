@@ -1,0 +1,26 @@
+{
+  "checks": {
+    "preflight_12": "PASS",
+    "postflight_12": "PASS",
+    "exact_patch_and_migration": "PASS",
+    "anon_table_insert_false": "PASS",
+    "anon_four_column_insert_only": "PASS",
+    "guest_defaults": "PASS",
+    "canonical_anon_policy": "PASS",
+    "anon_select_update_delete_blocked_by_rls": "PASS",
+    "assignment_policy_removed": "PASS",
+    "artisan_owner_and_linked_mission_preserved_without_phone": "PASS",
+    "only_authorized_catalogue_delta": "PASS",
+    "all_134_function_definitions_security_and_acl_identical": "PASS",
+    "default_acl_identical": "PASS",
+    "enterprise_and_artisan_rpcs_preserved": "PASS",
+    "service_role_postgres_and_authenticated_table_privileges_preserved": "PASS",
+    "triggers_constraints_identical": "PASS",
+    "s0_five_functions_52_privileges_nine_tables": "PASS",
+    "p0_catalogue_preserved": "PASS",
+    "rollback_reference_is_blocked_not_executed": "PASS"
+  },
+  "passed": 19,
+  "failed": 0,
+  "production_business_writes_performed": false
+}

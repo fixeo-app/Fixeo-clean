@@ -1,0 +1,80 @@
+[
+  {
+    "check_name": "ALL_CHECKS",
+    "expected_md5": null,
+    "actual_md5": null,
+    "pass": true
+  },
+  {
+    "check_name": "column_acl",
+    "expected_md5": "d751713988987e9331980363e24189ce",
+    "actual_md5": "d751713988987e9331980363e24189ce",
+    "pass": true
+  },
+  {
+    "check_name": "columns",
+    "expected_md5": "ad813ed6e8d4fa4343ed7744a16a3a20",
+    "actual_md5": "ad813ed6e8d4fa4343ed7744a16a3a20",
+    "pass": true
+  },
+  {
+    "check_name": "constraints",
+    "expected_md5": "0ea55a572f8abae879fc6f57749033df",
+    "actual_md5": "0ea55a572f8abae879fc6f57749033df",
+    "pass": true
+  },
+  {
+    "check_name": "effective_columns",
+    "expected_md5": "327aa3822d6ec2638e5ca6605f1f03ab",
+    "actual_md5": "327aa3822d6ec2638e5ca6605f1f03ab",
+    "pass": true
+  },
+  {
+    "check_name": "effective_table",
+    "expected_md5": "30df084b981f5fb8703b5190838bdc62",
+    "actual_md5": "30df084b981f5fb8703b5190838bdc62",
+    "pass": true
+  },
+  {
+    "check_name": "indexes",
+    "expected_md5": "025a1f7171a9ace4eac8ab21c055f1ee",
+    "actual_md5": "025a1f7171a9ace4eac8ab21c055f1ee",
+    "pass": true
+  },
+  {
+    "check_name": "memberships",
+    "expected_md5": "d751713988987e9331980363e24189ce",
+    "actual_md5": "d751713988987e9331980363e24189ce",
+    "pass": true
+  },
+  {
+    "check_name": "policies",
+    "expected_md5": "73a13708f3bf2289dfbed5d5a69a92e3",
+    "actual_md5": "73a13708f3bf2289dfbed5d5a69a92e3",
+    "pass": true
+  },
+  {
+    "check_name": "roles",
+    "expected_md5": "d31d75f5a6351088c9f7332a1d20cc6d",
+    "actual_md5": "d31d75f5a6351088c9f7332a1d20cc6d",
+    "pass": true
+  },
+  {
+    "check_name": "table",
+    "expected_md5": "88ae00956afbe43734916c0ad0d7c4f2",
+    "actual_md5": "88ae00956afbe43734916c0ad0d7c4f2",
+    "pass": true
+  },
+  {
+    "check_name": "table_acl",
+    "expected_md5": "910be19a2013b4c937520b41c9e43230",
+    "actual_md5": "910be19a2013b4c937520b41c9e43230",
+    "pass": true
+  },
+  {
+    "check_name": "triggers",
+    "expected_md5": "22372421c7e3155bc217a71b31a110d9",
+    "actual_md5": "22372421c7e3155bc217a71b31a110d9",
+    "pass": true
+  }
+]

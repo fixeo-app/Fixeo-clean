@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "project": "ztwtbgoqanqzvwiibtuh",
+  "name": "service_requests_safe_hardening_s1a",
+  "version": "20260924044646",
+  "sha256": "7e998abb17c31ccc587715c81fa9ecad803cff7e8cb6f2cccd31db83f3322844",
+  "authorization": "Explicit user authorization in this conversation; frozen SQL unchanged",
+  "baseline_main": "9fc7542c84a554f1c604e045322a374122f7daf0",
+  "baseline_production": "9fc7542c84a554f1c604e045322a374122f7daf0",
+  "baseline_vercel": "READY",
+  "reapply_performed": false,
+  "business_data_modified_by_this_operation": false,
+  "rollback_executed": false
+}
