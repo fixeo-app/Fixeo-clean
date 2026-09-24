@@ -365,9 +365,13 @@ AS $function$
 $function$;
 
 REVOKE ALL ON FUNCTION fixeo_private._fixeo_is_enterprise_workforce_self(uuid)
-  FROM PUBLIC,anon,authenticated;
+  FROM PUBLIC,anon;
 REVOKE ALL ON FUNCTION fixeo_private._fixeo_is_enterprise_dispatch_operator(uuid)
-  FROM PUBLIC,anon,authenticated;
+  FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION fixeo_private._fixeo_is_enterprise_workforce_self(uuid)
+  TO authenticated,service_role;
+GRANT EXECUTE ON FUNCTION fixeo_private._fixeo_is_enterprise_dispatch_operator(uuid)
+  TO authenticated,service_role;
 
 CREATE POLICY eww_members_select
 ON public.enterprise_workforce_workers
