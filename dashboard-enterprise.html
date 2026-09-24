@@ -795,6 +795,10 @@
               <option value="now">Immédiate</option>
             </select>
           </label>
+          <label>Montant soumis à approbation (MAD)
+            <input id="enterprise-request-approval-amount" type="number" min="0" step="0.01" placeholder="Optionnel">
+            <small>Utilisé uniquement pour les règles de gouvernance. Ce n’est pas une estimation de prix.</small>
+          </label>
           <p id="enterprise-request-form-error" class="fxew-form-error" role="alert" hidden></p>
           <div class="fxew-dialog-actions">
             <button id="enterprise-request-cancel" class="fxew-button" type="button">Annuler</button>
