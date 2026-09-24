@@ -14,6 +14,8 @@
   var PROTECTED = [
   'admin.html',
   'dashboard-client.html',
+  'dashboard-client-v1.html',
+  'dashboard-client-v2.html',
   'dashboard-artisan.html',
   'dashboard-artisan-v2.html',
   'onboarding-artisan.html'
@@ -28,6 +30,40 @@
     return ['admin', 'artisan', 'client'].indexOf(role) !== -1
       ? role
       : '';
+  }
+
+  var workspaceEntryLoader = null;
+
+  function loadWorkspaceEntry() {
+    if (window.FixeoWorkspaceEntry) return Promise.resolve(window.FixeoWorkspaceEntry);
+    if (workspaceEntryLoader) return workspaceEntryLoader;
+
+    workspaceEntryLoader = new Promise(function (resolve, reject) {
+      var script = document.createElement('script');
+      script.src = '/js/fixeo-workspace-entry.js?v=2c2-1';
+      script.async = true;
+      script.onload = function () {
+        if (window.FixeoWorkspaceEntry) resolve(window.FixeoWorkspaceEntry);
+        else reject(new Error('WORKSPACE_ENTRY_UNAVAILABLE'));
+      };
+      script.onerror = function () { reject(new Error('WORKSPACE_ENTRY_LOAD_FAILED')); };
+      document.head.appendChild(script);
+    });
+
+    return workspaceEntryLoader;
+  }
+
+  async function replaceWorkspaceAware(fallbackHref) {
+    try {
+      var api = await loadWorkspaceEntry();
+      if (!api || typeof api.resolveDestination !== 'function') {
+        throw new Error('WORKSPACE_ENTRY_INVALID');
+      }
+      var destination = await api.resolveDestination(fallbackHref);
+      window.location.replace(destination);
+    } catch (_) {
+      window.location.replace(fallbackHref);
+    }
   }
 
   function clearLocalIdentity() {
@@ -215,21 +251,30 @@ if (page === 'onboarding-artisan.html') {
 }
       }
 
-      /* 4. V1 artisan URL always upgrades to V2 */
+      /* 4. Legacy dashboard URLs converge on canonical destinations. */
       if (page === 'dashboard-artisan.html') {
-        window.location.replace(
-          canonicalRole === 'artisan'
-            ? 'dashboard-artisan-v2.html'
-            : ROLE_HOME[canonicalRole]
-        );
+        if (canonicalRole === 'artisan') {
+          window.location.replace('dashboard-artisan-v2.html');
+        } else {
+          await replaceWorkspaceAware(ROLE_HOME[canonicalRole]);
+        }
         return;
       }
 
-      /* 5. Every authenticated role has exactly ONE canonical dashboard */
+      if (page === 'dashboard-client-v1.html' || page === 'dashboard-client-v2.html') {
+        if (canonicalRole === 'client') {
+          window.location.replace('dashboard-client.html');
+        } else {
+          await replaceWorkspaceAware(ROLE_HOME[canonicalRole]);
+        }
+        return;
+      }
+
+      /* 5. Correct global dashboard stays direct; mismatches resolve available spaces. */
       var expectedPage = ROLE_HOME[canonicalRole];
 
       if (page !== expectedPage) {
-        window.location.replace(expectedPage);
+        await replaceWorkspaceAware(expectedPage);
         return;
       }
 
