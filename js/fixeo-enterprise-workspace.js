@@ -74,6 +74,7 @@
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
     var client = null, subscription = null, generation = 0, stopped = false, logoutPending = false;
+    var workforceUi = null;
     var logoutFailed = false, logoutProof = null;
 
     function clear() {
@@ -1123,6 +1124,7 @@
         if (run !== generation || stopped || doc.hidden || currentEnterpriseId !== enterpriseId) return;
         renderSites(model.sites || []);
         renderSlaPolicies(model.sla_policies || []);
+        if (workforceUi && typeof workforceUi.render === 'function') workforceUi.render(model);
         renderInvitations(model.invitations || []);
         renderTeam(model.members || []);
         renderInterventions(model.interventions || []);
@@ -1286,9 +1288,20 @@
     doc.addEventListener('visibilitychange', visibility);
     win.addEventListener('pagehide', pageHide);
     win.addEventListener('pageshow', pageShow);
+    if (win.FixeoEnterpriseWorkforceUI && typeof win.FixeoEnterpriseWorkforceUI.mount === 'function') {
+      workforceUi = win.FixeoEnterpriseWorkforceUI.mount(win, {
+        getClient: function () { return client; },
+        getEnterpriseId: function () { return currentEnterpriseId; },
+        getRole: function () { return currentEnterpriseRole; },
+        refresh: function () {
+          return currentEnterpriseId ? loadOperational(currentEnterpriseId, generation) : Promise.resolve();
+        }
+      });
+    }
     refresh();
     return { refresh: refresh, destroy: function () {
       stopped = true; clear();
+      if (workforceUi && typeof workforceUi.destroy === 'function') workforceUi.destroy();
       if (subscription) subscription.unsubscribe();
       retry.removeEventListener('click', refresh); logout.removeEventListener('click', signOut);
       siteClose.removeEventListener('click', closeSiteDialog); siteCancel.removeEventListener('click', closeSiteDialog);
