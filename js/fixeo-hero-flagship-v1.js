@@ -363,11 +363,11 @@
           ? 2
           : 3;
     content.innerHTML =
-      '<header class="fxhf-heading"><div class="fxhf-eyebrow"><span class="fxhf-presence" aria-hidden="true"></span>RAFI · Assistant FIXEO</div><h2 class="fxhf-title" tabindex="-1">' +
+      '<header class="fxhf-heading"><div class="fxhf-heading-copy"><div class="fxhf-eyebrow"><span class="fxhf-presence" aria-hidden="true"></span>RAFI · Assistant FIXEO</div><h2 class="fxhf-title" tabindex="-1">' +
       esc(title) +
       "</h2>" +
       (subtitle ? '<p class="fxhf-subtitle">' + esc(subtitle) + "</p>" : "") +
-      '<ol class="fxhf-progress" aria-label="Votre parcours">' +
+      '</div><ol class="fxhf-progress" aria-label="Votre parcours">' +
       ["Votre besoin", "RAFI analyse", "Votre solution"]
         .map(function (label, i) {
           return (
@@ -777,11 +777,10 @@
             ["unknown", "Je ne sais pas"],
           ]
         : (
-            {
+            q.options || {
               onset: ["Aujourd’hui", "Quelques jours", "Plus longtemps"],
-              affected_area: ["Mur", "Plafond", "Sol", "Équipement"],
               occurrence: ["En continu", "Par moments", "À l’utilisation"],
-            }[q.id] || []
+            }[q.id] || ["À l’intérieur", "À l’extérieur", "Plusieurs endroits"]
           )
             .map(function (x) {
               return [x, x];
@@ -826,7 +825,14 @@
   }
   function summary() {
     var s = intake.session,
-      r = s.result;
+      r = s.result,
+      contextLabels = { onset: "Depuis", affected_area: "Zone", occurrence: "Fréquence" },
+      context = (r.facts || []).filter(function (fact) {
+        return contextLabels[fact.key] && fact.provenance === "user_declared" &&
+          typeof fact.value === "string" && fact.value && fact.value !== "unknown";
+      }).slice(0, 2).map(function (fact) {
+        return contextLabels[fact.key] + " : " + fact.value;
+      });
     return (
       '<dl class="fxhf-summary"><div class="fxhf-summary-trade"><dt>Métier recommandé</dt><dd>' +
       esc(trades[r.trade.value] || r.trade.value) +
@@ -834,17 +840,30 @@
       esc(cities[s.city_slug] || s.city_slug) +
       '</dd></div><div class="fxhf-summary-wide fxhf-summary-problem"><dt>Besoin · analyse indicative</dt><dd>' +
       esc(r.problem.value) +
-      '</dd></div><div class="fxhf-summary-wide fxhf-summary-priority"><dt>Priorité</dt><dd>' +
+      '</dd></div>' +
+      (context.length ? '<div class="fxhf-summary-wide"><dt>Contexte déclaré</dt><dd>' + esc(context.join(" · ")) + '</dd></div>' : '') +
+      '<div class="fxhf-summary-wide fxhf-summary-priority"><dt>Priorité</dt><dd>' +
       esc(priority()) +
       "</dd></div></dl>"
     );
   }
-  function safetyNotice() {
-    var safety = intake.session.result.safety;
-    if (!safety.stop && !(safety.messages || []).length) return "";
+  function safetyNotice(includeAdvice) {
+    var r = intake.session.result,
+      safety = r.safety,
+      messages = safety.messages || [];
+    // Only show advice supplied by the existing engine. Safety instructions
+    // always take precedence; hypotheses never become an asserted diagnosis.
+    if (includeAdvice && !safety.stop && !messages.length) {
+      messages = (r.checks || []).filter(function (message) {
+        return typeof message === "string" && message.trim() &&
+          message !== priority() && message !== r.urgency?.reason &&
+          !/intervention.*(?:recommand|rapide|professionnell)/i.test(message);
+      }).slice(0, 1);
+    }
+    if (!safety.stop && !messages.length) return "";
     return (
       '<section class="fxhf-caution" role="alert"><strong>Conseil immédiat</strong><ul>' +
-      (safety.messages || [])
+      messages
         .map(function (message) {
           return "<li>" + esc(message) + "</li>";
         })
@@ -868,7 +887,7 @@
     );
     if (critical) panel(safetyNotice());
     panel(summary());
-    if (!critical) panel(safetyNotice());
+    if (!critical) panel(safetyNotice(true));
     if (critical) {
       panel(
         '<label class="fxhf-consent"><input type="checkbox" id="fxhf-critical-ack"' +

@@ -599,7 +599,7 @@ test("Hero legal details, native controls and static mobile footer reserve safe-
 // Cascade contracts, not pixel/physical-keyboard verification: JSDOM has no
 // layout engine. Include the real RAFI OS sibling that isolated Hero tests missed.
 for (const width of [320, 360, 390, 412]) {
-  test(`Mobile NEED keeps its heading and natural photo flow at ${width}px, including keyboard recovery`, async (t) => {
+  test(`Mobile canonical shell and sphere stay invariant at ${width}px, including photo/keyboard recovery`, async (t) => {
     const s = setup(t, {
       configure(w) {
         const hero = w.document.createElement("section");
@@ -663,6 +663,21 @@ for (const width of [320, 360, 390, 412]) {
     assert.equal(computed('.fxhf-rafi-sphere').width, '60px', 'keep the existing decoration slot');
     assert.equal(computed('.fxhf-rafi-face').transform, 'translate(-50%, -50%)');
     assert.equal(computed('.fxhf-rafi-halo').animation, 'fxhf-rafi-atmosphere 6s ease-in-out infinite');
+    const sphere = doc.querySelector('.fxhf-visual');
+    const sphereMarkup = sphere.outerHTML;
+    const sphereStyles = () => ['.fxhf-visual', '.fxhf-rafi-sphere', '.fxhf-rafi-core', '.fxhf-rafi-face', '.fxhf-rafi-halo'].map(selector => {
+      const css = computed(selector);
+      return ['display', 'position', 'top', 'left', 'inset', 'width', 'height', 'maxWidth',
+        'transform', 'transformOrigin', 'gridArea', 'alignSelf', 'justifySelf', 'animation',
+        'filter', 'background', 'boxShadow', 'borderColor'].map(property => css[property]);
+    });
+    const canonicalSphere = sphereStyles();
+    assert.equal(computed('.fxhf-visual').transform, 'translate(-12px, 8px)', 'NEED anchor is the canon');
+    assert.equal(computed('.fxhf-heading-copy').paddingRight, '96px', 'text reserves the halo slot');
+    assert.equal(computed('.fxhf-heading-copy').minHeight, '9.5rem');
+    assert.equal(computed('.fxhf-heading-copy').overflowWrap, 'anywhere');
+    assert.equal(computed('.fxhf-scroll').minHeight, '10rem', 'bounded content floor, independent of viewport');
+    assert.equal(computed('.fxhf-heading').animation, 'none', 'header never translates during transitions');
     for (const filled of [false, true]) {
       if (filled) s.fill();
       assert.equal(computed(".fxhf-content").gridTemplateRows, "auto auto auto");
@@ -734,7 +749,7 @@ for (const width of [320, 360, 390, 412]) {
     assert.equal(computed(".fxhf-universal").minHeight, "0");
     assert.equal(computed(".fxhf-actions").position, "static");
     assert.equal(computed('.fxhf-subtitle').display, 'none', 'retain intentional keyboard compaction');
-    assert.equal(computed('.fxhf-visual').display, 'none');
+    assert.notEqual(computed('.fxhf-visual').display, 'none', 'canonical RAFI also remains during keyboard entry');
     assert.equal(computed('.fxhf-photos').display, 'flex');
     assert.ok(s.q("fxhf-root").contains(s.q("fxhf-submit")));
     assert.equal(doc.querySelector("#home").nextElementSibling.id, "fixeo-estimation-signature");
@@ -755,9 +770,8 @@ for (const width of [320, 360, 390, 412]) {
     assert.equal(computed(".fxhf-content").gridTemplateRows, "auto auto auto");
     assert.equal(computed("#home").minHeight, "0", "SAFETY follows its actual content");
     assert.equal(computed(".fxhf-universal").minHeight, "0");
-    assert.equal(computed('.fxhf-title').fontWeight, '600', 'NEED weight does not leak to SAFETY');
-    assert.ok(['', 'none'].includes(computed('.fxhf-rafi-sphere').transform), 'NEED orb reduction does not leak to SAFETY');
-    assert.equal(computed('.fxhf-title').textShadow, '', 'NEED title treatment must not leak to SAFETY');
+    assert.equal(computed('.fxhf-title').fontWeight, '700', 'shared header signature');
+    assert.deepEqual(sphereStyles(), canonicalSphere, 'SAFETY uses the exact NEED artwork');
     assert.equal(computed(".rfos-stage-wrap").display, "none", "legacy stays mounted but hidden after NEED");
     const band = doc.createElement('div');
     band.className = 'rfos-h1-band';
@@ -775,6 +789,12 @@ for (const width of [320, 360, 390, 412]) {
       assert.equal(computed('.rfos-stage-wrap').display, 'none', state);
       assert.equal(computed('.rfos-h1-band').display, 'none', state);
       assert.notEqual(computed('.fxhf-visual').display, 'none', state);
+      assert.equal(doc.querySelector('.fxhf-visual'), sphere, state + ': same DOM component');
+      assert.equal(sphere.outerHTML, sphereMarkup, state + ': identical classes and image');
+      assert.deepEqual(sphereStyles(), canonicalSphere, state + ': exact NEED CSS geometry/glow/animation');
+      assert.equal(computed('.fxhf-heading-copy').paddingRight, '96px', state);
+      assert.equal(computed('.fxhf-heading-copy').minHeight, '9.5rem', state);
+      assert.equal(computed('.fxhf-scroll').minHeight, '10rem', state);
     }
   });
 }
@@ -1248,4 +1268,112 @@ test('Result shows priority once, useful safety advice and the unchanged canonic
   assert.equal(s.q('fxhf-phone').value, '0611111111');
   s.q('fxhf-confirm').click(); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'matching');
   assert.equal(s.counts().confirmCount, 1);
+});
+
+for (const trade of ['plomberie', 'electricite', 'climatisation', 'maconnerie', 'autre']) {
+  test('Hero renders server-owned question options for ' + trade, async t => {
+    const {qualificationQuestions} = require('../api/diagnostic/question-routing');
+    const s = setup(t, {override(body, server) {
+      if (body.action !== 'analyze') return;
+      server.result = result();
+      server.result.trade.value = trade;
+      server.result.questions = qualificationQuestions(server.input,
+        {trade, problem: 'Nature à préciser', question_ids: ['affected_area']}, [], server.result.safety);
+      server.state = 'ready'; server.result_run_id = body.run_id;
+      return {session: clone(server)};
+    }});
+    s.fill(); s.change('fxhf-need-input', 'Un problème à préciser');
+    s.q('fxhf-submit').click(); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'safety');
+    s.click('RAFI comprend mon besoin'); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'questions');
+    const question = s.server().result.questions[0];
+    const labels = [...s.q('fxhf-panel').querySelectorAll('.fxhf-answer')].map(el => el.textContent);
+    assert.deepEqual(labels, [...question.options, 'Je ne sais pas']);
+    assert.match(s.q('fxhf-panel').textContent, /facultatif/);
+    s.click(labels[0]); await s.until(() => s.q('fxhf-entrust'));
+    assert.equal(s.server().input.answers.affected_area, labels[0]);
+    assert.equal(s.counts().createCount, 1);
+  });
+}
+test('Blocked door goes straight to a qualified result; only server advice/context are surfaced', async t => {
+  const {qualificationQuestions} = require('../api/diagnostic/question-routing');
+  const advice = 'Évitez de forcer la serrure si elle résiste.';
+  const s = setup(t, {override(body, server) {
+    if (body.action !== 'analyze') return;
+    server.result = result();
+    server.result.trade.value = 'serrurerie'; server.result.problem.value = 'Porte bloquée';
+    server.result.questions = qualificationQuestions(server.input, {
+      trade: 'serrurerie', problem: 'Porte bloquée', question_ids: ['affected_area', 'onset', 'occurrence'],
+    }, [], server.result.safety);
+    server.result.checks = ['Intervention professionnelle recommandée', advice];
+    server.result.hypotheses = [{value: 'Cylindre définitivement cassé', provenance: 'ai_inferred'}];
+    server.result.facts = [{key: 'observation_0', value: 'Cylindre cassé', provenance: 'ai_inferred'}];
+    server.state = 'ready'; server.result_run_id = body.run_id;
+    return {session: clone(server)};
+  }});
+  s.fill(); s.change('fxhf-need-input', 'Ma porte est bloquée'); await s.analyze();
+  const panel = s.q('fxhf-panel');
+  assert.equal(s.q('fxhf-root').dataset.fxhfState, 'result');
+  assert.equal(panel.querySelector('.fxhf-question'), null);
+  assert.doesNotMatch(panel.textContent, /Mur|Plafond|Sol|Équipement|Cylindre|Contexte déclaré/);
+  assert.match(panel.textContent, /Serrurier.*Rabat.*Porte bloquée/);
+  assert.equal(panel.querySelector('.fxhf-caution li').textContent, advice);
+  assert.equal((panel.textContent.match(/Intervention professionnelle recommandée/g) || []).length, 1);
+  assert.equal(s.q('fxhf-entrust').textContent, 'Confier cette intervention à FIXEO');
+});
+test('Missing engine advice adds no invented recommendation; declared context keeps its provenance', async t => {
+  const s = setup(t, {override(body, server) {
+    if (body.action !== 'analyze') return;
+    server.result = result();
+    server.result.facts = [
+      {key: 'affected_area', value: 'Unité extérieure', provenance: 'user_declared'},
+      {key: 'onset', value: 'unknown', provenance: 'user_declared'},
+      {key: 'occurrence', value: 'Toujours', provenance: 'ai_inferred'},
+    ];
+    server.state = 'ready'; server.result_run_id = body.run_id;
+    return {session: clone(server)};
+  }});
+  s.fill(); await s.analyze();
+  assert.equal(s.q('fxhf-panel').querySelector('.fxhf-caution'), null);
+  assert.match(s.q('fxhf-panel').textContent, /Contexte déclaréZone : Unité extérieure/);
+  assert.doesNotMatch(s.q('fxhf-panel').textContent, /unknown|Toujours|Évitez de forcer/);
+});
+test('One exact RAFI DOM survives NEED through questions, confirmation and every server lifecycle stage', async t => {
+  const {qualificationQuestions} = require('../api/diagnostic/question-routing');
+  let release, first = true, stage = 'registered';
+  const s = setup(t, {override: async (body, server) => {
+    if (body.action === 'intervention_status') return {progress: {stage, request_id: 'canonical'}};
+    if (body.action !== 'analyze') return;
+    if (first) { first = false; await new Promise(resolve => { release = resolve; }); }
+    server.result = result();
+    server.result.questions = qualificationQuestions(server.input, {
+      trade: 'autre', problem: 'À préciser', question_ids: ['onset', 'affected_area'],
+    }, [], server.result.safety);
+    server.state = 'ready'; server.result_run_id = body.run_id;
+    return {session: clone(server)};
+  }});
+  const sphere = s.q('fxhf-root').querySelector('.fxhf-visual'), markup = sphere.outerHTML;
+  const check = state => {
+    assert.equal(s.q('fxhf-root').dataset.fxhfState, state);
+    assert.equal(s.q('fxhf-root').querySelectorAll('.fxhf-visual').length, 1);
+    assert.equal(s.q('fxhf-root').querySelector('.fxhf-visual'), sphere);
+    assert.equal(sphere.outerHTML, markup, state);
+    assert.equal(s.q('fxhf-root').querySelector('.fxhf-heading-copy').nextElementSibling.className, 'fxhf-progress');
+  };
+  check('need'); s.fill(); s.change('fxhf-need-input', 'Un souci');
+  s.q('fxhf-submit').click(); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'safety'); check('safety');
+  s.click('RAFI comprend mon besoin'); await wait(() => release); check('analysis');
+  assert.equal(s.q('fxhf-analysis-back').disabled, false);
+  release(); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'questions'); check('questions');
+  s.click('Je ne sais pas'); await s.until(() => s.q('fxhf-panel').textContent.includes('Question 2')); check('questions');
+  s.click('Je ne sais pas'); await s.until(() => s.q('fxhf-entrust')); check('result');
+  s.q('fxhf-entrust').click(); await s.until(() => s.q('fxhf-phone')); check('confirmation');
+  s.change('fxhf-phone', '0600000000'); s.click('Retour'); await s.until(() => s.q('fxhf-entrust')); check('result');
+  s.q('fxhf-entrust').click(); await s.until(() => s.q('fxhf-phone')); check('confirmation');
+  assert.equal(s.q('fxhf-phone').value, '0600000000');
+  s.q('fxhf-confirm').click(); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'matching'); check('matching');
+  for (const [serverStage, ui] of [['dispatch_prepared', 'dispatching'], ['notification_sent', 'acceptance'], ['artisan_confirmed', 'mission']]) {
+    stage = serverStage; s.click('Actualiser le suivi');
+    await s.until(() => s.q('fxhf-root').dataset.fxhfState === ui); check(ui);
+  }
+  assert.equal(s.counts().createCount, 1); assert.equal(s.counts().confirmCount, 1);
 });

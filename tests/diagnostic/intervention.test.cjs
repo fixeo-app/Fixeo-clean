@@ -88,10 +88,10 @@ for (const [name, input, model, photos, expected] of [
     },
     questionModel,
     [],
-    ["occurrence"],
+    [],
   ],
   [
-    "maximum three questions across rounds",
+    "maximum two questions across rounds",
     {
       description: "",
       answers: {
@@ -136,6 +136,66 @@ test("critical routing never yields qualification questions", () =>
     qualificationQuestions({}, questionModel, [], { stop: true }),
     [],
   ));
+for (const [trade, options, hazard] of [
+  ["plomberie", ["Robinet / évier", "WC", "Douche / baignoire", "Canalisation"], "water_spreading"],
+  ["electricite", ["Prise / interrupteur", "Éclairage", "Tableau électrique", "Appareil"], "smoke_sparks"],
+  ["climatisation", ["Unité intérieure", "Unité extérieure", "Plusieurs unités"], null],
+  ["maconnerie", ["Mur", "Plafond", "Sol", "Façade"], "structure_moving"],
+  ["autre", ["À l’intérieur", "À l’extérieur", "Plusieurs endroits"], null],
+]) {
+  test(`area choices match ${trade}, never another trade's surfaces`, () => {
+    const input = { description: "À préciser", answers: {} };
+    const model = { ...questionModel, trade };
+    const questions = qualificationQuestions(input, model, [], { stop: false });
+    assert.deepEqual(questions.find(q => q.id === "affected_area").options, options);
+    assert(questions.every(q => q.optional));
+    assert(questions.length <= 2);
+    if (hazard) {
+      const description = trade === "plomberie" ? "Une fuite d’eau" : "Un problème à préciser";
+      assert.deepEqual(qualificationQuestions({ description, answers: {} },
+        { ...model, question_ids: [hazard] }, [], { stop: false }).map(q => q.id), [hazard]);
+    }
+  });
+}
+for (const [trade, description, question] of [
+  ["plomberie", "Une fuite", "onset"],
+  ["plomberie", "Sous mon lavabo", "affected_area"],
+  ["electricite", "Ma prise ne fonctionne plus", "affected_area"],
+  ["climatisation", "L’unité extérieure fait du bruit", "affected_area"],
+  ["maconnerie", "Une fissure sur mon mur", "affected_area"],
+  ["serrurerie", "Ma porte est bloquée", "affected_area"],
+  ["serrurerie", "Clé perdue", "occurrence"],
+]) {
+  test(`already-known ${trade} facts skip ${question}: ${description}`, () => {
+    assert.deepEqual(qualificationQuestions({ description, answers: {} },
+      { trade, problem: description, question_ids: [question] }, [], { stop: false }), []);
+  });
+}
+test("clear locksmith needs zero questions, including a short description", () => {
+  for (const description of ["Ma porte est bloquée", "Porte claquée", "Clé cassée", "J’ai perdu ma clé"]) {
+    assert.deepEqual(qualificationQuestions({ description, answers: {} }, {
+      trade: "serrurerie", problem: description,
+      question_ids: ["affected_area", "onset", "occurrence"],
+    }, [], { stop: false }), []);
+  }
+});
+test("two questions total, including optional/skipped answers over later rounds", () => {
+  const input = { description: "Un souci", answers: {} };
+  const first = qualificationQuestions(input, questionModel, [], { stop: false });
+  assert.equal(first.length, 2);
+  input.answers[first[0].id] = "unknown";
+  assert.equal(qualificationQuestions(input, questionModel, [], { stop: false }).length, 1);
+  input.answers[first[1].id] = "unknown";
+  assert.deepEqual(qualificationQuestions(input, questionModel, [], { stop: false }), []);
+});
+test("photo facts and the effective electrical risk trade control area routing", () => {
+  const model = { ...questionModel, trade: "climatisation", question_ids: ["affected_area"] };
+  assert.deepEqual(qualificationQuestions({ description: "Un problème", answers: {} }, model,
+    [{ status: "informative", observations: [{ text: "Unité extérieure visible" }] }], { stop: false }), []);
+  const [question] = qualificationQuestions({ description: "Un problème", answers: {} }, model,
+    [], { stop: false, signals: ["electrical_risk"] });
+  assert.deepEqual(question.options, ["Prise / interrupteur", "Éclairage", "Tableau électrique", "Appareil"]);
+});
 test("exact selected run, revision, completed state and current risk contract required", () => {
   const d = dossier();
   assert.equal(qualified(d, 1, d.run.id), d.run.result);
