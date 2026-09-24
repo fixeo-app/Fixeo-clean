@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="same-origin">
+  <title>Choisir un espace | FIXEO</title>
+  <link rel="icon" href="img/logo-fixeo-icon.png">
+  <link rel="stylesheet" href="css/fixeo-workspace-select.css?v=2c1-1">
+  <script defer src="js/supabase-client.js"></script>
+  <script defer src="js/fixeo-logout-global.js"></script>
+  <script defer src="js/fixeo-auth-resolver.js"></script>
+  <script defer src="js/fixeo-workspace-select.js?v=2c1-1"></script>
+</head>
+<body class="fxws">
+  <a class="fxws-skip" href="#main">Aller au contenu</a>
+  <header class="fxws-header">
+    <a href="index.html" class="fxws-brand" aria-label="FIXEO — accueil"><img src="img/logo-fixeo-header.png" alt="FIXEO" width="126" height="42"></a>
+    <span>Mes espaces</span>
+    <button id="workspace-logout" type="button">Se déconnecter</button>
+  </header>
+  <main id="main" class="fxws-main">
+    <section id="workspace-state" class="fxws-state" aria-live="polite">
+      <p class="fxws-eyebrow">FIXEO</p>
+      <h1 id="workspace-title">Ouverture de vos espaces</h1>
+      <p id="workspace-message">Vérification de vos accès en cours…</p>
+      <button id="workspace-retry" type="button" hidden>Réessayer</button>
+    </section>
+    <section id="workspace-content" hidden>
+      <p class="fxws-eyebrow">FIXEO · MES ESPACES</p>
+      <h1 id="workspace-heading" tabindex="-1">Où souhaitez-vous aller ?</h1>
+      <p class="fxws-lead">Choisissez votre espace personnel ou l’une de vos entreprises.</p>
+      <nav id="workspace-list" class="fxws-list" aria-label="Espaces disponibles"></nav>
+    </section>
+  </main>
+  <footer class="fxws-footer"><span>FIXEO</span><span>Un compte. Plusieurs espaces.</span></footer>
+</body>
+</html>

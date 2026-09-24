@@ -6,6 +6,8 @@
   <script src="js/fixeo-logout-global.js?v=v2c4a"></script>
   <script src="js/fixeo-repository.js?v=s1b-candidate"></script>
   <script src="js/fixeo-auth-supabase.js?v=wa1a"></script>
+  <script src="js/fixeo-auth-resolver.js?v=2a-1"></script>
+  <script src="js/fixeo-workspace-router.js?v=2c1-1"></script>
 
   <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
   <link rel="apple-touch-icon" href="img/favicon.png">
@@ -865,7 +867,15 @@ if (!['admin', 'artisan', 'client'].includes(role)) {
   const name      = (user && user.full_name) || (email.indexOf('@') > -1 && !(_fxPhone && _fxPhone.isSyntheticEmail(email)) ? email.split('@')[0] : rawId);
   const roleLabel = role === 'artisan' ? 'Artisan' : (role === 'admin' ? 'Admin' : 'Client');
   notifications.success('Bienvenue\u00A0' + name + '\u00A0!', '\u2705 Connexion r\u00E9ussie en tant que ' + roleLabel + '. Redirection\u2026');
-  setTimeout(() => { window.FixeoAuth.redirectByRole(role); }, 1200);
+  setTimeout(async () => {
+    try {
+      if (window.FixeoWorkspaceRouter && typeof window.FixeoWorkspaceRouter.redirectAfterLogin === 'function') {
+        await window.FixeoWorkspaceRouter.redirectAfterLogin(role);
+        return;
+      }
+    } catch (_) {}
+    window.FixeoAuth.redirectByRole(role);
+  }, 1200);
 }
 
 /* ─────────────────────────────────────────────────────────────
