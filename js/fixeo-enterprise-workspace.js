@@ -38,7 +38,13 @@
     var interventionDialog = byId('enterprise-intervention-dialog'), interventionClose = byId('enterprise-intervention-close');
     var interventionDismiss = byId('enterprise-intervention-dismiss'), interventionDetail = byId('enterprise-intervention-detail');
     var interventionDialogTitle = byId('enterprise-intervention-dialog-title');
+    var reportPeriod = byId('enterprise-report-period'), reportState = byId('enterprise-report-state');
+    var reportMessage = byId('enterprise-report-message'), reportRetry = byId('enterprise-report-retry');
+    var reportContent = byId('enterprise-report-content'), reportKpis = byId('enterprise-report-kpis');
+    var reportSla = byId('enterprise-report-sla'), reportStatuses = byId('enterprise-report-statuses');
+    var reportSites = byId('enterprise-report-sites');
     var currentEnterpriseId = '', currentEnterpriseRole = '', currentSites = [], currentInterventions = [];
+    var currentReportPeriod = '30';
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
     var client = null, subscription = null, generation = 0, stopped = false, logoutPending = false;
@@ -59,6 +65,14 @@
       if (requestDialog) requestDialog.hidden = true;
       if (interventionDialog) interventionDialog.hidden = true;
       if (interventionDetail) interventionDetail.replaceChildren();
+      if (reportContent) reportContent.hidden = true;
+      if (reportKpis) reportKpis.replaceChildren();
+      if (reportSla) reportSla.replaceChildren();
+      if (reportStatuses) reportStatuses.replaceChildren();
+      if (reportSites) reportSites.replaceChildren();
+      if (reportState) reportState.hidden = false;
+      if (reportMessage) reportMessage.textContent = 'Chargement des indicateurs…';
+      if (reportRetry) reportRetry.hidden = true;
       name.textContent = company.textContent = role.textContent = '';
       if (sitesList) sitesList.replaceChildren();
       if (interventionsList) interventionsList.replaceChildren();
@@ -115,6 +129,101 @@
       if (cls) node.className = cls;
       if (content != null) node.textContent = content;
       return node;
+    }
+
+    function numeric(value) {
+      var n = Number(value);
+      return Number.isFinite(n) ? n : null;
+    }
+    function numberLabel(value) {
+      var n = numeric(value);
+      return n == null ? '—' : new Intl.NumberFormat('fr-MA', { maximumFractionDigits: 2 }).format(n);
+    }
+    function percentLabel(value) {
+      var n = numeric(value);
+      return n == null ? '—' : new Intl.NumberFormat('fr-MA', { maximumFractionDigits: 1 }).format(n) + ' %';
+    }
+    function minutesLabel(value) {
+      var n = numeric(value);
+      return n == null ? '—' : new Intl.NumberFormat('fr-MA', { maximumFractionDigits: 1 }).format(n) + ' min';
+    }
+    function kpi(labelText, valueText, hintText) {
+      var card = el('div', 'fxew-kpi');
+      card.append(el('span', 'fxew-kpi-label', labelText), el('strong', 'fxew-kpi-value', valueText));
+      if (hintText) card.append(el('small', 'fxew-kpi-hint', hintText));
+      return card;
+    }
+    function breakdownRow(key, count) {
+      var row = el('div', 'fxew-breakdown-row');
+      row.append(el('span', '', label(key)), el('strong', '', numberLabel(count)));
+      return row;
+    }
+    function renderReporting(model) {
+      reportKpis.replaceChildren(
+        kpi('Demandes', numberLabel(model.operational.request_count), 'Période sélectionnée'),
+        kpi('Acceptées', numberLabel(model.operational.accepted_request_count), percentLabel(model.operational.acceptance_rate_percent)),
+        kpi('Acceptation moyenne', minutesLabel(model.operational.avg_first_acceptance_minutes), 'Première acceptation'),
+        kpi('Missions terminées', numberLabel(model.operational.completed_mission_request_count), 'Demandes avec mission terminée')
+      );
+
+      reportSla.replaceChildren(
+        kpi('Éligibles', numberLabel(model.sla.eligible_count), ''),
+        kpi('SLA respecté', numberLabel(model.sla.met_count), percentLabel(model.sla.sla_met_rate_percent)),
+        kpi('À risque', numberLabel(model.sla.at_risk_count), ''),
+        kpi('Dépassé', numberLabel(model.sla.breached_count), '')
+      );
+
+      reportStatuses.replaceChildren();
+      var statuses = model.breakdown.by_request_status || [];
+      if (!statuses.length) reportStatuses.append(el('p', 'fxew-report-empty', 'Aucune demande sur cette période.'));
+      else statuses.forEach(function (row) { reportStatuses.append(breakdownRow(row.key, row.count)); });
+
+      reportSites.replaceChildren();
+      if (!model.sites.length) {
+        reportSites.append(el('p', 'fxew-report-empty', 'Aucun site accessible.'));
+      } else {
+        model.sites.forEach(function (site) {
+          var card = el('article', 'fxew-site-performance-card');
+          var head = el('div', 'fxew-site-performance-head');
+          var copy = el('div');
+          copy.append(el('strong', '', site.site_name || 'Site sans nom'));
+          copy.append(el('span', '', [site.city, label(site.site_status)].filter(Boolean).join(' · ')));
+          head.append(copy, el('span', 'fxew-status', numberLabel(site.request_count) + ' demande' + (Number(site.request_count) === 1 ? '' : 's')));
+          card.append(head);
+          var metrics = el('div', 'fxew-site-performance-metrics');
+          metrics.append(
+            kpi('Acceptées', numberLabel(site.accepted_count), percentLabel(site.acceptance_rate_percent)),
+            kpi('Terminées', numberLabel(site.completed_count), '')
+          );
+          card.append(metrics);
+          reportSites.append(card);
+        });
+      }
+
+      reportState.hidden = true;
+      reportContent.hidden = false;
+    }
+    function setReportState(messageText, retryable) {
+      reportContent.hidden = true;
+      reportState.hidden = false;
+      reportMessage.textContent = messageText;
+      reportRetry.hidden = !retryable;
+    }
+    async function loadReporting(enterpriseId, run) {
+      if (!win.FixeoEnterpriseReporting || typeof win.FixeoEnterpriseReporting.load !== 'function') {
+        setReportState('Les indicateurs sont momentanément indisponibles.', true);
+        return;
+      }
+      setReportState('Chargement des indicateurs…', false);
+      try {
+        var model = await bounded(win.FixeoEnterpriseReporting.load(client, enterpriseId, currentReportPeriod));
+        if (run !== generation || stopped || doc.hidden || currentEnterpriseId !== enterpriseId) return;
+        renderReporting(model);
+      } catch (_) {
+        if (run === generation && !stopped && !doc.hidden) {
+          setReportState('Impossible de charger la synthèse opérationnelle. Réessayez.', true);
+        }
+      }
     }
     function canManageSites() {
       return !!(win.FixeoEnterpriseSiteActions &&
@@ -448,7 +557,10 @@
         requestsMode.textContent = canCreateRequests() ? 'Chargement des sites…' : 'Lecture seule';
         state.hidden = true; panel.hidden = false; logout.hidden = false;
         main.setAttribute('aria-busy', 'false'); name.focus();
-        await loadOperational(result.enterprise.id, run);
+        await Promise.all([
+          loadOperational(result.enterprise.id, run),
+          loadReporting(result.enterprise.id, run)
+        ]);
       } catch (_) { if (run === generation && !stopped && !doc.hidden) failure(); }
     }
     async function signOut() {
@@ -490,6 +602,13 @@
     retry.addEventListener('click', refresh);
     dataRetry.addEventListener('click', function () {
       if (currentEnterpriseId) loadOperational(currentEnterpriseId, generation);
+    });
+    reportRetry.addEventListener('click', function () {
+      if (currentEnterpriseId) loadReporting(currentEnterpriseId, generation);
+    });
+    reportPeriod.addEventListener('change', function () {
+      currentReportPeriod = reportPeriod.value || '30';
+      if (currentEnterpriseId) loadReporting(currentEnterpriseId, generation);
     });
     siteCreate.addEventListener('click', function () { openSiteDialog(null); });
     siteClose.addEventListener('click', closeSiteDialog);

@@ -7,7 +7,7 @@
   <meta name="referrer" content="same-origin">
   <title>Espace entreprise | FIXEO</title>
   <link rel="icon" href="img/logo-fixeo-icon.png">
-  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=b4-1">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=b5-1">
   <script defer src="js/supabase-client.js"></script>
   <script defer src="js/fixeo-logout-global.js"></script>
   <script defer src="js/fixeo-auth-resolver.js"></script>
@@ -15,7 +15,8 @@
   <script defer src="js/fixeo-enterprise-readmodel.js?v=b4-1"></script>
   <script defer src="js/fixeo-enterprise-site-actions.js?v=b2-prod1"></script>
   <script defer src="js/fixeo-enterprise-request-actions.js?v=b3-1"></script>
-  <script defer src="js/fixeo-enterprise-workspace.js?v=b4-1"></script>
+  <script defer src="js/fixeo-enterprise-reporting.js?v=b5-1"></script>
+  <script defer src="js/fixeo-enterprise-workspace.js?v=b5-1"></script>
 </head>
 <body class="fxew">
   <a class="fxew-skip" href="#main">Aller au contenu</a>
@@ -59,6 +60,42 @@
         <span id="enterprise-data-message">Chargement des opérations…</span>
         <button id="enterprise-data-retry" class="fxew-button" type="button" hidden>Réessayer</button>
       </div>
+
+      <section class="fxew-module fxew-reporting" aria-labelledby="reporting-title">
+        <div class="fxew-module-heading">
+          <div><p class="fxew-module-kicker">Pilotage</p><h2 id="reporting-title">Synthèse opérationnelle & SLA</h2></div>
+          <label class="fxew-period-label">Période
+            <select id="enterprise-report-period">
+              <option value="7">7 jours</option>
+              <option value="30" selected>30 jours</option>
+              <option value="90">90 jours</option>
+              <option value="all">Tout l’historique</option>
+            </select>
+          </label>
+        </div>
+        <div id="enterprise-report-state" class="fxew-report-state" role="status" aria-live="polite">
+          <span class="fxew-data-spinner" aria-hidden="true"></span>
+          <span id="enterprise-report-message">Chargement des indicateurs…</span>
+          <button id="enterprise-report-retry" class="fxew-button" type="button" hidden>Réessayer</button>
+        </div>
+        <div id="enterprise-report-content" hidden>
+          <div id="enterprise-report-kpis" class="fxew-kpi-grid"></div>
+          <div class="fxew-report-grid">
+            <section class="fxew-report-card" aria-labelledby="sla-summary-title">
+              <div class="fxew-report-card-head"><h3 id="sla-summary-title">SLA</h3><span>Acceptation</span></div>
+              <div id="enterprise-report-sla" class="fxew-mini-grid"></div>
+            </section>
+            <section class="fxew-report-card" aria-labelledby="status-summary-title">
+              <div class="fxew-report-card-head"><h3 id="status-summary-title">Statuts</h3><span>Demandes</span></div>
+              <div id="enterprise-report-statuses" class="fxew-breakdown"></div>
+            </section>
+          </div>
+          <section class="fxew-report-card fxew-report-card--sites" aria-labelledby="site-performance-title">
+            <div class="fxew-report-card-head"><h3 id="site-performance-title">Performance par site</h3><span>Périmètre accessible</span></div>
+            <div id="enterprise-report-sites" class="fxew-site-performance"></div>
+          </section>
+        </div>
+      </section>
 
       <section class="fxew-module" aria-labelledby="sites-title">
         <div class="fxew-module-heading">
