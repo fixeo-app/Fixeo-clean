@@ -43,6 +43,14 @@
     var reportContent = byId('enterprise-report-content'), reportKpis = byId('enterprise-report-kpis');
     var reportSla = byId('enterprise-report-sla'), reportStatuses = byId('enterprise-report-statuses');
     var reportSites = byId('enterprise-report-sites');
+    var slaPoliciesList = byId('enterprise-sla-policies-list'), slaPoliciesEmpty = byId('enterprise-sla-policies-empty');
+    var slaPoliciesMode = byId('enterprise-sla-policies-mode'), slaPolicyCreate = byId('enterprise-sla-policy-create');
+    var slaPolicyDialog = byId('enterprise-sla-policy-dialog'), slaPolicyDialogTitle = byId('enterprise-sla-policy-dialog-title');
+    var slaPolicyClose = byId('enterprise-sla-policy-close'), slaPolicyCancel = byId('enterprise-sla-policy-cancel');
+    var slaPolicyForm = byId('enterprise-sla-policy-form'), slaPolicyId = byId('enterprise-sla-policy-id');
+    var slaPolicySite = byId('enterprise-sla-policy-site'), slaPolicyUrgency = byId('enterprise-sla-policy-urgency');
+    var slaPolicyTarget = byId('enterprise-sla-policy-target'), slaPolicyStatus = byId('enterprise-sla-policy-status');
+    var slaPolicySubmit = byId('enterprise-sla-policy-submit'), slaPolicyError = byId('enterprise-sla-policy-error');
     var auditModule = byId('enterprise-audit-module'), auditPeriod = byId('enterprise-audit-period');
     var auditState = byId('enterprise-audit-state'), auditMessage = byId('enterprise-audit-message');
     var auditRetry = byId('enterprise-audit-retry'), auditExport = byId('enterprise-audit-export');
@@ -61,7 +69,7 @@
     var memberDialog = byId('enterprise-member-dialog'), memberDialogTitle = byId('enterprise-member-dialog-title');
     var memberClose = byId('enterprise-member-close'), memberDismiss = byId('enterprise-member-dismiss');
     var memberDetail = byId('enterprise-member-detail'), memberError = byId('enterprise-member-error');
-    var currentEnterpriseId = '', currentEnterpriseRole = '', currentSites = [], currentInterventions = [], currentMembers = [], currentInvitations = [];
+    var currentEnterpriseId = '', currentEnterpriseRole = '', currentSites = [], currentInterventions = [], currentMembers = [], currentInvitations = [], currentSlaPolicies = [];
     var currentReportPeriod = '30', currentAuditPeriod = '30', currentAuditEvents = [], currentAuditCursor = null;
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
@@ -77,6 +85,7 @@
       currentInterventions = [];
       currentMembers = [];
       currentInvitations = [];
+      currentSlaPolicies = [];
       if (siteCreate) siteCreate.hidden = true;
       if (sitesMode) sitesMode.textContent = 'Lecture seule';
       if (requestCreate) requestCreate.hidden = true;
@@ -93,6 +102,12 @@
       if (reportState) reportState.hidden = false;
       if (reportMessage) reportMessage.textContent = 'Chargement des indicateurs…';
       if (reportRetry) reportRetry.hidden = true;
+      if (slaPoliciesList) slaPoliciesList.replaceChildren();
+      if (slaPoliciesEmpty) slaPoliciesEmpty.hidden = true;
+      if (slaPoliciesMode) slaPoliciesMode.textContent = 'Lecture seule';
+      if (slaPolicyCreate) slaPolicyCreate.hidden = true;
+      if (slaPolicyDialog) slaPolicyDialog.hidden = true;
+      if (slaPolicyError) { slaPolicyError.hidden = true; slaPolicyError.textContent = ''; }
       currentAuditEvents = [];
       currentAuditCursor = null;
       if (auditModule) auditModule.hidden = true;
@@ -435,6 +450,128 @@
       return !!(win.FixeoEnterpriseSiteActions &&
         typeof win.FixeoEnterpriseSiteActions.canManage === 'function' &&
         win.FixeoEnterpriseSiteActions.canManage(currentEnterpriseRole));
+    }
+
+    var SLA_URGENCY_LABELS = Object.freeze({
+      '':'Défaut du périmètre',
+      urgent:'Immédiate · urgent',
+      high:'Urgente · high',
+      normal:'Normale · normal',
+      low:'Faible · low'
+    });
+    function canManageSlaPolicies() {
+      return !!(win.FixeoEnterpriseSlaPolicyActions &&
+        typeof win.FixeoEnterpriseSlaPolicyActions.canManage === 'function' &&
+        win.FixeoEnterpriseSlaPolicyActions.canManage(currentEnterpriseRole));
+    }
+    function slaPolicyById(id) {
+      return currentSlaPolicies.find(function (policy) { return policy.id === id; }) || null;
+    }
+    function setSlaPolicyError(messageText) {
+      slaPolicyError.textContent = messageText || '';
+      slaPolicyError.hidden = !messageText;
+    }
+    function slaPolicyScopeLabel(policy) {
+      if (!policy.site_id) return 'Toute l’entreprise';
+      var site = currentSites.find(function (row) { return row.id === policy.site_id; });
+      return site ? [site.name || 'Site', site.city].filter(Boolean).join(' · ') : 'Site ' + shortId(policy.site_id);
+    }
+    function renderSlaPolicies(rows) {
+      currentSlaPolicies = rows.slice();
+      slaPoliciesList.replaceChildren();
+      slaPoliciesEmpty.hidden = rows.length !== 0;
+      var manager = canManageSlaPolicies();
+      slaPoliciesMode.textContent = manager ? 'Gestion autorisée' : 'Lecture seule';
+      slaPolicyCreate.hidden = !manager;
+      rows.forEach(function (policy) {
+        var card = el('article', 'fxew-sla-policy-card');
+        var head = el('div', 'fxew-sla-policy-head');
+        var copy = el('div');
+        copy.append(el('strong', '', SLA_URGENCY_LABELS[policy.urgency || ''] || label(policy.urgency)));
+        copy.append(el('span', '', slaPolicyScopeLabel(policy)));
+        head.append(copy, el('span', 'fxew-status', label(policy.status)));
+        card.append(head);
+        var meta = el('div', 'fxew-sla-policy-meta');
+        meta.append(el('span', '', 'Objectif · ' + String(policy.acceptance_target_minutes || 0) + ' min'));
+        if (policy.updated_at) meta.append(el('span', '', 'Mis à jour · ' + dateLabel(policy.updated_at)));
+        card.append(meta);
+        if (manager) {
+          var actions = el('div', 'fxew-site-actions');
+          var edit = el('button', 'fxew-site-action', 'Modifier');
+          edit.type = 'button'; edit.dataset.slaPolicyAction = 'edit'; edit.dataset.policyId = policy.id;
+          actions.append(edit); card.append(actions);
+        }
+        slaPoliciesList.append(card);
+      });
+    }
+    function populateSlaPolicySites(selectedId) {
+      slaPolicySite.replaceChildren();
+      var globalOption = doc.createElement('option');
+      globalOption.value = ''; globalOption.textContent = 'Toute l’entreprise';
+      slaPolicySite.append(globalOption);
+      currentSites.forEach(function (site) {
+        var option = doc.createElement('option');
+        option.value = site.id;
+        option.textContent = [site.name || 'Site', site.city].filter(Boolean).join(' · ');
+        if (selectedId && site.id === selectedId) option.selected = true;
+        slaPolicySite.append(option);
+      });
+      if (!selectedId) slaPolicySite.value = '';
+    }
+    function openSlaPolicyDialog(policy) {
+      if (!canManageSlaPolicies()) return;
+      slaPolicyForm.reset();
+      setSlaPolicyError('');
+      slaPolicyId.value = policy ? policy.id : '';
+      populateSlaPolicySites(policy && policy.site_id || '');
+      slaPolicyUrgency.value = policy ? (policy.urgency || '') : '';
+      slaPolicyTarget.value = policy ? String(policy.acceptance_target_minutes || '') : '';
+      slaPolicyStatus.value = policy ? policy.status : 'active';
+      slaPolicyDialogTitle.textContent = policy ? 'Modifier la politique SLA' : 'Nouvelle politique SLA';
+      slaPolicyDialog.hidden = false;
+      win.setTimeout(function () { slaPolicyTarget.focus(); }, 0);
+    }
+    function closeSlaPolicyDialog() {
+      slaPolicyDialog.hidden = true;
+      slaPolicyForm.reset();
+      slaPolicyId.value = '';
+      setSlaPolicyError('');
+    }
+    async function submitSlaPolicy(event) {
+      event.preventDefault();
+      if (!canManageSlaPolicies() || !currentEnterpriseId || !client || !win.FixeoEnterpriseSlaPolicyActions) return;
+      slaPolicySubmit.disabled = true;
+      setSlaPolicyError('');
+      var payload = {
+        site_id: slaPolicySite.value || null,
+        urgency: slaPolicyUrgency.value || null,
+        acceptance_target_minutes: Number(slaPolicyTarget.value),
+        status: slaPolicyStatus.value
+      };
+      try {
+        if (slaPolicyId.value) {
+          await bounded(win.FixeoEnterpriseSlaPolicyActions.update(client,currentEnterpriseId,slaPolicyId.value,payload));
+        } else {
+          await bounded(win.FixeoEnterpriseSlaPolicyActions.create(client,currentEnterpriseId,payload));
+        }
+        closeSlaPolicyDialog();
+        await loadOperational(currentEnterpriseId,generation);
+        if (canViewAudit()) await loadAudit(currentEnterpriseId,generation,false);
+      } catch (error) {
+        var reason = error && (error.reason || error.message) || '';
+        var msg = reason === 'policy_exists' ? 'Une politique existe déjà pour cette portée et ce niveau SLA.'
+          : reason === 'site_not_found' || reason === 'site_enterprise_mismatch' ? 'Le site sélectionné est invalide pour cette entreprise.'
+          : reason === 'invalid_target' || reason === 'INVALID_TARGET' ? 'L’objectif doit être un nombre entier de minutes supérieur à zéro.'
+          : reason === 'invalid_urgency' || reason === 'INVALID_URGENCY' ? 'Le niveau SLA sélectionné est invalide.'
+          : reason === 'forbidden' ? 'Votre rôle ne permet pas cette action.'
+          : 'Impossible d’enregistrer cette politique SLA. Réessayez.';
+        setSlaPolicyError(msg);
+      } finally { slaPolicySubmit.disabled = false; }
+    }
+    function handleSlaPolicyAction(event) {
+      var button = event.target && event.target.closest ? event.target.closest('[data-sla-policy-action]') : null;
+      if (!button || button.dataset.slaPolicyAction !== 'edit') return;
+      openSlaPolicyDialog(slaPolicyById(button.dataset.policyId || ''));
     }
     function canCreateRequests() {
       return !!(win.FixeoEnterpriseRequestActions &&
@@ -985,6 +1122,7 @@
         var model = await bounded(win.FixeoEnterpriseReadModel.load(client, enterpriseId));
         if (run !== generation || stopped || doc.hidden || currentEnterpriseId !== enterpriseId) return;
         renderSites(model.sites || []);
+        renderSlaPolicies(model.sla_policies || []);
         renderInvitations(model.invitations || []);
         renderTeam(model.members || []);
         renderInterventions(model.interventions || []);
@@ -1112,6 +1250,12 @@
       if (currentEnterpriseId && currentAuditCursor) loadAudit(currentEnterpriseId, generation, true);
     });
     auditExport.addEventListener('click', exportAuditPeriod);
+    slaPolicyCreate.addEventListener('click', function () { openSlaPolicyDialog(null); });
+    slaPolicyClose.addEventListener('click', closeSlaPolicyDialog);
+    slaPolicyCancel.addEventListener('click', closeSlaPolicyDialog);
+    slaPolicyDialog.addEventListener('click', function (event) { if (event.target === slaPolicyDialog) closeSlaPolicyDialog(); });
+    slaPolicyForm.addEventListener('submit', submitSlaPolicy);
+    slaPoliciesList.addEventListener('click', handleSlaPolicyAction);
     siteCreate.addEventListener('click', function () { openSiteDialog(null); });
     siteClose.addEventListener('click', closeSiteDialog);
     siteCancel.addEventListener('click', closeSiteDialog);
@@ -1153,6 +1297,10 @@
       requestClose.removeEventListener('click', closeRequestDialog); requestCancel.removeEventListener('click', closeRequestDialog);
       requestForm.removeEventListener('submit', submitRequest);
       auditExport.removeEventListener('click', exportAuditPeriod);
+      slaPolicyClose.removeEventListener('click', closeSlaPolicyDialog);
+      slaPolicyCancel.removeEventListener('click', closeSlaPolicyDialog);
+      slaPolicyForm.removeEventListener('submit', submitSlaPolicy);
+      slaPoliciesList.removeEventListener('click', handleSlaPolicyAction);
       invitationCreate.removeEventListener('click', openInvitationDialog);
       invitationClose.removeEventListener('click', closeInvitationDialog);
       invitationCancel.removeEventListener('click', closeInvitationDialog);

@@ -7,7 +7,7 @@
   <meta name="referrer" content="same-origin">
   <title>Espace entreprise | FIXEO</title>
   <link rel="icon" href="img/logo-fixeo-icon.png">
-  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=b8-1">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=b9-1">
   <script defer src="js/supabase-client.js"></script>
   <script defer src="js/fixeo-logout-global.js"></script>
   <script defer src="js/fixeo-auth-resolver.js"></script>
@@ -19,7 +19,8 @@
   <script defer src="js/fixeo-enterprise-member-actions.js?v=b6-1"></script>
   <script defer src="js/fixeo-enterprise-invitation-actions.js?v=b7-1"></script>
   <script defer src="js/fixeo-enterprise-audit.js?v=b8-1"></script>
-  <script defer src="js/fixeo-enterprise-workspace.js?v=b8-1"></script>
+  <script defer src="js/fixeo-enterprise-sla-policy-actions.js?v=b9-1"></script>
+  <script defer src="js/fixeo-enterprise-workspace.js?v=b9-1"></script>
 </head>
 <body class="fxew">
   <a class="fxew-skip" href="#main">Aller au contenu</a>
@@ -100,6 +101,24 @@
         </div>
       </section>
 
+      <section class="fxew-module" aria-labelledby="sla-policies-title">
+        <div class="fxew-module-heading">
+          <div><p class="fxew-module-kicker">SLA</p><h2 id="sla-policies-title">Politiques d’acceptation</h2></div>
+          <div class="fxew-module-actions">
+            <span id="enterprise-sla-policies-mode" class="fxew-module-meta">Lecture seule</span>
+            <button id="enterprise-sla-policy-create" class="fxew-button fxew-button--primary" type="button" hidden>Nouvelle politique</button>
+          </div>
+        </div>
+        <div class="fxew-sla-defaults" aria-label="Valeurs FIXEO par défaut">
+          <span>Immédiate → 15 min</span>
+          <span>Urgente → 30 min</span>
+          <span>Normale → 120 min</span>
+          <span>Faible → 240 min</span>
+        </div>
+        <div id="enterprise-sla-policies-list" class="fxew-sla-policy-list" aria-live="polite"></div>
+        <p id="enterprise-sla-policies-empty" class="fxew-empty" hidden>Aucune politique personnalisée. Les valeurs FIXEO par défaut s’appliquent.</p>
+      </section>
+
       <section id="enterprise-audit-module" class="fxew-module" aria-labelledby="audit-title" hidden>
         <div class="fxew-module-heading">
           <div><p class="fxew-module-kicker">Traçabilité</p><h2 id="audit-title">Historique & audit</h2></div>
@@ -172,6 +191,46 @@
         <p id="enterprise-interventions-empty" class="fxew-empty" hidden>Aucune intervention visible pour les sites auxquels vous avez accès.</p>
       </section>
     </section>
+
+    <div id="enterprise-sla-policy-dialog" class="fxew-dialog-backdrop" hidden>
+      <section class="fxew-dialog" role="dialog" aria-modal="true" aria-labelledby="enterprise-sla-policy-dialog-title">
+        <div class="fxew-dialog-head">
+          <div><p class="fxew-module-kicker">SLA</p><h2 id="enterprise-sla-policy-dialog-title">Nouvelle politique</h2></div>
+          <button id="enterprise-sla-policy-close" class="fxew-dialog-close" type="button" aria-label="Fermer">×</button>
+        </div>
+        <form id="enterprise-sla-policy-form" class="fxew-form">
+          <input id="enterprise-sla-policy-id" type="hidden">
+          <label>Portée
+            <select id="enterprise-sla-policy-site">
+              <option value="">Toute l’entreprise</option>
+            </select>
+          </label>
+          <label>Niveau SLA
+            <select id="enterprise-sla-policy-urgency">
+              <option value="">Défaut du périmètre</option>
+              <option value="urgent">Immédiate · urgent</option>
+              <option value="high">Urgente · high</option>
+              <option value="normal">Normale · normal</option>
+              <option value="low">Faible · low</option>
+            </select>
+          </label>
+          <label>Objectif d’acceptation (minutes)
+            <input id="enterprise-sla-policy-target" type="number" min="1" step="1" required>
+          </label>
+          <label>Statut
+            <select id="enterprise-sla-policy-status">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </label>
+          <p id="enterprise-sla-policy-error" class="fxew-form-error" role="alert" hidden></p>
+          <div class="fxew-dialog-actions">
+            <button id="enterprise-sla-policy-cancel" class="fxew-button" type="button">Annuler</button>
+            <button id="enterprise-sla-policy-submit" class="fxew-button fxew-button--primary" type="submit">Enregistrer</button>
+          </div>
+        </form>
+      </section>
+    </div>
 
     <div id="enterprise-invitation-dialog" class="fxew-dialog-backdrop" hidden>
       <section class="fxew-dialog" role="dialog" aria-modal="true" aria-labelledby="enterprise-invitation-dialog-title">

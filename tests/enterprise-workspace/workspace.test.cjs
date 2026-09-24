@@ -31,6 +31,7 @@ async function setup(t, options = {}, search = `?enterprise_id=${uuid(101)}`, mo
   w.FixeoEnterpriseRequestActions = mountOptions.requestActions || { canCreate: () => false };
   w.FixeoEnterpriseMemberActions = mountOptions.memberActions || { canManage: () => false };
   w.FixeoEnterpriseInvitationActions = mountOptions.invitationActions || { canManage: () => false };
+  w.FixeoEnterpriseSlaPolicyActions = mountOptions.slaPolicyActions || { canManage: () => false };
   w.FixeoEnterpriseAudit = mountOptions.audit || {
     canView: role => role === 'owner' || role === 'admin',
     listPage: async () => ({ status:'ok',events:[],returned_count:0,has_more:false,next_cursor:null }),
@@ -149,7 +150,7 @@ test('U11 New page has isolated scripts, unique IDs, local links and no operatio
     'js/fixeo-enterprise-site-actions.js', 'js/fixeo-enterprise-request-actions.js',
     'js/fixeo-enterprise-reporting.js', 'js/fixeo-enterprise-member-actions.js',
     'js/fixeo-enterprise-invitation-actions.js', 'js/fixeo-enterprise-audit.js',
-    'js/fixeo-enterprise-workspace.js']);
+    'js/fixeo-enterprise-sla-policy-actions.js', 'js/fixeo-enterprise-workspace.js']);
   const ids = [...d.querySelectorAll('[id]')].map(n => n.id);
   assert.equal(ids.length, new Set(ids).size);
   assert.ok([...d.querySelectorAll('a')].every(a => ['index.html', '#main', 'auth.html'].includes(a.getAttribute('href'))));
@@ -412,4 +413,55 @@ test('U26 B8 pagination appends the next server page without replacing prior eve
   await tick(); await tick();
   assert.equal(s.q('enterprise-audit-list').children.length,2);
   assert.equal(page,2);
+});
+
+test('U27 B9 renders SLA policies and manager controls for owner', async t => {
+  const readModel = { load: async () => ({
+    sites:[{id:uuid(301),name:'Siège',site_code:'CAS',city:'Casablanca',address_line:'',status:'active'}],
+    interventions:[],members:[],invitations:[],
+    sla_policies:[{id:uuid(871),site_id:'',urgency:'normal',acceptance_target_minutes:90,status:'active',
+      created_at:'2026-09-24T10:00:00Z',updated_at:'2026-09-24T10:00:00Z'}]
+  }) };
+  const slaPolicyActions = { canManage: role => role === 'owner' || role === 'admin' };
+  const s = await setup(t, {}, undefined, { readModel, slaPolicyActions });
+  await tick(); await tick();
+  assert.equal(s.q('enterprise-sla-policy-create').hidden,false);
+  assert.equal(s.q('enterprise-sla-policies-mode').textContent,'Gestion autorisée');
+  assert.match(s.q('enterprise-sla-policies-list').textContent,/Normale/);
+  assert.match(s.q('enterprise-sla-policies-list').textContent,/90 min/);
+  assert.ok(s.q('enterprise-sla-policies-list').querySelector('[data-sla-policy-action="edit"]'));
+});
+
+test('U28 B9 non-manager sees policies read-only', async t => {
+  const readModel = { load: async () => ({
+    sites:[],interventions:[],members:[],invitations:[],
+    sla_policies:[{id:uuid(872),site_id:'',urgency:'high',acceptance_target_minutes:30,status:'active'}]
+  }) };
+  const slaPolicyActions = { canManage: () => false };
+  const s = await setup(t, {
+    enterprise_members:[member(1,'viewer','active')]
+  }, undefined, { readModel, slaPolicyActions });
+  await tick(); await tick();
+  assert.equal(s.q('enterprise-sla-policy-create').hidden,true);
+  assert.equal(s.q('enterprise-sla-policies-mode').textContent,'Lecture seule');
+  assert.equal(s.q('enterprise-sla-policies-list').querySelector('[data-sla-policy-action="edit"]'),null);
+});
+
+test('U29 B9 edit dialog preserves full selected policy state', async t => {
+  const policyId=uuid(873),siteId=uuid(301);
+  const readModel = { load: async () => ({
+    sites:[{id:siteId,name:'Agence',site_code:'RBT',city:'Rabat',address_line:'',status:'active'}],
+    interventions:[],members:[],invitations:[],
+    sla_policies:[{id:policyId,site_id:siteId,urgency:'urgent',acceptance_target_minutes:20,status:'inactive'}]
+  }) };
+  const slaPolicyActions = { canManage: () => true };
+  const s = await setup(t, {}, undefined, { readModel, slaPolicyActions });
+  await tick(); await tick();
+  s.q('enterprise-sla-policies-list').querySelector('[data-sla-policy-action="edit"]').click();
+  assert.equal(s.q('enterprise-sla-policy-dialog').hidden,false);
+  assert.equal(s.q('enterprise-sla-policy-id').value,policyId);
+  assert.equal(s.q('enterprise-sla-policy-site').value,siteId);
+  assert.equal(s.q('enterprise-sla-policy-urgency').value,'urgent');
+  assert.equal(s.q('enterprise-sla-policy-target').value,'20');
+  assert.equal(s.q('enterprise-sla-policy-status').value,'inactive');
 });
