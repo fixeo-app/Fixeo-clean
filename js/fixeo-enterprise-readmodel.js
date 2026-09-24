@@ -109,6 +109,13 @@
           .eq('enterprise_id', enterpriseId)
           .order('created_at', { ascending: false })
           .range(from, to);
+      }),
+      paged(function (from, to) {
+        return fromPublic(client, 'enterprise_sla_policies')
+          .select('id,enterprise_id,site_id,urgency,acceptance_target_minutes,status,created_at,updated_at')
+          .eq('enterprise_id', enterpriseId)
+          .order('created_at', { ascending: true })
+          .range(from, to);
       })
     ]);
     var sites = pair[0];
@@ -116,6 +123,7 @@
     var members = pair[2];
     var memberSites = pair[3];
     var invitations = pair[4];
+    var slaPolicies = pair[5];
 
     var requestIds = Array.from(new Set(contexts.map(function (row) {
       return String(row.service_request_id || '');
@@ -222,6 +230,17 @@
           accepted_at: invitation.accepted_at || null,
           revoked_at: invitation.revoked_at || null,
           created_at: invitation.created_at || null
+        });
+      }),
+      sla_policies: slaPolicies.map(function (policy) {
+        return Object.freeze({
+          id: String(policy.id || ''),
+          site_id: policy.site_id ? String(policy.site_id) : '',
+          urgency: policy.urgency == null ? '' : String(policy.urgency),
+          acceptance_target_minutes: Number(policy.acceptance_target_minutes || 0),
+          status: String(policy.status || ''),
+          created_at: policy.created_at || null,
+          updated_at: policy.updated_at || null
         });
       })
     });
