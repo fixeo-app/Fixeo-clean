@@ -4,6 +4,20 @@
   "use strict";
   if (window.FixeoIntake) return;
   var key = "fixeo_diagnostic_dossier_v1";
+  var editKey = "fixeo_diagnostic_edit_v1";
+  function readEdit() {
+    try {
+      return JSON.parse(sessionStorage.getItem(editKey) || "null");
+    } catch (_) {
+      return null;
+    }
+  }
+  function rememberEdit(value) {
+    try {
+      if (value) sessionStorage.setItem(editKey, JSON.stringify(value));
+      else sessionStorage.removeItem(editKey);
+    } catch (_) {}
+  }
   function read() {
     try {
       return sessionStorage.getItem(key);
@@ -18,19 +32,21 @@
     } catch (_) {}
   }
   function create(onStatus) {
+    var editDraft = readEdit();
     var client = {
       id: read(),
       session: null,
       pending: [],
       progress: null,
       busy: false,
-      draft: {
+      draft: editDraft || {
         description: "",
         city: "",
         answers: {},
         safety_signals: [],
         consent: false,
       },
+      editing: !!editDraft,
     };
     var running, runId;
     function api(body) {
@@ -109,6 +125,13 @@
       });
     }
     client.load = load;
+    client.startEdit = function () {
+      client.editing = true;
+      rememberEdit(client.draft);
+    };
+    client.saveEdit = function () {
+      if (client.editing) rememberEdit(client.draft);
+    };
     client.addFiles = function (files) {
       if (client.busy) return;
       var count =
@@ -262,7 +285,10 @@
           run_id: runId,
         });
         if (response.pending) return poll();
-        return restore(response.session);
+        var analyzed = restore(response.session);
+        client.editing = false;
+        rememberEdit(null);
+        return analyzed;
       });
     };
     client.confirmation = function () {
@@ -336,6 +362,8 @@
         consent: false,
       };
       remember(null);
+      client.editing = false;
+      rememberEdit(null);
     };
     return client;
   }
