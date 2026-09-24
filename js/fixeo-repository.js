@@ -337,6 +337,16 @@
           var idx = claims.findIndex(function(c){ return c.id === localResult.claimId; });
           if (idx >= 0) { claims[idx]._supabase_id = data.id; localStorage.setItem('fixeo_claim_requests', JSON.stringify(claims)); }
         }
+        // S1B notification producer: only the canonical persisted claim UUID is sent.
+        // Non-blocking; notification failure never changes the claim result.
+        (async function() {
+          try {
+            var notification = await sb().rpc('publish_notification_event_s1b', {
+              p_event: 'claim_submitted', p_entity_id: data.id
+            });
+            if (notification && notification.error) log('Claim notification unavailable', 'warn');
+          } catch (_) { log('Claim notification unavailable', 'warn'); }
+        })();
         return { ok: true, claimId: data.id, localClaimId: localResult && localResult.claimId };
       }
     }

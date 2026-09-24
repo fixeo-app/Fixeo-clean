@@ -32,7 +32,7 @@
 
   if (window.FixeoNotifEngine) return; // idempotent
 
-  var VERSION = 'v1b';
+  var VERSION = 's1b-candidate';
 
   /* ── Helpers ──────────────────────────────────────────────── */
   function _dispatch(name, detail) {
@@ -86,36 +86,49 @@
     };
   }
 
-  /* ── Supabase persistence (non-blocking mirror) ────────────── */
-  /* Writes a notification row to the DB.
-   * Failures are console.warn only — never throws, never blocks UI. */
+  /* S1B: transport only. RPC derives recipient, type and payload from DB facts.
+   * Additive rollout: the legacy timeout producer remains explicitly unmigrated.
+   * Never fall back to INSERT when the controlled RPC rejects/fails. */
+  var _pendingEvents = Object.create(null);
   async function _sbPersist(type, recipientUserId, recipientRole, title, message, entityType, entityId, metadata) {
-    try {
-      var fsc = window.FixeoSupabaseClient;
-      if (!fsc || !fsc.CONFIGURED) return;
-      await fsc.ready();
-      var sb = fsc.client;
-      if (!sb) return;
-
-      var row = {
-        recipient_user_id:   recipientUserId || null,
-        recipient_role:      recipientRole   || 'client',
-        type:                type,
-        title:               title           || '',
-        message:             message         || '',
-        related_entity_type: entityType      || '',
-        related_entity_id:   String(entityId || ''),
-        read:                false,
-        metadata:            metadata        || {}
-      };
-
-      var res = await sb.from('notifications').insert([row]);
-      if (res.error) {
-        console.warn('[FixeoNotifEngine] DB persist error:', res.error.message);
+    var eventName = null;
+    if ((type === 'c_request_created' || type === 'adm_new_request') && entityType === 'service_request') eventName = 'request_created';
+    if (type === 'a_mission_accepted') eventName = 'mission_accepted';
+    if (type === 'a_mission_started' || (type === 'adm_new_request' && entityType === 'mission')) eventName = 'mission_started';
+    if (type === 'a_mission_completed' || type === 'adm_mission_validated') eventName = 'mission_completed';
+    if (type === 'c_mission_validated' || type === 'adm_commission_due') eventName = 'mission_validated';
+    var legacyTimeout = type === 'adm_mission_blocked';
+    if (!eventName && !legacyTimeout) return;
+    if (eventName && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(entityId || ''))) return;
+    var key = eventName + '|' + String(entityId || '');
+    if (eventName && _pendingEvents[key]) return _pendingEvents[key];
+    var operation = (async function() {
+      try {
+        var fsc = window.FixeoSupabaseClient;
+        if (!fsc || !fsc.CONFIGURED) return;
+        await fsc.ready();
+        var sb = fsc.client;
+        if (!sb) return;
+        var res;
+        if (legacyTimeout) {
+          // BLOCKER: local timer has no proven persisted assignment timestamp.
+          // Preserve existing admin alert during additive rollout. Do not revoke INSERT yet.
+          res = await sb.from('notifications').insert([{
+            recipient_user_id: null, recipient_role: 'admin', type: 'adm_mission_blocked',
+            title: title || '', message: message || '', related_entity_type: 'mission',
+            related_entity_id: String(entityId || ''), read: false, metadata: metadata || {}
+          }]);
+        } else {
+          res = await sb.rpc('publish_notification_event_s1b', { p_event: eventName, p_entity_id: entityId });
+        }
+        if (res && res.error) console.warn('[FixeoNotifEngine] DB persist error:', res.error.message);
+      } catch(e) {
+        console.warn('[FixeoNotifEngine] DB persist exception:', e && e.message);
       }
-    } catch (e) {
-      console.warn('[FixeoNotifEngine] DB persist exception:', e && e.message);
-    }
+    })();
+    if (eventName) _pendingEvents[key] = operation;
+    try { return await operation; }
+    finally { if (eventName) delete _pendingEvents[key]; }
   }
 
   /* ── Get current auth uid (non-blocking) ───────────────────── */
@@ -322,9 +335,8 @@
       { ref_type: 'claim', ref_id: claimId || artisanId, dedupe_key: 'adm_claim_request|' + claimId }
     ));
 
-    _sbPersist('adm_claim_request', null, 'admin',
-      'Nouvelle revendication', 'Revendication artisan soumise — ID claim: ' + claimId,
-      'claim_request', claimId || '', {});
+    // A local cl-* identifier is not a persisted claim. The repository emits
+    // the controlled RPC only after INSERT returns the real claim UUID.
   }
 
   function _onClaimRejected(evt) {
