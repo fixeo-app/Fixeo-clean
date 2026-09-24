@@ -444,7 +444,11 @@
           "Reprenons exactement là où nous en étions.",
         );
         button("Réessayer", analyze);
-        button("Modifier mon besoin", renderNeed, true);
+        button("Modifier mon besoin", function () {
+      capture();
+      intake.startEdit();
+      renderNeed();
+    }, true);
       }
       showError(error);
     } finally {
