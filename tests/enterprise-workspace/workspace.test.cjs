@@ -34,6 +34,12 @@ async function setup(t, options = {}, search = `?enterprise_id=${uuid(101)}`, mo
   w.FixeoEnterpriseSlaPolicyActions = mountOptions.slaPolicyActions || { canManage: () => false };
   w.FixeoEnterpriseWorkforceActions = mountOptions.workforceActions || { canManage:()=>false,canOperate:()=>false };
   w.FixeoEnterpriseWorkforceUI = mountOptions.workforceUi || { mount:()=>({render(){},destroy(){}}) };
+  w.FixeoEnterpriseControlTower = mountOptions.controlTower || {
+    canEscalate:()=>false,
+    load:async()=>({ok:true,summary:{},attention:[],site_load:[],worker_load:[]}),
+    upsertEscalation:async()=>({ok:true})
+  };
+  w.FixeoEnterpriseControlTowerUI = mountOptions.controlTowerUi || { mount:()=>({refresh(){},setMembers(){},destroy(){}}) };
   w.FixeoEnterpriseAudit = mountOptions.audit || {
     canView: role => role === 'owner' || role === 'admin',
     listPage: async () => ({ status:'ok',events:[],returned_count:0,has_more:false,next_cursor:null }),
@@ -153,7 +159,8 @@ test('U11 New page has isolated scripts, unique IDs, local links and no operatio
     'js/fixeo-enterprise-reporting.js', 'js/fixeo-enterprise-member-actions.js',
     'js/fixeo-enterprise-invitation-actions.js', 'js/fixeo-enterprise-audit.js',
     'js/fixeo-enterprise-sla-policy-actions.js', 'js/fixeo-enterprise-workforce-actions.js',
-    'js/fixeo-enterprise-workforce-ui.js', 'js/fixeo-enterprise-workspace.js']);
+    'js/fixeo-enterprise-workforce-ui.js', 'js/fixeo-enterprise-control-tower.js',
+    'js/fixeo-enterprise-control-tower-ui.js', 'js/fixeo-enterprise-workspace.js']);
   const ids = [...d.querySelectorAll('[id]')].map(n => n.id);
   assert.equal(ids.length, new Set(ids).size);
   assert.ok([...d.querySelectorAll('a')].every(a => ['index.html', '#main', 'auth.html'].includes(a.getAttribute('href'))));
