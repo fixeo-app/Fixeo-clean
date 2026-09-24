@@ -479,16 +479,51 @@ BEGIN
       w.status,
       w.availability,
       w.max_concurrent_jobs,
-      count(ia.id) FILTER (WHERE ia.status IN ('assigned','in_progress'))::integer AS active_assignments,
-      count(ia.id) FILTER (WHERE ia.status='assigned')::integer AS waiting_start_count,
-      count(ia.id) FILTER (WHERE ia.status='in_progress')::integer AS in_progress_count
+      count(ia.id) FILTER (
+        WHERE ia.status IN ('assigned','in_progress')
+          AND EXISTS (
+            SELECT 1
+            FROM public.enterprise_request_context erc2
+            WHERE erc2.service_request_id=ia.service_request_id
+              AND erc2.enterprise_id=p_enterprise_id
+              AND fixeo_private._fixeo_can_access_enterprise_site(erc2.enterprise_id,erc2.site_id)
+          )
+      )::integer AS active_assignments,
+      count(ia.id) FILTER (
+        WHERE ia.status='assigned'
+          AND EXISTS (
+            SELECT 1
+            FROM public.enterprise_request_context erc2
+            WHERE erc2.service_request_id=ia.service_request_id
+              AND erc2.enterprise_id=p_enterprise_id
+              AND fixeo_private._fixeo_can_access_enterprise_site(erc2.enterprise_id,erc2.site_id)
+          )
+      )::integer AS waiting_start_count,
+      count(ia.id) FILTER (
+        WHERE ia.status='in_progress'
+          AND EXISTS (
+            SELECT 1
+            FROM public.enterprise_request_context erc2
+            WHERE erc2.service_request_id=ia.service_request_id
+              AND erc2.enterprise_id=p_enterprise_id
+              AND fixeo_private._fixeo_can_access_enterprise_site(erc2.enterprise_id,erc2.site_id)
+          )
+      )::integer AS in_progress_count
     FROM public.enterprise_workforce_workers w
     LEFT JOIN public.enterprise_internal_assignments ia ON ia.worker_id=w.id
     WHERE w.enterprise_id=p_enterprise_id
+      AND (
+        w.all_sites=true
+        OR EXISTS (
+          SELECT 1
+          FROM public.enterprise_workforce_sites ws
+          WHERE ws.worker_id=w.id
+            AND ws.enterprise_id=p_enterprise_id
+            AND fixeo_private._fixeo_can_access_enterprise_site(ws.enterprise_id,ws.site_id)
+        )
+      )
     GROUP BY w.id,w.display_label,w.status,w.availability,w.max_concurrent_jobs
-    ORDER BY
-      (count(ia.id) FILTER (WHERE ia.status IN ('assigned','in_progress'))) DESC,
-      w.display_label
+    ORDER BY active_assignments DESC,w.display_label
   )
   SELECT COALESCE(
     pg_catalog.jsonb_agg(
