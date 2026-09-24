@@ -88,10 +88,26 @@
 
     var pair = await Promise.all([
       loadSites(client, enterpriseId),
-      loadContexts(client, enterpriseId)
+      loadContexts(client, enterpriseId),
+      paged(function (from, to) {
+        return fromPublic(client, 'enterprise_members')
+          .select('id,enterprise_id,user_id,role,status,created_at,updated_at')
+          .eq('enterprise_id', enterpriseId)
+          .order('id', { ascending: true })
+          .range(from, to);
+      }),
+      paged(function (from, to) {
+        return fromPublic(client, 'enterprise_member_sites')
+          .select('id,enterprise_id,member_id,site_id,created_at')
+          .eq('enterprise_id', enterpriseId)
+          .order('id', { ascending: true })
+          .range(from, to);
+      })
     ]);
     var sites = pair[0];
     var contexts = pair[1];
+    var members = pair[2];
+    var memberSites = pair[3];
 
     var requestIds = Array.from(new Set(contexts.map(function (row) {
       return String(row.service_request_id || '');
@@ -159,6 +175,13 @@
       return (Date.parse(b.created_at || 0) || 0) - (Date.parse(a.created_at || 0) || 0);
     });
 
+    var memberAssignments = new Map();
+    memberSites.forEach(function (row) {
+      var key = String(row.member_id || '');
+      if (!memberAssignments.has(key)) memberAssignments.set(key, []);
+      memberAssignments.get(key).push(String(row.site_id || ''));
+    });
+
     return Object.freeze({
       sites: sites.map(function (site) {
         return Object.freeze({
@@ -170,7 +193,16 @@
           status: String(site.status || '')
         });
       }),
-      interventions: interventions.map(Object.freeze)
+      interventions: interventions.map(Object.freeze),
+      members: members.map(function (member) {
+        return Object.freeze({
+          id: String(member.id || ''),
+          user_id: String(member.user_id || ''),
+          role: String(member.role || ''),
+          status: String(member.status || ''),
+          site_ids: Object.freeze((memberAssignments.get(String(member.id || '')) || []).slice())
+        });
+      })
     });
   }
 
