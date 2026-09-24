@@ -674,7 +674,7 @@ for (const width of [320, 360, 390, 412]) {
     const canonicalSphere = sphereStyles();
     assert.equal(computed('.fxhf-visual').transform, 'translate(-12px, 8px)', 'NEED anchor is the canon');
     assert.equal(computed('.fxhf-heading-copy').paddingRight, '96px', 'text reserves the halo slot');
-    assert.equal(computed('.fxhf-heading-copy').minHeight, '9.5rem');
+    assert.equal(computed('.fxhf-heading-copy').minHeight, 'calc(60px + 8px + 13px)', 'only the frozen artwork extent, not a common text reserve');
     assert.equal(computed('.fxhf-heading-copy').overflowWrap, 'anywhere');
     assert.equal(computed('.fxhf-scroll').minHeight, '8rem', 'bounded content floor, independent of viewport');
     assert.equal(computed('.fxhf-heading').animation, 'none', 'header never translates during transitions');
@@ -749,6 +749,7 @@ for (const width of [320, 360, 390, 412]) {
     assert.equal(computed(".fxhf-universal").minHeight, "0");
     assert.equal(computed(".fxhf-actions").position, "static");
     assert.equal(computed('.fxhf-subtitle').display, 'none', 'retain intentional keyboard compaction');
+    assert.equal(computed('.fxhf-heading-copy').minHeight, 'calc(60px + 8px + 13px)', 'same artwork clearance with the keyboard, no separate text reserve');
     assert.notEqual(computed('.fxhf-visual').display, 'none', 'canonical RAFI also remains during keyboard entry');
     assert.equal(computed('.fxhf-photos').display, 'flex');
     assert.ok(s.q("fxhf-root").contains(s.q("fxhf-submit")));
@@ -793,8 +794,21 @@ for (const width of [320, 360, 390, 412]) {
       assert.equal(sphere.outerHTML, sphereMarkup, state + ': identical classes and image');
       assert.deepEqual(sphereStyles(), canonicalSphere, state + ': exact NEED CSS geometry/glow/animation');
       assert.equal(computed('.fxhf-heading-copy').paddingRight, '96px', state);
-      assert.equal(computed('.fxhf-heading-copy').minHeight, '9.5rem', state);
+      assert.equal(computed('.fxhf-heading-copy').minHeight, 'calc(60px + 8px + 13px)', state);
       assert.equal(computed('.fxhf-scroll').minHeight, '8rem', state);
+      assert.equal(computed('.fxhf-scroll').justifyContent, 'flex-start', state);
+      // Long copy must grow intrinsically, without a clamp, fixed height or
+      // offset. These are cascade contracts, not measured Safari layout.
+      const copy = doc.querySelector('.fxhf-heading-copy');
+      copy.querySelector('.fxhf-title').textContent = 'Un besoin long à préciser sans couper les informations utiles';
+      const css = computed('.fxhf-heading-copy');
+      assert.ok(['', 'auto'].includes(css.height), state);
+      assert.ok(['', 'none'].includes(css.maxHeight), state);
+      assert.ok(['', 'visible'].includes(css.overflow), state);
+      assert.ok(['', 'none'].includes(css.transform), state);
+      assert.ok(['', 'static'].includes(css.position), state);
+      assert.equal(copy.nextElementSibling.className, 'fxhf-progress', state);
+      assert.deepEqual(sphereStyles(), canonicalSphere, state + ': long title cannot restyle RAFI');
     }
   });
 }
@@ -1109,7 +1123,7 @@ test("Hero premium preserves three photos, safety signals and primary footer thr
     3,
   );
   assert.match(s.q("fxhf-panel").textContent, /aucune manipulation/);
-  function footer() {
+  function footer(primary = true) {
     const actions = s.q("fxhf-actions"),
       scroll = s.q("fxhf-root").querySelector(".fxhf-scroll");
     assert.equal(
@@ -1117,7 +1131,7 @@ test("Hero premium preserves three photos, safety signals and primary footer thr
       false,
       "CTA must occupy its own grid row",
     );
-    assert.equal(actions.querySelectorAll(".fxhf-submit").length, 1);
+    assert.equal(actions.querySelectorAll(".fxhf-submit").length, primary ? 1 : 0);
   }
   footer();
   s.click("Retour");
@@ -1141,7 +1155,7 @@ test("Hero premium preserves three photos, safety signals and primary footer thr
   s.change("fxhf-phone", "0600000000");
   s.q("fxhf-confirm").click();
   await s.until(() => s.q("fxhf-root").dataset.fxhfState === "matching");
-  footer();
+  footer(false);
   assert.equal(s.counts().confirmCount, 1);
   assert.equal(
     s.q("fxhf-root").querySelectorAll(".fxhf-lifecycle .done").length,
@@ -1476,3 +1490,120 @@ test('Non-critical generic advice from an existing result is not repeated in con
   await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'matching');
   assert.equal(s.q('fxhf-panel').querySelector('.fxhf-caution'), null);
 });
+
+test('V2.2 compact safety copy keeps explicit danger reporting and the unchanged server gate', async t => {
+  const s = setup(t, {override: locksmithEngineResponse,
+    configure(w) { w.FixeoAIRE = {detect: () => ({cat: 'serrurerie'})}; }});
+  s.fill(); s.change('fxhf-need-input', 'Ma porte est bloquée');
+  s.q('fxhf-submit').click(); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'safety');
+  assert.equal(s.q('fxhf-root').querySelector('.fxhf-title').textContent, 'Avant l’analyse.');
+  const inputs = [...s.q('fxhf-panel').querySelectorAll('input')];
+  assert.equal(inputs.length, 1);
+  assert.equal(inputs[0].value, 'immediate_danger');
+  assert.equal(inputs[0].checked, false);
+  assert.equal(inputs[0].parentElement.textContent, 'Je signale un danger immédiat');
+  assert.match(s.q('fxhf-panel').textContent, /L’absence de signe déclaré ne garantit pas l’absence de danger/);
+  assert.equal(s.calls.length, 0);
+  inputs[0].checked = true;
+  s.click('Retour'); await s.until(() => s.q('fxhf-submit'));
+  s.q('fxhf-submit').click(); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'safety');
+  assert.equal(s.q('fxhf-panel').querySelector('input').checked, true);
+  s.click('RAFI comprend mon besoin'); await s.until(() => s.q('fxhf-entrust'));
+  assert.deepEqual(s.calls.find(c => c.action === 'create').input.safety_signals, ['immediate_danger']);
+  assert.equal(s.server().result.safety.level, 'CRITICAL');
+  assert.equal(s.server().result.safety.stop, true);
+  assert.equal(s.q('fxhf-entrust').disabled, true);
+});
+
+// Eight requested business cases: real local safety/question engine and Hero;
+// AI classification is a controlled provider fixture, never a production call.
+for (const [description, trade, problem, level, questionIds] of [
+  ['Ma porte est bloquée', 'serrurerie', 'Porte bloquée', 'TECHNICAL', []],
+  ["Ma porte est bloquée depuis aujourd'hui", 'serrurerie', 'Porte bloquée', 'TECHNICAL', []],
+  ["J'ai une fuite sous le lavabo", 'plomberie', 'Fuite sous le lavabo', 'TECHNICAL', ['water_spreading']],
+  ['Ma prise fait des étincelles', 'electricite', 'Étincelles dans une prise', 'CRITICAL', []],
+  ['Je sens une odeur de gaz', 'plomberie', 'Odeur de gaz', 'CRITICAL', []],
+  ['Ma clim ne refroidit plus', 'climatisation', 'Climatisation ne refroidissant plus', 'TECHNICAL', []],
+  ["J'ai une fissure sur un mur", 'maconnerie', 'Fissure sur un mur', 'TECHNICAL', ['structure_moving']],
+  ["J'ai un problème difficile à décrire", 'autre', 'Besoin à préciser', 'TECHNICAL', ['onset', 'affected_area']],
+]) {
+  test('V2.2 local journey matrix: ' + description, async t => {
+    const s = setup(t, {
+      configure(w) { w.FixeoAIRE = {detect: () => ({cat: trade})}; },
+      async override(body, server) {
+        if (body.action !== 'analyze') return;
+        const {analyze} = require('../api/diagnostic/engine');
+        const output = await analyze({input: server.input, media: []}, {
+          provider: {analyze: async () => ({result: {
+            trade, problem, observations: [], hypotheses: ['Hypothèse non confirmée'],
+            urgency: 'moderate', urgency_reason: 'Besoin déclaré à vérifier sur place.',
+            checks: [], possible_parts: [], safety_signals: [],
+            question_ids: ['onset', 'affected_area',
+              {plomberie: 'water_spreading', maconnerie: 'structure_moving'}[trade] || 'occurrence'],
+          }, usage: {}})}, mediaStore: {},
+        });
+        server.result = output.result; server.state = 'ready'; server.result_run_id = body.run_id;
+        return {session: clone(server)};
+      },
+    });
+    s.fill(); s.change('fxhf-location', 'fes'); s.change('fxhf-need-input', description);
+    const sphere = s.q('fxhf-root').querySelector('.fxhf-visual');
+    s.q('fxhf-submit').click(); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'safety');
+    assert([...s.q('fxhf-panel').querySelectorAll('input')].every(input => !input.checked));
+    if (level === 'CRITICAL')
+      assert.equal(s.q('fxhf-root').querySelector('.fxhf-title').textContent, 'D’abord, votre sécurité.');
+    s.click('RAFI comprend mon besoin');
+    await s.until(() => ['result', 'questions'].includes(s.q('fxhf-root').dataset.fxhfState));
+    assert.deepEqual(s.server().result.questions.map(q => q.id), questionIds);
+    assert(s.server().result.questions.every(q => q.optional));
+    let answered = 0;
+    while (s.q('fxhf-root').dataset.fxhfState === 'questions') {
+      assert(++answered <= 2, 'at most two optional questions across all rounds');
+      const before = s.q('fxhf-panel');
+      assert.match(before.textContent, /facultatif/);
+      if (trade === 'autre') assert.doesNotMatch(before.textContent, /Mur|Plafond|Sol|Équipement/);
+      s.click('Je ne sais pas');
+      await s.until(() => s.q('fxhf-panel') !== before);
+    }
+    assert.equal(s.q('fxhf-root').dataset.fxhfState, 'result');
+    const r = s.server().result, id = s.server().id;
+    assert.equal(r.trade.value, trade);
+    assert.equal(r.safety.level, level);
+    assert.equal(r.safety.safety_cleared, false);
+    assert.equal(r.safety.stop, level === 'CRITICAL');
+    assert.equal(s.q('fxhf-panel').querySelectorAll('.fxhf-summary-priority').length, 1);
+    assert.equal(s.q('fxhf-panel').querySelector('.fxhf-summary-city dd').textContent, 'Fès');
+    assert.equal(s.q('fxhf-panel').querySelector('.fxhf-summary-problem dd').textContent, r.problem.value);
+    assert.doesNotMatch(s.q('fxhf-panel').textContent, /Hypothèse non confirmée/);
+    if (level === 'CRITICAL') {
+      assert.equal(s.q('fxhf-entrust').disabled, true);
+      assert.match(s.q('fxhf-panel').querySelector('.fxhf-caution').textContent, /services d’urgence/);
+      s.change('fxhf-critical-ack', true);
+    } else {
+      assert.deepEqual(r.safety.signals, []);
+      assert.equal(s.q('fxhf-panel').querySelector('.fxhf-caution'), null);
+      assert.doesNotMatch(s.q('fxhf-panel').textContent, /Urgente|Gardez vos distances/);
+    }
+    assert.equal(s.q('fxhf-entrust').textContent, 'Confier cette intervention à FIXEO');
+    if (trade === 'serrurerie') assert.doesNotMatch(s.q('fxhf-panel').textContent, /Mur|Plafond|Sol|Équipement/);
+    s.q('fxhf-entrust').click(); await s.until(() => s.q('fxhf-phone'));
+    assert.equal(s.q('fxhf-root').querySelector('.fxhf-title').textContent, 'Confirmez votre demande.');
+    assert.equal(s.q('fxhf-panel').querySelector('.fxhf-recap').open, false);
+    assert.equal(!!s.q('fxhf-panel').querySelector('.fxhf-caution'), level === 'CRITICAL');
+    s.change('fxhf-phone', '0611111111'); s.click('Retour'); await s.until(() => s.q('fxhf-entrust'));
+    s.q('fxhf-entrust').click(); await s.until(() => s.q('fxhf-phone'));
+    assert.equal(s.q('fxhf-phone').value, '0611111111');
+    const confirm = s.q('fxhf-confirm'); confirm.click(); confirm.click();
+    await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'matching');
+    assert.equal(s.server().id, id);
+    assert.equal(s.server().input.description, description);
+    assert.equal(s.counts().createCount, 1);
+    assert.equal(s.calls.filter(c => c.action === 'confirm_intervention').length, 1);
+    assert.equal(s.q('fxhf-root').querySelector('.fxhf-visual'), sphere);
+    assert.equal(s.q('fxhf-panel').querySelectorAll('.fxhf-lifecycle .done').length, 2);
+    const refresh = [...s.q('fxhf-actions').querySelectorAll('button')].find(b => b.textContent === 'Actualiser le suivi');
+    assert.equal(refresh.className, 'fxhf-secondary');
+    refresh.click(); await s.until(() => s.calls.some(c => c.action === 'intervention_status'));
+    assert.equal(s.q('fxhf-panel').querySelectorAll('.fxhf-lifecycle .done').length, 2);
+  });
+}

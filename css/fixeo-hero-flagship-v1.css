@@ -255,10 +255,11 @@ body.fxhf-immersive #fixeo-urgent-fab, body.fxhf-immersive .chat-widget { visibi
     align-self: start;
     gap: 16px;
   }
-  /* A shared header reserve and a modest content floor, never a viewport.
-     Long copy grows naturally to the left of the unchanged RAFI slot. */
+  /* Intrinsic copy height; only clear the frozen artwork's 60px slot,
+     8px vertical offset and 13px halo extent before the progress margin.
+     Long copy grows naturally to its left, including with the keyboard. */
   #fxhf-root .fxhf-heading { animation: none; }
-  #fxhf-root .fxhf-heading-copy { min-width: 0; min-height: 9.5rem; padding-right: 96px; overflow-wrap: anywhere; }
+  #fxhf-root .fxhf-heading-copy { min-width: 0; min-height: calc(60px + 8px + 13px); padding-right: 96px; overflow-wrap: anywhere; }
   #fxhf-root[data-fxhf-state] .fxhf-scroll {
     overflow: visible;
     min-height: 8rem;
@@ -288,7 +289,6 @@ body.fxhf-immersive #fixeo-urgent-fab, body.fxhf-immersive .chat-widget { visibi
   #fxhf-root[data-fxhf-state=need] .fxhf-mic[aria-expanded=true] { background: #cde9ff13; }
   #fxhf-root[data-fxhf-state=need] .fxhf-speech-lang { background: #cde9ff06; color: #bdcede; border-radius: 10px; }
   body.fxhf-keyboard #fxhf-root .fxhf-title { font-size: 22px; }
-  body.fxhf-keyboard #fxhf-root .fxhf-heading-copy { min-height: 6rem; }
   /* RAFI OS still mounts for legacy consumers. Hide only its decorative
      homepage stage throughout the mounted canonical mobile journey. */
   section#home.fxhf-premium-home:has(#fxhf-root[data-fxhf-state]) > .hero-content > .rfos-stage-wrap,

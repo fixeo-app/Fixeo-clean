@@ -690,14 +690,15 @@
       return '<div class="fxhf-hazards">' + keys.map(function (key) {
         return '<label><input type="checkbox" value="' + key + '"' +
           (intake.draft.safety_signals.includes(key) ? " checked" : "") +
-          '><span>' + hazards[key] + '</span></label>';
+          '><span>' + (key === "immediate_danger" && relevant.size === 1
+            ? "Je signale un danger immédiat" : hazards[key]) + '</span></label>';
       }).join("") + '</div>';
     }
     frame(
       "safety",
-      relevant.size === 1 ? "Un point avant de continuer." : "D’abord, votre sécurité.",
+      relevant.size === 1 ? "Avant l’analyse." : "D’abord, votre sécurité.",
       relevant.size === 1
-        ? "Avez-vous déjà constaté un danger immédiat ? En cas de doute, signalez-le sans vous approcher."
+        ? "Un danger immédiat à signaler ? En cas de doute, signalez-le sans vous approcher."
         : "Pour ce besoin, avez-vous déjà constaté l’un de ces signes ? Ne vous approchez pas pour vérifier.",
     );
     panel(
@@ -1106,7 +1107,7 @@
     button("Actualiser le suivi", async function () {
       await intake.follow();
       renderBound();
-    });
+    }, true);
     button(
       "Un nouveau besoin",
       function () {
