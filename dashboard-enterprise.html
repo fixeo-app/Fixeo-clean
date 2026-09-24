@@ -21,6 +21,7 @@
   <script defer src="js/fixeo-enterprise-audit.js?v=b8-1"></script>
   <script defer src="js/fixeo-enterprise-sla-policy-actions.js?v=b9-1"></script>
   <script defer src="js/fixeo-enterprise-workforce-actions.js?v=block-a1"></script>
+  <script defer src="js/fixeo-enterprise-workforce-ui.js?v=block-a1"></script>
   <script defer src="js/fixeo-enterprise-workspace.js?v=block-a1"></script>
 </head>
 <body class="fxew">
@@ -130,6 +131,8 @@
         </div>
         <div id="enterprise-dispatch-policy-list" class="fxew-dispatch-policy-list" aria-live="polite"></div>
         <p id="enterprise-dispatch-policy-empty" class="fxew-empty" hidden>Aucune règle personnalisée : le dispatch externe historique reste le défaut.</p>
+        <div class="fxew-report-card-head"><h3>Dispatch en cours</h3><span>Interne + réseau FIXEO</span></div>
+        <div id="enterprise-hybrid-dispatch-live" class="fxew-hybrid-live" aria-live="polite"></div>
       </section>
 
       <section id="enterprise-my-workforce-module" class="fxew-module" aria-labelledby="my-workforce-title" hidden>
