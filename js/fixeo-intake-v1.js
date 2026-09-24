@@ -5,16 +5,18 @@
   if (window.FixeoIntake) return;
   var key = "fixeo_diagnostic_dossier_v1";
   var editKey = "fixeo_diagnostic_edit_v1";
-  function readEdit() {
+  function readEdit(id) {
     try {
-      return JSON.parse(sessionStorage.getItem(editKey) || "null");
+      var saved = JSON.parse(sessionStorage.getItem(editKey) || "null");
+      return saved && saved.session_id === id ? saved.draft : null;
     } catch (_) {
       return null;
     }
   }
-  function rememberEdit(value) {
+  function rememberEdit(id, value) {
     try {
-      if (value) sessionStorage.setItem(editKey, JSON.stringify(value));
+      if (id && value)
+        sessionStorage.setItem(editKey, JSON.stringify({ session_id: id, draft: value }));
       else sessionStorage.removeItem(editKey);
     } catch (_) {}
   }
@@ -32,9 +34,10 @@
     } catch (_) {}
   }
   function create(onStatus) {
-    var editDraft = readEdit();
+    var dossierId = read(),
+      editDraft = readEdit(dossierId);
     var client = {
-      id: read(),
+      id: dossierId,
       session: null,
       pending: [],
       progress: null,
@@ -126,11 +129,13 @@
     }
     client.load = load;
     client.startEdit = function () {
+      if (!client.id || client.session?.state === "bound") return false;
       client.editing = true;
-      rememberEdit(client.draft);
+      rememberEdit(client.id, client.draft);
+      return true;
     };
     client.saveEdit = function () {
-      if (client.editing) rememberEdit(client.draft);
+      if (client.editing) rememberEdit(client.id, client.draft);
     };
     client.addFiles = function (files) {
       if (client.busy) return;
@@ -287,7 +292,7 @@
         if (response.pending) return poll();
         var analyzed = restore(response.session);
         client.editing = false;
-        rememberEdit(null);
+        rememberEdit(null, null);
         return analyzed;
       });
     };
@@ -363,7 +368,7 @@
       };
       remember(null);
       client.editing = false;
-      rememberEdit(null);
+      rememberEdit(null, null);
     };
     return client;
   }
