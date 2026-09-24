@@ -1284,8 +1284,9 @@
         try {
           await intake.load(true);
           if (intake.session.state === "bound") {
-            intake.reset();
-            renderNeed();
+            intake.cancelEdit();
+            await intake.follow();
+            renderBound();
           } else renderNeed();
         } catch (error) {
           intake.reset();
