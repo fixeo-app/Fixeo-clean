@@ -122,6 +122,16 @@ SELECT EXISTS(
 );
 $function$;
 
+CREATE OR REPLACE FUNCTION fixeo_private._fixeo_is_enterprise_finance_global_reader(p_enterprise_id uuid)
+RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=''
+AS $function$
+SELECT EXISTS(
+  SELECT 1 FROM public.enterprise_members em
+  WHERE em.enterprise_id=p_enterprise_id AND em.user_id=auth.uid() AND em.status='active'
+    AND em.role IN ('owner','admin','operations_manager','reporter')
+);
+$function$;
+
 CREATE OR REPLACE FUNCTION fixeo_private._fixeo_is_enterprise_finance_manager(p_enterprise_id uuid)
 RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=''
 AS $function$
@@ -133,8 +143,10 @@ SELECT EXISTS(
 $function$;
 
 REVOKE ALL ON FUNCTION fixeo_private._fixeo_is_enterprise_finance_reader(uuid) FROM PUBLIC,anon;
+REVOKE ALL ON FUNCTION fixeo_private._fixeo_is_enterprise_finance_global_reader(uuid) FROM PUBLIC,anon;
 REVOKE ALL ON FUNCTION fixeo_private._fixeo_is_enterprise_finance_manager(uuid) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION fixeo_private._fixeo_is_enterprise_finance_reader(uuid) TO authenticated,service_role;
+GRANT EXECUTE ON FUNCTION fixeo_private._fixeo_is_enterprise_finance_global_reader(uuid) TO authenticated,service_role;
 GRANT EXECUTE ON FUNCTION fixeo_private._fixeo_is_enterprise_finance_manager(uuid) TO authenticated,service_role;
 
 -- 4) RLS + SELECT-only browser tables.
@@ -147,7 +159,10 @@ ALTER TABLE public.enterprise_request_finance_context ENABLE ROW LEVEL SECURITY;
 CREATE POLICY ecc_finance_select ON public.enterprise_cost_centers FOR SELECT TO authenticated
 USING(
   fixeo_private._fixeo_is_enterprise_finance_reader(enterprise_id)
-  AND (site_id IS NULL OR fixeo_private._fixeo_can_access_enterprise_site(enterprise_id,site_id))
+  AND (
+    (site_id IS NULL AND fixeo_private._fixeo_is_enterprise_finance_global_reader(enterprise_id))
+    OR (site_id IS NOT NULL AND fixeo_private._fixeo_can_access_enterprise_site(enterprise_id,site_id))
+  )
 );
 CREATE POLICY eb_finance_select ON public.enterprise_budgets FOR SELECT TO authenticated
 USING(
@@ -155,13 +170,19 @@ USING(
   AND EXISTS(
     SELECT 1 FROM public.enterprise_cost_centers c
     WHERE c.id=enterprise_budgets.cost_center_id
-      AND (c.site_id IS NULL OR fixeo_private._fixeo_can_access_enterprise_site(c.enterprise_id,c.site_id))
+      AND (
+      (c.site_id IS NULL AND fixeo_private._fixeo_is_enterprise_finance_global_reader(c.enterprise_id))
+      OR (c.site_id IS NOT NULL AND fixeo_private._fixeo_can_access_enterprise_site(c.enterprise_id,c.site_id))
+    )
   )
 );
 CREATE POLICY epo_finance_select ON public.enterprise_purchase_orders FOR SELECT TO authenticated
 USING(
   fixeo_private._fixeo_is_enterprise_finance_reader(enterprise_id)
-  AND (site_id IS NULL OR fixeo_private._fixeo_can_access_enterprise_site(enterprise_id,site_id))
+  AND (
+    (site_id IS NULL AND fixeo_private._fixeo_is_enterprise_finance_global_reader(enterprise_id))
+    OR (site_id IS NOT NULL AND fixeo_private._fixeo_can_access_enterprise_site(enterprise_id,site_id))
+  )
 );
 CREATE POLICY ewcr_finance_select ON public.enterprise_worker_cost_rates FOR SELECT TO authenticated
 USING(fixeo_private._fixeo_is_enterprise_finance_manager(enterprise_id));
@@ -411,7 +432,10 @@ BEGIN
 
   SELECT COALESCE(jsonb_agg(jsonb_build_object('id',c.id,'site_id',c.site_id,'code',c.code,'name',c.name,'department',c.department,'status',c.status) ORDER BY c.code),'[]'::jsonb)
   INTO v_cost_centers FROM public.enterprise_cost_centers c
-  WHERE c.enterprise_id=p_enterprise_id AND (c.site_id IS NULL OR fixeo_private._fixeo_can_access_enterprise_site(c.enterprise_id,c.site_id));
+  WHERE c.enterprise_id=p_enterprise_id AND (
+      (c.site_id IS NULL AND fixeo_private._fixeo_is_enterprise_finance_global_reader(c.enterprise_id))
+      OR (c.site_id IS NOT NULL AND fixeo_private._fixeo_can_access_enterprise_site(c.enterprise_id,c.site_id))
+    );
 
   SELECT COALESCE(jsonb_agg(jsonb_build_object(
     'id',b.id,'cost_center_id',b.cost_center_id,'period_start',b.period_start,'period_end',b.period_end,'amount',b.amount,'status',b.status,
@@ -434,12 +458,18 @@ BEGIN
   INTO v_budgets
   FROM public.enterprise_budgets b
   JOIN public.enterprise_cost_centers c ON c.id=b.cost_center_id
-  WHERE b.enterprise_id=p_enterprise_id AND (c.site_id IS NULL OR fixeo_private._fixeo_can_access_enterprise_site(c.enterprise_id,c.site_id));
+  WHERE b.enterprise_id=p_enterprise_id AND (
+      (c.site_id IS NULL AND fixeo_private._fixeo_is_enterprise_finance_global_reader(c.enterprise_id))
+      OR (c.site_id IS NOT NULL AND fixeo_private._fixeo_can_access_enterprise_site(c.enterprise_id,c.site_id))
+    );
 
   SELECT COALESCE(jsonb_agg(jsonb_build_object('id',po.id,'cost_center_id',po.cost_center_id,'site_id',po.site_id,'reference',po.reference,
     'approved_amount',po.approved_amount,'status',po.status,'notes',po.notes) ORDER BY po.created_at DESC),'[]'::jsonb)
   INTO v_pos FROM public.enterprise_purchase_orders po
-  WHERE po.enterprise_id=p_enterprise_id AND (po.site_id IS NULL OR fixeo_private._fixeo_can_access_enterprise_site(po.enterprise_id,po.site_id));
+  WHERE po.enterprise_id=p_enterprise_id AND (
+    (po.site_id IS NULL AND fixeo_private._fixeo_is_enterprise_finance_global_reader(po.enterprise_id))
+    OR (po.site_id IS NOT NULL AND fixeo_private._fixeo_can_access_enterprise_site(po.enterprise_id,po.site_id))
+  );
 
   IF fixeo_private._fixeo_is_enterprise_finance_manager(p_enterprise_id) THEN
     SELECT COALESCE(jsonb_agg(jsonb_build_object('worker_id',r.worker_id,'display_label',w.display_label,'hourly_cost',r.hourly_cost) ORDER BY w.display_label),'[]'::jsonb)
