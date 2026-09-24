@@ -319,7 +319,9 @@
       'dispatch.internal_assignment_updated':'Mission interne mise à jour',
       'dispatch.external_started':'Dispatch externe lancé',
       'dispatch.external_fallback':'Fallback externe lancé',
-      'dispatch.no_internal_candidate':'Aucun technicien interne éligible'
+      'dispatch.no_internal_candidate':'Aucun technicien interne éligible',
+      'control_tower.escalation_created':'Escalade Control Tower créée',
+      'control_tower.escalation_updated':'Escalade Control Tower modifiée'
     });
     function canViewAudit() {
       return !!(win.FixeoEnterpriseAudit &&
