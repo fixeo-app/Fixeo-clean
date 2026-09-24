@@ -137,6 +137,10 @@
     client.saveEdit = function () {
       if (client.editing) rememberEdit(client.id, client.draft);
     };
+    client.cancelEdit = function () {
+      client.editing = false;
+      rememberEdit(null, null);
+    };
     client.addFiles = function (files) {
       if (client.busy) return;
       var count =
