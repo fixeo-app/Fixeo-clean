@@ -331,7 +331,15 @@
       'equipment.maintenance_linked':'Plan préventif lié à un équipement',
       'equipment.maintenance_unlinked':'Plan préventif retiré de l’équipement',
       'equipment.asset_registered':'Média équipement ajouté',
-      'equipment.asset_removed':'Média équipement supprimé'
+      'equipment.asset_removed':'Média équipement supprimé',
+      'finance.cost_center_created':'Centre de coût créé',
+      'finance.cost_center_updated':'Centre de coût modifié',
+      'finance.budget_created':'Budget créé',
+      'finance.budget_updated':'Budget modifié',
+      'finance.po_created':'Bon de commande créé',
+      'finance.po_updated':'Bon de commande modifié',
+      'finance.worker_rate_updated':'Coût horaire Workforce modifié',
+      'finance.request_context_updated':'Contexte financier intervention modifié'
     });
     function canViewAudit() {
       return !!(win.FixeoEnterpriseAudit &&
