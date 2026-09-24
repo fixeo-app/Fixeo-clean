@@ -9,7 +9,7 @@ test('transport records request milestones and never retries uncertain quota mut
   const server = createServer((req) => { calls++; req.resume(); });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   try {
-    const transport = createTransport({ env: { SUPABASE_URL: 'http://127.0.0.1:' + server.address().port, SUPABASE_SERVICE_ROLE_KEY: 'sensitive-test-key' }, requestTimeout: 80 });
+    const transport = createTransport({ env: { SUPABASE_URL: 'http://127.0.0.1:' + server.address().port, SUPABASE_SERVICE_ROLE_KEY: 'sensitive-test-key' }, requestTimeout: 500 });
     await assert.rejects(transport.rpc('diagnostic_quota_v1', { secret_payload: 'private-payload' }), error => {
       assert.equal(error.code, 'DEPENDENCY_UNAVAILABLE');
       assert.equal(error.diagnosticTransport.operation, 'quota');
