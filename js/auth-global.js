@@ -56,6 +56,33 @@
     return href;
   }
 
+  var workspaceEntryLoader = null;
+  function loadWorkspaceEntry() {
+    if (window.FixeoWorkspaceEntry) return Promise.resolve(window.FixeoWorkspaceEntry);
+    if (workspaceEntryLoader) return workspaceEntryLoader;
+    workspaceEntryLoader = new Promise(function (resolve, reject) {
+      var script = document.createElement('script');
+      script.src = '/js/fixeo-workspace-entry.js?v=2c2-1';
+      script.async = true;
+      script.onload = function () {
+        window.FixeoWorkspaceEntry ? resolve(window.FixeoWorkspaceEntry) : reject(new Error('WORKSPACE_ENTRY_UNAVAILABLE'));
+      };
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+    return workspaceEntryLoader;
+  }
+
+  async function navigateWorkspaceEntry(fallbackHref) {
+    try {
+      var api = await loadWorkspaceEntry();
+      return await api.navigate(fallbackHref);
+    } catch (_) {
+      window.location.href = fallbackHref;
+      return fallbackHref;
+    }
+  }
+
   function readStoredUser() {
     var jsonUser = safeParse(localStorage.getItem('user'), null) || {};
     var fixeoUser = safeTrim(localStorage.getItem('fixeo_user'));
@@ -375,6 +402,17 @@ if (VALID_ROLES.indexOf(role) === -1) {
 
   window.addEventListener('storage', renderAll);
   window.addEventListener(AUTH_EVENT, function () { renderAll(); });
+
+  document.addEventListener('click', function (event) {
+    var link = event.target && event.target.closest ? event.target.closest('a[data-role="dashboard"]') : null;
+    if (!link) return;
+    var user = readStoredUser();
+    if (!user) return;
+    event.preventDefault();
+    var fallback = link.getAttribute('href') ||
+      (user.role === 'artisan' ? 'dashboard-artisan-v2.html' : (user.role === 'admin' ? 'admin.html' : 'dashboard-client.html'));
+    navigateWorkspaceEntry(fallback);
+  }, true);
 
   renderAll();
   if (document.readyState === 'loading') {

@@ -144,6 +144,33 @@ if (!['admin', 'artisan', 'client'].includes(role)) {
     return 'dashboard-client.html';
   }
 
+  let workspaceEntryLoader = null;
+  function loadWorkspaceEntry() {
+    if (window.FixeoWorkspaceEntry) return Promise.resolve(window.FixeoWorkspaceEntry);
+    if (workspaceEntryLoader) return workspaceEntryLoader;
+    workspaceEntryLoader = new Promise(function (resolve, reject) {
+      const script = document.createElement('script');
+      script.src = '/js/fixeo-workspace-entry.js?v=2c2-1';
+      script.async = true;
+      script.onload = function () {
+        window.FixeoWorkspaceEntry ? resolve(window.FixeoWorkspaceEntry) : reject(new Error('WORKSPACE_ENTRY_UNAVAILABLE'));
+      };
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+    return workspaceEntryLoader;
+  }
+
+  async function navigateWorkspaceEntry(fallbackHref) {
+    try {
+      const api = await loadWorkspaceEntry();
+      return await api.navigate(fallbackHref);
+    } catch (_) {
+      window.location.href = fallbackHref;
+      return fallbackHref;
+    }
+  }
+
   function injectStyles() {
     if (document.getElementById('fixeo-session-mobile-style')) return;
     const style = document.createElement('style');
@@ -252,13 +279,20 @@ if (!['admin', 'artisan', 'client'].includes(role)) {
         <strong>${user.name}</strong>
         <span>${user.job || 'Artisan Fixeo'}${user.city ? ' · ' + user.city : ''}</span>
       </div>
-      <a href="${dashboardHref(user)}">📊 Mon espace</a>
+      <a href="${dashboardHref(user)}" data-fixeo-workspace-entry>📊 Mon espace</a>
       <button type="button" data-fixeo-logout>🚪 Se déconnecter</button>`;
 
     const logoutBtn = menu.querySelector('[data-fixeo-logout]');
     logoutBtn?.addEventListener('click', function (event) {
       event.preventDefault();
       clearSession();
+    });
+
+    const workspaceLink = menu.querySelector('[data-fixeo-workspace-entry]');
+    workspaceLink?.addEventListener('click', function (event) {
+      event.preventDefault();
+      menu.classList.remove('is-open');
+      navigateWorkspaceEntry(workspaceLink.getAttribute('href') || dashboardHref(user));
     });
 
     avatarLink.addEventListener('click', function (event) {

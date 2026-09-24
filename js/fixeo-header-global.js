@@ -49,6 +49,33 @@
     return href;
   }
 
+  let workspaceEntryLoader = null;
+  function loadWorkspaceEntry() {
+    if (window.FixeoWorkspaceEntry) return Promise.resolve(window.FixeoWorkspaceEntry);
+    if (workspaceEntryLoader) return workspaceEntryLoader;
+    workspaceEntryLoader = new Promise(function (resolve, reject) {
+      const script = document.createElement('script');
+      script.src = '/js/fixeo-workspace-entry.js?v=2c2-1';
+      script.async = true;
+      script.onload = function () {
+        window.FixeoWorkspaceEntry ? resolve(window.FixeoWorkspaceEntry) : reject(new Error('WORKSPACE_ENTRY_UNAVAILABLE'));
+      };
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+    return workspaceEntryLoader;
+  }
+
+  async function navigateWorkspaceEntry(fallbackHref) {
+    try {
+      const api = await loadWorkspaceEntry();
+      return await api.navigate(fallbackHref);
+    } catch (_) {
+      window.location.href = fallbackHref;
+      return fallbackHref;
+    }
+  }
+
   function getAvatarHref(user) {
     if (!user) return resolveCoreHref('auth.html');
     if (user.role === 'artisan') return resolveCoreHref('dashboard-artisan-v2.html');
@@ -440,6 +467,7 @@
         <a
           class="fixeo-gh-drawer-link
                  fixeo-gh-drawer-compte-user"
+          data-fixeo-workspace-entry
           href="${dashDest}">
 
           <span class="fixeo-gh-drawer-avatar">
@@ -456,6 +484,7 @@
         <a
           class="fixeo-gh-drawer-link
                  fixeo-gh-drawer-espace"
+          data-fixeo-workspace-entry
           href="${dashDest}">
 
           <span
@@ -1174,6 +1203,15 @@ root.querySelectorAll(
     }
 
 
+    if (link.hasAttribute('data-fixeo-workspace-entry')) {
+      e.preventDefault();
+      e.stopPropagation();
+      const fallback = link.getAttribute('href') || getAvatarHref(getAuthUser());
+      closeDrawer(root);
+      navigateWorkspaceEntry(fallback);
+      return;
+    }
+
     /* Standard menu navigation */
     closeDrawer(root);
 
@@ -1207,18 +1245,15 @@ root.querySelectorAll(
       }
     });
 
-    /* ── Avatar workspace shortcut — delegated, works regardless of href timing ── */
+    /* ── Avatar workspace shortcut — canonical multi-space routing ── */
     root.addEventListener('click', function (e) {
       const avatarLink = e.target.closest('.fixeo-gh-avatar-link');
       if (!avatarLink) return;
+      const u = getAuthUser();
+      if (!u) return;
       e.preventDefault();
       e.stopPropagation();
-      const u = getAuthUser();
-      const dest = (u && u.role === 'artisan')
-        ? 'dashboard-artisan-v2.html'
-        : (u ? 'dashboard-client.html' : 'auth.html');
-      console.warn('[fixeo-gh] avatar workspace click →', dest);
-      window.location.href = dest;
+      navigateWorkspaceEntry(avatarLink.getAttribute('href') || getAvatarHref(u));
     });
 
     /* Language buttons in drawer */
