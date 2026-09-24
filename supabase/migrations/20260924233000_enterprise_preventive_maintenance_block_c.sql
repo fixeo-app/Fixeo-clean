@@ -585,6 +585,26 @@ BEGIN
     DO UPDATE SET updated_at=now()
     RETURNING id INTO v_run_id;
 
+    IF EXISTS (
+      SELECT 1
+      FROM public.enterprise_maintenance_runs r
+      WHERE r.id=v_run_id
+        AND r.status='generated'
+        AND r.service_request_id IS NOT NULL
+    ) THEN
+      v_next_due := fixeo_private._fixeo_next_maintenance_due(
+        v_plan.next_due_at,v_plan.frequency,v_plan.interval_count
+      );
+      UPDATE public.enterprise_maintenance_plans
+      SET next_due_at=v_next_due,updated_at=now()
+      WHERE id=v_plan.id;
+      CONTINUE;
+    END IF;
+
+    UPDATE public.enterprise_maintenance_runs
+    SET status='processing',error_code=NULL,updated_at=now()
+    WHERE id=v_run_id;
+
     SELECT fixeo_private._fixeo_generate_maintenance_request_v1(
       v_plan.id,
       v_plan.next_due_at
