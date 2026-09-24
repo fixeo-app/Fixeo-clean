@@ -102,12 +102,20 @@
           .eq('enterprise_id', enterpriseId)
           .order('id', { ascending: true })
           .range(from, to);
+      }),
+      paged(function (from, to) {
+        return fromPublic(client, 'enterprise_invitations')
+          .select('id,enterprise_id,email_normalized,role,target_user_id,status,expires_at,accepted_at,revoked_at,created_at,updated_at')
+          .eq('enterprise_id', enterpriseId)
+          .order('created_at', { ascending: false })
+          .range(from, to);
       })
     ]);
     var sites = pair[0];
     var contexts = pair[1];
     var members = pair[2];
     var memberSites = pair[3];
+    var invitations = pair[4];
 
     var requestIds = Array.from(new Set(contexts.map(function (row) {
       return String(row.service_request_id || '');
@@ -201,6 +209,19 @@
           role: String(member.role || ''),
           status: String(member.status || ''),
           site_ids: Object.freeze((memberAssignments.get(String(member.id || '')) || []).slice())
+        });
+      }),
+      invitations: invitations.map(function (invitation) {
+        return Object.freeze({
+          id: String(invitation.id || ''),
+          email: String(invitation.email_normalized || ''),
+          role: String(invitation.role || ''),
+          status: String(invitation.status || ''),
+          target_user_id: invitation.target_user_id ? String(invitation.target_user_id) : '',
+          expires_at: invitation.expires_at || null,
+          accepted_at: invitation.accepted_at || null,
+          revoked_at: invitation.revoked_at || null,
+          created_at: invitation.created_at || null
         });
       })
     });

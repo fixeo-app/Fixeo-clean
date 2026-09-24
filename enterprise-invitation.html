@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Invitation entreprise | FIXEO</title>
+  <link rel="icon" href="img/logo-fixeo-icon.png">
+  <link rel="stylesheet" href="css/fixeo-enterprise-invitation.css?v=b7-1">
+  <script defer src="js/supabase-client.js"></script>
+  <script defer src="js/fixeo-enterprise-invitation-actions.js?v=b7-1"></script>
+  <script defer src="js/fixeo-enterprise-invitation.js?v=b7-1"></script>
+</head>
+<body class="fxei">
+  <main class="fxei-card" aria-labelledby="fxei-title">
+    <a class="fxei-brand" href="index.html"><img src="img/logo-fixeo-header.png" alt="FIXEO" width="126" height="42"></a>
+    <p class="fxei-kicker">FIXEO ENTREPRISE</p>
+    <h1 id="fxei-title">Invitation à rejoindre une entreprise</h1>
+    <p id="fxei-message" class="fxei-message" role="status" aria-live="polite">Vérification de votre session…</p>
+
+    <div id="fxei-actions" class="fxei-actions" hidden>
+      <button id="fxei-accept" class="fxei-button fxei-button--primary" type="button">Accepter l’invitation</button>
+      <a id="fxei-login" class="fxei-button" href="auth.html" hidden>Se connecter</a>
+      <a id="fxei-workspace" class="fxei-button fxei-button--primary" href="#" hidden>Ouvrir l’espace entreprise</a>
+      <a class="fxei-link" href="index.html">Retour à l’accueil</a>
+    </div>
+  </main>
+</body>
+</html>

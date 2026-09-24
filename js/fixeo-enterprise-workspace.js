@@ -44,10 +44,19 @@
     var reportSla = byId('enterprise-report-sla'), reportStatuses = byId('enterprise-report-statuses');
     var reportSites = byId('enterprise-report-sites');
     var teamList = byId('enterprise-team-list'), teamEmpty = byId('enterprise-team-empty'), teamMode = byId('enterprise-team-mode');
+    var invitationsList = byId('enterprise-invitations-list'), invitationsEmpty = byId('enterprise-invitations-empty');
+    var invitationsMode = byId('enterprise-invitations-mode'), invitationCreate = byId('enterprise-invitation-create');
+    var invitationDialog = byId('enterprise-invitation-dialog'), invitationDialogTitle = byId('enterprise-invitation-dialog-title');
+    var invitationClose = byId('enterprise-invitation-close'), invitationCancel = byId('enterprise-invitation-cancel');
+    var invitationForm = byId('enterprise-invitation-form'), invitationEmail = byId('enterprise-invitation-email');
+    var invitationRole = byId('enterprise-invitation-role'), invitationExpiry = byId('enterprise-invitation-expiry');
+    var invitationSubmit = byId('enterprise-invitation-submit'), invitationError = byId('enterprise-invitation-error');
+    var invitationCreated = byId('enterprise-invitation-created'), invitationLink = byId('enterprise-invitation-link');
+    var invitationCopy = byId('enterprise-invitation-copy');
     var memberDialog = byId('enterprise-member-dialog'), memberDialogTitle = byId('enterprise-member-dialog-title');
     var memberClose = byId('enterprise-member-close'), memberDismiss = byId('enterprise-member-dismiss');
     var memberDetail = byId('enterprise-member-detail'), memberError = byId('enterprise-member-error');
-    var currentEnterpriseId = '', currentEnterpriseRole = '', currentSites = [], currentInterventions = [], currentMembers = [];
+    var currentEnterpriseId = '', currentEnterpriseRole = '', currentSites = [], currentInterventions = [], currentMembers = [], currentInvitations = [];
     var currentReportPeriod = '30';
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
@@ -62,6 +71,7 @@
       currentSites = [];
       currentInterventions = [];
       currentMembers = [];
+      currentInvitations = [];
       if (siteCreate) siteCreate.hidden = true;
       if (sitesMode) sitesMode.textContent = 'Lecture seule';
       if (requestCreate) requestCreate.hidden = true;
@@ -81,6 +91,14 @@
       if (teamList) teamList.replaceChildren();
       if (teamEmpty) teamEmpty.hidden = true;
       if (teamMode) teamMode.textContent = 'Lecture seule';
+      if (invitationsList) invitationsList.replaceChildren();
+      if (invitationsEmpty) invitationsEmpty.hidden = true;
+      if (invitationsMode) invitationsMode.textContent = 'Lecture seule';
+      if (invitationCreate) invitationCreate.hidden = true;
+      if (invitationDialog) invitationDialog.hidden = true;
+      if (invitationCreated) invitationCreated.hidden = true;
+      if (invitationLink) invitationLink.value = '';
+      if (invitationError) { invitationError.hidden = true; invitationError.textContent = ''; }
       if (memberDialog) memberDialog.hidden = true;
       if (memberDetail) memberDetail.replaceChildren();
       if (memberError) { memberError.hidden = true; memberError.textContent = ''; }
@@ -251,6 +269,128 @@
       return !!(win.FixeoEnterpriseMemberActions &&
         typeof win.FixeoEnterpriseMemberActions.canManage === 'function' &&
         win.FixeoEnterpriseMemberActions.canManage(currentEnterpriseRole));
+    }
+
+    function canManageInvitations() {
+      return !!(win.FixeoEnterpriseInvitationActions &&
+        typeof win.FixeoEnterpriseInvitationActions.canManage === 'function' &&
+        win.FixeoEnterpriseInvitationActions.canManage(currentEnterpriseRole));
+    }
+    function invitationById(id) {
+      return currentInvitations.find(function (item) { return item.id === id; }) || null;
+    }
+    function setInvitationError(messageText) {
+      invitationError.textContent = messageText || '';
+      invitationError.hidden = !messageText;
+    }
+    function renderInvitations(rows) {
+      currentInvitations = rows.slice();
+      invitationsList.replaceChildren();
+      invitationsEmpty.hidden = rows.length !== 0;
+      var manager = canManageInvitations();
+      invitationsMode.textContent = manager ? 'Gestion autorisée' : 'Lecture seule';
+      invitationCreate.hidden = !manager;
+      rows.forEach(function (invitation) {
+        var card = el('article', 'fxew-invitation-card');
+        var head = el('div', 'fxew-invitation-head');
+        var copy = el('div');
+        copy.append(el('strong', '', invitation.email || 'Email non renseigné'));
+        copy.append(el('span', '', LABELS[invitation.role] || label(invitation.role)));
+        head.append(copy, el('span', 'fxew-status', label(invitation.status)));
+        card.append(head);
+        var meta = el('div', 'fxew-invitation-meta');
+        if (invitation.created_at) meta.append(el('span', '', 'Créée · ' + dateLabel(invitation.created_at)));
+        if (invitation.expires_at) meta.append(el('span', '', 'Expire · ' + dateLabel(invitation.expires_at)));
+        card.append(meta);
+        if (manager && invitation.status === 'pending') {
+          var actions = el('div', 'fxew-site-actions');
+          var revoke = el('button', 'fxew-site-action', 'Révoquer');
+          revoke.type = 'button'; revoke.dataset.invitationAction = 'revoke'; revoke.dataset.invitationId = invitation.id;
+          actions.append(revoke); card.append(actions);
+        }
+        invitationsList.append(card);
+      });
+    }
+    function openInvitationDialog() {
+      if (!canManageInvitations()) return;
+      invitationForm.reset();
+      invitationRole.value = 'viewer';
+      invitationExpiry.value = '7';
+      invitationCreated.hidden = true;
+      invitationForm.hidden = false;
+      invitationLink.value = '';
+      invitationCopy.textContent = 'Copier le lien';
+      setInvitationError('');
+      invitationDialogTitle.textContent = 'Inviter un membre';
+      invitationDialog.hidden = false;
+      win.setTimeout(function () { invitationEmail.focus(); }, 0);
+    }
+    function closeInvitationDialog() {
+      invitationDialog.hidden = true;
+      invitationForm.hidden = false;
+      invitationForm.reset();
+      invitationCreated.hidden = true;
+      invitationLink.value = '';
+      setInvitationError('');
+    }
+    async function submitInvitation(event) {
+      event.preventDefault();
+      if (!canManageInvitations() || !currentEnterpriseId || !client || !win.FixeoEnterpriseInvitationActions) return;
+      invitationSubmit.disabled = true; setInvitationError('');
+      try {
+        var result = await bounded(win.FixeoEnterpriseInvitationActions.create(client, currentEnterpriseId, {
+          email: invitationEmail.value,
+          role: invitationRole.value,
+          expires_days: Number(invitationExpiry.value)
+        }));
+        var token = String(result.invitation_token || '');
+        if (!/^[0-9a-f]{64}$/i.test(token)) throw new Error('TOKEN_UNAVAILABLE');
+        invitationLink.value = win.location.origin + '/enterprise-invitation.html?token=' + encodeURIComponent(token);
+        invitationForm.hidden = true;
+        invitationCreated.hidden = false;
+        invitationDialogTitle.textContent = 'Invitation créée';
+        await loadOperational(currentEnterpriseId, generation);
+      } catch (error) {
+        var reason = error && (error.reason || error.message) || '';
+        var msg = reason === 'invitation_pending' ? 'Une invitation active existe déjà pour cet email.'
+          : reason === 'already_member' ? 'Cette personne est déjà membre de l’entreprise.'
+          : reason === 'identity_not_ready' ? 'Ce compte FIXEO n’a pas encore terminé son initialisation.'
+          : reason === 'invalid_email' || reason === 'INVALID_EMAIL' ? 'Saisissez une adresse email valide.'
+          : reason === 'invalid_role' || reason === 'INVALID_ROLE' ? 'Le rôle sélectionné est invalide.'
+          : reason === 'invalid_expiry' || reason === 'INVALID_EXPIRY' ? 'La durée d’invitation est invalide.'
+          : reason === 'forbidden' ? 'Votre rôle ne permet pas cette action.'
+          : 'Impossible de créer l’invitation. Réessayez.';
+        setInvitationError(msg);
+      } finally { invitationSubmit.disabled = false; }
+    }
+    async function copyInvitationLink() {
+      var value = invitationLink.value;
+      if (!value) return;
+      try {
+        if (win.navigator.clipboard && typeof win.navigator.clipboard.writeText === 'function') {
+          await win.navigator.clipboard.writeText(value);
+        } else {
+          invitationLink.focus(); invitationLink.select();
+          if (!doc.execCommand || !doc.execCommand('copy')) throw new Error('COPY_FAILED');
+        }
+        invitationCopy.textContent = 'Lien copié';
+      } catch (_) {
+        invitationLink.focus(); invitationLink.select();
+        invitationCopy.textContent = 'Copiez le lien sélectionné';
+      }
+    }
+    async function handleInvitationAction(event) {
+      var button = event.target && event.target.closest ? event.target.closest('[data-invitation-action]') : null;
+      if (!button || button.dataset.invitationAction !== 'revoke' || !canManageInvitations()) return;
+      var invitation = invitationById(button.dataset.invitationId || '');
+      if (!invitation || invitation.status !== 'pending') return;
+      button.disabled = true;
+      try {
+        await bounded(win.FixeoEnterpriseInvitationActions.revoke(client, currentEnterpriseId, invitation.id));
+        await loadOperational(currentEnterpriseId, generation);
+      } catch (_) {
+        setDataState('Impossible de révoquer cette invitation. Réessayez.', true);
+      } finally { button.disabled = false; }
     }
     function memberIdentity(member) {
       var raw = String(member && member.user_id || '').replace(/-/g, '');
@@ -668,6 +808,7 @@
         var model = await bounded(win.FixeoEnterpriseReadModel.load(client, enterpriseId));
         if (run !== generation || stopped || doc.hidden || currentEnterpriseId !== enterpriseId) return;
         renderSites(model.sites || []);
+        renderInvitations(model.invitations || []);
         renderTeam(model.members || []);
         renderInterventions(model.interventions || []);
         dataState.hidden = true;
@@ -793,6 +934,13 @@
     requestCancel.addEventListener('click', closeRequestDialog);
     requestDialog.addEventListener('click', function (event) { if (event.target === requestDialog) closeRequestDialog(); });
     requestForm.addEventListener('submit', submitRequest);
+    invitationCreate.addEventListener('click', openInvitationDialog);
+    invitationClose.addEventListener('click', closeInvitationDialog);
+    invitationCancel.addEventListener('click', closeInvitationDialog);
+    invitationDialog.addEventListener('click', function (event) { if (event.target === invitationDialog) closeInvitationDialog(); });
+    invitationForm.addEventListener('submit', submitInvitation);
+    invitationCopy.addEventListener('click', copyInvitationLink);
+    invitationsList.addEventListener('click', handleInvitationAction);
     teamList.addEventListener('click', handleMemberAction);
     memberClose.addEventListener('click', closeMemberDialog);
     memberDismiss.addEventListener('click', closeMemberDialog);
@@ -815,6 +963,12 @@
       requestCreate.removeEventListener('click', openRequestDialog);
       requestClose.removeEventListener('click', closeRequestDialog); requestCancel.removeEventListener('click', closeRequestDialog);
       requestForm.removeEventListener('submit', submitRequest);
+      invitationCreate.removeEventListener('click', openInvitationDialog);
+      invitationClose.removeEventListener('click', closeInvitationDialog);
+      invitationCancel.removeEventListener('click', closeInvitationDialog);
+      invitationForm.removeEventListener('submit', submitInvitation);
+      invitationCopy.removeEventListener('click', copyInvitationLink);
+      invitationsList.removeEventListener('click', handleInvitationAction);
       teamList.removeEventListener('click', handleMemberAction);
       memberClose.removeEventListener('click', closeMemberDialog);
       memberDismiss.removeEventListener('click', closeMemberDialog);
