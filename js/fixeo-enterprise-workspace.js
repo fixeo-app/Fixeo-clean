@@ -340,7 +340,12 @@
       'finance.po_created':'Bon de commande créé',
       'finance.po_updated':'Bon de commande modifié',
       'finance.worker_rate_updated':'Coût horaire Workforce modifié',
-      'finance.request_context_updated':'Contexte financier intervention modifié'
+      'finance.request_context_updated':'Contexte financier intervention modifié',
+      'governance.policy_created':'Règle d’approbation créée',
+      'governance.policy_updated':'Règle d’approbation modifiée',
+      'governance.case_created':'Dossier d’approbation créé',
+      'governance.case_approved':'Dossier d’approbation validé',
+      'governance.case_rejected':'Dossier d’approbation rejeté'
     });
     function canViewAudit() {
       return !!(win.FixeoEnterpriseAudit &&
