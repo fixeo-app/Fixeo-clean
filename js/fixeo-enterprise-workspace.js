@@ -340,10 +340,15 @@
       save.addEventListener('click', async function () {
         save.disabled = true; setMemberError('');
         try {
-          if (roleSelect.value !== member.role) {
-            await bounded(win.FixeoEnterpriseMemberActions.updateRole(client, currentEnterpriseId, member.id, roleSelect.value));
+          var roleChanged = roleSelect.value !== member.role;
+          var statusChanged = statusSelect.value !== member.status;
+          if (roleChanged && statusChanged) {
+            setMemberError('Modifiez le rôle ou le statut, puis enregistrez avant de changer l’autre.');
+            return;
           }
-          if (statusSelect.value !== member.status) {
+          if (roleChanged) {
+            await bounded(win.FixeoEnterpriseMemberActions.updateRole(client, currentEnterpriseId, member.id, roleSelect.value));
+          } else if (statusChanged) {
             await bounded(win.FixeoEnterpriseMemberActions.setStatus(client, currentEnterpriseId, member.id, statusSelect.value));
           }
           closeMemberDialog();
