@@ -7,7 +7,7 @@
   <meta name="referrer" content="same-origin">
   <title>Espace entreprise | FIXEO</title>
   <link rel="icon" href="img/logo-fixeo-icon.png">
-  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=block-d1">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=block-e1">
   <script defer src="js/supabase-client.js"></script>
   <script defer src="js/fixeo-logout-global.js"></script>
   <script defer src="js/fixeo-auth-resolver.js"></script>
@@ -28,7 +28,9 @@
   <script defer src="js/fixeo-enterprise-preventive-maintenance-ui.js?v=block-c1"></script>
   <script defer src="js/fixeo-enterprise-equipment.js?v=block-d1"></script>
   <script defer src="js/fixeo-enterprise-equipment-ui.js?v=block-d1"></script>
-  <script defer src="js/fixeo-enterprise-workspace.js?v=block-d1"></script>
+  <script defer src="js/fixeo-enterprise-finance.js?v=block-e1"></script>
+  <script defer src="js/fixeo-enterprise-finance-ui.js?v=block-e1"></script>
+  <script defer src="js/fixeo-enterprise-workspace.js?v=block-e1"></script>
 </head>
 <body class="fxew">
   <a class="fxew-skip" href="#main">Aller au contenu</a>
@@ -121,6 +123,49 @@
         <section class="fxew-report-card" aria-labelledby="maintenance-history-title">
           <div class="fxew-report-card-head"><h3 id="maintenance-history-title">Historique des exécutions</h3><span>Générations automatiques</span></div>
           <div id="enterprise-maintenance-runs" class="fxew-maintenance-runs"></div>
+        </section>
+      </section>
+
+      <section id="enterprise-finance-module" class="fxew-module fxew-finance" aria-labelledby="finance-title" hidden>
+        <div class="fxew-module-heading">
+          <div><p class="fxew-module-kicker">Finance</p><h2 id="finance-title">Finance Enterprise</h2></div>
+          <div class="fxew-module-actions">
+            <button id="enterprise-finance-tag" class="fxew-button" type="button" hidden>Rattacher intervention</button>
+            <button id="enterprise-finance-manage" class="fxew-button fxew-button--primary" type="button" hidden>Nouveau centre</button>
+            <button id="enterprise-finance-export" class="fxew-button" type="button" disabled>Exporter CSV</button>
+          </div>
+        </div>
+        <div class="fxew-finance-filters">
+          <label>Du <input id="enterprise-finance-from" type="date"></label>
+          <label>Au <input id="enterprise-finance-to" type="date"></label>
+        </div>
+        <div id="enterprise-finance-state" class="fxew-report-state" role="status" aria-live="polite">
+          <span class="fxew-data-spinner" aria-hidden="true"></span>
+          <span id="enterprise-finance-message">Chargement de la finance Enterprise…</span>
+          <button id="enterprise-finance-retry" class="fxew-button" type="button" hidden>Réessayer</button>
+        </div>
+        <div id="enterprise-finance-summary" class="fxew-kpi-grid"></div>
+        <div class="fxew-report-grid">
+          <section class="fxew-report-card">
+            <div class="fxew-report-card-head"><h3>Centres de coûts</h3><button class="fxew-site-action" data-finance-action="center" type="button">Ajouter</button></div>
+            <div id="enterprise-finance-centers" class="fxew-finance-list"></div>
+          </section>
+          <section class="fxew-report-card">
+            <div class="fxew-report-card-head"><h3>Budgets</h3><button class="fxew-site-action" data-finance-action="budget" type="button">Ajouter</button></div>
+            <div id="enterprise-finance-budgets" class="fxew-finance-list"></div>
+          </section>
+          <section class="fxew-report-card">
+            <div class="fxew-report-card-head"><h3>BC / PO</h3><button class="fxew-site-action" data-finance-action="po" type="button">Ajouter</button></div>
+            <div id="enterprise-finance-pos" class="fxew-finance-list"></div>
+          </section>
+          <section class="fxew-report-card">
+            <div class="fxew-report-card-head"><h3>Coûts Workforce</h3><button class="fxew-site-action" data-finance-action="rate" type="button">Configurer</button></div>
+            <div id="enterprise-finance-rates" class="fxew-finance-list"></div>
+          </section>
+        </div>
+        <section class="fxew-report-card fxew-report-card--sites">
+          <div class="fxew-report-card-head"><h3>Coûts par intervention</h3><span>Réel interne + externe</span></div>
+          <div id="enterprise-finance-rows" class="fxew-finance-rows"></div>
         </section>
       </section>
 
@@ -309,6 +354,24 @@
         <p id="enterprise-interventions-empty" class="fxew-empty" hidden>Aucune intervention visible pour les sites auxquels vous avez accès.</p>
       </section>
     </section>
+
+    <div id="enterprise-finance-dialog" class="fxew-dialog-backdrop" hidden>
+      <section class="fxew-dialog" role="dialog" aria-modal="true" aria-labelledby="enterprise-finance-dialog-title">
+        <div class="fxew-dialog-head">
+          <div><p class="fxew-module-kicker">Finance Enterprise</p><h2 id="enterprise-finance-dialog-title">Finance</h2></div>
+          <button id="enterprise-finance-close" class="fxew-dialog-close" type="button" aria-label="Fermer">×</button>
+        </div>
+        <form id="enterprise-finance-form" class="fxew-form">
+          <input id="enterprise-finance-dialog-type" type="hidden">
+          <div id="enterprise-finance-fields" class="fxew-form"></div>
+          <p id="enterprise-finance-error" class="fxew-form-error" role="alert" hidden></p>
+          <div class="fxew-dialog-actions">
+            <button id="enterprise-finance-cancel" class="fxew-button" type="button">Annuler</button>
+            <button id="enterprise-finance-submit" class="fxew-button fxew-button--primary" type="submit">Enregistrer</button>
+          </div>
+        </form>
+      </section>
+    </div>
 
     <div id="enterprise-equipment-dialog" class="fxew-dialog-backdrop" hidden>
       <section class="fxew-dialog" role="dialog" aria-modal="true" aria-labelledby="enterprise-equipment-dialog-title">

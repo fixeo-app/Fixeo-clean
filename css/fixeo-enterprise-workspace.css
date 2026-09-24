@@ -301,3 +301,15 @@
 .fxew-equipment-asset strong{display:block;font-size:12px}
 .fxew-equipment-asset span{display:block;margin-top:3px;color:var(--muted);font-size:11px}
 @media(max-width:760px){.fxew-equipment-grid{grid-template-columns:1fr;padding:14px}.fxew-inline-control,.fxew-equipment-asset{grid-template-columns:1fr}}
+
+/* BLOCK E — Enterprise Finance */
+.fxew-finance-filters{display:flex;flex-wrap:wrap;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.fxew-finance-filters label{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
+.fxew-finance-filters input{min-height:40px;border:1px solid var(--line);border-radius:10px;background:#191927;color:var(--text);padding:7px 10px;font:inherit}
+.fxew-finance-list{display:grid;gap:9px;padding:14px}
+.fxew-finance-card,.fxew-finance-row{border:1px solid var(--line);border-radius:12px;padding:13px;background:rgba(255,255,255,.02)}
+.fxew-finance-card strong,.fxew-finance-row strong{display:block;font-size:13px}
+.fxew-finance-card span,.fxew-finance-card small,.fxew-finance-row span:not(.fxew-status),.fxew-finance-row small{display:block;margin-top:4px;color:var(--muted);font-size:11px;overflow-wrap:anywhere}
+.fxew-finance-rows{display:grid;gap:10px;padding:14px}
+.fxew-finance-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;align-items:start}
+@media(max-width:700px){.fxew-finance-filters{padding:12px 14px}.fxew-finance-row{grid-template-columns:1fr}}
