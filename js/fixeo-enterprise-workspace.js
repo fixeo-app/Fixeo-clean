@@ -307,7 +307,10 @@
       memberDialogTitle.textContent = memberIdentity(member);
 
       var roleSelect = doc.createElement('select');
-      ['admin','operations_manager','site_manager','reporter','viewer'].forEach(function (value) {
+      var roleOptions = member.role === 'owner'
+        ? ['owner','admin','operations_manager','site_manager','reporter','viewer']
+        : ['admin','operations_manager','site_manager','reporter','viewer'];
+      roleOptions.forEach(function (value) {
         var option = doc.createElement('option');
         option.value = value; option.textContent = LABELS[value] || label(value);
         if (member.role === value) option.selected = true;
