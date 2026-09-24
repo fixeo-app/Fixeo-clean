@@ -676,6 +676,20 @@ for (const width of [320, 360, 390, 412]) {
     assert.equal(computed('.fxhf-heading-copy').paddingRight, '96px', 'text reserves the halo slot');
     assert.equal(computed('.fxhf-heading-copy').minHeight, 'calc(60px + 8px + 13px)', 'only the frozen artwork extent, not a common text reserve');
     assert.equal(computed('.fxhf-heading-copy').overflowWrap, 'anywhere');
+    // The capsule is paint only: preserve the V2.2 text line, presence dot,
+    // margins and progress rhythm at every mobile contract width.
+    const badge = computed('.fxhf-eyebrow');
+    assert.equal(badge.display, 'flex');
+    assert.equal(badge.width, 'fit-content');
+    assert.equal(badge.fontSize, '10px');
+    assert.equal(badge.lineHeight, '1.5');
+    assert.equal(badge.gap, '8px');
+    assert.ok(['', '0px'].includes(badge.paddingTop));
+    assert.ok(['', '0px'].includes(badge.paddingBottom));
+    assert.ok(['', '0px'].includes(badge.borderTopWidth));
+    assert.ok(['', '0px'].includes(badge.borderBottomWidth));
+    assert.equal(computed('.fxhf-presence').width, '6px');
+    assert.equal(computed('.fxhf-presence').height, '6px');
     assert.equal(computed('.fxhf-scroll').minHeight, '8rem', 'bounded content floor, independent of viewport');
     assert.equal(computed('.fxhf-heading').animation, 'none', 'header never translates during transitions');
     for (const filled of [false, true]) {
@@ -749,6 +763,7 @@ for (const width of [320, 360, 390, 412]) {
     assert.equal(computed(".fxhf-universal").minHeight, "0");
     assert.equal(computed(".fxhf-actions").position, "static");
     assert.equal(computed('.fxhf-subtitle').display, 'none', 'retain intentional keyboard compaction');
+    assert.equal(computed('.fxhf-eyebrow').display, 'none', 'preserve V2.2 keyboard compaction');
     assert.equal(computed('.fxhf-heading-copy').minHeight, 'calc(60px + 8px + 13px)', 'same artwork clearance with the keyboard, no separate text reserve');
     assert.notEqual(computed('.fxhf-visual').display, 'none', 'canonical RAFI also remains during keyboard entry');
     assert.equal(computed('.fxhf-photos').display, 'flex');
@@ -794,6 +809,8 @@ for (const width of [320, 360, 390, 412]) {
       assert.equal(sphere.outerHTML, sphereMarkup, state + ': identical classes and image');
       assert.deepEqual(sphereStyles(), canonicalSphere, state + ': exact NEED CSS geometry/glow/animation');
       assert.equal(computed('.fxhf-heading-copy').paddingRight, '96px', state);
+      assert.equal(computed('.fxhf-eyebrow').width, 'fit-content', state);
+      assert.equal(doc.querySelector('.fxhf-eyebrow').textContent, 'RAFI · Assistant FIXEO', state);
       assert.equal(computed('.fxhf-heading-copy').minHeight, 'calc(60px + 8px + 13px)', state);
       assert.equal(computed('.fxhf-scroll').minHeight, '8rem', state);
       assert.equal(computed('.fxhf-scroll').justifyContent, 'flex-start', state);
@@ -1350,6 +1367,71 @@ test('Missing engine advice adds no invented recommendation; declared context ke
   assert.equal(s.q('fxhf-panel').querySelector('.fxhf-caution'), null);
   assert.match(s.q('fxhf-panel').textContent, /Contexte déclaréZone : Unité extérieure/);
   assert.doesNotMatch(s.q('fxhf-panel').textContent, /unknown|Toujours|Évitez de forcer/);
+});
+
+for (const [checks, expected] of [
+  [['onset'], null],
+  [['affected_area', 'occurrence', 'gas_smell', 'water_spreading'], null],
+  [['onset: depuis aujourd’hui', 'Vérifier affected_area', 'Vérifier questionIds', 'Vérifier INTERNAL_CODE'], null],
+  [['unknown', '', '  '], null],
+  [['onset', 'Évitez de forcer la serrure si elle résiste.'], 'Évitez de forcer la serrure si elle résiste.'],
+  [['Le professionnel confirmera le diagnostic sur place.'], 'Le professionnel confirmera le diagnostic sur place.'],
+]) {
+  test('V2.2 micro: internal checks never become advice — ' + JSON.stringify(checks), async t => {
+    const s = setup(t, {async override(body, server) {
+      if (body.action !== 'analyze') return;
+      // Reproduce the actual source path: the existing schema accepts free
+      // text checks, and the engine forwards them without converting IDs.
+      const {analyze} = require('../api/diagnostic/engine');
+      const output = await analyze({input: server.input, media: []}, {
+        provider: {analyze: async () => ({result: {
+          trade: 'serrurerie', problem: 'Porte bloquée', observations: [], hypotheses: [],
+          urgency: 'moderate', urgency_reason: 'Besoin de serrurerie déclaré.',
+          checks, possible_parts: [], question_ids: [], safety_signals: [],
+        }, usage: {}})}, mediaStore: {},
+      });
+      server.result = output.result; server.state = 'ready'; server.result_run_id = body.run_id;
+      return {session: clone(server)};
+    }});
+    s.fill(); s.change('fxhf-need-input', 'Ma porte est bloquée'); await s.analyze();
+    assert.deepEqual(s.server().result.checks, checks, 'no server contract or dossier mutation');
+    const notice = s.q('fxhf-panel').querySelector('.fxhf-caution');
+    assert.equal(notice?.querySelector('li').textContent || null, expected);
+    assert.equal(!!notice, !!expected, 'no empty or invented advice block');
+    assert.doesNotMatch(s.q('fxhf-panel').textContent, /onset|affected_area|occurrence|gas_smell|water_spreading|questionIds|INTERNAL_CODE|unknown/);
+    assert.equal(s.q('fxhf-entrust').disabled, false);
+  });
+}
+
+test('V2.2 micro: advice filtering never suppresses actual server safety instructions', async t => {
+  const s = setup(t, {override(body, server) {
+    if (body.action !== 'analyze') return;
+    const {evaluateSafety} = require('../api/diagnostic/safety');
+    server.result = result(); server.result.safety = evaluateSafety(server.input);
+    server.result.checks = ['onset'];
+    server.state = 'ready'; server.result_run_id = body.run_id;
+    return {session: clone(server)};
+  }});
+  s.fill(); s.change('fxhf-need-input', 'Je sens une odeur de gaz'); await s.analyze();
+  assert.deepEqual([...s.q('fxhf-panel').querySelectorAll('.fxhf-caution li')].map(el => el.textContent), s.server().result.safety.messages);
+  assert.equal(s.q('fxhf-entrust').disabled, true);
+  assert.doesNotMatch(s.q('fxhf-panel').textContent, /onset/);
+});
+
+test('V2.2 micro: capsule decoration cannot grow the badge line or intercept a control', () => {
+  const dom = new JSDOM('<style></style>');
+  try {
+    const style = dom.window.document.querySelector('style');
+    style.textContent = read('css/fixeo-hero-flagship-v1.css');
+    const rule = [...style.sheet.cssRules].find(r => r.selectorText === '.fxhf-universal .fxhf-eyebrow::before');
+    assert(rule);
+    assert.equal(rule.style.position, 'absolute');
+    assert.equal(rule.style.getPropertyValue('pointer-events'), 'none');
+    assert.equal(rule.style.getPropertyValue('border-radius'), '999px');
+    assert.equal(rule.style.getPropertyValue('z-index'), '-1');
+    assert.equal(rule.style.getPropertyValue('animation'), '');
+    assert.equal(rule.style.getPropertyValue('transform'), '');
+  } finally { dom.window.close(); }
 });
 test('One exact RAFI DOM survives NEED through questions, confirmation and every server lifecycle stage', async t => {
   const {qualificationQuestions} = require('../api/diagnostic/question-routing');

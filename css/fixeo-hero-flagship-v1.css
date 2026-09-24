@@ -58,6 +58,9 @@ section#home.fxhf-premium-home > .hero-content {
 }
 .fxhf-universal .fxhf-heading { min-width: 0; animation: fxhf-enter 240ms ease-out both; }
 .fxhf-universal .fxhf-eyebrow { display: flex; align-items: center; gap: 8px; color: #b8cadb; font-size: 11px; font-weight: 600; letter-spacing: .11em; text-transform: uppercase; line-height: 1.5; margin: 0 0 12px; }
+/* Decorative capsule only: no padding/border changes the validated line box. */
+.fxhf-universal .fxhf-eyebrow { position: relative; width: fit-content; max-width: 100%; isolation: isolate; }
+.fxhf-universal .fxhf-eyebrow::before { content: ''; position: absolute; inset: -2px -6px; z-index: -1; pointer-events: none; border-radius: 999px; border: 1px solid #a9deeb30; background: #a9deeb09; box-shadow: inset 0 1px #ffffff08, 0 0 10px #8acfe30d; }
 .fxhf-universal .fxhf-presence { width: 6px; height: 6px; border-radius: 50%; background: #abdbcd; box-shadow: 0 0 12px #a1dfc859; flex: 0 0 auto; }
 .fxhf-universal .fxhf-title { font-size: clamp(28px, 3.6vw, 46px); font-weight: 600; letter-spacing: -.045em; line-height: 1.1; color: var(--fxhf-ink); margin: 0; text-wrap: balance; }
 .fxhf-universal .fxhf-subtitle { margin: 12px 0 0; font-size: 15px; line-height: 1.5; color: var(--fxhf-muted); max-width: 48ch; }

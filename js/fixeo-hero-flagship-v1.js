@@ -856,7 +856,11 @@
     // always take precedence; hypotheses never become an asserted diagnosis.
     if (includeAdvice && !safety.stop && !messages.length) {
       messages = (r.checks || []).filter(function (message) {
-        return typeof message === "string" && message.trim() &&
+        // checks is free text: question IDs/technical tokens are not advice.
+        // Filter this optional copy only; server safety messages stay intact.
+        return typeof message === "string" && /\p{L}{2,}[\s’']+\p{L}{2,}/u.test(message) &&
+          !/\b(?:onset|occurrence|unknown|null|undefined)\b/i.test(message) &&
+          !/\b[A-Za-z][A-Za-z0-9]*_[A-Za-z0-9_]+\b|\b[a-z]+[A-Z][a-zA-Z]*\b/.test(message) &&
           message !== priority() && message !== r.urgency?.reason &&
           !/intervention.*(?:recommand|rapide|professionnell)/i.test(message);
       }).slice(0, 1);
