@@ -29,6 +29,12 @@
     var siteName = byId('enterprise-site-name'), siteCity = byId('enterprise-site-city');
     var siteCode = byId('enterprise-site-code'), siteAddress = byId('enterprise-site-address');
     var siteSubmit = byId('enterprise-site-submit'), siteFormError = byId('enterprise-site-form-error');
+    var requestCreate = byId('enterprise-request-create'), requestsMode = byId('enterprise-requests-mode');
+    var requestDialog = byId('enterprise-request-dialog'), requestClose = byId('enterprise-request-close');
+    var requestCancel = byId('enterprise-request-cancel'), requestForm = byId('enterprise-request-form');
+    var requestSite = byId('enterprise-request-site'), requestCategory = byId('enterprise-request-category');
+    var requestDescription = byId('enterprise-request-description'), requestUrgency = byId('enterprise-request-urgency');
+    var requestSubmit = byId('enterprise-request-submit'), requestFormError = byId('enterprise-request-form-error');
     var currentEnterpriseId = '', currentEnterpriseRole = '', currentSites = [];
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
@@ -43,7 +49,10 @@
       currentSites = [];
       if (siteCreate) siteCreate.hidden = true;
       if (sitesMode) sitesMode.textContent = 'Lecture seule';
+      if (requestCreate) requestCreate.hidden = true;
+      if (requestsMode) requestsMode.textContent = 'Lecture seule';
       if (siteDialog) siteDialog.hidden = true;
+      if (requestDialog) requestDialog.hidden = true;
       name.textContent = company.textContent = role.textContent = '';
       if (sitesList) sitesList.replaceChildren();
       if (interventionsList) interventionsList.replaceChildren();
@@ -90,6 +99,22 @@
         typeof win.FixeoEnterpriseSiteActions.canManage === 'function' &&
         win.FixeoEnterpriseSiteActions.canManage(currentEnterpriseRole));
     }
+    function canCreateRequests() {
+      return !!(win.FixeoEnterpriseRequestActions &&
+        typeof win.FixeoEnterpriseRequestActions.canCreate === 'function' &&
+        win.FixeoEnterpriseRequestActions.canCreate(currentEnterpriseRole));
+    }
+    function activeSites() {
+      return currentSites.filter(function (site) { return site.status === 'active'; });
+    }
+    function syncRequestControls() {
+      var allowed = canCreateRequests();
+      var active = activeSites();
+      requestCreate.hidden = !allowed || active.length === 0;
+      requestsMode.textContent = !allowed ? 'Lecture seule'
+        : active.length === 0 ? 'Aucun site actif'
+        : 'Création autorisée';
+    }
     function renderSites(rows) {
       currentSites = rows.slice();
       sitesList.replaceChildren();
@@ -116,6 +141,7 @@
         }
         sitesList.append(card);
       });
+      syncRequestControls();
     }
     function renderInterventions(rows) {
       interventionsList.replaceChildren();
@@ -200,6 +226,69 @@
         setDataState('Impossible de modifier le statut du site. Réessayez.', true);
       } finally { button.disabled = false; }
     }
+
+    function setRequestError(messageText) {
+      requestFormError.textContent = messageText || '';
+      requestFormError.hidden = !messageText;
+    }
+    function populateRequestSites() {
+      requestSite.replaceChildren();
+      activeSites().forEach(function (site) {
+        var option = doc.createElement('option');
+        option.value = site.id;
+        option.textContent = [site.name || 'Site sans nom', site.city].filter(Boolean).join(' · ');
+        requestSite.append(option);
+      });
+    }
+    function openRequestDialog() {
+      if (!canCreateRequests()) return;
+      var sites = activeSites();
+      if (!sites.length) {
+        setDataState('Aucun site actif n’est disponible pour créer une intervention.', false);
+        return;
+      }
+      requestForm.reset();
+      setRequestError('');
+      populateRequestSites();
+      requestUrgency.value = 'normale';
+      requestDialog.hidden = false;
+      win.setTimeout(function () { requestCategory.focus(); }, 0);
+    }
+    function closeRequestDialog() {
+      requestDialog.hidden = true;
+      setRequestError('');
+      requestForm.reset();
+      requestSite.replaceChildren();
+    }
+    async function submitRequest(event) {
+      event.preventDefault();
+      if (!canCreateRequests() || !currentEnterpriseId || !client || !win.FixeoEnterpriseRequestActions) return;
+      var site = siteById(requestSite.value);
+      if (!site || site.status !== 'active') {
+        setRequestError('Choisissez un site actif auquel vous avez accès.');
+        return;
+      }
+      requestSubmit.disabled = true;
+      setRequestError('');
+      try {
+        await bounded(win.FixeoEnterpriseRequestActions.create(client, currentEnterpriseId, {
+          site_id: site.id,
+          service_category: requestCategory.value,
+          description: requestDescription.value,
+          urgency: requestUrgency.value
+        }));
+        closeRequestDialog();
+        await loadOperational(currentEnterpriseId, generation);
+      } catch (error) {
+        var reason = error && error.reason || error && error.message || '';
+        var msg = reason === 'site_inactive' ? 'Ce site n’est plus actif.'
+          : reason === 'site_forbidden' || reason === 'forbidden' ? 'Votre rôle ou votre périmètre ne permet pas cette création.'
+          : reason === 'INVALID_INPUT' ? 'Renseignez le métier et la description.'
+          : reason === 'INVALID_URGENCY' || reason === 'urgency_invalid' ? 'Le niveau d’urgence est invalide.'
+          : 'Impossible de créer l’intervention. Réessayez.';
+        setRequestError(msg);
+      } finally { requestSubmit.disabled = false; }
+    }
     async function loadOperational(enterpriseId, run) {
       if (!win.FixeoEnterpriseReadModel || typeof win.FixeoEnterpriseReadModel.load !== 'function') {
         setDataState('Les données opérationnelles sont momentanément indisponibles.', true); return;
@@ -265,6 +354,8 @@
         var manager = canManageSites();
         siteCreate.hidden = !manager;
         sitesMode.textContent = manager ? 'Gestion autorisée' : 'Lecture seule';
+        requestCreate.hidden = true;
+        requestsMode.textContent = canCreateRequests() ? 'Chargement des sites…' : 'Lecture seule';
         state.hidden = true; panel.hidden = false; logout.hidden = false;
         main.setAttribute('aria-busy', 'false'); name.focus();
         await loadOperational(result.enterprise.id, run);
@@ -316,6 +407,11 @@
     siteDialog.addEventListener('click', function (event) { if (event.target === siteDialog) closeSiteDialog(); });
     siteForm.addEventListener('submit', submitSite);
     sitesList.addEventListener('click', handleSiteAction);
+    requestCreate.addEventListener('click', openRequestDialog);
+    requestClose.addEventListener('click', closeRequestDialog);
+    requestCancel.addEventListener('click', closeRequestDialog);
+    requestDialog.addEventListener('click', function (event) { if (event.target === requestDialog) closeRequestDialog(); });
+    requestForm.addEventListener('submit', submitRequest);
     logout.addEventListener('click', signOut);
     doc.addEventListener('visibilitychange', visibility);
     win.addEventListener('pagehide', pageHide);
@@ -327,6 +423,9 @@
       retry.removeEventListener('click', refresh); logout.removeEventListener('click', signOut);
       siteClose.removeEventListener('click', closeSiteDialog); siteCancel.removeEventListener('click', closeSiteDialog);
       siteForm.removeEventListener('submit', submitSite); sitesList.removeEventListener('click', handleSiteAction);
+      requestCreate.removeEventListener('click', openRequestDialog);
+      requestClose.removeEventListener('click', closeRequestDialog); requestCancel.removeEventListener('click', closeRequestDialog);
+      requestForm.removeEventListener('submit', submitRequest);
       doc.removeEventListener('visibilitychange', visibility);
       win.removeEventListener('pagehide', pageHide); win.removeEventListener('pageshow', pageShow);
     } };
