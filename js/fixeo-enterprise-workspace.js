@@ -321,7 +321,9 @@
       'dispatch.external_fallback':'Fallback externe lancé',
       'dispatch.no_internal_candidate':'Aucun technicien interne éligible',
       'control_tower.escalation_created':'Escalade Control Tower créée',
-      'control_tower.escalation_updated':'Escalade Control Tower modifiée'
+      'control_tower.escalation_updated':'Escalade Control Tower modifiée',
+      'maintenance.plan_created':'Plan de maintenance créé',
+      'maintenance.plan_updated':'Plan de maintenance modifié'
     });
     function canViewAudit() {
       return !!(win.FixeoEnterpriseAudit &&
