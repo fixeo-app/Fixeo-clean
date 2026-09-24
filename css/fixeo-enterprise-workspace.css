@@ -112,3 +112,23 @@
 .fxew-form select{min-height:46px}
 .fxew-form textarea{min-height:120px;resize:vertical}
 .fxew-form select:focus,.fxew-form textarea:focus{border-color:#76ece4;outline:none;box-shadow:0 0 0 3px rgba(118,236,228,.12)}
+
+/* B4 — intervention detail + SLA */
+.fxew-intervention-actions{display:flex;justify-content:flex-end;margin-top:14px}
+.fxew-dialog--detail{width:min(720px,100%)}
+.fxew-detail{display:grid;gap:18px}
+.fxew-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--line)}
+.fxew-detail-row{min-width:0;padding:14px 16px;background:#171724}
+.fxew-detail-row dt{color:var(--muted);font-size:11px;margin-bottom:5px}
+.fxew-detail-row dd{margin:0;font-size:13px;font-weight:650;overflow-wrap:anywhere}
+.fxew-sla-box{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02);overflow:hidden}
+.fxew-sla-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px;border-bottom:1px solid var(--line)}
+.fxew-sla-head h3{margin:0;font-size:15px}
+.fxew-sla-state{padding:4px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.fxew-sla-state--track{background:rgba(28,118,87,.28);color:#baf3d9;border:1px solid rgba(166,239,206,.2)}
+.fxew-sla-state--risk{background:rgba(167,112,18,.22);color:#ffd892;border:1px solid rgba(255,216,146,.2)}
+.fxew-sla-state--late{background:rgba(172,48,86,.22);color:#ffc0d6;border:1px solid rgba(255,192,214,.2)}
+.fxew-sla-state--none{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--line)}
+.fxew-detail-grid--sla{border:0;border-radius:0}
+.fxew-detail-muted{padding:16px!important;color:var(--muted);font-size:13px}
+@media(max-width:560px){.fxew-detail-grid{grid-template-columns:1fr}.fxew-sla-head{align-items:flex-start;flex-direction:column}}
