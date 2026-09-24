@@ -55,7 +55,10 @@ test('B1 read model maps tenant sites, requests and latest mission without sensi
       member_id:'00000000-0000-4000-8000-000000000801',site_id:sid}],
     enterprise_invitations:[{id:'00000000-0000-4000-8000-000000000803',enterprise_id:eid,
       email_normalized:'invite@example.com',role:'viewer',target_user_id:null,status:'pending',
-      expires_at:'2026-10-01T10:00:00Z',created_at:'2026-09-24T10:00:00Z',token_hash:'SECRET'}]
+      expires_at:'2026-10-01T10:00:00Z',created_at:'2026-09-24T10:00:00Z',token_hash:'SECRET'}],
+    enterprise_sla_policies:[{id:'00000000-0000-4000-8000-000000000804',enterprise_id:eid,
+      site_id:null,urgency:'normal',acceptance_target_minutes:90,status:'active',
+      created_at:'2026-09-24T10:00:00Z',updated_at:'2026-09-24T10:00:00Z'}]
   });
   const out=await model.load(f.client,eid);
   assert.equal(out.sites.length,1);
@@ -72,6 +75,9 @@ test('B1 read model maps tenant sites, requests and latest mission without sensi
   assert.equal(Object.hasOwn(out.invitations[0],'token_hash'),false);
   const invitationCall=f.calls.find(c=>c.table==='enterprise_invitations');
   assert.equal(invitationCall.columns.includes('token_hash'),false);
+  assert.equal(out.sla_policies.length,1);
+  assert.equal(out.sla_policies[0].urgency,'normal');
+  assert.equal(out.sla_policies[0].acceptance_target_minutes,90);
   const requestCall=f.calls.find(c=>c.table==='service_requests');
   assert.equal(requestCall.columns.includes('client_phone'),false);
   assert.equal(requestCall.columns.includes('guest_token_hash'),false);
