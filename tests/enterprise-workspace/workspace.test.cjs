@@ -27,6 +27,7 @@ async function setup(t, options = {}, search = `?enterprise_id=${uuid(101)}`, mo
   w.FixeoSupabaseClient = { CONFIGURED: true, ready: async () => ({ client: f.client }) };
   w.FixeoEnterpriseGuard = guard;
   w.FixeoEnterpriseReadModel = mountOptions.readModel || { load: async () => ({ sites: [], interventions: [] }) };
+  w.FixeoEnterpriseSiteActions = mountOptions.siteActions || { canManage: () => false };
   w.eval(read('js/fixeo-logout-global.js'));
   const navigations = [];
   const app = mount(w, { navigate: p => navigations.push(p), ...mountOptions });
@@ -127,7 +128,8 @@ test('U11 New page has isolated scripts, unique IDs, local links and no operatio
   const dom = new JSDOM(html); const d = dom.window.document;
   assert.deepEqual([...d.scripts].map(s => s.getAttribute('src').split('?')[0]), [
     'js/supabase-client.js', 'js/fixeo-logout-global.js', 'js/fixeo-auth-resolver.js',
-    'js/fixeo-enterprise-guard.js', 'js/fixeo-enterprise-readmodel.js', 'js/fixeo-enterprise-workspace.js']);
+    'js/fixeo-enterprise-guard.js', 'js/fixeo-enterprise-readmodel.js',
+    'js/fixeo-enterprise-site-actions.js', 'js/fixeo-enterprise-workspace.js']);
   const ids = [...d.querySelectorAll('[id]')].map(n => n.id);
   assert.equal(ids.length, new Set(ids).size);
   assert.ok([...d.querySelectorAll('a')].every(a => ['index.html', '#main', 'auth.html'].includes(a.getAttribute('href'))));
@@ -170,4 +172,12 @@ test('U13 operational read failure preserves authorized shell and offers retry',
   await tick();
   assert.equal(s.q('enterprise-data-state').hidden, true);
   assert.equal(s.q('enterprise-sites-count').textContent, '0');
+});
+
+test('U14 owner/admin management controls appear only when site action policy allows them', async t => {
+  const readModel = { load: async () => ({ sites: [], interventions: [] }) };
+  const allowed = await setup(t, {}, undefined, { readModel, siteActions: { canManage: r => r === 'owner' } });
+  await tick();
+  assert.equal(allowed.q('enterprise-site-create').hidden, false);
+  assert.equal(allowed.q('enterprise-sites-mode').textContent, 'Gestion autorisée');
 });

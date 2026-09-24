@@ -88,3 +88,21 @@
   .fxew-status { max-width:42%; }
 }
 @media (prefers-reduced-motion:reduce) { .fxew-data-spinner { animation:none; } }
+
+/* B2 — site management */
+.fxew-module-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fxew-button--primary{border-color:rgba(118,236,228,.45);background:linear-gradient(135deg,rgba(72,100,255,.85),rgba(225,48,108,.75));color:#fff}
+.fxew-site-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.fxew-site-action{appearance:none;border:1px solid var(--line);background:#1c1c2b;color:var(--text);border-radius:10px;min-height:38px;padding:8px 11px;font:inherit;font-size:12px;font-weight:650;cursor:pointer}
+.fxew-site-action:disabled{opacity:.55;cursor:wait}
+.fxew-dialog-backdrop{position:fixed;inset:0;z-index:1400;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.68);backdrop-filter:blur(10px)}
+.fxew-dialog{width:min(560px,100%);max-height:min(760px,calc(100dvh - 40px));overflow:auto;border:1px solid var(--line);border-radius:22px;background:#11111d;box-shadow:0 28px 80px rgba(0,0,0,.45);padding:22px}
+.fxew-dialog-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:20px}
+.fxew-dialog-close{appearance:none;border:0;background:transparent;color:var(--muted);font-size:28px;line-height:1;min-width:44px;min-height:44px;cursor:pointer}
+.fxew-form{display:grid;gap:14px}
+.fxew-form label{display:grid;gap:7px;color:var(--muted);font-size:13px;font-weight:650}
+.fxew-form input{width:100%;min-height:46px;border:1px solid var(--line);border-radius:11px;background:#191927;color:var(--text);padding:10px 12px;font:inherit}
+.fxew-form input:focus{border-color:#76ece4;outline:none;box-shadow:0 0 0 3px rgba(118,236,228,.12)}
+.fxew-form-error{padding:12px 14px!important;border:1px solid rgba(255,138,180,.32);border-radius:11px;background:rgba(225,48,108,.09);color:#ffc0d6;font-size:13px}
+.fxew-dialog-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:4px}
+@media(max-width:520px){.fxew-module-actions{width:100%;justify-content:space-between}.fxew-module-actions .fxew-button{flex:1 1 auto}.fxew-dialog{padding:18px}.fxew-dialog-actions .fxew-button{flex:1 1 0}}
