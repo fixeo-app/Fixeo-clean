@@ -9,7 +9,7 @@
   function mount(win,hooks){
     var d=win.document,by=id=>d.getElementById(id),sites=[],current=null;
     var section=by('enterprise-preventive-maintenance'),state=by('enterprise-maintenance-state'),msg=by('enterprise-maintenance-message'),retry=by('enterprise-maintenance-retry');
-    var summary=by('enterprise-maintenance-summary'),plans=by('enterprise-maintenance-plans'),runs=by('enterprise-maintenance-runs'),empty=by('enterprise-maintenance-empty'),create=by('enterprise-maintenance-create'),mode=by('enterprise-maintenance-mode');
+    var summary=by('enterprise-maintenance-summary'),calendar=by('enterprise-maintenance-calendar'),plans=by('enterprise-maintenance-plans'),runs=by('enterprise-maintenance-runs'),empty=by('enterprise-maintenance-empty'),create=by('enterprise-maintenance-create'),mode=by('enterprise-maintenance-mode');
     var dlg=by('enterprise-maintenance-dialog'),title=by('enterprise-maintenance-dialog-title'),close=by('enterprise-maintenance-close'),cancel=by('enterprise-maintenance-cancel'),form=by('enterprise-maintenance-form');
     var pid=by('enterprise-maintenance-id'),site=by('enterprise-maintenance-site'),name=by('enterprise-maintenance-name'),category=by('enterprise-maintenance-category'),description=by('enterprise-maintenance-description'),urgency=by('enterprise-maintenance-urgency'),frequency=by('enterprise-maintenance-frequency'),interval=by('enterprise-maintenance-interval'),nextDue=by('enterprise-maintenance-next-due'),reminder=by('enterprise-maintenance-reminder'),status=by('enterprise-maintenance-status'),error=by('enterprise-maintenance-error'),submit=by('enterprise-maintenance-submit');
 
@@ -93,6 +93,21 @@
         plans.append(card);
       });
     }
+    function renderCalendar(rows){
+      calendar.replaceChildren();
+      var active=(rows||[]).filter(p=>p.status==='active').slice().sort((a,b)=>(Date.parse(a.next_due_at||0)||0)-(Date.parse(b.next_due_at||0)||0)).slice(0,20);
+      if(!active.length){calendar.append(el('p','fxew-report-empty','Aucune échéance active.'));return;}
+      active.forEach(p=>{
+        var row=el('div','fxew-maintenance-calendar-row');
+        var copy=el('div');
+        copy.append(el('strong','',fmt(p.next_due_at)||'Échéance'),el('span','',p.name+' · '+siteLabel(p.site_id)));
+        row.append(copy);
+        if(p.overdue)row.append(el('span','fxew-status','En retard'));
+        else if(p.reminder_due)row.append(el('span','fxew-status','Rappel'));
+        else row.append(el('span','fxew-status','Planifiée'));
+        calendar.append(row);
+      });
+    }
     function renderRuns(rows){
       runs.replaceChildren();
       if(!rows.length){runs.append(el('p','fxew-report-empty','Aucune exécution préventive enregistrée.'));return;}
@@ -110,7 +125,7 @@
       section.hidden=false;mode.textContent=canManage()?'Gestion autorisée':'Lecture seule';create.hidden=!canManage();setState('Actualisation de la maintenance préventive…',false);
       try{
         current=await api().load(client(),eid(),100);
-        renderSummary(current.summary||{});renderPlans(current.plans||[]);renderRuns(current.runs||[]);state.hidden=true;
+        renderSummary(current.summary||{});renderCalendar(current.plans||[]);renderPlans(current.plans||[]);renderRuns(current.runs||[]);state.hidden=true;
       }catch(_){setState('Impossible de charger la maintenance préventive. Réessayez.',true);}
     }
     function click(ev){
