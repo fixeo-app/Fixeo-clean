@@ -29,6 +29,14 @@ async function setup(t, options = {}, search = `?enterprise_id=${uuid(101)}`, mo
   w.FixeoEnterpriseReadModel = mountOptions.readModel || { load: async () => ({ sites: [], interventions: [] }) };
   w.FixeoEnterpriseSiteActions = mountOptions.siteActions || { canManage: () => false };
   w.FixeoEnterpriseRequestActions = mountOptions.requestActions || { canCreate: () => false };
+  w.FixeoEnterpriseReporting = mountOptions.reporting || { load: async () => ({
+    operational: { request_count: 0, accepted_request_count: 0, acceptance_rate_percent: null,
+      avg_first_acceptance_minutes: null, completed_mission_request_count: 0 },
+    sla: { eligible_count: 0, met_count: 0, breached_count: 0, on_track_count: 0,
+      at_risk_count: 0, sla_met_rate_percent: null },
+    sites: [],
+    breakdown: { by_service_category: [], by_urgency: [], by_request_status: [] }
+  }) };
   w.eval(read('js/fixeo-logout-global.js'));
   const navigations = [];
   const app = mount(w, { navigate: p => navigations.push(p), ...mountOptions });
@@ -131,7 +139,7 @@ test('U11 New page has isolated scripts, unique IDs, local links and no operatio
     'js/supabase-client.js', 'js/fixeo-logout-global.js', 'js/fixeo-auth-resolver.js',
     'js/fixeo-enterprise-guard.js', 'js/fixeo-enterprise-readmodel.js',
     'js/fixeo-enterprise-site-actions.js', 'js/fixeo-enterprise-request-actions.js',
-    'js/fixeo-enterprise-workspace.js']);
+    'js/fixeo-enterprise-reporting.js', 'js/fixeo-enterprise-workspace.js']);
   const ids = [...d.querySelectorAll('[id]')].map(n => n.id);
   assert.equal(ids.length, new Set(ids).size);
   assert.ok([...d.querySelectorAll('a')].every(a => ['index.html', '#main', 'auth.html'].includes(a.getAttribute('href'))));
@@ -224,4 +232,34 @@ test('U17 B4 opens read-only intervention detail with SLA snapshot', async t => 
   assert.match(s.q('enterprise-intervention-detail').textContent,/Objectif d’acceptation/);
   assert.match(s.q('enterprise-intervention-detail').textContent,/30 min/);
   assert.equal(s.q('enterprise-intervention-detail').querySelector('button'),null);
+});
+
+test('U18 B5 renders operational and SLA reporting from read-only RPC model', async t => {
+  const reporting = { load: async () => ({
+    operational: { request_count: 12, accepted_request_count: 9, acceptance_rate_percent: 75,
+      avg_first_acceptance_minutes: 18.5, completed_mission_request_count: 7 },
+    sla: { eligible_count: 10, met_count: 7, breached_count: 2, on_track_count: 1,
+      at_risk_count: 0, sla_met_rate_percent: 77.78 },
+    sites: [{ site_id: uuid(301), site_name: 'Siège', city: 'Casablanca',
+      site_status: 'active', request_count: 8, completed_count: 5,
+      accepted_count: 6, acceptance_rate_percent: 75 }],
+    breakdown: { by_service_category: [], by_urgency: [],
+      by_request_status: [{ key: 'new', count: 3 }, { key: 'completed', count: 5 }] }
+  }) };
+  const s = await setup(t, {}, undefined, { reporting });
+  await tick();
+  assert.equal(s.q('enterprise-report-content').hidden, false);
+  assert.match(s.q('enterprise-report-kpis').textContent,/12/);
+  assert.match(s.q('enterprise-report-sla').textContent,/77,8|77\.8/);
+  assert.match(s.q('enterprise-report-statuses').textContent,/New/);
+  assert.match(s.q('enterprise-report-sites').textContent,/Siège/);
+});
+
+test('U19 B5 reporting failure does not hide operational workspace', async t => {
+  const reporting = { load: async () => { throw new Error('offline'); } };
+  const s = await setup(t, {}, undefined, { reporting });
+  await tick();
+  assert.equal(s.q('enterprise-workspace').hidden, false);
+  assert.equal(s.q('enterprise-report-retry').hidden, false);
+  assert.equal(s.q('enterprise-report-content').hidden, true);
 });
