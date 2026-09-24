@@ -229,3 +229,23 @@
 .fxew-sla-policy-head span:not(.fxew-status){display:block;margin-top:4px;color:var(--muted);font-size:12px}
 .fxew-sla-policy-meta{display:flex;flex-wrap:wrap;gap:7px 14px;margin-top:12px;color:var(--muted);font-size:11px}
 @media(max-width:700px){.fxew-sla-policy-list{grid-template-columns:1fr;padding:14px}.fxew-sla-defaults{padding:12px 14px}}
+
+/* BLOCK A — Workforce interne & dispatch hybride */
+.fxew-workforce-list,.fxew-dispatch-policy-list,.fxew-hybrid-live{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:18px}
+.fxew-workforce-card,.fxew-dispatch-policy-card,.fxew-hybrid-live-card{border:1px solid rgba(255,255,255,.09);border-radius:15px;background:rgba(255,255,255,.025);padding:18px;min-width:0}
+.fxew-workforce-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.fxew-workforce-head strong{display:block;font-size:14px}
+.fxew-workforce-head span:not(.fxew-status){display:block;margin-top:4px;color:var(--muted);font-size:12px}
+.fxew-workforce-meta{margin:10px 0 0;color:var(--muted);font-size:11px;overflow-wrap:anywhere}
+.fxew-dispatch-modes{display:flex;flex-wrap:wrap;gap:8px 12px;padding:14px 18px;border-bottom:1px solid var(--line);color:var(--muted);font-size:11px}
+.fxew-dispatch-modes span{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.025)}
+.fxew-check{display:flex!important;align-items:center;gap:9px!important}
+.fxew-check input{width:auto!important;min-height:auto!important}
+.fxew-form small{color:var(--muted);font-weight:400;line-height:1.4}
+.fxew-form select[multiple]{min-height:130px}
+.fxew-hybrid-live{padding-top:14px}
+#enterprise-my-workforce-module .fxew-list{padding-top:0}
+@media(max-width:760px){
+  .fxew-workforce-list,.fxew-dispatch-policy-list,.fxew-hybrid-live{grid-template-columns:1fr;padding:14px}
+  .fxew-dispatch-modes{padding:12px 14px}
+}

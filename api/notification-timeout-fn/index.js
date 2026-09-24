@@ -23,6 +23,21 @@ module.exports=async function handler(req,res){
     if(!response.ok)return res.status(502).json({ok:false,error:'NOTIFICATION_WORKER_FAILED'});
     const result=await response.json();
     if(result?.ok!==true || !Number.isInteger(result.inserted) || !Number.isInteger(result.closed))return res.status(502).json({ok:false,error:'INVALID_WORKER_RESPONSE'});
-    return res.status(200).json({ok:true,inserted:result.inserted,closed:result.closed});
+
+    const fallbackResponse=await fetch(url.replace(/\/$/,'')+'/rest/v1/rpc/run_enterprise_dispatch_fallbacks_v1',{
+      method:'POST',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'},
+      body:'{}',signal:AbortSignal.timeout(20000)
+    });
+    if(!fallbackResponse.ok)return res.status(502).json({ok:false,error:'ENTERPRISE_FALLBACK_WORKER_FAILED'});
+    const fallback=await fallbackResponse.json();
+    if(fallback?.ok!==true || !Number.isInteger(fallback.processed) || !Number.isInteger(fallback.failed))return res.status(502).json({ok:false,error:'INVALID_ENTERPRISE_FALLBACK_RESPONSE'});
+
+    return res.status(200).json({
+      ok:true,
+      inserted:result.inserted,
+      closed:result.closed,
+      enterprise_fallback_processed:fallback.processed,
+      enterprise_fallback_failed:fallback.failed
+    });
   }catch(_){return res.status(502).json({ok:false,error:'NOTIFICATION_WORKER_UNAVAILABLE'});}
 };

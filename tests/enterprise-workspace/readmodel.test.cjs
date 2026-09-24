@@ -9,7 +9,7 @@ const mid='00000000-0000-4000-8000-000000000501';
 
 function fake(data, failTable){
   const calls=[];
-  const client={schema(name){
+  const client={auth:{async getSession(){return {data:{session:{user:{id:'00000000-0000-4000-8000-000000000901'}}},error:null};}},schema(name){
     assert.equal(name,'public');
     return {from(table){
       const call={table,filters:[],orders:[]}; calls.push(call);
@@ -58,7 +58,25 @@ test('B1 read model maps tenant sites, requests and latest mission without sensi
       expires_at:'2026-10-01T10:00:00Z',created_at:'2026-09-24T10:00:00Z',token_hash:'SECRET'}],
     enterprise_sla_policies:[{id:'00000000-0000-4000-8000-000000000804',enterprise_id:eid,
       site_id:null,urgency:'normal',acceptance_target_minutes:90,status:'active',
-      created_at:'2026-09-24T10:00:00Z',updated_at:'2026-09-24T10:00:00Z'}]
+      created_at:'2026-09-24T10:00:00Z',updated_at:'2026-09-24T10:00:00Z'}],
+    enterprise_workforce_workers:[{id:'00000000-0000-4000-8000-000000000805',enterprise_id:eid,
+      member_id:'00000000-0000-4000-8000-000000000801',display_label:'Ahmed Maintenance',
+      employee_code:'M-01',status:'active',availability:'available',all_sites:false,max_concurrent_jobs:2,
+      created_at:'2026-09-24T10:00:00Z',updated_at:'2026-09-24T10:00:00Z'}],
+    enterprise_workforce_skills:[{id:'00000000-0000-4000-8000-000000000806',enterprise_id:eid,
+      worker_id:'00000000-0000-4000-8000-000000000805',service_category:'plomberie',skill_level:5,active:true,created_at:'2026-09-24T10:00:00Z'}],
+    enterprise_workforce_sites:[{id:'00000000-0000-4000-8000-000000000807',enterprise_id:eid,
+      worker_id:'00000000-0000-4000-8000-000000000805',site_id:sid,created_at:'2026-09-24T10:00:00Z'}],
+    enterprise_dispatch_policies:[{id:'00000000-0000-4000-8000-000000000808',enterprise_id:eid,
+      site_id:sid,service_category:'plomberie',mode:'internal_first',internal_offer_limit:3,
+      offer_ttl_minutes:15,fallback_after_minutes:10,status:'active',created_at:'2026-09-24T10:00:00Z'}],
+    enterprise_internal_dispatch_offers:[{id:'00000000-0000-4000-8000-000000000809',enterprise_id:eid,
+      service_request_id:rid,worker_id:'00000000-0000-4000-8000-000000000805',status:'offered',
+      score:500,offered_at:'2026-09-24T10:00:00Z',expires_at:'2026-09-24T10:15:00Z'}],
+    enterprise_internal_assignments:[],
+    enterprise_hybrid_dispatch_state:[{service_request_id:rid,enterprise_id:eid,
+      policy_id:'00000000-0000-4000-8000-000000000808',mode:'internal_first',status:'internal_offered',
+      fallback_due_at:'2026-09-24T10:10:00Z',external_dispatched_at:null,created_at:'2026-09-24T10:00:00Z',updated_at:'2026-09-24T10:00:00Z'}]
   });
   const out=await model.load(f.client,eid);
   assert.equal(out.sites.length,1);
@@ -78,6 +96,13 @@ test('B1 read model maps tenant sites, requests and latest mission without sensi
   assert.equal(out.sla_policies.length,1);
   assert.equal(out.sla_policies[0].urgency,'normal');
   assert.equal(out.sla_policies[0].acceptance_target_minutes,90);
+  assert.equal(out.workforce.workers.length,1);
+  assert.equal(out.workforce.my_worker_id,'00000000-0000-4000-8000-000000000805');
+  assert.deepEqual(out.workforce.workers[0].site_ids,[sid]);
+  assert.equal(out.workforce.workers[0].skills[0].service_category,'plomberie');
+  assert.equal(out.workforce.dispatch_policies[0].mode,'internal_first');
+  assert.equal(out.workforce.offers[0].status,'offered');
+  assert.equal(out.interventions[0].hybrid_dispatch.status,'internal_offered');
   const requestCall=f.calls.find(c=>c.table==='service_requests');
   assert.equal(requestCall.columns.includes('client_phone'),false);
   assert.equal(requestCall.columns.includes('guest_token_hash'),false);

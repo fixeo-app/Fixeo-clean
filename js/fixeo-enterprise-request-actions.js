@@ -1,4 +1,4 @@
-/* FIXEO Enterprise B3 — request creation through canonical secured RPC. */
+/* FIXEO Enterprise Block A — request creation through hybrid dispatch RPC. */
 (function (root, factory) {
   'use strict';
   if (typeof module === 'object' && module.exports) module.exports = factory();
@@ -21,7 +21,7 @@
     var urgency=input.urgency==null||input.urgency===''?null:String(input.urgency);
     if(urgency!==null&&ALLOWED_URGENCY.indexOf(urgency)===-1) throw new Error('INVALID_URGENCY');
     if(!client||typeof client.rpc!=='function') throw new Error('RPC_UNAVAILABLE');
-    var response=await client.rpc('create_enterprise_request',{
+    var response=await client.rpc('create_enterprise_request_hybrid',{
       p_enterprise_id:enterpriseId,
       p_site_id:siteId,
       p_service_category:requireText(input.service_category),

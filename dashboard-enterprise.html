@@ -7,20 +7,22 @@
   <meta name="referrer" content="same-origin">
   <title>Espace entreprise | FIXEO</title>
   <link rel="icon" href="img/logo-fixeo-icon.png">
-  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=b9-1">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=block-a1">
   <script defer src="js/supabase-client.js"></script>
   <script defer src="js/fixeo-logout-global.js"></script>
   <script defer src="js/fixeo-auth-resolver.js"></script>
   <script defer src="js/fixeo-enterprise-guard.js?v=2b-1"></script>
-  <script defer src="js/fixeo-enterprise-readmodel.js?v=b4-1"></script>
+  <script defer src="js/fixeo-enterprise-readmodel.js?v=block-a1"></script>
   <script defer src="js/fixeo-enterprise-site-actions.js?v=b2-prod1"></script>
-  <script defer src="js/fixeo-enterprise-request-actions.js?v=b3-1"></script>
+  <script defer src="js/fixeo-enterprise-request-actions.js?v=block-a1"></script>
   <script defer src="js/fixeo-enterprise-reporting.js?v=b5-1"></script>
   <script defer src="js/fixeo-enterprise-member-actions.js?v=b6-1"></script>
   <script defer src="js/fixeo-enterprise-invitation-actions.js?v=b7-1"></script>
   <script defer src="js/fixeo-enterprise-audit.js?v=b8-1"></script>
   <script defer src="js/fixeo-enterprise-sla-policy-actions.js?v=b9-1"></script>
-  <script defer src="js/fixeo-enterprise-workspace.js?v=b9-1"></script>
+  <script defer src="js/fixeo-enterprise-workforce-actions.js?v=block-a1"></script>
+  <script defer src="js/fixeo-enterprise-workforce-ui.js?v=block-a1"></script>
+  <script defer src="js/fixeo-enterprise-workspace.js?v=block-a1"></script>
 </head>
 <body class="fxew">
   <a class="fxew-skip" href="#main">Aller au contenu</a>
@@ -99,6 +101,47 @@
             <div id="enterprise-report-sites" class="fxew-site-performance"></div>
           </section>
         </div>
+      </section>
+
+      <section class="fxew-module" aria-labelledby="workforce-title">
+        <div class="fxew-module-heading">
+          <div><p class="fxew-module-kicker">Workforce</p><h2 id="workforce-title">Effectifs internes</h2></div>
+          <div class="fxew-module-actions">
+            <span id="enterprise-workforce-mode" class="fxew-module-meta">Lecture seule</span>
+            <button id="enterprise-workforce-create" class="fxew-button fxew-button--primary" type="button" hidden>Ajouter un technicien</button>
+          </div>
+        </div>
+        <div id="enterprise-workforce-list" class="fxew-workforce-list" aria-live="polite"></div>
+        <p id="enterprise-workforce-empty" class="fxew-empty" hidden>Aucun technicien interne configuré.</p>
+      </section>
+
+      <section class="fxew-module" aria-labelledby="hybrid-dispatch-title">
+        <div class="fxew-module-heading">
+          <div><p class="fxew-module-kicker">Dispatch</p><h2 id="hybrid-dispatch-title">Dispatch hybride</h2></div>
+          <div class="fxew-module-actions">
+            <span id="enterprise-dispatch-policy-mode" class="fxew-module-meta">Lecture seule</span>
+            <button id="enterprise-dispatch-policy-create" class="fxew-button fxew-button--primary" type="button" hidden>Nouvelle règle</button>
+          </div>
+        </div>
+        <div class="fxew-dispatch-modes" aria-label="Modes de dispatch">
+          <span>Interne uniquement</span>
+          <span>Interne puis externe</span>
+          <span>Externe uniquement</span>
+          <span>Hybride simultané</span>
+        </div>
+        <div id="enterprise-dispatch-policy-list" class="fxew-dispatch-policy-list" aria-live="polite"></div>
+        <p id="enterprise-dispatch-policy-empty" class="fxew-empty" hidden>Aucune règle personnalisée : le dispatch externe historique reste le défaut.</p>
+        <div class="fxew-report-card-head"><h3>Dispatch en cours</h3><span>Interne + réseau FIXEO</span></div>
+        <div id="enterprise-hybrid-dispatch-live" class="fxew-hybrid-live" aria-live="polite"></div>
+      </section>
+
+      <section id="enterprise-my-workforce-module" class="fxew-module" aria-labelledby="my-workforce-title" hidden>
+        <div class="fxew-module-heading">
+          <div><p class="fxew-module-kicker">Technicien</p><h2 id="my-workforce-title">Mes missions internes</h2></div>
+          <span id="enterprise-my-workforce-status" class="fxew-module-meta"></span>
+        </div>
+        <div id="enterprise-my-workforce-offers" class="fxew-list" aria-live="polite"></div>
+        <div id="enterprise-my-workforce-assignments" class="fxew-list" aria-live="polite"></div>
       </section>
 
       <section class="fxew-module" aria-labelledby="sla-policies-title">
@@ -191,6 +234,109 @@
         <p id="enterprise-interventions-empty" class="fxew-empty" hidden>Aucune intervention visible pour les sites auxquels vous avez accès.</p>
       </section>
     </section>
+
+    <div id="enterprise-workforce-dialog" class="fxew-dialog-backdrop" hidden>
+      <section class="fxew-dialog" role="dialog" aria-modal="true" aria-labelledby="enterprise-workforce-dialog-title">
+        <div class="fxew-dialog-head">
+          <div><p class="fxew-module-kicker">Workforce</p><h2 id="enterprise-workforce-dialog-title">Technicien interne</h2></div>
+          <button id="enterprise-workforce-close" class="fxew-dialog-close" type="button" aria-label="Fermer">×</button>
+        </div>
+        <form id="enterprise-workforce-form" class="fxew-form">
+          <input id="enterprise-workforce-id" type="hidden">
+          <label>Membre Enterprise
+            <select id="enterprise-workforce-member" required></select>
+          </label>
+          <label>Nom opérationnel
+            <input id="enterprise-workforce-label" maxlength="160" required placeholder="Ex. Ahmed · Maintenance">
+          </label>
+          <label>Code employé
+            <input id="enterprise-workforce-code" maxlength="80" placeholder="Optionnel">
+          </label>
+          <label>Compétences
+            <input id="enterprise-workforce-skills" placeholder="plomberie:5, electricite:4">
+            <small>Format : métier:niveau (1 à 5), séparé par des virgules.</small>
+          </label>
+          <label>Sites autorisés
+            <select id="enterprise-workforce-sites" multiple size="5"></select>
+          </label>
+          <label class="fxew-check"><input id="enterprise-workforce-all-sites" type="checkbox"> Tous les sites</label>
+          <label>Capacité simultanée
+            <input id="enterprise-workforce-capacity" type="number" min="1" max="20" value="1" required>
+          </label>
+          <label>Statut
+            <select id="enterprise-workforce-status"><option value="active">Actif</option><option value="inactive">Inactif</option></select>
+          </label>
+          <p id="enterprise-workforce-error" class="fxew-form-error" role="alert" hidden></p>
+          <div class="fxew-dialog-actions">
+            <button id="enterprise-workforce-cancel" class="fxew-button" type="button">Annuler</button>
+            <button id="enterprise-workforce-submit" class="fxew-button fxew-button--primary" type="submit">Enregistrer</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div id="enterprise-dispatch-policy-dialog" class="fxew-dialog-backdrop" hidden>
+      <section class="fxew-dialog" role="dialog" aria-modal="true" aria-labelledby="enterprise-dispatch-policy-dialog-title">
+        <div class="fxew-dialog-head">
+          <div><p class="fxew-module-kicker">Dispatch hybride</p><h2 id="enterprise-dispatch-policy-dialog-title">Règle de dispatch</h2></div>
+          <button id="enterprise-dispatch-policy-close" class="fxew-dialog-close" type="button" aria-label="Fermer">×</button>
+        </div>
+        <form id="enterprise-dispatch-policy-form" class="fxew-form">
+          <input id="enterprise-dispatch-policy-id" type="hidden">
+          <label>Site
+            <select id="enterprise-dispatch-policy-site"><option value="">Toute l’entreprise</option></select>
+          </label>
+          <label>Métier / service
+            <input id="enterprise-dispatch-policy-category" placeholder="Vide = tous les métiers">
+          </label>
+          <label>Mode
+            <select id="enterprise-dispatch-policy-value">
+              <option value="internal_only">Interne uniquement</option>
+              <option value="internal_first">Interne puis externe</option>
+              <option value="external_only">Externe uniquement</option>
+              <option value="hybrid">Hybride simultané</option>
+            </select>
+          </label>
+          <label>Nombre d’offres internes
+            <input id="enterprise-dispatch-policy-limit" type="number" min="1" max="10" value="3">
+          </label>
+          <label>Durée d’une offre interne (min)
+            <input id="enterprise-dispatch-policy-ttl" type="number" min="1" max="1440" value="15">
+          </label>
+          <label>Fallback externe après (min)
+            <input id="enterprise-dispatch-policy-fallback" type="number" min="0" max="1440" value="10">
+          </label>
+          <label>Statut
+            <select id="enterprise-dispatch-policy-status"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+          </label>
+          <p id="enterprise-dispatch-policy-error" class="fxew-form-error" role="alert" hidden></p>
+          <div class="fxew-dialog-actions">
+            <button id="enterprise-dispatch-policy-cancel" class="fxew-button" type="button">Annuler</button>
+            <button id="enterprise-dispatch-policy-submit" class="fxew-button fxew-button--primary" type="submit">Enregistrer</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div id="enterprise-internal-assign-dialog" class="fxew-dialog-backdrop" hidden>
+      <section class="fxew-dialog" role="dialog" aria-modal="true" aria-labelledby="enterprise-internal-assign-title">
+        <div class="fxew-dialog-head">
+          <div><p class="fxew-module-kicker">Dispatch interne</p><h2 id="enterprise-internal-assign-title">Affecter un technicien</h2></div>
+          <button id="enterprise-internal-assign-close" class="fxew-dialog-close" type="button" aria-label="Fermer">×</button>
+        </div>
+        <form id="enterprise-internal-assign-form" class="fxew-form">
+          <input id="enterprise-internal-assign-request" type="hidden">
+          <label>Technicien
+            <select id="enterprise-internal-assign-worker" required></select>
+          </label>
+          <p id="enterprise-internal-assign-error" class="fxew-form-error" role="alert" hidden></p>
+          <div class="fxew-dialog-actions">
+            <button id="enterprise-internal-assign-cancel" class="fxew-button" type="button">Annuler</button>
+            <button id="enterprise-internal-assign-submit" class="fxew-button fxew-button--primary" type="submit">Affecter</button>
+          </div>
+        </form>
+      </section>
+    </div>
 
     <div id="enterprise-sla-policy-dialog" class="fxew-dialog-backdrop" hidden>
       <section class="fxew-dialog" role="dialog" aria-modal="true" aria-labelledby="enterprise-sla-policy-dialog-title">

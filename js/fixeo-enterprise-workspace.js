@@ -74,6 +74,7 @@
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
     var client = null, subscription = null, generation = 0, stopped = false, logoutPending = false;
+    var workforceUi = null;
     var logoutFailed = false, logoutProof = null;
 
     function clear() {
@@ -304,7 +305,21 @@
       'account.ownership_transferred':'Propriété transférée',
       'sla.policy_created':'Politique SLA créée',
       'sla.policy_updated':'Politique SLA modifiée',
-      'sla.snapshot_created':'Snapshot SLA créé'
+      'sla.snapshot_created':'Snapshot SLA créé',
+      'workforce.worker_created':'Technicien interne créé',
+      'workforce.worker_updated':'Technicien interne modifié',
+      'workforce.skills_updated':'Compétences Workforce modifiées',
+      'workforce.sites_updated':'Périmètre Workforce modifié',
+      'workforce.availability_updated':'Disponibilité Workforce modifiée',
+      'dispatch.policy_created':'Règle de dispatch créée',
+      'dispatch.policy_updated':'Règle de dispatch modifiée',
+      'dispatch.internal_offered':'Offres internes envoyées',
+      'dispatch.internal_accepted':'Mission interne acceptée',
+      'dispatch.internal_declined':'Offre interne refusée',
+      'dispatch.internal_assignment_updated':'Mission interne mise à jour',
+      'dispatch.external_started':'Dispatch externe lancé',
+      'dispatch.external_fallback':'Fallback externe lancé',
+      'dispatch.no_internal_candidate':'Aucun technicien interne éligible'
     });
     function canViewAudit() {
       return !!(win.FixeoEnterpriseAudit &&
@@ -1123,6 +1138,7 @@
         if (run !== generation || stopped || doc.hidden || currentEnterpriseId !== enterpriseId) return;
         renderSites(model.sites || []);
         renderSlaPolicies(model.sla_policies || []);
+        if (workforceUi && typeof workforceUi.render === 'function') workforceUi.render(model);
         renderInvitations(model.invitations || []);
         renderTeam(model.members || []);
         renderInterventions(model.interventions || []);
@@ -1286,9 +1302,20 @@
     doc.addEventListener('visibilitychange', visibility);
     win.addEventListener('pagehide', pageHide);
     win.addEventListener('pageshow', pageShow);
+    if (win.FixeoEnterpriseWorkforceUI && typeof win.FixeoEnterpriseWorkforceUI.mount === 'function') {
+      workforceUi = win.FixeoEnterpriseWorkforceUI.mount(win, {
+        getClient: function () { return client; },
+        getEnterpriseId: function () { return currentEnterpriseId; },
+        getRole: function () { return currentEnterpriseRole; },
+        refresh: function () {
+          return currentEnterpriseId ? loadOperational(currentEnterpriseId, generation) : Promise.resolve();
+        }
+      });
+    }
     refresh();
     return { refresh: refresh, destroy: function () {
       stopped = true; clear();
+      if (workforceUi && typeof workforceUi.destroy === 'function') workforceUi.destroy();
       if (subscription) subscription.unsubscribe();
       retry.removeEventListener('click', refresh); logout.removeEventListener('click', signOut);
       siteClose.removeEventListener('click', closeSiteDialog); siteCancel.removeEventListener('click', closeSiteDialog);
