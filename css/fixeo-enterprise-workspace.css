@@ -284,3 +284,20 @@
 .fxew-maintenance-calendar-row strong{display:block;font-size:12px}
 .fxew-maintenance-calendar-row span:not(.fxew-status){display:block;margin-top:3px;color:var(--muted);font-size:11px}
 @media(max-width:560px){.fxew-maintenance-calendar-card{margin:0 14px 14px}.fxew-maintenance-calendar-row{grid-template-columns:1fr}}
+
+/* BLOCK D — Equipment fleet */
+.fxew-equipment-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:18px}
+.fxew-equipment-card{border:1px solid var(--line);border-radius:15px;padding:18px;background:rgba(255,255,255,.025)}
+.fxew-equipment-card--recurring{box-shadow:inset 3px 0 0 rgba(255,177,72,.8)}
+.fxew-equipment-card--critical{border-color:rgba(255,90,110,.28)}
+.fxew-equipment-warning{margin:10px 0 0;color:#ffd59b;font-size:12px;font-weight:650}
+.fxew-equipment-detail-section{border:1px solid var(--line);border-radius:13px;overflow:hidden}
+.fxew-equipment-detail-section>h3,.fxew-equipment-link-box>h3{margin:0;padding:13px 15px;border-bottom:1px solid var(--line);font-size:13px}
+.fxew-equipment-link-box{border:1px solid var(--line);border-radius:13px;overflow:hidden;margin-top:14px}
+.fxew-inline-control{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:14px}
+.fxew-inline-control select{min-height:42px;border:1px solid var(--line);border-radius:10px;background:#191927;color:var(--text);padding:8px 10px;font:inherit}
+.fxew-equipment-asset{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 14px;align-items:start;padding:12px 14px}
+.fxew-equipment-asset+.fxew-equipment-asset{border-top:1px solid var(--line)}
+.fxew-equipment-asset strong{display:block;font-size:12px}
+.fxew-equipment-asset span{display:block;margin-top:3px;color:var(--muted);font-size:11px}
+@media(max-width:760px){.fxew-equipment-grid{grid-template-columns:1fr;padding:14px}.fxew-inline-control,.fxew-equipment-asset{grid-template-columns:1fr}}
