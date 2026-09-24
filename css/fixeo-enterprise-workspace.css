@@ -199,3 +199,22 @@
 .fxew-invitation-created label{display:grid;gap:7px;color:var(--muted);font-size:12px;font-weight:650}
 .fxew-invitation-created input{width:100%;min-height:46px;border:1px solid var(--line);border-radius:11px;background:#191927;color:var(--text);padding:10px 12px;font:inherit}
 @media(max-width:700px){.fxew-invitation-list{grid-template-columns:1fr;padding:14px}}
+
+/* B8 — audit history */
+.fxew-audit-list{display:grid;gap:10px;padding:18px}
+.fxew-audit-event{border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.022);padding:16px;min-width:0}
+.fxew-audit-event-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+.fxew-audit-event-head strong{display:block;font-size:14px}
+.fxew-audit-event-head span:not(.fxew-audit-time){display:block;margin-top:4px;color:var(--muted);font-size:11px;overflow-wrap:anywhere}
+.fxew-audit-time{flex:0 0 auto;color:var(--muted);font-size:11px;text-align:right}
+.fxew-audit-meta{display:flex;flex-wrap:wrap;gap:7px 14px;margin-top:11px;color:var(--muted);font-size:11px;overflow-wrap:anywhere}
+.fxew-audit-details{margin-top:13px;border-top:1px solid var(--line);padding-top:10px}
+.fxew-audit-details summary{cursor:pointer;color:#d8d8e7;font-size:12px;font-weight:650}
+.fxew-audit-detail-block{margin-top:10px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.fxew-audit-detail-block>strong{display:block;padding:8px 10px;background:#191927;font-size:11px}
+.fxew-audit-detail-row{display:flex;justify-content:space-between;gap:12px;padding:8px 10px;font-size:11px}
+.fxew-audit-detail-row+.fxew-audit-detail-row{border-top:1px solid var(--line)}
+.fxew-audit-detail-row span{color:var(--muted)}
+.fxew-audit-detail-row b{text-align:right;overflow-wrap:anywhere}
+.fxew-audit-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px 18px}
+@media(max-width:560px){.fxew-audit-event-head{flex-direction:column}.fxew-audit-time{text-align:left}.fxew-audit-footer{align-items:stretch;flex-direction:column}.fxew-audit-footer .fxew-button{width:100%}}
