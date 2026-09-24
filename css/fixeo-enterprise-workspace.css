@@ -265,3 +265,14 @@
 .fxew-control-load-grid{display:grid;gap:10px;padding:14px}
 .fxew-control-load-card{border:1px solid var(--line);border-radius:12px;padding:13px;background:rgba(255,255,255,.02)}
 @media(max-width:700px){.fxew-control-attention{padding:14px}.fxew-control-alert-head{flex-direction:column}}
+
+/* BLOCK C — Preventive Maintenance */
+.fxew-maintenance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:18px}
+.fxew-maintenance-card{border:1px solid var(--line);border-radius:15px;padding:18px;background:rgba(255,255,255,.025)}
+.fxew-maintenance-card--reminder{box-shadow:inset 3px 0 0 rgba(109,190,255,.7)}
+.fxew-maintenance-card--overdue{box-shadow:inset 3px 0 0 rgba(255,90,110,.85)}
+.fxew-maintenance-runs{display:grid;gap:8px;padding:14px}
+.fxew-maintenance-run{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;align-items:start;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:rgba(255,255,255,.02)}
+.fxew-maintenance-run strong{display:block;font-size:13px}
+.fxew-maintenance-run span:not(.fxew-status),.fxew-maintenance-run small{display:block;color:var(--muted);font-size:11px;overflow-wrap:anywhere}
+@media(max-width:760px){.fxew-maintenance-grid{grid-template-columns:1fr;padding:14px}.fxew-maintenance-run{grid-template-columns:1fr}}
