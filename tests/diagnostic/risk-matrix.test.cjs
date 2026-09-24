@@ -46,7 +46,7 @@ const matrix = [
     'TECHNICAL',
   ],
   ['gaz', 'Odeur de gaz près de la chaudière.', 'plomberie', 'CRITICAL'],
-  ['serrurerie', 'Serrure bloquée.', 'serrurerie', 'URGENT'],
+  ['serrurerie', 'Serrure bloquée.', 'serrurerie', 'TECHNICAL'],
   [
     'serrurerie',
     'Serrure bloquée, danger immédiat explicite.',
@@ -112,7 +112,8 @@ for (const [family, description, trade, level] of matrix)
       result.safety.urgency,
       { TECHNICAL: 'normale', URGENT: 'urgent', CRITICAL: 'now' }[level],
     );
-    assert.ok(result.safety.messages.length);
+    assert.equal(result.safety.messages.length > 0, result.safety.signals.length > 0);
+    if (!result.safety.signals.length) assert.deepEqual(result.safety.messages, []);
   });
 
 for (const trade of TRADES)
@@ -162,4 +163,62 @@ test('critical guidance contains no technical handling instruction even when urg
   assert.ok(safety.signals.includes('electrical_risk'));
   assert.doesNotMatch(safety.messages.join(' '), /coupez|démontez|réparez/i);
   assert.match(safety.messages.join(' '), /services d’urgence/);
+});
+
+test('Fès blocked door since today: qualified trade, no artificial urgency, warning or surface questions', async () => {
+  const { result } = await analyze({
+    city_slug: 'fes', media: [],
+    input: { description: 'Ma porte est bloquée depuis aujourd’hui.', answers: {}, safety_signals: [] },
+  }, {
+    provider: { analyze: async () => ({ result: {
+      ...fixture('serrurerie'), problem: 'Porte bloquée',
+      question_ids: ['onset', 'affected_area', 'occurrence'],
+    }, usage: {} }) }, mediaStore: {},
+  });
+  assert.equal(result.trade.value, 'serrurerie');
+  assert.equal(result.safety.level, 'TECHNICAL');
+  assert.equal(result.urgency.value, 'moderate');
+  assert.equal(result.safety.stop, false);
+  assert.equal(result.safety.safety_cleared, false);
+  for (const values of [result.safety.signals, result.safety.messages, result.checks, result.questions])
+    assert.deepEqual(values, []);
+  assert.equal(result.next, 'qualification');
+});
+
+test('business priority without hazard evidence retains its urgency but never invents danger advice', () => {
+  const result = evaluateSafety({ description: 'Besoin professionnel.' }, {
+    ...fixture('serrurerie'), urgency: 'high',
+  });
+  assert.equal(result.level, 'URGENT');
+  assert.deepEqual(result.signals, []);
+  assert.deepEqual(result.messages, []);
+  assert.equal(result.safety_cleared, false);
+});
+
+test('a blocked door never suppresses an actual, declared, model or previously recorded hazard', () => {
+  const input = { description: 'Ma porte est bloquée depuis aujourd’hui.' };
+  for (const [text, signal] of [
+    ['Une odeur de gaz.', 'gas'], ['De la fumée.', 'fire'],
+    ['Des flammes.', 'fire'], ['Des étincelles.', 'electricity'],
+    ['Une inondation.', 'flood'], ['Une fuite incontrôlable.', 'major_leak'],
+    ['Un effondrement.', 'structure'], ['Un danger immédiat.', 'immediate_danger'],
+  ]) {
+    for (const result of [
+      evaluateSafety({ description: input.description + ' ' + text }),
+      evaluateSafety({ ...input, safety_signals: [signal] }),
+      evaluateSafety(input, { ...fixture('serrurerie'), safety_signals: [signal] }),
+      evaluateSafety(input, null, [signal]),
+    ]) {
+      assert.equal(result.level, 'CRITICAL', signal);
+      assert.equal(result.stop, true, signal);
+      assert(result.signals.includes(signal));
+      assert(result.messages.length > 0);
+      assert.equal(result.safety_cleared, false);
+    }
+  }
+  for (const signal of ['electrical_risk', 'technical_urgency']) {
+    const result = evaluateSafety(input, null, [signal]);
+    assert.equal(result.level, 'URGENT');
+    assert(result.messages.length > 0, 'no silent rewrite of historical evidence');
+  }
 });

@@ -53,6 +53,11 @@ test('provider adapter sends only bounded evidence, no tools, no persistence; va
   assert.equal(sent.tools, undefined);
   assert.equal(sent.max_output_tokens, 2048);
   assert.equal(sent.text.format.strict, true);
+  assert.match(sent.instructions, /a simple blocked door\/lock without another danger signal/);
+  assert.match(sent.instructions, /Ma porte est bloquée depuis aujourd’hui/);
+  assert.match(sent.instructions, /does not justify high urgency or technical_urgency/);
+  assert.doesNotMatch(sent.instructions, /a blocked lock or worsening damage/);
+  assert.match(sent.instructions, /Retain every supplied photo safety signal/);
   assert.equal(output.usage.model, 'fixture-revision');
   assert.equal(validateProviderResult(output.result, []).trade, 'plomberie');
   for (const payload of [

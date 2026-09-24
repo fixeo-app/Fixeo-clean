@@ -40,7 +40,7 @@ const PATTERNS = Object.freeze({
   major_leak:
     /fuite.{0,16}(importante|majeure|incontrol)|(?:grosse|importante|majeure) fuite|eau.{0,20}coule.{0,16}(fort|partout)/u,
   technical_urgency:
-    /serrure.{0,16}bloquee|porte.{0,16}bloquee|fissure.{0,20}(?:s'agrandit|evolue)|(?:toiture|toit).{0,25}infiltration importante/u,
+    /fissure.{0,20}(?:s'agrandit|evolue)|(?:toiture|toit).{0,25}infiltration importante/u,
   flood: /inond|flood|غرق|فيضان/u,
   structure:
     /effondr|affaisse|plafond.{0,15}tombe|(?:tuiles?|toiture|mur).{0,25}menac.{0,15}tomber|collapse|انهيار|سقف.{0,15}طيح/u,
@@ -181,15 +181,11 @@ function evaluateSafety(input, model = null, previousSignals = []) {
     signals: list,
     stop,
     urgency: stop ? "now" : level === "URGENT" ? "urgent" : "normale",
-    messages: list.length
-      ? list
-          .filter((s) => !stop || SIGNAL_LEVELS[s] === "CRITICAL")
-          .map((s) => MESSAGES[s])
-      : [
-          level === "URGENT"
-            ? MESSAGES.technical_urgency
-            : "Une intervention professionnelle est recommandée pour confirmer le diagnostic.",
-        ],
+    // Service urgency alone is not evidence of danger. Advice belongs to the
+    // retained signals; an empty list never means safety has been certified.
+    messages: list
+      .filter((s) => !stop || SIGNAL_LEVELS[s] === "CRITICAL")
+      .map((s) => MESSAGES[s]),
     // "none" is a client declaration, never proof that an installation is safe.
     safety_cleared: false,
   };

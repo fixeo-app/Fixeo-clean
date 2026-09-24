@@ -983,10 +983,10 @@
         ) +
         " · " +
         esc(cities[intake.session.city_slug] || intake.session.city_slug) +
-        "</strong><span>Voir le besoin et la priorité</span></summary>" +
+        "</strong><span>" + esc(intake.session.result.problem.value) + "</span></summary>" +
         summary() +
         "</details>" +
-        safetyNotice() +
+        (intake.session.result.safety.stop ? safetyNotice() : "") +
         '<div class="fxhf-contact"><label for="fxhf-phone">Téléphone pour le suivi</label>' +
         (known
           ? '<p id="fxhf-known-phone">' +
@@ -1060,7 +1060,10 @@
       stage === "cancelled" ? "Demande annulée." : "Demande confirmée.",
       labels[stage] || labels.registered,
     );
-    panel(safetyNotice());
+    // Operational status leads after confirmation. Retain actual risk guidance,
+    // never repeat a generic service-urgency message from an older dossier.
+    if (intake.session.result.safety.stop || intake.session.result.safety.signals?.length)
+      panel(safetyNotice());
     var steps = [
       ["Demande enregistrée", true],
       ["Besoin analysé", true],

@@ -676,7 +676,7 @@ for (const width of [320, 360, 390, 412]) {
     assert.equal(computed('.fxhf-heading-copy').paddingRight, '96px', 'text reserves the halo slot');
     assert.equal(computed('.fxhf-heading-copy').minHeight, '9.5rem');
     assert.equal(computed('.fxhf-heading-copy').overflowWrap, 'anywhere');
-    assert.equal(computed('.fxhf-scroll').minHeight, '10rem', 'bounded content floor, independent of viewport');
+    assert.equal(computed('.fxhf-scroll').minHeight, '8rem', 'bounded content floor, independent of viewport');
     assert.equal(computed('.fxhf-heading').animation, 'none', 'header never translates during transitions');
     for (const filled of [false, true]) {
       if (filled) s.fill();
@@ -794,7 +794,7 @@ for (const width of [320, 360, 390, 412]) {
       assert.deepEqual(sphereStyles(), canonicalSphere, state + ': exact NEED CSS geometry/glow/animation');
       assert.equal(computed('.fxhf-heading-copy').paddingRight, '96px', state);
       assert.equal(computed('.fxhf-heading-copy').minHeight, '9.5rem', state);
-      assert.equal(computed('.fxhf-scroll').minHeight, '10rem', state);
+      assert.equal(computed('.fxhf-scroll').minHeight, '8rem', state);
     }
   });
 }
@@ -1376,4 +1376,103 @@ test('One exact RAFI DOM survives NEED through questions, confirmation and every
     await s.until(() => s.q('fxhf-root').dataset.fxhfState === ui); check(ui);
   }
   assert.equal(s.counts().createCount, 1); assert.equal(s.counts().confirmCount, 1);
+});
+
+test('V2.1 freezes the deployed V2 RAFI markup, asset, geometry, halo and animation byte for byte', () => {
+  const {createHash} = require('node:crypto');
+  const hash = text => createHash('sha256').update(text).digest('hex');
+  const styles = read('css/fixeo-hero-flagship-v1.css').split('\n')
+    .filter(line => /fxhf-visual|fxhf-rafi-|^@keyframes fxhf-halo/.test(line)).join('\n');
+  const markup = read('js/fixeo-hero-flagship-v1.js').split('\n')
+    .find(line => line.includes('<div class="fxhf-shell fxhf-shell--need fxhf-universal">'));
+  // Canon from deployed 720112f. State/viewport cascade contracts above remain active.
+  assert.equal(hash(styles), '94c4d8c0534bc2ac46f3a01956d9dfc913efc4d360b636758a7414065de06807');
+  assert.equal(hash(markup), 'b914984390e1ff3129a31f614f8c4bd09b18344197edf58576ce30c793d4a0f0');
+});
+
+// Run the actual qualification/safety engine locally; only the external AI is
+// a fixture. No production dossier, reservation or provider request is created.
+async function locksmithEngineResponse(body, server) {
+  if (body.action !== 'analyze') return;
+  const {analyze} = require('../api/diagnostic/engine');
+  const {result} = await analyze({input: server.input, media: []}, {
+    provider: {analyze: async () => ({result: {
+      trade: 'serrurerie', problem: 'Porte bloquée', observations: [], hypotheses: [],
+      urgency: 'moderate', urgency_reason: 'Besoin de serrurerie déclaré.',
+      checks: [], possible_parts: [], question_ids: ['onset', 'affected_area', 'occurrence'],
+      safety_signals: [],
+    }, usage: {}})}, mediaStore: {},
+  });
+  server.result = result; server.state = 'ready'; server.result_run_id = body.run_id;
+  return {session: clone(server)};
+}
+
+test('Fès iPhone regression: blocked door since today, no alarm, same dossier and one confirmation', async t => {
+  const s = setup(t, {override: locksmithEngineResponse,
+    configure(w) { w.FixeoAIRE = {detect: () => ({cat: 'serrurerie'})}; }});
+  const sphere = s.q('fxhf-root').querySelector('.fxhf-visual');
+  s.fill(); s.change('fxhf-location', 'fes');
+  s.change('fxhf-need-input', 'Ma porte est bloquée depuis aujourd’hui.');
+  await s.analyze();
+  const id = s.server().id;
+  assert.equal(s.q('fxhf-root').dataset.fxhfState, 'result');
+  assert.match(s.q('fxhf-panel').textContent, /Serrurier.*Fès.*Porte bloquée.*Intervention professionnelle recommandée/);
+  assert.doesNotMatch(s.q('fxhf-panel').textContent, /Urgente|Gardez vos distances|ne tentez pas|Mur|Plafond|Équipement/);
+  assert.equal(s.q('fxhf-panel').querySelector('.fxhf-caution'), null);
+  assert.equal(s.server().result.safety.safety_cleared, false);
+  assert.deepEqual(s.server().result.questions, []);
+  s.q('fxhf-entrust').click(); s.q('fxhf-entrust').click();
+  await s.until(() => s.q('fxhf-phone'));
+  assert.equal(s.q('fxhf-root').querySelector('.fxhf-title').textContent, 'Confirmez votre demande.');
+  assert.equal(s.q('fxhf-panel').querySelector('.fxhf-recap summary span').textContent, 'Porte bloquée');
+  assert.equal(s.q('fxhf-panel').querySelector('.fxhf-caution'), null);
+  s.change('fxhf-phone', '0611111111'); s.click('Retour');
+  await s.until(() => s.q('fxhf-entrust'));
+  s.q('fxhf-entrust').click(); await s.until(() => s.q('fxhf-phone'));
+  assert.equal(s.q('fxhf-phone').value, '0611111111');
+  assert.equal(s.q('fxhf-confirm').textContent, 'Confirmer ma demande');
+  const confirm = s.q('fxhf-confirm'); confirm.click(); confirm.click();
+  await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'matching');
+  assert.equal(s.q('fxhf-panel').querySelector('.fxhf-caution'), null);
+  assert.equal(s.q('fxhf-panel').querySelectorAll('.fxhf-lifecycle .done').length, 2);
+  s.click('Actualiser le suivi'); await s.until(() => !s.q('fxhf-root').hasAttribute('aria-busy'));
+  assert.equal(s.server().id, id); assert.equal(s.server().city_slug, 'fes');
+  assert.equal(s.server().input.description, 'Ma porte est bloquée depuis aujourd’hui.');
+  assert.equal(s.q('fxhf-root').querySelector('.fxhf-visual'), sphere);
+  assert.equal(s.counts().createCount, 1); assert.equal(s.counts().confirmCount, 1);
+  assert.equal(s.calls.filter(c => c.action === 'confirm_intervention').length, 1);
+});
+
+test('Genuine gas danger keeps critical acknowledgement and guidance through confirmation and follow-up', async t => {
+  const s = setup(t, {override: locksmithEngineResponse});
+  s.fill(); s.change('fxhf-need-input', 'Ma porte est bloquée. Une odeur de gaz.');
+  await s.analyze();
+  assert.equal(s.server().result.safety.stop, true);
+  assert(s.server().result.safety.signals.includes('gas'));
+  assert.equal(s.q('fxhf-entrust').disabled, true);
+  const guidance = s.q('fxhf-panel').querySelector('.fxhf-caution').textContent;
+  assert.match(guidance, /services d’urgence/);
+  s.change('fxhf-critical-ack', true);
+  s.q('fxhf-entrust').click(); await s.until(() => s.q('fxhf-phone'));
+  assert.equal(s.q('fxhf-panel').querySelector('.fxhf-caution').textContent, guidance);
+  s.change('fxhf-phone', '0611111111'); s.q('fxhf-confirm').click();
+  await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'matching');
+  assert.equal(s.q('fxhf-panel').querySelector('.fxhf-caution').textContent, guidance);
+});
+
+test('Non-critical generic advice from an existing result is not repeated in confirmation or operational follow-up', async t => {
+  const s = setup(t, {override(body, server) {
+    if (body.action !== 'analyze') return;
+    server.result = result(); server.result.safety.level = 'URGENT';
+    server.result.safety.messages = ['Gardez vos distances.'];
+    server.state = 'ready'; server.result_run_id = body.run_id;
+    return {session: clone(server)};
+  }});
+  s.fill(); await s.analyze();
+  assert(s.q('fxhf-panel').querySelector('.fxhf-caution'));
+  s.q('fxhf-entrust').click(); await s.until(() => s.q('fxhf-phone'));
+  assert.equal(s.q('fxhf-panel').querySelector('.fxhf-caution'), null);
+  s.change('fxhf-phone', '0611111111'); s.q('fxhf-confirm').click();
+  await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'matching');
+  assert.equal(s.q('fxhf-panel').querySelector('.fxhf-caution'), null);
 });
