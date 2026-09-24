@@ -1,4 +1,4 @@
-/* FIXEO Enterprise Block A — request creation through hybrid dispatch RPC. */
+/* FIXEO Enterprise Block F — governed request intake with hybrid fallback. */
 (function (root, factory) {
   'use strict';
   if (typeof module === 'object' && module.exports) module.exports = factory();
@@ -21,12 +21,13 @@
     var urgency=input.urgency==null||input.urgency===''?null:String(input.urgency);
     if(urgency!==null&&ALLOWED_URGENCY.indexOf(urgency)===-1) throw new Error('INVALID_URGENCY');
     if(!client||typeof client.rpc!=='function') throw new Error('RPC_UNAVAILABLE');
-    var response=await client.rpc('create_enterprise_request_hybrid',{
+    var response=await client.rpc('submit_enterprise_governed_request_v1',{
       p_enterprise_id:enterpriseId,
       p_site_id:siteId,
       p_service_category:requireText(input.service_category),
       p_description:requireText(input.description),
-      p_urgency:urgency
+      p_urgency:urgency,
+      p_requested_amount:input.requested_amount==null||input.requested_amount===''?null:Number(input.requested_amount)
     });
     if(!response||response.error) throw new Error('RPC_FAILED');
     var data=response.data;
