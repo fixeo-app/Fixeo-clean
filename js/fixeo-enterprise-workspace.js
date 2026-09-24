@@ -74,7 +74,7 @@
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
     var client = null, subscription = null, generation = 0, stopped = false, logoutPending = false;
-    var workforceUi = null;
+    var workforceUi = null, controlTowerUi = null;
     var logoutFailed = false, logoutProof = null;
 
     function clear() {
@@ -319,7 +319,9 @@
       'dispatch.internal_assignment_updated':'Mission interne mise à jour',
       'dispatch.external_started':'Dispatch externe lancé',
       'dispatch.external_fallback':'Fallback externe lancé',
-      'dispatch.no_internal_candidate':'Aucun technicien interne éligible'
+      'dispatch.no_internal_candidate':'Aucun technicien interne éligible',
+      'control_tower.escalation_created':'Escalade Control Tower créée',
+      'control_tower.escalation_updated':'Escalade Control Tower modifiée'
     });
     function canViewAudit() {
       return !!(win.FixeoEnterpriseAudit &&
@@ -1139,6 +1141,7 @@
         renderSites(model.sites || []);
         renderSlaPolicies(model.sla_policies || []);
         if (workforceUi && typeof workforceUi.render === 'function') workforceUi.render(model);
+        if (controlTowerUi && typeof controlTowerUi.setMembers === 'function') controlTowerUi.setMembers(model.members || []);
         renderInvitations(model.invitations || []);
         renderTeam(model.members || []);
         renderInterventions(model.interventions || []);
@@ -1204,6 +1207,7 @@
         await Promise.all([
           loadOperational(result.enterprise.id, run),
           loadReporting(result.enterprise.id, run),
+          controlTowerUi && typeof controlTowerUi.refresh === 'function' ? controlTowerUi.refresh() : Promise.resolve(),
           canViewAudit() ? loadAudit(result.enterprise.id, run, false) : Promise.resolve()
         ]);
       } catch (_) { if (run === generation && !stopped && !doc.hidden) failure(); }
@@ -1312,10 +1316,18 @@
         }
       });
     }
+    if (win.FixeoEnterpriseControlTowerUI && typeof win.FixeoEnterpriseControlTowerUI.mount === 'function') {
+      controlTowerUi = win.FixeoEnterpriseControlTowerUI.mount(win, {
+        getClient: function () { return client; },
+        getEnterpriseId: function () { return currentEnterpriseId; },
+        getRole: function () { return currentEnterpriseRole; }
+      });
+    }
     refresh();
     return { refresh: refresh, destroy: function () {
       stopped = true; clear();
       if (workforceUi && typeof workforceUi.destroy === 'function') workforceUi.destroy();
+      if (controlTowerUi && typeof controlTowerUi.destroy === 'function') controlTowerUi.destroy();
       if (subscription) subscription.unsubscribe();
       retry.removeEventListener('click', refresh); logout.removeEventListener('click', signOut);
       siteClose.removeEventListener('click', closeSiteDialog); siteCancel.removeEventListener('click', closeSiteDialog);
