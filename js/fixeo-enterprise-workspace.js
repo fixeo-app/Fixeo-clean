@@ -74,7 +74,7 @@
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
     var client = null, subscription = null, generation = 0, stopped = false, logoutPending = false;
-    var workforceUi = null, controlTowerUi = null, maintenanceUi = null, equipmentUi = null;
+    var workforceUi = null, controlTowerUi = null, maintenanceUi = null, equipmentUi = null, financeUi = null;
     var logoutFailed = false, logoutProof = null;
 
     function clear() {
@@ -1154,6 +1154,7 @@
         if (controlTowerUi && typeof controlTowerUi.setMembers === 'function') controlTowerUi.setMembers(model.members || []);
         if (maintenanceUi && typeof maintenanceUi.setSites === 'function') maintenanceUi.setSites(model.sites || []);
         if (equipmentUi && typeof equipmentUi.setContext === 'function') equipmentUi.setContext(model);
+        if (financeUi && typeof financeUi.setContext === 'function') financeUi.setContext(model);
         renderInvitations(model.invitations || []);
         renderTeam(model.members || []);
         renderInterventions(model.interventions || []);
@@ -1222,6 +1223,7 @@
           controlTowerUi && typeof controlTowerUi.refresh === 'function' ? controlTowerUi.refresh() : Promise.resolve(),
           maintenanceUi && typeof maintenanceUi.refresh === 'function' ? maintenanceUi.refresh() : Promise.resolve(),
           equipmentUi && typeof equipmentUi.refresh === 'function' ? equipmentUi.refresh() : Promise.resolve(),
+          financeUi && typeof financeUi.refresh === 'function' ? financeUi.refresh() : Promise.resolve(),
           canViewAudit() ? loadAudit(result.enterprise.id, run, false) : Promise.resolve()
         ]);
       } catch (_) { if (run === generation && !stopped && !doc.hidden) failure(); }
@@ -1351,6 +1353,13 @@
         getRole: function () { return currentEnterpriseRole; }
       });
     }
+    if (win.FixeoEnterpriseFinanceUI && typeof win.FixeoEnterpriseFinanceUI.mount === 'function') {
+      financeUi = win.FixeoEnterpriseFinanceUI.mount(win, {
+        getClient: function () { return client; },
+        getEnterpriseId: function () { return currentEnterpriseId; },
+        getRole: function () { return currentEnterpriseRole; }
+      });
+    }
     refresh();
     return { refresh: refresh, destroy: function () {
       stopped = true; clear();
@@ -1358,6 +1367,7 @@
       if (controlTowerUi && typeof controlTowerUi.destroy === 'function') controlTowerUi.destroy();
       if (maintenanceUi && typeof maintenanceUi.destroy === 'function') maintenanceUi.destroy();
       if (equipmentUi && typeof equipmentUi.destroy === 'function') equipmentUi.destroy();
+      if (financeUi && typeof financeUi.destroy === 'function') financeUi.destroy();
       if (subscription) subscription.unsubscribe();
       retry.removeEventListener('click', refresh); logout.removeEventListener('click', signOut);
       siteClose.removeEventListener('click', closeSiteDialog); siteCancel.removeEventListener('click', closeSiteDialog);
