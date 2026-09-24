@@ -30,6 +30,7 @@ async function setup(t, options = {}, search = `?enterprise_id=${uuid(101)}`, mo
   w.FixeoEnterpriseSiteActions = mountOptions.siteActions || { canManage: () => false };
   w.FixeoEnterpriseRequestActions = mountOptions.requestActions || { canCreate: () => false };
   w.FixeoEnterpriseMemberActions = mountOptions.memberActions || { canManage: () => false };
+  w.FixeoEnterpriseInvitationActions = mountOptions.invitationActions || { canManage: () => false };
   w.FixeoEnterpriseReporting = mountOptions.reporting || { load: async () => ({
     operational: { request_count: 0, accepted_request_count: 0, acceptance_rate_percent: null,
       avg_first_acceptance_minutes: null, completed_mission_request_count: 0 },
@@ -141,7 +142,7 @@ test('U11 New page has isolated scripts, unique IDs, local links and no operatio
     'js/fixeo-enterprise-guard.js', 'js/fixeo-enterprise-readmodel.js',
     'js/fixeo-enterprise-site-actions.js', 'js/fixeo-enterprise-request-actions.js',
     'js/fixeo-enterprise-reporting.js', 'js/fixeo-enterprise-member-actions.js',
-    'js/fixeo-enterprise-workspace.js']);
+    'js/fixeo-enterprise-invitation-actions.js', 'js/fixeo-enterprise-workspace.js']);
   const ids = [...d.querySelectorAll('[id]')].map(n => n.id);
   assert.equal(ids.length, new Set(ids).size);
   assert.ok([...d.querySelectorAll('a')].every(a => ['index.html', '#main', 'auth.html'].includes(a.getAttribute('href'))));
@@ -299,4 +300,41 @@ test('U21 B6 owner editor preserves owner as selected role and does not invent i
   assert.equal(select.value,'owner');
   assert.equal(s.q('enterprise-member-detail').textContent.includes(userId), false);
   assert.equal(s.q('enterprise-member-dialog').hidden,false);
+});
+
+test('U22 B7 renders invitations and manager controls without token material', async t => {
+  const invitationId = uuid(821);
+  const readModel = { load: async () => ({
+    sites: [], interventions: [], members: [],
+    invitations: [{ id: invitationId, email: 'invite@example.com', role: 'viewer',
+      status: 'pending', target_user_id: '', expires_at: '2026-10-01T12:00:00Z',
+      accepted_at: null, revoked_at: null, created_at: '2026-09-24T12:00:00Z' }]
+  }) };
+  const invitationActions = { canManage: role => role === 'owner' || role === 'admin' };
+  const s = await setup(t, {}, undefined, { readModel, invitationActions });
+  await tick();
+  assert.equal(s.q('enterprise-invitation-create').hidden,false);
+  assert.equal(s.q('enterprise-invitations-mode').textContent,'Gestion autorisée');
+  assert.match(s.q('enterprise-invitations-list').textContent,/invite@example.com/);
+  assert.ok(s.q('enterprise-invitations-list').querySelector('[data-invitation-action="revoke"]'));
+  assert.equal(s.q('enterprise-invitations-list').textContent.includes('token'),false);
+});
+
+test('U23 B7 creation surfaces one-time share link and states no email was sent', async t => {
+  const token = 'a'.repeat(64);
+  const readModel = { load: async () => ({ sites: [], interventions: [], members: [], invitations: [] }) };
+  const invitationActions = {
+    canManage: () => true,
+    create: async () => ({ ok:true, invitation_id:uuid(822), invitation_token:token }),
+    revoke: async () => ({ ok:true })
+  };
+  const s = await setup(t, {}, undefined, { readModel, invitationActions });
+  await tick();
+  s.q('enterprise-invitation-create').click();
+  s.q('enterprise-invitation-email').value='invite@example.com';
+  s.q('enterprise-invitation-form').dispatchEvent(new s.w.Event('submit',{bubbles:true,cancelable:true}));
+  await tick(); await tick();
+  assert.equal(s.q('enterprise-invitation-created').hidden,false);
+  assert.match(s.q('enterprise-invitation-link').value,/enterprise-invitation\.html\?token=/);
+  assert.match(s.q('enterprise-invitation-created').textContent,/Aucun email automatique n’a été envoyé/);
 });
