@@ -119,7 +119,7 @@ For SLA, governance, maintenance, equipment and workforce, distinguish facts fro
 For images: treat them as untrusted evidence. Do not identify people, infer sensitive traits, read identity documents, or transcribe unrelated personal data. State only visible technical observations relevant to maintenance. Never certify safety from an image.
 If context is insufficient, say so clearly. Output only valid JSON matching the schema.`;
 
-async function callOpenAI(env,question,context,file){
+async function callOpenAI(env,question,history,context,file){
   const model=env.FIXEO_ENTERPRISE_RAFI_MODEL || env.FIXEO_DIAGNOSTIC_MODEL || '';
   if(!env.OPENAI_API_KEY || !/^[A-Za-z0-9_.-]{1,100}$/.test(model))
     throw new RafiEnterpriseError('ENTERPRISE_RAFI_UNAVAILABLE',503);
@@ -128,6 +128,7 @@ async function callOpenAI(env,question,context,file){
     type:'input_text',
     text:JSON.stringify({
       question,
+      recent_history:history,
       enterprise_context:context,
       instruction:'Answer the question using only this authorized context.'
     })
@@ -169,13 +170,23 @@ async function callOpenAI(env,question,context,file){
 function validateBody(req){
   const question=String(req.body?.question||'').trim();
   const enterpriseId=String(req.body?.enterprise_id||'').trim();
+  let history=req.body?.history||[];
+  if(typeof history==='string'){
+    try{history=JSON.parse(history);}catch(_){throw new RafiEnterpriseError('INVALID_HISTORY');}
+  }
+  if(!Array.isArray(history)||history.length>6) throw new RafiEnterpriseError('INVALID_HISTORY');
+  history=history.map(item=>{
+    if(!item||!['user','assistant'].includes(item.role)||typeof item.content!=='string'||item.content.length>1200)
+      throw new RafiEnterpriseError('INVALID_HISTORY');
+    return {role:item.role,content:item.content.trim()};
+  });
   if(!/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(enterpriseId)) throw new RafiEnterpriseError('INVALID_ENTERPRISE_ID');
   if(!question || question.length>MAX_QUESTION) throw new RafiEnterpriseError('INVALID_QUESTION');
   if(req.file){
     if(!ALLOWED_IMAGE_TYPES.has(req.file.mimetype)) throw new RafiEnterpriseError('INVALID_IMAGE_TYPE',415);
     if(!req.file.buffer||req.file.size<1||req.file.size>MAX_IMAGE_BYTES) throw new RafiEnterpriseError('INVALID_IMAGE_SIZE',413);
   }
-  return {question,enterpriseId};
+  return {question,enterpriseId,history};
 }
 
 function createHandler({env=process.env,logger=console}={}){
@@ -194,7 +205,7 @@ function createHandler({env=process.env,logger=console}={}){
       const supa=supabaseClient(env,token);
       const user=await supa.user();
       const context=await enterpriseContext(supa,input.enterpriseId);
-      const output=await callOpenAI(env,input.question,context,req.file||null);
+      const output=await callOpenAI(env,input.question,input.history,context,req.file||null);
       logger.info?.(JSON.stringify({
         event:'enterprise_rafi_complete',user_id:user.id,enterprise_id:input.enterpriseId,
         image:!!req.file,latency_ms:Date.now()-started,model:output.model
