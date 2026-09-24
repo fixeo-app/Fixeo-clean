@@ -7,12 +7,13 @@
   <meta name="referrer" content="same-origin">
   <title>Espace entreprise | FIXEO</title>
   <link rel="icon" href="img/logo-fixeo-icon.png">
-  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=2b-1">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=b1-1">
   <script defer src="js/supabase-client.js"></script>
   <script defer src="js/fixeo-logout-global.js"></script>
   <script defer src="js/fixeo-auth-resolver.js"></script>
   <script defer src="js/fixeo-enterprise-guard.js?v=2b-1"></script>
-  <script defer src="js/fixeo-enterprise-workspace.js?v=2b-1"></script>
+  <script defer src="js/fixeo-enterprise-readmodel.js?v=b1-1"></script>
+  <script defer src="js/fixeo-enterprise-workspace.js?v=b1-1"></script>
 </head>
 <body class="fxew">
   <a class="fxew-skip" href="#main">Aller au contenu</a>
@@ -46,7 +47,34 @@
           <div><dt>État de l’entreprise</dt><dd><span class="fxew-dot" aria-hidden="true"></span>Active</dd></div>
         </dl>
       </section>
-      <aside class="fxew-note" aria-label="À venir"><span class="fxew-note-icon" aria-hidden="true">＋</span><div><h2>La suite se prépare</h2><p>Les outils de gestion de votre entreprise seront disponibles prochainement.</p></div></aside>
+      <section class="fxew-summary" aria-label="Synthèse opérationnelle">
+        <div><strong id="enterprise-sites-count">—</strong><span>Sites accessibles</span></div>
+        <div><strong id="enterprise-interventions-count">—</strong><span>Interventions visibles</span></div>
+      </section>
+
+      <div id="enterprise-data-state" class="fxew-data-state" role="status" aria-live="polite">
+        <span class="fxew-data-spinner" aria-hidden="true"></span>
+        <span id="enterprise-data-message">Chargement des opérations…</span>
+        <button id="enterprise-data-retry" class="fxew-button" type="button" hidden>Réessayer</button>
+      </div>
+
+      <section class="fxew-module" aria-labelledby="sites-title">
+        <div class="fxew-module-heading">
+          <div><p class="fxew-module-kicker">Périmètre autorisé</p><h2 id="sites-title">Sites</h2></div>
+          <span class="fxew-module-meta">Lecture seule</span>
+        </div>
+        <div id="enterprise-sites-list" class="fxew-grid" aria-live="polite"></div>
+        <p id="enterprise-sites-empty" class="fxew-empty" hidden>Aucun site accessible pour ce compte.</p>
+      </section>
+
+      <section class="fxew-module" aria-labelledby="interventions-title">
+        <div class="fxew-module-heading">
+          <div><p class="fxew-module-kicker">Activité</p><h2 id="interventions-title">Interventions</h2></div>
+          <span class="fxew-module-meta">Données réelles</span>
+        </div>
+        <div id="enterprise-interventions-list" class="fxew-list" aria-live="polite"></div>
+        <p id="enterprise-interventions-empty" class="fxew-empty" hidden>Aucune intervention visible pour les sites auxquels vous avez accès.</p>
+      </section>
     </section>
     <noscript><p>JavaScript est nécessaire pour vérifier votre accès. <a href="auth.html">Se connecter</a></p></noscript>
   </main>

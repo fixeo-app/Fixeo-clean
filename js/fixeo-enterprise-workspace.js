@@ -17,6 +17,12 @@
     var title = byId('state-title'), message = byId('state-message');
     var retry = byId('enterprise-retry'), home = byId('enterprise-home'), logout = byId('enterprise-logout');
     var name = byId('enterprise-name'), company = byId('enterprise-company'), role = byId('enterprise-role');
+    var dataState = byId('enterprise-data-state'), dataMessage = byId('enterprise-data-message');
+    var dataRetry = byId('enterprise-data-retry'), sitesList = byId('enterprise-sites-list');
+    var interventionsList = byId('enterprise-interventions-list'), sitesEmpty = byId('enterprise-sites-empty');
+    var interventionsEmpty = byId('enterprise-interventions-empty');
+    var sitesCount = byId('enterprise-sites-count'), interventionsCount = byId('enterprise-interventions-count');
+    var currentEnterpriseId = '';
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
     var client = null, subscription = null, generation = 0, stopped = false, logoutPending = false;
@@ -25,7 +31,14 @@
     function clear() {
       generation++;
       panel.hidden = true;
+      currentEnterpriseId = '';
       name.textContent = company.textContent = role.textContent = '';
+      if (sitesList) sitesList.replaceChildren();
+      if (interventionsList) interventionsList.replaceChildren();
+      if (sitesCount) sitesCount.textContent = '—';
+      if (interventionsCount) interventionsCount.textContent = '—';
+      if (sitesEmpty) sitesEmpty.hidden = true;
+      if (interventionsEmpty) interventionsEmpty.hidden = true;
     }
     function show(heading, text, canRetry, loading, focus) {
       clear(); state.hidden = false; title.textContent = heading; message.textContent = text;
@@ -42,6 +55,80 @@
         Promise.resolve(promise).then(function (value) { win.clearTimeout(timer); resolve(value); },
           function (error) { win.clearTimeout(timer); reject(error); });
       });
+    }
+
+    function text(value) { return String(value == null ? '' : value).trim(); }
+    function label(value) {
+      var v = text(value).replace(/[_-]+/g, ' ');
+      return v ? v.charAt(0).toUpperCase() + v.slice(1) : 'Non renseigné';
+    }
+    function dateLabel(value) {
+      if (!value) return '';
+      var d = new Date(value);
+      return Number.isNaN(d.getTime()) ? '' : new Intl.DateTimeFormat('fr-MA', { day: '2-digit', month: 'short', year: 'numeric' }).format(d);
+    }
+    function el(tag, cls, content) {
+      var node = doc.createElement(tag);
+      if (cls) node.className = cls;
+      if (content != null) node.textContent = content;
+      return node;
+    }
+    function renderSites(rows) {
+      sitesList.replaceChildren();
+      sitesCount.textContent = String(rows.length);
+      sitesEmpty.hidden = rows.length !== 0;
+      rows.forEach(function (site) {
+        var card = el('article', 'fxew-site-card');
+        var top = el('div', 'fxew-site-top');
+        var copy = el('div');
+        copy.append(el('strong', '', site.name || 'Site sans nom'));
+        copy.append(el('span', '', [site.site_code, site.city].filter(Boolean).join(' · ') || 'Localisation non renseignée'));
+        top.append(copy, el('span', 'fxew-status', label(site.status)));
+        card.append(top);
+        if (site.address_line) card.append(el('p', 'fxew-site-address', site.address_line));
+        sitesList.append(card);
+      });
+    }
+    function renderInterventions(rows) {
+      interventionsList.replaceChildren();
+      interventionsCount.textContent = String(rows.length);
+      interventionsEmpty.hidden = rows.length !== 0;
+      rows.forEach(function (item) {
+        var card = el('article', 'fxew-intervention');
+        var mainRow = el('div', 'fxew-intervention-main');
+        var copy = el('div');
+        copy.append(el('strong', '', label(item.service_category)));
+        copy.append(el('span', '', [item.site_name, item.city].filter(Boolean).join(' · ') || 'Site non renseigné'));
+        mainRow.append(copy, el('span', 'fxew-status', label(item.request_status)));
+        card.append(mainRow);
+        var meta = el('div', 'fxew-intervention-meta');
+        meta.append(el('span', '', item.urgency ? 'Urgence · ' + label(item.urgency) : 'Urgence · Non renseignée'));
+        meta.append(el('span', '', item.mission_status ? 'Mission · ' + label(item.mission_status) : 'Mission · Non attribuée'));
+        var when = dateLabel(item.created_at);
+        if (when) meta.append(el('span', '', when));
+        card.append(meta);
+        interventionsList.append(card);
+      });
+    }
+    function setDataState(messageText, retryable) {
+      dataState.hidden = false;
+      dataMessage.textContent = messageText;
+      dataRetry.hidden = !retryable;
+    }
+    async function loadOperational(enterpriseId, run) {
+      if (!win.FixeoEnterpriseReadModel || typeof win.FixeoEnterpriseReadModel.load !== 'function') {
+        setDataState('Les données opérationnelles sont momentanément indisponibles.', true); return;
+      }
+      setDataState('Chargement des opérations…', false);
+      try {
+        var model = await bounded(win.FixeoEnterpriseReadModel.load(client, enterpriseId));
+        if (run !== generation || stopped || doc.hidden || currentEnterpriseId !== enterpriseId) return;
+        renderSites(model.sites || []);
+        renderInterventions(model.interventions || []);
+        dataState.hidden = true;
+      } catch (_) {
+        if (run === generation && !stopped && !doc.hidden) setDataState('Impossible de charger les opérations. Votre accès reste sécurisé.', true);
+      }
     }
     function listen() {
       if (subscription) return;
@@ -86,10 +173,12 @@
           show('Cet espace n’est pas accessible', 'Votre compte ne dispose pas d’un accès actif à cette entreprise.', false, false, true); return;
         }
         if (!result.allowed) { failure(); return; }
+        currentEnterpriseId = result.enterprise.id;
         name.textContent = company.textContent = result.enterprise.name;
         role.textContent = LABELS[result.enterprise.role];
         state.hidden = true; panel.hidden = false; logout.hidden = false;
         main.setAttribute('aria-busy', 'false'); name.focus();
+        await loadOperational(result.enterprise.id, run);
       } catch (_) { if (run === generation && !stopped && !doc.hidden) failure(); }
     }
     async function signOut() {
@@ -129,6 +218,9 @@
     function pageHide() { clear(); }
     function pageShow(event) { if (event.persisted) refresh(); }
     retry.addEventListener('click', refresh);
+    dataRetry.addEventListener('click', function () {
+      if (currentEnterpriseId) loadOperational(currentEnterpriseId, generation);
+    });
     logout.addEventListener('click', signOut);
     doc.addEventListener('visibilitychange', visibility);
     win.addEventListener('pagehide', pageHide);

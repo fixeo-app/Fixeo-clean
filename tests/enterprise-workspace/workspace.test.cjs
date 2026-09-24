@@ -26,6 +26,7 @@ async function setup(t, options = {}, search = `?enterprise_id=${uuid(101)}`, mo
   };
   w.FixeoSupabaseClient = { CONFIGURED: true, ready: async () => ({ client: f.client }) };
   w.FixeoEnterpriseGuard = guard;
+  w.FixeoEnterpriseReadModel = mountOptions.readModel || { load: async () => ({ sites: [], interventions: [] }) };
   w.eval(read('js/fixeo-logout-global.js'));
   const navigations = [];
   const app = mount(w, { navigate: p => navigations.push(p), ...mountOptions });
@@ -126,13 +127,47 @@ test('U11 New page has isolated scripts, unique IDs, local links and no operatio
   const dom = new JSDOM(html); const d = dom.window.document;
   assert.deepEqual([...d.scripts].map(s => s.getAttribute('src').split('?')[0]), [
     'js/supabase-client.js', 'js/fixeo-logout-global.js', 'js/fixeo-auth-resolver.js',
-    'js/fixeo-enterprise-guard.js', 'js/fixeo-enterprise-workspace.js']);
+    'js/fixeo-enterprise-guard.js', 'js/fixeo-enterprise-readmodel.js', 'js/fixeo-enterprise-workspace.js']);
   const ids = [...d.querySelectorAll('[id]')].map(n => n.id);
   assert.equal(ids.length, new Set(ids).size);
   assert.ok([...d.querySelectorAll('a')].every(a => ['index.html', '#main', 'auth.html'].includes(a.getAttribute('href'))));
-  for (const p of ['js/fixeo-enterprise-workspace.js', 'js/fixeo-enterprise-guard.js']) {
+  for (const p of ['js/fixeo-enterprise-workspace.js', 'js/fixeo-enterprise-guard.js', 'js/fixeo-enterprise-readmodel.js']) {
     assert.doesNotMatch(read(p), /\.(insert|update|delete|upsert|rpc|signOut)\s*\(|service_role|user_metadata|raw_user_meta_data|\.from\(['"]profiles/);
   }
   assert.equal(d.querySelector('meta[name=robots]').content, 'noindex, nofollow');
   dom.window.close();
+});
+
+test('U12 B1 renders real read-only sites and interventions with text-only content', async t => {
+  const unsafe = '<svg onload=alert(1)>';
+  const readModel = { load: async () => ({
+    sites: [{ id: uuid(301), name: unsafe, site_code: 'CAS-01', city: 'Casablanca', address_line: 'Centre', status: 'active' }],
+    interventions: [{ id: uuid(401), site_id: uuid(301), site_name: unsafe, service_category: 'plomberie',
+      city: 'Casablanca', urgency: 'urgent', request_status: 'pending', mission_status: 'accepted',
+      created_at: '2026-09-24T10:00:00Z' }]
+  }) };
+  const s = await setup(t, {}, undefined, { readModel });
+  await tick();
+  assert.equal(s.q('enterprise-sites-count').textContent, '1');
+  assert.equal(s.q('enterprise-interventions-count').textContent, '1');
+  assert.equal(s.q('enterprise-sites-list').textContent.includes(unsafe), true);
+  assert.equal(s.q('enterprise-sites-list').querySelector('svg'), null);
+  assert.equal(s.q('enterprise-interventions-list').textContent.includes('Plomberie'), true);
+});
+
+test('U13 operational read failure preserves authorized shell and offers retry', async t => {
+  let fail = true;
+  const readModel = { load: async () => {
+    if (fail) throw new Error('offline');
+    return { sites: [], interventions: [] };
+  } };
+  const s = await setup(t, {}, undefined, { readModel });
+  await tick();
+  assert.equal(s.q('enterprise-workspace').hidden, false);
+  assert.equal(s.q('enterprise-data-retry').hidden, false);
+  fail = false;
+  s.q('enterprise-data-retry').click();
+  await tick();
+  assert.equal(s.q('enterprise-data-state').hidden, true);
+  assert.equal(s.q('enterprise-sites-count').textContent, '0');
 });
