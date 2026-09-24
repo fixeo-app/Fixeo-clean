@@ -29,6 +29,7 @@ async function setup(t, options = {}, search = `?enterprise_id=${uuid(101)}`, mo
   w.FixeoEnterpriseReadModel = mountOptions.readModel || { load: async () => ({ sites: [], interventions: [] }) };
   w.FixeoEnterpriseSiteActions = mountOptions.siteActions || { canManage: () => false };
   w.FixeoEnterpriseRequestActions = mountOptions.requestActions || { canCreate: () => false };
+  w.FixeoEnterpriseMemberActions = mountOptions.memberActions || { canManage: () => false };
   w.FixeoEnterpriseReporting = mountOptions.reporting || { load: async () => ({
     operational: { request_count: 0, accepted_request_count: 0, acceptance_rate_percent: null,
       avg_first_acceptance_minutes: null, completed_mission_request_count: 0 },
@@ -139,7 +140,8 @@ test('U11 New page has isolated scripts, unique IDs, local links and no operatio
     'js/supabase-client.js', 'js/fixeo-logout-global.js', 'js/fixeo-auth-resolver.js',
     'js/fixeo-enterprise-guard.js', 'js/fixeo-enterprise-readmodel.js',
     'js/fixeo-enterprise-site-actions.js', 'js/fixeo-enterprise-request-actions.js',
-    'js/fixeo-enterprise-reporting.js', 'js/fixeo-enterprise-workspace.js']);
+    'js/fixeo-enterprise-reporting.js', 'js/fixeo-enterprise-member-actions.js',
+    'js/fixeo-enterprise-workspace.js']);
   const ids = [...d.querySelectorAll('[id]')].map(n => n.id);
   assert.equal(ids.length, new Set(ids).size);
   assert.ok([...d.querySelectorAll('a')].every(a => ['index.html', '#main', 'auth.html'].includes(a.getAttribute('href'))));
@@ -262,4 +264,39 @@ test('U19 B5 reporting failure does not hide operational workspace', async t => 
   assert.equal(s.q('enterprise-workspace').hidden, false);
   assert.equal(s.q('enterprise-report-retry').hidden, false);
   assert.equal(s.q('enterprise-report-content').hidden, true);
+});
+
+test('U20 B6 renders member access safely and exposes controls only to managers', async t => {
+  const memberId = uuid(801), userId = uuid(901), siteId = uuid(301);
+  const readModel = { load: async () => ({
+    sites: [{ id: siteId, name: 'Siège', site_code: 'CAS', city: 'Casablanca', address_line: '', status: 'active' }],
+    interventions: [],
+    members: [{ id: memberId, user_id: userId, role: 'site_manager', status: 'active', site_ids: [siteId] }]
+  }) };
+  const memberActions = { canManage: role => role === 'owner' || role === 'admin' };
+  const s = await setup(t, {}, undefined, { readModel, memberActions });
+  await tick();
+  assert.equal(s.q('enterprise-team-empty').hidden, true);
+  assert.match(s.q('enterprise-team-list').textContent,/Responsable de site/);
+  assert.match(s.q('enterprise-team-list').textContent,/Siège/);
+  assert.equal(s.q('enterprise-team-list').textContent.includes(userId), false);
+  assert.ok(s.q('enterprise-team-list').querySelector('[data-member-action="manage"]'));
+  assert.equal(s.q('enterprise-team-mode').textContent,'Gestion autorisée');
+});
+
+test('U21 B6 owner editor preserves owner as selected role and does not invent identity fields', async t => {
+  const memberId = uuid(811), userId = uuid(911);
+  const readModel = { load: async () => ({
+    sites: [],
+    interventions: [],
+    members: [{ id: memberId, user_id: userId, role: 'owner', status: 'active', site_ids: [] }]
+  }) };
+  const memberActions = { canManage: () => true, roles: ['admin','operations_manager','site_manager','reporter','viewer'] };
+  const s = await setup(t, {}, undefined, { readModel, memberActions });
+  await tick();
+  s.q('enterprise-team-list').querySelector('[data-member-action="manage"]').click();
+  const select = s.q('enterprise-member-detail').querySelector('select');
+  assert.equal(select.value,'owner');
+  assert.equal(s.q('enterprise-member-detail').textContent.includes(userId), false);
+  assert.equal(s.q('enterprise-member-dialog').hidden,false);
 });
