@@ -32,7 +32,7 @@
 
   if (window.FixeoNotifEngine) return; // idempotent
 
-  var VERSION = 's1b-candidate';
+  var VERSION = 's1b2-candidate';
 
   /* ── Helpers ──────────────────────────────────────────────── */
   function _dispatch(name, detail) {
@@ -87,7 +87,7 @@
   }
 
   /* S1B: transport only. RPC derives recipient, type and payload from DB facts.
-   * Additive rollout: the legacy timeout producer remains explicitly unmigrated.
+   * S1B2 timeout alerts are produced exclusively by the scheduled backend.
    * Never fall back to INSERT when the controlled RPC rejects/fails. */
   var _pendingEvents = Object.create(null);
   async function _sbPersist(type, recipientUserId, recipientRole, title, message, entityType, entityId, metadata) {
@@ -97,8 +97,7 @@
     if (type === 'a_mission_started' || (type === 'adm_new_request' && entityType === 'mission')) eventName = 'mission_started';
     if (type === 'a_mission_completed' || type === 'adm_mission_validated') eventName = 'mission_completed';
     if (type === 'c_mission_validated' || type === 'adm_commission_due') eventName = 'mission_validated';
-    var legacyTimeout = type === 'adm_mission_blocked';
-    if (!eventName && !legacyTimeout) return;
+    if (!eventName) return;
     if (eventName && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(entityId || ''))) return;
     var key = eventName + '|' + String(entityId || '');
     if (eventName && _pendingEvents[key]) return _pendingEvents[key];
@@ -109,18 +108,7 @@
         await fsc.ready();
         var sb = fsc.client;
         if (!sb) return;
-        var res;
-        if (legacyTimeout) {
-          // BLOCKER: local timer has no proven persisted assignment timestamp.
-          // Preserve existing admin alert during additive rollout. Do not revoke INSERT yet.
-          res = await sb.from('notifications').insert([{
-            recipient_user_id: null, recipient_role: 'admin', type: 'adm_mission_blocked',
-            title: title || '', message: message || '', related_entity_type: 'mission',
-            related_entity_id: String(entityId || ''), read: false, metadata: metadata || {}
-          }]);
-        } else {
-          res = await sb.rpc('publish_notification_event_s1b', { p_event: eventName, p_entity_id: entityId });
-        }
+        var res = await sb.rpc('publish_notification_event_s1b', { p_event: eventName, p_entity_id: entityId });
         if (res && res.error) console.warn('[FixeoNotifEngine] DB persist error:', res.error.message);
       } catch(e) {
         console.warn('[FixeoNotifEngine] DB persist exception:', e && e.message);

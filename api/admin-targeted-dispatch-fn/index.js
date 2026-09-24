@@ -195,7 +195,7 @@ async function _targetedDispatch(requestId, artisanId) {
 
   try {
     rpcRes = await fetch(
-      url + '/rest/v1/rpc/admin_targeted_dispatch_v1',
+      url + '/rest/v1/rpc/admin_targeted_dispatch_notifications_s1b2',
       {
         method: 'POST',
 

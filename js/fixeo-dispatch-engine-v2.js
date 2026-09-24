@@ -50,7 +50,6 @@
     'chauffage', 'urgence', 'fuite', 'panne', 'gaz', 'debouchage'];
 
   /* Auto-redispatch timeout (ms) — 30 min */
-  var REDISPATCH_TIMEOUT_MS = 30 * 60 * 1000;
 
   /* Normal scoring weights (must sum to 100) */
   var W_NORMAL = {
@@ -296,116 +295,14 @@
   }
 
   /* ═══════════════════════════════════════════════════════════
-     S5: AUTO-REDISPATCH MONITOR
-     Watches assigned requests. If no mission accepted within
-     REDISPATCH_TIMEOUT_MS, fires admin alert + suggests next artisan.
-     State is localStorage-only (no Supabase writes).
+     S5: SERVER-OWNED TIMEOUT NOTIFICATIONS
+     No localStorage watcher, local clock, or direct notification write.
   ══════════════════════════════════════════════════════════ */
 
-  var REDISPATCH_STORAGE_KEY = 'fixeo_redispatch_watch_v2';
-  var _redispatchTimer = null;
-
-  function _readWatch() {
-    try { return JSON.parse(localStorage.getItem(REDISPATCH_STORAGE_KEY) || '{}'); }
-    catch(e) { return {}; }
-  }
-  function _writeWatch(obj) {
-    try { localStorage.setItem(REDISPATCH_STORAGE_KEY, JSON.stringify(obj)); }
-    catch(e) { /* silent */ }
-  }
-
-  /* Register a new assignment for monitoring */
-  function watchAssignment(reqId, artisanId, artisanName, assignedAt) {
-    if (!reqId) return;
-    var watch = _readWatch();
-    watch[reqId] = {
-      artisanId:   artisanId,
-      artisanName: artisanName,
-      assignedAt:  assignedAt || new Date().toISOString(),
-      alerted:     false
-    };
-    _writeWatch(watch);
-  }
-
-  /* Clear a watch entry (artisan accepted / cancelled / reassigned) */
-  function clearWatch(reqId) {
-    if (!reqId) return;
-    var watch = _readWatch();
-    delete watch[reqId];
-    _writeWatch(watch);
-  }
-
-  /* Poll: check watched entries every 5 minutes */
-  function _startRedispatchMonitor() {
-    if (_redispatchTimer) return;
-    _redispatchTimer = setInterval(_pollRedispatch, 5 * 60 * 1000);
-    /* Also run once immediately after 30s */
-    setTimeout(_pollRedispatch, 30000);
-  }
-
-  function _pollRedispatch() {
-    var watch = _readWatch();
-    var now   = Date.now();
-    var updated = false;
-
-    Object.keys(watch).forEach(function(reqId) {
-      var entry = watch[reqId];
-      if (entry.alerted) return; /* already notified */
-
-      var assignedAt = new Date(entry.assignedAt).getTime();
-      var elapsed    = now - assignedAt;
-
-      if (elapsed >= REDISPATCH_TIMEOUT_MS) {
-        /* Timeout: fire admin alert */
-        _fireRedispatchAlert(reqId, entry);
-        entry.alerted = true;
-        updated = true;
-      }
-    });
-
-    if (updated) _writeWatch(watch);
-  }
-
-  function _fireRedispatchAlert(reqId, entry) {
-    /* In-app admin notification */
-    var sys = window.FixeoNotificationsV1;
-    if (sys && typeof sys.push === 'function') {
-      sys.push({
-        id:         'fdv2_timeout_' + reqId,
-        type:       'adm_mission_blocked',
-        audience:   'admin',
-        title:      '⏱ Artisan ne répond pas',
-        message:    (entry.artisanName || 'L\'artisan') + ' n\'a pas accepté la mission #'
-          + String(reqId).slice(-6).toUpperCase() + ' depuis 30 min.',
-        ref_type:   'mission',
-        ref_id:     String(reqId),
-        severity:   'warning',
-        created_at: new Date().toISOString(),
-        read:       false,
-        dedupe_key: 'adm_timeout|' + reqId
-      });
-    }
-
-    /* Supabase persist (best-effort) */
-    var NE = window.FixeoNotifEngine;
-    if (NE && typeof NE.sbPersist === 'function') {
-      NE.sbPersist(
-        'adm_mission_blocked', null, 'admin',
-        '⏱ Artisan ne répond pas',
-        (entry.artisanName || 'L\'artisan') + ' — mission #' + String(reqId).slice(-6).toUpperCase() + ' depuis 30 min.',
-        'mission', reqId, { artisan_id: entry.artisanId, timeout_ms: REDISPATCH_TIMEOUT_MS }
-      );
-    }
-
-    /* Dispatch admin refresh so V3 urgences section updates */
-    try {
-      window.dispatchEvent(new CustomEvent('fixeo:admin:refresh', {
-        detail: { source: 'redispatch', reqId: reqId }
-      }));
-    } catch(e) { /* silent */ }
-
-    console.warn(LOG, 'redispatch timeout for reqId:', reqId, 'artisan:', entry.artisanName);
-  }
+  // S1B2: assignment evidence and the 30-minute alert are server-owned.
+  // Compatibility hooks intentionally have no local notification side effect.
+  function watchAssignment() {}
+  function clearWatch() {}
 
   /* ═══════════════════════════════════════════════════════════
      S6: ENHANCED SUGGESTIONS UI
@@ -673,7 +570,7 @@
   }
 
   /* ═══════════════════════════════════════════════════════════
-     PATCH V1 ASSIGN to register watch
+     PATCH V1 ASSIGN to refresh suggestions
   ══════════════════════════════════════════════════════════ */
 
   function _patchV1Assign() {
@@ -685,8 +582,7 @@
     v1.assignArtisan = async function(reqId, artisanId, artisanName, artisanPhone, artisanCat) {
       var result = await origAssign(reqId, artisanId, artisanName, artisanPhone, artisanCat);
       if (result && result.ok) {
-        /* Start monitoring this assignment for timeout */
-        watchAssignment(reqId, artisanId, artisanName, new Date().toISOString());
+        /* The backend records assignment notification evidence atomically. */
         /* Refresh V2 UI */
         setTimeout(refreshSuggestionsV2, 700);
       }
@@ -738,21 +634,7 @@
       });
     });
 
-    /* Clear watch when artisan accepts (mission created) */
-    window.addEventListener('fixeo:missions:updated', function() {
-      /* Re-check all watched entries against live __fxAccSbCache */
-      var cache = window.__fxAccSbCache || [];
-      var watch = _readWatch();
-      var updated = false;
-      Object.keys(watch).forEach(function(reqId) {
-        var req = cache.find(function(r) { return String(r.id) === reqId; });
-        if (req && req.status === 'in_progress') {
-          delete watch[reqId];
-          updated = true;
-        }
-      });
-      if (updated) _writeWatch(watch);
-    });
+
   }
 
   /* ═══════════════════════════════════════════════════════════
@@ -763,7 +645,6 @@
     _patchV1Assign();
     _patchAdminSection();
     _listenEvents();
-    _startRedispatchMonitor();
 
     /* Inject V2 into dispatch section if already open on load */
     setTimeout(function() {

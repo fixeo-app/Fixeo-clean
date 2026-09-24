@@ -107,6 +107,10 @@
       "use": "@vercel/node"
     },
     {
+      "src": "api/notification-timeout-fn/index.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "api/whatsapp-webhook-fn/index.js",
       "use": "@vercel/node"
     }
@@ -181,6 +185,10 @@
     {
       "src": "^/api/dispatch-whatsapp-worker$",
       "dest": "/api/dispatch-whatsapp-worker-fn/index.js"
+    },
+    {
+      "src": "^/api/notification-timeout$",
+      "dest": "/api/notification-timeout-fn/index.js"
     },
     {
       "src": "^/api/whatsapp-webhook$",
@@ -760,7 +768,8 @@
       ]
     }
   ],
-  "crons": [{ "path": "/api/diagnostic-maintenance", "schedule": "0 * * * *" }],
+  "crons": [{ "path": "/api/diagnostic-maintenance", "schedule": "0 * * * *" },
+    { "path": "/api/notification-timeout", "schedule": "*/5 * * * *" }],
   "git": {
     "deploymentEnabled": {
       "feat/diagnostic-v1": false
