@@ -48,7 +48,11 @@ test('B1 read model maps tenant sites, requests and latest mission without sensi
     ],
     enterprise_request_sla:[{id:'00000000-0000-4000-8000-000000000701',service_request_id:rid,enterprise_id:eid,site_id:sid,
       policy_id:null,policy_urgency:'high',request_urgency:'urgent',acceptance_target_minutes:30,
-      started_at:'2026-09-24T10:00:00Z',at_risk_at:'2026-09-24T10:22:30Z',due_at:'2026-09-24T10:30:00Z'}]
+      started_at:'2026-09-24T10:00:00Z',at_risk_at:'2026-09-24T10:22:30Z',due_at:'2026-09-24T10:30:00Z'}],
+    enterprise_members:[{id:'00000000-0000-4000-8000-000000000801',enterprise_id:eid,
+      user_id:'00000000-0000-4000-8000-000000000901',role:'site_manager',status:'active'}],
+    enterprise_member_sites:[{id:'00000000-0000-4000-8000-000000000802',enterprise_id:eid,
+      member_id:'00000000-0000-4000-8000-000000000801',site_id:sid}]
   });
   const out=await model.load(f.client,eid);
   assert.equal(out.sites.length,1);
@@ -57,6 +61,9 @@ test('B1 read model maps tenant sites, requests and latest mission without sensi
   assert.equal(out.interventions[0].mission_status,'accepted');
   assert.equal(out.interventions[0].sla.acceptance_target_minutes,30);
   assert.equal(out.interventions[0].sla.policy_source,'fixeo_default');
+  assert.equal(out.members.length,1);
+  assert.equal(out.members[0].role,'site_manager');
+  assert.deepEqual(out.members[0].site_ids,[sid]);
   const requestCall=f.calls.find(c=>c.table==='service_requests');
   assert.equal(requestCall.columns.includes('client_phone'),false);
   assert.equal(requestCall.columns.includes('guest_token_hash'),false);
