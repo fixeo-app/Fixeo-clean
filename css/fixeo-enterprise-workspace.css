@@ -249,3 +249,19 @@
   .fxew-workforce-list,.fxew-dispatch-policy-list,.fxew-hybrid-live{grid-template-columns:1fr;padding:14px}
   .fxew-dispatch-modes{padding:12px 14px}
 }
+
+/* BLOCK B — Enterprise Control Tower */
+.fxew-control-tower{overflow:hidden}
+.fxew-control-attention{display:grid;gap:12px;padding:18px}
+.fxew-control-alert{border:1px solid var(--line);border-radius:15px;padding:16px;background:rgba(255,255,255,.025)}
+.fxew-control-alert--critical{box-shadow:inset 3px 0 0 rgba(255,90,110,.85)}
+.fxew-control-alert--high{box-shadow:inset 3px 0 0 rgba(255,177,72,.8)}
+.fxew-control-alert--medium{box-shadow:inset 3px 0 0 rgba(109,190,255,.65)}
+.fxew-control-alert-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+.fxew-control-alert-head strong{display:block;font-size:14px}
+.fxew-control-alert-head span:not(.fxew-status){display:block;margin-top:4px;color:var(--muted);font-size:12px}
+.fxew-control-reason{margin:10px 0 0;font-size:13px;font-weight:650}
+.fxew-control-meta{display:flex;flex-wrap:wrap;gap:7px 14px;margin-top:10px;color:var(--muted);font-size:11px}
+.fxew-control-load-grid{display:grid;gap:10px;padding:14px}
+.fxew-control-load-card{border:1px solid var(--line);border-radius:12px;padding:13px;background:rgba(255,255,255,.02)}
+@media(max-width:700px){.fxew-control-attention{padding:14px}.fxew-control-alert-head{flex-direction:column}}
