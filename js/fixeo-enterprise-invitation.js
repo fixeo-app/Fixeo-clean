@@ -49,7 +49,7 @@
             :'Impossible d’accepter cette invitation. Réessayez.';
           show(text);
         }finally{ accept.disabled=false; }
-      },{once:true});
+      });
     }catch(_){
       accept.hidden=true; login.hidden=false; workspace.hidden=true;
       show('Le service d’invitation est momentanément indisponible.');
