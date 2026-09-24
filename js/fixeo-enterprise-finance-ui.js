@@ -105,6 +105,8 @@
     function setContext(m){context=m||context;}
 
     function openDialog(type){
+      if(type==='tag'){if(!canTag())return;}
+      else if(!canManage())return;
       setErr('');dynamic.replaceChildren();dlgType.value=type;dlgTitle.textContent={
         center:'Nouveau centre de coût',budget:'Nouveau budget',po:'Nouveau BC / PO',rate:'Coût horaire interne',tag:'Rattacher une intervention'
       }[type]||'Finance';
