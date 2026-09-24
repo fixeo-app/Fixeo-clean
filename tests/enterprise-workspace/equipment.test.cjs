@@ -118,3 +118,12 @@ test('D09 storage path helper fails closed instead of direct UUID casts in polic
   assert.match(sql,/EXCEPTION WHEN invalid_text_representation/);
   assert.doesNotMatch(sql,/\(\(storage\.foldername\(name\)\)\[2\]\)::uuid/);
 });
+
+test('D10 preventive maintenance runs auto-link generated requests to linked equipment',()=>{
+  const sql=fs.readFileSync(path.join(root,'supabase/migrations/20260924240000_enterprise_equipment_block_d.sql'),'utf8');
+  assert.match(sql,/_fixeo_link_generated_maintenance_equipment_v1/);
+  assert.match(sql,/AFTER INSERT OR UPDATE OF status,service_request_id/);
+  assert.match(sql,/NEW\.status='generated'/);
+  assert.match(sql,/enterprise_equipment_maintenance_links/);
+  assert.match(sql,/ON CONFLICT\(equipment_id,service_request_id\) DO NOTHING/);
+});
