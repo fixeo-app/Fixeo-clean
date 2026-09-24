@@ -444,7 +444,11 @@
           "Reprenons exactement là où nous en étions.",
         );
         button("Réessayer", analyze);
-        button("Modifier mon besoin", renderNeed, true);
+        button("Modifier mon besoin", function () {
+      capture();
+      intake.startEdit();
+      renderNeed();
+    }, true);
       }
       showError(error);
     } finally {
@@ -462,6 +466,7 @@
     if (node("fxhf-location")) intake.draft.city = node("fxhf-location").value;
     if (node("fxhf-consent"))
       intake.draft.consent = node("fxhf-consent").checked;
+    intake.saveEdit?.();
     if (node("fxhf-phone")) phone = node("fxhf-phone").value;
   }
   function readyPhotos() {
@@ -955,7 +960,9 @@
         optional.lastElementChild.appendChild(b);
       });
     node("fxhf-panel").appendChild(optional);
-    button("Modifier mon besoin", renderNeed, true);
+    button("Modifier mon besoin", function () {
+      if (intake.startEdit()) renderNeed();
+    }, true);
     availability();
   }
   async function beginConfirmation() {
@@ -1272,7 +1279,22 @@
       stopTracks();
       stopPrompt();
     });
-    if (intake.id)
+    if (intake.editing && intake.id)
+      execute(async function () {
+        try {
+          await intake.load(true);
+          if (intake.session.state === "bound") {
+            intake.cancelEdit();
+            await intake.follow();
+            renderBound();
+          } else renderNeed();
+        } catch (error) {
+          intake.reset();
+          renderNeed();
+          showError(error);
+        }
+      });
+    else if (intake.id)
       execute(async function () {
         frame(
           "analysis",

@@ -4,6 +4,22 @@
   "use strict";
   if (window.FixeoIntake) return;
   var key = "fixeo_diagnostic_dossier_v1";
+  var editKey = "fixeo_diagnostic_edit_v1";
+  function readEdit(id) {
+    try {
+      var saved = JSON.parse(sessionStorage.getItem(editKey) || "null");
+      return saved && saved.session_id === id ? saved.draft : null;
+    } catch (_) {
+      return null;
+    }
+  }
+  function rememberEdit(id, value) {
+    try {
+      if (id && value)
+        sessionStorage.setItem(editKey, JSON.stringify({ session_id: id, draft: value }));
+      else sessionStorage.removeItem(editKey);
+    } catch (_) {}
+  }
   function read() {
     try {
       return sessionStorage.getItem(key);
@@ -18,19 +34,22 @@
     } catch (_) {}
   }
   function create(onStatus) {
+    var dossierId = read(),
+      editDraft = readEdit(dossierId);
     var client = {
-      id: read(),
+      id: dossierId,
       session: null,
       pending: [],
       progress: null,
       busy: false,
-      draft: {
+      draft: editDraft || {
         description: "",
         city: "",
         answers: {},
         safety_signals: [],
         consent: false,
       },
+      editing: !!editDraft,
     };
     var running, runId;
     function api(body) {
@@ -109,6 +128,19 @@
       });
     }
     client.load = load;
+    client.startEdit = function () {
+      if (!client.id || client.session?.state === "bound") return false;
+      client.editing = true;
+      rememberEdit(client.id, client.draft);
+      return true;
+    };
+    client.saveEdit = function () {
+      if (client.editing) rememberEdit(client.id, client.draft);
+    };
+    client.cancelEdit = function () {
+      client.editing = false;
+      rememberEdit(null, null);
+    };
     client.addFiles = function (files) {
       if (client.busy) return;
       var count =
@@ -262,7 +294,10 @@
           run_id: runId,
         });
         if (response.pending) return poll();
-        return restore(response.session);
+        var analyzed = restore(response.session);
+        client.editing = false;
+        rememberEdit(null, null);
+        return analyzed;
       });
     };
     client.confirmation = function () {
@@ -336,6 +371,8 @@
         consent: false,
       };
       remember(null);
+      client.editing = false;
+      rememberEdit(null, null);
     };
     return client;
   }
