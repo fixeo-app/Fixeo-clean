@@ -52,7 +52,10 @@ test('B1 read model maps tenant sites, requests and latest mission without sensi
     enterprise_members:[{id:'00000000-0000-4000-8000-000000000801',enterprise_id:eid,
       user_id:'00000000-0000-4000-8000-000000000901',role:'site_manager',status:'active'}],
     enterprise_member_sites:[{id:'00000000-0000-4000-8000-000000000802',enterprise_id:eid,
-      member_id:'00000000-0000-4000-8000-000000000801',site_id:sid}]
+      member_id:'00000000-0000-4000-8000-000000000801',site_id:sid}],
+    enterprise_invitations:[{id:'00000000-0000-4000-8000-000000000803',enterprise_id:eid,
+      email_normalized:'invite@example.com',role:'viewer',target_user_id:null,status:'pending',
+      expires_at:'2026-10-01T10:00:00Z',created_at:'2026-09-24T10:00:00Z',token_hash:'SECRET'}]
   });
   const out=await model.load(f.client,eid);
   assert.equal(out.sites.length,1);
@@ -64,6 +67,11 @@ test('B1 read model maps tenant sites, requests and latest mission without sensi
   assert.equal(out.members.length,1);
   assert.equal(out.members[0].role,'site_manager');
   assert.deepEqual(out.members[0].site_ids,[sid]);
+  assert.equal(out.invitations.length,1);
+  assert.equal(out.invitations[0].email,'invite@example.com');
+  assert.equal(Object.hasOwn(out.invitations[0],'token_hash'),false);
+  const invitationCall=f.calls.find(c=>c.table==='enterprise_invitations');
+  assert.equal(invitationCall.columns.includes('token_hash'),false);
   const requestCall=f.calls.find(c=>c.table==='service_requests');
   assert.equal(requestCall.columns.includes('client_phone'),false);
   assert.equal(requestCall.columns.includes('guest_token_hash'),false);
