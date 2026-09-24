@@ -43,7 +43,11 @@
     var reportContent = byId('enterprise-report-content'), reportKpis = byId('enterprise-report-kpis');
     var reportSla = byId('enterprise-report-sla'), reportStatuses = byId('enterprise-report-statuses');
     var reportSites = byId('enterprise-report-sites');
-    var currentEnterpriseId = '', currentEnterpriseRole = '', currentSites = [], currentInterventions = [];
+    var teamList = byId('enterprise-team-list'), teamEmpty = byId('enterprise-team-empty'), teamMode = byId('enterprise-team-mode');
+    var memberDialog = byId('enterprise-member-dialog'), memberDialogTitle = byId('enterprise-member-dialog-title');
+    var memberClose = byId('enterprise-member-close'), memberDismiss = byId('enterprise-member-dismiss');
+    var memberDetail = byId('enterprise-member-detail'), memberError = byId('enterprise-member-error');
+    var currentEnterpriseId = '', currentEnterpriseRole = '', currentSites = [], currentInterventions = [], currentMembers = [];
     var currentReportPeriod = '30';
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
@@ -57,6 +61,7 @@
       currentEnterpriseRole = '';
       currentSites = [];
       currentInterventions = [];
+      currentMembers = [];
       if (siteCreate) siteCreate.hidden = true;
       if (sitesMode) sitesMode.textContent = 'Lecture seule';
       if (requestCreate) requestCreate.hidden = true;
@@ -73,6 +78,12 @@
       if (reportState) reportState.hidden = false;
       if (reportMessage) reportMessage.textContent = 'Chargement des indicateurs…';
       if (reportRetry) reportRetry.hidden = true;
+      if (teamList) teamList.replaceChildren();
+      if (teamEmpty) teamEmpty.hidden = true;
+      if (teamMode) teamMode.textContent = 'Lecture seule';
+      if (memberDialog) memberDialog.hidden = true;
+      if (memberDetail) memberDetail.replaceChildren();
+      if (memberError) { memberError.hidden = true; memberError.textContent = ''; }
       name.textContent = company.textContent = role.textContent = '';
       if (sitesList) sitesList.replaceChildren();
       if (interventionsList) interventionsList.replaceChildren();
@@ -234,6 +245,166 @@
       return !!(win.FixeoEnterpriseRequestActions &&
         typeof win.FixeoEnterpriseRequestActions.canCreate === 'function' &&
         win.FixeoEnterpriseRequestActions.canCreate(currentEnterpriseRole));
+    }
+
+    function canManageMembers() {
+      return !!(win.FixeoEnterpriseMemberActions &&
+        typeof win.FixeoEnterpriseMemberActions.canManage === 'function' &&
+        win.FixeoEnterpriseMemberActions.canManage(currentEnterpriseRole));
+    }
+    function memberIdentity(member) {
+      var raw = String(member && member.user_id || '').replace(/-/g, '');
+      return 'Membre • ' + (raw ? raw.slice(-6) : 'inconnu');
+    }
+    function siteNameById(id) {
+      var site = currentSites.find(function (row) { return row.id === id; });
+      return site ? (site.name || site.site_code || site.city || 'Site') : 'Site';
+    }
+    function memberById(id) {
+      return currentMembers.find(function (member) { return member.id === id; }) || null;
+    }
+    function setMemberError(messageText) {
+      memberError.textContent = messageText || '';
+      memberError.hidden = !messageText;
+    }
+    function renderTeam(rows) {
+      currentMembers = rows.slice();
+      teamList.replaceChildren();
+      teamEmpty.hidden = rows.length !== 0;
+      teamMode.textContent = canManageMembers() ? 'Gestion autorisée' : 'Lecture seule';
+      rows.forEach(function (member) {
+        var card = el('article', 'fxew-member-card');
+        var head = el('div', 'fxew-member-head');
+        var copy = el('div');
+        copy.append(el('strong', '', memberIdentity(member)));
+        copy.append(el('span', '', LABELS[member.role] || label(member.role)));
+        head.append(copy, el('span', 'fxew-status', label(member.status)));
+        card.append(head);
+        if (member.role === 'site_manager') {
+          var assigned = (member.site_ids || []).map(siteNameById);
+          card.append(el('p', 'fxew-member-sites', assigned.length ? 'Sites · ' + assigned.join(' · ') : 'Aucun site affecté visible'));
+        }
+        var mayEdit = canManageMembers() && member.status !== 'removed' &&
+          !(currentEnterpriseRole === 'admin' && member.role === 'owner');
+        if (mayEdit) {
+          var actions = el('div', 'fxew-site-actions');
+          var manage = el('button', 'fxew-site-action', 'Gérer l’accès');
+          manage.type = 'button'; manage.dataset.memberAction = 'manage'; manage.dataset.memberId = member.id;
+          actions.append(manage); card.append(actions);
+        }
+        teamList.append(card);
+      });
+    }
+    function memberField(labelText, control) {
+      var wrap = el('label', 'fxew-member-field');
+      wrap.append(el('span', '', labelText), control);
+      return wrap;
+    }
+    function openMemberDialog(member) {
+      if (!member || !canManageMembers()) return;
+      setMemberError('');
+      memberDetail.replaceChildren();
+      memberDialogTitle.textContent = memberIdentity(member);
+
+      var roleSelect = doc.createElement('select');
+      var roleOptions = member.role === 'owner'
+        ? ['owner','admin','operations_manager','site_manager','reporter','viewer']
+        : ['admin','operations_manager','site_manager','reporter','viewer'];
+      roleOptions.forEach(function (value) {
+        var option = doc.createElement('option');
+        option.value = value; option.textContent = LABELS[value] || label(value);
+        if (member.role === value) option.selected = true;
+        roleSelect.append(option);
+      });
+      roleSelect.disabled = member.status === 'invited' || member.status === 'removed';
+
+      var statusSelect = doc.createElement('select');
+      ['active','suspended','removed'].forEach(function (value) {
+        var option = doc.createElement('option');
+        option.value = value; option.textContent = label(value);
+        if (member.status === value) option.selected = true;
+        statusSelect.append(option);
+      });
+      statusSelect.disabled = member.status === 'invited' || member.status === 'removed';
+
+      var fields = el('div', 'fxew-member-fields');
+      fields.append(
+        memberField('Identifiant', el('span', 'fxew-member-static', memberIdentity(member))),
+        memberField('Rôle', roleSelect),
+        memberField('Statut', statusSelect)
+      );
+
+      var save = el('button', 'fxew-button fxew-button--primary', 'Enregistrer rôle / statut');
+      save.type = 'button';
+      save.disabled = roleSelect.disabled && statusSelect.disabled;
+      save.addEventListener('click', async function () {
+        save.disabled = true; setMemberError('');
+        try {
+          var roleChanged = roleSelect.value !== member.role;
+          var statusChanged = statusSelect.value !== member.status;
+          if (roleChanged && statusChanged) {
+            setMemberError('Modifiez le rôle ou le statut, puis enregistrez avant de changer l’autre.');
+            return;
+          }
+          if (roleChanged) {
+            await bounded(win.FixeoEnterpriseMemberActions.updateRole(client, currentEnterpriseId, member.id, roleSelect.value));
+          } else if (statusChanged) {
+            await bounded(win.FixeoEnterpriseMemberActions.setStatus(client, currentEnterpriseId, member.id, statusSelect.value));
+          }
+          closeMemberDialog();
+          await loadOperational(currentEnterpriseId, generation);
+        } catch (error) {
+          var reason = error && (error.reason || error.message) || '';
+          var msg = reason === 'owner_invariant_violation' ? 'Le dernier propriétaire actif ne peut pas être modifié.'
+            : reason === 'cannot_modify_owner' ? 'Un administrateur ne peut pas modifier un propriétaire.'
+            : reason === 'member_not_modifiable' || reason === 'member_already_removed' ? 'Ce membre ne peut plus être modifié.'
+            : reason === 'invited_status_not_managed_here' ? 'Cette invitation doit être gérée depuis le module Invitations.'
+            : reason === 'forbidden' ? 'Votre rôle ne permet pas cette action.'
+            : 'Impossible de modifier cet accès. Réessayez.';
+          setMemberError(msg);
+        } finally { save.disabled = false; }
+      });
+      fields.append(save);
+      memberDetail.append(fields);
+
+      if (member.role === 'site_manager' && member.status === 'active') {
+        var siteBox = el('section', 'fxew-member-site-box');
+        siteBox.append(el('h3', '', 'Sites affectés'));
+        currentSites.forEach(function (site) {
+          var row = el('label', 'fxew-member-site-row');
+          var check = doc.createElement('input');
+          check.type = 'checkbox';
+          check.checked = (member.site_ids || []).indexOf(site.id) !== -1;
+          check.addEventListener('change', async function () {
+            check.disabled = true; setMemberError('');
+            try {
+              if (check.checked) await bounded(win.FixeoEnterpriseMemberActions.assignSite(client, currentEnterpriseId, member.id, site.id));
+              else await bounded(win.FixeoEnterpriseMemberActions.unassignSite(client, currentEnterpriseId, member.id, site.id));
+              await loadOperational(currentEnterpriseId, generation);
+              var fresh = memberById(member.id);
+              if (fresh) openMemberDialog(fresh);
+            } catch (_) {
+              check.checked = !check.checked;
+              setMemberError('Impossible de modifier cette affectation de site.');
+            } finally { check.disabled = false; }
+          });
+          row.append(check, el('span', '', [site.name || 'Site', site.city].filter(Boolean).join(' · ')));
+          siteBox.append(row);
+        });
+        memberDetail.append(siteBox);
+      }
+      memberDialog.hidden = false;
+      win.setTimeout(function () { memberClose.focus(); }, 0);
+    }
+    function closeMemberDialog() {
+      memberDialog.hidden = true;
+      memberDetail.replaceChildren();
+      setMemberError('');
+    }
+    function handleMemberAction(event) {
+      var button = event.target && event.target.closest ? event.target.closest('[data-member-action]') : null;
+      if (!button || button.dataset.memberAction !== 'manage') return;
+      openMemberDialog(memberById(button.dataset.memberId || ''));
     }
     function activeSites() {
       return currentSites.filter(function (site) { return site.status === 'active'; });
@@ -497,6 +668,7 @@
         var model = await bounded(win.FixeoEnterpriseReadModel.load(client, enterpriseId));
         if (run !== generation || stopped || doc.hidden || currentEnterpriseId !== enterpriseId) return;
         renderSites(model.sites || []);
+        renderTeam(model.members || []);
         renderInterventions(model.interventions || []);
         dataState.hidden = true;
       } catch (_) {
@@ -621,6 +793,10 @@
     requestCancel.addEventListener('click', closeRequestDialog);
     requestDialog.addEventListener('click', function (event) { if (event.target === requestDialog) closeRequestDialog(); });
     requestForm.addEventListener('submit', submitRequest);
+    teamList.addEventListener('click', handleMemberAction);
+    memberClose.addEventListener('click', closeMemberDialog);
+    memberDismiss.addEventListener('click', closeMemberDialog);
+    memberDialog.addEventListener('click', function (event) { if (event.target === memberDialog) closeMemberDialog(); });
     interventionsList.addEventListener('click', handleInterventionAction);
     interventionClose.addEventListener('click', closeInterventionDetail);
     interventionDismiss.addEventListener('click', closeInterventionDetail);
@@ -639,6 +815,9 @@
       requestCreate.removeEventListener('click', openRequestDialog);
       requestClose.removeEventListener('click', closeRequestDialog); requestCancel.removeEventListener('click', closeRequestDialog);
       requestForm.removeEventListener('submit', submitRequest);
+      teamList.removeEventListener('click', handleMemberAction);
+      memberClose.removeEventListener('click', closeMemberDialog);
+      memberDismiss.removeEventListener('click', closeMemberDialog);
       interventionsList.removeEventListener('click', handleInterventionAction);
       interventionClose.removeEventListener('click', closeInterventionDetail);
       interventionDismiss.removeEventListener('click', closeInterventionDetail);
