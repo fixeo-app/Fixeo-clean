@@ -46,6 +46,11 @@ async function setup(t, options = {}, search = `?enterprise_id=${uuid(101)}`, mo
     upsertPlan:async()=>({ok:true})
   };
   w.FixeoEnterprisePreventiveMaintenanceUI = mountOptions.maintenanceUi || { mount:()=>({refresh(){},setSites(){},destroy(){}}) };
+  w.FixeoEnterpriseEquipment = mountOptions.equipment || {
+    canManage:()=>false,loadFleet:async()=>({ok:true,summary:{},equipment:[]}),
+    loadDetail:async()=>({ok:true,equipment:{},interventions:[],maintenance_plans:[],assets:[]})
+  };
+  w.FixeoEnterpriseEquipmentUI = mountOptions.equipmentUi || { mount:()=>({refresh(){},setContext(){},destroy(){}}) };
   w.FixeoEnterpriseAudit = mountOptions.audit || {
     canView: role => role === 'owner' || role === 'admin',
     listPage: async () => ({ status:'ok',events:[],returned_count:0,has_more:false,next_cursor:null }),
@@ -167,7 +172,8 @@ test('U11 New page has isolated scripts, unique IDs, local links and no operatio
     'js/fixeo-enterprise-sla-policy-actions.js', 'js/fixeo-enterprise-workforce-actions.js',
     'js/fixeo-enterprise-workforce-ui.js', 'js/fixeo-enterprise-control-tower.js',
     'js/fixeo-enterprise-control-tower-ui.js', 'js/fixeo-enterprise-preventive-maintenance.js',
-    'js/fixeo-enterprise-preventive-maintenance-ui.js', 'js/fixeo-enterprise-workspace.js']);
+    'js/fixeo-enterprise-preventive-maintenance-ui.js', 'js/fixeo-enterprise-equipment.js',
+    'js/fixeo-enterprise-equipment-ui.js', 'js/fixeo-enterprise-workspace.js']);
   const ids = [...d.querySelectorAll('[id]')].map(n => n.id);
   assert.equal(ids.length, new Set(ids).size);
   assert.ok([...d.querySelectorAll('a')].every(a => ['index.html', '#main', 'auth.html'].includes(a.getAttribute('href'))));
