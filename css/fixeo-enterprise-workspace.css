@@ -167,3 +167,22 @@
 .fxew-site-performance-metrics .fxew-kpi-value{font-size:16px}
 @media(max-width:820px){.fxew-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.fxew-report-grid{grid-template-columns:1fr}.fxew-site-performance{grid-template-columns:1fr}}
 @media(max-width:520px){.fxew-period-label{width:100%;justify-content:space-between}.fxew-period-label select{flex:1}.fxew-kpi-grid{grid-template-columns:1fr 1fr;padding:14px}.fxew-report-grid{padding:0 14px 14px}.fxew-report-card--sites{margin:0 14px 14px}.fxew-site-performance{padding:12px}}
+
+/* B6 — team & access */
+.fxew-team-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:18px}
+.fxew-member-card{border:1px solid rgba(255,255,255,.09);border-radius:15px;background:rgba(255,255,255,.025);padding:18px;min-width:0}
+.fxew-member-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.fxew-member-head strong{display:block;font-size:14px}
+.fxew-member-head span:not(.fxew-status){display:block;margin-top:4px;color:var(--muted);font-size:12px}
+.fxew-member-sites{margin-top:12px!important;color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.fxew-member-detail{display:grid;gap:16px}
+.fxew-member-fields{display:grid;gap:12px}
+.fxew-member-field{display:grid;gap:7px;color:var(--muted);font-size:12px;font-weight:650}
+.fxew-member-field select{min-height:44px;border:1px solid var(--line);border-radius:10px;background:#191927;color:var(--text);padding:8px 10px;font:inherit}
+.fxew-member-static{display:flex;align-items:center;min-height:44px;border:1px solid var(--line);border-radius:10px;background:#171724;color:var(--text);padding:8px 10px;font-weight:650}
+.fxew-member-site-box{border:1px solid var(--line);border-radius:13px;overflow:hidden}
+.fxew-member-site-box h3{margin:0;padding:13px 15px;border-bottom:1px solid var(--line);font-size:13px}
+.fxew-member-site-row{display:flex;align-items:flex-start;gap:10px;padding:11px 15px;color:var(--text);font-size:12px}
+.fxew-member-site-row + .fxew-member-site-row{border-top:1px solid var(--line)}
+.fxew-member-site-row input{margin-top:2px}
+@media(max-width:700px){.fxew-team-list{grid-template-columns:1fr;padding:14px}}
