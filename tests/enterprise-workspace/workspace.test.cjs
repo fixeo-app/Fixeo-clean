@@ -28,6 +28,7 @@ async function setup(t, options = {}, search = `?enterprise_id=${uuid(101)}`, mo
   w.FixeoEnterpriseGuard = guard;
   w.FixeoEnterpriseReadModel = mountOptions.readModel || { load: async () => ({ sites: [], interventions: [] }) };
   w.FixeoEnterpriseSiteActions = mountOptions.siteActions || { canManage: () => false };
+  w.FixeoEnterpriseRequestActions = mountOptions.requestActions || { canCreate: () => false };
   w.eval(read('js/fixeo-logout-global.js'));
   const navigations = [];
   const app = mount(w, { navigate: p => navigations.push(p), ...mountOptions });
@@ -129,7 +130,8 @@ test('U11 New page has isolated scripts, unique IDs, local links and no operatio
   assert.deepEqual([...d.scripts].map(s => s.getAttribute('src').split('?')[0]), [
     'js/supabase-client.js', 'js/fixeo-logout-global.js', 'js/fixeo-auth-resolver.js',
     'js/fixeo-enterprise-guard.js', 'js/fixeo-enterprise-readmodel.js',
-    'js/fixeo-enterprise-site-actions.js', 'js/fixeo-enterprise-workspace.js']);
+    'js/fixeo-enterprise-site-actions.js', 'js/fixeo-enterprise-request-actions.js',
+    'js/fixeo-enterprise-workspace.js']);
   const ids = [...d.querySelectorAll('[id]')].map(n => n.id);
   assert.equal(ids.length, new Set(ids).size);
   assert.ok([...d.querySelectorAll('a')].every(a => ['index.html', '#main', 'auth.html'].includes(a.getAttribute('href'))));
@@ -180,4 +182,28 @@ test('U14 owner/admin management controls appear only when site action policy al
   await tick();
   assert.equal(allowed.q('enterprise-site-create').hidden, false);
   assert.equal(allowed.q('enterprise-sites-mode').textContent, 'Gestion autorisée');
+});
+
+test('U15 B3 shows request creation only for authorized role with an active visible site', async t => {
+  const readModel = { load: async () => ({
+    sites: [{ id: uuid(301), name: 'Siège', site_code: 'CAS', city: 'Casablanca', address_line: '', status: 'active' }],
+    interventions: []
+  }) };
+  const requestActions = { canCreate: role => ['owner','admin','operations_manager','site_manager','reporter'].includes(role) };
+  const s = await setup(t, {}, undefined, { readModel, requestActions });
+  await tick();
+  assert.equal(s.q('enterprise-request-create').hidden, false);
+  assert.equal(s.q('enterprise-requests-mode').textContent, 'Création autorisée');
+});
+
+test('U16 B3 keeps creation hidden when no active site is in effective scope', async t => {
+  const readModel = { load: async () => ({
+    sites: [{ id: uuid(301), name: 'Archive', site_code: '', city: 'Rabat', address_line: '', status: 'inactive' }],
+    interventions: []
+  }) };
+  const requestActions = { canCreate: () => true };
+  const s = await setup(t, {}, undefined, { readModel, requestActions });
+  await tick();
+  assert.equal(s.q('enterprise-request-create').hidden, true);
+  assert.equal(s.q('enterprise-requests-mode').textContent, 'Aucun site actif');
 });
