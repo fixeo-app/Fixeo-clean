@@ -1,0 +1,42 @@
+{
+  "verified_at": "2026-09-24T00:55:52.796Z",
+  "main": {
+    "sha": "cb55e54cafb3792ed561b21b0da6bc104599d2e7",
+    "ref": "refs/heads/main",
+    "source": "https://api.github.com/repos/fixeo-app/Fixeo-clean/git/refs/heads/main"
+  },
+  "production": {
+    "sha": "cb55e54cafb3792ed561b21b0da6bc104599d2e7",
+    "id": "dpl_Hm2phKfBxMAjkZN7VVBt6aKNZrh8",
+    "status": "READY",
+    "target": "production",
+    "alias": [
+      "www.fixeo.ma",
+      "fixeo-clean.vercel.app",
+      "fixeo.ma",
+      "fixeo-clean-elalaouibiz-3410s-projects.vercel.app",
+      "fixeo-clean-git-main-elalaouibiz-3410s-projects.vercel.app"
+    ]
+  },
+  "canonical_authority": {
+    "owner": "postgres",
+    "security_definer": true,
+    "proconfig": [
+      "search_path=public"
+    ],
+    "definition_md5": "1986929dce09806c133d90b1bf480e1d"
+  },
+  "authority_query": "BEGIN READ ONLY; SELECT pg_get_userbyid(proowner) AS owner,prosecdef AS security_definer,proconfig,md5(pg_get_functiondef(oid)) AS definition_md5 FROM pg_proc WHERE oid='public.is_admin()'::regprocedure; ROLLBACK;",
+  "local_git": "?? docs/enterprise-os/\n?? tests/enterprise-security-s0/\ncb55e54cafb3792ed561b21b0da6bc104599d2e7\n449bff9ca37fd3c708d7439bf5bd04a4b4d1b66b4bc3ee4c7ca9c952ce775654  docs/enterprise-os/evidence/production-catalogue.json\n39246a11debb90b70970cab29d7ae4573d5b182e0748453c03a9c11684d6e2d6  docs/enterprise-os/security-s0/patch-proposed.sql\n0.3.14\n",
+  "phase_sources_sha256": {
+    "resolver": "1e515a1682011f827af39f3e9540a76009eeed68b63da6ee1f1b48866e635899",
+    "guard": "c4e396c7c8fdae9a37be7514f8521d83895d8edb0c1c941507167fded028b96f",
+    "workspace_js": "8eee8b4067326ca8d1b19d18ca28102f8583bf691edc47790e66d7535fdb633b",
+    "workspace_html": "9a20cfd500ec36b54e2c15a89bfdbddcad9643e9e9f6bd5a6c768b3f68a939e4"
+  },
+  "production_write": false,
+  "apply": false,
+  "commit": false,
+  "push": false,
+  "deploy": false
+}

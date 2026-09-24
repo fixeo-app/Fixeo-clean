@@ -1,0 +1,560 @@
+{
+  "at": "2026-09-24T02:14:10.512Z",
+  "state_found": "POST-S0 EXACT",
+  "s0_already_applied": true,
+  "main_sha_found": "cb55e54cafb3792ed561b21b0da6bc104599d2e7",
+  "production_sha_found": "cb55e54cafb3792ed561b21b0da6bc104599d2e7",
+  "vercel_status_found": "READY",
+  "supabase_project": "ztwtbgoqanqzvwiibtuh",
+  "migration_version": "20260924015116",
+  "patch_sha256": "39246a11debb90b70970cab29d7ae4573d5b182e0748453c03a9c11684d6e2d6",
+  "migration_sha256": "39246a11debb90b70970cab29d7ae4573d5b182e0748453c03a9c11684d6e2d6",
+  "reapply_performed": false,
+  "production_verification": "Read-only catalogue queries, BEGIN READ ONLY / COMMIT; no business function execution.",
+  "function_acl": [
+    {
+      "signature": "public.auto_dispatch_service_request_v1()",
+      "present": true,
+      "owner": "postgres",
+      "security_definer": true,
+      "return_type": "trigger",
+      "public_execute": false,
+      "anon_execute": false,
+      "authenticated_execute": false,
+      "service_role_execute": true,
+      "postgres_execute": true
+    },
+    {
+      "signature": "public.dispatch_notification_worker_peek_v1(text)",
+      "present": true,
+      "owner": "postgres",
+      "security_definer": true,
+      "return_type": "TABLE(notification_id uuid, request_id uuid, artisan_id uuid, contact_phone text, notification_type text, channel text, notification_status text, attempt_count integer, claimed_at timestamp with time zone)",
+      "public_execute": false,
+      "anon_execute": false,
+      "authenticated_execute": false,
+      "service_role_execute": true,
+      "postgres_execute": true
+    },
+    {
+      "signature": "public.dispatch_request_v1_backup_20260821(uuid)",
+      "present": true,
+      "owner": "postgres",
+      "security_definer": true,
+      "return_type": "jsonb",
+      "public_execute": false,
+      "anon_execute": false,
+      "authenticated_execute": false,
+      "service_role_execute": true,
+      "postgres_execute": true
+    },
+    {
+      "signature": "public.enqueue_dispatch_notification_from_mission_v1()",
+      "present": true,
+      "owner": "postgres",
+      "security_definer": true,
+      "return_type": "trigger",
+      "public_execute": false,
+      "anon_execute": false,
+      "authenticated_execute": false,
+      "service_role_execute": true,
+      "postgres_execute": true
+    },
+    {
+      "signature": "public.trigger_dispatch_v2_on_service_request()",
+      "present": true,
+      "owner": "postgres",
+      "security_definer": true,
+      "return_type": "trigger",
+      "public_execute": false,
+      "anon_execute": false,
+      "authenticated_execute": false,
+      "service_role_execute": true,
+      "postgres_execute": true
+    }
+  ],
+  "postflight": [
+    {
+      "check_name": "ALL_CHECKS",
+      "expected_md5": null,
+      "actual_md5": null,
+      "pass": true
+    },
+    {
+      "check_name": "all_function_definitions",
+      "expected_md5": "2e90810debf53c495e80bc72d14657c2",
+      "actual_md5": "2e90810debf53c495e80bc72d14657c2",
+      "pass": true
+    },
+    {
+      "check_name": "browser_role_memberships",
+      "expected_md5": "d751713988987e9331980363e24189ce",
+      "actual_md5": "d751713988987e9331980363e24189ce",
+      "pass": true
+    },
+    {
+      "check_name": "column_acl",
+      "expected_md5": "9e5791ff271403b7d7db9c7c741a42a7",
+      "actual_md5": "9e5791ff271403b7d7db9c7c741a42a7",
+      "pass": true
+    },
+    {
+      "check_name": "constraints",
+      "expected_md5": "0f5f8e80395244eea2289b25bb7660be",
+      "actual_md5": "0f5f8e80395244eea2289b25bb7660be",
+      "pass": true
+    },
+    {
+      "check_name": "function_inventory",
+      "expected_md5": "a976c44dd112ccf30d6f7bb8a5296145",
+      "actual_md5": "a976c44dd112ccf30d6f7bb8a5296145",
+      "pass": true
+    },
+    {
+      "check_name": "policies",
+      "expected_md5": "57741de3e2d77d408bfafeb777834e05",
+      "actual_md5": "57741de3e2d77d408bfafeb777834e05",
+      "pass": true
+    },
+    {
+      "check_name": "schema_access",
+      "expected_md5": "0891ab6a658cf605bf691aacb854aaa5",
+      "actual_md5": "0891ab6a658cf605bf691aacb854aaa5",
+      "pass": true
+    },
+    {
+      "check_name": "table_effective",
+      "expected_md5": "0e6964ab4ed554b075faf4e545062a42",
+      "actual_md5": "0e6964ab4ed554b075faf4e545062a42",
+      "pass": true
+    },
+    {
+      "check_name": "table_inventory",
+      "expected_md5": "61a17ef8a5931e31fbc0e1c4aef0c582",
+      "actual_md5": "61a17ef8a5931e31fbc0e1c4aef0c582",
+      "pass": true
+    },
+    {
+      "check_name": "triggers",
+      "expected_md5": "54e1d0cf96c413639e7de248e332d183",
+      "actual_md5": "54e1d0cf96c413639e7de248e332d183",
+      "pass": true
+    },
+    {
+      "check_name": "unprivileged_roles",
+      "expected_md5": "05b193a66e730ecc334ccfbc3093cb0d",
+      "actual_md5": "05b193a66e730ecc334ccfbc3093cb0d",
+      "pass": true
+    }
+  ],
+  "table_privileges": {
+    "targeted": 52,
+    "removed": 52,
+    "tables": 9,
+    "pass": true,
+    "matrix": [
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "anon",
+        "table_name": "artisan_profiles"
+      },
+      {
+        "allowed": false,
+        "privilege": "REFERENCES",
+        "role_name": "anon",
+        "table_name": "artisan_profiles"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRIGGER",
+        "role_name": "anon",
+        "table_name": "artisan_profiles"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRUNCATE",
+        "role_name": "anon",
+        "table_name": "artisan_profiles"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "authenticated",
+        "table_name": "artisan_profiles"
+      },
+      {
+        "allowed": false,
+        "privilege": "REFERENCES",
+        "role_name": "authenticated",
+        "table_name": "artisan_profiles"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRIGGER",
+        "role_name": "authenticated",
+        "table_name": "artisan_profiles"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRUNCATE",
+        "role_name": "authenticated",
+        "table_name": "artisan_profiles"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "anon",
+        "table_name": "artisans"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "authenticated",
+        "table_name": "artisans"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "authenticated",
+        "table_name": "enterprise_accounts"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "authenticated",
+        "table_name": "enterprise_audit_events"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "anon",
+        "table_name": "missions"
+      },
+      {
+        "allowed": false,
+        "privilege": "REFERENCES",
+        "role_name": "anon",
+        "table_name": "missions"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRIGGER",
+        "role_name": "anon",
+        "table_name": "missions"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRUNCATE",
+        "role_name": "anon",
+        "table_name": "missions"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "authenticated",
+        "table_name": "missions"
+      },
+      {
+        "allowed": false,
+        "privilege": "REFERENCES",
+        "role_name": "authenticated",
+        "table_name": "missions"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRIGGER",
+        "role_name": "authenticated",
+        "table_name": "missions"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRUNCATE",
+        "role_name": "authenticated",
+        "table_name": "missions"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "anon",
+        "table_name": "notifications"
+      },
+      {
+        "allowed": false,
+        "privilege": "REFERENCES",
+        "role_name": "anon",
+        "table_name": "notifications"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRIGGER",
+        "role_name": "anon",
+        "table_name": "notifications"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRUNCATE",
+        "role_name": "anon",
+        "table_name": "notifications"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "authenticated",
+        "table_name": "notifications"
+      },
+      {
+        "allowed": false,
+        "privilege": "REFERENCES",
+        "role_name": "authenticated",
+        "table_name": "notifications"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRIGGER",
+        "role_name": "authenticated",
+        "table_name": "notifications"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRUNCATE",
+        "role_name": "authenticated",
+        "table_name": "notifications"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "anon",
+        "table_name": "payments"
+      },
+      {
+        "allowed": false,
+        "privilege": "REFERENCES",
+        "role_name": "anon",
+        "table_name": "payments"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRIGGER",
+        "role_name": "anon",
+        "table_name": "payments"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRUNCATE",
+        "role_name": "anon",
+        "table_name": "payments"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "authenticated",
+        "table_name": "payments"
+      },
+      {
+        "allowed": false,
+        "privilege": "REFERENCES",
+        "role_name": "authenticated",
+        "table_name": "payments"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRIGGER",
+        "role_name": "authenticated",
+        "table_name": "payments"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRUNCATE",
+        "role_name": "authenticated",
+        "table_name": "payments"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "anon",
+        "table_name": "quotes"
+      },
+      {
+        "allowed": false,
+        "privilege": "REFERENCES",
+        "role_name": "anon",
+        "table_name": "quotes"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRIGGER",
+        "role_name": "anon",
+        "table_name": "quotes"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRUNCATE",
+        "role_name": "anon",
+        "table_name": "quotes"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "authenticated",
+        "table_name": "quotes"
+      },
+      {
+        "allowed": false,
+        "privilege": "REFERENCES",
+        "role_name": "authenticated",
+        "table_name": "quotes"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRIGGER",
+        "role_name": "authenticated",
+        "table_name": "quotes"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRUNCATE",
+        "role_name": "authenticated",
+        "table_name": "quotes"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "anon",
+        "table_name": "service_requests"
+      },
+      {
+        "allowed": false,
+        "privilege": "REFERENCES",
+        "role_name": "anon",
+        "table_name": "service_requests"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRIGGER",
+        "role_name": "anon",
+        "table_name": "service_requests"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRUNCATE",
+        "role_name": "anon",
+        "table_name": "service_requests"
+      },
+      {
+        "allowed": false,
+        "privilege": "MAINTAIN",
+        "role_name": "authenticated",
+        "table_name": "service_requests"
+      },
+      {
+        "allowed": false,
+        "privilege": "REFERENCES",
+        "role_name": "authenticated",
+        "table_name": "service_requests"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRIGGER",
+        "role_name": "authenticated",
+        "table_name": "service_requests"
+      },
+      {
+        "allowed": false,
+        "privilege": "TRUNCATE",
+        "role_name": "authenticated",
+        "table_name": "service_requests"
+      }
+    ]
+  },
+  "details": {
+    "artisan_rpc": [
+      {
+        "signature": "get_my_dispatch_offers_v1()",
+        "definition_md5": "d44c3300bcf9aed5d76d74c334a932ec",
+        "authenticated_execute": true
+      },
+      {
+        "signature": "accept_my_dispatch_offer_v1(uuid)",
+        "definition_md5": "fb687ccb39f93e52b1868b6845d381a6",
+        "authenticated_execute": true
+      }
+    ],
+    "is_admin_md5": "1986929dce09806c133d90b1bf480e1d",
+    "p0_admin_policies": [
+      {
+        "pass": true,
+        "policyname": "enterprise_leads_admin_select"
+      },
+      {
+        "pass": true,
+        "policyname": "ecr_admin_select"
+      },
+      {
+        "pass": true,
+        "policyname": "enterprise_leads_admin_update"
+      },
+      {
+        "pass": true,
+        "policyname": "admin_all_service_requests"
+      },
+      {
+        "pass": true,
+        "policyname": "admin_all_missions"
+      },
+      {
+        "pass": true,
+        "policyname": "admin_all_notifications"
+      }
+    ],
+    "role_dependencies": [
+      {
+        "table": "profiles",
+        "policy": "profiles_insert_own"
+      }
+    ],
+    "p0_profile_trigger": {
+      "enabled": "O",
+      "definition": "CREATE TRIGGER enforce_profiles_canonical_role_p0 BEFORE INSERT OR UPDATE OF id, role ON profiles FOR EACH ROW EXECUTE FUNCTION fixeo_private.enforce_profile_canonical_role_p0()"
+    },
+    "invitations_columns": {
+      "id": true,
+      "role": true,
+      "status": true,
+      "created_at": true,
+      "expires_at": true,
+      "invited_by": true,
+      "revoked_at": true,
+      "revoked_by": true,
+      "token_hash": false,
+      "updated_at": true,
+      "accepted_at": true,
+      "accepted_by": true,
+      "enterprise_id": true,
+      "target_user_id": true,
+      "email_normalized": true
+    },
+    "missions_update_status": true,
+    "p0_admin_policies_pass": true,
+    "missions_insert_columns": {
+      "status": true,
+      "request_id": true,
+      "agreed_price": true,
+      "client_profile_id": true,
+      "artisan_profile_id": true
+    },
+    "p0_identity_privileges_pass": true,
+    "auto_dispatch_attached_triggers": 0
+  },
+  "crud_preserved": true,
+  "column_acl_preserved": true,
+  "service_role_preserved": true,
+  "postgres_preserved": true,
+  "rls_identical": true,
+  "triggers_identical": true,
+  "constraints_identical": true,
+  "function_definitions_identical": true,
+  "business_data_changed_by_this_operation": false,
+  "rollback_executed": false,
+  "b1_started": false
+}

@@ -1,0 +1,31 @@
+▶ P0 PostgreSQL 17: every fixture and validation write is rolled back
+  ✔ T01 Client cannot create an Admin profile; even arbitrary input is normalized (8.298014ms)
+  ✔ T02 Artisan without a profile cannot create an Admin profile (3.828307ms)
+  ✔ T03 Missing canonical identity cannot self-assign Admin or Artisan (6.891084ms)
+  ✔ T04 Canonical Admin retains existing grants and Admin RLS, even without a profile (32.595775ms)
+  ✔ T05 Normal Client retains own identity, requests, missions and notifications (16.732957ms)
+  ✔ T06 Normal Artisan retains linked requests, own missions and onboarding RPC (20.945705ms)
+  ✔ T07 Enterprise membership Admin/Owner never becomes global Admin (9.779247ms)
+  ✔ T08 All six former profile-based Admin policies now use canonical is_admin() (2.825198ms)
+  ✔ T09 User-editable metadata cannot authorize Admin (6.872937ms)
+  ✔ T10 Non-Admin cannot change canonical role; ordinary self edits still work (8.173796ms)
+  ✔ ACL: exactly 16 excessive grants removed; CRUD and service_role unchanged (23.637491ms)
+  ✔ No migration data repair; existing functions and Enterprise memberships intact (12.682143ms)
+  ✔ RLS still rejects another user id and the private trigger grants no RPC (3.159203ms)
+  ✔ Prepared read-only postapply queries execute and confirm six canonical policies (8.52579ms)
+  ✔ Emergency rollback is guarded and restores reviewed policies/grants exactly (32.73763ms)
+✔ P0 PostgreSQL 17: every fixture and validation write is rolled back (1238.57475ms)
+✔ Provisioning trusts canonical Client/Artisan, even when metadata claims Admin (6.14251ms)
+✔ A real canonical Admin may provision their Admin mirror (1.919396ms)
+✔ Missing, invalid or unreadable canonical role fails closed (4.402987ms)
+✔ Existing profile stays untouched; failed profile lookup never triggers a write (1.642066ms)
+✔ Guest/unconfigured pages are silent; concurrent insert remains harmless (1.797011ms)
+✔ Sign-in/refresh keep canonical provisioning; script duplicate load remains inert (1.646313ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1360.0155

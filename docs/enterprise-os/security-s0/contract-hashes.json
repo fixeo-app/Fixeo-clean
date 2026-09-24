@@ -1,0 +1,28 @@
+{
+  "before": {
+    "policies": "57741de3e2d77d408bfafeb777834e05",
+    "triggers": "54e1d0cf96c413639e7de248e332d183",
+    "column_acl": "9e5791ff271403b7d7db9c7c741a42a7",
+    "constraints": "0f5f8e80395244eea2289b25bb7660be",
+    "schema_access": "0891ab6a658cf605bf691aacb854aaa5",
+    "table_effective": "a4dc3dd5b25ad264715fa2bd6b025024",
+    "table_inventory": "21ef0c8492b7f51c32c23934248e7b1e",
+    "function_inventory": "ab5347eb59627f227bd8f0086c7da7a1",
+    "unprivileged_roles": "05b193a66e730ecc334ccfbc3093cb0d",
+    "all_function_definitions": "2e90810debf53c495e80bc72d14657c2",
+    "browser_role_memberships": "d751713988987e9331980363e24189ce"
+  },
+  "after": {
+    "policies": "57741de3e2d77d408bfafeb777834e05",
+    "triggers": "54e1d0cf96c413639e7de248e332d183",
+    "column_acl": "9e5791ff271403b7d7db9c7c741a42a7",
+    "constraints": "0f5f8e80395244eea2289b25bb7660be",
+    "schema_access": "0891ab6a658cf605bf691aacb854aaa5",
+    "table_effective": "0e6964ab4ed554b075faf4e545062a42",
+    "table_inventory": "61a17ef8a5931e31fbc0e1c4aef0c582",
+    "function_inventory": "a976c44dd112ccf30d6f7bb8a5296145",
+    "unprivileged_roles": "05b193a66e730ecc334ccfbc3093cb0d",
+    "all_function_definitions": "2e90810debf53c495e80bc72d14657c2",
+    "browser_role_memberships": "d751713988987e9331980363e24189ce"
+  }
+}

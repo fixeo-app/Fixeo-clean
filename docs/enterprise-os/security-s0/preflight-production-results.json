@@ -1,0 +1,77 @@
+{
+  "mode": "BEGIN READ ONLY / ROLLBACK",
+  "results": [
+    {
+      "check_name": "ALL_CHECKS",
+      "expected_md5": null,
+      "actual_md5": null,
+      "pass": true
+    },
+    {
+      "check_name": "all_function_definitions",
+      "expected_md5": "2e90810debf53c495e80bc72d14657c2",
+      "actual_md5": "2e90810debf53c495e80bc72d14657c2",
+      "pass": true
+    },
+    {
+      "check_name": "browser_role_memberships",
+      "expected_md5": "d751713988987e9331980363e24189ce",
+      "actual_md5": "d751713988987e9331980363e24189ce",
+      "pass": true
+    },
+    {
+      "check_name": "column_acl",
+      "expected_md5": "9e5791ff271403b7d7db9c7c741a42a7",
+      "actual_md5": "9e5791ff271403b7d7db9c7c741a42a7",
+      "pass": true
+    },
+    {
+      "check_name": "constraints",
+      "expected_md5": "0f5f8e80395244eea2289b25bb7660be",
+      "actual_md5": "0f5f8e80395244eea2289b25bb7660be",
+      "pass": true
+    },
+    {
+      "check_name": "function_inventory",
+      "expected_md5": "ab5347eb59627f227bd8f0086c7da7a1",
+      "actual_md5": "ab5347eb59627f227bd8f0086c7da7a1",
+      "pass": true
+    },
+    {
+      "check_name": "policies",
+      "expected_md5": "57741de3e2d77d408bfafeb777834e05",
+      "actual_md5": "57741de3e2d77d408bfafeb777834e05",
+      "pass": true
+    },
+    {
+      "check_name": "schema_access",
+      "expected_md5": "0891ab6a658cf605bf691aacb854aaa5",
+      "actual_md5": "0891ab6a658cf605bf691aacb854aaa5",
+      "pass": true
+    },
+    {
+      "check_name": "table_effective",
+      "expected_md5": "a4dc3dd5b25ad264715fa2bd6b025024",
+      "actual_md5": "a4dc3dd5b25ad264715fa2bd6b025024",
+      "pass": true
+    },
+    {
+      "check_name": "table_inventory",
+      "expected_md5": "21ef0c8492b7f51c32c23934248e7b1e",
+      "actual_md5": "21ef0c8492b7f51c32c23934248e7b1e",
+      "pass": true
+    },
+    {
+      "check_name": "triggers",
+      "expected_md5": "54e1d0cf96c413639e7de248e332d183",
+      "actual_md5": "54e1d0cf96c413639e7de248e332d183",
+      "pass": true
+    },
+    {
+      "check_name": "unprivileged_roles",
+      "expected_md5": "05b193a66e730ecc334ccfbc3093cb0d",
+      "actual_md5": "05b193a66e730ecc334ccfbc3093cb0d",
+      "pass": true
+    }
+  ]
+}

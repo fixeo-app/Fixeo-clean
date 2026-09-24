@@ -1,0 +1,203 @@
+TAP version 13
+# Subtest: S0 PostgreSQL 17: every fixture and validation write is enclosed in BEGIN / ROLLBACK
+    # Subtest: S01 Exact baseline: 29 functions, 23 tables, 86 policies, 21 triggers and 155 constraints
+    ok 1 - S01 Exact baseline: 29 functions, 23 tables, 86 policies, 21 triggers and 155 constraints
+      ---
+      duration_ms: 52.3982
+      type: 'test'
+      ...
+    # Subtest: S02 Atomic preflight rejects an unexpected backup grant without partial ACL changes
+    ok 2 - S02 Atomic preflight rejects an unexpected backup grant without partial ACL changes
+      ---
+      duration_ms: 105.416449
+      type: 'test'
+      ...
+    # Subtest: S03 Atomic preflight rejects a changed trigger function body
+    ok 3 - S03 Atomic preflight rejects a changed trigger function body
+      ---
+      duration_ms: 91.946021
+      type: 'test'
+      ...
+    # Subtest: S04 Atomic preflight rejects a disabled live dispatch trigger
+    ok 4 - S04 Atomic preflight rejects a disabled live dispatch trigger
+      ---
+      duration_ms: 33.699407
+      type: 'test'
+      ...
+    # Subtest: S05 Exact postflight: only the expected five function ACLs and 52 table grants change
+    ok 5 - S05 Exact postflight: only the expected five function ACLs and 52 table grants change
+      ---
+      duration_ms: 48.891001
+      type: 'test'
+      ...
+    # Subtest: S06 Every worker/internal RPC rejects anon before execution (27 signatures)
+    ok 6 - S06 Every worker/internal RPC rejects anon before execution (27 signatures)
+      ---
+      duration_ms: 23.204192
+      type: 'test'
+      ...
+    # Subtest: S07 Every worker/internal RPC rejects authenticated, including the backup (27 signatures)
+    ok 7 - S07 Every worker/internal RPC rejects authenticated, including the backup (27 signatures)
+      ---
+      duration_ms: 23.993417
+      type: 'test'
+      ...
+    # Subtest: S08 All service_role and postgres EXECUTE/table privileges remain exactly equal
+    ok 8 - S08 All service_role and postgres EXECUTE/table privileges remain exactly equal
+      ---
+      duration_ms: 28.742436
+      type: 'test'
+      ...
+    # Subtest: S09 Existing service_request trigger fires from a real authenticated INSERT after EXECUTE/TRIGGER revoke
+    ok 9 - S09 Existing service_request trigger fires from a real authenticated INSERT after EXECUTE/TRIGGER revoke
+      ---
+      duration_ms: 15.245235
+      type: 'test'
+      ...
+    # Subtest: S10 Existing guest INSERT also fires V2 dispatch without an EXECUTE grant
+    ok 10 - S10 Existing guest INSERT also fires V2 dispatch without an EXECUTE grant
+      ---
+      duration_ms: 11.35049
+      type: 'test'
+      ...
+    # Subtest: S11 Canonical V1 service dispatch creates one mission and one outbox entry; repeated call is idempotent
+    ok 11 - S11 Canonical V1 service dispatch creates one mission and one outbox entry; repeated call is idempotent
+      ---
+      duration_ms: 17.575262
+      type: 'test'
+      ...
+    # Subtest: S12 Canonical V2 explicit service dispatch retains its candidate chain and idempotency
+    ok 12 - S12 Canonical V2 explicit service dispatch retains its candidate chain and idempotency
+      ---
+      duration_ms: 24.409397
+      type: 'test'
+      ...
+    # Subtest: S13 Old backup remains usable by privileged service and still can write a mission (LOCAL ONLY)
+    ok 13 - S13 Old backup remains usable by privileged service and still can write a mission (LOCAL ONLY)
+      ---
+      duration_ms: 14.57476
+      type: 'test'
+      ...
+    # Subtest: S14 Service worker_peek retains its contact result and changes no data
+    ok 14 - S14 Service worker_peek retains its contact result and changes no data
+      ---
+      duration_ms: 46.478591
+      type: 'test'
+      ...
+    # Subtest: S15 Existing mission trigger fires from an authenticated column-granted INSERT
+    ok 15 - S15 Existing mission trigger fires from an authenticated column-granted INSERT
+      ---
+      duration_ms: 12.61159
+      type: 'test'
+      ...
+    # Subtest: S16 Column-level mission INSERT and UPDATE(status) remain functional and bounded
+    ok 16 - S16 Column-level mission INSERT and UPDATE(status) remain functional and bounded
+      ---
+      duration_ms: 17.292374
+      type: 'test'
+      ...
+    # Subtest: S17 get_my_dispatch_offers_v1 is still authenticated and filters by canonical artisan owner
+    ok 17 - S17 get_my_dispatch_offers_v1 is still authenticated and filters by canonical artisan owner
+      ---
+      duration_ms: 14.297661
+      type: 'test'
+      ...
+    # Subtest: S18 accept_my_dispatch_offer_v1 remains authenticated and performs the real winner transition
+    ok 18 - S18 accept_my_dispatch_offer_v1 remains authenticated and performs the real winner transition
+      ---
+      duration_ms: 16.973021
+      type: 'test'
+      ...
+    # Subtest: S19 A second artisan cannot accept a cancelled opportunity
+    ok 19 - S19 A second artisan cannot accept a cancelled opportunity
+      ---
+      duration_ms: 12.183291
+      type: 'test'
+      ...
+    # Subtest: S20 anon cannot call the two retained authenticated RPCs
+    ok 20 - S20 anon cannot call the two retained authenticated RPCs
+      ---
+      duration_ms: 3.163949
+      type: 'test'
+      ...
+    # Subtest: S21 P0 canonical Admin authority, hardened profile role and users INSERT remain intact
+    ok 21 - S21 P0 canonical Admin authority, hardened profile role and users INSERT remain intact
+      ---
+      duration_ms: 10.691643
+      type: 'test'
+      ...
+    # Subtest: S22 Protected deployed worker handler still calls peek with service_role (local fetch double)
+    ok 22 - S22 Protected deployed worker handler still calls peek with service_role (local fetch double)
+      ---
+      duration_ms: 15.278686
+      type: 'test'
+      ...
+    # Subtest: S23 All 52 excess table privileges are false; TRUNCATE is denied before touching data
+    ok 23 - S23 All 52 excess table privileges are false; TRUNCATE is denied before touching data
+      ---
+      duration_ms: 33.309077
+      type: 'test'
+      ...
+    # Subtest: S24 Every CRUD grant and every column ACL is exactly preserved, including invitation token exclusion
+    ok 24 - S24 Every CRUD grant and every column ACL is exactly preserved, including invitation token exclusion
+      ---
+      duration_ms: 31.146383
+      type: 'test'
+      ...
+    # Subtest: S25 Enterprise membership stays independent of global role; existing Enterprise RLS is retained
+    ok 25 - S25 Enterprise membership stays independent of global role; existing Enterprise RLS is retained
+      ---
+      duration_ms: 6.418635
+      type: 'test'
+      ...
+    # Subtest: S26 Existing notification frontend INSERT/UPDATE survives unchanged
+    ok 26 - S26 Existing notification frontend INSERT/UPDATE survives unchanged
+      ---
+      duration_ms: 3.016566
+      type: 'test'
+      ...
+    # Subtest: S27 Rollback is blocked by default and restores no privilege
+    ok 27 - S27 Rollback is blocked by default and restores no privilege
+      ---
+      duration_ms: 35.489458
+      type: 'test'
+      ...
+    # Subtest: S28 Explicit LOCAL rollback reference restores the exact ACL baseline without changing data
+    ok 28 - S28 Explicit LOCAL rollback reference restores the exact ACL baseline without changing data
+      ---
+      duration_ms: 130.326174
+      type: 'test'
+      ...
+    # Subtest: S29 Reapplying the patch is stopped by its exact-baseline preflight
+    ok 29 - S29 Reapplying the patch is stopped by its exact-baseline preflight
+      ---
+      duration_ms: 73.328291
+      type: 'test'
+      ...
+    # Subtest: S30 The unused auto-dispatch function stays unattached; attached triggers and all function bodies are unchanged
+    ok 30 - S30 The unused auto-dispatch function stays unattached; attached triggers and all function bodies are unchanged
+      ---
+      duration_ms: 41.332792
+      type: 'test'
+      ...
+    # Subtest: S31 Postflight sees no persistent test data and unchanged business constraints/RLS
+    ok 31 - S31 Postflight sees no persistent test data and unchanged business constraints/RLS
+      ---
+      duration_ms: 52.102413
+      type: 'test'
+      ...
+    1..31
+ok 1 - S0 PostgreSQL 17: every fixture and validation write is enclosed in BEGIN / ROLLBACK
+  ---
+  duration_ms: 2290.614419
+  type: 'test'
+  ...
+1..1
+# tests 32
+# suites 0
+# pass 32
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2431.965449

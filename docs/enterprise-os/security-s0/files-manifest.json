@@ -1,0 +1,124 @@
+{
+  "scope": "Only new S0 review/test artifacts; excludes this manifest itself",
+  "existing_application_files_changed": 0,
+  "commit": false,
+  "push": false,
+  "deploy": false,
+  "files": [
+    {
+      "file": "docs/enterprise-os/security-s0/baseline-verification.json",
+      "bytes": 1908,
+      "sha256": "bbf28ddeee47184724256a7137113cbd9e38255ae5f0bb6608bd842c76849d10"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/call-graph.md",
+      "bytes": 6557,
+      "sha256": "55d26c3f84f321635cfbcef0a9ee528801bed4f733800d16fe53f4e425427d56"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/contract-after-expected.json",
+      "bytes": 274352,
+      "sha256": "9581aedfe66330e11cc9802972b28edb20454eb2d5b934fda97ea811e1c87d06"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/contract-before.json",
+      "bytes": 284283,
+      "sha256": "d51b8f3b9c9b10bce76513018d5e8359dce4c73096b1690f8bb54e010b4f90de"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/contract-hashes.json",
+      "bytes": 1334,
+      "sha256": "ffe68f92d83f0ca56761ad5751cc5a6d819fd0307ba70733b91b0e42c8af6917"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/function-decisions.json",
+      "bytes": 8694,
+      "sha256": "c006763ee9beb30980f37957fefe91eff9bf71531afd10a098bd03cf2fac1ce3"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/function-inventory.md",
+      "bytes": 36252,
+      "sha256": "17a64b9fbffc68e93857866311adc3301024ada28fa9268c0bc56470bef15e7c"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/patch-proposed.sql",
+      "bytes": 15247,
+      "sha256": "39246a11debb90b70970cab29d7ae4573d5b182e0748453c03a9c11684d6e2d6"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/preflight-production-results.json",
+      "bytes": 2216,
+      "sha256": "607898e22f1a22283f7bd7350606cadfbd7aa3b996b081672753a19cc2e9bc8f"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/production-readonly.json",
+      "bytes": 1033938,
+      "sha256": "03b915372ccbb92049ebe6ce84164e2ef7056cd84456f056e0d603095ef57670"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/review.md",
+      "bytes": 12380,
+      "sha256": "61fc81a0d8e00c7fea0643a8b384afdd0ba35e5675c1321f6697f1c30617b7e6"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/rollback-reference.sql",
+      "bytes": 16012,
+      "sha256": "05b1e2ca9a2c5d0223b396bf902342a4b542478845078ace7109eadc8f2cc8ab"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/table-acl-inventory.md",
+      "bytes": 9308,
+      "sha256": "0a75e3468cfd35a2864da1be32ed3d548cbab7bc6a5a5ac745a7af24c640196a"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/test-results.json",
+      "bytes": 6579,
+      "sha256": "5fc07eef3650a53d97760b72ee52bc9d46c44fbfc35d4de9e1b7521aedad0bef"
+    },
+    {
+      "file": "docs/enterprise-os/security-s0/test-results.tap",
+      "bytes": 8454,
+      "sha256": "81bb6c8114f59d6d8a1f1db3e24d5820c4b025f70f33f6d50e4b6cf230a925a6"
+    },
+    {
+      "file": "tests/enterprise-security-s0/build-artifacts.cjs",
+      "bytes": 6027,
+      "sha256": "fce4ce33c6bbe7a725cccbfb419c1bd411c4acb227d05a0e31d61bc1ee16a106"
+    },
+    {
+      "file": "tests/enterprise-security-s0/catalogue-select.sql",
+      "bytes": 5186,
+      "sha256": "b14b3bf25c6e0440b9df84e4afd75e495a263e99522fa24498300deb6caff16d"
+    },
+    {
+      "file": "tests/enterprise-security-s0/fixture.cjs",
+      "bytes": 6248,
+      "sha256": "6d0e0b14d276c16e96fe096f402f92de732c515faf21987b85e4fa694a849778"
+    },
+    {
+      "file": "tests/enterprise-security-s0/inventory-functions-readonly.sql",
+      "bytes": 4320,
+      "sha256": "9fe340d546a33c18e78339d7f676055a03769b71d49a95e51f12c3660c606656"
+    },
+    {
+      "file": "tests/enterprise-security-s0/inventory-tables-readonly.sql",
+      "bytes": 3189,
+      "sha256": "524242bf6289e55cc5c571ac70a8b00c491a6db3e6eb86e473c0496f31ddc121"
+    },
+    {
+      "file": "tests/enterprise-security-s0/postflight-readonly.sql",
+      "bytes": 6304,
+      "sha256": "7a14e27f04088b283daabcf03c5c0bfd49ddd1ae36c294d9954c916b22a1bf35"
+    },
+    {
+      "file": "tests/enterprise-security-s0/preflight-readonly.sql",
+      "bytes": 6304,
+      "sha256": "478d61f313f259ecc0ca59d477d3f3dd9352d2fe777e073d4c9752cb35817626"
+    },
+    {
+      "file": "tests/enterprise-security-s0/security.test.cjs",
+      "bytes": 19129,
+      "sha256": "99b219c7c340e41f0793d4d945502a9d3b7ebbdbd8d7d4a17134001d33b5efb1"
+    }
+  ]
+}

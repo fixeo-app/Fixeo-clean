@@ -1,0 +1,176 @@
+{
+  "accept_my_dispatch_offer_v1": [
+    "AUTHENTICATED ONLY",
+    "Navigateur Artisan : acceptation de sa propre offre ; auth.uid() → artisans.owner_user_id. Verrouille demande et offre, insère mission pending, assigne demande, annule les concurrents.",
+    "js/fixeo-artisan-dashboard-v2.js:1556",
+    "Écrit missions, service_requests et dispatch_execution_queue ; lit les identifiants et statuts liés."
+  ],
+  "admin_targeted_dispatch_v1": [
+    "SERVICE_ROLE ONLY",
+    "Ciblage Admin via API protégée ; le contrôle public.users.role est effectué par le handler. Aucun EXECUTE anon/authenticated actuel.",
+    "api/admin-targeted-dispatch-fn/index.js:198 ; js/fixeo-dispatch-engine.js utilise /api/admin/requests/assign",
+    "Lit demandes/artisans/missions ; écrit ciblage et statuts, appelle dispatch_request_v1."
+  ],
+  "auto_dispatch_service_request_v1": [
+    "TRIGGER INTERNAL",
+    "Ancien chemin V1 non attaché actuellement. Candidat à dépréciation séparée ; aucune suppression S0.",
+    "Aucun trigger attaché, aucun appel applicatif trouvé.",
+    "Délègue une écriture de mission à dispatch_request_v1 pour NEW.status=new."
+  ],
+  "dispatch_accept_winner_v1": [
+    "SERVICE_ROLE ONLY",
+    "Transition interne de gagnant dans la queue ; aucun navigateur nécessaire.",
+    "Aucun appelant externe explicite trouvé dans le repo audité.",
+    "Lit/verrouille et modifie dispatch_execution_queue ; annule les autres candidats."
+  ],
+  "dispatch_action_preview_v1": [
+    "SERVICE_ROLE ONLY",
+    "Prévisualisation des actions/fallback ; ne modifie rien dans son corps.",
+    "Appelants externes non trouvés.",
+    "Lit la demande, le comptage des candidats et le routage via dispatch_fallback_router_v1."
+  ],
+  "dispatch_advance_v1": [
+    "SERVICE_ROLE ONLY",
+    "Avancement interne des vagues ; pas un endpoint navigateur.",
+    "Appelants externes non trouvés.",
+    "Lit/verrouille la queue ; écrit indirectement via expiration et libération de lot."
+  ],
+  "dispatch_batch_preview_v1": [
+    "SERVICE_ROLE ONLY",
+    "Calcule les lots depuis le pool de candidats.",
+    "Appelants SQL listés ci-dessous.",
+    "Lecture de candidats avec noms, téléphones, localisation et scores."
+  ],
+  "dispatch_candidate_pool_v1": [
+    "SERVICE_ROLE ONLY",
+    "Enveloppe le ranking V2.1 pour le moteur interne.",
+    "Appelants SQL listés ci-dessous.",
+    "Lecture de candidats, contacts et scores."
+  ],
+  "dispatch_claim_notification_v1": [
+    "SERVICE_ROLE ONLY",
+    "Claim interne de notification ; réservation avec SKIP LOCKED.",
+    "Appelants externes non trouvés ; ne pas déduire obsolescence.",
+    "Lit et écrit dispatch_notification_outbox, statut/compteur/horodatages."
+  ],
+  "dispatch_enqueue_notifications_v1": [
+    "SERVICE_ROLE ONLY",
+    "Prépare l’outbox à partir de la queue.",
+    "Appelants externes non trouvés.",
+    "Lit la queue et insère dispatch_notification_outbox."
+  ],
+  "dispatch_execute_v1": [
+    "SERVICE_ROLE ONLY",
+    "Entrée canonique V2 : crée les opportunités QUEUED pour SEND_NOW.",
+    "api/urgent-request-fn/index.js:149 ; trigger service_requests",
+    "Lit le plan/candidats ; insère dispatch_execution_queue, retourne les opportunités."
+  ],
+  "dispatch_execution_plan_v1": [
+    "SERVICE_ROLE ONLY",
+    "Plan interne SEND_NOW/HOLD.",
+    "Appelé par dispatch_execute_v1.",
+    "Lecture des lots, noms, téléphones et scores."
+  ],
+  "dispatch_expire_contacted_v1": [
+    "SERVICE_ROLE ONLY",
+    "Expiration interne des contacts après timeout.",
+    "Appelé par dispatch_advance_v1.",
+    "Écrit dispatch_execution_queue."
+  ],
+  "dispatch_fallback_router_v1": [
+    "SERVICE_ROLE ONLY",
+    "État de fallback et comptage de candidats.",
+    "Appelé par dispatch_action_preview_v1.",
+    "Lit service_requests et le preview V2.1 ; pas de DML."
+  ],
+  "dispatch_finalize_notification_v1": [
+    "SERVICE_ROLE ONLY",
+    "Finalisation interne d’une notification après envoi/échec.",
+    "Appelants externes non trouvés.",
+    "Lit/verrouille et écrit outbox ; provider_message_id et last_error potentiellement sensibles."
+  ],
+  "dispatch_notification_worker_next_v1": [
+    "SERVICE_ROLE ONLY",
+    "Worker de claim avec contact ; ne pas confondre avec peek utilisé par le handler déployé.",
+    "Aucun appel actif trouvé ; le texte d’erreur du handler mentionne encore NEXT mais sa requête utilise PEEK.",
+    "Lit artisans/contact_phone et écrit outbox avec SKIP LOCKED."
+  ],
+  "dispatch_notification_worker_peek_v1": [
+    "SERVICE_ROLE ONLY",
+    "Worker de lecture. Aucun filtrage utilisateur/tenant ; privilèges actuels trop ouverts. Révoquer PUBLIC/anon/authenticated.",
+    "api/dispatch-whatsapp-worker-fn/index.js:50 ; route /api/dispatch-whatsapp-worker",
+    "Retourne la première notification PENDING éligible (attempt_count<3), dont contact_phone=coalesce(phone_public,phone). Aucun UPDATE/claim."
+  ],
+  "dispatch_preview_recruitment_v1": [
+    "SERVICE_ROLE ONLY",
+    "Ancienne prévisualisation recrutement ; conserver restrictive, usage externe non exclu.",
+    "Aucun appelant externe explicite trouvé.",
+    "Lecture demandes/artisans/missions ; téléphone, identité, source, scores."
+  ],
+  "dispatch_preview_v1": [
+    "SERVICE_ROLE ONLY",
+    "Prévisualisation V1 ; conserver jusqu’à décision de dépréciation distincte.",
+    "Aucun appelant externe explicite trouvé.",
+    "Lecture demandes/artisans/missions et indicateurs d’éligibilité ; pas de téléphone dans le type de retour."
+  ],
+  "dispatch_preview_v2": [
+    "SERVICE_ROLE ONLY",
+    "Prévisualisation V2 ; conserver restrictive.",
+    "Aucun appelant externe explicite trouvé.",
+    "Lecture candidats avec contact_phone, identité et scoring."
+  ],
+  "dispatch_preview_v21": [
+    "SERVICE_ROLE ONLY",
+    "Prévisualisation actuellement utilisée dans le plan V2.",
+    "Appelants SQL listés ci-dessous.",
+    "Lecture demandes/artisans/missions avec contact_phone ; utilise resolve_service_category_v1."
+  ],
+  "dispatch_queue_transition_v1": [
+    "SERVICE_ROLE ONLY",
+    "Transitions internes de la queue.",
+    "Appelants externes non trouvés.",
+    "Verrouille et écrit dispatch_execution_queue."
+  ],
+  "dispatch_release_next_batch_v1": [
+    "SERVICE_ROLE ONLY",
+    "Libération interne du prochain lot.",
+    "Appelé par dispatch_advance_v1.",
+    "Lit/verrouille la queue et les candidats ; insère de nouvelles opportunités."
+  ],
+  "dispatch_request_v1": [
+    "SERVICE_ROLE ONLY",
+    "Entrée canonique V1 ; conserve ciblage, règles métier et idempotence actuels.",
+    "api/create-request-fn/index.js:274 ; api/estimator-v1/index.js:1535 ; admin_targeted_dispatch_v1 ; auto trigger non attaché",
+    "Lit/verrouille service_requests ; lit artisans/missions ; insère une mission offered, donc déclenche l’outbox."
+  ],
+  "dispatch_request_v1_backup_20260821": [
+    "OBSOLETE / REMOVE LATER",
+    "Copie historique nommée backup_20260821, distincte de l’entrée canonique actuelle. Révoquer anon/authenticated ; conserver service_role/postgres, aucun DROP.",
+    "Aucune référence dans le code applicatif/configuration suivi, aucune fonction appelante trouvée, aucun trigger attaché.",
+    "SECURITY DEFINER sans auth.uid()/membership : peut verrouiller une demande et insérer une mission offered, puis outbox par trigger."
+  ],
+  "dispatch_retry_failed_notification_v1": [
+    "SERVICE_ROLE ONLY",
+    "Reprise interne d’une notification en échec.",
+    "Appelants externes non trouvés.",
+    "Lit/verrouille et écrit outbox, contrôle le nombre d’essais."
+  ],
+  "enqueue_dispatch_notification_from_mission_v1": [
+    "TRIGGER INTERNAL",
+    "Fonction du trigger missions ; aucun appel navigateur requis.",
+    "trg_enqueue_dispatch_notification_v1 AFTER INSERT ON missions (enabled O)",
+    "Pour une mission offered : INSERT dans dispatch_notification_outbox, ON CONFLICT DO NOTHING."
+  ],
+  "get_my_dispatch_offers_v1": [
+    "AUTHENTICATED ONLY",
+    "Lecture navigateur Artisan bornée à auth.uid() → artisan propriétaire. Maximum 50 offres, statuts QUEUED/CONTACTED et demande new.",
+    "js/fixeo-artisan-dashboard-v2.js:284",
+    "Lit artisans, queue et service_requests ; résultat volontairement sans contact_phone/description/tracking/commission."
+  ],
+  "trigger_dispatch_v2_on_service_request": [
+    "TRIGGER INTERNAL",
+    "Fonction réellement attachée à service_requests ; délègue au dispatcher V2.",
+    "trg_dispatch_v2_on_service_request AFTER INSERT ON service_requests (enabled O)",
+    "Pour NEW.status=new : appelle dispatch_execute_v1(NEW.id,3), donc écrit la queue."
+  ]
+}

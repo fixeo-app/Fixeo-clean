@@ -1,0 +1,186 @@
+{
+  "captured_at": "2026-09-24T00:52:21.250Z",
+  "command": "node --test --test-reporter=tap tests/enterprise-security-s0/security.test.cjs",
+  "runtime": "v24.19.0",
+  "pglite": "0.3.14",
+  "engine": "PostgreSQL 17 in-memory",
+  "scope": "Local synthetic data; no Production URL or credentials; BEGIN/ROLLBACK, SAVEPOINT per scenario",
+  "scenarios": 31,
+  "scenarios_pass": 31,
+  "node_tests_including_parent": 32,
+  "node_tests_pass": 32,
+  "node_tests_fail": 0,
+  "production_write_tests": 0,
+  "results": [
+    {
+      "id": "S01",
+      "objective": "Exact baseline: 29 functions, 23 tables, 86 policies, 21 triggers and 155 constraints",
+      "result": "PASS"
+    },
+    {
+      "id": "S02",
+      "objective": "Atomic preflight rejects an unexpected backup grant without partial ACL changes",
+      "result": "PASS"
+    },
+    {
+      "id": "S03",
+      "objective": "Atomic preflight rejects a changed trigger function body",
+      "result": "PASS"
+    },
+    {
+      "id": "S04",
+      "objective": "Atomic preflight rejects a disabled live dispatch trigger",
+      "result": "PASS"
+    },
+    {
+      "id": "S05",
+      "objective": "Exact postflight: only the expected five function ACLs and 52 table grants change",
+      "result": "PASS"
+    },
+    {
+      "id": "S06",
+      "objective": "Every worker/internal RPC rejects anon before execution (27 signatures)",
+      "result": "PASS"
+    },
+    {
+      "id": "S07",
+      "objective": "Every worker/internal RPC rejects authenticated, including the backup (27 signatures)",
+      "result": "PASS"
+    },
+    {
+      "id": "S08",
+      "objective": "All service_role and postgres EXECUTE/table privileges remain exactly equal",
+      "result": "PASS"
+    },
+    {
+      "id": "S09",
+      "objective": "Existing service_request trigger fires from a real authenticated INSERT after EXECUTE/TRIGGER revoke",
+      "result": "PASS"
+    },
+    {
+      "id": "S10",
+      "objective": "Existing guest INSERT also fires V2 dispatch without an EXECUTE grant",
+      "result": "PASS"
+    },
+    {
+      "id": "S11",
+      "objective": "Canonical V1 service dispatch creates one mission and one outbox entry; repeated call is idempotent",
+      "result": "PASS"
+    },
+    {
+      "id": "S12",
+      "objective": "Canonical V2 explicit service dispatch retains its candidate chain and idempotency",
+      "result": "PASS"
+    },
+    {
+      "id": "S13",
+      "objective": "Old backup remains usable by privileged service and still can write a mission (LOCAL ONLY)",
+      "result": "PASS"
+    },
+    {
+      "id": "S14",
+      "objective": "Service worker_peek retains its contact result and changes no data",
+      "result": "PASS"
+    },
+    {
+      "id": "S15",
+      "objective": "Existing mission trigger fires from an authenticated column-granted INSERT",
+      "result": "PASS"
+    },
+    {
+      "id": "S16",
+      "objective": "Column-level mission INSERT and UPDATE(status) remain functional and bounded",
+      "result": "PASS"
+    },
+    {
+      "id": "S17",
+      "objective": "get_my_dispatch_offers_v1 is still authenticated and filters by canonical artisan owner",
+      "result": "PASS"
+    },
+    {
+      "id": "S18",
+      "objective": "accept_my_dispatch_offer_v1 remains authenticated and performs the real winner transition",
+      "result": "PASS"
+    },
+    {
+      "id": "S19",
+      "objective": "A second artisan cannot accept a cancelled opportunity",
+      "result": "PASS"
+    },
+    {
+      "id": "S20",
+      "objective": "anon cannot call the two retained authenticated RPCs",
+      "result": "PASS"
+    },
+    {
+      "id": "S21",
+      "objective": "P0 canonical Admin authority, hardened profile role and users INSERT remain intact",
+      "result": "PASS"
+    },
+    {
+      "id": "S22",
+      "objective": "Protected deployed worker handler still calls peek with service_role (local fetch double)",
+      "result": "PASS"
+    },
+    {
+      "id": "S23",
+      "objective": "All 52 excess table privileges are false; TRUNCATE is denied before touching data",
+      "result": "PASS"
+    },
+    {
+      "id": "S24",
+      "objective": "Every CRUD grant and every column ACL is exactly preserved, including invitation token exclusion",
+      "result": "PASS"
+    },
+    {
+      "id": "S25",
+      "objective": "Enterprise membership stays independent of global role; existing Enterprise RLS is retained",
+      "result": "PASS"
+    },
+    {
+      "id": "S26",
+      "objective": "Existing notification frontend INSERT/UPDATE survives unchanged",
+      "result": "PASS"
+    },
+    {
+      "id": "S27",
+      "objective": "Rollback is blocked by default and restores no privilege",
+      "result": "PASS"
+    },
+    {
+      "id": "S28",
+      "objective": "Explicit LOCAL rollback reference restores the exact ACL baseline without changing data",
+      "result": "PASS"
+    },
+    {
+      "id": "S29",
+      "objective": "Reapplying the patch is stopped by its exact-baseline preflight",
+      "result": "PASS"
+    },
+    {
+      "id": "S30",
+      "objective": "The unused auto-dispatch function stays unattached; attached triggers and all function bodies are unchanged",
+      "result": "PASS"
+    },
+    {
+      "id": "S31",
+      "objective": "Postflight sees no persistent test data and unchanged business constraints/RLS",
+      "result": "PASS"
+    }
+  ],
+  "hashes": {
+    "tests/enterprise-security-s0/fixture.cjs": "6d0e0b14d276c16e96fe096f402f92de732c515faf21987b85e4fa694a849778",
+    "tests/enterprise-security-s0/security.test.cjs": "99b219c7c340e41f0793d4d945502a9d3b7ebbdbd8d7d4a17134001d33b5efb1",
+    "tests/enterprise-security-s0/build-artifacts.cjs": "fce4ce33c6bbe7a725cccbfb419c1bd411c4acb227d05a0e31d61bc1ee16a106",
+    "docs/enterprise-os/security-s0/patch-proposed.sql": "39246a11debb90b70970cab29d7ae4573d5b182e0748453c03a9c11684d6e2d6",
+    "docs/enterprise-os/security-s0/rollback-reference.sql": "05b1e2ca9a2c5d0223b396bf902342a4b542478845078ace7109eadc8f2cc8ab"
+  },
+  "limitations": [
+    "No real PostgREST HTTP/JWT/connection pool, external worker or provider call",
+    "No multi-connection race/load test",
+    "Unrelated diagnostic return type is a local stand-in; priced-offer/diagnostic branches not executed",
+    "All 134 function bodies and dispatch ACLs match the catalogue; non-dispatch helper ACLs not completely modelled",
+    "Local postgres is a PGlite owner/superuser; Production postgres is owner with BYPASSRLS",
+    "Initial S21 expected the wrong SQLSTATE; aligned to the exact Production trigger 42501, then all scenarios rerun"
+  ]
+}
