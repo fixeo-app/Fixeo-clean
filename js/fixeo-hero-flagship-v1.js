@@ -466,6 +466,7 @@
     if (node("fxhf-location")) intake.draft.city = node("fxhf-location").value;
     if (node("fxhf-consent"))
       intake.draft.consent = node("fxhf-consent").checked;
+    intake.saveEdit?.();
     if (node("fxhf-phone")) phone = node("fxhf-phone").value;
   }
   function readyPhotos() {
@@ -1276,6 +1277,10 @@
       stopTracks();
       stopPrompt();
     });
+    if (intake.editing) {
+      renderNeed();
+      return true;
+    }
     if (intake.id)
       execute(async function () {
         frame(
