@@ -113,15 +113,25 @@
       requestIds
     ) : [];
 
+    var slaRows = requestIds.length ? await loadByIds(
+      client,
+      'enterprise_request_sla',
+      'id,service_request_id,enterprise_id,site_id,policy_id,policy_urgency,request_urgency,acceptance_target_minutes,started_at,at_risk_at,due_at,created_at',
+      'service_request_id',
+      requestIds
+    ) : [];
+
     var siteMap = new Map(sites.map(function (site) { return [String(site.id), site]; }));
     var contextMap = new Map(contexts.map(function (ctx) { return [String(ctx.service_request_id), ctx]; }));
     var missionMap = latestMissionMap(missions);
+    var slaMap = new Map(slaRows.map(function (row) { return [String(row.service_request_id), row]; }));
 
     var interventions = requests.map(function (request) {
       var id = String(request.id);
       var context = contextMap.get(id);
       var site = context ? siteMap.get(String(context.site_id)) : null;
       var mission = missionMap.get(id) || null;
+      var sla = slaMap.get(id) || null;
       return {
         id: id,
         site_id: context ? String(context.site_id) : '',
@@ -133,7 +143,17 @@
         request_status: String(request.status || ''),
         mission_status: mission ? String(mission.status || '') : '',
         created_at: request.created_at || (context && context.created_at) || null,
-        accepted_at: mission && mission.accepted_at || null
+        accepted_at: mission && mission.accepted_at || null,
+        sla: sla ? Object.freeze({
+          id: String(sla.id || ''),
+          policy_source: sla.policy_id ? 'enterprise_policy' : 'fixeo_default',
+          policy_urgency: String(sla.policy_urgency || ''),
+          request_urgency: String(sla.request_urgency || ''),
+          acceptance_target_minutes: Number(sla.acceptance_target_minutes || 0),
+          started_at: sla.started_at || null,
+          at_risk_at: sla.at_risk_at || null,
+          due_at: sla.due_at || null
+        }) : null
       };
     }).sort(function (a, b) {
       return (Date.parse(b.created_at || 0) || 0) - (Date.parse(a.created_at || 0) || 0);
