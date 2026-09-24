@@ -75,7 +75,7 @@
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
     var client = null, subscription = null, generation = 0, stopped = false, logoutPending = false;
-    var workforceUi = null, controlTowerUi = null, maintenanceUi = null, equipmentUi = null, financeUi = null, governanceUi = null;
+    var workforceUi = null, controlTowerUi = null, maintenanceUi = null, equipmentUi = null, financeUi = null, governanceUi = null, rafiUi = null;
     var logoutFailed = false, logoutProof = null;
 
     function clear() {
@@ -1390,6 +1390,12 @@
         }
       });
     }
+    if (win.FixeoEnterpriseRafiUI && typeof win.FixeoEnterpriseRafiUI.mount === 'function') {
+      rafiUi = win.FixeoEnterpriseRafiUI.mount(win, {
+        getClient: function () { return client; },
+        getEnterpriseId: function () { return currentEnterpriseId; }
+      });
+    }
     refresh();
     return { refresh: refresh, destroy: function () {
       stopped = true; clear();
@@ -1399,6 +1405,7 @@
       if (equipmentUi && typeof equipmentUi.destroy === 'function') equipmentUi.destroy();
       if (financeUi && typeof financeUi.destroy === 'function') financeUi.destroy();
       if (governanceUi && typeof governanceUi.destroy === 'function') governanceUi.destroy();
+      if (rafiUi && typeof rafiUi.destroy === 'function') rafiUi.destroy();
       if (subscription) subscription.unsubscribe();
       retry.removeEventListener('click', refresh); logout.removeEventListener('click', signOut);
       siteClose.removeEventListener('click', closeSiteDialog); siteCancel.removeEventListener('click', closeSiteDialog);
