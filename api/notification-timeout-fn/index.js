@@ -24,20 +24,30 @@ module.exports=async function handler(req,res){
     const result=await response.json();
     if(result?.ok!==true || !Number.isInteger(result.inserted) || !Number.isInteger(result.closed))return res.status(502).json({ok:false,error:'INVALID_WORKER_RESPONSE'});
 
-    const fallbackResponse=await fetch(url.replace(/\/$/,'')+'/rest/v1/rpc/run_enterprise_dispatch_fallbacks_v1',{
-      method:'POST',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'},
-      body:'{}',signal:AbortSignal.timeout(20000)
-    });
+    const workerHeaders={apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'};
+    const [fallbackResponse,maintenanceResponse]=await Promise.all([
+      fetch(url.replace(/\/$/,'')+'/rest/v1/rpc/run_enterprise_dispatch_fallbacks_v1',{
+        method:'POST',headers:workerHeaders,body:'{}',signal:AbortSignal.timeout(20000)
+      }),
+      fetch(url.replace(/\/$/,'')+'/rest/v1/rpc/run_enterprise_maintenance_scheduler_v1',{
+        method:'POST',headers:workerHeaders,body:'{}',signal:AbortSignal.timeout(20000)
+      })
+    ]);
     if(!fallbackResponse.ok)return res.status(502).json({ok:false,error:'ENTERPRISE_FALLBACK_WORKER_FAILED'});
-    const fallback=await fallbackResponse.json();
+    if(!maintenanceResponse.ok)return res.status(502).json({ok:false,error:'ENTERPRISE_MAINTENANCE_WORKER_FAILED'});
+
+    const [fallback,maintenance]=await Promise.all([fallbackResponse.json(),maintenanceResponse.json()]);
     if(fallback?.ok!==true || !Number.isInteger(fallback.processed) || !Number.isInteger(fallback.failed))return res.status(502).json({ok:false,error:'INVALID_ENTERPRISE_FALLBACK_RESPONSE'});
+    if(maintenance?.ok!==true || !Number.isInteger(maintenance.generated) || !Number.isInteger(maintenance.failed))return res.status(502).json({ok:false,error:'INVALID_ENTERPRISE_MAINTENANCE_RESPONSE'});
 
     return res.status(200).json({
       ok:true,
       inserted:result.inserted,
       closed:result.closed,
       enterprise_fallback_processed:fallback.processed,
-      enterprise_fallback_failed:fallback.failed
+      enterprise_fallback_failed:fallback.failed,
+      enterprise_maintenance_generated:maintenance.generated,
+      enterprise_maintenance_failed:maintenance.failed
     });
   }catch(_){return res.status(502).json({ok:false,error:'NOTIFICATION_WORKER_UNAVAILABLE'});}
 };
