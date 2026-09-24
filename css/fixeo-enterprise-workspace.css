@@ -106,3 +106,9 @@
 .fxew-form-error{padding:12px 14px!important;border:1px solid rgba(255,138,180,.32);border-radius:11px;background:rgba(225,48,108,.09);color:#ffc0d6;font-size:13px}
 .fxew-dialog-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:4px}
 @media(max-width:520px){.fxew-module-actions{width:100%;justify-content:space-between}.fxew-module-actions .fxew-button{flex:1 1 auto}.fxew-dialog{padding:18px}.fxew-dialog-actions .fxew-button{flex:1 1 0}}
+
+/* B3 — intervention creation */
+.fxew-form select,.fxew-form textarea{width:100%;border:1px solid var(--line);border-radius:11px;background:#191927;color:var(--text);padding:10px 12px;font:inherit}
+.fxew-form select{min-height:46px}
+.fxew-form textarea{min-height:120px;resize:vertical}
+.fxew-form select:focus,.fxew-form textarea:focus{border-color:#76ece4;outline:none;box-shadow:0 0 0 3px rgba(118,236,228,.12)}
