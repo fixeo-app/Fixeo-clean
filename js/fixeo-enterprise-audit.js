@@ -15,7 +15,7 @@
     'availability','all_sites','max_concurrent_jobs','mode','offer_count',
     'remaining_offers','skill_count','site_count','internal_offer_limit',
     'offer_ttl_minutes','fallback_after_minutes','source',
-    'priority','note_present','frequency','interval_count','next_due_at','reminder_hours','asset_code','asset_type','mime_type','size_bytes','equipment_id'
+    'priority','note_present','frequency','interval_count','next_due_at','reminder_hours','asset_code','asset_type','mime_type','size_bytes','equipment_id','cost_center_id','purchase_order_id','reference','approved_amount','amount','hourly_cost','department'
   ]);
 
   function canView(role){ return role==='owner'||role==='admin'; }
