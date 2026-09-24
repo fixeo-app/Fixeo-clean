@@ -960,7 +960,9 @@
         optional.lastElementChild.appendChild(b);
       });
     node("fxhf-panel").appendChild(optional);
-    button("Modifier mon besoin", renderNeed, true);
+    button("Modifier mon besoin", function () {
+      if (intake.startEdit()) renderNeed();
+    }, true);
     availability();
   }
   async function beginConfirmation() {
@@ -1277,11 +1279,21 @@
       stopTracks();
       stopPrompt();
     });
-    if (intake.editing) {
-      renderNeed();
-      return true;
-    }
-    if (intake.id)
+    if (intake.editing && intake.id)
+      execute(async function () {
+        try {
+          await intake.load(true);
+          if (intake.session.state === "bound") {
+            intake.reset();
+            renderNeed();
+          } else renderNeed();
+        } catch (error) {
+          intake.reset();
+          renderNeed();
+          showError(error);
+        }
+      });
+    else if (intake.id)
       execute(async function () {
         frame(
           "analysis",
