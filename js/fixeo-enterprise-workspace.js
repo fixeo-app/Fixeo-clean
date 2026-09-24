@@ -34,6 +34,7 @@
     var requestCancel = byId('enterprise-request-cancel'), requestForm = byId('enterprise-request-form');
     var requestSite = byId('enterprise-request-site'), requestCategory = byId('enterprise-request-category');
     var requestDescription = byId('enterprise-request-description'), requestUrgency = byId('enterprise-request-urgency');
+    var requestApprovalAmount = byId('enterprise-request-approval-amount');
     var requestSubmit = byId('enterprise-request-submit'), requestFormError = byId('enterprise-request-form-error');
     var interventionDialog = byId('enterprise-intervention-dialog'), interventionClose = byId('enterprise-intervention-close');
     var interventionDismiss = byId('enterprise-intervention-dismiss'), interventionDetail = byId('enterprise-intervention-detail');
@@ -74,7 +75,7 @@
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
     var client = null, subscription = null, generation = 0, stopped = false, logoutPending = false;
-    var workforceUi = null, controlTowerUi = null, maintenanceUi = null, equipmentUi = null, financeUi = null;
+    var workforceUi = null, controlTowerUi = null, maintenanceUi = null, equipmentUi = null, financeUi = null, governanceUi = null;
     var logoutFailed = false, logoutProof = null;
 
     function clear() {
@@ -339,7 +340,12 @@
       'finance.po_created':'Bon de commande créé',
       'finance.po_updated':'Bon de commande modifié',
       'finance.worker_rate_updated':'Coût horaire Workforce modifié',
-      'finance.request_context_updated':'Contexte financier intervention modifié'
+      'finance.request_context_updated':'Contexte financier intervention modifié',
+      'governance.policy_created':'Règle d’approbation créée',
+      'governance.policy_updated':'Règle d’approbation modifiée',
+      'governance.case_created':'Dossier d’approbation créé',
+      'governance.case_approved':'Dossier d’approbation validé',
+      'governance.case_rejected':'Dossier d’approbation rejeté'
     });
     function canViewAudit() {
       return !!(win.FixeoEnterpriseAudit &&
@@ -1130,14 +1136,19 @@
       requestSubmit.disabled = true;
       setRequestError('');
       try {
-        await bounded(win.FixeoEnterpriseRequestActions.create(client, currentEnterpriseId, {
+        var created = await bounded(win.FixeoEnterpriseRequestActions.create(client, currentEnterpriseId, {
           site_id: site.id,
           service_category: requestCategory.value,
           description: requestDescription.value,
-          urgency: requestUrgency.value
+          urgency: requestUrgency.value,
+          requested_amount: requestApprovalAmount && requestApprovalAmount.value !== '' ? Number(requestApprovalAmount.value) : null
         }));
         closeRequestDialog();
         await loadOperational(currentEnterpriseId, generation);
+        if (governanceUi && typeof governanceUi.refresh === 'function') await governanceUi.refresh();
+        if (created && created.governance_status === 'pending_approval') {
+          setDataState('Demande soumise à approbation. Elle sera dispatchée après la validation finale.', false);
+        }
       } catch (error) {
         var reason = error && error.reason || error && error.message || '';
         var msg = reason === 'site_inactive' ? 'Ce site n’est plus actif.'
@@ -1232,6 +1243,7 @@
           maintenanceUi && typeof maintenanceUi.refresh === 'function' ? maintenanceUi.refresh() : Promise.resolve(),
           equipmentUi && typeof equipmentUi.refresh === 'function' ? equipmentUi.refresh() : Promise.resolve(),
           financeUi && typeof financeUi.refresh === 'function' ? financeUi.refresh() : Promise.resolve(),
+          governanceUi && typeof governanceUi.refresh === 'function' ? governanceUi.refresh() : Promise.resolve(),
           canViewAudit() ? loadAudit(result.enterprise.id, run, false) : Promise.resolve()
         ]);
       } catch (_) { if (run === generation && !stopped && !doc.hidden) failure(); }
@@ -1368,6 +1380,16 @@
         getRole: function () { return currentEnterpriseRole; }
       });
     }
+    if (win.FixeoEnterpriseGovernanceUI && typeof win.FixeoEnterpriseGovernanceUI.mount === 'function') {
+      governanceUi = win.FixeoEnterpriseGovernanceUI.mount(win, {
+        getClient: function () { return client; },
+        getEnterpriseId: function () { return currentEnterpriseId; },
+        getRole: function () { return currentEnterpriseRole; },
+        refreshOperations: function () {
+          return currentEnterpriseId ? loadOperational(currentEnterpriseId, generation) : Promise.resolve();
+        }
+      });
+    }
     refresh();
     return { refresh: refresh, destroy: function () {
       stopped = true; clear();
@@ -1376,6 +1398,7 @@
       if (maintenanceUi && typeof maintenanceUi.destroy === 'function') maintenanceUi.destroy();
       if (equipmentUi && typeof equipmentUi.destroy === 'function') equipmentUi.destroy();
       if (financeUi && typeof financeUi.destroy === 'function') financeUi.destroy();
+      if (governanceUi && typeof governanceUi.destroy === 'function') governanceUi.destroy();
       if (subscription) subscription.unsubscribe();
       retry.removeEventListener('click', refresh); logout.removeEventListener('click', signOut);
       siteClose.removeEventListener('click', closeSiteDialog); siteCancel.removeEventListener('click', closeSiteDialog);

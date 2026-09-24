@@ -313,3 +313,9 @@
 .fxew-finance-rows{display:grid;gap:10px;padding:14px}
 .fxew-finance-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;align-items:start}
 @media(max-width:700px){.fxew-finance-filters{padding:12px 14px}.fxew-finance-row{grid-template-columns:1fr}}
+
+/* BLOCK F — Governance & approvals */
+.fxew-governance-list{display:grid;gap:10px;padding:14px}
+.fxew-governance-card,.fxew-governance-case{border:1px solid var(--line);border-radius:13px;padding:14px;background:rgba(255,255,255,.02)}
+.fxew-governance-case--mine{box-shadow:inset 3px 0 0 rgba(109,190,255,.8)}
+.fxew-governance-description{margin:10px 0 0;color:var(--muted);font-size:12px;line-height:1.55;white-space:pre-wrap}

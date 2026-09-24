@@ -7,7 +7,7 @@
   <meta name="referrer" content="same-origin">
   <title>Espace entreprise | FIXEO</title>
   <link rel="icon" href="img/logo-fixeo-icon.png">
-  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=block-e1">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=block-f1">
   <script defer src="js/supabase-client.js"></script>
   <script defer src="js/fixeo-logout-global.js"></script>
   <script defer src="js/fixeo-auth-resolver.js"></script>
@@ -30,7 +30,9 @@
   <script defer src="js/fixeo-enterprise-equipment-ui.js?v=block-d1"></script>
   <script defer src="js/fixeo-enterprise-finance.js?v=block-e1"></script>
   <script defer src="js/fixeo-enterprise-finance-ui.js?v=block-e1"></script>
-  <script defer src="js/fixeo-enterprise-workspace.js?v=block-e1"></script>
+  <script defer src="js/fixeo-enterprise-governance.js?v=block-f1"></script>
+  <script defer src="js/fixeo-enterprise-governance-ui.js?v=block-f1"></script>
+  <script defer src="js/fixeo-enterprise-workspace.js?v=block-f1"></script>
 </head>
 <body class="fxew">
   <a class="fxew-skip" href="#main">Aller au contenu</a>
@@ -124,6 +126,34 @@
           <div class="fxew-report-card-head"><h3 id="maintenance-history-title">Historique des exécutions</h3><span>Générations automatiques</span></div>
           <div id="enterprise-maintenance-runs" class="fxew-maintenance-runs"></div>
         </section>
+      </section>
+
+      <section id="enterprise-governance-module" class="fxew-module fxew-governance" aria-labelledby="governance-title" hidden>
+        <div class="fxew-module-heading">
+          <div><p class="fxew-module-kicker">Gouvernance</p><h2 id="governance-title">Approbations & règles</h2></div>
+          <div class="fxew-module-actions">
+            <span id="enterprise-governance-mode" class="fxew-module-meta">Lecture</span>
+            <button id="enterprise-governance-create" class="fxew-button fxew-button--primary" type="button" hidden>Nouvelle règle</button>
+          </div>
+        </div>
+        <div id="enterprise-governance-state" class="fxew-report-state" role="status" aria-live="polite">
+          <span class="fxew-data-spinner" aria-hidden="true"></span>
+          <span id="enterprise-governance-message">Chargement de la gouvernance…</span>
+          <button id="enterprise-governance-retry" class="fxew-button" type="button" hidden>Réessayer</button>
+        </div>
+        <div class="fxew-kpi-grid">
+          <div class="fxew-kpi"><span class="fxew-kpi-label">À valider par moi</span><strong id="enterprise-governance-pending" class="fxew-kpi-value">0</strong></div>
+        </div>
+        <div class="fxew-report-grid">
+          <section class="fxew-report-card">
+            <div class="fxew-report-card-head"><h3>Règles d’approbation</h3><span>Owner / Admin</span></div>
+            <div id="enterprise-governance-policies" class="fxew-governance-list"></div>
+          </section>
+          <section class="fxew-report-card">
+            <div class="fxew-report-card-head"><h3>Dossiers d’approbation</h3><span>Multi-niveaux</span></div>
+            <div id="enterprise-governance-cases" class="fxew-governance-list"></div>
+          </section>
+        </div>
       </section>
 
       <section id="enterprise-finance-module" class="fxew-module fxew-finance" aria-labelledby="finance-title" hidden>
@@ -354,6 +384,66 @@
         <p id="enterprise-interventions-empty" class="fxew-empty" hidden>Aucune intervention visible pour les sites auxquels vous avez accès.</p>
       </section>
     </section>
+
+    <div id="enterprise-governance-policy-dialog" class="fxew-dialog-backdrop" hidden>
+      <section class="fxew-dialog" role="dialog" aria-modal="true" aria-labelledby="enterprise-governance-policy-title">
+        <div class="fxew-dialog-head">
+          <div><p class="fxew-module-kicker">Gouvernance</p><h2 id="enterprise-governance-policy-title">Nouvelle règle</h2></div>
+          <button id="enterprise-governance-policy-close" class="fxew-dialog-close" type="button" aria-label="Fermer">×</button>
+        </div>
+        <form id="enterprise-governance-policy-form" class="fxew-form">
+          <input id="enterprise-governance-policy-id" type="hidden">
+          <label>Nom<input id="enterprise-governance-policy-name" maxlength="200" required></label>
+          <label>Site<select id="enterprise-governance-policy-site"></select></label>
+          <label>Métier / service<input id="enterprise-governance-policy-category" placeholder="Vide = tous les métiers"></label>
+          <label>Urgence
+            <select id="enterprise-governance-policy-urgency">
+              <option value="">Toutes</option><option value="normale">Normale</option><option value="urgent">Urgente</option><option value="now">Immédiate</option>
+            </select>
+          </label>
+          <label>Rôle demandeur
+            <select id="enterprise-governance-policy-requester">
+              <option value="">Tous</option><option value="owner">Owner</option><option value="admin">Admin</option>
+              <option value="operations_manager">Operations manager</option><option value="site_manager">Site manager</option><option value="reporter">Reporter</option>
+            </select>
+          </label>
+          <label>Montant minimum (MAD)<input id="enterprise-governance-policy-min" type="number" min="0" step="0.01" placeholder="Optionnel"></label>
+          <label>Montant maximum (MAD)<input id="enterprise-governance-policy-max" type="number" min="0" step="0.01" placeholder="Optionnel"></label>
+          <label>Priorité<input id="enterprise-governance-policy-priority" type="number" min="1" max="10000" value="100"></label>
+          <label>Étapes
+            <input id="enterprise-governance-policy-steps" required placeholder="operations_manager, admin">
+            <small>Dans l’ordre, séparées par des virgules. Rôles : owner, admin, operations_manager, site_manager.</small>
+          </label>
+          <label>Statut
+            <select id="enterprise-governance-policy-status"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+          </label>
+          <p id="enterprise-governance-policy-error" class="fxew-form-error" role="alert" hidden></p>
+          <div class="fxew-dialog-actions">
+            <button id="enterprise-governance-policy-cancel" class="fxew-button" type="button">Annuler</button>
+            <button id="enterprise-governance-policy-submit" class="fxew-button fxew-button--primary" type="submit">Enregistrer</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <div id="enterprise-governance-decision-dialog" class="fxew-dialog-backdrop" hidden>
+      <section class="fxew-dialog" role="dialog" aria-modal="true" aria-labelledby="enterprise-governance-decision-title">
+        <div class="fxew-dialog-head">
+          <div><p class="fxew-module-kicker">Approbation</p><h2 id="enterprise-governance-decision-title">Prendre une décision</h2></div>
+          <button id="enterprise-governance-decision-close" class="fxew-dialog-close" type="button" aria-label="Fermer">×</button>
+        </div>
+        <input id="enterprise-governance-decision-case" type="hidden">
+        <div class="fxew-form">
+          <label>Note<textarea id="enterprise-governance-decision-note" rows="4" maxlength="1000" placeholder="Optionnel"></textarea></label>
+          <p id="enterprise-governance-decision-error" class="fxew-form-error" role="alert" hidden></p>
+          <div class="fxew-dialog-actions">
+            <button id="enterprise-governance-decision-cancel" class="fxew-button" type="button">Annuler</button>
+            <button id="enterprise-governance-reject" class="fxew-button" type="button">Rejeter</button>
+            <button id="enterprise-governance-approve" class="fxew-button fxew-button--primary" type="button">Approuver</button>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <div id="enterprise-finance-dialog" class="fxew-dialog-backdrop" hidden>
       <section class="fxew-dialog" role="dialog" aria-modal="true" aria-labelledby="enterprise-finance-dialog-title">
@@ -794,6 +884,10 @@
               <option value="urgent">Urgente</option>
               <option value="now">Immédiate</option>
             </select>
+          </label>
+          <label>Montant soumis à approbation (MAD)
+            <input id="enterprise-request-approval-amount" type="number" min="0" step="0.01" placeholder="Optionnel">
+            <small>Utilisé uniquement pour les règles de gouvernance. Ce n’est pas une estimation de prix.</small>
           </label>
           <p id="enterprise-request-form-error" class="fxew-form-error" role="alert" hidden></p>
           <div class="fxew-dialog-actions">
