@@ -63,6 +63,8 @@ async function setup(t, options = {}, search = `?enterprise_id=${uuid(101)}`, mo
     decide:async()=>({ok:true})
   };
   w.FixeoEnterpriseGovernanceUI = mountOptions.governanceUi || { mount:()=>({refresh(){},setSites(){},destroy(){}}) };
+  w.FixeoEnterpriseRafi = mountOptions.rafi || { ask:async()=>({ok:true,answer:'OK',highlights:[],alerts:[],recommendations:[],image_observations:[],confidence:'high'}),transcribe:async()=>'' };
+  w.FixeoEnterpriseRafiUI = mountOptions.rafiUi || { mount:()=>({destroy(){}}) };
   w.FixeoEnterpriseAudit = mountOptions.audit || {
     canView: role => role === 'owner' || role === 'admin',
     listPage: async () => ({ status:'ok',events:[],returned_count:0,has_more:false,next_cursor:null }),
@@ -187,7 +189,8 @@ test('U11 New page has isolated scripts, unique IDs, local links and no operatio
     'js/fixeo-enterprise-preventive-maintenance-ui.js', 'js/fixeo-enterprise-equipment.js',
     'js/fixeo-enterprise-equipment-ui.js', 'js/fixeo-enterprise-finance.js',
     'js/fixeo-enterprise-finance-ui.js', 'js/fixeo-enterprise-governance.js',
-    'js/fixeo-enterprise-governance-ui.js', 'js/fixeo-enterprise-workspace.js']);
+    'js/fixeo-enterprise-governance-ui.js', 'js/fixeo-enterprise-rafi.js',
+    'js/fixeo-enterprise-rafi-ui.js', 'js/fixeo-enterprise-workspace.js']);
   const ids = [...d.querySelectorAll('[id]')].map(n => n.id);
   assert.equal(ids.length, new Set(ids).size);
   assert.ok([...d.querySelectorAll('a')].every(a => ['index.html', '#main', 'auth.html'].includes(a.getAttribute('href'))));
