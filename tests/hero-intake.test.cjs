@@ -752,19 +752,29 @@ for (const width of [320, 360, 390, 412]) {
     assert.equal(s.calls.length, 0);
     s.q("fxhf-submit").click();
     await s.until(() => s.q("fxhf-root").dataset.fxhfState === "safety");
-    assert.equal(computed(".fxhf-content").gridTemplateRows, "auto minmax(0, 1fr) auto");
-    assert.equal(computed("#home").minHeight, "var(--fxhf-viewport-height, 100svh)", "SAFETY keeps its viewport workspace");
-    assert.equal(computed(".fxhf-universal").minHeight, "220px");
+    assert.equal(computed(".fxhf-content").gridTemplateRows, "auto auto auto");
+    assert.equal(computed("#home").minHeight, "0", "SAFETY follows its actual content");
+    assert.equal(computed(".fxhf-universal").minHeight, "0");
     assert.equal(computed('.fxhf-title').fontWeight, '600', 'NEED weight does not leak to SAFETY');
     assert.ok(['', 'none'].includes(computed('.fxhf-rafi-sphere').transform), 'NEED orb reduction does not leak to SAFETY');
     assert.equal(computed('.fxhf-title').textShadow, '', 'NEED title treatment must not leak to SAFETY');
-    assert.notEqual(computed(".rfos-stage-wrap").display, "none", "legacy visibility outside NEED is untouched");
+    assert.equal(computed(".rfos-stage-wrap").display, "none", "legacy stays mounted but hidden after NEED");
+    const band = doc.createElement('div');
+    band.className = 'rfos-h1-band';
+    doc.querySelector('#home').after(band);
     // Exercise only CSS state matching here; the functional suite covers the
     // corresponding transitions without changing the real journey state.
     for (const state of ['analysis', 'questions', 'result', 'confirmation', 'matching', 'dispatching', 'acceptance', 'mission', 'retry']) {
       s.q('fxhf-root').dataset.fxhfState = state;
-      assert.equal(computed('#home').minHeight, 'var(--fxhf-viewport-height, 100svh)', state);
-      assert.equal(computed('.fxhf-universal').minHeight, '220px', state);
+      assert.equal(computed('#home').minHeight, '0', state);
+      assert.equal(computed('.fxhf-universal').minHeight, '0', state);
+      assert.equal(computed('.fxhf-universal').height, 'auto', state);
+      assert.equal(computed('.fxhf-content').gridTemplateRows, 'auto auto auto', state);
+      assert.equal(computed('.fxhf-scroll').overflow, 'visible', state);
+      assert.equal(computed('.fxhf-actions').position, 'static', state);
+      assert.equal(computed('.rfos-stage-wrap').display, 'none', state);
+      assert.equal(computed('.rfos-h1-band').display, 'none', state);
+      assert.notEqual(computed('.fxhf-visual').display, 'none', state);
     }
   });
 }
@@ -1076,7 +1086,7 @@ test("Hero premium preserves three photos, safety signals and primary footer thr
   await s.until(() => s.q("fxhf-root").dataset.fxhfState === "safety");
   assert.equal(
     s.q("fxhf-panel").querySelectorAll(".fxhf-hazards input").length,
-    7,
+    3,
   );
   assert.match(s.q("fxhf-panel").textContent, /aucune manipulation/);
   function footer() {
@@ -1122,4 +1132,120 @@ test("Hero premium preserves three photos, safety signals and primary footer thr
     s.q("fxhf-root").querySelector(".fxhf-reference").textContent,
     /FX-FIXTURE/,
   );
+});
+
+for (const [description, hint, keys, expanded] of [
+  ['Ma porte est bloquée', 'serrurerie', ['immediate_danger'], false],
+  ['Des étincelles dans une prise', 'electricite', ['electricity', 'fire', 'immediate_danger'], false],
+  ['Une odeur de gaz près de ma porte', 'serrurerie', ['gas', 'fire', 'immediate_danger'], false],
+  ['Une fuite sous le lavabo', 'plomberie', ['major_leak', 'flood', 'immediate_danger'], false],
+  ['Le plafond risque de s’effondrer', 'maconnerie', ['structure', 'immediate_danger'], false],
+  ['Des flammes dans la cuisine', null, ['fire', 'immediate_danger'], false],
+  ['Un problème difficile à décrire', null, ['immediate_danger'], true],
+]) {
+  test('Contextual safety offers relevant signals only: ' + description, async t => {
+    const s = setup(t, {configure(w) { w.FixeoAIRE = {detect: () => hint ? {cat: hint} : null}; }});
+    s.fill(); s.change('fxhf-need-input', description);
+    s.q('fxhf-submit').click(); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'safety');
+    const inputs = [...s.q('fxhf-panel').querySelectorAll('.fxhf-hazards input')];
+    assert.deepEqual(inputs.filter(el => !el.closest('details')).map(el => el.value), keys);
+    assert(inputs.every(el => !el.checked), 'a UI hint never declares danger or safety on behalf of the user');
+    const details = s.q('fxhf-panel').querySelector('details');
+    assert.equal(!!details, expanded);
+    if (details) { assert.equal(details.open, false); assert.equal(inputs.length, 7); }
+    assert.match(s.q('fxhf-panel').textContent, /ne garantit pas l’absence de danger/);
+    assert.equal(s.calls.length, 0);
+  });
+}
+test('Safety selections and description survive back navigation and a change of trade', async t => {
+  const s = setup(t, {configure(w) { w.FixeoAIRE = {detect: text => ({cat: text.includes('porte') ? 'serrurerie' : 'electricite'})}; }});
+  s.fill(); s.change('fxhf-need-input', 'Une prise avec des étincelles');
+  s.q('fxhf-submit').click(); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'safety');
+  s.q('fxhf-panel').querySelector('[value=electricity]').checked = true;
+  s.click('Retour'); await s.until(() => s.q('fxhf-submit'));
+  assert.equal(s.q('fxhf-location').value, 'rabat');
+  s.change('fxhf-need-input', 'Ma porte est bloquée');
+  s.q('fxhf-submit').click(); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'safety');
+  assert.equal(s.q('fxhf-panel').querySelector('[value=electricity]').checked, true, 'previously declared signs are not discarded by filtering');
+  s.click('RAFI comprend mon besoin'); await s.until(() => s.q('fxhf-entrust'));
+  assert.deepEqual(s.calls.find(c => c.action === 'create').input, {
+    description: 'Ma porte est bloquée', answers: {}, safety_signals: ['electricity'],
+  });
+});
+test('UI filtering preserves the server text/photo safety contract and critical acknowledgement', async t => {
+  const {evaluateSafety} = require('../api/diagnostic/safety');
+  const s = setup(t, {
+    configure(w) { w.FixeoAIRE = {detect: () => ({cat: 'serrurerie'})}; },
+    override(body, server) {
+      if (body.action !== 'analyze') return;
+      server.result = result();
+      server.result.safety = evaluateSafety(server.input);
+      server.state = 'ready'; server.result_run_id = body.run_id;
+      return {session: clone(server)};
+    },
+  });
+  s.fill(); s.change('fxhf-need-input', 'Ma porte est bloquée et je sens une odeur de gaz'); s.photo();
+  await s.analyze();
+  const creation = s.calls.find(c => c.action === 'create');
+  assert.deepEqual(creation.input, {description: 'Ma porte est bloquée et je sens une odeur de gaz', answers: {}, safety_signals: []});
+  assert.equal(s.uploads.length, 1, 'unflagged UI never skips independent server photo analysis');
+  assert.deepEqual(s.calls.map(c => c.action), ['create', 'media_reserve', 'media_validate', 'analyze']);
+  assert.equal(s.server().result.safety.stop, true, 'server alone classifies the risk');
+  assert.equal(s.q('fxhf-entrust').disabled, true);
+  s.change('fxhf-critical-ack', true);
+  assert.equal(s.q('fxhf-entrust').disabled, false);
+});
+for (const goBack of [false, true]) {
+  test('Compact analysis has no minimum wait and preserves pending dossier' + (goBack ? ' on Return' : ''), async t => {
+    let release;
+    const s = setup(t, {override: async body => {
+      if (body.action === 'analyze') await new Promise(resolve => { release = resolve; });
+    }});
+    s.fill(); s.photo(); s.q('fxhf-submit').click();
+    await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'safety');
+    s.click('RAFI comprend mon besoin'); await wait(() => release);
+    assert.equal(s.q('fxhf-root').dataset.fxhfState, 'analysis');
+    assert.deepEqual([...s.q('fxhf-panel').querySelectorAll('li')].map(el => el.textContent), [
+      'J’identifie le métier', 'Je vérifie la priorité', 'Je prépare votre solution',
+    ]);
+    assert.equal(s.q('fxhf-panel').querySelector('img'), null, 'only the canonical RAFI remains');
+    assert(s.q('fxhf-root').querySelector('.fxhf-visual'));
+    assert.equal(s.q('fxhf-analysis-back').disabled, false);
+    if (goBack) {
+      s.q('fxhf-analysis-back').click();
+      assert.equal(s.q('fxhf-root').dataset.fxhfState, 'need');
+      assert.equal(s.q('fxhf-need-input').disabled, true, 'no concurrent draft edits while canonical analysis settles');
+    }
+    release();
+    await s.until(() => s.q('fxhf-root').dataset.fxhfState === (goBack ? 'need' : 'result'));
+    assert.equal(s.counts().analysisCount, 1);
+    if (goBack) {
+      assert.equal(s.q('fxhf-need-input').disabled, false);
+      assert.equal(s.q('fxhf-need-input').value, 'Une petite fuite sous mon lavabo depuis ce matin.');
+      assert.equal(s.q('fxhf-location').value, 'rabat');
+      assert.equal(s.q('fxhf-photos').querySelectorAll('figure').length, 1);
+      await s.analyze();
+      assert.equal(s.counts().createCount, 1); assert.equal(s.counts().analysisCount, 1);
+    }
+  });
+}
+test('Result shows priority once, useful safety advice and the unchanged canonical CTA', async t => {
+  const s = setup(t, {override(body, server) {
+    if (body.action !== 'analyze') return;
+    server.result = result(); server.result.safety.level = 'URGENT';
+    server.result.safety.messages = ['Gardez vos distances.'];
+    server.result_run_id = body.run_id; server.state = 'ready';
+    return {session: clone(server)};
+  }});
+  s.fill(); await s.analyze();
+  assert.equal((s.q('fxhf-root').textContent.match(/Urgente · intervention rapide recommandée/g) || []).length, 1);
+  assert.equal(s.q('fxhf-root').querySelector('.fxhf-caution strong').textContent, 'Conseil immédiat');
+  assert.match(s.q('fxhf-root').querySelector('.fxhf-caution').textContent, /Gardez vos distances/);
+  assert.equal(s.q('fxhf-entrust').textContent, 'Confier cette intervention à FIXEO');
+  s.q('fxhf-entrust').click(); await s.until(() => s.q('fxhf-phone'));
+  s.change('fxhf-phone', '0611111111'); s.click('Retour'); await s.until(() => s.q('fxhf-entrust'));
+  s.q('fxhf-entrust').click(); await s.until(() => s.q('fxhf-phone'));
+  assert.equal(s.q('fxhf-phone').value, '0611111111');
+  s.q('fxhf-confirm').click(); await s.until(() => s.q('fxhf-root').dataset.fxhfState === 'matching');
+  assert.equal(s.counts().confirmCount, 1);
 });

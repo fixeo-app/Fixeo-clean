@@ -122,6 +122,8 @@ section#home.fxhf-premium-home > .hero-content {
 .fxhf-universal .fxhf-hazards label { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 10px; border: 1px solid var(--fxhf-line); border-radius: 12px; color: #d2dbea; background: #dce8ff05; font-size: 13px; line-height: 1.4; cursor: pointer; }
 .fxhf-universal .fxhf-hazards label:first-child { grid-column: 1 / -1; }
 .fxhf-universal .fxhf-hazards label:has(:checked) { border-color: #d7bd7966; background: #d7bd790e; }
+.fxhf-universal .fxhf-safety-more { margin-top: 10px; color: var(--fxhf-muted); font-size: 13px; }
+.fxhf-universal .fxhf-safety-more summary { padding-block: 12px; }
 .fxhf-universal .fxhf-question-count { font-size: 12px; color: #bfdce6; margin: 0 0 12px; }
 .fxhf-universal .fxhf-question { font-size: 22px; line-height: 1.35; font-weight: 500; color: var(--fxhf-ink); margin: 0 0 16px; }
 .fxhf-universal .fxhf-answers { display: grid; gap: 8px; }
@@ -168,10 +170,11 @@ section#home.fxhf-premium-home > .hero-content {
 .fxhf-universal .fxhf-rafi-core { position: relative; display: grid; place-items: center; }
 .fxhf-universal .fxhf-rafi-face { display: block; width: 190px; height: 190px; object-fit: contain; filter: drop-shadow(0 12px 22px #87bccd1c); }
 .fxhf-universal .fxhf-rafi-caption { font-size: 16px; line-height: 1.7; color: #b4c9da; text-align: center; margin: 24px 0; }
-.fxhf-universal .fxhf-analysis-art { position: relative; width: 164px; height: 164px; display: grid; place-items: center; margin: 24px auto; isolation: isolate; pointer-events: none; }
-.fxhf-universal .fxhf-analysis-art span { position: absolute; inset: -8px; border-radius: 50%; border: 1px solid #b4e5f033; box-shadow: 0 0 32px #a3d4e112, inset 0 0 32px #a3d4e110; animation: fxhf-halo 3s ease-in-out infinite; }
-.fxhf-universal .fxhf-analysis-art img { width: 130px; height: 130px; object-fit: contain; }
-.fxhf-universal .fxhf-analysis-caption { text-align: center; font-size: 14px; color: #b7c8df; margin: 12px 0; }
+.fxhf-universal .fxhf-analysis-steps { list-style: none; display: grid; gap: 14px; padding: 16px; margin: 0; border: 1px solid var(--fxhf-line); border-radius: 16px; background: #b4d8ed05; }
+.fxhf-universal .fxhf-analysis-steps li { display: flex; align-items: center; gap: 10px; color: #d1deee; font-size: 14px; line-height: 1.5; }
+.fxhf-universal .fxhf-analysis-steps li::before { content: ''; flex: 0 0 5px; height: 5px; border-radius: 50%; background: #a9deeb; animation: fxhf-live-dot 3s ease-in-out infinite; }
+.fxhf-universal .fxhf-analysis-steps li:nth-child(2)::before { animation-delay: .3s; }
+.fxhf-universal .fxhf-analysis-steps li:nth-child(3)::before { animation-delay: .6s; }
 #fxhf-root[data-fxhf-state=analysis] .fxhf-scroll { display: flex; flex-direction: column; justify-content: center; }
 #fxhf-root[data-fxhf-state=analysis] .fxhf-status { text-align: center; }
 #fxhf-root[aria-busy=true] .fxhf-submit { background-size: 180% 100%; animation: fxhf-working 2s ease-in-out infinite; }
@@ -202,7 +205,7 @@ body.fxhf-immersive #fixeo-urgent-fab, body.fxhf-immersive .chat-widget { visibi
   .fxhf-universal .fxhf-progress span { margin-bottom: 5px; }
   .fxhf-universal .fxhf-scroll { padding-bottom: 8px; }
   .fxhf-universal .fxhf-actions { padding-top: 10px; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
-  #fxhf-root[data-fxhf-state=need] .fxhf-submit { background: var(--fxhf-cta-gradient); box-shadow: inset 0 1px #ffffff40, inset 0 -1px #24204240, 0 4px 16px #d044793b, 0 0 26px #9563d526; }
+  #fxhf-root .fxhf-submit { color: #fff; -webkit-text-fill-color: currentColor; background: var(--fxhf-cta-gradient); box-shadow: inset 0 1px #ffffff40, inset 0 -1px #24204240, 0 4px 16px #d044793b, 0 0 26px #9563d526; }
   #fxhf-root[data-fxhf-state=need] .fxhf-submit:disabled { opacity: 1; color: #d9c5d3; border-color: #e7bfd326; background: var(--fxhf-cta-muted-gradient); box-shadow: inset 0 1px #ffffff15, 0 0 16px #b650921a; }
   #fxhf-root[data-fxhf-state=need] .fxhf-submit:active:not(:disabled) { box-shadow: inset 0 2px 6px #291b4430; }
   #fxhf-root[data-fxhf-state=need] .fxhf-consent { font-size: 12.5px; font-weight: 400; line-height: 1.4; color: #bdc8da; gap: 9px; }
@@ -226,30 +229,29 @@ body.fxhf-immersive #fixeo-urgent-fab, body.fxhf-immersive .chat-widget { visibi
   body.fxhf-keyboard .fxhf-eyebrow { display: none; }
   body.fxhf-keyboard .fxhf-actions { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
 
-  /* NEED is a compact document, not a stretched three-row workspace.
-     End after the CTA without reserving an empty viewport tail. The fixed
-     keyboard surface and all other states keep their existing anchoring. */
-  body:not(.fxhf-keyboard) section#home.hero.hero-section.fxhf-premium-home:has(#fxhf-root[data-fxhf-state=need]) {
+  /* Every mobile journey state follows its content through the CTA.
+     The keyboard has one scroll surface; no viewport tail or nested footer. */
+  body:not(.fxhf-keyboard) section#home.hero.hero-section.fxhf-premium-home:has(#fxhf-root[data-fxhf-state]) {
     min-height: 0 !important;
   }
-  #fxhf-root[data-fxhf-state=need] .fxhf-universal {
+  #fxhf-root[data-fxhf-state] .fxhf-universal {
     height: auto;
     min-height: 0;
     align-content: start;
     padding-top: 4px;
     padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
-  #fxhf-root[data-fxhf-state=need] .fxhf-content {
+  #fxhf-root[data-fxhf-state] .fxhf-content {
     grid-template-rows: auto auto auto;
     align-content: start;
     align-self: start;
     gap: 8px;
   }
-  #fxhf-root[data-fxhf-state=need] .fxhf-scroll {
+  #fxhf-root[data-fxhf-state] .fxhf-scroll {
     overflow: visible;
     padding-bottom: 0;
   }
-  #fxhf-root[data-fxhf-state=need] .fxhf-actions {
+  #fxhf-root[data-fxhf-state] .fxhf-actions {
     padding-bottom: 0;
     background: transparent;
   }
@@ -287,21 +289,21 @@ body.fxhf-immersive #fixeo-urgent-fab, body.fxhf-immersive .chat-widget { visibi
   #fxhf-root[data-fxhf-state=need] .fxhf-speech-lang { background: #cde9ff06; color: #bdcede; border-radius: 10px; }
   body.fxhf-keyboard #fxhf-root[data-fxhf-state=need] .fxhf-title { font-size: 22px; }
   /* RAFI OS still mounts for legacy consumers. Hide only its decorative
-     homepage stage while mobile Premium NEED owns the presentation. */
-  section#home.fxhf-premium-home:has(#fxhf-root[data-fxhf-state=need]) > .hero-content > .rfos-stage-wrap,
-  section#home.fxhf-premium-home:has(#fxhf-root[data-fxhf-state=need]) + .rfos-h1-band {
+     homepage stage throughout the mounted canonical mobile journey. */
+  section#home.fxhf-premium-home:has(#fxhf-root[data-fxhf-state]) > .hero-content > .rfos-stage-wrap,
+  section#home.fxhf-premium-home:has(#fxhf-root[data-fxhf-state]) + .rfos-h1-band {
     display: none !important;
   }
   /* One scroll surface includes heading, fields AND CTA. No fixed footer
      can cover a field, including when Safari pans the visual viewport. */
-  body.fxhf-keyboard #fxhf-root[data-fxhf-state=need] {
+  body.fxhf-keyboard #fxhf-root[data-fxhf-state] {
     height: var(--fxhf-keyboard-height, 100svh);
     overflow-y: auto;
     overscroll-behavior-y: contain;
     -webkit-overflow-scrolling: touch;
     scroll-padding-block: 12px;
   }
-  body.fxhf-keyboard #fxhf-root[data-fxhf-state=need] .fxhf-universal {
+  body.fxhf-keyboard #fxhf-root[data-fxhf-state] .fxhf-universal {
     height: auto;
     min-height: 0;
   }
@@ -327,8 +329,6 @@ body.fxhf-immersive #fixeo-urgent-fab, body.fxhf-immersive .chat-widget { visibi
   .fxhf-universal .fxhf-summary { padding: 12px; gap: 8px; }
   .fxhf-universal .fxhf-lifecycle li { min-height: 38px; padding: 6px 0; }
   .fxhf-universal .fxhf-reference { margin: 10px 0; padding: 10px 12px; }
-  .fxhf-universal .fxhf-analysis-art { width: 116px; height: 116px; margin: 12px auto; }
-  .fxhf-universal .fxhf-analysis-art img { width: 98px; height: 98px; }
 }
 @keyframes fxhf-enter { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @keyframes fxhf-prompt-reveal { from { opacity: 0; } to { opacity: 1; } }

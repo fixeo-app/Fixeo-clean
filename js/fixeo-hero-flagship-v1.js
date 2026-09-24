@@ -666,27 +666,45 @@
     root.dataset.fxhfPhotos = String(count);
   }
   function renderSafety() {
+    // Presentation hints only: never infer a safe state or preselect a signal.
+    // The unchanged server still evaluates the full text, answers and photos.
+    var text = slug(intake.draft.description).replace(/-/g, " "),
+      hint;
+    try { hint = window.FixeoAIRE?.detect?.(intake.draft.description)?.cat; } catch (_) {}
+    var relevant = new Set(intake.draft.safety_signals),
+      contexts = [
+        [hint === "electricite" || /\b(electri\w*|prise[sz]?|disjonct\w*|etincell\w*|court circuit)\b/.test(text), ["electricity", "fire"]],
+        [/\b(gaz|butane|propane|chaudiere)\b/.test(text), ["gas", "fire"]],
+        [hint === "plomberie" || /\b(fuite|inond\w*|eau|canalis\w*)\b/.test(text), ["major_leak", "flood"]],
+        [hint === "maconnerie" || /\b(structur\w*|affaisse\w*|effondr\w*|fissur\w*|porteur|porteuse)\b/.test(text), ["structure"]],
+        [/\b(feu|flamme[sz]?|fumee|incendie|brule\w*)\b/.test(text), ["fire"]],
+      ];
+    contexts.forEach(function (entry) {
+      if (entry[0]) entry[1].forEach(function (key) { relevant.add(key); });
+    });
+    var clearTrade = Object.hasOwn(trades, hint || "") && hint !== "autre",
+      simpleDoor = /\b(porte|serrure|cle[fs]?|serrurier)\b/.test(text),
+      uncertain = !contexts.some(function (entry) { return entry[0]; }) && !clearTrade && !simpleDoor;
+    relevant.add("immediate_danger");
+    function choices(keys) {
+      return '<div class="fxhf-hazards">' + keys.map(function (key) {
+        return '<label><input type="checkbox" value="' + key + '"' +
+          (intake.draft.safety_signals.includes(key) ? " checked" : "") +
+          '><span>' + hazards[key] + '</span></label>';
+      }).join("") + '</div>';
+    }
     frame(
       "safety",
-      "D’abord, votre sécurité.",
-      "Sans vous approcher du danger, avez-vous déjà constaté l’un de ces signes ?",
+      relevant.size === 1 ? "Un point avant de continuer." : "D’abord, votre sécurité.",
+      relevant.size === 1
+        ? "Avez-vous déjà constaté un danger immédiat ? En cas de doute, signalez-le sans vous approcher."
+        : "Pour ce besoin, avez-vous déjà constaté l’un de ces signes ? Ne vous approchez pas pour vérifier.",
     );
     panel(
-      '<div class="fxhf-hazards">' +
-        Object.keys(hazards)
-          .map(function (key) {
-            return (
-              '<label><input type="checkbox" value="' +
-              key +
-              '"' +
-              (intake.draft.safety_signals.includes(key) ? " checked" : "") +
-              "><span>" +
-              hazards[key] +
-              "</span></label>"
-            );
-          })
-          .join("") +
-        '</div><p class="fxhf-note">Ne faites aucune manipulation pour vérifier. En cas de doute, gardez vos distances. L’absence de signe déclaré ne garantit pas l’absence de danger.</p>',
+      choices(Object.keys(hazards).filter(function (key) { return relevant.has(key); })) +
+        (uncertain ? '<details class="fxhf-safety-more"><summary>Préciser un signe observé</summary>' +
+          choices(Object.keys(hazards).filter(function (key) { return !relevant.has(key); })) + '</details>' : '') +
+        '<p class="fxhf-note">Ne faites aucune manipulation pour vérifier. L’absence de signe déclaré ne garantit pas l’absence de danger.</p>',
     );
     function captureSafety() {
       intake.draft.safety_signals = Array.from(
@@ -711,13 +729,26 @@
   async function analyze() {
     frame(
       "analysis",
-      "RAFI comprend votre besoin…",
+      "RAFI analyse votre besoin…",
       "Vos informations restent dans le même dossier sécurisé.",
     );
     panel(
-      '<div class="fxhf-analysis-art" aria-hidden="true"><span></span><img src="rafi/RAFI_V2_HeadCollar_Core.webp" alt="" width="144" height="144"></div><p class="fxhf-analysis-caption">Un besoin. Une solution adaptée.</p>',
+      '<ul class="fxhf-analysis-steps" aria-label="Traitement en cours"><li>J’identifie le métier</li><li>Je vérifie la priorité</li><li>Je prépare votre solution</li></ul>',
     );
-    await intake.analyze();
+    // Return is view-only. Keep the in-flight canonical analysis and its dossier;
+    // freeze edits until it settles, then restore the same draft/photos.
+    var returned = false,
+      back = button("Retour", function () {}, true, "fxhf-analysis-back");
+    back.onclick = function () {
+      if (state !== "analysis") return;
+      returned = true;
+      renderNeed();
+      root.querySelectorAll("input, select, textarea, button").forEach(function (el) { el.disabled = true; });
+      status("Analyse en cours. Votre besoin est conservé.");
+    };
+    try { await intake.analyze(); }
+    finally { if (returned) renderNeed(); }
+    if (returned) return;
     questionIndex = 0;
     renderState();
   }
@@ -810,16 +841,9 @@
   }
   function safetyNotice() {
     var safety = intake.session.result.safety;
-    if (
-      !safety.stop &&
-      safety.level !== "URGENT" &&
-      !safety.signals?.includes("electrical_risk")
-    )
-      return "";
+    if (!safety.stop && !(safety.messages || []).length) return "";
     return (
-      '<section class="fxhf-caution" role="alert"><strong>' +
-      esc(priority()) +
-      "</strong><ul>" +
+      '<section class="fxhf-caution" role="alert"><strong>Conseil immédiat</strong><ul>' +
       (safety.messages || [])
         .map(function (message) {
           return "<li>" + esc(message) + "</li>";
