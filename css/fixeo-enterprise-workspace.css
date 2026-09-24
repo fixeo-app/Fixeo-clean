@@ -218,3 +218,14 @@
 .fxew-audit-detail-row b{text-align:right;overflow-wrap:anywhere}
 .fxew-audit-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px 18px}
 @media(max-width:560px){.fxew-audit-event-head{flex-direction:column}.fxew-audit-time{text-align:left}.fxew-audit-footer{align-items:stretch;flex-direction:column}.fxew-audit-footer .fxew-button{width:100%}}
+
+/* B9 — SLA policy management */
+.fxew-sla-defaults{display:flex;flex-wrap:wrap;gap:8px 12px;padding:14px 18px;border-bottom:1px solid var(--line);color:var(--muted);font-size:11px}
+.fxew-sla-defaults span{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.025)}
+.fxew-sla-policy-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:18px}
+.fxew-sla-policy-card{border:1px solid rgba(255,255,255,.09);border-radius:15px;background:rgba(255,255,255,.025);padding:18px;min-width:0}
+.fxew-sla-policy-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.fxew-sla-policy-head strong{display:block;font-size:14px}
+.fxew-sla-policy-head span:not(.fxew-status){display:block;margin-top:4px;color:var(--muted);font-size:12px}
+.fxew-sla-policy-meta{display:flex;flex-wrap:wrap;gap:7px 14px;margin-top:12px;color:var(--muted);font-size:11px}
+@media(max-width:700px){.fxew-sla-policy-list{grid-template-columns:1fr;padding:14px}.fxew-sla-defaults{padding:12px 14px}}
