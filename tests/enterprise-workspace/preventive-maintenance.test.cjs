@@ -86,6 +86,7 @@ test('C06 UI renders reminders, overdue plans and execution history',async()=>{
   assert.match(w.document.getElementById('enterprise-maintenance-summary').textContent,/2/);
   assert.match(w.document.getElementById('enterprise-maintenance-plans').textContent,/En retard/);
   assert.match(w.document.getElementById('enterprise-maintenance-plans').textContent,/Rappel/);
+  assert.match(w.document.getElementById('enterprise-maintenance-calendar').textContent,/Clim|Électricité/);
   assert.match(w.document.getElementById('enterprise-maintenance-runs').textContent,/generated/);
   assert.equal(w.document.getElementById('enterprise-maintenance-create').hidden,false);
   app.destroy();dom.window.close();
@@ -105,6 +106,8 @@ test('C08 scheduler is idempotent per plan/due and generated requests enter hybr
   const sql=fs.readFileSync(path.join(root,'supabase/migrations/20260924233000_enterprise_preventive_maintenance_block_c.sql'),'utf8');
   assert.match(sql,/UNIQUE \(plan_id,due_at\)/);
   assert.match(sql,/ON CONFLICT \(plan_id,due_at\)/);
+  assert.match(sql,/r\.status='generated'/);
+  assert.match(sql,/CONTINUE;/);
   assert.match(sql,/current_setting|set_config\('fixeo\.enterprise_dispatch_deferred','on',true\)/);
   assert.match(sql,/public\.dispatch_enterprise_hybrid_v1\(v_request_id\)/);
   assert.match(sql,/enterprise_request_context/);
