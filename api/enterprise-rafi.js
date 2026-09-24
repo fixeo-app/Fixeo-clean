@@ -1,5 +1,7 @@
 'use strict';
 
+const { publicConfig } = require('./supabase-environment');
+
 const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 const MAX_QUESTION = 2000;
 const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg','image/png','image/webp']);
@@ -44,8 +46,9 @@ async function boundedJson(response,max=512*1024){
 }
 
 function supabaseClient(env,token){
-  const root=(env.SUPABASE_URL||'').replace(/\/$/,'');
-  const key=env.SUPABASE_ANON_KEY||'';
+  let cfg; try{cfg=publicConfig(env);}catch(_){throw new RafiEnterpriseError('ENTERPRISE_RAFI_UNAVAILABLE',503);}
+  const root=(cfg.SUPABASE_URL||'').replace(/\/$/,'');
+  const key=cfg.SUPABASE_ANON_KEY||'';
   if(!root||!key) throw new RafiEnterpriseError('ENTERPRISE_RAFI_UNAVAILABLE',503);
   const headers={apikey:key,Authorization:'Bearer '+token,'Content-Type':'application/json'};
   async function rpc(name,args){
