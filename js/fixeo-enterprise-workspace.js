@@ -35,7 +35,10 @@
     var requestSite = byId('enterprise-request-site'), requestCategory = byId('enterprise-request-category');
     var requestDescription = byId('enterprise-request-description'), requestUrgency = byId('enterprise-request-urgency');
     var requestSubmit = byId('enterprise-request-submit'), requestFormError = byId('enterprise-request-form-error');
-    var currentEnterpriseId = '', currentEnterpriseRole = '', currentSites = [];
+    var interventionDialog = byId('enterprise-intervention-dialog'), interventionClose = byId('enterprise-intervention-close');
+    var interventionDismiss = byId('enterprise-intervention-dismiss'), interventionDetail = byId('enterprise-intervention-detail');
+    var interventionDialogTitle = byId('enterprise-intervention-dialog-title');
+    var currentEnterpriseId = '', currentEnterpriseRole = '', currentSites = [], currentInterventions = [];
     var navigate = options.navigate || function (path) { win.location.replace(path); };
     var waitMs = options.waitMs || 15000;
     var client = null, subscription = null, generation = 0, stopped = false, logoutPending = false;
@@ -47,12 +50,15 @@
       currentEnterpriseId = '';
       currentEnterpriseRole = '';
       currentSites = [];
+      currentInterventions = [];
       if (siteCreate) siteCreate.hidden = true;
       if (sitesMode) sitesMode.textContent = 'Lecture seule';
       if (requestCreate) requestCreate.hidden = true;
       if (requestsMode) requestsMode.textContent = 'Lecture seule';
       if (siteDialog) siteDialog.hidden = true;
       if (requestDialog) requestDialog.hidden = true;
+      if (interventionDialog) interventionDialog.hidden = true;
+      if (interventionDetail) interventionDetail.replaceChildren();
       name.textContent = company.textContent = role.textContent = '';
       if (sitesList) sitesList.replaceChildren();
       if (interventionsList) interventionsList.replaceChildren();
@@ -87,6 +93,22 @@
       if (!value) return '';
       var d = new Date(value);
       return Number.isNaN(d.getTime()) ? '' : new Intl.DateTimeFormat('fr-MA', { day: '2-digit', month: 'short', year: 'numeric' }).format(d);
+    }
+    function dateTimeLabel(value) {
+      if (!value) return 'Non renseigné';
+      var d = new Date(value);
+      return Number.isNaN(d.getTime()) ? 'Non renseigné' : new Intl.DateTimeFormat('fr-MA', {
+        day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      }).format(d);
+    }
+    function slaState(sla) {
+      if (!sla || !sla.due_at) return { key: 'none', label: 'SLA non disponible' };
+      var now = Date.now();
+      var due = Date.parse(sla.due_at);
+      var risk = sla.at_risk_at ? Date.parse(sla.at_risk_at) : NaN;
+      if (!Number.isNaN(due) && now > due) return { key: 'late', label: 'Échéance dépassée' };
+      if (!Number.isNaN(risk) && now >= risk) return { key: 'risk', label: 'À risque' };
+      return { key: 'track', label: 'Dans les temps' };
     }
     function el(tag, cls, content) {
       var node = doc.createElement(tag);
@@ -144,11 +166,13 @@
       syncRequestControls();
     }
     function renderInterventions(rows) {
+      currentInterventions = rows.slice();
       interventionsList.replaceChildren();
       interventionsCount.textContent = String(rows.length);
       interventionsEmpty.hidden = rows.length !== 0;
       rows.forEach(function (item) {
         var card = el('article', 'fxew-intervention');
+        card.dataset.interventionId = item.id;
         var mainRow = el('div', 'fxew-intervention-main');
         var copy = el('div');
         copy.append(el('strong', '', label(item.service_category)));
@@ -158,9 +182,14 @@
         var meta = el('div', 'fxew-intervention-meta');
         meta.append(el('span', '', item.urgency ? 'Urgence · ' + label(item.urgency) : 'Urgence · Non renseignée'));
         meta.append(el('span', '', item.mission_status ? 'Mission · ' + label(item.mission_status) : 'Mission · Non attribuée'));
+        if (item.sla) meta.append(el('span', '', 'SLA · ' + slaState(item.sla).label));
         var when = dateLabel(item.created_at);
         if (when) meta.append(el('span', '', when));
         card.append(meta);
+        var actions = el('div', 'fxew-intervention-actions');
+        var detail = el('button', 'fxew-site-action', 'Voir le détail');
+        detail.type = 'button'; detail.dataset.interventionAction = 'detail'; detail.dataset.interventionId = item.id;
+        actions.append(detail); card.append(actions);
         interventionsList.append(card);
       });
     }
@@ -168,6 +197,67 @@
       dataState.hidden = false;
       dataMessage.textContent = messageText;
       dataRetry.hidden = !retryable;
+    }
+
+    function interventionById(id) {
+      return currentInterventions.find(function (item) { return item.id === id; }) || null;
+    }
+    function detailRow(term, value) {
+      var wrap = el('div', 'fxew-detail-row');
+      wrap.append(el('dt', '', term), el('dd', '', value || 'Non renseigné'));
+      return wrap;
+    }
+    function openInterventionDetail(item) {
+      if (!item) return;
+      interventionDetail.replaceChildren();
+      interventionDialogTitle.textContent = label(item.service_category);
+      var overview = el('dl', 'fxew-detail-grid');
+      overview.append(
+        detailRow('Référence', item.id),
+        detailRow('Site', item.site_name || item.site_code || 'Non renseigné'),
+        detailRow('Ville', item.city),
+        detailRow('Urgence', label(item.urgency)),
+        detailRow('Statut de la demande', label(item.request_status)),
+        detailRow('Statut de mission', item.mission_status ? label(item.mission_status) : 'Non attribuée'),
+        detailRow('Créée le', dateTimeLabel(item.created_at)),
+        detailRow('Acceptée le', item.accepted_at ? dateTimeLabel(item.accepted_at) : 'Non renseigné')
+      );
+      interventionDetail.append(overview);
+
+      var slaBox = el('section', 'fxew-sla-box');
+      var slaHeading = el('div', 'fxew-sla-head');
+      slaHeading.append(el('h3', '', 'SLA'));
+      var stateInfo = slaState(item.sla);
+      var badge = el('span', 'fxew-sla-state fxew-sla-state--' + stateInfo.key, stateInfo.label);
+      slaHeading.append(badge);
+      slaBox.append(slaHeading);
+
+      if (!item.sla) {
+        slaBox.append(el('p', 'fxew-detail-muted', 'Aucun snapshot SLA n’est disponible pour cette intervention.'));
+      } else {
+        var slaGrid = el('dl', 'fxew-detail-grid fxew-detail-grid--sla');
+        slaGrid.append(
+          detailRow('Source de la politique', item.sla.policy_source === 'enterprise_policy' ? 'Politique entreprise' : 'Valeur FIXEO par défaut'),
+          detailRow('Priorité SLA', label(item.sla.policy_urgency)),
+          detailRow('Objectif d’acceptation', item.sla.acceptance_target_minutes ? String(item.sla.acceptance_target_minutes) + ' min' : 'Non renseigné'),
+          detailRow('Démarrage', dateTimeLabel(item.sla.started_at)),
+          detailRow('À risque à partir de', dateTimeLabel(item.sla.at_risk_at)),
+          detailRow('Échéance', dateTimeLabel(item.sla.due_at))
+        );
+        slaBox.append(slaGrid);
+      }
+      interventionDetail.append(slaBox);
+      interventionDialog.hidden = false;
+      win.setTimeout(function () { interventionClose.focus(); }, 0);
+    }
+    function closeInterventionDetail() {
+      interventionDialog.hidden = true;
+      interventionDetail.replaceChildren();
+    }
+    function handleInterventionAction(event) {
+      var button = event.target && event.target.closest ? event.target.closest('[data-intervention-action]') : null;
+      if (!button || button.dataset.interventionAction !== 'detail') return;
+      openInterventionDetail(interventionById(button.dataset.interventionId || ''));
     }
 
     function siteById(id) {
@@ -412,6 +502,10 @@
     requestCancel.addEventListener('click', closeRequestDialog);
     requestDialog.addEventListener('click', function (event) { if (event.target === requestDialog) closeRequestDialog(); });
     requestForm.addEventListener('submit', submitRequest);
+    interventionsList.addEventListener('click', handleInterventionAction);
+    interventionClose.addEventListener('click', closeInterventionDetail);
+    interventionDismiss.addEventListener('click', closeInterventionDetail);
+    interventionDialog.addEventListener('click', function (event) { if (event.target === interventionDialog) closeInterventionDetail(); });
     logout.addEventListener('click', signOut);
     doc.addEventListener('visibilitychange', visibility);
     win.addEventListener('pagehide', pageHide);
@@ -426,6 +520,9 @@
       requestCreate.removeEventListener('click', openRequestDialog);
       requestClose.removeEventListener('click', closeRequestDialog); requestCancel.removeEventListener('click', closeRequestDialog);
       requestForm.removeEventListener('submit', submitRequest);
+      interventionsList.removeEventListener('click', handleInterventionAction);
+      interventionClose.removeEventListener('click', closeInterventionDetail);
+      interventionDismiss.removeEventListener('click', closeInterventionDetail);
       doc.removeEventListener('visibilitychange', visibility);
       win.removeEventListener('pagehide', pageHide); win.removeEventListener('pageshow', pageShow);
     } };
