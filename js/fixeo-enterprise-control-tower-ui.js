@@ -80,24 +80,31 @@
       attention.replaceChildren();
       if(!rows.length){attention.append(el('p','fxew-report-empty','Aucune intervention ne nécessite une attention immédiate.'));return;}
       rows.forEach(item=>{
-        var card=el('article','fxew-control-alert fxew-control-alert--'+item.severity);
-        var head=el('div','fxew-control-alert-head'),copy=el('div');
-        copy.append(el('strong','',item.service_category||'Intervention'),el('span','',[item.site_name,item.city].filter(Boolean).join(' · ')));
+        var card=el('article','fxew-control-alert fxew-control-alert--'+item.severity+' fxew-j85b-alert');
+        var head=el('div','fxew-control-alert-head fxew-j85b-head'),copy=el('div');
+        copy.append(el('span','fxew-module-kicker',item.severity==='critical'?'PRIORITÉ IMMÉDIATE':'MISSION LIVE'),el('strong','',item.service_category||'Intervention'),el('span','',[item.site_name,item.city].filter(Boolean).join(' · ')));
         head.append(copy,el('span','fxew-status',SEVERITY_LABELS[item.severity]||item.severity));card.append(head);
-        card.append(el('p','fxew-control-reason',REASON_LABELS[item.reason]||item.reason));
+        var rail=el('div','fxew-j85b-rail');
+        function step(name,value,state){var n=el('div','fxew-j85b-step fxew-j85b-step--'+state);n.append(el('span','',name),el('strong','',value));return n;}
+        var sla=REASON_LABELS[item.reason]||item.reason||'Sous contrôle';
+        var dispatch=item.dispatch_mode||'Non renseigné';
+        var mission=item.internal_worker_label?'Interne · '+item.internal_worker_label:(dispatch?'Réseau · '+dispatch:'Non attribuée');
+        rail.append(step('Priorité',SEVERITY_LABELS[item.severity]||item.severity,item.severity==='critical'?'critical':'risk'),step('SLA',sla,item.reason==='sla_breached'?'critical':item.reason==='sla_at_risk'?'risk':'done'),step('Dispatch',dispatch,'live'),step('Mission',mission,item.internal_worker_label?'done':'live'));
+        card.append(rail);
+        var next=el('div','fxew-j85b-next'),nextText=item.reason==='sla_breached'?'SLA dépassé : décider du traitement prioritaire maintenant.':item.reason==='no_internal_candidate'?'Capacité interne absente : maintenir le relais réseau FIXEO.':item.escalation?'Suivre l’escalade et son responsable.':'Analyser la situation et confirmer la prochaine action.';
+        next.append(el('span','','PROCHAINE DÉCISION'),el('strong','',nextText));card.append(next);
         var meta=el('div','fxew-control-meta');
         if(item.due_at)meta.append(el('span','', 'Échéance · '+dateTime(item.due_at)));
-        if(item.dispatch_mode)meta.append(el('span','', 'Dispatch · '+item.dispatch_mode));
-        if(item.internal_worker_label)meta.append(el('span','', 'Interne · '+item.internal_worker_label));
         if(item.escalation&&item.escalation.assigned_to_member_id)meta.append(el('span','', 'Responsable · '+memberLabel(item.escalation.assigned_to_member_id)));
-        card.append(meta);
+        if(meta.childNodes.length)card.append(meta);
         if(canEscalate()){
-          var a=el('div','fxew-site-actions'),b=el('button','fxew-site-action',item.escalation?'Modifier escalade':'Escalader');
+          var a=el('div','fxew-site-actions'),b=el('button','fxew-site-action',item.escalation?'Modifier escalade':item.severity==='critical'?'Décider maintenant':'Escalader');
           b.type='button';b.dataset.controlAction='escalate';b.dataset.requestId=item.request_id;a.append(b);card.append(a);
         }
         attention.append(card);
       });
     }
+
     function renderSites(rows){
       sites.replaceChildren();
       rows.forEach(x=>{
