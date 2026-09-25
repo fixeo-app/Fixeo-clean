@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.7 exposes Site Intelligence rail',()=>{const h=rd('dashboard-enterprise.html');for(const x of ['fxew-j87-command','SITE INTELLIGENCE','enterprise-sites-intelligence'])assert.match(h,new RegExp(x));});
+test('J8.7 derives intelligence from existing site health only',()=>{const j=rd('js/fixeo-enterprise-workspace.js');for(const x of ['PROCHAINE ATTENTION','Aucun site ne nécessite une décision prioritaire','siteHealth\(site\)'])assert.match(j,new RegExp(x));});
+test('J8.7 desktop uses main plus intelligence rail',()=>{assert.match(rd('css/fixeo-enterprise-workspace.css'),/grid-template-columns:minmax\(0,2\.2fr\) minmax\(280px,\.8fr\)/);});
+test('workspace syntax regression remains blocked',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
