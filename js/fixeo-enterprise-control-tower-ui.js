@@ -74,7 +74,7 @@
         ['À risque',s.at_risk||0],
         ['Escalades',s.manual_escalations||0]
       ].forEach(x=>{var c=el('div','fxew-kpi');c.append(el('span','fxew-kpi-label',x[0]),el('strong','fxew-kpi-value',String(x[1])));summary.append(c);});
-      try{win.dispatchEvent(new win.CustomEvent('fixeo:enterprise:control-tower-ready',{detail:{summary:s}}));}catch(_e){}
+      
     }
     function renderAttention(rows){
       attention.replaceChildren();
@@ -123,6 +123,7 @@
         renderAttention(current.attention||[]);
         renderSites(current.site_load||[]);
         renderWorkers(current.worker_load||[]);
+        try{win.dispatchEvent(new win.CustomEvent('fixeo:enterprise:control-tower-ready',{detail:{summary:current.summary||{},site_load:current.site_load||[]}}));}catch(_e){}
         state.hidden=true;
       }catch(_){setState('Impossible de charger la Control Tower. Réessayez.',true);}
     }
