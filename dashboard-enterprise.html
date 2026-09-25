@@ -21,7 +21,7 @@
   <script defer src="js/fixeo-enterprise-audit.js?v=b8-1"></script>
   <script defer src="js/fixeo-enterprise-sla-policy-actions.js?v=b9-1"></script>
   <script defer src="js/fixeo-enterprise-workforce-actions.js?v=block-a1"></script>
-  <script defer src="js/fixeo-enterprise-workforce-ui.js?v=block-a1"></script>
+  <script defer src="js/fixeo-enterprise-workforce-ui.js?v=j831"></script>
   <script defer src="js/fixeo-enterprise-control-tower.js?v=block-b1"></script>
   <script defer src="js/fixeo-enterprise-control-tower-ui.js?v=j61"></script>
   <script defer src="js/fixeo-enterprise-preventive-maintenance.js?v=block-c1"></script>
@@ -300,12 +300,14 @@
 
       <section id="enterprise-workforce-module" class="fxew-module" aria-labelledby="workforce-title">
         <div class="fxew-module-heading">
-          <div><p class="fxew-module-kicker">Workforce</p><h2 id="workforce-title">Effectifs internes</h2></div>
+          <div><p class="fxew-module-kicker">WORKFORCE HYBRID LIVE</p><h2 id="workforce-title">Capacité & mobilisation</h2><p class="fxew-j83-sub">Vos équipes internes et le réseau FIXEO réunis dans une même décision opérationnelle.</p></div>
           <div class="fxew-module-actions">
             <span id="enterprise-workforce-mode" class="fxew-module-meta">Lecture seule</span>
             <button id="enterprise-workforce-create" class="fxew-button fxew-button--primary" type="button" hidden>Ajouter un technicien</button>
           </div>
         </div>
+        <div id="enterprise-workforce-command" class="fxew-j83-command" aria-label="Capacité Workforce"></div>
+        <div id="enterprise-workforce-decision" class="fxew-j83-decision" role="status"></div>
         <div id="enterprise-workforce-list" class="fxew-workforce-list" aria-live="polite"></div>
         <p id="enterprise-workforce-empty" class="fxew-empty" hidden>Aucun technicien interne configuré. Ajoutez votre workforce ou configurez le dispatch externe / hybride pour mobiliser le réseau FIXEO.</p>
       </section>
@@ -326,7 +328,7 @@
         </div>
         <div id="enterprise-dispatch-policy-list" class="fxew-dispatch-policy-list" aria-live="polite"></div>
         <p id="enterprise-dispatch-policy-empty" class="fxew-empty" hidden>Aucune règle personnalisée : le dispatch externe historique reste le défaut.</p>
-        <div class="fxew-report-card-head"><h3>Dispatch en cours</h3><span>Interne + réseau FIXEO</span></div>
+        <div class="fxew-report-card-head"><h3>Dispatch en cours</h3><span id="enterprise-hybrid-live-summary">Interne + réseau FIXEO</span></div>
         <div id="enterprise-hybrid-dispatch-live" class="fxew-hybrid-live" aria-live="polite"></div>
       </section>
 
