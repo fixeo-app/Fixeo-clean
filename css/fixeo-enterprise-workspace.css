@@ -435,3 +435,9 @@
 #enterprise-workspace[data-j3-view="enterprise-sites"]>#enterprise-sites .fxew-grid:empty+ .fxew-empty{display:block}
 #enterprise-workspace[data-j3-view="enterprise-team"]>#enterprise-invitations-module{margin-bottom:14px}
 @media(max-width:700px){.fxew-j5-livebar{grid-template-columns:1fr 1fr}.fxew-j5-livebar>div:nth-child(2){border-right:0}.fxew-j5-livebar>div{padding:12px 14px}}
+
+/* J6 — Active Command Center */
+.fxew-j6-priority{display:flex;align-items:center;gap:18px;justify-content:space-between;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.07);background:linear-gradient(90deg,rgba(244,63,94,.075),rgba(99,102,241,.055),transparent)}
+.fxew-j6-priority[hidden]{display:none!important}.fxew-j6-priority>div:first-child{min-width:0}.fxew-j6-priority strong{display:block;margin-top:3px;font-size:15px;color:#fff}.fxew-j6-priority p{margin:5px 0 0;color:#bdc9d8;font-size:10px}.fxew-j6-priority-actions{display:flex;gap:8px;flex:0 0 auto}.fxew-j6-priority-actions .fxew-button{white-space:nowrap}
+.fxew-j5-livebar strong:not(:empty){font-variant-numeric:tabular-nums}
+@media(max-width:700px){.fxew-j6-priority{align-items:flex-start;flex-direction:column}.fxew-j6-priority-actions{width:100%}.fxew-j6-priority-actions .fxew-button{flex:1}}

@@ -123,7 +123,7 @@
         renderAttention(current.attention||[]);
         renderSites(current.site_load||[]);
         renderWorkers(current.worker_load||[]);
-        try{win.dispatchEvent(new win.CustomEvent('fixeo:enterprise:control-tower-ready',{detail:{summary:current.summary||{},site_load:current.site_load||[]}}));}catch(_e){}
+        try{win.dispatchEvent(new win.CustomEvent('fixeo:enterprise:control-tower-ready',{detail:{summary:current.summary||{},site_load:current.site_load||[],attention:current.attention||[]}}));}catch(_e){}
         state.hidden=true;
       }catch(_){setState('Impossible de charger la Control Tower. Réessayez.',true);}
     }
