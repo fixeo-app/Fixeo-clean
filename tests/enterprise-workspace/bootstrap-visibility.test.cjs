@@ -1,0 +1,3 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const s=()=>fs.readFileSync(path.join(__dirname,'../../js/fixeo-enterprise-workspace.js'),'utf8');
+test('visible transition queues bootstrap when prior run is settling',()=>{const x=s();assert.match(x,/refreshInFlight = false, refreshRequested = false/);assert.match(x,/if \(refreshInFlight\) \{ refreshRequested = true; return; \}/);});
+test('queued visibility bootstrap is replayed after finally',()=>{const x=s();assert.match(x,/if \(refreshRequested && !stopped && !doc\.hidden/);assert.match(x,/refreshRequested = false;\s*win\.setTimeout\(refresh, 0\)/);});

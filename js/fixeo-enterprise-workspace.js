@@ -76,7 +76,7 @@
     var waitMs = options.waitMs || 15000;
     var client = null, subscription = null, generation = 0, stopped = false, logoutPending = false;
     var workforceUi = null, controlTowerUi = null, maintenanceUi = null, equipmentUi = null, financeUi = null, governanceUi = null, rafiUi = null;
-    var logoutFailed = false, logoutProof = null, refreshInFlight = false;
+    var logoutFailed = false, logoutProof = null, refreshInFlight = false, refreshRequested = false;
 
     function clear() {
       generation++;
@@ -1271,7 +1271,13 @@
           canViewAudit() ? loadAudit(result.enterprise.id, run, false) : Promise.resolve()
         ]);
       } catch (_) { if (run === generation && !stopped && !doc.hidden) failure(); }
-      finally { refreshInFlight = false; }
+      finally {
+        refreshInFlight = false;
+        if (refreshRequested && !stopped && !doc.hidden && !logoutPending && !logoutFailed) {
+          refreshRequested = false;
+          win.setTimeout(refresh, 0);
+        }
+      }
     }
     async function signOut() {
       if (logoutPending || stopped) return;
@@ -1304,8 +1310,11 @@
       }
     }
     function visibility() {
-      if (doc.hidden) clear();
-      else refresh();
+      if (doc.hidden) { clear(); return; }
+      // If the tab became visible while an invalidated bootstrap is still settling,
+      // queue exactly one fresh bootstrap instead of dropping the visibility event.
+      if (refreshInFlight) { refreshRequested = true; return; }
+      refresh();
     }
     function pageHide() { clear(); }
     function pageShow(event) { if (event.persisted) refresh(); }
