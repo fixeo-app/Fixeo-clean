@@ -930,14 +930,18 @@
       sitesCount.textContent = String(rows.length);
       sitesEmpty.hidden = rows.length !== 0;
       rows.forEach(function (site) {
-        var health = siteHealth(site);\n        var card = el('article', 'fxew-site-card fxew-j82-site fxew-j82-site--' + health.tone);
+        var health = siteHealth(site);
+        var card = el('article', 'fxew-site-card fxew-j82-site fxew-j82-site--' + health.tone);
         card.dataset.siteId = site.id;
         var top = el('div', 'fxew-site-top');
         var copy = el('div');
         copy.append(el('strong', '', site.name || 'Site sans nom'));
         copy.append(el('span', '', [site.site_code, site.city].filter(Boolean).join(' · ') || 'Localisation non renseignée'));
         top.append(copy, el('span', 'fxew-status fxew-j82-health', health.label));
-        card.append(top);\n        var signals = el('div','fxew-j82-signals');\n        signals.append(kpi('Interventions',String(health.open),'Ouvertes'),kpi('Critiques',String(health.critical),health.critical?'Décision requise':'Aucune'),kpi('SLA',health.late?String(health.late)+' dépassé'+(health.late>1?'s':''):health.risk?String(health.risk)+' à risque':'Sous contrôle','Temps réel'));\n        card.append(signals);
+        card.append(top);
+        var signals = el('div','fxew-j82-signals');
+        signals.append(kpi('Interventions',String(health.open),'Ouvertes'),kpi('Critiques',String(health.critical),health.critical?'Décision requise':'Aucune'),kpi('SLA',health.late?String(health.late)+' dépassé'+(health.late>1?'s':''):health.risk?String(health.risk)+' à risque':'Sous contrôle','Temps réel'));
+        card.append(signals);
         if (site.address_line) card.append(el('p', 'fxew-site-address', site.address_line));
         if (canManageSites()) {
           var actions = el('div', 'fxew-site-actions');
@@ -956,7 +960,8 @@
       currentInterventions = rows.slice();
       interventionsList.replaceChildren();
       interventionsCount.textContent = String(rows.length);
-      interventionsEmpty.hidden = rows.length !== 0;\n      refreshSiteHealth();
+      interventionsEmpty.hidden = rows.length !== 0;
+      refreshSiteHealth();
       rows.forEach(function (item) {
         var card = el('article', 'fxew-intervention');
         card.dataset.interventionId = item.id;
