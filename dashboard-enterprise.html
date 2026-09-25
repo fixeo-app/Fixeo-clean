@@ -7,7 +7,7 @@
   <meta name="referrer" content="same-origin">
   <title>Espace entreprise | FIXEO</title>
   <link rel="icon" href="img/logo-fixeo-icon.png">
-  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=j813">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=j814">
   <script defer src="js/supabase-client.js"></script>
   <script defer src="js/fixeo-logout-global.js"></script>
   <script defer src="js/fixeo-auth-resolver.js"></script>
@@ -88,38 +88,42 @@
         <button id="enterprise-data-retry" class="fxew-button" type="button" hidden>Réessayer</button>
       </div>
 
-      <section id="enterprise-rafi-module" class="fxew-module fxew-rafi" aria-labelledby="enterprise-rafi-title" hidden>
-        <div class="fxew-module-heading">
-          <div><p class="fxew-module-kicker">RAFI Intelligence</p><h2 id="enterprise-rafi-title">Votre copilote Enterprise</h2></div>
-          <span class="fxew-module-meta">Analyse · actions confirmées</span>
+      <section id="enterprise-rafi-module" class="fxew-module fxew-rafi fxew-j814-rafi" aria-labelledby="enterprise-rafi-title" hidden>
+        <div class="fxew-j814-head">
+          <div><p class="fxew-module-kicker">RAFI ENTERPRISE INTELLIGENCE</p><h2 id="enterprise-rafi-title">Votre console de décision</h2><p>Interrogez vos opérations avec le contexte consolidé de votre entreprise.</p></div>
+          <div class="fxew-j814-connected"><i></i><span>CONTEXTE ENTERPRISE</span><strong>Connecté</strong><small>Analyse · actions confirmées</small></div>
         </div>
-        <div class="fxew-rafi-suggestions">
-          <button id="enterprise-rafi-briefing" type="button">RAFI · Prochaines actions</button>
-          <button type="button" data-rafi-question="Quelles interventions nécessitent mon attention maintenant ?">À traiter maintenant</button>
-          <button type="button" data-rafi-question="Quels sites ont le plus de problèmes ou de SLA à risque ?">Sites à risque</button>
-          <button type="button" data-rafi-question="Quels équipements présentent des pannes récurrentes ?">Pannes récurrentes</button>
-          <button type="button" data-rafi-question="Résume mes coûts internes et externes et les écarts de budget.">Finance</button>
+        <div class="fxew-j814-capabilities" aria-label="Contextes RAFI disponibles">
+          <span>Opérations</span><span>SLA</span><span>Sites</span><span>Workforce hybride</span><span>Maintenance</span><span>Finance</span><span>Gouvernance</span>
         </div>
-        <div id="enterprise-rafi-messages" class="fxew-rafi-messages" aria-live="polite"></div>
-        <div id="enterprise-rafi-photo" class="fxew-rafi-photo" hidden>
-          <button id="enterprise-rafi-photo-remove" class="fxew-site-action" type="button">Retirer</button>
-        </div>
-        <form id="enterprise-rafi-form" class="fxew-rafi-form">
-          <label class="fxew-sr-only" for="enterprise-rafi-input">Question pour RAFI</label>
-          <textarea id="enterprise-rafi-input" rows="3" maxlength="2000" required placeholder="Ex. Quels sites dépassent leur SLA et pourquoi ?"></textarea>
-          <div class="fxew-rafi-actions">
-            <button id="enterprise-rafi-speak" class="fxew-button" type="button">Parler à RAFI</button>
-            <select id="enterprise-rafi-language" class="fxew-rafi-language" aria-label="Langue de transcription">
-              <option value="fr-FR">FR</option><option value="ar-MA">الدارجة</option>
-            </select>
-            <button id="enterprise-rafi-show" class="fxew-button" type="button">Montrer à RAFI</button>
-            <button id="enterprise-rafi-camera-button" class="fxew-button" type="button">Caméra</button>
-            <button id="enterprise-rafi-send" class="fxew-button fxew-button--primary" type="submit">Demander à RAFI</button>
+        <div class="fxew-j814-console">
+          <div class="fxew-j814-main">
+            <div class="fxew-rafi-suggestions">
+              <button id="enterprise-rafi-briefing" type="button"><b>✦</b> Priorités maintenant</button>
+              <button type="button" data-rafi-question="Quelles interventions nécessitent mon attention maintenant ?">À traiter maintenant</button>
+              <button type="button" data-rafi-question="Quels sites ont le plus de problèmes ou de SLA à risque ?">Sites à risque</button>
+              <button type="button" data-rafi-question="Quels équipements présentent des pannes récurrentes ?">Pannes récurrentes</button>
+              <button type="button" data-rafi-question="Résume mes coûts internes et externes et les écarts de budget.">Analyse financière</button>
+            </div>
+            <div id="enterprise-rafi-messages" class="fxew-rafi-messages" aria-live="polite"></div>
+            <div id="enterprise-rafi-photo" class="fxew-rafi-photo" hidden><button id="enterprise-rafi-photo-remove" class="fxew-site-action" type="button">Retirer</button></div>
+            <form id="enterprise-rafi-form" class="fxew-rafi-form">
+              <label class="fxew-sr-only" for="enterprise-rafi-input">Question pour RAFI</label>
+              <div class="fxew-j814-prompt"><span>✦ RAFI</span><textarea id="enterprise-rafi-input" rows="3" maxlength="2000" required placeholder="Posez une question sur vos opérations, SLA, sites, équipes, maintenance ou finance…"></textarea></div>
+              <div class="fxew-rafi-actions">
+                <button id="enterprise-rafi-speak" class="fxew-button" type="button">◉ Parler</button>
+                <select id="enterprise-rafi-language" class="fxew-rafi-language" aria-label="Langue de transcription"><option value="fr-FR">FR</option><option value="ar-MA">الدارجة</option></select>
+                <button id="enterprise-rafi-show" class="fxew-button" type="button">▣ Montrer</button>
+                <button id="enterprise-rafi-camera-button" class="fxew-button" type="button">Caméra</button>
+                <button id="enterprise-rafi-send" class="fxew-button fxew-button--primary" type="submit">✦ Analyser avec RAFI</button>
+              </div>
+              <input id="enterprise-rafi-file" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+              <input id="enterprise-rafi-camera" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden>
+            </form>
+            <p id="enterprise-rafi-status" class="fxew-module-meta" aria-live="polite"></p>
           </div>
-          <input id="enterprise-rafi-file" type="file" accept="image/jpeg,image/png,image/webp" hidden>
-          <input id="enterprise-rafi-camera" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden>
-        </form>
-        <p id="enterprise-rafi-status" class="fxew-module-meta" aria-live="polite"></p>
+          <aside class="fxew-j814-rail"><p class="fxew-module-kicker">INTELLIGENCE LAYER</p><h3>Du signal à la décision</h3><div class="fxew-j814-flow"><div><span>01</span><strong>Contexte</strong><small>Enterprise + site + opérations</small></div><div><span>02</span><strong>Analyse</strong><small>SLA, charge, coûts et risques</small></div><div><span>03</span><strong>Décision</strong><small>Priorité et prochaine action</small></div><div><span>04</span><strong>Contrôle</strong><small>Confirmation avant toute action</small></div></div><p class="fxew-j814-trust">RAFI utilise les données disponibles dans votre périmètre Enterprise. Les actions sensibles restent confirmées par l’utilisateur.</p></aside>
+        </div>
       </section>
 
       <section id="fxew-section-shell" class="fxew-j86-shellhead" aria-label="Contexte de section" hidden>
