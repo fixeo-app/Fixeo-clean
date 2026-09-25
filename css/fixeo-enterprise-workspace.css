@@ -370,7 +370,7 @@
 
 /* J3 — Domain workspaces. Existing modules, new information architecture only. */
 .fxew-workspace-bar{display:flex;align-items:center;gap:9px;margin:18px auto -10px;max-width:1240px;color:#8d8fa2;font-size:10px;letter-spacing:.08em;text-transform:uppercase}.fxew-workspace-bar strong{color:#fff;font-size:11px;letter-spacing:.04em}
-.fxew-cockpit #enterprise-workspace>.fxew-module,.fxew-cockpit #enterprise-workspace>.fxew-overview,.fxew-cockpit #enterprise-workspace>.fxew-summary,.fxew-cockpit #enterprise-workspace>.fxew-data-state,.fxew-cockpit #enterprise-workspace>.fxew-sites,.fxew-cockpit #enterprise-workspace>.fxew-team{display:none!important}
+.fxew-cockpit #enterprise-workspace>.fxew-module,.fxew-cockpit #enterprise-workspace>.fxew-overview,.fxew-cockpit #enterprise-workspace>.fxew-summary,.fxew-cockpit #enterprise-workspace>.fxew-data-state,.fxew-cockpit #enterprise-workspace>.fxew-sites,.fxew-cockpit #enterprise-workspace>.fxew-team{display:none}
 .fxew-cockpit[data-workspace="cockpit"] #enterprise-command-center{display:block!important}.fxew-cockpit[data-workspace="cockpit"] #enterprise-workspace>.fxew-overview{display:grid!important}.fxew-cockpit[data-workspace="cockpit"] #enterprise-workspace>.fxew-summary{display:grid!important}
 .fxew-cockpit[data-workspace="interventions"] #enterprise-control-tower{display:block!important}
 .fxew-cockpit[data-workspace="sites"] #enterprise-workspace>.fxew-sites{display:block!important}
