@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.12 exposes Access Intelligence rail',()=>{const h=rd('dashboard-enterprise.html');for(const x of ['fxew-j812-command','ACCESS INTELLIGENCE','enterprise-admin-intelligence'])assert.match(h,new RegExp(x));});
+test('J8.12 intelligence derives from members and invitations',()=>{const j=rd('js/fixeo-enterprise-workspace.js');for(const x of ['POINT DE CONTRÔLE','PROCHAINE ACTION','currentInvitations','site_manager'])assert.match(j,new RegExp(x));});
+test('J8.12 desktop uses administration center plus rail',()=>{assert.match(rd('css/fixeo-enterprise-workspace.css'),/grid-template-columns:minmax\(0,2\.1fr\) minmax\(300px,\.9fr\)/);});
+test('workspace syntax regression remains blocked',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
