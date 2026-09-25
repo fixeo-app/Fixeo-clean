@@ -519,3 +519,34 @@
 .fxew-cockpit .fxew-main>*,.fxew-cockpit #enterprise-workspace{max-width:none!important}
 #enterprise-workspace[data-j3-view] > #fxew-section-shell:not([hidden]){display:grid!important}
 #enterprise-workspace[data-j3-view] > .fxew-intro{display:none!important}
+
+/* J8.6.2 — Desktop Command Grid: UX/CSS only */
+@media(min-width:981px){
+  .fxew-cockpit .fxew-main{padding-left:clamp(24px,2.6vw,42px);padding-right:clamp(24px,2.6vw,42px)}
+  .fxew-cockpit #enterprise-workspace[data-j3-view]{padding-right:0}
+  .fxew-cockpit #enterprise-workspace[data-j3-view="enterprise-control-tower"] #enterprise-control-tower{
+    display:grid!important;
+    grid-template-columns:minmax(0,2.15fr) minmax(300px,.85fr);
+    grid-template-areas:
+      "heading heading"
+      "state state"
+      "summary summary"
+      "attention rail";
+    gap:14px 18px;
+    align-items:start;
+  }
+  .fxew-cockpit #enterprise-workspace[data-j3-view="enterprise-control-tower"] #enterprise-control-tower>.fxew-module-heading{grid-area:heading}
+  .fxew-cockpit #enterprise-workspace[data-j3-view="enterprise-control-tower"] #enterprise-control-tower>.fxew-report-state{grid-area:state}
+  .fxew-cockpit #enterprise-workspace[data-j3-view="enterprise-control-tower"] #enterprise-control-summary{grid-area:summary}
+  .fxew-cockpit #enterprise-workspace[data-j3-view="enterprise-control-tower"] #enterprise-control-attention{grid-area:attention;min-width:0}
+  .fxew-cockpit #enterprise-workspace[data-j3-view="enterprise-control-tower"] #enterprise-control-tower>.fxew-report-grid{
+    grid-area:rail!important;display:grid!important;grid-template-columns:1fr!important;gap:12px!important;margin:0!important;align-self:start;min-width:0
+  }
+  .fxew-cockpit #enterprise-workspace[data-j3-view="enterprise-control-tower"] #enterprise-control-tower>.fxew-report-grid>.fxew-report-card{margin:0;min-height:150px}
+  .fxew-cockpit #enterprise-workspace[data-j3-view="enterprise-control-tower"] .fxew-j85b-alert{width:100%}
+  .fxew-cockpit #enterprise-workspace[data-j3-view="enterprise-control-tower"] .fxew-j85b-rail{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .fxew-cockpit #enterprise-workspace[data-j3-view="enterprise-control-tower"] .fxew-control-load-grid{grid-template-columns:1fr}
+}
+@media(min-width:1280px){
+  .fxew-cockpit #enterprise-workspace[data-j3-view="enterprise-control-tower"] #enterprise-control-tower{grid-template-columns:minmax(0,2.35fr) minmax(320px,.8fr)}
+}
