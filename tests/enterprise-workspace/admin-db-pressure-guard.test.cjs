@@ -1,0 +1,4 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('V4 coalesces DB refreshes and skips hidden tabs',()=>{const s=rd('js/admin-command-center-v4.js');assert.match(s,/MIN_FETCH_GAP_MS = 45000/);assert.match(s,/document\.hidden/);assert.match(s,/_refreshQueued/);});
+test('notification fallback is two minutes and hidden-safe',()=>{const s=rd('js/fixeo-notification-center-v1.js');assert.match(s,/POLL_MS\s*=\s*120000/);assert.match(s,/if \(document\.hidden\) return/);});
+test('legacy state bridge no longer refreshes every 30 seconds',()=>{const s=rd('js/fixeo-state-bridge.js');assert.doesNotMatch(s,/setInterval\(refreshAll, 30000\)/);assert.match(s,/120000/);assert.match(s,/document\.hidden/);});
