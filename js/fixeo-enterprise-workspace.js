@@ -1231,7 +1231,9 @@
         if (run !== generation || stopped || doc.hidden) return;
         if (!ready || !ready.client) throw new Error('UNAVAILABLE');
         client = ready.client;
-        listen();
+        // Bootstrap access first, then subscribe to auth events. Registering the
+        // listener before Guard.check() can synchronously emit SIGNED_IN and start
+        // a competing refresh that invalidates this generation.
         var target = win.FixeoEnterpriseGuard.targetFromSearch(win.location.search);
         var result = await bounded(win.FixeoEnterpriseGuard.check(client, target));
         if (run !== generation || stopped || doc.hidden) return;
@@ -1245,6 +1247,9 @@
         }
         if (!result.allowed) { failure(); return; }
         currentEnterpriseId = result.enterprise.id;
+        // The verified enterprise id is established before auth subscription so a
+        // synchronous SIGNED_IN/TOKEN_REFRESHED emission is treated as routine.
+        listen();
         currentEnterpriseRole = result.enterprise.role;
         name.textContent = company.textContent = result.enterprise.name;
         role.textContent = LABELS[result.enterprise.role];
