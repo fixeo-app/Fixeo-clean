@@ -1236,7 +1236,7 @@
         requestsMode.textContent = canCreateRequests() ? 'Chargement des sites…' : 'Lecture seule';
         state.hidden = true; panel.hidden = false; logout.hidden = false;
         main.setAttribute('aria-busy', 'false'); name.focus();
-        await Promise.all([
+        var workspaceLoads = [
           loadOperational(result.enterprise.id, run),
           loadReporting(result.enterprise.id, run),
           controlTowerUi && typeof controlTowerUi.refresh === 'function' ? controlTowerUi.refresh() : Promise.resolve(),
@@ -1245,7 +1245,10 @@
           financeUi && typeof financeUi.refresh === 'function' ? financeUi.refresh() : Promise.resolve(),
           governanceUi && typeof governanceUi.refresh === 'function' ? governanceUi.refresh() : Promise.resolve(),
           canViewAudit() ? loadAudit(result.enterprise.id, run, false) : Promise.resolve()
-        ]);
+        ];
+        await Promise.all(workspaceLoads.map(function (task) {
+          return Promise.resolve(task).catch(function () { return null; });
+        }));
       } catch (_) { if (run === generation && !stopped && !doc.hidden) failure(); }
     }
     async function signOut() {
