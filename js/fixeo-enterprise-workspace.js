@@ -929,6 +929,19 @@
       sitesList.replaceChildren();
       sitesCount.textContent = String(rows.length);
       sitesEmpty.hidden = rows.length !== 0;
+      var intelligence = by('enterprise-sites-intelligence');
+      if (intelligence) {
+        intelligence.replaceChildren();
+        var healthRows = rows.map(function(site){return {site:site,health:siteHealth(site)};});
+        var action = healthRows.filter(function(x){return x.health.key==='critical';});
+        var attention = healthRows.filter(function(x){return x.health.key==='attention';});
+        var stable = healthRows.filter(function(x){return x.health.key==='stable';});
+        var openTotal = healthRows.reduce(function(n,x){return n+x.health.open;},0);
+        function intel(labelText,value,hint,tone){var n=el('div','fxew-j87-intel fxew-j87-intel--'+tone);n.append(el('span','',labelText),el('strong','',String(value)),el('small','',hint));return n;}
+        intelligence.append(intel('Action',action.length,'site'+(action.length>1?'s':'')+' prioritaire'+(action.length>1?'s':''),'critical'),intel('Attention',attention.length,'à surveiller','attention'),intel('Stables',stable.length,'sous contrôle','stable'),intel('Charge',openTotal,'intervention'+(openTotal>1?'s':'')+' ouverte'+(openTotal>1?'s':''),'live'));
+        var decision=el('div','fxew-j87-decision'),decisionText=action.length?'Priorité : traiter '+(action[0].site.name||'le site critique')+' avant les autres sites.':attention.length?'Surveiller '+(attention[0].site.name||'le site en attention')+' et ses signaux opérationnels.':rows.length?'Aucun site ne nécessite une décision prioritaire selon les signaux disponibles.':'Aucun site accessible.';
+        decision.append(el('span','','PROCHAINE ATTENTION'),el('strong','',decisionText));intelligence.append(decision);
+      }
       rows.forEach(function (site) {
         var health = siteHealth(site);
         var card = el('article', 'fxew-site-card fxew-j82-site fxew-j82-site--' + health.tone);
