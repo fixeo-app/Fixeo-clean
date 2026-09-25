@@ -3,3 +3,5 @@ test('enterprise bootstrap is single-flight',()=>{const s=rd('js/fixeo-enterpris
 test('routine token rotation does not tear down verified workspace',()=>{const s=rd('js/fixeo-enterprise-workspace.js');assert.match(s,/event === 'TOKEN_REFRESHED' \|\| event === 'SIGNED_IN'/);assert.match(s,/currentEnterpriseId \|\| refreshInFlight/);});
 test('bootstrap remains bounded and fail closed',()=>{const s=rd('js/fixeo-enterprise-workspace.js');assert.match(s,/var waitMs = options\.waitMs \|\| 15000/);assert.match(s,/function failure\(\)/);assert.match(s,/await bounded\(win\.FixeoEnterpriseGuard\.check/);});
 test('workspace bootstrap source contains no escaped newline tokens outside strings',()=>{const s=rd('js/fixeo-enterprise-workspace.js');assert.doesNotMatch(s,/\}\\n\s+finally/);});
+
+test('workspace source contains no literal escaped newline separators',()=>{const s=rd('js/fixeo-enterprise-workspace.js');assert.doesNotMatch(s,/\\n/);});
