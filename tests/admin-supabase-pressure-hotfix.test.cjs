@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('admin V4 canonical poll is throttled and hidden-safe',()=>{const s=rd('js/admin-command-center-v4.js');assert.match(s,/POLL_MS = 120000/);assert.match(s,/MIN_FETCH_GAP_MS = 45000/);assert.match(s,/if \(document\.hidden\) return/);assert.doesNotMatch(s,/\}, 30000\)\)/);});
+test('analytics has no independent periodic Supabase refresh',()=>{const s=rd('js/fixeo-analytics-v1.js');const i=s.indexOf('function _startAutoRefresh');assert.ok(i>=0);assert.doesNotMatch(s.slice(i,i+350),/setInterval/);});
+test('P1 has no 45 second duplicate Supabase polling',()=>{const s=rd('js/admin-control-center-p1.js');assert.doesNotMatch(s,/setInterval\(function\(\) \{ _fetchSupabaseRequests\(\); renderAll\(\); \}, 45000\)/);});
+test('hotfix changes no enterprise auth guard',()=>{const h=rd('admin.html');assert.match(h,/admin-command-center-v4\.js\?v=pressure1/);assert.match(h,/fixeo-analytics-v1\.js\?v=pressure1/);});

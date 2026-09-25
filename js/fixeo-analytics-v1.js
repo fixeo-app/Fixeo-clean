@@ -677,14 +677,8 @@
 
   /* ── AUTO-REFRESH every 60s ─────────────────────────────── */
   function _startAutoRefresh() {
-    setInterval(function() {
-      if (document.hidden) return;
-      /* Only refresh if overview section is visible */
-      var ov = document.getElementById('admin-section-overview');
-      if (ov && ov.style.display !== 'none') {
-        _refresh();
-      }
-    }, 60000);
+    /* Stability hotfix: analytics no longer owns an independent Supabase poll.
+       Realtime/admin events and the manual refresh button keep it current. */
   }
 
   /* ── EVENT LISTENERS ─────────────────────────────────────── */
