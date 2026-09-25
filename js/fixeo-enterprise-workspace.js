@@ -1236,7 +1236,7 @@
         requestsMode.textContent = canCreateRequests() ? 'Chargement des sites…' : 'Lecture seule';
         state.hidden = true; panel.hidden = false; logout.hidden = false;
         main.setAttribute('aria-busy', 'false'); name.focus();
-        var workspaceLoads = [
+        await Promise.all([
           loadOperational(result.enterprise.id, run),
           loadReporting(result.enterprise.id, run),
           controlTowerUi && typeof controlTowerUi.refresh === 'function' ? controlTowerUi.refresh() : Promise.resolve(),
@@ -1245,10 +1245,7 @@
           financeUi && typeof financeUi.refresh === 'function' ? financeUi.refresh() : Promise.resolve(),
           governanceUi && typeof governanceUi.refresh === 'function' ? governanceUi.refresh() : Promise.resolve(),
           canViewAudit() ? loadAudit(result.enterprise.id, run, false) : Promise.resolve()
-        ];
-        await Promise.all(workspaceLoads.map(function (task) {
-          return Promise.resolve(task).catch(function () { return null; });
-        }));
+        ]);
       } catch (_) { if (run === generation && !stopped && !doc.hidden) failure(); }
     }
     async function signOut() {
@@ -1282,11 +1279,10 @@
       }
     }
     function visibility() {
-      // Keep an already-authorized workspace mounted when Chrome backgrounds the tab.
-      // Refresh on return instead of blanking the UI; auth is revalidated by refresh().
-      if (!doc.hidden) refresh();
+      if (doc.hidden) clear();
+      else refresh();
     }
-    function pageHide() { /* Do not blank the authorized workspace during tab lifecycle transitions. */ }
+    function pageHide() { clear(); }
     function pageShow(event) { if (event.persisted) refresh(); }
     retry.addEventListener('click', refresh);
     dataRetry.addEventListener('click', function () {

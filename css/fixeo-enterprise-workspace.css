@@ -367,18 +367,3 @@
 .fxew-intro--legacy{display:none}.fxew-cockpit .fxew-overview{margin-top:14px}.fxew-cockpit .fxew-overview,.fxew-cockpit .fxew-summary{opacity:.82}
 @media(max-width:980px){.fxew-command-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.fxew-command-grid{grid-template-columns:1fr}}
 @media(max-width:620px){.fxew-command-center{padding:16px;margin-top:18px;border-radius:17px}.fxew-command-top{display:grid}.fxew-command-actions{width:100%}.fxew-command-actions .fxew-button{flex:1}.fxew-command-kpis{grid-template-columns:1fr 1fr}.fxew-command-kpis button{padding:12px}.fxew-command-grid{margin-top:10px}}
-
-/* J3 — Domain workspaces. Existing modules, new information architecture only. */
-.fxew-workspace-bar{display:flex;align-items:center;gap:9px;margin:18px auto -10px;max-width:1240px;color:#8d8fa2;font-size:10px;letter-spacing:.08em;text-transform:uppercase}.fxew-workspace-bar strong{color:#fff;font-size:11px;letter-spacing:.04em}
-.fxew-cockpit #enterprise-workspace>.fxew-module,.fxew-cockpit #enterprise-workspace>.fxew-overview,.fxew-cockpit #enterprise-workspace>.fxew-summary,.fxew-cockpit #enterprise-workspace>.fxew-data-state,.fxew-cockpit #enterprise-workspace>.fxew-sites,.fxew-cockpit #enterprise-workspace>.fxew-team{display:none}
-.fxew-cockpit[data-workspace="cockpit"] #enterprise-command-center{display:block!important}.fxew-cockpit[data-workspace="cockpit"] #enterprise-workspace>.fxew-overview{display:grid!important}.fxew-cockpit[data-workspace="cockpit"] #enterprise-workspace>.fxew-summary{display:grid!important}
-.fxew-cockpit[data-workspace="interventions"] #enterprise-control-tower{display:block!important}
-.fxew-cockpit[data-workspace="sites"] #enterprise-workspace>.fxew-sites{display:block!important}
-.fxew-cockpit[data-workspace="teams"] #enterprise-my-workforce-module,.fxew-cockpit[data-workspace="teams"] #enterprise-workforce-module,.fxew-cockpit[data-workspace="teams"] #enterprise-workspace>.fxew-team{display:block!important}
-.fxew-cockpit[data-workspace="maintenance"] #enterprise-preventive-maintenance,.fxew-cockpit[data-workspace="maintenance"] #enterprise-equipment-module{display:block!important}
-.fxew-cockpit[data-workspace="governance"] #enterprise-governance-module{display:block!important}
-.fxew-cockpit[data-workspace="finance"] #enterprise-finance-module{display:block!important}
-.fxew-cockpit[data-workspace="reports"] #enterprise-reporting{display:block!important}
-.fxew-cockpit[data-workspace="admin"] #enterprise-audit-module,.fxew-cockpit[data-workspace="admin"] #enterprise-workspace>.fxew-team{display:block!important}
-.fxew-cockpit[data-rafi-overlay="open"] #enterprise-rafi-module{display:block!important}
-.fxew-cockpit:not([data-workspace="cockpit"]) #enterprise-command-center{display:none}.fxew-cockpit:not([data-workspace="cockpit"]) #enterprise-workspace{padding-top:8px}.fxew-cockpit:not([data-workspace="cockpit"]) #enterprise-workspace>.fxew-module,.fxew-cockpit:not([data-workspace="cockpit"]) #enterprise-workspace>.fxew-sites,.fxew-cockpit:not([data-workspace="cockpit"]) #enterprise-workspace>.fxew-team{margin-top:20px}
