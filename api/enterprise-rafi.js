@@ -221,6 +221,24 @@ async function callOpenAI(env,question,history,context,file){
   return {result,model:String(payload.model||model).slice(0,100),usage:payload.usage||null};
 }
 
+function priorityRisk(context){
+  const rows=Array.isArray(context.operational_changes)?context.operational_changes:[];
+  const changeWeight={worsened:4,new:3,changed:2,unchanged:0,improved:-1,resolved:-4};
+  return rows.slice(0,60).map(x=>{
+    const reasons=[];let score=Math.max(0,Math.min(4,Number(x.severity)||0));
+    if(x.change==='worsened'){score+=4;reasons.push('situation_aggravee');}
+    else if(x.change==='new'){score+=3;reasons.push('nouveau_sujet');}
+    else if(x.change==='changed'){score+=2;reasons.push('etat_modifie');}
+    else if(x.change==='improved'){score=Math.max(0,score-1);reasons.push('amelioration');}
+    else if(x.change==='resolved'){score=0;reasons.push('resolu');}
+    if(x.followup_kind==='sla'){score+=4;reasons.push('risque_sla');}
+    if(x.followup_kind==='governance'){score+=2;reasons.push('attente_gouvernance');}
+    if(['maintenance','equipment'].includes(x.followup_kind)){score+=2;reasons.push('risque_actif');}
+    const priority=score>=8?'critical':score>=5?'high':'normal';
+    return {priority,score,change:x.change,followup_kind:x.followup_kind,target_type:x.target_type,target_id:x.target_id,reasons:reasons.slice(0,4)};
+  }).sort((a,b)=>b.score-a.score).slice(0,20);
+}
+
 function deltaSummary(context){
   const rows=Array.isArray(context.operational_changes)?context.operational_changes:[];
   const order={worsened:0,new:1,changed:2,unchanged:3,improved:4,resolved:5};
@@ -238,9 +256,11 @@ function proactiveQuestion(context){
   const fn=context.finance&&context.finance.summary||{};
   const gv=context.governance||{};
   const delta=deltaSummary(context);
+  const priorities=priorityRisk(context);
   parts.push('Construis le briefing opérationnel priorisé du responsable Enterprise.');
   parts.push('Commence par un DELTA depuis le dernier état capturé: aggravations, nouveaux sujets, autres changements, puis améliorations et résolutions. Ne présente pas unchanged comme une nouveauté.');
   parts.push('Delta déterministe: '+JSON.stringify(delta));
+  parts.push('Priorités déterministes et raisons explicables: '+JSON.stringify(priorities)+'. Respecte cet ordre de priorité; ne transforme jamais ce classement en exécution autonome.');
   parts.push('Classe uniquement les éléments réellement présents dans le contexte selon urgence SLA, blocage opérationnel, maintenance/équipement, capacité workforce, gouvernance puis impact financier.');
   parts.push('Ne crée aucune action autonome. Si une action concrète sûre est justifiée, utilise action_proposals pour demander confirmation humaine.');
   parts.push('Indicateurs disponibles: '+JSON.stringify({control_tower:ct,maintenance:mt,equipment:eq,finance:fn,pending_for_me:Number(gv.pending_for_me)||0,open_followups:Array.isArray(context.followups)?context.followups.length:0,operational_changes:Array.isArray(context.operational_changes)?context.operational_changes.length:0}));
@@ -303,4 +323,4 @@ function createHandler({env=process.env,logger=console}={}){
   };
 }
 
-module.exports={createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion,deltaSummary};
+module.exports={createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion,deltaSummary,priorityRisk};
