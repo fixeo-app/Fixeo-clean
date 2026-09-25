@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.3 exposes hybrid workforce command surface',()=>{const h=rd('dashboard-enterprise.html');for(const x of ['WORKFORCE HYBRID LIVE','enterprise-workforce-command','enterprise-workforce-decision','enterprise-hybrid-live-summary'])assert.match(h,new RegExp(x));});
+test('J8.3 derives capacity from canonical workforce model',()=>{const j=rd('js/fixeo-enterprise-workforce-ui.js');assert.match(j,/wf\.workers/);assert.match(j,/wf\.assignments/);assert.match(j,/wf\.offers/);assert.doesNotMatch(j,/fetch\(|\.from\(/);});
+test('J8.3 keeps hybrid dispatch truthful when internal capacity is zero',()=>{const j=rd('js/fixeo-enterprise-workforce-ui.js');assert.match(j,/réseau FIXEO \/ dispatch hybride reste le relais opérationnel/);});
+test('workspace remains free of invalid escaped newline separators',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
