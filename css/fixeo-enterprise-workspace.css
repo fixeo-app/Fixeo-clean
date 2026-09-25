@@ -421,3 +421,17 @@
 @media(max-width:900px){.fxew-j4-command .fxew-j2v2-shortcuts{grid-template-columns:1fr 1fr}.fxew-j4-command .fxew-j2v2-heading{padding:18px}}
 @media(max-width:560px){.fxew-j4-command .fxew-j2v2-shortcuts{grid-template-columns:1fr}.fxew-j4-command .fxew-j2v2-shortcuts button{min-height:70px}.fxew-j4-techrail{overflow:auto;flex-wrap:nowrap}}
 @media(prefers-reduced-motion:reduce){.fxew-j4-command:before{animation:none}#enterprise-workspace[data-j3-view]>.fxew-module,#enterprise-workspace[data-j3-view]>.fxew-reporting{animation:none}}
+
+/* J5 — Live Command Center */
+.fxew-j5-livebar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);background:rgba(7,10,19,.5)}
+.fxew-j5-livebar>div{padding:15px 18px;border-right:1px solid rgba(255,255,255,.06)}.fxew-j5-livebar>div:last-of-type{border-right:0}
+.fxew-j5-livebar span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.fxew-j5-livebar strong{display:block;margin-top:5px;font-size:23px;line-height:1;color:#f7fbff}
+.fxew-j5-livebar p{grid-column:1/-1;margin:0;padding:12px 18px;color:#b9c8d8;font-size:11px;background:linear-gradient(90deg,rgba(45,212,191,.055),transparent)}
+.fxew-j5-context{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:9px 12px;border:1px solid rgba(255,255,255,.07);border-radius:12px;background:rgba(255,255,255,.025)}
+.fxew-j5-context span{font-size:8px;letter-spacing:.12em;color:#ff9fbd}.fxew-j5-context strong{font-size:12px}.fxew-j5-context button{margin-left:auto;border:1px solid rgba(45,212,191,.2);border-radius:999px;padding:6px 10px;background:rgba(45,212,191,.06);color:#9df8ed;font-weight:800;font-size:9px;cursor:pointer}
+#enterprise-workspace[data-j3-view]>.fxew-intro>p.fxew-lead{display:none}
+#enterprise-workspace[data-j3-view]>.fxew-intro>h1{font-size:clamp(24px,3vw,36px);margin-bottom:4px}
+#enterprise-workspace[data-j3-view="enterprise-sites"]>#enterprise-sites{display:block!important}
+#enterprise-workspace[data-j3-view="enterprise-sites"]>#enterprise-sites .fxew-grid:empty+ .fxew-empty{display:block}
+#enterprise-workspace[data-j3-view="enterprise-team"]>#enterprise-invitations-module{margin-bottom:14px}
+@media(max-width:700px){.fxew-j5-livebar{grid-template-columns:1fr 1fr}.fxew-j5-livebar>div:nth-child(2){border-right:0}.fxew-j5-livebar>div{padding:12px 14px}}
