@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.6 exposes shared premium section shell',()=>{const h=rd('dashboard-enterprise.html');for(const x of ['fxew-section-shell','fxew-section-title','fxew-section-context','fxew-section-rafi'])assert.match(h,new RegExp(x));});
+test('J8.6 context changes with routed section',()=>{const j=rd('js/fixeo-enterprise-cockpit.js');for(const x of ['Priorités opérationnelles','Santé des sites','Capacité hybride','Prévention active','Contrôle financier','Intelligence exécutive'])assert.match(j,new RegExp(x));});
+test('J8.6 desktop Mission Control uses primary plus context columns',()=>{const c=rd('css/fixeo-enterprise-workspace.css');assert.match(c,/grid-template-columns:minmax\(0,2fr\) minmax\(260px,\.8fr\)/);});
+test('workspace syntax regression remains blocked',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
