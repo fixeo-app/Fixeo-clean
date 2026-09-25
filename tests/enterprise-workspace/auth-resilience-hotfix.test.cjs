@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('resolver bounds remote Auth verification',()=>{const s=rd('js/fixeo-auth-resolver.js');assert.match(s,/AUTH_VERIFY_TIMEOUT_MS = 8000/);assert.match(s,/boundedAuth\(client\.auth\.getUser\(token\)\)/);});
+test('resolver never grants from local session alone',()=>{const s=rd('js/fixeo-auth-resolver.js');assert.match(s,/db\.from\('users'\)\.select\('id,role'\)\.eq\('id', userId\)\.maybeSingle\(\)/);assert.match(s,/readEnterprise\(db, userId\)/);assert.match(s,/currentSession\.access_token !== token/);});
+test('enterprise guard remains fail closed',()=>{const s=rd('js/fixeo-enterprise-guard.js');assert.match(s,/result\.ok !== true \|\| result\.status !== 'OK'/);assert.match(s,/return denied\('READ_ERROR'\)/);});
+test('enterprise page activates resolver cachebuster',()=>{assert.match(rd('dashboard-enterprise.html'),/fixeo-auth-resolver\.js\?v=auth-resilience1/);});
