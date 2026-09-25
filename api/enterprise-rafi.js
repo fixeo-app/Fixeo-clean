@@ -72,7 +72,12 @@ function supabaseClient(env,token){
     if(!/^[0-9a-f-]{36}$/i.test(data?.id||'')) throw new RafiEnterpriseError('AUTH_REQUIRED',401);
     return data;
   }
-  return {rpc,user};
+  async function sites(enterpriseId){
+    const q=new URLSearchParams({select:'id,name,site_code,city,status',enterprise_id:'eq.'+enterpriseId,status:'eq.active',order:'id.asc',limit:'50'});
+    const r=await fetch(root+'/rest/v1/enterprise_sites?'+q.toString(),{headers,signal:AbortSignal.timeout(8000),redirect:'error'});
+    const data=await boundedJson(r,128*1024);if(!r.ok)throw new RafiEnterpriseError(r.status===403?'FORBIDDEN':'DEPENDENCY_REJECTED',r.status===403?403:502);return Array.isArray(data)?data:[];
+  }
+  return {rpc,user,sites};
 }
 
 async function optional(call){
@@ -85,6 +90,7 @@ async function optional(call){
 function compactContext(raw){
   function arr(v,n){return Array.isArray(v)?v.slice(0,n):[];}
   const context={
+    sites:arr(raw.sites,50).map(s=>({id:s.id,name:s.name,site_code:s.site_code,city:s.city,status:s.status})),
     control_tower:raw.control_tower?{
       summary:raw.control_tower.summary||{},
       attention:arr(raw.control_tower.attention,60),
@@ -128,7 +134,8 @@ function compactContext(raw){
 async function enterpriseContext(supa,enterpriseId){
   await optional(()=>supa.rpc('reconcile_enterprise_rafi_followups_v1',{p_enterprise_id:enterpriseId}));
   const changes=await optional(()=>supa.rpc('capture_enterprise_rafi_changes_v1',{p_enterprise_id:enterpriseId}));
-  const [control,maintenance,equipment,finance,governance,followups]=await Promise.all([
+  const [sites,control,maintenance,equipment,finance,governance,followups]=await Promise.all([
+    optional(()=>supa.sites(enterpriseId)),
     optional(()=>supa.rpc('get_enterprise_control_tower_v1',{p_enterprise_id:enterpriseId,p_limit:80})),
     optional(()=>supa.rpc('get_enterprise_preventive_maintenance_v1',{p_enterprise_id:enterpriseId,p_history_limit:80})),
     optional(()=>supa.rpc('get_enterprise_equipment_fleet_v1',{p_enterprise_id:enterpriseId})),
@@ -138,7 +145,7 @@ async function enterpriseContext(supa,enterpriseId){
   ]);
   if(!control && !maintenance && !equipment && !finance && !governance && !followups)
     throw new RafiEnterpriseError('FORBIDDEN',403);
-  const context=compactContext({control_tower:control,maintenance,equipment,finance,governance});
+  const context=compactContext({sites,control_tower:control,maintenance,equipment,finance,governance});
   context.followups=followups&&followups.ok===true&&Array.isArray(followups.followups)?followups.followups.slice(0,60):[];
   context.operational_changes=changes&&changes.ok===true&&Array.isArray(changes.changes)?changes.changes.slice(0,60):[];
   return context;
@@ -162,8 +169,8 @@ const instructions=`You are RAFI Enterprise, the operational intelligence assist
 Answer in the user's language, normally French or Moroccan Darija.
 Use ONLY the supplied enterprise_context and optional image as evidence. Never invent records, prices, budgets, failures, people, sites or actions.
 The context is already tenant- and site-scoped by server authorization. Never infer or request data outside it.
-You are read-only: never claim you dispatched, approved, paid, changed a budget, modified maintenance, created a request, or executed any action.
-You may return up to 3 action_proposals when a concrete next action would help. A proposal is only a draft for human review: it never executes anything. Use only the allowed action types in the schema. Include only identifiers and parameters supported by enterprise_context; never invent IDs. Keep target and params minimal. If no safe concrete action is supported, return an empty action_proposals array.
+You are read-only until a human confirms an action proposal: never claim you dispatched, approved, paid, changed a budget, modified maintenance, created a request, or executed any action. You may prepare supported actions for explicit human confirmation; do not say the system cannot create an intervention when a valid create_governed_request proposal can be prepared.
+You may return up to 3 action_proposals when a concrete next action would help. A proposal is only a draft for human review: it never executes anything. Use only the allowed action types in the schema. Include only identifiers and parameters supported by enterprise_context; never invent IDs. For create_governed_request, resolve the requested active site from enterprise_context.sites and include its exact site_id; if the site cannot be resolved unambiguously, do not propose the action. Keep target and params minimal. If no safe concrete action is supported, return an empty action_proposals array.
 Give concise operational analysis: what matters now, why, and what a human should consider next.
 Financial values are actual/explicit enterprise values from context, not estimates. Never claim CMI/card payment is active.
 WhatsApp delivery is not operational unless the context explicitly says otherwise.
