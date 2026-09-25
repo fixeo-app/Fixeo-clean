@@ -60,7 +60,6 @@
 
   /* ── ready() promise — use for all async operations ─────── */
   var _readyPromise = null;
-  var SDK_TIMEOUT_MS = 8000;
 
   function ready() {
     if (_readyPromise) return _readyPromise;
@@ -71,16 +70,7 @@
         resolve({ configured: false, client: null });
         return;
       }
-      var settled = false;
-      var timer = setTimeout(function () {
-        if (settled) return;
-        settled = true;
-        reject(new Error('SUPABASE_SDK_TIMEOUT'));
-      }, SDK_TIMEOUT_MS);
       _loadSDK(function (err) {
-        if (settled) return;
-        settled = true;
-        clearTimeout(timer);
         if (err) { console.error('[FixeoSupabaseClient] SDK load error:', err); reject(err); return; }
         var c = _getClient();
         if (!c) { reject(new Error('createClient failed')); return; }
