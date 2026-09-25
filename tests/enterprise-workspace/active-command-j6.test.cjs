@@ -1,0 +1,6 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J6 publishes canonical attention context',()=>{const x=rd('js/fixeo-enterprise-control-tower-ui.js');assert.match(x,/attention:current\.attention\|\|\[\]/);});
+test('J6 renders priority from Control Tower attention',()=>{const h=rd('dashboard-enterprise.html'),j=rd('js/fixeo-enterprise-cockpit.js');assert.match(h,/id="j6-priority"/);assert.match(h,/id="j6-rafi-action"/);assert.match(j,/priority\(x\.attention\)/);assert.match(j,/item\.request_id/);});
+test('J6 RAFI handoff is analysis-first and confirmation-safe',()=>{const j=rd('js/fixeo-enterprise-cockpit.js');assert.match(j,/Ne lance aucune action sans ma confirmation/);assert.match(j,/route\('enterprise-rafi-module'\)/);});
+test('J6 cockpit adds no RPC fetch auth observer or direct mutation',()=>{const j=rd('js/fixeo-enterprise-cockpit.js');assert.doesNotMatch(j,/MutationObserver|IntersectionObserver|\.rpc\(|\.from\(|fetch\(|auth\.|insert\(|update\(|delete\(/);});
+test('J6 retains confirmed canonical action executor',()=>{const h=rd('dashboard-enterprise.html');assert.match(h,/fixeo-enterprise-rafi-actions\.js\?v=block-h2/);assert.match(h,/fixeo-enterprise-workspace\.js\?v=block-g1/);});
