@@ -929,7 +929,7 @@
       sitesList.replaceChildren();
       sitesCount.textContent = String(rows.length);
       sitesEmpty.hidden = rows.length !== 0;
-      var intelligence = by('enterprise-sites-intelligence');
+      var intelligence = byId('enterprise-sites-intelligence');
       if (intelligence) {
         intelligence.replaceChildren();
         var healthRows = rows.map(function(site){return {site:site,health:siteHealth(site)};});
