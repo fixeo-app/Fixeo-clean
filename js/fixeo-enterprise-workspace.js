@@ -962,29 +962,46 @@
       interventionsCount.textContent = String(rows.length);
       interventionsEmpty.hidden = rows.length !== 0;
       refreshSiteHealth();
+      var command = by('enterprise-interventions-command');
+      if (command) {
+        command.replaceChildren();
+        var open = rows.filter(function(i){return !['completed','cancelled','closed'].includes(String(i.request_status||'').toLowerCase());});
+        var critical = rows.filter(function(i){var s=slaState(i.sla);return s.key==='breached'||String(i.urgency||'').toLowerCase()==='now';});
+        var breached = rows.filter(function(i){return slaState(i.sla).key==='breached';});
+        var assigned = rows.filter(function(i){return !!i.mission_status;});
+        function metric(name,value,hint){var n=el('div','fxew-j85-metric');n.append(el('span','',name),el('strong','',String(value)),el('small','',hint));return n;}
+        command.append(metric('Ouvertes',open.length,'à piloter'),metric('Critiques',critical.length,'priorité immédiate'),metric('SLA dépassé',breached.length,'action requise'),metric('Missions',assigned.length,'avec statut'));
+      }
       rows.forEach(function (item) {
-        var card = el('article', 'fxew-intervention');
+        var stateInfo=slaState(item.sla), urgent=String(item.urgency||'').toLowerCase();
+        var severity=stateInfo.key==='breached'||urgent==='now'?'critical':stateInfo.key==='risk'?'risk':'stable';
+        var card = el('article', 'fxew-intervention fxew-j85-mission fxew-j85-mission--'+severity);
         card.dataset.interventionId = item.id;
-        var mainRow = el('div', 'fxew-intervention-main');
+        var mainRow = el('div', 'fxew-intervention-main fxew-j85-head');
         var copy = el('div');
+        copy.append(el('span','fxew-module-kicker',severity==='critical'?'PRIORITÉ IMMÉDIATE':'MISSION LIVE'));
         copy.append(el('strong', '', label(item.service_category)));
         copy.append(el('span', '', [item.site_name, item.city].filter(Boolean).join(' · ') || 'Site non renseigné'));
         mainRow.append(copy, el('span', 'fxew-status', label(item.request_status)));
         card.append(mainRow);
-        var meta = el('div', 'fxew-intervention-meta');
-        meta.append(el('span', '', item.urgency ? 'Urgence · ' + label(item.urgency) : 'Urgence · Non renseignée'));
-        meta.append(el('span', '', item.mission_status ? 'Mission · ' + label(item.mission_status) : 'Mission · Non attribuée'));
-        if (item.sla) meta.append(el('span', '', 'SLA · ' + slaState(item.sla).label));
-        var when = dateLabel(item.created_at);
-        if (when) meta.append(el('span', '', when));
-        card.append(meta);
+        var rail=el('div','fxew-j85-rail');
+        function step(name,value,state){var n=el('div','fxew-j85-step fxew-j85-step--'+state);n.append(el('span','',name),el('strong','',value));return n;}
+        var dispatch=item.hybrid_dispatch&&item.hybrid_dispatch.mode?label(item.hybrid_dispatch.mode):'Réseau FIXEO';
+        rail.append(step('Urgence',item.urgency?label(item.urgency):'Non renseignée',urgent==='now'?'critical':'done'));
+        rail.append(step('SLA',item.sla?stateInfo.label:'Non disponible',stateInfo.key==='breached'?'critical':stateInfo.key==='risk'?'risk':'done'));
+        rail.append(step('Dispatch',dispatch,'live'));
+        rail.append(step('Mission',item.mission_status?label(item.mission_status):'Non attribuée',item.mission_status?'done':'off'));
+        card.append(rail);
+        var next=el('div','fxew-j85-next'),nextText=stateInfo.key==='breached'?'SLA dépassé : ouvrir le détail et décider du traitement prioritaire.':!item.mission_status?'Suivre le dispatch et l’attribution de la mission.':'Suivre l’exécution de la mission.';
+        next.append(el('span','','PROCHAINE DÉCISION'),el('strong','',nextText));card.append(next);
         var actions = el('div', 'fxew-intervention-actions');
-        var detail = el('button', 'fxew-site-action', 'Voir le détail');
+        var detail = el('button', 'fxew-site-action', stateInfo.key==='breached'?'Décider maintenant':'Voir le détail');
         detail.type = 'button'; detail.dataset.interventionAction = 'detail'; detail.dataset.interventionId = item.id;
         actions.append(detail); card.append(actions);
         interventionsList.append(card);
       });
     }
+
     function setDataState(messageText, retryable) {
       dataState.hidden = false;
       dataMessage.textContent = messageText;
