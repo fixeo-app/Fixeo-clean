@@ -9,7 +9,7 @@
   function mount(win,hooks){
     var d=win.document,by=id=>d.getElementById(id),sites=[],current=null;
     var section=by('enterprise-preventive-maintenance'),state=by('enterprise-maintenance-state'),msg=by('enterprise-maintenance-message'),retry=by('enterprise-maintenance-retry');
-    var summary=by('enterprise-maintenance-summary'),calendar=by('enterprise-maintenance-calendar'),plans=by('enterprise-maintenance-plans'),runs=by('enterprise-maintenance-runs'),empty=by('enterprise-maintenance-empty'),create=by('enterprise-maintenance-create'),mode=by('enterprise-maintenance-mode');
+    var summary=by('enterprise-maintenance-summary'),calendar=by('enterprise-maintenance-calendar'),plans=by('enterprise-maintenance-plans'),runs=by('enterprise-maintenance-runs'),empty=by('enterprise-maintenance-empty'),create=by('enterprise-maintenance-create'),mode=by('enterprise-maintenance-mode'),intelligence=by('enterprise-maintenance-intelligence');
     var dlg=by('enterprise-maintenance-dialog'),title=by('enterprise-maintenance-dialog-title'),close=by('enterprise-maintenance-close'),cancel=by('enterprise-maintenance-cancel'),form=by('enterprise-maintenance-form');
     var pid=by('enterprise-maintenance-id'),site=by('enterprise-maintenance-site'),name=by('enterprise-maintenance-name'),category=by('enterprise-maintenance-category'),description=by('enterprise-maintenance-description'),urgency=by('enterprise-maintenance-urgency'),frequency=by('enterprise-maintenance-frequency'),interval=by('enterprise-maintenance-interval'),nextDue=by('enterprise-maintenance-next-due'),reminder=by('enterprise-maintenance-reminder'),status=by('enterprise-maintenance-status'),error=by('enterprise-maintenance-error'),submit=by('enterprise-maintenance-submit');
 
@@ -77,6 +77,19 @@
         var c=el('div','fxew-kpi');c.append(el('span','fxew-kpi-label',x[0]),el('strong','fxew-kpi-value',String(x[1])));summary.append(c);
       });
     }
+    function renderIntelligence(model){
+      if(!intelligence)return;
+      intelligence.replaceChildren();
+      var rows=(model&&model.plans)||[],active=rows.filter(p=>p.status==='active'),overdue=active.filter(p=>p.overdue),reminders=active.filter(p=>p.reminder_due&&!p.overdue);
+      var next=active.slice().sort((a,b)=>(Date.parse(a.next_due_at||0)||Infinity)-(Date.parse(b.next_due_at||0)||Infinity))[0]||null;
+      function signal(label,value,hint,tone){var n=el('div','fxew-j88-signal fxew-j88-signal--'+tone);n.append(el('span','',label),el('strong','',String(value)),el('small','',hint));return n;}
+      intelligence.append(signal('En retard',overdue.length,overdue.length?'action requise':'aucune','critical'),signal('Rappels',reminders.length,reminders.length?'à préparer':'aucun','attention'),signal('Plans actifs',active.length,'prévention suivie','stable'));
+      var nextCard=el('div','fxew-j88-next');
+      nextCard.append(el('span','','PROCHAINE ÉCHÉANCE'),el('strong','',next?(next.name||'Plan préventif'):'Aucune échéance active'),el('small','',next?[siteLabel(next.site_id),fmt(next.next_due_at)].filter(Boolean).join(' · '):'Créez un plan lorsque la maintenance préventive doit être programmée.'));
+      intelligence.append(nextCard);
+      var decision=el('div','fxew-j88-decision'),decisionText=overdue.length?'Priorité : traiter '+(overdue[0].name||'le plan en retard')+' maintenant.':reminders.length?'Préparer '+(reminders[0].name||'le prochain rappel')+' avant son échéance.':next?'Prochaine attention : '+(next.name||'plan préventif')+' · '+fmt(next.next_due_at)+'.':'Aucune action préventive prioritaire avec les données disponibles.';
+      decision.append(el('span','','PROCHAINE ACTION'),el('strong','',decisionText));intelligence.append(decision);
+    }
     function renderPlans(rows){
       plans.replaceChildren();empty.hidden=rows.length!==0;
       rows.forEach(p=>{
@@ -125,7 +138,7 @@
       section.hidden=false;mode.textContent=canManage()?'Gestion autorisée':'Lecture seule';create.hidden=!canManage();setState('Actualisation de la maintenance préventive…',false);
       try{
         current=await api().load(client(),eid(),100);
-        renderSummary(current.summary||{});renderCalendar(current.plans||[]);renderPlans(current.plans||[]);renderRuns(current.runs||[]);state.hidden=true;
+        renderSummary(current.summary||{});renderIntelligence(current);renderCalendar(current.plans||[]);renderPlans(current.plans||[]);renderRuns(current.runs||[]);state.hidden=true;
       }catch(_){setState('Impossible de charger la maintenance préventive. Réessayez.',true);}
     }
     function click(ev){
