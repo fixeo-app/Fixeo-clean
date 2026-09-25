@@ -357,3 +357,11 @@
 .fxew-nav-toggle{display:none;position:fixed;z-index:92;left:14px;top:14px;width:42px;height:42px;border:1px solid rgba(255,255,255,.12);border-radius:11px;background:#151520;color:#fff;font-size:19px}.fxew-nav-backdrop{position:fixed;z-index:70;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
 @media(max-width:980px){.fxew-cockpit-nav{transform:translateX(-105%);transition:transform .22s ease;box-shadow:25px 0 70px rgba(0,0,0,.35)}.fxew-nav-open .fxew-cockpit-nav{transform:translateX(0)}.fxew-nav-toggle{display:grid;place-items:center}.fxew-cockpit .fxew-header{left:0;width:100%;padding-left:70px}.fxew-cockpit .fxew-main{margin-left:0;padding-left:18px;padding-right:18px}}
 @media(max-width:560px){.fxew-cockpit-nav{width:min(82vw,290px)}.fxew-cockpit .fxew-main{padding-left:11px;padding-right:11px}.fxew-cockpit .fxew-header-label{display:none}}
+
+/* J2-v2 — static command center: no data observers, no auth/lifecycle coupling. */
+.fxew-j2v2-home{margin:14px 0;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,rgba(27,28,43,.82),rgba(17,18,28,.82));overflow:hidden}
+.fxew-j2v2-heading{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:18px;border-bottom:1px solid var(--line)}
+.fxew-j2v2-heading h2{margin:4px 0 5px;font-size:19px}.fxew-j2v2-heading p:not(.fxew-module-kicker){margin:0;color:var(--muted);font-size:12px}
+.fxew-j2v2-shortcuts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line)}
+.fxew-j2v2-shortcuts button{border:0;background:#151620;color:var(--text);padding:15px 16px;text-align:left;cursor:pointer;font:inherit}.fxew-j2v2-shortcuts button:hover{background:#1b1c29}.fxew-j2v2-shortcuts strong,.fxew-j2v2-shortcuts span{display:block}.fxew-j2v2-shortcuts strong{font-size:12px}.fxew-j2v2-shortcuts span{margin-top:5px;color:var(--muted);font-size:10px}
+@media(max-width:850px){.fxew-j2v2-shortcuts{grid-template-columns:1fr 1fr}}@media(max-width:560px){.fxew-j2v2-heading{display:grid}.fxew-j2v2-shortcuts{grid-template-columns:1fr}}
