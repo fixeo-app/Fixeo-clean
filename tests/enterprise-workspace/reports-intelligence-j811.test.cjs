@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.11 exposes Reports Intelligence rail',()=>{const h=rd('dashboard-enterprise.html');for(const x of ['fxew-j811-command','REPORTS INTELLIGENCE','enterprise-report-intelligence'])assert.match(h,new RegExp(x));});
+test('J8.11 intelligence derives from reporting model',()=>{const j=rd('js/fixeo-enterprise-workspace.js');for(const x of ['SITE LE PLUS ACTIF','LECTURE RAFI','sla.breached_count','op.acceptance_rate_percent'])assert.match(j,new RegExp(x));});
+test('J8.11 desktop uses reports center plus rail',()=>{assert.match(rd('css/fixeo-enterprise-workspace.css'),/grid-template-columns:minmax\(0,2\.12fr\) minmax\(300px,\.88fr\)/);});
+test('workspace syntax regression remains blocked',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});

@@ -7,7 +7,7 @@
   <meta name="referrer" content="same-origin">
   <title>Espace entreprise | FIXEO</title>
   <link rel="icon" href="img/logo-fixeo-icon.png">
-  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=j810">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=j811">
   <script defer src="js/supabase-client.js"></script>
   <script defer src="js/fixeo-logout-global.js"></script>
   <script defer src="js/fixeo-auth-resolver.js"></script>
@@ -36,7 +36,7 @@
   <script defer src="js/fixeo-enterprise-rafi-actions.js?v=block-h2"></script>
   <script defer src="js/fixeo-enterprise-rafi-followups.js?v=block-h5"></script>
   <script defer src="js/fixeo-enterprise-rafi-ui.js?v=block-h65"></script>
-  <script defer src="js/fixeo-enterprise-workspace.js?v=j871"></script><script defer src="js/fixeo-enterprise-cockpit.js?v=j86"></script>
+  <script defer src="js/fixeo-enterprise-workspace.js?v=j811"></script><script defer src="js/fixeo-enterprise-cockpit.js?v=j86"></script>
 </head>
 <body class="fxew fxew-cockpit">
   <a class="fxew-skip" href="#main">Aller au contenu</a><button id="fxew-nav-toggle" class="fxew-nav-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false">☰</button><aside id="fxew-cockpit-nav" class="fxew-cockpit-nav" aria-label="Navigation Enterprise"><div class="fxew-nav-brand"><img src="img/logo-fixeo-header.png" alt="FIXEO"><span>ENTERPRISE</span></div><nav><button class="fxew-nav-item is-active" data-cockpit-target="enterprise-workspace" type="button"><b>⌂</b><span>Cockpit</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-control-tower" type="button"><b>↗</b><span>Interventions</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-sites" type="button"><b>⌖</b><span>Sites</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-workforce-module" type="button"><b>◎</b><span>Équipes</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-preventive-maintenance" type="button"><b>◇</b><span>Maintenance</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-governance-module" type="button"><b>✓</b><span>Gouvernance</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-finance-module" type="button"><b>◫</b><span>Finance</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-reporting" type="button"><b>▥</b><span>Rapports</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-team" type="button"><b>⚙</b><span>Administration</span></button></nav><button class="fxew-nav-rafi" data-cockpit-target="enterprise-rafi-module" type="button"><span>✦</span><strong>Demander à RAFI</strong></button></aside><div id="fxew-nav-backdrop" class="fxew-nav-backdrop" hidden></div>
@@ -279,7 +279,7 @@
         <p id="enterprise-equipment-empty" class="fxew-empty" hidden>Aucun équipement enregistré.</p>
       </section>
 
-      <section id="enterprise-reporting" class="fxew-module fxew-reporting" aria-labelledby="reporting-title">
+      <section id="enterprise-reporting" class="fxew-module fxew-reporting fxew-j811-reports" aria-labelledby="reporting-title">
         <div class="fxew-module-heading">
           <div><p class="fxew-module-kicker">Pilotage</p><h2 id="reporting-title">Synthèse opérationnelle & SLA</h2></div>
           <label class="fxew-period-label">Période
@@ -298,20 +298,16 @@
         </div>
         <div id="enterprise-report-content" hidden>
           <div id="enterprise-report-kpis" class="fxew-kpi-grid"></div>
-          <div class="fxew-report-grid">
-            <section class="fxew-report-card" aria-labelledby="sla-summary-title">
-              <div class="fxew-report-card-head"><h3 id="sla-summary-title">SLA</h3><span>Acceptation</span></div>
-              <div id="enterprise-report-sla" class="fxew-mini-grid"></div>
-            </section>
-            <section class="fxew-report-card" aria-labelledby="status-summary-title">
-              <div class="fxew-report-card-head"><h3 id="status-summary-title">Statuts</h3><span>Demandes</span></div>
-              <div id="enterprise-report-statuses" class="fxew-breakdown"></div>
-            </section>
+          <div class="fxew-j811-command">
+            <div class="fxew-j811-primary">
+              <div class="fxew-report-grid">
+                <section class="fxew-report-card" aria-labelledby="sla-summary-title"><div class="fxew-report-card-head"><h3 id="sla-summary-title">SLA</h3><span>Acceptation</span></div><div id="enterprise-report-sla" class="fxew-mini-grid"></div></section>
+                <section class="fxew-report-card" aria-labelledby="status-summary-title"><div class="fxew-report-card-head"><h3 id="status-summary-title">Statuts</h3><span>Demandes</span></div><div id="enterprise-report-statuses" class="fxew-breakdown"></div></section>
+              </div>
+              <section class="fxew-report-card fxew-report-card--sites" aria-labelledby="site-performance-title"><div class="fxew-report-card-head"><h3 id="site-performance-title">Performance par site</h3><span>Périmètre accessible</span></div><div id="enterprise-report-sites" class="fxew-site-performance"></div></section>
+            </div>
+            <aside class="fxew-j811-rail" aria-label="Intelligence des rapports"><p class="fxew-module-kicker">REPORTS INTELLIGENCE</p><h3>Lecture exécutive</h3><div id="enterprise-report-intelligence" class="fxew-j811-intelligence"></div></aside>
           </div>
-          <section class="fxew-report-card fxew-report-card--sites" aria-labelledby="site-performance-title">
-            <div class="fxew-report-card-head"><h3 id="site-performance-title">Performance par site</h3><span>Périmètre accessible</span></div>
-            <div id="enterprise-report-sites" class="fxew-site-performance"></div>
-          </section>
         </div>
       </section>
 

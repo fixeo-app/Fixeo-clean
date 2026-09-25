@@ -43,7 +43,7 @@
     var reportMessage = byId('enterprise-report-message'), reportRetry = byId('enterprise-report-retry');
     var reportContent = byId('enterprise-report-content'), reportKpis = byId('enterprise-report-kpis');
     var reportSla = byId('enterprise-report-sla'), reportStatuses = byId('enterprise-report-statuses');
-    var reportSites = byId('enterprise-report-sites');
+    var reportSites = byId('enterprise-report-sites'), reportIntelligence = byId('enterprise-report-intelligence');
     var slaPoliciesList = byId('enterprise-sla-policies-list'), slaPoliciesEmpty = byId('enterprise-sla-policies-empty');
     var slaPoliciesMode = byId('enterprise-sla-policies-mode'), slaPolicyCreate = byId('enterprise-sla-policy-create');
     var slaPolicyDialog = byId('enterprise-sla-policy-dialog'), slaPolicyDialogTitle = byId('enterprise-sla-policy-dialog-title');
@@ -219,6 +219,18 @@
       row.append(el('span', '', label(key)), el('strong', '', numberLabel(count)));
       return row;
     }
+    function renderReportIntelligence(model) {
+      if (!reportIntelligence) return;
+      reportIntelligence.replaceChildren();
+      var op=model.operational||{},sla=model.sla||{},sites=model.sites||[];
+      var requestCount=Number(op.request_count||0),acceptance=numeric(op.acceptance_rate_percent),breached=Number(sla.breached_count||0),atRisk=Number(sla.at_risk_count||0);
+      function signal(labelText,valueText,hint,tone){var n=el('div','fxew-j811-signal fxew-j811-signal--'+tone);n.append(el('span','',labelText),el('strong','',valueText),el('small','',hint));return n;}
+      reportIntelligence.append(signal('Activité',numberLabel(requestCount),requestCount===1?'demande':'demandes','live'),signal('Acceptation',percentLabel(acceptance),'période sélectionnée','stable'),signal('SLA dépassés',numberLabel(breached),breached?'attention requise':'aucun','critical'),signal('À risque',numberLabel(atRisk),atRisk?'à surveiller':'aucun','attention'));
+      var site=sites.slice().sort(function(a,b){return Number(b.request_count||0)-Number(a.request_count||0);})[0]||null;
+      var focus=el('div','fxew-j811-focus');focus.append(el('span','','SITE LE PLUS ACTIF'),el('strong','',site?(site.site_name||'Site'):'Aucune activité par site'),el('small','',site?[site.city,numberLabel(site.request_count)+' demande'+(Number(site.request_count)===1?'':'s')].filter(Boolean).join(' · '):'Aucune donnée sur la période sélectionnée.'));reportIntelligence.append(focus);
+      var decision=el('div','fxew-j811-decision'),t=breached?'Priorité : analyser les SLA dépassés et les demandes concernées.':atRisk?'Surveiller les demandes à risque avant dépassement SLA.':requestCount&&acceptance!=null&&acceptance<80?'Surveiller le taux d’acceptation de la période et les statuts en attente.':requestCount?'Aucune alerte SLA prioritaire ; poursuivre le suivi de la performance.':'Aucune activité opérationnelle à analyser sur la période sélectionnée.';
+      decision.append(el('span','','LECTURE RAFI'),el('strong','',t));reportIntelligence.append(decision);
+    }
     function renderReporting(model) {
       reportKpis.replaceChildren(
         kpi('Demandes', numberLabel(model.operational.request_count), 'Période sélectionnée'),
@@ -260,6 +272,8 @@
           reportSites.append(card);
         });
       }
+
+      renderReportIntelligence(model);
 
       reportState.hidden = true;
       reportContent.hidden = false;
