@@ -1,0 +1,4 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.7.1 resolves intelligence with mounted byId helper',()=>{const j=rd('js/fixeo-enterprise-workspace.js');assert.match(j,/var intelligence = byId\('enterprise-sites-intelligence'\)/);assert.doesNotMatch(j,/var intelligence = by\('enterprise-sites-intelligence'\)/);});
+test('J8.7.1 cachebuster is active',()=>{assert.match(rd('dashboard-enterprise.html'),/fixeo-enterprise-workspace\.js\?v=j871/);});
+test('workspace escaped-newline regression remains blocked',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
