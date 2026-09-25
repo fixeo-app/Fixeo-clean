@@ -221,6 +221,15 @@ async function callOpenAI(env,question,history,context,file){
   return {result,model:String(payload.model||model).slice(0,100),usage:payload.usage||null};
 }
 
+function deltaSummary(context){
+  const rows=Array.isArray(context.operational_changes)?context.operational_changes:[];
+  const order={worsened:0,new:1,changed:2,unchanged:3,improved:4,resolved:5};
+  const sorted=rows.slice(0,60).sort((a,b)=>(order[a.change]??9)-(order[b.change]??9));
+  const counts={new:0,worsened:0,changed:0,unchanged:0,improved:0,resolved:0};
+  sorted.forEach(x=>{if(Object.hasOwn(counts,x.change))counts[x.change]++;});
+  return {counts,items:sorted.slice(0,20).map(x=>({change:x.change,followup_kind:x.followup_kind,target_type:x.target_type,target_id:x.target_id,state_key:x.state_key,severity:x.severity}))};
+}
+
 function proactiveQuestion(context){
   const parts=[];
   const ct=context.control_tower&&context.control_tower.summary||{};
@@ -228,7 +237,10 @@ function proactiveQuestion(context){
   const eq=context.equipment&&context.equipment.summary||{};
   const fn=context.finance&&context.finance.summary||{};
   const gv=context.governance||{};
+  const delta=deltaSummary(context);
   parts.push('Construis le briefing opérationnel priorisé du responsable Enterprise.');
+  parts.push('Commence par un DELTA depuis le dernier état capturé: aggravations, nouveaux sujets, autres changements, puis améliorations et résolutions. Ne présente pas unchanged comme une nouveauté.');
+  parts.push('Delta déterministe: '+JSON.stringify(delta));
   parts.push('Classe uniquement les éléments réellement présents dans le contexte selon urgence SLA, blocage opérationnel, maintenance/équipement, capacité workforce, gouvernance puis impact financier.');
   parts.push('Ne crée aucune action autonome. Si une action concrète sûre est justifiée, utilise action_proposals pour demander confirmation humaine.');
   parts.push('Indicateurs disponibles: '+JSON.stringify({control_tower:ct,maintenance:mt,equipment:eq,finance:fn,pending_for_me:Number(gv.pending_for_me)||0,open_followups:Array.isArray(context.followups)?context.followups.length:0,operational_changes:Array.isArray(context.operational_changes)?context.operational_changes.length:0}));
@@ -291,4 +303,4 @@ function createHandler({env=process.env,logger=console}={}){
   };
 }
 
-module.exports={createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion};
+module.exports={createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion,deltaSummary};
