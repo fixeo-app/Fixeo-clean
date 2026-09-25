@@ -27,6 +27,9 @@
     if(!r.ok||!data.ok){var e=new Error(data.error||'RAFI_FAILED');e.reason=data.error||'RAFI_FAILED';throw e;}
     return data;
   }
+  async function briefing(client,eid){
+    var t=await token(client);var r=await fetch('/api/enterprise-rafi',{method:'POST',headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'},body:JSON.stringify({enterprise_id:eid,mode:'briefing',history:[]}),credentials:'same-origin'});var data=await r.json().catch(()=>({ok:false,error:'INVALID_RESPONSE'}));if(!r.ok||!data.ok){var e=new Error(data.error||'RAFI_FAILED');e.reason=data.error||'RAFI_FAILED';throw e;}return data;
+  }
   async function transcribe(blob,language){
     var fd=new FormData();
     fd.append('audio',blob,'rafi-enterprise.webm');
@@ -36,5 +39,5 @@
     if(!r.ok||!data.ok){var e=new Error(data.error||'TRANSCRIPTION_FAILED');e.reason=data.error||'TRANSCRIPTION_FAILED';throw e;}
     return data.text;
   }
-  return Object.freeze({ask:ask,transcribe:transcribe});
+  return Object.freeze({ask:ask,briefing:briefing,transcribe:transcribe});
 });
