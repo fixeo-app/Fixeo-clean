@@ -74,7 +74,7 @@
         setStatus(r==='AUTH_REQUIRED'?'Reconnectez-vous pour continuer.':r==='PROVIDER_BUSY'?'RAFI est momentanément occupé. Réessayez.':'RAFI est momentanément indisponible.');
       }finally{busy=false;send.disabled=speak.disabled=show.disabled=false;}
     }
-    async function loadBriefing(){if(busy)return;busy=true;brief.disabled=true;setStatus('RAFI analyse les changements depuis votre dernier point…');try{var result=await api().briefing(client(),eid());message('assistant',result.answer,result);setStatus('Delta briefing et priorités actualisés.');}catch(_){setStatus('Briefing RAFI momentanément indisponible.');}finally{busy=false;brief.disabled=false;}}
+    async function loadBriefing(){if(busy)return;busy=true;brief.disabled=true;setStatus('RAFI analyse les changements, risques et priorités…');try{var result=await api().briefing(client(),eid());message('assistant',result.answer,result);setStatus('Delta briefing, risques et priorités actualisés.');}catch(_){setStatus('Briefing RAFI momentanément indisponible.');}finally{busy=false;brief.disabled=false;}}
     async function startVoice(){
       if(recorder&&recorder.state==='recording'){recorder.stop();speak.textContent='Parler à RAFI';return;}
       if(!win.navigator.mediaDevices||!win.MediaRecorder){setStatus('La reconnaissance vocale n’est pas disponible sur cet appareil.');return;}
