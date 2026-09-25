@@ -36,7 +36,7 @@
   <script defer src="js/fixeo-enterprise-rafi-actions.js?v=block-h2"></script>
   <script defer src="js/fixeo-enterprise-rafi-followups.js?v=block-h5"></script>
   <script defer src="js/fixeo-enterprise-rafi-ui.js?v=block-h65"></script>
-  <script defer src="js/fixeo-enterprise-workspace.js?v=j85"></script><script defer src="js/fixeo-enterprise-cockpit.js?v=j8"></script>
+  <script defer src="js/fixeo-enterprise-workspace.js?v=j85"></script><script defer src="js/fixeo-enterprise-cockpit.js?v=j86"></script>
 </head>
 <body class="fxew fxew-cockpit">
   <a class="fxew-skip" href="#main">Aller au contenu</a><button id="fxew-nav-toggle" class="fxew-nav-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false">☰</button><aside id="fxew-cockpit-nav" class="fxew-cockpit-nav" aria-label="Navigation Enterprise"><div class="fxew-nav-brand"><img src="img/logo-fixeo-header.png" alt="FIXEO"><span>ENTERPRISE</span></div><nav><button class="fxew-nav-item is-active" data-cockpit-target="enterprise-workspace" type="button"><b>⌂</b><span>Cockpit</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-control-tower" type="button"><b>↗</b><span>Interventions</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-sites" type="button"><b>⌖</b><span>Sites</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-workforce-module" type="button"><b>◎</b><span>Équipes</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-preventive-maintenance" type="button"><b>◇</b><span>Maintenance</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-governance-module" type="button"><b>✓</b><span>Gouvernance</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-finance-module" type="button"><b>◫</b><span>Finance</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-reporting" type="button"><b>▥</b><span>Rapports</span></button><button class="fxew-nav-item" data-cockpit-target="enterprise-team" type="button"><b>⚙</b><span>Administration</span></button></nav><button class="fxew-nav-rafi" data-cockpit-target="enterprise-rafi-module" type="button"><span>✦</span><strong>Demander à RAFI</strong></button></aside><div id="fxew-nav-backdrop" class="fxew-nav-backdrop" hidden></div>
@@ -120,6 +120,11 @@
           <input id="enterprise-rafi-camera" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden>
         </form>
         <p id="enterprise-rafi-status" class="fxew-module-meta" aria-live="polite"></p>
+      </section>
+
+      <section id="fxew-section-shell" class="fxew-j86-shellhead" aria-label="Contexte de section" hidden>
+        <div><p id="fxew-section-kicker" class="fxew-module-kicker">FIXEO ENTERPRISE OS</p><h2 id="fxew-section-title">Cockpit</h2><p id="fxew-section-subtitle">Pilotage intelligent de vos opérations.</p></div>
+        <aside class="fxew-j86-context"><span>RAFI CONTEXT</span><strong id="fxew-section-context">Situation consolidée</strong><small id="fxew-section-context-detail">Les signaux utiles apparaissent ici selon la section.</small><button id="fxew-section-rafi" class="fxew-button" type="button">✦ Analyser avec RAFI</button></aside>
       </section>
 
       <section id="enterprise-control-tower" class="fxew-module fxew-control-tower fxew-j85b-control" aria-labelledby="control-tower-title" hidden>
