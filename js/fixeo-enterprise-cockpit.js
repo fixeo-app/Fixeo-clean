@@ -1,0 +1,9 @@
+/* FIXEO Enterprise J1 — cockpit navigation shell. Presentation only. */
+(function(){'use strict';
+function mount(){var d=document,nav=d.getElementById('fxew-cockpit-nav'),toggle=d.getElementById('fxew-nav-toggle'),back=d.getElementById('fxew-nav-backdrop');if(!nav||!toggle)return;
+function close(){document.body.classList.remove('fxew-nav-open');toggle.setAttribute('aria-expanded','false');if(back)back.hidden=true}
+function open(){document.body.classList.add('fxew-nav-open');toggle.setAttribute('aria-expanded','true');if(back)back.hidden=false}
+toggle.addEventListener('click',()=>document.body.classList.contains('fxew-nav-open')?close():open());if(back)back.addEventListener('click',close);
+nav.addEventListener('click',function(e){var b=e.target.closest('[data-cockpit-target]');if(!b)return;var id=b.dataset.cockpitTarget,t=d.getElementById(id);if(!t){if(id==='enterprise-sites')t=d.querySelector('.fxew-sites');if(id==='enterprise-team')t=d.querySelector('.fxew-team');if(id==='enterprise-workforce-module')t=d.querySelector('#enterprise-workforce-module,#enterprise-my-workforce-module');}if(!t)return;nav.querySelectorAll('.fxew-nav-item').forEach(x=>x.classList.toggle('is-active',x===b));t.scrollIntoView({behavior:'smooth',block:'start'});close();});
+var sections=[...nav.querySelectorAll('.fxew-nav-item[data-cockpit-target]')].map(b=>({b,t:d.getElementById(b.dataset.cockpitTarget)})).filter(x=>x.t&&x.t.id!=='enterprise-workspace');if('IntersectionObserver'in window){var io=new IntersectionObserver(es=>{var hit=es.filter(x=>x.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(!hit)return;var x=sections.find(y=>y.t===hit.target);if(x)nav.querySelectorAll('.fxew-nav-item').forEach(n=>n.classList.toggle('is-active',n===x.b));},{rootMargin:'-25% 0px -60% 0px',threshold:[0,.1,.4]});sections.forEach(x=>io.observe(x.t));}}
+document.readyState==='loading'?document.addEventListener('DOMContentLoaded',mount):mount();})();
