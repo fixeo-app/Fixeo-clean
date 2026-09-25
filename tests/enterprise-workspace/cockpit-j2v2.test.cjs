@@ -1,0 +1,4 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..');
+test('J2V2-01 static home has no dynamic KPI clone',()=>{const h=fs.readFileSync(path.join(r,'dashboard-enterprise.html'),'utf8');assert.match(h,/fxew-j2v2-home/);assert.match(h,/Pilotage opérationnel/);});
+test('J2V2-02 cockpit has no observers or data access',()=>{const j=fs.readFileSync(path.join(r,'js/fixeo-enterprise-cockpit.js'),'utf8');assert.doesNotMatch(j,/MutationObserver|\.rpc\(|\.from\(|fetch\(/);});
+test('J2V2-03 auth workspace remains canonical',()=>{const h=fs.readFileSync(path.join(r,'dashboard-enterprise.html'),'utf8');assert.match(h,/<section id="enterprise-workspace"[^>]+hidden>/);assert.match(h,/fixeo-enterprise-workspace\.js\?v=block-g1/);});
