@@ -667,8 +667,8 @@
       setTimeout(doInit, 300);
     }
 
-    // Auto-refresh every 30s
-    setInterval(refreshAll, 30000);
+    // Pressure guard: local render refresh only while visible; DB ownership stays with canonical/realtime layers.
+    setInterval(function() { if (!document.hidden) refreshAll(); }, 120000);
   }
 
   /* ─── DEMO SEED (only if store empty) ─────────────────────── */

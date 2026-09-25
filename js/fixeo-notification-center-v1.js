@@ -33,7 +33,7 @@
   if (window.FixeoNotifCenter) return;
 
   var VERSION    = 'fnc-v1b';
-  var POLL_MS    = 30000;    /* 30-second polling interval */
+  var POLL_MS    = 120000;   /* pressure guard: 2-minute fallback; realtime/events handle freshness */
   var MAX_FETCH  = 50;       /* max rows per poll */
   var LOG        = '[FixeoNotifCenter]';
 
@@ -103,6 +103,7 @@
   var _pollTimer  = null;
 
   async function _poll() {
+    if (document.hidden) return;
     try {
       var uid  = _getAuthUid();
       var role = _getRole();
@@ -231,8 +232,8 @@
 
   function _schedulePoll() {
     if (_pollTimer) clearInterval(_pollTimer);
-    _poll(); /* immediate first poll */
-    _pollTimer = setInterval(_poll, POLL_MS);
+    if (!document.hidden) _poll(); /* immediate first poll */
+    _pollTimer = setInterval(function () { if (!document.hidden) _poll(); }, POLL_MS);
   }
 
   /* Flash poll dot on bell button */

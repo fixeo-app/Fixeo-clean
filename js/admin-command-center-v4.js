@@ -57,6 +57,7 @@
   var _timers     = [];
   var POLL_MS = 120000; /* stability: one canonical DB refresh every 2 min */
   var MIN_FETCH_GAP_MS = 45000;
+  var _refreshQueued = false;
 
   /* ── Helpers ── */
   function $(id) { return document.getElementById(id); }
@@ -885,9 +886,21 @@
   /* ═══════════════════════════════════════════════════════════════
      FULL REFRESH (fetch + render)
   ═══════════════════════════════════════════════════════════════ */
-  async function _refresh() {
+  async function _refresh(force) {
+    if (document.hidden && !force) return;
+    if (_refreshing) { _refreshQueued = true; return; }
+    if (!force && _lastFetch && (Date.now() - _lastFetch) < MIN_FETCH_GAP_MS) {
+      _renderAll();
+      return;
+    }
     await _fetchAll();
     _renderAll();
+    if (_refreshQueued) {
+      _refreshQueued = false;
+      if (!document.hidden && (Date.now() - _lastFetch) >= MIN_FETCH_GAP_MS) {
+        setTimeout(function () { _refresh(false); }, 250);
+      }
+    }
   }
 
   /* ═══════════════════════════════════════════════════════════════
@@ -910,7 +923,7 @@
 
     /* Stability hotfix: V4 is the only periodic DB owner; hidden tabs never poll. */
     _timers.push(setInterval(function () {
-      _refresh();
+      if (!document.hidden) _refresh(false);
     }, POLL_MS));
 
     /* Fast feed update every 5s (timestamps only if no new data) */
@@ -921,7 +934,7 @@
     /* React to admin events */
     ['fixeo:client-request-updated','fixeo:state:updated','fixeo:admin:refresh',
      'fixeo:client-request-created'].forEach(function(ev) {
-      window.addEventListener(ev, function () { setTimeout(_refresh, 200); });
+      window.addEventListener(ev, function () { setTimeout(function () { _refresh(false); }, 200); });
     });
 
     console.log(LOG, VERSION + ' ready — 8 war room modules loaded');
@@ -930,7 +943,7 @@
   /* ── Public API ── */
   window.FixeoAccV4 = {
     VERSION:  VERSION,
-    refresh:  _refresh,
+    refresh:  function() { return _refresh(false); },
     revTab:   function(tab) { _revTab = tab; _renderRevenue(tab); }
   };
 
