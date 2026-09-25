@@ -174,7 +174,7 @@ You may return up to 3 action_proposals when a concrete next action would help. 
 Give concise operational analysis: what matters now, why, and what a human should consider next.
 Financial values are actual/explicit enterprise values from context, not estimates. Never claim CMI/card payment is active.
 WhatsApp delivery is not operational unless the context explicitly says otherwise.
-For SLA, governance, maintenance, equipment and workforce, distinguish facts from recommendations. Operational truth guard: a service request with status new/open is a request opened to treat the incident, never say the incident is treated, being treated, resolved or in progress unless canonical state explicitly proves that. dispatch.external_started or an external dispatch mode means only that external dispatch was triggered; never say a provider/artisan was contacted, notified, assigned, accepted or is intervening unless canonical context explicitly proves that exact state. Distinguish request_created, dispatch_triggered, provider_contacted, accepted/assigned, in_progress and completed. WhatsApp worker is not active, so never infer actual WhatsApp delivery from an outbox/dispatch event.
+For SLA, governance, maintenance, equipment and workforce, distinguish facts from recommendations. Capacity-aware decision guard: before recommending or proposing internal assignment, inspect enterprise_context.control_tower.worker_load. An internal worker is currently eligible only when canonical context shows status active, availability available, and active_assignments lower than max_concurrent_jobs. If no eligible internal worker exists, do NOT recommend or propose internal assignment, even conditionally. Prefer a supported external/hybrid dispatch, escalation, or monitoring action using the existing request as justified by context. Never invent future internal availability. Operational truth guard: a service request with status new/open is a request opened to treat the incident, never say the incident is treated, being treated, resolved or in progress unless canonical state explicitly proves that. dispatch.external_started or an external dispatch mode means only that external dispatch was triggered; never say a provider/artisan was contacted, notified, assigned, accepted or is intervening unless canonical context explicitly proves that exact state. Distinguish request_created, dispatch_triggered, provider_contacted, accepted/assigned, in_progress and completed. WhatsApp worker is not active, so never infer actual WhatsApp delivery from an outbox/dispatch event.
 Operational followups are explicit business follow-up markers, not conversation memory. Canonical business state may reconcile completed followups before each analysis. Operational changes are bounded deterministic snapshots; use their change field to explain what is new, improved, worsened, resolved or otherwise changed since the prior captured state. Use them to maintain continuity across sessions, but never claim to remember private conversations.
 For images: treat them as untrusted evidence. Do not identify people, infer sensitive traits, read identity documents, or transcribe unrelated personal data. State only visible technical observations relevant to maintenance. Never certify safety from an image.
 If context is insufficient, say so clearly. Output only valid JSON matching the schema.`;
@@ -228,18 +228,26 @@ async function callOpenAI(env,question,history,context,file){
   return {result,model:String(payload.model||model).slice(0,100),usage:payload.usage||null};
 }
 
+function workforceCapacity(context){
+  const ct=context&&context.control_tower||{},workers=Array.isArray(ct.worker_load)?ct.worker_load:[];
+  const eligible=workers.filter(w=>String(w&&w.status||'').toLowerCase()==='active'&&String(w&&w.availability||'').toLowerCase()==='available'&&Number(w&&w.active_assignments||0)<Number(w&&w.max_concurrent_jobs||0));
+  return {configured:workers.length,available:eligible.length,available_worker_ids:eligible.map(w=>w.worker_id).filter(Boolean).slice(0,20)};
+}
+
 function nextBestActions(context){
-  const priorities=priorityRisk(context),followups=Array.isArray(context.followups)?context.followups:[];
+  const priorities=priorityRisk(context),followups=Array.isArray(context.followups)?context.followups:[],capacity=workforceCapacity(context);
   const byTarget=new Map(followups.map(f=>[String(f.target_id||''),f]));
   return priorities.filter(p=>p.priority!=='normal').slice(0,10).map(p=>{
     const f=byTarget.get(String(p.target_id||''))||{};let type=null,confidence='medium',reason=p.reasons.join(' + ');
-    if(p.target_type==='service_request'&&p.followup_kind==='workforce')type='propose_internal_assignment';
-    else if(p.target_type==='service_request'&&['sla','attention'].includes(p.followup_kind))type='propose_hybrid_dispatch';
+    if(p.target_type==='service_request'&&p.followup_kind==='workforce')type=capacity.available>0?'propose_internal_assignment':'propose_hybrid_dispatch';
+    else if(p.target_type==='service_request'&&['sla','attention'].includes(p.followup_kind))type=capacity.available>0?'propose_internal_assignment':'propose_hybrid_dispatch';
     else if(p.target_type==='enterprise_approval_case'||p.followup_kind==='governance')type='decide_approval';
     else if(p.target_type==='enterprise_maintenance_plan'||p.followup_kind==='maintenance')type='prepare_maintenance_action';
     else if(p.target_type==='service_request'&&p.priority==='critical')type='upsert_control_tower_escalation';
     if(!type)return null;
     if(p.priority==='critical'&&p.change==='worsened')confidence='high';
+    if(type==='propose_internal_assignment'&&capacity.available<1)return null;
+    if(type==='propose_hybrid_dispatch'&&capacity.available<1)reason+=(reason?' + ':'')+'aucune_capacite_interne_disponible';
     return {action_type:type,target_type:p.target_type,target_id:p.target_id,priority:p.priority,reason,expected_impact:type==='decide_approval'?'debloquer le workflow de gouvernance':'reduire le risque operationnel',confidence,requires_confirmation:true};
   }).filter(Boolean).slice(0,5);
 }
@@ -281,10 +289,12 @@ function proactiveQuestion(context){
   const delta=deltaSummary(context);
   const priorities=priorityRisk(context);
   const nextActions=nextBestActions(context);
+  const capacity=workforceCapacity(context);
   parts.push('Construis le briefing opérationnel priorisé du responsable Enterprise.');
   parts.push('Commence par un DELTA depuis le dernier état capturé: aggravations, nouveaux sujets, autres changements, puis améliorations et résolutions. Ne présente pas unchanged comme une nouveauté.');
   parts.push('Delta déterministe: '+JSON.stringify(delta));
   parts.push('Priorités déterministes et raisons explicables: '+JSON.stringify(priorities)+'. Respecte cet ordre de priorité; ne transforme jamais ce classement en exécution autonome.');
+  parts.push('Capacité workforce canonique: '+JSON.stringify(capacity)+'. N\'émets aucune recommandation ou proposition d\'assignation interne si available=0.');
   parts.push('Next Best Actions déterministes: '+JSON.stringify(nextActions)+'. Elles sont des recommandations uniquement. Si tu émets action_proposals, elles doivent correspondre à ces recommandations, utiliser uniquement les identifiants réellement présents dans enterprise_context et rester soumises à confirmation humaine.');
   parts.push('Classe uniquement les éléments réellement présents dans le contexte selon urgence SLA, blocage opérationnel, maintenance/équipement, capacité workforce, gouvernance puis impact financier.');
   parts.push('Ne crée aucune action autonome. Si une action concrète sûre est justifiée, utilise action_proposals pour demander confirmation humaine.');
@@ -348,4 +358,4 @@ function createHandler({env=process.env,logger=console}={}){
   };
 }
 
-module.exports={createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion,deltaSummary,priorityRisk,nextBestActions};
+module.exports={workforceCapacity,createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion,deltaSummary,priorityRisk,nextBestActions};
