@@ -238,14 +238,27 @@
         liveHead.textContent=rows.length?rows.length+' dispatch actifs · '+internal+' interne'+(internal>1?'s':'')+' · '+external+' avec relais réseau':'Aucun dispatch actif';
       }
       rows.slice(0,30).forEach(i=>{
-        var c=el('article','fxew-hybrid-live-card'),h=el('div','fxew-workforce-head'),copy=el('div');
-        copy.append(el('strong','',i.service_category||'Intervention'),el('span','',[i.site_name,i.city].filter(Boolean).join(' · ')));
-        var hs=i.hybrid_dispatch&&i.hybrid_dispatch.status||i.request_status;h.append(copy,el('span','fxew-status',hs));c.append(h);
-        var modeText=i.hybrid_dispatch?MODE_LABELS[i.hybrid_dispatch.mode]||i.hybrid_dispatch.mode:'';
-        c.append(el('p','fxew-workforce-meta',[modeText,i.internal_assignment?'Interne · '+i.internal_assignment.status:''].filter(Boolean).join(' · ')));
+        var hd=i.hybrid_dispatch||{},ia=i.internal_assignment||null;
+        var c=el('article','fxew-hybrid-live-card fxew-j84-flow');
+        var head=el('div','fxew-j84-flow-head'),copy=el('div');
+        copy.append(el('span','fxew-module-kicker','DECISION FLOW'),el('strong','',i.service_category||'Intervention'),el('small','',[i.site_name,i.city].filter(Boolean).join(' · ')));
+        head.append(copy,el('span','fxew-status',hd.status||i.request_status));c.append(head);
+        var flow=el('div','fxew-j84-rail');
+        function step(label,value,state){var n=el('div','fxew-j84-step fxew-j84-step--'+state);n.append(el('span','',label),el('strong','',value));return n;}
+        var mode=hd.mode||'external_only',modeLabel=MODE_LABELS[mode]||mode;
+        var internalState=ia?'done':((wf.workers||[]).some(w=>w.status==='active'&&w.availability==='available')?'ready':'off');
+        var internalText=ia?'Assigné · '+ia.status:(internalState==='ready'?'Capacité disponible':'Aucune capacité');
+        var externalUsed=['external_only','internal_first','hybrid'].includes(mode);
+        flow.append(step('Demande','Ouverte','done'),step('Stratégie',modeLabel,'done'),step('Interne',internalText,internalState),step('Réseau FIXEO',externalUsed?'Mobilisé':'En attente',externalUsed?'live':'off'),step('État',hd.status||i.request_status,'live'));
+        c.append(flow);
+        var next=el('div','fxew-j84-next');
+        var nextText=ia?'Suivre la mission interne et son avancement.':externalUsed?'Suivre le dispatch réseau sur cette demande existante.':'Capacité interne requise avant affectation.';
+        next.append(el('span','','PROCHAINE ACTION'),el('strong','',nextText));c.append(next);
         if(canOperate()&&i.request_status==='new'){
           var a=el('div','fxew-site-actions'),retry=el('button','fxew-site-action','Relancer dispatch'),assign=el('button','fxew-site-action','Affecter interne');
-          retry.type=assign.type='button';retry.dataset.wfAction='retry-dispatch';assign.dataset.wfAction='assign-worker';retry.dataset.requestId=assign.dataset.requestId=i.id;a.append(retry,assign);c.append(a);
+          retry.type=assign.type='button';retry.dataset.wfAction='retry-dispatch';assign.dataset.wfAction='assign-worker';retry.dataset.requestId=assign.dataset.requestId=i.id;
+          if(internalState==='off')assign.disabled=true;
+          a.append(retry,assign);c.append(a);
         }
         live.append(c);
       });
