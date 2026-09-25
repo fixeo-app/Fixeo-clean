@@ -368,3 +368,17 @@
 
 /* J2-v2.1 — complete domain launcher; still static and observer-free. */
 .fxew-j2v2-shortcuts button{min-height:72px}
+
+/* J3-v2 — isolated visual views. Native modules stay mounted; auth/data lifecycle is untouched. */
+#enterprise-workspace[data-j3-view] > *{display:none!important}
+#enterprise-workspace[data-j3-view] > .fxew-intro{display:block!important}
+#enterprise-workspace[data-j3-view="enterprise-control-tower"] > #enterprise-control-tower,
+#enterprise-workspace[data-j3-view="enterprise-preventive-maintenance"] > #enterprise-preventive-maintenance,
+#enterprise-workspace[data-j3-view="enterprise-governance-module"] > #enterprise-governance-module,
+#enterprise-workspace[data-j3-view="enterprise-finance-module"] > #enterprise-finance-module,
+#enterprise-workspace[data-j3-view="enterprise-reporting"] > #enterprise-reporting,
+#enterprise-workspace[data-j3-view="enterprise-rafi-module"] > #enterprise-rafi-module{display:block!important}
+#enterprise-workspace[data-j3-view="enterprise-sites"] > .fxew-sites,
+#enterprise-workspace[data-j3-view="enterprise-team"] > .fxew-team{display:grid!important}
+#enterprise-workspace[data-j3-view="enterprise-workforce-module"] > #enterprise-workforce-module,
+#enterprise-workspace[data-j3-view="enterprise-workforce-module"] > #enterprise-my-workforce-module{display:block!important}
