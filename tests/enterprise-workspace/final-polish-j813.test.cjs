@@ -1,0 +1,6 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.13 removes clipped Espace entreprise header label',()=>{const h=rd('dashboard-enterprise.html');assert.doesNotMatch(h,/class="fxew-header-label">Espace entreprise/);assert.match(h,/fixeo-enterprise-workspace\.css\?v=j813/);});
+test('J8.13 removes authenticated dashboard top dead space',()=>{const c=rd('css/fixeo-enterprise-workspace.css');assert.match(c,/\.fxew-cockpit \.fxew-main\{padding-top:14px\}/);assert.match(c,/#enterprise-workspace\[data-j3-view\]\{padding-top:0!important\}/);});
+test('J8.13 keeps bootstrap eyebrow but hides it in cockpit shell',()=>{const h=rd('dashboard-enterprise.html'),c=rd('css/fixeo-enterprise-workspace.css');assert.match(h,/fxew-eyebrow fxew-bootstrap-eyebrow/);assert.match(c,/\.fxew-main>\.fxew-bootstrap-eyebrow\{display:none\}/);});
+test('J8.13 prevents finance amount vertical wrapping',()=>{assert.match(rd('css/fixeo-enterprise-workspace.css'),/white-space:nowrap;overflow-wrap:normal;word-break:keep-all/);});
+test('workspace syntax regression remains blocked',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
