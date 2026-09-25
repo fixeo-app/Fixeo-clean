@@ -734,8 +734,8 @@
     window.addEventListener('storage', function(e) {
       if (e.key === STORAGE_KEY) setTimeout(renderAll, 80);
     });
-    /* admin-sb1: refresh Supabase cache in parallel with the 45s renderAll cycle */
-    setInterval(function() { _fetchSupabaseRequests(); renderAll(); }, 45000);
+    /* Stability hotfix: V4 owns periodic Supabase refresh.
+       P1 consumes the shared cache and reacts to existing admin events. */
   }
 
   function init() {
