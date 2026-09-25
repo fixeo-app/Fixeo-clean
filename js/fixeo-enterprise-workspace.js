@@ -76,7 +76,7 @@
     var waitMs = options.waitMs || 15000;
     var client = null, subscription = null, generation = 0, stopped = false, logoutPending = false;
     var workforceUi = null, controlTowerUi = null, maintenanceUi = null, equipmentUi = null, financeUi = null, governanceUi = null, rafiUi = null;
-    var logoutFailed = false, logoutProof = null;
+    var logoutFailed = false, logoutProof = null, refreshInFlight = false;
 
     function clear() {
       generation++;
@@ -1207,6 +1207,12 @@
           return;
         }
         if (logoutPending || logoutFailed) return;
+        // Supabase already rotates the token internally. Do not tear down a verified
+        // Enterprise workspace or start a second bootstrap on routine auth refreshes.
+        if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
+          if (currentEnterpriseId || refreshInFlight) return;
+        }
+        if (refreshInFlight) return;
         show('Vérification de votre accès', 'Actualisation de votre session…', false, true, false);
         win.setTimeout(function () { if (!doc.hidden) refresh(); }, 0);
       });
@@ -1214,7 +1220,8 @@
       if (!subscription || typeof subscription.unsubscribe !== 'function') throw new Error('AUTH_EVENTS_UNAVAILABLE');
     }
     async function refresh() {
-      if (stopped || logoutPending || logoutFailed) return;
+      if (stopped || logoutPending || logoutFailed || refreshInFlight) return;
+      refreshInFlight = true;
       show('Ouverture de votre espace', 'Vérification de votre accès en cours…', false, true, false);
       var run = generation;
       try {
@@ -1258,9 +1265,7 @@
           governanceUi && typeof governanceUi.refresh === 'function' ? governanceUi.refresh() : Promise.resolve(),
           canViewAudit() ? loadAudit(result.enterprise.id, run, false) : Promise.resolve()
         ]);
-      } catch (_) { if (run === generation && !stopped && !doc.hidden) failure(); }
-    }
-    async function signOut() {
+      } catch (_) { if (run === generation && !stopped && !doc.hidden) failure(); }\n      finally { refreshInFlight = false; }\n    }\n    async function signOut() {
       if (logoutPending || stopped) return;
       logoutPending = true; logoutFailed = false;
       logout.disabled = true;

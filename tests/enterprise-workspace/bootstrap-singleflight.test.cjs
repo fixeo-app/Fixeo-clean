@@ -1,0 +1,4 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('enterprise bootstrap is single-flight',()=>{const s=rd('js/fixeo-enterprise-workspace.js');assert.match(s,/refreshInFlight/);assert.match(s,/logoutFailed \|\| refreshInFlight/);assert.match(s,/finally \{ refreshInFlight = false; \}/);});
+test('routine token rotation does not tear down verified workspace',()=>{const s=rd('js/fixeo-enterprise-workspace.js');assert.match(s,/event === 'TOKEN_REFRESHED' \|\| event === 'SIGNED_IN'/);assert.match(s,/currentEnterpriseId \|\| refreshInFlight/);});
+test('bootstrap remains bounded and fail closed',()=>{const s=rd('js/fixeo-enterprise-workspace.js');assert.match(s,/var waitMs = options\.waitMs \|\| 15000/);assert.match(s,/function failure\(\)/);assert.match(s,/await bounded\(win\.FixeoEnterpriseGuard\.check/);});
