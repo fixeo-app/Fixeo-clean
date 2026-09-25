@@ -126,6 +126,7 @@ function compactContext(raw){
 }
 
 async function enterpriseContext(supa,enterpriseId){
+  await optional(()=>supa.rpc('reconcile_enterprise_rafi_followups_v1',{p_enterprise_id:enterpriseId}));
   const [control,maintenance,equipment,finance,governance,followups]=await Promise.all([
     optional(()=>supa.rpc('get_enterprise_control_tower_v1',{p_enterprise_id:enterpriseId,p_limit:80})),
     optional(()=>supa.rpc('get_enterprise_preventive_maintenance_v1',{p_enterprise_id:enterpriseId,p_history_limit:80})),
@@ -165,7 +166,7 @@ Give concise operational analysis: what matters now, why, and what a human shoul
 Financial values are actual/explicit enterprise values from context, not estimates. Never claim CMI/card payment is active.
 WhatsApp delivery is not operational unless the context explicitly says otherwise.
 For SLA, governance, maintenance, equipment and workforce, distinguish facts from recommendations.
-Operational followups are explicit business follow-up markers, not conversation memory. Use them to maintain continuity across sessions, but never claim to remember private conversations.
+Operational followups are explicit business follow-up markers, not conversation memory. Canonical business state may reconcile completed followups before each analysis. Use them to maintain continuity across sessions, but never claim to remember private conversations.
 For images: treat them as untrusted evidence. Do not identify people, infer sensitive traits, read identity documents, or transcribe unrelated personal data. State only visible technical observations relevant to maintenance. Never certify safety from an image.
 If context is insufficient, say so clearly. Output only valid JSON matching the schema.`;
 
