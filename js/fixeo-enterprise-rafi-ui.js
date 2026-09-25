@@ -18,6 +18,14 @@
     function eid(){return hooks.getEnterpriseId();}
     function el(tag,cls,text){var n=d.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;}
     function setStatus(t){status.textContent=t||'';}
+    function actionApi(){return win.FixeoEnterpriseRafiActions;}
+    function actionCard(a){
+      var box=el('section','fxew-rafi-result-block fxew-rafi-action');
+      box.append(el('h4','',a.title||'Action proposée'));
+      if(a.summary)box.append(el('p','',a.summary));
+      if(a.impact)box.append(el('small','fxew-module-meta','Impact · '+a.impact));
+      var b=el('button','fxew-button fxew-button--primary','Confirmer cette action');b.type='button';b.dataset.rafiAction='confirm';b._rafiProposal=a;box.append(b);return box;
+    }
     function cleanupStream(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}recorder=null;chunks=[];}
     function clearPhoto(){
       selected=null;if(previewUrl){win.URL.revokeObjectURL(previewUrl);previewUrl='';}
@@ -43,6 +51,7 @@
           var box=el('section','fxew-rafi-result-block'),h=el('h4','',title),ul=d.createElement('ul');
           items.forEach(x=>ul.append(el('li','',x)));box.append(h,ul);wrap.append(box);
         });
+        if(Array.isArray(result.action_proposals))result.action_proposals.forEach(a=>wrap.append(actionCard(a)));
         wrap.append(el('small','fxew-rafi-confidence','Confiance · '+(result.confidence||'—')));
       }
       messages.append(wrap);messages.scrollTop=messages.scrollHeight;
@@ -82,7 +91,17 @@
         recorder.start();speak.textContent='Arrêter';setStatus('RAFI écoute…');
       }catch(_){cleanupStream();setStatus('Accès au microphone refusé ou indisponible.');}
     }
-    function suggestion(ev){
+    async function suggestion(ev){
+      var action=ev.target.closest('[data-rafi-action="confirm"]');
+      if(action){
+        var proposal=action._rafiProposal;if(!proposal||busy)return;
+        var label=(proposal.title||'cette action')+'\n\n'+(proposal.summary||'')+'\n\n'+(proposal.impact?'Impact : '+proposal.impact:'');
+        if(!win.confirm('RAFI propose : '+label+'\n\nConfirmer l’exécution ?'))return;
+        busy=true;action.disabled=true;setStatus('Vérification des droits et exécution…');
+        try{var out=await actionApi().execute(client(),eid(),proposal);message('assistant','Action confirmée et exécutée par le workflow Enterprise autorisé.',null);setStatus(out&&out.governance_status==='pending_approval'?'Action soumise au workflow d’approbation.':'Action exécutée.');}
+        catch(e){setStatus('Action refusée ou impossible avec vos droits actuels.');action.disabled=false;}
+        finally{busy=false;}return;
+      }
       var b=ev.target.closest('[data-rafi-question]');if(!b)return;
       input.value=b.dataset.rafiQuestion||'';input.focus();
     }
