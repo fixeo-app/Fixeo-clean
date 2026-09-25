@@ -127,6 +127,7 @@ function compactContext(raw){
 
 async function enterpriseContext(supa,enterpriseId){
   await optional(()=>supa.rpc('reconcile_enterprise_rafi_followups_v1',{p_enterprise_id:enterpriseId}));
+  const changes=await optional(()=>supa.rpc('capture_enterprise_rafi_changes_v1',{p_enterprise_id:enterpriseId}));
   const [control,maintenance,equipment,finance,governance,followups]=await Promise.all([
     optional(()=>supa.rpc('get_enterprise_control_tower_v1',{p_enterprise_id:enterpriseId,p_limit:80})),
     optional(()=>supa.rpc('get_enterprise_preventive_maintenance_v1',{p_enterprise_id:enterpriseId,p_history_limit:80})),
@@ -139,6 +140,7 @@ async function enterpriseContext(supa,enterpriseId){
     throw new RafiEnterpriseError('FORBIDDEN',403);
   const context=compactContext({control_tower:control,maintenance,equipment,finance,governance});
   context.followups=followups&&followups.ok===true&&Array.isArray(followups.followups)?followups.followups.slice(0,60):[];
+  context.operational_changes=changes&&changes.ok===true&&Array.isArray(changes.changes)?changes.changes.slice(0,60):[];
   return context;
 }
 
@@ -166,7 +168,7 @@ Give concise operational analysis: what matters now, why, and what a human shoul
 Financial values are actual/explicit enterprise values from context, not estimates. Never claim CMI/card payment is active.
 WhatsApp delivery is not operational unless the context explicitly says otherwise.
 For SLA, governance, maintenance, equipment and workforce, distinguish facts from recommendations.
-Operational followups are explicit business follow-up markers, not conversation memory. Canonical business state may reconcile completed followups before each analysis. Use them to maintain continuity across sessions, but never claim to remember private conversations.
+Operational followups are explicit business follow-up markers, not conversation memory. Canonical business state may reconcile completed followups before each analysis. Operational changes are bounded deterministic snapshots; use their change field to explain what is new, improved, worsened, resolved or otherwise changed since the prior captured state. Use them to maintain continuity across sessions, but never claim to remember private conversations.
 For images: treat them as untrusted evidence. Do not identify people, infer sensitive traits, read identity documents, or transcribe unrelated personal data. State only visible technical observations relevant to maintenance. Never certify safety from an image.
 If context is insufficient, say so clearly. Output only valid JSON matching the schema.`;
 
@@ -229,7 +231,7 @@ function proactiveQuestion(context){
   parts.push('Construis le briefing opérationnel priorisé du responsable Enterprise.');
   parts.push('Classe uniquement les éléments réellement présents dans le contexte selon urgence SLA, blocage opérationnel, maintenance/équipement, capacité workforce, gouvernance puis impact financier.');
   parts.push('Ne crée aucune action autonome. Si une action concrète sûre est justifiée, utilise action_proposals pour demander confirmation humaine.');
-  parts.push('Indicateurs disponibles: '+JSON.stringify({control_tower:ct,maintenance:mt,equipment:eq,finance:fn,pending_for_me:Number(gv.pending_for_me)||0,open_followups:Array.isArray(context.followups)?context.followups.length:0}));
+  parts.push('Indicateurs disponibles: '+JSON.stringify({control_tower:ct,maintenance:mt,equipment:eq,finance:fn,pending_for_me:Number(gv.pending_for_me)||0,open_followups:Array.isArray(context.followups)?context.followups.length:0,operational_changes:Array.isArray(context.operational_changes)?context.operational_changes.length:0}));
   return parts.join(' ');
 }
 
