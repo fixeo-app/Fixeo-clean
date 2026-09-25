@@ -1265,7 +1265,10 @@
           governanceUi && typeof governanceUi.refresh === 'function' ? governanceUi.refresh() : Promise.resolve(),
           canViewAudit() ? loadAudit(result.enterprise.id, run, false) : Promise.resolve()
         ]);
-      } catch (_) { if (run === generation && !stopped && !doc.hidden) failure(); }\n      finally { refreshInFlight = false; }\n    }\n    async function signOut() {
+      } catch (_) { if (run === generation && !stopped && !doc.hidden) failure(); }
+      finally { refreshInFlight = false; }
+    }
+    async function signOut() {
       if (logoutPending || stopped) return;
       logoutPending = true; logoutFailed = false;
       logout.disabled = true;
