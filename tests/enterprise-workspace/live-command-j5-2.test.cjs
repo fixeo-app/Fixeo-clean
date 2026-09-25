@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J5.2 producer publishes canonical site_load with summary',()=>{const x=rd('js/fixeo-enterprise-control-tower-ui.js');assert.match(x,/detail:\{summary:current\.summary\|\|\{\},site_load:current\.site_load\|\|\[\]\}/);});
+test('J5.2 derives SLA breaches from site_load breached_count',()=>{const x=rd('js/fixeo-enterprise-cockpit.js');assert.match(x,/siteLoad\.reduce/);assert.match(x,/row&&row\.breached_count/);assert.match(x,/paint\(x\.summary,x\.site_load\)/);});
+test('J5.2 does not alter RPC SQL auth observers or mutations',()=>{const x=rd('js/fixeo-enterprise-cockpit.js');assert.doesNotMatch(x,/MutationObserver|IntersectionObserver|\.rpc\(|\.from\(|fetch\(|auth\.|insert\(|update\(|delete\(/);});
+test('J5.2 cache busts producer and consumer',()=>{const x=rd('dashboard-enterprise.html');assert.match(x,/control-tower-ui\.js\?v=j5-2/);assert.match(x,/enterprise-cockpit\.js\?v=j5-2/);});
