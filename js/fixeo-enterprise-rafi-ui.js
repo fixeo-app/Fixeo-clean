@@ -10,7 +10,7 @@
     var section=by('enterprise-rafi-module'),messages=by('enterprise-rafi-messages'),form=by('enterprise-rafi-form');
     var input=by('enterprise-rafi-input'),send=by('enterprise-rafi-send'),speak=by('enterprise-rafi-speak'),show=by('enterprise-rafi-show');
     var files=by('enterprise-rafi-file'),camera=by('enterprise-rafi-camera'),photo=by('enterprise-rafi-photo'),removePhoto=by('enterprise-rafi-photo-remove');
-    var lang=by('enterprise-rafi-language'),status=by('enterprise-rafi-status'),cameraBtn=by('enterprise-rafi-camera-button');
+    var lang=by('enterprise-rafi-language'),status=by('enterprise-rafi-status'),cameraBtn=by('enterprise-rafi-camera-button'),brief=by('enterprise-rafi-briefing');
     var history=[],selected=null,previewUrl='',recorder=null,stream=null,chunks=[],busy=false;
 
     function api(){return win.FixeoEnterpriseRafi;}
@@ -74,6 +74,7 @@
         setStatus(r==='AUTH_REQUIRED'?'Reconnectez-vous pour continuer.':r==='PROVIDER_BUSY'?'RAFI est momentanément occupé. Réessayez.':'RAFI est momentanément indisponible.');
       }finally{busy=false;send.disabled=speak.disabled=show.disabled=false;}
     }
+    async function loadBriefing(){if(busy)return;busy=true;brief.disabled=true;setStatus('RAFI construit vos priorités opérationnelles…');try{var result=await api().briefing(client(),eid());message('assistant',result.answer,result);setStatus('Briefing priorisé actualisé.');}catch(_){setStatus('Briefing RAFI momentanément indisponible.');}finally{busy=false;brief.disabled=false;}}
     async function startVoice(){
       if(recorder&&recorder.state==='recording'){recorder.stop();speak.textContent='Parler à RAFI';return;}
       if(!win.navigator.mediaDevices||!win.MediaRecorder){setStatus('La reconnaissance vocale n’est pas disponible sur cet appareil.');return;}
@@ -106,13 +107,13 @@
       input.value=b.dataset.rafiQuestion||'';input.focus();
     }
 
-    form.addEventListener('submit',submit);speak.addEventListener('click',startVoice);
+    form.addEventListener('submit',submit);speak.addEventListener('click',startVoice);brief.addEventListener('click',loadBriefing);
     show.addEventListener('click',()=>files.click());cameraBtn.addEventListener('click',()=>camera.click());
     files.addEventListener('change',()=>choose(files.files&&files.files[0]));camera.addEventListener('change',()=>choose(camera.files&&camera.files[0]));
     removePhoto.addEventListener('click',clearPhoto);section.addEventListener('click',suggestion);
 
     message('assistant','Je peux analyser vos opérations, SLA, équipes, maintenance, équipements, finance et gouvernance. Posez-moi une question, parlez-moi ou montrez-moi une situation.');
-    section.hidden=false;
+    section.hidden=false;loadBriefing();
     return {destroy:function(){cleanupStream();clearPhoto();section.removeEventListener('click',suggestion);}};
   }
   return Object.freeze({mount:mount});
