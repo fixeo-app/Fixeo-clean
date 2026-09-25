@@ -9,7 +9,7 @@
   function mount(win,hooks){
     var d=win.document,by=id=>d.getElementById(id),data=null,sites=[];
     var section=by('enterprise-governance-module'),state=by('enterprise-governance-state'),msg=by('enterprise-governance-message'),retry=by('enterprise-governance-retry');
-    var pending=by('enterprise-governance-pending'),policies=by('enterprise-governance-policies'),cases=by('enterprise-governance-cases'),create=by('enterprise-governance-create'),mode=by('enterprise-governance-mode');
+    var pending=by('enterprise-governance-pending'),policies=by('enterprise-governance-policies'),cases=by('enterprise-governance-cases'),create=by('enterprise-governance-create'),mode=by('enterprise-governance-mode'),intelligence=by('enterprise-governance-intelligence');
     var dlg=by('enterprise-governance-policy-dialog'),title=by('enterprise-governance-policy-title'),close=by('enterprise-governance-policy-close'),cancel=by('enterprise-governance-policy-cancel'),form=by('enterprise-governance-policy-form');
     var pid=by('enterprise-governance-policy-id'),pname=by('enterprise-governance-policy-name'),psite=by('enterprise-governance-policy-site'),pcat=by('enterprise-governance-policy-category'),purg=by('enterprise-governance-policy-urgency'),preq=by('enterprise-governance-policy-requester'),pmin=by('enterprise-governance-policy-min'),pmax=by('enterprise-governance-policy-max'),ppriority=by('enterprise-governance-policy-priority'),pstatus=by('enterprise-governance-policy-status'),psteps=by('enterprise-governance-policy-steps'),perror=by('enterprise-governance-policy-error'),psubmit=by('enterprise-governance-policy-submit');
     var decisionDlg=by('enterprise-governance-decision-dialog'),decisionClose=by('enterprise-governance-decision-close'),decisionCancel=by('enterprise-governance-decision-cancel'),decisionCase=by('enterprise-governance-decision-case'),decisionNote=by('enterprise-governance-decision-note'),decisionError=by('enterprise-governance-decision-error'),approve=by('enterprise-governance-approve'),reject=by('enterprise-governance-reject');
@@ -59,9 +59,19 @@
       });
       if(!cases.children.length)cases.append(el('p','fxew-report-empty','Aucun dossier d’approbation.'));
     }
+    function renderIntelligence(x){
+      if(!intelligence)return;intelligence.replaceChildren();
+      var rows=(x&&x.cases)||[],rules=(x&&x.policies)||[],mine=Number(x&&x.pending_for_me||0),pendingRows=rows.filter(c=>c.status==='pending'),activeRules=rules.filter(p=>p.status==='active');
+      function signal(label,value,hint,tone){var n=el('div','fxew-j89-signal fxew-j89-signal--'+tone);n.append(el('span','',label),el('strong','',String(value)),el('small','',hint));return n;}
+      intelligence.append(signal('À valider par moi',mine,mine?'décision'+(mine>1?'s':'')+' requise'+(mine>1?'s':''):'aucune','critical'),signal('En attente',pendingRows.length,'dossiers ouverts','attention'),signal('Règles actives',activeRules.length,'cadre de contrôle','stable'));
+      var next=rows.find(c=>c.status==='pending'&&c.required_role===role())||pendingRows[0]||null;
+      var card=el('div','fxew-j89-next');card.append(el('span','','PROCHAINE DÉCISION'),el('strong','',next?(next.service_category||'Dossier d’approbation'):'Aucune décision en attente'),el('small','',next?[siteName(next.site_id),'Étape '+next.current_step+'/'+next.total_steps,ROLE_LABELS[next.required_role]||next.required_role].filter(Boolean).join(' · '):'Aucun dossier ne nécessite actuellement une validation.'));intelligence.append(card);
+      var decision=el('div','fxew-j89-decision'),t=mine&&next?'Priorité : statuer sur ce dossier avant les autres validations.':pendingRows.length?'Suivre le prochain niveau d’approbation du dossier en attente.':activeRules.length?'Aucune validation en attente ; les règles actives restent appliquées.':'Aucune règle active ni décision en attente avec les données disponibles.';
+      decision.append(el('span','','PROCHAINE ACTION'),el('strong','',t));intelligence.append(decision);
+    }
     function render(x){
       data=x;pending.textContent=String(x.pending_for_me||0);mode.textContent=canManage()?'Gestion autorisée':'Lecture';create.hidden=!canManage();
-      renderPolicies(x.policies||[]);renderCases(x.cases||[]);state.hidden=true;
+      renderPolicies(x.policies||[]);renderCases(x.cases||[]);renderIntelligence(x);state.hidden=true;
     }
     async function refresh(){
       if(!api()||!client()||!eid())return;section.hidden=false;setState('Actualisation de la gouvernance…',false);

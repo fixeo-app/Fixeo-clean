@@ -7,7 +7,7 @@
   <meta name="referrer" content="same-origin">
   <title>Espace entreprise | FIXEO</title>
   <link rel="icon" href="img/logo-fixeo-icon.png">
-  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=j88">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=j89">
   <script defer src="js/supabase-client.js"></script>
   <script defer src="js/fixeo-logout-global.js"></script>
   <script defer src="js/fixeo-auth-resolver.js"></script>
@@ -187,7 +187,7 @@
         </div>
       </section>
 
-      <section id="enterprise-governance-module" class="fxew-module fxew-governance" aria-labelledby="governance-title" hidden>
+      <section id="enterprise-governance-module" class="fxew-module fxew-governance fxew-j89-governance" aria-labelledby="governance-title" hidden>
         <div class="fxew-module-heading">
           <div><p class="fxew-module-kicker">Gouvernance</p><h2 id="governance-title">Approbations & règles</h2></div>
           <div class="fxew-module-actions">
@@ -203,15 +203,22 @@
         <div class="fxew-kpi-grid">
           <div class="fxew-kpi"><span class="fxew-kpi-label">À valider par moi</span><strong id="enterprise-governance-pending" class="fxew-kpi-value">0</strong></div>
         </div>
-        <div class="fxew-report-grid">
-          <section class="fxew-report-card">
-            <div class="fxew-report-card-head"><h3>Règles d’approbation</h3><span>Owner / Admin</span></div>
-            <div id="enterprise-governance-policies" class="fxew-governance-list"></div>
-          </section>
-          <section class="fxew-report-card">
-            <div class="fxew-report-card-head"><h3>Dossiers d’approbation</h3><span>Multi-niveaux</span></div>
-            <div id="enterprise-governance-cases" class="fxew-governance-list"></div>
-          </section>
+        <div class="fxew-j89-command">
+          <div class="fxew-j89-primary">
+            <section class="fxew-report-card">
+              <div class="fxew-report-card-head"><h3>Dossiers d’approbation</h3><span>Multi-niveaux</span></div>
+              <div id="enterprise-governance-cases" class="fxew-governance-list"></div>
+            </section>
+            <section class="fxew-report-card">
+              <div class="fxew-report-card-head"><h3>Règles d’approbation</h3><span>Owner / Admin</span></div>
+              <div id="enterprise-governance-policies" class="fxew-governance-list"></div>
+            </section>
+          </div>
+          <aside class="fxew-j89-rail" aria-label="Intelligence de gouvernance">
+            <p class="fxew-module-kicker">GOVERNANCE INTELLIGENCE</p>
+            <h3>Décisions & contrôle</h3>
+            <div id="enterprise-governance-intelligence" class="fxew-j89-intelligence"></div>
+          </aside>
         </div>
       </section>
 
