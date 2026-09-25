@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.10 exposes Finance Intelligence rail',()=>{const h=rd('dashboard-enterprise.html');for(const x of ['fxew-j810-command','FINANCE INTELLIGENCE','enterprise-finance-intelligence'])assert.match(h,new RegExp(x));});
+test('J8.10 intelligence derives from finance payload',()=>{const j=rd('js/fixeo-enterprise-finance-ui.js');for(const x of ['POSTE À SURVEILLER','PROCHAINE ACTION','operational_cost','fixeo_commission','total_operational_cost'])assert.match(j,new RegExp(x));});
+test('J8.10 desktop uses finance center plus rail',()=>{assert.match(rd('css/fixeo-enterprise-workspace.css'),/grid-template-columns:minmax\(0,2\.12fr\) minmax\(300px,\.88fr\)/);});
+test('workspace syntax regression remains blocked',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
