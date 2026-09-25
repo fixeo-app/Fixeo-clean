@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.5 exposes intervention mission control',()=>{const h=rd('dashboard-enterprise.html');for(const x of ['INTERVENTION MISSION CONTROL','enterprise-interventions-command','Priorité, SLA, dispatch et prochaine décision'])assert.match(h,new RegExp(x));});
+test('J8.5 derives mission control from loaded intervention data',()=>{const j=rd('js/fixeo-enterprise-workspace.js');for(const x of ['PROCHAINE DÉCISION','SLA dépassé : ouvrir le détail','Suivre le dispatch et l’attribution'])assert.match(j,new RegExp(x));});
+test('J8.5 keeps detail as canonical action',()=>{const j=rd('js/fixeo-enterprise-workspace.js');assert.match(j,/dataset\.interventionAction = 'detail'/);});
+test('workspace source has no invalid escaped newline separators',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
