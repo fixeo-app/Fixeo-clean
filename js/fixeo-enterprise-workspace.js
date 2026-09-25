@@ -1282,10 +1282,11 @@
       }
     }
     function visibility() {
-      if (doc.hidden) clear();
-      else refresh();
+      // Keep an already-authorized workspace mounted when Chrome backgrounds the tab.
+      // Refresh on return instead of blanking the UI; auth is revalidated by refresh().
+      if (!doc.hidden) refresh();
     }
-    function pageHide() { clear(); }
+    function pageHide() { /* Do not blank the authorized workspace during tab lifecycle transitions. */ }
     function pageShow(event) { if (event.persisted) refresh(); }
     retry.addEventListener('click', refresh);
     dataRetry.addEventListener('click', function () {
