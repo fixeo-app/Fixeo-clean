@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.4 exposes decision flow language',()=>{const h=rd('dashboard-enterprise.html');assert.match(h,/HYBRID DECISION ENGINE/);assert.match(h,/stratégie, capacité interne, relais réseau et prochaine action/);});
+test('J8.4 decision rail is derived from canonical model only',()=>{const j=rd('js/fixeo-enterprise-workforce-ui.js');for(const x of ['Demande','Stratégie','Interne','Réseau FIXEO','PROCHAINE ACTION'])assert.match(j,new RegExp(x));assert.doesNotMatch(j,/fetch\(|\.from\(/);});
+test('J8.4 disables internal assignment without eligible capacity',()=>{const j=rd('js/fixeo-enterprise-workforce-ui.js');assert.match(j,/if\(internalState==='off'\)assign\.disabled=true/);});
+test('workspace syntax regression remains blocked',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
