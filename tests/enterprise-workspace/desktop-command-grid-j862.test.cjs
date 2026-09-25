@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.6.2 is CSS-only layout plus cachebuster',()=>{assert.match(rd('dashboard-enterprise.html'),/fixeo-enterprise-workspace\.css\?v=j862/);});
+test('desktop command grid uses mission plus operational rail',()=>{const c=rd('css/fixeo-enterprise-workspace.css');assert.match(c,/grid-template-areas:[\s\S]*"attention rail"/);assert.match(c,/#enterprise-control-tower>\.fxew-report-grid\{[\s\S]*grid-area:rail!important/);});
+test('desktop command grid keeps responsive breakpoint isolated',()=>{assert.match(rd('css/fixeo-enterprise-workspace.css'),/@media\(min-width:981px\)/);});
+test('workspace syntax remains untouched and clean',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
