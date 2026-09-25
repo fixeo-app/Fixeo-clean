@@ -170,10 +170,23 @@
       finally{b.disabled=false;}
     }
 
+    function renderWorkforceCommand(wf){
+      var host=by('enterprise-workforce-command');if(!host)return;host.replaceChildren();
+      var workers=wf.workers||[],active=workers.filter(w=>w.status==='active'),available=active.filter(w=>w.availability==='available');
+      var busy=(wf.assignments||[]).filter(a=>['assigned','in_progress'].includes(a.status));
+      var offers=(wf.offers||[]).filter(o=>o.status==='offered');
+      function metric(label,value,hint){var n=el('div','fxew-j83-metric');n.append(el('span','',label),el('strong','',String(value)),el('small','',hint));return n;}
+      host.append(metric('Effectif actif',active.length,'techniciens'),metric('Disponible',available.length,available.length?'mobilisable maintenant':'aucune capacité'),metric('Engagé',busy.length,'missions internes'),metric('Offres',offers.length,'en attente'));
+      var decision=by('enterprise-workforce-decision');if(decision){
+        var msg=available.length?'Capacité interne disponible · RAFI peut privilégier l’interne selon les règles de dispatch.':'Capacité interne indisponible · le réseau FIXEO / dispatch hybride reste le relais opérationnel.';
+        decision.textContent=msg;decision.dataset.state=available.length?'available':'external';
+      }
+    }
     function renderWorkers(wf){
+      renderWorkforceCommand(wf);
       list.replaceChildren();empty.hidden=wf.workers.length!==0;mode.textContent=canManage()?'Gestion autorisée':'Lecture seule';create.hidden=!canManage();
       wf.workers.forEach(w=>{
-        var c=el('article','fxew-workforce-card'),h=el('div','fxew-workforce-head'),copy=el('div');
+        var c=el('article','fxew-workforce-card fxew-j83-worker'),h=el('div','fxew-workforce-head'),copy=el('div');
         copy.append(el('strong','',w.display_label),el('span','',[w.employee_code||'',AVAIL_LABELS[w.availability]||w.availability].filter(Boolean).join(' · ')));
         h.append(copy,el('span','fxew-status',w.status));c.append(h);
         var sk=el('p','fxew-workforce-meta',(w.skills||[]).map(x=>x.service_category+' · N'+x.skill_level).join('  |  ')||'Aucune compétence');
@@ -219,7 +232,12 @@
     }
     function renderLive(wf){
       if(!live)return;live.replaceChildren();
-      (model.interventions||[]).filter(i=>i.hybrid_dispatch||i.internal_assignment).slice(0,30).forEach(i=>{
+      var rows=(model.interventions||[]).filter(i=>i.hybrid_dispatch||i.internal_assignment);
+      var liveHead=by('enterprise-hybrid-live-summary');if(liveHead){
+        var internal=rows.filter(i=>i.internal_assignment).length,external=rows.filter(i=>i.hybrid_dispatch&&['external_only','internal_first','hybrid'].includes(i.hybrid_dispatch.mode)).length;
+        liveHead.textContent=rows.length?rows.length+' dispatch actifs · '+internal+' interne'+(internal>1?'s':'')+' · '+external+' avec relais réseau':'Aucun dispatch actif';
+      }
+      rows.slice(0,30).forEach(i=>{
         var c=el('article','fxew-hybrid-live-card'),h=el('div','fxew-workforce-head'),copy=el('div');
         copy.append(el('strong','',i.service_category||'Intervention'),el('span','',[i.site_name,i.city].filter(Boolean).join(' · ')));
         var hs=i.hybrid_dispatch&&i.hybrid_dispatch.status||i.request_status;h.append(copy,el('span','fxew-status',hs));c.append(h);
