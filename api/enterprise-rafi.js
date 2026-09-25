@@ -214,8 +214,23 @@ async function callOpenAI(env,question,history,context,file){
   return {result,model:String(payload.model||model).slice(0,100),usage:payload.usage||null};
 }
 
+function proactiveQuestion(context){
+  const parts=[];
+  const ct=context.control_tower&&context.control_tower.summary||{};
+  const mt=context.maintenance&&context.maintenance.summary||{};
+  const eq=context.equipment&&context.equipment.summary||{};
+  const fn=context.finance&&context.finance.summary||{};
+  const gv=context.governance||{};
+  parts.push('Construis le briefing opérationnel priorisé du responsable Enterprise.');
+  parts.push('Classe uniquement les éléments réellement présents dans le contexte selon urgence SLA, blocage opérationnel, maintenance/équipement, capacité workforce, gouvernance puis impact financier.');
+  parts.push('Ne crée aucune action autonome. Si une action concrète sûre est justifiée, utilise action_proposals pour demander confirmation humaine.');
+  parts.push('Indicateurs disponibles: '+JSON.stringify({control_tower:ct,maintenance:mt,equipment:eq,finance:fn,pending_for_me:Number(gv.pending_for_me)||0}));
+  return parts.join(' ');
+}
+
 function validateBody(req){
-  const question=String(req.body?.question||'').trim();
+  let question=String(req.body?.question||'').trim();
+  const mode=String(req.body?.mode||'ask').trim();
   const enterpriseId=String(req.body?.enterprise_id||'').trim();
   let history=req.body?.history||[];
   if(typeof history==='string'){
@@ -228,12 +243,14 @@ function validateBody(req){
     return {role:item.role,content:item.content.trim()};
   });
   if(!/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(enterpriseId)) throw new RafiEnterpriseError('INVALID_ENTERPRISE_ID');
-  if(!question || question.length>MAX_QUESTION) throw new RafiEnterpriseError('INVALID_QUESTION');
+  if(!['ask','briefing'].includes(mode)) throw new RafiEnterpriseError('INVALID_MODE');
+  if(mode==='ask'&&(!question || question.length>MAX_QUESTION)) throw new RafiEnterpriseError('INVALID_QUESTION');
+  if(mode==='briefing') question='__PROACTIVE_BRIEFING__';
   if(req.file){
     if(!ALLOWED_IMAGE_TYPES.has(req.file.mimetype)) throw new RafiEnterpriseError('INVALID_IMAGE_TYPE',415);
     if(!req.file.buffer||req.file.size<1||req.file.size>MAX_IMAGE_BYTES) throw new RafiEnterpriseError('INVALID_IMAGE_SIZE',413);
   }
-  return {question,enterpriseId,history};
+  return {question,enterpriseId,history,mode};
 }
 
 function createHandler({env=process.env,logger=console}={}){
@@ -252,10 +269,11 @@ function createHandler({env=process.env,logger=console}={}){
       const supa=supabaseClient(env,token);
       await supa.user();
       const context=await enterpriseContext(supa,input.enterpriseId);
-      const output=await callOpenAI(env,input.question,input.history,context,req.file||null);
+      const question=input.mode==='briefing'?proactiveQuestion(context):input.question;
+      const output=await callOpenAI(env,question,input.history,context,req.file||null);
       logger.info?.(JSON.stringify({
         event:'enterprise_rafi_complete',enterprise_id:input.enterpriseId,
-        image:!!req.file,latency_ms:Date.now()-started,model:output.model
+        image:!!req.file,mode:input.mode,latency_ms:Date.now()-started,model:output.model
       }));
       return send(res,200,{ok:true,...output.result,meta:{model:output.model,generated_at:new Date().toISOString()}});
     }catch(error){
@@ -266,4 +284,4 @@ function createHandler({env=process.env,logger=console}={}){
   };
 }
 
-module.exports={createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext};
+module.exports={createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion};
