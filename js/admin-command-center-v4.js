@@ -55,6 +55,8 @@
   var _refreshing = false;
   var _revTab     = 'today'; /* today | week | month | all */
   var _timers     = [];
+  var POLL_MS = 120000; /* stability: one canonical DB refresh every 2 min */
+  var MIN_FETCH_GAP_MS = 45000;
 
   /* ── Helpers ── */
   function $(id) { return document.getElementById(id); }
@@ -130,6 +132,7 @@
 
       if (!rRes.error && rRes.data) _requests = rRes.data;
       if (!mRes.error && mRes.data) _missions  = mRes.data;
+      if ((!rRes.error && rRes.data) || (!mRes.error && mRes.data)) _lastFetch = Date.now();
 
       /* artisans — from existing V1 loader or FixeoDB */
       try {
@@ -905,10 +908,10 @@
     /* Initial fetch + render */
     _refresh();
 
-    /* Auto-refresh every 30s (faster than V3's 60s) */
+    /* Stability hotfix: V4 is the only periodic DB owner; hidden tabs never poll. */
     _timers.push(setInterval(function () {
       _refresh();
-    }, 30000));
+    }, POLL_MS));
 
     /* Fast feed update every 5s (timestamps only if no new data) */
     _timers.push(setInterval(function () {
