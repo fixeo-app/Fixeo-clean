@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.9 exposes Governance Intelligence rail',()=>{const h=rd('dashboard-enterprise.html');for(const x of ['fxew-j89-command','GOVERNANCE INTELLIGENCE','enterprise-governance-intelligence'])assert.match(h,new RegExp(x));});
+test('J8.9 derives decisions from governance payload',()=>{const j=rd('js/fixeo-enterprise-governance-ui.js');for(const x of ['PROCHAINE DÉCISION','PROCHAINE ACTION','pending_for_me','required_role'])assert.match(j,new RegExp(x));});
+test('J8.9 desktop uses decision center plus rail',()=>{assert.match(rd('css/fixeo-enterprise-workspace.css'),/grid-template-columns:minmax\(0,2\.1fr\) minmax\(290px,\.9fr\)/);});
+test('workspace syntax regression remains blocked',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
