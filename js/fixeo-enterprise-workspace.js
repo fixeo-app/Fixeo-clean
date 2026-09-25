@@ -57,7 +57,7 @@
     var auditRetry = byId('enterprise-audit-retry'), auditExport = byId('enterprise-audit-export');
     var auditList = byId('enterprise-audit-list'), auditCount = byId('enterprise-audit-count');
     var auditMore = byId('enterprise-audit-more');
-    var teamList = byId('enterprise-team-list'), teamEmpty = byId('enterprise-team-empty'), teamMode = byId('enterprise-team-mode');
+    var teamList = byId('enterprise-team-list'), teamEmpty = byId('enterprise-team-empty'), teamMode = byId('enterprise-team-mode'), adminIntelligence = byId('enterprise-admin-intelligence'), adminInvitationsMirror = byId('enterprise-admin-invitations-mirror');
     var invitationsList = byId('enterprise-invitations-list'), invitationsEmpty = byId('enterprise-invitations-empty');
     var invitationsMode = byId('enterprise-invitations-mode'), invitationCreate = byId('enterprise-invitation-create');
     var invitationDialog = byId('enterprise-invitation-dialog'), invitationDialogTitle = byId('enterprise-invitation-dialog-title');
@@ -776,11 +776,24 @@
       memberError.textContent = messageText || '';
       memberError.hidden = !messageText;
     }
+    function renderAdminIntelligence(rows) {
+      if (!adminIntelligence) return;
+      adminIntelligence.replaceChildren();
+      var active=rows.filter(function(m){return m.status==='active';}), suspended=rows.filter(function(m){return m.status==='suspended';}), siteManagers=active.filter(function(m){return m.role==='site_manager';}), pending=currentInvitations.filter(function(i){return i.status==='pending'||i.status==='active';});
+      function signal(labelText,valueText,hint,tone){var n=el('div','fxew-j812-signal fxew-j812-signal--'+tone);n.append(el('span','',labelText),el('strong','',String(valueText)),el('small','',hint));return n;}
+      adminIntelligence.append(signal('Membres actifs',active.length,'accès actifs','stable'),signal('Invitations',pending.length,'en attente','attention'),signal('Suspendus',suspended.length,suspended.length?'à contrôler':'aucun','critical'),signal('Site managers',siteManagers.length,'périmètres site','live'));
+      var focus=el('div','fxew-j812-focus'),unassigned=siteManagers.find(function(m){return !(m.site_ids||[]).length;})||null;
+      focus.append(el('span','','POINT DE CONTRÔLE'),el('strong','',unassigned?'Site manager sans site affecté':pending.length?'Invitation en attente':'Accès sous contrôle'),el('small','',unassigned?memberIdentity(unassigned):pending.length?'Vérifiez les invitations avant expiration.':'Aucune anomalie d’accès détectée avec les données disponibles.'));adminIntelligence.append(focus);
+      var decision=el('div','fxew-j812-decision'),t=unassigned?'Priorité : affecter un périmètre au site manager actif.':suspended.length?'Vérifier les accès suspendus et confirmer qu’ils doivent rester bloqués.':pending.length?'Suivre les invitations en attente et leur expiration.':'Aucune action d’administration prioritaire.';
+      decision.append(el('span','','PROCHAINE ACTION'),el('strong','',t));adminIntelligence.append(decision);
+      if(adminInvitationsMirror){adminInvitationsMirror.replaceChildren();if(!pending.length)adminInvitationsMirror.append(el('p','fxew-empty','Aucune invitation en attente.'));else pending.slice(0,5).forEach(function(i){var row=el('div','fxew-j812-invite');row.append(el('strong','',i.email||'Invitation Enterprise'),el('span','',[(LABELS[i.role]||label(i.role)),i.expires_at?('Expire · '+dateLabel(i.expires_at)):''].filter(Boolean).join(' · ')));adminInvitationsMirror.append(row);});}
+    }
     function renderTeam(rows) {
       currentMembers = rows.slice();
       teamList.replaceChildren();
       teamEmpty.hidden = rows.length !== 0;
       teamMode.textContent = canManageMembers() ? 'Gestion autorisée' : 'Lecture seule';
+      renderAdminIntelligence(rows);
       rows.forEach(function (member) {
         var card = el('article', 'fxew-member-card');
         var head = el('div', 'fxew-member-head');
