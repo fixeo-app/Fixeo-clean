@@ -21,6 +21,13 @@
   var ACCOUNT_STATUSES = ['active', 'suspended', 'closed'];
   var PAGE_SIZE = 200;
   var ACCOUNT_BATCH_SIZE = 100;
+  var AUTH_VERIFY_TIMEOUT_MS = 8000;
+  function boundedAuth(promise) {
+    return new Promise(function(resolve, reject) {
+      var timer = setTimeout(function(){ reject(new Error('AUTH_VERIFY_TIMEOUT')); }, AUTH_VERIFY_TIMEOUT_MS);
+      Promise.resolve(promise).then(function(v){ clearTimeout(timer); resolve(v); }, function(e){ clearTimeout(timer); reject(e); });
+    });
+  }
 
   function isUuid(value) {
     return typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
@@ -136,9 +143,18 @@
 
       // getSession alone reads SDK storage. Verify the token with Auth before DB reads.
       stage = 'SESSION_VALIDATION_ERROR';
-      var verified = await client.auth.getUser(token);
-      if (!verified || verified.error || !verified.data || !verified.data.user) return result(stage);
-      if (verified.data.user.id !== userId) return result('SESSION_IDENTITY_MISMATCH');
+      var verified;
+      try {
+        verified = await boundedAuth(client.auth.getUser(token));
+      } catch (_) {
+        /* Auth service can transiently 504 while the JWT remains locally valid.
+           Never grant access from storage alone: continue only to RLS-protected
+           identity reads using the existing token; any DB/RLS failure remains fail-closed. */
+        verified = null;
+      }
+      if (verified && verified.error) verified = null;
+      if (verified && (!verified.data || !verified.data.user)) return result(stage);
+      if (verified && verified.data.user.id !== userId) return result('SESSION_IDENTITY_MISMATCH');
 
       stage = 'PUBLIC_USER_READ_ERROR';
       var db = client.schema('public');
