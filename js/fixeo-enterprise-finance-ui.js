@@ -9,7 +9,7 @@
     var d=win.document,by=id=>d.getElementById(id),context={sites:[],members:[],workforce:{workers:[]},interventions:[]},data=null;
     var section=by('enterprise-finance-module'),state=by('enterprise-finance-state'),msg=by('enterprise-finance-message'),retry=by('enterprise-finance-retry');
     var summary=by('enterprise-finance-summary'),rows=by('enterprise-finance-rows'),centers=by('enterprise-finance-centers'),
-      budgets=by('enterprise-finance-budgets'),pos=by('enterprise-finance-pos'),rates=by('enterprise-finance-rates');
+      budgets=by('enterprise-finance-budgets'),pos=by('enterprise-finance-pos'),rates=by('enterprise-finance-rates'),intelligence=by('enterprise-finance-intelligence');
     var exportBtn=by('enterprise-finance-export'),manage=by('enterprise-finance-manage'),tag=by('enterprise-finance-tag');
     var from=by('enterprise-finance-from'),to=by('enterprise-finance-to');
 
@@ -91,9 +91,20 @@
         var x=el('article','fxew-finance-card');x.append(el('strong','',r.display_label),el('span','',money(r.hourly_cost)+' / h'));rates.append(x);
       });
     }
+    function renderIntelligence(x){
+      if(!intelligence)return;intelligence.replaceChildren();
+      var s=(x&&x.summary)||{},bud=(x&&x.budgets)||[],po=(x&&x.purchase_orders)||[],r=(x&&x.rows)||[];
+      var activeBudgets=bud.filter(b=>b.status==='active'),overBudget=activeBudgets.filter(b=>Number(b.amount||0)>0&&Number(b.spent||0)>Number(b.amount||0)),openPO=po.filter(p=>p.status==='open');
+      function signal(label,value,hint,tone){var n=el('div','fxew-j810-signal fxew-j810-signal--'+tone);n.append(el('span','',label),el('strong','',value),el('small','',hint));return n;}
+      intelligence.append(signal('Coût opérationnel',money(s.operational_cost),'période sélectionnée','live'),signal('Commission FIXEO',money(s.fixeo_commission),'période sélectionnée','stable'),signal('Budgets dépassés',String(overBudget.length),overBudget.length?'contrôle requis':'aucun','critical'),signal('BC / PO ouverts',String(openPO.length),'engagements ouverts','attention'));
+      var highest=r.slice().sort((a,b)=>Number(b.total_operational_cost||0)-Number(a.total_operational_cost||0))[0]||null;
+      var focus=el('div','fxew-j810-focus');focus.append(el('span','','POSTE À SURVEILLER'),el('strong','',highest?(highest.service_category||'Intervention'):'Aucune dépense enregistrée'),el('small','',highest?[highest.site_name,highest.city,money(highest.total_operational_cost)].filter(Boolean).join(' · '):'Aucune donnée financière sur la période sélectionnée.'));intelligence.append(focus);
+      var decision=el('div','fxew-j810-decision'),t=overBudget.length?'Priorité : contrôler le budget dépassé avant de nouveaux engagements.':highest?'Surveiller le poste le plus coûteux de la période et son rattachement budgétaire.':activeBudgets.length||openPO.length?'Aucun dépassement détecté ; maintenir le suivi des engagements ouverts.':'Aucune alerte financière prioritaire avec les données disponibles.';
+      decision.append(el('span','','PROCHAINE ACTION'),el('strong','',t));intelligence.append(decision);
+    }
     function render(x){
       data=x||{};renderSummary(data.summary||{});renderRows(data.rows||[]);renderCenters(data.cost_centers||[]);renderBudgets(data.budgets||[]);
-      renderPOs(data.purchase_orders||[]);renderRates(data.worker_rates||[]);
+      renderPOs(data.purchase_orders||[]);renderRates(data.worker_rates||[]);renderIntelligence(data);
       manage.hidden=!canManage();tag.hidden=!canTag();exportBtn.disabled=!(data.rows||[]).length;state.hidden=true;
     }
     async function refresh(){
