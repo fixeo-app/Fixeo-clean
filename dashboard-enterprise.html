@@ -7,7 +7,7 @@
   <meta name="referrer" content="same-origin">
   <title>Espace entreprise | FIXEO</title>
   <link rel="icon" href="img/logo-fixeo-icon.png">
-  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=j87">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=j88">
   <script defer src="js/supabase-client.js"></script>
   <script defer src="js/fixeo-logout-global.js"></script>
   <script defer src="js/fixeo-auth-resolver.js"></script>
@@ -152,7 +152,7 @@
         </div>
       </section>
 
-      <section id="enterprise-preventive-maintenance" class="fxew-module fxew-maintenance" aria-labelledby="maintenance-title" hidden>
+      <section id="enterprise-preventive-maintenance" class="fxew-module fxew-maintenance fxew-j88-maintenance" aria-labelledby="maintenance-title" hidden>
         <div class="fxew-module-heading">
           <div><p class="fxew-module-kicker">Maintenance</p><h2 id="maintenance-title">Maintenance préventive</h2></div>
           <div class="fxew-module-actions">
@@ -166,16 +166,25 @@
           <button id="enterprise-maintenance-retry" class="fxew-button" type="button" hidden>Réessayer</button>
         </div>
         <div id="enterprise-maintenance-summary" class="fxew-kpi-grid"></div>
-        <section class="fxew-report-card fxew-maintenance-calendar-card" aria-labelledby="maintenance-calendar-title">
-          <div class="fxew-report-card-head"><h3 id="maintenance-calendar-title">Calendrier des prochaines échéances</h3><span>Plans actifs</span></div>
-          <div id="enterprise-maintenance-calendar" class="fxew-maintenance-calendar" aria-live="polite"></div>
-        </section>
-        <div id="enterprise-maintenance-plans" class="fxew-maintenance-grid" aria-live="polite"></div>
-        <p id="enterprise-maintenance-empty" class="fxew-empty" hidden>Aucun plan de maintenance préventive.</p>
-        <section class="fxew-report-card" aria-labelledby="maintenance-history-title">
-          <div class="fxew-report-card-head"><h3 id="maintenance-history-title">Historique des exécutions</h3><span>Générations automatiques</span></div>
-          <div id="enterprise-maintenance-runs" class="fxew-maintenance-runs"></div>
-        </section>
+        <div class="fxew-j88-command">
+          <div class="fxew-j88-primary">
+            <section class="fxew-report-card fxew-maintenance-calendar-card" aria-labelledby="maintenance-calendar-title">
+              <div class="fxew-report-card-head"><h3 id="maintenance-calendar-title">Calendrier des prochaines échéances</h3><span>Plans actifs</span></div>
+              <div id="enterprise-maintenance-calendar" class="fxew-maintenance-calendar" aria-live="polite"></div>
+            </section>
+            <div id="enterprise-maintenance-plans" class="fxew-maintenance-grid" aria-live="polite"></div>
+            <p id="enterprise-maintenance-empty" class="fxew-empty" hidden>Aucun plan de maintenance préventive.</p>
+            <section class="fxew-report-card" aria-labelledby="maintenance-history-title">
+              <div class="fxew-report-card-head"><h3 id="maintenance-history-title">Historique des exécutions</h3><span>Générations automatiques</span></div>
+              <div id="enterprise-maintenance-runs" class="fxew-maintenance-runs"></div>
+            </section>
+          </div>
+          <aside class="fxew-j88-rail" aria-label="Intelligence maintenance">
+            <p class="fxew-module-kicker">MAINTENANCE INTELLIGENCE</p>
+            <h3>À anticiper</h3>
+            <div id="enterprise-maintenance-intelligence" class="fxew-j88-intelligence"></div>
+          </aside>
+        </div>
       </section>
 
       <section id="enterprise-governance-module" class="fxew-module fxew-governance" aria-labelledby="governance-title" hidden>

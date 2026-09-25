@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.8 exposes Maintenance Intelligence rail',()=>{const h=rd('dashboard-enterprise.html');for(const x of ['fxew-j88-command','MAINTENANCE INTELLIGENCE','enterprise-maintenance-intelligence'])assert.match(h,new RegExp(x));});
+test('J8.8 intelligence uses loaded preventive plans',()=>{const j=rd('js/fixeo-enterprise-preventive-maintenance-ui.js');for(const x of ['PROCHAINE ÉCHÉANCE','PROCHAINE ACTION','overdue','reminder_due'])assert.match(j,new RegExp(x));});
+test('J8.8 desktop uses primary plus intelligence rail',()=>{assert.match(rd('css/fixeo-enterprise-workspace.css'),/grid-template-columns:minmax\(0,2\.15fr\) minmax\(290px,\.85fr\)/);});
+test('workspace syntax regression remains blocked',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
