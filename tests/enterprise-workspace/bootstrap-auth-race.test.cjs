@@ -1,0 +1,3 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),s=()=>fs.readFileSync(path.join(r,'js/fixeo-enterprise-workspace.js'),'utf8');
+test('auth listener is installed only after guard verification',()=>{const x=s(),a=x.indexOf('var result = await bounded(win.FixeoEnterpriseGuard.check'),b=x.indexOf('currentEnterpriseId = result.enterprise.id',a),c=x.indexOf('listen();',b);assert.ok(a>0&&b>a&&c>b);assert.equal(x.slice(a,b).includes('listen();'),false);});
+test('verified id precedes auth subscription to absorb synchronous auth events',()=>{const x=s(),i=x.indexOf('currentEnterpriseId = result.enterprise.id');assert.match(x.slice(i,i+420),/listen\(\);/);});
