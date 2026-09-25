@@ -1322,6 +1322,9 @@
         requestsMode.textContent = canCreateRequests() ? 'Chargement des sites…' : 'Lecture seule';
         state.hidden = true; panel.hidden = false; logout.hidden = false;
         main.setAttribute('aria-busy', 'false'); name.focus();
+        // RAFI is mounted before bootstrap, but its proactive briefing must wait until
+        // the authenticated client and verified Enterprise id are both established.
+        if (rafiUi && typeof rafiUi.refreshBriefing === 'function') rafiUi.refreshBriefing();
         await Promise.all([
           loadOperational(result.enterprise.id, run),
           loadReporting(result.enterprise.id, run),
