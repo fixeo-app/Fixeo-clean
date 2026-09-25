@@ -221,6 +221,22 @@ async function callOpenAI(env,question,history,context,file){
   return {result,model:String(payload.model||model).slice(0,100),usage:payload.usage||null};
 }
 
+function nextBestActions(context){
+  const priorities=priorityRisk(context),followups=Array.isArray(context.followups)?context.followups:[];
+  const byTarget=new Map(followups.map(f=>[String(f.target_id||''),f]));
+  return priorities.filter(p=>p.priority!=='normal').slice(0,10).map(p=>{
+    const f=byTarget.get(String(p.target_id||''))||{};let type=null,confidence='medium',reason=p.reasons.join(' + ');
+    if(p.target_type==='service_request'&&p.followup_kind==='workforce')type='propose_internal_assignment';
+    else if(p.target_type==='service_request'&&['sla','attention'].includes(p.followup_kind))type='propose_hybrid_dispatch';
+    else if(p.target_type==='enterprise_approval_case'||p.followup_kind==='governance')type='decide_approval';
+    else if(p.target_type==='enterprise_maintenance_plan'||p.followup_kind==='maintenance')type='prepare_maintenance_action';
+    else if(p.target_type==='service_request'&&p.priority==='critical')type='upsert_control_tower_escalation';
+    if(!type)return null;
+    if(p.priority==='critical'&&p.change==='worsened')confidence='high';
+    return {action_type:type,target_type:p.target_type,target_id:p.target_id,priority:p.priority,reason,expected_impact:type==='decide_approval'?'debloquer le workflow de gouvernance':'reduire le risque operationnel',confidence,requires_confirmation:true};
+  }).filter(Boolean).slice(0,5);
+}
+
 function priorityRisk(context){
   const rows=Array.isArray(context.operational_changes)?context.operational_changes:[];
   const changeWeight={worsened:4,new:3,changed:2,unchanged:0,improved:-1,resolved:-4};
@@ -257,10 +273,12 @@ function proactiveQuestion(context){
   const gv=context.governance||{};
   const delta=deltaSummary(context);
   const priorities=priorityRisk(context);
+  const nextActions=nextBestActions(context);
   parts.push('Construis le briefing opérationnel priorisé du responsable Enterprise.');
   parts.push('Commence par un DELTA depuis le dernier état capturé: aggravations, nouveaux sujets, autres changements, puis améliorations et résolutions. Ne présente pas unchanged comme une nouveauté.');
   parts.push('Delta déterministe: '+JSON.stringify(delta));
   parts.push('Priorités déterministes et raisons explicables: '+JSON.stringify(priorities)+'. Respecte cet ordre de priorité; ne transforme jamais ce classement en exécution autonome.');
+  parts.push('Next Best Actions déterministes: '+JSON.stringify(nextActions)+'. Elles sont des recommandations uniquement. Si tu émets action_proposals, elles doivent correspondre à ces recommandations, utiliser uniquement les identifiants réellement présents dans enterprise_context et rester soumises à confirmation humaine.');
   parts.push('Classe uniquement les éléments réellement présents dans le contexte selon urgence SLA, blocage opérationnel, maintenance/équipement, capacité workforce, gouvernance puis impact financier.');
   parts.push('Ne crée aucune action autonome. Si une action concrète sûre est justifiée, utilise action_proposals pour demander confirmation humaine.');
   parts.push('Indicateurs disponibles: '+JSON.stringify({control_tower:ct,maintenance:mt,equipment:eq,finance:fn,pending_for_me:Number(gv.pending_for_me)||0,open_followups:Array.isArray(context.followups)?context.followups.length:0,operational_changes:Array.isArray(context.operational_changes)?context.operational_changes.length:0}));
@@ -323,4 +341,4 @@ function createHandler({env=process.env,logger=console}={}){
   };
 }
 
-module.exports={createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion,deltaSummary,priorityRisk};
+module.exports={createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion,deltaSummary,priorityRisk,nextBestActions};
