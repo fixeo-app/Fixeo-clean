@@ -113,8 +113,8 @@
     removePhoto.addEventListener('click',clearPhoto);section.addEventListener('click',suggestion);
 
     message('assistant','Je peux analyser vos opérations, SLA, équipes, maintenance, équipements, finance et gouvernance. Posez-moi une question, parlez-moi ou montrez-moi une situation.');
-    section.hidden=false;loadBriefing();
-    return {destroy:function(){cleanupStream();clearPhoto();section.removeEventListener('click',suggestion);}};
+    section.hidden=false;
+    return {refreshBriefing:loadBriefing,destroy:function(){cleanupStream();clearPhoto();section.removeEventListener('click',suggestion);}};
   }
   return Object.freeze({mount:mount});
 });
