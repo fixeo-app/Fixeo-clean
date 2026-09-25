@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('primary Control Tower is branded as Mission Control',()=>{const h=rd('dashboard-enterprise.html');assert.match(h,/INTERVENTION MISSION CONTROL/);assert.match(h,/Priorité, SLA, dispatch et prochaine décision dans votre vue opérationnelle principale/);});
+test('Control Tower attention cards expose decision rail',()=>{const j=rd('js/fixeo-enterprise-control-tower-ui.js');for(const x of ['Priorité','SLA','Dispatch','Mission','PROCHAINE DÉCISION'])assert.match(j,new RegExp(x));});
+test('critical Control Tower action becomes decision action',()=>{assert.match(rd('js/fixeo-enterprise-control-tower-ui.js'),/item\.severity==='critical'\?'Décider maintenant':'Escalader'/);});
+test('workspace syntax guard remains clean',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
