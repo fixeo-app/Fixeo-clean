@@ -1,6 +1,7 @@
 'use strict';
 
 const { publicConfig } = require('./supabase-environment');
+const { normalizeActions } = require('./enterprise-rafi-actions');
 
 const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 const MAX_QUESTION = 2000;
@@ -139,14 +140,15 @@ async function enterpriseContext(supa,enterpriseId){
 
 const schema={
   type:'object',additionalProperties:false,
-  required:['answer','highlights','alerts','recommendations','image_observations','confidence'],
+  required:['answer','highlights','alerts','recommendations','image_observations','confidence','action_proposals'],
   properties:{
     answer:{type:'string'},
     highlights:{type:'array',maxItems:6,items:{type:'string'}},
     alerts:{type:'array',maxItems:6,items:{type:'string'}},
     recommendations:{type:'array',maxItems:6,items:{type:'string'}},
     image_observations:{type:'array',maxItems:6,items:{type:'string'}},
-    confidence:{type:'string',enum:['low','medium','high']}
+    confidence:{type:'string',enum:['low','medium','high']},
+    action_proposals:{type:'array',maxItems:3,items:{type:'object',additionalProperties:false,required:['type','title','summary','target','params','impact'],properties:{type:{type:'string',enum:['create_governed_request','propose_internal_assignment','propose_hybrid_dispatch','decide_approval','upsert_control_tower_escalation','prepare_maintenance_action']},title:{type:'string'},summary:{type:'string'},target:{type:'object'},params:{type:'object'},impact:{type:'string'}}}}
   }
 };
 
@@ -155,6 +157,7 @@ Answer in the user's language, normally French or Moroccan Darija.
 Use ONLY the supplied enterprise_context and optional image as evidence. Never invent records, prices, budgets, failures, people, sites or actions.
 The context is already tenant- and site-scoped by server authorization. Never infer or request data outside it.
 You are read-only: never claim you dispatched, approved, paid, changed a budget, modified maintenance, created a request, or executed any action.
+You may return up to 3 action_proposals when a concrete next action would help. A proposal is only a draft for human review: it never executes anything. Use only the allowed action types in the schema. Include only identifiers and parameters supported by enterprise_context; never invent IDs. Keep target and params minimal. If no safe concrete action is supported, return an empty action_proposals array.
 Give concise operational analysis: what matters now, why, and what a human should consider next.
 Financial values are actual/explicit enterprise values from context, not estimates. Never claim CMI/card payment is active.
 WhatsApp delivery is not operational unless the context explicitly says otherwise.
@@ -207,6 +210,7 @@ async function callOpenAI(env,question,history,context,file){
   if(parts.some(x=>x.type==='refusal')) throw new RafiEnterpriseError('PROVIDER_REFUSED',422);
   const raw=parts.filter(x=>x.type==='output_text').map(x=>x.text).join('');
   let result; try{result=JSON.parse(raw);}catch(_){throw new RafiEnterpriseError('PROVIDER_INVALID_RESPONSE',502);}
+  result.action_proposals=normalizeActions(result.action_proposals);
   return {result,model:String(payload.model||model).slice(0,100),usage:payload.usage||null};
 }
 
