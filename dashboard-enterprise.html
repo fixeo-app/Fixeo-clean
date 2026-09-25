@@ -7,7 +7,7 @@
   <meta name="referrer" content="same-origin">
   <title>Espace entreprise | FIXEO</title>
   <link rel="icon" href="img/logo-fixeo-icon.png">
-  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=j8">
+  <link rel="stylesheet" href="css/fixeo-enterprise-workspace.css?v=j81">
   <script defer src="js/supabase-client.js"></script>
   <script defer src="js/fixeo-logout-global.js"></script>
   <script defer src="js/fixeo-auth-resolver.js"></script>
@@ -57,17 +57,14 @@
       </div>
     </section>
     <section id="enterprise-workspace" aria-labelledby="enterprise-name" hidden>
-      <div class="fxew-intro"><div id="fxew-j5-context" class="fxew-j5-context" hidden><span>FIXEO ENTERPRISE</span><strong id="fxew-j5-context-title">Cockpit</strong><button type="button" data-cockpit-target="enterprise-rafi-module">✦ RAFI</button></div>
-        <p class="fxew-overline">Votre espace de travail</p>
-        <h1 id="enterprise-name" tabindex="-1"></h1>
-        <p class="fxew-lead">Bienvenue dans votre espace FIXEO Entreprise.</p>
+      <div class="fxew-intro fxew-j81-intro"><div id="fxew-j5-context" class="fxew-j5-context" hidden><span>FIXEO ENTERPRISE</span><strong id="fxew-j5-context-title">Cockpit</strong><button type="button" data-cockpit-target="enterprise-rafi-module">✦ RAFI</button></div>
+        <div class="fxew-j81-identity"><div><p class="fxew-overline">LIVE OPERATIONS</p><h1 id="enterprise-name" tabindex="-1"></h1></div><div class="fxew-j81-status"><span><i></i> Opérationnel</span><small>RAFI · Control Tower · Dispatch hybride</small></div></div>
       </div>
-      <section class="fxew-overview" aria-labelledby="overview-title">
-        <div class="fxew-card-heading"><h2 id="overview-title">Vue d’ensemble</h2><span class="fxew-tag">Accès actif</span></div>
+      <section class="fxew-overview fxew-j81-contextbar" aria-label="Contexte entreprise">
         <dl class="fxew-details">
           <div><dt>Entreprise</dt><dd id="enterprise-company"></dd></div>
-          <div><dt>Votre rôle</dt><dd id="enterprise-role"></dd></div>
-          <div><dt>État de l’entreprise</dt><dd><span class="fxew-dot" aria-hidden="true"></span>Active</dd></div>
+          <div><dt>Rôle</dt><dd id="enterprise-role"></dd></div>
+          <div><dt>État</dt><dd><span class="fxew-dot" aria-hidden="true"></span>Active</dd></div>
         </dl>
       </section>
       <section class="fxew-j8-hero" aria-label="Situation opérationnelle">
