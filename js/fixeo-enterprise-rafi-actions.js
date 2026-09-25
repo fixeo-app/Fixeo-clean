@@ -10,6 +10,8 @@
   function text(v,max,required){v=String(v==null?'':v).trim();if(required&&!v)throw new Error('INVALID_TEXT');if(v.length>max)throw new Error('INVALID_TEXT');return v||null;}
   function num(v,min,max,nullable){if(v==null||v===''){if(nullable)return null;throw new Error('INVALID_NUMBER');}v=Number(v);if(!Number.isFinite(v)||v<min||v>max)throw new Error('INVALID_NUMBER');return v;}
   async function rpc(client,name,args){if(!client||typeof client.rpc!=='function')throw new Error('RPC_UNAVAILABLE');var r=await client.rpc(name,args);if(!r||r.error)throw new Error('RPC_FAILED');if(!r.data||r.data.ok!==true){var e=new Error('RPC_REJECTED');e.reason=r&&r.data&&r.data.reason;e.result=r&&r.data;throw e;}return r.data;}
+  function auditTarget(proposal,result){var t=proposal.target||{},p=proposal.params||{};return t.case_id||p.case_id||t.request_id||p.request_id||t.site_id||p.site_id||(result&&(result.request_id||result.case_id||result.escalation_id||result.plan_id))||null;}
+  async function audit(client,eid,proposal,result){var target=auditTarget(proposal,result);if(!target||!UUID.test(String(target)))return;var status=result&&result.governance_status==='pending_approval'?'pending_approval':'executed';try{await rpc(client,'audit_enterprise_rafi_action_v1',{p_enterprise_id:eid,p_action_type:proposal.type,p_target_id:String(target),p_result:status,p_details:{workflow:'canonical_enterprise_rpc',governance_status:result&&result.governance_status||null}});}catch(_){/* Business action succeeded: audit failure is surfaced server-side, never replay mutation. */}}
   async function execute(client,eid,proposal){
     eid=id(eid);if(!proposal||proposal.proposal_version!=='h1'||proposal.requires_confirmation!==true||proposal.executable!==false)throw new Error('INVALID_PROPOSAL');
     var p=proposal.params||{},t=proposal.target||{};
@@ -33,5 +35,6 @@
       default: throw new Error('ACTION_NOT_ALLOWED');
     }
   }
-  return Object.freeze({execute:execute});
+  async function executeConfirmed(client,eid,proposal){var result=await execute(client,eid,proposal);await audit(client,eid,proposal,result);return result;}
+  return Object.freeze({execute:executeConfirmed});
 });
