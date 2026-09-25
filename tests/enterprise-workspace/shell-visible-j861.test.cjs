@@ -1,0 +1,4 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.6 shell survives J3 routed-view hiding rule',()=>{const c=rd('css/fixeo-enterprise-workspace.css');assert.match(c,/#enterprise-workspace\[data-j3-view\] > #fxew-section-shell:not\(\[hidden\]\)\{display:grid!important\}/);});
+test('J8.6 removes legacy 1240 workspace cap',()=>{const c=rd('css/fixeo-enterprise-workspace.css');assert.match(c,/\.fxew-cockpit \.fxew-main>\*,\.fxew-cockpit #enterprise-workspace\{max-width:none!important\}/);});
+test('J8.6 stylesheet cachebuster is current',()=>{assert.match(rd('dashboard-enterprise.html'),/fixeo-enterprise-workspace\.css\?v=j861/);});
