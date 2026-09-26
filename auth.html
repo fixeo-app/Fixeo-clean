@@ -46,6 +46,18 @@
   <main class="auth-center" id="main-content">
     <div class="auth-box">
 
+      <section class="uag" aria-label="Choisir votre univers FIXEO">
+        <p class="uag-kicker">FIXEO · UNIFIED ACCESS</p>
+        <h1 class="uag-title">Un seul accès. Tout l’écosystème FIXEO.</h1>
+        <p class="uag-lead">Services, professionnels et opérations réunis dans un même écosystème.</p>
+        <div class="uag-spaces" role="group" aria-label="Univers FIXEO">
+          <button type="button" class="uag-space is-active" data-uag-space="client" onclick="selectGateway('client')"><span class="uag-icon">◎</span><strong>Client</strong><small>Trouvez, réservez et suivez vos interventions.</small></button>
+          <button type="button" class="uag-space" data-uag-space="artisan" onclick="selectGateway('artisan')"><span class="uag-icon">◇</span><strong>Artisan</strong><small>Recevez des missions et développez votre activité.</small></button>
+          <button type="button" class="uag-space uag-space--enterprise" data-uag-space="enterprise" onclick="selectGateway('enterprise')"><span class="uag-icon">✦</span><strong>Entreprise</strong><small>Pilotez sites, équipes et opérations avec RAFI.</small></button>
+        </div>
+        <div class="uag-context" id="uag-context"><span>CLIENT</span><strong>Votre espace personnel FIXEO</strong><small>Votre destination réelle reste déterminée après authentification.</small></div>
+      </section>
+
       <h1 class="auth-heading" id="auth-heading">Bon retour sur Fixeo</h1>
       <p class="auth-subheading" id="auth-sub">Votre r&eacute;seau d&rsquo;artisans vous attend.</p>
 
@@ -617,6 +629,21 @@
 
 // ── State ─────────────────────────────────────────────────
 let _selectedType = 'client';
+let _gatewaySpace = 'client';
+function selectGateway(space) {
+  if (!['client','artisan','enterprise'].includes(space)) return;
+  _gatewaySpace = space;
+  document.querySelectorAll('[data-uag-space]').forEach(function(btn){ btn.classList.toggle('is-active', btn.dataset.uagSpace === space); });
+  const ctx=document.getElementById('uag-context'),heading=document.getElementById('auth-heading'),sub=document.getElementById('auth-sub');
+  const copy={
+    client:['CLIENT','Votre espace personnel FIXEO','Connectez-vous avec votre numéro WhatsApp ou email.'],
+    artisan:['ARTISAN','Votre activité, vos missions, votre espace','Connectez-vous : FIXEO vérifie ensuite votre rôle réel.'],
+    enterprise:['FIXEO ENTERPRISE OS','Control Tower · Workforce · Maintenance · Finance · RAFI','Accès réservé aux membres Enterprise réellement autorisés.']
+  }[space];
+  if(ctx){ctx.children[0].textContent=copy[0];ctx.children[1].textContent=copy[1];ctx.children[2].textContent=copy[2];}
+  if(space==='enterprise'){switchTab('login');if(heading)heading.textContent='Accéder à FIXEO Enterprise';if(sub)sub.textContent='Votre accès Enterprise sera vérifié après connexion.';}
+  else if(document.getElementById('signup-form').style.display!=='none'){selectType(space);if(heading)heading.textContent=space==='artisan'?'Rejoindre le réseau FIXEO':'Créer votre espace Client';}
+}
 
 // ── Tab switching ─────────────────────────────────────────
 function switchTab(tab) {
@@ -632,7 +659,7 @@ function switchTab(tab) {
     : 'Rejoindre Fixeo';
   document.getElementById('auth-sub').textContent = isLogin
     ? 'Votre r\u00e9seau d\u2019artisans vous attend.'
-    : 'Acc\u00e9dez \u00e0 861 artisans qualifi\u00e9s dans tout le Maroc.';
+    : 'Cr\u00e9ez votre accès à l\u2019écosystème FIXEO.';
 }
 
 // ── Role card selection ─────────────────────────────────── */
