@@ -43,17 +43,20 @@
     }
     function message(role,text,result){
       var wrap=el('article','fxew-rafi-message fxew-rafi-message--'+role);
-      wrap.append(el('strong','',role==='user'?'Vous':'RAFI'));
-      wrap.append(el('p','',text));
-      if(result){
-        [['Points clés',result.highlights],['Alertes',result.alerts],['Recommandations',result.recommendations],['Observations image',result.image_observations]].forEach(([title,items])=>{
+      if(role==='assistant'&&result){
+        var head=el('div','fxew-rafi-exec-head'),identity=el('div','');
+        identity.append(el('span','fxew-module-kicker','RAFI EXECUTIVE BRIEF'),el('strong','fxew-rafi-exec-title','Situation consolidée'));
+        head.append(identity,el('span','fxew-rafi-confidence','Confiance · '+(result.confidence||'—')));wrap.append(head);
+        var summary=el('section','fxew-rafi-exec-summary'),summaryText=el('p','',text);summary.append(summaryText);wrap.append(summary);
+        var grid=el('div','fxew-rafi-exec-grid');
+        [['Points clés',result.highlights,'ÉTAT'],['Alertes',result.alerts,'RISQUE'],['Recommandations',result.recommendations,'PROCHAINE DÉCISION'],['Observations image',result.image_observations,'OBSERVATION']].forEach(([title,items,label])=>{
           if(!Array.isArray(items)||!items.length)return;
-          var box=el('section','fxew-rafi-result-block'),h=el('h4','',title),ul=d.createElement('ul');
-          items.forEach(x=>ul.append(el('li','',x)));box.append(h,ul);wrap.append(box);
+          var box=el('section','fxew-rafi-result-block fxew-rafi-exec-card'),h=el('h4','',label),ul=d.createElement('ul');
+          items.forEach(x=>ul.append(el('li','',x)));box.append(h,ul);grid.append(box);
         });
-        if(Array.isArray(result.action_proposals))result.action_proposals.forEach(a=>wrap.append(actionCard(a)));
-        wrap.append(el('small','fxew-rafi-confidence','Confiance · '+(result.confidence||'—')));
-      }
+        if(grid.childNodes.length)wrap.append(grid);
+        if(Array.isArray(result.action_proposals)&&result.action_proposals.length){var actions=el('div','fxew-rafi-exec-actions');result.action_proposals.forEach(a=>actions.append(actionCard(a)));wrap.append(actions);}
+      }else{wrap.append(el('strong','',role==='user'?'Vous':'RAFI'));wrap.append(el('p','',text));}
       messages.append(wrap);messages.scrollTop=messages.scrollHeight;
     }
     async function submit(ev){
