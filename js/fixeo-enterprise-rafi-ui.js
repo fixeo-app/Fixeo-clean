@@ -104,7 +104,8 @@
         finally{busy=false;}return;
       }
       var b=ev.target.closest('[data-rafi-question]');if(!b)return;
-      input.value=b.dataset.rafiQuestion||'';input.focus();
+      section.querySelectorAll('[data-rafi-question]').forEach(function(x){x.classList.toggle('is-selected',x===b);x.setAttribute('aria-pressed',x===b?'true':'false');});
+      input.value=b.dataset.rafiQuestion||'';input.focus();input.scrollIntoView({behavior:'smooth',block:'center'});
     }
 
     form.addEventListener('submit',submit);speak.addEventListener('click',startVoice);brief.addEventListener('click',loadBriefing);
