@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c21'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c22'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -561,6 +561,33 @@
     };
   }
 
+  function _renderClientNextAction(reqs) {
+    var active = (reqs || []).filter(function (r) { return r._pipeline && r._pipeline.step >= 0 && r._pipeline.step < 5; });
+    if (!active.length) return '';
+    var ranked = active.slice().sort(function (a, b) {
+      var as = a._pipeline.step, bs = b._pipeline.step;
+      if (as === 4 && bs !== 4) return -1;
+      if (bs === 4 && as !== 4) return 1;
+      if (as === 1 && bs !== 1) return -1;
+      if (bs === 1 && as !== 1) return 1;
+      return new Date(b.updated_at || b.created_at || 0) - new Date(a.updated_at || a.created_at || 0);
+    });
+    var r = ranked[0], p = r._pipeline || PIPELINE.NEW;
+    var title = p.label, detail = 'Suivez l’état réel de votre demande.', eyebrow = 'PROCHAINE ÉTAPE';
+    if (p.step === 4) { eyebrow = 'ACTION REQUISE'; title = 'Confirmez la prestation'; detail = 'Vérifiez l’intervention terminée puis confirmez-la depuis votre demande.'; }
+    else if (p === PIPELINE.PROPOSAL_RECEIVED) { eyebrow = 'DÉCISION'; title = 'Consultez la proposition reçue'; detail = 'Le devis reçu est disponible dans votre demande.'; }
+    else if (p.step === 3) { eyebrow = 'INTERVENTION'; title = 'Intervention en cours'; detail = 'Consultez le suivi réel de votre intervention.'; }
+    else if (p.step === 2) { eyebrow = 'PRISE EN CHARGE'; title = 'Artisan assigné'; detail = 'Votre demande est maintenant prise en charge.'; }
+    else { eyebrow = 'RECHERCHE'; title = 'Recherche en cours'; detail = 'FIXEO recherche un artisan éligible pour votre demande.'; }
+    return '<div class="fxv2-next-action">'
+      + '<span class="fxv2-next-kicker">' + esc(eyebrow) + '</span>'
+      + '<strong>' + esc(title) + '</strong>'
+      + '<span class="fxv2-next-context">' + esc(r.service_category || 'Intervention') + (r.city ? ' · ' + esc(r.city) : '') + '</span>'
+      + '<p>' + esc(detail) + '</p>'
+      + '<button class="fxv2-btn fxv2-next-btn" data-action="go-requests">Voir la demande</button>'
+      + '</div>';
+  }
+
   function _renderClientControlTower(reqs) {
     var p = _controlTowerPriority(reqs);
     var name = _clientFirstName();
@@ -601,6 +628,7 @@
 
     /* C2.1 deterministic Client Control Tower shell */
     html += _renderClientControlTower(reqs);
+    html += _renderClientNextAction(reqs);
 
     /* ── Insights band (always visible) ── */
     html += _renderInsightsBand();
