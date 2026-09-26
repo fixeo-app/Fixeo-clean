@@ -1581,3 +1581,17 @@ a.fxv2-header-logo:hover { opacity: .8; }
 .fxv2-mc-primary{background:linear-gradient(135deg,#E1306C,#833AB4);color:#fff;box-shadow:0 5px 18px rgba(225,48,108,.22)}
 .fxv2-mc-ref{margin-top:10px;color:rgba(255,255,255,.32);font-size:.64rem}
 @media(max-width:420px){.fxv2-mc{padding:16px}.fxv2-mc-facts{grid-template-columns:1fr 1fr}.fxv2-mc-actions>.fxv2-btn{flex:1;justify-content:center;min-width:130px}}
+
+
+/* C2.4 — Client Decision Center */
+.fxv2-decision-center{margin:0 0 18px;padding:16px;border:1px solid rgba(245,158,11,.20);border-radius:17px;background:linear-gradient(145deg,rgba(245,158,11,.065),rgba(225,48,108,.035))}
+.fxv2-decision-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.fxv2-decision-head span{display:block;margin-bottom:3px;color:rgba(245,158,11,.8);font-size:.58rem;font-weight:850;letter-spacing:.12em}
+.fxv2-decision-head strong{display:block;color:#fff;font-size:.9rem}
+.fxv2-decision-head>b{display:flex;align-items:center;justify-content:center;min-width:30px;height:30px;padding:0 8px;border-radius:999px;background:rgba(245,158,11,.13);color:#fbbf24;font-size:.75rem}
+.fxv2-decision-list{display:flex;flex-direction:column;gap:8px}
+.fxv2-decision-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid rgba(255,255,255,.075);border-radius:12px;background:rgba(0,0,0,.13)}
+.fxv2-decision-copy{min-width:0}.fxv2-decision-copy strong{display:block;color:#fff;font-size:.82rem}.fxv2-decision-copy>span{display:block;margin-top:2px;color:rgba(255,255,255,.56);font-size:.68rem}.fxv2-decision-copy p{margin:5px 0 0;color:var(--v2-text-3);font-size:.7rem;line-height:1.4}
+.fxv2-decision-action{flex-shrink:0;min-height:38px;border:1px solid rgba(245,158,11,.22);background:rgba(245,158,11,.09);color:#fcd34d}
+.fxv2-decision-clear{border-color:rgba(52,211,153,.13);background:rgba(52,211,153,.035)}.fxv2-decision-clear .fxv2-decision-head{margin-bottom:6px}.fxv2-decision-clear .fxv2-decision-head span{color:rgba(52,211,153,.75)}.fxv2-decision-clear .fxv2-decision-head>b{background:rgba(52,211,153,.10);color:#34d399}.fxv2-decision-clear>p{margin:0;color:var(--v2-text-3);font-size:.7rem;line-height:1.45}
+@media(max-width:420px){.fxv2-decision-item{align-items:flex-start;flex-direction:column}.fxv2-decision-action{width:100%;justify-content:center}}
