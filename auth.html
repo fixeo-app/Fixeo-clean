@@ -100,7 +100,7 @@
       </div>
 
       <!-- Tabs -->
-      <div class="ap-tabs" role="tablist">
+      <div class="ap-tabs" id="auth-tabs" role="tablist">
         <div class="ap-tab active" id="tab-login"  role="tab" tabindex="0"
              onclick="switchTab('login')"  onkeydown="if(event.key==='Enter')switchTab('login')">Connexion</div>
         <div class="ap-tab"        id="tab-signup" role="tab" tabindex="0"
@@ -641,25 +641,30 @@ function selectGateway(space) {
     enterprise:['FIXEO ENTERPRISE OS','Control Tower · Workforce · Maintenance · Finance · RAFI','Accès réservé aux membres Enterprise réellement autorisés.']
   }[space];
   if(ctx){ctx.children[0].textContent=copy[0];ctx.children[1].textContent=copy[1];ctx.children[2].textContent=copy[2];}
-  if(space==='enterprise'){switchTab('login');if(heading)heading.textContent='Accéder à FIXEO Enterprise';if(sub)sub.textContent='Votre accès Enterprise sera vérifié après connexion.';}
-  else if(document.getElementById('signup-form').style.display!=='none'){selectType(space);if(heading)heading.textContent=space==='artisan'?'Rejoindre le réseau FIXEO':'Créer votre espace Client';}
+  const signupTab=document.getElementById('tab-signup');
+  if(signupTab){signupTab.textContent=space==='enterprise'?'Accès Enterprise':'Créer un compte';signupTab.setAttribute('aria-disabled',space==='enterprise'?'true':'false');}
+  if(space==='enterprise') switchTab('login');
+  else if(document.getElementById('signup-form').style.display!=='none') switchTab('signup');
+  else switchTab('login');
 }
 
 // ── Tab switching ─────────────────────────────────────────
 function switchTab(tab) {
+  if (tab === 'signup' && _gatewaySpace === 'enterprise') tab = 'login';
   const isLogin = tab === 'login';
   document.getElementById('login-form').style.display  = isLogin ? 'block' : 'none';
   document.getElementById('signup-form').style.display = isLogin ? 'none'  : 'block';
+  if (!isLogin && (_gatewaySpace === 'client' || _gatewaySpace === 'artisan')) selectType(_gatewaySpace);
   document.getElementById('tab-login').classList.toggle('active',  isLogin);
   document.getElementById('tab-signup').classList.toggle('active', !isLogin);
   document.getElementById('login-error').style.display  = 'none';
   document.getElementById('signup-error').style.display = 'none';
   document.getElementById('auth-heading').textContent = isLogin
-    ? 'Bon retour sur Fixeo'
-    : 'Rejoindre Fixeo';
+    ? (_gatewaySpace === 'enterprise' ? 'Accéder à FIXEO Enterprise' : 'Bon retour sur Fixeo')
+    : 'Quel compte souhaitez-vous créer ?';
   document.getElementById('auth-sub').textContent = isLogin
-    ? 'Votre r\u00e9seau d\u2019artisans vous attend.'
-    : 'Cr\u00e9ez votre accès à l\u2019écosystème FIXEO.';
+    ? (_gatewaySpace === 'artisan' ? 'Retrouvez vos missions et votre activité FIXEO.' : _gatewaySpace === 'enterprise' ? 'Votre accès Enterprise sera vérifié après connexion.' : 'Retrouvez vos demandes, interventions et services FIXEO.')
+    : 'Choisissez Client ou Artisan. Enterprise reste réservé aux membres autorisés.';
 }
 
 // ── Role card selection ─────────────────────────────────── */
