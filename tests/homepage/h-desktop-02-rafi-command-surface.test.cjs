@@ -1,0 +1,7 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const h=fs.readFileSync(path.join(__dirname,'../../index.html'),'utf8');const b=(h.match(/<style id="h-desktop-01-production-cleanup">([\s\S]*?)<\/style>/)||[])[1]||'';
+test('H-DESKTOP-02 is desktop-only and mobile remains frozen',()=>{assert.match(b,/@media \(min-width: 821px\)/);assert.doesNotMatch(b,/max-width/);});
+test('single RAFI visual stays in right desktop column across states',()=>{assert.match(b,/#fxhf-root \.fxhf-visual \{ grid-area:1 \/ 2 !important/);assert.doesNotMatch(b,/data-fxhf-state=need\] \.fxhf-visual \{ display:none/);});
+test('desktop command surface expands the client input column',()=>assert.match(b,/grid-template-columns:minmax\(0,1\.38fr\) minmax\(300px,\.62fr\)/));
+test('consent and privacy remain in natural flow before actions',()=>{assert.match(b,/\.fxhf-consent \{ margin-top:12px/);assert.match(b,/\.fxhf-privacy \{ margin:4px 0 0 27px/);assert.match(b,/\.fxhf-actions \{ position:static/);});
+test('header CTA is truly RAFI and no longer invokes QuickSearch',()=>{const m=h.match(/<button class="btn-quick-search"[\s\S]*?<\/button>/);assert.ok(m);assert.match(m[0],/Demander à RAFI/);assert.match(m[0],/fxhf-root/);assert.doesNotMatch(m[0],/QuickSearchModal/);});
+test('legacy desktop language urgency and whatsapp entry points stay neutralized',()=>assert.match(b,/#lang-select, #fixeo-urgent-fab, \.chat-widget/));
