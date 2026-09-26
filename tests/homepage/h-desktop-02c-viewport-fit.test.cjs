@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const h=fs.readFileSync(path.join(__dirname,'../../index.html'),'utf8');const b=(h.match(/<style id="h-desktop-01-production-cleanup">([\s\S]*?)<\/style>/)||[])[1]||'';
+test('02C remains desktop-only',()=>assert.match(b,/@media \(min-width: 821px\)/));
+test('RAFI is raised and its halo is reduced',()=>{assert.match(b,/transform:translateY\(-12px\)/);assert.match(b,/transform:scale\(\.78\)/);assert.match(b,/transform:scale\(\.72\).*opacity:\.48/s);});
+test('desktop hero fits viewport without fixed CTA',()=>{assert.match(b,/height:calc\(var\(--fxhf-viewport-height,100svh\) - var\(--fxhf-header-height,72px\)\)/);assert.match(b,/\.fxhf-actions \{ padding-top:6px/);assert.doesNotMatch(b,/position:fixed/);});
+test('command surface recovers vertical space without hiding content',()=>{assert.match(b,/min-height:88px/);assert.match(b,/\.fxhf-submit \{ min-height:48px/);assert.match(b,/\.fxhf-consent \{ margin-top:6px/);});
