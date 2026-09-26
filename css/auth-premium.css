@@ -2023,3 +2023,7 @@ html body {
 /* A1.2.1 — Gateway clarity & desktop centering */
 @media(min-width:900px){.auth-shell{display:flex;flex-direction:column;align-items:center}.auth-topbar{width:min(100%,980px)}.auth-center{width:min(100% - 48px,780px)!important;margin-left:auto!important;margin-right:auto!important}.auth-box{width:100%;margin-inline:auto!important}}
 #tab-signup[aria-disabled="true"]{opacity:.5;cursor:not-allowed}.uag-space.is-active{transform:translateY(-1px)}
+/* A1.2.2 — Enterprise clarity & mobile viewport stability */
+.uag-enterprise-access{display:flex;align-items:center;gap:10px;margin:2px 0 16px;padding:11px 13px;border:1px solid rgba(112,240,220,.2);border-radius:12px;background:linear-gradient(135deg,rgba(112,240,220,.07),rgba(111,91,255,.05));color:#70f0dc}.uag-enterprise-access[hidden]{display:none!important}.uag-enterprise-access>span{font-size:.85rem}.uag-enterprise-access div{display:grid;gap:2px}.uag-enterprise-access strong{color:#effffc;font-size:.72rem}.uag-enterprise-access small{color:rgba(255,255,255,.38);font-size:.58rem}.ap-tabs[hidden]{display:none!important}
+@supports(-webkit-touch-callout:none){@media(max-width:820px){.ap-input,input.ap-input,select.ap-input,textarea.ap-input{font-size:16px!important}.auth-shell{overflow-x:hidden}.auth-center,.auth-box,.uag{max-width:100%;box-sizing:border-box}}}
+@media(max-width:520px){.uag-enterprise-access{margin-bottom:13px;padding:10px 11px}.uag-enterprise-access strong{font-size:.68rem}.uag-enterprise-access small{font-size:.55rem}}
