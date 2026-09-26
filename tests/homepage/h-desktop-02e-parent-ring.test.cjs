@@ -1,0 +1,5 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const h=fs.readFileSync(path.join(__dirname,'../../index.html'),'utf8');const b=(h.match(/<style id="h-desktop-01-production-cleanup">([\s\S]*?)<\/style>/)||[])[1]||'';const tail=b.split('H-DESKTOP-02E')[1]||'';
+test('02E moves the true command parent once',()=>{assert.match(tail,/#fxhf-root \.fxhf-content \{ transform:translateX\(34px\)/);assert.match(tail,/width:calc\(100% - 34px\)/);});
+test('02E cancels prior child compensation',()=>assert.match(tail,/\.fxhf-actions \{ transform:none !important; width:auto !important/));
+test('02E removes RAFI outer ring but keeps core halo',()=>{assert.match(tail,/\.fxhf-rafi-halo \{ background:radial-gradient/);assert.match(tail,/\.fxhf-rafi-halo::after \{ display:none !important/);});
+test('02E raises RAFI slightly and does not touch title subtitle or CTA vertical size',()=>{assert.match(tail,/translateY\(-36px\)/);assert.doesNotMatch(tail,/fxhf-title|fxhf-subtitle|min-height:.*submit/);});
