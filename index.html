@@ -2751,21 +2751,31 @@ section#home.hero.hero-section {
 .seo-authority-links a:hover{color:rgba(255,255,255,.6)}
 </style>
   <style id="h-desktop-01-production-cleanup">
-  /* H-DESKTOP-01 — desktop-only homepage production cleanup. Mobile is frozen. */
+  /* H-DESKTOP-02 — RAFI Hero Command Surface. Desktop only; mobile frozen. */
   @media (min-width: 821px) {
-    #fxhf-root[data-fxhf-state] .fxhf-scroll { overflow-y: visible !important; overscroll-behavior-y: auto !important; scrollbar-width: none !important; }
-    #fxhf-root[data-fxhf-state] .fxhf-scroll::-webkit-scrollbar { display: none !important; }
-    #fxhf-root[data-fxhf-state=need] .fxhf-visual { display: flex !important; }
-    .nav-actions .lang-selector, #lang-select { display: none !important; }
-    #fixeo-urgent-fab, .chat-widget { display: none !important; pointer-events: none !important; }
-    .nav-actions .btn-quick-search { border-color: rgba(116,235,226,.32) !important; background: linear-gradient(115deg,rgba(76,202,214,.12),rgba(132,105,210,.13)) !important; box-shadow: 0 0 22px rgba(87,194,218,.10) !important; }
+    #fxhf-root .fxhf-universal { grid-template-columns:minmax(0,1.38fr) minmax(300px,.62fr) !important; gap:clamp(42px,5vw,78px) !important; padding:clamp(28px,3vw,44px) clamp(34px,5vw,76px) !important; height:auto !important; min-height:calc(var(--fxhf-viewport-height,100svh) - var(--fxhf-header-height,72px)) !important; max-height:none !important; align-items:start !important; }
+    #fxhf-root .fxhf-content { grid-template-rows:auto auto auto !important; gap:16px !important; align-self:start !important; }
+    #fxhf-root[data-fxhf-state] .fxhf-scroll { overflow:visible !important; min-height:0 !important; padding:0 !important; scrollbar-width:none !important; }
+    #fxhf-root[data-fxhf-state] .fxhf-scroll::-webkit-scrollbar { display:none !important; }
+    #fxhf-root .fxhf-visual { grid-area:1 / 2 !important; align-self:start !important; justify-self:center !important; margin-top:clamp(88px,10vh,132px) !important; display:flex !important; transform:none !important; }
+    #fxhf-root .fxhf-visual .fxhf-rafi-sphere { transform:scale(1.08); transform-origin:center; }
+    #fxhf-root .fxhf-visual .fxhf-rafi-caption { display:block !important; max-width:24ch; margin-top:22px; text-align:center; color:#dce9f5; font-size:14px; line-height:1.5; }
+    #fxhf-root[data-fxhf-state]:not([data-fxhf-state="need"]) .fxhf-visual .fxhf-rafi-caption { display:none !important; }
+    #fxhf-root[data-fxhf-state]:not([data-fxhf-state="need"]) .fxhf-visual { margin-top:clamp(88px,10vh,132px) !important; }
+    .nav-actions .lang-selector, #lang-select, #fixeo-urgent-fab, .chat-widget { display:none !important; pointer-events:none !important; }
+    .nav-actions .btn-quick-search { border-color:rgba(116,235,226,.38) !important; background:linear-gradient(115deg,rgba(76,202,214,.14),rgba(132,105,210,.16)) !important; box-shadow:0 0 24px rgba(87,194,218,.12) !important; }
     .nav-actions .btn-quick-search .bqs-icon { color:#8ee9e1 !important; }
-    .nav-actions #login-btn, .nav-actions #register-btn { background: transparent !important; box-shadow:none !important; border-color:rgba(255,255,255,.10) !important; color:rgba(239,244,252,.72) !important; }
-    #fxhf-root[data-fxhf-state=need] .fxhf-title { font-size: clamp(38px,4.15vw,56px) !important; font-weight:700 !important; letter-spacing:-.045em !important; }
-    #fxhf-root[data-fxhf-state=need] .fxhf-subtitle { max-width:42ch !important; font-size:17px !important; line-height:1.48 !important; color:#e0e9f4 !important; }
-    #fxhf-root[data-fxhf-state=need] .fxhf-subtitle::first-line { color:#fff; }
-    #fxhf-root[data-fxhf-state=need] .fxhf-visual { align-self:center !important; }
-    #fxhf-root[data-fxhf-state=need] .fxhf-visual .fxhf-rafi-caption { display:none !important; }
+    .nav-actions #login-btn,.nav-actions #register-btn { background:transparent !important; box-shadow:none !important; border-color:rgba(255,255,255,.10) !important; color:rgba(239,244,252,.72) !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-title { font-size:clamp(42px,4.4vw,62px) !important; font-weight:700 !important; letter-spacing:-.05em !important; line-height:1.02 !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-subtitle { max-width:44ch !important; font-size:18px !important; line-height:1.48 !important; color:#e4edf7 !important; margin-top:10px !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-progress { margin-top:18px !important; }
+    #fxhf-root[data-fxhf-state=need] #fxhf-panel { width:100% !important; max-width:none !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-location-select { min-height:46px !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-need-input { min-height:112px !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-consent { margin-top:12px !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-privacy { margin:4px 0 0 27px !important; }
+    #fxhf-root[data-fxhf-state] .fxhf-actions { position:static !important; margin-top:2px !important; padding:12px 0 0 !important; background:transparent !important; border-top:1px solid var(--fxhf-line) !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-submit { min-height:56px !important; font-size:16px !important; }
   }
   </style>
   <link rel="stylesheet" href="css/homepage-sections-v1.css?v=hsv1a">
@@ -2919,11 +2929,11 @@ section#home.hero.hero-section {
 
     <!-- Quick search -->
     <button class="btn-quick-search"
-            onclick="window.QuickSearchModal && QuickSearchModal.focusInline(); return false;"
-            aria-label="Recherche rapide (touche /)"
-            title="Recherche rapide [ / ]">
-      <span class="bqs-icon">🔍</span>
-      <span class="bqs-text">Rechercher</span>
+            onclick="document.getElementById('fxhf-root')?.scrollIntoView({behavior:'smooth',block:'start'}); setTimeout(function(){document.getElementById('fxhf-need-input')?.focus();},450); return false;"
+            aria-label="Demander à RAFI"
+            title="Demander à RAFI">
+      <span class="bqs-icon">✦</span>
+      <span class="bqs-text">Demander à RAFI</span>
     </button>
 
     <!-- Language -->
