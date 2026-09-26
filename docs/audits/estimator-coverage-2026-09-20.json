@@ -1,0 +1,1723 @@
+{
+  "source_commit": "fdcd532a16bffa8f08555def181f21e6c90d7921",
+  "scope": "Local server orchestration; no browser classifier, no production HTTP call, no reservation",
+  "summary": {
+    "situations": 62,
+    "services": 53,
+    "supported_metiers": [
+      "plomberie",
+      "electricite",
+      "serrurerie",
+      "climatisation",
+      "bricolage",
+      "nettoyage",
+      "peinture",
+      "menuiserie"
+    ],
+    "states": {
+      "SERVICE_SELECTION": 40,
+      "METIER_SELECTION": 22
+    },
+    "unsupported_explicit_hints": 12,
+    "no_question_services": 12,
+    "missing_plans": 0
+  },
+  "situations": [
+    {
+      "universe": "eau",
+      "label": "Robinet qui fuit",
+      "hint": "plomberie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "plomberie.diagnostic",
+        "plomberie.fuite_simple",
+        "plomberie.debouchage_evier",
+        "plomberie.debouchage_wc_simple",
+        "plomberie.robinet_remplacement",
+        "plomberie.chasse_eau"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "eau",
+      "label": "Fuite sous un évier",
+      "hint": "plomberie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "plomberie.diagnostic",
+        "plomberie.fuite_simple",
+        "plomberie.debouchage_evier",
+        "plomberie.debouchage_wc_simple",
+        "plomberie.robinet_remplacement",
+        "plomberie.chasse_eau"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "eau",
+      "label": "WC bouché",
+      "hint": "plomberie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "plomberie.diagnostic",
+        "plomberie.fuite_simple",
+        "plomberie.debouchage_evier",
+        "plomberie.debouchage_wc_simple",
+        "plomberie.robinet_remplacement",
+        "plomberie.chasse_eau"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "eau",
+      "label": "Canalisation bouchée",
+      "hint": "plomberie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "plomberie.diagnostic",
+        "plomberie.fuite_simple",
+        "plomberie.debouchage_evier",
+        "plomberie.debouchage_wc_simple",
+        "plomberie.robinet_remplacement",
+        "plomberie.chasse_eau"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "eau",
+      "label": "Chasse d’eau défectueuse",
+      "hint": "plomberie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "plomberie.diagnostic",
+        "plomberie.fuite_simple",
+        "plomberie.debouchage_evier",
+        "plomberie.debouchage_wc_simple",
+        "plomberie.robinet_remplacement",
+        "plomberie.chasse_eau"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "eau",
+      "label": "Installer un sanitaire",
+      "hint": "plomberie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "plomberie.diagnostic",
+        "plomberie.fuite_simple",
+        "plomberie.debouchage_evier",
+        "plomberie.debouchage_wc_simple",
+        "plomberie.robinet_remplacement",
+        "plomberie.chasse_eau"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "eau",
+      "label": "Chauffe-eau en panne",
+      "hint": "plomberie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "plomberie.diagnostic",
+        "plomberie.fuite_simple",
+        "plomberie.debouchage_evier",
+        "plomberie.debouchage_wc_simple",
+        "plomberie.robinet_remplacement",
+        "plomberie.chasse_eau"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "eau",
+      "label": "Faible pression d’eau",
+      "hint": "plomberie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "plomberie.diagnostic",
+        "plomberie.fuite_simple",
+        "plomberie.debouchage_evier",
+        "plomberie.debouchage_wc_simple",
+        "plomberie.robinet_remplacement",
+        "plomberie.chasse_eau"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "electricite",
+      "label": "Prise qui ne fonctionne plus",
+      "hint": "electricite",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "electricite.diagnostic",
+        "electricite.prise_remplacement",
+        "electricite.interrupteur_remplacement.simple",
+        "electricite.interrupteur_remplacement.va_et_vient",
+        "electricite.luminaire_installation",
+        "electricite.disjoncteur_remplacement"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "electricite",
+      "label": "Éclairage en panne",
+      "hint": "electricite",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "electricite.diagnostic",
+        "electricite.prise_remplacement",
+        "electricite.interrupteur_remplacement.simple",
+        "electricite.interrupteur_remplacement.va_et_vient",
+        "electricite.luminaire_installation",
+        "electricite.disjoncteur_remplacement"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "electricite",
+      "label": "Disjoncteur qui saute",
+      "hint": "electricite",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "electricite.diagnostic",
+        "electricite.prise_remplacement",
+        "electricite.interrupteur_remplacement.simple",
+        "electricite.interrupteur_remplacement.va_et_vient",
+        "electricite.luminaire_installation",
+        "electricite.disjoncteur_remplacement"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "electricite",
+      "label": "Installer un luminaire",
+      "hint": "electricite",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "electricite.diagnostic",
+        "electricite.prise_remplacement",
+        "electricite.interrupteur_remplacement.simple",
+        "electricite.interrupteur_remplacement.va_et_vient",
+        "electricite.luminaire_installation",
+        "electricite.disjoncteur_remplacement"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "electricite",
+      "label": "Ajouter une prise",
+      "hint": "electricite",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "electricite.diagnostic",
+        "electricite.prise_remplacement",
+        "electricite.interrupteur_remplacement.simple",
+        "electricite.interrupteur_remplacement.va_et_vient",
+        "electricite.luminaire_installation",
+        "electricite.disjoncteur_remplacement"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "electricite",
+      "label": "Vérifier un tableau électrique",
+      "hint": "electricite",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "electricite.diagnostic",
+        "electricite.prise_remplacement",
+        "electricite.interrupteur_remplacement.simple",
+        "electricite.interrupteur_remplacement.va_et_vient",
+        "electricite.luminaire_installation",
+        "electricite.disjoncteur_remplacement"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "electricite",
+      "label": "Équipement électrique en panne",
+      "hint": "electricite",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "electricite.diagnostic",
+        "electricite.prise_remplacement",
+        "electricite.interrupteur_remplacement.simple",
+        "electricite.interrupteur_remplacement.va_et_vient",
+        "electricite.luminaire_installation",
+        "electricite.disjoncteur_remplacement"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "confort",
+      "label": "Climatiseur qui ne refroidit plus",
+      "hint": "climatisation",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "climatisation.diagnostic",
+        "climatisation.entretien_annuel",
+        "climatisation.desinfection_profonde",
+        "climatisation.recharge_gaz_r22",
+        "climatisation.reparation_fuite_recharge",
+        "climatisation.installation.standard",
+        "climatisation.installation.cassette",
+        "climatisation.desinstallation"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "confort",
+      "label": "Installer un climatiseur",
+      "hint": "climatisation",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "climatisation.diagnostic",
+        "climatisation.entretien_annuel",
+        "climatisation.desinfection_profonde",
+        "climatisation.recharge_gaz_r22",
+        "climatisation.reparation_fuite_recharge",
+        "climatisation.installation.standard",
+        "climatisation.installation.cassette",
+        "climatisation.desinstallation"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "confort",
+      "label": "Entretenir une climatisation",
+      "hint": "climatisation",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "climatisation.diagnostic",
+        "climatisation.entretien_annuel",
+        "climatisation.desinfection_profonde",
+        "climatisation.recharge_gaz_r22",
+        "climatisation.reparation_fuite_recharge",
+        "climatisation.installation.standard",
+        "climatisation.installation.cassette",
+        "climatisation.desinstallation"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "confort",
+      "label": "Climatiseur qui fuit",
+      "hint": "climatisation",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "climatisation.diagnostic",
+        "climatisation.entretien_annuel",
+        "climatisation.desinfection_profonde",
+        "climatisation.recharge_gaz_r22",
+        "climatisation.reparation_fuite_recharge",
+        "climatisation.installation.standard",
+        "climatisation.installation.cassette",
+        "climatisation.desinstallation"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "confort",
+      "label": "Bruit inhabituel de climatisation",
+      "hint": "climatisation",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "climatisation.diagnostic",
+        "climatisation.entretien_annuel",
+        "climatisation.desinfection_profonde",
+        "climatisation.recharge_gaz_r22",
+        "climatisation.reparation_fuite_recharge",
+        "climatisation.installation.standard",
+        "climatisation.installation.cassette",
+        "climatisation.desinstallation"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "confort",
+      "label": "Problème de ventilation",
+      "hint": "climatisation",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "climatisation.diagnostic",
+        "climatisation.entretien_annuel",
+        "climatisation.desinfection_profonde",
+        "climatisation.recharge_gaz_r22",
+        "climatisation.reparation_fuite_recharge",
+        "climatisation.installation.standard",
+        "climatisation.installation.cassette",
+        "climatisation.desinstallation"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "confort",
+      "label": "Chauffage en panne",
+      "hint": "climatisation",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "climatisation.diagnostic",
+        "climatisation.entretien_annuel",
+        "climatisation.desinfection_profonde",
+        "climatisation.recharge_gaz_r22",
+        "climatisation.reparation_fuite_recharge",
+        "climatisation.installation.standard",
+        "climatisation.installation.cassette",
+        "climatisation.desinstallation"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "portes",
+      "label": "Porte claquée",
+      "hint": "serrurerie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "serrurerie.porte_claquee_ouverture",
+        "serrurerie.porte_claquee_blindee.ouverture",
+        "serrurerie.porte_verrouillee.ouverture",
+        "serrurerie.cle_cassee_extraction",
+        "serrurerie.cylindre_remplacement.standard",
+        "serrurerie.serrure_remplacement.standard"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "portes",
+      "label": "Clé cassée dans la serrure",
+      "hint": "serrurerie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "serrurerie.porte_claquee_ouverture",
+        "serrurerie.porte_claquee_blindee.ouverture",
+        "serrurerie.porte_verrouillee.ouverture",
+        "serrurerie.cle_cassee_extraction",
+        "serrurerie.cylindre_remplacement.standard",
+        "serrurerie.serrure_remplacement.standard"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "portes",
+      "label": "Remplacer une serrure",
+      "hint": "serrurerie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "serrurerie.porte_claquee_ouverture",
+        "serrurerie.porte_claquee_blindee.ouverture",
+        "serrurerie.porte_verrouillee.ouverture",
+        "serrurerie.cle_cassee_extraction",
+        "serrurerie.cylindre_remplacement.standard",
+        "serrurerie.serrure_remplacement.standard"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "portes",
+      "label": "Fenêtre qui ferme mal",
+      "hint": "menuiserie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "menuiserie.reglage_porte.sans_rabotage",
+        "menuiserie.reglage_porte.avec_rabotage",
+        "menuiserie.remplacement_charniere",
+        "menuiserie.remplacement_coulisse_tiroir",
+        "menuiserie.deblocage_porte_coulissante.sans_piece",
+        "menuiserie.deblocage_porte_coulissante.avec_galets",
+        "menuiserie.installation_porte"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "portes",
+      "label": "Vitre fissurée",
+      "hint": "",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "portes",
+      "label": "Volet bloqué",
+      "hint": "menuiserie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "menuiserie.reglage_porte.sans_rabotage",
+        "menuiserie.reglage_porte.avec_rabotage",
+        "menuiserie.remplacement_charniere",
+        "menuiserie.remplacement_coulisse_tiroir",
+        "menuiserie.deblocage_porte_coulissante.sans_piece",
+        "menuiserie.deblocage_porte_coulissante.avec_galets",
+        "menuiserie.installation_porte"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "portes",
+      "label": "Réparer une porte",
+      "hint": "menuiserie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "menuiserie.reglage_porte.sans_rabotage",
+        "menuiserie.reglage_porte.avec_rabotage",
+        "menuiserie.remplacement_charniere",
+        "menuiserie.remplacement_coulisse_tiroir",
+        "menuiserie.deblocage_porte_coulissante.sans_piece",
+        "menuiserie.deblocage_porte_coulissante.avec_galets",
+        "menuiserie.installation_porte"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "portes",
+      "label": "Installer une grille de protection",
+      "hint": "",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "travaux",
+      "label": "Repeindre une pièce",
+      "hint": "peinture",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "peinture.forfait_minimum",
+        "peinture.mur_interieur.labour_only",
+        "peinture.mur_interieur.all_in",
+        "peinture.plafond.labour_only",
+        "peinture.mur_interieur.all_in_avec_prep",
+        "peinture.preparation_surface"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "travaux",
+      "label": "Peindre une façade",
+      "hint": "peinture",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "peinture.forfait_minimum",
+        "peinture.mur_interieur.labour_only",
+        "peinture.mur_interieur.all_in",
+        "peinture.plafond.labour_only",
+        "peinture.mur_interieur.all_in_avec_prep",
+        "peinture.preparation_surface"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "travaux",
+      "label": "Poser du carrelage",
+      "hint": "carrelage",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "travaux",
+      "label": "Réparer des joints",
+      "hint": "carrelage",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "travaux",
+      "label": "Infiltration ou étanchéité",
+      "hint": "",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "travaux",
+      "label": "Rénover une salle de bains",
+      "hint": "",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "travaux",
+      "label": "Rénover une cuisine",
+      "hint": "",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "travaux",
+      "label": "Petits travaux de maçonnerie",
+      "hint": "maconnerie",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "travaux",
+      "label": "Aménager une cloison",
+      "hint": "",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "travaux",
+      "label": "Préparer une rénovation complète",
+      "hint": "",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "installation",
+      "label": "Monter un meuble",
+      "hint": "bricolage",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "bricolage.visite_minimum",
+        "bricolage.horaire",
+        "bricolage.demi_journee",
+        "bricolage.montage_meuble",
+        "bricolage.fixation_accrochage",
+        "bricolage.intervention_conditionnelle"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "installation",
+      "label": "Fixer une étagère",
+      "hint": "bricolage",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "bricolage.visite_minimum",
+        "bricolage.horaire",
+        "bricolage.demi_journee",
+        "bricolage.montage_meuble",
+        "bricolage.fixation_accrochage",
+        "bricolage.intervention_conditionnelle"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "installation",
+      "label": "Installer une tringle",
+      "hint": "bricolage",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "bricolage.visite_minimum",
+        "bricolage.horaire",
+        "bricolage.demi_journee",
+        "bricolage.montage_meuble",
+        "bricolage.fixation_accrochage",
+        "bricolage.intervention_conditionnelle"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "installation",
+      "label": "Fixer un téléviseur",
+      "hint": "bricolage",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "bricolage.visite_minimum",
+        "bricolage.horaire",
+        "bricolage.demi_journee",
+        "bricolage.montage_meuble",
+        "bricolage.fixation_accrochage",
+        "bricolage.intervention_conditionnelle"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "installation",
+      "label": "Poser des meubles de cuisine",
+      "hint": "menuiserie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "menuiserie.reglage_porte.sans_rabotage",
+        "menuiserie.reglage_porte.avec_rabotage",
+        "menuiserie.remplacement_charniere",
+        "menuiserie.remplacement_coulisse_tiroir",
+        "menuiserie.deblocage_porte_coulissante.sans_piece",
+        "menuiserie.deblocage_porte_coulissante.avec_galets",
+        "menuiserie.installation_porte"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "installation",
+      "label": "Réparer un meuble",
+      "hint": "menuiserie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "menuiserie.reglage_porte.sans_rabotage",
+        "menuiserie.reglage_porte.avec_rabotage",
+        "menuiserie.remplacement_charniere",
+        "menuiserie.remplacement_coulisse_tiroir",
+        "menuiserie.deblocage_porte_coulissante.sans_piece",
+        "menuiserie.deblocage_porte_coulissante.avec_galets",
+        "menuiserie.installation_porte"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "installation",
+      "label": "Créer un rangement sur mesure",
+      "hint": "menuiserie",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "menuiserie.reglage_porte.sans_rabotage",
+        "menuiserie.reglage_porte.avec_rabotage",
+        "menuiserie.remplacement_charniere",
+        "menuiserie.remplacement_coulisse_tiroir",
+        "menuiserie.deblocage_porte_coulissante.sans_piece",
+        "menuiserie.deblocage_porte_coulissante.avec_galets",
+        "menuiserie.installation_porte"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "installation",
+      "label": "Installer un équipement",
+      "hint": "",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "entretien",
+      "label": "Nettoyage après travaux",
+      "hint": "nettoyage",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "nettoyage.visite_minimum",
+        "nettoyage.menage_standard",
+        "nettoyage.grand_menage",
+        "nettoyage.canape.deux_places",
+        "nettoyage.canape.trois_places",
+        "nettoyage.matelas.simple",
+        "nettoyage.matelas.double",
+        "nettoyage.apres_travaux"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "entretien",
+      "label": "Grand nettoyage",
+      "hint": "nettoyage",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "nettoyage.visite_minimum",
+        "nettoyage.menage_standard",
+        "nettoyage.grand_menage",
+        "nettoyage.canape.deux_places",
+        "nettoyage.canape.trois_places",
+        "nettoyage.matelas.simple",
+        "nettoyage.matelas.double",
+        "nettoyage.apres_travaux"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "entretien",
+      "label": "Nettoyer un canapé",
+      "hint": "nettoyage",
+      "hint_supported": true,
+      "state": "SERVICE_SELECTION",
+      "error": null,
+      "candidates": [
+        "nettoyage.visite_minimum",
+        "nettoyage.menage_standard",
+        "nettoyage.grand_menage",
+        "nettoyage.canape.deux_places",
+        "nettoyage.canape.trois_places",
+        "nettoyage.matelas.simple",
+        "nettoyage.matelas.double",
+        "nettoyage.apres_travaux"
+      ],
+      "service_code": null
+    },
+    {
+      "universe": "entretien",
+      "label": "Entretien de jardin",
+      "hint": "jardinage",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "entretien",
+      "label": "Taille de haie",
+      "hint": "jardinage",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "entretien",
+      "label": "Problème d’arrosage",
+      "hint": "jardinage",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "entretien",
+      "label": "Aménager une terrasse",
+      "hint": "",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "entretien",
+      "label": "Entretien de piscine",
+      "hint": "",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "demenagement",
+      "label": "Déménager un appartement",
+      "hint": "demenagement",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "demenagement",
+      "label": "Transporter quelques meubles",
+      "hint": "demenagement",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "demenagement",
+      "label": "Déplacer un objet lourd",
+      "hint": "demenagement",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "demenagement",
+      "label": "Démonter et remonter du mobilier",
+      "hint": "demenagement",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "demenagement",
+      "label": "Charger ou décharger un véhicule",
+      "hint": "demenagement",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    },
+    {
+      "universe": "demenagement",
+      "label": "Préparer un déménagement de bureau",
+      "hint": "demenagement",
+      "hint_supported": false,
+      "state": "METIER_SELECTION",
+      "error": null,
+      "candidates": [],
+      "service_code": null
+    }
+  ],
+  "services": [
+    {
+      "code": "plomberie.diagnostic",
+      "metier": "plomberie",
+      "output": "FIXEO_DIAGNOSTIC",
+      "questions": [],
+      "plan_present": true,
+      "initial_state": "READY_FOR_ENGINE",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "plomberie.fuite_simple",
+      "metier": "plomberie",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "leak_location_confirmed"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "plomberie.debouchage_evier",
+      "metier": "plomberie",
+      "output": "FIXEO_PRICE",
+      "questions": [],
+      "plan_present": true,
+      "initial_state": "READY_FOR_ENGINE",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "plomberie.debouchage_wc_simple",
+      "metier": "plomberie",
+      "output": "FIXEO_PRICE",
+      "questions": [],
+      "plan_present": true,
+      "initial_state": "READY_FOR_ENGINE",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "plomberie.robinet_remplacement",
+      "metier": "plomberie",
+      "output": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "questions": [
+        "part_replacement_required"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "plomberie.chasse_eau",
+      "metier": "plomberie",
+      "output": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "questions": [
+        "part_replacement_required"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "electricite.diagnostic",
+      "metier": "electricite",
+      "output": "FIXEO_DIAGNOSTIC",
+      "questions": [
+        "burning_smell",
+        "scorch_marks"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "electricite.prise_remplacement",
+      "metier": "electricite",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "burning_smell"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "electricite.interrupteur_remplacement.simple",
+      "metier": "electricite",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "burning_smell"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "electricite.interrupteur_remplacement.va_et_vient",
+      "metier": "electricite",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "burning_smell"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "electricite.luminaire_installation",
+      "metier": "electricite",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "burning_smell",
+        "ddr_rcd_involved"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "electricite.disjoncteur_remplacement",
+      "metier": "electricite",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "burning_smell",
+        "scorch_marks",
+        "distributor_equipment_involved",
+        "mcb_defect_confirmed"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "serrurerie.porte_claquee_ouverture",
+      "metier": "serrurerie",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "security_door"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "serrurerie.porte_claquee_blindee.ouverture",
+      "metier": "serrurerie",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "security_door",
+        "door_locked_with_key",
+        "part_replacement_required"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "serrurerie.porte_verrouillee.ouverture",
+      "metier": "serrurerie",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "security_door",
+        "part_replacement_required"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "serrurerie.cle_cassee_extraction",
+      "metier": "serrurerie",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "security_door",
+        "barrel_previously_damaged"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "serrurerie.cylindre_remplacement.standard",
+      "metier": "serrurerie",
+      "output": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "questions": [
+        "security_door",
+        "cylinder_count"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "serrurerie.serrure_remplacement.standard",
+      "metier": "serrurerie",
+      "output": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "questions": [
+        "security_door",
+        "lock_count"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "climatisation.diagnostic",
+      "metier": "climatisation",
+      "output": "FIXEO_DIAGNOSTIC",
+      "questions": [],
+      "plan_present": true,
+      "initial_state": "READY_FOR_ENGINE",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "climatisation.entretien_annuel",
+      "metier": "climatisation",
+      "output": "FIXEO_CALCULATED_PRICE",
+      "questions": [
+        "ac_count"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "climatisation.desinfection_profonde",
+      "metier": "climatisation",
+      "output": "FIXEO_CALCULATED_PRICE",
+      "questions": [
+        "ac_count"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "climatisation.recharge_gaz_r22",
+      "metier": "climatisation",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "refrigerant_type"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "climatisation.reparation_fuite_recharge",
+      "metier": "climatisation",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "refrigerant_type",
+        "leak_location_confirmed"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "climatisation.installation.standard",
+      "metier": "climatisation",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "multi_split",
+        "cassette_or_ducted",
+        "ac_capacity_btu",
+        "installation_height_m",
+        "facade_inaccessible"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "climatisation.installation.cassette",
+      "metier": "climatisation",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "multi_split",
+        "ac_capacity_btu"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "climatisation.desinstallation",
+      "metier": "climatisation",
+      "output": "FIXEO_PRICE",
+      "questions": [],
+      "plan_present": true,
+      "initial_state": "READY_FOR_ENGINE",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "bricolage.visite_minimum",
+      "metier": "bricolage",
+      "output": "FIXEO_PRICE",
+      "questions": [],
+      "plan_present": true,
+      "initial_state": "READY_FOR_ENGINE",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "bricolage.horaire",
+      "metier": "bricolage",
+      "output": "FIXEO_CALCULATED_PRICE",
+      "questions": [
+        "hours"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "bricolage.demi_journee",
+      "metier": "bricolage",
+      "output": "FIXEO_PRICE",
+      "questions": [],
+      "plan_present": true,
+      "initial_state": "READY_FOR_ENGINE",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "bricolage.montage_meuble",
+      "metier": "bricolage",
+      "output": "FIXEO_CALCULATED_PRICE",
+      "questions": [
+        "item_count"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "bricolage.fixation_accrochage",
+      "metier": "bricolage",
+      "output": "FIXEO_CALCULATED_PRICE",
+      "questions": [
+        "item_count"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "bricolage.intervention_conditionnelle",
+      "metier": "bricolage",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "tv_inches",
+        "bracket_type"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "nettoyage.visite_minimum",
+      "metier": "nettoyage",
+      "output": "FIXEO_PRICE",
+      "questions": [],
+      "plan_present": true,
+      "initial_state": "READY_FOR_ENGINE",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "nettoyage.menage_standard",
+      "metier": "nettoyage",
+      "output": "FIXEO_CALCULATED_PRICE",
+      "questions": [
+        "worker_count",
+        "hours"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "nettoyage.grand_menage",
+      "metier": "nettoyage",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "property_type"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "nettoyage.canape.deux_places",
+      "metier": "nettoyage",
+      "output": "FIXEO_PRICE",
+      "questions": [],
+      "plan_present": true,
+      "initial_state": "READY_FOR_ENGINE",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "nettoyage.canape.trois_places",
+      "metier": "nettoyage",
+      "output": "FIXEO_PRICE",
+      "questions": [],
+      "plan_present": true,
+      "initial_state": "READY_FOR_ENGINE",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "nettoyage.matelas.simple",
+      "metier": "nettoyage",
+      "output": "FIXEO_PRICE",
+      "questions": [],
+      "plan_present": true,
+      "initial_state": "READY_FOR_ENGINE",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "nettoyage.matelas.double",
+      "metier": "nettoyage",
+      "output": "FIXEO_PRICE",
+      "questions": [],
+      "plan_present": true,
+      "initial_state": "READY_FOR_ENGINE",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "nettoyage.apres_travaux",
+      "metier": "nettoyage",
+      "output": "FIXEO_CALCULATED_PRICE",
+      "questions": [
+        "surface_m2"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "peinture.forfait_minimum",
+      "metier": "peinture",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "active_moisture"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "peinture.mur_interieur.labour_only",
+      "metier": "peinture",
+      "output": "FIXEO_CALCULATED_PRICE",
+      "questions": [
+        "active_moisture",
+        "surface_condition",
+        "painted_m2"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "peinture.mur_interieur.all_in",
+      "metier": "peinture",
+      "output": "FIXEO_CALCULATED_PRICE",
+      "questions": [
+        "active_moisture",
+        "surface_condition",
+        "painted_m2"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "peinture.plafond.labour_only",
+      "metier": "peinture",
+      "output": "FIXEO_CALCULATED_PRICE",
+      "questions": [
+        "active_moisture",
+        "surface_condition",
+        "ceiling_m2"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "peinture.mur_interieur.all_in_avec_prep",
+      "metier": "peinture",
+      "output": "FIXEO_CALCULATED_PRICE",
+      "questions": [
+        "active_moisture",
+        "surface_condition",
+        "painted_m2"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "peinture.preparation_surface",
+      "metier": "peinture",
+      "output": "FIXEO_ADD_ON",
+      "questions": [
+        "active_moisture",
+        "primary_service_code",
+        "painted_m2"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "menuiserie.reglage_porte.sans_rabotage",
+      "metier": "menuiserie",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "security_door",
+        "frame_condition",
+        "lock_cylinder_involved"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "menuiserie.reglage_porte.avec_rabotage",
+      "metier": "menuiserie",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "security_door",
+        "frame_condition"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "menuiserie.remplacement_charniere",
+      "metier": "menuiserie",
+      "output": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "questions": [
+        "security_door",
+        "hinge_count"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "menuiserie.remplacement_coulisse_tiroir",
+      "metier": "menuiserie",
+      "output": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "questions": [
+        "drawer_count"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "menuiserie.deblocage_porte_coulissante.sans_piece",
+      "metier": "menuiserie",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "panel_warped",
+        "track_broken"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "menuiserie.deblocage_porte_coulissante.avec_galets",
+      "metier": "menuiserie",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "panel_warped",
+        "track_must_be_replaced"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    },
+    {
+      "code": "menuiserie.installation_porte",
+      "metier": "menuiserie",
+      "output": "FIXEO_PRICE",
+      "questions": [
+        "security_door",
+        "masonry_modification_required",
+        "door_width_cm",
+        "frame_condition"
+      ],
+      "plan_present": true,
+      "initial_state": "QUALIFICATION",
+      "production_ready": false,
+      "transaction_backed": false,
+      "scope_confidence": "MEDIUM"
+    }
+  ],
+  "probes": {
+    "wc_without_scope": {
+      "state": "READY_FOR_ENGINE",
+      "outcome": {
+        "outcome_type": "PRICE_READY",
+        "service_code": "plomberie.debouchage_wc_simple",
+        "commercial_output_type": "FIXEO_PRICE",
+        "price": {
+          "amount_mad": 300,
+          "labour_amount_mad": null,
+          "currency": "MAD"
+        },
+        "scope_summary": [],
+        "exclusions_summary": [],
+        "parts_notice_required": false,
+        "diagnostic_notice_required": false,
+        "route": null,
+        "next_action": "CONTINUE_TO_RESERVATION",
+        "engine_result_ref": null
+      },
+      "error": null
+    },
+    "grand_menage_small": {
+      "state": "READY_FOR_ENGINE",
+      "outcome": {
+        "outcome_type": "PRICE_READY",
+        "service_code": "nettoyage.grand_menage",
+        "commercial_output_type": "FIXEO_PRICE",
+        "price": {
+          "amount_mad": 600,
+          "labour_amount_mad": null,
+          "currency": "MAD"
+        },
+        "scope_summary": [],
+        "exclusions_summary": [],
+        "parts_notice_required": false,
+        "diagnostic_notice_required": false,
+        "route": null,
+        "next_action": "CONTINUE_TO_RESERVATION",
+        "engine_result_ref": null
+      },
+      "error": null
+    },
+    "grand_menage_large": {
+      "state": "READY_FOR_ENGINE",
+      "outcome": {
+        "outcome_type": "PRICE_READY",
+        "service_code": "nettoyage.grand_menage",
+        "commercial_output_type": "FIXEO_PRICE",
+        "price": {
+          "amount_mad": 600,
+          "labour_amount_mad": null,
+          "currency": "MAD"
+        },
+        "scope_summary": [],
+        "exclusions_summary": [],
+        "parts_notice_required": false,
+        "diagnostic_notice_required": false,
+        "route": null,
+        "next_action": "CONTINUE_TO_RESERVATION",
+        "engine_result_ref": null
+      },
+      "error": null
+    }
+  }
+}
