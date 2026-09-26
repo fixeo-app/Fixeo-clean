@@ -252,6 +252,24 @@ function nextBestActions(context){
   }).filter(Boolean).slice(0,5);
 }
 
+function operationalTruth(context){
+  const ct=context&&context.control_tower||{},attention=Array.isArray(ct.attention)?ct.attention:[];
+  return attention.slice(0,60).map(row=>{
+    const status=String(row&&row.status||row&&row.request_status||'').toLowerCase();
+    const dispatch=row&&row.dispatch&&typeof row.dispatch==='object'?row.dispatch:{};
+    return {
+      request_id:row&&row.request_id||row&&row.id||null,
+      status,
+      request_created:['new','open'].includes(status),
+      dispatch_triggered:!!(dispatch.external_started||dispatch.started||row&&row.dispatch_mode),
+      provider_contacted:!!(dispatch.provider_contacted||dispatch.contacted_at||row&&row.provider_contacted),
+      accepted_or_assigned:!!(dispatch.accepted||dispatch.assigned||dispatch.assigned_at||row&&row.assigned_worker_id),
+      in_progress:['in_progress','started'].includes(status),
+      completed:['completed','done','closed','resolved'].includes(status)
+    };
+  });
+}
+
 function enforceDecisionIntegrity(context,actions){
   const allowed=nextBestActions(context);
   const allowedByKey=new Set(allowed.map(a=>String(a.action_type||'')+'|'+String(a.target_id||'')));
@@ -308,6 +326,7 @@ function proactiveQuestion(context){
   parts.push('Delta déterministe: '+JSON.stringify(delta));
   parts.push('Priorités déterministes et raisons explicables: '+JSON.stringify(priorities)+'. Respecte cet ordre de priorité; ne transforme jamais ce classement en exécution autonome.');
   parts.push('Capacité workforce canonique: '+JSON.stringify(capacity)+'. N\'émets aucune recommandation ou proposition d\'assignation interne si available=0.');
+  parts.push('Vérité opérationnelle déterministe: '+JSON.stringify(operationalTruth(context))+'. Respecte strictement ces étapes; ne transforme jamais dispatch_triggered en provider_contacted, accepted_or_assigned, in_progress ou completed.');
   parts.push('Next Best Actions déterministes: '+JSON.stringify(nextActions)+'. Elles sont des recommandations uniquement. Si tu émets action_proposals, elles doivent correspondre à ces recommandations, utiliser uniquement les identifiants réellement présents dans enterprise_context et rester soumises à confirmation humaine.');
   parts.push('Classe uniquement les éléments réellement présents dans le contexte selon urgence SLA, blocage opérationnel, maintenance/équipement, capacité workforce, gouvernance puis impact financier.');
   parts.push('Ne crée aucune action autonome. Si une action concrète sûre est justifiée, utilise action_proposals pour demander confirmation humaine.');
@@ -371,4 +390,4 @@ function createHandler({env=process.env,logger=console}={}){
   };
 }
 
-module.exports={workforceCapacity,enforceDecisionIntegrity,createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion,deltaSummary,priorityRisk,nextBestActions};
+module.exports={workforceCapacity,operationalTruth,enforceDecisionIntegrity,createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion,deltaSummary,priorityRisk,nextBestActions};
