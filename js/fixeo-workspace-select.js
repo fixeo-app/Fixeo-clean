@@ -57,9 +57,9 @@
 
     (access.enterprise_spaces || []).forEach(function (space) {
       var id = String(space && space.enterprise_id || '');
-      var role = String(space && space.role || '');
-      if (!space || space.type !== 'enterprise' || !UUID_RE.test(id) || !ROLE_LABELS[role] || !String(space.name || '').trim()) return;
-      addCard(String(space.name), ROLE_LABELS[role], 'dashboard-enterprise.html?enterprise_id=' + encodeURIComponent(id), 'enterprise');
+      var role = String(space && space.member_role || '');
+      if (!space || space.type !== 'enterprise' || !UUID_RE.test(id) || !ROLE_LABELS[role] || !String(space.enterprise_name || '').trim()) return;
+      addCard(String(space.enterprise_name), ROLE_LABELS[role], 'dashboard-enterprise.html?enterprise_id=' + encodeURIComponent(id), 'enterprise');
     });
 
     q('workspace-state').hidden = true;
