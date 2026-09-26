@@ -1,0 +1,6 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.20.1 desktop camera uses real mediaDevices webcam',()=>{const u=rd('js/fixeo-enterprise-rafi-ui.js');assert.match(u,/getUserMedia\(\{video:/);assert.match(u,/cameraBtn\.addEventListener\('click',openCamera\)/);});
+test('J8.20.1 Montrer remains file picker',()=>{assert.match(rd('js/fixeo-enterprise-rafi-ui.js'),/show\.addEventListener\('click',\(\)=>files\.click\(\)\)/);});
+test('J8.20.1 mobile keeps native environment capture',()=>{const h=rd('dashboard-enterprise.html'),u=rd('js/fixeo-enterprise-rafi-ui.js');assert.match(h,/enterprise-rafi-camera[^>]+capture="environment"/);assert.match(u,/if\(mobileCapture\(\)\)\{camera\.click\(\);return;\}/);});
+test('J8.20.1 captured frame reuses existing choose pipeline',()=>{const u=rd('js/fixeo-enterprise-rafi-ui.js');assert.match(u,/canvas\.toBlob/);assert.match(u,/choose\(new File/);});
+test('J8.20.1 camera stream is stopped on cancel and destroy',()=>{const u=rd('js/fixeo-enterprise-rafi-ui.js');assert.match(u,/cameraCancel[\s\S]*stopCamera/);assert.match(u,/destroy:function\(\)\{cleanupStream\(\);stopCamera\(\)/);});
