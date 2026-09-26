@@ -36,8 +36,8 @@
   function validEnterpriseSpace(space) {
     return !!(space && space.type === 'enterprise' &&
       UUID_RE.test(String(space.enterprise_id || '')) &&
-      String(space.name || '').trim() &&
-      ENTERPRISE_ROLES.indexOf(String(space.role || '')) !== -1);
+      String(space.enterprise_name || '').trim() &&
+      ENTERPRISE_ROLES.indexOf(String(space.member_role || '')) !== -1);
   }
 
   function canonicalDestination(access, fallbackHref) {
