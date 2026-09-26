@@ -2755,9 +2755,17 @@ section#home.hero.hero-section {
   @media (min-width: 821px) {
     #fxhf-root[data-fxhf-state] .fxhf-scroll { overflow-y: visible !important; overscroll-behavior-y: auto !important; scrollbar-width: none !important; }
     #fxhf-root[data-fxhf-state] .fxhf-scroll::-webkit-scrollbar { display: none !important; }
-    #fxhf-root[data-fxhf-state=need] .fxhf-visual { display: none !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-visual { display: flex !important; }
     .nav-actions .lang-selector, #lang-select { display: none !important; }
     #fixeo-urgent-fab, .chat-widget { display: none !important; pointer-events: none !important; }
+    .nav-actions .btn-quick-search { border-color: rgba(116,235,226,.32) !important; background: linear-gradient(115deg,rgba(76,202,214,.12),rgba(132,105,210,.13)) !important; box-shadow: 0 0 22px rgba(87,194,218,.10) !important; }
+    .nav-actions .btn-quick-search .bqs-icon { color:#8ee9e1 !important; }
+    .nav-actions #login-btn, .nav-actions #register-btn { background: transparent !important; box-shadow:none !important; border-color:rgba(255,255,255,.10) !important; color:rgba(239,244,252,.72) !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-title { font-size: clamp(38px,4.15vw,56px) !important; font-weight:700 !important; letter-spacing:-.045em !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-subtitle { max-width:42ch !important; font-size:17px !important; line-height:1.48 !important; color:#e0e9f4 !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-subtitle::first-line { color:#fff; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-visual { align-self:center !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-visual .fxhf-rafi-caption { display:none !important; }
   }
   </style>
   <link rel="stylesheet" href="css/homepage-sections-v1.css?v=hsv1a">
