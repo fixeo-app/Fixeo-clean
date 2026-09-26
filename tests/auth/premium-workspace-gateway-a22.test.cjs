@@ -1,0 +1,6 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('A2.2 premium gateway derives global presentation from canonical role map',()=>{const s=rd('js/fixeo-workspace-select.js');for(const x of ['FIXEO ADMIN','FIXEO ARTISAN','FIXEO CLIENT'])assert.ok(s.includes(x));assert.match(s,/globalContract\.meta/);});
+test('A2.2 Enterprise card uses verified canonical name and member role only',()=>{const s=rd('js/fixeo-workspace-select.js');assert.match(s,/String\(space\.enterprise_name\)/);assert.match(s,/ROLE_LABELS\[role\]/);assert.match(s,/dashboard-enterprise\.html\?enterprise_id=/);});
+test('A2.2 presentation does not alter resolver or guard authority',()=>{const s=rd('js/fixeo-workspace-select.js');assert.doesNotMatch(s,/insert\(|update\(|delete\(|signUp|role\s*=/);});
+test('A2.2 responsive premium CSS has no artificial viewport width',()=>{const c=rd('css/fixeo-workspace-select.css');assert.match(c,/A2\.2 — Premium Workspace Gateway/);assert.doesNotMatch(c,/100vw|min-width:\s*[4-9][0-9]{2}px/);});
+test('A2.2 logout remains existing canonical control',()=>{const h=rd('workspace-select.html'),s=rd('js/fixeo-workspace-select.js');assert.match(h,/id="workspace-logout"/);assert.match(s,/fixeoGlobalLogout/);});
