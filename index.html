@@ -2753,15 +2753,17 @@ section#home.hero.hero-section {
   <style id="h-desktop-01-production-cleanup">
   /* H-DESKTOP-02 — RAFI Hero Command Surface. Desktop only; mobile frozen. */
   @media (min-width: 821px) {
-    #fxhf-root .fxhf-universal { grid-template-columns:minmax(0,1.38fr) minmax(300px,.62fr) !important; gap:clamp(42px,5vw,78px) !important; padding:clamp(28px,3vw,44px) clamp(34px,5vw,76px) !important; height:auto !important; min-height:calc(var(--fxhf-viewport-height,100svh) - var(--fxhf-header-height,72px)) !important; max-height:none !important; align-items:start !important; }
+    #fxhf-root .fxhf-universal { grid-template-columns:minmax(0,1.55fr) minmax(280px,.45fr) !important; gap:clamp(42px,5vw,78px) !important; padding:clamp(28px,3vw,44px) clamp(34px,5vw,76px) !important; height:auto !important; min-height:calc(var(--fxhf-viewport-height,100svh) - var(--fxhf-header-height,72px)) !important; max-height:none !important; align-items:start !important; }
+    section#home.fxhf-premium-home:has(#fxhf-root[data-fxhf-state]) > .hero-content > .rfos-stage-wrap,
+    section#home.fxhf-premium-home:has(#fxhf-root[data-fxhf-state]) + .rfos-h1-band { display:none !important; }
     #fxhf-root .fxhf-content { grid-template-rows:auto auto auto !important; gap:16px !important; align-self:start !important; }
     #fxhf-root[data-fxhf-state] .fxhf-scroll { overflow:visible !important; min-height:0 !important; padding:0 !important; scrollbar-width:none !important; }
     #fxhf-root[data-fxhf-state] .fxhf-scroll::-webkit-scrollbar { display:none !important; }
-    #fxhf-root .fxhf-visual { grid-area:1 / 2 !important; align-self:start !important; justify-self:center !important; margin-top:clamp(88px,10vh,132px) !important; display:flex !important; transform:none !important; }
+    #fxhf-root .fxhf-visual { grid-area:1 / 2 !important; align-self:start !important; justify-self:center !important; margin-top:clamp(54px,7vh,88px) !important; display:flex !important; transform:none !important; }
     #fxhf-root .fxhf-visual .fxhf-rafi-sphere { transform:scale(1.08); transform-origin:center; }
     #fxhf-root .fxhf-visual .fxhf-rafi-caption { display:block !important; max-width:24ch; margin-top:22px; text-align:center; color:#dce9f5; font-size:14px; line-height:1.5; }
     #fxhf-root[data-fxhf-state]:not([data-fxhf-state="need"]) .fxhf-visual .fxhf-rafi-caption { display:none !important; }
-    #fxhf-root[data-fxhf-state]:not([data-fxhf-state="need"]) .fxhf-visual { margin-top:clamp(88px,10vh,132px) !important; }
+    #fxhf-root[data-fxhf-state]:not([data-fxhf-state="need"]) .fxhf-visual { margin-top:clamp(54px,7vh,88px) !important; }
     .nav-actions .lang-selector, #lang-select, #fixeo-urgent-fab, .chat-widget { display:none !important; pointer-events:none !important; }
     .nav-actions .btn-quick-search { border-color:rgba(116,235,226,.38) !important; background:linear-gradient(115deg,rgba(76,202,214,.14),rgba(132,105,210,.16)) !important; box-shadow:0 0 24px rgba(87,194,218,.12) !important; }
     .nav-actions .btn-quick-search .bqs-icon { color:#8ee9e1 !important; }
