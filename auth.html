@@ -641,10 +641,10 @@ function selectGateway(space) {
     enterprise:['FIXEO ENTERPRISE OS','Control Tower · Workforce · Maintenance · Finance · RAFI','Accès réservé aux membres Enterprise réellement autorisés.']
   }[space];
   if(ctx){ctx.children[0].textContent=copy[0];ctx.children[1].textContent=copy[1];ctx.children[2].textContent=copy[2];}
-  const signupTab=document.getElementById('tab-signup'), tabs=document.getElementById('auth-tabs'), enterpriseAccess=document.getElementById('uag-enterprise-access'), hero=document.getElementById('ap-hero-zone');
+  const signupTab=document.getElementById('tab-signup'), tabs=document.getElementById('auth-tabs'), enterpriseAccess=document.getElementById('uag-enterprise-access'), hero=document.getElementById('ap-hero-zone'), loginSignupSwitch=document.getElementById('login-signup-switch');
   if(signupTab){signupTab.textContent='Créer un compte';signupTab.removeAttribute('aria-disabled');}
   if(tabs) tabs.hidden=space==='enterprise';
-  if(enterpriseAccess) enterpriseAccess.hidden=space!=='enterprise';
+  if(enterpriseAccess) enterpriseAccess.hidden=space!=='enterprise';\n  if(loginSignupSwitch) loginSignupSwitch.hidden=space==='enterprise';
   if(hero){hero.dataset.gatewayHidden=space==='enterprise'?'true':'false';if(space==='enterprise'){hero.classList.remove('ap-hero-visible');hero.setAttribute('aria-hidden','true');}}
   document.body.classList.toggle('uag-enterprise-mode',space==='enterprise');
   if(space==='enterprise') switchTab('login');
