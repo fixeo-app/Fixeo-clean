@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c25'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c26'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -712,6 +712,32 @@
       + '</div></section>';
   }
 
+  function _clientRafiBrief(reqs) {
+    var active = (reqs || []).filter(function (r) { return r._pipeline && r._pipeline.step >= 0 && r._pipeline.step < 5; });
+    var decisions = active.filter(function (r) { return r._pipeline.step === 4 || r._pipeline === PIPELINE.PROPOSAL_RECEIVED; });
+    if (!active.length) {
+      return { tone:'calm', title:'RAFI · Tout est calme', text:'Vous n’avez aucune intervention active. Je peux vous guider dès votre prochaine demande.', action:'Nouvelle demande', actionName:'new-request' };
+    }
+    if (decisions.length) {
+      var d = decisions[0], p = d._pipeline;
+      if (p.step === 4) return { tone:'attention', title:'RAFI · Votre confirmation est attendue', text:'Une prestation est indiquée comme terminée. Vérifiez l’intervention avant de la confirmer.', action:'Voir la décision', actionName:'go-requests' };
+      return { tone:'attention', title:'RAFI · Une proposition vous attend', text:'Un devis a été reçu pour ' + (d.service_category || 'votre demande') + '. Consultez les informations avant de décider.', action:'Examiner', actionName:'go-requests' };
+    }
+    var r = active[0], p2 = r._pipeline;
+    if (p2.step === 3) return { tone:'live', title:'RAFI · Intervention en cours', text:'Votre intervention ' + (r.service_category || '') + ' est actuellement indiquée en cours.', action:'Suivre', actionName:'go-requests' };
+    if (p2.step === 2) return { tone:'live', title:'RAFI · Votre demande est prise en charge', text:'Un artisan est assigné à votre demande. Les informations disponibles sont regroupées dans le Mission Command Center.', action:'Voir la mission', actionName:'go-requests' };
+    return { tone:'search', title:'RAFI · Recherche en cours', text:'FIXEO recherche actuellement un artisan éligible pour ' + (r.service_category || 'votre demande') + '.', action:'Voir la demande', actionName:'go-requests' };
+  }
+
+  function _renderClientRafiIntelligence(reqs) {
+    var b = _clientRafiBrief(reqs);
+    return '<section class="fxv2-rafi-intel" data-tone="' + esc(b.tone) + '" aria-label="RAFI Client Intelligence">'
+      + '<div class="fxv2-rafi-orb" aria-hidden="true"><span>R</span></div>'
+      + '<div class="fxv2-rafi-copy"><span class="fxv2-rafi-kicker">RAFI CLIENT INTELLIGENCE</span><strong>' + esc(b.title) + '</strong><p>' + esc(b.text) + '</p></div>'
+      + '<button class="fxv2-btn fxv2-rafi-action" data-action="' + esc(b.actionName) + '">' + esc(b.action) + '</button>'
+    + '</section>';
+  }
+
   function _renderClientControlTower(reqs) {
     var p = _controlTowerPriority(reqs);
     var name = _clientFirstName();
@@ -754,6 +780,7 @@
     html += _renderClientControlTower(reqs);
     html += _renderClientNextAction(reqs);
     html += _renderDecisionCenter(reqs);
+    html += _renderClientRafiIntelligence(reqs);
 
     /* ── Insights band (always visible) ── */
     html += _renderInsightsBand();
