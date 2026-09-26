@@ -1,0 +1,9 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+const router=require(path.join(r,'js/fixeo-workspace-router.js'));
+
+test('A1.1b router accepts canonical resolver Enterprise contract',()=>{assert.equal(router.validEnterpriseSpace({type:'enterprise',enterprise_id:'11111111-1111-4111-8111-111111111111',enterprise_name:'Fixeo Hotel',member_role:'owner'}),true);});
+test('A1.1b router rejects legacy mismatched name/role contract',()=>{assert.equal(router.validEnterpriseSpace({type:'enterprise',enterprise_id:'11111111-1111-4111-8111-111111111111',name:'Fixeo Hotel',role:'owner'}),false);});
+test('A1.1b selector requires canonical enterprise_name/member_role',()=>{const s=rd('js/fixeo-workspace-select.js');assert.match(s,/space\.member_role/);assert.match(s,/space\.enterprise_name/);assert.doesNotMatch(s,/space && space\.role/);assert.doesNotMatch(s,/String\(space\.name\)/);});
+test('A1.1b legacy global destinations remain unchanged',()=>{assert.equal(router.legacyDestination('client'),'dashboard-client.html');assert.equal(router.legacyDestination('artisan'),'dashboard-artisan-v2.html');assert.equal(router.legacyDestination('admin'),'admin.html');});
+test('A1.1b Enterprise availability triggers selector without granting access',()=>{assert.equal(router.selectorRequired({ok:true,status:'OK',enterprise_spaces:[{type:'enterprise',enterprise_id:'11111111-1111-4111-8111-111111111111',enterprise_name:'Fixeo Hotel',member_role:'viewer'}]}),true);});
+test('A1.1b invalid or inactive-shaped Enterprise data cannot trigger selector',()=>{assert.equal(router.selectorRequired({ok:true,status:'OK',enterprise_spaces:[{type:'enterprise',enterprise_id:'bad',enterprise_name:'X',member_role:'owner'}]}),false);});
