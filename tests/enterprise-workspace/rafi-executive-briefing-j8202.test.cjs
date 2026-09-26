@@ -1,0 +1,6 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.20.2 executive briefing uses existing structured RAFI fields only',()=>{const u=rd('js/fixeo-enterprise-rafi-ui.js');for(const x of ['result.highlights','result.alerts','result.recommendations','result.image_observations','result.confidence','result.action_proposals'])assert.match(u,new RegExp(x.replace('.','\\.')));});
+test('J8.20.2 keeps answer verbatim as summary',()=>{const u=rd('js/fixeo-enterprise-rafi-ui.js');assert.match(u,/summaryText=el\('p','',text\)/);});
+test('J8.20.2 preserves action confirmation cards',()=>{const u=rd('js/fixeo-enterprise-rafi-ui.js');assert.match(u,/actions\.append\(actionCard\(a\)\)/);assert.match(u,/Confirmer cette action/);});
+test('J8.20.2 renderer has executive hierarchy',()=>{const u=rd('js/fixeo-enterprise-rafi-ui.js');for(const x of ['RAFI EXECUTIVE BRIEF','ÉTAT','RISQUE','PROCHAINE DÉCISION'])assert.match(u,new RegExp(x));});
+test('J8.20.2 responsive briefing avoids artificial height',()=>{const c=rd('css/fixeo-enterprise-workspace.css');assert.match(c,/J8\.20\.2 — RAFI Executive Briefing/);assert.doesNotMatch(c,/fxew-rafi-exec[^}]*min-height/);});
