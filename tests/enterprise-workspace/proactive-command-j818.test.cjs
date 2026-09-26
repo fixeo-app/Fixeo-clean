@@ -1,0 +1,6 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.18 exposes bounded proactive command surface',()=>{const h=rd('dashboard-enterprise.html');for(const id of ['j818-proactive','j818-proactive-title','j818-proactive-detail','j818-proactive-action'])assert.match(h,new RegExp('id="'+id+'"'));});
+test('J8.18 derives proactive state only from canonical control tower event',()=>{const j=rd('js/fixeo-enterprise-cockpit.js');assert.match(j,/proactive\(x\.summary,x\.site_load,x\.attention\)/);assert.doesNotMatch(j,/\.rpc\(|\.from\(|fetch\(|auth\./);});
+test('J8.18 stays hidden without critical SLA or attention signal',()=>{const j=rd('js/fixeo-enterprise-cockpit.js');assert.match(j,/if\(!item&&cr<1&&breached<1\)\{box\.hidden=true;return\}/);});
+test('J8.18 routes to existing Control Tower and adds no mutation',()=>{const j=rd('js/fixeo-enterprise-cockpit.js');assert.match(j,/route\('enterprise-control-tower'\)/);assert.doesNotMatch(j,/insert\(|update\(|delete\(/);});
+test('J8.18 responsive styling remains compact',()=>{const c=rd('css/fixeo-enterprise-workspace.css');assert.match(c,/J8\.18 — Proactive Enterprise Command Center/);assert.match(c,/\.fxew-j818-proactive\[hidden\]\{display:none\}/);});
