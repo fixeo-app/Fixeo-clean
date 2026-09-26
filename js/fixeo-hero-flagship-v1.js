@@ -582,7 +582,7 @@
     });
     node("fxhf-mic").onclick = record;
     button(
-      "Laisser RAFI comprendre",
+      "Demander à RAFI",
       function () {
         capture();
         renderSafety();
