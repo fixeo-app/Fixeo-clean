@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c26'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c27'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -729,12 +729,48 @@
     return { tone:'search', title:'RAFI · Recherche en cours', text:'FIXEO recherche actuellement un artisan éligible pour ' + (r.service_category || 'votre demande') + '.', action:'Voir la demande', actionName:'go-requests' };
   }
 
+  function _rafiGovernedProposal(reqs) {
+    var active = (reqs || []).filter(function (r) { return r._pipeline && r._pipeline.step >= 0 && r._pipeline.step < 5; });
+    var confirmReq = active.find(function (r) { return r._pipeline.step === 4; });
+    if (confirmReq) return {
+      type:'confirm-completed', requestId:confirmReq.id,
+      title:'Confirmer la prestation',
+      summary:'RAFI peut lancer le parcours canonique de confirmation pour ' + (confirmReq.service_category || 'cette intervention') + '.',
+      confirm:'Confirmer cette prestation ? Cette action validera l’intervention via le mécanisme sécurisé existant.'
+    };
+    var proposalReq = active.find(function (r) { return r._pipeline === PIPELINE.PROPOSAL_RECEIVED; });
+    if (proposalReq) {
+      var pending = (_state.quotes || []).filter(function (q) { return q.request_id === proposalReq.id && q.status === 'pending'; });
+      if (pending.length === 1) {
+        var q = pending[0];
+        return {
+          type:'accept-quote', quoteId:q.id, requestId:proposalReq.id,
+          title:'Accepter le devis',
+          summary:'RAFI peut préparer l’acceptation du devis' + (q.proposed_price ? (' de ' + q.proposed_price + ' MAD') : '') + '.',
+          confirm:'Accepter ce devis ? L’artisan sera assigné selon le parcours FIXEO existant.'
+        };
+      }
+    }
+    return null;
+  }
+
+  function _renderRafiGovernedAction(reqs) {
+    var p = _rafiGovernedProposal(reqs);
+    if (!p) return '';
+    var id = p.type === 'accept-quote' ? p.quoteId : p.requestId;
+    return '<div class="fxv2-rafi-governed">'
+      + '<div><span>ACTION GOUVERNÉE</span><strong>' + esc(p.title) + '</strong><p>' + esc(p.summary) + '</p></div>'
+      + '<button class="fxv2-btn fxv2-rafi-governed-btn" data-action="rafi-governed-confirm" data-kind="' + esc(p.type) + '" data-id="' + esc(id) + '" data-confirm="' + esc(p.confirm) + '">Préparer</button>'
+    + '</div>';
+  }
+
   function _renderClientRafiIntelligence(reqs) {
     var b = _clientRafiBrief(reqs);
     return '<section class="fxv2-rafi-intel" data-tone="' + esc(b.tone) + '" aria-label="RAFI Client Intelligence">'
       + '<div class="fxv2-rafi-orb" aria-hidden="true"><span>R</span></div>'
       + '<div class="fxv2-rafi-copy"><span class="fxv2-rafi-kicker">RAFI CLIENT INTELLIGENCE</span><strong>' + esc(b.title) + '</strong><p>' + esc(b.text) + '</p></div>'
       + '<button class="fxv2-btn fxv2-rafi-action" data-action="' + esc(b.actionName) + '">' + esc(b.action) + '</button>'
+      + _renderRafiGovernedAction(reqs)
     + '</section>';
   }
 
@@ -1136,6 +1172,13 @@
         case 'open-review':    return _doOpenReview(btn);
         case 'submit-review':  return _doSubmitReview(btn);
         case 'mark-notif-read': return _doMarkNotifRead(id);
+        case 'rafi-governed-confirm':
+          var kind = btn.dataset.kind || '';
+          var msg = btn.dataset.confirm || 'Confirmer cette action ?';
+          if (!window.confirm(msg)) return;
+          if (kind === 'accept-quote') return _doAcceptQuote(id, btn);
+          if (kind === 'confirm-completed') return _doConfirmDone(id, btn);
+          return;
         case 'new-request':    return _openNewRequest();
         case 'new-urgent':     return _openUrgentRequest(btn);
         case 'go-requests':       return _showSection('requests');
