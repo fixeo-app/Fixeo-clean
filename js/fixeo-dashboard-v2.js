@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c22'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c23'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -383,43 +383,54 @@
   function _renderMissionHero(req) {
     if (!req) return '';
     var pipeline = req._pipeline;
-    var found    = _findAcceptedArtisan(req);
-    var artisan  = found ? found.artisan : null;
-    var ref      = req.tracking_ref || (req.metadata && req.metadata.tracking_ref);
+    var found = _findAcceptedArtisan(req);
+    var artisan = found ? found.artisan : null;
+    var quote = found ? found.quote : null;
+    var ref = req.tracking_ref || (req.metadata && req.metadata.tracking_ref);
+    var mission = (_state.missions || []).find(function (m) { return m.request_id === req.id; }) || null;
 
     var artisanBlock = artisan
       ? '<div class="fxv2-hero-artisan">'
           + '<div class="fxv2-hero-artisan-avatar">' + esc(initials(artisan.full_name)) + '</div>'
-          + '<div>'
+          + '<div class="fxv2-mc-artisan-copy">'
             + '<div class="fxv2-hero-artisan-name">' + esc(artisan.full_name)
-              + (artisan.verified === true ? ' <span class="fxv2-verified-badge">\u2714 V\u00e9rifi\u00e9</span>' : '')
+              + (artisan.verified === true ? ' <span class="fxv2-verified-badge">✔ Vérifié</span>' : '')
               + '</div>'
             + '<div class="fxv2-hero-artisan-role">' + esc(artisan.service_category || 'Artisan') + '</div>'
           + '</div>'
         + '</div>'
-      : '<div class="fxv2-hero-searching">'
-          + '<span class="fxv2-hero-search-dot"></span>'
-          + '<span>Recherche d\u2019un artisan qualifi\u00e9\u2026</span>'
-        + '</div>';
+      : '<div class="fxv2-hero-searching"><span class="fxv2-hero-search-dot"></span><span>Recherche d’un artisan qualifié…</span></div>';
 
-    var refLine = ref
-      ? '<a class="fxv2-tracking-pill fxv2-tracking-pill-hero" href="/suivi?ref=' + esc(ref) + '" target="_blank" rel="noopener">'
-          + '\uD83D\uDCF1 Suivre l\u2019intervention \u2192'
-        + '</a>'
-      : '';
+    var facts = [];
+    facts.push('<div class="fxv2-mc-fact"><span>État</span><strong>' + esc(pipeline.label) + '</strong></div>');
+    if (quote && quote.proposed_price) facts.push('<div class="fxv2-mc-fact"><span>Prix proposé</span><strong>' + esc(quote.proposed_price) + ' MAD</strong></div>');
+    if (mission && mission.status) facts.push('<div class="fxv2-mc-fact"><span>Mission</span><strong>' + esc(String(mission.status).replace(/_/g,' ')) + '</strong></div>');
 
-    return '<div class="fxv2-mission-hero">'
-      + '<div class="fxv2-mission-hero-top">'
-        + '<div>'
-          + '<div class="fxv2-mission-hero-label">Mission en cours</div>'
-          + '<div class="fxv2-mission-hero-service">' + esc(req.service_category || 'Service') + '</div>'
-          + '<div class="fxv2-mission-hero-city">\uD83D\uDCCD ' + esc(req.city || '') + '</div>'
-        + '</div>'
-        + _renderBadge(pipeline)
-      + '</div>'
+    var primary = '';
+    if (pipeline.badge === 'proposal') primary = '<button class="fxv2-btn fxv2-mc-primary" data-action="go-requests">Examiner le devis</button>';
+    else if (pipeline.badge === 'confirm') primary = '<button class="fxv2-btn fxv2-mc-primary" data-action="go-requests">Confirmer la prestation</button>';
+    else if (ref) primary = '<a class="fxv2-btn fxv2-mc-primary" href="/suivi?ref=' + esc(ref) + '" target="_blank" rel="noopener">Suivre l’intervention</a>';
+    else primary = '<button class="fxv2-btn fxv2-mc-primary" data-action="go-requests">Voir la demande</button>';
+
+    var wa = '';
+    if (artisan && artisan.phone_public) {
+      var waUrl = buildWA(artisan.phone_public, artisan.full_name);
+      if (waUrl) wa = '<a class="fxv2-btn fxv2-btn-wa" href="' + esc(waUrl) + '" target="_blank" rel="noopener">💬 Contacter</a>';
+    }
+
+    return '<div class="fxv2-mission-hero fxv2-mc">'
+      + '<div class="fxv2-mc-kicker">MISSION COMMAND CENTER</div>'
+      + '<div class="fxv2-mission-hero-top"><div>'
+        + '<div class="fxv2-mission-hero-label">Intervention prioritaire</div>'
+        + '<div class="fxv2-mission-hero-service">' + esc(req.service_category || 'Service') + '</div>'
+        + '<div class="fxv2-mission-hero-city">📍 ' + esc(req.city || '') + '</div>'
+      + '</div>' + _renderBadge(pipeline) + '</div>'
+      + '<div class="fxv2-mc-facts">' + facts.join('') + '</div>'
       + artisanBlock
+      + '<div class="fxv2-mc-timeline-label">Progression réelle</div>'
       + _renderTimeline(pipeline.step)
-      + (refLine ? '<div style="margin-top:14px">' + refLine + '</div>' : '')
+      + '<div class="fxv2-mc-actions">' + primary + wa + '</div>'
+      + (ref ? '<div class="fxv2-mc-ref">Référence · ' + esc(ref) + '</div>' : '')
     + '</div>';
   }
 
