@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c21'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c22'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -561,6 +561,77 @@
     };
   }
 
+  function _controlTowerNextAction(reqs) {
+    var active = (reqs || []).filter(function (r) {
+      return r._pipeline && r._pipeline.step >= 0 && r._pipeline.step < 5;
+    });
+    if (!active.length) return null;
+    var ranked = active.slice().sort(function (a, b) {
+      var as = a._pipeline ? a._pipeline.step : 0;
+      var bs = b._pipeline ? b._pipeline.step : 0;
+      if (as === 4 && bs !== 4) return -1;
+      if (bs === 4 && as !== 4) return 1;
+      if (as === 1 && bs !== 1) return -1;
+      if (bs === 1 && as !== 1) return 1;
+      return new Date(b.updated_at || b.created_at || 0) - new Date(a.updated_at || a.created_at || 0);
+    });
+    var r = ranked[0];
+    var pipe = r._pipeline || PIPELINE.NEW;
+    var found = _findAcceptedArtisan(r);
+    var artisan = found ? found.artisan : null;
+    var ref = r.tracking_ref || (r.metadata && r.metadata.tracking_ref) || '';
+    var out = {
+      requestId: r.id || '',
+      service: r.service_category || 'Intervention',
+      city: r.city || '',
+      ref: ref,
+      step: pipe.step,
+      label: pipe.label,
+      eyebrow: 'PROCHAINE ÉTAPE',
+      title: pipe.label,
+      detail: '',
+      action: 'Voir la demande',
+      actionName: 'go-requests'
+    };
+    if (pipe.step === 4) {
+      out.eyebrow = 'À VOUS DE JOUER';
+      out.title = 'Confirmez la prestation';
+      out.detail = 'L’intervention est indiquée comme terminée. Vérifiez puis confirmez depuis votre demande.';
+    } else if (pipe === PIPELINE.PROPOSAL_RECEIVED) {
+      out.eyebrow = 'DÉCISION';
+      out.title = 'Consultez la proposition reçue';
+      out.detail = 'Le devis et les informations disponibles sont prêts à être consultés.';
+    } else if (pipe.step === 3) {
+      out.eyebrow = 'INTERVENTION';
+      out.title = 'Intervention en cours';
+      out.detail = artisan ? ('Votre artisan : ' + (artisan.full_name || 'Artisan Fixeo') + '.') : 'Suivez l’état réel de votre intervention.';
+    } else if (pipe.step === 2) {
+      out.eyebrow = 'ARTISAN';
+      out.title = artisan ? ((artisan.full_name || 'Votre artisan') + ' est assigné') : 'Artisan assigné';
+      out.detail = 'Votre demande est prise en charge.';
+    } else {
+      out.eyebrow = 'RECHERCHE';
+      out.title = 'Recherche en cours';
+      out.detail = 'FIXEO recherche un artisan éligible pour votre demande.';
+    }
+    return out;
+  }
+
+  function _renderControlTowerNextAction(reqs) {
+    var n = _controlTowerNextAction(reqs);
+    if (!n) return '';
+    return '<div class="fxv2-ct-next">'
+      + '<div class="fxv2-ct-next-head">'
+        + '<span class="fxv2-ct-next-kicker">' + esc(n.eyebrow) + '</span>'
+        + (n.ref ? '<span class="fxv2-ct-next-ref">' + esc(n.ref) + '</span>' : '')
+      + '</div>'
+      + '<div class="fxv2-ct-next-title">' + esc(n.title) + '</div>'
+      + '<div class="fxv2-ct-next-context">' + esc(n.service) + (n.city ? ' · ' + esc(n.city) : '') + '</div>'
+      + '<p class="fxv2-ct-next-detail">' + esc(n.detail) + '</p>'
+      + '<button class="fxv2-btn fxv2-ct-next-action" data-action="' + esc(n.actionName) + '">' + esc(n.action) + '</button>'
+    + '</div>';
+  }
+
   function _renderClientControlTower(reqs) {
     var p = _controlTowerPriority(reqs);
     var name = _clientFirstName();
@@ -601,6 +672,7 @@
 
     /* C2.1 deterministic Client Control Tower shell */
     html += _renderClientControlTower(reqs);
+    html += _renderControlTowerNextAction(reqs);
 
     /* ── Insights band (always visible) ── */
     html += _renderInsightsBand();
