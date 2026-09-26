@@ -1,0 +1,6 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('A1.2.1 signup inherits selected Client or Artisan gateway context',()=>{const h=rd('auth.html');assert.match(h,/if \(!isLogin && \(_gatewaySpace === 'client' \|\| _gatewaySpace === 'artisan'\)\) selectType\(_gatewaySpace\)/);});
+test('A1.2.1 Enterprise cannot enter free signup',()=>{const h=rd('auth.html');assert.match(h,/tab === 'signup' && _gatewaySpace === 'enterprise'/);assert.match(h,/signupTab\.textContent=space==='enterprise'\?'Accès Enterprise'/);});
+test('A1.2.1 login copy is contextual',()=>{const h=rd('auth.html');for(const x of ['Retrouvez vos demandes, interventions et services FIXEO.','Retrouvez vos missions et votre activité FIXEO.','Votre accès Enterprise sera vérifié après connexion.'])assert.ok(h.includes(x));});
+test('A1.2.1 desktop gateway is centered',()=>{const c=rd('css/auth-premium.css');assert.match(c,/auth-center\{width:min\(100% - 48px,780px\)!important;margin-left:auto!important;margin-right:auto!important/);});
+test('A1.2.1 does not add Enterprise signup role',()=>{const h=rd('auth.html');assert.doesNotMatch(h,/name="account-type"[^>]+value="enterprise"/);});
