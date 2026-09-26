@@ -68,7 +68,7 @@
         Zero layout impact (absolute within relative container,
         collapsed via max-height + opacity when hidden).
       -->
-      <div class="ap-hero-zone" id="ap-hero-zone" aria-hidden="true">
+      <div class="ap-hero-zone" id="ap-hero-zone" aria-hidden="true" data-gateway-hidden="false">
         <!-- Client hero (default) -->
         <div class="ap-hero-panel" id="ap-hero-client">
           <div class="ap-hero-icon" aria-hidden="true">
@@ -645,7 +645,8 @@ function selectGateway(space) {
   if(signupTab){signupTab.textContent='Créer un compte';signupTab.removeAttribute('aria-disabled');}
   if(tabs) tabs.hidden=space==='enterprise';
   if(enterpriseAccess) enterpriseAccess.hidden=space!=='enterprise';
-  if(space==='enterprise' && hero){hero.classList.remove('visible');hero.setAttribute('aria-hidden','true');}
+  if(hero){hero.dataset.gatewayHidden=space==='enterprise'?'true':'false';if(space==='enterprise'){hero.classList.remove('ap-hero-visible');hero.setAttribute('aria-hidden','true');}}
+  document.body.classList.toggle('uag-enterprise-mode',space==='enterprise');
   if(space==='enterprise') switchTab('login');
   else if(document.getElementById('signup-form').style.display!=='none') switchTab('signup');
   else switchTab('login');
