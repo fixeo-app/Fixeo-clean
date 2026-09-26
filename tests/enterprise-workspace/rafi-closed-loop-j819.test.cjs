@@ -1,0 +1,7 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.19 keeps explicit human confirmation before execution',()=>{const u=rd('js/fixeo-enterprise-rafi-ui.js');assert.match(u,/win\.confirm/);assert.match(u,/Confirmer l’exécution/);assert.ok(u.indexOf('win.confirm')<u.indexOf('actionApi().execute'));});
+test('J8.19 refreshes canonical operations only after successful action',()=>{const u=rd('js/fixeo-enterprise-rafi-ui.js');assert.match(u,/actionApi\(\)\.execute[\s\S]*hooks\.refreshOperations/);assert.ok(u.indexOf('actionApi().execute')<u.indexOf('hooks.refreshOperations'));});
+test('J8.19 rebriefs RAFI after canonical refresh',()=>{const u=rd('js/fixeo-enterprise-rafi-ui.js');assert.match(u,/hooks\.refreshOperations\(\);await loadBriefing\(\)/);});
+test('J8.19 workspace refreshes existing read models without new mutation path',()=>{const w=rd('js/fixeo-enterprise-workspace.js');assert.match(w,/refreshOperations:[\s\S]*loadOperational[\s\S]*controlTowerUi[\s\S]*governanceUi/);});
+test('J8.19 action router remains canonical confirmed RPC layer',()=>{const a=rd('js/fixeo-enterprise-rafi-actions.js');assert.match(a,/executeConfirmed/);assert.match(a,/audit_enterprise_rafi_action_v1/);});
+test('J8.19 preserves workspace syntax regression guard',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
