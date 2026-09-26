@@ -99,7 +99,7 @@
         var label=(proposal.title||'cette action')+'\n\n'+(proposal.summary||'')+'\n\n'+(proposal.impact?'Impact : '+proposal.impact:'');
         if(!win.confirm('RAFI propose : '+label+'\n\nConfirmer l’exécution ?'))return;
         busy=true;action.disabled=true;setStatus('Vérification des droits et exécution…');
-        try{var out=await actionApi().execute(client(),eid(),proposal);message('assistant','Action confirmée et exécutée par le workflow Enterprise autorisé.',null);setStatus(out&&out.governance_status==='pending_approval'?'Action soumise au workflow d’approbation.':'Action exécutée.');}
+        try{var out=await actionApi().execute(client(),eid(),proposal);message('assistant','Action confirmée et exécutée par le workflow Enterprise autorisé.',null);setStatus(out&&out.governance_status==='pending_approval'?'Action soumise au workflow d’approbation. Actualisation du contexte…':'Action exécutée. Actualisation du contexte…');if(typeof hooks.refreshOperations==='function')await hooks.refreshOperations();await loadBriefing();setStatus(out&&out.governance_status==='pending_approval'?'Contexte actualisé · action en attente d’approbation.':'Contexte actualisé · RAFI a vérifié le nouvel état.');}
         catch(e){setStatus('Action refusée ou impossible avec vos droits actuels.');action.disabled=false;}
         finally{busy=false;}return;
       }
