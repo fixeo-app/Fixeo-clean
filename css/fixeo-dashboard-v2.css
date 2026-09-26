@@ -1556,3 +1556,13 @@ a.fxv2-header-logo:hover { opacity: .8; }
   .fxv2-ct-priority { align-items:flex-start; flex-direction:column; gap:10px; }
   .fxv2-ct-action { width:100%; justify-content:center; }
 }
+
+
+/* C2.2 — deterministic next action */
+.fxv2-next-action{margin:-6px 0 18px;padding:15px 16px;border:1px solid rgba(125,211,252,.13);border-radius:16px;background:linear-gradient(135deg,rgba(14,165,233,.07),rgba(131,58,180,.05))}
+.fxv2-next-kicker{display:block;margin-bottom:5px;color:#7dd3fc;font-size:.59rem;font-weight:800;letter-spacing:.11em}
+.fxv2-next-action strong{display:block;color:#fff;font-size:.96rem}
+.fxv2-next-context{display:block;margin-top:3px;color:rgba(255,255,255,.62);font-size:.7rem}
+.fxv2-next-action p{margin:8px 0 12px;color:var(--v2-text-3);font-size:.74rem;line-height:1.5}
+.fxv2-next-btn{min-height:38px;border:1px solid rgba(125,211,252,.2);background:rgba(125,211,252,.08);color:#bae6fd}
+@media(max-width:420px){.fxv2-next-action{padding:14px}.fxv2-next-btn{width:100%;justify-content:center}}
