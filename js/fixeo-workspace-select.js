@@ -10,9 +10,9 @@
     site_manager: 'Responsable de site', reporter: 'Reporting', viewer: 'Lecture'
   });
   var GLOBAL = Object.freeze({
-    admin: Object.freeze({ label: 'Administration FIXEO', destination: 'admin.html' }),
-    artisan: Object.freeze({ label: 'Espace Artisan', destination: 'dashboard-artisan-v2.html' }),
-    client: Object.freeze({ label: 'Espace Client', destination: 'dashboard-client.html' })
+    admin: Object.freeze({ label: 'Administration FIXEO', destination: 'admin.html', eyebrow: 'FIXEO ADMIN', meta: 'Pilotage de la plateforme FIXEO' }),
+    artisan: Object.freeze({ label: 'Espace Artisan', destination: 'dashboard-artisan-v2.html', eyebrow: 'FIXEO ARTISAN', meta: 'Missions, activité et réseau professionnel' }),
+    client: Object.freeze({ label: 'Espace Client', destination: 'dashboard-client.html', eyebrow: 'FIXEO CLIENT', meta: 'Demandes, interventions et services' })
   });
   var WAIT_MS = 15000;
   var generation = 0;
@@ -27,15 +27,17 @@
     q('workspace-retry').hidden = !retry;
     clearList();
   }
-  function addCard(label, meta, href, kind) {
+  function addCard(label, meta, href, kind, eyebrow) {
     var a = document.createElement('a');
-    a.className = 'fxws-card';
+    a.className = 'fxws-card fxws-card--' + kind;
     a.href = href;
     a.dataset.kind = kind;
+    var top = document.createElement('small'); top.className = 'fxws-card-kicker'; top.textContent = eyebrow || (kind === 'enterprise' ? 'FIXEO ENTERPRISE OS' : 'FIXEO');
     var strong = document.createElement('strong'); strong.textContent = label;
     var span = document.createElement('span'); span.textContent = meta;
+    var hint = document.createElement('em'); hint.textContent = kind === 'enterprise' ? 'Control Tower · RAFI Intelligence' : 'Ouvrir cet espace';
     var arrow = document.createElement('b'); arrow.setAttribute('aria-hidden', 'true'); arrow.textContent = '→';
-    a.append(strong, span, arrow); q('workspace-list').appendChild(a);
+    a.append(top, strong, span, hint, arrow); q('workspace-list').appendChild(a);
   }
   function withTimeout(promise) {
     return new Promise(function (resolve, reject) {
@@ -53,13 +55,13 @@
     var global = access.global_space;
     var globalContract = global && GLOBAL[global.type];
     if (!globalContract || global.destination !== globalContract.destination) throw new Error('GLOBAL_SPACE_INVALID');
-    addCard(globalContract.label, 'Votre espace personnel FIXEO', globalContract.destination, 'global');
+    addCard(globalContract.label, globalContract.meta, globalContract.destination, 'global', globalContract.eyebrow);
 
     (access.enterprise_spaces || []).forEach(function (space) {
       var id = String(space && space.enterprise_id || '');
       var role = String(space && space.member_role || '');
       if (!space || space.type !== 'enterprise' || !UUID_RE.test(id) || !ROLE_LABELS[role] || !String(space.enterprise_name || '').trim()) return;
-      addCard(String(space.enterprise_name), ROLE_LABELS[role], 'dashboard-enterprise.html?enterprise_id=' + encodeURIComponent(id), 'enterprise');
+      addCard(String(space.enterprise_name), 'Votre rôle · ' + ROLE_LABELS[role], 'dashboard-enterprise.html?enterprise_id=' + encodeURIComponent(id), 'enterprise', 'FIXEO ENTERPRISE OS');
     });
 
     q('workspace-state').hidden = true;
