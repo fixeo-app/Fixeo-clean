@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c24'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c25'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -228,6 +228,69 @@
     return html;
   }
 
+  function _fmtEventTime(iso) {
+    if (!iso) return '';
+    try {
+      return new Date(iso).toLocaleString('fr-MA', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+    } catch (e) { return ''; }
+  }
+
+  function _requestTruthEvents(req) {
+    if (!req) return [];
+    var events = [];
+    function push(key, label, at, detail) {
+      if (!at) return;
+      events.push({ key:key, label:label, at:at, detail:detail || '' });
+    }
+    push('created', 'Demande créée', req.created_at, (req.service_category || 'Service') + (req.city ? ' · ' + req.city : ''));
+
+    var qs = (_state.quotes || []).filter(function (q) { return q.request_id === req.id; });
+    qs.forEach(function (q) {
+      push('quote', 'Proposition reçue', q.created_at, q.proposed_price ? (q.proposed_price + ' MAD') : '');
+      if (q.status === 'accepted') push('quote_accepted', 'Devis accepté', q.updated_at || q.accepted_at, q.proposed_price ? (q.proposed_price + ' MAD') : '');
+    });
+
+    var m = (_state.missions || []).find(function (x) { return x.request_id === req.id; }) || null;
+    if (m) {
+      push('mission', 'Mission créée', m.created_at, '');
+      var mst = String(m.status || '').toLowerCase();
+      if (mst === 'in_progress' || mst === 'en_cours') push('mission_progress', 'Intervention en cours', m.updated_at, '');
+      if (mst === 'completed' || mst === 'validated' || mst === 'terminée' || mst === 'validée') push('mission_done', 'Intervention terminée', m.updated_at, '');
+    }
+
+    var rst = String(req.status || '').toLowerCase();
+    if (rst === 'assigned' || rst === 'acceptée' || rst === 'accepted') push('assigned', 'Artisan assigné', req.updated_at, '');
+    if (rst === 'in_progress' || rst === 'en_cours') push('progress', 'Intervention en cours', req.updated_at, '');
+    if (rst === 'completed' || rst === 'terminée') push('completed', 'Prestation terminée', req.updated_at, 'Confirmation client attendue');
+    if (rst === 'validated' || rst === 'validée') push('validated', 'Prestation validée', req.updated_at, '');
+    if (rst === 'cancelled' || rst === 'annulée') push('cancelled', 'Demande annulée', req.updated_at, '');
+
+    var seen = {};
+    events = events.filter(function (e) {
+      var k = e.key + '|' + e.at;
+      if (seen[k]) return false;
+      seen[k] = true;
+      return true;
+    });
+    events.sort(function (a,b) { return new Date(a.at) - new Date(b.at); });
+    return events;
+  }
+
+  function _renderTruthTimeline(req) {
+    var events = _requestTruthEvents(req);
+    if (!events.length) return '';
+    return '<div class="fxv2-truth">'
+      + '<div class="fxv2-truth-head"><span>CHRONOLOGIE RÉELLE</span><strong>' + events.length + ' événement' + (events.length > 1 ? 's' : '') + '</strong></div>'
+      + '<div class="fxv2-truth-list">'
+      + events.map(function (e, i) {
+          return '<div class="fxv2-truth-event' + (i === events.length - 1 ? ' is-latest' : '') + '">'
+            + '<i></i><div><strong>' + esc(e.label) + '</strong>'
+            + '<span>' + esc(_fmtEventTime(e.at)) + (e.detail ? ' · ' + esc(e.detail) : '') + '</span></div>'
+          + '</div>';
+        }).join('')
+      + '</div></div>';
+  }
+
   function _renderArtisanChip(artisan) {
     if (!artisan) return '';
     /* verified badge shown ONLY when artisan.verified === true (strict boolean) */
@@ -429,6 +492,7 @@
       + artisanBlock
       + '<div class="fxv2-mc-timeline-label">Progression réelle</div>'
       + _renderTimeline(pipeline.step)
+      + _renderTruthTimeline(req)
       + '<div class="fxv2-mc-actions">' + primary + wa + '</div>'
       + (ref ? '<div class="fxv2-mc-ref">Référence · ' + esc(ref) + '</div>' : '')
     + '</div>';
