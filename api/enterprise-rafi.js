@@ -270,6 +270,22 @@ function operationalTruth(context){
   });
 }
 
+function crossDomainSignals(context){
+  const ct=context&&context.control_tower||{},mt=context&&context.maintenance||{},eq=context&&context.equipment||{},fn=context&&context.finance||{},gv=context&&context.governance||{};
+  const signals=[];
+  const breached=Number(ct.summary&&ct.summary.sla_breached)||0;
+  const capacity=workforceCapacity(context);
+  const due=Number(mt.summary&&mt.summary.due)||Number(mt.summary&&mt.summary.overdue)||0;
+  const equipmentAlerts=Number(eq.summary&&eq.summary.alerts)||Number(eq.summary&&eq.summary.at_risk)||0;
+  const variance=Number(fn.summary&&fn.summary.variance)||Number(fn.summary&&fn.summary.budget_variance)||0;
+  const pending=Number(gv.pending_for_me)||0;
+  if(breached>0&&capacity.available===0)signals.push({domains:['sla','workforce'],signal:'sla_pressure_without_internal_capacity',facts:{sla_breached:breached,internal_available:0},interpretation:'SLA pressure is present while no eligible internal capacity is currently available.'});
+  if(due>0&&equipmentAlerts>0)signals.push({domains:['maintenance','equipment'],signal:'maintenance_and_equipment_risk_overlap',facts:{maintenance_due:due,equipment_alerts:equipmentAlerts},interpretation:'Maintenance due items and equipment risk signals coexist; correlation is observed, causality is not established.'});
+  if(breached>0&&variance!==0)signals.push({domains:['sla','finance'],signal:'sla_and_budget_variance_coexist',facts:{sla_breached:breached,budget_variance:variance},interpretation:'SLA breaches and a financial variance coexist; no causal relationship is inferred.'});
+  if(pending>0&&breached>0)signals.push({domains:['governance','sla'],signal:'pending_governance_with_sla_pressure',facts:{pending_for_me:pending,sla_breached:breached},interpretation:'Pending governance decisions coexist with SLA pressure; review priority without assuming blockage causality.'});
+  return signals.slice(0,12);
+}
+
 function enforceDecisionIntegrity(context,actions){
   const allowed=nextBestActions(context);
   const allowedByKey=new Set(allowed.map(a=>String(a.action_type||'')+'|'+String(a.target_id||'')));
@@ -327,6 +343,7 @@ function proactiveQuestion(context){
   parts.push('Priorités déterministes et raisons explicables: '+JSON.stringify(priorities)+'. Respecte cet ordre de priorité; ne transforme jamais ce classement en exécution autonome.');
   parts.push('Capacité workforce canonique: '+JSON.stringify(capacity)+'. N\'émets aucune recommandation ou proposition d\'assignation interne si available=0.');
   parts.push('Vérité opérationnelle déterministe: '+JSON.stringify(operationalTruth(context))+'. Respecte strictement ces étapes; ne transforme jamais dispatch_triggered en provider_contacted, accepted_or_assigned, in_progress ou completed.');
+  parts.push('Signaux cross-domain déterministes: '+JSON.stringify(crossDomainSignals(context))+'. Utilise-les pour relier les domaines quand utile, mais distingue toujours coexistence/corrélation et causalité; ne fabrique jamais une cause.');
   parts.push('Next Best Actions déterministes: '+JSON.stringify(nextActions)+'. Elles sont des recommandations uniquement. Si tu émets action_proposals, elles doivent correspondre à ces recommandations, utiliser uniquement les identifiants réellement présents dans enterprise_context et rester soumises à confirmation humaine.');
   parts.push('Classe uniquement les éléments réellement présents dans le contexte selon urgence SLA, blocage opérationnel, maintenance/équipement, capacité workforce, gouvernance puis impact financier.');
   parts.push('Ne crée aucune action autonome. Si une action concrète sûre est justifiée, utilise action_proposals pour demander confirmation humaine.');
@@ -390,4 +407,4 @@ function createHandler({env=process.env,logger=console}={}){
   };
 }
 
-module.exports={workforceCapacity,operationalTruth,enforceDecisionIntegrity,createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion,deltaSummary,priorityRisk,nextBestActions};
+module.exports={workforceCapacity,operationalTruth,crossDomainSignals,enforceDecisionIntegrity,createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion,deltaSummary,priorityRisk,nextBestActions};
