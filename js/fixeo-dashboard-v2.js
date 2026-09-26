@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2k4'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c21'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -499,6 +499,94 @@
     + '</div>';
   }
 
+  /* ── C2.1 CLIENT CONTROL TOWER FOUNDATION ────────────────────────
+     Deterministic/read-only shell over canonical dashboard state.
+     No autonomous RAFI action. No alternate persistence path. */
+  function _clientFirstName() {
+    var p = _state.profile || {};
+    var raw = String(p.full_name || p.name || '').trim();
+    return raw ? raw.split(/\s+/)[0] : '';
+  }
+
+  function _controlTowerPriority(reqs) {
+    var active = (reqs || []).filter(function (r) {
+      return r._pipeline && r._pipeline.step >= 0 && r._pipeline.step < 5;
+    });
+    if (!active.length) {
+      return {
+        tone: 'calm',
+        eyebrow: 'ESPACE CLIENT',
+        title: 'Tout est sous contrôle',
+        detail: 'Aucune intervention active. FIXEO reste prêt dès que vous en avez besoin.',
+        action: 'Nouvelle demande',
+        actionName: 'new-request'
+      };
+    }
+    var ranked = active.slice().sort(function (a, b) {
+      var as = a._pipeline ? a._pipeline.step : 0;
+      var bs = b._pipeline ? b._pipeline.step : 0;
+      if (as === 4 && bs !== 4) return -1;
+      if (bs === 4 && as !== 4) return 1;
+      return new Date(b.updated_at || b.created_at || 0) - new Date(a.updated_at || a.created_at || 0);
+    });
+    var r = ranked[0];
+    var pipe = r._pipeline || PIPELINE.NEW;
+    if (pipe.step === 4) {
+      return {
+        tone: 'attention',
+        eyebrow: 'ACTION REQUISE',
+        title: 'Confirmez votre intervention',
+        detail: (r.service_category || 'Votre intervention') + ' · ' + (r.city || ''),
+        action: 'Voir la demande',
+        actionName: 'go-requests'
+      };
+    }
+    if (pipe === PIPELINE.PROPOSAL_RECEIVED) {
+      return {
+        tone: 'attention',
+        eyebrow: 'NOUVELLE PROPOSITION',
+        title: 'Un artisan vous a répondu',
+        detail: (r.service_category || 'Votre demande') + ' · ' + (r.city || ''),
+        action: 'Voir la proposition',
+        actionName: 'go-requests'
+      };
+    }
+    return {
+      tone: 'live',
+      eyebrow: 'SUIVI EN DIRECT',
+      title: pipe.label,
+      detail: (r.service_category || 'Intervention') + ' · ' + (r.city || ''),
+      action: 'Suivre',
+      actionName: 'go-requests'
+    };
+  }
+
+  function _renderClientControlTower(reqs) {
+    var p = _controlTowerPriority(reqs);
+    var name = _clientFirstName();
+    var activeCount = (reqs || []).filter(function (r) {
+      return r._pipeline && r._pipeline.step >= 0 && r._pipeline.step < 5;
+    }).length;
+    return '<div class="fxv2-ct" data-tone="' + esc(p.tone) + '">'
+      + '<div class="fxv2-ct-top">'
+        + '<div>'
+          + '<div class="fxv2-ct-kicker">FIXEO CLIENT OS</div>'
+          + '<h1 class="fxv2-ct-title">' + (name ? 'Bonjour ' + esc(name) : 'Votre espace Fixeo') + '</h1>'
+          + '<p class="fxv2-ct-sub">Vos demandes, interventions et prochaines actions au même endroit.</p>'
+        + '</div>'
+        + '<div class="fxv2-ct-count"><strong>' + activeCount + '</strong><span>active' + (activeCount > 1 ? 's' : '') + '</span></div>'
+      + '</div>'
+      + '<div class="fxv2-ct-priority">'
+        + '<div class="fxv2-ct-priority-copy">'
+          + '<span class="fxv2-ct-eyebrow">' + esc(p.eyebrow) + '</span>'
+          + '<strong>' + esc(p.title) + '</strong>'
+          + '<span>' + esc(p.detail) + '</span>'
+        + '</div>'
+        + '<button class="fxv2-btn fxv2-ct-action" data-action="' + esc(p.actionName) + '">' + esc(p.action) + '</button>'
+      + '</div>'
+    + '</div>';
+  }
+
   /* ── SECTION: DASHBOARD (Command Center) ───────────────────────── */
   function _renderDashboard() {
     var sec = el('fxv2-sec-dashboard');
@@ -510,6 +598,9 @@
     var topMission = active.length > 0 ? active[0] : null;
 
     var html = '';
+
+    /* C2.1 deterministic Client Control Tower shell */
+    html += _renderClientControlTower(reqs);
 
     /* ── Insights band (always visible) ── */
     html += _renderInsightsBand();
