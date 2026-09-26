@@ -2750,6 +2750,16 @@ section#home.hero.hero-section {
 .seo-authority-links a{font-size:.75rem;color:rgba(255,255,255,.35);text-decoration:none;letter-spacing:.02em}
 .seo-authority-links a:hover{color:rgba(255,255,255,.6)}
 </style>
+  <style id="h-desktop-01-production-cleanup">
+  /* H-DESKTOP-01 — desktop-only homepage production cleanup. Mobile is frozen. */
+  @media (min-width: 821px) {
+    #fxhf-root[data-fxhf-state] .fxhf-scroll { overflow-y: visible !important; overscroll-behavior-y: auto !important; scrollbar-width: none !important; }
+    #fxhf-root[data-fxhf-state] .fxhf-scroll::-webkit-scrollbar { display: none !important; }
+    #fxhf-root[data-fxhf-state=need] .fxhf-visual { display: none !important; }
+    .nav-actions .lang-selector, #lang-select { display: none !important; }
+    #fixeo-urgent-fab, .chat-widget { display: none !important; pointer-events: none !important; }
+  }
+  </style>
   <link rel="stylesheet" href="css/homepage-sections-v1.css?v=hsv1a">
   <link rel="stylesheet" href="css/homepage-motion-v1.css?v=hmv1a">
   <link rel="stylesheet" href="css/fixeo-rafi-v2.css?v=rfv2-r0a">
