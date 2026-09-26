@@ -1,0 +1,11 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const root=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(root,p),'utf8');
+
+test('J8.20 Enterprise OS exposes all certified primary modules',()=>{const h=rd('dashboard-enterprise.html');for(const id of ['enterprise-control-tower','enterprise-sites','enterprise-workforce-module','enterprise-preventive-maintenance','enterprise-governance-module','enterprise-finance-module','enterprise-reporting','enterprise-team','enterprise-rafi-module'])assert.match(h,new RegExp('id="'+id+'"'));});
+test('J8.20 RAFI keeps explicit confirmation before canonical execution',()=>{const u=rd('js/fixeo-enterprise-rafi-ui.js');assert.ok(u.indexOf('win.confirm')>-1&&u.indexOf('win.confirm')<u.indexOf('actionApi().execute'));});
+test('J8.20 RAFI decision integrity remains post-model enforced',()=>{const a=rd('api/enterprise-rafi.js');assert.match(a,/enforceDecisionIntegrity\(context,normalizeActions/);assert.match(a,/capacity\.available<1/);});
+test('J8.20 RAFI operational truth distinguishes dispatch lifecycle',()=>{const a=rd('api/enterprise-rafi.js');for(const x of ['request_created','dispatch_triggered','provider_contacted','accepted_or_assigned','in_progress','completed'])assert.match(a,new RegExp(x));});
+test('J8.20 cross-domain intelligence forbids fabricated causality',()=>{const a=rd('api/enterprise-rafi.js');assert.match(a,/crossDomainSignals/);assert.match(a,/ne fabrique jamais une cause/);});
+test('J8.20 closed loop refreshes canonical state then rebriefs',()=>{const u=rd('js/fixeo-enterprise-rafi-ui.js');assert.match(u,/hooks\.refreshOperations\(\);await loadBriefing\(\)/);});
+test('J8.20 proactive cockpit consumes existing Control Tower event only',()=>{const c=rd('js/fixeo-enterprise-cockpit.js');assert.match(c,/fixeo:enterprise:control-tower-ready/);assert.doesNotMatch(c,/fetch\(|\.rpc\(|auth\./);});
+test('J8.20 workspace literal backslash-n regression remains absent',()=>{assert.doesNotMatch(rd('js/fixeo-enterprise-workspace.js'),/\\n/);});
+test('J8.20 card payment is not presented as active in Enterprise dashboard',()=>{const h=rd('dashboard-enterprise.html');assert.doesNotMatch(h,/paiement par carte disponible|CMI actif|payer par carte/i);});
