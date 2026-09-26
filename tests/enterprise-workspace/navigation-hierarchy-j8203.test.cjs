@@ -1,0 +1,6 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('J8.20.3 keeps exactly one canonical logout id in sidebar',()=>{const h=rd('dashboard-enterprise.html');assert.equal((h.match(/id="enterprise-logout"/g)||[]).length,1);const side=h.indexOf('id="fxew-cockpit-nav"'),logout=h.indexOf('id="enterprise-logout"');assert.ok(logout>side);});
+test('J8.20.3 RAFI CTA precedes operational navigation',()=>{const h=rd('dashboard-enterprise.html'),r=h.indexOf('class="fxew-nav-rafi"'),n=h.indexOf('<nav>');assert.ok(r>-1&&n>-1&&r<n);});
+test('J8.20.3 logout logic remains untouched and discoverable by id',()=>{const l=rd('js/fixeo-logout-global.js');assert.match(l,/enterprise-logout/);});
+test('J8.20.3 sidebar session action is visually secondary',()=>{const c=rd('css/fixeo-enterprise-workspace.css');assert.match(c,/\.fxew-nav-session\{margin-top:auto/);assert.match(c,/\.fxew-nav-logout\{/);});
+test('J8.20.3 desktop main top rhythm is compact without negative margins',()=>{const c=rd('css/fixeo-enterprise-workspace.css');assert.match(c,/fxew-main\{padding-top:6px/);const block=c.slice(c.indexOf('J8.20.3'));assert.doesNotMatch(block,/margin-top:\s*-/);});
