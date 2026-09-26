@@ -224,7 +224,7 @@ async function callOpenAI(env,question,history,context,file){
   if(parts.some(x=>x.type==='refusal')) throw new RafiEnterpriseError('PROVIDER_REFUSED',422);
   const raw=parts.filter(x=>x.type==='output_text').map(x=>x.text).join('');
   let result; try{result=JSON.parse(raw);}catch(_){throw new RafiEnterpriseError('PROVIDER_INVALID_RESPONSE',502);}
-  result.action_proposals=normalizeActions(result.action_proposals);
+  result.action_proposals=enforceDecisionIntegrity(context,normalizeActions(result.action_proposals));
   return {result,model:String(payload.model||model).slice(0,100),usage:payload.usage||null};
 }
 
@@ -250,6 +250,19 @@ function nextBestActions(context){
     if(type==='propose_hybrid_dispatch'&&capacity.available<1)reason+=(reason?' + ':'')+'aucune_capacite_interne_disponible';
     return {action_type:type,target_type:p.target_type,target_id:p.target_id,priority:p.priority,reason,expected_impact:type==='decide_approval'?'debloquer le workflow de gouvernance':'reduire le risque operationnel',confidence,requires_confirmation:true};
   }).filter(Boolean).slice(0,5);
+}
+
+function enforceDecisionIntegrity(context,actions){
+  const allowed=nextBestActions(context);
+  const allowedByKey=new Set(allowed.map(a=>String(a.action_type||'')+'|'+String(a.target_id||'')));
+  const capacity=workforceCapacity(context);
+  return (Array.isArray(actions)?actions:[]).filter(action=>{
+    if(!action||!action.type)return false;
+    if(action.type==='propose_internal_assignment'&&capacity.available<1)return false;
+    const target=action.target&&typeof action.target==='object'?action.target:{};
+    const targetId=target.request_id||target.case_id||target.plan_id||'';
+    return allowedByKey.has(String(action.type)+'|'+String(targetId));
+  }).slice(0,3);
 }
 
 function priorityRisk(context){
@@ -358,4 +371,4 @@ function createHandler({env=process.env,logger=console}={}){
   };
 }
 
-module.exports={workforceCapacity,createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion,deltaSummary,priorityRisk,nextBestActions};
+module.exports={workforceCapacity,enforceDecisionIntegrity,createHandler,MAX_IMAGE_BYTES,ALLOWED_IMAGE_TYPES,enterpriseContext,proactiveQuestion,deltaSummary,priorityRisk,nextBestActions};
