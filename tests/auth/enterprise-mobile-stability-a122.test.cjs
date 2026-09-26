@@ -1,0 +1,6 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const r=path.join(__dirname,'../..'),rd=p=>fs.readFileSync(path.join(r,p),'utf8');
+test('A1.2.2 Enterprise uses one secure-access state, not a fake signup tab',()=>{const h=rd('auth.html');assert.match(h,/id="uag-enterprise-access"/);assert.match(h,/tabs\.hidden=space==='enterprise'/);assert.match(h,/enterpriseAccess\.hidden=space!=='enterprise'/);assert.doesNotMatch(h,/signupTab\.textContent=space==='enterprise'/);});
+test('A1.2.2 Enterprise hides signup hero residue',()=>{const h=rd('auth.html');assert.match(h,/space==='enterprise' && hero/);assert.match(h,/hero\.setAttribute\('aria-hidden','true'\)/);});
+test('A1.2.2 iOS inputs stay at least 16px to prevent focus auto-zoom',()=>{const c=rd('css/auth-premium.css');assert.match(c,/@supports\(-webkit-touch-callout:none\)/);assert.match(c,/font-size:16px!important/);});
+test('A1.2.2 does not disable user zoom accessibility',()=>{const h=rd('auth.html');assert.doesNotMatch(h,/user-scalable\s*=\s*no|maximum-scale\s*=\s*1/i);});
+test('A1.2.2 Enterprise remains login-only with canonical auth untouched',()=>{const h=rd('auth.html');assert.match(h,/tab === 'signup' && _gatewaySpace === 'enterprise'/);assert.doesNotMatch(h,/name="account-type"[^>]+value="enterprise"/);});
