@@ -100,7 +100,7 @@
       </div>
 
       <!-- Tabs -->
-      <div class="ap-tabs" id="auth-tabs" role="tablist">
+      <div class="uag-enterprise-access" id="uag-enterprise-access" hidden><span>✦</span><div><strong>Accès Enterprise sécurisé</strong><small>Connexion requise · permissions vérifiées après authentification</small></div></div>\n      <div class="ap-tabs" id="auth-tabs" role="tablist">
         <div class="ap-tab active" id="tab-login"  role="tab" tabindex="0"
              onclick="switchTab('login')"  onkeydown="if(event.key==='Enter')switchTab('login')">Connexion</div>
         <div class="ap-tab"        id="tab-signup" role="tab" tabindex="0"
@@ -641,8 +641,11 @@ function selectGateway(space) {
     enterprise:['FIXEO ENTERPRISE OS','Control Tower · Workforce · Maintenance · Finance · RAFI','Accès réservé aux membres Enterprise réellement autorisés.']
   }[space];
   if(ctx){ctx.children[0].textContent=copy[0];ctx.children[1].textContent=copy[1];ctx.children[2].textContent=copy[2];}
-  const signupTab=document.getElementById('tab-signup');
-  if(signupTab){signupTab.textContent=space==='enterprise'?'Accès Enterprise':'Créer un compte';signupTab.setAttribute('aria-disabled',space==='enterprise'?'true':'false');}
+  const signupTab=document.getElementById('tab-signup'), tabs=document.getElementById('auth-tabs'), enterpriseAccess=document.getElementById('uag-enterprise-access'), hero=document.getElementById('ap-hero-zone');
+  if(signupTab){signupTab.textContent='Créer un compte';signupTab.removeAttribute('aria-disabled');}
+  if(tabs) tabs.hidden=space==='enterprise';
+  if(enterpriseAccess) enterpriseAccess.hidden=space!=='enterprise';
+  if(space==='enterprise' && hero){hero.classList.remove('visible');hero.setAttribute('aria-hidden','true');}
   if(space==='enterprise') switchTab('login');
   else if(document.getElementById('signup-form').style.display!=='none') switchTab('signup');
   else switchTab('login');
