@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c23'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c24'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -599,6 +599,55 @@
       + '</div>';
   }
 
+  function _renderDecisionCenter(reqs) {
+    var decisions = [];
+    (reqs || []).forEach(function (r) {
+      var p = r._pipeline || PIPELINE.NEW;
+      if (p === PIPELINE.PROPOSAL_RECEIVED) {
+        var pending = (_state.quotes || []).filter(function (q) { return q.request_id === r.id && q.status === 'pending'; });
+        decisions.push({
+          kind: 'proposal',
+          service: r.service_category || 'Demande',
+          city: r.city || '',
+          count: pending.length,
+          title: pending.length > 1 ? (pending.length + ' propositions à examiner') : 'Proposition à examiner',
+          detail: 'Consultez le devis et les informations disponibles avant de décider.',
+          action: 'Examiner',
+          actionName: 'go-requests'
+        });
+      } else if (p.step === 4) {
+        decisions.push({
+          kind: 'confirm',
+          service: r.service_category || 'Intervention',
+          city: r.city || '',
+          count: 1,
+          title: 'Prestation à confirmer',
+          detail: 'Vérifiez que l’intervention est terminée avant de la confirmer.',
+          action: 'Vérifier',
+          actionName: 'go-requests'
+        });
+      }
+    });
+    if (!decisions.length) {
+      return '<section class="fxv2-decision-center fxv2-decision-clear" aria-label="Centre de décision">'
+        + '<div class="fxv2-decision-head"><div><span>CENTRE DE DÉCISION</span><strong>Aucune décision en attente</strong></div><b>✓</b></div>'
+        + '<p>Votre espace reste à jour. Les décisions nécessitant votre validation apparaîtront ici.</p>'
+      + '</section>';
+    }
+    return '<section class="fxv2-decision-center" aria-label="Centre de décision">'
+      + '<div class="fxv2-decision-head"><div><span>CENTRE DE DÉCISION</span><strong>' + decisions.length + ' décision' + (decisions.length > 1 ? 's' : '') + ' à traiter</strong></div><b>' + decisions.length + '</b></div>'
+      + '<div class="fxv2-decision-list">'
+      + decisions.map(function (d) {
+          return '<article class="fxv2-decision-item" data-kind="' + esc(d.kind) + '">'
+            + '<div class="fxv2-decision-copy"><strong>' + esc(d.title) + '</strong>'
+            + '<span>' + esc(d.service) + (d.city ? ' · ' + esc(d.city) : '') + '</span>'
+            + '<p>' + esc(d.detail) + '</p></div>'
+            + '<button class="fxv2-btn fxv2-decision-action" data-action="' + esc(d.actionName) + '">' + esc(d.action) + '</button>'
+          + '</article>';
+        }).join('')
+      + '</div></section>';
+  }
+
   function _renderClientControlTower(reqs) {
     var p = _controlTowerPriority(reqs);
     var name = _clientFirstName();
@@ -640,6 +689,7 @@
     /* C2.1 deterministic Client Control Tower shell */
     html += _renderClientControlTower(reqs);
     html += _renderClientNextAction(reqs);
+    html += _renderDecisionCenter(reqs);
 
     /* ── Insights band (always visible) ── */
     html += _renderInsightsBand();
