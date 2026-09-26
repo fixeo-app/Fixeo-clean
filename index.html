@@ -2856,6 +2856,8 @@ section#home.hero.hero-section {
     #fxhf-root[data-fxhf-state=need] .fxhf-privacy,
     #fxhf-root[data-fxhf-state=need] .fxhf-actions { transform:translateX(34px) !important; width:calc(100% - 34px) !important; }
   }
+    /* H-DESKTOP-02K — scope desktop overrides; restore native mobile */
+  @media (min-width: 821px) {
     /* H-DESKTOP-02I — final cascade lock */
     #fxhf-root .fxhf-content { transform:none !important; width:min(100%,920px) !important; margin-inline:auto !important; justify-self:center !important; }
     #fxhf-root[data-fxhf-state=need] .fxhf-progress,
@@ -2876,6 +2878,7 @@ section#home.hero.hero-section {
     }
     #fxhf-root[data-fxhf-state=need] .fxhf-progress { margin-top:22px !important; }
     #fxhf-root[data-fxhf-state=need] .fxhf-actions { margin-top:10px !important; }
+  }
   </style>
   <link rel="stylesheet" href="css/homepage-sections-v1.css?v=hsv1a">
   <link rel="stylesheet" href="css/homepage-motion-v1.css?v=hmv1a">
