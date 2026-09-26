@@ -2020,3 +2020,6 @@ html body {
 @media(min-width:900px){.auth-center{max-width:780px!important}.auth-box{max-width:760px!important}.uag-title{font-size:1.35rem}.uag-space{padding:14px 12px}.uag-space strong{font-size:.78rem}.uag-space small{font-size:.62rem}}
 @media(max-width:520px){.uag{padding:14px;margin-bottom:17px}.uag-title{font-size:1rem}.uag-lead{font-size:.66rem}.uag-spaces{gap:6px}.uag-space{padding:9px 7px}.uag-space strong{font-size:.66rem}.uag-space small{font-size:.52rem}.uag-context{grid-template-columns:1fr}.uag-context span{grid-row:auto;margin-bottom:2px}.uag-context small{margin-top:2px}}
 @media(max-width:360px){.uag{padding:12px}.uag-space small{display:none}.uag-space{text-align:center}.uag-icon{margin-bottom:4px}.uag-context small{display:none}}
+/* A1.2.1 — Gateway clarity & desktop centering */
+@media(min-width:900px){.auth-shell{display:flex;flex-direction:column;align-items:center}.auth-topbar{width:min(100%,980px)}.auth-center{width:min(100% - 48px,780px)!important;margin-left:auto!important;margin-right:auto!important}.auth-box{width:100%;margin-inline:auto!important}}
+#tab-signup[aria-disabled="true"]{opacity:.5;cursor:not-allowed}.uag-space.is-active{transform:translateY(-1px)}
