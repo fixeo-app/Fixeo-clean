@@ -1492,7 +1492,17 @@
     if (win.FixeoEnterpriseRafiUI && typeof win.FixeoEnterpriseRafiUI.mount === 'function') {
       rafiUi = win.FixeoEnterpriseRafiUI.mount(win, {
         getClient: function () { return client; },
-        getEnterpriseId: function () { return currentEnterpriseId; }
+        getEnterpriseId: function () { return currentEnterpriseId; },
+        refreshOperations: function () {
+          return currentEnterpriseId ? Promise.all([
+            loadOperational(currentEnterpriseId, generation),
+            controlTowerUi && typeof controlTowerUi.refresh === 'function' ? controlTowerUi.refresh() : Promise.resolve(),
+            maintenanceUi && typeof maintenanceUi.refresh === 'function' ? maintenanceUi.refresh() : Promise.resolve(),
+            equipmentUi && typeof equipmentUi.refresh === 'function' ? equipmentUi.refresh() : Promise.resolve(),
+            financeUi && typeof financeUi.refresh === 'function' ? financeUi.refresh() : Promise.resolve(),
+            governanceUi && typeof governanceUi.refresh === 'function' ? governanceUi.refresh() : Promise.resolve()
+          ]) : Promise.resolve();
+        }
       });
     }
     refresh();
