@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c31'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c311'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -1161,18 +1161,9 @@
 
   /* ── INJECT NOTIFICATION BELL INTO HEADER ─────────────────────── */
   function _injectNotifBell() {
-    /* Header right slot — find the empty reservation div */
-    var header = document.querySelector('.fxv2-header');
-    if (!header) return;
-    /* Only inject once */
-    if (document.getElementById('fxv2-notif-bell')) return;
-    /* Find the last div in header (the empty reservation slot) */
-    var slots = header.querySelectorAll('div');
-    var slot  = slots[slots.length - 1];
-    if (!slot) return;
-    slot.innerHTML = '<button id="fxv2-notif-bell" class="fxv2-notif-bell" aria-label="Notifications" data-action="go-notifications">'
-      + '\uD83D\uDD14'
-      + '</button>';
+    var slot = document.getElementById('fxv2-header-notifications');
+    if (!slot || document.getElementById('fxv2-notif-bell')) return;
+    slot.innerHTML = '<button id="fxv2-notif-bell" class="fxv2-notif-bell" aria-label="Notifications" data-action="go-notifications">\uD83D\uDD14</button>';
   }
 
   /* ── SECTION: NOTIFICATIONS ────────────────────────────────────── */
@@ -1253,6 +1244,7 @@
     if (o) o.classList.add('show');
     if (h) { h.classList.add('open'); h.setAttribute('aria-expanded', 'true'); }
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('fxv2-menu-open');
   }
 
   function _closeSidebar() {
@@ -1263,6 +1255,7 @@
     if (o) o.classList.remove('show');
     if (h) { h.classList.remove('open'); h.setAttribute('aria-expanded', 'false'); }
     document.body.style.overflow = '';
+    document.body.classList.remove('fxv2-menu-open');
   }
 
   /* ── NAV BINDING (single listener each) ──────────────────────── */
