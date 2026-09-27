@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c28'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c29'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -802,6 +802,38 @@
     + '</section>';
   }
 
+  function _multiRequestSummary(reqs) {
+    var out={search:0,decision:0,assigned:0,progress:0,confirm:0,done:0,cancelled:0,total:(reqs||[]).length};
+    (reqs||[]).forEach(function(r){
+      var p=r._pipeline||PIPELINE.NEW;
+      if(p.step<0) out.cancelled++;
+      else if(p.step===5) out.done++;
+      else if(p.step===4) out.confirm++;
+      else if(p.step===3) out.progress++;
+      else if(p.step===2) out.assigned++;
+      else if(p===PIPELINE.PROPOSAL_RECEIVED) out.decision++;
+      else out.search++;
+    });
+    return out;
+  }
+
+  function _renderMultiRequestTower(reqs) {
+    var m=_multiRequestSummary(reqs);
+    if(m.total<2) return '';
+    var cells=[
+      ['Décisions',m.decision+m.confirm,'decision'],
+      ['En intervention',m.progress,'progress'],
+      ['Pris en charge',m.assigned,'assigned'],
+      ['En recherche',m.search,'search'],
+      ['Terminées',m.done,'done']
+    ];
+    return '<section class="fxv2-multi" aria-label="Vue globale de vos demandes">'
+      + '<div class="fxv2-multi-head"><div><span>VUE MULTI-DEMANDES</span><strong>' + m.total + ' demandes au total</strong></div><button class="fxv2-multi-all" data-action="go-requests">Tout voir →</button></div>'
+      + '<div class="fxv2-multi-grid">' + cells.map(function(c){return '<button class="fxv2-multi-cell" data-kind="'+c[2]+'" data-action="go-requests"><strong>'+c[1]+'</strong><span>'+c[0]+'</span></button>';}).join('') + '</div>'
+      + (m.cancelled ? '<div class="fxv2-multi-foot">'+m.cancelled+' annulée'+(m.cancelled>1?'s':'')+'</div>' : '')
+    + '</section>';
+  }
+
   function _renderClientControlTower(reqs) {
     var p = _controlTowerPriority(reqs);
     var name = _clientFirstName();
@@ -842,6 +874,7 @@
 
     /* C2.1 deterministic Client Control Tower shell */
     html += _renderClientControlTower(reqs);
+    html += _renderMultiRequestTower(reqs);
     html += _renderAttentionEngine(reqs);
     html += _renderClientNextAction(reqs);
     html += _renderDecisionCenter(reqs);
