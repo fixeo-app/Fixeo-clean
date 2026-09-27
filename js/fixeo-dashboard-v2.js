@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c211'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c213r1'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -155,6 +155,27 @@
     if (requests.length) {
       var ids = requests.map(function (r) { return r.id; });
       quotes = await FS.listQuotesForRequestIds(ids).catch(function () { return []; });
+    }
+
+    /* Reconcile accepted quote -> mission through the governed server RPC.
+       This repairs interrupted acceptQuote flows without client-side mission INSERT. */
+    var missionRequestIds = missions.map(function (m) { return String(m.request_id || ''); });
+    var orphanAccepted = quotes.filter(function (q) {
+      return q.status === 'accepted' && q.request_id && missionRequestIds.indexOf(String(q.request_id)) === -1;
+    });
+    if (orphanAccepted.length) {
+      try {
+        var reconcileSb = await FS.getClient();
+        for (var rq = 0; rq < orphanAccepted.length; rq++) {
+          var rec = await reconcileSb.rpc('create_client_mission_from_accepted_quote', {
+            p_quote_id: orphanAccepted[rq].id
+          });
+          if (rec.error) throw rec.error;
+        }
+        missions = await FS.listClientMissions().catch(function () { return missions; });
+      } catch (e) {
+        console.warn('[fxv2] accepted quote reconciliation:', e && e.message);
+      }
     }
 
     /* Artisan lookups for accepted/progress quotes */
