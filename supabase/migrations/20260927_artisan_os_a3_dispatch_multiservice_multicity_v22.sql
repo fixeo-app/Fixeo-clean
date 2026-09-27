@@ -1,0 +1,7 @@
+-- ARTISAN OS A3
+-- Production migration applied: artisan_os_a3_dispatch_multiservice_multicity_v22
+-- Canonical effect:
+-- 1. public.dispatch_preview_v22(uuid,integer) scores Signup OS multi-service and multi-city relations first.
+-- 2. Historical service_category/city/work_zone remain fallback for legacy artisans.
+-- 3. public.dispatch_candidate_pool_v1 now consumes v22.
+-- Full SQL is preserved in Supabase migration history.
