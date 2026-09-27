@@ -51,39 +51,12 @@
     } catch (_) {}
   });
 
-  /* ── 2. Logout bridge: wrap fixeoGlobalLogout to call Supabase signOut ── */
-  function _patchLogout() {
-    var original = window.fixeoGlobalLogout;
-
-    window.fixeoGlobalLogout = async function (options) {
-      options = options || {};
-
-      /* Call real Supabase signOut first */
-      if (window.FixeoSupabase && typeof window.FixeoSupabase.logout === 'function') {
-        try {
-          await window.FixeoSupabase.logout({ suppressRedirect: true });
-        } catch (_) {}
-      } else if (window.FixeoAuth && typeof window.FixeoAuth.signOut === 'function') {
-        /* Fallback: FixeoAuth.signOut from fixeo-auth-supabase.js */
-        try { await window.FixeoAuth.signOut(); } catch (_) {}
-      }
-
-      /* Then run original auth-global logout (clears localStorage + renders) */
-      if (typeof original === 'function') {
-        try {
-          original({ redirectTo: options.redirectTo || 'index.html' });
-        } catch (_) {
-          window.location.href = options.redirectTo || 'index.html';
-        }
-      } else {
-        window.location.href = options.redirectTo || 'index.html';
-      }
-    };
-
-    /* Keep aliases in sync */
-    window.fixeoLogout = window.fixeoGlobalLogout;
-    window.logout      = window.fixeoGlobalLogout;
-  }
+  /* ── 2. Logout authority ──────────────────────────────────── */
+  /*
+   * fixeo-logout-global.js is the single canonical logout authority.
+   * Do not wrap or replace window.fixeoGlobalLogout here: doing so creates
+   * competing signOut/redirect flows and can reintroduce stale role routing.
+   */
 
   /* ── 3. Hydrate UI from live Supabase session on page load ── */
   async function _hydrateLiveSession() {
@@ -134,7 +107,7 @@
           }
           /* Redirect to homepage if on a protected page */
           var page = (window.location.pathname.split('/').pop() || '').toLowerCase();
-          var protected_ = ['dashboard-client.html', 'dashboard-artisan.html', 'admin.html'];
+          var protected_ = ['dashboard-client.html', 'dashboard-artisan.html', 'dashboard-artisan-v2.html', 'admin.html'];
           if (protected_.indexOf(page) !== -1) {
             window.location.href = 'index.html';
           }
