@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c213r1'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c31'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -1197,10 +1197,21 @@
     _renderNotificationsSection();
     _renderProfile();
     _renderSupport();
+    _renderC31Rafi();
+    _renderC31Documents();
+  }
+
+  function _renderC31Rafi() {
+    var sec=el('fxv2-sec-rafi'); if(!sec) return;
+    sec.innerHTML='<div class="fxv2-c31-pagehead"><span>FIXEO CLIENT OS</span><h2>RAFI</h2><p>Votre assistant pour comprendre la situation et accéder aux prochaines actions.</p></div>'+_renderClientRafiIntelligence(_state.requests||[]);
+  }
+  function _renderC31Documents() {
+    var sec=el('fxv2-sec-documents'); if(!sec) return;
+    sec.innerHTML='<div class="fxv2-c31-pagehead"><span>MON ACTIVITÉ</span><h2>Documents & preuves</h2><p>Les éléments réellement enregistrés dans votre dossier FIXEO.</p></div>'+_renderEvidenceCenter(_state.requests||[]);
   }
 
   /* ── NAVIGATION ───────────────────────────────────────────────── */
-  var SECTIONS = ['dashboard', 'requests', 'missions', 'messages', 'history', 'notifications', 'profile', 'support'];
+  var SECTIONS = ['dashboard', 'requests', 'missions', 'messages', 'history', 'notifications', 'profile', 'support', 'rafi', 'documents'];
 
   function _showSection(name) {
     if (SECTIONS.indexOf(name) === -1) name = 'dashboard';
@@ -1269,6 +1280,11 @@
     /* Overlay — ONE listener */
     var overlay = el('fxv2-overlay');
     if (overlay) overlay.addEventListener('click', _closeSidebar);
+
+    /* Header shortcuts */
+    document.querySelectorAll('.fxv2-header-actions [data-section]').forEach(function (a) {
+      a.addEventListener('click', function () { _showSection(a.dataset.section); });
+    });
 
     /* Sidebar nav links */
     document.querySelectorAll('.fxv2-nav-link').forEach(function (a) {
