@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c35'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c36'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -1651,6 +1651,7 @@ if (!result.ok) {
         return n.id === notifId ? Object.assign({}, n, { read: true }) : n;
       });
       _renderNotificationBell();
+      _renderNotificationsSection();
     } catch(e) { /* best-effort */ }
   }
 
@@ -1674,25 +1675,33 @@ if (!result.ok) {
     }
   }
 
+  function _notificationContext(n) {
+    var raw=[n&&n.type,n&&n.title,n&&n.message].filter(Boolean).join(' ').toLowerCase();
+    var action='go-requests', cta='Voir les demandes', kind='update';
+    if(/mission|artisan|intervention|assign/.test(raw)){action='go-missions';cta='Voir les missions';kind='mission';}
+    if(/confirm|validation|termin/.test(raw)){action='go-requests';cta='Vérifier';kind='decision';}
+    if(/devis|quote|proposition/.test(raw)){action='go-requests';cta='Examiner';kind='decision';}
+    if(/support|aide/.test(raw)){action='go-support';cta='Ouvrir le support';kind='support';}
+    return {action:action,cta:cta,kind:kind};
+  }
+  function _renderC36NotifCard(n) {
+    var c=_notificationContext(n), cls=n.read?' is-read':' is-unread';
+    return '<article class="fxv2-c36-item'+cls+'" data-kind="'+esc(c.kind)+'">'
+      +'<div class="fxv2-c36-dot"></div><div class="fxv2-c36-copy"><strong>'+esc(n.title||n.type||'Mise à jour FIXEO')+'</strong>'
+      +(n.message?'<p>'+esc(n.message)+'</p>':'')+'<small>'+esc(fmtDate(n.created_at))+'</small></div>'
+      +'<div class="fxv2-c36-actions"><button data-action="'+esc(c.action)+'">'+esc(c.cta)+'</button>'+(!n.read?'<button class="fxv2-c36-read" data-action="mark-notif-read" data-id="'+esc(n.id)+'">Marquer lue</button>':'')+'</div>'
+    +'</article>';
+  }
   function _renderNotificationList() {
-    var notifs = _state.notifications || [];
-    if (!notifs.length) {
-      return '<div class="fxv2-empty">'
-        + '<div class="fxv2-empty-icon">\uD83D\uDD14</div>'
-        + '<div class="fxv2-empty-title">Aucune notification</div>'
-        + '<div class="fxv2-empty-sub">Les mises \u00e0 jour de vos demandes apparaissent ici.</div>'
-        + '</div>';
-    }
-    return '<div class="fxv2-notif-list">'
-      + notifs.map(function(n) {
-          var cls = n.read ? 'fxv2-notif-item fxv2-notif-read' : 'fxv2-notif-item fxv2-notif-unread';
-          return '<div class="' + cls + '" data-action="mark-notif-read" data-id="' + esc(n.id) + '">'
-            + '<div class="fxv2-notif-title">' + esc(n.title || n.type) + '</div>'
-            + (n.message ? '<div class="fxv2-notif-msg">' + esc(n.message) + '</div>' : '')
-            + '<div class="fxv2-notif-date">' + esc(fmtDate(n.created_at)) + '</div>'
-            + '</div>';
-        }).join('')
-      + '</div>';
+    var notifs=(_state.notifications||[]).slice().sort(function(a,b){return new Date(b.created_at||0)-new Date(a.created_at||0);});
+    if(!notifs.length) return '<section class="fxv2-c36-empty"><div>🔔</div><strong>Tout est à jour</strong><p>Les décisions, interventions et mises à jour FIXEO apparaîtront ici.</p><button data-action="go-requests">Voir mes demandes</button></section>';
+    var unread=notifs.filter(function(n){return !n.read;}), read=notifs.filter(function(n){return n.read;});
+    var action=unread.filter(function(n){return _notificationContext(n).kind==='decision';});
+    var updates=unread.filter(function(n){return _notificationContext(n).kind!=='decision';});
+    return '<div class="fxv2-c36-summary"><div><span>À TRAITER</span><strong>'+action.length+'</strong></div><div><span>NOUVELLES</span><strong>'+updates.length+'</strong></div><div><span>HISTORIQUE</span><strong>'+read.length+'</strong></div></div>'
+      +(action.length?'<section class="fxv2-c36-group"><h3>À traiter maintenant</h3>'+action.map(_renderC36NotifCard).join('')+'</section>':'')
+      +(updates.length?'<section class="fxv2-c36-group"><h3>Mises à jour</h3>'+updates.map(_renderC36NotifCard).join('')+'</section>':'')
+      +(read.length?'<section class="fxv2-c36-group fxv2-c36-history"><h3>Historique</h3>'+read.slice(0,12).map(_renderC36NotifCard).join('')+'</section>':'');
   }
 
   /* NEW REQUEST MODAL ────────────────────────────────────────── */
