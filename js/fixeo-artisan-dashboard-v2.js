@@ -693,135 +693,52 @@ var available =
     return html + '</div>';
   }
 
-  /* ── RENDER: SECTION — DASHBOARD ─────────────────────────── */
+  /* ── ARTISAN OS A2 — COMMAND CENTER ─────────────────────── */
+  function _artisanAttention(ap) {
+    var missions=(_state.myMissions||[]);
+    var inProgress=missions.find(function(m){return String((m._request&&m._request.status)||'')==='in_progress';});
+    var accepted=missions.find(function(m){
+      var s=String((m._request&&m._request.status)||m.status||'');
+      return s==='assigned'||s==='pending';
+    });
+    var offers=Array.isArray(_state.dispatchOffers)?_state.dispatchOffers:[];
+    if(inProgress) return {tone:'mission',eyebrow:'INTERVENTION EN COURS',title:'Votre intervention demande votre attention.',copy:'RAFI garde la mission prioritaire tant qu’elle est en cours.',cta:'Ouvrir la mission',section:'missions'};
+    if(accepted) return {tone:'mission',eyebrow:'MISSION ACCEPTÉE',title:'Votre prochaine intervention est prête.',copy:'Consultez les informations utiles avant de démarrer.',cta:'Préparer l’intervention',section:'missions'};
+    if(offers.length) return {tone:'opportunity',eyebrow:'NOUVELLE OPPORTUNITÉ',title:'Une mission correspond à votre profil FIXEO.',copy:'Elle provient du moteur Dispatch et attend votre décision.',cta:'Voir l’opportunité',section:'available'};
+    if(ap.availability!=='available') return {tone:'offline',eyebrow:'DISPONIBILITÉ',title:'Vous ne recevez pas de nouvelles opportunités.',copy:ap.availability==='busy'?'Votre statut est Occupé. RAFI conserve vos missions actives, mais le Dispatch ne vous propose pas de nouvelle mission.':'Votre profil est actuellement indisponible pour le Dispatch.',cta:'Gérer ma disponibilité',section:'profile'};
+    return {tone:'clear',eyebrow:'ACTIVITÉ À JOUR',title:'Rien d’urgent pour le moment.',copy:'Vous êtes disponible. FIXEO peut vous proposer une mission correspondant à votre activité.',cta:'Voir les opportunités',section:'available'};
+  }
+
   function _renderDashboard() {
-    var sec = el('fxav2-sec-dashboard');
-    if (!sec) return;
-
-    var ap = _state.artisanProfile;
-    var profHtml = _renderProfileHeader();
-
-    /* ── FETCH ERROR STATE ────────────────────────────────────── */
-    if (_state.fetchError) {
-      sec.innerHTML = profHtml
-        + '<div class="fxa-error-banner fxa-error-banner--prominent">'
-        + '⚠️ ' + esc(_state.fetchError)
-        + ' <button class="fxa-btn fxa-btn-ghost fxa-btn-sm" style="margin-left:10px" '
-        + 'onclick="window.location.reload()">Réessayer</button>'
-        + '</div>';
+    var sec=el('fxav2-sec-dashboard'); if(!sec)return;
+    var ap=_state.artisanProfile;
+    if(_state.fetchError){sec.innerHTML='<div class="fxao-hero"><div class="fxao-kicker">ARTISAN OS</div><h1>Connexion momentanément indisponible.</h1><p>'+esc(_state.fetchError)+'</p><button class="fxa-btn fxa-btn-primary" onclick="window.location.reload()">Réessayer</button></div>';return;}
+    if(!ap){sec.innerHTML='<div class="fxao-hero"><div class="fxao-kicker">ARTISAN OS</div><h1>Terminons votre espace professionnel.</h1><p>Ce compte n’est pas encore associé à un profil artisan exploitable.</p><a href="onboarding-artisan.html" class="fxa-btn fxa-btn-primary">Compléter mon profil</a></div>';return;}
+    if(!ap.onboarding_completed){
+      sec.innerHTML='<div class="fxao-hero"><div class="fxao-kicker">ARTISAN OS · RAFI</div><h1>Votre activité commence ici.</h1><p>Complétez et activez votre profil pour entrer dans le moteur Dispatch FIXEO.</p><button class="fxa-btn fxa-btn-primary" data-action="complete-onboarding">Activer mon profil</button></div>';
       return;
     }
+    var name=ap.full_name||ap.name||'Artisan';
+    var first=String(name).trim().split(/\s+/)[0]||'Artisan';
+    var att=_artisanAttention(ap);
+    var offers=Array.isArray(_state.dispatchOffers)?_state.dispatchOffers.length:0;
+    var active=(_state.myMissions||[]).filter(function(m){var s=String((m._request&&m._request.status)||m.status||'');return ['pending','assigned','in_progress','en_cours'].includes(s);}).length;
+    var status=ap.availability||'unavailable';
+    var statusLabel=status==='available'?'Disponible':status==='busy'?'Occupé':'Indisponible';
+    sec.innerHTML=
+      '<div class="fxao-welcome"><div><span class="fxao-kicker">ARTISAN OS · FIXEO</span><h1>Bonsoir, '+esc(first)+'.</h1><p>Votre activité est sous contrôle.</p></div><button class="fxao-status fxao-status--'+esc(status)+'" data-action="'+(status==='available'?'set-unavailable':'set-available')+'"><i></i>'+esc(statusLabel)+'</button></div>'+
+      '<article class="fxao-rafi fxao-rafi--'+att.tone+'"><div class="fxao-rafi-top"><span class="fxao-orb">✦</span><div><b>RAFI</b><small>Intelligence Artisan</small></div></div><span class="fxao-attention">'+att.eyebrow+'</span><h2>'+att.title+'</h2><p>'+att.copy+'</p><button class="fxao-primary" data-action="go-'+att.section+'">'+att.cta+' <span>→</span></button></article>'+
+      '<div class="fxao-pulse"><button data-action="go-available"><b>'+offers+'</b><span>Opportunité'+(offers===1?'':'s')+'</span></button><button data-action="go-missions"><b>'+active+'</b><span>Mission'+(active===1?'':'s')+' active'+(active===1?'':'s')+'</span></button><button data-action="go-profile"><b>'+esc(statusLabel)+'</b><span>Dispatch</span></button></div>'+
+      (active?'<div class="fxao-section-title"><span>EN DIRECT</span><h2>Votre travail maintenant</h2></div><div class="fxa-card-list">'+(_state.myMissions||[]).filter(function(m){var s=String((m._request&&m._request.status)||m.status||'');return ['pending','assigned','in_progress','en_cours'].includes(s);}).slice(0,1).map(_renderMissionCard).join('')+'</div>':'')+
+      (offers?'<div class="fxao-section-title"><span>DISPATCH FIXEO</span><h2>À décider</h2></div><div class="fxa-card-list">'+(_state.dispatchOffers||[]).slice(0,1).map(_renderDispatchOfferCard).join('')+'</div>':'');
+  }
 
-    /* ── NO PROFILE STATE — dead claim_requests query removed (7C.12A.3) ──
-     * New artisans always have an artisans row (register_new_artisan).
-     * If artisanProfile is null after a successful load it means this
-     * authenticated user never completed registration. Show clear guidance. */
-    if (!ap) {
-      sec.innerHTML = profHtml
-        + '<div class="fxa-no-profile">'
-        + '<div class="fxa-no-profile-icon">🔧</div>'
-        + '<div class="fxa-no-profile-title">Compte artisan non trouvé</div>'
-        + '<div class="fxa-no-profile-sub">'
-        + 'Ce compte n\'est pas associé à un profil artisan. '
-        + 'Si vous venez de vous inscrire, complétez d\'abord votre inscription sur la page d\'enregistrement.'
-        + '</div>'
-        + '<a href="onboarding-artisan.html" class="fxa-btn fxa-btn-primary" style="margin-top:16px;display:inline-flex;text-decoration:none">Compléter l\'inscription</a>'
-        + '<a href="https://wa.me/212660484415" target="_blank" class="fxa-btn fxa-btn-wa" style="margin-top:10px;display:inline-flex">📲 Contacter le support</a>'
-        + '</div>';
-      return;
-    }
-
-    /* ── ONBOARDING DOMINANT CTA — takes over home screen when incomplete ── */
-    if (!ap.onboarding_completed) {
-      var missingItems = [];
-      if (!ap.full_name || (ap.full_name || '').length < 3) missingItems.push('Nom complet');
-      if (!(ap.service_category || ap.category))            missingItems.push('Métier');
-      if (!ap.city)                                          missingItems.push('Ville');
-
-      var missingHtml = missingItems.length
-        ? '<ul style="margin:8px 0 0;padding-left:18px;font-size:.84rem;opacity:.8">'
-          + missingItems.map(function(m) { return '<li>' + esc(m) + '</li>'; }).join('')
-          + '</ul>'
-        : '';
-
-      sec.innerHTML = profHtml
-        + '<div class="fxa-onboarding-cta fxa-onboarding-cta--full">'
-        + '<div class="fxa-onboarding-cta-icon" style="font-size:2.2rem">🚀</div>'
-        + '<div class="fxa-onboarding-cta-body">'
-        + '<strong style="font-size:1rem">Activez votre profil pour commencer</strong>'
-        + '<p>Une fois activé, vous pourrez recevoir des missions et gérer votre disponibilité.</p>'
-        + missingHtml
-        + '</div>'
-        + '<div class="fxa-actions" style="margin-top:14px">'
-        + (missingItems.length
-            ? '<button class="fxa-btn fxa-btn-ghost" data-action="edit-profile">Compléter le profil</button>'
-            : '')
-        + '<button class="fxa-btn fxa-btn-primary" data-action="complete-onboarding" style="flex:2">Activer mon profil</button>'
-        + '</div></div>';
-      return;
-    }
-
-    /* ── NORMAL OPERATIONAL DASHBOARD ──────────────────────────── */
-
-    /* Availability state banner — shown only when unavailable, no duplicate label */
-    var avail = ap.availability || 'unavailable';
-    var availBanner = '';
-    if (avail !== 'available') {
-      availBanner = '<div class="fxa-avail-row fxa-avail-row--banner">'
-        + '<span class="fxa-avail-label fxa-avail-off" style="font-size:.8rem;opacity:.6">'
-        + 'Vous ne recevez pas de nouvelles demandes.</span>'
-        + '<button class="fxa-btn fxa-btn-primary" data-action="set-available" style="flex-shrink:0">✅ Me rendre disponible</button>'
-        + '</div>';
-    }
-
-    /* Profile completeness warning */
-    var warn = '';
-    if (!ap.city || !(ap.service_category || ap.category)) {
-      warn = '<div class="fxa-error-banner">⚠️ '
-        + '<span>Complétez votre ville et métier pour recevoir des demandes. </span>'
-        + '<button class="fxa-btn fxa-btn-ghost fxa-btn-sm" style="margin-left:8px" data-action="edit-profile">Compléter</button>'
-        + '</div>';
-    }
-
-    /* Active missions — DOMINANT: show first, max 2 */
-    var activeMissions = _state.myMissions.filter(function(m) {
-      var st = (m._request && m._request.status) || m.status || '';
-      return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'en_cours';
-    }).slice(0, 2);
-
-    var missionHtml = '';
-    if (activeMissions.length) {
-      missionHtml = '<div class="fxa-section-head" style="margin-top:0"><h2>⚡ Mission en cours</h2>'
-        + '<span class="fxa-section-count">' + activeMissions.length + '</span>'
-        + '</div>'
-        + '<div class="fxa-card-list fxa-card-list--priority">'
-        + activeMissions.map(_renderMissionCard).join('') + '</div>';
-    }
-
-    /* Recent open requests (max 3) */
-    var recentOpen = _state.openRequests.slice(0, 3);
-    var openHtml = '';
-    if (recentOpen.length) {
-      openHtml = '<div class="fxa-section-head" style="margin-top:' + (activeMissions.length ? '20px' : '0') + '">'
-        + '<h2>📬 Nouvelles demandes</h2>'
-        + '<span class="fxa-section-count">' + _state.openRequests.length + '</span>'
-        + '</div>'
-        + '<div class="fxa-card-list">' + recentOpen.map(_renderRequestCard).join('') + '</div>';
-      if (_state.openRequests.length > 3) {
-        openHtml += '<button class="fxa-btn fxa-btn-ghost fxa-btn-full" style="margin-top:10px" data-action="go-available">'
-          + 'Voir toutes (' + _state.openRequests.length + ')</button>';
-      }
-    } else if (!activeMissions.length && ap.city && (ap.service_category || ap.category)) {
-      /* Only show empty state if also no active mission — otherwise it reads as noise */
-      openHtml = '<div class="fxa-empty fxa-empty--inline">'
-        + '<div class="fxa-empty-icon" style="font-size:1.8rem">📬</div>'
-        + '<div>'
-        + '<div class="fxa-empty-title" style="font-size:.95rem">Aucune demande pour le moment</div>'
-        + '<div class="fxa-empty-sub" style="font-size:.8rem">Vous serez notifié dès qu\'une demande correspond à votre zone.</div>'
-        + '</div></div>';
-    }
-
-    sec.innerHTML = profHtml + availBanner + warn + missionHtml + openHtml;
+  function _renderRafiSection(){
+    var sec=el('fxav2-sec-rafi'); if(!sec)return;
+    var ap=_state.artisanProfile;
+    if(!ap){sec.innerHTML='';return;}
+    var att=_artisanAttention(ap);
+    sec.innerHTML='<div class="fxao-rafi-page"><span class="fxao-kicker">RAFI · INTELLIGENCE ARTISAN</span><h1>Votre copilote professionnel.</h1><p>RAFI analyse uniquement les états réels disponibles dans votre espace FIXEO.</p><article class="fxao-rafi fxao-rafi--'+att.tone+'"><span class="fxao-attention">'+att.eyebrow+'</span><h2>'+att.title+'</h2><p>'+att.copy+'</p><button class="fxao-primary" data-action="go-'+att.section+'">'+att.cta+' →</button></article><div class="fxao-rafi-note">RAFI ne crée ni mission, ni prix, ni état. Les actions engageantes restent gouvernées par les moteurs FIXEO.</div></div>';
   }
 
    /* ── RENDER: TARGETED OFFER CARD ─────────────────────────────
@@ -1336,13 +1253,14 @@ html += targetedOffers
     _renderMyMissions();
     _renderHistory();
     _renderProfileSection();
+    _renderRafiSection();
     _renderSupport();
   }
 
   /* ── NAVIGATION ───────────────────────────────────────────── */
   /* Cockpit sections live in fxck-sec-* IDs; V2 handles fxav2-sec-* only.
    * Navigation entries for cockpit sections are still dispatched via fixeo:section:changed. */
-  var SECTIONS     = ['dashboard', 'available', 'missions', 'history', 'profile', 'support'];
+  var SECTIONS     = ['dashboard', 'available', 'missions', 'history', 'profile', 'rafi', 'support'];
   var COCKPIT_SECS = ['gallery', 'quotes', 'public-profile', 'revenus', 'notifications'];
 
   function _showSection(name) {
