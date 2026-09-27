@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c29'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c210'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -834,6 +834,30 @@
     + '</section>';
   }
 
+  function _financeTruth(reqs) {
+    var requestIds=(reqs||[]).map(function(r){return r.id;});
+    var quotes=(_state.quotes||[]).filter(function(q){return requestIds.indexOf(q.request_id)!==-1;});
+    var missions=(_state.missions||[]).filter(function(m){return requestIds.indexOf(m.request_id)!==-1;});
+    var accepted=quotes.filter(function(q){return q.status==='accepted';});
+    var pending=quotes.filter(function(q){return q.status==='pending';});
+    var agreed=missions.filter(function(m){return m.agreed_price!=null && Number(m.agreed_price)>=0;});
+    var knownTotal=agreed.reduce(function(sum,m){return sum+Number(m.agreed_price||0);},0);
+    return {accepted:accepted.length,pending:pending.length,pricedMissions:agreed.length,knownTotal:knownTotal};
+  }
+
+  function _renderFinanceTrustCenter(reqs) {
+    var f=_financeTruth(reqs);
+    return '<section class="fxv2-finance" aria-label="Finance et confiance">'
+      + '<div class="fxv2-finance-head"><div><span>FINANCE & CONFIANCE</span><strong>Vos montants connus, sans surprise</strong></div><b>FIXEO</b></div>'
+      + '<div class="fxv2-finance-grid">'
+        + '<div><span>Devis acceptés</span><strong>'+f.accepted+'</strong></div>'
+        + '<div><span>Devis à examiner</span><strong>'+f.pending+'</strong></div>'
+        + '<div><span>Prix convenus connus</span><strong>'+(f.pricedMissions?esc(f.knownTotal.toLocaleString('fr-MA'))+' MAD':'—')+'</strong></div>'
+      + '</div>'
+      + '<div class="fxv2-finance-trust"><span>✓ Prix affiché uniquement lorsqu’il est enregistré</span><span>✓ Paiement après intervention</span><span>Carte bancaire non disponible actuellement</span></div>'
+    + '</section>';
+  }
+
   function _renderClientControlTower(reqs) {
     var p = _controlTowerPriority(reqs);
     var name = _clientFirstName();
@@ -878,6 +902,7 @@
     html += _renderAttentionEngine(reqs);
     html += _renderClientNextAction(reqs);
     html += _renderDecisionCenter(reqs);
+    html += _renderFinanceTrustCenter(reqs);
     html += _renderClientRafiIntelligence(reqs);
 
     /* ── Insights band (always visible) ── */
