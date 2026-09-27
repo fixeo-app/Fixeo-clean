@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c210'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c211'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -858,6 +858,39 @@
     + '</section>';
   }
 
+  function _evidenceForRequest(req) {
+    if(!req) return [];
+    var items=[];
+    if(req.description) items.push({kind:'request',label:'Signalement client',detail:String(req.description)});
+    var quotes=(_state.quotes||[]).filter(function(q){return q.request_id===req.id;});
+    quotes.forEach(function(q){
+      var d=q.proposed_price ? (q.proposed_price+' MAD') : '';
+      if(q.message) d+=(d?' · ':'')+q.message;
+      items.push({kind:'quote',label:q.status==='accepted'?'Devis accepté':'Proposition artisan',detail:d||'Proposition enregistrée'});
+    });
+    var mission=(_state.missions||[]).find(function(m){return m.request_id===req.id;});
+    if(mission){
+      var md=mission.agreed_price!=null ? (mission.agreed_price+' MAD') : '';
+      if(mission.status) md+=(md?' · ':'')+String(mission.status).replace(/_/g,' ');
+      items.push({kind:'mission',label:'Dossier mission',detail:md||'Mission enregistrée'});
+    }
+    var ref=req.tracking_ref||(req.metadata&&req.metadata.tracking_ref);
+    if(ref) items.push({kind:'tracking',label:'Référence de suivi',detail:String(ref)});
+    return items;
+  }
+
+  function _renderEvidenceCenter(reqs) {
+    var active=(reqs||[]).filter(function(r){return r._pipeline&&r._pipeline.step>=0&&r._pipeline.step<5;});
+    var req=active[0]||(reqs&&reqs[0])||null;
+    if(!req) return '';
+    var items=_evidenceForRequest(req);
+    return '<section class="fxv2-evidence" aria-label="Dossier intervention">'
+      + '<div class="fxv2-evidence-head"><div><span>DOCUMENTS & PREUVES</span><strong>Dossier de l’intervention</strong></div><b>'+items.length+'</b></div>'
+      + (items.length?'<div class="fxv2-evidence-list">'+items.map(function(i){return '<div class="fxv2-evidence-item" data-kind="'+esc(i.kind)+'"><i>✓</i><div><strong>'+esc(i.label)+'</strong><span>'+esc(i.detail)+'</span></div></div>';}).join('')+'</div>':'<p class="fxv2-evidence-empty">Aucun élément documentaire disponible pour cette intervention.</p>')
+      + '<div class="fxv2-evidence-note">Seuls les éléments réellement enregistrés dans votre dossier FIXEO sont affichés.</div>'
+    + '</section>';
+  }
+
   function _renderClientControlTower(reqs) {
     var p = _controlTowerPriority(reqs);
     var name = _clientFirstName();
@@ -903,6 +936,7 @@
     html += _renderClientNextAction(reqs);
     html += _renderDecisionCenter(reqs);
     html += _renderFinanceTrustCenter(reqs);
+    html += _renderEvidenceCenter(reqs);
     html += _renderClientRafiIntelligence(reqs);
 
     /* ── Insights band (always visible) ── */
