@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c36'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c37'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -1243,9 +1243,24 @@
     var sec=el('fxv2-sec-rafi'); if(!sec) return;
     sec.innerHTML='<div class="fxv2-c31-pagehead fxv2-c34-pagehead"><span>FIXEO CLIENT OS</span><h2>RAFI</h2><p>Votre copilote client : situation réelle, priorité et actions sous votre contrôle.</p></div>'+_renderClientRafiIntelligence(_state.requests||[]);
   }
+  function _renderC37RequestDossier(req) {
+    var items=_evidenceForRequest(req), p=req._pipeline||PIPELINE.NEW;
+    var ref=req.tracking_ref||(req.metadata&&req.metadata.tracking_ref);
+    return '<article class="fxv2-c37-dossier"><div class="fxv2-c37-dossier-head"><div><strong>'+esc(req.service_category||'Intervention')+'</strong><small>'+esc(req.city||'')+' · '+esc(p.label||'Dossier FIXEO')+'</small></div><b>'+items.length+'</b></div>'
+      +(items.length?'<div class="fxv2-c37-evidence">'+items.map(function(i){return '<div data-kind="'+esc(i.kind)+'"><i>✓</i><span><strong>'+esc(i.label)+'</strong><small>'+esc(i.detail)+'</small></span></div>';}).join('')+'</div>':'<p class="fxv2-c37-empty">Aucun élément enregistré pour ce dossier.</p>')
+      +(ref?'<a class="fxv2-c37-track" href="/suivi?ref='+esc(ref)+'" target="_blank" rel="noopener">Ouvrir le suivi · '+esc(ref)+' ↗</a>':'')
+      +'</article>';
+  }
   function _renderC31Documents() {
     var sec=el('fxv2-sec-documents'); if(!sec) return;
-    sec.innerHTML='<div class="fxv2-c31-pagehead"><span>MON ACTIVITÉ</span><h2>Documents & preuves</h2><p>Les éléments réellement enregistrés dans votre dossier FIXEO.</p></div>'+_renderEvidenceCenter(_state.requests||[]);
+    var reqs=(_state.requests||[]).slice().sort(function(a,b){return new Date(b.created_at||0)-new Date(a.created_at||0);});
+    var total=reqs.reduce(function(sum,r){return sum+_evidenceForRequest(r).length;},0);
+    var html='<div class="fxv2-c31-pagehead fxv2-c37-pagehead"><span>FIXEO TRUST CENTER</span><h2>Documents & preuves</h2><p>Votre dossier de confiance : uniquement les éléments réellement enregistrés par FIXEO.</p></div>'
+      +'<section class="fxv2-c37-summary"><div><span>DOSSIERS</span><strong>'+reqs.length+'</strong></div><div><span>ÉLÉMENTS</span><strong>'+total+'</strong></div><div><span>PRINCIPE</span><strong>Traçable</strong></div></section>'
+      +'<div class="fxv2-c37-trust"><span>✓ Aucun document inventé</span><span>✓ Prix uniquement s’ils sont enregistrés</span><span>✓ Références de suivi conservées</span></div>';
+    if(reqs.length) html+='<div class="fxv2-c37-list">'+reqs.map(_renderC37RequestDossier).join('')+'</div>';
+    else html+='<div class="fxv2-c37-zero"><strong>Aucun dossier pour le moment</strong><span>Vos preuves et références apparaîtront ici dès qu’elles seront enregistrées.</span></div>';
+    sec.innerHTML=html;
   }
 
   /* ── NAVIGATION ───────────────────────────────────────────────── */
