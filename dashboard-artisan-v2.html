@@ -16,7 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
   <!-- V2 CSS — single file, no V1 CSS -->
-  <link rel="stylesheet" href="css/fixeo-artisan-dashboard-v2.css?v=v2a">
+  <link rel="stylesheet" href="css/fixeo-artisan-dashboard-v2.css?v=artisan-os-a2">
   <link rel="stylesheet" href="css/fixeo-artisan-cockpit-v1.css?v=v1a">
   <!-- Notification CSS kept — real notifications table exists -->
   <link rel="stylesheet" href="css/fixeo-notifications-real-v1.css?v=1">
@@ -66,10 +66,10 @@
   <!-- Navigation -->
   <nav class="fxa-nav" role="navigation" aria-label="Navigation principale">
     <button class="fxa-nav-link active" data-section="dashboard">
-      <span class="icon">🏠</span> Tableau de bord
+      <span class="icon">🏠</span> Accueil
     </button>
     <button class="fxa-nav-link" data-section="available">
-      <span class="icon">📬</span> Demandes disponibles
+      <span class="icon">✦</span> Opportunités
     </button>
     <button class="fxa-nav-link" data-section="missions">
       <span class="icon">⚡</span> Mes missions
@@ -78,7 +78,7 @@
       <span class="icon">📁</span> Historique
     </button>
     <button class="fxa-nav-link" data-section="profile">
-      <span class="icon">👤</span> Mon profil
+      <span class="icon">👤</span> Profil professionnel
     </button>
     <button class="fxa-nav-link" data-section="gallery">
       <span class="icon">🖼</span> Ma galerie
@@ -90,10 +90,13 @@
       <span class="icon">👁</span> Profil public
     </button>
     <button class="fxa-nav-link" data-section="revenus">
-      <span class="icon">💰</span> Revenus
+      <span class="icon">💰</span> Finance
     </button>
     <button class="fxa-nav-link" data-section="notifications">
       <span class="icon">🔔</span> Notifications
+    </button>
+    <button class="fxa-nav-link" data-section="support">
+      <span class="icon">✦</span> RAFI Artisan
     </button>
     <button class="fxa-nav-link" data-section="support">
       <span class="icon">🆘</span> Support Fixeo
@@ -182,6 +185,10 @@
              role="region" aria-label="Notifications">
     </section>
 
+    <section class="fxa-section" id="fxav2-sec-rafi"
+             role="region" aria-label="RAFI Artisan">
+    </section>
+
     <section class="fxa-section" id="fxav2-sec-support"
              role="region" aria-label="Support Fixeo">
     </section>
@@ -197,16 +204,13 @@
     <span class="bicon">🏠</span><span>Accueil</span>
   </button>
   <button class="fxa-bottom-btn" data-section="available" aria-label="Demandes disponibles">
-    <span class="bicon">📬</span><span>Demandes</span>
+    <span class="bicon">✦</span><span>Opportunités</span>
   </button>
   <button class="fxa-bottom-btn" data-section="missions" aria-label="Mes missions">
     <span class="bicon">⚡</span><span>Missions</span>
   </button>
-  <button class="fxa-bottom-btn" data-section="quotes" aria-label="Mes devis">
-    <span class="bicon">📋</span><span>Devis</span>
-  </button>
-  <button class="fxa-bottom-btn" data-section="profile" aria-label="Mon profil">
-    <span class="bicon">👤</span><span>Profil</span>
+  <button class="fxa-bottom-btn" data-section="rafi" aria-label="RAFI Artisan">
+    <span class="bicon">✦</span><span>RAFI</span>
   </button>
 </nav>
 
