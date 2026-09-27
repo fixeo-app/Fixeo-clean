@@ -733,6 +733,13 @@ var available =
       (offers?'<div class="fxao-section-title"><span>DISPATCH FIXEO</span><h2>À décider</h2></div><div class="fxa-card-list">'+(_state.dispatchOffers||[]).slice(0,1).map(_renderDispatchOfferCard).join('')+'</div>':'');
   }
 
+  function _renderPerformanceSection(){
+    var sec=el('fxav2-sec-performance'); if(!sec)return;
+    var ap=_state.artisanProfile||{}; var count=Number(ap.review_count||0); var rating=Number(ap.rating||0); var done=Number(ap.completed_missions||0);
+    sec.innerHTML='<div class="fxao-rafi-page"><span class="fxao-kicker">PERFORMANCE · FIXEO</span><h1>Développez votre activité.</h1>'+
+      (count>0?'<div class="fxao-pulse"><button><b>'+rating.toFixed(1)+'/5</b><span>Note client</span></button><button><b>'+count+'</b><span>Avis</span></button><button><b>'+done+'</b><span>Missions terminées</span></button></div><article class="fxao-rafi"><span class="fxao-attention">RAFI · COACH</span><h2>Votre réputation se construit mission après mission.</h2><p>RAFI s’appuie uniquement sur vos données FIXEO réelles pour vous aider à progresser.</p></article>':'<article class="fxao-rafi"><span class="fxao-attention">RAFI · COACH</span><h2>Pas encore assez de données pour mesurer votre performance.</h2><p>Vos indicateurs apparaîtront après vos premières missions et évaluations réelles. Aucun score n’est simulé.</p></article>')+'</div>';
+  }
+
   function _renderRafiSection(){
     var sec=el('fxav2-sec-rafi'); if(!sec)return;
     var ap=_state.artisanProfile;
@@ -1255,13 +1262,14 @@ html += targetedOffers
     _renderHistory();
     _renderProfileSection();
     _renderRafiSection();
+    _renderPerformanceSection();
     _renderSupport();
   }
 
   /* ── NAVIGATION ───────────────────────────────────────────── */
   /* Cockpit sections live in fxck-sec-* IDs; V2 handles fxav2-sec-* only.
    * Navigation entries for cockpit sections are still dispatched via fixeo:section:changed. */
-  var SECTIONS     = ['dashboard', 'available', 'missions', 'history', 'profile', 'rafi', 'support'];
+  var SECTIONS     = ['dashboard', 'available', 'missions', 'history', 'profile', 'performance', 'rafi', 'support'];
   var COCKPIT_SECS = ['gallery', 'quotes', 'public-profile', 'revenus', 'notifications'];
 
   function _showSection(name) {
