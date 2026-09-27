@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c37'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c38'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -1119,31 +1119,20 @@
 
   /* ── SECTION: PROFILE ─────────────────────────────────────────── */
   function _renderProfile() {
-    var sec = el('fxv2-sec-profile');
-    if (!sec) return;
-    var p = _state.profile || {};
-    var u = (_state.session && _state.session.user) || {};
-    var name  = p.full_name  || u.user_metadata && u.user_metadata.full_name || 'Client';
-    var email = p.email      || u.email  || '';
-    var phone = p.phone      || u.user_metadata && u.user_metadata.phone || '';
-    var city  = p.city       || u.user_metadata && u.user_metadata.city  || '';
-
-    sec.innerHTML = '<div class="fxv2-section-head"><h2>\uD83D\uDC64 Mon profil</h2></div>'
-      + '<div class="fxv2-profile-card">'
-      + '<div class="fxv2-profile-avatar-lg">' + esc(initials(name) || '\uD83D\uDC64') + '</div>'
-      + '<div>'
-      + '<div class="fxv2-profile-name">' + esc(name) + '</div>'
-      + (email ? '<div class="fxv2-profile-email">' + esc(email) + '</div>' : '')
-      + (city  ? '<div class="fxv2-profile-city">\uD83D\uDCCD ' + esc(city) + '</div>' : '')
-      + '</div></div>'
-      + _infoRow('Nom complet', name)
-      + _infoRow('Email', email || '—')
-      + _infoRow('T\u00e9l\u00e9phone', phone || '—')
-      + _infoRow('Ville', city || '—')
-      + _infoRow('Total demandes', String(_state.requests.length))
-      + _infoRow('Missions termin\u00e9es', String(_state.requests.filter(function (r) { return r._pipeline.step === 5; }).length))
-      + '<div class="fxv2-divider"></div>'
-      + '<button class="fxv2-btn fxv2-btn-ghost" data-action="logout" style="width:100%;justify-content:center">Se d\u00e9connecter</button>';
+    var sec=el('fxv2-sec-profile'); if(!sec)return;
+    var p=_state.profile||{},u=(_state.session&&_state.session.user)||{};
+    var name=p.full_name||(u.user_metadata&&u.user_metadata.full_name)||'Client';
+    var email=p.email||u.email||'',phone=p.phone||(u.user_metadata&&u.user_metadata.phone)||'',city=p.city||(u.user_metadata&&u.user_metadata.city)||'';
+    var active=_state.requests.filter(function(r){return r._pipeline&&r._pipeline.step>=0&&r._pipeline.step<5;}).length;
+    var done=_state.requests.filter(function(r){return r._pipeline&&r._pipeline.step===5;}).length;
+    var unread=(_state.notifications||[]).filter(function(n){return !n.read;}).length;
+    sec.innerHTML='<div class="fxv2-c38-head"><span>COMPTE CLIENT</span><h2>Profil & préférences</h2><p>Votre identité FIXEO et les réglages disponibles dans cet espace.</p></div>'
+      +'<section class="fxv2-c38-identity"><div class="fxv2-c38-avatar">'+esc(initials(name)||'C')+'</div><div><strong>'+esc(name)+'</strong>'+(email?'<span>'+esc(email)+'</span>':'')+(city?'<small>📍 '+esc(city)+'</small>':'')+'</div><b>CLIENT</b></section>'
+      +'<div class="fxv2-c38-stats"><div><strong>'+active+'</strong><span>Actives</span></div><div><strong>'+done+'</strong><span>Terminées</span></div><div><strong>'+unread+'</strong><span>Non lues</span></div></div>'
+      +'<section class="fxv2-c38-card"><div class="fxv2-c38-cardhead"><span>INFORMATIONS DU COMPTE</span><strong>Coordonnées enregistrées</strong></div>'+_infoRow('Nom complet',name)+_infoRow('Email',email||'—')+_infoRow('Téléphone',phone||'—')+_infoRow('Ville',city||'—')+'</section>'
+      +'<section class="fxv2-c38-card"><div class="fxv2-c38-cardhead"><span>PRÉFÉRENCES</span><strong>Votre expérience FIXEO</strong></div><button class="fxv2-c38-link" data-action="go-notifications"><span>🔔 Notifications</span><small>'+unread+' non lue'+(unread>1?'s':'')+'</small><i>→</i></button><button class="fxv2-c38-link" data-action="go-rafi"><span>✦ RAFI</span><small>Copilote client</small><i>→</i></button><button class="fxv2-c38-link" data-action="go-documents"><span>▤ Documents & preuves</span><small>Dossier FIXEO</small><i>→</i></button></section>'
+      +'<div class="fxv2-c38-security"><span>✓ Session authentifiée</span><span>✓ Données visibles selon vos droits FIXEO</span></div>'
+      +'<button class="fxv2-btn fxv2-btn-ghost fxv2-c38-logout" data-action="logout">Se déconnecter</button>';
   }
 
   function _infoRow(label, value) {
