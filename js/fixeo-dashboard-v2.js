@@ -1280,8 +1280,16 @@
     sec.innerHTML='<div class="fxv2-c31-pagehead fxv2-c37-pagehead"><span>MON ACTIVITÉ</span><h2>Documents & confiance</h2><p>Votre dossier FIXEO : demandes, devis, missions, montants connus et références de suivi réellement enregistrés.</p></div>'+_renderC37Documents(_state.requests||[]);
   }
 
+  /* C3.9-A — dedicated Decision Center page */
+  function _renderC39DecisionPage(reqs) {
+    var sec = el('fxv2-sec-decision');
+    if (!sec) return;
+    sec.innerHTML = '<div class="fxv2-c31-pagehead"><span>FIXEO CLIENT OS</span><h2>Centre de décision</h2><p>Vos actions prioritaires et décisions à prendre, séparées de la liste de vos demandes.</p></div>'
+      + _renderC35DecisionEngine(reqs || []);
+  }
+
   /* ── NAVIGATION ───────────────────────────────────────────────── */
-  var SECTIONS = ['dashboard', 'requests', 'missions', 'messages', 'history', 'notifications', 'profile', 'support', 'rafi', 'documents'];
+  var SECTIONS = ['dashboard', 'decision', 'requests', 'missions', 'messages', 'history', 'notifications', 'profile', 'support', 'rafi', 'documents'];
 
   function _showSection(name) {
     if (SECTIONS.indexOf(name) === -1) name = 'dashboard';
@@ -1363,8 +1371,8 @@
       a.addEventListener('click', function () {
         var route=a.getAttribute('data-c31-route');
         if(route==='decision'){
-          _showSection('requests');
           _renderC39DecisionPage(_state.requests||[]);
+          _showSection('decision');
           return;
         }
         _showSection(a.dataset.section);
@@ -1861,9 +1869,9 @@ if (!result.ok) {
       }
 
       /* Wire nav — happens before fetch so sidebar is responsive */
+      _injectNotifBell();
       _bindNav();
       _bindActions();
-      _injectNotifBell();
       _showSection('dashboard');
 
       /* Fetch data */
