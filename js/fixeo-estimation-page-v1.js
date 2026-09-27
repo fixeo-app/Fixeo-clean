@@ -786,8 +786,8 @@
       {
         icon: 'search',
         tag: 'IL FAUT VÉRIFIER SUR PLACE',
-        name: 'Diagnostic',
-        desc: 'Une vérification sur place est nécessaire avant de chiffrer correctement.',
+        name: 'Visite',
+        desc: 'Une vérification terrain est nécessaire avant de chiffrer correctement.',
         cls: 'fxep-outcome-card',
       },
       {
@@ -800,8 +800,8 @@
       {
         icon: 'direction',
         tag: 'IL MANQUE UNE PRÉCISION',
-        name: 'Orientation',
-        desc: 'Le besoin demande à être précisé avant de poursuivre. Aucun prix n’est inventé.',
+        name: 'Clarification',
+        desc: 'RAFI demande la précision manquante avant de poursuivre. Aucun prix n’est inventé.',
         cls: 'fxep-outcome-card',
       },
     ];
@@ -837,17 +837,17 @@
     var STEPS = [
       {
         num: '01',
-        title: 'Vos mots, tout simplement.',
+        title: 'Décrivez.',
         desc: 'Décrivez ce qui se passe. Aucun terme technique à connaître.',
       },
       {
         num: '02',
-        title: 'Les précisions qui comptent.',
+        title: 'RAFI précise.',
         desc: 'RAFI vous guide pour définir ce que l’intervention doit couvrir.',
       },
       {
         num: '03',
-        title: 'La décision vous appartient.',
+        title: 'Vous décidez.',
         desc: 'Découvrez le résultat. Vous choisissez ensuite de poursuivre et de confirmer.',
       },
     ];
