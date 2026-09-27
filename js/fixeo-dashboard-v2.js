@@ -1321,6 +1321,9 @@
         case 'new-request':    return _openNewRequest();
         case 'new-urgent':     return _openUrgentRequest(btn);
         case 'go-requests':       return _showSection('requests');
+        case 'go-missions':       return _showSection('missions');
+        case 'go-rafi':           return _showSection('rafi');
+        case 'go-documents':      return _showSection('documents');
         case 'go-history':        return _showSection('history');
         case 'go-support':        return _showSection('support');
         case 'go-notifications':  return _showSection('notifications');
