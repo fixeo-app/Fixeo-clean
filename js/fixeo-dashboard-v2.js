@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c36'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c37'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -1243,9 +1243,19 @@
     var sec=el('fxv2-sec-rafi'); if(!sec) return;
     sec.innerHTML='<div class="fxv2-c31-pagehead fxv2-c34-pagehead"><span>FIXEO CLIENT OS</span><h2>RAFI</h2><p>Votre copilote client : situation réelle, priorité et actions sous votre contrôle.</p></div>'+_renderClientRafiIntelligence(_state.requests||[]);
   }
+  function _renderC37Documents(reqs) {
+    var all=(reqs||[]), total=0, dossiers=[];
+    all.forEach(function(r){var items=_evidenceForRequest(r);total+=items.length;if(items.length)dossiers.push({r:r,items:items});});
+    var f=_financeTruth(all);
+    return '<div class="fxv2-c37-trust">'
+      +'<div class="fxv2-c37-summary"><div><span>DOSSIER FIXEO</span><strong>'+total+'</strong><small>élément'+(total>1?'s':'')+' enregistré'+(total>1?'s':'')+'</small></div><div><span>PRIX CONNUS</span><strong>'+(f.pricedMissions?esc(f.knownTotal.toLocaleString('fr-MA'))+' MAD':'—')+'</strong><small>'+f.accepted+' devis accepté'+(f.accepted>1?'s':'')+'</small></div></div>'
+      +'<div class="fxv2-c37-trustbar"><span>✓ Données issues de votre dossier</span><span>✓ Aucun montant inventé</span><span>✓ Références de suivi conservées</span></div>'
+      +(dossiers.length?'<div class="fxv2-c37-dossiers">'+dossiers.slice(0,8).map(function(d){var r=d.r,p=r._pipeline||PIPELINE.NEW;return '<article class="fxv2-c37-dossier"><div class="fxv2-c37-dossier-head"><div><strong>'+esc(r.service_category||'Intervention')+'</strong><small>'+esc(r.city||'')+' · '+esc(p.label||'')+'</small></div><b>'+d.items.length+'</b></div><div class="fxv2-c37-items">'+d.items.map(function(i){return '<div data-kind="'+esc(i.kind)+'"><i>✓</i><span><strong>'+esc(i.label)+'</strong><small>'+esc(i.detail)+'</small></span></div>';}).join('')+'</div></article>';}).join('')+'</div>':'<div class="fxv2-c37-empty">Aucun élément documentaire enregistré pour le moment.</div>')
+    +'</div>';
+  }
   function _renderC31Documents() {
     var sec=el('fxv2-sec-documents'); if(!sec) return;
-    sec.innerHTML='<div class="fxv2-c31-pagehead"><span>MON ACTIVITÉ</span><h2>Documents & preuves</h2><p>Les éléments réellement enregistrés dans votre dossier FIXEO.</p></div>'+_renderEvidenceCenter(_state.requests||[]);
+    sec.innerHTML='<div class="fxv2-c31-pagehead fxv2-c37-pagehead"><span>MON ACTIVITÉ</span><h2>Documents & confiance</h2><p>Votre dossier FIXEO : demandes, devis, missions, montants connus et références de suivi réellement enregistrés.</p></div>'+_renderC37Documents(_state.requests||[]);
   }
 
   /* ── NAVIGATION ───────────────────────────────────────────────── */
