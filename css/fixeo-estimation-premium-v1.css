@@ -271,3 +271,179 @@ body.fxep-mode-public .fxf-canonical > .container { max-width: 1120px; padding-l
   #fxep-public-root .fxep-service-item { min-height: 0; }
 }
 @media(prefers-reduced-motion: reduce) { #fxep-public-root *, #fxep-public-root *::before, #fxep-public-root *::after { scroll-behavior: auto; transition: none !important; animation: none !important; } }
+
+
+/* ================================================================
+   ESTIMATION — PREMIUM MASTER / MOBILE-FIRST
+   Optical density, iOS stability, quieter surfaces, faster rhythm.
+   No estimator/pricing/business logic.
+   ================================================================ */
+html:has(#fxep-public-root),
+body:has(#fxep-public-root) {
+  max-width: 100%;
+  overflow-x: hidden;
+  background: #090e1b;
+  overscroll-behavior-x: none;
+  -webkit-text-size-adjust: 100%;
+}
+#fxep-public-root { overflow-x: clip; }
+
+/* Header = stable product chrome: never scales or morphs on scroll/focus. */
+#fxep-public-root .fxep-header {
+  transform: none !important;
+  scale: 1 !important;
+  contain: layout style;
+  min-width: 0;
+}
+#fxep-public-root .fxep-header > * { transform: none !important; flex-shrink: 0; }
+#fxep-public-root .fxep-header-spacer { flex-shrink: 1; }
+
+/* Premium density: less editorial distance, more product rhythm. */
+#fxep-public-root .fxep-discovery,
+#fxep-public-root .fxep-how,
+#fxep-public-root .fxep-services,
+#fxep-public-root .fxep-outcomes,
+#fxep-public-root .fxep-faq,
+#fxep-public-root .fxep-invitation {
+  scroll-margin-top: 76px;
+}
+
+/* Quieter surfaces + lighter GPU cost while scrolling. */
+#fxep-public-root .fxep-input-card,
+#fxep-public-root .fxep-example-after,
+#fxep-public-root .fxep-steps,
+#fxep-public-root .fxep-outcome-card,
+#fxep-public-root .fxep-invitation {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Services read as compact actions, not large marketing tiles. */
+#fxep-public-root .fxep-service-item {
+  min-height: 0;
+}
+
+/* FAQ: the first three are the primary mobile decision questions. */
+@media (max-width: 600px) {
+  #fxep-public-root .fxep-header {
+    height: 60px;
+    min-height: 60px;
+    padding: 0 16px;
+    position: sticky;
+    top: 0;
+  }
+  #fxep-public-root .fxep-header-brand { font-size: 16px; }
+  #fxep-public-root .fxep-header-back { min-height: 40px; padding: 8px 12px; }
+  #fxep-public-root .fxep-header-rafi-badge { font-size: 9px; }
+
+  #fxep-public-root .fxep-hero {
+    padding: 18px 16px 22px;
+    gap: 16px;
+  }
+  #fxep-public-root .fxep-hero-signal { margin-bottom: 11px; }
+  #fxep-public-root .fxep-hero-h1 {
+    font-size: clamp(33px, 9vw, 40px);
+    line-height: 1.02;
+    margin-bottom: 10px;
+  }
+  #fxep-public-root .fxep-hero-sub {
+    max-width: 34ch;
+    font-size: 14px;
+    line-height: 1.52;
+  }
+  #fxep-public-root .fxep-input-card { padding: 17px 15px; border-radius: 20px; }
+  #fxep-public-root .fxep-console-kicker { margin-bottom: 12px; }
+  #fxep-public-root .fxep-console-title { font-size: 19px; margin-bottom: 10px; }
+  #fxep-public-root .fxep-nlp-input {
+    min-height: 88px;
+    padding: 14px;
+    font-size: 16px !important;
+    line-height: 1.5;
+    resize: none;
+  }
+  #fxep-public-root .fxep-voice-btn,
+  #fxep-public-root select,
+  #fxep-public-root input,
+  #fxep-public-root textarea { font-size: 16px !important; }
+  #fxep-public-root .fxep-console-note { margin-top: 8px; line-height: 1.45; }
+  #fxep-public-root .fxep-city-row { margin-top: 12px; }
+  #fxep-public-root .fxep-hero-cta { min-height: 50px; margin-top: 4px; }
+
+  #fxep-public-root .fxep-discovery,
+  #fxep-public-root .fxep-how,
+  #fxep-public-root .fxep-services,
+  #fxep-public-root .fxep-outcomes,
+  #fxep-public-root .fxep-faq {
+    padding: 26px 16px;
+  }
+  #fxep-public-root .fxep-section-label { margin-bottom: 8px; }
+  #fxep-public-root .fxep-section-title,
+  #fxep-public-root .fxep-how > .fxep-section-title,
+  #fxep-public-root .fxep-services .fxep-section-title,
+  #fxep-public-root .fxep-outcomes-heading {
+    font-size: 27px;
+    line-height: 1.08;
+    margin-bottom: 10px;
+  }
+  #fxep-public-root .fxep-section-copy,
+  #fxep-public-root .fxep-outcomes-sub {
+    font-size: 13px;
+    line-height: 1.55;
+    margin-bottom: 16px;
+  }
+
+  /* RAFI example = one compact transformation card. */
+  #fxep-public-root .fxep-example-choices { margin-bottom: 14px; }
+  #fxep-public-root .fxep-example-stage { gap: 8px; }
+  #fxep-public-root .fxep-example-before { padding: 8px 12px; }
+  #fxep-public-root .fxep-example-before p { font-size: 20px; margin: 9px 0; }
+  #fxep-public-root .fxep-example-transform { font-size: 17px; line-height: 1; }
+  #fxep-public-root .fxep-example-after { padding: 15px 14px; border-radius: 16px; }
+  #fxep-public-root .fxep-example-after h3 { font-size: 17px; margin: 8px 0; }
+  #fxep-public-root .fxep-example-after ul { margin: 10px 0; gap: 5px; }
+  #fxep-public-root .fxep-example-after li { padding: 7px 9px; font-size: 12px; }
+  #fxep-public-root .fxep-example-try { margin-top: 10px; min-height: 40px; }
+
+  /* Three steps become a dense timeline. */
+  #fxep-public-root .fxep-steps { margin-top: 12px; border-radius: 18px; }
+  #fxep-public-root .fxep-step { padding: 14px 13px; gap: 11px; }
+  #fxep-public-root .fxep-step-num { flex-basis: 32px; width: 32px; height: 32px; font-size: 10px; }
+  #fxep-public-root .fxep-step-title { font-size: 14px; margin-bottom: 3px; }
+  #fxep-public-root .fxep-step-desc { font-size: 12px; line-height: 1.45; }
+
+  /* Services: ~30% less vertical mass. */
+  #fxep-public-root .fxep-service-grid { gap: 8px; }
+  #fxep-public-root .fxep-service-item { min-height: 126px; padding: 14px 12px; border-radius: 16px; }
+  #fxep-public-root .fxep-service-icon { width: 38px; height: 38px; margin-bottom: 11px; }
+  #fxep-public-root .fxep-service-arrow { right: 11px; top: 13px; font-size: 17px; }
+  #fxep-public-root .fxep-service-category { margin-bottom: 4px; }
+  #fxep-public-root .fxep-service-name { font-size: 13px; line-height: 1.35; }
+  #fxep-public-root .fxep-service-badge { margin-top: 6px; font-size: 10px; }
+
+  /* Outcome hierarchy: Price hero + compact alternatives. */
+  #fxep-public-root .fxep-outcomes-grid { gap: 8px; margin-top: 16px; }
+  #fxep-public-root .fxep-outcome-card { padding: 15px 14px; border-radius: 16px; }
+  #fxep-public-root .is-price { padding: 19px 16px; }
+  #fxep-public-root .is-price .fxep-outcome-name { font-size: 29px; margin: 7px 0 10px; }
+  #fxep-public-root .fxep-outcome-name { font-size: 16px; margin: 3px 0 5px; }
+  #fxep-public-root .fxep-outcome-desc { font-size: 12px; line-height: 1.5; }
+  #fxep-public-root .fxep-outcome-promise { margin-top: 12px; padding-top: 10px; }
+
+  /* FAQ: compact decision support. */
+  #fxep-public-root .fxep-faq-q { min-height: 52px; padding: 14px 2px; font-size: 13px; line-height: 1.4; }
+  #fxep-public-root .fxep-faq-a { padding: 0 2px 14px; font-size: 12px; line-height: 1.6; }
+  #fxep-public-root .fxep-faq-chevron { flex-basis: 26px; width: 26px; height: 26px; font-size: 16px; }
+
+  /* Signature closing card. */
+  #fxep-public-root .fxep-invitation { margin: 20px 16px 30px; padding: 24px 18px; border-radius: 20px; }
+  #fxep-public-root .fxep-invitation h2 { font-size: 29px; margin: 9px 0; }
+  #fxep-public-root .fxep-invitation p { font-size: 13px; line-height: 1.5; margin-bottom: 16px; }
+  #fxep-public-root .fxep-invitation button { width: 100%; min-height: 50px; }
+  #fxep-public-root .fxep-invitation small { margin-top: 10px; }
+}
+
+@media (max-width: 380px) {
+  #fxep-public-root .fxep-header { padding-inline: 12px; }
+  #fxep-public-root .fxep-hero { padding-inline: 14px; }
+  #fxep-public-root .fxep-service-item { min-height: 118px; padding: 12px 10px; }
+}
