@@ -1,0 +1,6 @@
+-- ARTISAN OS A7
+-- Production migration applied: artisan_os_a7_finance_acl_canonical_owner
+-- Revokes authenticated INSERT/UPDATE/DELETE on payments.
+-- Revokes authenticated write privileges on artisan_review_stats.
+-- Replaces payment read policy with canonical artisan ownership through artisans.owner_user_id.
+-- Full SQL is preserved in Supabase migration history.
