@@ -6,3 +6,52 @@
 .rafi-dictation :focus-visible{outline:2px solid #ffc391;outline-offset:3px}
 .rafi-dictation-status{flex-basis:100%;font-size:12px;line-height:1.5;color:#b7c7df}
 .fxep-input-row:has(.rafi-dictation){flex-wrap:wrap}
+
+
+/* Estimation Visual System Master — canonical RAFI command bar */
+#fxep-public-root .rafi-dictation{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
+  margin:10px 0 0;
+}
+#fxep-public-root .rafi-dictation button,
+#fxep-public-root .rafi-dictation select{
+  min-height:46px;
+  border:1px solid #aebeff52;
+  border-radius:14px;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif !important;
+  font-size:16px !important;
+  font-style:normal !important;
+  font-weight:700;
+  color:#f6f7fc;
+  box-shadow:inset 0 1px #ffffff16,0 8px 22px #0002;
+}
+#fxep-public-root .rafi-dictation button{
+  background:linear-gradient(110deg,#4f8ec4 0%,#746aa8 48%,#a85f91 100%);
+  border-color:#bdd8ff80;
+}
+#fxep-public-root .rafi-dictation select{
+  width:auto;
+  max-width:150px;
+  padding:10px 34px 10px 13px;
+  background-color:#172239;
+}
+#fxep-public-root .rafi-dictation button[aria-pressed=true]{
+  background:linear-gradient(110deg,#a6537c,#6e5ca6);
+  border-color:#ffc9dc90;
+}
+#fxep-public-root .rafi-dictation-status{
+  grid-column:1/-1;
+  margin:0;
+  padding:0 2px;
+  color:#b9c4d8;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:11px;
+  line-height:1.45;
+}
+@media(max-width:380px){
+  #fxep-public-root .rafi-dictation{grid-template-columns:minmax(0,1fr) 124px}
+  #fxep-public-root .rafi-dictation select{max-width:124px}
+}
