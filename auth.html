@@ -320,9 +320,9 @@
             </div>
 
             <!-- Specialty cards (visual) — syncs #signup-specialty -->
-            <div class="ap-field-label">Sp&eacute;cialit&eacute;</div>
+            <div class="ap-field-label">Vos m&eacute;tiers <span class="ap-field-meta" id="ap-services-count">0 s&eacute;lectionn&eacute;</span></div>
             <div class="ap-specialty-grid" id="ap-specialty-grid" role="listbox"
-                 aria-label="Choisir votre spécialité">
+                 aria-label="Choisir vos métiers" aria-multiselectable="true">
               <div class="ap-scard" role="option" tabindex="0" data-value="Plomberie"
                    onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
                 <span class="ap-scard-icon ap-si-plomberie" aria-hidden="true"></span>
@@ -408,9 +408,9 @@
             </select>
 
             <!-- City chips — syncs #signup-city -->
-            <div class="ap-field-label" style="margin-top:18px">Ville</div>
+            <div class="ap-field-label" style="margin-top:18px">Vos villes d’intervention <span class="ap-field-meta" id="ap-cities-count">0 s&eacute;lectionn&eacute;e</span></div>
             <div class="ap-city-chips" id="ap-city-chips" role="listbox"
-                 aria-label="Choisir votre ville">
+                 aria-label="Choisir vos villes d’intervention" aria-multiselectable="true">
               <div class="ap-chip" role="option" tabindex="0" data-value="Casablanca"
                    onclick="selectCity(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectCity(this)">Casablanca</div>
               <div class="ap-chip" role="option" tabindex="0" data-value="Rabat"
@@ -1006,6 +1006,29 @@ async function handleSignup(e) {
 
   errEl.style.display = 'none';
 
+  if (role === 'artisan') {
+    try {
+      var readyState = await window.FixeoSupabaseClient.ready();
+      var rpcClient = readyState && readyState.client;
+      var services = _selectedValues('#ap-specialty-grid .ap-scard');
+      var cities = _selectedValues('#ap-city-chips .ap-chip');
+      if (!rpcClient || !services.length || !cities.length) throw new Error('Profil artisan incomplet.');
+      var rpcResult = await rpcClient.rpc('finalize_artisan_signup_v1', {
+        p_full_name: nameEl.value.trim(),
+        p_phone: phone,
+        p_services: services,
+        p_cities: cities
+      });
+      if (rpcResult.error || !rpcResult.data || rpcResult.data.ok !== true) {
+        throw new Error((rpcResult.error && rpcResult.error.message) || 'Impossible de finaliser le profil artisan.');
+      }
+    } catch (artisanErr) {
+      errEl.textContent = '❌ ' + (artisanErr.message || 'Impossible de finaliser le profil artisan.');
+      errEl.style.display = 'block';
+      return;
+    }
+  }
+
   /* Phase 6.2.4 — R-06: dispatch dedicated signup success event.
      Fires ONLY here: after FixeoAuth.signUp() succeeds (user non-null,
      error null) and immediately before the confirmation screen is shown.
@@ -1364,73 +1387,33 @@ function syncTerms(el) {
 }
 
 // ── Specialty card selection ────────────────────────────────
-function selectSpecialty(el) {
-  var grid = document.getElementById('ap-specialty-grid');
-  if (!grid) return;
-  // Deselect all
-  grid.querySelectorAll('.ap-scard').forEach(function(c) {
-    c.classList.remove('ap-selected');
-    c.setAttribute('aria-selected','false');
-  });
-  // Select clicked
-  el.classList.add('ap-selected');
-  el.setAttribute('aria-selected','true');
-  // Sync hidden canonical select
-  var val = el.dataset.value || '';
-  var sel = document.getElementById('signup-specialty');
-  if (sel) {
-    for (var i = 0; i < sel.options.length; i++) {
-      if (sel.options[i].value === val || sel.options[i].text === val) {
-        sel.selectedIndex = i; break;
-      }
-    }
-    sel.value = val;
-    sel.dispatchEvent(new Event('change', { bubbles: true }));
-  }
-  // Micro-pulse feedback
-  el.classList.add('ap-tap');
-  setTimeout(function() { el.classList.remove('ap-tap'); }, 320);
-  // Field-done calming: non-selected cards fade after short delay
-  var grid2 = document.getElementById('ap-specialty-grid');
-  if (grid2) {
-    grid2.classList.remove('ap-field-done');
-    setTimeout(function() { grid2.classList.add('ap-field-done'); }, 480);
-  }
+function _selectedValues(selector) {
+  return Array.from(document.querySelectorAll(selector + '.ap-selected')).map(function(el){ return el.dataset.value || ''; }).filter(Boolean);
 }
-
-// ── City chip selection ─────────────────────────────────────
+function _updateMultiCounts() {
+  var sv=_selectedValues('#ap-specialty-grid .ap-scard');
+  var cv=_selectedValues('#ap-city-chips .ap-chip');
+  var sc=document.getElementById('ap-services-count'), cc=document.getElementById('ap-cities-count');
+  if(sc) sc.textContent=sv.length + (sv.length>1 ? ' sélectionnés' : ' sélectionné');
+  if(cc) cc.textContent=cv.length + (cv.length>1 ? ' sélectionnées' : ' sélectionnée');
+}
+function selectSpecialty(el) {
+  el.classList.toggle('ap-selected');
+  el.setAttribute('aria-selected',el.classList.contains('ap-selected')?'true':'false');
+  var vals=_selectedValues('#ap-specialty-grid .ap-scard');
+  var sel=document.getElementById('signup-specialty');
+  if(sel) sel.value=vals[0]||'';
+  el.classList.add('ap-tap'); setTimeout(function(){el.classList.remove('ap-tap');},260);
+  _updateMultiCounts();
+}
 function selectCity(el) {
-  var row = document.getElementById('ap-city-chips');
-  if (!row) return;
-  // Deselect all
-  row.querySelectorAll('.ap-chip').forEach(function(c) {
-    c.classList.remove('ap-selected');
-    c.setAttribute('aria-selected','false');
-  });
-  // Select clicked
-  el.classList.add('ap-selected');
-  el.setAttribute('aria-selected','true');
-  // Sync hidden canonical select
-  var val = el.dataset.value || '';
-  var sel = document.getElementById('signup-city');
-  if (sel) {
-    for (var i = 0; i < sel.options.length; i++) {
-      if (sel.options[i].value === val || sel.options[i].text === val) {
-        sel.selectedIndex = i; break;
-      }
-    }
-    sel.value = val;
-    sel.dispatchEvent(new Event('change', { bubbles: true }));
-  }
-  // Micro-pulse feedback
-  el.classList.add('ap-tap');
-  setTimeout(function() { el.classList.remove('ap-tap'); }, 320);
-  // Field-done calming: non-selected chips fade after short delay
-  var row2 = document.getElementById('ap-city-chips');
-  if (row2) {
-    row2.classList.remove('ap-field-done');
-    setTimeout(function() { row2.classList.add('ap-field-done'); }, 420);
-  }
+  el.classList.toggle('ap-selected');
+  el.setAttribute('aria-selected',el.classList.contains('ap-selected')?'true':'false');
+  var vals=_selectedValues('#ap-city-chips .ap-chip');
+  var sel=document.getElementById('signup-city');
+  if(sel) sel.value=vals[0]||'';
+  el.classList.add('ap-tap'); setTimeout(function(){el.classList.remove('ap-tap');},260);
+  _updateMultiCounts();
 }
 
 // ── Artisan step 4 proxy submit ─────────────────────────────
@@ -1509,7 +1492,10 @@ function validateSignupStep(step) {
   }
 
   if (step === 3 && role === 'artisan') {
-    // Artisan specialty + city: optional — just advance
+    var services=_selectedValues('#ap-specialty-grid .ap-scard');
+    var cities=_selectedValues('#ap-city-chips .ap-chip');
+    if (!services.length) { show('Sélectionnez au moins un métier.'); return false; }
+    if (!cities.length) { show('Sélectionnez au moins une ville d’intervention.'); return false; }
     return true;
   }
 
