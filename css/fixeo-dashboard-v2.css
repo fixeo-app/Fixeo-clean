@@ -1773,3 +1773,12 @@ a.fxv2-header-logo:hover { opacity: .8; }
 
 /* C3.9C — Communication & Support */
 .fxv2-c39c-head{margin-bottom:13px}.fxv2-c39c-head>span{color:rgba(225,48,108,.72);font-size:.55rem;font-weight:900;letter-spacing:.12em}.fxv2-c39c-head h2{margin:4px 0 2px;color:#fff;font-size:1.35rem}.fxv2-c39c-head p{margin:0;color:var(--v2-text-3);font-size:.68rem}.fxv2-c39c-card{margin-bottom:10px;padding:14px;border:1px solid rgba(255,255,255,.07);border-radius:16px;background:rgba(255,255,255,.022)}.fxv2-c39c-title span,.fxv2-c39c-title strong{display:block}.fxv2-c39c-title span{color:rgba(255,255,255,.34);font-size:.51rem;font-weight:900;letter-spacing:.11em}.fxv2-c39c-title strong{margin-top:3px;color:#fff;font-size:.79rem}.fxv2-c39c-list{display:grid;gap:6px;margin-top:10px}.fxv2-c39c-list a{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:8px;padding:9px;border:1px solid rgba(37,211,102,.12);border-radius:11px;background:rgba(37,211,102,.025);color:#fff;text-decoration:none}.fxv2-c39c-list strong,.fxv2-c39c-list small{display:block}.fxv2-c39c-list strong{font-size:.66rem}.fxv2-c39c-list small{color:var(--v2-text-3);font-size:.54rem}.fxv2-c39c-list b{color:#86efac;font-size:.55rem}.fxv2-c39c-actions{display:grid;gap:7px;margin-top:10px}.fxv2-c39c-actions a,.fxv2-c39c-actions button,.fxv2-c39c-wide{display:flex;align-items:center;justify-content:center;width:100%;min-height:38px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.025);color:#fff;font-size:.61rem;font-weight:800;text-decoration:none}.fxv2-c39c-note,.fxv2-c39c-empty p{color:var(--v2-text-3);font-size:.58rem;line-height:1.45}.fxv2-c39c-empty strong{color:#fff;font-size:.72rem}.fxv2-c39c-wide{margin-top:10px}.fxv2-c39c-rafi{border-color:rgba(168,85,247,.18);color:#e9d5ff}.fxv2-c39c-tech{margin-top:12px;color:rgba(255,255,255,.35);font-size:.55rem}.fxv2-c39c-tech summary{cursor:pointer}.fxv2-c39c-tech span{display:block;margin-top:6px}
+
+
+/* C3.9D — final shell polish */
+.fxv2-nav-rafi .icon{font-size:1.12rem!important;color:#e9d5ff!important;text-shadow:0 0 10px rgba(216,180,254,.5)}
+.fxv2-nav-rafi.active .icon{font-size:1.18rem!important}
+.fxv2-bottom-c31 .fxv2-bottom-btn:nth-child(1) .bicon{font-size:1.05rem!important}
+.fxv2-bottom-c31 .fxv2-bottom-btn:nth-child(2) .bicon{font-size:.9rem!important;color:rgba(255,255,255,.78)}
+.fxv2-bottom-c31 .fxv2-bottom-btn:nth-child(2).active .bicon{color:#fff}
+.fxv2-support-tech{opacity:.45;font-size:.5rem}
