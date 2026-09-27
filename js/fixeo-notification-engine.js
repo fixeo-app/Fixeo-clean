@@ -32,7 +32,7 @@
 
   if (window.FixeoNotifEngine) return; // idempotent
 
-  var VERSION = 's1b2-candidate';
+  var VERSION = 's1b2-candidate-c321';
 
   /* ── Helpers ──────────────────────────────────────────────── */
   function _dispatch(name, detail) {
@@ -376,8 +376,11 @@
 
   /* Inject bell into client dashboard header */
   function _injectClientBell() {
-    /* Target: <div><!-- reserved for future notification bell --></div> */
-    var placeholder = document.querySelector('.fxv2-header > div');
+    /* Client OS owns its canonical notification slot/bell.
+       Do not inject a second legacy bell into the first header div. */
+    var canonical = document.getElementById('fxv2-header-notifications');
+    if (canonical) return;
+    var placeholder = document.querySelector('.fxv2-header > div:last-child');
     if (!placeholder || placeholder.querySelector('.fxne-bell')) return;
     placeholder.style.position = 'relative';
     placeholder.innerHTML = _bellHTML();
