@@ -2078,3 +2078,9 @@ body {
     max-width: 100%;
   }
 }
+
+
+/* Unified Access — selected universe is authoritative during signup. */
+#signup-role-chooser[hidden]{
+  display:none !important;
+}
