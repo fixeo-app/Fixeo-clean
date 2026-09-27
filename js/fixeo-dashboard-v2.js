@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c34'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c35'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -843,6 +843,23 @@
     + '</section>';
   }
 
+  function _renderC35DecisionEngine(reqs) {
+    var items=_clientAttentionItems(reqs);
+    if(!items.length) return '<section class="fxv2-c35-decision fxv2-c35-clear"><div class="fxv2-c35-head"><div><span>CENTRE DE DÉCISION</span><strong>Tout est sous contrôle</strong><p>Aucune action immédiate n’est requise.</p></div><b>✓</b></div></section>';
+    var primary=items[0], secondary=items.slice(1,3);
+    var why=primary.tone==='action'?'La prestation est indiquée comme terminée et attend votre validation.'
+      :primary.tone==='decision'?'Une proposition enregistrée attend votre décision.'
+      :primary.tone==='notification'?'Une mise à jour FIXEO non lue peut nécessiter votre attention.'
+      :primary.tone==='live'?'Une intervention est actuellement indiquée en cours.'
+      :primary.tone==='assigned'?'Un artisan est assigné et la prochaine étape est le démarrage.'
+      :'FIXEO recherche encore un artisan éligible pour cette demande.';
+    return '<section class="fxv2-c35-decision" data-tone="'+esc(primary.tone)+'" aria-label="Centre de décision">'
+      +'<div class="fxv2-c35-head"><div><span>CENTRE DE DÉCISION</span><strong>'+items.length+' point'+(items.length>1?'s':'')+' à suivre</strong></div><b>'+items.length+'</b></div>'
+      +'<button class="fxv2-c35-primary" data-action="'+esc(primary.action)+'"><em>PRIORITÉ 01</em><strong>'+esc(primary.label)+'</strong><small>'+esc(primary.detail)+'</small><p><i>✦</i> RAFI · '+esc(why)+'</p><span>Agir maintenant →</span></button>'
+      +(secondary.length?'<div class="fxv2-c35-secondary">'+secondary.map(function(i,idx){return '<button data-action="'+esc(i.action)+'"><em>0'+(idx+2)+'</em><span><strong>'+esc(i.label)+'</strong><small>'+esc(i.detail)+'</small></span><i>→</i></button>';}).join('')+'</div>':'')
+    +'</section>';
+  }
+
   function _multiRequestSummary(reqs) {
     var out={search:0,decision:0,assigned:0,progress:0,confirm:0,done:0,cancelled:0,total:(reqs||[]).length};
     (reqs||[]).forEach(function(r){
@@ -1009,6 +1026,7 @@
 
     /* C3.2 — one hierarchy: situation → action → live → RAFI → portfolio. */
     html += _renderClientControlTower(reqs);
+    html += _renderC35DecisionEngine(reqs);
     html += _renderC32Live(reqs);
     html += _renderC32RafiBrief(reqs);
     html += _renderC32Portfolio(reqs);
