@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c38'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c39a'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -1198,7 +1198,7 @@
     });
     var bell = slot.querySelector('#fxv2-notif-bell');
     if (!bell) {
-      slot.innerHTML = '<button id="fxv2-notif-bell" class="fxv2-notif-bell" aria-label="Notifications" data-action="go-notifications">\uD83D\uDD14</button>';
+      slot.innerHTML = '<button id="fxv2-notif-bell" class="fxv2-notif-bell" aria-label="Notifications" data-section="notifications">\uD83D\uDD14</button>';
     }
   }
 
@@ -1217,6 +1217,7 @@
     _renderSidebarProfile();
     _renderNotificationBell();
     _renderDashboard();
+    _renderC39DecisionCenter();
     _renderRequests();
     _renderMissions();
     _renderHistory();
@@ -1226,6 +1227,11 @@
     _renderSupport();
     _renderC31Rafi();
     _renderC31Documents();
+  }
+
+  function _renderC39DecisionCenter() {
+    var sec=el('fxv2-sec-decisions'); if(!sec) return;
+    sec.innerHTML='<div class="fxv2-c31-pagehead"><span>FIXEO CLIENT OS</span><h2>Centre de décision</h2><p>Vos priorités et décisions, classées à partir des états réels de votre dossier.</p></div>'+_renderC35DecisionEngine(_state.requests||[]);
   }
 
   function _renderC31Rafi() {
@@ -1248,7 +1254,7 @@
   }
 
   /* ── NAVIGATION ───────────────────────────────────────────────── */
-  var SECTIONS = ['dashboard', 'requests', 'missions', 'messages', 'history', 'notifications', 'profile', 'support', 'rafi', 'documents'];
+  var SECTIONS = ['dashboard', 'decisions', 'requests', 'missions', 'messages', 'history', 'notifications', 'profile', 'support', 'rafi', 'documents'];
 
   function _showSection(name) {
     if (SECTIONS.indexOf(name) === -1) name = 'dashboard';
