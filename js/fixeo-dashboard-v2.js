@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c33'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c34'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -785,13 +785,33 @@
     + '</div>';
   }
 
+  function _rafiSituationRows(reqs) {
+    var rows=[];
+    (reqs||[]).filter(function(r){return r._pipeline&&r._pipeline.step>=0&&r._pipeline.step<5;}).slice(0,4).forEach(function(r){
+      var p=r._pipeline||PIPELINE.NEW, found=_findAcceptedArtisan(r), artisan=found?found.artisan:null, quote=found?found.quote:null;
+      var facts=[r.city||'',p.label||''];
+      if(artisan&&artisan.full_name) facts.push(artisan.full_name);
+      if(quote&&quote.proposed_price) facts.push(quote.proposed_price+' MAD');
+      rows.push({service:r.service_category||'Intervention',facts:facts.filter(Boolean).join(' · '),step:p.step});
+    });
+    return rows;
+  }
+  function _renderRafiSituation(reqs) {
+    var rows=_rafiSituationRows(reqs);
+    if(!rows.length) return '<div class="fxv2-c34-empty">Aucune intervention active. RAFI reste disponible pour votre prochaine demande.</div>';
+    return '<div class="fxv2-c34-situations">'+rows.map(function(r){return '<div class="fxv2-c34-situation" data-step="'+r.step+'"><i></i><span><strong>'+esc(r.service)+'</strong><small>'+esc(r.facts)+'</small></span></div>';}).join('')+'</div>';
+  }
+  function _renderRafiGuardrails() {
+    return '<div class="fxv2-c34-trust"><span>✓ États issus de votre dossier FIXEO</span><span>✓ Prix affichés seulement s’ils sont enregistrés</span><span>✓ Toute action sensible demande votre confirmation</span></div>';
+  }
   function _renderClientRafiIntelligence(reqs) {
     var b = _clientRafiBrief(reqs);
-    return '<section class="fxv2-rafi-intel" data-tone="' + esc(b.tone) + '" aria-label="RAFI Client Intelligence">'
-      + '<div class="fxv2-rafi-orb" aria-hidden="true"><span>R</span></div>'
-      + '<div class="fxv2-rafi-copy"><span class="fxv2-rafi-kicker">RAFI CLIENT INTELLIGENCE</span><strong>' + esc(b.title) + '</strong><p>' + esc(b.text) + '</p></div>'
+    return '<section class="fxv2-rafi-intel fxv2-c34-copilot" data-tone="' + esc(b.tone) + '" aria-label="RAFI Client Copilot">'
+      + '<div class="fxv2-c34-hero"><div class="fxv2-c34-star" aria-hidden="true">✦</div><div class="fxv2-rafi-copy"><span class="fxv2-rafi-kicker">RAFI CLIENT COPILOT</span><strong>' + esc(b.title.replace(/^RAFI ·\s*/,'')) + '</strong><p>' + esc(b.text) + '</p></div></div>'
       + '<button class="fxv2-btn fxv2-rafi-action" data-action="' + esc(b.actionName) + '">' + esc(b.action) + '</button>'
+      + '<div class="fxv2-c34-section"><span>SITUATION RÉELLE</span>'+_renderRafiSituation(reqs)+'</div>'
       + _renderRafiGovernedAction(reqs)
+      + _renderRafiGuardrails()
     + '</section>';
   }
 
@@ -1203,7 +1223,7 @@
 
   function _renderC31Rafi() {
     var sec=el('fxv2-sec-rafi'); if(!sec) return;
-    sec.innerHTML='<div class="fxv2-c31-pagehead"><span>FIXEO CLIENT OS</span><h2>RAFI</h2><p>Votre assistant pour comprendre la situation et accéder aux prochaines actions.</p></div>'+_renderClientRafiIntelligence(_state.requests||[]);
+    sec.innerHTML='<div class="fxv2-c31-pagehead fxv2-c34-pagehead"><span>FIXEO CLIENT OS</span><h2>RAFI</h2><p>Votre copilote client : situation réelle, priorité et actions sous votre contrôle.</p></div>'+_renderClientRafiIntelligence(_state.requests||[]);
   }
   function _renderC31Documents() {
     var sec=el('fxv2-sec-documents'); if(!sec) return;
