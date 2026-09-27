@@ -223,11 +223,10 @@ if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
       return { user: Object.assign({}, user, { role: role, full_name: fullName }), error: null };
     }
 
-    /* Offline fallback — PHASE 1B: fixeo_admin localStorage no longer trusted */
-    var role = localStorage.getItem('fixeo_role') || 'client';
-    _setLocalSession({ id: localStorage.getItem('user_id') || 'local-' + Date.now(), email: email, role: role });
-    log('signIn: offline mode — role=' + role);
-    return { user: { id: localStorage.getItem('user_id'), email: email, role: role }, error: null };
+    /* Production auth is fail-closed: never synthesize a local identity or role. */
+    _clearLocalSession();
+    log('signIn blocked — Supabase Auth unavailable', 'error');
+    return { user: null, error: { message: 'Service d’authentification momentanément indisponible.' } };
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -288,9 +287,8 @@ if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
       var _ref = await sb().auth.getSession();
       return (_ref.data && _ref.data.session) || null;
     }
-    var uid = localStorage.getItem('fixeo_user_id') || localStorage.getItem('user_id');
-    if (!uid) return null;
-    return { user: { id: uid, email: localStorage.getItem('fixeo_user') || '', role: localStorage.getItem('fixeo_role') || 'client' } };
+    /* No Supabase client means no trusted session. LocalStorage is not auth authority. */
+    return null;
   }
 
   async function getCurrentUser() {
@@ -322,14 +320,17 @@ if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
     /* Keys required by header-unified.js and auth-global.js */
     localStorage.setItem('user_id',          s.id    || '');
     localStorage.setItem('fixeo_user',        s.email || '');
-    localStorage.setItem('fixeo_role',        s.role  || 'client');
+    if (['admin', 'artisan', 'client'].indexOf(String(s.role || '').toLowerCase()) === -1) {
+      throw new Error('Invalid canonical role');
+    }
+    localStorage.setItem('fixeo_role',        s.role);
     localStorage.setItem('fixeo_user_name',   s.name  || '');
     localStorage.setItem('user_name',         s.name  || '');
-    localStorage.setItem('role',              s.role  || 'client');
+    localStorage.setItem('role',              s.role);
     localStorage.setItem('user', JSON.stringify({
       id:   s.id    || '',
       name: s.name  || '',
-      role: s.role  || 'client'
+      role: s.role
     }));
     if (s.role === 'admin') {
       /* PHASE 1B: admin token sessionStorage ONLY */
