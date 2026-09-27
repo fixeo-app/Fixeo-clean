@@ -55,3 +55,15 @@
   #fxep-public-root .rafi-dictation{grid-template-columns:minmax(0,1fr) 124px}
   #fxep-public-root .rafi-dictation select{max-width:124px}
 }
+
+
+/* ESTIMATION — CTA COLOR HARMONY / secondary RAFI action */
+#fxep-public-root .rafi-dictation button {
+  color:#f8f7ff !important;
+  background:linear-gradient(105deg,#45698f 0%,#665b91 48%,#875a7a 100%) !important;
+  border-color:#b8c9ff70 !important;
+  box-shadow:inset 0 1px #ffffff18,0 7px 20px #0002 !important;
+}
+#fxep-public-root .rafi-dictation button[aria-pressed=true] {
+  background:linear-gradient(105deg,#875a7a 0%,#6b5893 54%,#496d98 100%) !important;
+}
