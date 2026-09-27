@@ -2155,3 +2155,24 @@ body {
   #signup-form .ap-city-chips{gap:7px}
   #signup-form .ap-chip{min-height:40px;padding:9px 12px}
 }
+
+
+/* Signup OS — canonical FIXEO action gradient */
+#signup-form .ap-btn,
+#signup-form .ap-btn-next{
+  color:#fff !important;
+  background:linear-gradient(105deg,#e1306c 0%,#b44fc2 48%,#6f5bff 72%,#55b8ff 100%) !important;
+  border:1px solid rgba(255,255,255,.20) !important;
+  text-shadow:0 1px 1px rgba(35,18,54,.22);
+  box-shadow:0 12px 30px rgba(177,73,193,.28),0 0 0 1px rgba(255,255,255,.08) inset !important;
+}
+#signup-form .ap-btn:hover:not(:disabled),
+#signup-form .ap-btn-next:hover:not(:disabled){
+  background:linear-gradient(105deg,#ed3d78 0%,#bf58ca 48%,#7865ff 72%,#62c1ff 100%) !important;
+}
+#signup-form .ap-btn:disabled,
+#signup-form .ap-btn-next:disabled{
+  color:rgba(255,255,255,.68) !important;
+  background:linear-gradient(105deg,rgba(225,48,108,.46),rgba(111,91,255,.46),rgba(85,184,255,.40)) !important;
+  box-shadow:none !important;
+}
