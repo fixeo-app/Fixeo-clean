@@ -2030,3 +2030,51 @@ html body {
 /* A1.2.3 — Enterprise isolation & iOS focus geometry */
 .uag-enterprise-mode #ap-hero-zone,.uag-enterprise-mode #auth-tabs{display:none!important}.uag-enterprise-mode .uag-enterprise-access{display:flex!important;color:#70f0dc!important}.uag-enterprise-mode .uag-enterprise-access strong{color:#effffc!important}.uag-enterprise-mode .uag-enterprise-access small{color:rgba(255,255,255,.58)!important}.ap-hero-zone[data-gateway-hidden="true"]{display:none!important}
 @media(max-width:820px){html,body{width:100%;max-width:100%;overflow-x:hidden}.auth-shell,.auth-center,.auth-box{width:100%;max-width:100%;box-sizing:border-box}.auth-center{padding-left:12px!important;padding-right:12px!important}.auth-box{min-width:0}.ap-input-wrap,.ap-group,.ap-input,.ap-select{max-width:100%;box-sizing:border-box}.ap-input,input.ap-input,select.ap-input,textarea.ap-input{font-size:16px!important;line-height:1.35}.ap-input-phone{font-size:16px!important}}
+
+
+/* ================================================================
+   AUTH MOBILE STABILITY — iOS Safari keyboard / visual viewport
+   - 16px form controls prevent Safari focus auto-zoom.
+   - dynamic viewport units keep the dark shell behind the keyboard.
+   - horizontal overscroll is suppressed without disabling user zoom.
+   ================================================================ */
+html {
+  min-height: 100%;
+  background: #0b0f1a;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  background: #0b0f1a;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+.auth-shell {
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+@media (max-width: 900px) {
+  .ap-input,
+  .ap-input-phone,
+  .ap-select,
+  input.ap-input,
+  select.ap-select {
+    font-size: 16px !important;
+  }
+
+  .auth-shell,
+  .auth-main,
+  .auth-card {
+    max-width: 100%;
+  }
+}
