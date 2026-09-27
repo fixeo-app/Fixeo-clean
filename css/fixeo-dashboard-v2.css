@@ -1702,3 +1702,14 @@ a.fxv2-header-logo:hover { opacity: .8; }
 .fxv2-menu-open .fxv2-bottom-nav{opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,12px)}
 .fxv2-bottom-c31{transition:opacity .16s ease,visibility .16s ease,transform .16s ease}.fxv2-bottom-c31 .bicon{font-size:1rem;font-weight:800}.fxv2-bottom-c31 .fxv2-bottom-btn:nth-child(1) .bicon{font-size:.72rem}.fxv2-bottom-c31 .fxv2-bottom-btn:nth-child(2) .bicon{font-size:.92rem}
 @media(max-width:520px){.fxv2-header{grid-template-columns:54px 1fr auto}.fxv2-header-brand>span{display:none}.fxv2-header-logo{font-size:1.15rem}.fxv2-header-actions{gap:8px}}
+
+
+/* C3.1.2 — final mobile header micro-pass */
+.fxv2-header-brand{z-index:3}.fxv2-header-brand .fxv2-header-logo{display:block!important;opacity:1!important;visibility:visible!important;color:#fff;text-shadow:0 0 12px rgba(225,48,108,.28)}
+.fxv2-header-actions{position:relative;z-index:4}
+.fxv2-header-rafi{background:rgba(168,85,247,.055);box-shadow:inset 0 0 0 1px rgba(168,85,247,.08),0 0 14px rgba(168,85,247,.07)}
+.fxv2-header-rafi-star{display:flex!important;align-items:center;justify-content:center;width:30px;height:30px;color:#e9d5ff!important;font-size:1.35rem!important;line-height:1;text-shadow:0 0 12px rgba(216,180,254,.48)}
+.fxv2-header-rafi-orb{display:none!important}
+#fxv2-header-notifications>.fxv2-notif-bell{display:flex;align-items:center;justify-content:center}
+.fxv2-header>.fxv2-notif-bell,.fxv2-header>button.fxv2-notif-bell{display:none!important}
+@media(max-width:520px){.fxv2-header-brand{display:flex!important;left:50%!important}.fxv2-header-brand .fxv2-header-logo{font-size:1.18rem!important}.fxv2-header-actions{gap:7px}.fxv2-header-rafi{width:42px;height:42px}}
