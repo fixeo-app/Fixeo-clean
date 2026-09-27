@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c32'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c33'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -939,11 +939,32 @@
   }
 
   /* ── SECTION: DASHBOARD (Command Center) ───────────────────────── */
+  function _c33MissionFacts(req) {
+    var p=req._pipeline||PIPELINE.NEW;
+    var found=_findAcceptedArtisan(req), artisan=found?found.artisan:null, quote=found?found.quote:null;
+    var mission=(_state.missions||[]).find(function(m){return m.request_id===req.id;})||null;
+    var next='Suivi en cours', action='go-missions', cta='Voir la mission';
+    if(p.step===2) next='Prochaine étape · démarrage de l’intervention';
+    if(p.step===3) next='Intervention en cours · suivez son avancement';
+    if(p.step===4){next='Action requise · confirmer la prestation';action='go-requests';cta='Confirmer';}
+    return {p:p,artisan:artisan,quote:quote,mission:mission,next:next,action:action,cta:cta};
+  }
   function _renderC32Live(reqs) {
     var live=(reqs||[]).filter(function(r){return r._pipeline&&r._pipeline.step>=2&&r._pipeline.step<5;}).slice(0,2);
     if(!live.length) return '';
-    return '<section class="fxv2-c32-live" aria-label="Interventions en direct"><div class="fxv2-c32-head"><div><span>INTERVENTIONS EN DIRECT</span><strong>'+live.length+' intervention'+(live.length>1?'s':'')+' suivie'+(live.length>1?'s':'')+'</strong></div><button data-action="go-missions">Tout voir →</button></div><div class="fxv2-c32-live-list">'+live.map(function(r){var p=r._pipeline||PIPELINE.NEW;return '<button class="fxv2-c32-live-item" data-action="go-missions"><span class="fxv2-c32-live-dot" data-step="'+p.step+'"></span><span><strong>'+esc(r.service_category||'Intervention')+'</strong><small>'+esc(r.city||'')+' · '+esc(p.label||'Suivi en cours')+'</small></span><i>→</i></button>';}).join('')+'</div></section>';
+    return '<section class="fxv2-c32-live fxv2-c33-live" aria-label="Interventions en direct"><div class="fxv2-c32-head"><div><span>INTERVENTIONS EN DIRECT</span><strong>'+live.length+' intervention'+(live.length>1?'s':'')+' sous contrôle</strong></div><button data-action="go-missions">Tout voir →</button></div><div class="fxv2-c33-live-list">'+live.map(function(r){
+      var f=_c33MissionFacts(r), ref=r.tracking_ref||(r.metadata&&r.metadata.tracking_ref);
+      var price=f.quote&&f.quote.proposed_price?f.quote.proposed_price:(f.mission&&f.mission.agreed_price?f.mission.agreed_price:null);
+      var artisanName=f.artisan&&f.artisan.full_name?f.artisan.full_name:'Artisan assigné';
+      return '<article class="fxv2-c33-mission" data-step="'+f.p.step+'">'
+        +'<div class="fxv2-c33-top"><div><strong>'+esc(r.service_category||'Intervention')+'</strong><small>📍 '+esc(r.city||'')+(price?' · '+esc(price)+' MAD':'')+'</small></div>'+_renderBadge(f.p)+'</div>'
+        +'<div class="fxv2-c33-artisan"><span class="fxv2-c33-avatar">'+esc(initials(artisanName)||'F')+'</span><span><small>ARTISAN</small><strong>'+esc(artisanName)+'</strong></span></div>'
+        +'<div class="fxv2-c33-progress"><div class="fxv2-c33-track"><i style="width:'+Math.max(12,Math.min(100,(f.p.step/5)*100))+'%"></i></div><span>'+esc(f.next)+'</span></div>'
+        +'<div class="fxv2-c33-actions"><button data-action="'+esc(f.action)+'">'+esc(f.cta)+'</button>'+(ref?'<a href="/suivi?ref='+esc(ref)+'" target="_blank" rel="noopener">Suivi ↗</a>':'')+'</div>'
+      +'</article>';
+    }).join('')+'</div></section>';
   }
+
   function _renderC32RafiBrief(reqs) {
     var b=_clientRafiBrief(reqs);
     return '<section class="fxv2-c32-rafi" data-tone="'+esc(b.tone)+'"><div class="fxv2-c32-rafi-star">✦</div><div><span>BRIEFING RAFI</span><strong>'+esc(b.title.replace(/^RAFI ·\s*/,''))+'</strong><p>'+esc(b.text)+'</p></div><button data-action="go-rafi">Ouvrir RAFI</button></section>';
