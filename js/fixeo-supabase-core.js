@@ -694,25 +694,14 @@ if (blockingMission) {
   }
 
   async function maybeCreateMissionFallback(requestRow, quoteRow) {
-    if (!requestRow || !quoteRow) return null;
+    if (!requestRow || !quoteRow || !quoteRow.id) return null;
     var sb = await getClient();
-    var response = await sb.from('missions').insert({
-      request_id: requestRow.id,
-      client_profile_id: requestRow.client_profile_id,
-      artisan_profile_id: quoteRow.artisan_profile_id,
-      agreed_price: Number(quoteRow.proposed_price || 0),
-      status: 'validated'
-    }).select('*').maybeSingle();
+    var response = await sb.rpc('create_client_mission_from_accepted_quote', {
+      p_quote_id: quoteRow.id
+    });
 
-    if (response.error) {
-      var conflictCodes = ['23505', '23503'];
-      if (conflictCodes.indexOf(String(response.error.code || '')) !== -1) {
-        return fetchMissionByRequestId(requestRow.id).catch(function () { return null; });
-      }
-      throw response.error;
-    }
-
-    return response.data || null;
+    if (response.error) throw response.error;
+    return response.data || fetchMissionByRequestId(requestRow.id).catch(function () { return null; });
   }
 
   async function acceptQuote(quoteId) {
