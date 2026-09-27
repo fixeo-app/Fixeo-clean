@@ -207,7 +207,7 @@
         <div class="ap-step" id="ap-step-1">
 
           <!-- Role cards -->
-          <div class="ap-role-row" role="group" aria-label="Type de compte">
+          <div class="ap-role-row" id="signup-role-chooser" role="group" aria-label="Type de compte">
             <div class="ap-role-card selected" id="card-client"
                  role="radio" aria-checked="true" tabindex="0"
                  onclick="selectType('client')" onkeydown="if(event.key==='Enter')selectType('client')">
@@ -659,7 +659,14 @@ function switchTab(tab) {
   const isLogin = tab === 'login';
   document.getElementById('login-form').style.display  = isLogin ? 'block' : 'none';
   document.getElementById('signup-form').style.display = isLogin ? 'none'  : 'block';
-  if (!isLogin && (_gatewaySpace === 'client' || _gatewaySpace === 'artisan')) selectType(_gatewaySpace);
+  if (!isLogin && (_gatewaySpace === 'client' || _gatewaySpace === 'artisan')) {
+    selectType(_gatewaySpace);
+    const chooser = document.getElementById('signup-role-chooser');
+    if (chooser) {
+      chooser.hidden = true;
+      chooser.setAttribute('aria-hidden','true');
+    }
+  }
   document.getElementById('tab-login').classList.toggle('active',  isLogin);
   document.getElementById('tab-signup').classList.toggle('active', !isLogin);
   document.getElementById('login-error').style.display  = 'none';
@@ -669,7 +676,7 @@ function switchTab(tab) {
     : 'Quel compte souhaitez-vous créer ?';
   document.getElementById('auth-sub').textContent = isLogin
     ? (_gatewaySpace === 'artisan' ? 'Retrouvez vos missions et votre activité FIXEO.' : _gatewaySpace === 'enterprise' ? 'Votre accès Enterprise sera vérifié après connexion.' : 'Retrouvez vos demandes, interventions et services FIXEO.')
-    : 'Choisissez Client ou Artisan. Enterprise reste réservé aux membres autorisés.';
+    : (_gatewaySpace === 'artisan' ? 'Création de votre profil Artisan FIXEO.' : 'Création de votre compte Client FIXEO.');
 }
 
 // ── Role card selection ─────────────────────────────────── */
