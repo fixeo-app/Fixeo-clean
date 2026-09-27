@@ -710,3 +710,67 @@ body.fxep-mode-public {
   #fxep-public-root .fxep-console-title{font-size:21px}
   #fxep-public-root .fxep-nlp-input{min-height:88px}
 }
+
+
+/* ESTIMATION — GLOBAL HEADER MOBILE FIT
+   Scoped to /estimation public mode only. Canonical V5B remains unchanged elsewhere. */
+@media (max-width: 768px) {
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-gh-mobile,
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-gh-mobile-bar {
+    width: 100% !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-gh-mobile-bar {
+    padding-left: calc(10px + env(safe-area-inset-left,0px)) !important;
+    padding-right: calc(10px + env(safe-area-inset-right,0px)) !important;
+    gap: 7px !important;
+    overflow: hidden !important;
+  }
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-gh-brand {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    gap: 6px !important;
+    overflow: hidden !important;
+  }
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-logo-img {
+    height: 25px !important;
+    max-width: 100px !important;
+    flex-shrink: 1 !important;
+  }
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-gh-actions {
+    flex: 0 0 auto !important;
+    min-width: 0 !important;
+    gap: 5px !important;
+  }
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-gh-icon-btn,
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-gh-avatar-link,
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-gh-menu {
+    width: 37px !important;
+    height: 37px !important;
+    min-width: 37px !important;
+    flex: 0 0 37px !important;
+    border-radius: 12px !important;
+  }
+}
+@media (max-width: 380px) {
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-gh-mobile-bar {
+    padding-left: calc(8px + env(safe-area-inset-left,0px)) !important;
+    padding-right: calc(8px + env(safe-area-inset-right,0px)) !important;
+    gap: 5px !important;
+  }
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-logo-img {
+    height: 24px !important;
+    max-width: 92px !important;
+  }
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-gh-actions { gap: 4px !important; }
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-gh-icon-btn,
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-gh-avatar-link,
+  body.fxep-mode-public.fixeo-gh-enabled .fixeo-gh-menu {
+    width: 35px !important;
+    height: 35px !important;
+    min-width: 35px !important;
+    flex-basis: 35px !important;
+  }
+}
