@@ -1645,3 +1645,37 @@ a.fxv2-header-logo:hover { opacity: .8; }
 .fxv2-evidence{margin:0 0 18px;padding:15px;border:1px solid rgba(255,255,255,.085);border-radius:17px;background:rgba(255,255,255,.025)}
 .fxv2-evidence-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.fxv2-evidence-head span{display:block;color:rgba(255,255,255,.4);font-size:.55rem;font-weight:850;letter-spacing:.11em}.fxv2-evidence-head strong{display:block;margin-top:2px;color:#fff;font-size:.84rem}.fxv2-evidence-head>b{display:flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.065);color:rgba(255,255,255,.7);font-size:.68rem}
 .fxv2-evidence-list{display:flex;flex-direction:column;gap:6px}.fxv2-evidence-item{display:grid;grid-template-columns:20px 1fr;gap:9px;padding:9px 10px;border:1px solid rgba(255,255,255,.06);border-radius:10px;background:rgba(0,0,0,.10)}.fxv2-evidence-item>i{color:#34d399;font-size:.68rem;font-style:normal}.fxv2-evidence-item strong{display:block;color:rgba(255,255,255,.86);font-size:.7rem}.fxv2-evidence-item span{display:block;margin-top:2px;color:var(--v2-text-3);font-size:.63rem;line-height:1.35;overflow-wrap:anywhere}.fxv2-evidence-note,.fxv2-evidence-empty{margin:9px 0 0;color:rgba(255,255,255,.34);font-size:.6rem;line-height:1.4}
+
+
+/* C2.12 — Client OS Premium UX coherence pass
+   Visual hierarchy only: no business logic. */
+#fxv2-sec-dashboard{max-width:1040px;margin:0 auto}
+#fxv2-sec-dashboard>.fxv2-ct{margin-bottom:12px}
+#fxv2-sec-dashboard>.fxv2-multi,
+#fxv2-sec-dashboard>.fxv2-attention,
+#fxv2-sec-dashboard>.fxv2-next-action,
+#fxv2-sec-dashboard>.fxv2-decision-center,
+#fxv2-sec-dashboard>.fxv2-finance,
+#fxv2-sec-dashboard>.fxv2-evidence,
+#fxv2-sec-dashboard>.fxv2-rafi-intel{margin-bottom:12px}
+.fxv2-ct,.fxv2-multi,.fxv2-attention,.fxv2-next-action,.fxv2-decision-center,.fxv2-finance,.fxv2-evidence,.fxv2-rafi-intel,.fxv2-mission-hero{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.fxv2-ct-title,.fxv2-mission-hero-service{font-weight:820;text-wrap:balance}
+.fxv2-ct-sub,.fxv2-next-action p,.fxv2-decision-copy p,.fxv2-rafi-copy p,.fxv2-evidence-note{max-width:68ch}
+.fxv2-btn,.fxv2-attention-item,.fxv2-multi-cell{transition:transform .16s ease,border-color .16s ease,background-color .16s ease,opacity .16s ease}
+@media(hover:hover){.fxv2-attention-item:hover,.fxv2-multi-cell:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.13)}}
+.fxv2-btn:focus-visible,.fxv2-attention-item:focus-visible,.fxv2-multi-cell:focus-visible{outline:2px solid rgba(125,211,252,.78);outline-offset:2px}
+@media(max-width:720px){
+  #fxv2-sec-dashboard{max-width:none}
+  .fxv2-ct,.fxv2-multi,.fxv2-attention,.fxv2-next-action,.fxv2-decision-center,.fxv2-finance,.fxv2-evidence,.fxv2-rafi-intel,.fxv2-mission-hero{border-radius:15px}
+  .fxv2-ct-title{font-size:1.42rem}
+  .fxv2-ct-sub{font-size:.75rem;line-height:1.45}
+  .fxv2-multi-head,.fxv2-finance-head,.fxv2-evidence-head{align-items:flex-start}
+}
+@media(max-width:390px){
+  .fxv2-ct,.fxv2-multi,.fxv2-attention,.fxv2-next-action,.fxv2-decision-center,.fxv2-finance,.fxv2-evidence,.fxv2-rafi-intel,.fxv2-mission-hero{padding-left:13px;padding-right:13px}
+  .fxv2-multi-grid{grid-template-columns:repeat(2,1fr)}
+  .fxv2-finance-grid{grid-template-columns:1fr}
+  .fxv2-finance-grid>div:last-child{grid-column:auto}
+  .fxv2-ct-count{min-width:54px}
+}
+@media(prefers-reduced-motion:reduce){.fxv2-btn,.fxv2-attention-item,.fxv2-multi-cell{transition:none!important}}
