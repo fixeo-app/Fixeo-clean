@@ -356,3 +356,35 @@ body.fxhf-immersive #fixeo-urgent-fab, body.fxhf-immersive .chat-widget { visibi
     transform: translateX(2px);
   }
 }
+
+
+/* Diagnostic consent — explicit high-contrast selected state on iOS */
+.fxhf-universal .fxhf-consent input[type=checkbox]{
+  -webkit-appearance:none;
+  appearance:none;
+  display:grid;
+  place-content:center;
+  width:20px;
+  height:20px;
+  flex:0 0 20px;
+  border:1px solid rgba(255,255,255,.42);
+  border-radius:5px;
+  background:#fff;
+  cursor:pointer;
+}
+.fxhf-universal .fxhf-consent input[type=checkbox]::before{
+  content:"";
+  width:10px;
+  height:6px;
+  border-left:2.5px solid #111;
+  border-bottom:2.5px solid #111;
+  transform:rotate(-45deg) scale(0);
+  transform-origin:center;
+}
+.fxhf-universal .fxhf-consent input[type=checkbox]:checked::before{
+  transform:rotate(-45deg) scale(1);
+}
+.fxhf-universal .fxhf-consent input[type=checkbox]:focus-visible{
+  outline:2px solid #aebeff;
+  outline-offset:2px;
+}
