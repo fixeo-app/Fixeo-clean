@@ -1113,7 +1113,8 @@ html += targetedOffers
       if (avail === 'available') {
         availHtml = '<div class="fxa-avail-row" style="margin:12px 0">'
           + '<span class="fxa-avail-label fxa-avail-on">● Disponible</span>'
-          + '<button class="fxa-btn fxa-btn-ghost fxa-btn-sm" data-action="set-unavailable">Mettre en pause</button>'
+          + '<button class="fxa-btn fxa-btn-ghost fxa-btn-sm" data-action="set-busy">Occupé</button>'
+          + '<button class="fxa-btn fxa-btn-ghost fxa-btn-sm" data-action="set-unavailable">Indisponible</button>'
           + '</div>';
       } else {
         availHtml = '<div class="fxa-avail-row" style="margin:12px 0">'
@@ -1397,6 +1398,7 @@ var missionId = btn.dataset.missionId || '';
         case 'go-available':        return _showSection('available');
         case 'set-available':       _doSetAvailability('available', btn); return;
         case 'set-unavailable':     _doSetAvailability('unavailable', btn); return;
+        case 'set-busy':            _doSetAvailability('busy', btn); return;
         case 'complete-onboarding': _doCompleteOnboarding(btn); return;
         case 'edit-profile':        _openProfileEditModal(); return;
         case 'close-modal':         _closeModal(); return;
