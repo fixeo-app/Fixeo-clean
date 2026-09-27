@@ -32,7 +32,7 @@
 
   function normalizeRole(value) {
     value = safeTrim(value).toLowerCase();
-    return VALID_ROLES.indexOf(value) >= 0 ? value : 'client';
+    return VALID_ROLES.indexOf(value) >= 0 ? value : '';
   }
 
   function escapeHtml(str) {
@@ -107,7 +107,7 @@
     var email = (_pu && _pu.isSyntheticEmail(_rawFixeoUser))
       ? (_pu.syntheticEmailToPhone(_rawFixeoUser) || _rawFixeoUser)
       : _rawFixeoUser;
-    var role = normalizeRole(fixeoRole || legacyRole || jsonUser.role || 'client');
+    var role = normalizeRole(fixeoRole || legacyRole || jsonUser.role);
     var avatar = fixeoAvatar || legacyAvatar || safeTrim(jsonUser.avatar);
     var job = legacyJob || safeTrim(jsonUser.job);
     var city = legacyCity || safeTrim(jsonUser.city);
@@ -120,6 +120,7 @@
       name = email.split('@')[0];
     }
     if (!name && !email && !legacyLogged) return null;
+    if (!role) return null;
     if (!name) name = 'Utilisateur';
 
     return {
@@ -393,10 +394,14 @@ if (VALID_ROLES.indexOf(role) === -1) {
   };
   window.FixeoAuthSession = sessionApi;
 
-  window.fixeoGlobalLogout = function (options) {
-    options = options || {};
-    clearActiveUser({ redirectTo: resolveCoreHref(options.redirectTo || 'index.html') });
-  };
+  /* fixeo-logout-global.js is the canonical logout authority.
+     Only provide a local fallback on legacy surfaces where it is absent. */
+  if (typeof window.fixeoGlobalLogout !== 'function') {
+    window.fixeoGlobalLogout = function (options) {
+      options = options || {};
+      clearActiveUser({ redirectTo: resolveCoreHref(options.redirectTo || 'index.html') });
+    };
+  }
   window.fixeoLogout = window.fixeoGlobalLogout;
   window.logout = window.fixeoGlobalLogout;
 
