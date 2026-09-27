@@ -1381,8 +1381,7 @@ html += targetedOffers
 var reqId     = btn.dataset.reqId || '';
 var missionId = btn.dataset.missionId || '';
       /* Navigation/UI actions are exempt from in-flight guard */
-      var navAction = action === 'go-available' || action === 'close-modal'
-        || action === 'edit-profile' || action === 'logout';
+      var navAction = ['go-available','go-missions','go-profile','go-rafi','close-modal','edit-profile','logout'].indexOf(action) !== -1;
       if (_actionInFlight && !navAction) return; /* drop duplicate tap */
       switch (action) {
         case 'serrurerie-repair':
@@ -1404,6 +1403,9 @@ var missionId = btn.dataset.missionId || '';
         case 'start-mission':       _doStartMission(reqId, btn); return;
         case 'complete-mission':    _doCompleteMission(reqId, btn); return;
         case 'go-available':        return _showSection('available');
+        case 'go-missions':         return _showSection('missions');
+        case 'go-profile':          return _showSection('profile');
+        case 'go-rafi':             return _showSection('rafi');
         case 'set-available':       _doSetAvailability('available', btn); return;
         case 'set-unavailable':     _doSetAvailability('unavailable', btn); return;
         case 'set-busy':            _doSetAvailability('busy', btn); return;
