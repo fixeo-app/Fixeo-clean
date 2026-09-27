@@ -483,9 +483,10 @@
       var agreedP  = m.agreed_price !== null && m.agreed_price !== undefined && Number(m.agreed_price) > 0
                      ? Number(m.agreed_price) : null;
       var price = finalP || agreedP; /* prefer final_price; agreed_price if admin-set */
-      var net = m.pricing_offer_id
-        ? (m.commission_amount != null && Number.isFinite(Number(m.commission_amount)) ? Math.round((price-Number(m.commission_amount))*100)/100 : null)
-        : Math.round(price*0.85);
+      /* Never invent artisan net: require both a real price and persisted commission. */
+      var net = (price !== null && m.commission_amount != null && Number.isFinite(Number(m.commission_amount)))
+        ? Math.round((price - Number(m.commission_amount)) * 100) / 100
+        : null;
 
       if (st === 'validated' || st === 'done') {
         result.validatedCount++;
