@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c39a'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c39b'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -1129,10 +1129,47 @@
     sec.innerHTML='<div class="fxv2-c38-head"><span>COMPTE CLIENT</span><h2>Profil & préférences</h2><p>Votre identité FIXEO et les réglages disponibles dans cet espace.</p></div>'
       +'<section class="fxv2-c38-identity"><div class="fxv2-c38-avatar">'+esc(initials(name)||'C')+'</div><div><strong>'+esc(name)+'</strong>'+(email?'<span>'+esc(email)+'</span>':'')+(city?'<small>📍 '+esc(city)+'</small>':'')+'</div><b>CLIENT</b></section>'
       +'<div class="fxv2-c38-stats"><div><strong>'+active+'</strong><span>Actives</span></div><div><strong>'+done+'</strong><span>Terminées</span></div><div><strong>'+unread+'</strong><span>Non lues</span></div></div>'
-      +'<section class="fxv2-c38-card"><div class="fxv2-c38-cardhead"><span>INFORMATIONS DU COMPTE</span><strong>Coordonnées enregistrées</strong></div>'+_infoRow('Nom complet',name)+_infoRow('Email',email||'—')+_infoRow('Téléphone',phone||'—')+_infoRow('Ville',city||'—')+'</section>'
+      +'<section class="fxv2-c38-card"><div class="fxv2-c38-cardhead"><span>INFORMATIONS DU COMPTE</span><strong>Coordonnées enregistrées</strong></div>'+_infoRow('Nom complet',name)+_infoRow('Email',email||'—')+_infoRow('Téléphone',phone||'—')+_infoRow('Ville',city||'—')+'<button class="fxv2-btn fxv2-c39b-edit" data-action="profile-edit">Modifier mes coordonnées</button></section>'
+      +'<section class="fxv2-c38-card fxv2-c39b-security"><div class="fxv2-c38-cardhead"><span>SÉCURITÉ</span><strong>Accès à votre compte</strong></div><p>Modifiez votre mot de passe depuis votre session authentifiée.</p><button class="fxv2-btn fxv2-btn-ghost" data-action="password-edit">Modifier mon mot de passe</button></section>'
       +'<section class="fxv2-c38-card"><div class="fxv2-c38-cardhead"><span>PRÉFÉRENCES</span><strong>Votre expérience FIXEO</strong></div><button class="fxv2-c38-link" data-action="go-notifications"><span>🔔 Notifications</span><small>'+unread+' non lue'+(unread>1?'s':'')+'</small><i>→</i></button><button class="fxv2-c38-link" data-action="go-rafi"><span>✦ RAFI</span><small>Copilote client</small><i>→</i></button><button class="fxv2-c38-link" data-action="go-documents"><span>▤ Documents & preuves</span><small>Dossier FIXEO</small><i>→</i></button></section>'
       +'<div class="fxv2-c38-security"><span>✓ Session authentifiée</span><span>✓ Données visibles selon vos droits FIXEO</span></div>'
       +'<button class="fxv2-btn fxv2-btn-ghost fxv2-c38-logout" data-action="logout">Se déconnecter</button>';
+  }
+
+  function _openProfileEdit() {
+    var p=_state.profile||{},u=(_state.session&&_state.session.user)||{};
+    var name=p.full_name||(u.user_metadata&&u.user_metadata.full_name)||'', phone=p.phone||(u.user_metadata&&u.user_metadata.phone)||'', city=p.city||(u.user_metadata&&u.user_metadata.city)||'';
+    var options='<option value="">Choisir une ville</option>'+CITIES.map(function(c){return '<option value="'+esc(c)+'"'+(c===city?' selected':'')+'>'+esc(c)+'</option>';}).join('');
+    _openModal('<div class="fxv2-c39b-modal"><span>PROFIL CLIENT</span><h3>Modifier mes coordonnées</h3><label>Nom complet<input id="fxv2-profile-name" type="text" value="'+esc(name)+'" autocomplete="name"></label><label>Téléphone<input id="fxv2-profile-phone" type="tel" value="'+esc(phone)+'" autocomplete="tel" placeholder="06XXXXXXXX"></label><label>Ville<select id="fxv2-profile-city">'+options+'</select></label><button class="fxv2-btn fxv2-btn-primary" data-action="profile-save">Enregistrer</button></div>');
+  }
+  async function _saveProfile(btn) {
+    var name=(el('fxv2-profile-name')&&el('fxv2-profile-name').value||'').trim(), phone=(el('fxv2-profile-phone')&&el('fxv2-profile-phone').value||'').trim(), city=(el('fxv2-profile-city')&&el('fxv2-profile-city').value||'').trim();
+    if(!name){_toast('Le nom complet est requis.','error');return;}
+    if(phone && !/^(?:\\+?212|0)[5-7]\\d{8}$/.test(phone.replace(/[ .-]/g,''))){_toast('Numéro de téléphone invalide.','error');return;}
+    _btnBusy(btn,'Enregistrement…');
+    try {
+      var sb=await window.FixeoSupabase.getClient(), uid=_state.session&&_state.session.user&&_state.session.user.id;
+      if(!uid) throw new Error('Session expirée.');
+      var res=await sb.from('profiles').update({full_name:name,phone:phone,city:city}).eq('id',uid).select('id,full_name,phone,city').maybeSingle();
+      if(res.error) throw res.error;
+      if(!res.data) throw new Error('Modification non autorisée.');
+      var au=await sb.auth.updateUser({data:{full_name:name,phone:phone,city:city}});
+      if(au.error) throw au.error;
+      _state.profile=Object.assign({},_state.profile||{},res.data);
+      if(_state.session.user){_state.session.user.user_metadata=Object.assign({},_state.session.user.user_metadata||{},{full_name:name,phone:phone,city:city});}
+      _closeModal();_renderProfile();_renderSidebarProfile();_toast('Coordonnées mises à jour.','success');
+    } catch(e){_toast('❌ '+(e&&e.message?e.message:'Impossible de modifier le profil.'),'error');_btnReset(btn,'Enregistrer');}
+  }
+  function _openPasswordEdit() {
+    _openModal('<div class="fxv2-c39b-modal"><span>SÉCURITÉ</span><h3>Modifier mon mot de passe</h3><p>Utilisez au moins 8 caractères.</p><label>Nouveau mot de passe<input id="fxv2-password-new" type="password" minlength="8" autocomplete="new-password"></label><label>Confirmer<input id="fxv2-password-confirm" type="password" minlength="8" autocomplete="new-password"></label><button class="fxv2-btn fxv2-btn-primary" data-action="password-save">Mettre à jour</button></div>');
+  }
+  async function _savePassword(btn) {
+    var a=el('fxv2-password-new')&&el('fxv2-password-new').value||'', b=el('fxv2-password-confirm')&&el('fxv2-password-confirm').value||'';
+    if(a.length<8){_toast('Le mot de passe doit contenir au moins 8 caractères.','error');return;}
+    if(a!==b){_toast('Les deux mots de passe ne correspondent pas.','error');return;}
+    _btnBusy(btn,'Mise à jour…');
+    try{var sb=await window.FixeoSupabase.getClient();var r=await sb.auth.updateUser({password:a});if(r.error)throw r.error;_closeModal();_toast('Mot de passe mis à jour.','success');}
+    catch(e){_toast('❌ '+(e&&e.message?e.message:'Impossible de modifier le mot de passe.'),'error');_btnReset(btn,'Mettre à jour');}
   }
 
   function _infoRow(label, value) {
@@ -1382,6 +1419,10 @@
         case 'open-review':    return _doOpenReview(btn);
         case 'submit-review':  return _doSubmitReview(btn);
         case 'mark-notif-read': return _doMarkNotifRead(id);
+        case 'profile-edit': return _openProfileEdit();
+        case 'profile-save': return _saveProfile(btn);
+        case 'password-edit': return _openPasswordEdit();
+        case 'password-save': return _savePassword(btn);
         case 'rafi-governed-confirm':
           var kind = btn.dataset.kind || '';
           var msg = btn.dataset.confirm || 'Confirmer cette action ?';
