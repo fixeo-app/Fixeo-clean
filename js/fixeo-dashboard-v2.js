@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c27'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c28'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -774,6 +774,34 @@
     + '</section>';
   }
 
+  function _clientAttentionItems(reqs) {
+    var items = [];
+    (reqs || []).forEach(function (r) {
+      var p = r._pipeline || PIPELINE.NEW;
+      if (p.step === 4) items.push({priority:100,tone:'action',label:'Confirmation requise',detail:(r.service_category || 'Intervention') + (r.city ? ' · ' + r.city : ''),action:'go-requests'});
+      else if (p === PIPELINE.PROPOSAL_RECEIVED) items.push({priority:90,tone:'decision',label:'Proposition à examiner',detail:(r.service_category || 'Demande') + (r.city ? ' · ' + r.city : ''),action:'go-requests'});
+      else if (p.step === 3) items.push({priority:60,tone:'live',label:'Intervention en cours',detail:(r.service_category || 'Intervention') + (r.city ? ' · ' + r.city : ''),action:'go-requests'});
+      else if (p.step === 2) items.push({priority:50,tone:'assigned',label:'Artisan assigné',detail:(r.service_category || 'Demande') + (r.city ? ' · ' + r.city : ''),action:'go-requests'});
+      else if (p.step === 0) items.push({priority:30,tone:'search',label:'Recherche en cours',detail:(r.service_category || 'Demande') + (r.city ? ' · ' + r.city : ''),action:'go-requests'});
+    });
+    var unread = (_state.notifications || []).filter(function (n) { return !n.read; }).length;
+    if (unread) items.push({priority:70,tone:'notification',label:unread + ' notification' + (unread > 1 ? 's' : '') + ' non lue' + (unread > 1 ? 's' : ''),detail:'Consultez les dernières mises à jour FIXEO.',action:'go-notifications'});
+    items.sort(function(a,b){return b.priority-a.priority;});
+    return items;
+  }
+
+  function _renderAttentionEngine(reqs) {
+    var items = _clientAttentionItems(reqs);
+    if (!items.length) return '<section class="fxv2-attention fxv2-attention-clear"><div><span>ATTENTION ENGINE</span><strong>Rien ne requiert votre attention</strong></div><b>✓</b></section>';
+    var top = items.slice(0,3);
+    return '<section class="fxv2-attention" aria-label="Priorités client">'
+      + '<div class="fxv2-attention-title"><div><span>ATTENTION ENGINE</span><strong>À regarder maintenant</strong></div><b>' + items.length + '</b></div>'
+      + '<div class="fxv2-attention-list">' + top.map(function(i,idx){
+        return '<button class="fxv2-attention-item" data-tone="' + esc(i.tone) + '" data-action="' + esc(i.action) + '"><em>' + (idx+1) + '</em><span><strong>' + esc(i.label) + '</strong><small>' + esc(i.detail) + '</small></span><i>→</i></button>';
+      }).join('') + '</div>'
+    + '</section>';
+  }
+
   function _renderClientControlTower(reqs) {
     var p = _controlTowerPriority(reqs);
     var name = _clientFirstName();
@@ -814,6 +842,7 @@
 
     /* C2.1 deterministic Client Control Tower shell */
     html += _renderClientControlTower(reqs);
+    html += _renderAttentionEngine(reqs);
     html += _renderClientNextAction(reqs);
     html += _renderDecisionCenter(reqs);
     html += _renderClientRafiIntelligence(reqs);
