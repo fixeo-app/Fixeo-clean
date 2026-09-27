@@ -1110,12 +1110,10 @@
   function _renderMessages() {
     var sec=el('fxv2-sec-messages'); if(!sec)return;
     var active=(_state.requests||[]).filter(function(r){return r._pipeline&&r._pipeline.step>=2&&r._pipeline.step<5;});
-    var contacts=[];
-    active.forEach(function(r){var found=_findAcceptedArtisan(r),a=found?found.artisan:null;if(a&&a.phone_public){var wa=buildWA(a.phone_public,a.full_name);if(wa)contacts.push({service:r.service_category||'Intervention',city:r.city||'',name:a.full_name||'Artisan',wa:wa});}});
+    var contacts=[]; active.forEach(function(r){var found=_findAcceptedArtisan(r),x=found?found.artisan:null;if(x&&x.phone_public){var wa=buildWA(x.phone_public,x.full_name);if(wa)contacts.push({service:r.service_category||'Intervention',city:r.city||'',name:x.full_name||'Artisan',wa:wa});}});
     sec.innerHTML='<div class="fxv2-c39c-head"><span>COMMUNICATION CENTER</span><h2>Messages & contacts</h2><p>Les canaux réellement disponibles pour vos interventions.</p></div>'
       +(contacts.length?'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>ARTISANS JOIGNABLES</span><strong>'+contacts.length+' contact'+(contacts.length>1?'s':'')+' disponible'+(contacts.length>1?'s':'')+'</strong></div><div class="fxv2-c39c-list">'+contacts.map(function(c){return '<a href="'+esc(c.wa)+'" target="_blank" rel="noopener"><i>💬</i><span><strong>'+esc(c.name)+'</strong><small>'+esc(c.service)+(c.city?' · '+esc(c.city):'')+'</small></span><b>WhatsApp ↗</b></a>';}).join('')+'</div></section>':'<section class="fxv2-c39c-card fxv2-c39c-empty"><strong>Aucun artisan joignable actuellement</strong><p>Un canal de contact apparaîtra ici lorsqu’un numéro public est disponible pour votre intervention.</p></section>')
-      +'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>FIXEO</span><strong>Besoin d’aide ?</strong></div><div class="fxv2-c39c-actions"><a href="https://wa.me/212660484415" target="_blank" rel="noopener">💬 WhatsApp Fixeo</a><a href="mailto:contact@fixeo.ma">✉ Email Fixeo</a><button data-action="go-support">Support Center →</button></div></section>'
-      +'<div class="fxv2-c39c-note">La messagerie intégrée FIXEO n’est pas encore disponible. Aucun faux chat n’est affiché.</div>';
+      +'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>FIXEO</span><strong>Besoin d’aide ?</strong></div><div class="fxv2-c39c-actions"><a href="https://wa.me/212660484415" target="_blank" rel="noopener">💬 WhatsApp Fixeo</a><a href="mailto:contact@fixeo.ma">✉ Email Fixeo</a><button data-action="go-support">Support Center →</button></div></section><div class="fxv2-c39c-note">La messagerie intégrée FIXEO n’est pas encore disponible. Aucun faux chat n’est affiché.</div>';
   }
 
   /* ── SECTION: PROFILE ─────────────────────────────────────────── */
@@ -1186,11 +1184,7 @@
     var active=(_state.requests||[]).filter(function(r){return r._pipeline&&r._pipeline.step>=0&&r._pipeline.step<5;});
     sec.innerHTML='<div class="fxv2-c39c-head"><span>FIXEO CARE</span><h2>Support Center</h2><p>Aide, dossier et canaux officiels au même endroit.</p></div>'
       +(active.length?'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>VOS INTERVENTIONS</span><strong>'+active.length+' dossier'+(active.length>1?'s':'')+' actif'+(active.length>1?'s':'')+'</strong></div><button class="fxv2-c39c-wide" data-action="go-missions">Voir mes interventions →</button></section>':'')
-      +'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>ASSISTANCE</span><strong>Choisissez votre canal</strong></div>'
-      +_supportItem('https://wa.me/212660484415','💬','WhatsApp Support','Contacter FIXEO')
-      +_supportItem('mailto:contact@fixeo.ma','✉','Email','contact@fixeo.ma')
-      +'<button class="fxv2-c39c-wide fxv2-c39c-rafi" data-action="go-rafi">✦ Comprendre la situation avec RAFI</button></section>'
-      +'<details class="fxv2-c39c-tech"><summary>Informations techniques</summary><span>Version '+esc(VERSION)+' · Fixeo Client OS</span></details>';
+      +'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>ASSISTANCE</span><strong>Choisissez votre canal</strong></div>'+_supportItem('https://wa.me/212660484415','💬','WhatsApp Support','Contacter FIXEO')+_supportItem('mailto:contact@fixeo.ma','✉','Email','contact@fixeo.ma')+'<button class="fxv2-c39c-wide fxv2-c39c-rafi" data-action="go-rafi">✦ Comprendre la situation avec RAFI</button></section><details class="fxv2-c39c-tech"><summary>Informations techniques</summary><span>Version '+esc(VERSION)+' · Fixeo Client OS</span></details>';
   }
 
   function _supportItem(href, icon, label, desc) {
