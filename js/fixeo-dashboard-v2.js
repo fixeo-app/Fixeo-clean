@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c312'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c32'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -939,58 +939,40 @@
   }
 
   /* ── SECTION: DASHBOARD (Command Center) ───────────────────────── */
+  function _renderC32Live(reqs) {
+    var live=(reqs||[]).filter(function(r){return r._pipeline&&r._pipeline.step>=2&&r._pipeline.step<5;}).slice(0,2);
+    if(!live.length) return '';
+    return '<section class="fxv2-c32-live" aria-label="Interventions en direct"><div class="fxv2-c32-head"><div><span>INTERVENTIONS EN DIRECT</span><strong>'+live.length+' intervention'+(live.length>1?'s':'')+' suivie'+(live.length>1?'s':'')+'</strong></div><button data-action="go-missions">Tout voir →</button></div><div class="fxv2-c32-live-list">'+live.map(function(r){var p=r._pipeline||PIPELINE.NEW;return '<button class="fxv2-c32-live-item" data-action="go-missions"><span class="fxv2-c32-live-dot" data-step="'+p.step+'"></span><span><strong>'+esc(r.service_category||'Intervention')+'</strong><small>'+esc(r.city||'')+' · '+esc(p.label||'Suivi en cours')+'</small></span><i>→</i></button>';}).join('')+'</div></section>';
+  }
+  function _renderC32RafiBrief(reqs) {
+    var b=_clientRafiBrief(reqs);
+    return '<section class="fxv2-c32-rafi" data-tone="'+esc(b.tone)+'"><div class="fxv2-c32-rafi-star">✦</div><div><span>BRIEFING RAFI</span><strong>'+esc(b.title.replace(/^RAFI ·\s*/,''))+'</strong><p>'+esc(b.text)+'</p></div><button data-action="go-rafi">Ouvrir RAFI</button></section>';
+  }
+  function _renderC32Portfolio(reqs) {
+    var m=_multiRequestSummary(reqs), f=_financeTruth(reqs);
+    var active=(reqs||[]).filter(function(r){return r._pipeline&&r._pipeline.step>=0&&r._pipeline.step<5;});
+    var evidence=active.length?_evidenceForRequest(active[0]).length:0;
+    return '<section class="fxv2-c32-portfolio" aria-label="Synthèse client"><div class="fxv2-c32-head"><div><span>VOTRE ESPACE</span><strong>L’essentiel, sans surcharge</strong></div></div><div class="fxv2-c32-portfolio-grid">'
+      +'<button data-action="go-requests"><span>Demandes</span><strong>'+m.total+'</strong><small>'+(m.decision+m.confirm)+' décision'+((m.decision+m.confirm)>1?'s':'')+'</small></button>'
+      +'<button data-action="go-requests"><span>Finance</span><strong>'+(f.pricedMissions?esc(f.knownTotal.toLocaleString('fr-MA'))+' MAD':'—')+'</strong><small>'+f.accepted+' devis accepté'+(f.accepted>1?'s':'')+'</small></button>'
+      +'<button data-action="go-documents"><span>Dossier</span><strong>'+evidence+'</strong><small>élément'+(evidence>1?'s':'')+' disponible'+(evidence>1?'s':'')+'</small></button>'
+      +'</div></section>';
+  }
+
   function _renderDashboard() {
     var sec = el('fxv2-sec-dashboard');
     if (!sec) return;
     var reqs = _state.requests;
-
-    /* Most recent active mission (for hero) */
     var active = reqs.filter(function (r) { return r._pipeline.step >= 0 && r._pipeline.step < 5; });
-    var topMission = active.length > 0 ? active[0] : null;
-
     var html = '';
 
-    /* C2.1 deterministic Client Control Tower shell */
+    /* C3.2 — one hierarchy: situation → action → live → RAFI → portfolio. */
     html += _renderClientControlTower(reqs);
-    html += _renderMultiRequestTower(reqs);
-    html += _renderAttentionEngine(reqs);
-    html += _renderClientNextAction(reqs);
-    html += _renderDecisionCenter(reqs);
-    html += _renderFinanceTrustCenter(reqs);
-    html += _renderEvidenceCenter(reqs);
-    html += _renderClientRafiIntelligence(reqs);
+    html += _renderC32Live(reqs);
+    html += _renderC32RafiBrief(reqs);
+    html += _renderC32Portfolio(reqs);
 
-    /* ── Insights band (always visible) ── */
-    html += _renderInsightsBand();
-
-    /* ── Quick Actions (always visible) ── */
-    html += _renderQuickActions();
-
-    if (active.length) {
-      /* ── Mission Control Hero (active mission) ── */
-      html += _renderMissionHero(topMission);
-
-      /* ── More active missions ── */
-      if (active.length > 1) {
-        html += '<div class="fxv2-section-sub-head">Autres demandes actives</div>';
-        html += '<div class="fxv2-card-list">';
-        active.slice(1).forEach(function (r) { html += _renderCard(r); });
-        html += '</div>';
-      }
-
-      /* ── See all link ── */
-      if (reqs.length > active.length) {
-        html += '<div style="text-align:center;margin-top:16px">'
-          + '<button class="fxv2-btn fxv2-btn-ghost" data-action="go-requests">'
-            + 'Voir l\u2019historique (' + (reqs.length - active.length) + ' termin\u00e9es)'
-          + '</button>'
-          + '</div>';
-      }
-    } else {
-      /* ── Premium empty state ── */
-      html += _renderPremiumEmpty(_state.profile);
-    }
-
+    if (!active.length) html += _renderPremiumEmpty(_state.profile);
     sec.innerHTML = html;
   }
 
