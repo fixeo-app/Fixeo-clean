@@ -1328,8 +1328,21 @@
     /* Sidebar nav links */
     document.querySelectorAll('.fxv2-nav-link').forEach(function (a) {
       a.addEventListener('click', function () {
+        var route=a.getAttribute('data-c31-route');
+        if(route==='decision'){
+          _showSection('requests');
+          _renderC39DecisionPage(_state.requests||[]);
+          return;
+        }
         _showSection(a.dataset.section);
       });
+    });
+
+    /* Canonical header notification bell lives outside #fxv2-main. */
+    var notifBell=document.getElementById('fxv2-notif-bell');
+    if(notifBell) notifBell.addEventListener('click',function(){
+      _showSection('notifications');
+      _renderNotificationsSection();
     });
 
     /* Bottom nav buttons */
