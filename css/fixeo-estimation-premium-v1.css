@@ -447,3 +447,216 @@ body:has(#fxep-public-root) {
   #fxep-public-root .fxep-hero { padding-inline: 14px; }
   #fxep-public-root .fxep-service-item { min-height: 118px; padding: 12px 10px; }
 }
+
+
+/* ================================================================
+   ESTIMATION — VISUAL SYSTEM MASTER
+   One FIXEO palette, one typography system, one RAFI cockpit language.
+   ================================================================ */
+body.fxep-mode-public {
+  --fxep-ink: #090d18;
+  --fxep-surface: #111827;
+  --fxep-surface-2: #182136;
+  --fxep-surface-3: #202943;
+  --fxep-rafi: #8fa8ff;
+  --fxep-rafi-soft: #b8c7ff;
+  --fxep-pink: #ef9ac5;
+  --fxep-warm: #ffd08e;
+  --fxep-line: #aebeff2e;
+  --fxep-line-soft: #ffffff14;
+  --fxep-copy: #b9c4d8;
+}
+#fxep-public-root,
+#fxep-public-root button,
+#fxep-public-root input,
+#fxep-public-root textarea,
+#fxep-public-root select,
+#fxep-public-root option,
+#fxep-public-root summary {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-style: normal;
+}
+#fxep-public-root {
+  background:
+    radial-gradient(ellipse 62% 560px at 82% 170px, #5365b526, transparent 72%),
+    radial-gradient(ellipse 48% 420px at 2% 520px, #a5507720, transparent 72%),
+    var(--fxep-ink);
+}
+#fxep-public-root .fxep-section-label,
+#fxep-public-root .fxep-example-label,
+#fxep-public-root .fxep-outcome-tag,
+#fxep-public-root .fxep-service-category {
+  color: #c6b8d5;
+  font-weight: 750;
+}
+#fxep-public-root .fxep-section-copy,
+#fxep-public-root .fxep-outcomes-sub,
+#fxep-public-root .fxep-step-desc,
+#fxep-public-root .fxep-outcome-desc,
+#fxep-public-root .fxep-example-caption {
+  color: var(--fxep-copy);
+}
+
+/* RAFI cockpit — flagship surface */
+#fxep-public-root .fxep-input-card {
+  isolation: isolate;
+  border: 1px solid #aebeff42;
+  background:
+    radial-gradient(circle at 0 0, #7c62aa26, transparent 42%),
+    radial-gradient(circle at 100% 0, #526fb22b, transparent 46%),
+    linear-gradient(150deg,#1c2540 0%,#121a2d 58%,#101625 100%);
+  box-shadow: 0 24px 64px #0006, 0 0 0 1px #ffffff05 inset;
+}
+#fxep-public-root .fxep-input-card::before {
+  left: 22px;
+  right: 22px;
+  height: 2px;
+  background: linear-gradient(90deg,var(--fxep-warm),var(--fxep-pink) 52%,var(--fxep-rafi));
+  box-shadow: 0 0 18px #ef9ac54a;
+}
+#fxep-public-root .fxep-input-card:focus-within {
+  border-color: #b8c7ff75;
+  box-shadow: 0 24px 64px #0006, 0 0 34px #829aff17, 0 0 0 1px #ffffff08 inset;
+}
+#fxep-public-root .fxep-console-kicker {
+  color: #f0e9f7;
+  letter-spacing: .11em;
+}
+#fxep-public-root .fxep-console-kicker small {
+  color: #c2ccdf;
+  font-weight: 500;
+}
+#fxep-public-root .fxep-rafi-orb {
+  background: radial-gradient(circle at 28% 22%,#fff0ce,#ef9ac5 34%,#8877cf 62%,#39456f 100%);
+  box-shadow: 0 0 26px #e99ac34d, inset 0 0 0 1px #ffe6c9a3;
+}
+#fxep-public-root .fxep-console-title {
+  color: #f7f8fc;
+  font-weight: 750;
+}
+#fxep-public-root .fxep-input-row {
+  border: 1px solid #9fb2e340;
+  background: #080f1ded;
+  box-shadow: inset 0 1px #ffffff06;
+}
+#fxep-public-root .fxep-input-row:focus-within {
+  border-color: #aebeff7a;
+  box-shadow: 0 0 0 3px #829aff12, inset 0 1px #ffffff08;
+}
+#fxep-public-root .fxep-nlp-input {
+  color: #f7f8fc;
+  font-weight: 560;
+}
+#fxep-public-root .fxep-nlp-input::placeholder { color: #8f9bb0; }
+
+/* Secondary controls form one coherent command bar. */
+#fxep-public-root .fxep-voice-btn,
+#fxep-public-root .fxep-language-select,
+#fxep-public-root select {
+  border: 1px solid #aebeff3d !important;
+  background: #ffffff08 !important;
+  color: #edf1fb !important;
+  box-shadow: inset 0 1px #ffffff0a;
+  font-weight: 650;
+}
+#fxep-public-root .fxep-voice-btn {
+  background: linear-gradient(110deg,#5f91c9aa,#a05e91aa) !important;
+  border-color: #b9d6ff88 !important;
+}
+#fxep-public-root .fxep-city-label { color: #aeb9cd; }
+#fxep-public-root .fxep-city-chip {
+  border-color: #aebeff35;
+  background: #ffffff08;
+  color: #f0f3fb;
+  font-weight: 650;
+}
+
+/* Signature primary CTA */
+#fxep-public-root .fxep-hero-cta,
+#fxep-public-root .fxep-invitation button {
+  color: #171421 !important;
+  background: linear-gradient(105deg,#ffd492 0%,#f0a0c9 54%,#aebcff 100%) !important;
+  border: 1px solid #fff4df75 !important;
+  box-shadow: 0 10px 28px #e89bb02e, inset 0 1px #ffffff9e;
+  font-weight: 760;
+  letter-spacing: -.012em;
+}
+#fxep-public-root .fxep-hero-cta:active,
+#fxep-public-root .fxep-invitation button:active {
+  transform: translateY(1px) scale(.995);
+  filter: brightness(.98);
+}
+
+/* All premium surfaces now belong to the same color family. */
+#fxep-public-root .fxep-discovery,
+#fxep-public-root .fxep-steps,
+#fxep-public-root .fxep-service-item,
+#fxep-public-root .fxep-outcome-card,
+#fxep-public-root .fxep-invitation {
+  border-color: var(--fxep-line);
+}
+#fxep-public-root .fxep-discovery {
+  background:
+    radial-gradient(ellipse at 100% 100%,#5269a626,transparent 64%),
+    linear-gradient(135deg,#171d31,#101725);
+}
+#fxep-public-root .fxep-example-after {
+  background: linear-gradient(145deg,#1b2940,#142033);
+  border-color: #9fb5ec4a;
+}
+#fxep-public-root .fxep-steps {
+  background: linear-gradient(135deg,#1b2135,#111a2a);
+}
+#fxep-public-root .fxep-service-item {
+  background: linear-gradient(145deg,#1c2940,#152033);
+}
+#fxep-public-root .fxep-outcome-card {
+  background: linear-gradient(145deg,#182438,#111b2c);
+}
+#fxep-public-root .fxep-outcome-card.is-price {
+  background:
+    radial-gradient(circle at 95% 0,#ef9ac529,transparent 60%),
+    linear-gradient(150deg,#30283b,#192137);
+  border-color: #f3bdc06b;
+}
+#fxep-public-root .fxep-invitation {
+  background:
+    radial-gradient(ellipse at 50% 0,#a85b8a35,transparent 66%),
+    linear-gradient(125deg,#211f35,#151d2e);
+}
+
+/* Typography hierarchy: remove inherited serif/italic accidents. */
+#fxep-public-root h1,
+#fxep-public-root h2,
+#fxep-public-root h3,
+#fxep-public-root p,
+#fxep-public-root span,
+#fxep-public-root li,
+#fxep-public-root small,
+#fxep-public-root label {
+  font-family: inherit;
+}
+#fxep-public-root .fxep-hero-cta,
+#fxep-public-root .fxep-invitation button,
+#fxep-public-root .fxep-example-try {
+  font-style: normal !important;
+}
+
+@media (max-width: 600px) {
+  #fxep-public-root .fxep-input-card {
+    padding: 16px 14px 15px;
+    border-radius: 19px;
+  }
+  #fxep-public-root .fxep-console-kicker { margin-bottom: 10px; }
+  #fxep-public-root .fxep-rafi-orb { width: 40px; height: 40px; }
+  #fxep-public-root .fxep-console-title { margin-bottom: 9px; }
+  #fxep-public-root .fxep-input-row { border-radius: 14px; }
+  #fxep-public-root .fxep-nlp-input { min-height: 82px; }
+  #fxep-public-root .fxep-city-row { padding: 8px 0 7px; margin-top: 7px; }
+  #fxep-public-root .fxep-city-chip { min-height: 40px; padding: 8px 13px; }
+  #fxep-public-root .fxep-hero-cta {
+    min-height: 52px;
+    margin-top: 5px;
+    border-radius: 13px;
+  }
+}
