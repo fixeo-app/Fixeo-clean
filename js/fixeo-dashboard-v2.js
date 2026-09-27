@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c311'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c312'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -1162,8 +1162,14 @@
   /* ── INJECT NOTIFICATION BELL INTO HEADER ─────────────────────── */
   function _injectNotifBell() {
     var slot = document.getElementById('fxv2-header-notifications');
-    if (!slot || document.getElementById('fxv2-notif-bell')) return;
-    slot.innerHTML = '<button id="fxv2-notif-bell" class="fxv2-notif-bell" aria-label="Notifications" data-action="go-notifications">\uD83D\uDD14</button>';
+    if (!slot) return;
+    document.querySelectorAll('#fxv2-notif-bell').forEach(function (node) {
+      if (!slot.contains(node)) node.remove();
+    });
+    var bell = slot.querySelector('#fxv2-notif-bell');
+    if (!bell) {
+      slot.innerHTML = '<button id="fxv2-notif-bell" class="fxv2-notif-bell" aria-label="Notifications" data-action="go-notifications">\uD83D\uDD14</button>';
+    }
   }
 
   /* ── SECTION: NOTIFICATIONS ────────────────────────────────────── */
