@@ -17,7 +17,7 @@
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
   <!-- V2 CSS only — no V1 CSS loaded -->
   <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/fixeo-dashboard-v2.css?v=c212">
+  <link rel="stylesheet" href="css/fixeo-dashboard-v2.css?v=c31">
   <link rel="stylesheet" href="css/main.css">
   <!-- Canonical request flow V4 (replaces legacy request-form / urgent-modal stack) -->
   <link rel="stylesheet" href="css/fx-request-flow-v4.css?v=fxrf4-v5z4-final-polish">
@@ -42,8 +42,8 @@
           aria-controls="fxv2-sidebar">
     <span></span><span></span><span></span>
   </button>
-  <a class="fxv2-header-logo" href="/" aria-label="Retour à l'accueil Fixeo">Fixeo</a>
-  <div><!-- reserved for future notification bell --></div>
+  <div class="fxv2-header-brand"><a class="fxv2-header-logo" href="/" aria-label="Retour à l'accueil Fixeo">Fixeo</a><span>CLIENT OS</span></div>
+  <div class="fxv2-header-actions"><button class="fxv2-header-rafi" data-section="rafi" aria-label="Ouvrir RAFI"><span>✦</span><b>RAFI</b></button><div id="fxv2-header-notifications"></div><button class="fxv2-header-avatar" data-section="profile" aria-label="Mon profil">👤</button></div>
 </header>
 
 <!-- ══════════════════════════════════════════════════════════
@@ -61,28 +61,24 @@
   </div>
 
   <!-- Navigation -->
-  <nav class="fxv2-nav" role="navigation" aria-label="Navigation principale">
-    <button class="fxv2-nav-link active" data-section="dashboard">
-      <span class="icon">🏠</span> Tableau de bord
-    </button>
-    <button class="fxv2-nav-link" data-section="requests">
-      <span class="icon">📋</span> Mes demandes
-    </button>
-    <button class="fxv2-nav-link" data-section="missions">
-      <span class="icon">⚡</span> Mes missions
-    </button>
-    <button class="fxv2-nav-link" data-section="messages">
-      <span class="icon">💬</span> Messages
-    </button>
-    <button class="fxv2-nav-link" data-section="history">
-      <span class="icon">📁</span> Historique
-    </button>
-    <button class="fxv2-nav-link" data-section="profile">
-      <span class="icon">👤</span> Profil
-    </button>
-    <button class="fxv2-nav-link" data-section="support">
-      <span class="icon">🆘</span> Support Fixeo
-    </button>
+  <nav class="fxv2-nav fxv2-nav-c31" role="navigation" aria-label="Navigation principale">
+    <div class="fxv2-nav-group"><span class="fxv2-nav-label">PILOTAGE</span>
+      <button class="fxv2-nav-link active" data-section="dashboard"><span class="icon">⌂</span><span><b>Tableau de bord</b><small>Votre cockpit FIXEO</small></span></button>
+      <button class="fxv2-nav-link" data-section="requests"><span class="icon">◇</span><span><b>Centre de décision</b><small>Demandes et décisions</small></span></button>
+      <button class="fxv2-nav-link" data-section="missions"><span class="icon">⚡</span><span><b>Mes interventions</b><small>Suivi des missions</small></span></button>
+    </div>
+    <div class="fxv2-nav-group"><span class="fxv2-nav-label">MON ACTIVITÉ</span>
+      <button class="fxv2-nav-link" data-section="history"><span class="icon">◫</span><span><b>Historique</b><small>Interventions passées</small></span></button>
+      <button class="fxv2-nav-link" data-section="documents"><span class="icon">▤</span><span><b>Documents & preuves</b><small>Dossier d'intervention</small></span></button>
+    </div>
+    <div class="fxv2-nav-group"><span class="fxv2-nav-label">FIXEO</span>
+      <button class="fxv2-nav-link" data-section="rafi"><span class="icon">✦</span><span><b>RAFI</b><small>Assistant client</small></span></button>
+      <button class="fxv2-nav-link" data-section="messages"><span class="icon">●</span><span><b>Messages</b><small>Échanges FIXEO</small></span></button>
+      <button class="fxv2-nav-link" data-section="support"><span class="icon">◎</span><span><b>Support</b><small>Aide et assistance</small></span></button>
+    </div>
+    <div class="fxv2-nav-group fxv2-nav-account"><span class="fxv2-nav-label">COMPTE</span>
+      <button class="fxv2-nav-link" data-section="profile"><span class="icon">♙</span><span><b>Profil & paramètres</b></span></button>
+    </div>
   </nav>
 
   <!-- Logout -->
@@ -160,33 +156,20 @@
     <!-- populated by _renderProfile() -->
   </section>
 
-  <section class="fxv2-section" id="fxv2-sec-support"
-           role="region" aria-label="Support Fixeo">
-    <!-- populated by _renderSupport() -->
-  </section>
+  <section class="fxv2-section" id="fxv2-sec-support" role="region" aria-label="Support Fixeo"><!-- populated by _renderSupport() --></section>
+  <section class="fxv2-section" id="fxv2-sec-rafi" role="region" aria-label="RAFI"><!-- populated from Client Intelligence --></section>
+  <section class="fxv2-section" id="fxv2-sec-documents" role="region" aria-label="Documents et preuves"><!-- populated from Evidence Center --></section>
 
 </main>
 
 <!-- ══════════════════════════════════════════════════════════
      BOTTOM NAV (mobile only, sticky)
 ════════════════════════════════════════════════════════════ -->
-<nav class="fxv2-bottom-nav" role="navigation" aria-label="Navigation rapide">
-  <button class="fxv2-bottom-btn active" data-section="dashboard" aria-label="Tableau de bord">
-    <span class="bicon">🏠</span>
-    <span>Accueil</span>
-  </button>
-  <button class="fxv2-bottom-btn" data-section="requests" aria-label="Mes demandes">
-    <span class="bicon">📋</span>
-    <span>Demandes</span>
-  </button>
-  <button class="fxv2-bottom-btn" data-section="missions" aria-label="Mes missions">
-    <span class="bicon">⚡</span>
-    <span>Missions</span>
-  </button>
-  <button class="fxv2-bottom-btn" data-section="profile" aria-label="Mon profil">
-    <span class="bicon">👤</span>
-    <span>Profil</span>
-  </button>
+<nav class="fxv2-bottom-nav fxv2-bottom-c31" role="navigation" aria-label="Navigation rapide">
+  <button class="fxv2-bottom-btn active" data-section="dashboard" aria-label="Accueil"><span class="bicon">⌂</span><span>Accueil</span></button>
+  <button class="fxv2-bottom-btn" data-section="requests" aria-label="Demandes"><span class="bicon">◇</span><span>Demandes</span></button>
+  <button class="fxv2-bottom-btn" data-section="missions" aria-label="Missions"><span class="bicon">⚡</span><span>Missions</span></button>
+  <button class="fxv2-bottom-btn fxv2-bottom-rafi" data-section="rafi" aria-label="RAFI"><span class="bicon">✦</span><span>RAFI</span></button>
 </nav>
 
 <!-- ══════════════════════════════════════════════════════════
@@ -215,7 +198,7 @@
 <!-- Canonical request store + V4 flow (convergence — same engine as public site) -->
 <script src="js/fixeo-client-requests-store.js?v=50a38b9"></script>
 <script src="js/fx-request-flow-v4.js?v=fxrf4-v5e-final-polish"></script>
-<script src="js/fixeo-dashboard-v2.js?v=c213r1" defer></script>
+<script src="js/fixeo-dashboard-v2.js?v=c31" defer></script>
 <script src="js/fixeo-notifications-real-v1.js?v=1" defer></script>
 <script src="js/fixeo-notification-engine.js?v=s1b2-candidate" defer></script>
 <script src="js/fixeo-notification-center-v1.js?v=fnc-v1b" defer></script>
