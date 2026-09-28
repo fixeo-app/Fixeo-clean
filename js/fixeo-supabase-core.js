@@ -571,87 +571,18 @@ async function listOpenRequests() {
   }
 
   async function submitQuote(payload) {
-    var auth = await requireAuth('artisan');
+    await requireAuth('artisan');
     var sb = await getClient();
-
-    var requestResponse = await sb.from('service_requests').select('*').eq('id', payload.request_id).maybeSingle();
-    if (requestResponse.error) throw requestResponse.error;
-    if (!requestResponse.data) throw new Error('Demande introuvable.');
-
-    var acceptedQuoteResponse = await sb.from('quotes').select('id').eq('request_id', payload.request_id).eq('status', 'accepted');
-    if (acceptedQuoteResponse.error) throw acceptedQuoteResponse.error;
-    if ((acceptedQuoteResponse.data || []).length) {
-      throw new Error('Cette demande a déjà été attribuée à un artisan.');
-    }
-
-  /*
- * Canonical quote eligibility.
- *
- * A dispatch-created mission with status='offered' does NOT block quoting
- * when that offer belongs to the currently authenticated artisan.
- *
- * Any other existing mission state remains exclusive and blocks quoting.
- *
- * Mission ownership uses artisans.id, not profiles.id/auth.uid().
- */
-var artisanIdentityRes = await sb.from('artisans')
-  .select('id')
-  .eq('owner_user_id', auth.user.id)
-  .maybeSingle();
-
-if (artisanIdentityRes.error) throw artisanIdentityRes.error;
-if (!artisanIdentityRes.data || !artisanIdentityRes.data.id) {
-  throw new Error('Profil artisan introuvable.');
-}
-
-var artisanProfileId = artisanIdentityRes.data.id;
-
-var missionResponse = await sb.from('missions')
-  .select('id,artisan_profile_id,status')
-  .eq('request_id', payload.request_id);
-
-if (missionResponse.error) throw missionResponse.error;
-
-var existingMissions = missionResponse.data || [];
-
-var blockingMission = existingMissions.find(function(mission) {
-  var status = String(mission.status || '').toLowerCase().trim();
-
-  var isOwnOfferedMission =
-    status === 'offered' &&
-    String(mission.artisan_profile_id || '') === String(artisanProfileId);
-
-  return !isOwnOfferedMission;
-});
-
-if (blockingMission) {
-  throw new Error('Une mission existe déjà pour cette demande.');
-}
-
-    var existingQuoteResponse = await sb.from('quotes').select('*').eq('request_id', payload.request_id).eq('artisan_profile_id', artisanProfileId).maybeSingle();
-    if (existingQuoteResponse.error && String(existingQuoteResponse.error.code || '') !== 'PGRST116') {
-      throw existingQuoteResponse.error;
-    }
-
-    var response;
-    if (existingQuoteResponse.data) {
-      response = await sb.from('quotes').update({
-        proposed_price: Number(payload.proposed_price),
-        message: payload.message,
-        status: 'pending'
-      }).eq('id', existingQuoteResponse.data.id).select('*').maybeSingle();
-    } else {
-      response = await sb.from('quotes').insert({
-        request_id: payload.request_id,
-        artisan_profile_id: artisanProfileId,
-        proposed_price: Number(payload.proposed_price),
-        message: payload.message,
-        status: 'pending'
-      }).select('*').maybeSingle();
-    }
-
+    var response = await sb.rpc('submit_artisan_quote_v2', {
+      p_request_id: payload.request_id,
+      p_proposed_price: Number(payload.proposed_price),
+      p_service_description: payload.service_description || payload.message || '',
+      p_supplies_description: payload.supplies_description || '',
+      p_estimated_duration: payload.estimated_duration || '',
+      p_message: payload.message || ''
+    });
     if (response.error) throw response.error;
-    dispatch('fixeo:data:changed', { type: existingQuoteResponse.data ? 'quote_updated' : 'quote_created', quote: response.data });
+    dispatch('fixeo:data:changed', { type: 'quote_submitted', quote: response.data });
     return response.data;
   }
 
@@ -705,55 +636,13 @@ if (blockingMission) {
   }
 
   async function acceptQuote(quoteId) {
-    var auth = await requireAuth('client');
+    await requireAuth('client');
     var sb = await getClient();
-
-    var quoteRes = await sb.from('quotes').select('*').eq('id', quoteId).maybeSingle();
-    if (quoteRes.error) throw quoteRes.error;
-    if (!quoteRes.data) throw new Error('Devis introuvable.');
-
-    var requestRes = await sb.from('service_requests').select('*').eq('id', quoteRes.data.request_id).maybeSingle();
-    if (requestRes.error) throw requestRes.error;
-    if (!requestRes.data) throw new Error('Demande associée introuvable.');
-    if (requestRes.data.client_profile_id !== auth.profile.id) {
-      throw new Error('Ce devis ne vous appartient pas.');
-    }
-
-    var updateRes = await sb.from('quotes').update({ status: 'accepted' }).eq('id', quoteId).select('*').maybeSingle();
-    if (updateRes.error) throw updateRes.error;
-    if (!updateRes.data) throw new Error('Devis introuvable ou déjà traité.');
-
-    await sb.from('quotes').update({ status: 'rejected' }).eq('request_id', requestRes.data.id).neq('id', quoteId).eq('status', 'pending');
-
-    var mission = null;
-    for (var i = 0; i < 4; i++) {
-      await sleep(350);
-      mission = await fetchMissionByRequestId(requestRes.data.id).catch(function () { return null; });
-      if (mission) break;
-    }
-
-    if (!mission) {
-      mission = await maybeCreateMissionFallback(requestRes.data, updateRes.data);
-    }
-
-    var commissionExpected = Number((Number(updateRes.data.proposed_price || 0) * 0.15).toFixed(2));
-    var commissionActual = mission && mission.commission_amount != null ? Number(mission.commission_amount) : null;
-    var commissionOk = commissionActual != null ? Math.abs(commissionActual - commissionExpected) < 0.01 : false;
-
-    dispatch('fixeo:data:changed', {
-      type: 'quote_accepted',
-      quote: updateRes.data,
-      mission: mission,
-      commission_ok: commissionOk
-    });
-
-    return {
-      quote: updateRes.data,
-      mission: mission,
-      commission_expected: commissionExpected,
-      commission_actual: commissionActual,
-      commission_ok: commissionOk
-    };
+    var response = await sb.rpc('accept_quote_v2', { p_quote_id: quoteId });
+    if (response.error) throw response.error;
+    var mission = response.data || null;
+    dispatch('fixeo:data:changed', { type: 'quote_accepted', mission: mission });
+    return { mission: mission };
   }
 
   function computeRequestState(requestRow, quotes, missions) {
