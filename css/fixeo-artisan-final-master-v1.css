@@ -156,3 +156,12 @@
 .fxbo-periods .fxa-btn{min-height:38px;padding:8px 12px}
 .fxbo-periods .fxa-btn.active{border-color:rgba(255,77,166,.28)!important;background:linear-gradient(135deg,rgba(255,77,166,.14),rgba(90,210,255,.08))!important}
 @media(max-width:520px){.fxbo-periods{display:grid;grid-template-columns:repeat(3,1fr)}.fxbo-periods .fxa-btn{padding:8px 5px;font-size:.66rem}}
+
+/* ── BLOCK O — RAFI ARTISAN INTELLIGENCE FINAL ───────────── */
+.fxbo-rafi-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:5px}
+.fxbo-rafi-secondary{display:grid;gap:6px;margin-top:4px;padding-top:10px;border-top:1px solid rgba(255,255,255,.075)}
+.fxbo-rafi-secondary span{font-size:.66rem;line-height:1.4;color:rgba(255,255,255,.58)}
+@media(max-width:520px){
+  .fxbo-rafi-actions{display:grid;grid-template-columns:1fr}
+  .fxbo-rafi-actions .fxa-btn{width:100%;justify-content:center}
+}
