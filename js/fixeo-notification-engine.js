@@ -388,7 +388,8 @@
 
   /* Inject bell into artisan V2 dashboard header */
   function _injectArtisanBell() {
-    /* Target: <div><!-- notification bell placeholder --></div> */
+    /* Artisan OS owns one canonical bell. Never inject a legacy duplicate. */
+    if (document.getElementById('fxav2-bell')) return;
     var placeholder = document.querySelector('.fxa-header > div:last-child');
     if (!placeholder || placeholder.querySelector('.fxne-bell')) return;
     placeholder.style.position = 'relative';
