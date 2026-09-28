@@ -266,10 +266,15 @@
 
     /* Open requests eligible for quoting — from V2 state */
     var v2 = getV2State();
+    var quotedRequestIds = {};
+    (quotes || []).forEach(function(q) {
+      if (q && q.request_id) quotedRequestIds[String(q.request_id)] = true;
+    });
     var eligibleRequests = (v2 && v2.openRequests && v2.openRequests.length)
       ? v2.openRequests.filter(function(r) {
-          /* Eligible: status=new — no existing accepted quote (server enforces; we show button) */
-          return r.status === 'new';
+          /* One active proposal per artisan/request in the workspace.
+             Server RPC remains the authority and enforces eligibility. */
+          return r.status === 'new' && !quotedRequestIds[String(r.id)];
         }).slice(0, 5)
       : [];
 
@@ -302,11 +307,22 @@
     if (err) {
       html += '<div class="fxa-error-banner">⚠️ ' + esc(err) + '</div>';
     } else if (!quotes.length) {
-      html += '<div class="fxa-empty fxa-empty--inline" style="margin-top:14px">'
+      html += '<div class="fxck-quote-studio-home">'
+        + '<div class="fxck-quote-studio-kicker">DEVIS STUDIO · FIXEO</div>'
+        + '<h3 class="fxck-quote-studio-title">Votre espace commercial</h3>'
+        + '<p class="fxck-quote-studio-sub">Préparez vos propositions depuis les demandes éligibles. Chaque devis passe par FIXEO avant d’être présenté au client.</p>'
+        + '<div class="fxck-quote-workspace-stats">'
+        + '<div class="fxa-card"><strong>0</strong><span>À préparer</span></div>'
+        + '<div class="fxa-card"><strong>0</strong><span>En attente</span></div>'
+        + '<div class="fxa-card"><strong>0</strong><span>Acceptés</span></div>'
+        + '</div>'
+        + '<div class="fxa-empty fxa-empty--inline" style="margin-top:14px">'
         + '<div class="fxa-empty-icon" style="font-size:1.8rem">📋</div>'
-        + '<div>'
-        + '<div class="fxa-empty-title" style="font-size:.92rem">Aucun devis envoyé</div>'
-        + '<div class="fxa-empty-sub" style="font-size:.78rem">Lorsqu’une demande éligible permet un devis, FIXEO la fera apparaître ici. Aucun devis fictif n’est créé.</div>'
+        + '<div><div class="fxa-empty-title" style="font-size:.92rem">Aucune demande à chiffrer maintenant</div>'
+        + '<div class="fxa-empty-sub" style="font-size:.78rem">Dès qu’une opportunité éligible correspond à votre activité, vous pourrez ouvrir l’atelier, rédiger le devis et l’envoyer à FIXEO ici.</div></div></div>'
+        + '<div class="fxa-actions" style="margin-top:14px">'
+        + '<button class="fxa-btn fxa-btn-primary" data-action="quote-see-opportunities">Voir les opportunités →</button>'
+        + '<button class="fxa-btn fxa-btn-ghost" data-action="quote-ask-rafi">Conseil RAFI</button>'
         + '</div></div>';
     } else {
       /* Group by status */
@@ -886,6 +902,12 @@
 
       if (action === 'quote-new') {
         _openQuoteModal(btn.dataset.requestId, btn.dataset.requestDesc);
+      }
+
+      if (action === 'quote-see-opportunities' || action === 'quote-ask-rafi') {
+        var targetSection = action === 'quote-see-opportunities' ? 'available' : 'rafi';
+        var nav = document.querySelector('[data-section="' + targetSection + '"]');
+        if (nav) nav.click();
       }
 
       if (action === 'notif-read') {
