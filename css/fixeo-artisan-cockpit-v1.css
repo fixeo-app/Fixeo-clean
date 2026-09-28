@@ -488,3 +488,15 @@
 
 /* ARTISAN OS PREMIUM MASTER — B6 */
 .fxck-empty-tip{margin-top:10px;padding:9px 11px;border-radius:11px;background:rgba(126,102,190,.08);color:rgba(255,255,255,.48);font-size:.65rem;line-height:1.4}
+
+
+/* Devis Studio V2 */
+.fxck-quote-studio-kicker{font-size:.7rem;font-weight:800;letter-spacing:.12em;color:#ff8cc8;margin-bottom:6px}
+.fxck-quote-studio-title{font-size:1.18rem;font-weight:800;margin:0 0 5px}
+.fxck-quote-studio-sub{font-size:.78rem;line-height:1.5;color:rgba(255,255,255,.64);margin:0 0 14px}
+.fxck-quote-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fxck-quote-trust{font-size:.7rem;line-height:1.45;color:rgba(255,255,255,.56);padding:9px 10px;border:1px solid rgba(255,255,255,.08);border-radius:12px;margin:4px 0 12px}
+.fxck-quote-detail{font-size:.76rem;line-height:1.45;color:rgba(255,255,255,.72);margin-top:5px}
+.fxck-quote-service{color:rgba(255,255,255,.9)}
+.fxck-quote-actions{position:sticky;bottom:0;padding-top:8px;background:linear-gradient(180deg,rgba(26,26,46,0),#1a1a2e 28%)}
+@media(max-width:420px){.fxck-quote-grid{grid-template-columns:1fr}.fxck-quote-studio-title{font-size:1.05rem}}
