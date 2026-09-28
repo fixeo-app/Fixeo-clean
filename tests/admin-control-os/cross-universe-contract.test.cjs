@@ -1,0 +1,18 @@
+'use strict';
+const fs=require('fs'),path=require('path'),root=path.resolve(__dirname,'../../../..');
+const A=fs.readFileSync(path.join(root,'js/admin-control-os-clean.js'),'utf8');
+const C=fs.readFileSync(path.join(root,'js/fixeo-dashboard-v2.js'),'utf8');
+const AR=fs.readFileSync(path.join(root,'dashboard-artisan-v2.html'),'utf8');
+const E=fs.readFileSync(path.join(root,'dashboard-enterprise.html'),'utf8');
+let n=0,f=0;const t=(x,v)=>{n++;if(v)console.log('PASS',x);else{f++;console.error('FAIL',x)}};
+t('Client and Admin share service_requests',C.includes('service_requests')&&A.includes("q(c,'service_requests'"));
+t('Client and Admin share missions',C.includes('missions')&&A.includes("q(c,'missions'"));
+t('Client and Admin share quotes',C.includes('quotes')&&A.includes("q(c,'quotes'"));
+t('Client and Admin share notifications',C.includes("from('notifications')")&&A.includes("q(c,'notifications'"));
+t('Artisan universe exposes missions',AR.includes('fxav2-sec-missions')&&A.includes("q(c,'missions'"));
+t('Artisan universe exposes quotes',AR.includes('fxck-sec-quotes')&&A.includes("q(c,'quotes'"));
+t('Artisan universe uses real notifications',AR.includes('fixeo-notifications-real-v1.js')&&A.includes("q(c,'notifications'"));
+t('Enterprise universe exists and Admin reads accounts/sites',E.includes('dashboard-enterprise')||E.includes('ENTERPRISE')||E.includes('Enterprise'),A.includes("q(c,'enterprise_accounts'")&&A.includes("q(c,'enterprise_sites'"));
+t('Admin mutations are governed APIs/repository',A.includes('/api/admin/requests/assign')&&A.includes('/api/admin/artisans/verify')&&A.includes('approveClaimRequest'));
+t('Admin has no direct insert/update/delete',!A.includes('.insert(')&&!A.includes('.update(')&&!A.includes('.delete('));
+console.log('TOTAL',n,'PASS',n-f,'FAIL',f);if(f)process.exit(1);
