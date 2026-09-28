@@ -955,3 +955,6 @@ a.fxa-header-logo:hover { opacity: .82; }
 
 /* PREMIUM MASTER — B3 DISPATCH OPPORTUNITIES */
 .fxao-match-reason{display:flex;align-items:flex-start;gap:9px;margin:12px 0;padding:10px 11px;border:1px solid rgba(141,164,255,.12);border-radius:12px;background:rgba(111,91,255,.055)}.fxao-match-reason>span{color:#e9a8cb;font-size:.78rem}.fxao-match-reason b{display:block;color:rgba(255,255,255,.82);font-size:.68rem}.fxao-match-reason small{display:block;margin-top:2px;color:rgba(255,255,255,.38);font-size:.6rem;line-height:1.4}
+
+/* PREMIUM MASTER — B4 MISSION CENTER */
+.fxao-next-step{margin:12px 0;padding:11px 12px;border-left:2px solid #bd82d5;border-radius:0 11px 11px 0;background:linear-gradient(90deg,rgba(189,130,213,.09),rgba(95,125,220,.035))}.fxao-next-step span{display:block;color:#d4a9d9;font-size:.53rem;font-weight:850;letter-spacing:.12em}.fxao-next-step b{display:block;margin-top:4px;color:rgba(255,255,255,.72);font-size:.68rem;line-height:1.4}
