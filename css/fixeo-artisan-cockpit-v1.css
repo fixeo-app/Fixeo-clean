@@ -485,3 +485,6 @@
   min-height: 72px;
   max-height: 160px;
 }
+
+/* ARTISAN OS PREMIUM MASTER — B6 */
+.fxck-empty-tip{margin-top:10px;padding:9px 11px;border-radius:11px;background:rgba(126,102,190,.08);color:rgba(255,255,255,.48);font-size:.65rem;line-height:1.4}
