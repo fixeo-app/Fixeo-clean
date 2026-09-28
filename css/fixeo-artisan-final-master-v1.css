@@ -338,3 +338,10 @@
   .fxa-bottom-nav{height:var(--fxau-mobile-nav-height)!important;min-height:var(--fxau-mobile-nav-height)!important;box-sizing:border-box!important}
   .fxa-modal-overlay>div{scroll-padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}
 }
+
+/* ── ARTISAN OS FINALIZATION B/C — CRM FINANCE CLOSURE ─────── */
+.fxbo-client-balance{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.fxbo-client-balance>div{display:grid;gap:3px;padding:11px;border:1px solid rgba(255,255,255,.075);border-radius:13px;background:rgba(255,255,255,.025)}
+.fxbo-client-balance span{font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.48)}
+.fxbo-client-balance strong{font-size:.8rem}
+@media(max-width:520px){.fxbo-client-balance{grid-template-columns:1fr}.fxbo-client-detail .fxbo-actions{display:grid;grid-template-columns:1fr 1fr}.fxbo-client-detail .fxbo-actions .fxa-btn{justify-content:center}}
