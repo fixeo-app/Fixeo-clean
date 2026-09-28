@@ -131,3 +131,21 @@
   .fxa-content{padding:28px 26px 50px!important}
   #fxbo-sec-clients .fxbo-list,#fxbo-sec-agenda .fxbo-list,#fxbo-ledger-list{grid-template-columns:1fr}
 }
+
+/* ── BLOCK L — DEVIS STUDIO FINAL ─────────────────────────── */
+.fxbo-client-picker{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end}
+.fxbo-client-picker label{min-width:0}
+.fxbo-inline-client{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;border:1px solid rgba(90,210,255,.14);border-radius:14px;background:rgba(90,210,255,.035)}
+.fxbo-inline-client[hidden]{display:none}
+.fxbo-inline-client>strong{grid-column:1/-1;font-size:.76rem}
+.fxbo-inline-client label:nth-of-type(1),.fxbo-inline-client label:nth-of-type(4){grid-column:1/-1}
+.fxbo-document-parties{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:4px 0 2px}
+.fxbo-document-parties>div{display:grid;gap:3px;padding:11px 12px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.025)}
+.fxbo-document-parties small{font-size:.56rem;font-weight:900;letter-spacing:.12em;opacity:.52}
+.fxbo-document-parties strong{font-size:.8rem}
+.fxbo-document-parties span{font-size:.67rem;opacity:.62;overflow-wrap:anywhere}
+@media(max-width:520px){
+  .fxbo-client-picker{grid-template-columns:1fr}.fxbo-client-picker>.fxa-btn{width:100%;justify-content:center}
+  .fxbo-inline-client,.fxbo-document-parties{grid-template-columns:1fr}
+  .fxbo-inline-client label{grid-column:1!important}
+}
