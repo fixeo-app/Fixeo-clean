@@ -60,11 +60,11 @@ G5 manual refresh + bounded 60s refresh — PASS
 G6 graceful errors — PASS
 
 ## H Cutover
-H1 legacy parity matrix — IN PROGRESS
-H2 automated certification — IN PROGRESS
+H1 legacy parity matrix — PASS (overview, requests, reservations, missions/commissions, artisans/trust, urgent, notifications retained in clean equivalents)
+H2 automated certification — PASS (dedicated clean suite + static certification)
 H3 cross-universe E2E — pending
-H4 security/error regression — pending
-H5 responsive/performance — pending
+H4 security/error regression — PASS (canonical auth, governed writes, no service-role browser, timeout + single-flight)
+H5 responsive/performance — PASS (bounded reads, 12s timeout, visibility refresh, single-flight, 900/520 responsive, reduced motion)
 H6 admin.html cutover — pending
 
 Rule: H6 cannot execute until H1–H5 are green.
