@@ -641,8 +641,13 @@ async function listOpenRequests() {
     var response = await sb.rpc('accept_quote_v2', { p_quote_id: quoteId });
     if (response.error) throw response.error;
     var mission = response.data || null;
-    dispatch('fixeo:data:changed', { type: 'quote_accepted', mission: mission });
-    return { mission: mission };
+    var agreed = mission && mission.agreed_price != null ? Number(mission.agreed_price) : null;
+    var commissionExpected = agreed != null ? Number((agreed * 0.15).toFixed(2)) : null;
+    var commissionActual = mission && mission.commission_amount != null ? Number(mission.commission_amount) : null;
+    var commissionOk = commissionExpected != null && commissionActual != null
+      ? Math.abs(commissionActual - commissionExpected) < 0.01 : false;
+    dispatch('fixeo:data:changed', { type: 'quote_accepted', mission: mission, commission_ok: commissionOk });
+    return { mission: mission, commission_expected: commissionExpected, commission_actual: commissionActual, commission_ok: commissionOk };
   }
 
   function computeRequestState(requestRow, quotes, missions) {
