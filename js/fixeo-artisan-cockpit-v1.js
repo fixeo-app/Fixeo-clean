@@ -257,105 +257,84 @@
   function _renderQuotesSection(quotes, loading, err) {
     var sec = el('fxck-sec-quotes');
     if (!sec) return;
-
     if (loading) {
-      sec.innerHTML = '<div class="fxa-section-head"><h2>📋 Mes devis</h2></div>'
-        + _skeletonCards(3);
+      sec.innerHTML = '<div class="fxa-section-head"><h2>Mes devis</h2></div>' + _skeletonCards(3);
       return;
     }
 
-    /* Open requests eligible for quoting — from V2 state */
+    quotes = quotes || [];
     var v2 = getV2State();
     var quotedRequestIds = {};
-    (quotes || []).forEach(function(q) {
-      if (q && q.request_id) quotedRequestIds[String(q.request_id)] = true;
-    });
-    var eligibleRequests = (v2 && v2.openRequests && v2.openRequests.length)
-      ? v2.openRequests.filter(function(r) {
-          /* One active proposal per artisan/request in the workspace.
-             Server RPC remains the authority and enforces eligibility. */
-          return r.status === 'new' && !quotedRequestIds[String(r.id)];
-        }).slice(0, 5)
-      : [];
+    quotes.forEach(function(q){ if(q && q.request_id) quotedRequestIds[String(q.request_id)] = true; });
+    var eligibleRequests = (v2 && v2.openRequests || []).filter(function(r){
+      return r.status === 'new' && !quotedRequestIds[String(r.id)];
+    }).slice(0,12);
 
-    var html = '<div class="fxa-section-head"><h2>📋 Mes devis</h2>'
-      + '<span class="fxa-section-count">' + quotes.length + '</span>'
-      + '</div>';
+    var pending  = quotes.filter(function(q){return q.status==='pending';});
+    var accepted = quotes.filter(function(q){return q.status==='accepted';});
+    var closed   = quotes.filter(function(q){return ['rejected','expired'].indexOf(q.status)!==-1;});
+    var other    = quotes.filter(function(q){return ['pending','accepted','rejected','expired'].indexOf(q.status)===-1;});
 
-    /* Eligible requests CTA */
+    function quoteCard(q) {
+      var search = [q.service_description,q.supplies_description,q.message,q.request_id,_quoteStatusLabel(q.status)].filter(Boolean).join(' ').toLowerCase();
+      return '<article class="fxa-card fxck-quote-card fxau-commercial-item" data-commercial-state="'+esc(q.status||'other')+'" data-commercial-search="'+esc(search)+'">'
+        + '<div class="fxa-card-top"><span class="fxa-badge '+_quoteStatusCls(q.status)+'">'+esc(_quoteStatusLabel(q.status))+'</span>'
+        + (q.proposed_price > 0 ? '<span class="fxck-quote-price">'+fmt(q.proposed_price)+' MAD</span>' : '')+'</div>'
+        + (q.service_description?'<div class="fxa-card-desc fxck-quote-service"><strong>Intervention</strong><br>'+esc(q.service_description.slice(0,180))+(q.service_description.length>180?'…':'')+'</div>':'')
+        + '<div class="fxau-commercial-details">'
+        + (q.supplies_description?'<span><b>Fournitures</b>'+esc(q.supplies_description.slice(0,120))+'</span>':'')
+        + (q.estimated_duration?'<span><b>Délai</b>'+esc(q.estimated_duration)+'</span>':'')
+        + (q.message?'<span><b>Suivi FIXEO</b>'+esc(q.message.slice(0,120))+'</span>':'')
+        + '</div><div class="fxck-quote-meta">'+(q.created_at?new Date(q.created_at).toLocaleDateString('fr-FR'):'')+' · Réf. '+esc((q.request_id||'').slice(0,8))+'</div></article>';
+    }
+    function group(label,items,key) {
+      return '<section class="fxau-commercial-group" data-commercial-group="'+key+'"><div class="fxau-commercial-group-head"><strong>'+label+'</strong><span>'+items.length+'</span></div>'
+        +(items.length?'<div class="fxa-card-list">'+items.map(quoteCard).join('')+'</div>':'<div class="fxau-commercial-group-empty">Aucun élément dans cette étape.</div>')+'</section>';
+    }
+
+    var html = '<div class="fxau-commercial">'
+      + '<header class="fxau-commercial-hero"><div><span>MARKETPLACE · DEVIS STUDIO</span><h2>Pilotez vos propositions FIXEO.</h2><p>Préparez, suivez et retrouvez vos devis marketplace. FIXEO reste l’étape de validation avant présentation au client.</p></div>'
+      + '<div class="fxau-commercial-actions"><button class="fxa-btn fxa-btn-primary" data-action="quote-see-opportunities">Voir les opportunités</button><button class="fxa-btn fxa-btn-ghost" data-action="quote-ask-rafi">Conseil RAFI</button></div></header>'
+      + '<div class="fxau-commercial-kpis">'
+      + '<button data-commercial-filter="prepare"><b>'+eligibleRequests.length+'</b><span>À préparer</span><small>Demandes éligibles</small></button>'
+      + '<button data-commercial-filter="pending"><b>'+pending.length+'</b><span>En attente</span><small>Validation / décision</small></button>'
+      + '<button data-commercial-filter="accepted"><b>'+accepted.length+'</b><span>Acceptés</span><small>À transformer en mission</small></button>'
+      + '<button data-commercial-filter="closed"><b>'+closed.length+'</b><span>Clos</span><small>Refusés / expirés</small></button></div>'
+      + '<div class="fxau-commercial-tools"><label><span>Rechercher</span><input id="fxau-commercial-search" type="search" placeholder="Client, intervention, référence…"></label>'
+      + '<div class="fxau-commercial-tabs"><button class="active" data-commercial-tab="all">Tout</button><button data-commercial-tab="prepare">À préparer</button><button data-commercial-tab="pending">En attente</button><button data-commercial-tab="accepted">Acceptés</button><button data-commercial-tab="closed">Clos</button></div></div>';
+
+    if (err) html += '<div class="fxa-error-banner">'+esc(err)+'</div>';
+
+    html += '<section class="fxau-commercial-group" data-commercial-group="prepare"><div class="fxau-commercial-group-head"><strong>À préparer</strong><span>'+eligibleRequests.length+'</span></div>';
     if (eligibleRequests.length) {
-      html += '<div class="fxck-quote-eligible-head">Demandes disponibles — Envoyer un devis</div>'
-        + '<div class="fxa-card-list">'
-        + eligibleRequests.map(function(r) {
-          return '<div class="fxa-card fxck-quote-eligible-card">'
-            + '<div class="fxck-quote-eligible-top">'
-            + '<span class="fxa-card-service">' + esc(r.service_category || r.category || '—') + '</span>'
-            + '<span class="fxck-quote-city">📍 ' + esc(r.city || '') + '</span>'
-            + '</div>'
-            + (r.description ? '<div class="fxa-card-desc" style="margin-top:4px">' + esc(r.description.slice(0, 80)) + (r.description.length > 80 ? '…' : '') + '</div>' : '')
-            + '<div class="fxa-actions" style="margin-top:10px">'
-            + '<button class="fxa-btn fxa-btn-primary fxa-btn-sm" '
-            + 'data-action="quote-new" data-request-id="' + esc(r.id) + '" '
-            + 'data-request-desc="' + esc(r.description || r.service_category || '') + '">'
-            + '📋 Envoyer un devis</button>'
-            + '</div>'
-            + '</div>';
-        }).join('')
-        + '</div>';
-    }
-
-    if (err) {
-      html += '<div class="fxa-error-banner">⚠️ ' + esc(err) + '</div>';
-    } else if (!quotes.length) {
-      html += '<div class="fxck-quote-studio-home">'
-        + '<div class="fxck-quote-studio-kicker">DEVIS STUDIO · FIXEO</div>'
-        + '<h3 class="fxck-quote-studio-title">Votre espace commercial</h3>'
-        + '<p class="fxck-quote-studio-sub">Préparez vos propositions depuis les demandes éligibles. Chaque devis passe par FIXEO avant d’être présenté au client.</p>'
-        + '<div class="fxck-quote-workspace-stats">'
-        + '<div class="fxa-card"><strong>0</strong><span>À préparer</span></div>'
-        + '<div class="fxa-card"><strong>0</strong><span>En attente</span></div>'
-        + '<div class="fxa-card"><strong>0</strong><span>Acceptés</span></div>'
-        + '</div>'
-        + '<div class="fxa-empty fxa-empty--inline" style="margin-top:14px">'
-        + '<div class="fxa-empty-icon" style="font-size:1.8rem">📋</div>'
-        + '<div><div class="fxa-empty-title" style="font-size:.92rem">Aucune demande à chiffrer maintenant</div>'
-        + '<div class="fxa-empty-sub" style="font-size:.78rem">Dès qu’une opportunité éligible correspond à votre activité, vous pourrez ouvrir l’atelier, rédiger le devis et l’envoyer à FIXEO ici.</div></div></div>'
-        + '<div class="fxa-actions" style="margin-top:14px">'
-        + '<button class="fxa-btn fxa-btn-primary" data-action="quote-see-opportunities">Voir les opportunités →</button>'
-        + '<button class="fxa-btn fxa-btn-ghost" data-action="quote-ask-rafi">Conseil RAFI</button>'
-        + '</div></div>';
+      html += '<div class="fxa-card-list">'+eligibleRequests.map(function(r){
+        var search=[r.service_category,r.category,r.city,r.description,r.id].filter(Boolean).join(' ').toLowerCase();
+        return '<article class="fxa-card fxck-quote-eligible-card fxau-commercial-item" data-commercial-state="prepare" data-commercial-search="'+esc(search)+'"><div class="fxck-quote-eligible-top"><span class="fxa-card-service">'+esc(r.service_category||r.category||'Intervention')+'</span><span class="fxck-quote-city">'+esc(r.city||'')+'</span></div>'
+          +(r.description?'<div class="fxa-card-desc">'+esc(r.description.slice(0,150))+(r.description.length>150?'…':'')+'</div>':'')
+          +'<div class="fxa-actions"><button class="fxa-btn fxa-btn-primary fxa-btn-sm" data-action="quote-new" data-request-id="'+esc(r.id)+'" data-request-desc="'+esc(r.description||r.service_category||'')+'">Préparer le devis →</button></div></article>';
+      }).join('')+'</div>';
     } else {
-      /* Group by status */
-      var pending  = quotes.filter(function(q){return q.status==='pending';});
-      var accepted = quotes.filter(function(q){return q.status==='accepted';});
-      var other    = quotes.filter(function(q){return q.status!=='pending'&&q.status!=='accepted';});
-
-      function renderGroup(label, items) {
-        if (!items.length) return '';
-        return '<div class="fxck-quote-group-label">' + esc(label) + ' (' + items.length + ')</div>'
-          + '<div class="fxa-card-list">'
-          + items.map(function(q) {
-            return '<div class="fxa-card fxck-quote-card">'
-              + '<div class="fxa-card-top">'
-              + '<span class="fxa-badge ' + _quoteStatusCls(q.status) + '">' + esc(_quoteStatusLabel(q.status)) + '</span>'
-              + (q.proposed_price > 0 ? '<span class="fxck-quote-price">' + fmt(q.proposed_price) + ' MAD</span>' : '')
-              + '</div>'
-              + (q.service_description ? '<div class="fxa-card-desc fxck-quote-service" style="margin-top:8px"><strong>Intervention</strong><br>' + esc(q.service_description.slice(0,180)) + (q.service_description.length>180?'…':'') + '</div>' : '') + (q.supplies_description ? '<div class="fxck-quote-detail"><strong>Fournitures :</strong> ' + esc(q.supplies_description.slice(0,140)) + '</div>' : '') + (q.estimated_duration ? '<div class="fxck-quote-detail"><strong>Délai :</strong> ' + esc(q.estimated_duration) + '</div>' : '') + (q.message ? '<div class="fxck-quote-detail"><strong>Note FIXEO :</strong> ' + esc(q.message.slice(0,120)) + '</div>' : '')
-              + '<div class="fxck-quote-meta">'
-              + (q.created_at ? new Date(q.created_at).toLocaleDateString('fr-FR') : '')
-              + ' · Demande <code style="font-size:.75rem">' + esc((q.request_id||'').slice(0,8)) + '</code>'
-              + '</div>'
-              + '</div>';
-          }).join('')
-          + '</div>';
-      }
-
-      if (accepted.length) html += renderGroup('✅ Acceptés', accepted);
-      if (pending.length)  html += renderGroup('⏳ En attente', pending);
-      if (other.length)    html += renderGroup('📁 Historique', other);
+      html += '<div class="fxau-commercial-group-empty"><strong>Rien à chiffrer maintenant.</strong><span>Les nouvelles demandes éligibles apparaîtront ici automatiquement.</span></div>';
     }
-
+    html += '</section>'+group('En attente',pending,'pending')+group('Acceptés',accepted,'accepted')+group('Clos',closed.concat(other),'closed')+'</div>';
     sec.innerHTML = html;
+  }
+
+  function _applyCommercialView() {
+    var sec=el('fxck-sec-quotes'); if(!sec) return;
+    var active=sec.querySelector('[data-commercial-tab].active');
+    var tab=active?active.getAttribute('data-commercial-tab'):'all';
+    var q=(sec.querySelector('#fxau-commercial-search')||{}).value||''; q=q.trim().toLowerCase();
+    sec.querySelectorAll('[data-commercial-group]').forEach(function(g){
+      var key=g.getAttribute('data-commercial-group');
+      var tabVisible=tab==='all'||tab===key;
+      var any=false;
+      g.querySelectorAll('.fxau-commercial-item').forEach(function(item){
+        var hit=!q||(item.getAttribute('data-commercial-search')||'').indexOf(q)!==-1;
+        item.style.display=hit?'':'none'; if(hit) any=true;
+      });
+      g.style.display=(tabVisible&&(!q||any))?'':'none';
+    });
   }
 
   /* ── PROFILE COMPLETENESS ───────────────────────────────────
