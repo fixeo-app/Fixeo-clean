@@ -1188,13 +1188,13 @@ html += targetedOffers
 
     sec.innerHTML =
       '<div class="fxaf-account-page">'
-      + '<div class="fxaf-account-hero"><span>COMPTE · SÉCURITÉ</span><h1>Votre accès, sous votre contrôle.</h1><p>Gérez vos coordonnées de connexion sans modifier votre rôle, votre identité artisan ou vos droits FIXEO.</p></div>'
+      + '<div class="fxaf-account-hero"><span>COMPTE · SÉCURITÉ</span><h1>Votre accès, sous votre contrôle.</h1><p>Gérez simplement vos coordonnées et la sécurité de votre accès FIXEO.</p></div>'
       + '<div class="fxaf-account-grid">'
-        + '<article class="fxaf-account-card"><div class="fxaf-account-icon">☎</div><div><small>TÉLÉPHONE DE CONTACT</small><strong>'+esc(phone || 'Non renseigné')+'</strong><p>Utilisé pour votre contact professionnel et votre profil public. Il ne sert jamais d’autorité d’identité.</p></div><button class="fxa-btn fxa-btn-ghost" data-action="account-phone-edit">Modifier</button></article>'
-        + '<article class="fxaf-account-card"><div class="fxaf-account-icon">✉</div><div><small>E-MAIL DE CONNEXION</small><strong>'+esc(email || 'Non renseigné')+'</strong>'+(pendingEmail?'<p class="fxaf-account-pending">Confirmation en attente : '+esc(pendingEmail)+'</p>':'<p>La nouvelle adresse n’est appliquée qu’après validation par Supabase Auth.</p>')+'</div><button class="fxa-btn fxa-btn-ghost" data-action="account-email-edit">Modifier</button></article>'
-        + '<article class="fxaf-account-card"><div class="fxaf-account-icon">⌁</div><div><small>MOT DE PASSE</small><strong>Sécuriser mon accès</strong><p>Le mot de passe est géré exclusivement par Supabase Auth et n’est jamais stocké dans les tables FIXEO.</p></div><button class="fxa-btn fxa-btn-ghost" data-action="account-password-edit">Modifier</button></article>'
+        + '<article class="fxaf-account-card"><div class="fxaf-account-icon">☎</div><div><small>TÉLÉPHONE DE CONTACT</small><strong>'+esc(phone || 'Non renseigné')+'</strong><p>Votre numéro de contact professionnel, également utilisé sur votre profil public.</p></div><button class="fxa-btn fxa-btn-ghost" data-action="account-phone-edit">Modifier</button></article>'
+        + '<article class="fxaf-account-card"><div class="fxaf-account-icon">✉</div><div><small>E-MAIL DE CONNEXION</small><strong>'+esc(email || 'Non renseigné')+'</strong>'+(pendingEmail?'<p class="fxaf-account-pending">Confirmation en attente : '+esc(pendingEmail)+'</p>':'<p>Un e-mail de confirmation sécurisera le changement d’adresse.</p>')+'</div><button class="fxa-btn fxa-btn-ghost" data-action="account-email-edit">Modifier</button></article>'
+        + '<article class="fxaf-account-card"><div class="fxaf-account-icon">⌁</div><div><small>MOT DE PASSE</small><strong>Sécuriser mon accès</strong><p>Choisissez un nouveau mot de passe après vérification de votre accès actuel.</p></div><button class="fxa-btn fxa-btn-ghost" data-action="account-password-edit">Modifier</button></article>'
       + '</div>'
-      + '<div class="fxaf-account-trust"><span>✓ Identité : compte authentifié</span><span>✓ Rôle : '+esc((p.role||'artisan'))+'</span><span>✓ Fournisseur : '+esc(provider)+'</span><span>✓ Aucun changement de rôle depuis cet écran</span></div>'
+      + '<div class="fxaf-account-trust"><span>✓ Accès sécurisé</span><span>✓ Espace : '+esc((p.role||'artisan'))+'</span><span>✓ Connexion : '+esc(provider)+'</span><span>✓ Vos droits FIXEO restent protégés</span></div>'
       + '</div>';
   }
 
@@ -1233,7 +1233,7 @@ html += targetedOffers
   function _openAccountEmailEdit() {
     var u = (_state.session && _state.session.user) || {};
     var email = u.email || (_state.profile && _state.profile.email) || '';
-    _openModal('<div class="fxaf-account-modal"><span>COMPTE · CONNEXION</span><h3>Modifier mon e-mail</h3><p>Un message de confirmation sera envoyé. L’ancienne adresse reste active jusqu’à validation.</p><label>Nouvelle adresse e-mail<input id="fxaf-account-email" type="email" autocomplete="email" value="'+esc(email)+'"></label><button class="fxa-btn fxa-btn-primary fxa-btn-full" data-action="account-email-save">Envoyer la confirmation</button></div>');
+    _openModal('<div class="fxaf-account-modal"><span>COMPTE · CONNEXION</span><h3>Modifier mon e-mail</h3><p>Un message de confirmation sera envoyé. Votre adresse actuelle reste active jusqu’à validation.</p><label>Nouvelle adresse e-mail<input id="fxaf-account-email" type="email" autocomplete="email" value="'+esc(email)+'"></label><button class="fxa-btn fxa-btn-primary fxa-btn-full" data-action="account-email-save">Envoyer la confirmation</button></div>');
   }
 
   async function _saveAccountEmail(btn) {
