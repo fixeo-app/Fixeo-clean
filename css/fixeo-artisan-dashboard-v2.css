@@ -952,3 +952,6 @@ a.fxa-header-logo:hover { opacity: .82; }
 
 /* PREMIUM MASTER — B2 RAFI V3 */
 .fxao-plan{display:grid;gap:8px;margin-bottom:14px}.fxao-plan button{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:11px;width:100%;padding:13px 14px;border:1px solid rgba(255,255,255,.07);border-radius:15px;background:rgba(255,255,255,.025);color:#fff;text-align:left}.fxao-plan>button>span{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:rgba(160,132,210,.12);color:#efb4d3}.fxao-plan b{display:block;font-size:.73rem}.fxao-plan small{display:block;margin-top:3px;color:rgba(255,255,255,.4);font-size:.62rem;line-height:1.35}.fxao-plan em{color:#d9c7ef;font-size:.61rem;font-style:normal;font-weight:800;white-space:nowrap}@media(max-width:380px){.fxao-plan button{grid-template-columns:30px minmax(0,1fr)}.fxao-plan em{grid-column:2}}
+
+/* PREMIUM MASTER — B3 DISPATCH OPPORTUNITIES */
+.fxao-match-reason{display:flex;align-items:flex-start;gap:9px;margin:12px 0;padding:10px 11px;border:1px solid rgba(141,164,255,.12);border-radius:12px;background:rgba(111,91,255,.055)}.fxao-match-reason>span{color:#e9a8cb;font-size:.78rem}.fxao-match-reason b{display:block;color:rgba(255,255,255,.82);font-size:.68rem}.fxao-match-reason small{display:block;margin-top:2px;color:rgba(255,255,255,.38);font-size:.6rem;line-height:1.4}
