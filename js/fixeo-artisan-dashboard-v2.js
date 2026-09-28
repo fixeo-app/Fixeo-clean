@@ -563,9 +563,9 @@ var available =
     var st    = String((req && req.status) || mission.status || 'pending').toLowerCase().trim();
     var badge = _missionBadge(st);
     var price = Number(mission.final_price || (req && req.final_price) || mission.agreed_price || 0);
-    var net = mission.pricing_offer_id
-      ? (mission.commission_amount != null && Number.isFinite(Number(mission.commission_amount)) ? Math.round((price-Number(mission.commission_amount))*100)/100 : null)
-      : price > 0 ? Math.round(price * 0.85) : 0;
+    var net = (price > 0 && mission.commission_amount != null && Number.isFinite(Number(mission.commission_amount)))
+      ? Math.round((price - Number(mission.commission_amount)) * 100) / 100
+      : null;
     var mDate = (req && req.created_at) || mission.created_at || '';
 
     /* ── Header: category + badge ── */
@@ -616,12 +616,20 @@ var available =
         + '</div>';
     }
 
+    var nextStep = (st==='pending'||st==='assigned') ? 'Préparez les informations utiles puis démarrez l’intervention.'
+      : (st==='in_progress'||st==='en_cours') ? 'Intervention en cours : terminez les contrôles métier avant la clôture.'
+      : st==='completed' ? 'Intervention terminée : la confirmation client est attendue.'
+      : st==='validated' ? 'Mission validée : elle alimentera votre historique et vos données d’activité.'
+      : '';
+    var nextHtml = nextStep ? '<div class="fxao-next-step"><span>PROCHAINE ÉTAPE</span><b>'+nextStep+'</b></div>' : '';
+
     return '<div class="fxa-card">'
       + headerHtml
       + metaHtml
       + descHtml
       + fallbackHtml
       + priceHtml
+      + nextHtml
       + (['pending','done','validated'].includes(mission.status) ? '<button type="button" class="fxa-btn fxa-btn-ghost" data-fixeo-diagnostic-mission="' + esc(mission.id) + '">Contexte Diagnostic FIXEO</button>' : '')
       + _missionActions(mission, st)
       + '</div>';
