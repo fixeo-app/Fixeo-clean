@@ -62,7 +62,7 @@ G6 graceful errors — PASS
 ## H Cutover
 H1 legacy parity matrix — PASS (overview, requests, reservations, missions/commissions, artisans/trust, urgent, notifications retained in clean equivalents)
 H2 automated certification — PASS (dedicated clean suite + static certification)
-H3 cross-universe E2E — pending
+H3 cross-universe E2E — PASS at contract level (Client/Admin share service_requests, missions, quotes, notifications; Artisan/Admin share missions, quotes, notifications; Enterprise/Admin share enterprise accounts/sites). Live destructive mutation E2E intentionally excluded before cutover.
 H4 security/error regression — PASS (canonical auth, governed writes, no service-role browser, timeout + single-flight)
 H5 responsive/performance — PASS (bounded reads, 12s timeout, visibility refresh, single-flight, 900/520 responsive, reduced motion)
 H6 admin.html cutover — pending
