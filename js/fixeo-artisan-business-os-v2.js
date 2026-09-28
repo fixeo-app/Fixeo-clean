@@ -127,22 +127,23 @@ async function agenda(){
   let groups=group("Aujourd’hui",today)+group('À venir',upcoming)+group('À planifier',unscheduled)+group('Récemment terminées',completed);
   s.innerHTML=head('AGENDA · FIXEO','Votre activité planifiée','Interventions personnelles enregistrées dans Artisan OS. Les missions FIXEO restent dans Mes missions.')+actions('<button class="fxa-btn fxa-btn-primary" data-biz="new-job">+ Intervention</button>')+(groups||empty('Agenda libre','Ajoutez une intervention personnelle ou enregistrez l’accord d’un devis pour la créer automatiquement.'));
 }
-function businessPriority(){
-  let jobs=personalJobs(),quotes=personalQuotes(),ledger=personalLedger();
+function businessPriorities(){
+  let jobs=personalJobs(),quotes=personalQuotes(),ledger=personalLedger(),list=[];
   let unpaid=jobs.find(j=>j.status==='completed'&&!ledger.some(l=>l.job_id===j.id&&l.entry_type==='income'));
-  if(unpaid)return {k:'ENCAISSEMENT À SUIVRE',t:'Enregistrer l’encaissement de « '+unpaid.title+' »',p:'L’intervention est terminée mais aucun encaissement personnel lié n’est enregistré.',biz:'income-for-job',id:unpaid.id,cta:'Enregistrer'};
+  if(unpaid)list.push({k:'ENCAISSEMENT À SUIVRE',t:'Enregistrer l’encaissement de « '+unpaid.title+' »',p:'L’intervention est terminée mais aucun encaissement personnel lié n’est enregistré.',biz:'income-for-job',id:unpaid.id,cta:'Enregistrer'});
   let today=jobs.find(j=>j.scheduled_at&&localKey(j.scheduled_at)===todayKey()&&j.status!=='completed'&&j.status!=='cancelled');
-  if(today)return {k:'INTERVENTION AUJOURD’HUI',t:today.title,p:fmtDate(today.scheduled_at)+' · '+clientName(today.client_id),biz:'schedule-job',id:today.id,cta:'Préparer'};
+  if(today)list.push({k:'INTERVENTION AUJOURD’HUI',t:today.title,p:fmtDate(today.scheduled_at)+' · '+clientName(today.client_id),biz:'schedule-job',id:today.id,cta:'Préparer'});
   let unscheduled=jobs.find(j=>j.status==='planned'&&!j.scheduled_at);
-  if(unscheduled)return {k:'À PLANIFIER',t:'Fixer le rendez-vous pour « '+unscheduled.title+' »',p:'Cette intervention existe réellement mais n’a pas encore de créneau.',biz:'schedule-job',id:unscheduled.id,cta:'Planifier'};
+  if(unscheduled)list.push({k:'À PLANIFIER',t:'Fixer le rendez-vous pour « '+unscheduled.title+' »',p:'Cette intervention existe réellement mais n’a pas encore de créneau.',biz:'schedule-job',id:unscheduled.id,cta:'Planifier'});
   let draft=quotes.find(q=>q.status==='draft');
-  if(draft)return {k:'DEVIS BROUILLON',t:'Finaliser et partager '+draft.quote_number,p:draft.title+' · '+money(draft.total),biz:'quote-preview',id:draft.id,cta:'Ouvrir'};
+  if(draft)list.push({k:'DEVIS BROUILLON',t:'Finaliser et partager '+draft.quote_number,p:draft.title+' · '+money(draft.total),biz:'quote-preview',id:draft.id,cta:'Ouvrir'});
   let late=quotes.find(q=>q.status==='sent'&&q.sent_at&&(Date.now()-new Date(q.sent_at).getTime())>3*864e5);
-  if(late)return {k:'DEVIS EN ATTENTE',t:'Relancer '+clientName(late.client_id),p:late.quote_number+' est envoyé depuis plus de 3 jours sans décision enregistrée.',section:'quotes',cta:'Voir le devis'};
+  if(late)list.push({k:'DEVIS EN ATTENTE',t:'Relancer '+clientName(late.client_id),p:late.quote_number+' est envoyé depuis plus de 3 jours sans décision enregistrée.',section:'quotes',cta:'Voir le devis'});
   let incomplete=state.clients.find(c=>!c.phone||!c.address);
-  if(incomplete)return {k:'FICHE À COMPLÉTER',t:incomplete.full_name,p:'Des coordonnées manquent encore dans cette fiche client personnelle.',biz:'open-client',id:incomplete.id,cta:'Compléter'};
-  return null;
+  if(incomplete)list.push({k:'FICHE À COMPLÉTER',t:incomplete.full_name,p:'Des coordonnées manquent encore dans cette fiche client personnelle.',biz:'open-client',id:incomplete.id,cta:'Compléter'});
+  return list;
 }
+function businessPriority(){return businessPriorities()[0]||null}
 async function day(){
   let s=$('fxbo-sec-day');s.innerHTML=head('MA JOURNÉE · RAFI','Le prochain geste utile','Uniquement des événements et états réellement enregistrés.')+loading();
   try{await loadAll(true)}catch(e){s.innerHTML+=empty('Chargement impossible',esc(e.message));return}
@@ -178,9 +179,11 @@ async function finance(){
   renderFinanceRows();
 }
 function rafiCardHTML(){
-  let p=businessPriority();
+  let list=businessPriorities(),p=list[0];
   if(!p)return '<article class="fxbo-rafi-business fxbo-rafi-business--clear"><span>ARTISAN OS · ACTIVITÉ PERSONNELLE</span><strong>Aucune action personnelle en attente.</strong><p>RAFI ne détecte actuellement ni devis à suivre, ni intervention à préparer, ni encaissement manquant dans votre registre.</p></article>';
-  return '<article class="fxbo-rafi-business"><span>ARTISAN OS · '+esc(p.k)+'</span><strong>'+esc(p.t)+'</strong><p>'+esc(p.p)+'</p><button class="fxa-btn fxa-btn-primary" '+(p.biz?'data-biz="'+p.biz+'" data-id="'+esc(p.id||'')+'"':'data-section="'+p.section+'"')+'>'+esc(p.cta)+' →</button></article>';
+  let action=x=>'<button class="fxa-btn '+(x===p?'fxa-btn-primary':'fxa-btn-ghost')+'" '+(x.biz?'data-biz="'+x.biz+'" data-id="'+esc(x.id||'')+'"':'data-section="'+x.section+'"')+'>'+esc(x.cta)+(x===p?' →':'')+'</button>';
+  let secondary=list.slice(1,3);
+  return '<article class="fxbo-rafi-business"><span>ARTISAN OS · '+esc(p.k)+'</span><strong>'+esc(p.t)+'</strong><p>'+esc(p.p)+'</p><div class="fxbo-rafi-actions">'+action(p)+secondary.map(action).join('')+'</div>'+(secondary.length?'<div class="fxbo-rafi-secondary">'+secondary.map(x=>'<span>'+esc(x.k)+' · '+esc(x.t)+'</span>').join('')+'</div>':'')+'</article>';
 }
 function augmentRafi(){let s=$('fxav2-sec-rafi');if(!s||!s.innerHTML.trim()||s.querySelector('.fxbo-rafi-business'))return;if(!state.loaded){loadAll(false).then(()=>augmentRafi()).catch(()=>{});return}let box=d.createElement('div');box.className='fxbo-rafi-inject';box.innerHTML=rafiCardHTML();let note=s.querySelector('.fxao-rafi-note');note?note.before(box):s.appendChild(box)}
 function refreshRafi(){d.querySelector('.fxbo-rafi-inject')?.remove();augmentRafi()}
