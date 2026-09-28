@@ -149,3 +149,10 @@
   .fxbo-inline-client,.fxbo-document-parties{grid-template-columns:1fr}
   .fxbo-inline-client label{grid-column:1!important}
 }
+
+/* ── BLOCK M/N — CRM, AGENDA & FINANCE FINAL ──────────────── */
+.fxbo-agenda-group{display:grid;gap:6px;margin-top:14px}
+.fxbo-periods{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.fxbo-periods .fxa-btn{min-height:38px;padding:8px 12px}
+.fxbo-periods .fxa-btn.active{border-color:rgba(255,77,166,.28)!important;background:linear-gradient(135deg,rgba(255,77,166,.14),rgba(90,210,255,.08))!important}
+@media(max-width:520px){.fxbo-periods{display:grid;grid-template-columns:repeat(3,1fr)}.fxbo-periods .fxa-btn{padding:8px 5px;font-size:.66rem}}
