@@ -8,7 +8,7 @@ t('clean page excludes legacy admin CSS',!H.includes('css/admin.css')&&!H.includ
 t('legacy AI excluded',!H.includes('admin-command-center-v4')&&!H.includes('suggestions-fixeo'));
 t('canonical auth guard',H.includes('fixeo-auth-guard.js?v=guard-v15'));
 t('canonical repository authority',H.includes('fixeo-repository.js'));
-['overview','operations','reservations','network','finance','trust','intelligence','rafi','governance'].forEach(x=>t('section '+x,H.includes('sec-'+x)));
+['overview','operations','reservations','network','finance','trust','intelligence','urgent','rafi','governance'].forEach(x=>t('section '+x,H.includes('sec-'+x)));
 t('bounded timeout',J.includes('withTimeout')&&J.includes('12000'));
 t('visibility-aware refresh',J.includes("document.visibilityState==='visible'"));
 t('dispatch server API',J.includes('/api/admin/requests/assign'));
