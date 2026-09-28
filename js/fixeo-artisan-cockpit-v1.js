@@ -524,9 +524,9 @@
         + '<div class="fxck-fin-val">' + fin.validatedCount + '</div>'
       + '</div>'
       + '<div class="fxck-fin-card">'
-        + '<div class="fxck-fin-label">Revenus nets (validés)</div>'
+        + '<div class="fxck-fin-label">Net enregistré · missions validées</div>'
         + moneyVal(fin.knownRevenue)
-        + '<div class="fxck-fin-sub">Après les frais FIXEO de chaque mission</div>'
+        + '<div class="fxck-fin-sub">Affiché uniquement lorsqu’un prix et une commission sont enregistrés</div>'
       + '</div>'
       + (fin.completedCount > 0 ? '<div class="fxck-fin-card fxck-fin-card--pending">'
         + '<div class="fxck-fin-label">En attente de validation</div>'
