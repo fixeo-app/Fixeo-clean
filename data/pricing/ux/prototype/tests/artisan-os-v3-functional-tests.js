@@ -1,5 +1,5 @@
 /**
- * FIXEO Artisan OS V3.1 — transversal functional contract tests.
+ * FIXEO Artisan OS V3.2 — transversal functional contract tests.
  * Run: node data/pricing/ux/prototype/tests/artisan-os-v3-functional-tests.js
  */
 'use strict';
@@ -13,7 +13,7 @@ function test(name,fn){try{fn();pass++;console.log('PASS',name)}catch(e){fail++;
 function ok(v,m){if(!v)throw new Error(m||'assertion failed')}
 
 test('JS parses',()=>new Function(js));
-test('V3.1 API exposed',()=>ok(js.includes("VERSION='v3.1'")));
+test('V3.2 API exposed',()=>ok(js.includes("VERSION='v3.2'")));
 test('canonical business tables',()=>['artisan_business_clients','artisan_business_quotes','artisan_business_jobs','artisan_business_ledger'].forEach(x=>ok(js.includes(x),x)));
 test('personal quote source filter',()=>ok(js.includes("function personalQuotes(){return state.quotes.filter(x=>x.source==='personal')}")));
 test('personal job source filter',()=>ok(js.includes("function personalJobs(){return state.jobs.filter(x=>x.source==='personal')}")));
@@ -34,8 +34,11 @@ test('FIXEO revenue remains distinct',()=>{ok(js.includes('Revenus FIXEO'));ok(j
 test('RAFI deterministic and no fake values',()=>{ok(js.includes('function businessPriority()'));ok(!/Math\.random|mockPrice|fakeScore/i.test(js))});
 test('business section injection is idempotent',()=>ok(js.includes('if(old)return old')));
 test('safe-area support',()=>ok(css.includes('safe-area-inset-bottom')));
+test('sticky mobile submit CTA',()=>ok(css.includes('.fxbo-form>.fxa-btn[type="submit"]')));
+test('finance filters are labelled',()=>{ok(js.includes('<span>Mouvement</span>'));ok(js.includes('<span>Client</span>'));ok(js.includes('<span>Du</span>'));ok(js.includes('<span>Au</span>'))});
+test('business pages clear bottom-nav active state',()=>ok(js.includes("d.querySelectorAll('.fxa-bottom-btn').forEach(x=>x.classList.remove('active'))")));
 test('responsive quote studio',()=>{ok(css.includes('.fxbo-line{'));ok(css.includes('@media(max-width:520px)'))});
-test('asset cachebusters V4',()=>{ok(html.includes('fixeo-artisan-business-os-v2.css?v=artisan-business-os4'));ok(html.includes('fixeo-artisan-business-os-v2.js?v=artisan-business-os4'))});
+test('asset cachebusters V5',()=>{ok(html.includes('fixeo-artisan-business-os-v2.css?v=artisan-business-os5'));ok(html.includes('fixeo-artisan-business-os-v2.js?v=artisan-business-os4'))});
 
-console.log('\nArtisan OS V3.1:',pass,'PASS /',fail,'FAIL');
+console.log('\nArtisan OS V3.2:',pass,'PASS /',fail,'FAIL');
 if(fail)process.exit(1);
