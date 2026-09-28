@@ -1,5 +1,7 @@
 (function(root){'use strict';
  const uuid=()=>crypto.randomUUID();
+ const sources=Object.freeze(['requests','missions','artisans','trust','network','finance']);
+ const summaryFlights=new Map();
  async function request(operation,body){
   const c=root.FixeoSupabaseClient?.client;if(!c)throw Error('SUPABASE_UNAVAILABLE');
   const s=await c.auth.getSession(),token=s.data?.session?.access_token;if(!token)throw Error('SESSION_REQUIRED');
@@ -23,5 +25,18 @@
   if(!await review(p))return {cancelled:true};
   return request('action/execute',{preview_id:p.preview_id,confirmed:true,idempotency_key:uuid()});
  }
- root.FixeoControl={request,command};
+ function summary(onSource,classification='all'){
+  if(!['all','production','test','internal','unclassified'].includes(classification))return Promise.reject(Error('INVALID_CLASSIFICATION'));
+  let flight=summaryFlights.get(classification);
+  if(flight){flight.listeners.add(onSource);return flight.promise;}
+  flight={listeners:new Set([onSource]),promise:null};summaryFlights.set(classification,flight);
+  flight.promise=Promise.all(sources.map(async source=>{
+   let state;try{const result=await request('summary',{source,classification});state=result.sources[source];}
+   catch(error){state={source,status:error.message==='FORBIDDEN'?'forbidden':'unavailable',data:null,error:error.message,as_of:null,completeness:'unknown'};}
+   for(const listener of flight.listeners)if(typeof listener==='function')listener(source,state);
+   return [source,state];
+  })).then(Object.fromEntries).finally(()=>summaryFlights.delete(classification));
+  return flight.promise;
+ }
+ root.FixeoControl={request,command,summary};
 })(window);

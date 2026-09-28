@@ -38,8 +38,10 @@ function createHandler({env=process.env,fetchImpl=fetch}={}){
    const client=transport(env,bearer.slice(7),fetchImpl);const user=await client.user();if(!UUID.test(user?.id||''))fail('AUTH_REQUIRED',401);
    let data;
    if(operation==='summary'||operation==='signals'){
-    allow(body,['classification']);const classification=body.classification||'all';if(!['all','production','test','internal','unclassified'].includes(classification))fail('INVALID_CLASSIFICATION');
-    const entries=await Promise.all(C.SOURCES.map(async source=>{const startedAt=Date.now();try{const result=await client.rpc('control_summary_v1',{p_source:source,p_classification:classification});return[source,C.sourceState(source,{status:result.completeness==='complete'?'healthy':'partial',data:result,asOf:result.as_of,lastSuccessAt:new Date().toISOString(),startedAt,completeness:result.completeness})];}catch(error){return[source,C.failSource(source,error,null,startedAt)];}}));
+    allow(body,operation==='summary'?['classification','source']:['classification']);const classification=body.classification||'all';if(!['all','production','test','internal','unclassified'].includes(classification))fail('INVALID_CLASSIFICATION');
+    if(body.source!==undefined&&!C.SOURCES.includes(body.source))fail('INVALID_SOURCE');
+    const sources=body.source?[body.source]:C.SOURCES;
+    const entries=await Promise.all(sources.map(async source=>{const startedAt=Date.now();try{const result=await client.rpc('control_summary_v1',{p_source:source,p_classification:classification});return[source,C.sourceState(source,{status:result.completeness==='complete'?'healthy':'partial',data:result,asOf:result.as_of,lastSuccessAt:new Date().toISOString(),startedAt,completeness:result.completeness})];}catch(error){return[source,C.failSource(source,error,null,startedAt)];}}));
     const states=Object.fromEntries(entries);if(entries.every(([,x])=>x.status==='forbidden'))fail('FORBIDDEN',403);
     data=operation==='signals'?C.signals(states):{sources:states,manifest:C.MANIFEST};
    }else if(operation==='operations'){
