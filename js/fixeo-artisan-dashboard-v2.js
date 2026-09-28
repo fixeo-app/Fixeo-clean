@@ -193,7 +193,7 @@
               'verified,is_verified,availability,onboarding_completed,' +
               'rating,review_count,completed_missions,' +
               'owner_user_id,claimed,claim_status,badge_label,avatar_color,work_zone,' +
-              'response_time_min,description')
+              'response_time_min,description,services')
       /* phone_public intentionally excluded — see 7C.12A.1 security note */
       .eq('owner_user_id', userId)
       .maybeSingle();
@@ -497,6 +497,9 @@ var available =
     var name = (ap && (ap.full_name || ap.name)) || p.full_name || 'Artisan';
     var city = ap && ap.city || '';
     var svc  = ap && (ap.service_category || ap.category) || '';
+    var svcList = [];
+    try { svcList = Array.isArray(ap && ap.services) ? ap.services : (typeof (ap&&ap.services)==='string' ? JSON.parse(ap.services) : []); } catch(e) { svcList=[]; }
+    if(!svcList.length && svc) svcList=[svc];
     var avail= ap && ap.availability || '';
     var verified = ap && (ap.verified || ap.is_verified);
     var onboarded = ap && ap.onboarding_completed;
@@ -505,7 +508,7 @@ var available =
     var tags = '';
     if (verified)               tags += '<span class="fxa-tag verified">✓ Vérifié</span>';
     if (city)                   tags += '<span class="fxa-tag city">📍 ' + esc(city) + '</span>';
-    if (svc)                    tags += '<span class="fxa-tag service">🔧 ' + esc(svc) + '</span>';
+    if (svcList.length) tags += svcList.slice(0,3).map(function(x){return '<span class="fxa-tag service">🔧 '+esc(x)+'</span>';}).join('') + (svcList.length>3?'<span class="fxa-tag service">+'+(svcList.length-3)+'</span>':'');
     if (avail === 'available')  tags += '<span class="fxa-tag avail">● Disponible</span>';
     if (avail === 'busy')       tags += '<span class="fxa-tag busy">🔶 Occupé</span>';
 
