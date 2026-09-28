@@ -1475,28 +1475,18 @@
 
   async function _doRejectQuote(quoteId, btn) {
     if (!quoteId) return;
-    _btnBusy(btn, 'Refus\u2026');
+    _btnBusy(btn, 'Refus…');
     try {
       var FS = window.FixeoSupabase;
       var sb = await FS.getClient();
-
-      /* Ownership check — quote must belong to a request owned by this client */
-      var quoteRes = await sb.from('quotes').select('id,request_id').eq('id', quoteId).maybeSingle();
-      if (quoteRes.error) throw quoteRes.error;
-      if (!quoteRes.data) throw new Error('Devis introuvable.');
-
-      /* Verify request ownership via _state (already fetched — no extra roundtrip) */
-      var ownsRequest = (_state.requests || []).some(function(r) { return r.id === quoteRes.data.request_id; });
-      if (!ownsRequest) throw new Error('Ce devis ne vous appartient pas.');
-
-      var res = await sb.from('quotes').update({ status: 'rejected' }).eq('id', quoteId);
+      var res = await sb.rpc('reject_quote_v2', { p_quote_id: quoteId });
       if (res.error) throw res.error;
-      _toast('Devis refus\u00e9.', 'info');
+      _toast('Devis refusé.', 'info');
       await _refresh();
     } catch (e) {
       console.warn('[fxv2] rejectQuote error:', e && e.message);
-      _toast('\u274C ' + (e && e.message ? e.message : 'Erreur lors du refus.'), 'error');
-      _btnReset(btn, '\u2716 Refuser');
+      _toast('❌ ' + (e && e.message ? e.message : 'Erreur lors du refus.'), 'error');
+      _btnReset(btn, '✖ Refuser');
     }
   }
 
