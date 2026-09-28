@@ -220,6 +220,11 @@ app.options('/api/admin/artisans/*', cors());
 
 app.use(bodyParser.json());
 
+// Fixed operations only; the handler never accepts SQL, table names or RPC names.
+app.all(/^\/api\/control-v1\/(summary|operations|dossier|search|signals|action\/preview|action\/execute)$/, function(req,res) {
+  return require('./control').createHandler()(req,res);
+});
+
 /* ============================================================
    RAFI VOICE — Upload audio en mémoire
    ============================================================ */

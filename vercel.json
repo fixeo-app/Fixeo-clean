@@ -139,6 +139,10 @@
       "dest": "/api/server.js"
     },
     {
+      "src": "^/api/control-v1/(summary|operations|dossier|search|signals|action/preview|action/execute)$",
+      "dest": "/api/server.js"
+    },
+    {
       "src": "^/api/estimator-v1$",
       "dest": "/api/estimator-v1/index.js"
     },
@@ -772,8 +776,16 @@
       ]
     }
   ],
-  "crons": [{ "path": "/api/diagnostic-maintenance", "schedule": "0 * * * *" },
-    { "path": "/api/notification-timeout", "schedule": "*/5 * * * *" }],
+  "crons": [
+    {
+      "path": "/api/diagnostic-maintenance",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/notification-timeout",
+      "schedule": "*/5 * * * *"
+    }
+  ],
   "git": {
     "deploymentEnabled": {
       "feat/diagnostic-v1": false
