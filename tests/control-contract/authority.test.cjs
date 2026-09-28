@@ -171,6 +171,8 @@ tx('History and empty totals retain distinct meanings',async()=>{
  await db.exec(`RESET ROLE; UPDATE public.service_requests SET status='validated' WHERE id='${uuid(100)}'; INSERT INTO public.missions(request_id,artisan_profile_id,status,final_price) VALUES('${uuid(100)}','${uuid(20)}','validated',1000);`);
  await actor(db,3);const m=await rpc('control_summary_v1',['missions','all']);assert.equal(m.metrics['missions.validated'],0);assert.equal(m.metrics['missions.validated_raw'],1);assert.equal(m.metrics['missions.validation_unproven'],1);
  assert.equal((await rpc('control_summary_v1',['finance','all'])).metrics['finance.due_gross'],null);
+ const id=(await query('select id from public.missions where request_id=$1',[uuid(100)]))[0].id;
+ await denied(()=>preview('finance.declare',id,{reason:'Synthetic review',amount:100,method:'cash',proof_reference:'SYNTHETIC'}),/COMMISSION_NOT_DUE/);
 });
 tx('Existing server intake producer retains its grant while browser writes are denied',async()=>{
  await actor(db,1,'service_role');await query("insert into public.service_requests(id,city,service_category,description,status) values($1,'Fès','plomberie','Synthetic server intake','new')",[uuid(700)]);
@@ -198,4 +200,12 @@ test('Postflight and non-destructive pause/resume scripts execute against the ca
 tx('Classification cannot be selected by an ordinary Marketplace producer',async()=>{
  await db.exec(`RESET ROLE; SELECT set_config('request.jwt.claims','{"sub":"${uuid(1)}","role":"authenticated"}',false);`);
  await denied(()=>query("insert into public.artisans(id,full_name,city,service_category,data_classification) values($1,'Synthetic','Fès','plomberie','test')",[uuid(730)]),/CLASSIFICATION_AUTHORITY_REQUIRED/);
+});
+
+tx('Finance history is discoverable from its mission with minimal proof metadata',async()=>{
+ const m=await completed();await actor(db,3);await command('mission.settle',m.id,{final_price:1000,expected_final_price:null});
+ const d=await command('finance.declare',m.id,{amount:100,method:'cash',proof_reference:'PRIVATE-RECEIPT-REFERENCE'});assert.equal(d.ok,true);
+ const mission=await rpc('control_dossier_read_v1',['mission',m.id]);assert.ok(mission.relations.some(x=>x.type==='remittance'&&x.id===d.result.id));
+ const record=await rpc('control_dossier_read_v1',['remittance',d.result.id]);assert.equal(record.summary.proof_present,true);assert.equal(record.summary.amount,100);assert.ok(record.timeline.some(x=>x.action==='declare'));assert.ok(!JSON.stringify(record).includes('PRIVATE-RECEIPT-REFERENCE'));
+ await actor(db,1);await denied(()=>rpc('control_dossier_read_v1',['remittance',d.result.id]),/FORBIDDEN/);
 });

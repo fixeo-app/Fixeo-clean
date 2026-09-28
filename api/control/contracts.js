@@ -1,7 +1,7 @@
 'use strict';
 const VERSION='control-v1';
 const SOURCES=Object.freeze(['requests','missions','artisans','trust','network','finance']);
-const ENTITY_TYPES=Object.freeze(['request','mission','quote','artisan','client','claim','enterprise','site','worker','internal_assignment','pricing_offer','diagnostic_summary']);
+const ENTITY_TYPES=Object.freeze(['request','mission','quote','artisan','client','claim','enterprise','site','worker','internal_assignment','pricing_offer','diagnostic_summary','remittance']);
 const CAPABILITIES=Object.freeze({
  'artisan.verify':{authority:'Trust',entity:'artisan',effect:'Vérifier le profil Marketplace et aligner le drapeau historique.'},
  'claim.approve':{authority:'Claims',entity:'claim',effect:'Attribuer le profil au demandeur selon les verrous Claims.'},

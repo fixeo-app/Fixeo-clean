@@ -17,6 +17,7 @@ BEGIN
  WHEN 'site' THEN SELECT jsonb_build_object('id',id,'enterprise_id',enterprise_id,'name',name,'city',city,'status',status,'site_code',site_code) INTO j FROM public.enterprise_sites WHERE id=p_id;
  WHEN 'worker' THEN SELECT jsonb_build_object('id',id,'enterprise_id',enterprise_id,'status',status,'availability',availability,'max_concurrent_jobs',max_concurrent_jobs,'active_assignments',(SELECT count(*) FROM public.enterprise_internal_assignments WHERE worker_id=w.id AND status IN('assigned','in_progress'))) INTO j FROM public.enterprise_workforce_workers w WHERE id=p_id;
  WHEN 'internal_assignment' THEN SELECT jsonb_build_object('id',id,'enterprise_id',enterprise_id,'request_id',service_request_id,'worker_id',worker_id,'status',status,'assigned_at',assigned_at,'started_at',started_at,'completed_at',completed_at) INTO j FROM public.enterprise_internal_assignments WHERE id=p_id;
+ WHEN 'remittance' THEN SELECT jsonb_build_object('id',id,'mission_id',mission_id,'amount',amount,'currency',currency,'method',method,'status',status,'version',version,'proof_present',proof_reference IS NOT NULL,'created_at',created_at,'confirmed_at',confirmed_at,'cancelled_at',cancelled_at,'supersedes_id',supersedes_id) INTO j FROM public.commission_remittances_v1 WHERE id=p_id;
  WHEN 'pricing_offer' THEN SELECT jsonb_build_object('id',id,'pricing_version',pricing_version,'currency',currency,'service_code',service_code,'city',city,'vap_minor',vap_minor,'materials_minor',materials_minor,'commission_minor',commission_minor,'client_total_minor',client_total_minor,'created_at',created_at,'expires_at',expires_at) INTO j FROM public.fixeo_pricing_offers_v1 WHERE id=p_id;
  WHEN 'diagnostic_summary' THEN SELECT jsonb_build_object('id',s.id,'request_id',s.service_request_id,'state',s.state,'revision',s.revision,'source',s.source,'consent_version',s.consent_version,'created_at',s.created_at,'updated_at',s.updated_at,'analysis_state',r.state,'contract_version',r.contract_version,'safety_version',r.safety_version,'media_access','forbidden','provenance','diagnostic_authority') INTO j FROM fixeo_private.diagnostic_sessions_v1 s LEFT JOIN fixeo_private.diagnostic_runs_v1 r ON r.id=s.selected_run_id WHERE s.id=p_id AND s.service_request_id IS NOT NULL;
  ELSE RAISE EXCEPTION 'UNSUPPORTED_ENTITY';
@@ -41,7 +42,13 @@ BEGIN
    UNION ALL SELECT jsonb_build_object('type','diagnostic_summary','id',id) FROM fixeo_private.diagnostic_sessions_v1 WHERE service_request_id=p_id
   ) raw ORDER BY x->>'type',x->>'id' LIMIT 51) u;
  ELSIF p_type IN('mission','quote','internal_assignment','diagnostic_summary') THEN
-  rid:=(j->>'request_id')::uuid; relations:=jsonb_build_array(jsonb_build_object('type','request','id',rid));
+  IF (j->>'request_id') ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' THEN
+   rid:=(j->>'request_id')::uuid; relations:=jsonb_build_array(jsonb_build_object('type','request','id',rid));
+  END IF;
+  IF p_type='mission' THEN
+   SELECT relations||coalesce(jsonb_agg(x),'[]') INTO relations FROM (SELECT jsonb_build_object('type','remittance','id',id) x FROM public.commission_remittances_v1 WHERE mission_id=p_id ORDER BY created_at DESC,id LIMIT 51) u;
+  END IF;
+ ELSIF p_type='remittance' THEN relations:=jsonb_build_array(jsonb_build_object('type','mission','id',j->>'mission_id'));
  ELSIF p_type='artisan' THEN
   SELECT coalesce(jsonb_agg(x),'[]') INTO relations FROM (SELECT jsonb_build_object('type','mission','id',id) x FROM public.missions WHERE artisan_profile_id=p_id ORDER BY created_at DESC,id LIMIT 51) u;
  END IF;
@@ -134,7 +141,7 @@ BEGIN
  IF p_capability='mission.settle' AND NOT ((j->>'status'='done' AND j->>'request_status' IN('completed','validated')) OR (j->>'status'='validated' AND j->>'request_status'='validated')) THEN RAISE EXCEPTION 'INELIGIBLE_MISSION'; END IF;
  IF p_capability='request.dispatch' AND (j->>'status'<>'new' OR p_payload->>'artisan_id' IS NULL) THEN RAISE EXCEPTION 'REQUEST_NOT_DISPATCHABLE'; END IF;
  IF p_capability IN('claim.approve','claim.reject') AND j->>'status'<>'pending' THEN RAISE EXCEPTION 'CLAIM_NOT_PENDING'; END IF;
- IF p_capability LIKE 'finance.%' AND (j->>'final_price' IS NULL OR NOT ((j->>'status'='done' AND j->>'request_status' IN('completed','validated')) OR (j->>'status'='validated' AND j->>'request_status'='validated'))) AND p_capability<>'finance.cancel' THEN RAISE EXCEPTION 'COMMISSION_NOT_DUE'; END IF;
+ IF p_capability LIKE 'finance.%' AND (j->>'final_price' IS NULL OR (j->>'status'='validated' AND j->>'completed_at' IS NULL) OR NOT ((j->>'status'='done' AND j->>'request_status' IN('completed','validated')) OR (j->>'status'='validated' AND j->>'request_status'='validated'))) AND p_capability<>'finance.cancel' THEN RAISE EXCEPTION 'COMMISSION_NOT_DUE'; END IF;
 
  IF p_capability IN('finance.confirm','finance.cancel','finance.correct') THEN
   SELECT jsonb_build_object('id',x.id,'amount',x.amount,'currency',x.currency,'method',x.method,'status',x.status,'version',x.version,'proof_present',x.proof_reference IS NOT NULL) INTO remittance FROM public.commission_remittances_v1 x WHERE x.id=(p_payload->>'remittance_id')::uuid AND x.mission_id=p_target_id;

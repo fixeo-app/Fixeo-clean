@@ -148,7 +148,7 @@ BEGIN
  SELECT * INTO m FROM public.missions WHERE id=p_mission_id FOR UPDATE;
  IF NOT FOUND THEN RAISE EXCEPTION 'NOT_FOUND'; END IF;
  SELECT * INTO r FROM public.service_requests WHERE id::text=m.request_id;
- IF p_operation IN('declare','confirm','correct') AND (m.final_price IS NULL OR m.commission_amount IS NULL OR NOT ((m.status='done' AND r.status IN('completed','validated')) OR (m.status='validated' AND r.status='validated'))) THEN RAISE EXCEPTION 'COMMISSION_NOT_DUE'; END IF;
+ IF p_operation IN('declare','confirm','correct') AND (m.final_price IS NULL OR m.commission_amount IS NULL OR (m.status='validated' AND m.completed_at IS NULL) OR NOT ((m.status='done' AND r.status IN('completed','validated')) OR (m.status='validated' AND r.status='validated'))) THEN RAISE EXCEPTION 'COMMISSION_NOT_DUE'; END IF;
  IF p_operation<>'declare' THEN
   SELECT * INTO x FROM public.commission_remittances_v1 WHERE id=p_remittance_id AND mission_id=m.id FOR UPDATE;
   IF NOT FOUND OR x.version IS DISTINCT FROM p_version THEN RAISE EXCEPTION 'STALE_VERSION' USING ERRCODE='40001'; END IF;
