@@ -1,0 +1,40 @@
+/* FIXEO Artisan OS Final Master — additive premium layer */
+:root{
+  --fxaf-pink:#ff4da6;
+  --fxaf-violet:#7c5cff;
+  --fxaf-cyan:#5ad2ff;
+  --fxaf-bg:#0b0d17;
+  --fxaf-panel:rgba(255,255,255,.035);
+  --fxaf-line:rgba(255,255,255,.10);
+  --fxaf-text:#f8f9ff;
+  --fxaf-muted:rgba(248,249,255,.64);
+}
+.fxaf-account-page{display:grid;gap:16px}
+.fxaf-account-hero{padding:22px;border:1px solid var(--fxaf-line);border-radius:22px;background:linear-gradient(135deg,rgba(255,77,166,.10),rgba(90,210,255,.05))}
+.fxaf-account-hero>span{font-size:.62rem;font-weight:900;letter-spacing:.15em;opacity:.7}
+.fxaf-account-hero h1{margin:7px 0 6px;font-size:1.55rem;line-height:1.12}
+.fxaf-account-hero p{margin:0;max-width:680px;color:var(--fxaf-muted);font-size:.82rem;line-height:1.55}
+.fxaf-account-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fxaf-account-card{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 12px;align-items:start;padding:16px;border:1px solid var(--fxaf-line);border-radius:18px;background:var(--fxaf-panel)}
+.fxaf-account-card>.fxa-btn{grid-column:1/-1;width:100%;justify-content:center}
+.fxaf-account-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,rgba(255,77,166,.16),rgba(90,210,255,.11));font-size:1rem}
+.fxaf-account-card small{display:block;font-size:.58rem;font-weight:900;letter-spacing:.12em;opacity:.55}
+.fxaf-account-card strong{display:block;margin-top:4px;font-size:.88rem;overflow-wrap:anywhere}
+.fxaf-account-card p{margin:5px 0 0;color:var(--fxaf-muted);font-size:.7rem;line-height:1.45}
+.fxaf-account-pending{color:#fde68a!important;opacity:.9}
+.fxaf-account-trust{display:flex;gap:8px;flex-wrap:wrap;padding:13px 14px;border:1px solid rgba(90,210,255,.12);border-radius:15px;background:rgba(90,210,255,.035)}
+.fxaf-account-trust span{padding:5px 8px;border-radius:999px;background:rgba(255,255,255,.045);font-size:.64rem;color:var(--fxaf-muted)}
+.fxaf-account-modal{display:grid;gap:12px;padding:2px 0 calc(78px + env(safe-area-inset-bottom))}
+.fxaf-account-modal>span{font-size:.6rem;font-weight:900;letter-spacing:.13em;opacity:.58}
+.fxaf-account-modal h3{margin:0;font-size:1.15rem}
+.fxaf-account-modal>p{margin:-5px 0 2px;color:var(--fxaf-muted);font-size:.74rem;line-height:1.5}
+.fxaf-account-modal label{display:grid;gap:6px;font-size:.72rem;font-weight:800}
+.fxaf-account-modal input{width:100%;box-sizing:border-box;min-height:46px;padding:11px 12px;border:1px solid rgba(255,255,255,.13);border-radius:12px;background:#101326;color:#fff;font:inherit;font-size:16px;outline:none}
+.fxaf-account-modal input:focus{border-color:rgba(90,210,255,.55);box-shadow:0 0 0 3px rgba(90,210,255,.08)}
+.fxaf-account-modal>.fxa-btn{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));z-index:7;min-height:50px;box-shadow:0 -14px 28px rgba(26,26,46,.92)}
+@media(max-width:900px){.fxaf-account-grid{grid-template-columns:1fr}}
+@media(max-width:520px){
+  .fxaf-account-hero{padding:18px}.fxaf-account-hero h1{font-size:1.32rem}
+  .fxaf-account-card{padding:14px}
+  .fxaf-account-trust{display:grid}
+}
