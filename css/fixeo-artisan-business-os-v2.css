@@ -19,3 +19,16 @@
 .fxbo-sec{padding-bottom:calc(118px + env(safe-area-inset-bottom))}
 @media(max-width:760px){.fxbo-line{grid-template-columns:1fr 1fr}.fxbo-line-label{grid-column:1/-1}.fxbo-line-remove{grid-column:2;justify-self:end}.fxbo-filterbar{grid-template-columns:1fr 1fr}.fxbo-day-kpis{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.fxbo-detail-grid{grid-template-columns:1fr}.fxbo-card-topline{gap:8px}.fxbo-card-actions{grid-template-columns:1fr 1fr}.fxbo-card-actions .fxa-btn:nth-child(3):last-child{grid-column:1/-1}.fxbo-line{grid-template-columns:1fr 1fr;padding:9px}.fxbo-line>label:nth-of-type(1),.fxbo-line-label{grid-column:1/-1}.fxbo-line-remove{height:38px}.fxbo-quote-preview{align-items:flex-end}.fxbo-source-card{align-items:stretch;flex-direction:column}.fxbo-source-card .fxa-btn{width:100%;justify-content:center}.fxbo-filterbar{grid-template-columns:1fr 1fr}.fxbo-history>div{grid-template-columns:1fr}.fxbo-history>div small{grid-column:1;grid-row:auto}.fxbo-priority>.fxa-btn,.fxbo-rafi-business>.fxa-btn{width:100%;justify-content:center}.fxbo-sec{padding-bottom:calc(138px + env(safe-area-inset-bottom))}}
+
+/* ARTISAN OS V3.2 — iPhone visual polish */
+#fxav2-modal-overlay:not(.hidden)>div{-webkit-overflow-scrolling:touch;scroll-padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+.fxbo-form{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+.fxbo-form>.fxa-btn[type="submit"]{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));z-index:6;margin-top:10px;box-shadow:0 -14px 28px rgba(26,26,46,.92)}
+#fxck-sec-quotes{padding-bottom:calc(152px + env(safe-area-inset-bottom))}
+.fxbo-filterbar label{display:grid;gap:5px;min-width:0}.fxbo-filterbar label>span{padding-left:2px;font-size:.62rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase;opacity:.58}
+.fxbo-filterbar select,.fxbo-filterbar input{min-height:44px}
+@media(max-width:520px){
+  .fxbo-filterbar{grid-template-columns:1fr 1fr;gap:10px 8px}
+  .fxbo-filterbar label:nth-child(3),.fxbo-filterbar label:nth-child(4){min-width:0}
+  .fxbo-form>.fxa-btn[type="submit"]{min-height:52px}
+}
