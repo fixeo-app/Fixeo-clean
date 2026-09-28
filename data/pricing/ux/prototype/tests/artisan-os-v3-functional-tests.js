@@ -87,5 +87,27 @@ test('final master CSS loaded',()=>ok(html.includes('fixeo-artisan-final-master-
 test('dashboard final asset loaded',()=>ok(html.includes('fixeo-artisan-dashboard-v2.js?v=artisan-final-p')));
 test('business final asset loaded',()=>ok(html.includes('fixeo-artisan-business-os-v2.js?v=artisan-business-os6')));
 
-console.log('\nArtisan OS Final Master:',pass,'PASS /',fail,'FAIL');
+
+/* Ultra Premium Q → V */
+test('Q RAFI navigation has signature class',()=>ok(html.includes('fxau-bottom-rafi')&&finalCss.includes('.fxau-bottom-rafi .bicon')));
+test('Q opportunities icon is distinct from RAFI',()=>ok(html.includes('fxau-bottom-opportunities')&&html.includes('<span class="bicon">◎</span>')));
+test('R marketplace commercial cockpit V2',()=>ok(fs.readFileSync(path.join(ROOT,'js/fixeo-artisan-cockpit-v1.js'),'utf8').includes('Pilotez vos propositions FIXEO.')));
+test('R marketplace submit authority remains FIXEO',()=>{
+  const cockpit=fs.readFileSync(path.join(ROOT,'js/fixeo-artisan-cockpit-v1.js'),'utf8');
+  ok(cockpit.includes('window.FixeoSupabase.submitQuote'));
+  ok(cockpit.includes('Transmission à FIXEO…'));
+  ok(cockpit.includes('Devis transmis à FIXEO.'));
+});
+test('R commercial search and filters exist',()=>{
+  const cockpit=fs.readFileSync(path.join(ROOT,'js/fixeo-artisan-cockpit-v1.js'),'utf8');
+  ok(cockpit.includes('fxau-commercial-search'));
+  ok(cockpit.includes('data-commercial-tab'));
+  ok(cockpit.includes('function _applyCommercialView()'));
+});
+test('S artisan security copy hides implementation detail',()=>ok(!dash.includes('validation par Supabase Auth')&&!dash.includes('géré exclusivement par Supabase Auth')));
+test('T mobile optical safe areas',()=>ok(finalCss.includes('ULTRA PREMIUM T/U')&&finalCss.includes('env(safe-area-inset-bottom)')));
+test('U desktop optical master is bounded',()=>ok(finalCss.includes('--fxa-sidebar-w:248px')&&finalCss.includes('1180px')));
+test('V ultra assets cachebusted',()=>ok(html.includes('artisan-ultra-v1')));
+
+console.log('\nArtisan OS Ultra Premium Golden Master:',pass,'PASS /',fail,'FAIL');
 if(fail)process.exit(1);
