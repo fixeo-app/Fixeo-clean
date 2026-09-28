@@ -1,0 +1,20 @@
+/* FIXEO ADMIN OS — B1/B2 Command Shell
+   Additive presentation layer. No domain authority lives here. */
+:root{--fxao-bg:#070914;--fxao-panel:#0d1120;--fxao-line:rgba(255,255,255,.075);--fxao-text:#f5f7ff;--fxao-muted:#7f8ba3;--fxao-cyan:#70f0dc;--fxao-violet:#9b8cff;--fxao-pink:#f472b6}
+body[data-dash-type="admin"]{background:radial-gradient(circle at 70% -10%,rgba(99,102,241,.09),transparent 34%),var(--fxao-bg)}
+body[data-dash-type="admin"] #admin-app{min-height:100dvh}
+body[data-dash-type="admin"] .dashboard-layout{min-height:calc(100dvh - 72px);background:transparent}
+body[data-dash-type="admin"] #admin-sidebar{width:250px;border-right:1px solid var(--fxao-line);background:linear-gradient(180deg,rgba(12,15,29,.98),rgba(7,9,20,.99));box-shadow:18px 0 48px rgba(0,0,0,.12)}
+body[data-dash-type="admin"] #admin-sidebar .sidebar-mini-profile{margin:12px;padding:14px!important;border-color:rgba(155,140,255,.16)!important;border-radius:16px;background:linear-gradient(145deg,rgba(155,140,255,.09),rgba(112,240,220,.035))!important}
+body[data-dash-type="admin"] #admin-sidebar .sidebar-nav{padding:0 10px 18px}
+body[data-dash-type="admin"] #admin-sidebar .sidebar-section-label{padding:10px 10px 6px;color:rgba(255,255,255,.28);font-size:.53rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
+body[data-dash-type="admin"] #admin-sidebar .sidebar-link{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:9px;min-height:43px;margin:2px 0;padding:6px 9px;border:1px solid transparent;border-radius:12px;color:#aab4c8;transition:.16s ease}
+body[data-dash-type="admin"] #admin-sidebar .sidebar-link:hover{border-color:rgba(255,255,255,.07);background:rgba(255,255,255,.035);color:#fff}
+body[data-dash-type="admin"] #admin-sidebar .sidebar-link.active{border-color:rgba(112,240,220,.13);background:linear-gradient(90deg,rgba(112,240,220,.085),rgba(99,102,241,.055));color:#fff;box-shadow:inset 2px 0 var(--fxao-cyan)}
+body[data-dash-type="admin"] #admin-sidebar .icon.fxao-icon{display:inline-flex;align-items:center;justify-content:center;width:29px;height:29px;border:1px solid rgba(255,255,255,.065);border-radius:9px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));color:#9daac0;font-size:.83rem;font-style:normal;font-weight:850}
+body[data-dash-type="admin"] #admin-sidebar .sidebar-link.active .fxao-icon{border-color:rgba(112,240,220,.25);color:#effffc;text-shadow:0 0 10px rgba(112,240,220,.45)}
+.fxao-admin-rafi{margin:6px 12px 12px;padding:12px;border:1px solid rgba(155,140,255,.2);border-radius:15px;background:linear-gradient(135deg,rgba(139,92,246,.11),rgba(112,240,220,.045));cursor:pointer}
+.fxao-admin-rafi span,.fxao-admin-rafi strong,.fxao-admin-rafi small{display:block}.fxao-admin-rafi span{color:#d8ccff;font-size:1.1rem;text-shadow:0 0 12px rgba(196,181,253,.5)}.fxao-admin-rafi strong{margin-top:4px;color:#fff;font-size:.75rem}.fxao-admin-rafi small{margin-top:2px;color:var(--fxao-muted);font-size:.56rem}
+.fxao-command-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:0 0 18px}.fxao-command-head p{margin:0;color:var(--fxao-cyan);font-size:.56rem;font-weight:900;letter-spacing:.14em}.fxao-command-head h1{margin:4px 0 3px;color:#fff;font-size:clamp(1.4rem,2vw,2rem)}.fxao-command-head small{color:var(--fxao-muted)}
+.fxao-global-search{display:flex;align-items:center;gap:8px;min-width:min(420px,42vw);padding:8px 11px;border:1px solid var(--fxao-line);border-radius:13px;background:rgba(255,255,255,.025)}.fxao-global-search input{width:100%;border:0;outline:0;background:transparent;color:#fff;font:inherit}.fxao-global-search kbd{padding:3px 6px;border:1px solid rgba(255,255,255,.08);border-radius:6px;color:#78849a;font-size:.55rem}
+@media(max-width:900px){.fxao-command-head{flex-direction:column}.fxao-global-search{width:100%;min-width:0}.fxao-admin-rafi{margin-top:54px}}
