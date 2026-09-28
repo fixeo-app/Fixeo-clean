@@ -870,7 +870,21 @@
       }
     });
 
+    document.addEventListener('input', function(e) {
+      if (e.target && e.target.id === 'fxau-commercial-search') _applyCommercialView();
+    });
+
     document.addEventListener('click', function(e) {
+      var commercialTab = e.target.closest('[data-commercial-tab],[data-commercial-filter]');
+      if (commercialTab) {
+        var value = commercialTab.getAttribute('data-commercial-tab') || commercialTab.getAttribute('data-commercial-filter') || 'all';
+        var sec = el('fxck-sec-quotes');
+        if (sec) {
+          sec.querySelectorAll('[data-commercial-tab]').forEach(function(x){x.classList.toggle('active',x.getAttribute('data-commercial-tab')===value);});
+          _applyCommercialView();
+        }
+        return;
+      }
       var btn = e.target.closest('[data-action]');
       if (!btn) return;
       var action = btn.dataset.action;
