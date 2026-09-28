@@ -172,3 +172,34 @@
 .fxau-bottom-rafi .bicon{font-size:1.48rem!important;line-height:1!important;transform:translateY(-1px);filter:drop-shadow(0 0 9px rgba(255,193,230,.58))}
 .fxau-bottom-opportunities .bicon{font-size:1.22rem!important;line-height:1!important;color:#8fe7ff;filter:drop-shadow(0 0 7px rgba(90,210,255,.34))}
 .fxau-bottom-rafi.active .bicon{transform:translateY(-2px) scale(1.08)}
+
+/* ── ULTRA PREMIUM R — COMMERCIAL COCKPIT V2 ──────────────── */
+.fxau-commercial{display:grid;gap:18px;padding-bottom:calc(120px + env(safe-area-inset-bottom))}
+.fxau-commercial-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:end;padding:22px;border:1px solid rgba(255,255,255,.10);border-radius:22px;background:linear-gradient(135deg,rgba(255,77,166,.09),rgba(90,210,255,.045))}
+.fxau-commercial-hero>div:first-child>span{font-size:.62rem;font-weight:950;letter-spacing:.15em;opacity:.66}
+.fxau-commercial-hero h2{margin:7px 0 6px;font-size:1.45rem;line-height:1.12}
+.fxau-commercial-hero p{margin:0;max-width:650px;color:rgba(255,255,255,.65);font-size:.78rem;line-height:1.55}
+.fxau-commercial-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.fxau-commercial-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.fxau-commercial-kpis button{display:grid;gap:3px;text-align:left;padding:15px;border:1px solid rgba(255,255,255,.09);border-radius:17px;background:rgba(255,255,255,.025);color:#fff;cursor:pointer}
+.fxau-commercial-kpis b{font-size:1.22rem}.fxau-commercial-kpis span{font-size:.74rem;font-weight:850}.fxau-commercial-kpis small{font-size:.6rem;opacity:.5}
+.fxau-commercial-tools{display:grid;gap:10px;padding:13px;border:1px solid rgba(255,255,255,.075);border-radius:17px;background:rgba(255,255,255,.02)}
+.fxau-commercial-tools label{display:grid;gap:5px}.fxau-commercial-tools label>span{font-size:.57rem;font-weight:900;letter-spacing:.12em;opacity:.55}
+#fxau-commercial-search{width:100%;box-sizing:border-box;min-height:44px;padding:10px 12px;border:1px solid rgba(255,255,255,.11);border-radius:12px;background:#101326;color:#fff;font:inherit;font-size:16px;outline:none}
+#fxau-commercial-search:focus{border-color:rgba(90,210,255,.5);box-shadow:0 0 0 3px rgba(90,210,255,.07)}
+.fxau-commercial-tabs{display:flex;gap:7px;overflow:auto;padding-bottom:1px;scrollbar-width:none}.fxau-commercial-tabs::-webkit-scrollbar{display:none}
+.fxau-commercial-tabs button{white-space:nowrap;padding:8px 11px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:transparent;color:rgba(255,255,255,.68);font:inherit;font-size:.66rem;font-weight:800}
+.fxau-commercial-tabs button.active{color:#fff;border-color:rgba(255,77,166,.25);background:linear-gradient(135deg,rgba(255,77,166,.13),rgba(90,210,255,.07))}
+.fxau-commercial-group{display:grid;gap:9px}
+.fxau-commercial-group-head{display:flex;align-items:center;justify-content:space-between;padding:0 3px}.fxau-commercial-group-head strong{font-size:.8rem}.fxau-commercial-group-head span{display:grid;place-items:center;min-width:26px;height:26px;padding:0 6px;border-radius:999px;background:rgba(255,255,255,.055);font-size:.66rem}
+.fxau-commercial-group-empty{display:grid;gap:5px;padding:22px 16px;text-align:center;border:1px dashed rgba(255,255,255,.09);border-radius:17px;color:rgba(255,255,255,.55);font-size:.72rem}
+.fxau-commercial-group-empty strong{color:#fff;font-size:.82rem}.fxau-commercial-group-empty span{line-height:1.5}
+.fxau-commercial-details{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:9px}
+.fxau-commercial-details span{display:grid;gap:2px;padding:8px;border-radius:10px;background:rgba(255,255,255,.025);font-size:.63rem;color:rgba(255,255,255,.65)}.fxau-commercial-details b{font-size:.55rem;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.42)}
+.fxck-quote-service{margin-top:10px!important}
+@media(max-width:700px){
+ .fxau-commercial{gap:14px}
+ .fxau-commercial-hero{grid-template-columns:1fr;padding:18px}.fxau-commercial-actions{display:grid;grid-template-columns:1fr 1fr}.fxau-commercial-actions .fxa-btn{justify-content:center}
+ .fxau-commercial-kpis{grid-template-columns:1fr 1fr}.fxau-commercial-kpis button{padding:13px}
+ .fxau-commercial-details{grid-template-columns:1fr}
+}
