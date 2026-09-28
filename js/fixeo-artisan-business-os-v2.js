@@ -44,7 +44,7 @@ function quoteById(id){return state.quotes.find(x=>x.id===id)||null}
 function jobById(id){return state.jobs.find(x=>x.id===id)||null}
 function personalQuotes(){return state.quotes.filter(x=>x.source==='personal')}
 function personalJobs(){return state.jobs.filter(x=>x.source==='personal')}
-function personalLedger(){return personalLedger().filter(x=>x.source==='personal')}
+function personalLedger(){return state.ledger.filter(x=>x.source==='personal')}
 function clientName(id){let c=clientById(id);return c?c.full_name:'Client non enregistré'}
 function statusLabel(s){return {draft:'Brouillon',sent:'Envoyé',accepted:'Accepté',rejected:'Refusé',expired:'Expiré',cancelled:'Annulé',planned:'Planifiée',in_progress:'En cours',completed:'Terminée'}[s]||s||'—'}
 function fmtDate(v){if(!v)return 'À planifier';try{return new Date(v).toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}catch(_){return v}}
