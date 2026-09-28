@@ -1390,6 +1390,12 @@ html += targetedOffers
     if (av) av.textContent = initials(name);
     if (nm) nm.textContent = name;
     if (sb) sb.textContent = sub;
+    var hav = el('fxaf-account-chip-avatar');
+    var hnm = el('fxaf-account-chip-name');
+    var hst = el('fxaf-account-chip-status');
+    if (hav) hav.textContent = initials(name);
+    if (hnm) hnm.textContent = name;
+    if (hst) hst.textContent = (ap.availability === 'available' ? 'Disponible' : ap.availability === 'busy' ? 'Occupé' : 'Compte sécurisé');
   }
 
   /* ── MASTER RENDER ────────────────────────────────────────── */
