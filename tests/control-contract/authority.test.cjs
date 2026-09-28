@@ -149,3 +149,53 @@ tx('Sensitive functions cannot be executed by anon, non-admin or service-role wi
  await actor(db,1,'service_role');await denied(()=>rpc('control_summary_v1',['requests','all']),/permission denied/);
  await db.exec('RESET ROLE');const leaked=await query("select p.proname from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='fixeo_private' and p.proname in('control_row_v1','authority_audit_v1','control_require_admin_v1') and has_function_privilege('authenticated',p.oid,'EXECUTE')");assert.equal(leaked.length,0);
 });
+
+tx('Claims approval resolves the legacy link and preserves the canonical owner rule',async()=>{
+ await db.exec(`INSERT INTO public.artisans(id,legacy_id,full_name,city,service_category,claimed,claim_status) VALUES('${uuid(21)}','synthetic-legacy','Synthetic unowned','Fès','plomberie',false,'pending'); INSERT INTO public.claim_requests(id,artisan_legacy_id,requester_user_id,status) VALUES('${uuid(201)}','synthetic-legacy','${uuid(4)}','pending');`);
+ await actor(db,3);const r=await command('claim.approve',uuid(201),{});assert.equal(r.ok,true,JSON.stringify(r));assert.equal(r.verified.status,'approved');
+ await db.exec('RESET ROLE');assert.equal((await query('select owner_user_id from public.artisans where id=$1',[uuid(21)]))[0].owner_user_id,uuid(4));
+});
+tx('Claim rejection uses the existing authority and failed review is durably audited',async()=>{
+ await db.exec(`INSERT INTO public.claim_requests(id,artisan_id,requester_user_id,status) VALUES('${uuid(202)}','${uuid(20)}','${uuid(1)}','pending'),('${uuid(203)}','${uuid(20)}','${uuid(4)}','pending');`);
+ await actor(db,3);const rejected=await command('claim.reject',uuid(202),{});assert.equal(rejected.ok,true,JSON.stringify(rejected));assert.equal(rejected.verified.status,'rejected');
+ const conflict=await command('claim.approve',uuid(203),{});assert.equal(conflict.ok,false);assert.equal(conflict.code,'artisan_has_owner');
+ await db.exec('RESET ROLE');const audit=await query('select result from fixeo_private.authority_audit_events_v1 where id=$1',[conflict.audit_id]);assert.equal(audit[0].result,'failed');
+});
+tx('Dossier relations are bounded and report overflow instead of silently claiming completeness',async()=>{
+ await db.exec(`INSERT INTO public.missions(request_id,artisan_profile_id,status) SELECT '${uuid(100)}','${uuid(20)}','expired' FROM generate_series(1,61);`);
+ await actor(db,3);const d=await rpc('control_dossier_read_v1',['request',uuid(100)]);assert.equal(d.relations.length,50);assert.equal(d.relations_has_more,true);
+});
+tx('History and empty totals retain distinct meanings',async()=>{
+ await actor(db,3);assert.equal((await rpc('control_summary_v1',['finance','all'])).metrics['finance.due_gross'],0);
+ const a=await rpc('control_summary_v1',['artisans','all']);assert.equal(a.metric_quality['artisans.active_30d'],'partial_historical_coverage');
+ await db.exec(`RESET ROLE; UPDATE public.service_requests SET status='validated' WHERE id='${uuid(100)}'; INSERT INTO public.missions(request_id,artisan_profile_id,status,final_price) VALUES('${uuid(100)}','${uuid(20)}','validated',1000);`);
+ await actor(db,3);const m=await rpc('control_summary_v1',['missions','all']);assert.equal(m.metrics['missions.validated'],0);assert.equal(m.metrics['missions.validated_raw'],1);assert.equal(m.metrics['missions.validation_unproven'],1);
+ assert.equal((await rpc('control_summary_v1',['finance','all'])).metrics['finance.due_gross'],null);
+});
+tx('Existing server intake producer retains its grant while browser writes are denied',async()=>{
+ await actor(db,1,'service_role');await query("insert into public.service_requests(id,city,service_category,description,status) values($1,'Fès','plomberie','Synthetic server intake','new')",[uuid(700)]);
+ await db.exec('RESET ROLE');assert.equal((await query('select data_classification from public.service_requests where id=$1',[uuid(700)]))[0].data_classification,'production');
+});
+
+tx('Legacy accepted quote history stays readable without allowing a new validated mission',async()=>{
+ await db.exec(`INSERT INTO public.quotes(id,request_id,artisan_profile_id,proposed_price,status,review_status) VALUES('${uuid(720)}','${uuid(100)}','${uuid(20)}',1000,'accepted','legacy_unreviewed');`);
+ await actor(db,1);assert.equal((await query('select id from public.quotes where id=$1',[uuid(720)])).length,1);
+ await denied(()=>rpc('accept_quote_v2',[uuid(720)]),/LEGACY_RECONCILIATION_REQUIRED/);
+});
+
+tx('Artisan photo producer is owner-bound without a general update grant',async()=>{
+ await actor(db,2);const good='https://abcdefghijklmnopqrst.supabase.co/storage/v1/object/public/artisan-media/profiles/'+uuid(2)+'/avatar.jpg';assert.equal((await rpc('update_my_artisan_photo_v1',[good])).id,uuid(20));
+ await denied(()=>rpc('update_my_artisan_photo_v1',[good.replace(uuid(2),uuid(1))]),/INVALID_PHOTO_URL/);
+ await actor(db,1);await denied(()=>rpc('update_my_artisan_photo_v1',[good]),/ARTISAN_NOT_FOUND/);
+});
+test('Postflight and non-destructive pause/resume scripts execute against the candidate schema',async()=>{
+ const fs=require('node:fs'),path=require('node:path');const release=n=>fs.readFileSync(path.join(__dirname,'../../docs/control-os/bloc1',n),'utf8');
+ await db.exec('RESET ROLE');await db.exec(release('02-postflight-readonly.sql'));await db.exec(release('03-rollback-pause-actions.sql'));
+ await db.exec('BEGIN');await actor(db,3);await denied(()=>preview('artisan.verify',uuid(20),{reason:'Synthetic review'}),/permission denied/);await db.exec('ROLLBACK; RESET ROLE');
+ await db.exec(release('04-resume-actions-after-review.sql'));await actor(db,3);assert.equal((await rpc('control_summary_v1',['requests','all'])).source,'requests');await db.exec('RESET ROLE');
+});
+
+tx('Classification cannot be selected by an ordinary Marketplace producer',async()=>{
+ await db.exec(`RESET ROLE; SELECT set_config('request.jwt.claims','{"sub":"${uuid(1)}","role":"authenticated"}',false);`);
+ await denied(()=>query("insert into public.artisans(id,full_name,city,service_category,data_classification) values($1,'Synthetic','Fès','plomberie','test')",[uuid(730)]),/CLASSIFICATION_AUTHORITY_REQUIRED/);
+});

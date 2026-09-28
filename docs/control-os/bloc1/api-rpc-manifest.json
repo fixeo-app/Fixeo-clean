@@ -1,0 +1,204 @@
+{
+  "version": "control-v1",
+  "http_operations": [
+    "summary",
+    "operations",
+    "dossier",
+    "search",
+    "signals",
+    "action/preview",
+    "action/execute"
+  ],
+  "route": "POST /api/control-v1/{operation}",
+  "functions": [
+    {
+      "name": "fixeo_private.control_require_admin_v1",
+      "declaration_arguments": "",
+      "change": "created",
+      "source": "supabase/migrations/20260928212710_control_os_b1_foundation.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "fixeo_private.authority_audit_v1",
+      "declaration_arguments": "p_type text,p_id uuid,p_authority text,p_action text,p_result text,p_change jsonb DEFAULT '{}'::jsonb",
+      "change": "created",
+      "source": "supabase/migrations/20260928212710_control_os_b1_foundation.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "fixeo_private.control_event_capture_v1",
+      "declaration_arguments": "",
+      "change": "created",
+      "source": "supabase/migrations/20260928212710_control_os_b1_foundation.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "fixeo_private.mission_event_times_v1",
+      "declaration_arguments": "",
+      "change": "created",
+      "source": "supabase/migrations/20260928212710_control_os_b1_foundation.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "fixeo_private.request_start_time_v1",
+      "declaration_arguments": "",
+      "change": "created",
+      "source": "supabase/migrations/20260928212710_control_os_b1_foundation.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "public.submit_artisan_quote_v2",
+      "declaration_arguments": "p_request_id uuid,p_proposed_price numeric,p_service_description text DEFAULT NULL,p_supplies_description text DEFAULT NULL,p_estimated_duration text DEFAULT NULL,p_message text DEFAULT NULL",
+      "change": "modified",
+      "source": "supabase/migrations/20260928212721_control_os_b1_authorities.sql",
+      "direct_browser_execution": true
+    },
+    {
+      "name": "public.review_marketplace_quote_v1",
+      "declaration_arguments": "p_quote_id uuid,p_version integer,p_approve boolean,p_reason text,p_expires_at timestamptz DEFAULT NULL",
+      "change": "created",
+      "source": "supabase/migrations/20260928212721_control_os_b1_authorities.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "public.accept_quote_v2",
+      "declaration_arguments": "p_quote_id uuid",
+      "change": "modified",
+      "source": "supabase/migrations/20260928212721_control_os_b1_authorities.sql",
+      "direct_browser_execution": true
+    },
+    {
+      "name": "public.create_client_mission_from_accepted_quote",
+      "declaration_arguments": "p_quote_id uuid",
+      "change": "modified",
+      "source": "supabase/migrations/20260928212721_control_os_b1_authorities.sql",
+      "direct_browser_execution": true
+    },
+    {
+      "name": "public.reject_quote_v2",
+      "declaration_arguments": "p_quote_id uuid",
+      "change": "modified",
+      "source": "supabase/migrations/20260928212721_control_os_b1_authorities.sql",
+      "direct_browser_execution": true
+    },
+    {
+      "name": "public.create_my_service_request_v1",
+      "declaration_arguments": "p_service_category text,p_city text,p_description text,p_idempotency_key uuid",
+      "change": "created",
+      "source": "supabase/migrations/20260928212721_control_os_b1_authorities.sql",
+      "direct_browser_execution": true
+    },
+    {
+      "name": "public.admin_settle_mission_v1",
+      "declaration_arguments": "p_mission_id uuid,p_final_price numeric,p_expected_final_price numeric,p_reason text",
+      "change": "created",
+      "source": "supabase/migrations/20260928212721_control_os_b1_authorities.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "public.admin_commission_remittance_v1",
+      "declaration_arguments": "p_mission_id uuid,p_operation text,p_remittance_id uuid,p_version integer,p_amount numeric,p_method text,p_proof_reference text,p_reason text",
+      "change": "created",
+      "source": "supabase/migrations/20260928212721_control_os_b1_authorities.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "public.admin_verify_artisan_v1",
+      "declaration_arguments": "p_artisan_id uuid",
+      "change": "created",
+      "source": "supabase/migrations/20260928212721_control_os_b1_authorities.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "public.update_my_artisan_photo_v1",
+      "declaration_arguments": "p_photo_url text",
+      "change": "created",
+      "source": "supabase/migrations/20260928212721_control_os_b1_authorities.sql",
+      "direct_browser_execution": true
+    },
+    {
+      "name": "fixeo_private.control_row_v1",
+      "declaration_arguments": "p_type text,p_id uuid",
+      "change": "created",
+      "source": "supabase/migrations/20260928212728_control_os_b1_projections.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "public.control_dossier_read_v1",
+      "declaration_arguments": "p_type text,p_id uuid",
+      "change": "created",
+      "source": "supabase/migrations/20260928212728_control_os_b1_projections.sql",
+      "direct_browser_execution": true
+    },
+    {
+      "name": "public.control_operations_list_v1",
+      "declaration_arguments": "p_after uuid DEFAULT NULL,p_limit integer DEFAULT 50,p_status text DEFAULT NULL,p_city text DEFAULT NULL,p_trade text DEFAULT NULL,p_enterprise_id uuid DEFAULT NULL,p_site_id uuid DEFAULT NULL,p_classification text DEFAULT 'all'",
+      "change": "created",
+      "source": "supabase/migrations/20260928212728_control_os_b1_projections.sql",
+      "direct_browser_execution": true
+    },
+    {
+      "name": "public.control_search_v1",
+      "declaration_arguments": "p_query text,p_type text,p_after uuid DEFAULT NULL,p_limit integer DEFAULT 25",
+      "change": "created",
+      "source": "supabase/migrations/20260928212728_control_os_b1_projections.sql",
+      "direct_browser_execution": true
+    },
+    {
+      "name": "public.control_summary_v1",
+      "declaration_arguments": "p_source text,p_classification text DEFAULT 'all'",
+      "change": "created",
+      "source": "supabase/migrations/20260928212728_control_os_b1_projections.sql",
+      "direct_browser_execution": true
+    },
+    {
+      "name": "fixeo_private.control_action_type_v1",
+      "declaration_arguments": "p_capability text",
+      "change": "created",
+      "source": "supabase/migrations/20260928212728_control_os_b1_projections.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "public.control_action_preview_v1",
+      "declaration_arguments": "p_capability text,p_target_id uuid,p_payload jsonb,p_correlation_id uuid",
+      "change": "created",
+      "source": "supabase/migrations/20260928212728_control_os_b1_projections.sql",
+      "direct_browser_execution": true
+    },
+    {
+      "name": "public.control_action_execute_v1",
+      "declaration_arguments": "p_preview_id uuid,p_confirmed boolean,p_idempotency_key uuid",
+      "change": "created",
+      "source": "supabase/migrations/20260928212728_control_os_b1_projections.sql",
+      "direct_browser_execution": true
+    },
+    {
+      "name": "fixeo_private.classification_guard_v1",
+      "declaration_arguments": "",
+      "change": "created",
+      "source": "supabase/migrations/20260928212736_control_os_b1_acl_cutover.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "fixeo_private.verified_canonical_v1",
+      "declaration_arguments": "",
+      "change": "created",
+      "source": "supabase/migrations/20260928212736_control_os_b1_acl_cutover.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "fixeo_private.execution_winner_guard_v1",
+      "declaration_arguments": "",
+      "change": "created",
+      "source": "supabase/migrations/20260928212736_control_os_b1_acl_cutover.sql",
+      "direct_browser_execution": false
+    },
+    {
+      "name": "public.enterprise_request_sla_facts_v1",
+      "declaration_arguments": "p_request_id uuid",
+      "change": "created",
+      "source": "supabase/migrations/20260928212736_control_os_b1_acl_cutover.sql",
+      "direct_browser_execution": true
+    }
+  ]
+}

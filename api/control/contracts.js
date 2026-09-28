@@ -33,6 +33,7 @@ function failSource(source,error,previous,startedAt){
 }
 function metricValue(states,id){
  for(const state of Object.values(states||{})){if(state.status!=='healthy'||state.completeness!=='complete')continue;
+ if(state.data?.metric_quality?.[id]&&state.data.metric_quality[id]!=='complete')continue;
  const value=state.data?.metrics?.[id];if(typeof value==='number'&&Number.isFinite(value))return value;
  }return null;
 }

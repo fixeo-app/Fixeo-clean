@@ -11,7 +11,7 @@
   const title=document.createElement('h2');title.id='control-review-title';title.textContent='Confirmer cette action';
   const text=document.createElement('p');text.textContent=p.effect_description;
   const details=document.createElement('pre');details.style.cssText='white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.6 system-ui;background:#f1f5f9;padding:16px;border-radius:10px';
-  details.textContent='Cible : '+(p.current.name||p.target.type)+' · '+p.target.id+'\nAutorité : '+p.authority+'\nÉtat actuel : '+(p.current.status||p.current.review_status||'Profil')+'\nEffet demandé : '+JSON.stringify(p.effect,null,2)+'\nValidité : '+new Date(p.expires_at).toLocaleTimeString('fr-FR');
+  details.textContent='Cible : '+(p.current.name||p.target.type)+' · '+p.target.id+'\nAutorité : '+p.authority+'\nÉtat actuel : '+(p.current.status||p.current.review_status||'Profil')+'\nEffet demandé : '+JSON.stringify(p.effect,null,2)+(p.remittance?'\nReversement : '+JSON.stringify(p.remittance,null,2):'')+'\nPréconditions : '+p.preconditions.join(', ')+'\nValidité : '+new Date(p.expires_at).toLocaleTimeString('fr-FR');
   const warning=document.createElement('p');warning.textContent='Le serveur revérifiera les droits et l’état du dossier. L’action et son résultat seront journalisés.';
   const cancel=document.createElement('button');cancel.className='btn';cancel.textContent='Revenir';
   const confirm=document.createElement('button');confirm.className='btn primary';confirm.textContent='Confirmer et exécuter';confirm.style.marginLeft='12px';

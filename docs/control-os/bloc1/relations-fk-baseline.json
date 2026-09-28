@@ -1,0 +1,240 @@
+[
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_selected_run_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (id, selected_run_id) REFERENCES fixeo_private.diagnostic_runs_v1(session_id, id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_owner_user_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (owner_user_id) REFERENCES auth.users(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_service_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisans",
+    "conname": "artisans_owner_user_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (owner_user_id) REFERENCES users(id) ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "claim_requests",
+    "conname": "claim_requests_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "claim_requests",
+    "conname": "claim_requests_requester_user_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (requester_user_id) REFERENCES users(id) ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_assignments",
+    "conname": "enterprise_internal_assignments_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_assignments",
+    "conname": "enterprise_internal_assignments_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (offer_id) REFERENCES enterprise_internal_dispatch_offers(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_assignments",
+    "conname": "enterprise_internal_assignments_service_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_assignments",
+    "conname": "enterprise_internal_assignments_worker_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (worker_id) REFERENCES enterprise_workforce_workers(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_members",
+    "conname": "enterprise_members_enterprise_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_members",
+    "conname": "enterprise_members_invited_by_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (invited_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_members",
+    "conname": "enterprise_members_user_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_context",
+    "conname": "erc_created_by_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_context",
+    "conname": "erc_enterprise_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_context",
+    "conname": "erc_service_request_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_context",
+    "conname": "erc_site_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_enterprise_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_policy_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (policy_id) REFERENCES enterprise_sla_policies(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_request_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_site_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sites",
+    "conname": "enterprise_sites_enterprise_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_workers",
+    "conname": "enterprise_workforce_workers_created_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_workers",
+    "conname": "enterprise_workforce_workers_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_workers",
+    "conname": "enterprise_workforce_workers_member_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (member_id) REFERENCES enterprise_members(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "missions",
+    "conname": "missions_pricing_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (pricing_offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "payments",
+    "conname": "payments_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "profiles",
+    "conname": "profiles_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "quotes",
+    "conname": "quotes_artisan_profile_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_profile_id) REFERENCES artisans(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "quotes",
+    "conname": "quotes_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "service_requests",
+    "conname": "service_requests_client_profile_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (client_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "service_requests",
+    "conname": "service_requests_pricing_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (pricing_offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "service_requests",
+    "conname": "service_requests_target_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (target_artisan_id) REFERENCES artisans(id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "users",
+    "conname": "users_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE"
+  }
+]

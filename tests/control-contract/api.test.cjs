@@ -29,3 +29,13 @@ test('Human confirmation is mandatory; a model cannot choose an RPC',async()=>{
  r=response();await h(request('action/preview',{capability:'arbitrary_rpc',target_id:uid,payload:{}}),r);assert.equal(r.statusCode,400);
  r=response();await h(request('action/execute',{preview_id:uid,confirmed:true,idempotency_key:uid},{origin:'https://hostile.invalid'}),r);assert.equal(r.statusCode,403);
 });
+test('An observed activity lower bound is not published as a complete global metric',()=>{
+ const states={artisans:{status:'healthy',completeness:'complete',data:{metrics:{'artisans.active_30d':2},metric_quality:{'artisans.active_30d':'partial_historical_coverage'}}}};
+ assert.equal(C.metricValue(states,'artisans.active_30d'),null);
+});
+test('Registry covers every SQL summary metric and specifies its completeness contract',()=>{
+ const fs=require('node:fs'),path=require('node:path');const registry=require('../../api/control/metrics-registry.json');const ids=new Set(registry.metrics.map(x=>x.id));assert.equal(ids.size,registry.metrics.length);
+ const sql=fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260928212728_control_os_b1_projections.sql'),'utf8').split('CREATE FUNCTION public.control_summary_v1')[1].split('CREATE FUNCTION fixeo_private.control_action_type_v1')[0];
+ for(const match of sql.matchAll(/'((?:requests|urgency|missions|artisans|trust|network|finance)\.[a-z0-9_.]+)'/g))assert.ok(ids.has(match[1]),match[1]);
+ for(const metric of registry.metrics)for(const key of ['version','grain','source','authority','formula','scope','window','timezone','exclusions','freshness_ms','completeness','pagination'])assert.ok(metric[key]!=null,metric.id+':'+key);
+});

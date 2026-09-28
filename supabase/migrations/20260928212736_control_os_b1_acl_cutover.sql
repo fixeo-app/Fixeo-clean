@@ -20,11 +20,25 @@ DROP POLICY quotes_select_related_admin ON public.quotes;
 CREATE POLICY quotes_select_related_admin ON public.quotes FOR SELECT TO authenticated USING(
  public.is_admin()
  OR artisan_profile_id IN(SELECT id FROM public.artisans WHERE owner_user_id=auth.uid())
+ OR (review_status='legacy_unreviewed' AND status IN('accepted','rejected') AND request_id IN(SELECT id FROM public.service_requests WHERE client_profile_id=auth.uid()))
  OR (review_status='approved' AND reviewed_version=quote_version AND presented_at IS NOT NULL AND request_id IN(SELECT id FROM public.service_requests WHERE client_profile_id=auth.uid()))
 );
 -- Claim creation remains the existing producer, but cannot create a fake review.
 DROP POLICY "7c12a1_auth_insert_own" ON public.claim_requests;
 CREATE POLICY "7c12a1_auth_insert_own" ON public.claim_requests FOR INSERT TO authenticated WITH CHECK(requester_user_id=auth.uid() AND status='pending' AND reviewed_at IS NULL);
+
+-- Browser producers cannot choose test/internal/unclassified to hide Marketplace activity.
+CREATE FUNCTION fixeo_private.classification_guard_v1() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
+BEGIN
+ IF (TG_OP='INSERT' AND NEW.data_classification IS DISTINCT FROM 'production') OR (TG_OP='UPDATE' AND NEW.data_classification IS DISTINCT FROM OLD.data_classification) THEN
+  IF NOT coalesce(public.is_admin(),false) AND coalesce(auth.role(),'')<>'service_role' THEN RAISE EXCEPTION 'CLASSIFICATION_AUTHORITY_REQUIRED' USING ERRCODE='42501'; END IF;
+ END IF;
+ RETURN NEW;
+END $$;
+REVOKE ALL ON FUNCTION fixeo_private.classification_guard_v1() FROM PUBLIC,anon,authenticated,service_role;
+CREATE TRIGGER classification_guard_v1 BEFORE INSERT OR UPDATE OF data_classification ON public.service_requests FOR EACH ROW EXECUTE FUNCTION fixeo_private.classification_guard_v1();
+CREATE TRIGGER classification_guard_v1 BEFORE INSERT OR UPDATE OF data_classification ON public.artisans FOR EACH ROW EXECUTE FUNCTION fixeo_private.classification_guard_v1();
+CREATE TRIGGER classification_guard_v1 BEFORE INSERT OR UPDATE OF data_classification ON public.enterprise_accounts FOR EACH ROW EXECUTE FUNCTION fixeo_private.classification_guard_v1();
 
 CREATE FUNCTION fixeo_private.verified_canonical_v1() RETURNS trigger LANGUAGE plpgsql SET search_path='' AS $$
 BEGIN NEW.is_verified:=coalesce(NEW.verified,false); RETURN NEW; END $$;

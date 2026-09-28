@@ -46,10 +46,11 @@ ALTER TABLE public.missions ADD COLUMN started_at timestamptz, ADD COLUMN comple
 CREATE UNIQUE INDEX missions_accepted_quote_v1 ON public.missions(accepted_quote_id) WHERE accepted_quote_id IS NOT NULL;
 
 -- Review is orthogonal to the existing client's pending/accepted/rejected state.
-ALTER TABLE public.quotes ADD COLUMN review_status text NOT NULL DEFAULT 'submitted' CHECK(review_status IN('submitted','approved','rejected')),
+ALTER TABLE public.quotes ADD COLUMN review_status text NOT NULL DEFAULT 'legacy_unreviewed' CHECK(review_status IN('legacy_unreviewed','submitted','approved','rejected')),
  ADD COLUMN quote_version integer NOT NULL DEFAULT 1 CHECK(quote_version>0),
  ADD COLUMN reviewed_version integer, ADD COLUMN reviewed_at timestamptz, ADD COLUMN reviewed_by uuid REFERENCES public.users(id),
  ADD COLUMN review_reason text, ADD COLUMN presented_at timestamptz, ADD COLUMN expires_at timestamptz;
+ALTER TABLE public.quotes ALTER COLUMN review_status SET DEFAULT 'submitted';
 COMMENT ON COLUMN public.quotes.expires_at IS 'Optional validity chosen on FIXEO review. NULL explicitly means no stated expiry; never invent an expiry.';
 
 CREATE TABLE fixeo_private.control_action_previews_v1 (

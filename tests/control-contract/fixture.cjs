@@ -32,11 +32,12 @@ async function baseline(options={}){
  }
  for(const f of read('db-definitions'))sql.push(f.definition+';');
  for(const fk of [false,true])for(const c of read('db-constraints').filter(c=>(c.contype==='f')===fk))sql.push(`ALTER TABLE ${ident(c.schema,c.table_name)} ADD CONSTRAINT ${q(c.conname)} ${c.definition};`);
+ for(const i of read('db-indexes'))sql.push(i.indexdef.replace(/^(CREATE (?:UNIQUE )?INDEX) /,'$1 IF NOT EXISTS ')+';');
  // Views and their policies are restored below after function registration.
- for(const v of read('db-views'))sql.push(`CREATE VIEW ${ident(v.schema,v.name)} AS ${v.definition};`);
+ for(const v of read('db-views'))sql.push(`CREATE VIEW ${ident(v.schema,v.name)}${v.reloptions?.length?' WITH ('+v.reloptions.join(',')+')':''} AS ${v.definition};`);
  for(const t of cat.table_acl){if(t.rls)sql.push(`ALTER TABLE ${ident(t.schema,t.table)} ENABLE ROW LEVEL SECURITY;`);acl(sql,'TABLE '+ident(t.schema,t.table),t.acl);}
  for(const c of read('db-privileges'))sql.push(`GRANT ${c.privilege_type} (${q(c.column_name)}) ON ${ident(c.table_schema,c.table_name)} TO ${q(c.grantee)};`);
- for(const f of read('db-functions')){const sig=ident(f.schema,f.proname)+'('+f.args+')';sql.push('REVOKE ALL ON FUNCTION '+sig+' FROM PUBLIC;');acl(sql,'FUNCTION '+sig,f.proacl);}
+ for(const f of read('db-functions')){const sig=ident(f.schema,f.proname)+'('+f.args+')';if(f.proacl!==null){sql.push('REVOKE ALL ON FUNCTION '+sig+' FROM PUBLIC;');acl(sql,'FUNCTION '+sig,f.proacl);}}
  for(const p of cat.policies)sql.push(`CREATE POLICY ${q(p.policyname)} ON ${ident(p.schemaname,p.tablename)} AS ${p.permissive} FOR ${p.cmd} TO ${p.roles.map(r=>r==='public'?'PUBLIC':q(r)).join(',')}${p.qual?' USING ('+p.qual+')':''}${p.with_check?' WITH CHECK ('+p.with_check+')':''};`);
  for(const t of read('db-triggers'))sql.push(t.definition+';');
  sql.push('SET check_function_bodies=on;');

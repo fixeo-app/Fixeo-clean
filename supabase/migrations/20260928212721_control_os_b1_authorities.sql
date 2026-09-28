@@ -41,7 +41,7 @@ BEGIN
  IF q.id IS NULL OR q.quote_version IS DISTINCT FROM p_version THEN RAISE EXCEPTION 'STALE_VERSION' USING ERRCODE='40001'; END IF;
  IF q.status<>'pending' OR r.status<>'new' THEN RAISE EXCEPTION 'QUOTE_NOT_REVIEWABLE'; END IF;
  IF q.reviewed_version=p_version AND q.review_status=(CASE WHEN p_approve THEN 'approved' ELSE 'rejected' END) THEN RETURN q; END IF;
- IF q.review_status<>'submitted' THEN RAISE EXCEPTION 'ALREADY_REVIEWED'; END IF;
+ IF q.review_status NOT IN('submitted','legacy_unreviewed') THEN RAISE EXCEPTION 'ALREADY_REVIEWED'; END IF;
  IF p_approve AND (r.client_profile_id IS NULL OR r.pricing_offer_id IS NOT NULL OR EXISTS(SELECT 1 FROM public.enterprise_request_context WHERE service_request_id=rid)) THEN RAISE EXCEPTION 'CANONICAL_SCOPE_REQUIRED'; END IF;
  IF p_expires_at IS NOT NULL AND p_expires_at<=now() THEN RAISE EXCEPTION 'INVALID_EXPIRY'; END IF;
  UPDATE public.quotes SET review_status=CASE WHEN p_approve THEN 'approved' ELSE 'rejected' END,reviewed_version=quote_version,reviewed_by=uid,reviewed_at=now(),review_reason=trim(p_reason),presented_at=CASE WHEN p_approve THEN now() END,expires_at=p_expires_at WHERE id=q.id RETURNING * INTO q;
@@ -148,7 +148,7 @@ BEGIN
  SELECT * INTO m FROM public.missions WHERE id=p_mission_id FOR UPDATE;
  IF NOT FOUND THEN RAISE EXCEPTION 'NOT_FOUND'; END IF;
  SELECT * INTO r FROM public.service_requests WHERE id::text=m.request_id;
- IF p_operation IN('declare','confirm','correct') AND (m.final_price IS NULL OR NOT ((m.status='done' AND r.status IN('completed','validated')) OR (m.status='validated' AND r.status='validated'))) THEN RAISE EXCEPTION 'COMMISSION_NOT_DUE'; END IF;
+ IF p_operation IN('declare','confirm','correct') AND (m.final_price IS NULL OR m.commission_amount IS NULL OR NOT ((m.status='done' AND r.status IN('completed','validated')) OR (m.status='validated' AND r.status='validated'))) THEN RAISE EXCEPTION 'COMMISSION_NOT_DUE'; END IF;
  IF p_operation<>'declare' THEN
   SELECT * INTO x FROM public.commission_remittances_v1 WHERE id=p_remittance_id AND mission_id=m.id FOR UPDATE;
   IF NOT FOUND OR x.version IS DISTINCT FROM p_version THEN RAISE EXCEPTION 'STALE_VERSION' USING ERRCODE='40001'; END IF;
