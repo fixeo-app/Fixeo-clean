@@ -963,7 +963,14 @@
       if (section) {
         /* Loading state first */
         _renderSectionLoading(section);
-        _renderAll(section);
+        /* Cockpit data may have been unavailable during initial boot.
+           Refresh on demand so Gallery/Quotes/Notifications never look inert. */
+        if (['gallery','quotes','notifications','public-profile','revenus'].indexOf(section) !== -1) {
+          _loadCockpit().then(function(){ _renderAll(section); _refreshBellBadge(); })
+            .catch(function(){ _renderAll(section); });
+        } else {
+          _renderAll(section);
+        }
       }
     });
   }
