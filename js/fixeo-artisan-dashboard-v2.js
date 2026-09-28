@@ -1172,6 +1172,135 @@ html += targetedOffers
       + '<button class="fxa-btn fxa-btn-ghost fxa-btn-full" style="justify-content:center" data-action="logout">Se déconnecter</button>';
   }
 
+
+  /* ── RENDER: SECTION — ACCOUNT & SECURITY ─────────────────── */
+  function _renderAccountSection() {
+    var sec = el('fxav2-sec-account');
+    if (!sec) return;
+
+    var p = _state.profile || {};
+    var ap = _state.artisanProfile || {};
+    var u = (_state.session && _state.session.user) || {};
+    var email = u.email || p.email || '';
+    var pendingEmail = u.new_email || '';
+    var phone = p.phone || ap.phone || ap.phone_public || '';
+    var provider = (u.app_metadata && u.app_metadata.provider) || 'email';
+
+    sec.innerHTML =
+      '<div class="fxaf-account-page">'
+      + '<div class="fxaf-account-hero"><span>COMPTE · SÉCURITÉ</span><h1>Votre accès, sous votre contrôle.</h1><p>Gérez vos coordonnées de connexion sans modifier votre rôle, votre identité artisan ou vos droits FIXEO.</p></div>'
+      + '<div class="fxaf-account-grid">'
+        + '<article class="fxaf-account-card"><div class="fxaf-account-icon">☎</div><div><small>TÉLÉPHONE DE CONTACT</small><strong>'+esc(phone || 'Non renseigné')+'</strong><p>Utilisé pour votre contact professionnel et votre profil public. Il ne sert jamais d’autorité d’identité.</p></div><button class="fxa-btn fxa-btn-ghost" data-action="account-phone-edit">Modifier</button></article>'
+        + '<article class="fxaf-account-card"><div class="fxaf-account-icon">✉</div><div><small>E-MAIL DE CONNEXION</small><strong>'+esc(email || 'Non renseigné')+'</strong>'+(pendingEmail?'<p class="fxaf-account-pending">Confirmation en attente : '+esc(pendingEmail)+'</p>':'<p>La nouvelle adresse n’est appliquée qu’après validation par Supabase Auth.</p>')+'</div><button class="fxa-btn fxa-btn-ghost" data-action="account-email-edit">Modifier</button></article>'
+        + '<article class="fxaf-account-card"><div class="fxaf-account-icon">⌁</div><div><small>MOT DE PASSE</small><strong>Sécuriser mon accès</strong><p>Le mot de passe est géré exclusivement par Supabase Auth et n’est jamais stocké dans les tables FIXEO.</p></div><button class="fxa-btn fxa-btn-ghost" data-action="account-password-edit">Modifier</button></article>'
+      + '</div>'
+      + '<div class="fxaf-account-trust"><span>✓ Identité : compte authentifié</span><span>✓ Rôle : '+esc((p.role||'artisan'))+'</span><span>✓ Fournisseur : '+esc(provider)+'</span><span>✓ Aucun changement de rôle depuis cet écran</span></div>'
+      + '</div>';
+  }
+
+  function _openAccountPhoneEdit() {
+    var p = _state.profile || {};
+    var ap = _state.artisanProfile || {};
+    var phone = p.phone || ap.phone || ap.phone_public || '';
+    _openModal('<div class="fxaf-account-modal"><span>COMPTE · CONTACT</span><h3>Modifier mon téléphone</h3><p>Format Maroc : 06XXXXXXXX, 07XXXXXXXX ou +212…</p><label>Téléphone<input id="fxaf-account-phone" type="tel" inputmode="tel" autocomplete="tel" value="'+esc(phone)+'"></label><button class="fxa-btn fxa-btn-primary fxa-btn-full" data-action="account-phone-save">Enregistrer</button></div>');
+  }
+
+  async function _saveAccountPhone(btn) {
+    var input = el('fxaf-account-phone');
+    if (!input) return;
+    if (btn) _btnBusy(btn,'Enregistrement…');
+    try {
+      var sb = await window.FixeoSupabase.getClient();
+      var res = await sb.rpc('update_my_artisan_contact_v1',{p_phone:String(input.value||'').trim()});
+      if (res.error) throw res.error;
+      if (!res.data || res.data.ok !== true) throw new Error((res.data && res.data.message) || 'Numéro invalide.');
+      var phone = res.data.phone || '';
+      if (_state.profile) _state.profile.phone = phone;
+      if (_state.artisanProfile) {
+        _state.artisanProfile.phone = phone;
+        _state.artisanProfile.phone_public = phone;
+      }
+      _closeModal();
+      _renderAccountSection();
+      _renderProfileSection();
+      _toast('✅ Numéro de téléphone mis à jour.','success');
+    } catch(e) {
+      _toast('❌ '+(e&&e.message?e.message:'Impossible de modifier le téléphone.'),'error');
+      if (btn) _btnReset(btn);
+    }
+  }
+
+  function _openAccountEmailEdit() {
+    var u = (_state.session && _state.session.user) || {};
+    var email = u.email || (_state.profile && _state.profile.email) || '';
+    _openModal('<div class="fxaf-account-modal"><span>COMPTE · CONNEXION</span><h3>Modifier mon e-mail</h3><p>Un message de confirmation sera envoyé. L’ancienne adresse reste active jusqu’à validation.</p><label>Nouvelle adresse e-mail<input id="fxaf-account-email" type="email" autocomplete="email" value="'+esc(email)+'"></label><button class="fxa-btn fxa-btn-primary fxa-btn-full" data-action="account-email-save">Envoyer la confirmation</button></div>');
+  }
+
+  async function _saveAccountEmail(btn) {
+    var input = el('fxaf-account-email');
+    if (!input) return;
+    var next = String(input.value||'').trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(next)) {
+      _toast('❌ Adresse e-mail invalide.','error'); return;
+    }
+    var current = (_state.session && _state.session.user && _state.session.user.email) || '';
+    if (next === String(current).toLowerCase()) {
+      _toast('Cette adresse est déjà utilisée.','info'); return;
+    }
+    if (btn) _btnBusy(btn,'Envoi…');
+    try {
+      var sb = await window.FixeoSupabase.getClient();
+      var res = await sb.auth.updateUser({email:next});
+      if (res.error) throw res.error;
+      if (_state.session && _state.session.user && res.data && res.data.user) {
+        _state.session.user = res.data.user;
+      }
+      _closeModal();
+      _renderAccountSection();
+      _toast('✅ Confirmation envoyée à la nouvelle adresse e-mail.','success');
+    } catch(e) {
+      _toast('❌ '+(e&&e.message?e.message:'Impossible de modifier l’e-mail.'),'error');
+      if (btn) _btnReset(btn);
+    }
+  }
+
+  function _openAccountPasswordEdit() {
+    _openModal('<div class="fxaf-account-modal"><span>COMPTE · SÉCURITÉ</span><h3>Modifier mon mot de passe</h3><p>Confirmez votre mot de passe actuel puis choisissez au moins 8 caractères.</p><label>Mot de passe actuel<input id="fxaf-password-current" type="password" autocomplete="current-password"></label><label>Nouveau mot de passe<input id="fxaf-password-new" type="password" minlength="8" autocomplete="new-password"></label><label>Confirmer<input id="fxaf-password-confirm" type="password" minlength="8" autocomplete="new-password"></label><button class="fxa-btn fxa-btn-primary fxa-btn-full" data-action="account-password-save">Mettre à jour</button></div>');
+  }
+
+  async function _saveAccountPassword(btn) {
+    var cur = el('fxaf-password-current'), n = el('fxaf-password-new'), c = el('fxaf-password-confirm');
+    if (!cur || !n || !c) return;
+    var current = String(cur.value||''), next = String(n.value||''), confirm = String(c.value||'');
+    if (next.length < 8) { _toast('❌ Utilisez au moins 8 caractères.','error'); return; }
+    if (next !== confirm) { _toast('❌ Les mots de passe ne correspondent pas.','error'); return; }
+    var email = (_state.session && _state.session.user && _state.session.user.email) || '';
+    if (!email) { _toast('❌ Adresse de connexion introuvable.','error'); return; }
+    if (btn) _btnBusy(btn,'Vérification…');
+    try {
+      var sb = await window.FixeoSupabase.getClient();
+      var auth = await sb.auth.signInWithPassword({email:email,password:current});
+      if (auth.error) throw new Error('Mot de passe actuel incorrect.');
+      if (btn) btn.textContent='Mise à jour…';
+      var res = await sb.auth.updateUser({password:next});
+      if (res.error) throw res.error;
+      _closeModal();
+      _toast('✅ Mot de passe mis à jour.','success');
+    } catch(e) {
+      _toast('❌ '+(e&&e.message?e.message:'Impossible de modifier le mot de passe.'),'error');
+      if (btn) _btnReset(btn);
+    }
+  }
+
+  async function _syncAccountEmail() {
+    try {
+      var sb = await window.FixeoSupabase.getClient();
+      var res = await sb.rpc('sync_my_account_email_v1');
+      if (res.error || !res.data || res.data.ok !== true) return;
+      if (_state.profile) _state.profile.email = res.data.email || _state.profile.email;
+    } catch(e) { /* non-blocking reconciliation */ }
+  }
+
   /* ── PROFILE EDIT MODAL ────────────────────────────────────── */
   function _openProfileEditModal() {
     var ap = _state.artisanProfile || {};
@@ -1272,6 +1401,7 @@ html += targetedOffers
     _renderMyMissions();
     _renderHistory();
     _renderProfileSection();
+    _renderAccountSection();
     _renderRafiSection();
     _renderPerformanceSection();
     _renderSupport();
@@ -1280,7 +1410,7 @@ html += targetedOffers
   /* ── NAVIGATION ───────────────────────────────────────────── */
   /* Cockpit sections live in fxck-sec-* IDs; V2 handles fxav2-sec-* only.
    * Navigation entries for cockpit sections are still dispatched via fixeo:section:changed. */
-  var SECTIONS     = ['dashboard', 'available', 'missions', 'history', 'profile', 'performance', 'rafi', 'support'];
+  var SECTIONS     = ['dashboard', 'available', 'missions', 'history', 'profile', 'account', 'performance', 'rafi', 'support'];
   var COCKPIT_SECS = ['gallery', 'quotes', 'public-profile', 'revenus', 'notifications'];
 
   function _showSection(name) {
@@ -1422,6 +1552,12 @@ var missionId = btn.dataset.missionId || '';
         case 'set-busy':            _doSetAvailability('busy', btn); return;
         case 'complete-onboarding': _doCompleteOnboarding(btn); return;
         case 'edit-profile':        _openProfileEditModal(); return;
+        case 'account-phone-edit':   _openAccountPhoneEdit(); return;
+        case 'account-phone-save':   _saveAccountPhone(btn); return;
+        case 'account-email-edit':   _openAccountEmailEdit(); return;
+        case 'account-email-save':   _saveAccountEmail(btn); return;
+        case 'account-password-edit':_openAccountPasswordEdit(); return;
+        case 'account-password-save':_saveAccountPassword(btn); return;
         case 'close-modal':         _closeModal(); return;
         case 'save-profile':
           (function() {
@@ -2023,6 +2159,7 @@ async function _doClaimOfferedMission(missionId, btn) {
 
       /* Fetch data */
       await _fetch();
+      await _syncAccountEmail();
 
       /* Render */
       _render();
