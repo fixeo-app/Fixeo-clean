@@ -165,3 +165,10 @@
   .fxbo-rafi-actions{display:grid;grid-template-columns:1fr}
   .fxbo-rafi-actions .fxa-btn{width:100%;justify-content:center}
 }
+
+/* ── ULTRA PREMIUM Q — SIGNATURE NAVIGATION ───────────────── */
+.fxau-nav-rafi .icon{font-size:1.28em!important;filter:drop-shadow(0 0 9px rgba(196,181,253,.65))}
+.fxau-nav-opportunities .icon{font-size:1.18em!important;color:#8fe7ff;filter:drop-shadow(0 0 7px rgba(90,210,255,.34))}
+.fxau-bottom-rafi .bicon{font-size:1.48rem!important;line-height:1!important;transform:translateY(-1px);filter:drop-shadow(0 0 9px rgba(255,193,230,.58))}
+.fxau-bottom-opportunities .bicon{font-size:1.22rem!important;line-height:1!important;color:#8fe7ff;filter:drop-shadow(0 0 7px rgba(90,210,255,.34))}
+.fxau-bottom-rafi.active .bicon{transform:translateY(-2px) scale(1.08)}
