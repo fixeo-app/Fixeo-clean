@@ -233,3 +233,58 @@
   .fxa-content{max-width:1240px!important}
   .fxau-commercial,.fxaf-account-page,.fxbo-sec{max-width:1140px}
 }
+
+/* ── FINAL REAL-DEVICE RECETTE POLISH ─────────────────────── */
+/* Desktop: the Artisan OS rail is a true full-height application surface. */
+@media (min-width:900px){
+  .fxa-sidebar{
+    top:0!important;
+    bottom:0!important;
+    height:100dvh!important;
+    min-height:100vh!important;
+    max-height:none!important;
+    display:flex!important;
+    flex-direction:column!important;
+    overflow:hidden!important;
+  }
+  .fxa-sidebar-scroll,
+  .fxa-sidebar nav,
+  .fxa-sidebar .fxa-nav{
+    min-height:0!important;
+    flex:1 1 auto!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain;
+    scrollbar-width:none;
+  }
+  .fxa-sidebar-scroll::-webkit-scrollbar,
+  .fxa-sidebar nav::-webkit-scrollbar,
+  .fxa-sidebar .fxa-nav::-webkit-scrollbar{width:0!important;height:0!important}
+}
+/* Mobile: reserve the whole navigation + browser-safe footer corridor. */
+@media (max-width:899px){
+  :root{--fxau-mobile-nav-reserve:calc(154px + env(safe-area-inset-bottom))}
+  .fxa-content{padding-bottom:var(--fxau-mobile-nav-reserve)!important}
+  .fxa-section,
+  .fxbo-sec,
+  .fxaf-account-page,
+  .fxao-rafi-page,
+  .fxau-commercial{scroll-margin-bottom:var(--fxau-mobile-nav-reserve)}
+  .fxa-section.active> :last-child,
+  .fxbo-sec> :last-child,
+  .fxaf-account-page> :last-child,
+  .fxao-rafi-page> :last-child,
+  .fxau-commercial> :last-child{margin-bottom:34px!important}
+  .fxa-bottom-nav{
+    z-index:1200!important;
+    min-height:72px!important;
+    padding-bottom:max(5px,env(safe-area-inset-bottom))!important;
+    background:rgba(8,10,19,.96)!important;
+    backdrop-filter:blur(20px) saturate(135%);
+    -webkit-backdrop-filter:blur(20px) saturate(135%);
+  }
+  #fxav2-modal-overlay{padding-bottom:max(14px,env(safe-area-inset-bottom))!important}
+  #fxav2-modal-overlay>div{
+    overscroll-behavior:contain;
+    padding-bottom:max(22px,env(safe-area-inset-bottom))!important;
+  }
+}
