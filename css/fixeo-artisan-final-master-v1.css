@@ -256,9 +256,15 @@
     overscroll-behavior:contain;
     scrollbar-width:none;
   }
+  .fxa-sidebar-scroll,
+  .fxa-sidebar nav,
+  .fxa-sidebar .fxa-nav{scrollbar-width:thin!important;scrollbar-color:rgba(132,153,255,.42) transparent!important}
   .fxa-sidebar-scroll::-webkit-scrollbar,
   .fxa-sidebar nav::-webkit-scrollbar,
-  .fxa-sidebar .fxa-nav::-webkit-scrollbar{width:0!important;height:0!important}
+  .fxa-sidebar .fxa-nav::-webkit-scrollbar{width:5px!important;height:5px!important}
+  .fxa-sidebar-scroll::-webkit-scrollbar-thumb,
+  .fxa-sidebar nav::-webkit-scrollbar-thumb,
+  .fxa-sidebar .fxa-nav::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(255,77,166,.46),rgba(90,210,255,.40))!important;border-radius:999px!important}
 }
 /* Mobile: reserve the whole navigation + browser-safe footer corridor. */
 @media (max-width:899px){
