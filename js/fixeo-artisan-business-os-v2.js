@@ -1,6 +1,6 @@
 /* FIXEO Artisan OS — personal business workspace V3 */
 (function(w,d){'use strict';if(w._fxBizOS2)return;w._fxBizOS2=true;
-const VERSION='v3.2';
+const VERSION='v4.0';
 const $=id=>d.getElementById(id);
 const esc=s=>{let x=d.createElement('div');x.textContent=String(s??'');return x.innerHTML};
 const money=n=>Number(n||0).toLocaleString('fr-FR',{minimumFractionDigits:0,maximumFractionDigits:2})+' MAD';
