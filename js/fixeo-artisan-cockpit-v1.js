@@ -238,7 +238,7 @@
       var sb = await getSB();
       /* artisan_profile_id = artisans.id (PK), not auth.uid() */
       var res = await sb.from('quotes')
-        .select('id,request_id,proposed_price,message,status,created_at')
+        .select('id,request_id,proposed_price,message,status,created_at,service_description,supplies_description,estimated_duration,submitted_at')
         .eq('artisan_profile_id', artisanProfileId)
         .order('created_at', { ascending: false })
         .limit(50);
@@ -324,7 +324,7 @@
               + '<span class="fxa-badge ' + _quoteStatusCls(q.status) + '">' + esc(_quoteStatusLabel(q.status)) + '</span>'
               + (q.proposed_price > 0 ? '<span class="fxck-quote-price">' + fmt(q.proposed_price) + ' MAD</span>' : '')
               + '</div>'
-              + (q.message ? '<div class="fxa-card-desc" style="margin-top:6px">' + esc(q.message.slice(0,120)) + (q.message.length>120?'…':'') + '</div>' : '')
+              + (q.service_description ? '<div class="fxa-card-desc fxck-quote-service" style="margin-top:8px"><strong>Intervention</strong><br>' + esc(q.service_description.slice(0,180)) + (q.service_description.length>180?'…':'') + '</div>' : '') + (q.supplies_description ? '<div class="fxck-quote-detail"><strong>Fournitures :</strong> ' + esc(q.supplies_description.slice(0,140)) + '</div>' : '') + (q.estimated_duration ? '<div class="fxck-quote-detail"><strong>Délai :</strong> ' + esc(q.estimated_duration) + '</div>' : '') + (q.message ? '<div class="fxck-quote-detail"><strong>Note FIXEO :</strong> ' + esc(q.message.slice(0,120)) + '</div>' : '')
               + '<div class="fxck-quote-meta">'
               + (q.created_at ? new Date(q.created_at).toLocaleDateString('fr-FR') : '')
               + ' · Demande <code style="font-size:.75rem">' + esc((q.request_id||'').slice(0,8)) + '</code>'
@@ -799,113 +799,64 @@
   var _quoteSubmitting = false;
 
   function _openQuoteModal(requestId, requestDesc) {
-    /* Find V2 modal machinery */
     var overlay = el('fxav2-modal-overlay');
-    var body    = el('fxav2-modal-body');
+    var body = el('fxav2-modal-body');
     if (!overlay || !body) { toast('Interface non disponible', 'error'); return; }
-
-    var shortId = (requestId || '').slice(0, 8);
-    body.innerHTML = '<h3 style="margin:0 0 16px;font-size:1rem;font-weight:800">📋 Envoyer un devis</h3>'
-      + (requestDesc ? '<div class="fxck-quote-modal-req">Demande : ' + esc(requestDesc.slice(0, 80)) + (requestDesc.length > 80 ? '…' : '') + '</div>' : '')
-      + '<form id="fxck-quote-form" autocomplete="off" style="margin-top:12px">'
-      + '<div class="fxck-modal-field">'
-      + '<label for="fxck-q-price" class="fxck-modal-label">Prix proposé (MAD) <span style="color:#e1306c">*</span></label>'
-      + '<input type="number" id="fxck-q-price" name="price" min="1" max="999999" step="1" required '
-      + 'class="fxck-modal-input" placeholder="Ex: 350" inputmode="numeric">'
+    body.innerHTML = '<div class="fxck-quote-studio">'
+      + '<div class="fxck-quote-studio-kicker">DEVIS STUDIO · FIXEO</div>'
+      + '<h3 class="fxck-quote-studio-title">Préparer votre proposition</h3>'
+      + '<p class="fxck-quote-studio-sub">Votre devis est transmis à FIXEO. Le client reçoit uniquement la proposition validée dans son espace.</p>'
+      + (requestDesc ? '<div class="fxck-quote-modal-req"><strong>Demande client</strong><br>' + esc(requestDesc.slice(0,160)) + (requestDesc.length > 160 ? '…' : '') + '</div>' : '')
+      + '<form id="fxck-quote-form" autocomplete="off">'
+      + '<div class="fxck-modal-field"><label for="fxck-q-service" class="fxck-modal-label">Intervention proposée *</label>'
+      + '<textarea id="fxck-q-service" maxlength="500" rows="3" required class="fxck-modal-input fxck-modal-textarea" placeholder="Ex : remplacement du tableau, vérification et remise en service…"></textarea></div>'
+      + '<div class="fxck-quote-grid">'
+      + '<div class="fxck-modal-field"><label for="fxck-q-price" class="fxck-modal-label">Prix proposé (MAD) *</label><input type="number" id="fxck-q-price" min="1" max="999999" step="1" required class="fxck-modal-input" placeholder="Ex : 850" inputmode="numeric"></div>'
+      + '<div class="fxck-modal-field"><label for="fxck-q-duration" class="fxck-modal-label">Délai / durée</label><input type="text" id="fxck-q-duration" maxlength="120" class="fxck-modal-input" placeholder="Ex : 2 heures"></div>'
       + '</div>'
-      + '<div class="fxck-modal-field">'
-      + '<label for="fxck-q-msg" class="fxck-modal-label">Description / détails (optionnel)</label>'
-      + '<textarea id="fxck-q-msg" name="message" maxlength="500" rows="3" '
-      + 'class="fxck-modal-input fxck-modal-textarea" placeholder="Décrivez brièvement votre intervention…"></textarea>'
-      + '</div>'
+      + '<div class="fxck-modal-field"><label for="fxck-q-supplies" class="fxck-modal-label">Fournitures / matériel</label><textarea id="fxck-q-supplies" maxlength="500" rows="2" class="fxck-modal-input fxck-modal-textarea" placeholder="Précisez ce qui est inclus ou à prévoir."></textarea></div>'
+      + '<div class="fxck-modal-field"><label for="fxck-q-msg" class="fxck-modal-label">Note pour FIXEO</label><textarea id="fxck-q-msg" maxlength="500" rows="2" class="fxck-modal-input fxck-modal-textarea" placeholder="Information utile pour le traitement du devis…"></textarea></div>'
+      + '<div class="fxck-quote-trust">✦ RAFI vérifie la complétude. Le prix, la mission et les statuts restent gouvernés par les moteurs FIXEO.</div>'
       + '<div id="fxck-quote-err" class="fxa-error-banner" style="display:none;margin-bottom:10px"></div>'
-      + '<div class="fxa-actions" style="margin-top:14px">'
-      + '<button type="button" class="fxa-btn fxa-btn-ghost" data-action="close-modal">Annuler</button>'
-      + '<button type="submit" id="fxck-quote-submit" class="fxa-btn fxa-btn-primary" style="flex:2">Envoyer le devis</button>'
-      + '</div>'
-      + '</form>';
-
-    /* Store request_id on form for submit handler */
+      + '<div class="fxa-actions fxck-quote-actions"><button type="button" class="fxa-btn fxa-btn-ghost" data-action="close-modal">Annuler</button>'
+      + '<button type="submit" id="fxck-quote-submit" class="fxa-btn fxa-btn-primary" style="flex:2">Envoyer à FIXEO →</button></div>'
+      + '</form></div>';
     var form = document.getElementById('fxck-quote-form');
     if (form) form.dataset.requestId = requestId;
-
-    /* Show modal */
     overlay.classList.remove('hidden');
     overlay.removeAttribute('aria-hidden');
-
-    /* Focus price input */
-    setTimeout(function() {
-      var inp = document.getElementById('fxck-q-price');
-      if (inp) inp.focus();
-    }, 80);
+    setTimeout(function(){ var inp=document.getElementById('fxck-q-service'); if(inp) inp.focus(); },80);
   }
 
   async function _doSubmitQuote(form) {
     if (_quoteSubmitting) return;
-
-    var requestId = form.dataset.requestId || '';
-    var priceInp  = document.getElementById('fxck-q-price');
-    var msgInp    = document.getElementById('fxck-q-msg');
-    var errEl     = document.getElementById('fxck-quote-err');
-    var submitBtn = document.getElementById('fxck-quote-submit');
-    var errDiv    = errEl;
-
-    function showErr(msg) {
-      if (errDiv) { errDiv.textContent = msg; errDiv.style.display = ''; }
-      else toast(msg, 'error');
-    }
-    function clearErr() { if (errDiv) errDiv.style.display = 'none'; }
-
-    clearErr();
-
-    if (!requestId) { showErr('Demande introuvable. Ferme et réessaie.'); return; }
-
-    var price = Number(priceInp && priceInp.value);
-    if (!price || price <= 0 || !Number.isInteger(price)) {
-      showErr('Prix invalide. Entrez un montant entier en MAD (ex: 350).');
-      if (priceInp) priceInp.focus();
-      return;
-    }
-    if (price > 999999) { showErr('Prix trop élevé (max 999 999 MAD).'); return; }
-
-    var message = (msgInp && msgInp.value.trim()) || '';
-
-    /* Check FixeoSupabase.submitQuote is available */
-    if (!window.FixeoSupabase || typeof window.FixeoSupabase.submitQuote !== 'function') {
-      showErr('Service non disponible. Actualisez la page.');
-      return;
-    }
-
-    _quoteSubmitting = true;
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Envoi…'; }
-
-    try {
+    var requestId=form.dataset.requestId||'';
+    var priceInp=el('fxck-q-price'), serviceInp=el('fxck-q-service'), suppliesInp=el('fxck-q-supplies'), durationInp=el('fxck-q-duration'), msgInp=el('fxck-q-msg');
+    var errDiv=el('fxck-quote-err'), submitBtn=el('fxck-quote-submit');
+    function showErr(msg){ if(errDiv){errDiv.textContent=msg;errDiv.style.display='';} else toast(msg,'error'); }
+    if(errDiv) errDiv.style.display='none';
+    if(!requestId){showErr('Demande introuvable. Fermez et réessayez.');return;}
+    var service=(serviceInp&&serviceInp.value.trim())||'';
+    if(service.length<5){showErr('Décrivez clairement l’intervention proposée.');if(serviceInp)serviceInp.focus();return;}
+    var price=Number(priceInp&&priceInp.value);
+    if(!price||price<=0||!Number.isInteger(price)||price>999999){showErr('Entrez un prix entier valide en MAD.');if(priceInp)priceInp.focus();return;}
+    if(!window.FixeoSupabase||typeof window.FixeoSupabase.submitQuote!=='function'){showErr('Service non disponible. Actualisez la page.');return;}
+    _quoteSubmitting=true;
+    if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Transmission à FIXEO…';}
+    try{
       await window.FixeoSupabase.submitQuote({
-        request_id:     requestId,
-        proposed_price: price,
-        message:        message
+        request_id:requestId, proposed_price:price,
+        service_description:service,
+        supplies_description:(suppliesInp&&suppliesInp.value.trim())||'',
+        estimated_duration:(durationInp&&durationInp.value.trim())||'',
+        message:(msgInp&&msgInp.value.trim())||''
       });
-
-      /* Close modal */
-      var overlay = el('fxav2-modal-overlay');
-      if (overlay) { overlay.classList.add('hidden'); overlay.setAttribute('aria-hidden', 'true'); }
-
-      toast('✅ Devis envoyé avec succès.');
-
-      /* Refresh quotes section */
-      var v2 = getV2State();
-      var artisanId = v2 && v2.artisanProfile && v2.artisanProfile.id;
-      if (artisanId) {
-        _ck.quotes = await _fetchQuotes(artisanId);
-        if ((v2 && v2.section) === 'quotes') _renderAll('quotes');
-      }
-    } catch(e) {
-      var msg = (e && e.message) || 'Erreur lors de l\'envoi.';
-      showErr(msg);
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Envoyer le devis'; }
-    } finally {
-      _quoteSubmitting = false;
-    }
+      var overlay=el('fxav2-modal-overlay'); if(overlay){overlay.classList.add('hidden');overlay.setAttribute('aria-hidden','true');}
+      toast('✓ Devis transmis à FIXEO.');
+      var v2=getV2State(), artisanId=v2&&v2.artisanProfile&&v2.artisanProfile.id;
+      if(artisanId){_ck.quotes=await _fetchQuotes(artisanId);_renderAll('quotes');}
+    }catch(e){showErr((e&&e.message)||'Erreur lors de l’envoi.');if(submitBtn){submitBtn.disabled=false;submitBtn.textContent='Envoyer à FIXEO →';}}
+    finally{_quoteSubmitting=false;}
   }
 
   function _bindCockpitEvents() {
