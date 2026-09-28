@@ -65,6 +65,6 @@ H2 automated certification — PASS (dedicated clean suite + static certificatio
 H3 cross-universe E2E — PASS at contract level (Client/Admin share service_requests, missions, quotes, notifications; Artisan/Admin share missions, quotes, notifications; Enterprise/Admin share enterprise accounts/sites). Live destructive mutation E2E intentionally excluded before cutover.
 H4 security/error regression — PASS (canonical auth, governed writes, no service-role browser, timeout + single-flight)
 H5 responsive/performance — PASS (bounded reads, 12s timeout, visibility refresh, single-flight, 900/520 responsive, reduced motion)
-H6 admin.html cutover — pending
+H6 admin.html cutover — CANDIDATE APPLIED ON BRANCH; legacy snapshot preserved as admin-legacy-rollback-20260928.html; production pending final preview READY
 
 Rule: H6 cannot execute until H1–H5 are green.
