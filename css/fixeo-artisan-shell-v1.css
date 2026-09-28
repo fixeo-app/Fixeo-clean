@@ -1,0 +1,18 @@
+/* FIXEO Artisan OS — premium shell v1a */
+.fxa-header{height:64px;padding:env(safe-area-inset-top) 18px 0;background:rgba(8,9,16,.9);backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);border-bottom:1px solid rgba(255,255,255,.055)}
+.fxa-header-logo{position:absolute;left:50%;transform:translateX(-50%);font-weight:900;letter-spacing:-.035em;background:linear-gradient(105deg,#ffb46e,#f06fae 48%,#8e7cff 78%,#76d9ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fxao-header-actions{margin-left:auto;display:flex;align-items:center;gap:5px}
+.fxao-rafi-head,.fxav2-bell-btn{position:relative;display:grid;place-items:center;width:42px;height:42px;border:0;border-radius:14px;background:transparent;color:rgba(255,255,255,.72);font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,background .16s ease,color .16s ease}
+.fxao-rafi-head{font-size:1.2rem;color:#eeb2d4;text-shadow:0 0 16px rgba(235,139,197,.45)}
+.fxav2-bell-btn{font-size:1.15rem;color:#f6d47b}
+.fxao-rafi-head:active,.fxav2-bell-btn:active{transform:scale(.94);background:rgba(255,255,255,.06)}
+.fxav2-bell-badge{display:none;position:absolute;top:5px;right:4px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:#e1306c;color:#fff;font-size:.57rem;font-weight:900;line-height:16px;text-align:center;box-shadow:0 0 0 2px #090a12}
+.fxa-sidebar{background:linear-gradient(180deg,rgba(28,31,58,.985),rgba(16,18,34,.99));box-shadow:24px 0 70px rgba(0,0,0,.38);transition:transform .28s cubic-bezier(.22,.8,.22,1)}
+.fxa-overlay{background:rgba(3,4,9,.58);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.fxa-nav{padding:8px 10px 16px}
+.fxa-nav-link{min-height:48px;border-radius:14px;margin:2px 0;transition:background .16s ease,transform .16s ease}
+.fxa-nav-link:active{transform:scale(.985)}
+.fxa-nav-link.active{background:linear-gradient(90deg,rgba(225,48,108,.14),rgba(111,91,255,.12));box-shadow:inset 2px 0 #ee7eb5}
+.fxa-nav-link[data-section="rafi"] .icon,.fxa-bottom-btn[data-section="rafi"] .bicon{color:#efb5d5;text-shadow:0 0 13px rgba(236,137,195,.45)}
+.fxao-menu-group{padding:14px 14px 5px;color:rgba(255,255,255,.3);font-size:.54rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+@media(max-width:767px){.fxa-sidebar{width:min(84vw,330px)}}
