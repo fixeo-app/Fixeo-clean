@@ -1445,13 +1445,16 @@ html += targetedOffers
     /* KPI bar: only on dashboard + available */
     var kpiBar = el('fxav2-kpi-bar');
     if (kpiBar) {
-      kpiBar.style.display = (name === 'dashboard' || name === 'available') ? '' : 'none';
+      kpiBar.style.display = (name === 'available') ? '' : 'none';
     }
 
     /* Notify cockpit of section change so it can render */
     try {
       window.dispatchEvent(new CustomEvent('fixeo:section:changed', { detail: { section: name } }));
     } catch(e) {}
+
+    /* Dashboard is canonical: late cockpit listeners must never leave an alternate Home composition. */
+    if (name === 'dashboard') _renderDashboard();
 
     _closeSidebar();
   }
