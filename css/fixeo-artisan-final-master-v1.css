@@ -323,3 +323,18 @@
   .fxbo-card .fxa-btn,
   .fxbo-client-actions .fxa-btn{min-height:44px!important}
 }
+
+/* ── ARTISAN OS FINALIZATION A — SHELL CERTIFICATION ───────── */
+@media (min-width:900px){
+  .fxa-sidebar{display:grid!important;grid-template-rows:auto minmax(0,1fr) auto!important;height:100dvh!important;min-height:100vh!important;overflow:hidden!important}
+  .fxa-sidebar-profile{grid-row:1!important;flex:none!important}
+  .fxa-sidebar>.fxa-nav{grid-row:2!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain;padding-bottom:10px!important}
+  .fxa-sidebar-footer{grid-row:3!important;position:relative!important;flex:none!important;background:linear-gradient(180deg,rgba(8,10,19,.82),rgba(8,10,19,.98))!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+}
+@media (max-width:899px){
+  :root{--fxau-mobile-nav-height:72px;--fxau-mobile-nav-gap:16px;--fxau-mobile-nav-reserve:calc(var(--fxau-mobile-nav-height) + var(--fxau-mobile-nav-gap) + 44px + env(safe-area-inset-bottom))}
+  .fxa-content{padding-bottom:var(--fxau-mobile-nav-reserve)!important}
+  .fxbo-sec,.fxa-section{padding-bottom:24px!important}
+  .fxa-bottom-nav{height:var(--fxau-mobile-nav-height)!important;min-height:var(--fxau-mobile-nav-height)!important;box-sizing:border-box!important}
+  .fxa-modal-overlay>div{scroll-padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}
+}
