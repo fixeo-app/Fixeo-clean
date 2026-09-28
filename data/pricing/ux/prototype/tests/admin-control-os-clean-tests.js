@@ -9,7 +9,8 @@ t('legacy AI excluded',!H.includes('admin-command-center-v4')&&!H.includes('sugg
 t('canonical auth guard',H.includes('fixeo-auth-guard.js?v=guard-v15'));
 t('canonical repository authority',H.includes('fixeo-repository.js'));
 ['overview','operations','reservations','network','finance','trust','intelligence','urgent','rafi','notifications','governance'].forEach(x=>t('section '+x,H.includes('sec-'+x)));
-t('bounded timeout',J.includes('withTimeout')&&J.includes('12000'));
+t('isolated bounded sources',J.includes('loadGroup')&&J.includes("timeout(c.from(t).select(sel).limit(limit),8000)"));
+t('degraded mode keeps healthy sources',J.includes('Mode dégradé')&&J.includes('healthBanner'));
 t('visibility-aware refresh',J.includes("document.visibilityState==='visible'"));
 t('dispatch server API',J.includes('/api/admin/requests/assign'));
 t('artisan verification server API',J.includes('/api/admin/artisans/verify'));
