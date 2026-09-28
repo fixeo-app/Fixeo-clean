@@ -870,12 +870,7 @@ function _renderDispatchOfferCard(offer) {
     + '</span>'
     + '</div>'
 
-    + '<div class="fxa-info-row">'
-    + '<span class="fxa-info-label">Position Fixeo</span>'
-    + '<span class="fxa-info-value">'
-    + esc(String(offer.match_rank || '—'))
-    + '</span>'
-    + '</div>'
+    + '<div class="fxao-match-reason"><span>✦</span><div><b>Correspond à votre activité</b><small>Cette opportunité vous est proposée par le moteur Dispatch selon votre métier, votre zone et votre disponibilité.</small></div></div>'
 
     + '<div class="fxa-actions">'
     + '<button class="fxa-btn fxa-btn-primary" '
@@ -948,7 +943,7 @@ var genericOpenRequests = (_state.openRequests || []).filter(function(req) {
 
   var html =
     '<div class="fxa-section-head">'
-    + '<h2>📬 Demandes disponibles</h2>'
+    + '<h2>✦ Opportunités FIXEO</h2>'
     + '<span class="fxa-section-count">'
     + availableCount
     + '</span>'
@@ -1003,11 +998,10 @@ var genericOpenRequests = (_state.openRequests || []).filter(function(req) {
 
     html +=
       '<div class="fxa-empty">'
-      + '<div class="fxa-empty-icon">📬</div>'
-      + '<div class="fxa-empty-title">Aucune demande pour le moment</div>'
-      + '<div class="fxa-empty-sub">'
-      + 'Vous serez notifié dès qu\'une demande correspond à votre zone et votre métier.'
-      + '</div>'
+      + '<div class="fxa-empty-icon">✦</div>'
+      + '<div class="fxa-empty-title">Aucune opportunité à décider</div>'
+      + '<div class="fxa-empty-sub">Votre disponibilité est active. FIXEO vous notifiera lorsqu’une mission éligible correspondra à votre activité.</div>'
+      + '<button class="fxa-btn fxa-btn-ghost" style="margin-top:12px" data-action="go-rafi">Voir les conseils RAFI</button>'
       + '</div>';
 
   } else {
