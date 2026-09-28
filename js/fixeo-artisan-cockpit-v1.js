@@ -218,7 +218,7 @@
       html += '<div class="fxck-gallery-empty" style="grid-column:1/-1">'
         + '<div style="font-size:2rem">🏗</div>'
         + '<div class="fxa-empty-title" style="margin-top:8px">Aucune réalisation</div>'
-        + '<div class="fxa-empty-sub">Ajoutez des photos de vos travaux pour inspirer confiance aux clients.</div>'
+        + '<div class="fxa-empty-sub">Ajoutez vos premières réalisations : elles enrichiront votre profil public et aideront les clients à comprendre votre savoir-faire.</div><div class="fxck-empty-tip">✦ RAFI recommande de commencer par 3 photos nettes de travaux terminés.</div>'
         + '</div>';
     }
 
@@ -306,7 +306,7 @@
         + '<div class="fxa-empty-icon" style="font-size:1.8rem">📋</div>'
         + '<div>'
         + '<div class="fxa-empty-title" style="font-size:.92rem">Aucun devis envoyé</div>'
-        + '<div class="fxa-empty-sub" style="font-size:.78rem">Vos devis apparaîtront ici après envoi.</div>'
+        + '<div class="fxa-empty-sub" style="font-size:.78rem">Lorsqu’une demande éligible permet un devis, FIXEO la fera apparaître ici. Aucun devis fictif n’est créé.</div>'
         + '</div></div>';
     } else {
       /* Group by status */
