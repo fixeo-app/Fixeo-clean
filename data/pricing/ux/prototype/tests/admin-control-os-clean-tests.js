@@ -9,16 +9,23 @@ t('legacy AI excluded',!H.includes('admin-command-center-v4')&&!H.includes('sugg
 t('canonical auth guard',H.includes('fixeo-auth-guard.js?v=guard-v15'));
 t('canonical repository authority',H.includes('fixeo-repository.js'));
 ['overview','operations','reservations','network','finance','trust','intelligence','urgent','rafi','notifications','governance'].forEach(x=>t('section '+x,H.includes('sec-'+x)));
+['overview-signals','operations-missions','finance-list','rafi-plan','governance-health'].forEach(x=>t('operator surface '+x,H.includes(x)));
 t('isolated bounded sources',J.includes('loadGroup')&&J.includes("timeout(c.from(t).select(sel).limit(limit),8000)"));
 t('degraded mode keeps healthy sources',J.includes('Mode dégradé')&&J.includes('healthBanner'));
 t('visibility-aware refresh',J.includes("document.visibilityState==='visible'"));
 t('dispatch server API',J.includes('/api/admin/requests/assign'));
 t('artisan verification server API',J.includes('/api/admin/artisans/verify'));
+t('mission settlement server API',J.includes('/api/admin/missions/settle'));
 t('claim RPC repository',J.includes('approveClaimRequest')&&J.includes('rejectClaimRequest'));
+t('urgent includes immediate and urgent',J.includes("['now','urgent']"));
+t('operations filters wired',J.includes('ops-search')&&J.includes('ops-status')&&J.includes('ops-urgency'));
+t('network filters wired',J.includes('network-search')&&J.includes('network-type')&&J.includes('network-state'));
+t('drawer resets transient actions',J.includes("acts.innerHTML='';rel.innerHTML=''"));
+t('payments read model connected',J.includes("['payments','payments'"));
 t('no service role browser',!J.includes('SERVICE_ROLE'));
 t('no direct browser insert/update/delete',!J.includes('.insert(')&&!J.includes('.update(')&&!J.includes('.delete('));
-t('supply demand intelligence',J.includes("Demandes '+d+' · Artisans"));
-t('RAFI next action',J.includes('rafi-next'));
-t('responsive breakpoint',C.includes('@media(max-width:900px)'));
+t('supply demand intelligence',J.includes('function coverage()')&&J.includes('Trous de couverture')===false);
+t('RAFI real priorities',J.includes('urgentActive().length')&&J.includes("view:'operations'"));
+t('responsive breakpoints',C.includes('@media(max-width:900px)')&&C.includes('@media(max-width:520px)'));
 try{new Function(J);t('controller parses',true)}catch(e){t('controller parses',false)}
 console.log('TOTAL',n,'PASS',n-fail,'FAIL',fail);if(fail)process.exit(1);
