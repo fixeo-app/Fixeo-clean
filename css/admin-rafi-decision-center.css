@@ -1,0 +1,69 @@
+/* RAFI Decision Center — one briefing, a ranked plan and a governed dossier. */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.rafi-statusbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-bottom:12px}
+.rafi-statusbar label{margin-left:auto;display:flex;gap:10px;align-items:center}
+.rafi-statusbar .control,.rafi-filters .control{font-size:11px;padding:8px;min-width:0}
+.rafi-sources{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.rafi-source{display:flex;gap:8px;align-items:center;padding:5px 9px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:10px}
+.rafi-source b{color:var(--mint);font-size:9px;letter-spacing:.04em}
+.rafi-source[data-state="PARTIAL"] b,.rafi-source[data-state="STALE"] b{color:var(--warn)}
+.rafi-source[data-state="UNAVAILABLE"] b,.rafi-source[data-state="FORBIDDEN"] b{color:var(--danger)}
+.rafi-briefing{position:relative;overflow:hidden;border:1px solid rgba(167,139,250,.32);border-radius:22px;padding:26px 28px;background:radial-gradient(ellipse at 95% 0,rgba(139,92,246,.13),transparent 60%),linear-gradient(130deg,#11172c,#0b1020);margin-bottom:28px}
+.rafi-briefing[data-priority="P0"]{border-color:rgba(251,113,133,.46)}
+.rafi-briefing[data-priority="P1"]{border-color:rgba(251,191,36,.32)}
+.rafi-topline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rafi-briefing h2{font-size:clamp(23px,2.3vw,34px);line-height:1.4;max-width:980px;margin:16px 0 10px;letter-spacing:-.025em}
+.rafi-briefing>p{font-size:13px;line-height:1.8;max-width:1000px;color:#b4bfd3;margin:0}
+.rafi-impact{display:flex;align-items:baseline;gap:14px;margin:18px 0 20px;padding-top:15px;border-top:1px solid var(--line)}
+.rafi-impact>span{font-size:9px;letter-spacing:.1em;white-space:nowrap;color:var(--violet);font-weight:800}
+.rafi-impact p{font-size:12px;color:var(--muted);margin:0}
+.rafi-priority{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:6px;padding:3px 7px;font-size:10px;font-weight:700;white-space:nowrap;color:#a9b4c8;background:rgba(148,163,184,.05)}
+.rafi-priority.p0{color:#fecdd3;border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.09)}
+.rafi-priority.p1{color:#fde68a;border-color:rgba(251,191,36,.28);background:rgba(251,191,36,.06)}
+.rafi-priority.p2{color:#a5f3fc;border-color:rgba(103,232,249,.22);background:rgba(103,232,249,.04)}
+.rafi-meta{color:var(--muted);font-size:11px;align-self:center;margin-left:4px}
+.rafi-workspace{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:22px;align-items:start}
+.rafi-plan-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:14px}
+.rafi-plan-head h2,.rafi-network h2{font-size:19px;margin:4px 0}
+.rafi-plan-head p,.rafi-network>p{font-size:11px;line-height:1.7;color:var(--muted);margin:0}
+.rafi-filters{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.rafi-plan{display:grid;gap:1px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--line)}
+.rafi-decision{display:flex;align-items:center;gap:14px;padding:17px;background:#0c1120}
+.rafi-decision:hover{background:#101629}
+.rafi-order{align-self:flex-start;color:#556178;font-size:13px;font-variant-numeric:tabular-nums;padding-top:4px}
+.rafi-decision-main{flex:1;min-width:0}
+.rafi-decision-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rafi-decision-meta>span:last-child{font-size:8px;letter-spacing:.07em;color:var(--muted)}
+.rafi-decision h3{font-size:14px;line-height:1.6;margin:8px 0 3px}
+.rafi-decision p{font-size:11px;color:#a1adc4;line-height:1.7;margin:0 0 4px}
+.rafi-decision small{font-size:10px;color:var(--muted)}
+.rafi-decision>.btn{font-size:11px;white-space:nowrap;padding:7px 10px}
+.rafi-network{padding:18px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(160deg,rgba(103,232,249,.035),transparent)}
+.rafi-network-item{width:100%;text-align:left;color:inherit;border:0;border-top:1px solid var(--line);padding:15px 0;background:transparent;cursor:pointer;display:grid;justify-items:start;gap:8px;margin-top:14px}
+.rafi-network-item b{font-size:12px;line-height:1.7}
+.rafi-network-item>span:last-child{font-size:10px;line-height:1.7;color:var(--muted)}
+.rafi-network-item:hover b{color:var(--cyan)}
+#overview-signals{grid-template-columns:repeat(5,minmax(0,1fr))}
+#overview-signals .signal{padding:14px}
+#overview-signals .signal p{line-height:1.65}
+.rafi-explain h3{font-size:13px;margin:18px 0 6px}
+.rafi-explain h3 small{font-size:9px;font-weight:400;color:var(--violet)}
+.rafi-explain ul{font-size:12px;color:#b4bfd3;padding-left:18px;line-height:1.85}
+.rafi-explain details{margin-top:18px;font-size:11px;line-height:1.8;overflow-wrap:anywhere}
+.rafi-explain summary{color:var(--cyan);cursor:pointer}
+.rafi-relation{text-align:left;overflow-wrap:anywhere;white-space:normal}
+.rafi-event{display:grid;gap:4px;padding:10px;border-left:2px solid var(--violet);background:rgba(167,139,250,.025);font-size:12px;overflow-wrap:anywhere}
+.rafi-event small,.rafi-event span{font-size:10px;color:var(--muted)}
+.rafi-action-contract{width:100%}.rafi-action-contract b{font-size:11px;color:var(--cyan)}
+#rafi-action-form,#rafi-action-result{width:100%;overflow-wrap:anywhere}
+#rafi-prepare-form{display:grid;gap:12px;margin-top:12px}
+#rafi-prepare-form label{display:grid;gap:6px;font-size:12px}
+#rafi-prepare-form .control{width:100%;min-width:0}
+#rafi-action-result{font-size:11px;color:var(--mint);line-height:1.8}
+.rafi-context{margin-bottom:20px;border-color:var(--line2)}
+.rafi-context .list{margin:14px 0}
+.drawer{width:min(600px,100%)}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+[hidden]{display:none!important}
+@media(max-width:1300px){.rafi-workspace{grid-template-columns:1fr}.rafi-network>div{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.rafi-plan-head{align-items:flex-start}#overview-signals{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.rafi-briefing{padding:20px}.rafi-impact{display:block}.rafi-impact p{margin-top:5px}.rafi-plan-head{display:block}.rafi-filters{justify-content:flex-start;margin-top:12px}.rafi-network>div{grid-template-columns:1fr}.rafi-decision{align-items:flex-start;flex-wrap:wrap;gap:9px}.rafi-decision-main{flex-basis:80%}.rafi-decision>.btn{margin-left:25px}.rafi-statusbar label{margin-left:0;width:100%}.rafi-statusbar .control{flex:1}#overview-signals{grid-template-columns:repeat(2,minmax(0,1fr))}.rafi-meta{margin-left:0;width:100%}.drawer{padding:18px}}

@@ -8,7 +8,7 @@ Baseline : `529961f99136c750dad8803870b32e9602372c38`. Production observée READ
 
 RAFI ajoute des lectures administrateur et des règles ; aucune table de décisions, aucune nouvelle autorité de mutation, aucun LLM. Le rôle vient de `public.users.role`, jamais de métadonnées éditables. Les réponses ne comprennent ni coordonnées personnelles, ni preuve financière brute, ni données Business privées.
 
-Les sources sont Operations, Network, Trust, Finance et Enterprise. Chaque observation a sa relation canonique, son horodatage, sa classification, ses IDs et son périmètre. Les groupes réseau sont calculés sur toutes les demandes éligibles au filtre, puis bornés à 100 groupes. Les autres sources sont bornées à 200 observations, avec total et indicateur de dépassement. Un échantillon d'IDs ne représente jamais un total global. Les pages incomplètes sont PARTIAL, une erreur UNAVAILABLE, une observation de plus de 60 secondes STALE. Les valeurs absentes restent nulles. Aucun cache partagé entre utilisateurs.
+Les sources sont Operations, Network, Trust, Finance et Enterprise. Chaque observation a sa relation canonique, son horodatage, sa classification, ses IDs et son périmètre. Les groupes réseau sont calculés sur toutes les demandes éligibles au filtre, puis bornés à 100 groupes. La navigation réseau dispose de sa propre RPC paginée, avec les mêmes filtres déclaratifs. Les autres sources sont bornées à 200 observations, avec total et indicateur de dépassement. Un échantillon d'IDs ne représente jamais un total global. Les pages incomplètes sont PARTIAL, une erreur UNAVAILABLE, une observation de plus de 60 secondes STALE. Les valeurs absentes restent nulles. Aucun cache partagé entre utilisateurs.
 
 ## Frontières de connaissance
 
@@ -29,3 +29,9 @@ L'action disponible signifie consultation ou préparation. L'autorisation d'exé
 Construction et certification : local + Supabase staging isolé `kqyhusnbybsukbcaoqtu`. Aucun test de mutation Production. Déploiement Production soumis à un GO distinct.
 
 Retour arrière applicatif : redéployer l'arbre Bloc 1. Les lectures ajoutées peuvent rester inertes ; si nécessaire retirer uniquement EXECUTE des nouvelles RPC RAFI, sans toucher aux RPC Bloc 1, aux données métier ni à l'audit. Aucun backfill, aucune donnée à restaurer.
+
+## Vérification de sécurité ciblée
+
+Supabase signale les trois nouvelles RPC comme `authenticated_security_definer_function_executable` (WARN). Cette exposition est intentionnelle : la supervision minimale exige une fonction privilégiée, dont la première instruction est le garde Admin canonique. EXECUTE est retiré de PUBLIC, anon et service_role ; authenticated ne constitue jamais l’autorisation métier. Les 14 identités staging non-admin sont refusées sur les trois RPC, dont les deux tenants Enterprise. Owner postgres, STABLE et search_path vide sont vérifiés. Aucune table ni policy RLS n’est ajoutée ou assouplie.
+
+Référence du contrôle : [Supabase linter 0029](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable). Les avertissements préexistants hors périmètre ne sont pas corrigés par ce candidat.

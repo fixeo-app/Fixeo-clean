@@ -50,6 +50,7 @@ function createHandler({env=process.env,fetchImpl=fetch}={}){
     data=Rafi.build(Object.fromEntries(entries),{classification});
    }else if(operation==='network-context'){
     allow(body,['city','trade','state','classification','after','limit']);
+    if(typeof body.city!=='string'||!body.city.trim()||body.city.length>120||typeof body.trade!=='string'||!body.trade.trim()||body.trade.length>80||!['all','available','unverified','unclaimed'].includes(body.state??'all')||!['all','production','test','internal','unclassified'].includes(body.classification??'all')||!Number.isInteger(body.limit??25)||(body.limit??25)<1||(body.limit??25)>50)fail('INVALID_FILTER');
     data=await client.rpc('control_rafi_network_list_v1',{p_city:body.city,p_trade:body.trade,p_state:body.state??'all',p_classification:body.classification??'all',p_after:id(body.after,true),p_limit:body.limit??25});
    }else if(operation==='dispatch-candidates'){
     allow(body,['request_id']);data=await client.rpc('control_rafi_dispatch_read_v1',{p_request_id:id(body.request_id)});

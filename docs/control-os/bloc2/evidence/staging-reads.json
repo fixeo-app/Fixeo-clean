@@ -1,0 +1,156 @@
+{
+  "environment": "kqyhusnbybsukbcaoqtu",
+  "started_at": "2026-09-29T02:48:26.823Z",
+  "production_mutated": false,
+  "checks": [
+    {
+      "name": "Real staging identities authenticate",
+      "status": "PASS",
+      "duration_ms": 13516,
+      "identities": 16
+    },
+    {
+      "name": "Anon cannot invoke any new RAFI RPC",
+      "status": "PASS",
+      "duration_ms": 813
+    },
+    {
+      "name": "Non-admin denied / client",
+      "status": "PASS",
+      "duration_ms": 822
+    },
+    {
+      "name": "Non-admin denied / artisan",
+      "status": "PASS",
+      "duration_ms": 788
+    },
+    {
+      "name": "Non-admin denied / client_other",
+      "status": "PASS",
+      "duration_ms": 780
+    },
+    {
+      "name": "Non-admin denied / enterprise_owner",
+      "status": "PASS",
+      "duration_ms": 772
+    },
+    {
+      "name": "Non-admin denied / enterprise_operations",
+      "status": "PASS",
+      "duration_ms": 797
+    },
+    {
+      "name": "Non-admin denied / enterprise_viewer",
+      "status": "PASS",
+      "duration_ms": 772
+    },
+    {
+      "name": "Non-admin denied / enterprise_b_owner",
+      "status": "PASS",
+      "duration_ms": 849
+    },
+    {
+      "name": "Non-admin denied / enterprise_b_operations",
+      "status": "PASS",
+      "duration_ms": 817
+    },
+    {
+      "name": "Non-admin denied / enterprise_b_viewer",
+      "status": "PASS",
+      "duration_ms": 778
+    },
+    {
+      "name": "Non-admin denied / workforce",
+      "status": "PASS",
+      "duration_ms": 765
+    },
+    {
+      "name": "Non-admin denied / artisan_other",
+      "status": "PASS",
+      "duration_ms": 796
+    },
+    {
+      "name": "Non-admin denied / enterprise_site_manager",
+      "status": "PASS",
+      "duration_ms": 837
+    },
+    {
+      "name": "Non-admin denied / claimant_a",
+      "status": "PASS",
+      "duration_ms": 999
+    },
+    {
+      "name": "Non-admin denied / claimant_b",
+      "status": "PASS",
+      "duration_ms": 785
+    },
+    {
+      "name": "Admin reads each real source; completeness stays explicit",
+      "status": "PASS",
+      "duration_ms": 1643
+    },
+    {
+      "name": "Scoped classification and invalid input are enforced",
+      "status": "PASS",
+      "duration_ms": 504
+    },
+    {
+      "name": "Governed Claims action requires confirmation and returns one audited idempotent outcome",
+      "status": "PASS",
+      "duration_ms": 26814,
+      "target_id": "5050e076-7b0e-486c-8f99-c28554d143ec",
+      "audit_id": "521eb81c-bf9e-4a7d-90e4-3eab4716b9fe",
+      "idempotency_key": "f01bad40-78f0-4491-986d-eb792d4e0c8a"
+    }
+  ],
+  "sources": {
+    "operations": {
+      "status": "PARTIAL",
+      "total_observations": 268,
+      "returned": 200,
+      "duration_ms": 314
+    },
+    "network": {
+      "status": "FRESH",
+      "total_observations": 3,
+      "returned": 3,
+      "duration_ms": 250
+    },
+    "trust": {
+      "status": "FRESH",
+      "total_observations": 1,
+      "returned": 1,
+      "duration_ms": 251
+    },
+    "finance": {
+      "status": "FRESH",
+      "total_observations": 6,
+      "returned": 6,
+      "duration_ms": 251
+    },
+    "enterprise": {
+      "status": "FRESH",
+      "total_observations": 4,
+      "returned": 4,
+      "duration_ms": 310
+    }
+  },
+  "briefing": {
+    "status": "PARTIAL",
+    "decision_count": 212,
+    "types": [
+      "claim.pending",
+      "enterprise.sla",
+      "finance.declared",
+      "finance.price_missing",
+      "network.activate",
+      "network.capacity",
+      "network.concentration",
+      "network.coverage",
+      "quote.review",
+      "request.waiting"
+    ]
+  },
+  "verdict": "PASS",
+  "finished_at": "2026-09-29T02:49:21.474Z"
+}
