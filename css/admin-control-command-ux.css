@@ -7,3 +7,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .nav button,.btn,.ghost-link,.row,[data-kind],summary{min-height:44px}.menu{min-width:44px;min-height:44px}
 @media(max-width:700px){.command-open kbd{display:none}.command-open{padding-inline:10px}.command-shell{padding:15px}.command-head h2{font-size:17px}.command-palette{width:calc(100% - 16px);max-height:calc(100dvh - 16px)}}
 @media(prefers-reduced-motion:reduce){.command-palette::backdrop{backdrop-filter:none}}
+
+/* B8 responsive universal search: both controls share the available head width. */
+.head .search-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,240px);gap:8px;width:min(650px,52vw);min-width:0;max-width:100%}
+.head .search-wrap>.search,.head .search-wrap>.control{width:100%;min-width:0}.head .search-wrap>.search-results{grid-column:1/-1}
+@media(max-width:900px){.head .search-wrap{width:100%}}
+@media(max-width:520px){.head .search-wrap{grid-template-columns:1fr}}
