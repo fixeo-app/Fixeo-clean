@@ -71,7 +71,7 @@ BEGIN
  SELECT * INTO prior FROM fixeo_private.control_action_previews_v1 WHERE id=p_preview_id AND actor_id=uid;
  IF prior.executed_at IS NULL THEN
   BEGIN
-   IF link.expires_at<=now() THEN RAISE EXCEPTION 'STALE_EVIDENCE';END IF;
+   IF link.expires_at<=clock_timestamp() THEN RAISE EXCEPTION 'STALE_EVIDENCE';END IF;
    PERFORM fixeo_private.rafi_current_proof_v3(link.proof,false);
   EXCEPTION WHEN OTHERS THEN
    GET STACKED DIAGNOSTICS err=MESSAGE_TEXT;
@@ -211,7 +211,7 @@ BEGIN
  SELECT * INTO link FROM fixeo_private.rafi_proposals_v3 WHERE preview_id=p_preview_id;
  IF NOT FOUND THEN RETURN;END IF;
  IF link.actor_id<>uid THEN RAISE EXCEPTION 'FORBIDDEN' USING ERRCODE='42501';END IF;
- IF link.expires_at<=now() THEN RAISE EXCEPTION 'STALE_EVIDENCE';END IF;
+ IF link.expires_at<=clock_timestamp() THEN RAISE EXCEPTION 'STALE_EVIDENCE';END IF;
  PERFORM fixeo_private.rafi_current_proof_v3(link.proof,false);
 END $$;
 REVOKE ALL ON FUNCTION fixeo_private.rafi_guard_bound_preview_v3(uuid) FROM PUBLIC,anon,authenticated,service_role;

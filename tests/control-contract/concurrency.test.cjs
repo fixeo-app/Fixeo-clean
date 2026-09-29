@@ -170,4 +170,9 @@ else {
   const result=await Promise.allSettled([rpc(a,'control_rafi_followup_v3',['acknowledge',f.id,1,null,null,null,null,uuid(1522)]),rpc(b,'control_rafi_followup_v3',['reschedule',f.id,1,null,null,due,null,uuid(1523)])]);assert.equal(result.filter(x=>x.status==='fulfilled').length,1);assert.match(result.find(x=>x.status==='rejected').reason.message,/STALE_FOLLOWUP/);assert.equal(Number((await admin.query('select count(*) n from fixeo_private.rafi_followups_v3 where observation_ref=$1',[p.ref])).rows[0].n),1);
  });
 
+ test('B7 expiration while waiting for canonical lock uses wall-clock time before any business effect',async()=>{
+  const {a,p}=await rafiClaim(1530),writer=await raw(),proposal=await rpc(a,'control_rafi_proposal_v3',[p,'claim.pending','claim.reject',uuid(1530),{reason:'Synthetic expiration under lock'},uuid(1531)]);
+  await writer.query('BEGIN');try{await writer.query('select id from public.claim_requests where id=$1 for update',[uuid(1530)]);await admin.query("update fixeo_private.rafi_proposals_v3 set expires_at=clock_timestamp()+interval '100 milliseconds' where preview_id=$1",[proposal.preview_id]);const pending=execute(a,proposal,uuid(1532));await blocked(a.processID,writer.processID);await writer.query('select pg_sleep(0.15)');await writer.query('COMMIT');const r=await pending;assert.equal(r.ok,false);assert.equal(r.code,'STALE_EVIDENCE');assert.equal((await admin.query('select status from public.claim_requests where id=$1',[uuid(1530)])).rows[0].status,'pending');}finally{await writer.query('ROLLBACK');}
+ });
+
 }

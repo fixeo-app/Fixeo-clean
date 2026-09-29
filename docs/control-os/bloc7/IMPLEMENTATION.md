@@ -26,10 +26,12 @@ Operator metadata: three private tables, six guarded public RPCs, two sealed hel
 
 Local global suite: 282 PASS, 0 FAIL, 1 SKIP (native PostgreSQL concurrency is mandatory in CI); subsequent affected tests PASS. Staging: nine grouped checks with real Auth/RPC, all six new RPCs denied to anon/client/artisan/two nonadmin tenants. No staging business mutation. Full native concurrency and real UI recipes run in CI before release.
 
-Migration: `20260929204000_control_os_b7_rafi_governance.sql`, SHA256 `af97a5831f913b89aed49c9d2db5a5534df29ce67932d4136a3f230c9b66657b`. Staging applied exactly. Production application requires baseline/data/metadata preflight and exact candidate CI PASS.
+Migration: `20260929204000_control_os_b7_rafi_governance.sql`, SHA256 `1c1ef385fe7be772954331f6e3f90795bcfcd6fbddb2adf4c1746b35770a4c59`. Staging applied exactly. Production application requires baseline/data/metadata preflight and exact candidate CI PASS.
 
 Rollback is verified against the B6 fixture: restore B6 application, expire only unexecuted B7-linked previews, restore exact acquired Control executor, remove added functions, retain all operator metadata and canonical audits. No business row deletion or restoration. Reapplication retains historical metadata.
 
 Performance: five bounded source reads per briefing, at most five priorities; followups keyset pages 1–50 and one source read per distinct source/classification on that page. No per-row remote calls. Source freshness is 60 seconds; model optional/disabled, 3-second timeout, max 300 tokens, grounded sentence selection only. Production true Admin visual session and model provider call are not claimed unless independently performed.
 
 Next exact Blueprint block: BLOC 8 — COMMAND UX / SECURITY / OBSERVABILITY / CERTIFICATION; 8.1 UX/accessibilité, 8.2 sécurité/observabilité, 8.3 certification/cutover/rollback, 8.4 documentation opérateur.
+
+Expiry uses wall-clock time after canonical lock acquisition, including confirmations that waited past the evidence deadline. Native CI exercises this exact interleaving.
