@@ -59,7 +59,7 @@ const SLUG   = (args.find(a => a.startsWith('--slug=')) || '').split('=')[1];
 const CATEGORIES = {
   prix:       { label: 'Tarifs & Prix',           icon: '💰', desc: 'Guides de prix par service au Maroc.' },
   urgence:    { label: 'Urgences',                 icon: '🚨', desc: 'Conseils d\'urgence pour pannes et dépannages.' },
-  confiance:  { label: 'Confiance & Garanties',   icon: '🛡️', desc: 'Artisans vérifiés, garanties et sécurité.' },
+  confiance:  { label: 'Confiance & Garanties',   icon: '🛡️', desc: 'Profils référencés, repères de confiance et sécurité.' },
   local:      { label: 'Guides par ville',         icon: '📍', desc: 'Artisans et conseils par quartier et ville.' },
   guide:      { label: 'Guides pratiques',         icon: '📖', desc: 'Comment choisir, quand appeler, que faire.' },
   conseils:   { label: 'Conseils & Entretien',     icon: '🔧', desc: 'Prévention, entretien et saisonnalité.' },
@@ -488,8 +488,8 @@ function buildArticlePage(article, allArticles) {
       <!-- CTA Block -->
       <div class="blog-cta-v2" aria-label="Appel à l'action">
         <div class="blog-cta-v2-inner">
-          <p class="blog-cta-title">🔧 Besoin d'un artisan vérifié ?</p>
-          <p class="blog-cta-desc">Fixeo vous met en relation avec des professionnels qualifiés dans votre ville au Maroc — devis gratuit, paiement sécurisé après intervention.</p>
+          <p class="blog-cta-title">🔧 Besoin d’un artisan ?</p>
+          <p class="blog-cta-desc">Fixeo vous aide à décrire votre besoin et à consulter des profils professionnels référencés dans votre ville. Le tarif est confirmé avant intervention.</p>
           <div class="blog-cta-btns">
             <a href="/index.html?open=request" class="blog-cta-btn blog-cta-btn-primary">Demander un devis</a>
             <a href="/suivi" class="blog-cta-btn blog-cta-btn-secondary">Suivre mon intervention</a>
@@ -517,7 +517,7 @@ function buildArticlePage(article, allArticles) {
       </div>
       <div class="blog-sidebar-widget blog-sidebar-cta">
         <h3>Trouver un artisan</h3>
-        <p>Artisans vérifiés disponibles dans votre ville.</p>
+        <p>Profils professionnels référencés dans votre ville, selon la couverture du moment.</p>
         <a href="/index.html?open=request" class="blog-cta-btn">Demander un devis</a>
       </div>
     </aside>
