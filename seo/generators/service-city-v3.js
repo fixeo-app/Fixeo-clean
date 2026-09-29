@@ -358,6 +358,46 @@ function buildPriceHtml(pricingTiers, priceIntro, pricingNote, cityLabel) {
     + '</section>';
 }
 
+function buildIntentSupportHtml(serviceSlug, citySlug, cityLabel) {
+  const MAP = {
+    plombier: [
+      ['/prix/plomberie/' + citySlug, 'Voir les tarifs indicatifs de plomberie à ' + cityLabel],
+      ['/fuite-eau/' + citySlug, 'Fuite d’eau à ' + cityLabel],
+      ['/wc-bouche/' + citySlug, 'WC bouché à ' + cityLabel],
+    ],
+    electricien: [
+      ['/prix/electricite/' + citySlug, 'Voir les tarifs indicatifs d’électricité à ' + cityLabel],
+      ['/panne-electrique/' + citySlug, 'Panne électrique à ' + cityLabel],
+      ['/disjoncteur-saute/' + citySlug, 'Disjoncteur qui saute à ' + cityLabel],
+    ],
+    serrurier: [
+      ['/prix/serrurerie/' + citySlug, 'Voir les tarifs indicatifs de serrurerie à ' + cityLabel],
+      ['/porte-bloquee/' + citySlug, 'Porte bloquée à ' + cityLabel],
+      ['/serrure-cassee/' + citySlug, 'Serrure cassée à ' + cityLabel],
+    ],
+    climatisation: [
+      ['/prix/climatisation/' + citySlug, 'Voir les tarifs indicatifs de climatisation à ' + cityLabel],
+      ['/climatisation-en-panne/' + citySlug, 'Climatisation en panne à ' + cityLabel],
+      ['/blog/recharge-gaz-climatisation', 'Comprendre une recharge de gaz de climatisation'],
+    ],
+  };
+  const links = MAP[serviceSlug] || [];
+  if (!links.length) return '';
+  const items = links.map(([href, label]) =>
+    '<li><a href="' + esc(href) + '">' + esc(label) + '</a></li>'
+  ).join('\n        ');
+  return ''
+    + '\n<hr class="fxlp-divider">\n'
+    + '<section class="fxlp-section fxlp-intent-support" aria-labelledby="fxlp-intent-title">\n'
+    + '  <div class="fxlp-wrap">\n'
+    + '    <span class="fxlp-section-label">GUIDES UTILES</span>\n'
+    + '    <h2 id="fxlp-intent-title" class="fxlp-section-title">Préparer votre intervention à ' + esc(cityLabel) + '</h2>\n'
+    + '    <p class="fxlp-section-sub">Consultez les informations correspondant à votre situation sans quitter la page principale du métier.</p>\n'
+    + '    <ul class="fxlp-intent-links">\n        ' + items + '\n    </ul>\n'
+    + '  </div>\n'
+    + '</section>';
+}
+
 function buildExplorerHtml(service, citySlug, city, cities, services) {
   const relatedLinks = (service.related_services || [])
     .filter(relSlug => services[relSlug])
@@ -667,6 +707,7 @@ function generateServiceCityPage(opts) {
   const situationsHtml = buildSituationsHtml(service.situations || [], profession, cityLabel);
   const beforeHtml     = buildBeforeHtml(profession, cityLabel);
   const priceHtml      = buildPriceHtml(service.pricing_tiers, priceIntro, city.pricing_note, cityLabel);
+  const intentSupportHtml = buildIntentSupportHtml(serviceSlug, citySlug, cityLabel);
   const explorerHtml   = buildExplorerHtml(service, citySlug, city, cities, services);
 
   // Injection 1: insert BESOINS FRÉQUENTS after the first <hr class="fxlp-divider"> (post-hero).
@@ -706,11 +747,12 @@ function generateServiceCityPage(opts) {
       + html.slice(faqIdx);
   }
 
-  // Injection 4: insert EXPLORER AUSSI just before the CTA banner (after FAQ).
+  // Injection 4: insert GUIDES UTILES then EXPLORER AUSSI just before the CTA banner (after FAQ).
   const ctaMarker = '<div class="fxlp-cta-banner"';
   const ctaIdx    = html.indexOf(ctaMarker);
   if (ctaIdx !== -1) {
     html = html.slice(0, ctaIdx)
+      + intentSupportHtml + '\n\n'
       + explorerHtml + '\n\n'
       + html.slice(ctaIdx);
   }
@@ -747,6 +789,7 @@ module.exports = {
   _buildRenderedCards:          buildRenderedCards,
   _patchArtisanGrid:            patchArtisanGrid,
   _buildSituationsHtml:         buildSituationsHtml,
+  _buildIntentSupportHtml:       buildIntentSupportHtml,
   _removeFlagshipScript:        removeFlagshipScript,
   _isPlaceholderName:           isPlaceholderName,
   _FLAGSHIP_SCRIPT_TAG:         FLAGSHIP_SCRIPT_TAG,
