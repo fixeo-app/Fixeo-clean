@@ -45,7 +45,7 @@ async function load(){
   const needed=viewSources[requestedView]||[];
   await loadGroup(c,sourceDefinitions.filter(d=>needed.includes(d[0])));
   lastLoad=Date.now();healthBanner();renderAll();
- }catch(e){S.error=e.message;if(['FORBIDDEN','SESSION_REQUIRED'].includes(e.message)){window.FixeoRegisters?.clear(e.message);window.FixeoIntelligence?.clear();}const el=$('#os-error');if(el){el.textContent='Session Control OS indisponible · '+e.message;el.hidden=false}}
+ }catch(e){S.error=e.message;if(['FORBIDDEN','SESSION_REQUIRED'].includes(e.message)){window.FixeoRegisters?.clear(e.message);window.FixeoIntelligence?.clear();window.FixeoRafiFollowups?.clear();}const el=$('#os-error');if(el){el.textContent='Session Control OS indisponible · '+e.message;el.hidden=false}}
  finally{loading=false;if(requestedView!==currentView)load()}
 }
 

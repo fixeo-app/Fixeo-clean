@@ -4,6 +4,7 @@ const {createHash} = require('node:crypto');
 const {CAPABILITIES} = require('./contracts');
 const {decisionResult} = require('./decision-contracts');
 const Cohorts = require('./marketplace-cohorts');
+const Evidence = require('./rafi-evidence');
 const VERSION = 'rafi-decisions-v1';
 const SOURCES = Object.freeze(['operations', 'network', 'trust', 'finance', 'enterprise']);
 const FRESH_MS = 60000;
@@ -26,6 +27,7 @@ function sourceState(source, data, error, now = Date.now()) {
 }
 
 function build(states, {now = Date.now(), classification = 'all'} = {}) {
+  states=Object.fromEntries(SOURCES.map(s=>[s,sourceState(s,states[s]?.data,states[s]?.error?{code:states[s].error}:undefined,now)]));
   const decisions = [];
   const unavailable = SOURCES.filter(s => !['FRESH', 'PARTIAL'].includes(states[s]?.status));
   const add = (source, o, type, priority, title, reason, impact, recommendation, options = {}) => {
@@ -38,11 +40,11 @@ function build(states, {now = Date.now(), classification = 'all'} = {}) {
     if(o.facts.all_cells)context.all_cells=true;
     const key = [type, targetType, targetId, o.city, o.service_category, o.enterprise_id, o.site_id, classification];
     const authority = capability ? CAPABILITIES[capability].authority : options.authority || 'Control · lecture administrateur';
-    const id = 'rafi_' + digest(key);
+    const id = 'rafi_' + (o.proof?.ref?createHash('md5').update(o.proof.ref+type).digest('hex'):digest(key));
     decisions.push({
       kind: 'Decision', contract_version: VERSION, rule_version: '1', decision_id: id, decision_type: type,
-      priority, priority_label: PRIORITIES[priority], title, summary: title, reason,
-      evidence: [{kind: 'FACT', source, reference: o.reference, target_type: o.target_type, target_id: o.target_id || null, count: o.count, facts: o.facts, sample_ids: o.sample_ids || [], as_of: state.as_of, scope: {classification, city: o.city || null, service_category: o.service_category || null}, completeness: 'complete_observation', source_window: state.status}],
+      priority, ranking: {version:'b7-lexicographic-v1', deadline_at:o.facts.sla?.acceptance_due_at||o.facts.fallback_due_at||null, blocking:['request.waiting','quote.review','dispatch.failed','finance.price_missing','enterprise.fallback','enterprise.dispatch_failed'].includes(type)}, priority_label: PRIORITIES[priority], title, summary: title, reason,
+      evidence: [{kind: 'FACT', source, reference: o.reference, target_type: o.target_type, target_id: o.target_id || null, count: o.count, facts: o.facts, proof:o.proof||null, sample_ids: o.sample_ids || [], as_of: state.as_of, scope: {classification, city: o.city || null, service_category: o.service_category || null}, completeness: 'complete_observation', source_window: state.status}],
       impact: {kind: 'INFERENCE', text: impact},
       recommended_action: {kind: 'RECOMMENDATION', text: recommendation, context},
       target_type: targetType, target_id: targetId, city: o.city || null, service_category: o.service_category || null,
@@ -137,7 +139,7 @@ function build(states, {now = Date.now(), classification = 'all'} = {}) {
     }
   }
   // One dominant operational decision for the same request; keep distinct network/finance work.
-  decisions.sort((a, b) => a.priority.localeCompare(b.priority) || (b.age_minutes ?? -1) - (a.age_minutes ?? -1) || b.affected_count - a.affected_count || (a.decision_id < b.decision_id ? -1 : 1));
+  decisions.sort((a, b) => a.priority.localeCompare(b.priority) || (time(a.ranking.deadline_at)??Infinity)-(time(b.ranking.deadline_at)??Infinity) || Number(b.ranking.blocking)-Number(a.ranking.blocking) || (b.age_minutes ?? -1) - (a.age_minutes ?? -1) || b.affected_count - a.affected_count || (a.decision_id < b.decision_id ? -1 : 1));
   const seen = new Set(), targets = new Set();
   const unique = decisions.filter(d => {
     const operational = ['request.waiting', 'enterprise.sla', 'enterprise.fallback'].includes(d.decision_type);
@@ -145,13 +147,13 @@ function build(states, {now = Date.now(), classification = 'all'} = {}) {
     seen.add(d.decision_id); if (operational) targets.add(d.target_id); return true;
   });
   const partial = SOURCES.some(s => states[s]?.status !== 'FRESH');
-  return {contract_version: VERSION, generated_at: new Date(now).toISOString(), classification,
+  return Evidence.enrich({contract_version: VERSION, generated_at: new Date(now).toISOString(), classification,
     status: unavailable.length === SOURCES.length ? 'UNAVAILABLE' : partial ? 'PARTIAL' : 'FRESH',
     sources: Object.fromEntries(SOURCES.map(s => [s, {source: s, status: states[s]?.status || 'UNAVAILABLE', as_of: states[s]?.as_of || null, error: states[s]?.error || null, total_observations: states[s]?.data?.total_observations ?? null, returned_observations: states[s]?.data?.observations?.length ?? null}])),
     decisions: unique, top_decision: unique[0]?.decision_id || null,
     count_scope: 'decisions_in_observed_window', llm_required: false, authority_manifest: 'control-v1',
     limitations: ['Couverture déclarative ; éligibilité finale dans Dispatch.', 'SLA d’acceptation uniquement lorsqu’un snapshot canonique existe.', 'Les sources absentes ne contribuent pas aux décisions.'],
-  };
+  },decisions,now);
 }
 
 module.exports = {VERSION, SOURCES, FRESH_MS, PRIORITIES, sourceState, build, decisionResult};

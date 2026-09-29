@@ -15,7 +15,16 @@
   const button = (id, label, cls='') => `<button class="btn ${cls}" data-rafi-decision="${esc(id)}">${esc(label)}</button>`;
   const badge = d => `<span class="rafi-priority ${d.priority.toLowerCase()}">${esc(d.priority)} · ${esc(d.priority_label)}</span>`;
 
+  function annotateLists() {
+    for(const row of document.querySelectorAll('.operation-main[data-id],.register-row[data-id]')){
+      row.querySelector('.rafi-inline-priority')?.remove();
+      const d=snapshot?.decisions.find(x=>x.target_type===(row.dataset.kind||row.dataset.dossierType)&&x.target_id===row.dataset.id);
+      if(!d)continue;const label=document.createElement('span');label.className='rafi-inline-priority';label.textContent=d.priority+' · '+d.title+(stale(d)?' · STALE':'');label.title=d.reason.join(' ');row.appendChild(label);
+    }
+  }
+  document.addEventListener('fixeo:lists-rendered',annotateLists);
   function render() {
+    annotateLists();
     if (!$('rafi-plan')) return;
     if (!snapshot) {set('rafi-brief','Lecture des sources canoniques…');set('rafi-next','Les priorités apparaîtront dès que les sources auront répondu.');for(const id of ['rafi-actions','rafi-plan','rafi-network-plan','rafi-top-priority','rafi-sources'])$(id).innerHTML='';set('rafi-top-impact','');return;}
     const state = snapshotState();
@@ -69,7 +78,8 @@
   const relation=(type,id,label)=>`<button class="btn rafi-relation" data-rafi-dossier="${esc(type)}" data-id="${esc(id)}">${esc(label||type+' · '+id.slice(0,8))} →</button>`;
   function explain(d) {
     const evidence=d.evidence[0];
-    return `<div class="rafi-explain">${stale(d)?'<p class="error">STALE · recommandation datée ; relire les sources avant décision.</p>':''}${badge(d)}<h3>Pourquoi maintenant</h3><ul>${d.reason.map(r=>'<li>'+esc(r)+'</li>').join('')}</ul><h3>Impact potentiel <small>INFÉRENCE</small></h3><p>${esc(d.impact.text)}</p><h3>Action recommandée</h3><p>${esc(d.recommended_action.text)}</p><h3>Autorité / parcours</h3><p>${esc(d.authority)}${d.actionability.capability?" · "+esc(d.actionability.capability):""}</p><p>${esc(d.actionability.rpc)}</p><details><summary>Voir les preuves · FAITS</summary><p>${d.affected_count} objet(s) concernés · ${esc(date(evidence.as_of))}</p><p>${esc(evidence.reference)}</p><p>Périmètre : ${esc(evidence.scope.classification)} · ${esc(d.city||'ville non renseignée')} · ${esc(d.service_category||'métier non renseigné')}</p><p>Règle ${esc(d.decision_type)} / ${esc(d.rule_version)} · ${esc(evidence.source_window)}</p>${evidence.sample_ids.length?'<p>Références échantillonnées :</p>'+evidence.sample_ids.map(id=>relation('request',id)).join(''):''}</details></div>`;
+    const proofs=d.evidence_refs?.map(e=>'<details><summary>'+esc(e.source)+' · '+esc(e.quality)+'</summary><p>'+esc(e.authority)+'</p><p>'+esc(date(e.observed_at))+' · '+esc(e.evidence_id)+'</p><dl>'+Object.entries(e.value).map(([k,v])=>'<dt>'+esc(k)+' · '+esc(e.provenance[k])+'</dt><dd>'+esc(v==null?'UNKNOWN':typeof v==='object'?JSON.stringify(v):v)+'</dd>').join('')+'</dl><small>Empreinte '+esc(e.fingerprint)+'</small></details>').join('')||'';
+    return `<div class="rafi-explain">${stale(d)?'<p class="error">STALE · recommandation datée ; relire les sources avant décision.</p>':''}${badge(d)}${d.priority_rule?'<p>Règle '+esc(d.priority_rule.rule_id)+' / '+esc(d.priority_rule.version)+' · '+esc(d.priority_rule.priority_rule)+'</p>':''}${d.conflicts?.length?'<p class=error>Preuves divergentes : revue requise. Aucune proposition exécutable.</p>':''}<h3>Pourquoi maintenant</h3><ul>${d.reason.map(r=>'<li>'+esc(r)+'</li>').join('')}</ul><h3>Impact potentiel <small>INFÉRENCE</small></h3><p>${esc(d.impact.text)}</p><h3>Action recommandée</h3><p>${esc(d.recommended_action.text)}</p><h3>Autorité / parcours</h3><p>${esc(d.authority)}${d.actionability.capability?" · "+esc(d.actionability.capability):""}</p><p>${esc(d.actionability.rpc)}</p><details><summary>Voir les preuves · FAITS</summary><p>${d.affected_count} objet(s) concernés · ${esc(date(evidence.as_of))}</p><p>${esc(evidence.reference)}</p><p>Périmètre : ${esc(evidence.scope.classification)} · ${esc(d.city||'ville non renseignée')} · ${esc(d.service_category||'métier non renseigné')}</p><p>Règle ${esc(d.decision_type)} / ${esc(d.rule_version)} · ${esc(evidence.source_window)}</p>${evidence.sample_ids.length?'<p>Références échantillonnées :</p>'+evidence.sample_ids.map(id=>relation('request',id)).join(''):''}</details>${proofs}${d.canonical_proof?`<button class="btn" data-rafi-follow="${esc(d.decision_id)}">Suivre ce signal</button>`:""}</div>`;
   }
   async function openDecision(id) {
     const d=decision(id);if(!d)return;
@@ -118,5 +128,5 @@
   });
   document.addEventListener('change',event=>{if(['rafi-priority-filter','rafi-universe-filter'].includes(event.target.id)){planLimit=40;render();}if(event.target.id==='rafi-classification'){snapshot=null;planLimit=40;clearContext();render();load();}});
   setInterval(()=>{if(snapshot&&!document.hidden)render();},15000);
-  root.FixeoRafi={load,render,renderTower,openDossier,openDecision,clearContext,decisionsFor:(type,id)=>snapshot?.decisions.filter(d=>d.target_type===type&&d.target_id===id)||[],explain};
+  root.FixeoRafi={load,getDecision:decision,render,renderTower,openDossier,openDecision,clearContext,decisionsFor:(type,id)=>snapshot?.decisions.filter(d=>d.target_type===type&&d.target_id===id)||[],explain};
 })(window);

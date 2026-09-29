@@ -47,6 +47,7 @@
    $('dossier-hybrid').innerHTML=`<p>Politique résolue : <b>${esc(h.policy.mode)}</b> · ${esc(h.policy.id||'Défaut canonique')}</p><p>${h.tenant_operator?'Permission de dispatch Enterprise vérifiée.':'ACTION NON DISPONIBLE · permission de dispatch du tenant absente.'}</p>`+
     (h.workers.length?h.workers.map(w=>`<div class="dossier-worker">${relation({type:'worker',id:w.id})}<span>${w.eligible?'Éligible selon le preview':'Non éligible'} · ${w.active_assignments}/${w.max_concurrent_jobs} interventions actives · ${esc(w.availability)}</span><small>${esc(w.reasons.join(' · '))}</small></div>`).join(''):'<p>Aucun technicien dans le registre du tenant.</p>')+
     `<small>${esc(h.source)} · ${esc(date(h.as_of))} · ${h.workers_has_more?'PARTIAL — 50 techniciens affichés sur '+h.worker_total:'FRESH'}</small><p>Autorités : ${esc(h.rpc.assign)} / ${esc(h.rpc.retry)}. Le preview ne déclenche aucune offre.</p>`;
+   if(h.rafi_workforce?.signals.length)$('dossier-hybrid').insertAdjacentHTML('beforeend','<p>RAFI · '+esc(h.rafi_workforce.status)+' · '+h.rafi_workforce.signals.length+' capacité(s) atteinte(s) dans ce contexte. Examiner les affectations ; aucune surcharge globale déduite.</p>');
    renderActions(d,d.decision);
   }catch(e){if(mark===ticket)$('dossier-hybrid').innerHTML=`<div class="error">SOURCE ERROR · ${esc(e.message)} — actions indisponibles.</div>`;}
  }
@@ -56,6 +57,7 @@
   try{const d=await root.FixeoControl.request('dossier',{type,id});if(mark!==ticket)return;
    currentDossier=d;d.decision=context?.decision;const s=d.summary;
    $('drawer-summary').innerHTML=`<div class="dossier-toolbar"><button class="btn" data-dossier-back>← Retour</button><button class="btn" data-dossier-refresh>Actualiser le dossier</button><button class="btn" data-dossier-copy>Copier le lien</button></div><b>${esc(s.name||s.service_category||labels[type])}</b><p>${esc(s.status||s.state||s.availability||'État non renseigné')} · FRESH · ${esc(date(d.as_of))}</p><small>Source : ${esc(d.provenance)} · Projection : ${esc(d.projection)}</small>`;
+   if(d.rafi_context){const c=d.rafi_context;$('drawer-summary').insertAdjacentHTML('beforeend','<details><summary>Contexte RAFI · établi / manquant</summary>'+c.facts.map(f=>'<p>'+esc(f.field)+' : '+esc(f.value==null?'UNKNOWN':f.value)+' · '+esc(f.provenance)+'</p>').join('')+'<p>'+esc(c.limitations.join(' '))+'</p></details>');}
    const matches=root.FixeoRafi?.decisionsFor(type,id)||[];
    $('drawer-summary').insertAdjacentHTML('beforeend',context?.explanation||matches.slice(0,3).map(x=>root.FixeoRafi.explain(x)).join(''));
    $('drawer-facts').innerHTML=Object.entries({...fields,state:'État canonique',revision:'Révision',role:'Rôle',site_code:'Référence site',max_concurrent_jobs:'Capacité déclarée',active_assignments:'Affectations actives',service_code:'Service tarifaire',pricing_version:'Version tarifaire',client_total_minor:'Total (unités mineures)',expires_at:'Expiration',media_access:'Accès médias'}).filter(([k])=>Object.hasOwn(s,k)).map(([k,label])=>`<div class="fact"><span>${esc(label)}</span><b>${s[k]===null?'UNKNOWN':esc(Array.isArray(s[k])?s[k].join(', '):typeof s[k]==='boolean'?(s[k]?'Oui':'Non'):s[k])}</b><small>${esc(d.field_sources?.[k]||d.provenance)}</small></div>`).join('');
@@ -67,7 +69,7 @@
   const fields = {status:'État',request_status:'État demande',urgency:'Urgence',city:'Ville',service_category:'Métier',availability:'Disponibilité',claimed:'Revendiqué',verified:'Vérifié',has_owner:'Propriétaire présent',onboarding_completed:'Onboarding terminé',created_at:'Création',accepted_at:'Acceptation',started_at:'Démarrage',completed_at:'Fin',validated_at:'Validation',final_price:'Prix final',agreed_price:'Prix convenu',commission_amount:'Commission',confirmed_commission:'Reversements confirmés',service_description:'Périmètre proposé',supplies_description:'Fournitures proposées',estimated_duration:'Durée estimée par l’artisan',submitted_at:'Soumission',presented_at:'Présentation au client',reviewed_version:'Version revue',review_status:'Revue',quote_version:'Version',proposed_price:'Prix proposé',amount:'Montant',currency:'Devise',version:'Version',proof_present:'Preuve enregistrée',services:'Métiers déclarés',cities:'Villes déclarées',data_classification:'Classification'};
   function renderActions(dossier,d) {
     const s=dossier.summary, type=dossier.entity_type, controls=[];
-    const action=(cap,label)=>`<button class="btn" data-rafi-prepare="${esc(cap)}">${esc(label)}</button>`;
+    const action=(cap,label)=>d?.canonical_proof&&![d.actionability.capability,({'claim.approve':'claim.reject','quote.approve':'quote.reject'})[d.actionability.capability]].includes(cap)?'':`<button class="btn" data-rafi-prepare="${esc(cap)}">${esc(label)}</button>`;
     if(type==='request'&&s.status==='new'&&!dossier.enterprise_context)controls.push(action('request.dispatch','Préparer le dispatch'));
     if(type==='artisan'&&s.verified!==true&&s.claimed&&s.has_owner&&s.onboarding_completed)controls.push(action('artisan.verify','Préparer la vérification'));
     if(type==='claim'&&s.status==='pending')controls.push(action('claim.approve','Préparer l’approbation'),action('claim.reject','Préparer le refus'));
@@ -82,6 +84,7 @@
       if(dossier.hybrid.policy.mode!=='external_only'&&dossier.hybrid.workers.some(w=>w.eligible))controls.push(action('enterprise.assign','Préparer l’affectation interne'));
       controls.push(action('enterprise.retry','Préparer la relance hybride'));
     }
+    for(let i=controls.length-1;i>=0;i--)if(!controls[i])controls.splice(i,1);
     $('drawer-actions').innerHTML=`<div class="rafi-action-contract"><b>${controls.length?'ACTION DISPONIBLE · préparation':'ACTION MÉTIER NON DISPONIBLE'}</b><p>${controls.length?'Préconditions relues par le serveur ; confirmation Admin obligatoire avant exécution.':esc(dossier.hybrid?.unavailable_reason||d?.actionability.unavailable_reason||(dossier.enterprise_context?'Permission Enterprise et état courant requis.':'Aucune commande applicable à cet état.'))}</p></div>`+controls.join('')+'<div id="rafi-action-form"></div><div id="rafi-action-result" role="status" aria-live="polite"></div>';
   }
   async function prepare(capability) {
@@ -119,7 +122,7 @@
     }
     actionBusy=true;for(const b of form.querySelectorAll('button,input,select,textarea'))b.disabled=true;
     try {
-      const result=await root.FixeoControl.command(capability,target,payload);
+      const result=await root.FixeoControl.command(capability,target,payload,d.decision||null);
       if(result.cancelled){set('rafi-action-result','Action annulée avant exécution.');return;}
       if(!result.ok||!result.audit_id||!result.correlation_id||!result.idempotency_key||result.verified?.id!==target)throw Error('RESULT_NOT_VERIFIED');
       await root.FixeoRafi.load();

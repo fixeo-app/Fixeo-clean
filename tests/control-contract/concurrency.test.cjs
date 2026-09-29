@@ -17,6 +17,7 @@ else {
   await admin.query(require('./bloc5-fixture.cjs').sql);
   await admin.query(require('./bloc5-fixture.cjs').guard);
   await admin.query(require('./bloc6-fixture.cjs').sql);
+  await admin.query(require('./bloc7-fixture.cjs').sql);
  });
  after(async()=>{await Promise.all(clients.map(c=>c.end()));await admin?.end();});
  const request=async(n,status='new')=>admin.query('INSERT INTO public.service_requests(id,client_profile_id,city,service_category,description,status) VALUES($1,$2,$3,$4,$5,$6)',[uuid(n),uuid(1),'Fès','plomberie','Synthetic concurrency',status]);
@@ -152,6 +153,26 @@ else {
    const finance=await rpc(b,'control_finance_context_v1',['mission',uuid(1401),null,25]);assert.equal(finance.facts.request_relation,'NOT_FOUND');assert.equal(finance.facts.due_balance,null);
    assert.deepEqual((await admin.query('select to_jsonb(m) j from public.missions m where id=$1',[uuid(1401)])).rows[0].j,mission);
   }finally{await a.query('ROLLBACK');}
+ });
+
+ async function rafiClaim(n){await admin.query('insert into public.claim_requests(id,artisan_id,requester_user_id,status) values($1,$2,$3,$4)',[uuid(n),uuid(20),uuid(1),'pending']);const a=await conn(3);const p=(await rpc(a,'control_rafi_source_v3',['trust','all'])).observations.find(o=>o.target_id===uuid(n)).proof;return {a,p};}
+ test('B7 simultaneous RAFI confirmations share one canonical result and one execution audit',async()=>{
+  const {a,p}=await rafiClaim(1500),b=await conn(3),proposal=await rpc(a,'control_rafi_proposal_v3',[p,'claim.pending','claim.reject',uuid(1500),{reason:'Synthetic concurrent review'},uuid(1501)]),key=uuid(1502);
+  const r=await Promise.all([a,b].map(c=>rpc(c,'control_rafi_execute_v3',[proposal.preview_id,true,key])));assert.ok(r.every(x=>x.ok),JSON.stringify(r));assert.deepEqual(r[0],r[1]);assert.equal(Number((await admin.query("select count(*) n from fixeo_private.authority_audit_events_v1 where action='execute' and idempotency_key=$1",[key])).rows[0].n),1);
+ });
+ test('B7 a source change winning the target lock is refused even through the old Control endpoint',async()=>{
+  const {a,p}=await rafiClaim(1510),writer=await raw(),proposal=await rpc(a,'control_rafi_proposal_v3',[p,'claim.pending','claim.reject',uuid(1510),{reason:'Synthetic concurrent review'},uuid(1511)]);
+  await writer.query('BEGIN');try{await writer.query("update public.claim_requests set status='approved' where id=$1",[uuid(1510)]);const pending=execute(a,proposal,uuid(1512));await blocked(a.processID,writer.processID);await writer.query('COMMIT');const r=await pending;assert.equal(r.ok,false);assert.equal(r.code,'EVIDENCE_NOT_OBSERVED');assert.equal((await admin.query('select status from public.claim_requests where id=$1',[uuid(1510)])).rows[0].status,'approved');}finally{await writer.query('ROLLBACK');}
+ });
+ test('B7 concurrent followup creation deduplicates operator intent; competing versions cannot overwrite',async()=>{
+  const {a,p}=await rafiClaim(1520),b=await conn(3),due=new Date(Date.now()+3600000).toISOString();const create=c=>rpc(c,'control_rafi_followup_v3',['create',null,null,p,'claim.pending',due,null,uuid(1521)]);
+  const made=await Promise.all([create(a),create(b)]);assert.deepEqual(made[0],made[1]);const f=made[0].followup;
+  const result=await Promise.allSettled([rpc(a,'control_rafi_followup_v3',['acknowledge',f.id,1,null,null,null,null,uuid(1522)]),rpc(b,'control_rafi_followup_v3',['reschedule',f.id,1,null,null,due,null,uuid(1523)])]);assert.equal(result.filter(x=>x.status==='fulfilled').length,1);assert.match(result.find(x=>x.status==='rejected').reason.message,/STALE_FOLLOWUP/);assert.equal(Number((await admin.query('select count(*) n from fixeo_private.rafi_followups_v3 where observation_ref=$1',[p.ref])).rows[0].n),1);
+ });
+
+ test('B7 expiration while waiting for canonical lock uses wall-clock time before any business effect',async()=>{
+  const {a,p}=await rafiClaim(1530),writer=await raw(),proposal=await rpc(a,'control_rafi_proposal_v3',[p,'claim.pending','claim.reject',uuid(1530),{reason:'Synthetic expiration under lock'},uuid(1531)]);
+  await writer.query('BEGIN');try{await writer.query('select id from public.claim_requests where id=$1 for update',[uuid(1530)]);await admin.query("update fixeo_private.rafi_proposals_v3 set expires_at=clock_timestamp()+interval '100 milliseconds' where preview_id=$1",[proposal.preview_id]);const pending=execute(a,proposal,uuid(1532));await blocked(a.processID,writer.processID);await writer.query('select pg_sleep(0.15)');await writer.query('COMMIT');const r=await pending;assert.equal(r.ok,false);assert.equal(r.code,'STALE_EVIDENCE');assert.equal((await admin.query('select status from public.claim_requests where id=$1',[uuid(1530)])).rows[0].status,'pending');}finally{await writer.query('ROLLBACK');}
  });
 
 }
