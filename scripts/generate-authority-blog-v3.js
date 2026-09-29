@@ -235,6 +235,7 @@ function buildArticlePage(article) {
   const cat          = CATEGORIES[article.category] || { label: article.category || 'Guide', icon: '📖', desc: '' };
   const today        = new Date().toISOString().slice(0, 10);
   const dateISO      = article.date || today;
+  const modifiedISO  = article.date_modified || dateISO;
   const dateFR       = formatDate(dateISO);
   const title        = article.title;
   const metaDesc     = article.meta_description || '';
@@ -314,7 +315,7 @@ function buildArticlePage(article) {
     'description':     metaDesc,
     'url':             canonicalUrl,
     'datePublished':   dateISO,
-    'dateModified':    dateISO,
+    'dateModified':    modifiedISO,
     'image':           catImage,
     'author': {
       '@type': 'Organization',
