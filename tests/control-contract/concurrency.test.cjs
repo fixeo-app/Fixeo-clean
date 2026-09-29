@@ -58,7 +58,7 @@ else {
   INSERT INTO public.enterprise_members(id,enterprise_id,user_id,role,status) VALUES('${uuid(base+12)}','${uuid(base+10)}','${uuid(3)}','operations_manager','active'),('${uuid(base+13)}','${uuid(base+10)}','${uuid(2)}','viewer','active');
   INSERT INTO public.enterprise_workforce_workers(id,enterprise_id,member_id,display_label,all_sites,created_by) VALUES('${uuid(base+14)}','${uuid(base+10)}','${uuid(base+13)}','Synthetic B34 worker',true,'${uuid(3)}');
   INSERT INTO public.enterprise_workforce_skills(enterprise_id,worker_id,service_category,skill_level,active) VALUES('${uuid(base+10)}','${uuid(base+14)}','plomberie',3,true);
-  INSERT INTO public.enterprise_dispatch_policies(id,enterprise_id,mode,status) VALUES('${uuid(base+15)}','${uuid(base+10)}','internal_only','active');
+  INSERT INTO public.enterprise_dispatch_policies(id,enterprise_id,mode,status,created_by) VALUES('${uuid(base+15)}','${uuid(base+10)}','internal_only','active','${uuid(3)}');
   INSERT INTO public.enterprise_request_context(enterprise_id,site_id,service_request_id,created_by) VALUES('${uuid(base+10)}','${uuid(base+11)}','${uuid(base)}','${uuid(3)}');`);
   if(extraRequest)await admin.query('insert into public.enterprise_request_context(enterprise_id,site_id,service_request_id,created_by) values($1,$2,$3,$4)',[uuid(base+10),uuid(base+11),uuid(base+1),uuid(3)]);
  }
