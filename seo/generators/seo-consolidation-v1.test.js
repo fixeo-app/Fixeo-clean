@@ -145,3 +145,11 @@ test('SEO-6 no DB migration is part of this consolidation contract', () => {
   assert.match(policy, /No mass noindex/);
   assert.match(policy, /No redirect of a ranking URL unless/);
 });
+
+
+test('SEO hotfix: climatisation Agadir blog keeps its own editorial canonical', () => {
+  const html = read('blog/climatisation-agadir.html');
+  assert.equal(canonical(html), 'https://www.fixeo.ma/blog/climatisation-agadir');
+  assert.ok(html.includes('href="/climatisation/agadir"'));
+  assert.ok(!html.includes('href="/electricien-agadir"'));
+});
