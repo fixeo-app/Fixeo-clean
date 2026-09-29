@@ -753,7 +753,18 @@ function servicesHtml(services) {
   return services.map(s => `<li class="ssp-service-tag">${esc(s)}</li>`).join('');
 }
 
-/* ── Main HTML generator ── */
+/* ── SEO placeholder eligibility ──
+   Generic imported identities stay reachable but must not compete in search. */
+function isSeoPlaceholderProfile(artisan) {
+  const name = String(artisan?.name || artisan?.full_name || '').trim().toLowerCase();
+  const slug = String(artisan?.public_slug || '').trim().toLowerCase();
+  return /^participant\s+anonyme\b/.test(name)
+    || /^participant-anonyme-/.test(slug)
+    || /^membre\s+anonyme\b/.test(name)
+    || /^membre-anonyme-/.test(slug);
+}
+
+ /* ── Main HTML generator ── */
 function buildProfileHtml(artisan) {
   /* ── Raw variables — unescaped Supabase values ──
      esc() is applied at each insertion point, never here.
@@ -764,6 +775,7 @@ function buildProfileHtml(artisan) {
   /* Profiles with unresolved city are kept at HTTP 200 but receive noindex,follow */
   const INVALID_CITIES = ['ville à qualifier', 'unknown'];
   const isInvalidCity  = INVALID_CITIES.includes(rawCity.trim().toLowerCase());
+  const isSeoPlaceholder = isSeoPlaceholderProfile(artisan);
   const rawCategory    = String(artisan.category || artisan.service_category || '');
   const rawLabel       = svcLabel(rawCategory);   /* from hardcoded SVC_LABELS — trusted */
   const rawSlugVal     = String(artisan.public_slug || '');
@@ -1012,7 +1024,7 @@ function buildProfileHtml(artisan) {
   <link rel="canonical" href="${canonicalUrl}">
 
   <!-- SEO: Robots — noindex for profiles with unresolved city -->
-  <meta name="robots" content="${isInvalidCity ? 'noindex, follow' : 'index, follow, max-snippet:-1, max-image-preview:large'}">
+  <meta name="robots" content="${(isInvalidCity || isSeoPlaceholder) ? 'noindex, follow' : 'index, follow, max-snippet:-1, max-image-preview:large'}">
 
   <!-- Open Graph — og:image, twitter:image, JSON-LD image all use the same resolved URL -->
   <meta property="og:type" content="profile">
@@ -1584,11 +1596,12 @@ module.exports = async function handler(req, res) {
   const INVALID_CITIES_H = ['ville à qualifier', 'unknown'];
   const handlerCity = String(artisan.city || '').trim().toLowerCase();
   const handlerInvalidCity = INVALID_CITIES_H.includes(handlerCity);
+  const handlerSeoPlaceholder = isSeoPlaceholderProfile(artisan);
 
   /* CDN cache: 1 hour fresh, stale served up to 24h while revalidating */
   res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.setHeader('X-Robots-Tag', handlerInvalidCity ? 'noindex, follow' : 'index, follow');
+  res.setHeader('X-Robots-Tag', (handlerInvalidCity || handlerSeoPlaceholder) ? 'noindex, follow' : 'index, follow');
   res.setHeader('X-Artisan-Slug', rawSlug); // Debug header — harmless
 
   res.status(200).send(html);
