@@ -1,0 +1,63 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> test
+> node --test *.test.cjs
+
+✔ No authentication: refuse before any backend access (3.743143ms)
+✔ Preview rejects Production backend configuration (0.881801ms)
+✔ Fixed reader routes use only public key + user JWT, reject arbitrary fields and business types (2.935348ms)
+✔ One failed source never makes a global zero or a healthy briefing (2.78944ms)
+✔ Unknown/partial/forbidden metrics stay null; stale keeps dated values only (0.624644ms)
+✔ Human confirmation is mandatory; a model cannot choose an RPC (0.912305ms)
+✔ An observed activity lower bound is not published as a complete global metric (0.317197ms)
+✔ Registry covers every SQL summary metric and specifies its completeness contract (6.614825ms)
+✔ Historic classification remains unknown; future canonical creation is production and idempotent (2623.977138ms)
+✔ Anon and authenticated cannot write direct SR, Mission or Quote, including column grants (57.076717ms)
+✔ Submitted quote is owner-visible, hidden from client, and emits no client notification (24.629766ms)
+✔ Review requires Admin and a human confirmation; duplicate execution is idempotent (42.961111ms)
+✔ Acceptance creates pending/assigned, never validated; full lifecycle retains canonical owners (58.515701ms)
+✔ Resubmission invalidates approval and stale previews without exposing unreviewed price (22.171423ms)
+✔ Expired reviewed quote cannot be accepted and review cannot change a submitted price (11.344119ms)
+✔ Claims view denies anon and keeps owner isolation; no audit contains requester PII (13.989364ms)
+✔ Legacy Claims RPCs and direct review writes cannot bypass the human authority gate (31.678663ms)
+✔ Settlement records canonical price/commission, never a remittance (42.508726ms)
+✔ Finance proof, reconciliation, correction and cancellation are versioned and audit-safe (56.543443ms)
+✔ Bounded projections exclude private business, raw PII and arbitrary types (20.741164ms)
+✔ Exact totals exceed a frontend page; pagination never claims a global total (8747.688853ms)
+✔ Classification is explicit, reversible and unavailable through direct updates (12.590146ms)
+✔ Verification synchronises the canonical flag only through a reviewed authority (21.060715ms)
+✔ Enterprise global supervision is minimal, scoped, and creates no membership (35.819609ms)
+✔ SLA canonical facts recognise an internal winner and deny unrelated users (18.677064ms)
+✔ Diagnostic projection exposes metadata only and only when bound to a request (8.558829ms)
+✔ VAP settlement preserves the persisted commission and rejects a different total (18.134948ms)
+✔ Sensitive functions cannot be executed by anon, non-admin or service-role without actor context (10.847946ms)
+✔ Claims approval resolves the legacy link and preserves the canonical owner rule (12.010421ms)
+✔ Claim rejection uses the existing authority and failed review is durably audited (13.320836ms)
+✔ Dossier relations are bounded and report overflow instead of silently claiming completeness (18.592634ms)
+✔ History and empty totals retain distinct meanings (18.101006ms)
+✔ Existing server intake producer retains its grant while browser writes are denied (19.450802ms)
+✔ Legacy accepted quote history stays readable without allowing a new validated mission (8.400316ms)
+✔ Artisan photo producer is owner-bound without a general update grant (10.10179ms)
+✔ Postflight and non-destructive pause/resume scripts execute against the candidate schema (16.035597ms)
+✔ Classification cannot be selected by an ordinary Marketplace producer (2.993035ms)
+✔ Finance history is discoverable from its mission with minimal proof metadata (36.191481ms)
+✔ Legacy Claims consumers require human Control and emit only after canonical verification (14.455369ms)
+✔ Cancelled, unavailable and unverified Claims never become local success (5.265757ms)
+✔ Claims network rejection cannot update local cache or fall back to raw RPC (1.960396ms)
+﹣ Native PostgreSQL concurrency suite runs in isolated CI service (0.774737ms) # CONTROL_TEST_DATABASE_URL absent; never use a remote or Production database
+✔ RAFI abstains for missing, partial, forbidden and stale evidence (3.80821ms)
+✔ Evidence provenance and hostile descriptions never become permissions or executable instructions (0.942743ms)
+✔ DecisionResult requires canonical verification and durable audit identities (0.360601ms)
+✔ Preflight accepts equivalent explicit/default ACLs but rejects changed grants and owners (2488.05662ms)
+✔ Progressive source loading publishes available cards and coalesces refreshes (12.264409ms)
+✔ A source selector is a fixed enum and does not permit arbitrary RPC access (5.121516ms)
+✔ A complete but old snapshot is stale and cannot trigger a recommendation (1.579003ms)
+✔ Missing or future provenance is unknown, never a healthy zero (0.38009ms)
+ℹ tests 50
+ℹ suites 0
+ℹ pass 49
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 12293.282326

@@ -5,7 +5,7 @@
  async function request(operation,body){
   const c=root.FixeoSupabaseClient?.client;if(!c)throw Error('SUPABASE_UNAVAILABLE');
   const s=await c.auth.getSession(),token=s.data?.session?.access_token;if(!token)throw Error('SESSION_REQUIRED');
-  const response=await fetch('/api/control-v1/'+operation,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(body||{}),signal:AbortSignal.timeout(8000)});
+  const response=await fetch('/api/control-v1/'+operation,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(body||{}),signal:AbortSignal.timeout(15000)});
   const data=await response.json();if(!response.ok||data.ok===false)throw Error(data.code||'CONTROL_UNAVAILABLE');return data;
  }
  function review(p){return new Promise(resolve=>{

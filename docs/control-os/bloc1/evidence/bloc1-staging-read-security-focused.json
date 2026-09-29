@@ -1,0 +1,76 @@
+{
+  "suite": "read-security",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "preview": "https://fixeo-clean-5n2ii43f8-elalaouibiz-3410s-projects.vercel.app",
+  "completed_at": "2026-09-29T00:15:49.384Z",
+  "results": [
+    {
+      "name": "seven APIs reject anonymous and invalid bearer",
+      "status": "PASS",
+      "duration_ms": 15450
+    },
+    {
+      "name": "seven APIs deny non-admin client",
+      "status": "PASS",
+      "duration_ms": 6969
+    },
+    {
+      "name": "seven APIs deny non-admin artisan",
+      "status": "PASS",
+      "duration_ms": 7216
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_viewer",
+      "status": "PASS",
+      "duration_ms": 7100
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_operations",
+      "status": "PASS",
+      "duration_ms": 6293
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_owner",
+      "status": "PASS",
+      "duration_ms": 6994
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_site_manager",
+      "status": "PASS",
+      "duration_ms": 7774
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_b_owner",
+      "status": "PASS",
+      "duration_ms": 6379
+    },
+    {
+      "name": "Admin reads typed APIs; invalid IDs/parameters/method/origin denied",
+      "status": "PASS",
+      "duration_ms": 63059
+    },
+    {
+      "name": "Direct protected writes denied by real PostgREST for all actors",
+      "status": "PASS",
+      "duration_ms": 22006
+    },
+    {
+      "name": "Artisan Business inaccessible to Admin, readable only by its owner",
+      "status": "PASS",
+      "duration_ms": 172543
+    },
+    {
+      "name": "Diagnostic and workforce projections exclude raw input, media and private labels",
+      "status": "PASS",
+      "duration_ms": 17575
+    },
+    {
+      "name": "Sensitive domain mutations cannot bypass Control preview/execute",
+      "status": "PASS",
+      "duration_ms": 2422
+    }
+  ],
+  "pass": 13,
+  "fail": 0,
+  "skip": 0
+}

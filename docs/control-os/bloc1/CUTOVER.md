@@ -8,7 +8,7 @@
 2. Relire HEAD main et SHA réellement servi ; baseline attendue `04528ab40523e9077a89f0381fed639540d0d111`. Toute évolution nécessite un diff ciblé et un candidat réconcilié ; aucune réinitialisation de main.
 3. Exécuter `01-preflight-readonly.sql` sur le projet Production explicitement identifié. Comparer ACL/policies retournées à `baseline-fingerprints.json`. Aucun écart de définition/grant ne peut être écrasé silencusement.
 4. Vérifier l’existence d’une sauvegarde restaurable et son point de restauration via l’administration habituelle. Aucune nouvelle copie de données n’est créée par le Bloc 1. Ne jamais employer le projet de restauration `avzawlissxfdjgxfeaxu` comme environnement de test.
-5. Valider une courte fenêtre contrôlée de changement. Les anciens onglets Client/Artisan/Admin doivent recharger les nouveaux producteurs après le durcissement ; les écritures directes anciennes seront refusées. Ne pas restaurer leurs grants pour masquer un cache ancien.
+5. Valider une courte fenêtre contrôlée de changement, avec suspension opératoire des actions Admin jusqu’au postflight. Les anciens onglets Client/Artisan/Admin doivent recharger les nouveaux producteurs après le durcissement ; les écritures directes anciennes seront refusées. Ne pas restaurer leurs grants pour masquer un cache ancien.
 6. Vérifier les signatures SHA256 de tous les SQL et l’absence de migration concurrente. Connexion TLS et rôle de migration approprié ; ne pas copier de secrets dans le rapport/PR.
 
 ## Ordre exact proposé, après autorisation seulement
@@ -22,13 +22,14 @@
 | 5 | `20260928212728_control_os_b1_projections.sql` | Lectures allowlist et action preview/execute ; membres tenant inchangés |
 | 6 | `20260928212736_control_os_b1_acl_cutover.sql` | Retrait table/column grants, vues invoker, policies devis/claims, winner, SLA, verified/classification |
 | 7 | Déployer le SHA applicatif approuvé sur Production par la procédure Vercel normale | Le merge main qui déclenche Production exige le GO explicite ; refresh des sessions anciennes |
-| 8 | `02-postflight-readonly.sql`, contrôles HTTP/RPC de lecture avec comptes autorisés | Guards, ACL, vues, résumé/dossier, fraîcheur ; zéro création de fixture en Production |
-| 9 | Vérifier une action métier réelle uniquement si son opérateur l’a effectivement demandée et confirmée | Relire résultat et audit ; ne pas créer une mission/règlement/claim artificiel pour « tester » |
-| 10 | Lever la fenêtre et surveiller erreurs par source | Contrôles contractuels, aucun message/campagne automatique |
+| 8 | `20260929002702_control_os_b1_claims_gate.sql` | Retrait des appels Claims directs et des writes de revue ; adaptateur navigateur Control déjà publié |
+| 9 | `02-postflight-readonly.sql`, contrôles HTTP/RPC de lecture avec comptes autorisés | Guards, ACL, vues, résumé/dossier, fraîcheur ; zéro création de fixture en Production |
+| 10 | Vérifier une action métier réelle uniquement si son opérateur l’a effectivement demandée et confirmée | Relire résultat et audit ; ne pas créer une mission/règlement/claim artificiel pour « tester » |
+| 11 | Lever la fenêtre et surveiller erreurs par source | Contrôles contractuels, aucun message/campagne automatique |
 
-Chaque fichier SQL utilise BEGIN/COMMIT, lock_timeout 5 s et statement_timeout 30 s. Un fichier en erreur est annulé ; ne pas poursuivre automatiquement avec les suivants. Les quatre fichiers ne forment pas une transaction distribuée avec Vercel : risque de courte indisponibilité des anciennes sessions explicitement assumé dans la fenêtre. Ne pas déclarer un déploiement sans interruption. Un orchestrateur d’application peut exécuter les quatre contenus dans une transaction unique après retrait **mécanique** de leurs BEGIN/COMMIT et enregistrement correct de l’historique ; ce mode doit être certifié séparément, il n’est pas le plan par défaut livré.
+Chaque fichier SQL utilise BEGIN/COMMIT, lock_timeout 5 s et statement_timeout 30 s. Un fichier en erreur est annulé ; ne pas poursuivre automatiquement avec les suivants. Les cinq fichiers ne forment pas une transaction distribuée avec Vercel : risque de courte indisponibilité des anciennes sessions explicitement assumé dans la fenêtre. Ne pas déclarer un déploiement sans interruption. Un orchestrateur d’application peut exécuter les cinq contenus dans une transaction unique après retrait **mécanique** de leurs BEGIN/COMMIT et enregistrement correct de l’historique ; ce mode doit être certifié séparément, il n’est pas le plan par défaut livré.
 
-Ne pas utiliser un `supabase db push` aveugle de toutes les migrations historiques : le Blueprint constate déjà des divergences de noms entre repository et registre live. Appliquer uniquement ces quatre versions, dans l’ordre, par l’outil de migration autorisé qui enregistre leur exécution. Si une phase a été appliquée, vérifier son contenu exact avant reprise ; aucun `IF NOT EXISTS` général pour cacher une exécution partielle.
+Ne pas utiliser un `supabase db push` aveugle de toutes les migrations historiques : le Blueprint constate déjà des divergences de noms entre repository et registre live. Appliquer uniquement ces cinq versions, dans l’ordre, par l’outil de migration autorisé qui enregistre leur exécution. Si une phase a été appliquée, vérifier son contenu exact avant reprise ; aucun `IF NOT EXISTS` général pour cacher une exécution partielle.
 
 ## Post-déploiement
 
@@ -52,4 +53,4 @@ Ne pas utiliser un `supabase db push` aveugle de toutes les migrations historiqu
 
 **Rollback applicatif** : un retour au SHA historique complet n’est pas sûr après retrait des writes directs. Conserver les adaptateurs producteurs Client/photo et les autorités sécurisées ; si seule l’UI pose problème, revenir à une UI compatible via un commit de correction et déploiement explicitement approuvé. Les endpoints de commande restent suspendus pendant l’incident. La branche candidate et le diff complet permettent de préparer ce commit, sans restaurer d’autorité parallèle.
 
-La pause et la reprise SQL sont testées dans la fixture isolée. Une restauration de sauvegarde Production n’a pas été effectuée et n’est pas couverte par cette certification. La durée de rétention des previews/audit et leur archivage doivent être définis avant un volume durable ; aucun purge-job destructif n’est ajouté ici.
+La pause et la reprise SQL sont testées dans la fixture isolée et sur le staging Supabase réel avec JWT synthétiques (voir CERTIFICATION-STAGING.md). Une restauration de sauvegarde Production n’a pas été effectuée et n’est pas couverte par cette certification. La durée de rétention des previews/audit et leur archivage doivent être définis avant un volume durable ; aucun purge-job destructif n’est ajouté ici.

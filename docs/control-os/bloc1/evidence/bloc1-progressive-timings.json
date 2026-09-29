@@ -1,0 +1,35 @@
+{
+  "preview": "https://fixeo-clean-5n2ii43f8-elalaouibiz-3410s-projects.vercel.app",
+  "published": [
+    {
+      "source": "requests",
+      "duration_ms": 6335,
+      "status": 200
+    },
+    {
+      "source": "artisans",
+      "duration_ms": 6918,
+      "status": 403
+    },
+    {
+      "source": "missions",
+      "duration_ms": 7392,
+      "status": 200
+    },
+    {
+      "source": "network",
+      "duration_ms": 7883,
+      "status": 200
+    },
+    {
+      "source": "trust",
+      "duration_ms": 9381,
+      "status": 200
+    },
+    {
+      "source": "finance",
+      "duration_ms": 11989,
+      "status": 200
+    }
+  ]
+}

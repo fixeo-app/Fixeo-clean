@@ -1,0 +1,52 @@
+{
+  "suite": "enterprise-trust",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "preview": "https://fixeo-clean-e9quse3xx-elalaouibiz-3410s-projects.vercel.app",
+  "completed_at": "2026-09-28T23:55:34.793Z",
+  "results": [
+    {
+      "name": "Two tenants and site scope isolate accounts, sites, ERC, workforce and reporting",
+      "status": "PASS",
+      "duration_ms": 100442
+    },
+    {
+      "name": "Global Admin supervises minimally without a tenant membership or dispatch delegation",
+      "status": "PASS",
+      "duration_ms": 50972
+    },
+    {
+      "name": "Internal versus external concurrent acceptance leaves one canonical winner",
+      "status": "PASS",
+      "duration_ms": 17136
+    },
+    {
+      "name": "Enterprise internal lifecycle and SLA facts reuse the tenant authorities",
+      "status": "FAIL",
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(facts.acceptance_at&&facts.start_at&&facts.resolution_at)\n",
+      "duration_ms": 37080
+    },
+    {
+      "name": "Enterprise producer preserves ERC, hybrid dispatch policy and SLA snapshots",
+      "status": "PASS",
+      "duration_ms": 25757
+    },
+    {
+      "name": "Artisan multiactivity, availability and photo use owner RPCs; verification aligns legacy",
+      "status": "PASS",
+      "duration_ms": 60681
+    },
+    {
+      "name": "Claims legacy resolution, rejection and existing owner protection",
+      "status": "PASS",
+      "duration_ms": 55457
+    },
+    {
+      "name": "Concurrent claims lock the profile and produce one approved owner",
+      "status": "PASS",
+      "duration_ms": 25689
+    }
+  ],
+  "pass": 7,
+  "fail": 1,
+  "skip": 0
+}

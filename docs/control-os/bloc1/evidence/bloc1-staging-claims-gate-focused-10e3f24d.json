@@ -1,0 +1,16 @@
+{
+  "suite": "claims-gate",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "preview": "https://fixeo-clean-5n2ii43f8-elalaouibiz-3410s-projects.vercel.app",
+  "completed_at": "2026-09-29T00:35:05.550Z",
+  "results": [
+    {
+      "name": "Claims approval still has one winner, durable audit and idempotent replay through Control",
+      "status": "PASS",
+      "duration_ms": 22742
+    }
+  ],
+  "pass": 1,
+  "fail": 0,
+  "skip": 0
+}

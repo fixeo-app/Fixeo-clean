@@ -1,0 +1,122 @@
+{
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "synthetic_identities": 16,
+  "results": [
+    {
+      "name": "client",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "admin",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "artisan",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "enterprise_owner",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "client_other",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "enterprise_operations",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "enterprise_viewer",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "enterprise_b_owner",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "enterprise_b_operations",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "enterprise_b_viewer",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "workforce",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "artisan_other",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "admin_other",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "enterprise_site_manager",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "claimant_a",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    },
+    {
+      "name": "claimant_b",
+      "login": "PASS",
+      "real_jwt": "PASS",
+      "canonical_role": "PASS",
+      "refresh": "PASS"
+    }
+  ],
+  "invalid_password": "PASS",
+  "anonymous_user": "PASS",
+  "invalid_bearer": "PASS",
+  "completed_at": "2026-09-28T23:47:17.591Z"
+}

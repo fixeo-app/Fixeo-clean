@@ -200,5 +200,29 @@
       "source": "supabase/migrations/20260928212736_control_os_b1_acl_cutover.sql",
       "direct_browser_execution": true
     }
-  ]
+  ],
+  "legacy_claims_gate": {
+    "migration": "supabase/migrations/20260929002702_control_os_b1_claims_gate.sql",
+    "authorities_unchanged": [
+      "public.approve_artisan_claim(uuid)",
+      "public.reject_artisan_claim(uuid,text)",
+      "public._supersede_competing_claims(uuid,uuid,text)"
+    ],
+    "execute_revoked_from": [
+      "PUBLIC",
+      "anon",
+      "authenticated",
+      "service_role"
+    ],
+    "table": "public.claim_requests",
+    "table_privileges_revoked": [
+      "UPDATE",
+      "DELETE",
+      "TRUNCATE"
+    ],
+    "all_column_update_revoked": true,
+    "own_pending_insert_retained": true,
+    "consumer": "FixeoRepository → FixeoControl.command → preview/confirm/execute/verify/audit",
+    "private_cache_before_success": false
+  }
 }

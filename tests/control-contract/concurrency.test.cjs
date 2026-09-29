@@ -37,6 +37,12 @@ else {
   const [a,b]=await Promise.all([conn(2),conn(4)]);const r=await Promise.all([rpc(a,'claim_mission',[uuid(626)]),rpc(b,'assign_enterprise_internal_worker_v1',[uuid(621),uuid(620),uuid(625)])]);assert.equal(r.filter(x=>x.ok).length,1,JSON.stringify(r));
   const n=await admin.query("select (select count(*) from public.missions where request_id=$1 and status='pending')+(select count(*) from public.enterprise_internal_assignments where service_request_id=$1::uuid and status='assigned') n",[uuid(620)]);assert.equal(Number(n.rows[0].n),1);
  });
+ test('Concurrent Claims through Control retain one owner and supersede the other claim',async()=>{
+  await admin.query(`INSERT INTO public.artisans(id,full_name,city,service_category,claimed,claim_status) VALUES('${uuid(700)}','Synthetic unclaimed','Fès','plomberie',false,'pending'); INSERT INTO public.claim_requests(id,artisan_id,requester_user_id,status) VALUES('${uuid(701)}','${uuid(700)}','${uuid(1)}','pending'),('${uuid(702)}','${uuid(700)}','${uuid(4)}','pending');`);
+  const [a,b]=await Promise.all([conn(3),conn(3)]);const [pa,pb]=await Promise.all([preview(a,'claim.approve',uuid(701),{}),preview(b,'claim.approve',uuid(702),{})]);
+  const results=await Promise.all([execute(a,pa),execute(b,pb)]);assert.equal(results.filter(x=>x.ok).length,1);
+  const rows=(await admin.query('select status from public.claim_requests where artisan_id=$1',[uuid(700)])).rows;assert.deepEqual(rows.map(x=>x.status).sort(),['approved','superseded_by_approval']);
+ });
  test('Concurrent remittance confirmations cannot overpay the canonical commission',async()=>{
   const a=await conn(3),b=await conn(3);const p1=await preview(a,'finance.declare',uuid(601),{amount:100,method:'cash',proof_reference:'SYNTHETIC-A'}),p2=await preview(b,'finance.declare',uuid(601),{amount:100,method:'cash',proof_reference:'SYNTHETIC-B'});
   const d1=await execute(a,p1),d2=await execute(b,p2);assert.ok(d1.ok&&d2.ok);

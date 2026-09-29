@@ -1,0 +1,26 @@
+{
+  "suite": "source-faults",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "preview": "https://fixeo-clean-5n2ii43f8-elalaouibiz-3410s-projects.vercel.app",
+  "completed_at": "2026-09-29T00:01:46.991Z",
+  "results": [
+    {
+      "name": "Real source faults stay isolated: stale, partial, forbidden, error, timeout and healthy",
+      "status": "PASS",
+      "duration_ms": 17681
+    },
+    {
+      "name": "Independent HTTP source responses arrive before a deliberately slow source",
+      "status": "PASS",
+      "duration_ms": 11989
+    },
+    {
+      "name": "Unfaulted scope remains healthy and ordinary roles cannot use fault scope",
+      "status": "PASS",
+      "duration_ms": 33355
+    }
+  ],
+  "pass": 3,
+  "fail": 0,
+  "skip": 0
+}

@@ -1,0 +1,27 @@
+{
+  "suite": "claims-gate",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "preview": "https://fixeo-clean-5n2ii43f8-elalaouibiz-3410s-projects.vercel.app",
+  "completed_at": "2026-09-29T00:30:53.158Z",
+  "results": [
+    {
+      "name": "Legacy Claims RPCs are denied even to real Admin; private helper is never callable",
+      "status": "PASS",
+      "duration_ms": 13295
+    },
+    {
+      "name": "Own pending producer survives; direct review/identity/delete and foreign creation are denied",
+      "status": "PASS",
+      "duration_ms": 23900
+    },
+    {
+      "name": "Claims approval still has one winner, durable audit and idempotent replay through Control",
+      "status": "FAIL",
+      "error": "[{\"ok\":false,\"code\":\"internal_error\",\"audit_id\":\"54ae02b6-ef65-43af-9428-87c6a7712c16\",\"correlation_id\":\"7788120c-d376-48fa-a369-f22f4de4df3f\",\"idempotency_key\":\"866d4982-cd0b-4dd2-bbc4-a4028421022b\",\"contract_version\":\"control-v1\"},{\"ok\":false,\"code\":\"internal_error\",\"audit_id\":\"45b70d24-c92c-4d4d-9a3d-122b1251e2d9\",\"correlation_id\":\"44c3fb64-4ceb-4a15-8fc5-6acd8c265629\",\"idempotency_key\":\"7d4bf2ee-59f1-4019-b376-4cbf5018ea8d\",\"contract_version\":\"control-v1\"}]\n\n0 !== 1\n",
+      "duration_ms": 20837
+    }
+  ],
+  "pass": 2,
+  "fail": 1,
+  "skip": 0
+}

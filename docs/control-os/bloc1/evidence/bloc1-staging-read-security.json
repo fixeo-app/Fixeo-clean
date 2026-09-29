@@ -1,0 +1,96 @@
+{
+  "suite": "read-security",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "preview": "https://fixeo-clean-e9quse3xx-elalaouibiz-3410s-projects.vercel.app",
+  "completed_at": "2026-09-28T23:43:06.431Z",
+  "results": [
+    {
+      "name": "seven APIs reject anonymous and invalid bearer",
+      "status": "PASS",
+      "duration_ms": 13480
+    },
+    {
+      "name": "seven APIs deny non-admin client",
+      "status": "PASS",
+      "duration_ms": 6443
+    },
+    {
+      "name": "seven APIs deny non-admin artisan",
+      "status": "PASS",
+      "duration_ms": 8007
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_viewer",
+      "status": "PASS",
+      "duration_ms": 6572
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_operations",
+      "status": "PASS",
+      "duration_ms": 6774
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_owner",
+      "status": "PASS",
+      "duration_ms": 7166
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_site_manager",
+      "status": "PASS",
+      "duration_ms": 7849
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_b_owner",
+      "status": "PASS",
+      "duration_ms": 7286
+    },
+    {
+      "name": "Admin reads typed APIs; invalid IDs/parameters/method/origin denied",
+      "status": "PASS",
+      "duration_ms": 61442
+    },
+    {
+      "name": "Exact metrics exceed 700 and distinguish unknown/fulfilled/active",
+      "status": "PASS",
+      "duration_ms": 13108
+    },
+    {
+      "name": "Keyset pagination traverses all 800 volume requests once",
+      "status": "PASS",
+      "duration_ms": 5252
+    },
+    {
+      "name": "Direct protected writes denied by real PostgREST for all actors",
+      "status": "PASS",
+      "duration_ms": 22087
+    },
+    {
+      "name": "Claims view is private and requester rows remain bounded",
+      "status": "PASS",
+      "duration_ms": 18852
+    },
+    {
+      "name": "Artisan Business inaccessible to Admin, readable only by its owner",
+      "status": "PASS",
+      "duration_ms": 170837
+    },
+    {
+      "name": "Diagnostic and workforce projections exclude raw input, media and private labels",
+      "status": "PASS",
+      "duration_ms": 17056
+    },
+    {
+      "name": "Sensitive domain mutations cannot bypass Control preview/execute",
+      "status": "PASS",
+      "duration_ms": 2682
+    },
+    {
+      "name": "Prepare real expiring ticket while wrong actor/target and tampering are refused",
+      "status": "PASS",
+      "duration_ms": 18366
+    }
+  ],
+  "pass": 17,
+  "fail": 0,
+  "skip": 0
+}

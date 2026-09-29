@@ -1,0 +1,31 @@
+{
+  "suite": "final-readiness",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "preview": "https://fixeo-clean-5n2ii43f8-elalaouibiz-3410s-projects.vercel.app",
+  "completed_at": "2026-09-29T00:09:31.154Z",
+  "results": [
+    {
+      "name": "Expired approved and historical unreviewed quotes cannot become an accepted prestation",
+      "status": "PASS",
+      "duration_ms": 22103
+    },
+    {
+      "name": "Diagnostic server producers remain denied to real ordinary JWTs and Control sees metadata only",
+      "status": "PASS",
+      "duration_ms": 23526
+    },
+    {
+      "name": "Restored source authority returns healthy results and exact totals remain independent of pages",
+      "status": "PASS",
+      "duration_ms": 18535
+    },
+    {
+      "name": "Real dossier, recommendation and audited execution enforce the RAFI foundation boundaries",
+      "status": "PASS",
+      "duration_ms": 16265
+    }
+  ],
+  "pass": 4,
+  "fail": 0,
+  "skip": 0
+}

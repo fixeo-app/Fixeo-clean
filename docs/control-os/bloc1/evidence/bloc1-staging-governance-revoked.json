@@ -1,0 +1,16 @@
+{
+  "suite": "governance-revoked",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "preview": "https://fixeo-clean-5n2ii43f8-elalaouibiz-3410s-projects.vercel.app",
+  "completed_at": "2026-09-29T00:04:43.404Z",
+  "results": [
+    {
+      "name": "A previously valid JWT cannot execute after public.users.role is withdrawn",
+      "status": "PASS",
+      "duration_ms": 19165
+    }
+  ],
+  "pass": 1,
+  "fail": 0,
+  "skip": 0
+}

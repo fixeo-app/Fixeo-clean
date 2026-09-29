@@ -1,10 +1,14 @@
 -- Read-only metadata certification. No Production fixture, write or impersonation.
 BEGIN TRANSACTION READ ONLY;
 SET LOCAL statement_timeout='15s';
-DO $$ DECLARE t text; c record;
+DO $$ DECLARE t text; r text; c record;
 BEGIN
  FOREACH t IN ARRAY ARRAY['service_requests','missions','quotes'] LOOP
   IF has_table_privilege('authenticated','public.'||t,'INSERT,UPDATE,DELETE') OR has_any_column_privilege('authenticated','public.'||t,'INSERT,UPDATE') THEN RAISE EXCEPTION 'DIRECT_WRITE_GRANT_REMAINS: %',t; END IF;
+ END LOOP;
+ FOREACH r IN ARRAY ARRAY['anon','authenticated','service_role'] LOOP
+  IF has_table_privilege(r,'public.claim_requests','UPDATE,DELETE,TRUNCATE') OR has_any_column_privilege(r,'public.claim_requests','UPDATE') THEN RAISE EXCEPTION 'CLAIMS_DIRECT_WRITE: %',r; END IF;
+  IF has_function_privilege(r,'public.approve_artisan_claim(uuid)','EXECUTE') OR has_function_privilege(r,'public.reject_artisan_claim(uuid,text)','EXECUTE') OR has_function_privilege(r,'public._supersede_competing_claims(uuid,uuid,text)','EXECUTE') THEN RAISE EXCEPTION 'CLAIMS_PREVIEW_BYPASS: %',r; END IF;
  END LOOP;
  IF has_table_privilege('anon','public.claims_pending','SELECT') THEN RAISE EXCEPTION 'CLAIMS_ANON_EXPOSED'; END IF;
  IF has_table_privilege('authenticated','public.commission_remittances_v1','SELECT,INSERT,UPDATE,DELETE') THEN RAISE EXCEPTION 'FINANCE_DIRECT_ACCESS'; END IF;

@@ -10,7 +10,7 @@ Candidat de préparation, **sans application Production**. Branche `feat/control
 |---|---|---|
 | Utilisateur `auth.users.id` UUID | `public.users.id`, `profiles.id` portent la même identité ; profil applicatif éventuellement absent | Auth vérifie la session ; `public.users.role`/`public.is_admin()` décide Admin. Aucun rôle transmis par navigateur n’est une preuve. |
 | Client `users.id`, role client | 1 → N `service_requests.client_profile_id` ; NULL = demande guest, pas un client anonyme unique | Client OS / autorités d’intake. Pas de rapprochement automatique par téléphone. |
-| Artisan `artisans.id` UUID | `owner_user_id` → identité Auth ; profil référencé éventuellement sans propriétaire ; `legacy_id` reste une référence historique | Claims possède le transfert de propriété ; Trust possède `verified`. Ni téléphone ni `legacy_id` ne remplace la clé UUID. Plusieurs profils par utilisateur ne sont pas fusionnés. |
+| Artisan `artisans.id` UUID | `owner_user_id` → identité Auth ; profil référencé éventuellement sans propriétaire ; `legacy_id` reste une référence historique | Claims possède le transfert de propriété ; Trust possède `verified`. Ni téléphone ni `legacy_id` ne remplace la clé UUID. L’index unique `artisans_owner_user_id_unique` borne chaque propriétaire à un profil revendiqué. Aucun profil n’est fusionné. |
 | Multiactivité artisan | 1 → N `artisan_service_categories`, 1 → N `artisan_service_cities` ; champs principaux et `services` historiques conservés | Dispatch reste l’autorité d’éligibilité. La projection expose les listes réelles ; aucun moteur Admin de matching. |
 | Demande `service_requests.id` UUID | 1 → N offres/missions, 1 → N devis ; 0/1 ERC ; 0/1 offre Pricing référencée ; Diagnostic lié facultatif | Service Requests, intake Client/guest/urgent/Enterprise existants. Origine Enterprise prouvée par ERC, pas par texte libre. |
 | Mission `missions.id` UUID | `request_id` **texte sans FK** vers SR.id ; `artisan_profile_id`, `client_profile_id` ; 0/1 devis accepté nouveau | Ne pas convertir tous les identifiants historiques. Jointure `r.id::text=m.request_id`, orphelin explicite. Nouveau gagnant exige une demande canonique. |
@@ -63,7 +63,7 @@ Les six sources implémentées sont requests, missions, artisans, trust, network
 - Le nombre de clients est une dimension d’identité non classifiée ; ne pas l’utiliser comme clientèle « production » filtrée. Claims sans FK artisan restent inclus dans all et non classés, sans rapprochement silencieux.
 - NULL ≠ 0. Population vide complète = 0 pour un compte/somme connu ; durée sans événement = NULL. Une valeur partielle ne devient pas exacte parce que la requête HTTP a réussi.
 
-`SourceState` commun : source, status (healthy/stale/partial/forbidden/unavailable/unknown), data, error, as_of, last_success_at, latency_ms, completeness. Les états idle/loading relèvent du consommateur ; aucune valeur n’est exposée pendant l’initialisation. L’accès refusé efface toute ancienne donnée ; l’échec réseau peut garder une sélection datée stale. Les six agrégats échouent indépendamment, timeout 5 s/source, navigateur 8 s, aucun retry automatique. Une source absente interdit le briefing « tout va bien ». Pas de cache serveur partagé ni de métrique p95 déduite d’un seul fetch.
+`SourceState` commun : source, status (healthy/stale/partial/forbidden/unavailable/unknown), data, error, as_of, last_success_at, latency_ms, completeness. Les états idle/loading relèvent du consommateur ; aucune valeur n’est exposée pendant l’initialisation. L’accès refusé efface toute ancienne donnée ; l’échec réseau peut garder une sélection datée stale. Les six agrégats échouent indépendamment, timeout 5 s/source et 5 s Auth, navigateur 15 s, aucun retry automatique. Une source absente interdit le briefing « tout va bien ». Pas de cache serveur partagé ni de métrique p95 déduite d’un seul fetch.
 
 Le shell conserve ses listes bornées comme **sélections**, avec colonnes minimales, timeout annulable et pagination côté contrat. Ses cartes principales utilisent les agrégats ; les autres comptes sont explicitement « sélection ». Les anciens calculs « demandes moins profils = capacité » ne sont plus présentés comme une capacité ou un trou critique. Les listes/UX complètes relèvent des blocs 2–6.
 
@@ -73,7 +73,7 @@ Transport fermé : POST JSON `/api/control-v1/...`, bearer utilisateur, clé pub
 
 | Opération | Entrée / sortie | Autorité et refus |
 |---|---|---|
-| summary | classification fermée ; six SourceState + manifest | `control_summary_v1(source,classification)` ; agrégats exacts, aucun total de page |
+| summary | classification fermée ; source optionnelle parmi les six sources ; SourceState + manifest | `control_summary_v1(source,classification)` ; agrégats exacts, aucun total de page |
 | operations | curseur UUID, limite 1–100, statut/ville/métier/tenant/site/classification | `control_operations_list_v1` ; curseur ordonné ID, has_more, global_total=NULL |
 | dossier | type allowlist + UUID | `control_dossier_read_v1` ; résumé minimal, relations 50 et overflow, timeline 50 et overflow, ERC/SLA ; pas de chargement Business |
 | search | texte 2–120, type fermé, limite 1–50, curseur | `control_search_v1` ; champs explicitement autorisés ; pas de texte privé/media/token |
@@ -95,7 +95,7 @@ Audit append-only privé : acteur, rôle DB, type/cible, autorité/capability, a
 
 | Gate | Constat / consommateurs | Préparation livrée | Tests / limite |
 |---|---|---|---|
-| A Claims | Vue owner postgres exposée ; claim-system/repository et Admin utilisent Claims | security_invoker, retrait anon ; insert propre pending uniquement ; Control délègue aux RPC Claims et à leurs locks | anon refusé, autre demandeur isolé, faux approved refusé, lien legacy approuvé, propriétaire incompatible refusé/audité ; aucun transfert historique |
+| A Claims | Vue owner postgres exposée ; claim-system/repository et Admin utilisent Claims | security_invoker, retrait anon ; insert propre pending uniquement ; phase 5 retire les appels Claims directs et UPDATE/DELETE/TRUNCATE, y compris les grants par colonne ; consommateurs historiques adaptés au Control | anon refusé, autre demandeur isolé, faux approved refusé, lien legacy approuvé, propriétaire incompatible refusé/audité ; aucun transfert historique |
 | B Service Requests | Writes navigateur larges ; Client core, intake public/urgent/guest, Diagnostic et Enterprise | Retrait INSERT/UPDATE/DELETE table **et colonnes** ; création Client bornée/idempotente ; producers serveur et RPC existants conservés | Création/retry/conflit, accès direct même Admin refusé ; producer service_role synthétique reste fonctionnel |
 | C Missions | Écriture directe ; devis créant validated ; claim/start/complete/confirm | Plus d’écriture libre ; devis crée pending ; dates nouvelles ; garde du gagnant inter-univers | Cycle complet, acceptation concurrente unique, externe/interne concurrent, ancienne validation signalée |
 | D Quotes | Soumission visible client sans revue ; insert libre ; core et cockpit | Revue serveur/version ; SELECT client après présentation ; accepter/rejeter préconditions ; historique accepté conservé | Soumission cachée, refus non-admin, prix/scope inchangés par revue, stale, expiration, replay, pas de notification client précoce |
@@ -108,14 +108,20 @@ Audit append-only privé : acteur, rôle DB, type/cible, autorité/capability, a
 
 Les anciennes routes **en mémoire** du serveur Express `/api/admin/orders` et `/api/admin/artisans...` sont retirées (410) ; les fonctions Vercel Admin canoniques gardent leurs routes dédiées. Les trois endpoints actifs verify/assign/settle ne possèdent plus de mutations parallèles : ticket/confirmation obligatoires. Les anciens appels de navigateur sans preview reçoivent 428. Les modules legacy archivés ne sont pas réactivés.
 
-Les RPC Claims existantes restent des autorités Admin canoniques avec leur guard de rôle ; leur interface historique n’est pas transformée en RPC générique. Le shell Control utilise systématiquement preview/confirmation. Les fonctions Finance/Trust/revue nouvelles ne sont pas directement exécutables par authenticated, anon ou service_role : seule la commande typée les appelle après revue.
+Les RPC Claims existantes restent les autorités canoniques avec leur guard de rôle, invoquées uniquement par la commande Control après preview/confirmation. Leur EXECUTE direct, ainsi que celui du helper de supersession, est retiré à PUBLIC/anon/authenticated/service_role. FixeoRepository ne met plus le cache à jour avant succès : il attend la relecture canonique et l’audit. Les fonctions Finance/Trust/revue nouvelles ne sont pas directement exécutables par authenticated, anon ou service_role : seule la commande typée les appelle après revue.
 
 ## Fichiers, certification et frontières
 
-- Migrations : les quatre `supabase/migrations/202609282127*_control_os_b1_*.sql`, dans l’ordre numérique ; **non appliquées en Production**.
+- Migrations : les quatre `supabase/migrations/202609282127*_control_os_b1_*.sql` inchangées, puis `20260929002702_control_os_b1_claims_gate.sql` ; **non appliquées en Production**.
 - Baseline : `baseline-fingerprints.json`, `01-preflight-readonly.sql` et fixture catalogue sans données de production.
 - Postflight : `02-postflight-readonly.sql`. Rollback opérationnel : `03-rollback-pause-actions.sql`. Reprise contrôlée : `04-resume-actions-after-review.sql`.
 - Tests : `tests/control-contract` (PostgreSQL embarqué, API, PostgreSQL natif multi-connexions en CI). Auth simulée dans la fixture, RLS/ACL/fonctions/contraintes/index réels reconstruits. Ce n’est pas un test Supabase Auth/Storage réel.
 - Build Diagnostic : `node api/diagnostic/verify-build.cjs`. Tests UI/Preview et résultats exacts dans le rapport candidat final.
 
 Aucune mutation Production, aucun merge main, aucun déploiement Production. Les migrations préparées ne constituent pas leur autorisation d’application. Une Preview READY de Vercel ne prouve pas à elle seule une recette métier authentifiée.
+
+## Recette authentifiée — levée de la Condition F
+
+Voir `CERTIFICATION-STAGING.md` pour la preuve Supabase Auth, les 16 identités synthétiques, les deux tenants, les tests HTTP/RPC/concurrence, le rollback staging et les limites. Les anciennes suites embarquées restent distinguées de la recette réelle. Les quatre migrations autorisées conservent leurs SHA256.
+
+Le chargement du résumé publie chaque source séparément et mutualise les refresh simultanés. La fraîcheur du registre (60 s) est appliquée : réponse ancienne = stale, provenance absente ou future incohérente = unknown. `decision-contracts.js` porte EvidenceRef/Recommendation/ActionProposal/DecisionResult sans LLM ni exécution ; seule l’autorité preview/execute peut muter.

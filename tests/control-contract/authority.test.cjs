@@ -75,6 +75,18 @@ tx('Claims view denies anon and keeps owner isolation; no audit contains request
  await denied(()=>query("insert into public.claim_requests(requester_user_id,status) values($1,'approved')",[uuid(1)]),/row-level security/);
  await db.exec('RESET ROLE');assert.ok(!JSON.stringify(await query('select * from fixeo_private.authority_audit_events_v1')).includes('PRIVATE MARKER'));
 });
+tx('Legacy Claims RPCs and direct review writes cannot bypass the human authority gate',async()=>{
+ await db.exec(`INSERT INTO public.claim_requests(id,artisan_id,requester_user_id,status) VALUES('${uuid(200)}','${uuid(20)}','${uuid(1)}','pending');`);
+ for(const role of ['anon','authenticated','service_role']){
+  await actor(db,3,role);
+  await denied(()=>rpc('approve_artisan_claim',[uuid(200)]),/permission denied/);
+  await denied(()=>rpc('reject_artisan_claim',[uuid(200),'Synthetic denial']),/permission denied/);
+  await denied(()=>rpc('_supersede_competing_claims',[uuid(20),uuid(200),null]),/permission denied/);
+  await denied(()=>query("update public.claim_requests set status='approved' where id=$1",[uuid(200)]),/permission denied/);
+  await denied(()=>query('delete from public.claim_requests where id=$1',[uuid(200)]),/permission denied/);
+ }
+ await actor(db,3);const result=await command('claim.reject',uuid(200),{});assert.equal(result.ok,true,JSON.stringify(result));assert.equal(result.verified.status,'rejected');assert.ok(result.audit_id);
+});
 tx('Settlement records canonical price/commission, never a remittance',async()=>{
  const m=await completed();await actor(db,3);const r=await command('mission.settle',m.id,{final_price:1000,expected_final_price:null});assert.equal(r.ok,true,JSON.stringify(r));assert.equal(Number(r.verified.commission_amount),150);assert.equal(Number(r.verified.confirmed_commission),0);
  const summary=await rpc('control_summary_v1',['finance','all']);assert.equal(Number(summary.metrics['finance.confirmed']),0);

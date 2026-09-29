@@ -1,0 +1,70 @@
+{
+  "suite": "workflows",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "preview": "https://fixeo-clean-e9quse3xx-elalaouibiz-3410s-projects.vercel.app",
+  "completed_at": "2026-09-28T23:52:15.183Z",
+  "results": [
+    {
+      "name": "Client authority creates production by default; retries and protected identity/classification",
+      "status": "PASS",
+      "duration_ms": 47462
+    },
+    {
+      "name": "Quote review versioning and hostile business text remain data; stale preview denied",
+      "status": "PASS",
+      "duration_ms": 70193
+    },
+    {
+      "name": "Human confirmation, double-click, replay and idempotency conflicts execute once",
+      "status": "PASS",
+      "duration_ms": 42139
+    },
+    {
+      "name": "Concurrent acceptance creates pending/assigned and full proven Mission lifecycle",
+      "status": "PASS",
+      "duration_ms": 80879
+    },
+    {
+      "name": "Two artisans quote concurrently; a single accepted winner remains",
+      "status": "PASS",
+      "duration_ms": 39006
+    },
+    {
+      "name": "Client quote rejection, rejected review, invalid expiry and legacy reconciliation",
+      "status": "FAIL",
+      "error": "{\"ok\":false,\"code\":\"INVALID_EXPIRY\",\"audit_id\":\"ce7c9837-67ee-468a-aae1-d2d55d7b9299\",\"correlation_id\":\"94f9d93c-82a0-4519-9d27-841e6992d412\",\"idempotency_key\":\"78286f33-1ddf-462d-8aef-0eddbfb10168\",\"contract_version\":\"control-v1\"}\n\n409 !== 200\n",
+      "duration_ms": 6724
+    },
+    {
+      "name": "Offered Mission ownership, double acceptance and terminal states are guarded",
+      "status": "PASS",
+      "duration_ms": 57573
+    },
+    {
+      "name": "Competing Finance settlements serialize and FINAL_PRICE is never PAID",
+      "status": "FAIL",
+      "error": "{\"ok\":false,\"code\":\"STALE_PREVIEW\",\"audit_id\":\"31846d21-3bc7-453e-a6ee-7a392b978320\",\"correlation_id\":\"a6d8bfcf-2386-4934-b07f-36561f83a04f\",\"idempotency_key\":\"28529602-09ea-46e7-81a5-52d1d0ebc845\",\"contract_version\":\"control-v1\"}\n\n409 !== 200\n",
+      "duration_ms": 32408
+    },
+    {
+      "name": "Finance proof, Wafacash, bank correction, cancellation and version history",
+      "status": "FAIL",
+      "error": "{\"ok\":false,\"code\":\"INVALID_PROOF_OR_AMOUNT\",\"audit_id\":\"4622fb12-84e0-430e-b717-2682bb69b16e\",\"correlation_id\":\"425d94c9-1d10-43fa-94df-c29bd4eedcf4\",\"idempotency_key\":\"1b46d38f-6b0b-4453-8530-b4d551bab13d\",\"contract_version\":\"control-v1\"}\n\n409 !== 200\n",
+      "duration_ms": 42028
+    },
+    {
+      "name": "VAP amount/materials preserved; historical unproven validation cannot create due commission",
+      "status": "FAIL",
+      "error": "{\"ok\":false,\"code\":\"AUTHORITY_REJECTED\",\"audit_id\":\"b4587047-5da1-44df-bba8-7638646405b3\",\"correlation_id\":\"e8549210-8ffe-4168-a920-f8bacc32f752\",\"idempotency_key\":\"f935fb1c-3a88-465d-98fb-3d95cfca1084\",\"contract_version\":\"control-v1\"}\n\n409 !== 200\n",
+      "duration_ms": 12116
+    },
+    {
+      "name": "Real expired preview is refused after its five-minute lifetime",
+      "status": "PASS",
+      "duration_ms": 14881
+    }
+  ],
+  "pass": 7,
+  "fail": 4,
+  "skip": 0
+}
