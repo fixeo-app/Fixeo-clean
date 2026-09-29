@@ -1,0 +1,1 @@
+{"status":"PASS","environment":"isolated staging","refusals":16,"partial_writes":0,"finance_state":"UNKNOWN","request_relation":"NOT_FOUND","p0_unchanged":true,"cleanup":"ROLLBACK","production_mutations":0}

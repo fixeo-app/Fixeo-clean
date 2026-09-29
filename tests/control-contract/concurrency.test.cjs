@@ -14,6 +14,8 @@ else {
   for(const p of fs.readdirSync(path.join(__dirname,'../../supabase/migrations')).filter(x=>x.includes('_control_os_b1_')||x.includes('_control_os_b2_')).sort())await admin.query(fs.readFileSync(path.join(__dirname,'../../supabase/migrations',p),'utf8'));
   await admin.query(require('./bloc34-fixture.cjs').sql);
   await admin.query(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260929142337_control_os_b34_settlement_integrity_guard.sql'),'utf8'));
+  await admin.query(require('./bloc5-fixture.cjs').sql);
+  await admin.query(require('./bloc5-fixture.cjs').guard);
  });
  after(async()=>{await Promise.all(clients.map(c=>c.end()));await admin?.end();});
  const request=async(n,status='new')=>admin.query('INSERT INTO public.service_requests(id,client_profile_id,city,service_category,description,status) VALUES($1,$2,$3,$4,$5,$6)',[uuid(n),uuid(1),'Fès','plomberie','Synthetic concurrency',status]);
@@ -112,6 +114,27 @@ else {
   const [a,b]=await Promise.all([conn(3),conn(2)]),p=await hp(a,1000);const r=await Promise.all([he(a,p),rpc(b,'claim_mission',[uuid(1020)])]);
   assert.equal(r.filter(x=>x.ok).length,1,JSON.stringify(r));
   const n=(await admin.query("select (select count(*) from public.missions where request_id=$1 and status='pending')+(select count(*) from public.enterprise_internal_assignments where service_request_id=$1::uuid and status='assigned') n",[uuid(1000)])).rows[0].n;assert.equal(Number(n),1);
+ });
+
+ test('B5 Finance locks the canonical parent against deletion and state changes until commit',async()=>{
+  await doneMission(1300);const a=await conn(3),editor=await raw();assert.equal((await execute(a,await preview(a,'mission.settle',uuid(1301),{final_price:1000,expected_final_price:null}))).ok,true);
+  for(const operation of ['delete','update']){
+   const p=await preview(a,'finance.declare',uuid(1301),{amount:10,method:'cash',proof_reference:'SYNTHETIC-B5-'+operation});await a.query('BEGIN');await editor.query('BEGIN');
+   try{assert.equal((await execute(a,p)).ok,true);const sql=operation==='delete'?'delete from public.service_requests where id=$1':"update public.service_requests set status='cancelled' where id=$1";
+    const pending=editor.query(sql,[uuid(1300)]).then(value=>({value}),error=>({error}));await blocked(editor.processID,a.processID);await a.query('COMMIT');const {error}=await pending;assert.ifError(error);await editor.query('ROLLBACK');
+   }finally{await a.query('ROLLBACK');await editor.query('ROLLBACK');}
+  }
+  assert.equal((await admin.query('select status from public.service_requests where id=$1',[uuid(1300)])).rows[0].status,'completed');
+ });
+ test('B5 Finance rechecks a concurrently deleted parent after waiting; no partial ledger write',async()=>{
+  await doneMission(1310);const a=await conn(3),remover=await raw();assert.equal((await execute(a,await preview(a,'mission.settle',uuid(1311),{final_price:1000,expected_final_price:null}))).ok,true);
+  const p=await preview(a,'finance.declare',uuid(1311),{amount:10,method:'cash',proof_reference:'SYNTHETIC-B5-DELETED'});await remover.query('BEGIN');
+  try{await remover.query('delete from public.service_requests where id=$1',[uuid(1310)]);const pending=execute(a,p);await blocked(a.processID,remover.processID);await remover.query('COMMIT');const r=await pending;assert.equal(r.ok,false);assert.equal(r.code,'REQUEST_NOT_FOUND');assert.equal(Number((await admin.query('select count(*) n from public.commission_remittances_v1 where mission_id=$1',[uuid(1311)])).rows[0].n),0);
+  }finally{await remover.query('ROLLBACK');}
+ });
+ test('B5 concurrent retries of one financial declaration share one ledger row and one result',async()=>{
+  const [a,b]=await Promise.all([conn(3),conn(3)]),p=await preview(a,'finance.declare',uuid(1301),{amount:10,method:'cash',proof_reference:'SYNTHETIC-B5-RETRY'}),key=uuid(++seq);
+  const r=await Promise.all([execute(a,p,key),execute(b,p,key)]);assert.ok(r.every(x=>x.ok));assert.deepEqual(r[0],r[1]);assert.equal(Number((await admin.query('select count(*) n from public.commission_remittances_v1 where id=$1',[r[0].result.id])).rows[0].n),1);
  });
 
 }
