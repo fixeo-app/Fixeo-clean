@@ -45,7 +45,7 @@ const CATEGORIES = {
   climatisation: { label: 'Climatisation',        icon: '❄️', desc: 'Climatisation et ventilation au Maroc.' },
   prix:          { label: 'Tarifs & Prix',         icon: '💰', desc: 'Guides de prix par service au Maroc.' },
   urgence:       { label: 'Urgences',              icon: '🚨', desc: 'Conseils urgence et dépannage.' },
-  confiance:     { label: 'Confiance & Garanties', icon: '🛡️', desc: 'Artisans vérifiés et garanties.' },
+  confiance:     { label: 'Confiance & Garanties', icon: '🛡️', desc: 'Profils référencés et repères de confiance.' },
   local:         { label: 'Guides par ville',      icon: '📍', desc: 'Artisans et conseils par ville.' },
   guide:         { label: 'Guides pratiques',      icon: '📖', desc: 'Guides pratiques artisanat.' },
   conseils:      { label: 'Conseils & Entretien',  icon: '🔩', desc: 'Conseils entretien et prévention.' }
@@ -82,15 +82,15 @@ const DEFAULT_IMAGE = 'https://www.fixeo.ma/img/fixeo-logo.webp';
 
 // ── Category → Intro CTA block (Phase 4.4 locked) ───────────
 const CATEGORY_CTA = {
-  plomberie:     { icon: '🔧', label: 'Trouver un plombier vérifié',         desc: 'Intervention rapide, devis gratuit, artisan certifié Fixeo.',              btn: 'Demander un devis' },
-  electricite:   { icon: '⚡', label: 'Trouver un électricien vérifié',      desc: 'Artisan certifié, intervention rapide, paiement sécurisé.',               btn: 'Trouver un électricien' },
-  serrurerie:    { icon: '🔐', label: 'Trouver un serrurier vérifié',        desc: 'Serrurier disponible rapidement, tarifs transparents, certifié Fixeo.',  btn: 'Trouver un serrurier' },
-  climatisation: { icon: '❄️', label: 'Trouver un technicien climatisation', desc: 'Installation et maintenance par un expert certifié Fixeo.',              btn: 'Trouver un technicien' }
+  plomberie:     { icon: '🔧', label: 'Trouver un plombier',                  desc: 'Décrivez votre besoin et consultez les profils référencés dans votre ville.', btn: 'Décrire mon besoin' },
+  electricite:   { icon: '⚡', label: 'Trouver un électricien',               desc: 'Consultez les profils référencés ; le tarif est confirmé avant intervention.', btn: 'Trouver un électricien' },
+  serrurerie:    { icon: '🔐', label: 'Trouver un serrurier',                 desc: 'Décrivez la situation et consultez les profils référencés selon votre secteur.', btn: 'Trouver un serrurier' },
+  climatisation: { icon: '❄️', label: 'Trouver un technicien climatisation', desc: 'Décrivez votre besoin et consultez les profils référencés dans votre ville.', btn: 'Trouver un technicien' }
 };
-const DEFAULT_CTA = { icon: '🔧', label: 'Trouver un artisan vérifié', desc: 'Artisan certifié, intervention rapide, paiement sécurisé.', btn: 'Trouver un artisan' };
+const DEFAULT_CTA = { icon: '🔧', label: 'Trouver un artisan', desc: 'Décrivez votre besoin et consultez les profils référencés sur FIXEO.', btn: 'Trouver un artisan' };
 
 // ── Category → SSR LP internal links (Phase 4.5 locked) ─────
-// Format: /service-city (hyphen, SSR LP routes in vercel.json)
+// Format: /service/city — canonical clean route.
 const CATEGORY_LP_LINKS = {
   plomberie: [
     ['/plombier/casablanca', 'Plombier Casablanca'],
@@ -499,7 +499,7 @@ function buildArticlePage(article) {
       </div>
       <div class="blog-sidebar-widget blog-sidebar-cta">
         <h3>Trouver un artisan</h3>
-        <p>Artisans vérifiés disponibles dans votre ville.</p></div>
+        <p>Profils professionnels référencés dans votre ville, selon la couverture du moment.</p></div>
         <a href="/?open=request" class="blog-cta-btn">Demander un devis</a>
       </div>
     </aside>
