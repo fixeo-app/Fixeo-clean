@@ -596,7 +596,7 @@ function buildIndexPage(articles) {
   }).filter(Boolean).join('\n    ');
 
   const sitemapEntries = articles.map(a =>
-    `  <url>\n    <loc>https://www.fixeo.ma/blog/${a.slug}</loc>\n    <lastmod>${a.date || new Date().toISOString().slice(0,10)}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.70</priority>\n  </url>`
+    `  <url>\n    <loc>https://www.fixeo.ma/blog/${a.slug}</loc>\n    <lastmod>${a.date_modified || a.date || new Date().toISOString().slice(0,10)}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.70</priority>\n  </url>`
   ).join('\n');
 
   const catNavHtml = catOrder.filter(k => byCategory[k] && byCategory[k].length).map(k => {
