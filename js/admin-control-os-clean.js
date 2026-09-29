@@ -28,7 +28,7 @@ async function q(c,t,sel='id',limit=500){const at=Date.now(),abort=new AbortCont
 async function loadGroup(c,defs){await Promise.all(defs.map(async d=>{const key=d[0],r=await q(c,d[1],d[2],d[3]);if(r.ok)S[key]=r.data;S.health[key]={ok:r.ok,status:r.ok?'partial':S[key]?.length?'stale':'unavailable',ms:r.ms,error:r.error||null,count:S[key]?.length||0,last_success_at:r.ok?new Date().toISOString():S.health[key]?.last_success_at};healthBanner()}))}
 
 function healthBanner(){const bad=Object.entries(S.health).filter(([,v])=>!v.ok);const e=$('#os-error');if(!e)return;if(!bad.length){e.hidden=true;e.textContent='';return}e.hidden=false;e.textContent='Mode dégradé · '+bad.map(([k,v])=>k+': '+(v.error||'indisponible')).join(' · ')}
-const viewSources={overview:['missions'],rafi:[],operations:[],reservations:[],network:[],finance:[],trust:[],intelligence:['requests','artisans'],urgent:['requests','missions','artisans'],governance:['users','notifications'],notifications:['notifications']};
+const viewSources={overview:['missions'],rafi:[],operations:[],reservations:[],network:[],finance:[],trust:[],intelligence:[],urgent:['requests','missions','artisans'],governance:['users','notifications'],notifications:['notifications']};
 const sourceDefinitions=[['requests','service_requests','id,status,city,service_category,urgency,created_at,target_artisan_id,client_profile_id,pricing_offer_id,data_classification',700],['missions','missions','id,request_id,artisan_profile_id,status,created_at,accepted_at,agreed_price,final_price,commission_amount,pricing_offer_id',700],['artisans','artisans','id,full_name,city,service_category,category,availability,claimed,claim_status,verified,is_verified,rating,onboarding_completed',1600],['quotes','quotes','id,request_id,artisan_profile_id,proposed_price,status,created_at,review_status,quote_version',500],['claims','claim_requests','id,artisan_id,status,created_at,reviewed_at',300],['users','users','id,full_name,role,city,created_at',700],['notifications','notifications','id,title,type,read,created_at,related_entity_type,related_entity_id',300],['payments','payments','id,mission_id,amount,status,created_at',500],['enterprises','enterprise_accounts','id,name,status,created_at',300],['sites','enterprise_sites','id,enterprise_id,name,city,status',500]];
 async function load(){
  if(loading)return;loading=true;const requestedView=currentView;
@@ -39,12 +39,13 @@ async function load(){
   if(!routeLoaded){routeLoaded=true;window.FixeoDossier.fromRoute();}
   if(requestedView==='operations')window.FixeoOperations.refresh();
   window.FixeoRegisters?.refresh(requestedView);
+  if(requestedView==='intelligence')window.FixeoIntelligence?.refresh();
   S.error=null;window.FixeoRafi.load();canonicalSources={};applyCanonicalMetrics();
   window.FixeoControl.summary((source,state)=>{canonicalSources[source]=state;applyCanonicalMetrics()}).catch(()=>{canonicalSources={};applyCanonicalMetrics()});
   const needed=viewSources[requestedView]||[];
   await loadGroup(c,sourceDefinitions.filter(d=>needed.includes(d[0])));
   lastLoad=Date.now();healthBanner();renderAll();
- }catch(e){S.error=e.message;if(['FORBIDDEN','SESSION_REQUIRED'].includes(e.message))window.FixeoRegisters?.clear(e.message);const el=$('#os-error');if(el){el.textContent='Session Control OS indisponible · '+e.message;el.hidden=false}}
+ }catch(e){S.error=e.message;if(['FORBIDDEN','SESSION_REQUIRED'].includes(e.message)){window.FixeoRegisters?.clear(e.message);window.FixeoIntelligence?.clear();}const el=$('#os-error');if(el){el.textContent='Session Control OS indisponible · '+e.message;el.hidden=false}}
  finally{loading=false;if(requestedView!==currentView)load()}
 }
 
@@ -62,17 +63,12 @@ function applyCanonicalMetrics(){
 function rowHtml(x,kind,title,meta,badge){return '<button class="row" data-kind="'+kind+'" data-id="'+esc(x.id)+'"><b>'+esc(title)+'</b><small>'+esc(meta)+'</small><span class="pill '+tone(x.status,x.urgency)+'">'+esc(badge)+'</span></button>'}
 function rows(arr,kind,title,meta,badge=x=>statusLabel(x.status)){return arr.length?arr.map(x=>rowHtml(x,kind,title(x),meta(x),badge(x))).join(''):'<div class="empty">Aucun élément dans cet état.</div>'}
 function topCounts(list,key){const m={};list.forEach(x=>{const k=String(typeof key==='function'?key(x):x[key]||'Non renseigné').trim()||'Non renseigné';m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1])}
-function coverage(){const demand={},supply={};S.requests.forEach(r=>{const k=(r.city||'Non renseignée')+' · '+(r.service_category||'Service');demand[k]=(demand[k]||0)+1});S.artisans.forEach(a=>{const k=(a.city||'Non renseignée')+' · '+(a.service_category||a.category||'Service');supply[k]=(supply[k]||0)+1});return[...new Set([...Object.keys(demand),...Object.keys(supply)])].map(k=>({key:k,d:demand[k]||0,s:supply[k]||0,g:(demand[k]||0)-(supply[k]||0)})).sort((a,b)=>b.g-a.g||b.d-a.d)}
-function renderAll(){set('k-requests',S.requests.length);set('k-pending',pending().length);set('k-missions',activeM().length);set('k-artisans',S.artisans.length);set('k-claims',S.claims.filter(x=>['pending','new'].includes(st(x))).length);renderOverview();renderIntelligence();renderUrgent();renderNotifications();renderGovernance();renderRafi();applyCanonicalMetrics()}
+function renderAll(){set('k-requests',S.requests.length);set('k-pending',pending().length);set('k-missions',activeM().length);set('k-artisans',S.artisans.length);set('k-claims',S.claims.filter(x=>['pending','new'].includes(st(x))).length);renderOverview();renderUrgent();renderNotifications();renderGovernance();renderRafi();applyCanonicalMetrics()}
 
 function renderOverview(){const unv=exactMetric('artisans.to_verify')??'—',u=exactMetric('urgency.active')??'—';
 window.FixeoRafi?.renderTower();
 const recent=[...S.missions].sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||''))).slice(0,8);
 $('#overview-recent').innerHTML=rows(recent,'mission',x=>'Mission '+String(x.id||'').slice(0,8),x=>statusLabel(x.status)+' · commission '+money(x.commission_amount||0),x=>statusLabel(x.status))}
-
-function renderIntelligence(){const cov=coverage(),gaps=cov.filter(x=>x.d>0&&x.s===0),city=topCounts(S.requests,'city')[0]||['—',0],service=topCounts(S.requests,'service_category')[0]||['—',0],available=S.artisans.filter(x=>norm(x.availability)==='available').length;set('i-gaps',gaps.length);set('i-city',city[0]+' · '+city[1]);set('i-service',service[0]+' · '+service[1]);set('i-available',available);
-$('#intel-list').innerHTML=cov.slice(0,80).map(x=>'<div class="row"><b>'+esc(x.key)+'</b><small>Sélection chargée : demandes '+x.d+' · profils référencés '+x.s+'</small><span class="pill">Éligibilité à qualifier</span></div>').join('')||'<div class="empty">Aucun signal de couverture disponible.</div>';
-const top=topCounts(S.requests,'city').slice(0,8),max=Math.max(1,...top.map(x=>x[1]));$('#intel-top').innerHTML=top.map(([k,v])=>'<div class="mini-bar"><b>'+esc(k)+'</b><div class="track"><div class="fill" style="width:'+Math.round(v/max*100)+'%"></div></div><span>'+v+'</span></div>').join('')}
 
 function renderUrgent(){const u=urgentAll(),a=urgentActive(),d=u.filter(terminalReq),old=a.length?Math.max(...a.map(x=>ageMinutes(x.created_at))):0;set('u-requests',u.length);set('u-active',a.length);set('u-done',d.length);set('u-oldest',old?ageLabel(Date.now()-old*60000):'—');
 const arr=[...u].sort((x,y)=>{const w=z=>norm(z.urgency)==='now'?2:1;return w(y)-w(x)||new Date(x.created_at)-new Date(y.created_at)});$('#urgent-list').innerHTML=rows(arr.slice(0,100),'request',x=>(x.service_category||'Urgence')+' · '+(x.city||'—'),x=>urgencyLabel(x.urgency)+' · '+statusLabel(x.status)+' · '+ageLabel(x.created_at),x=>terminalReq(x)?statusLabel(x.status):'À traiter')}
@@ -89,7 +85,7 @@ async function canonicalCommand(capability,id,payload){const out=await window.Fi
 function show(id){if(!viewSources[id])return;currentView=id;const url=new URL(location.href);url.searchParams.set('view',id);history.replaceState(history.state,'',url);load();$$('.section').forEach(x=>x.classList.toggle('active',x.id==='sec-'+id));$$('[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===id));$('#side').classList.remove('open');set('page-title',({overview:'Control Tower',operations:'Operations Command Center',reservations:'Réservations & devis',network:'Network 360',finance:'Finance & Trust',trust:'Claims & Trust',intelligence:'Marketplace Intelligence',urgent:'Urgent Performance',governance:'System & Governance',rafi:'RAFI Decision Center',notifications:'Notifications'}[id]||'Control OS'))}
 
 window.FixeoAdmin={navigate:show};
-document.addEventListener('click',e=>{const v=e.target.closest('[data-view]');if(v){show(v.dataset.view);return}const r=e.target.closest('[data-kind]');if(r){drawer(r.dataset.kind,r.dataset.id);return}if(e.target.closest('#menu')){$('#side').classList.toggle('open');return}if(e.target.closest('#refresh')){load();if(currentView==='operations')window.FixeoOperations.refresh(true);window.FixeoRegisters?.refresh(currentView,true);return}
+document.addEventListener('click',e=>{const v=e.target.closest('[data-view]');if(v){show(v.dataset.view);return}const r=e.target.closest('[data-kind]');if(r){drawer(r.dataset.kind,r.dataset.id);return}if(e.target.closest('#menu')){$('#side').classList.toggle('open');return}if(e.target.closest('#refresh')){load();if(currentView==='operations')window.FixeoOperations.refresh(true);window.FixeoRegisters?.refresh(currentView,true);if(currentView==='intelligence')window.FixeoIntelligence?.refresh(true);return}
 
 const cp=e.target.closest('[data-copy-ref]');if(cp){navigator.clipboard?.writeText(cp.dataset.copyRef);cp.textContent='Copié ✓'}});
 

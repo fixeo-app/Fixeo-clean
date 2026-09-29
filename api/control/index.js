@@ -3,6 +3,7 @@ const {randomUUID}=require('node:crypto');
 const {publicConfig}=require('../supabase-environment');
 const C=require('./contracts');
 const Rafi=require('./rafi-decisions');
+const Marketplace=require('./marketplace-intelligence');
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 class ControlError extends Error{constructor(code,status=400){super(code);this.code=code;this.status=status;}}
 const fail=(code,status)=>{throw new ControlError(code,status);};
@@ -35,10 +36,22 @@ function createHandler({env=process.env,fetchImpl=fetch}={}){
    if(req.headers?.['sec-fetch-site']==='cross-site')fail('ORIGIN_REJECTED',403);
    const body=req.body||{};if(Buffer.byteLength(JSON.stringify(body))>8192)fail('PAYLOAD_TOO_LARGE',413);
    const operation=(req.path||req.url||'').split('?')[0].replace(/^\/api\/control-v1\//,'');
-   if(!['summary','operations','dossier','search','signals','decisions','dispatch-candidates','network-context','action/preview','action/execute','dossier-section','operation-context','hybrid-context','hybrid/preview','hybrid/execute','people','people-context','trust','trust-context','review-history','quotes','quote-context','finance','finance-context'].includes(operation))fail('UNKNOWN_OPERATION',404);
+   if(!['summary','operations','dossier','search','signals','decisions','dispatch-candidates','network-context','action/preview','action/execute','dossier-section','operation-context','hybrid-context','hybrid/preview','hybrid/execute','people','people-context','trust','trust-context','review-history','quotes','quote-context','finance','finance-context','marketplace','marketplace-population','marketplace-coverage'].includes(operation))fail('UNKNOWN_OPERATION',404);
    const client=transport(env,bearer.slice(7),fetchImpl);const user=await client.user();if(!UUID.test(user?.id||''))fail('AUTH_REQUIRED',401);
    let data;
-   if(operation==='decisions'){
+   if(operation.startsWith('marketplace')){
+    allow(body,['filters','after','limit',...(operation==='marketplace-population'?['kind']:[])]);
+    const filters=body.filters??{};allow(filters,['from','to','city','trade','classification','enterprise_id','site_id','horizon_hours']);
+    for(const k of ['enterprise_id','site_id'])if(filters[k]!=null)id(filters[k]);
+    if(operation==='marketplace'){
+     const entries=await Promise.all(Marketplace.SOURCES.map(async source=>{try{return[source,Marketplace.sourceState(source,await client.rpc('control_marketplace_cube_v1',{p_source:source,p_filters:filters,p_after:body.after??null,p_limit:body.limit??25}))];}catch(error){return[source,Marketplace.sourceState(source,null,error)];}}));
+     if(entries.some(([,s])=>s.status==='FORBIDDEN'))fail('FORBIDDEN',403);
+     data=Marketplace.build(Object.fromEntries(entries));
+    }else if(operation==='marketplace-population'){
+     if(!['cohort','previous','open','waiting','profiles','claimable','verification_ready'].includes(body.kind))fail('INVALID_FILTER');
+     data=await client.rpc('control_marketplace_population_v1',{p_kind:body.kind,p_filters:filters,p_after:body.after??null,p_limit:body.limit??25});
+    }else data=await client.rpc('control_marketplace_coverage_v1',{p_filters:filters,p_after:id(body.after,true),p_limit:body.limit??5});
+   }else if(operation==='decisions'){
     allow(body,['classification']);
     const classification=body.classification??'all';
     if(!['all','production','test','internal','unclassified'].includes(classification))fail('INVALID_CLASSIFICATION');
