@@ -15,8 +15,9 @@ function locs(xml) {
   return [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
 }
 function meta(html, name) {
-  const re = new RegExp('<meta[^>]+name=["\\']' + name + '["\\'][^>]+content=["\\']([^"\\']*)["\\']', 'i');
-  return (html.match(re) || [])[1] || '';
+  const tags = html.match(/<meta\\b[^>]*>/gi) || [];
+  const tag = tags.find(t => new RegExp(`name=["']${name}["']`, 'i').test(t));
+  return tag ? ((tag.match(/content=["']([^"']*)["']/i) || [])[1] || '') : '';
 }
 function canonical(html) {
   return (html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i) || [])[1] || '';
