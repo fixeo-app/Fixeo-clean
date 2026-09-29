@@ -21,6 +21,7 @@ on:
       - 'js/fixeo-control-client-v1.js'
       - 'js/admin-control-os-clean.js'
       - 'js/admin-control-command-ux.js'
+      - 'js/admin-control-observability.js'
       - 'css/admin-control-command-ux.css'
       - 'docs/control-os/bloc8/**'
       - 'admin.html'
