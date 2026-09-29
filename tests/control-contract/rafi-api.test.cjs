@@ -1,0 +1,22 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {createHandler}=require('../../api/control');
+const uid='00000000-0000-4000-8000-000000000003';
+const env={SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_SYNTHETIC',FIXEO_STAGING_PROJECT_REF:'abcdefghijklmnopqrst',VERCEL_ENV:'preview',VERCEL_URL:'test.vercel.app'};
+const reply=(data,status=200)=>({ok:status<400,status,text:async()=>JSON.stringify(data)});
+async function run(operation,body={},fetchImpl,headers={authorization:'Bearer synthetic.not_a_real_token'}){
+ const res={setHeader(){},status(s){this.statusCode=s;return this;},json(j){this.body=j;return this;}};
+ await createHandler({env,fetchImpl})({method:'POST',url:'/api/control-v1/'+operation,headers,body},res);return res;
+}
+const empty=source=>({contract_version:'rafi-observations-v1',source,as_of:new Date().toISOString(),observations:[],total_observations:0,has_more:false});
+test('RAFI API rejects anon before contacting any backend',async()=>{for(const op of ['decisions','dispatch-candidates','network-context'])assert.equal((await run(op,{},()=>{throw Error('unexpected');},{})).statusCode,401);});
+test('RAFI API verifies the user and invokes only the five fixed RPC sources in parallel',async()=>{let active=0,maximum=0;const calls=[];
+ const r=await run('decisions',{classification:'test'},async(url,options)=>{calls.push({url,options});if(url.endsWith('/user'))return reply({id:uid});active++;maximum=Math.max(active,maximum);await new Promise(resolve=>setImmediate(resolve));active--;const body=JSON.parse(options.body);assert.equal(body.p_classification,'test');return reply(empty(body.p_source));});
+ assert.equal(r.statusCode,200);assert.equal(r.body.status,'FRESH');assert.equal(calls.length,6);assert.equal(maximum,5);assert.equal(r.body.decisions.length,0);
+ for(const c of calls){assert.equal(c.options.headers.apikey,'sb_publishable_SYNTHETIC');assert.equal(c.options.headers.Authorization,'Bearer synthetic.not_a_real_token');assert.ok(!c.url.includes('service_role'));}
+});
+test('RAFI API role denial fails closed without returning other sources',async()=>{const r=await run('decisions',{},async(url,o)=>url.endsWith('/user')?reply({id:uid}):JSON.parse(o.body).p_source==='finance'?reply({code:'42501',message:'FORBIDDEN'},403):reply(empty(JSON.parse(o.body).p_source)));assert.equal(r.statusCode,403);assert.equal(r.body.code,'FORBIDDEN');assert.equal(r.body.decisions,undefined);});
+test('RAFI API source timeout is partial with explicit error and null counts',async()=>{const r=await run('decisions',{},async(url,o)=>{if(url.endsWith('/user'))return reply({id:uid});const source=JSON.parse(o.body).p_source;if(source==='network'){const e=Error('timeout');e.name='TimeoutError';throw e;}return reply(empty(source));});assert.equal(r.statusCode,200);assert.equal(r.body.status,'PARTIAL');assert.equal(r.body.sources.network.error,'SOURCE_TIMEOUT');assert.equal(r.body.sources.network.total_observations,null);});
+test('RAFI API never accepts model-selected RPCs, user IDs, or tenant mutation capabilities',async()=>{const fetchImpl=async()=>reply({id:uid});for(const body of [{rpc:'arbitrary'},{user_id:uid},{source:'private'},{classification:'secret'}])assert.equal((await run('decisions',body,fetchImpl)).statusCode,400);assert.equal((await run('network-context',{city:'Fès',trade:'plomberie',table:'users'},fetchImpl)).statusCode,400);assert.equal((await run('dispatch-candidates',{request_id:'invalid'},fetchImpl)).statusCode,400);});
+test('RAFI API context navigation uses its read-only fixed RPC with typed cursor',async()=>{const calls=[];const r=await run('network-context',{city:'Fès',trade:'plomberie',state:'unclaimed',classification:'unclassified',after:uid},async(url,o)=>{if(url.endsWith('/user'))return reply({id:uid});calls.push({url,body:JSON.parse(o.body)});return reply({items:[],has_more:false});});assert.equal(r.statusCode,200);assert.ok(calls[0].url.endsWith('/control_rafi_network_list_v1'));assert.equal(calls[0].body.p_state,'unclaimed');assert.equal(calls[0].body.p_classification,'unclassified');assert.equal(calls[0].body.p_after,uid);});
+test('RAFI API rejects cross-origin requests',async()=>{const r=await run('decisions',{},()=>{throw Error('unexpected');},{authorization:'Bearer synthetic.not_a_real_token',origin:'https://hostile.invalid'});assert.equal(r.statusCode,403);assert.equal(r.body.code,'ORIGIN_REJECTED');});

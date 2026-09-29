@@ -1,0 +1,184 @@
+{
+  "preview": "https://fixeo-clean-h1jmjtjkm-elalaouibiz-3410s-projects.vercel.app",
+  "sha": "fa733c9996eb8dc0887960f6387274e31be44ea4",
+  "environment": "kqyhusnbybsukbcaoqtu",
+  "started_at": "2026-09-29T03:09:15.468Z",
+  "production_mutated": false,
+  "checks": [
+    {
+      "name": "Preview public config pins isolated staging; Production ref absent",
+      "status": "PASS",
+      "duration_ms": 7926
+    },
+    {
+      "name": "HTTP and deployed assets equal candidate bytes",
+      "status": "PASS",
+      "duration_ms": 14050
+    },
+    {
+      "name": "Anonymous denied on all RAFI API routes",
+      "status": "PASS",
+      "duration_ms": 11931
+    },
+    {
+      "name": "Non-admin API denied / client",
+      "status": "PASS",
+      "duration_ms": 22230
+    },
+    {
+      "name": "Non-admin API denied / artisan",
+      "status": "PASS",
+      "duration_ms": 21641
+    },
+    {
+      "name": "Non-admin API denied / client_other",
+      "status": "PASS",
+      "duration_ms": 22172
+    },
+    {
+      "name": "Non-admin API denied / enterprise_owner",
+      "status": "PASS",
+      "duration_ms": 23276
+    },
+    {
+      "name": "Non-admin API denied / enterprise_operations",
+      "status": "PASS",
+      "duration_ms": 19809
+    },
+    {
+      "name": "Non-admin API denied / enterprise_viewer",
+      "status": "PASS",
+      "duration_ms": 22178
+    },
+    {
+      "name": "Non-admin API denied / enterprise_b_owner",
+      "status": "PASS",
+      "duration_ms": 24416
+    },
+    {
+      "name": "Non-admin API denied / enterprise_b_operations",
+      "status": "PASS",
+      "duration_ms": 23040
+    },
+    {
+      "name": "Non-admin API denied / enterprise_b_viewer",
+      "status": "PASS",
+      "duration_ms": 21580
+    },
+    {
+      "name": "Non-admin API denied / workforce",
+      "status": "PASS",
+      "duration_ms": 22296
+    },
+    {
+      "name": "Non-admin API denied / artisan_other",
+      "status": "PASS",
+      "duration_ms": 22097
+    },
+    {
+      "name": "Non-admin API denied / enterprise_site_manager",
+      "status": "PASS",
+      "duration_ms": 25544
+    },
+    {
+      "name": "Non-admin API denied / claimant_a",
+      "status": "PASS",
+      "duration_ms": 22759
+    },
+    {
+      "name": "Non-admin API denied / claimant_b",
+      "status": "PASS",
+      "duration_ms": 21927
+    },
+    {
+      "name": "Admin briefing preserves real provenance, bounded partial state and no-store",
+      "status": "PASS",
+      "duration_ms": 7037,
+      "state": "PARTIAL",
+      "decisions": 212,
+      "sources": {
+        "operations": {
+          "status": "PARTIAL",
+          "total": 268,
+          "returned": 200
+        },
+        "network": {
+          "status": "FRESH",
+          "total": 3,
+          "returned": 3
+        },
+        "trust": {
+          "status": "FRESH",
+          "total": 1,
+          "returned": 1
+        },
+        "finance": {
+          "status": "FRESH",
+          "total": 6,
+          "returned": 6
+        },
+        "enterprise": {
+          "status": "FRESH",
+          "total": 4,
+          "returned": 4
+        }
+      }
+    },
+    {
+      "name": "Contextual network navigation and canonical dossier round trip",
+      "status": "PASS",
+      "duration_ms": 18063
+    },
+    {
+      "name": "Payload, origin, method and confirmation gates hold on deployed API",
+      "status": "PASS",
+      "duration_ms": 27706
+    }
+  ],
+  "assets": [
+    {
+      "path": "admin.html",
+      "sha256": "768cdc59bb663f5c8f371f9dfae5c9a09ee90cdc814580d951c9005a25def052",
+      "http_sha256": "491821a0885ed411a29bda6eb67162d986fcec445f5bbd8e71b046685a1cfb50",
+      "vercel_toolbar_appended": true,
+      "status": 200
+    },
+    {
+      "path": "admin-control-os.html",
+      "sha256": "768cdc59bb663f5c8f371f9dfae5c9a09ee90cdc814580d951c9005a25def052",
+      "http_sha256": "491821a0885ed411a29bda6eb67162d986fcec445f5bbd8e71b046685a1cfb50",
+      "vercel_toolbar_appended": true,
+      "status": 200
+    },
+    {
+      "path": "js/admin-rafi-decision-center.js",
+      "sha256": "48faffa36465a1a7f952a26308bf438279c2661aa6c7970547bfb89c2c1c4660",
+      "http_sha256": "48faffa36465a1a7f952a26308bf438279c2661aa6c7970547bfb89c2c1c4660",
+      "vercel_toolbar_appended": false,
+      "status": 200
+    },
+    {
+      "path": "js/admin-control-os-clean.js",
+      "sha256": "51b907313928b82a3962cd6c3179881da5920ca8d4a7f7a0218a0c72c39dc0bf",
+      "http_sha256": "51b907313928b82a3962cd6c3179881da5920ca8d4a7f7a0218a0c72c39dc0bf",
+      "vercel_toolbar_appended": false,
+      "status": 200
+    },
+    {
+      "path": "js/fixeo-control-client-v1.js",
+      "sha256": "fefd3970b41ff6628d58f2e44e5ec9359209c0f44b1fd0ca1ff6b20e7932b0c9",
+      "http_sha256": "fefd3970b41ff6628d58f2e44e5ec9359209c0f44b1fd0ca1ff6b20e7932b0c9",
+      "vercel_toolbar_appended": false,
+      "status": 200
+    },
+    {
+      "path": "css/admin-rafi-decision-center.css",
+      "sha256": "ad7d05a32a1d7734fe2c5f546ec3637771062c104eb263a84d0c76023dbaa4c5",
+      "http_sha256": "ad7d05a32a1d7734fe2c5f546ec3637771062c104eb263a84d0c76023dbaa4c5",
+      "vercel_toolbar_appended": false,
+      "status": 200
+    }
+  ],
+  "verdict": "PASS",
+  "finished_at": "2026-09-29T03:15:57.150Z"
+}

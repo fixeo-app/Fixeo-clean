@@ -1,12 +1,20 @@
 name: Control contract isolated certification
 on:
   push:
-    branches: [feat/control-os-bloc1-contract]
+    branches: [feat/control-os-bloc1-contract, feat/control-os-bloc2-rafi-decision-center]
   pull_request:
     paths:
       - 'api/control/**'
       - 'tests/control-contract/**'
+      - 'tests/admin-control-os/cross-universe-contract.test.cjs'
       - 'supabase/migrations/*control_os_b1*'
+      - 'supabase/migrations/*control_os_b2*'
+      - 'js/admin-rafi-decision-center.js'
+      - 'js/fixeo-control-client-v1.js'
+      - 'js/admin-control-os-clean.js'
+      - 'admin.html'
+      - 'admin-control-os.html'
+      - 'css/admin-rafi-decision-center.css'
       - '.github/workflows/control-contract.yml'
 permissions:
   contents: read
@@ -38,3 +46,4 @@ jobs:
         working-directory: tests/control-contract
         env:
           CONTROL_TEST_DATABASE_URL: postgresql://postgres:synthetic-ci-only@127.0.0.1:5432/control_contract
+      - run: node --test tests/admin-control-os/cross-universe-contract.test.cjs

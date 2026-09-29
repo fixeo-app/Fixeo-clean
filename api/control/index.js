@@ -2,6 +2,7 @@
 const {randomUUID}=require('node:crypto');
 const {publicConfig}=require('../supabase-environment');
 const C=require('./contracts');
+const Rafi=require('./rafi-decisions');
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 class ControlError extends Error{constructor(code,status=400){super(code);this.code=code;this.status=status;}}
 const fail=(code,status)=>{throw new ControlError(code,status);};
@@ -34,10 +35,26 @@ function createHandler({env=process.env,fetchImpl=fetch}={}){
    if(req.headers?.['sec-fetch-site']==='cross-site')fail('ORIGIN_REJECTED',403);
    const body=req.body||{};if(Buffer.byteLength(JSON.stringify(body))>8192)fail('PAYLOAD_TOO_LARGE',413);
    const operation=(req.path||req.url||'').split('?')[0].replace(/^\/api\/control-v1\//,'');
-   if(!['summary','operations','dossier','search','signals','action/preview','action/execute'].includes(operation))fail('UNKNOWN_OPERATION',404);
+   if(!['summary','operations','dossier','search','signals','decisions','dispatch-candidates','network-context','action/preview','action/execute'].includes(operation))fail('UNKNOWN_OPERATION',404);
    const client=transport(env,bearer.slice(7),fetchImpl);const user=await client.user();if(!UUID.test(user?.id||''))fail('AUTH_REQUIRED',401);
    let data;
-   if(operation==='summary'||operation==='signals'){
+   if(operation==='decisions'){
+    allow(body,['classification']);
+    const classification=body.classification??'all';
+    if(!['all','production','test','internal','unclassified'].includes(classification))fail('INVALID_CLASSIFICATION');
+    const entries=await Promise.all(Rafi.SOURCES.map(async source=>{
+     try{return [source,Rafi.sourceState(source,await client.rpc('control_rafi_source_v1',{p_source:source,p_classification:classification}))];}
+     catch(error){return [source,Rafi.sourceState(source,null,error)];}
+    }));
+    if(entries.some(([,state])=>state.status==='FORBIDDEN'))fail('FORBIDDEN',403);
+    data=Rafi.build(Object.fromEntries(entries),{classification});
+   }else if(operation==='network-context'){
+    allow(body,['city','trade','state','classification','after','limit']);
+    if(typeof body.city!=='string'||!body.city.trim()||body.city.length>120||typeof body.trade!=='string'||!body.trade.trim()||body.trade.length>80||!['all','available','unverified','unclaimed'].includes(body.state??'all')||!['all','production','test','internal','unclassified'].includes(body.classification??'all')||!Number.isInteger(body.limit??25)||(body.limit??25)<1||(body.limit??25)>50)fail('INVALID_FILTER');
+    data=await client.rpc('control_rafi_network_list_v1',{p_city:body.city,p_trade:body.trade,p_state:body.state??'all',p_classification:body.classification??'all',p_after:id(body.after,true),p_limit:body.limit??25});
+   }else if(operation==='dispatch-candidates'){
+    allow(body,['request_id']);data=await client.rpc('control_rafi_dispatch_read_v1',{p_request_id:id(body.request_id)});
+   }else if(operation==='summary'||operation==='signals'){
     allow(body,operation==='summary'?['classification','source']:['classification']);const classification=body.classification||'all';if(!['all','production','test','internal','unclassified'].includes(classification))fail('INVALID_CLASSIFICATION');
     if(body.source!==undefined&&!C.SOURCES.includes(body.source))fail('INVALID_SOURCE');
     const sources=body.source?[body.source]:C.SOURCES;

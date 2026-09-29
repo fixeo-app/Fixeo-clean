@@ -1,0 +1,76 @@
+{
+  "checked_at": "2026-09-29T03:10:23.554Z",
+  "migration": "20260929021750_control_os_b2_rafi_reads.sql",
+  "sha256": "9dc5872e2bd9647f10ff7a82c389f1ba53afca2a3b66e15b55bbae0b91a97a65",
+  "staging_functions": [
+    {
+      "proname": "control_rafi_dispatch_read_v1",
+      "prosecdef": true,
+      "provolatile": "s",
+      "proconfig": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anon": false,
+      "authenticated": true,
+      "service_role": false
+    },
+    {
+      "proname": "control_rafi_network_list_v1",
+      "prosecdef": true,
+      "provolatile": "s",
+      "proconfig": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anon": false,
+      "authenticated": true,
+      "service_role": false
+    },
+    {
+      "proname": "control_rafi_source_v1",
+      "prosecdef": true,
+      "provolatile": "s",
+      "proconfig": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anon": false,
+      "authenticated": true,
+      "service_role": false
+    }
+  ],
+  "production_presence": [
+    {
+      "observed_at": "2026-09-29 03:09:51.873712+00",
+      "bloc2_functions": 0,
+      "bloc2_migrations": 0
+    }
+  ],
+  "advisors": {
+    "new_warnings": 3,
+    "code": "authenticated_security_definer_function_executable",
+    "rationale": "Intentional authenticated RPC exposure; canonical Admin guard first; anon and service_role have no execute; 14 real non-admin identities denied on all 3 RPCs."
+  },
+  "production": {
+    "deployment_id": "dpl_5yH3sqRzwCfpfrTSwpRhUbToe35r",
+    "sha": "529961f99136c750dad8803870b32e9602372c38",
+    "state": "READY"
+  },
+  "preview": {
+    "deployment_id": "dpl_ApzCFgDtSMWctHQnXsobs6U51GCt",
+    "sha": "fa733c9996eb8dc0887960f6387274e31be44ea4",
+    "state": "READY",
+    "url": "https://fixeo-clean-h1jmjtjkm-elalaouibiz-3410s-projects.vercel.app"
+  },
+  "ci": {
+    "run_id": 36515461849,
+    "job_id": 109236628066,
+    "sha": "fa733c9996eb8dc0887960f6387274e31be44ea4",
+    "tests": 103,
+    "pass": 103,
+    "fail": 0,
+    "skipped": 0,
+    "postgres": "17.6"
+  }
+}

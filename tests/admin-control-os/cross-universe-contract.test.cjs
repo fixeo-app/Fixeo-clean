@@ -1,18 +1,19 @@
 'use strict';
-const fs=require('fs'),path=require('path'),root=path.resolve(__dirname,'../../../..');
-const A=fs.readFileSync(path.join(root,'js/admin-control-os-clean.js'),'utf8');
-const C=fs.readFileSync(path.join(root,'js/fixeo-dashboard-v2.js'),'utf8');
-const AR=fs.readFileSync(path.join(root,'dashboard-artisan-v2.html'),'utf8');
-const E=fs.readFileSync(path.join(root,'dashboard-enterprise.html'),'utf8');
-let n=0,f=0;const t=(x,v)=>{n++;if(v)console.log('PASS',x);else{f++;console.error('FAIL',x)}};
-t('Client and Admin share service_requests',C.includes('service_requests')&&A.includes("q(c,'service_requests'"));
-t('Client and Admin share missions',C.includes('missions')&&A.includes("q(c,'missions'"));
-t('Client and Admin share quotes',C.includes('quotes')&&A.includes("q(c,'quotes'"));
-t('Client and Admin share notifications',C.includes("from('notifications')")&&A.includes("q(c,'notifications'"));
-t('Artisan universe exposes missions',AR.includes('fxav2-sec-missions')&&A.includes("q(c,'missions'"));
-t('Artisan universe exposes quotes',AR.includes('fxck-sec-quotes')&&A.includes("q(c,'quotes'"));
-t('Artisan universe uses real notifications',AR.includes('fixeo-notifications-real-v1.js')&&A.includes("q(c,'notifications'"));
-t('Enterprise universe exists and Admin reads accounts/sites',E.includes('dashboard-enterprise')||E.includes('ENTERPRISE')||E.includes('Enterprise'),A.includes("q(c,'enterprise_accounts'")&&A.includes("q(c,'enterprise_sites'"));
-t('Admin mutations are governed APIs/repository',A.includes('/api/admin/requests/assign')&&A.includes('/api/admin/artisans/verify')&&A.includes('approveClaimRequest'));
-t('Admin has no direct insert/update/delete',!A.includes('.insert(')&&!A.includes('.update(')&&!A.includes('.delete('));
-console.log('TOTAL',n,'PASS',n-f,'FAIL',f);if(f)process.exit(1);
+// Runtime cross-universe contract; replaces the pre-Bloc-1 substring/path assertions.
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const R=require('../../api/control/rafi-decisions');
+const now=Date.parse('2026-09-29T12:00:00Z'),as_of=new Date(now).toISOString();
+function build(input){return R.build(Object.fromEntries(R.SOURCES.map(source=>[source,R.sourceState(source,{contract_version:'rafi-observations-v1',source,as_of,observations:input[source]||[],total_observations:(input[source]||[]).length,has_more:false},null,now)])),{now});}
+const observation=(kind,id,facts,extra={})=>({kind,target_type:'request',target_id:id,count:1,created_at:'2026-09-29T08:00:00Z',reference:'canonical_test_relation',facts,...extra});
+test('Enterprise decisions retain tenant and site without tenant write delegation',()=>{
+ const result=build({enterprise:[observation('enterprise.request','a',{sla:{acceptance_status:'at_risk'}},{enterprise_id:'tenant-a',site_id:'site-a'}),observation('enterprise.request','b',{sla:{acceptance_status:'at_risk'}},{enterprise_id:'tenant-b',site_id:'site-b'})]});
+ assert.equal(result.decisions.length,2);for(const d of result.decisions){const suffix=d.target_id;assert.equal(d.recommended_action.context.enterprise_id,'tenant-'+suffix);assert.equal(d.recommended_action.context.site_id,'site-'+suffix);assert.equal(d.actionability.capability,null);}
+});
+test('Marketplace and Finance keep separate targets and canonical authorities',()=>{
+ const result=build({operations:[observation('quote.review','quote',{quote_version:3},{target_type:'quote'})],finance:[observation('finance.price_missing','mission',{status:'done'},{target_type:'mission'})]});
+ assert.equal(result.decisions.length,2);const quote=result.decisions.find(d=>d.target_id==='quote'),finance=result.decisions.find(d=>d.target_id==='mission');assert.equal(quote.actionability.capability,'quote.approve');assert.equal(finance.actionability.capability,'mission.settle');assert.equal(quote.authority,'Quotes');assert.equal(finance.authority,'Finance + Pricing');
+});
+test('An internal offer is an opportunity, not a promised worker allocation',()=>{
+ const result=build({enterprise:[observation('enterprise.request','request',{mode:'internal_first',valid_internal_offers:2,status:'internal_offered',fallback_due_at:'2026-09-29T11:00:00Z'})]});
+ assert.ok(result.decisions.some(d=>d.decision_type==='enterprise.fallback'));assert.ok(result.decisions.some(d=>d.decision_type==='enterprise.internal_capacity'));assert.ok(result.decisions.every(d=>d.actionability.execution_authorized===false));
+});
