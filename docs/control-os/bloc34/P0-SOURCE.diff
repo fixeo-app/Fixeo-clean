@@ -1,0 +1,30 @@
+--- baseline/admin_settle_mission_v1
++++ P0/admin_settle_mission_v1
+@@ -10,8 +10,10 @@
+  IF p_final_price IS NULL OR p_final_price<=0 OR p_final_price>500000 OR round(p_final_price,2)<>p_final_price OR length(trim(coalesce(p_reason,''))) NOT BETWEEN 3 AND 500 THEN RAISE EXCEPTION 'INVALID_SETTLEMENT'; END IF;
+  SELECT * INTO m FROM public.missions WHERE id=p_mission_id FOR UPDATE;
+  IF NOT FOUND THEN RAISE EXCEPTION 'NOT_FOUND'; END IF;
+- SELECT * INTO r FROM public.service_requests WHERE id::text=m.request_id;
+- IF NOT ((m.status='done' AND r.status IN('completed','validated')) OR (m.status='validated' AND r.status='validated')) THEN RAISE EXCEPTION 'INELIGIBLE_MISSION'; END IF;
++ -- Keep the canonical parent alive until the settlement transaction ends.
++ SELECT * INTO r FROM public.service_requests WHERE id::text=m.request_id FOR KEY SHARE;
++ IF NOT FOUND THEN RAISE EXCEPTION 'REQUEST_NOT_FOUND'; END IF;
++ IF ((m.status='done' AND r.status IN('completed','validated')) OR (m.status='validated' AND r.status='validated')) IS NOT TRUE THEN RAISE EXCEPTION 'INELIGIBLE_MISSION'; END IF;
+  IF m.final_price IS NOT DISTINCT FROM p_final_price THEN RETURN jsonb_build_object('id',m.id,'final_price',m.final_price,'commission_amount',m.commission_amount,'idempotent',true); END IF;
+  IF m.final_price IS DISTINCT FROM p_expected_final_price THEN RAISE EXCEPTION 'STALE_VERSION' USING ERRCODE='40001'; END IF;
+  IF EXISTS(SELECT 1 FROM public.commission_remittances_v1 WHERE mission_id=m.id AND status='confirmed') THEN RAISE EXCEPTION 'CONFIRMED_REMITTANCE_REQUIRES_RECONCILIATION'; END IF;
+--- baseline/control_action_preview_v1
++++ P0/control_action_preview_v1
+@@ -13,7 +13,11 @@
+  j:=fixeo_private.control_row_v1(typ,p_target_id); IF j IS NULL THEN RAISE EXCEPTION 'NOT_FOUND'; END IF;
+  IF p_capability='request.dispatch' AND j->>'enterprise_id' IS NOT NULL THEN RAISE EXCEPTION 'ENTERPRISE_DELEGATION_REQUIRED' USING ERRCODE='42501'; END IF;
+  IF p_capability IN('quote.approve','quote.reject') AND (j->>'status'<>'pending' OR j->>'review_status' NOT IN('submitted','legacy_unreviewed') OR (j->>'quote_version')::integer IS DISTINCT FROM (p_payload->>'version')::integer) THEN RAISE EXCEPTION 'QUOTE_NOT_REVIEWABLE'; END IF;
+- IF p_capability='mission.settle' AND NOT ((j->>'status'='done' AND j->>'request_status' IN('completed','validated')) OR (j->>'status'='validated' AND j->>'request_status'='validated')) THEN RAISE EXCEPTION 'INELIGIBLE_MISSION'; END IF;
++ IF p_capability='mission.settle' THEN
++  PERFORM 1 FROM public.service_requests sr WHERE sr.id::text=j->>'request_id' FOR KEY SHARE;
++  IF NOT FOUND THEN RAISE EXCEPTION 'REQUEST_NOT_FOUND'; END IF;
++  IF ((j->>'status'='done' AND j->>'request_status' IN('completed','validated')) OR (j->>'status'='validated' AND j->>'request_status'='validated')) IS NOT TRUE THEN RAISE EXCEPTION 'INELIGIBLE_MISSION'; END IF;
++ END IF;
+  IF p_capability='request.dispatch' AND (j->>'status'<>'new' OR p_payload->>'artisan_id' IS NULL) THEN RAISE EXCEPTION 'REQUEST_NOT_DISPATCHABLE'; END IF;
+  IF p_capability IN('claim.approve','claim.reject') AND j->>'status'<>'pending' THEN RAISE EXCEPTION 'CLAIM_NOT_PENDING'; END IF;
+  IF p_capability LIKE 'finance.%' AND (j->>'final_price' IS NULL OR (j->>'status'='validated' AND j->>'completed_at' IS NULL) OR NOT ((j->>'status'='done' AND j->>'request_status' IN('completed','validated')) OR (j->>'status'='validated' AND j->>'request_status'='validated'))) AND p_capability<>'finance.cancel' THEN RAISE EXCEPTION 'COMMISSION_NOT_DUE'; END IF;

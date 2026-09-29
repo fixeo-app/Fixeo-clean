@@ -10,3 +10,9 @@ En cas de nécessité de rollback Production : STOP du mandat et signalement pr�
 4. Conserver les aperçus et audits existants. Une affectation/relance réelle éventuellement effectuée par un opérateur reste un événement métier légitime et n’est pas annulée par un rollback applicatif.
 
 La sauvegarde manuelle Supabase PHYSICAL du 29/09/2026 00:11:57 UTC a été fournie dans la conversation, avec Restore disponible attesté. Aucune restauration n’est exécutée. Les comparaisons avant/après cutover doivent prouver que seuls les objets attendus ont été ajoutés et que les données métier sont inchangées pendant la migration.
+
+## Guard P0 mission.settle
+
+Le rollback applicatif et `rollback.sql` conservent le guard P0 : ses signatures sont compatibles avec la baseline B1/B2 et il n'ajoute aucune table. Le test DB/rollback B34 est exécuté avec ce guard déjà installé et vérifie qu'il reste intact après retrait des onze fonctions B34.
+
+Ne pas restaurer les anciens corps de `admin_settle_mission_v1` et `control_action_preview_v1` : cela réintroduirait le règlement d'une mission sans demande. Si le guard nécessite une correction, suspendre le cutover et préparer un correctif ciblé, sans retirer le refus d'une demande absente. Aucun rollback ne modifie les missions historiques ni ne recrée leurs demandes.

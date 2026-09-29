@@ -28,3 +28,10 @@
 - `tests/control-contract/staging/bloc34.cjs`
 - `vercel.json`
 - `docs/control-os/bloc34/FILES.md`
+- `docs/control-os/bloc34/P0-INTEGRITY.md`
+- `docs/control-os/bloc34/P0-SOURCE.diff`
+- `docs/control-os/bloc34/evidence/p0-staging.json`
+- `supabase/migrations/20260929142337_control_os_b34_settlement_integrity_guard.sql`
+- `tests/control-contract/fixture.cjs`
+- `tests/control-contract/settlement-integrity.test.cjs`
+- `tests/control-contract/staging/settlement-integrity.cjs`

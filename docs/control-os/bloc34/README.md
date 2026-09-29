@@ -6,6 +6,8 @@ Reprise vérifiée le 29 septembre 2026 : MAIN / Production `56272c24f1f47649842
 
 Le dossier est une projection des 13 familles canoniques existantes. Réservation et Finance restent respectivement des parcours demande/offre tarifaire et mission/reversement. Aucun dossier miroir, aucune nouvelle table métier, aucune modification des policies, triggers ou RPC métier existants.
 
+Exception ciblée ajoutée après le candidat `543d1f1ae01349a7a734900f3536f9bcc0f87197` : le [guard P0 de règlement](P0-INTEGRITY.md) durcit deux fonctions canoniques existantes pour refuser une demande source absente. La migration B34 initiale reste strictement identique ; aucun calcul, permission ou autre autorité n'est modifié.
+
 - Identité via `control_row_v1`, champs de provenance, ID adressable dans `admin.html?view=operations&dossier=request:<UUID>`.
 - Relations FK / références canoniques paginées ; aucun rapprochement par nom/téléphone.
 - Timeline paginée : timestamps canoniques distingués des audits, acteur/corrélation conservés. Les anciennes images de lignes et les payloads privés ne sont jamais exposés.
