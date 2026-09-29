@@ -72,4 +72,6 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 .rafi-follow-dialog{max-width:560px;width:calc(100% - 32px);border:1px solid #334155;border-radius:18px;padding:24px;color:#f7f8ff;background:#0c1120}
 .rafi-follow-dialog::backdrop{background:#0009}.rafi-follow-dialog label{display:block;margin:16px 0}.rafi-follow-dialog input,.rafi-follow-dialog select{width:100%;min-height:44px}.rafi-follow-buttons{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.rafi-follow-buttons button{min-height:44px}.rafi-follow-row{border-top:1px solid #334155;padding:18px 0;overflow-wrap:anywhere}.rafi-explain dd{margin-left:12px;overflow-wrap:anywhere}.rafi-explain dt{margin-top:8px}.rafi-follow-dialog select{white-space:normal}
 
-.rafi-inline-priority{display:block;color:var(--navy,#173e44);font-size:12px;white-space:normal;overflow-wrap:anywhere}
+.rafi-inline-priority{display:block;color:#9deaf8;font-size:12px;white-space:normal;overflow-wrap:anywhere}
+
+.rafi-decision .btn{min-height:44px;min-width:44px}.rafi-explain summary{min-height:44px;align-content:center}
