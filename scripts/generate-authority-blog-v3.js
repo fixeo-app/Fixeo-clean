@@ -57,7 +57,7 @@ const CATEGORY_IMAGES = {
   plomberie:     'https://www.fixeo.ma/img/blog/plomberie-blog.webp',
   electricite:   'https://www.fixeo.ma/img/blog/electricite-blog.webp',
   serrurerie:    'https://www.fixeo.ma/img/blog/serrurerie-blog.webp',
-  climatisation: 'https://www.fixeo.ma/img/blog/climatisation-blog.webp',
+  climatisation: 'https://www.fixeo.ma/img/blog/climatisation/blog.webp',
   prix:          'https://www.fixeo.ma/img/blog/tarifs-blog.webp',
   urgence:       'https://www.fixeo.ma/img/blog/urgence-blog.webp',
   confiance:     'https://www.fixeo.ma/img/blog/confiance-blog.webp',
@@ -70,7 +70,7 @@ const CATEGORY_HERO_SRC = {
   plomberie:     '/img/blog/plomberie-blog.webp',
   electricite:   '/img/blog/electricite-blog.webp',
   serrurerie:    '/img/blog/serrurerie-blog.webp',
-  climatisation: '/img/blog/climatisation-blog.webp',
+  climatisation: '/img/blog/climatisation/blog.webp',
   prix:          '/img/blog/tarifs-blog.webp',
   urgence:       '/img/blog/urgence-blog.webp',
   confiance:     '/img/blog/confiance-blog.webp',
@@ -93,33 +93,33 @@ const DEFAULT_CTA = { icon: '🔧', label: 'Trouver un artisan vérifié', desc:
 // Format: /service-city (hyphen, SSR LP routes in vercel.json)
 const CATEGORY_LP_LINKS = {
   plomberie: [
-    ['/plombier-casablanca', 'Plombier Casablanca'],
-    ['/plombier-rabat',      'Plombier Rabat'],
-    ['/plombier-marrakech',  'Plombier Marrakech'],
-    ['/plombier-fes',        'Plombier Fès'],
-    ['/plombier-tanger',     'Plombier Tanger'],
-    ['/plombier-agadir',     'Plombier Agadir']
+    ['/plombier/casablanca', 'Plombier Casablanca'],
+    ['/plombier/rabat',      'Plombier Rabat'],
+    ['/plombier/marrakech',  'Plombier Marrakech'],
+    ['/plombier/fes',        'Plombier Fès'],
+    ['/plombier/tanger',     'Plombier Tanger'],
+    ['/plombier/agadir',     'Plombier Agadir']
   ],
   electricite: [
-    ['/electricien-casablanca', 'Electricien Casablanca'],
-    ['/electricien-rabat',      'Electricien Rabat'],
-    ['/electricien-marrakech',  'Electricien Marrakech'],
-    ['/electricien-fes',        'Electricien Fès'],
-    ['/electricien-tanger',     'Electricien Tanger'],
-    ['/electricien-agadir',     'Electricien Agadir']
+    ['/electricien/casablanca', 'Electricien Casablanca'],
+    ['/electricien/rabat',      'Electricien Rabat'],
+    ['/electricien/marrakech',  'Electricien Marrakech'],
+    ['/electricien/fes',        'Electricien Fès'],
+    ['/electricien/tanger',     'Electricien Tanger'],
+    ['/electricien/agadir',     'Electricien Agadir']
   ],
   serrurerie: [
-    ['/serrurier-casablanca', 'Serrurier Casablanca'],
-    ['/serrurier-rabat',      'Serrurier Rabat'],
-    ['/serrurier-marrakech',  'Serrurier Marrakech'],
-    ['/serrurier-fes',        'Serrurier Fès'],
-    ['/serrurier-tanger',     'Serrurier Tanger'],
-    ['/serrurier-agadir',     'Serrurier Agadir']
+    ['/serrurier/casablanca', 'Serrurier Casablanca'],
+    ['/serrurier/rabat',      'Serrurier Rabat'],
+    ['/serrurier/marrakech',  'Serrurier Marrakech'],
+    ['/serrurier/fes',        'Serrurier Fès'],
+    ['/serrurier/tanger',     'Serrurier Tanger'],
+    ['/serrurier/agadir',     'Serrurier Agadir']
   ],
   climatisation: [
-    ['/climatisation-casablanca', 'Climatisation Casablanca'],
-    ['/climatisation-rabat',      'Climatisation Rabat'],
-    ['/climatisation-marrakech',  'Climatisation Marrakech']
+    ['/climatisation/casablanca', 'Climatisation Casablanca'],
+    ['/climatisation/rabat',      'Climatisation Rabat'],
+    ['/climatisation/marrakech',  'Climatisation Marrakech']
   ]
 };
 
@@ -474,8 +474,8 @@ function buildArticlePage(article) {
       </div>
       <div class="blog-cta-v2" aria-label="Appel à l'action">
         <div class="blog-cta-v2-inner">
-          <p class="blog-cta-title">🔧 Besoin d'un artisan vérifié ?</p>
-          <p class="blog-cta-desc">Fixeo vous met en relation avec des professionnels qualifiés dans votre ville au Maroc — devis gratuit, paiement sécurisé après intervention.</p>
+          <p class="blog-cta-title">🔧 Besoin d’un artisan ?</p>
+          <p class="blog-cta-desc">Fixeo vous aide à décrire votre besoin et à consulter des profils professionnels référencés dans votre ville. Le tarif est confirmé avant intervention.</p>
           <div class="blog-cta-btns">
             <a href="/?open=request" class="blog-cta-btn blog-cta-btn-primary">Demander un devis</a>
             <a href="/suivi" class="blog-cta-btn blog-cta-btn-secondary">Suivre mon intervention</a>
