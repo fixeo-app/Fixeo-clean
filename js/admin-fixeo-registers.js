@@ -62,13 +62,13 @@
   const eid=d.entity_type==='enterprise'?d.id:d.summary.enterprise_id;if(eid){const b=document.createElement('button');b.className='btn';b.textContent='Ouvrir Operations dans cette entreprise';b.onclick=()=>{root.FixeoDossier.close();root.FixeoAdmin.navigate('operations');root.FixeoOperations.setContext({view:'operations',enterprise_id:eid,...(d.entity_type==='site'?{site_id:d.id}:{})});};box.append(b);}
  }
 
- async function loadDossier(d,box){if(!box)return;const jobs=[];box.classList.add('register-context');
-  if(Object.hasOwn(types,d.entity_type)){const p=document.createElement('section');box.append(p);jobs.push(loadPeopleDossier(d,p));}
-  if(['artisan','claim','mission'].includes(d.entity_type)){const p=document.createElement('section');box.append(p);jobs.push(loadTrustDossier(d,p));}
-  if(['artisan','claim','mission','quote','remittance'].includes(d.entity_type)){const p=document.createElement('section');box.append(p);jobs.push(loadHistory(d,p));}
-  if(['request','quote'].includes(d.entity_type)){const p=document.createElement('section');box.append(p);jobs.push(loadQuoteDossier(d,p));}
-  if(['mission','remittance'].includes(d.entity_type)){const p=document.createElement('section');box.append(p);jobs.push(loadFinanceDossier(d,p));}
-  await Promise.allSettled(jobs);
+ async function loadDossier(d,box){if(!box)return;const jobs=[];box.replaceChildren();box.classList.add('register-context');box.setAttribute('aria-busy','true');
+  if(Object.hasOwn(types,d.entity_type)){const p=document.createElement('section');p.textContent='Lecture…';box.append(p);jobs.push(loadPeopleDossier(d,p));}
+  if(['artisan','claim','mission'].includes(d.entity_type)){const p=document.createElement('section');p.textContent='Lecture…';box.append(p);jobs.push(loadTrustDossier(d,p));}
+  if(['artisan','claim','mission','quote','remittance'].includes(d.entity_type)){const p=document.createElement('section');p.textContent='Lecture…';box.append(p);jobs.push(loadHistory(d,p));}
+  if(['request','quote'].includes(d.entity_type)){const p=document.createElement('section');p.textContent='Lecture…';box.append(p);jobs.push(loadQuoteDossier(d,p));}
+  if(['mission','remittance'].includes(d.entity_type)){const p=document.createElement('section');p.textContent='Lecture…';box.append(p);jobs.push(loadFinanceDossier(d,p));}
+  await Promise.allSettled(jobs);box.setAttribute('aria-busy','false');
  }
  async function loadFinanceDossier(d,box,more=false){try{
   const r=await root.FixeoControl.request('finance-context',{type:d.entity_type,id:d.id,after:more?d.financeContext?.next_cursor:null,limit:25});if(!box.isConnected)return;
