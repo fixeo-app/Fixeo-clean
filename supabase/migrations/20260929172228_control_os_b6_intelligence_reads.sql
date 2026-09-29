@@ -83,7 +83,7 @@ $$;
 
 CREATE FUNCTION public.control_marketplace_cube_v1(p_source text,p_filters jsonb DEFAULT '{}',p_after jsonb DEFAULT NULL,p_limit integer DEFAULT 25)
 RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path='' AS $$
-DECLARE s jsonb;items jsonb;total bigint;scope_hash text;cursor_key text;
+DECLARE s jsonb;items jsonb;total bigint;scope_hash text;cursor_key text;more boolean;
 BEGIN
  PERFORM fixeo_private.control_require_admin_v1();s:=fixeo_private.control_marketplace_scope_v1(p_filters);scope_hash:=md5(s::text);
  IF p_source IS NULL OR p_source NOT IN('operations','network','commerce') OR p_limit IS NULL OR p_limit NOT BETWEEN 1 AND 50 THEN RAISE EXCEPTION 'INVALID_FILTER';END IF;
@@ -113,10 +113,10 @@ BEGIN
  'quote_requirement','UNKNOWN — absence of quote is not QUOTE_REQUIRED','source','quotes joined to request creation cohort')
  FROM public.quotes q JOIN r ON r.id=q.request_id WHERE r.city IS NOT DISTINCT FROM c.city AND r.trade IS NOT DISTINCT FROM c.trade AND r.created_at>=(s->>'from_utc')::timestamptz AND r.created_at<(s->>'to_utc')::timestamptz)
  END facts FROM page c)
- SELECT coalesce((SELECT jsonb_agg(to_jsonb(data) ORDER BY key COLLATE "C") FROM data),'[]'),(SELECT count(*) FROM cells),(SELECT key FROM page ORDER BY key COLLATE "C" DESC LIMIT 1)
- INTO items,total,cursor_key;
+ SELECT coalesce((SELECT jsonb_agg(to_jsonb(data) ORDER BY key COLLATE "C") FROM data),'[]'),(SELECT count(*) FROM cells),(SELECT key FROM page ORDER BY key COLLATE "C" DESC LIMIT 1),EXISTS(SELECT 1 FROM cells WHERE key COLLATE "C">(SELECT key FROM page ORDER BY key COLLATE "C" DESC LIMIT 1) COLLATE "C")
+ INTO items,total,cursor_key,more;
  RETURN jsonb_build_object('contract_version','marketplace-intelligence-v1','source',p_source,'source_state','FRESH','as_of',now(),'scope',s,'scope_hash',scope_hash,
- 'items',items,'total_cells',total,'has_more',EXISTS(SELECT 1 FROM fixeo_private.control_marketplace_requests_v1(s) r WHERE (r.status IN('new','no_match','assigned','in_progress') OR(r.created_at>=(s->>'previous_from_utc')::timestamptz AND r.created_at<(s->>'to_utc')::timestamptz)) AND jsonb_build_array(r.city,r.trade)::text COLLATE "C">cursor_key COLLATE "C"),
+ 'items',items,'total_cells',total,'has_more',more,
  'next_cursor',CASE WHEN cursor_key IS NOT NULL THEN jsonb_build_object('key',cursor_key,'scope',scope_hash) END,
  'completeness','exact_cells_paged','normalization','marketplace-dimensions-v1 / resolve_service_category_v1; raw dimensions in dossiers',
  'grain','distinct request / distinct artisan per cell; never sum artisans across cells','stock_at',now(),'cohort_window','[from,to)',
@@ -174,6 +174,32 @@ BEGIN
  'next_cursor',CASE WHEN n>p_limit THEN items->(p_limit-1)->>'id' END,'coverage_rate',NULL,'quality','BOUNDED_REQUEST_CHECK; not global coverage','execution_authorized',false,'requires_canonical_preview',true);
 END $$;
 
+-- RAFI consumes the same normalized request/profile facts; priorities remain in its existing engine.
+CREATE FUNCTION public.control_marketplace_signals_v1(p_source text DEFAULT 'network',p_classification text DEFAULT 'all')
+RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path='' AS $$
+DECLARE s jsonb;items jsonb;total bigint;
+BEGIN
+ PERFORM fixeo_private.control_require_admin_v1();IF p_source IS DISTINCT FROM 'network' THEN RAISE EXCEPTION 'INVALID_SOURCE';END IF;
+ s:=fixeo_private.control_marketplace_scope_v1(jsonb_build_object('classification',p_classification));
+ WITH r AS MATERIALIZED(SELECT * FROM fixeo_private.control_marketplace_requests_v1(s) WHERE waiting),
+ a AS MATERIALIZED(SELECT * FROM fixeo_private.control_marketplace_artisans_v1(s)),
+ cells AS(SELECT city,trade,count(*) n,min(created_at) oldest,count(*) FILTER(WHERE urgency IN('now','urgent')) urgent,
+ (array_agg(id ORDER BY created_at NULLS LAST,id))[1:5] sample_ids FROM r GROUP BY city,trade),
+ page AS(SELECT * FROM cells ORDER BY urgent DESC,oldest NULLS LAST,city NULLS LAST,trade NULLS LAST LIMIT 100),
+ observed AS(SELECT 'network.cohort' kind,'cohort' target_type,NULL::uuid target_id,c.city,c.trade service_category,c.oldest created_at,c.n count,c.sample_ids,
+ jsonb_build_object('profiles',count(a.id),'available_profiles',count(a.id) FILTER(WHERE a.availability='available'),
+ 'to_verify',count(a.id) FILTER(WHERE a.verification_ready),'unclaimed',count(a.id) FILTER(WHERE a.claimable),
+ 'verify_ids',(array_agg(a.id ORDER BY a.id) FILTER(WHERE a.verification_ready))[1:5],'claim_ids',(array_agg(a.id ORDER BY a.id) FILTER(WHERE a.claimable))[1:5],
+ 'urgent_count',c.urgent,'total_waiting',(SELECT count(*) FROM r),'match_basis','marketplace-dimensions-v1; canonical multiactivity',
+ 'eligibility','CANONICAL_CHECK_ON_DEMAND','location_known',c.city IS NOT NULL AND c.trade IS NOT NULL,'cube_context',true,'claimable_only',true) facts,
+ 'control_marketplace_requests_v1 + control_marketplace_artisans_v1; raw sources in Cube population dossiers' reference
+ FROM page c LEFT JOIN a ON c.city=ANY(a.cities) AND c.trade=ANY(a.trades) GROUP BY c.city,c.trade,c.oldest,c.n,c.sample_ids,c.urgent)
+ SELECT coalesce((SELECT jsonb_agg(to_jsonb(observed) ORDER BY created_at NULLS LAST,city,service_category) FROM observed),'[]'),(SELECT count(*) FROM cells) INTO items,total;
+ RETURN jsonb_build_object('contract_version','rafi-observations-v1','source','network','as_of',now(),'observations',items,'total_observations',total,'has_more',total>100,'observation_limit',100,
+ 'completeness',CASE WHEN total>100 THEN 'partial' ELSE 'complete' END,'classification',p_classification,'pii','excluded','private_business','excluded','execution_authorized',false);
+END $$;
+REVOKE ALL ON FUNCTION public.control_marketplace_signals_v1(text,text) FROM PUBLIC,anon,authenticated,service_role;
+GRANT EXECUTE ON FUNCTION public.control_marketplace_signals_v1(text,text) TO authenticated;
 REVOKE ALL ON FUNCTION fixeo_private.control_marketplace_dimension_v1(text),fixeo_private.control_marketplace_scope_v1(jsonb),fixeo_private.control_marketplace_requests_v1(jsonb),fixeo_private.control_marketplace_artisans_v1(jsonb) FROM PUBLIC,anon,authenticated,service_role;
 REVOKE ALL ON FUNCTION public.control_marketplace_cube_v1(text,jsonb,jsonb,integer),public.control_marketplace_population_v1(text,jsonb,jsonb,integer),public.control_marketplace_coverage_v1(jsonb,uuid,integer) FROM PUBLIC,anon,authenticated,service_role;
 GRANT EXECUTE ON FUNCTION public.control_marketplace_cube_v1(text,jsonb,jsonb,integer),public.control_marketplace_population_v1(text,jsonb,jsonb,integer),public.control_marketplace_coverage_v1(jsonb,uuid,integer) TO authenticated;

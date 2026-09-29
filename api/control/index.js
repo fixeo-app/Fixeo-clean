@@ -56,7 +56,7 @@ function createHandler({env=process.env,fetchImpl=fetch}={}){
     const classification=body.classification??'all';
     if(!['all','production','test','internal','unclassified'].includes(classification))fail('INVALID_CLASSIFICATION');
     const entries=await Promise.all(Rafi.SOURCES.map(async source=>{
-     try{return [source,Rafi.sourceState(source,await client.rpc('control_rafi_source_v1',{p_source:source,p_classification:classification}))];}
+     try{return [source,Rafi.sourceState(source,await client.rpc(source==='network'?'control_marketplace_signals_v1':'control_rafi_source_v1',{p_source:source,p_classification:classification}))];}
      catch(error){return [source,Rafi.sourceState(source,null,error)];}
     }));
     if(entries.some(([,state])=>state.status==='FORBIDDEN'))fail('FORBIDDEN',403);

@@ -75,7 +75,7 @@
     const d=decision(id);if(!d)return;
     if(d.target_id && d.target_type!=='cohort')return openDossier(d.target_type,d.target_id,d);
     openDrawer(d.title,'Décision RAFI · '+d.decision_id);$('drawer-summary').innerHTML=explain(d);
-    $('drawer-actions').innerHTML=`<p>ACTION DISPONIBLE · ouvrir le contexte</p><button class="btn primary" data-rafi-context="${esc(id)}">Ouvrir ${d.recommended_action.context.view==='network'?'Network 360':'Operations'} filtré</button>`;
+    $('drawer-actions').innerHTML=`<p>ACTION DISPONIBLE · ouvrir le contexte</p><button class="btn primary" data-rafi-context="${esc(id)}">Ouvrir ${d.recommended_action.context.view==='intelligence'?'Marketplace Intelligence':d.recommended_action.context.view==='network'?'Network 360':'Operations'} filtré</button>`;
     if(d.actionability.unavailable_reason)$('drawer-actions').insertAdjacentHTML('beforeend','<p>ACTION MÉTIER NON DISPONIBLE · '+esc(d.actionability.unavailable_reason)+'</p>');
     $('drawer-relations').innerHTML=d.related_ids.map(id=>relation('artisan',id,'Profil prioritaire · '+id.slice(0,8))).join('');
   }
@@ -85,6 +85,7 @@
   async function openContext(id) {
     const d=decision(id);if(!d)return;activeContext={...d.recommended_action.context};contextCursor=null;contextRows=[];
     closeDrawer();root.FixeoAdmin.navigate(activeContext.view);
+    if(activeContext.view==='intelligence'&&root.FixeoIntelligence){root.FixeoIntelligence.setContext({city:activeContext.city??'__unknown__',trade:activeContext.trade??'__unknown__',classification:activeContext.classification});return;}
     if(activeContext.view==='network'&&root.FixeoRegisters){root.FixeoRegisters.setContext('network',{...activeContext,type:'artisan'});return;}
     if(activeContext.view==='operations'&&root.FixeoOperations){root.FixeoOperations.setContext(activeContext);return;}
     await loadContext(false);

@@ -33,7 +33,7 @@ function build(states, {now = Date.now(), classification = 'all'} = {}) {
     const targetType = options.target_type || o.target_type;
     const targetId = options.target_id || o.target_id || null;
     const capability = options.capability || null;
-    const context = {view: options.view || 'operations', city: o.city || null, trade: o.service_category || null, enterprise_id: o.enterprise_id || null, site_id: o.site_id || null, type: targetType, id: targetId, classification, state: options.state || null};
+    const context = {view: o.facts.cube_context ? 'intelligence' : options.view || 'operations', city: o.city || null, trade: o.service_category || null, enterprise_id: o.enterprise_id || null, site_id: o.site_id || null, type: targetType, id: targetId, classification, state: options.state || null};
     const key = [type, targetType, targetId, o.city, o.service_category, o.enterprise_id, o.site_id, classification];
     const authority = capability ? CAPABILITIES[capability].authority : options.authority || 'Control · lecture administrateur';
     const id = 'rafi_' + digest(key);
@@ -45,7 +45,7 @@ function build(states, {now = Date.now(), classification = 'all'} = {}) {
       recommended_action: {kind: 'RECOMMENDATION', text: recommendation, context},
       target_type: targetType, target_id: targetId, city: o.city || null, service_category: o.service_category || null,
       affected_count: o.count, age_minutes: age(o.created_at, now), confidence: 'observed_facts', authority,
-      actionability: {status: 'AVAILABLE', mode: capability ? 'PREPARE' : 'OPEN', capability, rpc: capability ? 'control_action_preview_v1 → control_action_execute_v1' : 'control_dossier_read_v1 / control_operations_list_v1', execution_authorized: false, requires_confirmation: Boolean(capability), preconditions: capability ? ['admin_server_check', 'fresh_dossier', 'canonical_preview', 'domain_recheck'] : ['admin_server_check'], unavailable_reason: options.unavailable_reason || null},
+      actionability: {status: 'AVAILABLE', mode: capability ? 'PREPARE' : 'OPEN', capability, rpc: capability ? 'control_action_preview_v1 → control_action_execute_v1' : o.facts.cube_context ? 'control_marketplace_population_v1 / control_dossier_section_v1' : 'control_dossier_read_v1 / control_operations_list_v1', execution_authorized: false, requires_confirmation: Boolean(capability), preconditions: capability ? ['admin_server_check', 'fresh_dossier', 'canonical_preview', 'domain_recheck'] : ['admin_server_check'], unavailable_reason: options.unavailable_reason || null},
       created_at: o.created_at || null, updated_at: state.as_of, expires_at: new Date(time(state.as_of) + FRESH_MS).toISOString(),
       universes: options.universes || ['OPERATIONS'], related_ids: options.related_ids || [],
     });
@@ -84,7 +84,7 @@ function build(states, {now = Date.now(), classification = 'all'} = {}) {
           }
           const label = where || 'Ville / métier non renseigné';
           if (f.available_profiles === 0) add(source, o, 'network.coverage', f.urgent_count > 0 ? 'P1' : 'P2', `${o.count} demande(s), aucun profil disponible déclaré · ${label}`,
-            [`${f.profiles} profil(s) déclarent cette ville et ce métier ; aucun n’est marqué disponible.`, `${f.urgent_count} demande(s) urgente(s) dans cette cohorte.`, 'Correspondance déclarative exacte, métiers et villes secondaires inclus.'],
+            [`${f.profiles} profil(s) déclarent cette ville et ce métier ; aucun n’est marqué disponible.`, `${f.urgent_count} demande(s) urgente(s) dans cette cohorte.`, f.cube_context?'Dimensions normalisées par les fonctions canoniques, métiers et villes secondaires inclus.':'Correspondance déclarative exacte, métiers et villes secondaires inclus.'],
             'Un manque de couverture locale est possible ; Dispatch peut proposer une proximité autorisée.',
             f.profiles ? 'Examiner les profils existants et la couverture Dispatch.' : 'Prioriser la recherche de profils pour cette ville et ce métier.', {view: 'network', universes: ['CLIENT', 'ARTISAN', 'OPERATIONS'], authority: 'Network · observation ; Dispatch reste souverain'});
           else add(source, o, 'network.capacity', 'P3', `${f.available_profiles} profil(s) disponible(s) pour ${o.count} demande(s) · ${label}`,
@@ -94,7 +94,7 @@ function build(states, {now = Date.now(), classification = 'all'} = {}) {
             ['Profils revendiqués, avec propriétaire et onboarding terminé, non vérifiés.', 'La demande locale détermine l’ordre de revue ; vérifier ne garantit pas la disponibilité.'],
             'Une revue Trust peut améliorer la confiance du réseau mobilisable.', 'Ouvrir les profils prioritaires, vérifier leurs éléments et préparer la vérification.', {view: 'network', state: 'unverified', related_ids: f.verify_ids || [], universes: ['CLIENT', 'ARTISAN', 'TRUST'], authority: 'Trust · artisan.verify'});
           if (f.unclaimed > 0) add(source, o, 'network.activate', f.urgent_count > 0 ? 'P2' : 'P3', `${f.unclaimed} profil(s) à revendiquer · ${label}`,
-            [`${o.count} demande(s) attendent dans cette cohorte.`, 'Profils sans propriétaire et non revendiqués ; aucune disponibilité future présumée.'],
+            [`${o.count} demande(s) attendent dans cette cohorte.`, f.claimable_only?'Profils revendicables, sans propriétaire ni claim pending ; aucune disponibilité future présumée.':'Profils sans propriétaire et non revendiqués ; aucune disponibilité future présumée.'],
             'Une activation légitime de ces profils pourrait renforcer le réseau local.', 'Examiner les profils existants à activer ; la revendication reste celle de leur propriétaire.', {view: 'network', state: 'unclaimed', related_ids: f.claim_ids || [], universes: ['CLIENT', 'ARTISAN', 'TRUST'], authority: 'Claims · propriétaire puis revue Admin', unavailable_reason: 'RAFI ne revendique pas un profil à la place de son propriétaire.'});
           if (f.total_waiting >= 10 && o.count / f.total_waiting >= 0.5) add(source, o, 'network.concentration', 'P3', `${o.count} / ${f.total_waiting} demandes en attente · ${label}`, ['Au moins la moitié du backlog courant appartient à cette cohorte.', 'Absence de référence historique : aucune anomalie statistique affirmée.'], 'Cette concentration peut amplifier les délais locaux.', 'Examiner la couverture et les demandes de cette cohorte.', {universes: ['CLIENT', 'ARTISAN', 'OPERATIONS']});
           break;

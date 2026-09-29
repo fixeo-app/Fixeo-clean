@@ -27,3 +27,13 @@ Public readers: `control_marketplace_cube_v1`, `control_marketplace_population_v
 API timeout/source errors remain explicit, with null source facts. UI reuses the Universal Dossier, pages exact populations, escapes source values, and rejects late responses to obsolete filters. The previous bounded browser-array Marketplace screen is replaced, not patched in parallel.
 
 Gate 6.1: 13 isolated DB tests + 5 API tests + 4 DOM interaction tests PASS (0 fail/skip). Browser rendering and final remote CI remain candidate gates.
+
+Additional gate evidence: 45 targeted B3/B5/RAFI API/UI/cross-universe tests PASS. A 2,000-request / 40-cell isolated population returned 25 cells in 102 ms and 11,193 bytes; no index/materialization added. This is a local measurement, not a Production latency claim. Normalized RAFI evidence and the exact population/Dossier navigation are covered by the 6.2 integration tests.
+
+## 6.2 Activation / recruitment
+
+The same Cube facts drive deterministic recommendations: no locally referenced profile, declared unavailability (only when none are unknown), profiles ready for verification, and genuinely claimable profiles without pending claims. A missing declared network is a fact; a structural gap or improvement after activation remains an inference. No staffing target, future revenue or marketing causality is generated. Priorities reuse RAFI's P1/P2/P3 network rules; no artificial P0 is introduced.
+
+`control_marketplace_signals_v1` replaces the network observation read in the existing five-source RAFI API without changing the old RPC or other source authorities. It uses the same sealed request/network facts, retains a bounded observation window with explicit completeness, and opens the exact normalized Cube context. Recommendations navigate to paginated real populations and Universal Dossier; claims/verification/dispatch still require their existing server-authorized workflows. No campaign, claim or business command runs from the Cube.
+
+Gate 6.2: 30 relevant API/UI/engine/DB/performance checks PASS after correcting the isolated audit assertion to compare before/after reads (fixture insertion itself is audited). No product guard was weakened. Native browser rendering remains the final candidate gate.
