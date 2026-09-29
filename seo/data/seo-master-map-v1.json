@@ -1,0 +1,223 @@
+{
+  "version": "seo-master-map-v1",
+  "generated_at": "2026-09-29",
+  "source_window": {
+    "start": "2026-06-28",
+    "end": "2026-09-27",
+    "settled_through": "2026-09-27"
+  },
+  "rules": {
+    "canonical_host": "https://www.fixeo.ma",
+    "canonical_shapes": {
+      "service": "/{service}",
+      "service_city": "/{service}/{city}",
+      "service_city_district": "/{service}/{city}/{district}",
+      "problem_city": "/{problem}/{city}",
+      "price_city": "/prix/{service}/{city}",
+      "blog": "/blog/{slug}",
+      "artisan": "/artisan/{public_slug}"
+    },
+    "statuses": [
+      "KEEP",
+      "UPGRADE",
+      "MERGE",
+      "REDIRECT",
+      "HOLD",
+      "NOINDEX"
+    ]
+  },
+  "wave1": [
+    {
+      "intent": "plombier tanger",
+      "master": "/plombier/tanger",
+      "status": "UPGRADE",
+      "legacy": [
+        "/plombier-tanger",
+        "/plombier-tanger.html"
+      ],
+      "support": [
+        "/prix/plomberie/tanger",
+        "/fuite-eau/tanger",
+        "/wc-bouche/tanger"
+      ],
+      "note": "legacy flat URL still carries most recent visibility; preserve 301 and strengthen clean canonical"
+    },
+    {
+      "intent": "plombier oujda",
+      "master": "/plombier/oujda",
+      "status": "UPGRADE",
+      "legacy": [
+        "/plombier-oujda",
+        "/plombier-oujda.html"
+      ],
+      "support": [
+        "/prix/plomberie/oujda",
+        "/fuite-eau/oujda",
+        "/wc-bouche/oujda"
+      ],
+      "note": "price page and legacy page split authority"
+    },
+    {
+      "intent": "plombier nador",
+      "master": "/plombier/nador",
+      "status": "KEEP",
+      "legacy": [
+        "/plombier-nador",
+        "/plombier-nador.html"
+      ],
+      "support": [
+        "/prix/plomberie/nador",
+        "/fuite-eau/nador",
+        "/wc-bouche/nador"
+      ],
+      "note": "clean URL already winning"
+    },
+    {
+      "intent": "plombier tetouan",
+      "master": "/plombier/tetouan",
+      "status": "UPGRADE",
+      "legacy": [
+        "/plombier-tetouan",
+        "/plombier-tetouan.html"
+      ],
+      "support": [
+        "/prix/plomberie/tetouan",
+        "/fuite-eau/tetouan",
+        "/wc-bouche/tetouan"
+      ],
+      "note": "legacy + artisan profiles split query"
+    },
+    {
+      "intent": "serrurier casablanca",
+      "master": "/serrurier/casablanca",
+      "status": "UPGRADE",
+      "legacy": [
+        "/serrurier-casablanca",
+        "/serrurier-casablanca.html"
+      ],
+      "support": [
+        "/prix/serrurerie/casablanca",
+        "/porte-bloquee/casablanca",
+        "/serrure-cassee/casablanca"
+      ],
+      "note": "strong impression volume but weak CTR and legacy flat signal"
+    },
+    {
+      "intent": "serrurier tanger",
+      "master": "/serrurier/tanger",
+      "status": "UPGRADE",
+      "legacy": [
+        "/serrurier-tanger",
+        "/serrurier-tanger.html"
+      ],
+      "support": [
+        "/prix/serrurerie/tanger",
+        "/porte-bloquee/tanger",
+        "/serrure-cassee/tanger"
+      ],
+      "note": "price page + profile dominate"
+    },
+    {
+      "intent": "serrurier oujda",
+      "master": "/serrurier/oujda",
+      "status": "UPGRADE",
+      "legacy": [
+        "/serrurier-oujda",
+        "/serrurier-oujda.html"
+      ],
+      "support": [
+        "/prix/serrurerie/oujda",
+        "/porte-bloquee/oujda",
+        "/serrure-cassee/oujda"
+      ],
+      "note": "legacy and price pages stronger than clean URL"
+    },
+    {
+      "intent": "serrurier marrakech",
+      "master": "/serrurier/marrakech",
+      "status": "UPGRADE",
+      "legacy": [
+        "/serrurier-marrakech",
+        "/serrurier-marrakech.html"
+      ],
+      "support": [
+        "/prix/serrurerie/marrakech",
+        "/porte-bloquee/marrakech",
+        "/serrure-cassee/marrakech"
+      ],
+      "note": "profiles + multiple local URLs split query"
+    },
+    {
+      "intent": "electricien rabat",
+      "master": "/electricien/rabat",
+      "status": "UPGRADE",
+      "legacy": [
+        "/electricien-rabat",
+        "/electricien-rabat.html"
+      ],
+      "support": [
+        "/prix/electricite/rabat",
+        "/panne-electrique/rabat",
+        "/disjoncteur-saute/rabat"
+      ],
+      "note": "artisan profiles currently outrank landing"
+    },
+    {
+      "intent": "climatisation oujda",
+      "master": "/climatisation/oujda",
+      "status": "UPGRADE",
+      "legacy": [
+        "/climatisation-oujda",
+        "/climatisation-oujda.html"
+      ],
+      "support": [
+        "/prix/climatisation/oujda",
+        "/climatisation-en-panne/oujda",
+        "/blog/recharge-gaz-climatisation"
+      ],
+      "note": "price intent currently captures generic query"
+    },
+    {
+      "intent": "climatisation agadir",
+      "master": "/climatisation/agadir",
+      "status": "UPGRADE",
+      "legacy": [
+        "/climatisation-agadir",
+        "/climatisation-agadir.html"
+      ],
+      "support": [
+        "/prix/climatisation/agadir",
+        "/climatisation-en-panne/agadir",
+        "/blog/climatisation-agadir"
+      ],
+      "note": "blog currently owns generic query; reposition blog to informational support"
+    }
+  ],
+  "protected_blog": [
+    {
+      "url": "/blog/recharge-gaz-climatisation",
+      "status": "KEEP_UPGRADE",
+      "reason": "62 clicks / 1628 impressions / avg position 6.4 over audit window"
+    },
+    {
+      "url": "/blog/compteur-electrique-probleme",
+      "status": "KEEP_UPGRADE",
+      "reason": "14 clicks / 337 impressions"
+    },
+    {
+      "url": "/blog/climatisation-agadir",
+      "status": "REPOSITION_SUPPORT",
+      "reason": "generic local query currently resolves to blog"
+    },
+    {
+      "url": "/blog/pression-eau-faible-maison",
+      "status": "KEEP_UPGRADE",
+      "reason": "9 clicks / 86 impressions"
+    },
+    {
+      "url": "/blog/serrure-3-points-installation",
+      "status": "KEEP_UPGRADE",
+      "reason": "9 clicks / 87 impressions"
+    }
+  ]
+}
