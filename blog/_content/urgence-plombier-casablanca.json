@@ -3,22 +3,37 @@
   "category": "urgence",
   "service": "plombier",
   "city": "casablanca",
-  "title": "Plombier urgence Casablanca 24h/7 : fuite, WC bouché, intervention rapide",
-  "meta_description": "Plombier urgence Casablanca disponible 24h/24 et 7j/7. Fuite d'eau, WC bouché, tuyau éclaté — intervention en 30 à 60 min. Trouver un plombier maintenant.",
+  "title": "Urgence plomberie à Casablanca : fuite, WC bouché, premiers réflexes",
+  "meta_description": "Fuite d'eau, WC bouché ou tuyau endommagé à Casablanca : les premiers gestes à faire, les informations à préparer et comment demander une intervention via FIXEO.",
   "date": "2026-06-12",
   "hero_image": "/img/blog/urgence-plombier.webp",
-  "tags": ["plombier", "urgence", "casablanca", "24h", "fuite"],
+  "tags": [
+    "plombier",
+    "urgence",
+    "casablanca",
+    "24h",
+    "fuite"
+  ],
   "estimated_read_min": 4,
-  "related_articles": ["urgence-plombier-fes", "prix-plombier-maroc", "comment-choisir-plombier-maroc"],
-  "internal_links": ["/plombier/casablanca", "/plombier/mohammedia", "/plombier/sale"],
+  "related_articles": [
+    "urgence-plombier-fes",
+    "prix-plombier-maroc",
+    "comment-choisir-plombier-maroc"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/fuite-eau/casablanca",
+    "/wc-bouche/casablanca",
+    "/prix/plomberie/casablanca"
+  ],
   "faq": [
     {
       "q": "En combien de temps un plombier urgence arrive à Casablanca ?",
-      "a": "La plupart des plombiers d'urgence à Casablanca (Maarif, Ain Diab, Hay Hassani, Belvédère) interviennent en 30 à 60 minutes selon leur localisation et le trafic. Via Fixeo, vous êtes mis en relation avec le plombier disponible le plus proche."
+      "a": "Le délai varie selon le secteur, le trafic et la disponibilité réelle du professionnel. FIXEO ne garantit pas un délai fixe : la disponibilité est confirmée lors de la prise en charge de la demande."
     },
     {
       "q": "Combien coûte un plombier urgence la nuit à Casablanca ?",
-      "a": "Une intervention d'urgence nocturne (après 20h) à Casablanca coûte en moyenne entre 400 et 800 MAD, selon la nature de la panne et la durée d'intervention. Un plombier peut donner une estimation par téléphone avant de se déplacer."
+      "a": "Le coût dépend de la panne, de l'horaire, des fournitures et du déplacement. Demandez une estimation avant intervention ; le tarif définitif doit être confirmé par le professionnel avant le début des travaux."
     },
     {
       "q": "Que faire en attendant le plombier en cas de fuite ?",
@@ -26,7 +41,7 @@
     },
     {
       "q": "Y a-t-il des plombiers disponibles le vendredi et le dimanche à Casablanca ?",
-      "a": "Oui, plusieurs plombiers à Casablanca sont disponibles 7j/7 y compris les jours fériés. Les plombiers d'urgence sur Fixeo sont sélectionnés pour leur disponibilité en dehors des heures ouvrées."
+      "a": "Certains professionnels peuvent proposer des créneaux le vendredi, le dimanche ou en dehors des horaires habituels. La disponibilité doit être confirmée au moment de la demande."
     }
   ],
   "sections": [
@@ -67,19 +82,43 @@
     },
     {
       "type": "h2",
-      "title": "Tarifs urgence plombier à Casablanca",
-      "content": "Les interventions d'urgence comportent une majoration sur le tarif standard. Voici les fourchettes pratiquées à Casablanca en 2025."
+      "title": "Tarifs urgence plomberie à Casablanca",
+      "content": "Les interventions d'urgence comportent une majoration sur le tarif standard. Voici les fourchettes pratiquées à Casablanca en ."
     },
     {
       "type": "table",
-      "caption": "Tarifs plombier urgence Casablanca (2025)",
-      "headers": ["Intervention", "Heures ouvrées (MAD)", "Nuit/Weekend (MAD)"],
+      "caption": "Tarifs plombier urgence Casablanca",
+      "headers": [
+        "Intervention",
+        "Heures ouvrées (MAD)",
+        "Nuit/Weekend (MAD)"
+      ],
       "rows": [
-        ["Débouchage WC", "250–450 MAD", "400–700 MAD"],
-        ["Réparation fuite robinet/tuyau", "200–450 MAD", "350–700 MAD"],
-        ["Détection fuite encastrée", "500–1 000 MAD", "700–1 500 MAD"],
-        ["Débouchage canalisation (hydrocureur)", "600–1 200 MAD", "900–1 800 MAD"],
-        ["Dépannage chauffe-eau", "300–600 MAD", "500–900 MAD"]
+        [
+          "Débouchage WC",
+          "250–450 MAD",
+          "400–700 MAD"
+        ],
+        [
+          "Réparation fuite robinet/tuyau",
+          "200–450 MAD",
+          "350–700 MAD"
+        ],
+        [
+          "Détection fuite encastrée",
+          "500–1 000 MAD",
+          "700–1 500 MAD"
+        ],
+        [
+          "Débouchage canalisation (hydrocureur)",
+          "600–1 200 MAD",
+          "900–1 800 MAD"
+        ],
+        [
+          "Dépannage chauffe-eau",
+          "300–600 MAD",
+          "500–900 MAD"
+        ]
       ]
     },
     {
@@ -89,7 +128,8 @@
     {
       "type": "h2",
       "title": "Zones couvertes par les plombiers d'urgence à Casablanca",
-      "content": "Les plombiers disponibles via Fixeo couvrent l'ensemble de Casablanca et ses environs : Maarif, Ain Diab, Belvédère, Hay Hassani, Derb Sultan, Bernoussi, Sidi Bernoussi, Hay Mohammadi, Bourgogne, Gauthier, CIL, et les communes périphériques comme Ain Sbaa, Hay Inara et Ben Msik."
+      "content": "Les plombiers référencés sur FIXEO peuvent couvrir différents secteurs de Casablanca selon leur zone d’intervention : Maarif, Ain Diab, Belvédère, Hay Hassani, Derb Sultan, Bernoussi, Sidi Bernoussi, Hay Mohammadi, Bourgogne, Gauthier, CIL, et les communes périphériques comme Ain Sbaa, Hay Inara et Ben Msik."
     }
-  ]
+  ],
+  "date_modified": "2026-09-29"
 }
