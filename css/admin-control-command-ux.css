@@ -13,3 +13,5 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .head .search-wrap>.search,.head .search-wrap>.control{width:100%;min-width:0}.head .search-wrap>.search-results{grid-column:1/-1}
 @media(max-width:900px){.head .search-wrap{width:100%}}
 @media(max-width:520px){.head .search-wrap{grid-template-columns:1fr}}
+
+.control-observability{margin-top:14px}.control-trace-kpis{margin:12px 0}.control-trace-row b{overflow-wrap:anywhere}.control-trace-row small{font-variant-numeric:tabular-nums}
