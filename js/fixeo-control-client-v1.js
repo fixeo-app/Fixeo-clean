@@ -3,11 +3,30 @@
  const sources=Object.freeze(['requests','missions','artisans','trust','network','finance']);
  const summaryFlights=new Map();
  const commandFlights=new Map(),pendingCommands=new Map();
+ const traces=[];
+ const now=()=>root.performance?.now?.()??Date.now();
+ const safeOperation=value=>/^[a-z0-9/_-]{1,64}$/i.test(String(value||''))?String(value):'unknown';
+ const safeCode=value=>/^[A-Z0-9_]{2,80}$/.test(String(value||''))?String(value):null;
+ const safeCorrelation=value=>/^[0-9a-f-]{36}$/i.test(String(value||''))?String(value):null;
+ function recordTrace(entry){
+  const trace=Object.freeze({operation:safeOperation(entry.operation),status:entry.status==='success'?'success':'error',http_status:Number.isInteger(entry.http_status)?entry.http_status:null,ms:Math.max(0,Math.round(Number(entry.ms)||0)),code:safeCode(entry.code),correlation_id:safeCorrelation(entry.correlation_id),at:new Date().toISOString()});
+  traces.push(trace);if(traces.length>50)traces.splice(0,traces.length-50);
+  try{root.dispatchEvent?.(new CustomEvent('fixeo:control-trace',{detail:trace}));}catch(_){}
+  return trace;
+ }
  async function request(operation,body){
-  const c=root.FixeoSupabaseClient?.client;if(!c)throw Error('SUPABASE_UNAVAILABLE');
-  const s=await c.auth.getSession(),token=s.data?.session?.access_token;if(!token)throw Error('SESSION_REQUIRED');
-  const response=await fetch('/api/control-v1/'+operation,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(body||{}),signal:AbortSignal.timeout(15000)});
-  const data=await response.json();if(!response.ok||data.ok===false){const error=Error(data.code||'CONTROL_UNAVAILABLE');error.status=response.status;throw error;}return data;
+  const started=now(),op=safeOperation(operation);
+  try{
+   const c=root.FixeoSupabaseClient?.client;if(!c)throw Error('SUPABASE_UNAVAILABLE');
+   const s=await c.auth.getSession(),token=s.data?.session?.access_token;if(!token)throw Error('SESSION_REQUIRED');
+   const response=await fetch('/api/control-v1/'+operation,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(body||{}),signal:AbortSignal.timeout(15000)});
+   const data=await response.json(),correlation=response.headers?.get?.('X-Correlation-ID')||data?.correlation_id;
+   if(!response.ok||data.ok===false){const error=Error(data.code||'CONTROL_UNAVAILABLE');error.status=response.status;recordTrace({operation:op,status:'error',http_status:response.status,ms:now()-started,code:error.message,correlation_id:correlation});throw error;}
+   recordTrace({operation:op,status:'success',http_status:response.status,ms:now()-started,correlation_id:correlation});return data;
+  }catch(error){
+   if(!Number.isInteger(error.status))recordTrace({operation:op,status:'error',http_status:null,ms:now()-started,code:safeCode(error.message)||'TRANSPORT_ERROR',correlation_id:null});
+   throw error;
+  }
  }
  function review(p){return new Promise(resolve=>{
   const dialog=document.createElement('dialog');dialog.setAttribute('aria-labelledby','control-review-title');dialog.style.cssText='max-width:560px;width:calc(100% - 32px);border:1px solid #334155;border-radius:18px;padding:24px;color:#f7f8ff;background:#0c1120;box-shadow:0 24px 90px #0004';
@@ -49,5 +68,5 @@
   })).then(Object.fromEntries).finally(()=>summaryFlights.delete(classification));
   return flight.promise;
  }
- root.FixeoControl={request,command,summary};
+ root.FixeoControl={request,command,summary,traceSnapshot:()=>traces.map(x=>({...x}))};
 })(window);

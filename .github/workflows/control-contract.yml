@@ -20,6 +20,10 @@ on:
       - 'js/admin-rafi-*.js'
       - 'js/fixeo-control-client-v1.js'
       - 'js/admin-control-os-clean.js'
+      - 'js/admin-control-command-ux.js'
+      - 'js/admin-control-observability.js'
+      - 'css/admin-control-command-ux.css'
+      - 'docs/control-os/bloc8/**'
       - 'admin.html'
       - 'admin-control-os.html'
       - 'css/admin-rafi-decision-center.css'
@@ -62,6 +66,7 @@ jobs:
       - run: node tests/control-contract/browser-bloc5.cjs
       - run: node tests/control-contract/browser-bloc6.cjs
       - run: node tests/control-contract/browser-bloc7.cjs
+      - run: node tests/control-contract/browser-bloc8.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -82,3 +87,8 @@ jobs:
         with:
           name: control-bloc7-browser
           path: docs/control-os/bloc7/evidence/browser/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: control-bloc8-browser
+          path: docs/control-os/bloc8/evidence/browser/
