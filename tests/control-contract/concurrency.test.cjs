@@ -16,6 +16,7 @@ else {
   await admin.query(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260929142337_control_os_b34_settlement_integrity_guard.sql'),'utf8'));
   await admin.query(require('./bloc5-fixture.cjs').sql);
   await admin.query(require('./bloc5-fixture.cjs').guard);
+  await admin.query(require('./bloc6-fixture.cjs').sql);
  });
  after(async()=>{await Promise.all(clients.map(c=>c.end()));await admin?.end();});
  const request=async(n,status='new')=>admin.query('INSERT INTO public.service_requests(id,client_profile_id,city,service_category,description,status) VALUES($1,$2,$3,$4,$5,$6)',[uuid(n),uuid(1),'Fès','plomberie','Synthetic concurrency',status]);
@@ -135,6 +136,22 @@ else {
  test('B5 concurrent retries of one financial declaration share one ledger row and one result',async()=>{
   const [a,b]=await Promise.all([conn(3),conn(3)]),p=await preview(a,'finance.declare',uuid(1301),{amount:10,method:'cash',proof_reference:'SYNTHETIC-B5-RETRY'}),key=uuid(++seq);
   const r=await Promise.all([execute(a,p,key),execute(b,p,key)]);assert.ok(r.every(x=>x.ok));assert.deepEqual(r[0],r[1]);assert.equal(Number((await admin.query('select count(*) n from public.commission_remittances_v1 where id=$1',[r[0].result.id])).rows[0].n),1);
+ });
+
+ test('B6 read snapshots remain coherent through concurrent parent removal; missions and authorities stay unchanged',async()=>{
+  await request(1400);await admin.query("update public.service_requests set city='Synthetic Cube Concurrency' where id=$1",[uuid(1400)]);
+  await admin.query("insert into public.missions(id,request_id,artisan_profile_id,status) values($1,$2,$3,'offered')",[uuid(1401),uuid(1400),uuid(20)]);
+  const a=await conn(3),b=await conn(3),writer=await raw(),filters={city:'Synthetic Cube Concurrency'};
+  const mission=(await admin.query('select to_jsonb(m) j from public.missions m where id=$1',[uuid(1401)])).rows[0].j;
+  await a.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
+  try{
+   const first=await rpc(a,'control_marketplace_cube_v1',['operations',filters,null,25]);assert.equal(first.items[0].facts.waiting,1);
+   await writer.query('delete from public.service_requests where id=$1',[uuid(1400)]);
+   const repeated=await rpc(a,'control_marketplace_cube_v1',['operations',filters,null,25]);assert.deepEqual(repeated,first);
+   const fresh=await rpc(b,'control_marketplace_cube_v1',['operations',filters,null,25]);assert.equal(fresh.total_cells,0);
+   const finance=await rpc(b,'control_finance_context_v1',['mission',uuid(1401),null,25]);assert.equal(finance.facts.request_relation,'NOT_FOUND');assert.equal(finance.facts.due_balance,null);
+   assert.deepEqual((await admin.query('select to_jsonb(m) j from public.missions m where id=$1',[uuid(1401)])).rows[0].j,mission);
+  }finally{await a.query('ROLLBACK');}
  });
 
 }

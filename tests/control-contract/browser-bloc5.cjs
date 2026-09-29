@@ -1,7 +1,7 @@
 'use strict';
 // Full Bloc 5 UI against the migrated isolated PostgreSQL fixture. No external writes.
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict'),{chromium}=require('playwright');
-const F=require('./bloc5-fixture.cjs'),{createHandler}=require('../../api/control');
+const F=require('./bloc6-fixture.cjs'),{createHandler}=require('../../api/control');
 const root=path.resolve(__dirname,'../..'),out=path.join(root,'docs/control-os/bloc5/evidence/browser'),u=F.uuid;let db,server,browser,executions=0,fault=false;
 const checks=[],errors=[],backendErrors=[];
 const ok=data=>({ok:true,status:200,text:async()=>JSON.stringify(data)});

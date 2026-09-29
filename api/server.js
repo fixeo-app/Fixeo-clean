@@ -221,7 +221,7 @@ app.options('/api/admin/artisans/*', cors());
 app.use(bodyParser.json());
 
 // Fixed operations only; the handler never accepts SQL, table names or RPC names.
-app.all(/^\/api\/control-v1\/(summary|operations|dossier|search|signals|action\/preview|action\/execute|people|people-context|trust|trust-context|review-history|quotes|quote-context|finance|finance-context)$/, function(req,res) {
+app.all(/^\/api\/control-v1\/(summary|operations|dossier|search|signals|action\/preview|action\/execute|people|people-context|trust|trust-context|review-history|quotes|quote-context|finance|finance-context|marketplace|marketplace-population|marketplace-coverage|marketplace-cohorts)$/, function(req,res) {
   return require('./control').createHandler()(req,res);
 });
 

@@ -3,6 +3,7 @@
 const {createHash} = require('node:crypto');
 const {CAPABILITIES} = require('./contracts');
 const {decisionResult} = require('./decision-contracts');
+const Cohorts = require('./marketplace-cohorts');
 const VERSION = 'rafi-decisions-v1';
 const SOURCES = Object.freeze(['operations', 'network', 'trust', 'finance', 'enterprise']);
 const FRESH_MS = 60000;
@@ -33,7 +34,8 @@ function build(states, {now = Date.now(), classification = 'all'} = {}) {
     const targetType = options.target_type || o.target_type;
     const targetId = options.target_id || o.target_id || null;
     const capability = options.capability || null;
-    const context = {view: options.view || 'operations', city: o.city || null, trade: o.service_category || null, enterprise_id: o.enterprise_id || null, site_id: o.site_id || null, type: targetType, id: targetId, classification, state: options.state || null};
+    const context = {view: o.facts.cube_context ? 'intelligence' : options.view || 'operations', city: o.city || null, trade: o.service_category || null, enterprise_id: o.enterprise_id || null, site_id: o.site_id || null, type: targetType, id: targetId, classification, state: options.state || null};
+    if(o.facts.all_cells)context.all_cells=true;
     const key = [type, targetType, targetId, o.city, o.service_category, o.enterprise_id, o.site_id, classification];
     const authority = capability ? CAPABILITIES[capability].authority : options.authority || 'Control · lecture administrateur';
     const id = 'rafi_' + digest(key);
@@ -45,7 +47,7 @@ function build(states, {now = Date.now(), classification = 'all'} = {}) {
       recommended_action: {kind: 'RECOMMENDATION', text: recommendation, context},
       target_type: targetType, target_id: targetId, city: o.city || null, service_category: o.service_category || null,
       affected_count: o.count, age_minutes: age(o.created_at, now), confidence: 'observed_facts', authority,
-      actionability: {status: 'AVAILABLE', mode: capability ? 'PREPARE' : 'OPEN', capability, rpc: capability ? 'control_action_preview_v1 → control_action_execute_v1' : 'control_dossier_read_v1 / control_operations_list_v1', execution_authorized: false, requires_confirmation: Boolean(capability), preconditions: capability ? ['admin_server_check', 'fresh_dossier', 'canonical_preview', 'domain_recheck'] : ['admin_server_check'], unavailable_reason: options.unavailable_reason || null},
+      actionability: {status: 'AVAILABLE', mode: capability ? 'PREPARE' : 'OPEN', capability, rpc: capability ? 'control_action_preview_v1 → control_action_execute_v1' : o.facts.cube_context ? 'control_marketplace_population_v1 / control_dossier_section_v1' : 'control_dossier_read_v1 / control_operations_list_v1', execution_authorized: false, requires_confirmation: Boolean(capability), preconditions: capability ? ['admin_server_check', 'fresh_dossier', 'canonical_preview', 'domain_recheck'] : ['admin_server_check'], unavailable_reason: options.unavailable_reason || null},
       created_at: o.created_at || null, updated_at: state.as_of, expires_at: new Date(time(state.as_of) + FRESH_MS).toISOString(),
       universes: options.universes || ['OPERATIONS'], related_ids: options.related_ids || [],
     });
@@ -57,6 +59,16 @@ function build(states, {now = Date.now(), classification = 'all'} = {}) {
       if (!o || typeof o.facts !== 'object' || !o.facts || !numeric(o.count) || o.count === 0) continue;
       const f = o.facts, minutes = age(o.created_at, now), where = place(o);
       switch (o.kind) {
+        case 'marketplace.cohorts': {
+          const c=Cohorts.build(f.cohorts,now);
+          if(c.status==='FRESH'&&c.comparison?.status==='OBSERVED_DIFFERENCE'&&c.comparison.delta_percentage_points<0){
+            const a=c.cohorts.find(x=>x.label==='current').conversion,b=c.cohorts.find(x=>x.label==='previous').conversion;
+            add(source,o,'marketplace.conversion_review','P2','Conversion à horizon fixe en baisse observée',
+              [`${a.numerator}/${a.denominator} demandes acceptées dans l’horizon, contre ${b.numerator}/${b.denominator} sur la cohorte précédente.`, `Deux fenêtres de ${c.scope.days} jours métier, horizon ${c.scope.horizon_hours} h, aucune cohorte récente exclue ni preuve inconnue.`, 'Au moins 30 demandes observables par cohorte ; intervalles Wilson 95 % disjoints.'],
+              'Une friction de parcours est possible ; ni sa cause ni son effet commercial ne sont démontrés.',
+              'Comparer les populations et leurs dossiers avant de choisir une intervention.',{universes:['MARKETPLACE','CLIENT','OPERATIONS'],authority:'Marketplace · lecture de cohortes canoniques'});
+          }break;
+        }
         case 'request.waiting': {
           const urgent = ['now', 'urgent'].includes(f.urgency);
           const critical = urgent && minutes !== null && minutes >= 120;
@@ -77,24 +89,24 @@ function build(states, {now = Date.now(), classification = 'all'} = {}) {
         case 'dispatch.failed':
           add(source, o, o.kind, 'P1', `${o.count} notification(s) de dispatch en échec`, [`Échec enregistré dans l’outbox ; ${known(f.attempt_count)} tentative(s) cumulée(s).`], 'Des artisans peuvent ne pas avoir reçu la proposition.', 'Ouvrir la demande et examiner l’état du dispatch.', {universes: ['OPERATIONS', 'ARTISAN'], unavailable_reason: 'Aucun retry de notification autorisé depuis RAFI dans ce Bloc.'}); break;
         case 'network.cohort': {
-          if (!['available_profiles', 'profiles', 'to_verify', 'unclaimed', 'urgent_count', 'total_waiting'].every(k => numeric(f[k]))) break;
           if (f.location_known !== true) {
             add(source, o, 'network.context_missing', 'P2', `${o.count} demande(s) sans ville ou métier exploitable`, ['La correspondance de couverture ne peut pas être calculée.'], 'Une demande insuffisamment qualifiée peut retarder le dispatch.', 'Ouvrir les demandes pour examiner leur contexte.', {universes: ['CLIENT', 'OPERATIONS']});
             break;
           }
+          if (!['available_profiles', 'profiles', 'to_verify', 'unclaimed', 'urgent_count', 'total_waiting'].every(k => numeric(f[k]))) break;
           const label = where || 'Ville / métier non renseigné';
-          if (f.available_profiles === 0) add(source, o, 'network.coverage', f.urgent_count > 0 ? 'P1' : 'P2', `${o.count} demande(s), aucun profil disponible déclaré · ${label}`,
-            [`${f.profiles} profil(s) déclarent cette ville et ce métier ; aucun n’est marqué disponible.`, `${f.urgent_count} demande(s) urgente(s) dans cette cohorte.`, 'Correspondance déclarative exacte, métiers et villes secondaires inclus.'],
+          if (f.available_profiles === 0 && (!f.cube_context || f.availability_unknown === 0)) add(source, o, 'network.coverage', f.urgent_count > 0 ? 'P1' : 'P2', `${o.count} demande(s), aucun profil disponible déclaré · ${label}`,
+            [`${f.profiles} profil(s) déclarent cette ville et ce métier ; aucun n’est marqué disponible.`, `${f.urgent_count} demande(s) urgente(s) dans cette cohorte.`, f.cube_context?'Dimensions normalisées par les fonctions canoniques, métiers et villes secondaires inclus.':'Correspondance déclarative exacte, métiers et villes secondaires inclus.'],
             'Un manque de couverture locale est possible ; Dispatch peut proposer une proximité autorisée.',
             f.profiles ? 'Examiner les profils existants et la couverture Dispatch.' : 'Prioriser la recherche de profils pour cette ville et ce métier.', {view: 'network', universes: ['CLIENT', 'ARTISAN', 'OPERATIONS'], authority: 'Network · observation ; Dispatch reste souverain'});
-          else add(source, o, 'network.capacity', 'P3', `${f.available_profiles} profil(s) disponible(s) pour ${o.count} demande(s) · ${label}`,
+          else if (f.available_profiles > 0) add(source, o, 'network.capacity', 'P3', `${f.available_profiles} profil(s) disponible(s) pour ${o.count} demande(s) · ${label}`,
             ['Disponibilité déclarée, sans réservation de capacité.', 'Éligibilité finale et acceptation vérifiées par Dispatch.'],
             'Le réseau déclaré peut aider à réduire cette attente, sans garantie d’affectation.', 'Ouvrir les demandes de cette cohorte et préparer le dispatch.', {universes: ['CLIENT', 'ARTISAN', 'OPERATIONS']});
           if (f.to_verify > 0) add(source, o, 'network.verify', f.urgent_count > 0 ? 'P1' : 'P2', `${f.to_verify} profil(s) à vérifier là où ${o.count} demande(s) attendent · ${label}`,
             ['Profils revendiqués, avec propriétaire et onboarding terminé, non vérifiés.', 'La demande locale détermine l’ordre de revue ; vérifier ne garantit pas la disponibilité.'],
             'Une revue Trust peut améliorer la confiance du réseau mobilisable.', 'Ouvrir les profils prioritaires, vérifier leurs éléments et préparer la vérification.', {view: 'network', state: 'unverified', related_ids: f.verify_ids || [], universes: ['CLIENT', 'ARTISAN', 'TRUST'], authority: 'Trust · artisan.verify'});
           if (f.unclaimed > 0) add(source, o, 'network.activate', f.urgent_count > 0 ? 'P2' : 'P3', `${f.unclaimed} profil(s) à revendiquer · ${label}`,
-            [`${o.count} demande(s) attendent dans cette cohorte.`, 'Profils sans propriétaire et non revendiqués ; aucune disponibilité future présumée.'],
+            [`${o.count} demande(s) attendent dans cette cohorte.`, f.claimable_only?'Profils revendicables, sans propriétaire ni claim pending ; aucune disponibilité future présumée.':'Profils sans propriétaire et non revendiqués ; aucune disponibilité future présumée.'],
             'Une activation légitime de ces profils pourrait renforcer le réseau local.', 'Examiner les profils existants à activer ; la revendication reste celle de leur propriétaire.', {view: 'network', state: 'unclaimed', related_ids: f.claim_ids || [], universes: ['CLIENT', 'ARTISAN', 'TRUST'], authority: 'Claims · propriétaire puis revue Admin', unavailable_reason: 'RAFI ne revendique pas un profil à la place de son propriétaire.'});
           if (f.total_waiting >= 10 && o.count / f.total_waiting >= 0.5) add(source, o, 'network.concentration', 'P3', `${o.count} / ${f.total_waiting} demandes en attente · ${label}`, ['Au moins la moitié du backlog courant appartient à cette cohorte.', 'Absence de référence historique : aucune anomalie statistique affirmée.'], 'Cette concentration peut amplifier les délais locaux.', 'Examiner la couverture et les demandes de cette cohorte.', {universes: ['CLIENT', 'ARTISAN', 'OPERATIONS']});
           break;

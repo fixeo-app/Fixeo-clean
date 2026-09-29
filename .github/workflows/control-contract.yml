@@ -11,9 +11,11 @@ on:
       - 'supabase/migrations/*control_os_b2*'
       - 'supabase/migrations/*control_os_b34*'
       - 'supabase/migrations/*control_os_b5*'
+      - 'supabase/migrations/*control_os_b6*'
       - 'js/admin-fixeo-*.js'
       - 'css/admin-fixeo-dossier-operations.css'
       - 'css/admin-fixeo-registers.css'
+      - 'css/admin-fixeo-intelligence.css'
       - 'js/admin-rafi-decision-center.js'
       - 'js/fixeo-control-client-v1.js'
       - 'js/admin-control-os-clean.js'
@@ -57,6 +59,7 @@ jobs:
         working-directory: tests/control-contract
       - run: node tests/control-contract/browser.cjs
       - run: node tests/control-contract/browser-bloc5.cjs
+      - run: node tests/control-contract/browser-bloc6.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -67,3 +70,8 @@ jobs:
         with:
           name: control-bloc5-browser
           path: docs/control-os/bloc5/evidence/browser/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: control-bloc6-browser
+          path: docs/control-os/bloc6/evidence/browser/
