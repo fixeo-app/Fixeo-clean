@@ -8,6 +8,8 @@
   let activeContext = null, contextCursor = null, contextRows = [], actionBusy = false, planLimit = 40;
   const age = minutes => minutes == null ? 'Ancienneté inconnue' : minutes < 60 ? minutes+' min' : minutes < 1440 ? Math.floor(minutes/60)+' h' : Math.floor(minutes/1440)+' j';
   const date = value => value ? new Date(value).toLocaleString('fr-FR') : 'Non renseigné';
+  const sourceState = s => ['FRESH','PARTIAL'].includes(s.status) && (!Number.isFinite(Date.parse(s.as_of)) || Date.now()-Date.parse(s.as_of)>60000) ? 'STALE' : s.status;
+  const snapshotState = () => snapshot?.status==='STALE' || Object.values(snapshot?.sources||{}).some(s=>sourceState(s)==='STALE') ? 'STALE' : snapshot?.status;
   const stale = d => !d || Date.parse(d.expires_at) <= Date.now() || snapshot?.status === 'STALE';
   const decision = id => snapshot?.decisions.find(d => d.decision_id === id);
   const set = (id, text) => {if ($(id)) $(id).textContent = text;};
@@ -17,11 +19,10 @@
   function render() {
     if (!$('rafi-plan')) return;
     if (!snapshot) {set('rafi-brief','Lecture des sources canoniques…');set('rafi-next','Les priorités apparaîtront dès que les sources auront répondu.');for(const id of ['rafi-actions','rafi-plan','rafi-network-plan','rafi-top-priority','rafi-sources'])$(id).innerHTML='';set('rafi-top-impact','');return;}
-    const expired = snapshot.decisions.some(stale);
-    const state = expired ? 'STALE' : snapshot.status;
+    const state = snapshotState();
     set('rafi-state',state);$('rafi-state').dataset.state=state;
     set('rafi-as-of','Observé le '+date(snapshot.generated_at));
-    $('rafi-sources').innerHTML=Object.entries(snapshot.sources).map(([source,s])=>`<span class="rafi-source" data-state="${esc(s.status)}" title="${esc(s.error || (s.total_observations==null?'Source indisponible':s.returned_observations+' / '+s.total_observations+' observations'))}">${esc(labels[source])}<b>${esc(s.status)}</b></span>`).join('');
+    $('rafi-sources').innerHTML=Object.entries(snapshot.sources).map(([source,s])=>`<span class="rafi-source" data-state="${esc(sourceState(s))}" title="${esc(s.error || (s.total_observations==null?'Source indisponible':s.returned_observations+' / '+s.total_observations+' observations'))}">${esc(labels[source])}<b>${esc(sourceState(s))}</b></span>`).join('');
     const top = snapshot.decisions[0];
     $('rafi-top').dataset.priority = top?.priority || 'empty';
     $('rafi-top-priority').innerHTML = top ? badge(top) : '';
@@ -42,9 +43,10 @@
 
   function renderTower() {
     if (!snapshot || !$('overview-signals')) return;
+    const state=snapshotState(), freshness=state==='STALE'?'Lecture périmée · ':'';
     const groups=[['NOW','À traiter',d=>d.priority==='P0'||d.priority==='P1'],['RISK','Risque',d=>d.decision_type.includes('sla')||d.decision_type.includes('inconsistent')||d.decision_type.includes('failed')],['CAPACITY','Capacité',d=>d.decision_type.includes('capacity')],['TRUST','Confiance',d=>d.universes.includes('TRUST')],['COVERAGE','Couverture',d=>d.decision_type==='network.coverage']];
-    $('overview-signals').innerHTML=groups.map(([tag,title,predicate])=>{const matches=snapshot.decisions.filter(predicate);return `<button class="signal" data-view="rafi"><small>${tag} · ${esc(title)}</small><b>${matches.length || '—'}</b><p>${matches[0]?esc(matches[0].title):snapshot.status==='FRESH'?'Aucune décision déclenchée.':'Aucun signal visible · lecture partielle.'}</p></button>`;}).join('');
-    $('overview-priority').innerHTML=snapshot.decisions.slice(0,4).map(d=>`<button class="row" data-rafi-decision="${esc(d.decision_id)}"><b>${esc(d.title)}</b><small>${esc(d.reason[0])}</small>${badge(d)}</button>`).join('')||'<div class="empty">'+(snapshot.status==='FRESH'?'Aucune priorité RAFI détectée.':'Priorités inconnues sur les sources indisponibles.')+'</div>';
+    $('overview-signals').innerHTML=groups.map(([tag,title,predicate])=>{const matches=snapshot.decisions.filter(predicate);return `<button class="signal" data-view="rafi"><small>${tag} · ${esc(title)}</small><b>${matches.length || '—'}</b><p>${freshness}${matches[0]?esc(matches[0].title):state==='FRESH'?'Aucune décision déclenchée.':'Aucun signal visible · lecture incomplète.'}</p></button>`;}).join('');
+    $('overview-priority').innerHTML=snapshot.decisions.slice(0,4).map(d=>`<button class="row" data-rafi-decision="${esc(d.decision_id)}"><b>${esc(d.title)}</b><small>${freshness}${esc(d.reason[0])}</small>${badge(d)}</button>`).join('')||'<div class="empty">'+(state==='FRESH'?'Aucune priorité RAFI détectée.':freshness+'Priorités inconnues sur les sources indisponibles.')+'</div>';
   }
 
   async function load() {

@@ -1,0 +1,115 @@
+{
+  "baseline": "529961f99136c750dad8803870b32e9602372c38",
+  "branch": "feat/control-os-bloc2-rafi-decision-center",
+  "scope": "Changed files except this self-referential manifest; SHA256 of working bytes at commit preparation. Final commit SHA is recorded in the PR and delivery report.",
+  "files": [
+    {
+      "path": ".github/workflows/control-contract.yml",
+      "sha256": "ce1dbbf1128f66edf89d7a0c530c941c9b3aa53ba54a204b3cea641e2cb9263e"
+    },
+    {
+      "path": "admin-control-os.html",
+      "sha256": "768cdc59bb663f5c8f371f9dfae5c9a09ee90cdc814580d951c9005a25def052"
+    },
+    {
+      "path": "admin.html",
+      "sha256": "768cdc59bb663f5c8f371f9dfae5c9a09ee90cdc814580d951c9005a25def052"
+    },
+    {
+      "path": "api/control/index.js",
+      "sha256": "89d2e17761c8add4d984e33a1ced6629e1d516e3256d431e802f2d681b02a73f"
+    },
+    {
+      "path": "api/control/rafi-decisions.js",
+      "sha256": "69d2152017ea2ae0c3606feca40faaffde5d84fc053eae561597336f97d6725f"
+    },
+    {
+      "path": "css/admin-rafi-decision-center.css",
+      "sha256": "ad7d05a32a1d7734fe2c5f546ec3637771062c104eb263a84d0c76023dbaa4c5"
+    },
+    {
+      "path": "docs/control-os/bloc2/CERTIFICATION.md",
+      "sha256": "f8e7ea492c535cb0802b46b21a3b037de66d19c10934a09dd4546330df2cfe5d"
+    },
+    {
+      "path": "docs/control-os/bloc2/DECISION-MATRIX.md",
+      "sha256": "52c7cbd20668f08233f79604879853a389f3bd6de01751e78be56bf1a74389c9"
+    },
+    {
+      "path": "docs/control-os/bloc2/README.md",
+      "sha256": "ff691517762cb5193c6ce0385c3775e19c986d0222e4b8cd68063382c202bc80"
+    },
+    {
+      "path": "docs/control-os/bloc2/ROLLBACK.md",
+      "sha256": "200b51bc7144034c5b2bded01eacd53277032b85196afacf712e050f65245829"
+    },
+    {
+      "path": "docs/control-os/bloc2/evidence/preview.json",
+      "sha256": "4118d85df67e8e8318fda74128638793e60796f9c096281c4b57c3af08779ec8"
+    },
+    {
+      "path": "docs/control-os/bloc2/evidence/security-and-ci.json",
+      "sha256": "d92aa8243ae4f5ca3440cae595b2d98a6e9dbe861cc1522d9fa02642dd59c7a0"
+    },
+    {
+      "path": "docs/control-os/bloc2/evidence/staging-reads.json",
+      "sha256": "d41aca4e826d2d6868d92019d6a06c5f25bc0cfcda1e4679769d97e001e1f0d3"
+    },
+    {
+      "path": "js/admin-control-os-clean.js",
+      "sha256": "51b907313928b82a3962cd6c3179881da5920ca8d4a7f7a0218a0c72c39dc0bf"
+    },
+    {
+      "path": "js/admin-rafi-decision-center.js",
+      "sha256": "1c87d80f6c018acdca59c600155725277317e0970c2bcbb0cf89525a6921d647"
+    },
+    {
+      "path": "js/fixeo-control-client-v1.js",
+      "sha256": "fefd3970b41ff6628d58f2e44e5ec9359209c0f44b1fd0ca1ff6b20e7932b0c9"
+    },
+    {
+      "path": "supabase/migrations/20260929021750_control_os_b2_rafi_reads.sql",
+      "sha256": "9dc5872e2bd9647f10ff7a82c389f1ba53afca2a3b66e15b55bbae0b91a97a65"
+    },
+    {
+      "path": "tests/admin-control-os/cross-universe-contract.test.cjs",
+      "sha256": "604dfd6ebbf6dac1fb408a85c790f46ddf6df697096425f9646591b19d48b9bc"
+    },
+    {
+      "path": "tests/control-contract/package-lock.json",
+      "sha256": "e4c438c606403837ff5e99cfd9a64eddacb7ab2566a80116d8e49c2d311418f0"
+    },
+    {
+      "path": "tests/control-contract/package.json",
+      "sha256": "a167abdd6eac00faa71f5a29459930ba5f13832d6dec73ee06912acbe4301695"
+    },
+    {
+      "path": "tests/control-contract/rafi-api.test.cjs",
+      "sha256": "28ff4b4e581c5f34523dca04f7ab0e351cbb710cf2aafa137856e60cd8597e98"
+    },
+    {
+      "path": "tests/control-contract/rafi-db.test.cjs",
+      "sha256": "4972771e72c068b85b7864113a36c7d807a820aa87dd17cd40bde2254dd4a18f"
+    },
+    {
+      "path": "tests/control-contract/rafi-engine.test.cjs",
+      "sha256": "dbff69f8665bb7c78a492f7213d5d68d6ecefa3503a96d95f842712bd8662394"
+    },
+    {
+      "path": "tests/control-contract/rafi-ui.test.cjs",
+      "sha256": "5f964e88eb615277c96653716eb1492e819c760a05c5e57d6cf673e448c53760"
+    },
+    {
+      "path": "tests/control-contract/staging/rafi-preview.cjs",
+      "sha256": "d66ff79a2b55aacd361b323d5d9029544a5d93e51f3bba487e2907292b3427d5"
+    },
+    {
+      "path": "tests/control-contract/staging/rafi.cjs",
+      "sha256": "1b51562230b92bba7716d5c138ef6c608b81d7c562c530ad19f83275ca0dad61"
+    },
+    {
+      "path": "vercel.json",
+      "sha256": "6f322efe86be63223f18588ae771a5b0e3d4a11b75aaf728bcf6e17d481e5eb9"
+    }
+  ]
+}
