@@ -63,10 +63,11 @@
  function boot(){
   ensure();wireGlobal();
   const actions=$('.top .actions');if(actions&&!$('#command-open')){const b=document.createElement('button');b.id='command-open';b.className='btn command-open';b.type='button';b.setAttribute('aria-keyshortcuts','Control+K Meta+K');b.innerHTML='Commandes <kbd>⌘K</kbd>';b.onclick=open;actions.insertBefore(b,actions.firstChild);}
+  const menu=$('#menu'),side=$('#side');if(menu&&side)document.addEventListener('click',e=>{if(e.target.closest('#menu')||e.target.closest('[data-view]'))queueMicrotask(()=>menu.setAttribute('aria-expanded',String(side.classList.contains('open'))));});
   document.addEventListener('keydown',e=>{
    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();open();return;}
    if(e.key==='/'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!editable(e.target)){e.preventDefault();root.FixeoAdmin?.navigate('overview');queueMicrotask(()=>$('#global-search')?.focus());return;}
-   if(e.key==='Escape'&&!dialog.open){const side=$('#side');if(side?.classList.contains('open')){e.preventDefault();side.classList.remove('open');}}
+   if(e.key==='Escape'&&!dialog.open){const side=$('#side');if(side?.classList.contains('open')){e.preventDefault();side.classList.remove('open');$('#menu')?.setAttribute('aria-expanded','false');$('#menu')?.focus();}}
   });
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
