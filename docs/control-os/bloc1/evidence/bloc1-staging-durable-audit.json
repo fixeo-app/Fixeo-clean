@@ -1,0 +1,15 @@
+{
+  "requests": 859,
+  "auth_other": 0,
+  "observed_at": "2026-09-29T00:15:46.180865+00:00",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "media_objects": 0,
+  "auth_synthetic": 16,
+  "execute_events": 53,
+  "admin_memberships": 0,
+  "fault_helper_exists": false,
+  "invalid_execute_audit": 0,
+  "duplicate_execute_keys": 0,
+  "sensitive_marker_leaks": 0,
+  "failed_execution_events": 17
+}

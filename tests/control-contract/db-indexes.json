@@ -1,0 +1,980 @@
+[
+  {
+    "schemaname": "public",
+    "tablename": "artisan_service_categories",
+    "indexname": "artisan_service_categories_pkey",
+    "indexdef": "CREATE UNIQUE INDEX artisan_service_categories_pkey ON public.artisan_service_categories USING btree (artisan_id, service_category)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisan_service_cities",
+    "indexname": "artisan_service_cities_pkey",
+    "indexdef": "CREATE UNIQUE INDEX artisan_service_cities_pkey ON public.artisan_service_cities USING btree (artisan_id, city)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "artisans_category_idx",
+    "indexdef": "CREATE INDEX artisans_category_idx ON public.artisans USING btree (category)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "artisans_city_idx",
+    "indexdef": "CREATE INDEX artisans_city_idx ON public.artisans USING btree (city)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "artisans_legacy_id_unique",
+    "indexdef": "CREATE UNIQUE INDEX artisans_legacy_id_unique ON public.artisans USING btree (legacy_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "artisans_owner_user_id_unique",
+    "indexdef": "CREATE UNIQUE INDEX artisans_owner_user_id_unique ON public.artisans USING btree (owner_user_id) WHERE (owner_user_id IS NOT NULL)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "artisans_pkey",
+    "indexdef": "CREATE UNIQUE INDEX artisans_pkey ON public.artisans USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "artisans_public_slug_idx",
+    "indexdef": "CREATE INDEX artisans_public_slug_idx ON public.artisans USING btree (public_slug)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "artisans_slug_unique",
+    "indexdef": "CREATE UNIQUE INDEX artisans_slug_unique ON public.artisans USING btree (public_slug)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "idx_artisans_availability",
+    "indexdef": "CREATE INDEX idx_artisans_availability ON public.artisans USING btree (availability)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "idx_artisans_city",
+    "indexdef": "CREATE INDEX idx_artisans_city ON public.artisans USING btree (city)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "idx_artisans_claimed",
+    "indexdef": "CREATE INDEX idx_artisans_claimed ON public.artisans USING btree (claimed)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "idx_artisans_legacy_id",
+    "indexdef": "CREATE INDEX idx_artisans_legacy_id ON public.artisans USING btree (legacy_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "idx_artisans_owner",
+    "indexdef": "CREATE INDEX idx_artisans_owner ON public.artisans USING btree (owner_user_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "idx_artisans_rating",
+    "indexdef": "CREATE INDEX idx_artisans_rating ON public.artisans USING btree (rating DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "idx_artisans_service",
+    "indexdef": "CREATE INDEX idx_artisans_service ON public.artisans USING btree (service_category)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "artisans",
+    "indexname": "idx_artisans_verified",
+    "indexdef": "CREATE INDEX idx_artisans_verified ON public.artisans USING btree (verified)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "claim_requests",
+    "indexname": "claim_requests_pkey",
+    "indexdef": "CREATE UNIQUE INDEX claim_requests_pkey ON public.claim_requests USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "claim_requests",
+    "indexname": "idx_claims_artisan_id",
+    "indexdef": "CREATE INDEX idx_claims_artisan_id ON public.claim_requests USING btree (artisan_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "claim_requests",
+    "indexname": "idx_claims_legacy",
+    "indexdef": "CREATE INDEX idx_claims_legacy ON public.claim_requests USING btree (artisan_legacy_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "claim_requests",
+    "indexname": "idx_claims_requester",
+    "indexdef": "CREATE INDEX idx_claims_requester ON public.claim_requests USING btree (requester_user_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "claim_requests",
+    "indexname": "idx_claims_status",
+    "indexdef": "CREATE INDEX idx_claims_status ON public.claim_requests USING btree (status)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_accounts",
+    "indexname": "enterprise_accounts_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_accounts_pkey ON public.enterprise_accounts USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_accounts",
+    "indexname": "idx_ea_status",
+    "indexdef": "CREATE INDEX idx_ea_status ON public.enterprise_accounts USING btree (status) WHERE (status = 'active'::text)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_approval_cases",
+    "indexname": "enterprise_approval_cases_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_approval_cases_pkey ON public.enterprise_approval_cases USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_approval_cases",
+    "indexname": "enterprise_approval_cases_service_request_id_key",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_approval_cases_service_request_id_key ON public.enterprise_approval_cases USING btree (service_request_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_approval_cases",
+    "indexname": "idx_enterprise_approval_cases_pending",
+    "indexdef": "CREATE INDEX idx_enterprise_approval_cases_pending ON public.enterprise_approval_cases USING btree (enterprise_id, status, site_id, current_step, created_at)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_approval_decisions",
+    "indexname": "enterprise_approval_decisions_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_approval_decisions_pkey ON public.enterprise_approval_decisions USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_approval_decisions",
+    "indexname": "enterprise_approval_decisions_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_approval_decisions_uq ON public.enterprise_approval_decisions USING btree (case_id, step_order)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_approval_policies",
+    "indexname": "enterprise_approval_policies_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_approval_policies_pkey ON public.enterprise_approval_policies USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_approval_policies",
+    "indexname": "idx_enterprise_approval_policies_match",
+    "indexdef": "CREATE INDEX idx_enterprise_approval_policies_match ON public.enterprise_approval_policies USING btree (enterprise_id, status, site_id, priority)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_approval_policy_steps",
+    "indexname": "enterprise_approval_policy_steps_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_approval_policy_steps_pkey ON public.enterprise_approval_policy_steps USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_approval_policy_steps",
+    "indexname": "enterprise_approval_policy_steps_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_approval_policy_steps_uq ON public.enterprise_approval_policy_steps USING btree (policy_id, step_order)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_audit_events",
+    "indexname": "enterprise_audit_events_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_audit_events_pkey ON public.enterprise_audit_events USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_audit_events",
+    "indexname": "idx_enterprise_audit_events_actor_created",
+    "indexdef": "CREATE INDEX idx_enterprise_audit_events_actor_created ON public.enterprise_audit_events USING btree (actor_user_id, created_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_audit_events",
+    "indexname": "idx_enterprise_audit_events_enterprise_created",
+    "indexdef": "CREATE INDEX idx_enterprise_audit_events_enterprise_created ON public.enterprise_audit_events USING btree (enterprise_id, created_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_audit_events",
+    "indexname": "idx_enterprise_audit_events_target_created",
+    "indexdef": "CREATE INDEX idx_enterprise_audit_events_target_created ON public.enterprise_audit_events USING btree (enterprise_id, target_type, target_id, created_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_budgets",
+    "indexname": "enterprise_budgets_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_budgets_pkey ON public.enterprise_budgets USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_budgets",
+    "indexname": "enterprise_budgets_scope_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_budgets_scope_uq ON public.enterprise_budgets USING btree (cost_center_id, period_start, period_end)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_budgets",
+    "indexname": "idx_enterprise_budgets_enterprise",
+    "indexdef": "CREATE INDEX idx_enterprise_budgets_enterprise ON public.enterprise_budgets USING btree (enterprise_id, period_start, period_end, status)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_control_tower_escalations",
+    "indexname": "enterprise_control_tower_escalations_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_control_tower_escalations_pkey ON public.enterprise_control_tower_escalations USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_control_tower_escalations",
+    "indexname": "enterprise_control_tower_escalations_service_request_id_key",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_control_tower_escalations_service_request_id_key ON public.enterprise_control_tower_escalations USING btree (service_request_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_control_tower_escalations",
+    "indexname": "idx_enterprise_control_tower_escalations_enterprise",
+    "indexdef": "CREATE INDEX idx_enterprise_control_tower_escalations_enterprise ON public.enterprise_control_tower_escalations USING btree (enterprise_id, status, priority, updated_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_cost_centers",
+    "indexname": "enterprise_cost_centers_code_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_cost_centers_code_uq ON public.enterprise_cost_centers USING btree (enterprise_id, lower(btrim(code)))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_cost_centers",
+    "indexname": "enterprise_cost_centers_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_cost_centers_pkey ON public.enterprise_cost_centers USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_cost_centers",
+    "indexname": "idx_enterprise_cost_centers_scope",
+    "indexdef": "CREATE INDEX idx_enterprise_cost_centers_scope ON public.enterprise_cost_centers USING btree (enterprise_id, site_id, status)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_dispatch_policies",
+    "indexname": "enterprise_dispatch_policies_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_dispatch_policies_pkey ON public.enterprise_dispatch_policies USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_dispatch_policies",
+    "indexname": "enterprise_dispatch_policies_scope_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_dispatch_policies_scope_uq ON public.enterprise_dispatch_policies USING btree (enterprise_id, COALESCE(site_id, '00000000-0000-0000-0000-000000000000'::uuid), COALESCE(lower(btrim(service_category)), '__default__'::text))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_dispatch_policies",
+    "indexname": "idx_enterprise_dispatch_policies_lookup",
+    "indexdef": "CREATE INDEX idx_enterprise_dispatch_policies_lookup ON public.enterprise_dispatch_policies USING btree (enterprise_id, status, site_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_equipment",
+    "indexname": "enterprise_equipment_asset_code_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_equipment_asset_code_uq ON public.enterprise_equipment USING btree (enterprise_id, lower(btrim(asset_code))) WHERE (asset_code IS NOT NULL)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_equipment",
+    "indexname": "enterprise_equipment_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_equipment_pkey ON public.enterprise_equipment USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_equipment",
+    "indexname": "idx_enterprise_equipment_criticality",
+    "indexdef": "CREATE INDEX idx_enterprise_equipment_criticality ON public.enterprise_equipment USING btree (enterprise_id, criticality, status)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_equipment",
+    "indexname": "idx_enterprise_equipment_site",
+    "indexdef": "CREATE INDEX idx_enterprise_equipment_site ON public.enterprise_equipment USING btree (enterprise_id, site_id, status)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_equipment_assets",
+    "indexname": "enterprise_equipment_assets_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_equipment_assets_pkey ON public.enterprise_equipment_assets USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_equipment_assets",
+    "indexname": "enterprise_equipment_assets_storage_path_key",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_equipment_assets_storage_path_key ON public.enterprise_equipment_assets USING btree (storage_path)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_equipment_assets",
+    "indexname": "idx_enterprise_equipment_assets_equipment",
+    "indexdef": "CREATE INDEX idx_enterprise_equipment_assets_equipment ON public.enterprise_equipment_assets USING btree (equipment_id, created_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_equipment_maintenance_links",
+    "indexname": "enterprise_equipment_maintenance_links_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_equipment_maintenance_links_pkey ON public.enterprise_equipment_maintenance_links USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_equipment_maintenance_links",
+    "indexname": "enterprise_equipment_maintenance_links_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_equipment_maintenance_links_uq ON public.enterprise_equipment_maintenance_links USING btree (equipment_id, plan_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_equipment_request_links",
+    "indexname": "enterprise_equipment_request_links_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_equipment_request_links_pkey ON public.enterprise_equipment_request_links USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_equipment_request_links",
+    "indexname": "enterprise_equipment_request_links_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_equipment_request_links_uq ON public.enterprise_equipment_request_links USING btree (equipment_id, service_request_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_equipment_request_links",
+    "indexname": "idx_enterprise_equipment_request_links_request",
+    "indexdef": "CREATE INDEX idx_enterprise_equipment_request_links_request ON public.enterprise_equipment_request_links USING btree (enterprise_id, service_request_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_hybrid_dispatch_state",
+    "indexname": "enterprise_hybrid_dispatch_state_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_hybrid_dispatch_state_pkey ON public.enterprise_hybrid_dispatch_state USING btree (service_request_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_hybrid_dispatch_state",
+    "indexname": "idx_enterprise_hybrid_dispatch_state_fallback",
+    "indexdef": "CREATE INDEX idx_enterprise_hybrid_dispatch_state_fallback ON public.enterprise_hybrid_dispatch_state USING btree (status, fallback_due_at) WHERE (fallback_due_at IS NOT NULL)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_internal_assignments",
+    "indexname": "enterprise_internal_assignments_offer_id_key",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_internal_assignments_offer_id_key ON public.enterprise_internal_assignments USING btree (offer_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_internal_assignments",
+    "indexname": "enterprise_internal_assignments_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_internal_assignments_pkey ON public.enterprise_internal_assignments USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_internal_assignments",
+    "indexname": "enterprise_internal_assignments_service_request_id_key",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_internal_assignments_service_request_id_key ON public.enterprise_internal_assignments USING btree (service_request_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_internal_assignments",
+    "indexname": "idx_enterprise_internal_assignments_worker",
+    "indexdef": "CREATE INDEX idx_enterprise_internal_assignments_worker ON public.enterprise_internal_assignments USING btree (worker_id, status, assigned_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_internal_dispatch_offers",
+    "indexname": "enterprise_internal_dispatch_offers_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_internal_dispatch_offers_pkey ON public.enterprise_internal_dispatch_offers USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_internal_dispatch_offers",
+    "indexname": "enterprise_internal_dispatch_offers_unique",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_internal_dispatch_offers_unique ON public.enterprise_internal_dispatch_offers USING btree (service_request_id, worker_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_internal_dispatch_offers",
+    "indexname": "idx_enterprise_internal_dispatch_offers_request",
+    "indexdef": "CREATE INDEX idx_enterprise_internal_dispatch_offers_request ON public.enterprise_internal_dispatch_offers USING btree (service_request_id, status)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_internal_dispatch_offers",
+    "indexname": "idx_enterprise_internal_dispatch_offers_worker",
+    "indexdef": "CREATE INDEX idx_enterprise_internal_dispatch_offers_worker ON public.enterprise_internal_dispatch_offers USING btree (worker_id, status, expires_at)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_invitations",
+    "indexname": "enterprise_invitations_one_pending_email_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_invitations_one_pending_email_uq ON public.enterprise_invitations USING btree (enterprise_id, email_normalized) WHERE (status = 'pending'::text)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_invitations",
+    "indexname": "enterprise_invitations_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_invitations_pkey ON public.enterprise_invitations USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_invitations",
+    "indexname": "enterprise_invitations_token_hash_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_invitations_token_hash_uq ON public.enterprise_invitations USING btree (token_hash)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_invitations",
+    "indexname": "idx_enterprise_invitations_enterprise_status",
+    "indexdef": "CREATE INDEX idx_enterprise_invitations_enterprise_status ON public.enterprise_invitations USING btree (enterprise_id, status, created_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_invitations",
+    "indexname": "idx_enterprise_invitations_target_user",
+    "indexdef": "CREATE INDEX idx_enterprise_invitations_target_user ON public.enterprise_invitations USING btree (target_user_id, status) WHERE (target_user_id IS NOT NULL)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_leads",
+    "indexname": "enterprise_leads_created_at_idx",
+    "indexdef": "CREATE INDEX enterprise_leads_created_at_idx ON public.enterprise_leads USING btree (created_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_leads",
+    "indexname": "enterprise_leads_email_idx",
+    "indexdef": "CREATE INDEX enterprise_leads_email_idx ON public.enterprise_leads USING btree (lower(email))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_leads",
+    "indexname": "enterprise_leads_org_type_idx",
+    "indexdef": "CREATE INDEX enterprise_leads_org_type_idx ON public.enterprise_leads USING btree (org_type)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_leads",
+    "indexname": "enterprise_leads_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_leads_pkey ON public.enterprise_leads USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_leads",
+    "indexname": "enterprise_leads_ville_idx",
+    "indexdef": "CREATE INDEX enterprise_leads_ville_idx ON public.enterprise_leads USING btree (ville) WHERE (ville IS NOT NULL)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_maintenance_plans",
+    "indexname": "enterprise_maintenance_plans_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_maintenance_plans_pkey ON public.enterprise_maintenance_plans USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_maintenance_plans",
+    "indexname": "idx_enterprise_maintenance_plans_due",
+    "indexdef": "CREATE INDEX idx_enterprise_maintenance_plans_due ON public.enterprise_maintenance_plans USING btree (status, next_due_at) WHERE (status = 'active'::text)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_maintenance_plans",
+    "indexname": "idx_enterprise_maintenance_plans_enterprise",
+    "indexdef": "CREATE INDEX idx_enterprise_maintenance_plans_enterprise ON public.enterprise_maintenance_plans USING btree (enterprise_id, site_id, status, next_due_at)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_maintenance_runs",
+    "indexname": "enterprise_maintenance_runs_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_maintenance_runs_pkey ON public.enterprise_maintenance_runs USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_maintenance_runs",
+    "indexname": "enterprise_maintenance_runs_unique_due",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_maintenance_runs_unique_due ON public.enterprise_maintenance_runs USING btree (plan_id, due_at)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_maintenance_runs",
+    "indexname": "idx_enterprise_maintenance_runs_enterprise",
+    "indexdef": "CREATE INDEX idx_enterprise_maintenance_runs_enterprise ON public.enterprise_maintenance_runs USING btree (enterprise_id, due_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_maintenance_runs",
+    "indexname": "idx_enterprise_maintenance_runs_plan",
+    "indexdef": "CREATE INDEX idx_enterprise_maintenance_runs_plan ON public.enterprise_maintenance_runs USING btree (plan_id, due_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_member_sites",
+    "indexname": "enterprise_member_sites_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_member_sites_pkey ON public.enterprise_member_sites USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_member_sites",
+    "indexname": "enterprise_member_sites_unique_assignment",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_member_sites_unique_assignment ON public.enterprise_member_sites USING btree (enterprise_id, member_id, site_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_member_sites",
+    "indexname": "idx_enterprise_member_sites_member",
+    "indexdef": "CREATE INDEX idx_enterprise_member_sites_member ON public.enterprise_member_sites USING btree (enterprise_id, member_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_member_sites",
+    "indexname": "idx_enterprise_member_sites_site",
+    "indexdef": "CREATE INDEX idx_enterprise_member_sites_site ON public.enterprise_member_sites USING btree (enterprise_id, site_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_members",
+    "indexname": "enterprise_members_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_members_pkey ON public.enterprise_members USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_members",
+    "indexname": "enterprise_members_unique_membership",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_members_unique_membership ON public.enterprise_members USING btree (enterprise_id, user_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_members",
+    "indexname": "idx_em_active_membership",
+    "indexdef": "CREATE UNIQUE INDEX idx_em_active_membership ON public.enterprise_members USING btree (enterprise_id, user_id) WHERE (status = 'active'::text)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_members",
+    "indexname": "idx_em_enterprise_status",
+    "indexdef": "CREATE INDEX idx_em_enterprise_status ON public.enterprise_members USING btree (enterprise_id, status)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_members",
+    "indexname": "idx_em_invited",
+    "indexdef": "CREATE INDEX idx_em_invited ON public.enterprise_members USING btree (enterprise_id, created_at DESC) WHERE (status = 'invited'::text)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_members",
+    "indexname": "idx_em_user_status",
+    "indexdef": "CREATE INDEX idx_em_user_status ON public.enterprise_members USING btree (user_id, status)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_purchase_orders",
+    "indexname": "enterprise_purchase_orders_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_purchase_orders_pkey ON public.enterprise_purchase_orders USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_purchase_orders",
+    "indexname": "enterprise_purchase_orders_ref_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_purchase_orders_ref_uq ON public.enterprise_purchase_orders USING btree (enterprise_id, lower(btrim(reference)))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_purchase_orders",
+    "indexname": "idx_enterprise_purchase_orders_scope",
+    "indexdef": "CREATE INDEX idx_enterprise_purchase_orders_scope ON public.enterprise_purchase_orders USING btree (enterprise_id, site_id, status)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_rafi_followup_snapshots",
+    "indexname": "enterprise_rafi_followup_snapshots_lookup",
+    "indexdef": "CREATE INDEX enterprise_rafi_followup_snapshots_lookup ON public.enterprise_rafi_followup_snapshots USING btree (enterprise_id, followup_id, captured_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_rafi_followup_snapshots",
+    "indexname": "enterprise_rafi_followup_snapshots_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_rafi_followup_snapshots_pkey ON public.enterprise_rafi_followup_snapshots USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_rafi_followups",
+    "indexname": "enterprise_rafi_followups_enterprise_id_target_type_target__key",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_rafi_followups_enterprise_id_target_type_target__key ON public.enterprise_rafi_followups USING btree (enterprise_id, target_type, target_id, followup_kind)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_rafi_followups",
+    "indexname": "enterprise_rafi_followups_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_rafi_followups_pkey ON public.enterprise_rafi_followups USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_request_context",
+    "indexname": "erc_pkey",
+    "indexdef": "CREATE UNIQUE INDEX erc_pkey ON public.enterprise_request_context USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_request_context",
+    "indexname": "erc_service_request_unique",
+    "indexdef": "CREATE UNIQUE INDEX erc_service_request_unique ON public.enterprise_request_context USING btree (service_request_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_request_context",
+    "indexname": "idx_erc_created_by",
+    "indexdef": "CREATE INDEX idx_erc_created_by ON public.enterprise_request_context USING btree (created_by)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_request_context",
+    "indexname": "idx_erc_enterprise",
+    "indexdef": "CREATE INDEX idx_erc_enterprise ON public.enterprise_request_context USING btree (enterprise_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_request_context",
+    "indexname": "idx_erc_site",
+    "indexdef": "CREATE INDEX idx_erc_site ON public.enterprise_request_context USING btree (site_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_request_finance_context",
+    "indexname": "enterprise_request_finance_context_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_request_finance_context_pkey ON public.enterprise_request_finance_context USING btree (service_request_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_request_finance_context",
+    "indexname": "idx_enterprise_request_finance_context_enterprise",
+    "indexdef": "CREATE INDEX idx_enterprise_request_finance_context_enterprise ON public.enterprise_request_finance_context USING btree (enterprise_id, cost_center_id, purchase_order_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_request_sla",
+    "indexname": "enterprise_request_sla_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_request_sla_pkey ON public.enterprise_request_sla USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_request_sla",
+    "indexname": "enterprise_request_sla_request_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_request_sla_request_uq ON public.enterprise_request_sla USING btree (service_request_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_request_sla",
+    "indexname": "idx_enterprise_request_sla_due",
+    "indexdef": "CREATE INDEX idx_enterprise_request_sla_due ON public.enterprise_request_sla USING btree (due_at)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_request_sla",
+    "indexname": "idx_enterprise_request_sla_enterprise_created",
+    "indexdef": "CREATE INDEX idx_enterprise_request_sla_enterprise_created ON public.enterprise_request_sla USING btree (enterprise_id, created_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_request_sla",
+    "indexname": "idx_enterprise_request_sla_site_created",
+    "indexdef": "CREATE INDEX idx_enterprise_request_sla_site_created ON public.enterprise_request_sla USING btree (site_id, created_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_sites",
+    "indexname": "enterprise_sites_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_sites_pkey ON public.enterprise_sites USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_sites",
+    "indexname": "idx_es_enterprise_status",
+    "indexdef": "CREATE INDEX idx_es_enterprise_status ON public.enterprise_sites USING btree (enterprise_id, status)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_sites",
+    "indexname": "uq_es_enterprise_site_code",
+    "indexdef": "CREATE UNIQUE INDEX uq_es_enterprise_site_code ON public.enterprise_sites USING btree (enterprise_id, site_code) WHERE (site_code IS NOT NULL)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_sla_policies",
+    "indexname": "enterprise_sla_policies_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_sla_policies_pkey ON public.enterprise_sla_policies USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_sla_policies",
+    "indexname": "enterprise_sla_policies_scope_urgency_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_sla_policies_scope_urgency_uq ON public.enterprise_sla_policies USING btree (enterprise_id, COALESCE(site_id, '00000000-0000-0000-0000-000000000000'::uuid), COALESCE(urgency, '__default__'::text))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_sla_policies",
+    "indexname": "idx_enterprise_sla_policies_enterprise",
+    "indexdef": "CREATE INDEX idx_enterprise_sla_policies_enterprise ON public.enterprise_sla_policies USING btree (enterprise_id, status)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_sla_policies",
+    "indexname": "idx_enterprise_sla_policies_site",
+    "indexdef": "CREATE INDEX idx_enterprise_sla_policies_site ON public.enterprise_sla_policies USING btree (site_id, status) WHERE (site_id IS NOT NULL)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_worker_cost_rates",
+    "indexname": "enterprise_worker_cost_rates_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_worker_cost_rates_pkey ON public.enterprise_worker_cost_rates USING btree (worker_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_worker_cost_rates",
+    "indexname": "idx_enterprise_worker_cost_rates_enterprise",
+    "indexdef": "CREATE INDEX idx_enterprise_worker_cost_rates_enterprise ON public.enterprise_worker_cost_rates USING btree (enterprise_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_workforce_sites",
+    "indexname": "enterprise_workforce_sites_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_workforce_sites_pkey ON public.enterprise_workforce_sites USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_workforce_sites",
+    "indexname": "enterprise_workforce_sites_unique",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_workforce_sites_unique ON public.enterprise_workforce_sites USING btree (enterprise_id, worker_id, site_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_workforce_sites",
+    "indexname": "idx_enterprise_workforce_sites_lookup",
+    "indexdef": "CREATE INDEX idx_enterprise_workforce_sites_lookup ON public.enterprise_workforce_sites USING btree (enterprise_id, site_id, worker_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_workforce_skills",
+    "indexname": "enterprise_workforce_skills_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_workforce_skills_pkey ON public.enterprise_workforce_skills USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_workforce_skills",
+    "indexname": "enterprise_workforce_skills_worker_category_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_workforce_skills_worker_category_uq ON public.enterprise_workforce_skills USING btree (worker_id, lower(btrim(service_category)))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_workforce_skills",
+    "indexname": "idx_enterprise_workforce_skills_lookup",
+    "indexdef": "CREATE INDEX idx_enterprise_workforce_skills_lookup ON public.enterprise_workforce_skills USING btree (enterprise_id, lower(btrim(service_category)), active)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_workforce_workers",
+    "indexname": "enterprise_workforce_workers_employee_code_uq",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_workforce_workers_employee_code_uq ON public.enterprise_workforce_workers USING btree (enterprise_id, lower(btrim(employee_code))) WHERE (employee_code IS NOT NULL)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_workforce_workers",
+    "indexname": "enterprise_workforce_workers_pkey",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_workforce_workers_pkey ON public.enterprise_workforce_workers USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_workforce_workers",
+    "indexname": "enterprise_workforce_workers_unique_member",
+    "indexdef": "CREATE UNIQUE INDEX enterprise_workforce_workers_unique_member ON public.enterprise_workforce_workers USING btree (enterprise_id, member_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "enterprise_workforce_workers",
+    "indexname": "idx_enterprise_workforce_workers_enterprise",
+    "indexdef": "CREATE INDEX idx_enterprise_workforce_workers_enterprise ON public.enterprise_workforce_workers USING btree (enterprise_id, status, availability)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "missions",
+    "indexname": "missions_artisan_profile_id_idx",
+    "indexdef": "CREATE INDEX missions_artisan_profile_id_idx ON public.missions USING btree (artisan_profile_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "missions",
+    "indexname": "missions_client_profile_id_idx",
+    "indexdef": "CREATE INDEX missions_client_profile_id_idx ON public.missions USING btree (client_profile_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "missions",
+    "indexname": "missions_one_offer_per_request",
+    "indexdef": "CREATE UNIQUE INDEX missions_one_offer_per_request ON public.missions USING btree (request_id) WHERE (status = 'offered'::text)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "missions",
+    "indexname": "missions_one_pending_per_request",
+    "indexdef": "CREATE UNIQUE INDEX missions_one_pending_per_request ON public.missions USING btree (request_id) WHERE (status = 'pending'::text)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "missions",
+    "indexname": "missions_pkey",
+    "indexdef": "CREATE UNIQUE INDEX missions_pkey ON public.missions USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "missions",
+    "indexname": "missions_pricing_offer_idx",
+    "indexdef": "CREATE INDEX missions_pricing_offer_idx ON public.missions USING btree (pricing_offer_id) WHERE (pricing_offer_id IS NOT NULL)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "missions",
+    "indexname": "missions_request_id_idx",
+    "indexdef": "CREATE INDEX missions_request_id_idx ON public.missions USING btree (request_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "missions",
+    "indexname": "missions_status_idx",
+    "indexdef": "CREATE INDEX missions_status_idx ON public.missions USING btree (status)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "missions",
+    "indexname": "missions_unique_artisan_per_request",
+    "indexdef": "CREATE UNIQUE INDEX missions_unique_artisan_per_request ON public.missions USING btree (request_id, artisan_profile_id) WHERE (status = ANY (ARRAY['offered'::text, 'pending'::text]))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "notifications",
+    "indexname": "idx_notifications_recipient",
+    "indexdef": "CREATE INDEX idx_notifications_recipient ON public.notifications USING btree (recipient_user_id, read, created_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "notifications",
+    "indexname": "idx_notifications_role",
+    "indexdef": "CREATE INDEX idx_notifications_role ON public.notifications USING btree (recipient_role, created_at DESC)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "notifications",
+    "indexname": "idx_notifications_type",
+    "indexdef": "CREATE INDEX idx_notifications_type ON public.notifications USING btree (type)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "notifications",
+    "indexname": "notifications_pkey",
+    "indexdef": "CREATE UNIQUE INDEX notifications_pkey ON public.notifications USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "payments",
+    "indexname": "payments_pkey",
+    "indexdef": "CREATE UNIQUE INDEX payments_pkey ON public.payments USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "quotes",
+    "indexname": "quotes_artisan_profile_id_idx",
+    "indexdef": "CREATE INDEX quotes_artisan_profile_id_idx ON public.quotes USING btree (artisan_profile_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "quotes",
+    "indexname": "quotes_one_active_per_artisan_request",
+    "indexdef": "CREATE UNIQUE INDEX quotes_one_active_per_artisan_request ON public.quotes USING btree (request_id, artisan_profile_id) WHERE (status = ANY (ARRAY['pending'::text, 'accepted'::text]))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "quotes",
+    "indexname": "quotes_pkey",
+    "indexdef": "CREATE UNIQUE INDEX quotes_pkey ON public.quotes USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "quotes",
+    "indexname": "quotes_request_id_idx",
+    "indexdef": "CREATE INDEX quotes_request_id_idx ON public.quotes USING btree (request_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "quotes",
+    "indexname": "quotes_status_idx",
+    "indexdef": "CREATE INDEX quotes_status_idx ON public.quotes USING btree (status)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "service_requests",
+    "indexname": "idx_service_requests_created_at",
+    "indexdef": "CREATE INDEX idx_service_requests_created_at ON public.service_requests USING btree (created_at)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "service_requests",
+    "indexname": "service_requests_city_idx",
+    "indexdef": "CREATE INDEX service_requests_city_idx ON public.service_requests USING btree (city)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "service_requests",
+    "indexname": "service_requests_client_profile_id_idx",
+    "indexdef": "CREATE INDEX service_requests_client_profile_id_idx ON public.service_requests USING btree (client_profile_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "service_requests",
+    "indexname": "service_requests_idempotency_key_unique",
+    "indexdef": "CREATE UNIQUE INDEX service_requests_idempotency_key_unique ON public.service_requests USING btree (idempotency_key) WHERE (idempotency_key IS NOT NULL)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "service_requests",
+    "indexname": "service_requests_pkey",
+    "indexdef": "CREATE UNIQUE INDEX service_requests_pkey ON public.service_requests USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "service_requests",
+    "indexname": "service_requests_pricing_offer_id_key",
+    "indexdef": "CREATE UNIQUE INDEX service_requests_pricing_offer_id_key ON public.service_requests USING btree (pricing_offer_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "service_requests",
+    "indexname": "service_requests_service_category_idx",
+    "indexdef": "CREATE INDEX service_requests_service_category_idx ON public.service_requests USING btree (service_category)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "service_requests",
+    "indexname": "service_requests_status_idx",
+    "indexdef": "CREATE INDEX service_requests_status_idx ON public.service_requests USING btree (status)"
+  }
+]

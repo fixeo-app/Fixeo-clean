@@ -1,0 +1,31 @@
+{
+  "suite": "workflows",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "preview": "https://fixeo-clean-e9quse3xx-elalaouibiz-3410s-projects.vercel.app",
+  "completed_at": "2026-09-28T23:57:20.140Z",
+  "results": [
+    {
+      "name": "Client quote rejection, rejected review, invalid expiry and legacy reconciliation",
+      "status": "PASS",
+      "duration_ms": 57152
+    },
+    {
+      "name": "Competing Finance settlements serialize and FINAL_PRICE is never PAID",
+      "status": "PASS",
+      "duration_ms": 43025
+    },
+    {
+      "name": "Finance proof, Wafacash, bank correction, cancellation and version history",
+      "status": "PASS",
+      "duration_ms": 130451
+    },
+    {
+      "name": "VAP amount/materials preserved; historical unproven validation cannot create due commission",
+      "status": "PASS",
+      "duration_ms": 29291
+    }
+  ],
+  "pass": 4,
+  "fail": 0,
+  "skip": 0
+}

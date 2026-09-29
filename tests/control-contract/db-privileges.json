@@ -1,0 +1,1682 @@
+[
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "availability"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "avatar_color"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "badge_label"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "category"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "city"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "claim_status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "claimable"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "claimed"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "completed_missions"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "description"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "experience"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "full_name"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "is_featured"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "is_public"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "is_verified"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "legacy_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "name"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "onboarding_completed"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "owner_user_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "phone"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "phone_public"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "photo_url"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "price_from"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "price_label"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "public_slug"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "rating"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "response_time_min"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "review_count"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "service_category"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "services"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "source"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "starting_price"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "updated_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "verified"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "artisans",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "work_zone"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "missions",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "agreed_price"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "missions",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "artisan_profile_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "missions",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "client_profile_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "missions",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "request_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "missions",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "missions",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "message"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "metadata"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "read"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "recipient_role"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "recipient_user_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "related_entity_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "related_entity_type"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "title"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "type"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "message"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "metadata"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "read"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "recipient_role"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "recipient_user_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "related_entity_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "related_entity_type"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "title"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "type"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "notifications",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "read"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "payments",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "amount"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "payments",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "payments",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "payments",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "mission_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "payments",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "payments",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "amount"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "payments",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "payments",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "payments",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "mission_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "payments",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "city"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "email"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "full_name"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "phone"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "role"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "city"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "email"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "full_name"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "phone"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "role"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "city"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "email"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "full_name"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "phone"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "role"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "city"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "email"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "full_name"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "phone"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "profiles",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "role"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "artisan_profile_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "estimated_duration"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "message"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "proposed_price"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "request_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "service_description"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "submitted_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "supplies_description"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "artisan_profile_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "estimated_duration"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "message"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "proposed_price"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "request_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "service_description"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "submitted_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "supplies_description"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "artisan_profile_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "estimated_duration"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "message"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "proposed_price"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "request_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "service_description"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "submitted_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "supplies_description"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "artisan_profile_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "estimated_duration"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "message"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "proposed_price"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "request_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "service_description"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "submitted_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "quotes",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "supplies_description"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "city"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "description"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "service_category"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "budget_range"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "city"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "client_phone"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "client_profile_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "commission_amount"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "commission_paid"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "commission_paid_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "commission_paid_by"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "commission_status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "description"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "guest_token_hash"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "idempotency_key"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "pricing_offer_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "service_category"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "target_artisan_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "tracking_ref"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "urgency"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "budget_range"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "city"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "client_phone"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "client_profile_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "commission_amount"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "commission_paid"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "commission_paid_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "commission_paid_by"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "commission_status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "description"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "guest_token_hash"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "idempotency_key"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "pricing_offer_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "service_category"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "target_artisan_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "tracking_ref"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "urgency"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "budget_range"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "city"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "client_phone"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "client_profile_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "commission_amount"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "commission_paid"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "commission_paid_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "commission_paid_by"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "commission_status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "description"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "guest_token_hash"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "idempotency_key"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "pricing_offer_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "service_category"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "status"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "target_artisan_id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "tracking_ref"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "service_requests",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "urgency"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "city"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "email"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "full_name"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "phone"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "INSERT",
+    "column_name": "role"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "city"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "email"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "full_name"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "phone"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "anon",
+    "privilege_type": "UPDATE",
+    "column_name": "role"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "city"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "email"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "full_name"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "phone"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "INSERT",
+    "column_name": "role"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "city"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "created_at"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "email"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "full_name"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "id"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "phone"
+  },
+  {
+    "table_schema": "public",
+    "table_name": "users",
+    "grantee": "authenticated",
+    "privilege_type": "UPDATE",
+    "column_name": "role"
+  }
+]

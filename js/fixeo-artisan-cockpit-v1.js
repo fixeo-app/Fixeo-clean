@@ -88,9 +88,7 @@
     if (!publicUrl) throw new Error('URL de photo non disponible.');
 
     /* Persist to artisans.photo_url (column grant allows this) */
-    var updateRes = await sb.from('artisans')
-      .update({ photo_url: publicUrl })
-      .eq('owner_user_id', uid);
+    var updateRes = await sb.rpc('update_my_artisan_photo_v1', { p_photo_url: publicUrl });
     if (updateRes.error) throw new Error('Mise à jour profil échouée: ' + updateRes.error.message);
 
     return publicUrl;
@@ -238,7 +236,7 @@
       var sb = await getSB();
       /* artisan_profile_id = artisans.id (PK), not auth.uid() */
       var res = await sb.from('quotes')
-        .select('id,request_id,proposed_price,message,status,created_at,service_description,supplies_description,estimated_duration,submitted_at')
+        .select('id,request_id,proposed_price,message,status,created_at,service_description,supplies_description,estimated_duration,submitted_at,review_status,quote_version,expires_at')
         .eq('artisan_profile_id', artisanProfileId)
         .order('created_at', { ascending: false })
         .limit(50);

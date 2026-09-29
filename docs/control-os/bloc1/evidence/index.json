@@ -1,0 +1,371 @@
+{
+  "cases": [
+    {
+      "name": "seven APIs reject anonymous and invalid bearer",
+      "status": "PASS",
+      "duration_ms": 15450,
+      "evidence": "bloc1-staging-read-security-focused.json",
+      "completed_at": "2026-09-29T00:15:49.384Z"
+    },
+    {
+      "name": "seven APIs deny non-admin client",
+      "status": "PASS",
+      "duration_ms": 6969,
+      "evidence": "bloc1-staging-read-security-focused.json",
+      "completed_at": "2026-09-29T00:15:49.384Z"
+    },
+    {
+      "name": "seven APIs deny non-admin artisan",
+      "status": "PASS",
+      "duration_ms": 7216,
+      "evidence": "bloc1-staging-read-security-focused.json",
+      "completed_at": "2026-09-29T00:15:49.384Z"
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_viewer",
+      "status": "PASS",
+      "duration_ms": 7100,
+      "evidence": "bloc1-staging-read-security-focused.json",
+      "completed_at": "2026-09-29T00:15:49.384Z"
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_operations",
+      "status": "PASS",
+      "duration_ms": 6293,
+      "evidence": "bloc1-staging-read-security-focused.json",
+      "completed_at": "2026-09-29T00:15:49.384Z"
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_owner",
+      "status": "PASS",
+      "duration_ms": 6994,
+      "evidence": "bloc1-staging-read-security-focused.json",
+      "completed_at": "2026-09-29T00:15:49.384Z"
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_site_manager",
+      "status": "PASS",
+      "duration_ms": 7774,
+      "evidence": "bloc1-staging-read-security-focused.json",
+      "completed_at": "2026-09-29T00:15:49.384Z"
+    },
+    {
+      "name": "seven APIs deny non-admin enterprise_b_owner",
+      "status": "PASS",
+      "duration_ms": 6379,
+      "evidence": "bloc1-staging-read-security-focused.json",
+      "completed_at": "2026-09-29T00:15:49.384Z"
+    },
+    {
+      "name": "Admin reads typed APIs; invalid IDs/parameters/method/origin denied",
+      "status": "PASS",
+      "duration_ms": 63059,
+      "evidence": "bloc1-staging-read-security-focused.json",
+      "completed_at": "2026-09-29T00:15:49.384Z"
+    },
+    {
+      "name": "Exact metrics exceed 700 and distinguish unknown/fulfilled/active",
+      "status": "PASS",
+      "duration_ms": 13108,
+      "evidence": "bloc1-staging-read-security.json",
+      "completed_at": "2026-09-28T23:43:06.431Z"
+    },
+    {
+      "name": "Keyset pagination traverses all 800 volume requests once",
+      "status": "PASS",
+      "duration_ms": 5252,
+      "evidence": "bloc1-staging-read-security.json",
+      "completed_at": "2026-09-28T23:43:06.431Z"
+    },
+    {
+      "name": "Direct protected writes denied by real PostgREST for all actors",
+      "status": "PASS",
+      "duration_ms": 22006,
+      "evidence": "bloc1-staging-read-security-focused.json",
+      "completed_at": "2026-09-29T00:15:49.384Z"
+    },
+    {
+      "name": "Claims view is private and requester rows remain bounded",
+      "status": "PASS",
+      "duration_ms": 18852,
+      "evidence": "bloc1-staging-read-security.json",
+      "completed_at": "2026-09-28T23:43:06.431Z"
+    },
+    {
+      "name": "Artisan Business inaccessible to Admin, readable only by its owner",
+      "status": "PASS",
+      "duration_ms": 172543,
+      "evidence": "bloc1-staging-read-security-focused.json",
+      "completed_at": "2026-09-29T00:15:49.384Z"
+    },
+    {
+      "name": "Diagnostic and workforce projections exclude raw input, media and private labels",
+      "status": "PASS",
+      "duration_ms": 17575,
+      "evidence": "bloc1-staging-read-security-focused.json",
+      "completed_at": "2026-09-29T00:15:49.384Z"
+    },
+    {
+      "name": "Sensitive domain mutations cannot bypass Control preview/execute",
+      "status": "PASS",
+      "duration_ms": 2422,
+      "evidence": "bloc1-staging-read-security-focused.json",
+      "completed_at": "2026-09-29T00:15:49.384Z"
+    },
+    {
+      "name": "Prepare real expiring ticket while wrong actor/target and tampering are refused",
+      "status": "PASS",
+      "duration_ms": 18366,
+      "evidence": "bloc1-staging-read-security.json",
+      "completed_at": "2026-09-28T23:43:06.431Z"
+    },
+    {
+      "name": "Client authority creates production by default; retries and protected identity/classification",
+      "status": "PASS",
+      "duration_ms": 47462,
+      "evidence": "bloc1-staging-workflows.json",
+      "completed_at": "2026-09-28T23:52:15.183Z"
+    },
+    {
+      "name": "Quote review versioning and hostile business text remain data; stale preview denied",
+      "status": "PASS",
+      "duration_ms": 70193,
+      "evidence": "bloc1-staging-workflows.json",
+      "completed_at": "2026-09-28T23:52:15.183Z"
+    },
+    {
+      "name": "Human confirmation, double-click, replay and idempotency conflicts execute once",
+      "status": "PASS",
+      "duration_ms": 42139,
+      "evidence": "bloc1-staging-workflows.json",
+      "completed_at": "2026-09-28T23:52:15.183Z"
+    },
+    {
+      "name": "Concurrent acceptance creates pending/assigned and full proven Mission lifecycle",
+      "status": "PASS",
+      "duration_ms": 80879,
+      "evidence": "bloc1-staging-workflows.json",
+      "completed_at": "2026-09-28T23:52:15.183Z"
+    },
+    {
+      "name": "Two artisans quote concurrently; a single accepted winner remains",
+      "status": "PASS",
+      "duration_ms": 39006,
+      "evidence": "bloc1-staging-workflows.json",
+      "completed_at": "2026-09-28T23:52:15.183Z"
+    },
+    {
+      "name": "Client quote rejection, rejected review, invalid expiry and legacy reconciliation",
+      "status": "PASS",
+      "duration_ms": 57152,
+      "evidence": "bloc1-staging-workflows-focused.json",
+      "completed_at": "2026-09-28T23:57:20.140Z"
+    },
+    {
+      "name": "Offered Mission ownership, double acceptance and terminal states are guarded",
+      "status": "PASS",
+      "duration_ms": 88816,
+      "evidence": "bloc1-staging-workflows-focused-ca0012dd.json",
+      "completed_at": "2026-09-29T00:15:42.171Z"
+    },
+    {
+      "name": "Competing Finance settlements serialize and FINAL_PRICE is never PAID",
+      "status": "PASS",
+      "duration_ms": 43025,
+      "evidence": "bloc1-staging-workflows-focused.json",
+      "completed_at": "2026-09-28T23:57:20.140Z"
+    },
+    {
+      "name": "Finance proof, Wafacash, bank correction, cancellation and version history",
+      "status": "PASS",
+      "duration_ms": 130451,
+      "evidence": "bloc1-staging-workflows-focused.json",
+      "completed_at": "2026-09-28T23:57:20.140Z"
+    },
+    {
+      "name": "VAP amount/materials preserved; historical unproven validation cannot create due commission",
+      "status": "PASS",
+      "duration_ms": 29291,
+      "evidence": "bloc1-staging-workflows-focused.json",
+      "completed_at": "2026-09-28T23:57:20.140Z"
+    },
+    {
+      "name": "Real expired preview is refused after its five-minute lifetime",
+      "status": "PASS",
+      "duration_ms": 14881,
+      "evidence": "bloc1-staging-workflows.json",
+      "completed_at": "2026-09-28T23:52:15.183Z"
+    },
+    {
+      "name": "Two tenants and site scope isolate accounts, sites, ERC, workforce and reporting",
+      "status": "PASS",
+      "duration_ms": 100442,
+      "evidence": "bloc1-staging-enterprise-trust.json",
+      "completed_at": "2026-09-28T23:55:34.793Z"
+    },
+    {
+      "name": "Global Admin supervises minimally without a tenant membership or dispatch delegation",
+      "status": "PASS",
+      "duration_ms": 50972,
+      "evidence": "bloc1-staging-enterprise-trust.json",
+      "completed_at": "2026-09-28T23:55:34.793Z"
+    },
+    {
+      "name": "Internal versus external concurrent acceptance leaves one canonical winner",
+      "status": "PASS",
+      "duration_ms": 17136,
+      "evidence": "bloc1-staging-enterprise-trust.json",
+      "completed_at": "2026-09-28T23:55:34.793Z"
+    },
+    {
+      "name": "Enterprise internal lifecycle and SLA facts reuse the tenant authorities",
+      "status": "PASS",
+      "duration_ms": 59714,
+      "evidence": "bloc1-staging-enterprise-trust-focused.json",
+      "completed_at": "2026-09-28T23:58:36.076Z"
+    },
+    {
+      "name": "Enterprise producer preserves ERC, hybrid dispatch policy and SLA snapshots",
+      "status": "PASS",
+      "duration_ms": 25757,
+      "evidence": "bloc1-staging-enterprise-trust.json",
+      "completed_at": "2026-09-28T23:55:34.793Z"
+    },
+    {
+      "name": "Artisan multiactivity, availability and photo use owner RPCs; verification aligns legacy",
+      "status": "PASS",
+      "duration_ms": 60681,
+      "evidence": "bloc1-staging-enterprise-trust.json",
+      "completed_at": "2026-09-28T23:55:34.793Z"
+    },
+    {
+      "name": "Claims legacy resolution, rejection and existing owner protection",
+      "status": "PASS",
+      "duration_ms": 55457,
+      "evidence": "bloc1-staging-enterprise-trust.json",
+      "completed_at": "2026-09-28T23:55:34.793Z"
+    },
+    {
+      "name": "Concurrent claims lock the profile and produce one approved owner",
+      "status": "PASS",
+      "duration_ms": 25689,
+      "evidence": "bloc1-staging-enterprise-trust.json",
+      "completed_at": "2026-09-28T23:55:34.793Z"
+    },
+    {
+      "name": "Real source faults stay isolated: stale, partial, forbidden, error, timeout and healthy",
+      "status": "PASS",
+      "duration_ms": 17681,
+      "evidence": "bloc1-staging-source-faults.json",
+      "completed_at": "2026-09-29T00:01:46.991Z"
+    },
+    {
+      "name": "Independent HTTP source responses arrive before a deliberately slow source",
+      "status": "PASS",
+      "duration_ms": 11989,
+      "evidence": "bloc1-staging-source-faults.json",
+      "completed_at": "2026-09-29T00:01:46.991Z"
+    },
+    {
+      "name": "Unfaulted scope remains healthy and ordinary roles cannot use fault scope",
+      "status": "PASS",
+      "duration_ms": 33355,
+      "evidence": "bloc1-staging-source-faults.json",
+      "completed_at": "2026-09-29T00:01:46.991Z"
+    },
+    {
+      "name": "Prepare a real preview before role withdrawal",
+      "status": "PASS",
+      "duration_ms": 9029,
+      "evidence": "bloc1-staging-governance-prepare.json",
+      "completed_at": "2026-09-29T00:04:05.481Z"
+    },
+    {
+      "name": "A previously valid JWT cannot execute after public.users.role is withdrawn",
+      "status": "PASS",
+      "duration_ms": 19165,
+      "evidence": "bloc1-staging-governance-revoked.json",
+      "completed_at": "2026-09-29T00:04:43.404Z"
+    },
+    {
+      "name": "Role restoration returns through canonical preview, execute, verify and audit",
+      "status": "PASS",
+      "duration_ms": 18016,
+      "evidence": "bloc1-staging-governance-recovered.json",
+      "completed_at": "2026-09-29T00:06:10.614Z"
+    },
+    {
+      "name": "Operational rollback denies sensitive actions but preserves reads and Client producer",
+      "status": "PASS",
+      "duration_ms": 25398,
+      "evidence": "bloc1-staging-governance-paused.json",
+      "completed_at": "2026-09-29T00:06:54.155Z"
+    },
+    {
+      "name": "Resume restores only governed actions; raw protected writes remain denied",
+      "status": "PASS",
+      "duration_ms": 16845,
+      "evidence": "bloc1-staging-governance-resumed.json",
+      "completed_at": "2026-09-29T00:07:23.278Z"
+    },
+    {
+      "name": "Expired approved and historical unreviewed quotes cannot become an accepted prestation",
+      "status": "PASS",
+      "duration_ms": 22103,
+      "evidence": "bloc1-staging-final-readiness.json",
+      "completed_at": "2026-09-29T00:09:31.154Z"
+    },
+    {
+      "name": "Diagnostic server producers remain denied to real ordinary JWTs and Control sees metadata only",
+      "status": "PASS",
+      "duration_ms": 23526,
+      "evidence": "bloc1-staging-final-readiness.json",
+      "completed_at": "2026-09-29T00:09:31.154Z"
+    },
+    {
+      "name": "Restored source authority returns healthy results and exact totals remain independent of pages",
+      "status": "PASS",
+      "duration_ms": 18535,
+      "evidence": "bloc1-staging-final-readiness.json",
+      "completed_at": "2026-09-29T00:09:31.154Z"
+    },
+    {
+      "name": "Real dossier, recommendation and audited execution enforce the RAFI foundation boundaries",
+      "status": "PASS",
+      "duration_ms": 16265,
+      "evidence": "bloc1-staging-final-readiness.json",
+      "completed_at": "2026-09-29T00:09:31.154Z"
+    },
+    {
+      "name": "Legacy Claims RPCs are denied even to real Admin; private helper is never callable",
+      "status": "PASS",
+      "duration_ms": 13295,
+      "evidence": "bloc1-staging-claims-gate.json",
+      "completed_at": "2026-09-29T00:30:53.158Z"
+    },
+    {
+      "name": "Own pending producer survives; direct review/identity/delete and foreign creation are denied",
+      "status": "PASS",
+      "duration_ms": 23900,
+      "evidence": "bloc1-staging-claims-gate.json",
+      "completed_at": "2026-09-29T00:30:53.158Z"
+    },
+    {
+      "name": "Claims approval still has one winner, durable audit and idempotent replay through Control",
+      "status": "PASS",
+      "duration_ms": 22742,
+      "evidence": "bloc1-staging-claims-gate-focused-10e3f24d.json",
+      "completed_at": "2026-09-29T00:35:05.550Z"
+    },
+    {
+      "name": "Claims final checkpoint verifies the concurrent winner without replaying committed fixtures",
+      "status": "PASS",
+      "duration_ms": 14139,
+      "evidence": "bloc1-staging-claims-gate-focused-52e3dc08.json",
+      "completed_at": "2026-09-29T00:33:40.117Z"
+    }
+  ],
+  "pass": 52,
+  "fail": 0,
+  "note": "Latest focused result replaces the same named case; raw failures are retained. Auth, empty-source, server SQL and CI are separate evidence."
+}

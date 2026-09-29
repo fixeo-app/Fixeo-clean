@@ -1,0 +1,33 @@
+{
+  "preview": "https://fixeo-clean-e9quse3xx-elalaouibiz-3410s-projects.vercel.app",
+  "admin_real_auth": "PASS",
+  "empty_summary": "PASS",
+  "empty_operations": "PASS",
+  "signals": "PASS",
+  "sources": {
+    "requests": {
+      "status": "healthy",
+      "completeness": "complete"
+    },
+    "missions": {
+      "status": "healthy",
+      "completeness": "complete"
+    },
+    "artisans": {
+      "status": "healthy",
+      "completeness": "complete"
+    },
+    "trust": {
+      "status": "healthy",
+      "completeness": "complete"
+    },
+    "network": {
+      "status": "healthy",
+      "completeness": "complete"
+    },
+    "finance": {
+      "status": "healthy",
+      "completeness": "complete"
+    }
+  }
+}

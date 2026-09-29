@@ -354,115 +354,35 @@
     return localResult || { ok: false, reason: 'no_handler' };
   }
 
-  /**
-   * approveClaimRequest(claimId, note)
+  /** Claims mutations share the Control human-confirmation gate.
+   * Ownership and rejection still run in the existing canonical Claims RPCs.
+   * No optimistic cache success and no direct RPC/table-write fallback.
    */
-  /*
-   * approveClaimRequest(claimId, note)
-   *
-   * 7C.12A.1 SECURITY REWRITE:
-   *
-   * Previously this function directly UPDATE'd artisans.owner_user_id,
-   * profiles.role, and users.role from the browser admin session.
-   *
-   * REMOVED ENTIRELY:
-   *   - browser-side artisans.owner_user_id UPDATE
-   *   - browser-side profiles/users.role UPDATE
-   *   - requesterUID sourced from localStorage (localResult.userId / claim.user_id)
-   *   - artisanUUID derived from localStorage fallback
-   *
-   * REPLACEMENT ARCHITECTURE:
-   *   All privileged ownership writes are performed by the server-side
-   *   Supabase RPC: approve_artisan_claim(p_claim_id uuid)
-   *   This RPC is SECURITY DEFINER, SET search_path='', admin-only verified
-   *   from DB data (not caller payload). It atomically:
-   *     1. Verifies caller is admin (reads users.role for auth.uid())
-   *     2. Reads claim_requests row by p_claim_id (server-sourced identity)
-   *     3. Reads artisan from claim_requests.artisan_legacy_id (server-sourced)
-   *     4. Reads requester from claim_requests.requester_user_id (server-sourced)
-   *     5. Verifies claim.status = 'pending'
-   *     6. Verifies artisan.owner_user_id IS NULL (no existing owner)
-   *     7. Sets artisans.owner_user_id = requester_user_id
-   *        claimed = true, claim_status = 'approved'
-   *        onboarding_completed remains FALSE (approval ≠ onboarding complete)
-   *     8. Sets claim_requests.status = 'approved', reviewed_at = now()
-   *     9. Promotes users.role / profiles.role = 'artisan'
-   *    10. Returns {ok, artisan_id, requester_id} or {ok:false, reason}
-   *
-   * The browser admin session calls the RPC as an authenticated user.
-   * The RPC verifies admin authority server-side — no trust from caller payload.
-   */
-  async function approveClaimRequest(claimId, note) {
-    /* Step 1: Local cache update (admin UI coherence — not authoritative) */
-    if (window.FixeoClaimSystem) window.FixeoClaimSystem.adminApproveClaim(claimId, note);
-
-    if (isSupabaseMode()) {
-      await window.FixeoSupabaseClient.ready();
-
-      /* Step 2: Call server-authoritative RPC — all ownership writes happen here.
-       * The RPC reads all identity from the DB (claim row, artisan row) —
-       * no artisan_id or requester_id is passed from the browser. */
-      var _rpc = await sb().rpc('approve_artisan_claim', { p_claim_id: claimId });
-
-      if (_rpc.error) {
-        log('approveClaimRequest RPC error: ' + _rpc.error.message, 'error');
-        return { ok: false, reason: _rpc.error.message };
-      }
-
-      var result = _rpc.data;
-      if (!result || result.ok === false) {
-        log('approveClaimRequest RPC returned error: ' + JSON.stringify(result), 'error');
-        return { ok: false, reason: (result && result.reason) || 'rpc_rejected' };
-      }
-
-      /* Optional: store note in claim_requests.notes if note provided.
-       * The RPC does not accept a note param — admin note is a UI-only annotation.
-       * We write it separately via claim_requests UPDATE (not an ownership write). */
-      if (note) {
-        await sb().from(T_CLAIMS)
-          .update({ notes: String(note) })
-          .eq('id', claimId);
-      }
-
-      log('approveClaimRequest: RPC success — artisan_id=' + (result && result.artisan_id));
+  async function reviewClaimRequest(capability, claimId, note) {
+    if (!isSupabaseMode() || !window.FixeoControl || typeof window.FixeoControl.command !== 'function') {
+      return { ok: false, reason: 'CONTROL_AUTHORITY_REQUIRED' };
     }
-    return { ok: true };
+    await window.FixeoSupabaseClient.ready();
+    var result = await window.FixeoControl.command(capability, claimId, {
+      reason: String(note || 'Revue explicite par opérateur FIXEO')
+    });
+    if (result && result.cancelled) return { ok: false, cancelled: true, reason: 'ACTION_CANCELLED' };
+    var expected = capability === 'claim.approve' ? 'approved' : 'rejected';
+    if (!result || result.ok !== true || !result.audit_id || !result.verified ||
+        result.verified.id !== claimId || result.verified.status !== expected) {
+      return { ok: false, reason: (result && result.code) || 'CLAIM_VERIFICATION_REQUIRED' };
+    }
+    // Consumers reload canonical data. Local claim caches never create authority.
+    try { window.dispatchEvent(new CustomEvent('fixeo:claim-' + expected, { detail: { claimId: claimId } })); } catch (_) {}
+    return result;
   }
 
-  /**
-   * rejectClaimRequest(claimId, note)
-   *
-   * 7C.12A.1: Delegated to reject_artisan_claim(p_claim_id uuid) RPC.
-   * Rejection NEVER alters artisan ownership.
-   */
+  async function approveClaimRequest(claimId, note) {
+    return reviewClaimRequest('claim.approve', claimId, note);
+  }
+
   async function rejectClaimRequest(claimId, note) {
-    /* Step 1: Local cache update (admin UI coherence — not authoritative) */
-    if (window.FixeoClaimSystem) window.FixeoClaimSystem.adminRejectClaim(claimId, note);
-
-    if (isSupabaseMode()) {
-      await window.FixeoSupabaseClient.ready();
-
-      /* Step 2: Call server-authoritative RPC — rejection updates claim row only.
-       * artisan.owner_user_id is NEVER touched by rejection. */
-      var _rpc = await sb().rpc('reject_artisan_claim', {
-        p_claim_id: claimId,
-        p_note: note || ''
-      });
-
-      if (_rpc.error) {
-        log('rejectClaimRequest RPC error: ' + _rpc.error.message, 'error');
-        return { ok: false, reason: _rpc.error.message };
-      }
-
-      var result = _rpc.data;
-      if (!result || result.ok === false) {
-        log('rejectClaimRequest RPC returned error: ' + JSON.stringify(result), 'error');
-        return { ok: false, reason: (result && result.reason) || 'rpc_rejected' };
-      }
-
-      log('rejectClaimRequest: RPC success for claim_id=' + claimId);
-    }
-    return { ok: true };
+    return reviewClaimRequest('claim.reject', claimId, note);
   }
 
   /**

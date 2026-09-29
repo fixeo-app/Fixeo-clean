@@ -1,0 +1,3803 @@
+[
+  {
+    "schema": "fixeo_private",
+    "table_name": "artisan_description_phrase_cleanup_v1_backup",
+    "conname": "artisan_description_phrase_cleanup_v1_backup_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (artisan_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "artisan_description_phrase_cleanup_v1_backup",
+    "conname": "artisan_description_phrase_cleanup_v1_backup_public_slug_key",
+    "contype": "u",
+    "definition": "UNIQUE (public_slug)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_completion_v1",
+    "conname": "climatisation_completion_v1_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_completion_v1",
+    "conname": "climatisation_completion_v1_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_completion_v1",
+    "conname": "climatisation_completion_v1_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_completion_v1",
+    "conname": "climatisation_completion_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (mission_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_completion_v1",
+    "conname": "climatisation_completion_v1_professional_checks_check",
+    "contype": "c",
+    "definition": "CHECK ((jsonb_typeof(professional_checks) = 'object'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_decisions_v1",
+    "conname": "climatisation_decisions_v1_consent_version_check",
+    "contype": "c",
+    "definition": "CHECK ((consent_version = 'climatisation-same-visit-v1'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_decisions_v1",
+    "conname": "climatisation_decisions_v1_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_decisions_v1",
+    "conname": "climatisation_decisions_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (proposal_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_decisions_v1",
+    "conname": "climatisation_decisions_v1_proposal_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (proposal_id) REFERENCES fixeo_private.climatisation_proposals_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_decisions_v1",
+    "conname": "climatisation_decisions_v1_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_offer_checks_v1",
+    "conname": "climatisation_offer_checks_v1_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_offer_checks_v1",
+    "conname": "climatisation_offer_checks_v1_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_offer_checks_v1",
+    "conname": "climatisation_offer_checks_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (request_id, artisan_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_offer_checks_v1",
+    "conname": "climatisation_offer_checks_v1_professional_checks_check",
+    "contype": "c",
+    "definition": "CHECK ((jsonb_typeof(professional_checks) = 'object'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_offer_checks_v1",
+    "conname": "climatisation_offer_checks_v1_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_prework_v1",
+    "conname": "climatisation_prework_v1_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_prework_v1",
+    "conname": "climatisation_prework_v1_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_prework_v1",
+    "conname": "climatisation_prework_v1_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_prework_v1",
+    "conname": "climatisation_prework_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (mission_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_prework_v1",
+    "conname": "climatisation_prework_v1_professional_checks_check",
+    "contype": "c",
+    "definition": "CHECK ((jsonb_typeof(professional_checks) = 'object'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_proposals_v1",
+    "conname": "climatisation_proposals_v1_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_proposals_v1",
+    "conname": "climatisation_proposals_v1_diagnostic_paid_minor_check",
+    "contype": "c",
+    "definition": "CHECK ((diagnostic_paid_minor = ANY (ARRAY[(0)::bigint, (26000)::bigint])))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_proposals_v1",
+    "conname": "climatisation_proposals_v1_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_proposals_v1",
+    "conname": "climatisation_proposals_v1_original_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (original_offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_proposals_v1",
+    "conname": "climatisation_proposals_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_proposals_v1",
+    "conname": "climatisation_proposals_v1_repair_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (repair_offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_proposals_v1",
+    "conname": "climatisation_proposals_v1_repair_offer_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (repair_offer_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_proposals_v1",
+    "conname": "climatisation_proposals_v1_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_proposals_v1",
+    "conname": "climatisation_proposals_v1_same_visit_check",
+    "contype": "c",
+    "definition": "CHECK (same_visit)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_proposals_v1",
+    "conname": "climatisation_proposals_v1_sequence_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (sequence_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_actual_bytes_check",
+    "contype": "c",
+    "definition": "CHECK (((actual_bytes >= 1) AND (actual_bytes <= 8388608)))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_check",
+    "contype": "c",
+    "definition": "CHECK (((state <> 'ready'::text) OR ((actual_mime = 'image/webp'::text) AND (actual_bytes IS NOT NULL) AND (width IS NOT NULL) AND (height IS NOT NULL) AND (sha256 IS NOT NULL))))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_check1",
+    "contype": "c",
+    "definition": "CHECK ((raw_path ~~ (('raw/'::text || (session_id)::text) || '/%'::text)))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_check2",
+    "contype": "c",
+    "definition": "CHECK ((clean_path ~~ (('safe/'::text || (session_id)::text) || '/%'::text)))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_clean_path_key",
+    "contype": "u",
+    "definition": "UNIQUE (clean_path)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_declared_bytes_check",
+    "contype": "c",
+    "definition": "CHECK (((declared_bytes >= 1) AND (declared_bytes <= 8388608)))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_duration_ms_check",
+    "contype": "c",
+    "definition": "CHECK ((duration_ms > 0))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_height_check",
+    "contype": "c",
+    "definition": "CHECK ((height > 0))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_kind_check",
+    "contype": "c",
+    "definition": "CHECK ((kind = ANY (ARRAY['photo'::text, 'video'::text])))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_raw_path_key",
+    "contype": "u",
+    "definition": "UNIQUE (raw_path)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_session_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (session_id) REFERENCES fixeo_private.diagnostic_sessions_v1(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_session_id_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (session_id, id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_sha256_check",
+    "contype": "c",
+    "definition": "CHECK ((sha256 ~ '^[0-9a-f]{64}$'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_state_check",
+    "contype": "c",
+    "definition": "CHECK ((state = ANY (ARRAY['reserved'::text, 'validating'::text, 'ready'::text, 'rejected'::text, 'removed'::text, 'deleted'::text])))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_media_v1",
+    "conname": "diagnostic_media_v1_width_check",
+    "contype": "c",
+    "definition": "CHECK ((width > 0))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_runs_v1",
+    "conname": "diagnostic_runs_v1_check",
+    "contype": "c",
+    "definition": "CHECK (((state <> 'complete'::text) OR ((result IS NOT NULL) AND (finished_at IS NOT NULL))))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_runs_v1",
+    "conname": "diagnostic_runs_v1_contract_version_check",
+    "contype": "c",
+    "definition": "CHECK ((contract_version = 'fixeo-diagnostic-v1'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_runs_v1",
+    "conname": "diagnostic_runs_v1_latency_ms_check",
+    "contype": "c",
+    "definition": "CHECK ((latency_ms >= 0))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_runs_v1",
+    "conname": "diagnostic_runs_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_runs_v1",
+    "conname": "diagnostic_runs_v1_reserved_micro_usd_check",
+    "contype": "c",
+    "definition": "CHECK ((reserved_micro_usd >= 0))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_runs_v1",
+    "conname": "diagnostic_runs_v1_result_check",
+    "contype": "c",
+    "definition": "CHECK (((result IS NULL) OR (octet_length((result)::text) <= 32768)))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_runs_v1",
+    "conname": "diagnostic_runs_v1_session_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (session_id) REFERENCES fixeo_private.diagnostic_sessions_v1(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_runs_v1",
+    "conname": "diagnostic_runs_v1_session_id_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (session_id, id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_runs_v1",
+    "conname": "diagnostic_runs_v1_state_check",
+    "contype": "c",
+    "definition": "CHECK ((state = ANY (ARRAY['running'::text, 'complete'::text, 'failed'::text])))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_selected_run_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (id, selected_run_id) REFERENCES fixeo_private.diagnostic_runs_v1(session_id, id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_check",
+    "contype": "c",
+    "definition": "CHECK ((((owner_user_id IS NOT NULL) AND (guest_secret_hash IS NULL) AND (owner_key = ('u:'::text || (owner_user_id)::text))) OR ((owner_user_id IS NULL) AND (guest_secret_hash IS NOT NULL) AND (owner_key = ('g:'::text || guest_secret_hash)))))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_check1",
+    "contype": "c",
+    "definition": "CHECK (((state = 'bound'::text) = (service_request_id IS NOT NULL)))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_city_slug_check",
+    "contype": "c",
+    "definition": "CHECK ((city_slug = ANY (ARRAY['casablanca'::text, 'rabat'::text, 'marrakech'::text, 'fes'::text, 'tanger'::text, 'agadir'::text, 'meknes'::text, 'oujda'::text, 'kenitra'::text, 'tetouan'::text, 'sale'::text, 'temara'::text, 'el-jadida'::text, 'beni-mellal'::text, 'nador'::text, 'khouribga'::text, 'safi'::text, 'taza'::text, 'ouarzazate'::text, 'mohammedia'::text])))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_consent_version_check",
+    "contype": "c",
+    "definition": "CHECK ((consent_version = 'diagnostic-privacy-v1'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_guest_secret_hash_check",
+    "contype": "c",
+    "definition": "CHECK ((guest_secret_hash ~ '^[0-9a-f]{64}$'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_input_check",
+    "contype": "c",
+    "definition": "CHECK (((jsonb_typeof(input) = 'object'::text) AND (octet_length((input)::text) <= 32768)))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_owner_user_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (owner_user_id) REFERENCES auth.users(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_revision_check",
+    "contype": "c",
+    "definition": "CHECK ((revision > 0))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_safety_signals_check",
+    "contype": "c",
+    "definition": "CHECK ((jsonb_typeof(safety_signals) = 'array'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_service_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_service_request_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (service_request_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_source_check",
+    "contype": "c",
+    "definition": "CHECK ((source = ANY (ARRAY['homepage'::text, 'rafi'::text, 'client'::text])))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_sessions_v1",
+    "conname": "diagnostic_sessions_v1_state_check",
+    "contype": "c",
+    "definition": "CHECK ((state = ANY (ARRAY['draft'::text, 'analyzing'::text, 'questions'::text, 'ready'::text, 'bound'::text, 'expired'::text])))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_usage_windows_v1",
+    "conname": "diagnostic_usage_windows_v1_analyses_check",
+    "contype": "c",
+    "definition": "CHECK ((analyses >= 0))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_usage_windows_v1",
+    "conname": "diagnostic_usage_windows_v1_bytes_check",
+    "contype": "c",
+    "definition": "CHECK ((bytes >= 0))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_usage_windows_v1",
+    "conname": "diagnostic_usage_windows_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (quota_key, window_start)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_usage_windows_v1",
+    "conname": "diagnostic_usage_windows_v1_quota_key_check",
+    "contype": "c",
+    "definition": "CHECK (((length(quota_key) >= 1) AND (length(quota_key) <= 160)))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_usage_windows_v1",
+    "conname": "diagnostic_usage_windows_v1_requests_check",
+    "contype": "c",
+    "definition": "CHECK ((requests >= 0))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_usage_windows_v1",
+    "conname": "diagnostic_usage_windows_v1_reserved_micro_usd_check",
+    "contype": "c",
+    "definition": "CHECK ((reserved_micro_usd >= 0))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_usage_windows_v1",
+    "conname": "diagnostic_usage_windows_v1_sessions_check",
+    "contype": "c",
+    "definition": "CHECK ((sessions >= 0))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_decisions_v1",
+    "conname": "electricity_decisions_v1_consent_version_check",
+    "contype": "c",
+    "definition": "CHECK ((consent_version = 'electricity-same-visit-v1'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_decisions_v1",
+    "conname": "electricity_decisions_v1_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_decisions_v1",
+    "conname": "electricity_decisions_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (proposal_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_decisions_v1",
+    "conname": "electricity_decisions_v1_proposal_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (proposal_id) REFERENCES fixeo_private.electricity_proposals_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_decisions_v1",
+    "conname": "electricity_decisions_v1_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_prework_v1",
+    "conname": "electricity_prework_v1_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_prework_v1",
+    "conname": "electricity_prework_v1_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_prework_v1",
+    "conname": "electricity_prework_v1_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_prework_v1",
+    "conname": "electricity_prework_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (mission_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_prework_v1",
+    "conname": "electricity_prework_v1_professional_checks_check",
+    "contype": "c",
+    "definition": "CHECK ((jsonb_typeof(professional_checks) = 'object'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_proposals_v1",
+    "conname": "electricity_proposals_v1_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_proposals_v1",
+    "conname": "electricity_proposals_v1_diagnostic_paid_minor_check",
+    "contype": "c",
+    "definition": "CHECK ((diagnostic_paid_minor = ANY (ARRAY[(0)::bigint, (24000)::bigint])))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_proposals_v1",
+    "conname": "electricity_proposals_v1_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_proposals_v1",
+    "conname": "electricity_proposals_v1_original_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (original_offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_proposals_v1",
+    "conname": "electricity_proposals_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_proposals_v1",
+    "conname": "electricity_proposals_v1_repair_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (repair_offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_proposals_v1",
+    "conname": "electricity_proposals_v1_repair_offer_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (repair_offer_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_proposals_v1",
+    "conname": "electricity_proposals_v1_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_proposals_v1",
+    "conname": "electricity_proposals_v1_same_visit_check",
+    "contype": "c",
+    "definition": "CHECK (same_visit)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_proposals_v1",
+    "conname": "electricity_proposals_v1_sequence_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (sequence_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "notification_assignment_events_s1b2",
+    "conname": "notification_assignment_events_s1b2_check",
+    "contype": "c",
+    "definition": "CHECK (((notified_at IS NULL) OR (closed_at IS NULL)))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "notification_assignment_events_s1b2",
+    "conname": "notification_assignment_events_s1b2_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "notification_assignment_events_s1b2",
+    "conname": "notification_assignment_events_s1b2_notification_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (notification_id) REFERENCES notifications(id) ON DELETE SET NULL"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "notification_assignment_events_s1b2",
+    "conname": "notification_assignment_events_s1b2_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (mission_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_decisions_v1",
+    "conname": "plumbing_decisions_v1_consent_version_check",
+    "contype": "c",
+    "definition": "CHECK ((consent_version = 'plumbing-same-visit-v1'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_decisions_v1",
+    "conname": "plumbing_decisions_v1_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_decisions_v1",
+    "conname": "plumbing_decisions_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (proposal_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_decisions_v1",
+    "conname": "plumbing_decisions_v1_proposal_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (proposal_id) REFERENCES fixeo_private.plumbing_proposals_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_decisions_v1",
+    "conname": "plumbing_decisions_v1_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_proposals_v1",
+    "conname": "plumbing_proposals_v1_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_proposals_v1",
+    "conname": "plumbing_proposals_v1_diagnostic_paid_minor_check",
+    "contype": "c",
+    "definition": "CHECK ((diagnostic_paid_minor = ANY (ARRAY[(0)::bigint, (22000)::bigint])))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_proposals_v1",
+    "conname": "plumbing_proposals_v1_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_proposals_v1",
+    "conname": "plumbing_proposals_v1_original_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (original_offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_proposals_v1",
+    "conname": "plumbing_proposals_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_proposals_v1",
+    "conname": "plumbing_proposals_v1_repair_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (repair_offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_proposals_v1",
+    "conname": "plumbing_proposals_v1_repair_offer_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (repair_offer_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_proposals_v1",
+    "conname": "plumbing_proposals_v1_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_proposals_v1",
+    "conname": "plumbing_proposals_v1_same_visit_check",
+    "contype": "c",
+    "definition": "CHECK (same_visit)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_proposals_v1",
+    "conname": "plumbing_proposals_v1_sequence_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (sequence_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_completion_v1",
+    "conname": "serrurerie_completion_v1_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_completion_v1",
+    "conname": "serrurerie_completion_v1_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_completion_v1",
+    "conname": "serrurerie_completion_v1_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_completion_v1",
+    "conname": "serrurerie_completion_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (mission_id, offer_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_completion_v1",
+    "conname": "serrurerie_completion_v1_professional_checks_check",
+    "contype": "c",
+    "definition": "CHECK ((jsonb_typeof(professional_checks) = 'object'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_decisions_v1",
+    "conname": "serrurerie_decisions_v1_consent_version_check",
+    "contype": "c",
+    "definition": "CHECK ((consent_version = 'serrurerie-same-visit-v1'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_decisions_v1",
+    "conname": "serrurerie_decisions_v1_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_decisions_v1",
+    "conname": "serrurerie_decisions_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (proposal_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_decisions_v1",
+    "conname": "serrurerie_decisions_v1_proposal_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (proposal_id) REFERENCES fixeo_private.serrurerie_proposals_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_decisions_v1",
+    "conname": "serrurerie_decisions_v1_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_offer_checks_v1",
+    "conname": "serrurerie_offer_checks_v1_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_offer_checks_v1",
+    "conname": "serrurerie_offer_checks_v1_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_offer_checks_v1",
+    "conname": "serrurerie_offer_checks_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (request_id, artisan_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_offer_checks_v1",
+    "conname": "serrurerie_offer_checks_v1_professional_checks_check",
+    "contype": "c",
+    "definition": "CHECK ((jsonb_typeof(professional_checks) = 'object'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_offer_checks_v1",
+    "conname": "serrurerie_offer_checks_v1_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_prework_v1",
+    "conname": "serrurerie_prework_v1_access_check_type_check",
+    "contype": "c",
+    "definition": "CHECK ((access_check_type = ANY (ARRAY['OCCUPANT_DOCUMENTS'::text, 'AUTHORIZED_MANDATE'::text])))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_prework_v1",
+    "conname": "serrurerie_prework_v1_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_prework_v1",
+    "conname": "serrurerie_prework_v1_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_prework_v1",
+    "conname": "serrurerie_prework_v1_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_prework_v1",
+    "conname": "serrurerie_prework_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (mission_id, offer_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_prework_v1",
+    "conname": "serrurerie_prework_v1_professional_checks_check",
+    "contype": "c",
+    "definition": "CHECK ((jsonb_typeof(professional_checks) = 'object'::text))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_proposals_v1",
+    "conname": "serrurerie_proposals_v1_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_proposals_v1",
+    "conname": "serrurerie_proposals_v1_diagnostic_paid_minor_check",
+    "contype": "c",
+    "definition": "CHECK ((diagnostic_paid_minor = ANY (ARRAY[(0)::bigint, (22000)::bigint])))"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_proposals_v1",
+    "conname": "serrurerie_proposals_v1_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_proposals_v1",
+    "conname": "serrurerie_proposals_v1_original_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (original_offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_proposals_v1",
+    "conname": "serrurerie_proposals_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_proposals_v1",
+    "conname": "serrurerie_proposals_v1_repair_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (repair_offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_proposals_v1",
+    "conname": "serrurerie_proposals_v1_repair_offer_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (repair_offer_id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_proposals_v1",
+    "conname": "serrurerie_proposals_v1_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_proposals_v1",
+    "conname": "serrurerie_proposals_v1_same_visit_check",
+    "contype": "c",
+    "definition": "CHECK (same_visit)"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_proposals_v1",
+    "conname": "serrurerie_proposals_v1_sequence_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (sequence_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_clients",
+    "conname": "artisan_business_clients_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_jobs",
+    "conname": "artisan_business_jobs_amount_check",
+    "contype": "c",
+    "definition": "CHECK (((amount IS NULL) OR (amount >= (0)::numeric)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_jobs",
+    "conname": "artisan_business_jobs_client_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (client_id) REFERENCES artisan_business_clients(id) ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_jobs",
+    "conname": "artisan_business_jobs_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_jobs",
+    "conname": "artisan_business_jobs_quote_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (quote_id) REFERENCES artisan_business_quotes(id) ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_jobs",
+    "conname": "artisan_business_jobs_source_check",
+    "contype": "c",
+    "definition": "CHECK ((source = ANY (ARRAY['personal'::text, 'fixeo'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_jobs",
+    "conname": "artisan_business_jobs_status_check",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['planned'::text, 'in_progress'::text, 'completed'::text, 'cancelled'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_ledger",
+    "conname": "artisan_business_ledger_amount_check",
+    "contype": "c",
+    "definition": "CHECK ((amount > (0)::numeric))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_ledger",
+    "conname": "artisan_business_ledger_client_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (client_id) REFERENCES artisan_business_clients(id) ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_ledger",
+    "conname": "artisan_business_ledger_entry_type_check",
+    "contype": "c",
+    "definition": "CHECK ((entry_type = ANY (ARRAY['income'::text, 'expense'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_ledger",
+    "conname": "artisan_business_ledger_job_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (job_id) REFERENCES artisan_business_jobs(id) ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_ledger",
+    "conname": "artisan_business_ledger_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_ledger",
+    "conname": "artisan_business_ledger_quote_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (quote_id) REFERENCES artisan_business_quotes(id) ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_ledger",
+    "conname": "artisan_business_ledger_source_check",
+    "contype": "c",
+    "definition": "CHECK ((source = ANY (ARRAY['personal'::text, 'fixeo'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_quotes",
+    "conname": "artisan_business_quotes_client_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (client_id) REFERENCES artisan_business_clients(id) ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_quotes",
+    "conname": "artisan_business_quotes_discount_check",
+    "contype": "c",
+    "definition": "CHECK ((discount >= (0)::numeric))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_quotes",
+    "conname": "artisan_business_quotes_owner_user_id_quote_number_key",
+    "contype": "u",
+    "definition": "UNIQUE (owner_user_id, quote_number)"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_quotes",
+    "conname": "artisan_business_quotes_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_quotes",
+    "conname": "artisan_business_quotes_source_check",
+    "contype": "c",
+    "definition": "CHECK ((source = ANY (ARRAY['personal'::text, 'fixeo'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_quotes",
+    "conname": "artisan_business_quotes_status_check",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['draft'::text, 'sent'::text, 'accepted'::text, 'rejected'::text, 'expired'::text, 'cancelled'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_quotes",
+    "conname": "artisan_business_quotes_subtotal_check",
+    "contype": "c",
+    "definition": "CHECK ((subtotal >= (0)::numeric))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_quotes",
+    "conname": "artisan_business_quotes_total_check",
+    "contype": "c",
+    "definition": "CHECK ((total >= (0)::numeric))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_profiles",
+    "conname": "artisan_profiles_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_profiles",
+    "conname": "artisan_profiles_profile_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_service_categories",
+    "conname": "artisan_service_categories_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_service_categories",
+    "conname": "artisan_service_categories_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (artisan_id, service_category)"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_service_cities",
+    "conname": "artisan_service_cities_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_service_cities",
+    "conname": "artisan_service_cities_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (artisan_id, city)"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisans",
+    "conname": "artisans_availability_check",
+    "contype": "c",
+    "definition": "CHECK ((availability = ANY (ARRAY['available'::text, 'busy'::text, 'unavailable'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisans",
+    "conname": "artisans_claim_status_check",
+    "contype": "c",
+    "definition": "CHECK ((claim_status = ANY (ARRAY['unclaimed'::text, 'pending'::text, 'approved'::text, 'rejected'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisans",
+    "conname": "artisans_legacy_id_unique",
+    "contype": "u",
+    "definition": "UNIQUE (legacy_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisans",
+    "conname": "artisans_owner_user_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (owner_user_id) REFERENCES users(id) ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisans",
+    "conname": "artisans_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisans",
+    "conname": "artisans_rating_check",
+    "contype": "c",
+    "definition": "CHECK (((rating >= (0)::numeric) AND (rating <= (5)::numeric)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisans",
+    "conname": "artisans_review_count_check",
+    "contype": "c",
+    "definition": "CHECK ((review_count >= 0))"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisans",
+    "conname": "artisans_slug_unique",
+    "contype": "u",
+    "definition": "UNIQUE (public_slug)"
+  },
+  {
+    "schema": "public",
+    "table_name": "claim_requests",
+    "conname": "claim_requests_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "claim_requests",
+    "conname": "claim_requests_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "claim_requests",
+    "conname": "claim_requests_requester_user_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (requester_user_id) REFERENCES users(id) ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "claim_requests",
+    "conname": "claims_status_check",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text, 'superseded_by_approval'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "claims",
+    "conname": "claims_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "claims",
+    "conname": "claims_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_execution_queue",
+    "conname": "dispatch_execution_queue_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_execution_queue",
+    "conname": "dispatch_execution_queue_batch_number_check",
+    "contype": "c",
+    "definition": "CHECK ((batch_number >= 1))"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_execution_queue",
+    "conname": "dispatch_execution_queue_execution_priority_check",
+    "contype": "c",
+    "definition": "CHECK (((execution_priority IS NULL) OR (execution_priority >= 1)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_execution_queue",
+    "conname": "dispatch_execution_queue_execution_status_check",
+    "contype": "c",
+    "definition": "CHECK ((execution_status = ANY (ARRAY['QUEUED'::text, 'CONTACTED'::text, 'ACCEPTED'::text, 'DECLINED'::text, 'EXPIRED'::text, 'CANCELLED'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_execution_queue",
+    "conname": "dispatch_execution_queue_match_rank_check",
+    "contype": "c",
+    "definition": "CHECK ((match_rank >= 1))"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_execution_queue",
+    "conname": "dispatch_execution_queue_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_execution_queue",
+    "conname": "dispatch_execution_queue_position_in_batch_check",
+    "contype": "c",
+    "definition": "CHECK ((position_in_batch >= 1))"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_execution_queue",
+    "conname": "dispatch_execution_queue_request_id_artisan_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (request_id, artisan_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_execution_queue",
+    "conname": "dispatch_execution_queue_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_notification_outbox",
+    "conname": "dispatch_notification_outbox_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_notification_outbox",
+    "conname": "dispatch_notification_outbox_attempt_count_check",
+    "contype": "c",
+    "definition": "CHECK ((attempt_count >= 0))"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_notification_outbox",
+    "conname": "dispatch_notification_outbox_channel_check",
+    "contype": "c",
+    "definition": "CHECK ((channel = ANY (ARRAY['WHATSAPP'::text, 'SMS'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_notification_outbox",
+    "conname": "dispatch_notification_outbox_notification_status_check",
+    "contype": "c",
+    "definition": "CHECK ((notification_status = ANY (ARRAY['PENDING'::text, 'PROCESSING'::text, 'SENT'::text, 'FAILED'::text, 'CANCELLED'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_notification_outbox",
+    "conname": "dispatch_notification_outbox_notification_type_check",
+    "contype": "c",
+    "definition": "CHECK ((notification_type = ANY (ARRAY['DISPATCH_REQUEST'::text, 'DISPATCH_REMINDER'::text, 'DISPATCH_CANCELLED'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_notification_outbox",
+    "conname": "dispatch_notification_outbox_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_notification_outbox",
+    "conname": "dispatch_notification_outbox_queue_entry_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (queue_entry_id) REFERENCES dispatch_execution_queue(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_notification_outbox",
+    "conname": "dispatch_notification_outbox_request_id_artisan_id_notifica_key",
+    "contype": "u",
+    "definition": "UNIQUE (request_id, artisan_id, notification_type, channel)"
+  },
+  {
+    "schema": "public",
+    "table_name": "dispatch_notification_outbox",
+    "conname": "dispatch_notification_outbox_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_accounts",
+    "conname": "enterprise_accounts_legal_name_length",
+    "contype": "c",
+    "definition": "CHECK (((legal_name IS NULL) OR ((char_length(legal_name) >= 1) AND (char_length(legal_name) <= 300))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_accounts",
+    "conname": "enterprise_accounts_name_length",
+    "contype": "c",
+    "definition": "CHECK (((char_length(name) >= 1) AND (char_length(name) <= 200)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_accounts",
+    "conname": "enterprise_accounts_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_accounts",
+    "conname": "enterprise_accounts_status_values",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'suspended'::text, 'closed'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_cases",
+    "conname": "enterprise_approval_cases_amount_chk",
+    "contype": "c",
+    "definition": "CHECK (((requested_amount IS NULL) OR (requested_amount >= (0)::numeric)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_cases",
+    "conname": "enterprise_approval_cases_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_cases",
+    "conname": "enterprise_approval_cases_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_cases",
+    "conname": "enterprise_approval_cases_policy_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (policy_id) REFERENCES enterprise_approval_policies(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_cases",
+    "conname": "enterprise_approval_cases_requested_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (requested_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_cases",
+    "conname": "enterprise_approval_cases_role_chk",
+    "contype": "c",
+    "definition": "CHECK ((requester_role = ANY (ARRAY['owner'::text, 'admin'::text, 'operations_manager'::text, 'site_manager'::text, 'reporter'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_cases",
+    "conname": "enterprise_approval_cases_service_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_cases",
+    "conname": "enterprise_approval_cases_service_request_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (service_request_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_cases",
+    "conname": "enterprise_approval_cases_site_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_cases",
+    "conname": "enterprise_approval_cases_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_cases",
+    "conname": "enterprise_approval_cases_steps_chk",
+    "contype": "c",
+    "definition": "CHECK ((((total_steps >= 1) AND (total_steps <= 10)) AND ((current_step >= 1) AND (current_step <= total_steps))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_cases",
+    "conname": "enterprise_approval_cases_urgency_chk",
+    "contype": "c",
+    "definition": "CHECK (((urgency IS NULL) OR (urgency = ANY (ARRAY['normale'::text, 'urgent'::text, 'now'::text]))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_decisions",
+    "conname": "enterprise_approval_decisions_approver_member_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (approver_member_id) REFERENCES enterprise_members(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_decisions",
+    "conname": "enterprise_approval_decisions_case_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (case_id) REFERENCES enterprise_approval_cases(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_decisions",
+    "conname": "enterprise_approval_decisions_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_decisions",
+    "conname": "enterprise_approval_decisions_note_chk",
+    "contype": "c",
+    "definition": "CHECK (((note IS NULL) OR (char_length(btrim(note)) <= 1000)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_decisions",
+    "conname": "enterprise_approval_decisions_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_decisions",
+    "conname": "enterprise_approval_decisions_role_chk",
+    "contype": "c",
+    "definition": "CHECK ((approver_role = ANY (ARRAY['owner'::text, 'admin'::text, 'operations_manager'::text, 'site_manager'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_decisions",
+    "conname": "enterprise_approval_decisions_uq",
+    "contype": "u",
+    "definition": "UNIQUE (case_id, step_order)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_decisions",
+    "conname": "enterprise_approval_decisions_value_chk",
+    "contype": "c",
+    "definition": "CHECK ((decision = ANY (ARRAY['approved'::text, 'rejected'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policies",
+    "conname": "enterprise_approval_policies_amount_chk",
+    "contype": "c",
+    "definition": "CHECK ((((min_amount IS NULL) OR (min_amount >= (0)::numeric)) AND ((max_amount IS NULL) OR (max_amount >= (0)::numeric)) AND ((min_amount IS NULL) OR (max_amount IS NULL) OR (max_amount >= min_amount))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policies",
+    "conname": "enterprise_approval_policies_created_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policies",
+    "conname": "enterprise_approval_policies_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policies",
+    "conname": "enterprise_approval_policies_name_chk",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(name)) >= 1) AND (char_length(btrim(name)) <= 200)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policies",
+    "conname": "enterprise_approval_policies_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policies",
+    "conname": "enterprise_approval_policies_priority_chk",
+    "contype": "c",
+    "definition": "CHECK (((priority >= 1) AND (priority <= 10000)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policies",
+    "conname": "enterprise_approval_policies_requester_role_chk",
+    "contype": "c",
+    "definition": "CHECK (((requester_role IS NULL) OR (requester_role = ANY (ARRAY['owner'::text, 'admin'::text, 'operations_manager'::text, 'site_manager'::text, 'reporter'::text]))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policies",
+    "conname": "enterprise_approval_policies_site_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policies",
+    "conname": "enterprise_approval_policies_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'inactive'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policies",
+    "conname": "enterprise_approval_policies_updated_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (updated_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policies",
+    "conname": "enterprise_approval_policies_urgency_chk",
+    "contype": "c",
+    "definition": "CHECK (((urgency IS NULL) OR (urgency = ANY (ARRAY['normale'::text, 'urgent'::text, 'now'::text]))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policy_steps",
+    "conname": "enterprise_approval_policy_steps_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policy_steps",
+    "conname": "enterprise_approval_policy_steps_order_chk",
+    "contype": "c",
+    "definition": "CHECK (((step_order >= 1) AND (step_order <= 10)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policy_steps",
+    "conname": "enterprise_approval_policy_steps_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policy_steps",
+    "conname": "enterprise_approval_policy_steps_policy_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (policy_id) REFERENCES enterprise_approval_policies(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policy_steps",
+    "conname": "enterprise_approval_policy_steps_role_chk",
+    "contype": "c",
+    "definition": "CHECK ((approver_role = ANY (ARRAY['owner'::text, 'admin'::text, 'operations_manager'::text, 'site_manager'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_approval_policy_steps",
+    "conname": "enterprise_approval_policy_steps_uq",
+    "contype": "u",
+    "definition": "UNIQUE (policy_id, step_order)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_audit_events",
+    "conname": "enterprise_audit_events_after_object_chk",
+    "contype": "c",
+    "definition": "CHECK (((after_state IS NULL) OR (jsonb_typeof(after_state) = 'object'::text)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_audit_events",
+    "conname": "enterprise_audit_events_before_object_chk",
+    "contype": "c",
+    "definition": "CHECK (((before_state IS NULL) OR (jsonb_typeof(before_state) = 'object'::text)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_audit_events",
+    "conname": "enterprise_audit_events_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE RESTRICT ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_audit_events",
+    "conname": "enterprise_audit_events_event_type_chk",
+    "contype": "c",
+    "definition": "CHECK ((event_type = ANY (ARRAY['member.role_updated'::text, 'member.status_updated'::text, 'site.created'::text, 'site.updated'::text, 'site.status_updated'::text, 'request.created'::text, 'account.created'::text, 'account.updated'::text, 'member.invited'::text, 'member.invitation_accepted'::text, 'member.invitation_revoked'::text, 'member.invitation_expired'::text, 'account.status_updated'::text, 'account.ownership_transferred'::text, 'sla.policy_created'::text, 'sla.policy_updated'::text, 'sla.snapshot_created'::text, 'member.site_assigned'::text, 'member.site_unassigned'::text, 'workforce.worker_created'::text, 'workforce.worker_updated'::text, 'workforce.skills_updated'::text, 'workforce.sites_updated'::text, 'workforce.availability_updated'::text, 'dispatch.policy_created'::text, 'dispatch.policy_updated'::text, 'dispatch.internal_offered'::text, 'dispatch.internal_accepted'::text, 'dispatch.internal_declined'::text, 'dispatch.internal_assignment_updated'::text, 'dispatch.external_started'::text, 'dispatch.external_fallback'::text, 'dispatch.no_internal_candidate'::text, 'control_tower.escalation_created'::text, 'control_tower.escalation_updated'::text, 'maintenance.plan_created'::text, 'maintenance.plan_updated'::text, 'equipment.created'::text, 'equipment.updated'::text, 'equipment.request_linked'::text, 'equipment.request_unlinked'::text, 'equipment.maintenance_linked'::text, 'equipment.maintenance_unlinked'::text, 'equipment.asset_registered'::text, 'equipment.asset_removed'::text, 'finance.cost_center_created'::text, 'finance.cost_center_updated'::text, 'finance.budget_created'::text, 'finance.budget_updated'::text, 'finance.po_created'::text, 'finance.po_updated'::text, 'finance.worker_rate_updated'::text, 'finance.request_context_updated'::text, 'governance.policy_created'::text, 'governance.policy_updated'::text, 'governance.case_created'::text, 'governance.case_approved'::text, 'governance.case_rejected'::text, 'rafi.action_confirmed'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_audit_events",
+    "conname": "enterprise_audit_events_metadata_object_chk",
+    "contype": "c",
+    "definition": "CHECK ((jsonb_typeof(metadata) = 'object'::text))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_audit_events",
+    "conname": "enterprise_audit_events_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_audit_events",
+    "conname": "enterprise_audit_events_target_type_chk",
+    "contype": "c",
+    "definition": "CHECK ((target_type = ANY (ARRAY['enterprise_member'::text, 'enterprise_site'::text, 'service_request'::text, 'enterprise_account'::text, 'enterprise_invitation'::text, 'enterprise_member_site'::text, 'enterprise_workforce_worker'::text, 'enterprise_dispatch_policy'::text, 'enterprise_internal_assignment'::text, 'enterprise_control_tower_escalation'::text, 'enterprise_maintenance_plan'::text, 'enterprise_equipment'::text, 'enterprise_equipment_asset'::text, 'enterprise_cost_center'::text, 'enterprise_budget'::text, 'enterprise_purchase_order'::text, 'enterprise_request_finance_context'::text, 'enterprise_approval_policy'::text, 'enterprise_approval_case'::text, 'rafi_action'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_budgets",
+    "conname": "enterprise_budgets_amount_chk",
+    "contype": "c",
+    "definition": "CHECK ((amount >= (0)::numeric))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_budgets",
+    "conname": "enterprise_budgets_cost_center_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (cost_center_id) REFERENCES enterprise_cost_centers(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_budgets",
+    "conname": "enterprise_budgets_created_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_budgets",
+    "conname": "enterprise_budgets_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_budgets",
+    "conname": "enterprise_budgets_period_chk",
+    "contype": "c",
+    "definition": "CHECK ((period_end >= period_start))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_budgets",
+    "conname": "enterprise_budgets_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_budgets",
+    "conname": "enterprise_budgets_scope_uq",
+    "contype": "u",
+    "definition": "UNIQUE (cost_center_id, period_start, period_end)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_budgets",
+    "conname": "enterprise_budgets_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'inactive'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_budgets",
+    "conname": "enterprise_budgets_updated_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (updated_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_control_tower_escalations",
+    "conname": "enterprise_control_tower_escalations_assigned_to_member_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (assigned_to_member_id) REFERENCES enterprise_members(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_control_tower_escalations",
+    "conname": "enterprise_control_tower_escalations_created_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_control_tower_escalations",
+    "conname": "enterprise_control_tower_escalations_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_control_tower_escalations",
+    "conname": "enterprise_control_tower_escalations_note_chk",
+    "contype": "c",
+    "definition": "CHECK (((note IS NULL) OR ((char_length(btrim(note)) >= 1) AND (char_length(btrim(note)) <= 1000))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_control_tower_escalations",
+    "conname": "enterprise_control_tower_escalations_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_control_tower_escalations",
+    "conname": "enterprise_control_tower_escalations_priority_chk",
+    "contype": "c",
+    "definition": "CHECK ((priority = ANY (ARRAY['normal'::text, 'high'::text, 'critical'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_control_tower_escalations",
+    "conname": "enterprise_control_tower_escalations_service_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_control_tower_escalations",
+    "conname": "enterprise_control_tower_escalations_service_request_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (service_request_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_control_tower_escalations",
+    "conname": "enterprise_control_tower_escalations_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['open'::text, 'acknowledged'::text, 'resolved'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_control_tower_escalations",
+    "conname": "enterprise_control_tower_escalations_updated_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (updated_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_cost_centers",
+    "conname": "enterprise_cost_centers_code_chk",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(code)) >= 1) AND (char_length(btrim(code)) <= 80)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_cost_centers",
+    "conname": "enterprise_cost_centers_created_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_cost_centers",
+    "conname": "enterprise_cost_centers_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_cost_centers",
+    "conname": "enterprise_cost_centers_name_chk",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(name)) >= 1) AND (char_length(btrim(name)) <= 200)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_cost_centers",
+    "conname": "enterprise_cost_centers_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_cost_centers",
+    "conname": "enterprise_cost_centers_site_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_cost_centers",
+    "conname": "enterprise_cost_centers_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'inactive'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_cost_centers",
+    "conname": "enterprise_cost_centers_updated_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (updated_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_dispatch_policies",
+    "conname": "enterprise_dispatch_policies_category_chk",
+    "contype": "c",
+    "definition": "CHECK (((service_category IS NULL) OR ((char_length(btrim(service_category)) >= 1) AND (char_length(btrim(service_category)) <= 160))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_dispatch_policies",
+    "conname": "enterprise_dispatch_policies_created_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_dispatch_policies",
+    "conname": "enterprise_dispatch_policies_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_dispatch_policies",
+    "conname": "enterprise_dispatch_policies_fallback_chk",
+    "contype": "c",
+    "definition": "CHECK (((fallback_after_minutes >= 0) AND (fallback_after_minutes <= 1440)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_dispatch_policies",
+    "conname": "enterprise_dispatch_policies_mode_chk",
+    "contype": "c",
+    "definition": "CHECK ((mode = ANY (ARRAY['internal_only'::text, 'internal_first'::text, 'external_only'::text, 'hybrid'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_dispatch_policies",
+    "conname": "enterprise_dispatch_policies_offer_limit_chk",
+    "contype": "c",
+    "definition": "CHECK (((internal_offer_limit >= 1) AND (internal_offer_limit <= 10)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_dispatch_policies",
+    "conname": "enterprise_dispatch_policies_offer_ttl_chk",
+    "contype": "c",
+    "definition": "CHECK (((offer_ttl_minutes >= 1) AND (offer_ttl_minutes <= 1440)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_dispatch_policies",
+    "conname": "enterprise_dispatch_policies_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_dispatch_policies",
+    "conname": "enterprise_dispatch_policies_site_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_dispatch_policies",
+    "conname": "enterprise_dispatch_policies_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'inactive'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment",
+    "conname": "enterprise_equipment_category_chk",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(category)) >= 1) AND (char_length(btrim(category)) <= 160)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment",
+    "conname": "enterprise_equipment_code_chk",
+    "contype": "c",
+    "definition": "CHECK (((asset_code IS NULL) OR ((char_length(btrim(asset_code)) >= 1) AND (char_length(btrim(asset_code)) <= 100))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment",
+    "conname": "enterprise_equipment_created_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment",
+    "conname": "enterprise_equipment_criticality_chk",
+    "contype": "c",
+    "definition": "CHECK ((criticality = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment",
+    "conname": "enterprise_equipment_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment",
+    "conname": "enterprise_equipment_name_chk",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(name)) >= 1) AND (char_length(btrim(name)) <= 200)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment",
+    "conname": "enterprise_equipment_notes_chk",
+    "contype": "c",
+    "definition": "CHECK (((notes IS NULL) OR (char_length(btrim(notes)) <= 2000)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment",
+    "conname": "enterprise_equipment_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment",
+    "conname": "enterprise_equipment_site_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment",
+    "conname": "enterprise_equipment_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'out_of_service'::text, 'retired'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment",
+    "conname": "enterprise_equipment_updated_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (updated_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_assets",
+    "conname": "enterprise_equipment_assets_created_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_assets",
+    "conname": "enterprise_equipment_assets_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_assets",
+    "conname": "enterprise_equipment_assets_equipment_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (equipment_id) REFERENCES enterprise_equipment(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_assets",
+    "conname": "enterprise_equipment_assets_mime_chk",
+    "contype": "c",
+    "definition": "CHECK ((mime_type = ANY (ARRAY['image/jpeg'::text, 'image/png'::text, 'image/webp'::text, 'application/pdf'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_assets",
+    "conname": "enterprise_equipment_assets_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_assets",
+    "conname": "enterprise_equipment_assets_size_chk",
+    "contype": "c",
+    "definition": "CHECK (((size_bytes >= 1) AND (size_bytes <= 10485760)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_assets",
+    "conname": "enterprise_equipment_assets_storage_path_key",
+    "contype": "u",
+    "definition": "UNIQUE (storage_path)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_assets",
+    "conname": "enterprise_equipment_assets_title_chk",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(title)) >= 1) AND (char_length(btrim(title)) <= 200)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_assets",
+    "conname": "enterprise_equipment_assets_type_chk",
+    "contype": "c",
+    "definition": "CHECK ((asset_type = ANY (ARRAY['photo'::text, 'document'::text, 'manual'::text, 'warranty'::text, 'invoice'::text, 'other'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_maintenance_links",
+    "conname": "enterprise_equipment_maintenance_links_created_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_maintenance_links",
+    "conname": "enterprise_equipment_maintenance_links_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_maintenance_links",
+    "conname": "enterprise_equipment_maintenance_links_equipment_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (equipment_id) REFERENCES enterprise_equipment(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_maintenance_links",
+    "conname": "enterprise_equipment_maintenance_links_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_maintenance_links",
+    "conname": "enterprise_equipment_maintenance_links_plan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (plan_id) REFERENCES enterprise_maintenance_plans(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_maintenance_links",
+    "conname": "enterprise_equipment_maintenance_links_uq",
+    "contype": "u",
+    "definition": "UNIQUE (equipment_id, plan_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_request_links",
+    "conname": "enterprise_equipment_request_links_created_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_request_links",
+    "conname": "enterprise_equipment_request_links_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_request_links",
+    "conname": "enterprise_equipment_request_links_equipment_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (equipment_id) REFERENCES enterprise_equipment(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_request_links",
+    "conname": "enterprise_equipment_request_links_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_request_links",
+    "conname": "enterprise_equipment_request_links_service_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_equipment_request_links",
+    "conname": "enterprise_equipment_request_links_uq",
+    "contype": "u",
+    "definition": "UNIQUE (equipment_id, service_request_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_hybrid_dispatch_state",
+    "conname": "enterprise_hybrid_dispatch_state_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_hybrid_dispatch_state",
+    "conname": "enterprise_hybrid_dispatch_state_mode_chk",
+    "contype": "c",
+    "definition": "CHECK ((mode = ANY (ARRAY['internal_only'::text, 'internal_first'::text, 'external_only'::text, 'hybrid'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_hybrid_dispatch_state",
+    "conname": "enterprise_hybrid_dispatch_state_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (service_request_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_hybrid_dispatch_state",
+    "conname": "enterprise_hybrid_dispatch_state_policy_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (policy_id) REFERENCES enterprise_dispatch_policies(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_hybrid_dispatch_state",
+    "conname": "enterprise_hybrid_dispatch_state_service_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_hybrid_dispatch_state",
+    "conname": "enterprise_hybrid_dispatch_state_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['internal_offered'::text, 'internal_assigned'::text, 'external_dispatched'::text, 'hybrid_active'::text, 'no_internal_candidate'::text, 'external_failed'::text, 'completed'::text, 'cancelled'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_assignments",
+    "conname": "enterprise_internal_assignments_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_assignments",
+    "conname": "enterprise_internal_assignments_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (offer_id) REFERENCES enterprise_internal_dispatch_offers(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_assignments",
+    "conname": "enterprise_internal_assignments_offer_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (offer_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_assignments",
+    "conname": "enterprise_internal_assignments_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_assignments",
+    "conname": "enterprise_internal_assignments_service_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_assignments",
+    "conname": "enterprise_internal_assignments_service_request_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (service_request_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_assignments",
+    "conname": "enterprise_internal_assignments_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['assigned'::text, 'in_progress'::text, 'completed'::text, 'validated'::text, 'cancelled'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_assignments",
+    "conname": "enterprise_internal_assignments_worker_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (worker_id) REFERENCES enterprise_workforce_workers(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_dispatch_offers",
+    "conname": "enterprise_internal_dispatch_offers_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_dispatch_offers",
+    "conname": "enterprise_internal_dispatch_offers_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_dispatch_offers",
+    "conname": "enterprise_internal_dispatch_offers_service_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_dispatch_offers",
+    "conname": "enterprise_internal_dispatch_offers_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['offered'::text, 'accepted'::text, 'declined'::text, 'expired'::text, 'cancelled'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_dispatch_offers",
+    "conname": "enterprise_internal_dispatch_offers_unique",
+    "contype": "u",
+    "definition": "UNIQUE (service_request_id, worker_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_internal_dispatch_offers",
+    "conname": "enterprise_internal_dispatch_offers_worker_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (worker_id) REFERENCES enterprise_workforce_workers(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_invitations",
+    "conname": "enterprise_invitations_accepted_by_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (accepted_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_invitations",
+    "conname": "enterprise_invitations_email_chk",
+    "contype": "c",
+    "definition": "CHECK (((email_normalized = lower(btrim(email_normalized))) AND ((char_length(email_normalized) >= 3) AND (char_length(email_normalized) <= 320)) AND (strpos(email_normalized, '@'::text) > 1)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_invitations",
+    "conname": "enterprise_invitations_enterprise_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_invitations",
+    "conname": "enterprise_invitations_expiry_chk",
+    "contype": "c",
+    "definition": "CHECK ((expires_at > created_at))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_invitations",
+    "conname": "enterprise_invitations_invited_by_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (invited_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_invitations",
+    "conname": "enterprise_invitations_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_invitations",
+    "conname": "enterprise_invitations_revoked_by_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (revoked_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_invitations",
+    "conname": "enterprise_invitations_role_chk",
+    "contype": "c",
+    "definition": "CHECK ((role = ANY (ARRAY['admin'::text, 'operations_manager'::text, 'site_manager'::text, 'reporter'::text, 'viewer'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_invitations",
+    "conname": "enterprise_invitations_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'accepted'::text, 'revoked'::text, 'expired'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_invitations",
+    "conname": "enterprise_invitations_target_user_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (target_user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_invitations",
+    "conname": "enterprise_invitations_terminal_state_chk",
+    "contype": "c",
+    "definition": "CHECK ((((status = 'pending'::text) AND (accepted_at IS NULL) AND (accepted_by IS NULL) AND (revoked_at IS NULL) AND (revoked_by IS NULL)) OR ((status = 'accepted'::text) AND (accepted_at IS NOT NULL) AND (accepted_by IS NOT NULL) AND (revoked_at IS NULL) AND (revoked_by IS NULL)) OR ((status = 'revoked'::text) AND (accepted_at IS NULL) AND (accepted_by IS NULL) AND (revoked_at IS NOT NULL) AND (revoked_by IS NOT NULL)) OR ((status = 'expired'::text) AND (accepted_at IS NULL) AND (accepted_by IS NULL) AND (revoked_at IS NULL) AND (revoked_by IS NULL))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_invitations",
+    "conname": "enterprise_invitations_token_hash_chk",
+    "contype": "c",
+    "definition": "CHECK ((token_hash ~ '^[0-9a-f]{64}$'::text))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_batiments_check",
+    "contype": "c",
+    "definition": "CHECK ((char_length(batiments) <= 50))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_email_check",
+    "contype": "c",
+    "definition": "CHECK (((char_length(email) >= 3) AND (char_length(email) <= 254)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_entreprise_check",
+    "contype": "c",
+    "definition": "CHECK (((char_length(entreprise) >= 1) AND (char_length(entreprise) <= 500)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_fonction_check",
+    "contype": "c",
+    "definition": "CHECK (((char_length(fonction) >= 1) AND (char_length(fonction) <= 500)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_message_check",
+    "contype": "c",
+    "definition": "CHECK ((char_length(message) <= 2000))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_needs_check",
+    "contype": "c",
+    "definition": "CHECK ((char_length(needs) <= 500))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_nom_check",
+    "contype": "c",
+    "definition": "CHECK (((char_length(nom) >= 1) AND (char_length(nom) <= 500)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_org_type_check",
+    "contype": "c",
+    "definition": "CHECK (((char_length(org_type) >= 1) AND (char_length(org_type) <= 100)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_page_check",
+    "contype": "c",
+    "definition": "CHECK ((char_length(page) <= 200))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_prenom_check",
+    "contype": "c",
+    "definition": "CHECK (((char_length(prenom) >= 1) AND (char_length(prenom) <= 500)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_source_check",
+    "contype": "c",
+    "definition": "CHECK ((source = 'enterprise'::text))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_telephone_check",
+    "contype": "c",
+    "definition": "CHECK (((char_length(telephone) >= 1) AND (char_length(telephone) <= 50)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_leads",
+    "conname": "enterprise_leads_ville_check",
+    "contype": "c",
+    "definition": "CHECK ((char_length(ville) <= 100))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_plans",
+    "conname": "enterprise_maintenance_plans_category_chk",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(service_category)) >= 1) AND (char_length(btrim(service_category)) <= 160)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_plans",
+    "conname": "enterprise_maintenance_plans_created_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_plans",
+    "conname": "enterprise_maintenance_plans_description_chk",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(description)) >= 1) AND (char_length(btrim(description)) <= 2000)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_plans",
+    "conname": "enterprise_maintenance_plans_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_plans",
+    "conname": "enterprise_maintenance_plans_frequency_chk",
+    "contype": "c",
+    "definition": "CHECK ((frequency = ANY (ARRAY['daily'::text, 'weekly'::text, 'monthly'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_plans",
+    "conname": "enterprise_maintenance_plans_interval_chk",
+    "contype": "c",
+    "definition": "CHECK (((interval_count >= 1) AND (interval_count <= 24)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_plans",
+    "conname": "enterprise_maintenance_plans_name_chk",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(name)) >= 1) AND (char_length(btrim(name)) <= 200)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_plans",
+    "conname": "enterprise_maintenance_plans_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_plans",
+    "conname": "enterprise_maintenance_plans_reminder_chk",
+    "contype": "c",
+    "definition": "CHECK (((reminder_hours >= 0) AND (reminder_hours <= 720)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_plans",
+    "conname": "enterprise_maintenance_plans_site_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_plans",
+    "conname": "enterprise_maintenance_plans_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'paused'::text, 'inactive'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_plans",
+    "conname": "enterprise_maintenance_plans_updated_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (updated_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_plans",
+    "conname": "enterprise_maintenance_plans_urgency_chk",
+    "contype": "c",
+    "definition": "CHECK (((urgency IS NULL) OR (urgency = ANY (ARRAY['normale'::text, 'urgent'::text, 'now'::text]))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_runs",
+    "conname": "enterprise_maintenance_runs_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_runs",
+    "conname": "enterprise_maintenance_runs_error_chk",
+    "contype": "c",
+    "definition": "CHECK (((error_code IS NULL) OR ((char_length(btrim(error_code)) >= 1) AND (char_length(btrim(error_code)) <= 160))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_runs",
+    "conname": "enterprise_maintenance_runs_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_runs",
+    "conname": "enterprise_maintenance_runs_plan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (plan_id) REFERENCES enterprise_maintenance_plans(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_runs",
+    "conname": "enterprise_maintenance_runs_service_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_runs",
+    "conname": "enterprise_maintenance_runs_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['processing'::text, 'generated'::text, 'failed'::text, 'skipped'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_runs",
+    "conname": "enterprise_maintenance_runs_unique_due",
+    "contype": "u",
+    "definition": "UNIQUE (plan_id, due_at)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_member_sites",
+    "conname": "enterprise_member_sites_assigned_by_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (assigned_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_member_sites",
+    "conname": "enterprise_member_sites_enterprise_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_member_sites",
+    "conname": "enterprise_member_sites_member_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (member_id) REFERENCES enterprise_members(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_member_sites",
+    "conname": "enterprise_member_sites_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_member_sites",
+    "conname": "enterprise_member_sites_site_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_member_sites",
+    "conname": "enterprise_member_sites_unique_assignment",
+    "contype": "u",
+    "definition": "UNIQUE (enterprise_id, member_id, site_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_members",
+    "conname": "enterprise_members_enterprise_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_members",
+    "conname": "enterprise_members_invited_by_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (invited_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_members",
+    "conname": "enterprise_members_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_members",
+    "conname": "enterprise_members_role_values",
+    "contype": "c",
+    "definition": "CHECK ((role = ANY (ARRAY['owner'::text, 'admin'::text, 'operations_manager'::text, 'site_manager'::text, 'reporter'::text, 'viewer'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_members",
+    "conname": "enterprise_members_status_values",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['invited'::text, 'active'::text, 'suspended'::text, 'removed'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_members",
+    "conname": "enterprise_members_unique_membership",
+    "contype": "u",
+    "definition": "UNIQUE (enterprise_id, user_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_members",
+    "conname": "enterprise_members_user_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_purchase_orders",
+    "conname": "enterprise_purchase_orders_amount_chk",
+    "contype": "c",
+    "definition": "CHECK (((approved_amount IS NULL) OR (approved_amount >= (0)::numeric)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_purchase_orders",
+    "conname": "enterprise_purchase_orders_cost_center_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (cost_center_id) REFERENCES enterprise_cost_centers(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_purchase_orders",
+    "conname": "enterprise_purchase_orders_created_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_purchase_orders",
+    "conname": "enterprise_purchase_orders_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_purchase_orders",
+    "conname": "enterprise_purchase_orders_notes_chk",
+    "contype": "c",
+    "definition": "CHECK (((notes IS NULL) OR (char_length(btrim(notes)) <= 2000)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_purchase_orders",
+    "conname": "enterprise_purchase_orders_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_purchase_orders",
+    "conname": "enterprise_purchase_orders_ref_chk",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(reference)) >= 1) AND (char_length(btrim(reference)) <= 120)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_purchase_orders",
+    "conname": "enterprise_purchase_orders_site_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_purchase_orders",
+    "conname": "enterprise_purchase_orders_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['open'::text, 'closed'::text, 'cancelled'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_purchase_orders",
+    "conname": "enterprise_purchase_orders_updated_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (updated_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_rafi_followup_snapshots",
+    "conname": "enterprise_rafi_followup_snapshots_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_rafi_followup_snapshots",
+    "conname": "enterprise_rafi_followup_snapshots_followup_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (followup_id) REFERENCES enterprise_rafi_followups(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_rafi_followup_snapshots",
+    "conname": "enterprise_rafi_followup_snapshots_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_rafi_followup_snapshots",
+    "conname": "enterprise_rafi_followup_snapshots_severity_check",
+    "contype": "c",
+    "definition": "CHECK (((severity >= 0) AND (severity <= 4)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_rafi_followup_snapshots",
+    "conname": "enterprise_rafi_followup_snapshots_state_key_check",
+    "contype": "c",
+    "definition": "CHECK ((char_length(state_key) <= 80))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_rafi_followups",
+    "conname": "enterprise_rafi_followups_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_rafi_followups",
+    "conname": "enterprise_rafi_followups_enterprise_id_target_type_target__key",
+    "contype": "u",
+    "definition": "UNIQUE (enterprise_id, target_type, target_id, followup_kind)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_rafi_followups",
+    "conname": "enterprise_rafi_followups_followup_kind_check",
+    "contype": "c",
+    "definition": "CHECK ((followup_kind = ANY (ARRAY['attention'::text, 'sla'::text, 'governance'::text, 'maintenance'::text, 'equipment'::text, 'workforce'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_rafi_followups",
+    "conname": "enterprise_rafi_followups_note_check",
+    "contype": "c",
+    "definition": "CHECK (((note IS NULL) OR (char_length(note) <= 500)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_rafi_followups",
+    "conname": "enterprise_rafi_followups_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_rafi_followups",
+    "conname": "enterprise_rafi_followups_status_check",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['open'::text, 'resolved'::text, 'dismissed'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_rafi_followups",
+    "conname": "enterprise_rafi_followups_target_type_check",
+    "contype": "c",
+    "definition": "CHECK ((target_type = ANY (ARRAY['service_request'::text, 'enterprise_approval_case'::text, 'enterprise_maintenance_plan'::text, 'enterprise_equipment'::text, 'enterprise_site'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_context",
+    "conname": "erc_created_by_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_context",
+    "conname": "erc_enterprise_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_context",
+    "conname": "erc_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_context",
+    "conname": "erc_service_request_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_context",
+    "conname": "erc_service_request_unique",
+    "contype": "u",
+    "definition": "UNIQUE (service_request_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_context",
+    "conname": "erc_site_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_finance_context",
+    "conname": "enterprise_request_finance_context_cost_center_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (cost_center_id) REFERENCES enterprise_cost_centers(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_finance_context",
+    "conname": "enterprise_request_finance_context_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_finance_context",
+    "conname": "enterprise_request_finance_context_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (service_request_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_finance_context",
+    "conname": "enterprise_request_finance_context_purchase_order_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (purchase_order_id) REFERENCES enterprise_purchase_orders(id) ON UPDATE CASCADE ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_finance_context",
+    "conname": "enterprise_request_finance_context_service_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_finance_context",
+    "conname": "enterprise_request_finance_context_updated_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (updated_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_deadline_order_chk",
+    "contype": "c",
+    "definition": "CHECK (((started_at <= at_risk_at) AND (at_risk_at <= due_at)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_enterprise_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_policy_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (policy_id) REFERENCES enterprise_sla_policies(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_policy_urgency_chk",
+    "contype": "c",
+    "definition": "CHECK (((policy_urgency IS NULL) OR (policy_urgency = ANY (ARRAY['urgent'::text, 'high'::text, 'normal'::text, 'low'::text]))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_request_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_request_uq",
+    "contype": "u",
+    "definition": "UNIQUE (service_request_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_request_urgency_chk",
+    "contype": "c",
+    "definition": "CHECK (((request_urgency IS NULL) OR (request_urgency = ANY (ARRAY['normale'::text, 'urgent'::text, 'now'::text]))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_site_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "conname": "enterprise_request_sla_target_chk",
+    "contype": "c",
+    "definition": "CHECK ((acceptance_target_minutes > 0))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sites",
+    "conname": "enterprise_sites_address_line_length",
+    "contype": "c",
+    "definition": "CHECK (((address_line IS NULL) OR ((char_length(btrim(address_line)) >= 1) AND (char_length(btrim(address_line)) <= 500))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sites",
+    "conname": "enterprise_sites_city_length",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(city)) >= 1) AND (char_length(btrim(city)) <= 120)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sites",
+    "conname": "enterprise_sites_enterprise_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sites",
+    "conname": "enterprise_sites_name_length",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(name)) >= 1) AND (char_length(btrim(name)) <= 200)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sites",
+    "conname": "enterprise_sites_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sites",
+    "conname": "enterprise_sites_site_code_length",
+    "contype": "c",
+    "definition": "CHECK (((site_code IS NULL) OR ((char_length(btrim(site_code)) >= 1) AND (char_length(btrim(site_code)) <= 80))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sites",
+    "conname": "enterprise_sites_status_values",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'inactive'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sla_policies",
+    "conname": "enterprise_sla_policies_created_by_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sla_policies",
+    "conname": "enterprise_sla_policies_enterprise_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sla_policies",
+    "conname": "enterprise_sla_policies_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sla_policies",
+    "conname": "enterprise_sla_policies_site_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sla_policies",
+    "conname": "enterprise_sla_policies_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'inactive'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sla_policies",
+    "conname": "enterprise_sla_policies_target_chk",
+    "contype": "c",
+    "definition": "CHECK ((acceptance_target_minutes > 0))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sla_policies",
+    "conname": "enterprise_sla_policies_urgency_chk",
+    "contype": "c",
+    "definition": "CHECK (((urgency IS NULL) OR (urgency = ANY (ARRAY['urgent'::text, 'high'::text, 'normal'::text, 'low'::text]))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_worker_cost_rates",
+    "conname": "enterprise_worker_cost_rates_amount_chk",
+    "contype": "c",
+    "definition": "CHECK ((hourly_cost >= (0)::numeric))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_worker_cost_rates",
+    "conname": "enterprise_worker_cost_rates_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_worker_cost_rates",
+    "conname": "enterprise_worker_cost_rates_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (worker_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_worker_cost_rates",
+    "conname": "enterprise_worker_cost_rates_updated_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (updated_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_worker_cost_rates",
+    "conname": "enterprise_worker_cost_rates_worker_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (worker_id) REFERENCES enterprise_workforce_workers(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_sites",
+    "conname": "enterprise_workforce_sites_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_sites",
+    "conname": "enterprise_workforce_sites_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_sites",
+    "conname": "enterprise_workforce_sites_site_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (site_id) REFERENCES enterprise_sites(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_sites",
+    "conname": "enterprise_workforce_sites_unique",
+    "contype": "u",
+    "definition": "UNIQUE (enterprise_id, worker_id, site_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_sites",
+    "conname": "enterprise_workforce_sites_worker_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (worker_id) REFERENCES enterprise_workforce_workers(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_skills",
+    "conname": "enterprise_workforce_skills_category_chk",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(service_category)) >= 1) AND (char_length(btrim(service_category)) <= 160)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_skills",
+    "conname": "enterprise_workforce_skills_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_skills",
+    "conname": "enterprise_workforce_skills_level_chk",
+    "contype": "c",
+    "definition": "CHECK (((skill_level >= 1) AND (skill_level <= 5)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_skills",
+    "conname": "enterprise_workforce_skills_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_skills",
+    "conname": "enterprise_workforce_skills_worker_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (worker_id) REFERENCES enterprise_workforce_workers(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_workers",
+    "conname": "enterprise_workforce_workers_availability_chk",
+    "contype": "c",
+    "definition": "CHECK ((availability = ANY (ARRAY['available'::text, 'unavailable'::text, 'off_duty'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_workers",
+    "conname": "enterprise_workforce_workers_capacity_chk",
+    "contype": "c",
+    "definition": "CHECK (((max_concurrent_jobs >= 1) AND (max_concurrent_jobs <= 20)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_workers",
+    "conname": "enterprise_workforce_workers_created_by_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_workers",
+    "conname": "enterprise_workforce_workers_employee_code_chk",
+    "contype": "c",
+    "definition": "CHECK (((employee_code IS NULL) OR ((char_length(btrim(employee_code)) >= 1) AND (char_length(btrim(employee_code)) <= 80))))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_workers",
+    "conname": "enterprise_workforce_workers_enterprise_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (enterprise_id) REFERENCES enterprise_accounts(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_workers",
+    "conname": "enterprise_workforce_workers_label_chk",
+    "contype": "c",
+    "definition": "CHECK (((char_length(btrim(display_label)) >= 1) AND (char_length(btrim(display_label)) <= 160)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_workers",
+    "conname": "enterprise_workforce_workers_member_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (member_id) REFERENCES enterprise_members(id) ON UPDATE CASCADE ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_workers",
+    "conname": "enterprise_workforce_workers_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_workers",
+    "conname": "enterprise_workforce_workers_status_chk",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'inactive'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_workforce_workers",
+    "conname": "enterprise_workforce_workers_unique_member",
+    "contype": "u",
+    "definition": "UNIQUE (enterprise_id, member_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "estimator_context_redemptions",
+    "conname": "estimator_context_redemptions_context_id_unique",
+    "contype": "u",
+    "definition": "UNIQUE (context_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "estimator_context_redemptions",
+    "conname": "estimator_context_redemptions_failure_reason_check",
+    "contype": "c",
+    "definition": "CHECK (((failure_reason IS NULL) OR (char_length(failure_reason) <= 500)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "estimator_context_redemptions",
+    "conname": "estimator_context_redemptions_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "estimator_context_redemptions",
+    "conname": "estimator_context_redemptions_service_request_fk",
+    "contype": "f",
+    "definition": "FOREIGN KEY (service_request_id) REFERENCES service_requests(id) ON DELETE RESTRICT"
+  },
+  {
+    "schema": "public",
+    "table_name": "estimator_context_redemptions",
+    "conname": "estimator_context_redemptions_state_check",
+    "contype": "c",
+    "definition": "CHECK ((state = ANY (ARRAY['acquired'::text, 'committed'::text, 'failed'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_catalogue_version_check",
+    "contype": "c",
+    "definition": "CHECK (((length(btrim(catalogue_version)) >= 1) AND (length(btrim(catalogue_version)) <= 80)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_check",
+    "contype": "c",
+    "definition": "CHECK ((commission_minor = fixeo_vap_commission_minor_v1(vap_minor)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_check1",
+    "contype": "c",
+    "definition": "CHECK ((client_total_minor = ((vap_minor + commission_minor) + materials_minor)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_check2",
+    "contype": "c",
+    "definition": "CHECK ((isfinite(created_at) AND isfinite(expires_at) AND (expires_at > created_at)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_city_check",
+    "contype": "c",
+    "definition": "CHECK (((length(btrim(city)) >= 1) AND (length(btrim(city)) <= 120)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_client_total_minor_check",
+    "contype": "c",
+    "definition": "CHECK (((client_total_minor >= 1) AND (client_total_minor <= 50000000)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_currency_check",
+    "contype": "c",
+    "definition": "CHECK ((currency = 'MAD'::text))"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_materials_minor_check",
+    "contype": "c",
+    "definition": "CHECK (((materials_minor >= 0) AND (materials_minor <= 50000000)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_offer_key_key",
+    "contype": "u",
+    "definition": "UNIQUE (offer_key)"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_pricing_version_check",
+    "contype": "c",
+    "definition": "CHECK ((pricing_version = 'vap-bp33-v1'::text))"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_scope_check",
+    "contype": "c",
+    "definition": "CHECK (((jsonb_typeof(scope) = 'object'::text) AND (scope <> '{}'::jsonb)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_service_code_check",
+    "contype": "c",
+    "definition": "CHECK (((length(btrim(service_code)) >= 1) AND (length(btrim(service_code)) <= 160)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "conname": "fixeo_pricing_offers_v1_vap_minor_check",
+    "contype": "c",
+    "definition": "CHECK (((vap_minor >= 1) AND (vap_minor <= 50000000)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "missions",
+    "conname": "missions_agreed_price_check",
+    "contype": "c",
+    "definition": "CHECK ((agreed_price >= (0)::numeric))"
+  },
+  {
+    "schema": "public",
+    "table_name": "missions",
+    "conname": "missions_commission_amount_check",
+    "contype": "c",
+    "definition": "CHECK ((commission_amount >= (0)::numeric))"
+  },
+  {
+    "schema": "public",
+    "table_name": "missions",
+    "conname": "missions_final_price_check",
+    "contype": "c",
+    "definition": "CHECK (((final_price IS NULL) OR (final_price > (0)::numeric)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "missions",
+    "conname": "missions_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "missions",
+    "conname": "missions_pricing_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (pricing_offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "missions",
+    "conname": "missions_status_check",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['offered'::text, 'pending'::text, 'declined'::text, 'expired'::text, 'done'::text, 'cancelled'::text, 'validated'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "notifications",
+    "conname": "notifications_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "notifications",
+    "conname": "notifications_recipient_user_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (recipient_user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "payments",
+    "conname": "payments_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "payments",
+    "conname": "payments_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "portfolio_items",
+    "conname": "portfolio_items_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "profiles",
+    "conname": "profiles_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "profiles",
+    "conname": "profiles_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "profiles",
+    "conname": "profiles_role_check",
+    "contype": "c",
+    "definition": "CHECK ((role = ANY (ARRAY['client'::text, 'artisan'::text, 'admin'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "quotes",
+    "conname": "quotes_artisan_profile_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (artisan_profile_id) REFERENCES artisans(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "quotes",
+    "conname": "quotes_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "quotes",
+    "conname": "quotes_proposed_price_check",
+    "contype": "c",
+    "definition": "CHECK ((proposed_price >= (0)::numeric))"
+  },
+  {
+    "schema": "public",
+    "table_name": "quotes",
+    "conname": "quotes_request_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (request_id) REFERENCES service_requests(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "quotes",
+    "conname": "quotes_status_check",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'accepted'::text, 'rejected'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "reviews",
+    "conname": "reviews_client_profile_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (client_profile_id) REFERENCES profiles(id) ON DELETE SET NULL"
+  },
+  {
+    "schema": "public",
+    "table_name": "reviews",
+    "conname": "reviews_mission_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (mission_id) REFERENCES missions(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "reviews",
+    "conname": "reviews_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "reviews",
+    "conname": "reviews_quality_score_check",
+    "contype": "c",
+    "definition": "CHECK (((quality_score >= 1) AND (quality_score <= 5)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "reviews",
+    "conname": "reviews_rating_check",
+    "contype": "c",
+    "definition": "CHECK (((rating >= 1) AND (rating <= 5)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "reviews",
+    "conname": "reviews_response_time_score_check",
+    "contype": "c",
+    "definition": "CHECK (((response_time_score >= 1) AND (response_time_score <= 5)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "reviews",
+    "conname": "reviews_review_text_check",
+    "contype": "c",
+    "definition": "CHECK ((char_length(review_text) <= 500))"
+  },
+  {
+    "schema": "public",
+    "table_name": "service_requests",
+    "conname": "service_requests_client_profile_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (client_profile_id) REFERENCES profiles(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "service_requests",
+    "conname": "service_requests_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "service_requests",
+    "conname": "service_requests_pricing_offer_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (pricing_offer_id) REFERENCES fixeo_pricing_offers_v1(id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "service_requests",
+    "conname": "service_requests_pricing_offer_id_key",
+    "contype": "u",
+    "definition": "UNIQUE (pricing_offer_id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "service_requests",
+    "conname": "service_requests_status_check",
+    "contype": "c",
+    "definition": "CHECK ((status = ANY (ARRAY['new'::text, 'assigned'::text, 'in_progress'::text, 'completed'::text, 'validated'::text, 'cancelled'::text, 'no_match'::text])))"
+  },
+  {
+    "schema": "public",
+    "table_name": "service_requests",
+    "conname": "service_requests_target_artisan_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (target_artisan_id) REFERENCES artisans(id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "service_requests",
+    "conname": "service_requests_urgency_check",
+    "contype": "c",
+    "definition": "CHECK (((urgency = ANY (ARRAY['normale'::text, 'urgent'::text, 'now'::text])) OR (urgency IS NULL)))"
+  },
+  {
+    "schema": "public",
+    "table_name": "users",
+    "conname": "users_id_fkey",
+    "contype": "f",
+    "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE"
+  },
+  {
+    "schema": "public",
+    "table_name": "users",
+    "conname": "users_pkey",
+    "contype": "p",
+    "definition": "PRIMARY KEY (id)"
+  },
+  {
+    "schema": "public",
+    "table_name": "users",
+    "conname": "users_role_check",
+    "contype": "c",
+    "definition": "CHECK ((role = ANY (ARRAY['admin'::text, 'artisan'::text, 'client'::text])))"
+  }
+]

@@ -1,0 +1,2260 @@
+[
+  {
+    "schema": "fixeo_private",
+    "proname": "_bp12_reject_request_sla_mutation",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_bp12_touch_sla_policy",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_bp12_validate_sla_policy_site",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_bp15_validate_member_site_assignment",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": null
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_em_enforce_owner_invariant",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": null
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_can_access_enterprise_equipment",
+    "args": "p_enterprise_id uuid, p_equipment_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_can_access_enterprise_equipment_path",
+    "args": "p_enterprise_id_text text, p_equipment_id_text text, p_manage boolean",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_can_access_enterprise_site",
+    "args": "p_enterprise_id uuid, p_site_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_can_manage_enterprise_equipment",
+    "args": "p_enterprise_id uuid, p_site_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_can_manage_enterprise_equipment_id",
+    "args": "p_enterprise_id uuid, p_equipment_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_generate_maintenance_request_v1",
+    "args": "p_plan_id uuid, p_due_at timestamp with time zone",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_is_admin",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_is_enterprise_dispatch_operator",
+    "args": "p_enterprise_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_is_enterprise_finance_global_reader",
+    "args": "p_enterprise_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_is_enterprise_finance_manager",
+    "args": "p_enterprise_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_is_enterprise_finance_reader",
+    "args": "p_enterprise_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_is_enterprise_manager",
+    "args": "p_enterprise_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_is_enterprise_member",
+    "args": "p_enterprise_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_is_enterprise_workforce_self",
+    "args": "p_worker_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_link_generated_maintenance_equipment_v1",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_next_maintenance_due",
+    "args": "p_due_at timestamp with time zone, p_frequency text, p_interval_count integer",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_fixeo_start_external_dispatch_v1",
+    "args": "p_request_id uuid, p_enterprise_id uuid, p_policy_id uuid, p_mode text, p_event_type text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "_write_enterprise_audit_event",
+    "args": "p_enterprise_id uuid, p_event_type text, p_target_type text, p_target_id uuid, p_before_state jsonb, p_after_state jsonb, p_metadata jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "climatisation_immutable_v1",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "climatisation_state_v1",
+    "args": "mid uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "climatisation_tariff_v1",
+    "args": "code text",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "diagnostic_bind_v1",
+    "args": "p_context jsonb, p_request uuid, p_offer uuid, p_booking jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "diagnostic_booking_context_v1",
+    "args": "p_context jsonb, p_city text, p_offer uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "diagnostic_confirm_request_core_v1",
+    "args": "p_context_id text, p_outcome_type text, p_service_code text, p_session_id text, p_amount_mad numeric, p_city_slug text, p_client_phone text, p_description text, p_tracking_ref text, p_guest_token_hash text, p_offer_id uuid, p_diagnostic jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "diagnostic_lock_v1",
+    "args": "p_id uuid, p_actor text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "diagnostic_quota_v1",
+    "args": "p_limits jsonb, p_delta jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "diagnostic_run_immutable_v1",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "electricity_immutable_v1",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "electricity_state_v1",
+    "args": "mid uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "electricity_tariff_v1",
+    "args": "code text",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "enforce_profile_canonical_role_p0",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "guard_vap_write",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "is_vap_request",
+    "args": "request_key text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "mission_vap_amounts",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "plumbing_immutable_v1",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "plumbing_state_v1",
+    "args": "mid uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "plumbing_tariff_v1",
+    "args": "code text",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "serrurerie_immutable_v1",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "serrurerie_offer_guard_v1",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "serrurerie_state_v1",
+    "args": "mid uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "fixeo_private",
+    "proname": "serrurerie_tariff_v1",
+    "args": "code text",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "_supersede_competing_claims",
+    "args": "p_artisan_id uuid, p_winner_claim uuid, p_winner_legacy text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "accept_enterprise_invitation",
+    "args": "p_token text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "accept_my_dispatch_offer_v1",
+    "args": "p_request_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "accept_my_enterprise_workforce_offer_v1",
+    "args": "p_request_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "accept_quote_v2",
+    "args": "p_quote_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=public, pg_temp"
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "admin_targeted_dispatch_notifications_s1b2",
+    "args": "p_request_id uuid, p_artisan_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "admin_targeted_dispatch_v1",
+    "args": "p_request_id uuid, p_artisan_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "approve_artisan_claim",
+    "args": "p_claim_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "artisan_business_accept_quote",
+    "args": "p_quote_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=public, pg_temp"
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "artisan_business_next_quote_number",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=public, pg_temp"
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "artisan_business_validate_links",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=public, pg_temp"
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "assign_enterprise_internal_worker_v1",
+    "args": "p_enterprise_id uuid, p_request_id uuid, p_worker_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "assign_enterprise_member_site",
+    "args": "p_enterprise_id uuid, p_member_id uuid, p_site_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "audit_enterprise_rafi_action_v1",
+    "args": "p_enterprise_id uuid, p_action_type text, p_target_id uuid, p_result text, p_details jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "auto_dispatch_service_request_v1",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "capture_enterprise_rafi_changes_v1",
+    "args": "p_enterprise_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "claim_mission",
+    "args": "p_mission_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "climatisation_completion_artisan_v1",
+    "args": "p_mission_id uuid, p_professional_checks jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "climatisation_offer_artisan_v1",
+    "args": "p_request_id uuid, p_professional_checks jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "climatisation_prework_artisan_v1",
+    "args": "p_mission_id uuid, p_professional_checks jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "climatisation_repair_admin_v1",
+    "args": "p_mission_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "climatisation_repair_artisan_v1",
+    "args": "p_mission_id uuid, p_service_code text, p_inputs jsonb, p_paid_minor bigint, p_proposal_id uuid, p_same_visit boolean, p_professional_checks jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "climatisation_repair_guest_v1",
+    "args": "p_tracking_ref text, p_guest_hash text, p_action text, p_proposal_id uuid, p_expected_paid_minor bigint",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "complete_artisan_onboarding",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "complete_mission",
+    "args": "p_mission_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "confirm_completed_mission",
+    "args": "p_request_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "confirm_estimator_request_diagnostic_v1",
+    "args": "p_context_id text, p_outcome_type text, p_service_code text, p_session_id text, p_amount_mad numeric, p_city_slug text, p_client_phone text, p_description text, p_tracking_ref text, p_guest_token_hash text, p_offer_id uuid, p_diagnostic jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "confirm_estimator_request_v1",
+    "args": "p_context_id text, p_outcome_type text, p_service_code text, p_session_id text, p_amount_mad integer, p_city_slug text, p_client_phone text, p_description text, p_tracking_ref text, p_guest_token_hash text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "confirm_estimator_request_vap_v1",
+    "args": "p_context_id text, p_outcome_type text, p_service_code text, p_session_id text, p_amount_mad numeric, p_city_slug text, p_client_phone text, p_description text, p_tracking_ref text, p_guest_token_hash text, p_offer_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "create_client_mission_from_accepted_quote",
+    "args": "p_quote_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=public, pg_temp"
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "create_diagnostic_critical_request_v1",
+    "args": "p_diagnostic jsonb, p_client_phone text, p_tracking_ref text, p_guest_token_hash text, p_ack_version text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "create_diagnostic_quote_request_v1",
+    "args": "p_diagnostic jsonb, p_client_phone text, p_tracking_ref text, p_guest_token_hash text, p_description text, p_service_category text, p_city_slug text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "create_enterprise_account",
+    "args": "p_name text, p_legal_name text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "create_enterprise_invitation",
+    "args": "p_enterprise_id uuid, p_email text, p_role text, p_expires_at timestamp with time zone",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "create_enterprise_request",
+    "args": "p_enterprise_id uuid, p_site_id uuid, p_service_category text, p_description text, p_urgency text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "create_enterprise_request_hybrid",
+    "args": "p_enterprise_id uuid, p_site_id uuid, p_service_category text, p_description text, p_urgency text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "create_enterprise_site",
+    "args": "p_enterprise_id uuid, p_name text, p_city text, p_site_code text, p_address_line text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "create_enterprise_sla_policy",
+    "args": "p_enterprise_id uuid, p_site_id uuid, p_urgency text, p_acceptance_target_minutes integer, p_status text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "create_enterprise_workforce_worker",
+    "args": "p_enterprise_id uuid, p_member_id uuid, p_display_label text, p_employee_code text, p_all_sites boolean, p_max_concurrent_jobs integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "decide_enterprise_approval_case_v1",
+    "args": "p_enterprise_id uuid, p_case_id uuid, p_decision text, p_note text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "decline_mission",
+    "args": "p_mission_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "decline_my_enterprise_workforce_offer_v1",
+    "args": "p_request_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "diagnostic_cleanup_v1",
+    "args": "p_action text, p_payload jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "diagnostic_mission_context_v1",
+    "args": "p_user_id uuid, p_mission_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "diagnostic_quota_v1",
+    "args": "p_limits jsonb, p_delta jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "diagnostic_state_v1",
+    "args": "p_action text, p_actor text, p_session_id uuid, p_payload jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_accept_winner_v1",
+    "args": "p_request_id uuid, p_artisan_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_action_preview_v1",
+    "args": "p_request_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=public"
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_advance_v1",
+    "args": "p_request_id uuid, p_timeout_minutes integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_batch_preview_v1",
+    "args": "p_request_id uuid, p_batch_size integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_candidate_pool_v1",
+    "args": "p_request_id uuid, p_limit integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_claim_notification_v1",
+    "args": "p_channel text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_enqueue_notifications_v1",
+    "args": "p_request_id uuid, p_channel text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_enterprise_hybrid_v1",
+    "args": "p_request_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_execute_v1",
+    "args": "p_request_id uuid, p_primary_batch_size integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_execution_plan_v1",
+    "args": "p_request_id uuid, p_batch_size integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_expire_contacted_v1",
+    "args": "p_request_id uuid, p_timeout_minutes integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=public"
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_fallback_router_v1",
+    "args": "p_request_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=public"
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_finalize_notification_v1",
+    "args": "p_notification_id uuid, p_final_status text, p_provider_message_id text, p_last_error text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_notification_worker_next_v1",
+    "args": "p_channel text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_notification_worker_peek_v1",
+    "args": "p_channel text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_preview_recruitment_v1",
+    "args": "p_request_id uuid, p_limit integer",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_preview_v1",
+    "args": "p_request_id uuid, p_limit integer",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_preview_v2",
+    "args": "p_request_id uuid, p_limit integer",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_preview_v21",
+    "args": "p_request_id uuid, p_limit integer",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_preview_v22",
+    "args": "p_request_id uuid, p_limit integer",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_queue_transition_v1",
+    "args": "p_request_id uuid, p_artisan_id uuid, p_new_status text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_release_next_batch_v1",
+    "args": "p_request_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_request_v1",
+    "args": "p_request_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_request_v1_backup_20260821",
+    "args": "p_request_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "dispatch_retry_failed_notification_v1",
+    "args": "p_notification_id uuid, p_max_attempts integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "electricity_prework_artisan_v1",
+    "args": "p_mission_id uuid, p_professional_checks jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "electricity_repair_admin_v1",
+    "args": "p_mission_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "electricity_repair_artisan_v1",
+    "args": "p_mission_id uuid, p_service_code text, p_inputs jsonb, p_paid_minor bigint, p_proposal_id uuid, p_same_visit boolean, p_professional_checks jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "electricity_repair_guest_v1",
+    "args": "p_tracking_ref text, p_guest_hash text, p_action text, p_proposal_id uuid, p_expected_paid_minor bigint",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "enqueue_dispatch_notification_from_mission_v1",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "export_enterprise_audit_events",
+    "args": "p_enterprise_id uuid, p_from timestamp with time zone, p_to timestamp with time zone, p_event_type text, p_target_type text, p_target_id uuid, p_actor_user_id uuid, p_limit integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "finalize_artisan_signup_v1",
+    "args": "p_full_name text, p_phone text, p_services text[], p_cities text[]",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "fixeo_reject_offer_mutation_v1",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "fixeo_vap_commission_minor_v1",
+    "args": "v bigint",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_accepted_mission_detail",
+    "args": "p_mission_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_enterprise_control_tower_v1",
+    "args": "p_enterprise_id uuid, p_limit integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_enterprise_equipment_detail_v1",
+    "args": "p_enterprise_id uuid, p_equipment_id uuid, p_history_limit integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_enterprise_equipment_fleet_v1",
+    "args": "p_enterprise_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_enterprise_finance_v1",
+    "args": "p_enterprise_id uuid, p_from date, p_to date, p_limit integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_enterprise_governance_v1",
+    "args": "p_enterprise_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_enterprise_operational_summary",
+    "args": "p_enterprise_id uuid, p_from timestamp with time zone, p_to timestamp with time zone, p_site_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_enterprise_preventive_maintenance_v1",
+    "args": "p_enterprise_id uuid, p_history_limit integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_enterprise_rafi_followups_v1",
+    "args": "p_enterprise_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_enterprise_request_breakdown",
+    "args": "p_enterprise_id uuid, p_from timestamp with time zone, p_to timestamp with time zone, p_site_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_enterprise_site_summary",
+    "args": "p_enterprise_id uuid, p_from timestamp with time zone, p_to timestamp with time zone",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_enterprise_sla_summary",
+    "args": "p_enterprise_id uuid, p_from timestamp with time zone, p_to timestamp with time zone",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_my_dispatch_offers_v1",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_my_enterprise_workforce_profile_v1",
+    "args": "p_enterprise_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "get_my_mission_offers",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "handle_new_user",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=public"
+    ],
+    "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "is_admin",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=public"
+    ],
+    "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "list_enterprise_audit_events",
+    "args": "p_enterprise_id uuid, p_limit integer, p_cursor_created_at timestamp with time zone, p_cursor_id uuid, p_from timestamp with time zone, p_to timestamp with time zone, p_event_type text, p_target_type text, p_target_id uuid, p_actor_user_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "match_artisans_v1",
+    "args": "p_service text, p_city text, p_limit integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "normalize_service_category_v1",
+    "args": "p_category text",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": null,
+    "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "plumbing_repair_admin_v1",
+    "args": "p_mission_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "plumbing_repair_artisan_v1",
+    "args": "p_mission_id uuid, p_service_code text, p_inputs jsonb, p_paid_minor bigint, p_proposal_id uuid, p_same_visit boolean",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "plumbing_repair_guest_v1",
+    "args": "p_tracking_ref text, p_guest_hash text, p_action text, p_proposal_id uuid, p_expected_paid_minor bigint",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "prevent_non_admin_role_change",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=public, auth"
+    ],
+    "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "publish_due_notification_alerts_s1b2",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "publish_notification_event_s1b",
+    "args": "p_event text, p_entity_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "reconcile_enterprise_rafi_followups_v1",
+    "args": "p_enterprise_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "register_enterprise_equipment_asset_v1",
+    "args": "p_enterprise_id uuid, p_equipment_id uuid, p_asset_type text, p_title text, p_storage_path text, p_mime_type text, p_size_bytes bigint",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "register_new_artisan",
+    "args": "p_full_name text, p_service_category text, p_city text, p_phone text, p_description text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "reject_artisan_claim",
+    "args": "p_claim_id uuid, p_note text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "reject_quote_v2",
+    "args": "p_quote_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=public, pg_temp"
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "remove_enterprise_equipment_asset_v1",
+    "args": "p_enterprise_id uuid, p_asset_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "replace_enterprise_workforce_sites",
+    "args": "p_enterprise_id uuid, p_worker_id uuid, p_site_ids uuid[]",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "replace_enterprise_workforce_skills",
+    "args": "p_enterprise_id uuid, p_worker_id uuid, p_skills jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "resolve_service_category_v1",
+    "args": "p_category text, p_description text",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": null,
+    "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "retry_enterprise_hybrid_dispatch_v1",
+    "args": "p_enterprise_id uuid, p_request_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "revoke_enterprise_invitation",
+    "args": "p_enterprise_id uuid, p_invitation_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "run_enterprise_dispatch_fallbacks_v1",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "run_enterprise_maintenance_scheduler_v1",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "serrurerie_completion_artisan_v1",
+    "args": "p_mission_id uuid, p_professional_checks jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "serrurerie_offer_artisan_v1",
+    "args": "p_request_id uuid, p_professional_checks jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "serrurerie_prework_artisan_v1",
+    "args": "p_mission_id uuid, p_professional_checks jsonb, p_access_check_type text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "serrurerie_repair_admin_v1",
+    "args": "p_mission_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "serrurerie_repair_artisan_v1",
+    "args": "p_mission_id uuid, p_service_code text, p_inputs jsonb, p_paid_minor bigint, p_proposal_id uuid, p_same_visit boolean, p_professional_checks jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "serrurerie_repair_guest_v1",
+    "args": "p_tracking_ref text, p_guest_hash text, p_action text, p_proposal_id uuid, p_expected_paid_minor bigint",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "set_commission_amount",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": null,
+    "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "set_enterprise_account_status",
+    "args": "p_enterprise_id uuid, p_status text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "set_enterprise_equipment_maintenance_link_v1",
+    "args": "p_enterprise_id uuid, p_equipment_id uuid, p_plan_id uuid, p_linked boolean",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "set_enterprise_equipment_request_link_v1",
+    "args": "p_enterprise_id uuid, p_equipment_id uuid, p_request_id uuid, p_linked boolean",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "set_enterprise_internal_assignment_status_v1",
+    "args": "p_enterprise_id uuid, p_request_id uuid, p_status text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "set_enterprise_member_status",
+    "args": "p_enterprise_id uuid, p_member_id uuid, p_new_status text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "set_enterprise_request_finance_context_v1",
+    "args": "p_enterprise_id uuid, p_request_id uuid, p_cost_center_id uuid, p_purchase_order_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "set_enterprise_site_status",
+    "args": "p_enterprise_id uuid, p_site_id uuid, p_status text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "set_enterprise_worker_cost_rate_v1",
+    "args": "p_enterprise_id uuid, p_worker_id uuid, p_hourly_cost numeric",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "set_enterprise_workforce_availability",
+    "args": "p_enterprise_id uuid, p_worker_id uuid, p_availability text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "start_mission",
+    "args": "p_mission_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "submit_artisan_quote_v2",
+    "args": "p_request_id uuid, p_proposed_price numeric, p_service_description text, p_supplies_description text, p_estimated_duration text, p_message text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=public, pg_temp"
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "submit_enterprise_governed_request_v1",
+    "args": "p_enterprise_id uuid, p_site_id uuid, p_service_category text, p_description text, p_urgency text, p_requested_amount numeric",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "sync_my_account_email_v1",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "transfer_enterprise_ownership",
+    "args": "p_enterprise_id uuid, p_target_member_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "trigger_dispatch_v2_on_service_request",
+    "args": "",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "unassign_enterprise_member_site",
+    "args": "p_enterprise_id uuid, p_member_id uuid, p_site_id uuid",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "update_artisan_availability",
+    "args": "p_status text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "update_enterprise_account",
+    "args": "p_enterprise_id uuid, p_name text, p_legal_name text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "update_enterprise_member_role",
+    "args": "p_enterprise_id uuid, p_member_id uuid, p_new_role text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "update_enterprise_site",
+    "args": "p_enterprise_id uuid, p_site_id uuid, p_name text, p_city text, p_site_code text, p_address_line text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "update_enterprise_sla_policy",
+    "args": "p_enterprise_id uuid, p_policy_id uuid, p_site_id uuid, p_urgency text, p_acceptance_target_minutes integer, p_status text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "update_enterprise_workforce_worker",
+    "args": "p_enterprise_id uuid, p_worker_id uuid, p_display_label text, p_employee_code text, p_status text, p_all_sites boolean, p_max_concurrent_jobs integer",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "update_my_artisan_activity_v1",
+    "args": "p_services text[], p_cities text[]",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "update_my_artisan_contact_v1",
+    "args": "p_phone text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "update_updated_at",
+    "args": "",
+    "prosecdef": false,
+    "owner": "postgres",
+    "proconfig": null,
+    "proacl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "upsert_enterprise_approval_policy_v1",
+    "args": "p_enterprise_id uuid, p_policy_id uuid, p_name text, p_site_id uuid, p_service_category text, p_urgency text, p_requester_role text, p_min_amount numeric, p_max_amount numeric, p_priority integer, p_status text, p_steps jsonb",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "upsert_enterprise_budget_v1",
+    "args": "p_enterprise_id uuid, p_budget_id uuid, p_cost_center_id uuid, p_period_start date, p_period_end date, p_amount numeric, p_status text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "upsert_enterprise_control_tower_escalation_v1",
+    "args": "p_enterprise_id uuid, p_request_id uuid, p_priority text, p_status text, p_assigned_to_member_id uuid, p_note text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "upsert_enterprise_cost_center_v1",
+    "args": "p_enterprise_id uuid, p_cost_center_id uuid, p_site_id uuid, p_code text, p_name text, p_department text, p_status text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "upsert_enterprise_dispatch_policy",
+    "args": "p_enterprise_id uuid, p_policy_id uuid, p_site_id uuid, p_service_category text, p_mode text, p_internal_offer_limit integer, p_offer_ttl_minutes integer, p_fallback_after_minutes integer, p_status text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "upsert_enterprise_equipment_v1",
+    "args": "p_enterprise_id uuid, p_equipment_id uuid, p_site_id uuid, p_name text, p_category text, p_asset_code text, p_manufacturer text, p_model text, p_serial_number text, p_installed_at date, p_criticality text, p_status text, p_notes text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "upsert_enterprise_maintenance_plan_v1",
+    "args": "p_enterprise_id uuid, p_plan_id uuid, p_site_id uuid, p_name text, p_service_category text, p_description text, p_urgency text, p_frequency text, p_interval_count integer, p_next_due_at timestamp with time zone, p_reminder_hours integer, p_status text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "upsert_enterprise_purchase_order_v1",
+    "args": "p_enterprise_id uuid, p_purchase_order_id uuid, p_cost_center_id uuid, p_site_id uuid, p_reference text, p_approved_amount numeric, p_status text, p_notes text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  },
+  {
+    "schema": "public",
+    "proname": "upsert_enterprise_rafi_followup_v1",
+    "args": "p_enterprise_id uuid, p_target_type text, p_target_id uuid, p_followup_kind text, p_status text, p_note text",
+    "prosecdef": true,
+    "owner": "postgres",
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "proacl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}"
+  }
+]

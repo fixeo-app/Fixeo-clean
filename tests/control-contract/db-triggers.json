@@ -1,0 +1,248 @@
+[
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_completion_v1",
+    "tgname": "climatisation_completion_immutable",
+    "definition": "CREATE TRIGGER climatisation_completion_immutable BEFORE DELETE OR UPDATE ON fixeo_private.climatisation_completion_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.climatisation_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_decisions_v1",
+    "tgname": "climatisation_decision_immutable",
+    "definition": "CREATE TRIGGER climatisation_decision_immutable BEFORE DELETE OR UPDATE ON fixeo_private.climatisation_decisions_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.climatisation_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_offer_checks_v1",
+    "tgname": "climatisation_offer_checks_immutable",
+    "definition": "CREATE TRIGGER climatisation_offer_checks_immutable BEFORE DELETE OR UPDATE ON fixeo_private.climatisation_offer_checks_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.climatisation_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_prework_v1",
+    "tgname": "climatisation_prework_immutable",
+    "definition": "CREATE TRIGGER climatisation_prework_immutable BEFORE DELETE OR UPDATE ON fixeo_private.climatisation_prework_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.climatisation_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "climatisation_proposals_v1",
+    "tgname": "climatisation_proposal_immutable",
+    "definition": "CREATE TRIGGER climatisation_proposal_immutable BEFORE DELETE OR UPDATE ON fixeo_private.climatisation_proposals_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.climatisation_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "diagnostic_runs_v1",
+    "tgname": "diagnostic_run_immutable",
+    "definition": "CREATE TRIGGER diagnostic_run_immutable BEFORE UPDATE ON fixeo_private.diagnostic_runs_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.diagnostic_run_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_decisions_v1",
+    "tgname": "electricity_decision_immutable",
+    "definition": "CREATE TRIGGER electricity_decision_immutable BEFORE DELETE OR UPDATE ON fixeo_private.electricity_decisions_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.electricity_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_prework_v1",
+    "tgname": "electricity_prework_immutable",
+    "definition": "CREATE TRIGGER electricity_prework_immutable BEFORE DELETE OR UPDATE ON fixeo_private.electricity_prework_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.electricity_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "electricity_proposals_v1",
+    "tgname": "electricity_proposal_immutable",
+    "definition": "CREATE TRIGGER electricity_proposal_immutable BEFORE DELETE OR UPDATE ON fixeo_private.electricity_proposals_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.electricity_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_decisions_v1",
+    "tgname": "plumbing_decision_immutable",
+    "definition": "CREATE TRIGGER plumbing_decision_immutable BEFORE DELETE OR UPDATE ON fixeo_private.plumbing_decisions_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.plumbing_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "plumbing_proposals_v1",
+    "tgname": "plumbing_proposal_immutable",
+    "definition": "CREATE TRIGGER plumbing_proposal_immutable BEFORE DELETE OR UPDATE ON fixeo_private.plumbing_proposals_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.plumbing_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_completion_v1",
+    "tgname": "serrurerie_completion_immutable",
+    "definition": "CREATE TRIGGER serrurerie_completion_immutable BEFORE DELETE OR UPDATE ON fixeo_private.serrurerie_completion_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.serrurerie_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_decisions_v1",
+    "tgname": "serrurerie_decision_immutable",
+    "definition": "CREATE TRIGGER serrurerie_decision_immutable BEFORE DELETE OR UPDATE ON fixeo_private.serrurerie_decisions_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.serrurerie_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_offer_checks_v1",
+    "tgname": "serrurerie_offer_checks_immutable",
+    "definition": "CREATE TRIGGER serrurerie_offer_checks_immutable BEFORE DELETE OR UPDATE ON fixeo_private.serrurerie_offer_checks_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.serrurerie_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_prework_v1",
+    "tgname": "serrurerie_prework_immutable",
+    "definition": "CREATE TRIGGER serrurerie_prework_immutable BEFORE DELETE OR UPDATE ON fixeo_private.serrurerie_prework_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.serrurerie_immutable_v1()"
+  },
+  {
+    "schema": "fixeo_private",
+    "table_name": "serrurerie_proposals_v1",
+    "tgname": "serrurerie_proposal_immutable",
+    "definition": "CREATE TRIGGER serrurerie_proposal_immutable BEFORE DELETE OR UPDATE ON fixeo_private.serrurerie_proposals_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.serrurerie_immutable_v1()"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_jobs",
+    "tgname": "artisan_business_jobs_link_guard",
+    "definition": "CREATE TRIGGER artisan_business_jobs_link_guard BEFORE INSERT OR UPDATE OF owner_user_id, client_id, quote_id ON public.artisan_business_jobs FOR EACH ROW EXECUTE FUNCTION artisan_business_validate_links()"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_ledger",
+    "tgname": "artisan_business_ledger_link_guard",
+    "definition": "CREATE TRIGGER artisan_business_ledger_link_guard BEFORE INSERT OR UPDATE OF owner_user_id, client_id, job_id, quote_id ON public.artisan_business_ledger FOR EACH ROW EXECUTE FUNCTION artisan_business_validate_links()"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisan_business_quotes",
+    "tgname": "artisan_business_quotes_link_guard",
+    "definition": "CREATE TRIGGER artisan_business_quotes_link_guard BEFORE INSERT OR UPDATE OF owner_user_id, client_id ON public.artisan_business_quotes FOR EACH ROW EXECUTE FUNCTION artisan_business_validate_links()"
+  },
+  {
+    "schema": "public",
+    "table_name": "artisans",
+    "tgname": "artisans_updated_at",
+    "definition": "CREATE TRIGGER artisans_updated_at BEFORE UPDATE ON public.artisans FOR EACH ROW EXECUTE FUNCTION update_updated_at()"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_accounts",
+    "tgname": "enterprise_accounts_updated_at",
+    "definition": "CREATE TRIGGER enterprise_accounts_updated_at BEFORE UPDATE ON public.enterprise_accounts FOR EACH ROW EXECUTE FUNCTION update_updated_at()"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_invitations",
+    "tgname": "enterprise_invitations_updated_at",
+    "definition": "CREATE TRIGGER enterprise_invitations_updated_at BEFORE UPDATE ON public.enterprise_invitations FOR EACH ROW EXECUTE FUNCTION update_updated_at()"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_maintenance_runs",
+    "tgname": "trg_enterprise_maintenance_run_equipment_link",
+    "definition": "CREATE TRIGGER trg_enterprise_maintenance_run_equipment_link AFTER INSERT OR UPDATE OF status, service_request_id ON public.enterprise_maintenance_runs FOR EACH ROW EXECUTE FUNCTION fixeo_private._fixeo_link_generated_maintenance_equipment_v1()"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_member_sites",
+    "tgname": "bp15_validate_member_site_assignment",
+    "definition": "CREATE TRIGGER bp15_validate_member_site_assignment BEFORE INSERT OR UPDATE OF enterprise_id, member_id, site_id ON public.enterprise_member_sites FOR EACH ROW EXECUTE FUNCTION fixeo_private._bp15_validate_member_site_assignment()"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_members",
+    "tgname": "em_enforce_owner_invariant",
+    "definition": "CREATE TRIGGER em_enforce_owner_invariant BEFORE DELETE OR UPDATE ON public.enterprise_members FOR EACH ROW EXECUTE FUNCTION fixeo_private._em_enforce_owner_invariant()"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_members",
+    "tgname": "enterprise_members_updated_at",
+    "definition": "CREATE TRIGGER enterprise_members_updated_at BEFORE UPDATE ON public.enterprise_members FOR EACH ROW EXECUTE FUNCTION update_updated_at()"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_request_sla",
+    "tgname": "bp12_reject_request_sla_mutation",
+    "definition": "CREATE TRIGGER bp12_reject_request_sla_mutation BEFORE DELETE OR UPDATE ON public.enterprise_request_sla FOR EACH ROW EXECUTE FUNCTION fixeo_private._bp12_reject_request_sla_mutation()"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sites",
+    "tgname": "enterprise_sites_updated_at",
+    "definition": "CREATE TRIGGER enterprise_sites_updated_at BEFORE UPDATE ON public.enterprise_sites FOR EACH ROW EXECUTE FUNCTION update_updated_at()"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sla_policies",
+    "tgname": "bp12_touch_sla_policy",
+    "definition": "CREATE TRIGGER bp12_touch_sla_policy BEFORE UPDATE ON public.enterprise_sla_policies FOR EACH ROW EXECUTE FUNCTION fixeo_private._bp12_touch_sla_policy()"
+  },
+  {
+    "schema": "public",
+    "table_name": "enterprise_sla_policies",
+    "tgname": "bp12_validate_sla_policy_site",
+    "definition": "CREATE TRIGGER bp12_validate_sla_policy_site BEFORE INSERT OR UPDATE OF enterprise_id, site_id ON public.enterprise_sla_policies FOR EACH ROW EXECUTE FUNCTION fixeo_private._bp12_validate_sla_policy_site()"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "tgname": "serrurerie_offer_guard",
+    "definition": "CREATE TRIGGER serrurerie_offer_guard BEFORE INSERT ON public.fixeo_pricing_offers_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_private.serrurerie_offer_guard_v1()"
+  },
+  {
+    "schema": "public",
+    "table_name": "fixeo_pricing_offers_v1",
+    "tgname": "vap_offer_immutable",
+    "definition": "CREATE TRIGGER vap_offer_immutable BEFORE DELETE OR UPDATE ON public.fixeo_pricing_offers_v1 FOR EACH ROW EXECUTE FUNCTION fixeo_reject_offer_mutation_v1()"
+  },
+  {
+    "schema": "public",
+    "table_name": "missions",
+    "tgname": "a_vap_mission_guard",
+    "definition": "CREATE TRIGGER a_vap_mission_guard BEFORE INSERT OR UPDATE ON public.missions FOR EACH ROW EXECUTE FUNCTION fixeo_private.guard_vap_write()"
+  },
+  {
+    "schema": "public",
+    "table_name": "missions",
+    "tgname": "trg_enqueue_dispatch_notification_v1",
+    "definition": "CREATE TRIGGER trg_enqueue_dispatch_notification_v1 AFTER INSERT ON public.missions FOR EACH ROW EXECUTE FUNCTION enqueue_dispatch_notification_from_mission_v1()"
+  },
+  {
+    "schema": "public",
+    "table_name": "missions",
+    "tgname": "trg_set_commission_amount",
+    "definition": "CREATE TRIGGER trg_set_commission_amount BEFORE INSERT OR UPDATE ON public.missions FOR EACH ROW EXECUTE FUNCTION set_commission_amount()"
+  },
+  {
+    "schema": "public",
+    "table_name": "missions",
+    "tgname": "z_vap_mission_amounts",
+    "definition": "CREATE TRIGGER z_vap_mission_amounts BEFORE INSERT OR UPDATE ON public.missions FOR EACH ROW EXECUTE FUNCTION fixeo_private.mission_vap_amounts()"
+  },
+  {
+    "schema": "public",
+    "table_name": "profiles",
+    "tgname": "enforce_profiles_canonical_role_p0",
+    "definition": "CREATE TRIGGER enforce_profiles_canonical_role_p0 BEFORE INSERT OR UPDATE OF id, role ON public.profiles FOR EACH ROW EXECUTE FUNCTION fixeo_private.enforce_profile_canonical_role_p0()"
+  },
+  {
+    "schema": "public",
+    "table_name": "profiles",
+    "tgname": "protect_profiles_role",
+    "definition": "CREATE TRIGGER protect_profiles_role BEFORE UPDATE OF role ON public.profiles FOR EACH ROW EXECUTE FUNCTION prevent_non_admin_role_change()"
+  },
+  {
+    "schema": "public",
+    "table_name": "service_requests",
+    "tgname": "a_vap_request_guard",
+    "definition": "CREATE TRIGGER a_vap_request_guard BEFORE INSERT OR UPDATE ON public.service_requests FOR EACH ROW EXECUTE FUNCTION fixeo_private.guard_vap_write()"
+  },
+  {
+    "schema": "public",
+    "table_name": "service_requests",
+    "tgname": "trg_dispatch_v2_on_service_request",
+    "definition": "CREATE TRIGGER trg_dispatch_v2_on_service_request AFTER INSERT ON public.service_requests FOR EACH ROW EXECUTE FUNCTION trigger_dispatch_v2_on_service_request()"
+  },
+  {
+    "schema": "public",
+    "table_name": "users",
+    "tgname": "protect_users_role",
+    "definition": "CREATE TRIGGER protect_users_role BEFORE UPDATE OF role ON public.users FOR EACH ROW EXECUTE FUNCTION prevent_non_admin_role_change()"
+  }
+]

@@ -450,13 +450,13 @@ if (['admin', 'artisan', 'client'].indexOf(role) === -1) {
   async function submitServiceRequest(payload) {
     var auth = await requireAuth('client');
     var sb = await getClient();
-    var response = await sb.from('service_requests').insert({
-      client_profile_id: auth.profile.id,
-      service_category: payload.service_category,
-      city: payload.city,
-      description: payload.description,
-      status: 'new'
-    }).select('*').maybeSingle();
+    payload.idempotency_key = payload.idempotency_key || crypto.randomUUID();
+    var response = await sb.rpc('create_my_service_request_v1', {
+      p_service_category: payload.service_category,
+      p_city: payload.city,
+      p_description: payload.description,
+      p_idempotency_key: payload.idempotency_key
+    });
 
     if (response.error) throw response.error;
     dispatch('fixeo:data:changed', { type: 'service_request_created', request: response.data });

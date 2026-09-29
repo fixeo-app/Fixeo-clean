@@ -1,0 +1,28 @@
+[
+  {
+    "schema": "public",
+    "name": "artisan_review_stats",
+    "reloptions": null,
+    "definition": " SELECT artisan_id,\n    (count(*))::integer AS review_count,\n    round(avg(rating), 2) AS avg_rating,\n    round(avg(response_time_score), 2) AS avg_response_time_score,\n    round(avg(quality_score), 2) AS avg_quality_score,\n    (round(((((avg(rating) * 0.5) + (avg(COALESCE(response_time_score, rating)) * 0.2)) + (avg(COALESCE(quality_score, rating)) * 0.3)) * (20)::numeric), 0))::integer AS trust_score\n   FROM reviews\n  GROUP BY artisan_id;"
+  },
+  {
+    "schema": "public",
+    "name": "artisans_available",
+    "reloptions": null,
+    "definition": " SELECT id,\n    name,\n    city,\n    category,\n    phone,\n    description,\n    rating,\n    created_at,\n    legacy_id,\n    public_slug,\n    full_name,\n    experience,\n    photo_url,\n    service_category,\n    services,\n    work_zone,\n    phone_public,\n    availability,\n    verified,\n    claimed,\n    claim_status,\n    owner_user_id,\n    onboarding_completed,\n    review_count,\n    price_from,\n    price_label,\n    source,\n    updated_at,\n    starting_price,\n    is_verified,\n    is_featured,\n    claimable,\n    response_time_min,\n    completed_missions,\n    badge_label,\n    avatar_color,\n    is_public\n   FROM artisans\n  WHERE ((availability = 'available'::text) AND (is_public = true))\n  ORDER BY rating DESC, review_count DESC;"
+  },
+  {
+    "schema": "public",
+    "name": "claims_pending",
+    "reloptions": null,
+    "definition": " SELECT cr.id,\n    cr.artisan_id,\n    cr.artisan_legacy_id,\n    cr.requester_user_id,\n    cr.requester_name,\n    cr.requester_phone,\n    cr.onboarding_data,\n    cr.status,\n    cr.notes,\n    cr.created_at,\n    cr.reviewed_at,\n    a.full_name AS artisan_name,\n    a.city AS artisan_city,\n    a.service_category AS artisan_service\n   FROM (claim_requests cr\n     JOIN artisans a ON (((a.id = cr.artisan_id) OR (a.legacy_id = cr.artisan_legacy_id))))\n  WHERE (cr.status = 'pending'::text)\n  ORDER BY cr.created_at;"
+  },
+  {
+    "schema": "public",
+    "name": "enterprise_sla_status",
+    "reloptions": [
+      "security_invoker=true"
+    ],
+    "definition": " WITH first_acceptance AS (\n         SELECT ers_1.service_request_id,\n            min(m.accepted_at) AS first_accepted_at\n           FROM (enterprise_request_sla ers_1\n             LEFT JOIN missions m ON (((m.request_id = (ers_1.service_request_id)::text) AND (m.accepted_at IS NOT NULL))))\n          GROUP BY ers_1.service_request_id\n        )\n SELECT ers.id AS request_sla_id,\n    ers.service_request_id,\n    ers.enterprise_id,\n    ers.site_id,\n    ers.policy_id,\n    ers.policy_urgency,\n    ers.request_urgency,\n    ers.acceptance_target_minutes,\n    ers.started_at,\n    ers.at_risk_at,\n    ers.due_at,\n    fa.first_accepted_at,\n        CASE\n            WHEN ((fa.first_accepted_at IS NOT NULL) AND (fa.first_accepted_at <= ers.due_at)) THEN 'MET'::text\n            WHEN ((fa.first_accepted_at IS NOT NULL) AND (fa.first_accepted_at > ers.due_at)) THEN 'BREACHED'::text\n            WHEN (now() >= ers.due_at) THEN 'BREACHED'::text\n            WHEN (now() >= ers.at_risk_at) THEN 'AT_RISK'::text\n            ELSE 'ON_TRACK'::text\n        END AS sla_status,\n        CASE\n            WHEN (fa.first_accepted_at IS NOT NULL) THEN GREATEST((0)::numeric, (EXTRACT(epoch FROM (fa.first_accepted_at - ers.started_at)) / 60.0))\n            ELSE NULL::numeric\n        END AS first_acceptance_minutes,\n        CASE\n            WHEN ((fa.first_accepted_at IS NOT NULL) AND (fa.first_accepted_at > ers.due_at)) THEN (EXTRACT(epoch FROM (fa.first_accepted_at - ers.due_at)) / 60.0)\n            WHEN ((fa.first_accepted_at IS NULL) AND (now() > ers.due_at)) THEN (EXTRACT(epoch FROM (now() - ers.due_at)) / 60.0)\n            ELSE (0)::numeric\n        END AS breach_minutes\n   FROM (enterprise_request_sla ers\n     LEFT JOIN first_acceptance fa ON ((fa.service_request_id = ers.service_request_id)));"
+  }
+]

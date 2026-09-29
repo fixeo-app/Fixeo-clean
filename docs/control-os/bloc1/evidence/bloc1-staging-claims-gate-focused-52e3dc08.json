@@ -1,0 +1,16 @@
+{
+  "suite": "claims-gate",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "preview": "https://fixeo-clean-5n2ii43f8-elalaouibiz-3410s-projects.vercel.app",
+  "completed_at": "2026-09-29T00:33:40.117Z",
+  "results": [
+    {
+      "name": "Claims final checkpoint verifies the concurrent winner without replaying committed fixtures",
+      "status": "PASS",
+      "duration_ms": 14139
+    }
+  ],
+  "pass": 1,
+  "fail": 0,
+  "skip": 0
+}

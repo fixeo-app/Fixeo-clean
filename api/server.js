@@ -220,6 +220,18 @@ app.options('/api/admin/artisans/*', cors());
 
 app.use(bodyParser.json());
 
+// Fixed operations only; the handler never accepts SQL, table names or RPC names.
+app.all(/^\/api\/control-v1\/(summary|operations|dossier|search|signals|action\/preview|action\/execute)$/, function(req,res) {
+  return require('./control').createHandler()(req,res);
+});
+
+// Retired in-memory Admin routes are not canonical authorities.
+// Dedicated Vercel Admin functions are separately routed and remain available.
+app.all(/^\/api\/admin\/(orders|artisans(?:\/.*)?)$/, function(req,res) {
+  res.setHeader('Cache-Control','no-store');
+  return res.status(410).json({ok:false,code:'LEGACY_ADMIN_AUTHORITY_RETIRED'});
+});
+
 /* ============================================================
    RAFI VOICE — Upload audio en mémoire
    ============================================================ */

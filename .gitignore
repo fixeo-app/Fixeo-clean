@@ -1,0 +1,4 @@
+
+# Local test runtimes and Supabase CLI state
+**/node_modules/
+supabase/.temp/
