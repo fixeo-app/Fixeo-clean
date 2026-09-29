@@ -49,7 +49,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path='' AS $$
  AND(e.enterprise_id IS NULL OR fixeo_private._fixeo_can_access_enterprise_site(e.enterprise_id,e.site_id))
  ), facts AS (
  SELECT r.*,m.first_at external_at,i.first_at internal_at,
- CASE WHEN m.invalid+i.invalid>0 THEN 'PARTIAL' ELSE 'COMPLETE' END acceptance_quality,
+ CASE WHEN m.invalid+i.invalid>0 OR m.engaged+i.engaged>1 OR(r.status IN('assigned','in_progress','completed','validated') AND m.first_at IS NULL AND i.first_at IS NULL) THEN 'PARTIAL' ELSE 'COMPLETE' END acceptance_quality,
  r.status IN('new','no_match') AND m.engaged+i.engaged=0 waiting,m.offers,
  (SELECT count(*) FROM public.dispatch_notification_outbox d WHERE d.request_id=r.id AND lower(d.notification_status)='failed') dispatch_failures
  FROM base r
@@ -93,7 +93,7 @@ BEGIN
  page AS(SELECT * FROM cells WHERE p_after IS NULL OR key COLLATE "C">(p_after->>'key') COLLATE "C" ORDER BY key COLLATE "C" LIMIT p_limit),
  a AS MATERIALIZED(SELECT * FROM fixeo_private.control_marketplace_artisans_v1(s) WHERE p_source='network'),
  data AS(SELECT c.key,c.city,c.trade,
- CASE p_source WHEN 'operations' THEN(SELECT jsonb_build_object(
+ CASE WHEN p_source='network' AND(c.city IS NULL OR c.trade IS NULL) THEN jsonb_build_object('source_state','UNKNOWN','reason','MISSING_DIMENSIONS','source','artisans normalized matching unavailable') ELSE CASE p_source WHEN 'operations' THEN(SELECT jsonb_build_object(
  'cohort_requests',count(*) FILTER(WHERE created_at>=(s->>'from_utc')::timestamptz AND created_at<(s->>'to_utc')::timestamptz),
  'open',count(*) FILTER(WHERE status IN('new','no_match','assigned','in_progress')),
  'waiting',count(*) FILTER(WHERE waiting),'urgent_waiting',count(*) FILTER(WHERE waiting AND urgency IN('now','urgent')),
@@ -112,7 +112,7 @@ BEGIN
  'quotes_expired',count(*) FILTER(WHERE q.status<>'accepted' AND q.expires_at<=now()),
  'quote_requirement','UNKNOWN — absence of quote is not QUOTE_REQUIRED','source','quotes joined to request creation cohort')
  FROM public.quotes q JOIN r ON r.id=q.request_id WHERE r.city IS NOT DISTINCT FROM c.city AND r.trade IS NOT DISTINCT FROM c.trade AND r.created_at>=(s->>'from_utc')::timestamptz AND r.created_at<(s->>'to_utc')::timestamptz)
- END facts FROM page c)
+ END END facts FROM page c)
  SELECT coalesce((SELECT jsonb_agg(to_jsonb(data) ORDER BY key COLLATE "C") FROM data),'[]'),(SELECT count(*) FROM cells),(SELECT key FROM page ORDER BY key COLLATE "C" DESC LIMIT 1),EXISTS(SELECT 1 FROM cells WHERE key COLLATE "C">(SELECT key FROM page ORDER BY key COLLATE "C" DESC LIMIT 1) COLLATE "C")
  INTO items,total,cursor_key,more;
  RETURN jsonb_build_object('contract_version','marketplace-intelligence-v1','source',p_source,'source_state','FRESH','as_of',now(),'scope',s,'scope_hash',scope_hash,
@@ -174,12 +174,61 @@ BEGIN
  'next_cursor',CASE WHEN n>p_limit THEN items->(p_limit-1)->>'id' END,'coverage_rate',NULL,'quality','BOUNDED_REQUEST_CHECK; not global coverage','execution_authorized',false,'requires_canonical_preview',true);
 END $$;
 
+-- 6.3: equal business-date cohorts, fixed acceptance horizon, explicit censoring.
+CREATE FUNCTION public.control_marketplace_cohorts_v1(p_filters jsonb DEFAULT '{}')
+RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path='' AS $$
+DECLARE s jsonb;items jsonb;h interval;
+BEGIN
+ PERFORM fixeo_private.control_require_admin_v1();s:=fixeo_private.control_marketplace_scope_v1(p_filters);h:=make_interval(hours=>(s->>'horizon_hours')::integer);
+ WITH r AS MATERIALIZED(SELECT * FROM fixeo_private.control_marketplace_requests_v1(s)),
+ windows AS(SELECT 'current' label,(s->>'from_utc')::timestamptz start_at,(s->>'to_utc')::timestamptz end_at UNION ALL SELECT 'previous',(s->>'previous_from_utc')::timestamptz,(s->>'from_utc')::timestamptz),
+ cohorts AS(SELECT w.label,w.start_at,w.end_at,
+ (SELECT jsonb_build_object('total',count(*),'mature',count(*) FILTER(WHERE created_at+h<=now()),'censored',count(*) FILTER(WHERE created_at+h>now()),
+ 'unknown_acceptance',count(*) FILTER(WHERE created_at+h<=now() AND acceptance_quality<>'COMPLETE'),
+ 'observable_denominator',count(*) FILTER(WHERE created_at+h<=now() AND acceptance_quality='COMPLETE'),
+ 'accepted_within_horizon',count(*) FILTER(WHERE created_at+h<=now() AND acceptance_quality='COMPLETE' AND accepted_at<=created_at+h),
+ 'external_within_horizon',count(*) FILTER(WHERE created_at+h<=now() AND acceptance_quality='COMPLETE' AND external_at<=created_at+h),
+ 'internal_within_horizon',count(*) FILTER(WHERE created_at+h<=now() AND acceptance_quality='COMPLETE' AND internal_at<=created_at+h),
+ 'accepted_observed',count(*) FILTER(WHERE accepted_at IS NOT NULL),'fulfilled_state',count(*) FILTER(WHERE status IN('completed','validated')),'cancelled_state',count(*) FILTER(WHERE status='cancelled'),
+ 'acceptance_p50_minutes',percentile_cont(0.5) WITHIN GROUP(ORDER BY extract(epoch FROM(accepted_at-created_at))/60) FILTER(WHERE created_at+h<=now() AND acceptance_quality='COMPLETE' AND accepted_at<=created_at+h),
+ 'acceptance_p95_minutes',percentile_cont(0.95) WITHIN GROUP(ORDER BY extract(epoch FROM(accepted_at-created_at))/60) FILTER(WHERE created_at+h<=now() AND acceptance_quality='COMPLETE' AND accepted_at<=created_at+h),
+ 'delay_sample',count(*) FILTER(WHERE created_at+h<=now() AND acceptance_quality='COMPLETE' AND accepted_at<=created_at+h),
+ 'source','service_requests.created_at + missions.accepted_at + enterprise_internal_assignments.assigned_at; deduplicated at request') FROM r WHERE created_at>=w.start_at AND created_at<w.end_at) requests,
+ (SELECT jsonb_build_object('presented_current_versions',count(*),'mature',count(*) FILTER(WHERE q.presented_at+h<=now()),'censored',count(*) FILTER(WHERE q.presented_at+h>now()),
+ 'unknown_accepted_relation',count(*) FILTER(WHERE q.status='accepted' AND NOT EXISTS(SELECT 1 FROM public.missions m WHERE m.accepted_quote_id=q.id AND m.accepted_quote_version=q.quote_version AND m.request_id=q.request_id::text AND m.artisan_profile_id=q.artisan_profile_id AND m.accepted_at>=q.presented_at AND m.accepted_at<=now())),
+ 'converted_within_horizon',count(*) FILTER(WHERE q.presented_at+h<=now() AND q.status='accepted' AND EXISTS(SELECT 1 FROM public.missions m WHERE m.accepted_quote_id=q.id AND m.accepted_quote_version=q.quote_version AND m.request_id=q.request_id::text AND m.artisan_profile_id=q.artisan_profile_id AND m.accepted_at>=q.presented_at AND m.accepted_at<=q.presented_at+h)),
+ 'scope','persisted currently presented/reviewed quote versions only; historical superseded presentations unavailable',
+ 'source','quotes.presented_at / reviewed_version + missions.accepted_quote_id / accepted_quote_version')
+ FROM public.quotes q JOIN r ON r.id=q.request_id WHERE q.presented_at>=w.start_at AND q.presented_at<w.end_at AND q.reviewed_version=q.quote_version) quotes,
+ (SELECT jsonb_build_object('eligible_reviews',count(*),'rating_mean',avg(v.rating),'source','reviews verified=true, same mission/artisan and existing request; review.created_at flow')
+ FROM public.reviews v JOIN public.missions m ON m.id=v.mission_id AND m.artisan_profile_id=v.artisan_id JOIN r ON r.id::text=m.request_id WHERE v.created_at>=w.start_at AND v.created_at<w.end_at AND v.verified IS TRUE AND v.rating BETWEEN 1 AND 5) quality,
+ (SELECT jsonb_build_object('missions',count(*),'unknown_cases',count(*) FILTER(WHERE f->>'finance_state' IN('UNKNOWN','INTEGRITY_REVIEW','PRICE_REQUIRED','AMOUNT_UNKNOWN')),
+ 'known_due_balance',coalesce(sum((f->>'due_balance')::numeric),0),
+ 'due_balance',CASE WHEN count(*) FILTER(WHERE f->>'finance_state' IN('UNKNOWN','INTEGRITY_REVIEW','PRICE_REQUIRED','AMOUNT_UNKNOWN'))=0 THEN coalesce(sum((f->>'due_balance')::numeric),0) END,
+ 'known_expected_commission',coalesce(sum((f->>'expected_commission')::numeric),0),
+ 'confirmed_recorded',coalesce(sum((f->>'confirmed_recorded')::numeric),0),'currency','MAD','scope','current financial facts of missions attached to request creation cohort; not period revenue',
+ 'source','control_finance_facts_v1; missing parents cannot be attributed to any cohort') FROM(SELECT fixeo_private.control_finance_facts_v1(m.id) f FROM public.missions m JOIN r ON r.id::text=m.request_id WHERE r.created_at>=w.start_at AND r.created_at<w.end_at) f) finance,
+ (SELECT jsonb_build_object('sent_sample',count(*),'first_sent_p50_minutes',percentile_cont(0.5) WITHIN GROUP(ORDER BY minutes),
+ 'source','min(dispatch_notification_outbox.sent_at) >= request.created_at; first recorded sending, not acceptance nor confirmed delivery',
+ 'execution_delay',NULL,'execution_reason','NO_IMMUTABLE_FIRST_EXECUTION_PROOF','offer_acceptance_rate',NULL,'offer_reason','NO_COMPLETE_PRESENTED_OFFER_DENOMINATOR')
+ FROM(SELECT extract(epoch FROM(min(d.sent_at)-r.created_at))/60 minutes FROM r JOIN public.dispatch_notification_outbox d ON d.request_id=r.id WHERE r.created_at>=w.start_at AND r.created_at<w.end_at AND d.sent_at>=r.created_at AND d.sent_at<=now() GROUP BY r.id,r.created_at) sent) dispatch
+ FROM windows w)
+ SELECT jsonb_agg(to_jsonb(cohorts) ORDER BY label) INTO items FROM cohorts;
+ RETURN jsonb_build_object('contract_version','marketplace-cohorts-v1','as_of',now(),'source_state','FRESH','scope',s,'cohorts',items,
+ 'undated_requests',(SELECT count(*) FROM fixeo_private.control_marketplace_requests_v1(s) WHERE created_at IS NULL),
+ 'conversion_definition','first persisted acceptance within fixed horizon / mature observable request cohort; external/internal union deduplicated',
+ 'exclusions','only explicit classification and scope filters; no heuristic test exclusion','private_business','excluded','execution_authorized',false);
+END $$;
+REVOKE ALL ON FUNCTION public.control_marketplace_cohorts_v1(jsonb) FROM PUBLIC,anon,authenticated,service_role;
+GRANT EXECUTE ON FUNCTION public.control_marketplace_cohorts_v1(jsonb) TO authenticated;
+
 -- RAFI consumes the same normalized request/profile facts; priorities remain in its existing engine.
 CREATE FUNCTION public.control_marketplace_signals_v1(p_source text DEFAULT 'network',p_classification text DEFAULT 'all')
 RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path='' AS $$
-DECLARE s jsonb;items jsonb;total bigint;
+DECLARE s jsonb;items jsonb;total bigint;cohort_data jsonb;cohort_count bigint;
 BEGIN
  PERFORM fixeo_private.control_require_admin_v1();IF p_source IS DISTINCT FROM 'network' THEN RAISE EXCEPTION 'INVALID_SOURCE';END IF;
+ IF p_classification IS NULL THEN RAISE EXCEPTION 'INVALID_CLASSIFICATION';END IF;
  s:=fixeo_private.control_marketplace_scope_v1(jsonb_build_object('classification',p_classification));
  WITH r AS MATERIALIZED(SELECT * FROM fixeo_private.control_marketplace_requests_v1(s) WHERE waiting),
  a AS MATERIALIZED(SELECT * FROM fixeo_private.control_marketplace_artisans_v1(s)),
@@ -187,16 +236,23 @@ BEGIN
  (array_agg(id ORDER BY created_at NULLS LAST,id))[1:5] sample_ids FROM r GROUP BY city,trade),
  page AS(SELECT * FROM cells ORDER BY urgent DESC,oldest NULLS LAST,city NULLS LAST,trade NULLS LAST LIMIT 100),
  observed AS(SELECT 'network.cohort' kind,'cohort' target_type,NULL::uuid target_id,c.city,c.trade service_category,c.oldest created_at,c.n count,c.sample_ids,
- jsonb_build_object('profiles',count(a.id),'available_profiles',count(a.id) FILTER(WHERE a.availability='available'),
- 'to_verify',count(a.id) FILTER(WHERE a.verification_ready),'unclaimed',count(a.id) FILTER(WHERE a.claimable),
+ jsonb_build_object('profiles',CASE WHEN c.city IS NULL OR c.trade IS NULL THEN NULL ELSE count(a.id) END,'available_profiles',CASE WHEN c.city IS NULL OR c.trade IS NULL THEN NULL ELSE count(a.id) FILTER(WHERE a.availability='available') END,
+ 'to_verify',CASE WHEN c.city IS NULL OR c.trade IS NULL THEN NULL ELSE count(a.id) FILTER(WHERE a.verification_ready) END,'unclaimed',CASE WHEN c.city IS NULL OR c.trade IS NULL THEN NULL ELSE count(a.id) FILTER(WHERE a.claimable) END,
  'verify_ids',(array_agg(a.id ORDER BY a.id) FILTER(WHERE a.verification_ready))[1:5],'claim_ids',(array_agg(a.id ORDER BY a.id) FILTER(WHERE a.claimable))[1:5],
  'urgent_count',c.urgent,'total_waiting',(SELECT count(*) FROM r),'match_basis','marketplace-dimensions-v1; canonical multiactivity',
  'eligibility','CANONICAL_CHECK_ON_DEMAND','location_known',c.city IS NOT NULL AND c.trade IS NOT NULL,'cube_context',true,'claimable_only',true) facts,
  'control_marketplace_requests_v1 + control_marketplace_artisans_v1; raw sources in Cube population dossiers' reference
  FROM page c LEFT JOIN a ON c.city=ANY(a.cities) AND c.trade=ANY(a.trades) GROUP BY c.city,c.trade,c.oldest,c.n,c.sample_ids,c.urgent)
  SELECT coalesce((SELECT jsonb_agg(to_jsonb(observed) ORDER BY created_at NULLS LAST,city,service_category) FROM observed),'[]'),(SELECT count(*) FROM cells) INTO items,total;
- RETURN jsonb_build_object('contract_version','rafi-observations-v1','source','network','as_of',now(),'observations',items,'total_observations',total,'has_more',total>100,'observation_limit',100,
- 'completeness',CASE WHEN total>100 THEN 'partial' ELSE 'complete' END,'classification',p_classification,'pii','excluded','private_business','excluded','execution_authorized',false);
+ cohort_data:=public.control_marketplace_cohorts_v1(jsonb_build_object('classification',p_classification));
+ SELECT (value->'requests'->>'total')::bigint INTO cohort_count FROM jsonb_array_elements(cohort_data->'cohorts') WHERE value->>'label'='current';
+ IF cohort_count>0 THEN
+  items:=items||jsonb_build_array(jsonb_build_object('kind','marketplace.cohorts','target_type','cohort','target_id',NULL,'city',NULL,'service_category',NULL,'created_at',s->'from_utc','count',cohort_count,
+   'facts',jsonb_build_object('cohorts',cohort_data,'cube_context',true,'all_cells',true),'reference','control_marketplace_cohorts_v1; fixed-horizon request cohorts'));
+  total:=total+1;
+ END IF;
+ RETURN jsonb_build_object('contract_version','rafi-observations-v1','source','network','as_of',now(),'observations',items,'total_observations',total,'has_more',total>jsonb_array_length(items),'observation_limit',101,
+ 'completeness',CASE WHEN total>jsonb_array_length(items) THEN 'partial' ELSE 'complete' END,'classification',p_classification,'pii','excluded','private_business','excluded','execution_authorized',false);
 END $$;
 REVOKE ALL ON FUNCTION public.control_marketplace_signals_v1(text,text) FROM PUBLIC,anon,authenticated,service_role;
 GRANT EXECUTE ON FUNCTION public.control_marketplace_signals_v1(text,text) TO authenticated;

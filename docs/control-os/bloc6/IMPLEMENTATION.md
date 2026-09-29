@@ -37,3 +37,15 @@ The same Cube facts drive deterministic recommendations: no locally referenced p
 `control_marketplace_signals_v1` replaces the network observation read in the existing five-source RAFI API without changing the old RPC or other source authorities. It uses the same sealed request/network facts, retains a bounded observation window with explicit completeness, and opens the exact normalized Cube context. Recommendations navigate to paginated real populations and Universal Dossier; claims/verification/dispatch still require their existing server-authorized workflows. No campaign, claim or business command runs from the Cube.
 
 Gate 6.2: 30 relevant API/UI/engine/DB/performance checks PASS after correcting the isolated audit assertion to compare before/after reads (fixture insertion itself is audited). No product guard was weakened. Native browser rendering remains the final candidate gate.
+
+## 6.3 Cohorts and trends
+
+`control_marketplace_cohorts_v1` returns two equal civil-day windows with a fixed acceptance horizon (1/24/72/168 hours). Mature, censored, observable and missing-proof populations stay separate. External/internal acceptance events are deduplicated at request grain. Historical cancellation does not erase a persisted acceptance event; a current assigned/completed request with no execution proof stays incomplete. A raw offer or queue row never counts as acceptance.
+
+Request conversion, n, conditional p50/p95 acceptance delays, current-version quote presentation/acceptance, eligible review flows, B5 financial facts and recorded dispatch sending are distinct metrics. First actual execution delay and presented-offer acceptance rate remain UNKNOWN where no complete immutable proof exists. Superseded quote presentations are an explicit limitation; financial balances are current cohort facts, not period revenue.
+
+Trend review requires comparable windows, complete mature evidence, at least 30 observable requests in each cohort and disjoint Wilson 95% intervals. Small samples/overlap/stale/incomplete/censored data lead to abstention, not a predicted trend. RAFI adds an OPEN-only P2 cohort-review recommendation only for a demonstrated descriptive conversion decline; no causal or revenue assertion. It navigates to the same global cohort filters and real Dossier populations. No Bloc7 architecture or new action authority is introduced.
+
+Gate 6.3: 24 affected cohort/API/DOM tests PASS; migration/rollback/reapply invariants PASS. All final CI, native concurrency, browser, staging and Production gates are reported separately with their actual results.
+
+Local global gate before remote CI: 247 PASS / 0 FAIL / 1 SKIP (native PostgreSQL service unavailable locally); three cross-universe checks PASS. The subsequent missing-dimension regression adds one passing check. CI is required with PostgreSQL 17.6 for the skipped service suite and the new repeatable-read/concurrent-parent-removal scenario. No local SKIP is relabeled PASS. Browser certification uses the real Admin UI/API/SQL with isolated synthetic data; it does not claim a real Production Admin visual session.

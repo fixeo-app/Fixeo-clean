@@ -85,7 +85,7 @@
   async function openContext(id) {
     const d=decision(id);if(!d)return;activeContext={...d.recommended_action.context};contextCursor=null;contextRows=[];
     closeDrawer();root.FixeoAdmin.navigate(activeContext.view);
-    if(activeContext.view==='intelligence'&&root.FixeoIntelligence){root.FixeoIntelligence.setContext({city:activeContext.city??'__unknown__',trade:activeContext.trade??'__unknown__',classification:activeContext.classification});return;}
+    if(activeContext.view==='intelligence'&&root.FixeoIntelligence){const filters=activeContext.all_cells?{classification:activeContext.classification}:{city:activeContext.city??'__unknown__',trade:activeContext.trade??'__unknown__',classification:activeContext.classification};root.FixeoIntelligence.setContext(filters).then(()=>{if(d.decision_type==='marketplace.conversion_review')root.FixeoIntelligence.openCohorts();});return;}
     if(activeContext.view==='network'&&root.FixeoRegisters){root.FixeoRegisters.setContext('network',{...activeContext,type:'artisan'});return;}
     if(activeContext.view==='operations'&&root.FixeoOperations){root.FixeoOperations.setContext(activeContext);return;}
     await loadContext(false);
