@@ -1,0 +1,48 @@
+{
+  "at": "2026-09-29T14:34:50.843Z",
+  "environment": "isolated staging; existing real synthetic Auth sessions",
+  "checks": [
+    {
+      "name": "anon_preview_refused",
+      "status": "PASS"
+    },
+    {
+      "name": "real_nonadmin_preview_and_execution_refused",
+      "status": "PASS"
+    },
+    {
+      "name": "direct_authority_stays_private",
+      "status": "PASS"
+    },
+    {
+      "name": "missing_request_preview_and_three_retries_refused",
+      "status": "PASS"
+    },
+    {
+      "name": "old_preview_execution_refused_with_stable_idempotent_failure",
+      "status": "PASS"
+    },
+    {
+      "name": "real_JWT_API_preserves_REQUEST_NOT_FOUND",
+      "status": "PASS"
+    },
+    {
+      "name": "valid_settlement_retains_price_commission_audit_and_replay",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan_dossier_stays_readable_and_context_NOT_FOUND",
+      "status": "PASS"
+    }
+  ],
+  "pass": 8,
+  "fail": 0,
+  "production_mutations": 0,
+  "cleanup": {
+    "temporary_users_created": 0,
+    "remaining_temporary_fixtures": 0,
+    "business_tables_compared": 26,
+    "changed_business_tables": 0,
+    "method": "Exact pre/post count and full-row fingerprint comparison; migration retained"
+  }
+}

@@ -1,0 +1,37 @@
+# Fichiers du candidat
+
+- `.github/workflows/control-contract.yml`
+- `admin.html`
+- `api/control/index.js`
+- `css/admin-fixeo-dossier-operations.css`
+- `docs/control-os/bloc34/README.md`
+- `docs/control-os/bloc34/ROLLBACK.md`
+- `docs/control-os/bloc34/evidence/local-tests.json`
+- `docs/control-os/bloc34/evidence/staging.json`
+- `docs/control-os/bloc34/rollback.sql`
+- `js/admin-control-os-clean.js`
+- `js/admin-fixeo-dossier.js`
+- `js/admin-fixeo-operations.js`
+- `js/admin-rafi-decision-center.js`
+- `js/fixeo-control-client-v1.js`
+- `supabase/migrations/20260929131128_control_os_b34_dossier_operations.sql`
+- `tests/control-contract/api.test.cjs`
+- `tests/control-contract/bloc34-api.test.cjs`
+- `tests/control-contract/bloc34-db.test.cjs`
+- `tests/control-contract/bloc34-fixture.cjs`
+- `tests/control-contract/bloc34-ui.test.cjs`
+- `tests/control-contract/browser.cjs`
+- `tests/control-contract/concurrency.test.cjs`
+- `tests/control-contract/package-lock.json`
+- `tests/control-contract/package.json`
+- `tests/control-contract/rafi-ui.test.cjs`
+- `tests/control-contract/staging/bloc34.cjs`
+- `vercel.json`
+- `docs/control-os/bloc34/FILES.md`
+- `docs/control-os/bloc34/P0-INTEGRITY.md`
+- `docs/control-os/bloc34/P0-SOURCE.diff`
+- `docs/control-os/bloc34/evidence/p0-staging.json`
+- `supabase/migrations/20260929142337_control_os_b34_settlement_integrity_guard.sql`
+- `tests/control-contract/fixture.cjs`
+- `tests/control-contract/settlement-integrity.test.cjs`
+- `tests/control-contract/staging/settlement-integrity.cjs`

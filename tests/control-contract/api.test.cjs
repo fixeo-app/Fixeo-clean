@@ -10,7 +10,7 @@ test('No authentication: refuse before any backend access',async()=>{const res=r
 test('Preview rejects Production backend configuration',async()=>{const res=response();await createHandler({env:{...env,SUPABASE_URL:'https://ztwtbgoqanqzvwiibtuh.supabase.co'},fetchImpl:()=>{throw Error('must not call')}})(request('summary',{}),res);assert.equal(res.statusCode,503);});
 test('Fixed reader routes use only public key + user JWT, reject arbitrary fields and business types',async()=>{
  let calls=[];const fetchImpl=async(url,options)=>{calls.push([url,options]);return{ok:true,status:200,text:async()=>JSON.stringify(url.endsWith('/user')?{id:uid}:{summary:{id:uid}})}};
- const h=createHandler({env,fetchImpl});let r=response();await h(request('dossier',{type:'request',id:uid}),r);assert.equal(r.statusCode,200);assert.ok(calls[1][0].endsWith('/rpc/control_dossier_read_v1'));assert.equal(calls[1][1].headers.apikey,'sb_publishable_SYNTHETIC');assert.equal(calls[1][1].headers.Authorization,'Bearer synthetic.not_a_real_token');
+ const h=createHandler({env,fetchImpl});let r=response();await h(request('dossier',{type:'request',id:uid}),r);assert.equal(r.statusCode,200);assert.ok(calls[1][0].endsWith('/rpc/control_dossier_section_v1'));assert.equal(calls[1][1].headers.apikey,'sb_publishable_SYNTHETIC');assert.equal(calls[1][1].headers.Authorization,'Bearer synthetic.not_a_real_token');
  r=response();await h(request('dossier',{type:'artisan_business_clients',id:uid}),r);assert.equal(r.statusCode,400);
  r=response();await h(request('dossier',{type:'request',id:uid,table:'users'}),r);assert.equal(r.statusCode,400);
 });

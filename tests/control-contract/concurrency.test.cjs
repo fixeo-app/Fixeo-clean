@@ -11,7 +11,9 @@ else {
  before(async()=>{
   admin=new Client({connectionString:url});await admin.connect();let schema;await baseline({db:{exec:s=>{schema=s;}}});await admin.query(schema);
   await admin.query(`INSERT INTO auth.users(id) VALUES('${uuid(1)}'),('${uuid(2)}'),('${uuid(3)}'),('${uuid(4)}'); INSERT INTO public.users(id,role) VALUES('${uuid(1)}','client'),('${uuid(2)}','artisan'),('${uuid(3)}','admin'),('${uuid(4)}','client'); INSERT INTO public.profiles(id,role) SELECT id,role FROM public.users; INSERT INTO public.artisans(id,owner_user_id,full_name,phone,city,service_category,claimed,claim_status,onboarding_completed,availability) VALUES('${uuid(20)}','${uuid(2)}','Synthetic Artisan','+000000000001','Fès','plomberie',true,'approved',true,'available');`);
-  for(const p of fs.readdirSync(path.join(__dirname,'../../supabase/migrations')).filter(x=>x.includes('_control_os_b1_')).sort())await admin.query(fs.readFileSync(path.join(__dirname,'../../supabase/migrations',p),'utf8'));
+  for(const p of fs.readdirSync(path.join(__dirname,'../../supabase/migrations')).filter(x=>x.includes('_control_os_b1_')||x.includes('_control_os_b2_')).sort())await admin.query(fs.readFileSync(path.join(__dirname,'../../supabase/migrations',p),'utf8'));
+  await admin.query(require('./bloc34-fixture.cjs').sql);
+  await admin.query(fs.readFileSync(path.join(__dirname,'../../supabase/migrations/20260929142337_control_os_b34_settlement_integrity_guard.sql'),'utf8'));
  });
  after(async()=>{await Promise.all(clients.map(c=>c.end()));await admin?.end();});
  const request=async(n,status='new')=>admin.query('INSERT INTO public.service_requests(id,client_profile_id,city,service_category,description,status) VALUES($1,$2,$3,$4,$5,$6)',[uuid(n),uuid(1),'Fès','plomberie','Synthetic concurrency',status]);
@@ -49,4 +51,67 @@ else {
   const [c1,c2]=await Promise.all([preview(a,'finance.confirm',uuid(601),{remittance_id:d1.result.id,version:1}),preview(b,'finance.confirm',uuid(601),{remittance_id:d2.result.id,version:1})]);
   const r=await Promise.all([execute(a,c1),execute(b,c2)]);assert.equal(r.filter(x=>x.ok).length,1);const sums=await admin.query("select sum(amount) paid from public.commission_remittances_v1 where mission_id=$1 and status='confirmed'",[uuid(601)]);assert.equal(Number(sums.rows[0].paid),100);
  });
+ // P0: native row-lock evidence, without timing assumptions or remote data.
+ const raw=async()=>{const c=new Client({connectionString:url});await c.connect();clients.push(c);return c;};
+ async function blocked(pid,blocker){for(let i=0;i<200;i++){const r=await admin.query('select $2::int=any(pg_blocking_pids($1::int)) blocked',[pid,blocker]);if(r.rows[0].blocked)return;await new Promise(resolve=>setTimeout(resolve,20));}assert.fail('Expected canonical parent row lock was not observed');}
+ async function doneMission(base){await request(base,'completed');await admin.query("insert into public.missions(id,request_id,artisan_profile_id,status,completed_at) values($1,$2,$3,'done',now())",[uuid(base+1),uuid(base),uuid(20)]);}
+ test('P0 concurrent invalid previews are both refused without creating a preview or financial mutation',async()=>{
+  await doneMission(1200);await admin.query('delete from public.service_requests where id=$1',[uuid(1200)]);
+  const [a,b]=await Promise.all([conn(3),conn(3)]),r=await Promise.allSettled([preview(a,'mission.settle',uuid(1201),{final_price:100,expected_final_price:null}),preview(b,'mission.settle',uuid(1201),{final_price:100,expected_final_price:null})]);
+  for(const x of r){assert.equal(x.status,'rejected');assert.match(x.reason.message,/REQUEST_NOT_FOUND/);}
+  assert.equal(Number((await admin.query('select count(*) n from fixeo_private.control_action_previews_v1 where target_id=$1',[uuid(1201)])).rows[0].n),0);
+  assert.equal((await admin.query('select final_price from public.missions where id=$1',[uuid(1201)])).rows[0].final_price,null);
+ });
+ test('P0 deletion winning the row lock makes settlement wait then refuse without any partial business write',async()=>{
+  await doneMission(1210);const a=await conn(3),remover=await raw(),p=await preview(a,'mission.settle',uuid(1211),{final_price:100,expected_final_price:null});
+  const before=(await admin.query('select to_jsonb(m) row from public.missions m where id=$1',[uuid(1211)])).rows[0].row;
+  await remover.query('BEGIN');try{
+   await remover.query('delete from public.service_requests where id=$1',[uuid(1210)]);
+   const pending=execute(a,p).then(value=>({value}),error=>({error}));await blocked(a.processID,remover.processID);await remover.query('COMMIT');
+   const {value,error}=await pending;assert.ifError(error);assert.equal(value.ok,false);assert.equal(value.code,'REQUEST_NOT_FOUND');
+   assert.deepEqual((await admin.query('select to_jsonb(m) row from public.missions m where id=$1',[uuid(1211)])).rows[0].row,before);
+  }finally{await remover.query('ROLLBACK');}
+ });
+ test('P0 settlement holds a parent key-share lock until commit; a concurrent deletion cannot pass it',async()=>{
+  await doneMission(1220);const a=await conn(3),remover=await raw(),p=await preview(a,'mission.settle',uuid(1221),{final_price:100,expected_final_price:null});
+  await a.query('BEGIN');await remover.query('BEGIN');try{
+   const result=await execute(a,p);assert.equal(result.ok,true);assert.equal(result.verified.request_status,'completed');
+   const pending=remover.query('delete from public.service_requests where id=$1',[uuid(1220)]).then(value=>({value}),error=>({error}));
+   await blocked(remover.processID,a.processID);await a.query('COMMIT');const {error}=await pending;assert.ifError(error);await remover.query('ROLLBACK');
+   assert.equal((await admin.query('select count(*)::int n from public.service_requests where id=$1',[uuid(1220)])).rows[0].n,1);
+   assert.equal(Number((await admin.query('select final_price from public.missions where id=$1',[uuid(1221)])).rows[0].final_price),100);
+  }finally{await a.query('ROLLBACK');await remover.query('ROLLBACK');}
+ });
+ // Blocs 3 + 4: exercise new orchestration through the unchanged domain RPCs.
+ async function hybridSeed(base,extraRequest=false){
+  await request(base);if(extraRequest)await request(base+1);
+  await admin.query(`INSERT INTO public.enterprise_accounts(id,name,status) VALUES('${uuid(base+10)}','Synthetic B34 tenant','active');
+  INSERT INTO public.enterprise_sites(id,enterprise_id,name,city,status) VALUES('${uuid(base+11)}','${uuid(base+10)}','Synthetic B34 site','Fès','active');
+  INSERT INTO public.enterprise_members(id,enterprise_id,user_id,role,status) VALUES('${uuid(base+12)}','${uuid(base+10)}','${uuid(3)}','operations_manager','active'),('${uuid(base+13)}','${uuid(base+10)}','${uuid(2)}','viewer','active');
+  INSERT INTO public.enterprise_workforce_workers(id,enterprise_id,member_id,display_label,all_sites,created_by) VALUES('${uuid(base+14)}','${uuid(base+10)}','${uuid(base+13)}','Synthetic B34 worker',true,'${uuid(3)}');
+  INSERT INTO public.enterprise_workforce_skills(enterprise_id,worker_id,service_category,skill_level,active) VALUES('${uuid(base+10)}','${uuid(base+14)}','plomberie',3,true);
+  INSERT INTO public.enterprise_dispatch_policies(id,enterprise_id,mode,status,created_by) VALUES('${uuid(base+15)}','${uuid(base+10)}','internal_only','active','${uuid(3)}');
+  INSERT INTO public.enterprise_request_context(enterprise_id,site_id,service_request_id,created_by) VALUES('${uuid(base+10)}','${uuid(base+11)}','${uuid(base)}','${uuid(3)}');`);
+  if(extraRequest)await admin.query('insert into public.enterprise_request_context(enterprise_id,site_id,service_request_id,created_by) values($1,$2,$3,$4)',[uuid(base+10),uuid(base+11),uuid(base+1),uuid(3)]);
+ }
+ const hp=(c,base,requestId=base)=>rpc(c,'control_hybrid_preview_v1',['enterprise.assign',uuid(requestId),{worker_id:uuid(base+14),reason:'Synthetic B34 race'},uuid(++seq)]);
+ const he=(c,p,key=uuid(++seq))=>rpc(c,'control_hybrid_execute_v1',[p.preview_id,true,key]);
+ test('B34 two concurrent clicks share one canonical assignment and execution audit',async()=>{
+  await hybridSeed(800);const [a,b]=await Promise.all([conn(3),conn(3)]),p=await hp(a,800),key=uuid(++seq);
+  const r=await Promise.all([he(a,p,key),he(b,p,key)]);assert.ok(r.every(x=>x.ok),JSON.stringify(r));assert.deepEqual(r[0],r[1]);
+  assert.equal(Number((await admin.query('select count(*) n from public.enterprise_internal_assignments where service_request_id=$1',[uuid(800)])).rows[0].n),1);
+  assert.equal(Number((await admin.query("select count(*) n from fixeo_private.authority_audit_events_v1 where action='enterprise.assign' and idempotency_key=$1",[key])).rows[0].n),1);
+ });
+ test('B34 two requests competing for one worker cannot overbook through Control',async()=>{
+  await hybridSeed(900,true);const [a,b]=await Promise.all([conn(3),conn(3)]),pa=await hp(a,900),pb=await hp(b,900,901);
+  const r=await Promise.all([he(a,pa),he(b,pb)]);assert.equal(r.filter(x=>x.ok).length,1,JSON.stringify(r));assert.equal(r.find(x=>!x.ok).code,'STALE_PREVIEW');
+  assert.equal(Number((await admin.query("select count(*) n from public.enterprise_internal_assignments where worker_id=$1 and status='assigned'",[uuid(914)])).rows[0].n),1);
+ });
+ test('B34 governed internal assignment versus canonical external acceptance has one winner',async()=>{
+  await hybridSeed(1000);await admin.query("insert into public.missions(id,request_id,artisan_profile_id,status) values($1,$2,$3,'offered')",[uuid(1020),uuid(1000),uuid(20)]);
+  const [a,b]=await Promise.all([conn(3),conn(2)]),p=await hp(a,1000);const r=await Promise.all([he(a,p),rpc(b,'claim_mission',[uuid(1020)])]);
+  assert.equal(r.filter(x=>x.ok).length,1,JSON.stringify(r));
+  const n=(await admin.query("select (select count(*) from public.missions where request_id=$1 and status='pending')+(select count(*) from public.enterprise_internal_assignments where service_request_id=$1::uuid and status='assigned') n",[uuid(1000)])).rows[0].n;assert.equal(Number(n),1);
+ });
+
 }

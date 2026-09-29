@@ -45,5 +45,5 @@ async function baseline(options={}){
 }
 const uuid=n=>'00000000-0000-4000-8000-'+String(n).padStart(12,'0');
 async function actor(db,n,role='authenticated'){await db.exec(`RESET ROLE; SELECT set_config('request.jwt.claims',${literal(JSON.stringify({sub:uuid(n),role}))},false); SET ROLE ${q(role)};`);}
-async function migrate(db){for(const file of fs.readdirSync(path.join(__dirname,'../../supabase/migrations')).filter(x=>x.includes('_control_os_b1_')).sort())await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations',file),'utf8'));}
+async function migrate(db,{settlementGuard=true}={}){for(const file of fs.readdirSync(path.join(__dirname,'../../supabase/migrations')).filter(x=>x.includes('_control_os_b1_')||(settlementGuard&&x.includes('_control_os_b34_settlement_integrity_guard'))).sort())await db.exec(fs.readFileSync(path.join(__dirname,'../../supabase/migrations',file),'utf8'));}
 module.exports={baseline,actor,migrate,uuid,read};

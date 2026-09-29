@@ -1,0 +1,24 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const h=require('./http.cjs'),{createHandler}=require('../../../api/control');
+const checks=[];async function check(name,fn){await fn();checks.push({name,status:'PASS'});}
+(async()=>{
+ const admin='admin',nonadmin=Object.keys(h.identities).find(x=>x!=='admin'&&x.startsWith('client'));
+ assert.ok(nonadmin);await h.ensureSession(admin);await h.ensureSession(nonadmin);
+ const read=async(name,body)=>{const r=await h.rpc(admin,name,body);assert.equal(r.status,200,name+':'+JSON.stringify(r.data));return r.data;};
+ let items;
+ await check('authenticated_admin_operations',async()=>{const r=await read('control_operations_page_v1',{p_filters:{},p_limit:25});assert.ok(Array.isArray(r.items));assert.ok(r.items.length);items=r.items;assert.equal(r.global_total,null);});
+ const target=items[0].id;
+ const reads=[['control_dossier_section_v1',{p_type:'request',p_id:target,p_section:'identity'}],['control_operations_page_v1',{p_filters:{}}],['control_operation_read_v1',{p_request_id:target}],['control_search_all_v1',{p_query:target}],['control_hybrid_read_v1',{p_request_id:target}]];
+ await check('anon_new_RPC_grants_refuse',async()=>{for(const [rpc,body] of reads){const r=await h.request('/rest/v1/rpc/'+rpc,{body});assert.ok([401,403,404].includes(r.status),rpc+':'+r.status);}});
+ await check('real_nonadmin_JWT_all_readers_refuse',async()=>{for(const [rpc,body] of reads){const r=await h.rpc(nonadmin,rpc,body);assert.equal(r.status,403,rpc);}});
+ await check('nonadmin_hybrid_preview_and_execute_refuse',async()=>{for(const [rpc,body] of [['control_hybrid_preview_v1',{p_capability:'enterprise.retry',p_request_id:target,p_payload:{reason:'Synthetic security check'},p_correlation_id:h.randomId()}],['control_hybrid_execute_v1',{p_preview_id:h.randomId(),p_confirmed:true,p_idempotency_key:h.randomId()}]])assert.equal((await h.rpc(nonadmin,rpc,body)).status,403);});
+ await check('dossier_identity_relations_timeline_real_RPC',async()=>{for(const section of ['identity','relations','timeline']){const r=await read('control_dossier_section_v1',{p_type:'request',p_id:target,p_section:section,p_limit:1});assert.equal(r.id,target);assert.equal(r.section,section);assert.ok(!JSON.stringify(r).includes('guest_token_hash'));if(r.next_cursor){const next=await read('control_dossier_section_v1',{p_type:'request',p_id:target,p_section:section,p_limit:1,p_after:r.next_cursor});assert.notEqual(next.items[0]?.key,r.items[0]?.key);}}});
+ await check('search_exact_ID_real_RPC',async()=>{const r=await read('control_search_all_v1',{p_query:target});assert.ok(r.items.some(x=>x.type==='request'&&x.id===target));});
+ await check('operations_context_raw_and_derived_states',async()=>{const r=await read('control_operation_read_v1',{p_request_id:target});assert.equal(r.item.id,target);assert.ok(r.item.provenance);assert.ok(r.item.dispatch.source);});
+ await check('hybrid_minimal_read_does_not_delegate_tenant_permission',async()=>{const t=(await read('control_operations_page_v1',{p_filters:{origin:'enterprise'},p_limit:1})).items[0];assert.ok(t,'STAGING_ENTERPRISE_FIXTURE_REQUIRED');const r=await read('control_hybrid_read_v1',{p_request_id:t.id});assert.equal(r.tenant_operator,false);assert.equal(r.actionable,false);assert.ok(!Object.hasOwn(r,'fingerprint'));const denied=await h.rpc(admin,'control_hybrid_preview_v1',{p_capability:'enterprise.retry',p_request_id:t.id,p_payload:{reason:'Synthetic permission refusal'},p_correlation_id:h.randomId()});assert.equal(denied.status,403);});
+ const env={VERCEL_ENV:'preview',VERCEL_URL:'isolated-api.invalid',SUPABASE_URL:h.config.url,SUPABASE_ANON_KEY:h.config.key,FIXEO_STAGING_PROJECT_REF:h.REF};
+ await check('API_to_real_Auth_to_new_RPC_with_admin_JWT',async()=>{const r={setHeader(){},status(s){this.statusCode=s;return this;},json(v){this.body=v;}};await createHandler({env})({method:'POST',url:'/api/control-v1/dossier',headers:{authorization:'Bearer '+h.sessions.admin.access_token},body:{type:'request',id:target}},r);assert.equal(r.statusCode,200);assert.equal(r.body.id,target);});
+ await check('API_to_real_Auth_nonadmin_refused',async()=>{const r={setHeader(){},status(s){this.statusCode=s;return this;},json(v){this.body=v;}};await createHandler({env})({method:'POST',url:'/api/control-v1/operations',headers:{authorization:'Bearer '+h.sessions[nonadmin].access_token},body:{}},r);assert.equal(r.statusCode,403);});
+ const report={at:new Date().toISOString(),project:'isolated staging',checks,pass:checks.length,fail:0,mutations:'none; only authenticated read/refusal checks; no fixtures created'};fs.writeFileSync(path.join(__dirname,'../../../docs/control-os/bloc34/evidence/staging.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));
+})().catch(e=>{console.error(e.message);process.exitCode=1;});
