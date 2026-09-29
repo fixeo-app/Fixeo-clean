@@ -143,7 +143,7 @@
       "dest": "/api/server.js"
     },
     {
-      "src": "^/api/control-v1/(summary|operations|dossier|search|signals|action/preview|action/execute)$",
+      "src": "^/api/control-v1/(summary|operations|dossier|search|signals|decisions|dispatch-candidates|network-context|action/preview|action/execute)$",
       "dest": "/api/control-fn/index.js"
     },
     {
