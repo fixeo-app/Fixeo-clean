@@ -3,89 +3,77 @@
   "category": "confiance",
   "service": null,
   "city": null,
-  "title": "Pourquoi choisir un artisan vérifié Fixeo au Maroc",
-  "meta_description": "Qu'est-ce qu'un artisan vérifié Fixeo ? Processus de vérification, avis authentiques, garantie intervention — pourquoi c'est plus sûr qu'un contact direct ou les flyers.",
+  "title": "Comment évaluer un profil artisan sur FIXEO au Maroc",
+  "meta_description": "Quels éléments regarder avant de choisir un artisan sur FIXEO : métier, ville, description, réalisations disponibles, historique et tarif confirmé avant intervention.",
   "date": "2026-06-12",
   "hero_image": "/img/blog/artisan-verifie.webp",
-  "tags": ["artisan", "confiance", "verification", "fixeo", "maroc"],
+  "tags": [
+    "artisan",
+    "confiance",
+    "profil",
+    "fixeo",
+    "maroc"
+  ],
   "estimated_read_min": 4,
-  "related_articles": ["comment-choisir-plombier-maroc", "avis-artisans-fixeo", "garantie-intervention-fixeo"],
-  "internal_links": ["/plombier/casablanca", "/electricien/rabat", "/serrurier/marrakech"],
+  "related_articles": [
+    "comment-choisir-plombier-maroc",
+    "avis-artisans-fixeo",
+    "garantie-intervention-fixeo"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/electricien/rabat",
+    "/serrurier/marrakech"
+  ],
   "faq": [
     {
-      "q": "Comment Fixeo vérifie-t-il ses artisans ?",
-      "a": "Chaque artisan sur Fixeo passe par un processus de vérification en plusieurs étapes : vérification d'identité (CIN ou passeport), validation du numéro professionnel quand applicable, collecte de photos de réalisations récentes, et entretien téléphonique. Les artisans avec un mauvais bilan (annulations répétées, avis négatifs) sont retirés de la plateforme."
+      "q": "Que faut-il vérifier sur un profil artisan FIXEO ?",
+      "a": "Vérifiez le métier indiqué, la ville ou zone d’intervention, la description du profil, les prestations proposées et les éventuelles réalisations publiques. Les informations absentes doivent être confirmées avant l’intervention."
     },
     {
-      "q": "Que se passe-t-il si un artisan Fixeo fait un mauvais travail ?",
-      "a": "Si vous n'êtes pas satisfait, Fixeo propose une médiation gratuite. Dans la plupart des cas, l'artisan revient corriger le travail. Si le litige persiste, Fixeo peut activer la garantie intervention et prendre en charge les frais de reprise dans les conditions définies."
+      "q": "Le tarif affiché est-il toujours le prix final ?",
+      "a": "Non. Une fourchette ou un prix indicatif ne remplace pas le tarif définitif. Le professionnel doit confirmer le prix et le périmètre de la prestation avant le début de l’intervention."
     },
     {
-      "q": "Les artisans Fixeo sont-ils plus chers que ceux trouvés directement ?",
-      "a": "Non — les artisans Fixeo pratiquent les mêmes tarifs que le marché local. La vérification n'implique pas de surcoût pour le client. Ce que vous gagnez, c'est la tranquillité d'esprit de savoir que l'artisan est réel, qualifié et responsable."
+      "q": "Que faire si une information du profil semble incomplète ?",
+      "a": "Demandez confirmation avant d’accepter l’intervention. FIXEO privilégie les informations vérifiables et évite de présenter une disponibilité, une qualification ou une garantie comme acquise lorsqu’elle n’est pas établie."
     }
   ],
   "sections": [
     {
       "type": "intro",
-      "content": "Au Maroc, trouver un artisan fiable reste un défi quotidien pour de nombreux ménages. Les annonces non vérifiées sur Facebook, les flyers dans les boîtes aux lettres, ou le prestataire trouvé « par hasard » — ces méthodes exposent à des risques réels : surfacturation, travail bâclé, voire arnaques pures. C'est pourquoi Fixeo a développé un processus rigoureux de vérification de ses artisans."
+      "content": "Un profil artisan peut aider à comparer plusieurs professionnels, à condition de distinguer ce qui est réellement renseigné de ce qui doit encore être confirmé. Sur FIXEO, l’objectif est de présenter des informations utiles sans transformer une donnée absente en promesse."
     },
     {
       "type": "h2",
-      "title": "Le problème : l'artisanat informel au Maroc",
-      "content": "Le secteur de l'artisanat bâtiment au Maroc est majoritairement informel. Selon les estimations, plus de 70% des petits travaux (plomberie, électricité, peinture) sont réalisés par des travailleurs sans formation certifiée, sans assurance et sans enregistrement officiel. Ce n'est pas toujours synonyme de mauvaise qualité — mais c'est un facteur de risque réel pour le consommateur."
+      "title": "Les informations à regarder en priorité",
+      "content": "Commencez par le métier, la ville ou zone d’intervention, la description du profil, les prestations proposées et les éléments publics qui permettent de comprendre l’activité du professionnel."
     },
     {
       "type": "list",
       "items": [
-        "Pas de recours légal si le travail est bâclé",
-        "Pas d'assurance responsabilité civile — vous êtes responsable des dégâts éventuels",
-        "Impossible de vérifier les références réelles",
-        "Pas de facture = pas de déclaration d'assurance possible",
-        "Risque de travaux non conformes aux normes (électricité surtout)"
+        "Métier ou spécialité indiquée",
+        "Ville et zone d’intervention",
+        "Description des prestations",
+        "Réalisations ou éléments publics disponibles",
+        "Fourchette de prix lorsqu’elle existe",
+        "Informations à confirmer avant intervention"
       ]
     },
     {
       "type": "h2",
-      "title": "Le processus de vérification Fixeo",
-      "content": "Chaque artisan qui rejoint Fixeo passe par plusieurs étapes avant d'être mis en relation avec des clients."
-    },
-    {
-      "type": "table",
-      "caption": "Étapes de vérification Fixeo",
-      "headers": ["Étape", "Description", "Obligatoire"],
-      "rows": [
-        ["Identité", "Vérification CIN ou passeport", "Oui"],
-        ["Profil professionnel", "Photos, descriptions de métier, zone de couverture", "Oui"],
-        ["Réalisations", "Photos de chantiers récents", "Oui"],
-        ["Entretien", "Appel de validation avec l'équipe Fixeo", "Oui"],
-        ["Formation", "Module en ligne sur les bonnes pratiques", "Recommandé"],
-        ["Avis clients", "Collecte après chaque mission — authentifiés", "Continu"]
-      ]
+      "title": "Ce qui doit toujours être confirmé avant l’intervention",
+      "content": "La disponibilité réelle, le délai d’arrivée, le périmètre exact des travaux, les fournitures nécessaires et le tarif définitif dépendent de la situation. Ces éléments doivent être confirmés avant le démarrage."
     },
     {
       "type": "h2",
-      "title": "Le badge artisan vérifié",
-      "content": "Seuls les artisans ayant complété toutes les étapes obligatoires et maintenu une note supérieure à 4/5 affichent le badge 🛡️ artisan vérifié sur leur profil Fixeo. Ce badge est retiré automatiquement en cas d'annulations répétées ou d'avis très négatifs."
-    },
-    {
-      "type": "h2",
-      "title": "Pourquoi c'est important pour vous",
-      "content": null
-    },
-    {
-      "type": "list",
-      "items": [
-        "Vous connaissez l'artisan avant qu'il arrive chez vous — photo, note, avis réels",
-        "Vous bénéficiez d'une garantie en cas de litige",
-        "Le paiement n'est confirmé qu'après votre validation de la mission",
-        "Vous avez une traçabilité complète (devis, mission, facture)",
-        "L'artisan sait qu'il est évalué — cela l'incite à un travail soigné"
-      ]
+      "title": "Comment FIXEO aide à cadrer la demande",
+      "content": "FIXEO permet de décrire le besoin, d’identifier le métier concerné et d’orienter la demande vers des profils référencés correspondant au secteur. La plateforme ne doit pas présenter une information non vérifiée comme une certitude."
     },
     {
       "type": "tip",
-      "content": "Avant de valider une mission Fixeo, vérifiez le profil de l'artisan : lisez les 3 derniers avis, regardez ses photos de réalisations, et vérifiez qu'il opère dans votre quartier."
+      "content": "Avant de confirmer une intervention, résumez par écrit le problème, la localisation, le créneau et le tarif annoncé. Une demande bien cadrée réduit les malentendus."
     }
-  ]
+  ],
+  "date_modified": "2026-09-29"
 }

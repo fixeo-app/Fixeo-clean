@@ -25,6 +25,7 @@
  *   1. public_slug non-empty and matches SLUG_RE
  *   2. availability ∉ {inactive, deleted}
  *   3. city.trim().toLowerCase() ∉ {ville à qualifier, unknown}
+ *   4. generic anonymous placeholder slugs are excluded
  *
  * Ordering: alphabetical by public_slug (case-insensitive, ASCII order).
  *   Tie is impossible given 0 duplicate slugs, but public_slug is the
@@ -143,6 +144,7 @@ function isEligible(row) {
   if (!SLUG_RE.test(slug))            return { ok: false, reason: 'malformed_slug' };
   if (INVALID_AVAIL.has(avail))       return { ok: false, reason: 'invalid_avail' };
   if (INVALID_CITIES.has(city))       return { ok: false, reason: 'invalid_city' };
+  if (/^(participant|membre)-anonyme-/.test(slug)) return { ok: false, reason: 'placeholder_identity' };
   return { ok: true };
 }
 
@@ -267,7 +269,7 @@ async function main() {
 
   /* 2. Classify */
   const eligible    = [];
-  const excluded    = { invalid_city: [], invalid_avail: [], malformed_slug: [], empty_slug: [] };
+  const excluded    = { invalid_city: [], invalid_avail: [], malformed_slug: [], empty_slug: [], placeholder_identity: [] };
 
   for (const row of allRows) {
     const { ok, reason } = isEligible(row);
@@ -286,6 +288,7 @@ async function main() {
   console.log(`  Excl avail:     ${excluded.invalid_avail.length}`);
   console.log(`  Excl malformed: ${excluded.malformed_slug.length}`);
   console.log(`  Excl empty:     ${excluded.empty_slug.length}`);
+  console.log(`  Excl placeholder:${excluded.placeholder_identity.length}`);
 
   /* 4. Build XML */
   const generated = buildSitemap(eligible, allRows.length);

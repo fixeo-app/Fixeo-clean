@@ -27,6 +27,16 @@ on:
       - 'admin.html'
       - 'admin-control-os.html'
       - 'css/admin-rafi-decision-center.css'
+      - 'seo/**'
+      - 'blog/**'
+      - 'blog-index.html'
+      - 'sitemap*.xml'
+      - 'robots.txt'
+      - 'vercel.json'
+      - 'scripts/generate-blog-v2.js'
+      - 'scripts/generate-authority-blog-v3.js'
+      - 'scripts/generate-profile-sitemap.js'
+      - 'api/artisan-profile-fn/**'
       - '.github/workflows/control-contract.yml'
 permissions:
   contents: read
@@ -59,6 +69,13 @@ jobs:
         env:
           CONTROL_TEST_DATABASE_URL: postgresql://postgres:synthetic-ci-only@127.0.0.1:5432/control_contract
       - run: node --test tests/admin-control-os/cross-universe-contract.test.cjs
+      - run: node --test seo/generators/seo-consolidation-v1.test.js
+      - run: |
+          node --check seo/generators/service-city-v3.js
+          node --check scripts/generate-blog-v2.js
+          node --check scripts/generate-authority-blog-v3.js
+          node --check scripts/generate-profile-sitemap.js
+          node --check api/artisan-profile-fn/index.js
 
       - run: npx playwright install --with-deps chromium
         working-directory: tests/control-contract

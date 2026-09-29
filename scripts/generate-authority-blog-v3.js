@@ -45,7 +45,7 @@ const CATEGORIES = {
   climatisation: { label: 'Climatisation',        icon: '❄️', desc: 'Climatisation et ventilation au Maroc.' },
   prix:          { label: 'Tarifs & Prix',         icon: '💰', desc: 'Guides de prix par service au Maroc.' },
   urgence:       { label: 'Urgences',              icon: '🚨', desc: 'Conseils urgence et dépannage.' },
-  confiance:     { label: 'Confiance & Garanties', icon: '🛡️', desc: 'Artisans vérifiés et garanties.' },
+  confiance:     { label: 'Confiance & Garanties', icon: '🛡️', desc: 'Profils référencés et repères de confiance.' },
   local:         { label: 'Guides par ville',      icon: '📍', desc: 'Artisans et conseils par ville.' },
   guide:         { label: 'Guides pratiques',      icon: '📖', desc: 'Guides pratiques artisanat.' },
   conseils:      { label: 'Conseils & Entretien',  icon: '🔩', desc: 'Conseils entretien et prévention.' }
@@ -57,7 +57,7 @@ const CATEGORY_IMAGES = {
   plomberie:     'https://www.fixeo.ma/img/blog/plomberie-blog.webp',
   electricite:   'https://www.fixeo.ma/img/blog/electricite-blog.webp',
   serrurerie:    'https://www.fixeo.ma/img/blog/serrurerie-blog.webp',
-  climatisation: 'https://www.fixeo.ma/img/blog/climatisation-blog.webp',
+  climatisation: 'https://www.fixeo.ma/img/blog/climatisation/blog.webp',
   prix:          'https://www.fixeo.ma/img/blog/tarifs-blog.webp',
   urgence:       'https://www.fixeo.ma/img/blog/urgence-blog.webp',
   confiance:     'https://www.fixeo.ma/img/blog/confiance-blog.webp',
@@ -70,7 +70,7 @@ const CATEGORY_HERO_SRC = {
   plomberie:     '/img/blog/plomberie-blog.webp',
   electricite:   '/img/blog/electricite-blog.webp',
   serrurerie:    '/img/blog/serrurerie-blog.webp',
-  climatisation: '/img/blog/climatisation-blog.webp',
+  climatisation: '/img/blog/climatisation/blog.webp',
   prix:          '/img/blog/tarifs-blog.webp',
   urgence:       '/img/blog/urgence-blog.webp',
   confiance:     '/img/blog/confiance-blog.webp',
@@ -82,44 +82,44 @@ const DEFAULT_IMAGE = 'https://www.fixeo.ma/img/fixeo-logo.webp';
 
 // ── Category → Intro CTA block (Phase 4.4 locked) ───────────
 const CATEGORY_CTA = {
-  plomberie:     { icon: '🔧', label: 'Trouver un plombier vérifié',         desc: 'Intervention rapide, devis gratuit, artisan certifié Fixeo.',              btn: 'Demander un devis' },
-  electricite:   { icon: '⚡', label: 'Trouver un électricien vérifié',      desc: 'Artisan certifié, intervention rapide, paiement sécurisé.',               btn: 'Trouver un électricien' },
-  serrurerie:    { icon: '🔐', label: 'Trouver un serrurier vérifié',        desc: 'Serrurier disponible rapidement, tarifs transparents, certifié Fixeo.',  btn: 'Trouver un serrurier' },
-  climatisation: { icon: '❄️', label: 'Trouver un technicien climatisation', desc: 'Installation et maintenance par un expert certifié Fixeo.',              btn: 'Trouver un technicien' }
+  plomberie:     { icon: '🔧', label: 'Trouver un plombier',                  desc: 'Décrivez votre besoin et consultez les profils référencés dans votre ville.', btn: 'Décrire mon besoin' },
+  electricite:   { icon: '⚡', label: 'Trouver un électricien',               desc: 'Consultez les profils référencés ; le tarif est confirmé avant intervention.', btn: 'Trouver un électricien' },
+  serrurerie:    { icon: '🔐', label: 'Trouver un serrurier',                 desc: 'Décrivez la situation et consultez les profils référencés selon votre secteur.', btn: 'Trouver un serrurier' },
+  climatisation: { icon: '❄️', label: 'Trouver un technicien climatisation', desc: 'Décrivez votre besoin et consultez les profils référencés dans votre ville.', btn: 'Trouver un technicien' }
 };
-const DEFAULT_CTA = { icon: '🔧', label: 'Trouver un artisan vérifié', desc: 'Artisan certifié, intervention rapide, paiement sécurisé.', btn: 'Trouver un artisan' };
+const DEFAULT_CTA = { icon: '🔧', label: 'Trouver un artisan', desc: 'Décrivez votre besoin et consultez les profils référencés sur FIXEO.', btn: 'Trouver un artisan' };
 
 // ── Category → SSR LP internal links (Phase 4.5 locked) ─────
-// Format: /service-city (hyphen, SSR LP routes in vercel.json)
+// Format: /service/city — canonical clean route.
 const CATEGORY_LP_LINKS = {
   plomberie: [
-    ['/plombier-casablanca', 'Plombier Casablanca'],
-    ['/plombier-rabat',      'Plombier Rabat'],
-    ['/plombier-marrakech',  'Plombier Marrakech'],
-    ['/plombier-fes',        'Plombier Fès'],
-    ['/plombier-tanger',     'Plombier Tanger'],
-    ['/plombier-agadir',     'Plombier Agadir']
+    ['/plombier/casablanca', 'Plombier Casablanca'],
+    ['/plombier/rabat',      'Plombier Rabat'],
+    ['/plombier/marrakech',  'Plombier Marrakech'],
+    ['/plombier/fes',        'Plombier Fès'],
+    ['/plombier/tanger',     'Plombier Tanger'],
+    ['/plombier/agadir',     'Plombier Agadir']
   ],
   electricite: [
-    ['/electricien-casablanca', 'Electricien Casablanca'],
-    ['/electricien-rabat',      'Electricien Rabat'],
-    ['/electricien-marrakech',  'Electricien Marrakech'],
-    ['/electricien-fes',        'Electricien Fès'],
-    ['/electricien-tanger',     'Electricien Tanger'],
-    ['/electricien-agadir',     'Electricien Agadir']
+    ['/electricien/casablanca', 'Electricien Casablanca'],
+    ['/electricien/rabat',      'Electricien Rabat'],
+    ['/electricien/marrakech',  'Electricien Marrakech'],
+    ['/electricien/fes',        'Electricien Fès'],
+    ['/electricien/tanger',     'Electricien Tanger'],
+    ['/electricien/agadir',     'Electricien Agadir']
   ],
   serrurerie: [
-    ['/serrurier-casablanca', 'Serrurier Casablanca'],
-    ['/serrurier-rabat',      'Serrurier Rabat'],
-    ['/serrurier-marrakech',  'Serrurier Marrakech'],
-    ['/serrurier-fes',        'Serrurier Fès'],
-    ['/serrurier-tanger',     'Serrurier Tanger'],
-    ['/serrurier-agadir',     'Serrurier Agadir']
+    ['/serrurier/casablanca', 'Serrurier Casablanca'],
+    ['/serrurier/rabat',      'Serrurier Rabat'],
+    ['/serrurier/marrakech',  'Serrurier Marrakech'],
+    ['/serrurier/fes',        'Serrurier Fès'],
+    ['/serrurier/tanger',     'Serrurier Tanger'],
+    ['/serrurier/agadir',     'Serrurier Agadir']
   ],
   climatisation: [
-    ['/climatisation-casablanca', 'Climatisation Casablanca'],
-    ['/climatisation-rabat',      'Climatisation Rabat'],
-    ['/climatisation-marrakech',  'Climatisation Marrakech']
+    ['/climatisation/casablanca', 'Climatisation Casablanca'],
+    ['/climatisation/rabat',      'Climatisation Rabat'],
+    ['/climatisation/marrakech',  'Climatisation Marrakech']
   ]
 };
 
@@ -235,6 +235,7 @@ function buildArticlePage(article) {
   const cat          = CATEGORIES[article.category] || { label: article.category || 'Guide', icon: '📖', desc: '' };
   const today        = new Date().toISOString().slice(0, 10);
   const dateISO      = article.date || today;
+  const modifiedISO  = article.date_modified || dateISO;
   const dateFR       = formatDate(dateISO);
   const title        = article.title;
   const metaDesc     = article.meta_description || '';
@@ -314,7 +315,7 @@ function buildArticlePage(article) {
     'description':     metaDesc,
     'url':             canonicalUrl,
     'datePublished':   dateISO,
-    'dateModified':    dateISO,
+    'dateModified':    modifiedISO,
     'image':           catImage,
     'author': {
       '@type': 'Organization',
@@ -474,8 +475,8 @@ function buildArticlePage(article) {
       </div>
       <div class="blog-cta-v2" aria-label="Appel à l'action">
         <div class="blog-cta-v2-inner">
-          <p class="blog-cta-title">🔧 Besoin d'un artisan vérifié ?</p>
-          <p class="blog-cta-desc">Fixeo vous met en relation avec des professionnels qualifiés dans votre ville au Maroc — devis gratuit, paiement sécurisé après intervention.</p>
+          <p class="blog-cta-title">🔧 Besoin d’un artisan ?</p>
+          <p class="blog-cta-desc">Fixeo vous aide à décrire votre besoin et à consulter des profils professionnels référencés dans votre ville. Le tarif est confirmé avant intervention.</p>
           <div class="blog-cta-btns">
             <a href="/?open=request" class="blog-cta-btn blog-cta-btn-primary">Demander un devis</a>
             <a href="/suivi" class="blog-cta-btn blog-cta-btn-secondary">Suivre mon intervention</a>
@@ -499,7 +500,7 @@ function buildArticlePage(article) {
       </div>
       <div class="blog-sidebar-widget blog-sidebar-cta">
         <h3>Trouver un artisan</h3>
-        <p>Artisans vérifiés disponibles dans votre ville.</p></div>
+        <p>Profils professionnels référencés dans votre ville, selon la couverture du moment.</p></div>
         <a href="/?open=request" class="blog-cta-btn">Demander un devis</a>
       </div>
     </aside>
@@ -513,18 +514,35 @@ function buildArticlePage(article) {
 }
 
 // ── Update sitemap-blog.xml ───────────────────────────────────
-function updateSitemapBlog(slugs, today) {
+function updateSitemapBlog(slugs, dateBySlug, today) {
   let existing = '';
   if (fs.existsSync(SITEMAP_BLOG)) {
     existing = fs.readFileSync(SITEMAP_BLOG, 'utf8');
   }
-  const newEntries = slugs.filter(slug => !existing.includes(`/blog/${slug}`)).map(slug =>
-    `  <url>\n    <loc>https://www.fixeo.ma/blog/${slug}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.70</priority>\n  </url>`
-  ).join('\n');
-  if (!newEntries) return;
-  const updated = existing.replace('</urlset>', newEntries + '\n</urlset>');
+
+  let updated = existing;
+  for (const slug of slugs) {
+    const date = dateBySlug[slug] || today;
+    const loc = `https://www.fixeo.ma/blog/${slug}`;
+    const marker = `<loc>${loc}</loc>`;
+
+    if (updated.includes(marker)) {
+      const locIndex = updated.indexOf(marker);
+      const lastmodOpen = updated.indexOf('<lastmod>', locIndex);
+      const lastmodClose = lastmodOpen >= 0 ? updated.indexOf('</lastmod>', lastmodOpen) : -1;
+      if (lastmodOpen >= 0 && lastmodClose >= 0) {
+        const valueStart = lastmodOpen + '<lastmod>'.length;
+        updated = updated.slice(0, valueStart) + date + updated.slice(lastmodClose);
+      }
+    } else {
+      const entry = `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${date}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.70</priority>\n  </url>`;
+      updated = updated.replace('</urlset>', entry + '\n</urlset>');
+    }
+  }
+
+  if (updated === existing) return;
   fs.writeFileSync(SITEMAP_BLOG, updated, 'utf8');
-  console.log(`[OK]  sitemap-blog.xml updated`);
+  console.log('[OK]  sitemap-blog.xml updated');
 }
 
 // ── Main ──────────────────────────────────────────────────────
@@ -543,6 +561,7 @@ function main() {
   }
 
   const slugs = [];
+  const sitemapDates = {};
   let generated = 0;
   let skipped   = 0;
   let errors    = 0;
@@ -562,6 +581,7 @@ function main() {
 
     const outPath = path.join(BLOG_DIR, `${slug}.html`);
     slugs.push(slug);
+    sitemapDates[slug] = article.date_modified || article.date || today;
 
     if (!FORCE && fs.existsSync(outPath)) {
       skipped++;
@@ -578,7 +598,7 @@ function main() {
     generated++;
   }
 
-  if (!DRY) updateSitemapBlog(slugs, today);
+  if (!DRY) updateSitemapBlog(slugs, sitemapDates, today);
 
   console.log(`\nDone: ${generated} generated, ${skipped} skipped, ${errors} errors.`);
 }

@@ -1527,3 +1527,10 @@ body.seo-service-page .fxlp-breadcrumbs a,
 body.seo-service-page .fxlp-section-body a {
   min-height: unset;
 }
+
+
+/* SEO consolidation V1 — intent support links */
+.fxlp-intent-links{display:grid;gap:10px;margin:18px 0 0;padding:0;list-style:none}
+.fxlp-intent-links a{display:block;padding:12px 14px;border:1px solid rgba(255,255,255,.10);border-radius:12px;background:rgba(255,255,255,.025);color:inherit;text-decoration:none}
+.fxlp-intent-links a:hover,.fxlp-intent-links a:focus-visible{border-color:rgba(103,232,249,.34);background:rgba(103,232,249,.055)}
+@media(min-width:760px){.fxlp-intent-links{grid-template-columns:repeat(3,minmax(0,1fr))}}

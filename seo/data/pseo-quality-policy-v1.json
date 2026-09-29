@@ -1,0 +1,23 @@
+{
+  "version": "pseo-quality-gate-v1",
+  "frozen_at": "2026-09-29",
+  "current_limits": {
+    "sitemap_pseo_urls": 391,
+    "blog_urls": 122,
+    "profile_sitemap_urls_before_placeholder_cleanup": 1205
+  },
+  "rules": [
+    "No automatic pSEO expansion beyond the frozen sitemap count without a reviewed evidence file.",
+    "Problem and price pages support the master service-city page; they must not target the same generic service-city title.",
+    "District pages are held unless they have distinct local utility or Search Console evidence.",
+    "No mass noindex based only on zero clicks.",
+    "No claims of fixed availability, response time, certification, guarantee, or final price without canonical evidence."
+  ],
+  "release_gate": {
+    "requires_unique_intent": true,
+    "requires_internal_link_to_master": true,
+    "requires_truthful_claims": true,
+    "requires_canonical_clean_url": true,
+    "requires_gsc_or_business_evidence": true
+  }
+}
