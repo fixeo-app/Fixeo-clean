@@ -378,7 +378,7 @@ function buildIntentSupportHtml(serviceSlug, citySlug, cityLabel) {
     climatisation: [
       ['/prix/climatisation/' + citySlug, 'Voir les tarifs indicatifs de climatisation à ' + cityLabel],
       ['/climatisation-en-panne/' + citySlug, 'Climatisation en panne à ' + cityLabel],
-      ['/blog/recharge-gaz-climatisation', 'Comprendre une recharge de gaz de climatisation'],
+      [citySlug === 'agadir' ? '/blog/climatisation-agadir' : '/blog/recharge-gaz-climatisation', citySlug === 'agadir' ? 'Guide climatisation à Agadir' : 'Comprendre une recharge de gaz de climatisation'],
     ],
   };
   const links = MAP[serviceSlug] || [];
