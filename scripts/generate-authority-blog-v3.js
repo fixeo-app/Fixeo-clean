@@ -524,30 +524,25 @@ function updateSitemapBlog(slugs, dateBySlug, today) {
   for (const slug of slugs) {
     const date = dateBySlug[slug] || today;
     const loc = `https://www.fixeo.ma/blog/${slug}`;
-    if (updated.includes(`/blog/${slug}`)) {
-      const escaped = loc.replace(/[.*+?^$\{\}()|[\]\\]/g, '\\function updateSitemapBlog(slugs, today) {
-  let existing = '';
-  if (fs.existsSync(SITEMAP_BLOG)) {
-    existing = fs.readFileSync(SITEMAP_BLOG, 'utf8');
-  }
-  const newEntries = slugs.filter(slug => !existing.includes(`/blog/${slug}`)).map(slug =>
-    `  <url>\n    <loc>https://www.fixeo.ma/blog/${slug}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.70</priority>\n  </url>`
-  ).join('\n');
-  if (!newEntries) return;
-  const updated = existing.replace('</urlset>', newEntries + '\n</urlset>');
-  fs.writeFileSync(SITEMAP_BLOG, updated, 'utf8');
-  console.log(`[OK]  sitemap-blog.xml updated`);
-}');
-      const re = new RegExp(`(<loc>${escaped}<\\/loc>\\s*<lastmod>)[^<]+(<\\/lastmod>)`);
-      updated = updated.replace(re, `$1${date}$2`);
+    const marker = `<loc>${loc}</loc>`;
+
+    if (updated.includes(marker)) {
+      const locIndex = updated.indexOf(marker);
+      const lastmodOpen = updated.indexOf('<lastmod>', locIndex);
+      const lastmodClose = lastmodOpen >= 0 ? updated.indexOf('</lastmod>', lastmodOpen) : -1;
+      if (lastmodOpen >= 0 && lastmodClose >= 0) {
+        const valueStart = lastmodOpen + '<lastmod>'.length;
+        updated = updated.slice(0, valueStart) + date + updated.slice(lastmodClose);
+      }
     } else {
       const entry = `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${date}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.70</priority>\n  </url>`;
       updated = updated.replace('</urlset>', entry + '\n</urlset>');
     }
   }
+
   if (updated === existing) return;
   fs.writeFileSync(SITEMAP_BLOG, updated, 'utf8');
-  console.log(`[OK]  sitemap-blog.xml updated`);
+  console.log('[OK]  sitemap-blog.xml updated');
 }
 
 // ── Main ──────────────────────────────────────────────────────
