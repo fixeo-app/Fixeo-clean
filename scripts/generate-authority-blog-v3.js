@@ -514,7 +514,18 @@ function buildArticlePage(article) {
 }
 
 // ── Update sitemap-blog.xml ───────────────────────────────────
-function updateSitemapBlog(slugs, today) {
+function updateSitemapBlog(slugs, dateBySlug, today) {
+  let existing = '';
+  if (fs.existsSync(SITEMAP_BLOG)) {
+    existing = fs.readFileSync(SITEMAP_BLOG, 'utf8');
+  }
+
+  let updated = existing;
+  for (const slug of slugs) {
+    const date = dateBySlug[slug] || today;
+    const loc = `https://www.fixeo.ma/blog/${slug}`;
+    if (updated.includes(`/blog/${slug}`)) {
+      const escaped = loc.replace(/[.*+?^$\{\}()|[\]\\]/g, '\\function updateSitemapBlog(slugs, today) {
   let existing = '';
   if (fs.existsSync(SITEMAP_BLOG)) {
     existing = fs.readFileSync(SITEMAP_BLOG, 'utf8');
@@ -524,6 +535,17 @@ function updateSitemapBlog(slugs, today) {
   ).join('\n');
   if (!newEntries) return;
   const updated = existing.replace('</urlset>', newEntries + '\n</urlset>');
+  fs.writeFileSync(SITEMAP_BLOG, updated, 'utf8');
+  console.log(`[OK]  sitemap-blog.xml updated`);
+}');
+      const re = new RegExp(`(<loc>${escaped}<\\/loc>\\s*<lastmod>)[^<]+(<\\/lastmod>)`);
+      updated = updated.replace(re, `$1${date}$2`);
+    } else {
+      const entry = `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${date}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.70</priority>\n  </url>`;
+      updated = updated.replace('</urlset>', entry + '\n</urlset>');
+    }
+  }
+  if (updated === existing) return;
   fs.writeFileSync(SITEMAP_BLOG, updated, 'utf8');
   console.log(`[OK]  sitemap-blog.xml updated`);
 }
@@ -544,6 +566,7 @@ function main() {
   }
 
   const slugs = [];
+  const sitemapDates = {};
   let generated = 0;
   let skipped   = 0;
   let errors    = 0;
@@ -563,6 +586,7 @@ function main() {
 
     const outPath = path.join(BLOG_DIR, `${slug}.html`);
     slugs.push(slug);
+    sitemapDates[slug] = article.date_modified || article.date || today;
 
     if (!FORCE && fs.existsSync(outPath)) {
       skipped++;
@@ -579,7 +603,7 @@ function main() {
     generated++;
   }
 
-  if (!DRY) updateSitemapBlog(slugs, today);
+  if (!DRY) updateSitemapBlog(slugs, sitemapDates, today);
 
   console.log(`\nDone: ${generated} generated, ${skipped} skipped, ${errors} errors.`);
 }
