@@ -15,10 +15,12 @@ function page(snapshot=fixture(),override){
  w.FixeoControl={request:async(operation,body)=>{calls.push({operation,body});if(override){const value=await override(operation,body);if(value!==undefined)return value;}
    if(operation==='decisions')return snapshot;
    if(operation==='dossier')return {entity_type:body.type,id:body.id,as_of:new Date().toISOString(),summary:{id:body.id,status:'new',city:'Fès',service_category:'plomberie'},relations:[],timeline:[]};
-   if(operation==='network-context'||operation==='operations')return {items:[{id,city:'Fès',name:'Synthetic Profile'}],has_more:false,next_cursor:null};
+   if(operation==='dossier-section')return {items:[],has_more:false,as_of:new Date().toISOString()};
+   if(operation==='operations')return {items:[],has_more:false,next_cursor:null,as_of:new Date().toISOString()};
+   if(operation==='network-context')return {items:[{id,city:'Fès',name:'Synthetic Profile'}],has_more:false,next_cursor:null};
    throw Error('Unexpected read '+operation);
  },command:async()=>{throw Error('Unexpected mutation');}};
- w.eval(fs.readFileSync(path.join(root,'js/admin-rafi-decision-center.js'),'utf8'));
+ for(const file of ['admin-fixeo-dossier.js','admin-fixeo-operations.js','admin-rafi-decision-center.js'])w.eval(fs.readFileSync(path.join(root,'js',file),'utf8'));
  return {dom,w,calls,close:()=>w.close()};
 }
 test('RAFI UI renders computed top priority, explainability and escaping without executing actions',async()=>{const data=fixture();data.decisions[0].title='<img src=x onerror=alert(1)> urgence';const p=page(data);try{await p.w.FixeoRafi.load();assert.equal(p.w.document.querySelector('#rafi-brief').textContent,data.decisions[0].title);assert.equal(p.w.document.querySelector('#rafi-brief img'),null);await p.w.FixeoRafi.openDecision(data.decisions[0].decision_id);const text=p.w.document.querySelector('#drawer').textContent;for(const expected of ['Pourquoi maintenant','INFÉRENCE','FAITS','request.dispatch','Suivi / audit'])assert.ok(text.includes(expected),expected);assert.equal(p.calls.filter(c=>c.operation==='dossier').length,1);}finally{p.close();}});
@@ -30,7 +32,7 @@ test('An empty cached briefing expires in RAFI and Control Tower without becomin
 test('Admin shell loads only active-surface lists and the canonical RAFI briefing',async()=>{
  const p=page(fixture()),tables=[];p.w.FixeoControl.summary=async()=>({});
  p.w.FixeoSupabaseClient={client:{auth:{getSession:async()=>({data:{session:{user:{id}}}})},from:table=>({select(){return this;},eq(){return this;},single:async()=>({data:{role:'admin'}}),order(){return this;},limit(){return this;},abortSignal:async()=>{tables.push(table);return {data:[]};}})}};
- try{p.w.eval(fs.readFileSync(path.join(root,'js/admin-control-os-clean.js'),'utf8'));p.w.dispatchEvent(new p.w.Event('load'));await tick();await tick();assert.deepEqual([...new Set(tables)],['missions']);tables.length=0;p.w.FixeoAdmin.navigate('rafi');await tick();assert.deepEqual(tables,[]);p.w.FixeoAdmin.navigate('operations');await tick();await tick();assert.deepEqual(tables.sort(),['missions','service_requests']);assert.ok(p.w.document.getElementById('sec-operations').classList.contains('active'));assert.ok(p.calls.some(c=>c.operation==='decisions'));}finally{p.close();}
+ try{p.w.eval(fs.readFileSync(path.join(root,'js/admin-control-os-clean.js'),'utf8'));p.w.dispatchEvent(new p.w.Event('load'));await tick();await tick();assert.deepEqual([...new Set(tables)],['missions']);tables.length=0;p.w.FixeoAdmin.navigate('rafi');await tick();assert.deepEqual(tables,[]);p.w.FixeoAdmin.navigate('operations');await tick();await tick();assert.deepEqual(tables,[]);assert.ok(p.calls.some(c=>c.operation==='operations'));assert.ok(p.w.document.getElementById('sec-operations').classList.contains('active'));assert.ok(p.calls.some(c=>c.operation==='decisions'));}finally{p.close();}
 });
 test('RAFI command retry keeps the same preview and idempotency key after an uncertain response',async()=>{
  const dom=new JSDOM('<body></body>',{runScripts:'outside-only'}),w=dom.window,requests=[];let failed=false;

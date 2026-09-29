@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-let canonicalSources={},currentView="overview";
+let canonicalSources={},currentView="overview",routeLoaded=false;
 let S={requests:[],missions:[],artisans:[],quotes:[],claims:[],users:[],enterprises:[],sites:[],notifications:[],payments:[],health:{},error:null},loading=false,lastLoad=0;
 const F={ops:{q:'',status:'all',urgency:'all'},network:{q:'',type:'all',state:'all'}};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -28,7 +28,7 @@ async function q(c,t,sel='id',limit=500){const at=Date.now(),abort=new AbortCont
 async function loadGroup(c,defs){await Promise.all(defs.map(async d=>{const key=d[0],r=await q(c,d[1],d[2],d[3]);if(r.ok)S[key]=r.data;S.health[key]={ok:r.ok,status:r.ok?'partial':S[key]?.length?'stale':'unavailable',ms:r.ms,error:r.error||null,count:S[key]?.length||0,last_success_at:r.ok?new Date().toISOString():S.health[key]?.last_success_at};healthBanner()}))}
 
 function healthBanner(){const bad=Object.entries(S.health).filter(([,v])=>!v.ok);const e=$('#os-error');if(!e)return;if(!bad.length){e.hidden=true;e.textContent='';return}e.hidden=false;e.textContent='Mode dégradé · '+bad.map(([k,v])=>k+': '+(v.error||'indisponible')).join(' · ')}
-const viewSources={overview:['missions'],rafi:[],operations:['requests','missions'],reservations:['requests','quotes'],network:['artisans','users','enterprises'],finance:['missions','payments'],trust:['claims','artisans'],intelligence:['requests','artisans'],urgent:['requests','missions','artisans'],governance:['users','notifications'],notifications:['notifications']};
+const viewSources={overview:['missions'],rafi:[],operations:[],reservations:['requests','quotes'],network:['artisans','users','enterprises'],finance:['missions','payments'],trust:['claims','artisans'],intelligence:['requests','artisans'],urgent:['requests','missions','artisans'],governance:['users','notifications'],notifications:['notifications']};
 const sourceDefinitions=[['requests','service_requests','id,status,city,service_category,urgency,created_at,target_artisan_id,client_profile_id,pricing_offer_id,data_classification',700],['missions','missions','id,request_id,artisan_profile_id,status,created_at,accepted_at,agreed_price,final_price,commission_amount,pricing_offer_id',700],['artisans','artisans','id,full_name,city,service_category,category,availability,claimed,claim_status,verified,is_verified,rating,onboarding_completed',1600],['quotes','quotes','id,request_id,artisan_profile_id,proposed_price,status,created_at,review_status,quote_version',500],['claims','claim_requests','id,artisan_id,status,created_at,reviewed_at',300],['users','users','id,full_name,role,city,created_at',700],['notifications','notifications','id,title,type,read,created_at,related_entity_type,related_entity_id',300],['payments','payments','id,mission_id,amount,status,created_at',500],['enterprises','enterprise_accounts','id,name,status,created_at',300],['sites','enterprise_sites','id,enterprise_id,name,city,status',500]];
 async function load(){
  if(loading)return;loading=true;const requestedView=currentView;
@@ -36,6 +36,8 @@ async function load(){
   const c=await client(),sess=await c.auth.getSession();if(!sess?.data?.session)throw Error('SESSION_REQUIRED');
   const role=await c.from('users').select('role').eq('id',sess.data.session.user.id).single();
   if(role.error||role.data?.role!=='admin')throw Error('FORBIDDEN');
+  if(!routeLoaded){routeLoaded=true;window.FixeoDossier.fromRoute();}
+  if(requestedView==='operations')window.FixeoOperations.refresh();
   S.error=null;window.FixeoRafi.load();canonicalSources={};applyCanonicalMetrics();
   window.FixeoControl.summary((source,state)=>{canonicalSources[source]=state;applyCanonicalMetrics()}).catch(()=>{canonicalSources={};applyCanonicalMetrics()});
   const needed=viewSources[requestedView]||[];
@@ -60,18 +62,12 @@ function rowHtml(x,kind,title,meta,badge){return '<button class="row" data-kind=
 function rows(arr,kind,title,meta,badge=x=>statusLabel(x.status)){return arr.length?arr.map(x=>rowHtml(x,kind,title(x),meta(x),badge(x))).join(''):'<div class="empty">Aucun élément dans cet état.</div>'}
 function topCounts(list,key){const m={};list.forEach(x=>{const k=String(typeof key==='function'?key(x):x[key]||'Non renseigné').trim()||'Non renseigné';m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1])}
 function coverage(){const demand={},supply={};S.requests.forEach(r=>{const k=(r.city||'Non renseignée')+' · '+(r.service_category||'Service');demand[k]=(demand[k]||0)+1});S.artisans.forEach(a=>{const k=(a.city||'Non renseignée')+' · '+(a.service_category||a.category||'Service');supply[k]=(supply[k]||0)+1});return[...new Set([...Object.keys(demand),...Object.keys(supply)])].map(k=>({key:k,d:demand[k]||0,s:supply[k]||0,g:(demand[k]||0)-(supply[k]||0)})).sort((a,b)=>b.g-a.g||b.d-a.d)}
-function renderAll(){set('k-requests',S.requests.length);set('k-pending',pending().length);set('k-missions',activeM().length);set('k-artisans',S.artisans.length);set('k-claims',S.claims.filter(x=>['pending','new'].includes(st(x))).length);renderOverview();renderOperations();renderReservations();renderNetwork();renderFinance();renderTrust();renderIntelligence();renderUrgent();renderNotifications();renderGovernance();renderRafi();applyCanonicalMetrics()}
+function renderAll(){set('k-requests',S.requests.length);set('k-pending',pending().length);set('k-missions',activeM().length);set('k-artisans',S.artisans.length);set('k-claims',S.claims.filter(x=>['pending','new'].includes(st(x))).length);renderOverview();renderReservations();renderNetwork();renderFinance();renderTrust();renderIntelligence();renderUrgent();renderNotifications();renderGovernance();renderRafi();applyCanonicalMetrics()}
 
 function renderOverview(){const unv=exactMetric('artisans.to_verify')??'—',u=exactMetric('urgency.active')??'—';
 window.FixeoRafi?.renderTower();
 const recent=[...S.missions].sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||''))).slice(0,8);
 $('#overview-recent').innerHTML=rows(recent,'mission',x=>'Mission '+String(x.id||'').slice(0,8),x=>statusLabel(x.status)+' · commission '+money(x.commission_amount||0),x=>statusLabel(x.status))}
-
-function renderOperations(){set('ops-new',S.requests.filter(x=>st(x)==='new').length);set('ops-assigned',S.requests.filter(x=>st(x)==='assigned').length);set('ops-progress',S.requests.filter(x=>st(x)==='in_progress').length);set('ops-closed',S.requests.filter(x=>['completed','validated','cancelled'].includes(st(x))).length);
-let arr=[...S.requests];if(F.ops.status!=='all')arr=arr.filter(x=>st(x)===F.ops.status);if(F.ops.urgency!=='all')arr=arr.filter(x=>norm(x.urgency)===F.ops.urgency);if(F.ops.q)arr=arr.filter(x=>Object.values(x).join(' ').toLowerCase().includes(F.ops.q));arr.sort((a,b)=>{const w=x=>norm(x.urgency)==='now'?3:norm(x.urgency)==='urgent'?2:1;return w(b)-w(a)||new Date(a.created_at)-new Date(b.created_at)});set('ops-count',arr.length+' demande(s) affichée(s)');
-$('#operations-list').innerHTML=rows(arr.slice(0,100),'request',x=>(x.service_category||'Demande')+' · '+(x.city||'—'),x=>urgencyLabel(x.urgency)+' · '+statusLabel(x.status)+' · '+ageLabel(x.created_at),x=>statusLabel(x.status));
-const m=[...S.missions].sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||''))).slice(0,40);
-$('#operations-missions').innerHTML=rows(m,'mission',x=>'Mission '+String(x.id||'').slice(0,8),x=>statusLabel(x.status)+' · '+money(x.final_price||x.agreed_price||0),x=>statusLabel(x.status))}
 
 function renderReservations(){const openReq=S.requests.filter(x=>!terminalReq(x)),quotedIds=new Set(S.quotes.map(q=>String(q.request_id))),unquoted=openReq.filter(r=>!quotedIds.has(String(r.id)));set('r-quotes',S.quotes.length);set('r-unquoted',unquoted.length);set('r-pending',S.quotes.filter(x=>st(x)==='pending').length);set('r-accepted',S.quotes.filter(x=>st(x)==='accepted').length);
 const ctx=$('#reservations-context');if(ctx)ctx.innerHTML='<div><b>Pipeline marketplace</b><p>Sélection bornée : '+unquoted.length+' demande(s) sans devis dans les données chargées ; le besoin d’un devis reste à qualifier. Les devis personnels Artisan OS ne sont volontairement pas mélangés ici.</p></div><button class="btn primary" data-view="operations">Ouvrir les demandes</button>';
@@ -106,27 +102,13 @@ function renderGovernance(){set('g-users',S.users.length);set('g-notifs',S.notif
 function drawer(kind,id){return window.FixeoRafi.openDossier(kind,id)}
 async function canonicalCommand(capability,id,payload){const out=await window.FixeoControl.command(capability,id,payload);await load();return out}
 async function claim(id,approve){return canonicalCommand(approve?'claim.approve':'claim.reject',id,{})}
-function show(id){currentView=id;load();$$('.section').forEach(x=>x.classList.toggle('active',x.id==='sec-'+id));$$('[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===id));$('#side').classList.remove('open');set('page-title',({overview:'Control Tower',operations:'Operations Command Center',reservations:'Réservations & devis',network:'Network 360',finance:'Finance & Trust',trust:'Claims & Trust',intelligence:'Marketplace Intelligence',urgent:'Urgent Performance',governance:'System & Governance',rafi:'RAFI Decision Center',notifications:'Notifications'}[id]||'Control OS'))}
+function show(id){if(!viewSources[id])return;currentView=id;const url=new URL(location.href);url.searchParams.set('view',id);history.replaceState(history.state,'',url);load();$$('.section').forEach(x=>x.classList.toggle('active',x.id==='sec-'+id));$$('[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===id));$('#side').classList.remove('open');set('page-title',({overview:'Control Tower',operations:'Operations Command Center',reservations:'Réservations & devis',network:'Network 360',finance:'Finance & Trust',trust:'Claims & Trust',intelligence:'Marketplace Intelligence',urgent:'Urgent Performance',governance:'System & Governance',rafi:'RAFI Decision Center',notifications:'Notifications'}[id]||'Control OS'))}
 
 window.FixeoAdmin={navigate:show};
-document.addEventListener('click',e=>{const v=e.target.closest('[data-view]');if(v){show(v.dataset.view);return}const r=e.target.closest('[data-kind]');if(r){drawer(r.dataset.kind,r.dataset.id);return}if(e.target.closest('#menu')){$('#side').classList.toggle('open');return}if(e.target.closest('#drawer-close')){$('#drawer').classList.remove('open');return}if(e.target.closest('#refresh')){load();return}
+document.addEventListener('click',e=>{const v=e.target.closest('[data-view]');if(v){show(v.dataset.view);return}const r=e.target.closest('[data-kind]');if(r){drawer(r.dataset.kind,r.dataset.id);return}if(e.target.closest('#menu')){$('#side').classList.toggle('open');return}if(e.target.closest('#refresh')){load();if(currentView==='operations')window.FixeoOperations.refresh(true);return}
 const ca=e.target.closest('[data-claim-approve]');if(ca){ca.disabled=true;claim(ca.dataset.claimApprove,true).catch(err=>{ca.disabled=false;ca.textContent='Échec · '+err.message});return}
 const cr=e.target.closest('[data-claim-reject]');if(cr){cr.disabled=true;claim(cr.dataset.claimReject,false).catch(err=>{cr.disabled=false;cr.textContent='Échec · '+err.message});return}
 const cp=e.target.closest('[data-copy-ref]');if(cp){navigator.clipboard?.writeText(cp.dataset.copyRef);cp.textContent='Copié ✓'}});
-$('#ops-search')?.addEventListener('input',e=>{F.ops.q=e.target.value.toLowerCase().trim();renderOperations()});$('#ops-status')?.addEventListener('change',e=>{F.ops.status=e.target.value;renderOperations()});$('#ops-urgency')?.addEventListener('change',e=>{F.ops.urgency=e.target.value;renderOperations()});$('#network-search')?.addEventListener('input',e=>{F.network.q=e.target.value.toLowerCase().trim();renderNetwork()});$('#network-type')?.addEventListener('change',e=>{F.network.type=e.target.value;renderNetwork()});$('#network-state')?.addEventListener('change',e=>{F.network.state=e.target.value;renderNetwork()});
-let searchTimer,searchTicket=0;
-$('#global-search')?.addEventListener('input',e=>{
- const query=e.target.value.trim(),box=$('#global-results'),ticket=++searchTicket;clearTimeout(searchTimer);
- if(query.length<2){box.hidden=true;box.innerHTML='';return}
- box.hidden=false;box.innerHTML='<div class="empty">Recherche canonique…</div>';
- searchTimer=setTimeout(async()=>{
-  const types=['request','artisan','client','enterprise','mission'];
-  const results=await Promise.allSettled(types.map(async type=>{const result=await window.FixeoControl.request('search',{query,type,limit:5});return result.items.map(x=>({...x,_k:type}))}));
-  if(ticket!==searchTicket)return;
-  const items=results.flatMap(r=>r.status==='fulfilled'?r.value:[]);
-  const partial=results.some(r=>r.status==='rejected');
-  box.innerHTML=(partial?'<p>Recherche partielle : certaines sources sont indisponibles.</p>':'')+(items.length?items.slice(0,15).map(x=>'<button class="row" data-kind="'+x._k+'" data-id="'+esc(x.id)+'"><b>'+esc(x.name||x.service_category||x._k)+'</b><small>'+esc(x.city||x.status||'')+'</small><span class="pill">'+esc(x._k)+'</span></button>').join(''):'<div class="empty">'+(partial?'Résultat inconnu sur les sources absentes.':'Aucun résultat dans les pages interrogées.')+'</div>');
- },350);
-});
-window.addEventListener('load',load);setInterval(()=>{if(document.visibilityState==='visible')load()},60000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')load()});
+$('#network-search')?.addEventListener('input',e=>{F.network.q=e.target.value.toLowerCase().trim();renderNetwork()});$('#network-type')?.addEventListener('change',e=>{F.network.type=e.target.value;renderNetwork()});$('#network-state')?.addEventListener('change',e=>{F.network.state=e.target.value;renderNetwork()});
+window.addEventListener('load',()=>{const view=new URL(location.href).searchParams.get('view');if(view&&viewSources[view])show(view);else load();});setInterval(()=>{if(document.visibilityState==='visible')load()},60000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')load()});
 })();

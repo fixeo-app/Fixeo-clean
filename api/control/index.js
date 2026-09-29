@@ -35,7 +35,7 @@ function createHandler({env=process.env,fetchImpl=fetch}={}){
    if(req.headers?.['sec-fetch-site']==='cross-site')fail('ORIGIN_REJECTED',403);
    const body=req.body||{};if(Buffer.byteLength(JSON.stringify(body))>8192)fail('PAYLOAD_TOO_LARGE',413);
    const operation=(req.path||req.url||'').split('?')[0].replace(/^\/api\/control-v1\//,'');
-   if(!['summary','operations','dossier','search','signals','decisions','dispatch-candidates','network-context','action/preview','action/execute'].includes(operation))fail('UNKNOWN_OPERATION',404);
+   if(!['summary','operations','dossier','search','signals','decisions','dispatch-candidates','network-context','action/preview','action/execute','dossier-section','operation-context','hybrid-context','hybrid/preview','hybrid/execute'].includes(operation))fail('UNKNOWN_OPERATION',404);
    const client=transport(env,bearer.slice(7),fetchImpl);const user=await client.user();if(!UUID.test(user?.id||''))fail('AUTH_REQUIRED',401);
    let data;
    if(operation==='decisions'){
@@ -62,12 +62,25 @@ function createHandler({env=process.env,fetchImpl=fetch}={}){
     const states=Object.fromEntries(entries);if(entries.every(([,x])=>x.status==='forbidden'))fail('FORBIDDEN',403);
     data=operation==='signals'?C.signals(states):{sources:states,manifest:C.MANIFEST};
    }else if(operation==='operations'){
-    allow(body,['after','limit','status','city','trade','enterprise_id','site_id','classification']);
-    data=await client.rpc('control_operations_list_v1',{p_after:id(body.after,true),p_limit:body.limit??50,p_status:body.status??null,p_city:body.city??null,p_trade:body.trade??null,p_enterprise_id:id(body.enterprise_id,true),p_site_id:id(body.site_id,true),p_classification:body.classification??'all'});
-   }else if(operation==='dossier'){
-    allow(body,['type','id']);if(!C.ENTITY_TYPES.includes(body.type))fail('UNSUPPORTED_ENTITY');data=await client.rpc('control_dossier_read_v1',{p_type:body.type,p_id:id(body.id)});
+    allow(body,['after','limit','status','city','trade','enterprise_id','site_id','classification','urgency','origin','executor','mode','sla','min_age','max_age','query']);
+    const {after,limit,...filters}=body;
+    data=await client.rpc('control_operations_page_v1',{p_filters:filters,p_after:id(after,true),p_limit:limit??25});
+   }else if(operation==='dossier'||operation==='dossier-section'){
+    allow(body,operation==='dossier'?['type','id']:['type','id','section','after','limit']);if(!C.ENTITY_TYPES.includes(body.type))fail('UNSUPPORTED_ENTITY');
+    data=await client.rpc('control_dossier_section_v1',{p_type:body.type,p_id:id(body.id),p_section:operation==='dossier'?'identity':body.section,p_after:body.after??null,p_limit:body.limit??25});
+   }else if(operation==='operation-context'||operation==='hybrid-context'){
+    allow(body,['request_id']);data=await client.rpc(operation==='operation-context'?'control_operation_read_v1':'control_hybrid_read_v1',{p_request_id:id(body.request_id)});
    }else if(operation==='search'){
-    allow(body,['query','type','after','limit']);data=await client.rpc('control_search_v1',{p_query:body.query,p_type:body.type,p_after:id(body.after,true),p_limit:body.limit??25});
+    allow(body,['query','type','after','limit']);
+    if(typeof body.query!=='string'||body.query.trim().length<2||body.query.length>120||!['all',...C.ENTITY_TYPES].includes(body.type??'all')||(body.after!=null&&(typeof body.after!=='string'||body.after.length>100)))fail('INVALID_SEARCH');
+    data=await client.rpc('control_search_all_v1',{p_query:body.query,p_type:body.type??'all',p_after:body.after??null,p_limit:body.limit??25});
+   }else if(operation==='hybrid/preview'){
+    allow(body,['capability','target_id','payload']);if(!['enterprise.assign','enterprise.retry'].includes(body.capability))fail('UNSUPPORTED_CAPABILITY');
+    data=await client.rpc('control_hybrid_preview_v1',{p_capability:body.capability,p_request_id:id(body.target_id),p_payload:body.payload,p_correlation_id:trace});
+   }else if(operation==='hybrid/execute'){
+    allow(body,['preview_id','confirmed','idempotency_key']);if(body.confirmed!==true)fail('HUMAN_CONFIRMATION_REQUIRED',428);
+    data=await client.rpc('control_hybrid_execute_v1',{p_preview_id:id(body.preview_id),p_confirmed:true,p_idempotency_key:id(body.idempotency_key)});
+    if(data.ok===false)return res.status(409).json({...data,contract_version:C.VERSION});
    }else if(operation==='action/preview'){
     allow(body,['capability','target_id','payload']);const cap=C.CAPABILITIES[body.capability];if(!cap)fail('UNSUPPORTED_CAPABILITY');
     data=await client.rpc('control_action_preview_v1',{p_capability:body.capability,p_target_id:id(body.target_id),p_payload:body.payload,p_correlation_id:trace});

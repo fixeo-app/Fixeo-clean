@@ -11,7 +11,8 @@ else {
  before(async()=>{
   admin=new Client({connectionString:url});await admin.connect();let schema;await baseline({db:{exec:s=>{schema=s;}}});await admin.query(schema);
   await admin.query(`INSERT INTO auth.users(id) VALUES('${uuid(1)}'),('${uuid(2)}'),('${uuid(3)}'),('${uuid(4)}'); INSERT INTO public.users(id,role) VALUES('${uuid(1)}','client'),('${uuid(2)}','artisan'),('${uuid(3)}','admin'),('${uuid(4)}','client'); INSERT INTO public.profiles(id,role) SELECT id,role FROM public.users; INSERT INTO public.artisans(id,owner_user_id,full_name,phone,city,service_category,claimed,claim_status,onboarding_completed,availability) VALUES('${uuid(20)}','${uuid(2)}','Synthetic Artisan','+000000000001','Fès','plomberie',true,'approved',true,'available');`);
-  for(const p of fs.readdirSync(path.join(__dirname,'../../supabase/migrations')).filter(x=>x.includes('_control_os_b1_')).sort())await admin.query(fs.readFileSync(path.join(__dirname,'../../supabase/migrations',p),'utf8'));
+  for(const p of fs.readdirSync(path.join(__dirname,'../../supabase/migrations')).filter(x=>x.includes('_control_os_b1_')||x.includes('_control_os_b2_')).sort())await admin.query(fs.readFileSync(path.join(__dirname,'../../supabase/migrations',p),'utf8'));
+  await admin.query(require('./bloc34-fixture.cjs').sql);
  });
  after(async()=>{await Promise.all(clients.map(c=>c.end()));await admin?.end();});
  const request=async(n,status='new')=>admin.query('INSERT INTO public.service_requests(id,client_profile_id,city,service_category,description,status) VALUES($1,$2,$3,$4,$5,$6)',[uuid(n),uuid(1),'Fès','plomberie','Synthetic concurrency',status]);
@@ -49,4 +50,36 @@ else {
   const [c1,c2]=await Promise.all([preview(a,'finance.confirm',uuid(601),{remittance_id:d1.result.id,version:1}),preview(b,'finance.confirm',uuid(601),{remittance_id:d2.result.id,version:1})]);
   const r=await Promise.all([execute(a,c1),execute(b,c2)]);assert.equal(r.filter(x=>x.ok).length,1);const sums=await admin.query("select sum(amount) paid from public.commission_remittances_v1 where mission_id=$1 and status='confirmed'",[uuid(601)]);assert.equal(Number(sums.rows[0].paid),100);
  });
+ // Blocs 3 + 4: exercise new orchestration through the unchanged domain RPCs.
+ async function hybridSeed(base,extraRequest=false){
+  await request(base);if(extraRequest)await request(base+1);
+  await admin.query(`INSERT INTO public.enterprise_accounts(id,name,status) VALUES('${uuid(base+10)}','Synthetic B34 tenant','active');
+  INSERT INTO public.enterprise_sites(id,enterprise_id,name,city,status) VALUES('${uuid(base+11)}','${uuid(base+10)}','Synthetic B34 site','Fès','active');
+  INSERT INTO public.enterprise_members(id,enterprise_id,user_id,role,status) VALUES('${uuid(base+12)}','${uuid(base+10)}','${uuid(3)}','operations_manager','active'),('${uuid(base+13)}','${uuid(base+10)}','${uuid(2)}','viewer','active');
+  INSERT INTO public.enterprise_workforce_workers(id,enterprise_id,member_id,display_label,all_sites,created_by) VALUES('${uuid(base+14)}','${uuid(base+10)}','${uuid(base+13)}','Synthetic B34 worker',true,'${uuid(3)}');
+  INSERT INTO public.enterprise_workforce_skills(enterprise_id,worker_id,service_category,skill_level,active) VALUES('${uuid(base+10)}','${uuid(base+14)}','plomberie',3,true);
+  INSERT INTO public.enterprise_dispatch_policies(id,enterprise_id,mode,status) VALUES('${uuid(base+15)}','${uuid(base+10)}','internal_only','active');
+  INSERT INTO public.enterprise_request_context(enterprise_id,site_id,service_request_id,created_by) VALUES('${uuid(base+10)}','${uuid(base+11)}','${uuid(base)}','${uuid(3)}');`);
+  if(extraRequest)await admin.query('insert into public.enterprise_request_context(enterprise_id,site_id,service_request_id,created_by) values($1,$2,$3,$4)',[uuid(base+10),uuid(base+11),uuid(base+1),uuid(3)]);
+ }
+ const hp=(c,base,requestId=base)=>rpc(c,'control_hybrid_preview_v1',['enterprise.assign',uuid(requestId),{worker_id:uuid(base+14),reason:'Synthetic B34 race'},uuid(++seq)]);
+ const he=(c,p,key=uuid(++seq))=>rpc(c,'control_hybrid_execute_v1',[p.preview_id,true,key]);
+ test('B34 two concurrent clicks share one canonical assignment and execution audit',async()=>{
+  await hybridSeed(800);const [a,b]=await Promise.all([conn(3),conn(3)]),p=await hp(a,800),key=uuid(++seq);
+  const r=await Promise.all([he(a,p,key),he(b,p,key)]);assert.ok(r.every(x=>x.ok),JSON.stringify(r));assert.deepEqual(r[0],r[1]);
+  assert.equal(Number((await admin.query('select count(*) n from public.enterprise_internal_assignments where service_request_id=$1',[uuid(800)])).rows[0].n),1);
+  assert.equal(Number((await admin.query("select count(*) n from fixeo_private.authority_audit_events_v1 where action='enterprise.assign' and idempotency_key=$1",[key])).rows[0].n),1);
+ });
+ test('B34 two requests competing for one worker cannot overbook through Control',async()=>{
+  await hybridSeed(900,true);const [a,b]=await Promise.all([conn(3),conn(3)]),pa=await hp(a,900),pb=await hp(b,900,901);
+  const r=await Promise.all([he(a,pa),he(b,pb)]);assert.equal(r.filter(x=>x.ok).length,1,JSON.stringify(r));assert.equal(r.find(x=>!x.ok).code,'STALE_PREVIEW');
+  assert.equal(Number((await admin.query("select count(*) n from public.enterprise_internal_assignments where worker_id=$1 and status='assigned'",[uuid(914)])).rows[0].n),1);
+ });
+ test('B34 governed internal assignment versus canonical external acceptance has one winner',async()=>{
+  await hybridSeed(1000);await admin.query("insert into public.missions(id,request_id,artisan_profile_id,status) values($1,$2,$3,'offered')",[uuid(1020),uuid(1000),uuid(20)]);
+  const [a,b]=await Promise.all([conn(3),conn(2)]),p=await hp(a,1000);const r=await Promise.all([he(a,p),rpc(b,'claim_mission',[uuid(1020)])]);
+  assert.equal(r.filter(x=>x.ok).length,1,JSON.stringify(r));
+  const n=(await admin.query("select (select count(*) from public.missions where request_id=$1 and status='pending')+(select count(*) from public.enterprise_internal_assignments where service_request_id=$1::uuid and status='assigned') n",[uuid(1000)])).rows[0].n;assert.equal(Number(n),1);
+ });
+
 }

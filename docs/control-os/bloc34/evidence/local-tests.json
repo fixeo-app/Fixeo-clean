@@ -1,0 +1,28 @@
+{
+  "targeted": {
+    "tests": 54,
+    "pass": 54,
+    "fail": 0,
+    "skipped": 0
+  },
+  "regression": {
+    "tests": 135,
+    "pass": 134,
+    "fail": 0,
+    "skipped": 1,
+    "note": "Native PostgreSQL suite not available locally; required in PR CI, not certified by the local skip."
+  },
+  "build": {
+    "tests": 164,
+    "pass": 164,
+    "fail": 0,
+    "skipped": 0
+  },
+  "at": "2026-09-29T13:40:30.477232+00:00",
+  "database_and_rollback": {
+    "tests": 26,
+    "pass": 26,
+    "fail": 0,
+    "skipped": 0
+  }
+}

@@ -1,0 +1,15 @@
+BEGIN;
+SET LOCAL lock_timeout='5s';
+SET LOCAL statement_timeout='30s';
+DROP FUNCTION public.control_hybrid_execute_v1(uuid,boolean,uuid);
+DROP FUNCTION public.control_hybrid_preview_v1(text,uuid,jsonb,uuid);
+DROP FUNCTION public.control_hybrid_read_v1(uuid);
+DROP FUNCTION public.control_operation_read_v1(uuid);
+DROP FUNCTION public.control_operations_page_v1(jsonb,uuid,integer);
+DROP FUNCTION public.control_search_all_v1(text,text,text,integer);
+DROP FUNCTION public.control_dossier_section_v1(text,uuid,text,jsonb,integer);
+DROP FUNCTION fixeo_private.control_hybrid_snapshot_v1(uuid);
+DROP FUNCTION fixeo_private.control_operation_row_v1(uuid);
+DROP FUNCTION fixeo_private.control_dossier_edges_v1(text,uuid);
+DROP FUNCTION fixeo_private.control_dossier_source_v1(text);
+COMMIT;

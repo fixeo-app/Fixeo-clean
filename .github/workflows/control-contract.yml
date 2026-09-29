@@ -9,6 +9,9 @@ on:
       - 'tests/admin-control-os/cross-universe-contract.test.cjs'
       - 'supabase/migrations/*control_os_b1*'
       - 'supabase/migrations/*control_os_b2*'
+      - 'supabase/migrations/*control_os_b34*'
+      - 'js/admin-fixeo-*.js'
+      - 'css/admin-fixeo-dossier-operations.css'
       - 'js/admin-rafi-decision-center.js'
       - 'js/fixeo-control-client-v1.js'
       - 'js/admin-control-os-clean.js'
@@ -47,3 +50,12 @@ jobs:
         env:
           CONTROL_TEST_DATABASE_URL: postgresql://postgres:synthetic-ci-only@127.0.0.1:5432/control_contract
       - run: node --test tests/admin-control-os/cross-universe-contract.test.cjs
+
+      - run: npx playwright install --with-deps chromium
+        working-directory: tests/control-contract
+      - run: node tests/control-contract/browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: control-bloc34-browser
+          path: docs/control-os/bloc34/evidence/browser/

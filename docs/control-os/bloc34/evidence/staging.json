@@ -1,0 +1,49 @@
+{
+  "at": "2026-09-29T13:38:36.481Z",
+  "project": "isolated staging",
+  "checks": [
+    {
+      "name": "authenticated_admin_operations",
+      "status": "PASS"
+    },
+    {
+      "name": "anon_new_RPC_grants_refuse",
+      "status": "PASS"
+    },
+    {
+      "name": "real_nonadmin_JWT_all_readers_refuse",
+      "status": "PASS"
+    },
+    {
+      "name": "nonadmin_hybrid_preview_and_execute_refuse",
+      "status": "PASS"
+    },
+    {
+      "name": "dossier_identity_relations_timeline_real_RPC",
+      "status": "PASS"
+    },
+    {
+      "name": "search_exact_ID_real_RPC",
+      "status": "PASS"
+    },
+    {
+      "name": "operations_context_raw_and_derived_states",
+      "status": "PASS"
+    },
+    {
+      "name": "hybrid_minimal_read_does_not_delegate_tenant_permission",
+      "status": "PASS"
+    },
+    {
+      "name": "API_to_real_Auth_to_new_RPC_with_admin_JWT",
+      "status": "PASS"
+    },
+    {
+      "name": "API_to_real_Auth_nonadmin_refused",
+      "status": "PASS"
+    }
+  ],
+  "pass": 10,
+  "fail": 0,
+  "mutations": "none; only authenticated read/refusal checks; no fixtures created"
+}
