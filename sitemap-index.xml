@@ -2,7 +2,7 @@
 <!--
   Fixeo Sitemap Index — seo4
   Segmented sitemap architecture for scalable indexation.
-  Last updated: 2026-07-11 — SEO Foundation Recovery: canonical unified to www.fixeo.ma
+  Last updated: 2026-09-29 — SEO consolidation V1
 
   Segments:
     sitemap-static.xml          → Homepage + strategic informational pages
@@ -46,7 +46,7 @@
     <lastmod>2026-05-12</lastmod>
   </sitemap>
 
-  <!-- Artisan profiles (1205 eligible profiles — valid city, available, index,follow) -->
+  <!-- Artisan profiles (1194 eligible non-placeholder profiles — valid city, available, index,follow) -->
   <sitemap>
     <loc>https://www.fixeo.ma/sitemap-profiles.xml</loc>
     <lastmod>2026-08-02</lastmod>
@@ -71,7 +71,7 @@
     <lastmod>2026-06-12</lastmod>
   </sitemap>
 
-  <!-- SSR Local Landing Pages — Phase 3C Production (40 eligible pages: 8 services × 6 Tier-1 cities) -->
+  <!-- SSR Local Landing Pages — canonical supplemental service pages (41 URLs currently listed) -->
   <!-- sitemap-lp-poc.xml (Phase 3B, 6 pages) is retained in the repository as an archive but is no longer advertised here -->
   <sitemap>
     <loc>https://www.fixeo.ma/sitemap-lp.xml</loc>
