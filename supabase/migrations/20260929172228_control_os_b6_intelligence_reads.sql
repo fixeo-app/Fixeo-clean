@@ -237,6 +237,7 @@ BEGIN
  page AS(SELECT * FROM cells ORDER BY urgent DESC,oldest NULLS LAST,city NULLS LAST,trade NULLS LAST LIMIT 100),
  observed AS(SELECT 'network.cohort' kind,'cohort' target_type,NULL::uuid target_id,c.city,c.trade service_category,c.oldest created_at,c.n count,c.sample_ids,
  jsonb_build_object('profiles',CASE WHEN c.city IS NULL OR c.trade IS NULL THEN NULL ELSE count(a.id) END,'available_profiles',CASE WHEN c.city IS NULL OR c.trade IS NULL THEN NULL ELSE count(a.id) FILTER(WHERE a.availability='available') END,
+ 'availability_unknown',CASE WHEN c.city IS NULL OR c.trade IS NULL THEN NULL ELSE count(a.id) FILTER(WHERE a.availability IS NULL OR a.availability NOT IN('available','busy','unavailable')) END,
  'to_verify',CASE WHEN c.city IS NULL OR c.trade IS NULL THEN NULL ELSE count(a.id) FILTER(WHERE a.verification_ready) END,'unclaimed',CASE WHEN c.city IS NULL OR c.trade IS NULL THEN NULL ELSE count(a.id) FILTER(WHERE a.claimable) END,
  'verify_ids',(array_agg(a.id ORDER BY a.id) FILTER(WHERE a.verification_ready))[1:5],'claim_ids',(array_agg(a.id ORDER BY a.id) FILTER(WHERE a.claimable))[1:5],
  'urgent_count',c.urgent,'total_waiting',(SELECT count(*) FROM r),'match_basis','marketplace-dimensions-v1; canonical multiactivity',

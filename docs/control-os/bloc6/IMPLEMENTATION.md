@@ -49,3 +49,11 @@ Trend review requires comparable windows, complete mature evidence, at least 30 
 Gate 6.3: 24 affected cohort/API/DOM tests PASS; migration/rollback/reapply invariants PASS. All final CI, native concurrency, browser, staging and Production gates are reported separately with their actual results.
 
 Local global gate before remote CI: 247 PASS / 0 FAIL / 1 SKIP (native PostgreSQL service unavailable locally); three cross-universe checks PASS. The subsequent missing-dimension regression adds one passing check. CI is required with PostgreSQL 17.6 for the skipped service suite and the new repeatable-read/concurrent-parent-removal scenario. No local SKIP is relabeled PASS. Browser certification uses the real Admin UI/API/SQL with isolated synthetic data; it does not claim a real Production Admin visual session.
+
+## Recovery and final candidate corrections
+
+The recovered worktree and all three implementation commits were preserved. PR56 already existed; its remote tree was reconciled with the local index without resetting or overwriting files. Final targeted checks: 51 PASS, no fail/skip, including rollback/reapply. The first remote CI exposed a cohort boundary comparison failure. Comparability now verifies the canonical SQL business dates and their exact UTC boundaries together, without recomputing business dates in JavaScript. Unequal days, invalid civil dates, changed UTC boundaries or missing timezone still cause abstention; offset transitions are explicitly tested.
+
+The four Marketplace paths are connected to the existing Vercel and local server handler, with deployment routing tests and cache versions for the changed Admin scripts. RAFI retains explicit unknown availability and cannot turn it into a coverage gap or zero capacity. The added source-error fixture preserves the database NOT NULL/CHECK constraints.
+
+Staging already contained the initial B6 migration (`20260929181242`), from the previous execution. Eight function definitions matched exactly; the signal reader alone required the availability quality field. It was aligned by an additive staging-only migration. The Production migration remains the single complete repository migration in SHA256SUMS. No Production migration has been applied at this checkpoint.

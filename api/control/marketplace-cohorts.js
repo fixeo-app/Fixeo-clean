@@ -2,7 +2,16 @@
 // Wilson score interval, NIST/SEMATECH e-Handbook 7.2.4.1. Observational uncertainty, never a forecast.
 const NIST='https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm';
 const count=x=>Number.isSafeInteger(x)&&x>=0;
-const civilDay=value=>{const date=new Date(value);if(!Number.isFinite(+date))return NaN;const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'Africa/Casablanca',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date).map(x=>[x.type,x.value]));return Date.UTC(+parts.year,+parts.month-1,+parts.day)/86400000;};
+// SQL supplies both authoritative business dates and UTC boundaries. Do not
+// reinterpret those dates with a second runtime timezone database.
+const civilDay=value=>{if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value))return NaN;const t=Date.parse(value+'T00:00:00Z');return Number.isFinite(t)&&new Date(t).toISOString().slice(0,10)===value?t/86400000:NaN;};
+function comparable(scope,a,b){
+ const start=civilDay(scope.from),end=civilDay(scope.to),previous=civilDay(scope.previous_from);
+ const same=(x,y)=>Number.isFinite(Date.parse(x))&&Date.parse(x)===Date.parse(y);
+ return scope.timezone==='Africa/Casablanca'&&end-start===scope.days&&start-previous===scope.days&&scope.days>0&&
+  same(a.start_at,scope.from_utc)&&same(a.end_at,scope.to_utc)&&same(b.start_at,scope.previous_from_utc)&&same(b.end_at,scope.from_utc)&&
+  Date.parse(a.end_at)>Date.parse(a.start_at)&&Date.parse(b.end_at)>Date.parse(b.start_at);
+}
 function wilson(k,n){
  if(!count(k)||!count(n)||n===0||k>n)return null;
  const z=1.959963984540054,z2=z*z,p=k/n,d=1+z2/n,center=(p+z2/(2*n))/d,half=z*Math.sqrt(p*(1-p)/n+z2/(4*n*n))/d;
@@ -21,7 +30,7 @@ function build(data,now=Date.now()){
  if(!valid)return {status:'UNAVAILABLE',error:'INVALID_COHORT_PROVENANCE',as_of:null,cohorts:null,comparison:null};
  const cohorts=data.cohorts.map(c=>({...c,conversion:rate(c.requests)})),a=cohorts.find(c=>c.label==='current'),b=cohorts.find(c=>c.label==='previous');
  let reason=null;
- if(Date.parse(a.start_at)!==Date.parse(b.end_at)||civilDay(a.end_at)-civilDay(a.start_at)!==civilDay(b.end_at)-civilDay(b.start_at)||civilDay(a.end_at)<=civilDay(a.start_at)||data.undated_requests!==0)reason='INCOMPARABLE_OR_UNDATED';
+ if(!comparable(data.scope,a,b)||data.undated_requests!==0)reason='INCOMPARABLE_OR_UNDATED';
  else if(now-at>60000)reason='STALE';
  else if([a,b].some(c=>c.conversion.status==='PARTIAL'))reason='PARTIAL_SOURCE';
  else if([a,b].some(c=>c.conversion.censored>0))reason='CENSORED_COHORT';

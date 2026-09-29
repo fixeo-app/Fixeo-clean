@@ -95,11 +95,11 @@ function build(states, {now = Date.now(), classification = 'all'} = {}) {
           }
           if (!['available_profiles', 'profiles', 'to_verify', 'unclaimed', 'urgent_count', 'total_waiting'].every(k => numeric(f[k]))) break;
           const label = where || 'Ville / métier non renseigné';
-          if (f.available_profiles === 0) add(source, o, 'network.coverage', f.urgent_count > 0 ? 'P1' : 'P2', `${o.count} demande(s), aucun profil disponible déclaré · ${label}`,
+          if (f.available_profiles === 0 && (!f.cube_context || f.availability_unknown === 0)) add(source, o, 'network.coverage', f.urgent_count > 0 ? 'P1' : 'P2', `${o.count} demande(s), aucun profil disponible déclaré · ${label}`,
             [`${f.profiles} profil(s) déclarent cette ville et ce métier ; aucun n’est marqué disponible.`, `${f.urgent_count} demande(s) urgente(s) dans cette cohorte.`, f.cube_context?'Dimensions normalisées par les fonctions canoniques, métiers et villes secondaires inclus.':'Correspondance déclarative exacte, métiers et villes secondaires inclus.'],
             'Un manque de couverture locale est possible ; Dispatch peut proposer une proximité autorisée.',
             f.profiles ? 'Examiner les profils existants et la couverture Dispatch.' : 'Prioriser la recherche de profils pour cette ville et ce métier.', {view: 'network', universes: ['CLIENT', 'ARTISAN', 'OPERATIONS'], authority: 'Network · observation ; Dispatch reste souverain'});
-          else add(source, o, 'network.capacity', 'P3', `${f.available_profiles} profil(s) disponible(s) pour ${o.count} demande(s) · ${label}`,
+          else if (f.available_profiles > 0) add(source, o, 'network.capacity', 'P3', `${f.available_profiles} profil(s) disponible(s) pour ${o.count} demande(s) · ${label}`,
             ['Disponibilité déclarée, sans réservation de capacité.', 'Éligibilité finale et acceptation vérifiées par Dispatch.'],
             'Le réseau déclaré peut aider à réduire cette attente, sans garantie d’affectation.', 'Ouvrir les demandes de cette cohorte et préparer le dispatch.', {universes: ['CLIENT', 'ARTISAN', 'OPERATIONS']});
           if (f.to_verify > 0) add(source, o, 'network.verify', f.urgent_count > 0 ? 'P1' : 'P2', `${f.to_verify} profil(s) à vérifier là où ${o.count} demande(s) attendent · ${label}`,
