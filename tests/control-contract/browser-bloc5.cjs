@@ -1,7 +1,7 @@
 'use strict';
 // Full Bloc 5 UI against the migrated isolated PostgreSQL fixture. No external writes.
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict'),{chromium}=require('playwright');
-const F=require('./bloc6-fixture.cjs'),{createHandler}=require('../../api/control');
+const F=require('./bloc7-fixture.cjs'),{createHandler}=require('../../api/control');
 const root=path.resolve(__dirname,'../..'),out=path.join(root,'docs/control-os/bloc5/evidence/browser'),u=F.uuid;let db,server,browser,executions=0,fault=false;
 const checks=[],errors=[],backendErrors=[];
 const ok=data=>({ok:true,status:200,text:async()=>JSON.stringify(data)});
@@ -13,7 +13,7 @@ const ok=data=>({ok:true,status:200,text:async()=>JSON.stringify(data)});
  await F.actor(db,2);const quote=(await rpc('submit_artisan_quote_v2',[u(100),1000,'Réparation synthétique isolée','Fournitures synthétiques','1 heure',null])).id;await F.actor(db,3);
  const handler=createHandler({env:{SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_SYNTHETIC',VERCEL_ENV:'preview',VERCEL_URL:'isolated.invalid',FIXEO_STAGING_PROJECT_REF:'abcdefghijklmnopqrst'},fetchImpl:async(url,o)=>{
   if(url.endsWith('/user'))return ok({id:u(3)});
-  const name=url.split('/').at(-1),args=JSON.parse(o.body);assert.match(name,/^control_[a-z0-9_]+_v1$/);const keys=Object.keys(args);assert.ok(keys.every(k=>/^p_[a-z_]+$/.test(k)));
+  const name=url.split('/').at(-1),args=JSON.parse(o.body);assert.match(name,/^control_[a-z0-9_]+_v[13]$/);const keys=Object.keys(args);assert.ok(keys.every(k=>/^p_[a-z_]+$/.test(k)));
   if(fault&&name==='control_finance_context_v1')return{ok:false,status:503,text:async()=>JSON.stringify({message:'SOURCE_TIMEOUT'})};
   if(name.endsWith('_execute_v1'))executions++;
   try{return ok((await db.query(`select public.${name}(${keys.map((k,i)=>k+'=> $'+(i+1)).join(',')}) result`,Object.values(args))).rows[0].result);}catch(e){backendErrors.push({name,args,code:e.code,message:e.message});return{ok:false,status:e.code==='42501'?403:422,text:async()=>JSON.stringify({code:e.code,message:e.message})};}

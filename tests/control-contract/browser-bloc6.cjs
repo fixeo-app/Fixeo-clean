@@ -1,7 +1,7 @@
 'use strict';
 // Real Admin UI → real API handler → canonical SQL in an isolated migrated database.
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict'),{chromium}=require('playwright');
-const F=require('./bloc6-fixture.cjs'),{createHandler}=require('../../api/control'),u=F.uuid,root=path.resolve(__dirname,'../..'),out=path.join(root,'docs/control-os/bloc6/evidence/browser');
+const F=require('./bloc7-fixture.cjs'),{createHandler}=require('../../api/control'),u=F.uuid,root=path.resolve(__dirname,'../..'),out=path.join(root,'docs/control-os/bloc6/evidence/browser');
 let db,server,browser,fault=null,executions=0;const checks=[],errors=[],backendErrors=[];
 const reply=(data,status=200)=>({ok:status<400,status,text:async()=>JSON.stringify(data)});
 (async()=>{try{
@@ -13,7 +13,7 @@ const reply=(data,status=200)=>({ok:status<400,status,text:async()=>JSON.stringi
  INSERT INTO public.missions(id,request_id,artisan_profile_id,status,accepted_at) VALUES('${u(200)}','${u(101)}','${u(20)}','pending','2026-09-05T11:00Z'),('${u(201)}','${u(102)}','${u(20)}','done','2026-09-05T11:00Z');
  DELETE FROM public.service_requests WHERE id='${u(102)}';UPDATE public.artisans SET city='Fès',service_category='plomberie',claimable=true WHERE id='${u(21)}';`);
  const handler=createHandler({env:{SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_SYNTHETIC',FIXEO_STAGING_PROJECT_REF:'abcdefghijklmnopqrst'},fetchImpl:async(url,o)=>{
-  if(url.endsWith('/user'))return reply({id:u(3)});const name=url.split('/').at(-1),args=JSON.parse(o.body);assert.match(name,/^control_[a-z0-9_]+_v1$/);const keys=Object.keys(args);assert.ok(keys.every(k=>/^p_[a-z_]+$/.test(k)));
+  if(url.endsWith('/user'))return reply({id:u(3)});const name=url.split('/').at(-1),args=JSON.parse(o.body);assert.match(name,/^control_[a-z0-9_]+_v[13]$/);const keys=Object.keys(args);assert.ok(keys.every(k=>/^p_[a-z_]+$/.test(k)));
   if(name.endsWith('_execute_v1'))executions++;
   if(fault==='network'&&name==='control_marketplace_cube_v1'&&args.p_source==='network'||fault==='cohorts'&&name==='control_marketplace_cohorts_v1')return reply({message:'SOURCE_TIMEOUT'},503);
   try{return reply((await db.query(`select public.${name}(${keys.map((k,i)=>k+'=> $'+(i+1)).join(',')}) result`,Object.values(args))).rows[0].result);}catch(e){backendErrors.push({name,code:e.code,message:e.message});return reply({code:e.code,message:e.message},e.code==='42501'?403:422);}

@@ -21,15 +21,15 @@
   const close=value=>{dialog.close();dialog.remove();resolve(value);};cancel.onclick=()=>close(false);confirm.onclick=()=>close(true);dialog.addEventListener('cancel',e=>{e.preventDefault();close(false);});
   dialog.append(title,text,details,warning,cancel,confirm);document.body.append(dialog);dialog.showModal();cancel.focus();
  });}
- async function command(capability,targetId,payload){
+ async function command(capability,targetId,payload,decision=null){
   const session=await root.FixeoSupabaseClient.client.auth.getSession();
   const actor=session.data?.session?.user?.id;if(!actor)throw Error('SESSION_REQUIRED');
-  const prefix=capability.startsWith('enterprise.')?'hybrid':'action';
-  const key=JSON.stringify([actor,capability,targetId,payload]);
+  const prefix=decision?.canonical_proof?'rafi':capability.startsWith('enterprise.')?'hybrid':'action';
+  const key=JSON.stringify([actor,capability,targetId,payload,decision?.decision_id||null]);
   if(commandFlights.has(key))return commandFlights.get(key);
   const flight=(async()=>{
    let pending=pendingCommands.get(key);
-   if(!pending){pending={preview:await request(prefix+'/preview',{capability,target_id:targetId,payload:{reason:'Revue explicite par opérateur FIXEO',...payload}}),idempotency_key:uuid()};pendingCommands.set(key,pending);}
+   if(!pending){pending={preview:await request(prefix+'/preview',{capability,target_id:targetId,payload:{reason:'Revue explicite par opérateur FIXEO',...payload},...(prefix==='rafi'?{decision_id:decision.decision_id,evidence_fingerprint:decision.evidence_fingerprint,valid_until:decision.expires_at,classification:decision.recommended_action.context.classification}:{})}),idempotency_key:uuid()};pendingCommands.set(key,pending);}
    if(!await review(pending.preview)){pendingCommands.delete(key);return {cancelled:true};}
    try{const result=await request(prefix+'/execute',{preview_id:pending.preview.preview_id,confirmed:true,idempotency_key:pending.idempotency_key});pendingCommands.delete(key);return result;}
    catch(error){if(error.status>=400&&error.status<500)pendingCommands.delete(key);throw error;}

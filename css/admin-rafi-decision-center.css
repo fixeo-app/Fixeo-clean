@@ -67,3 +67,9 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var
 [hidden]{display:none!important}
 @media(max-width:1300px){.rafi-workspace{grid-template-columns:1fr}.rafi-network>div{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.rafi-plan-head{align-items:flex-start}#overview-signals{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:700px){.rafi-briefing{padding:20px}.rafi-impact{display:block}.rafi-impact p{margin-top:5px}.rafi-plan-head{display:block}.rafi-filters{justify-content:flex-start;margin-top:12px}.rafi-network>div{grid-template-columns:1fr}.rafi-decision{align-items:flex-start;flex-wrap:wrap;gap:9px}.rafi-decision-main{flex-basis:80%}.rafi-decision>.btn{margin-left:25px}.rafi-statusbar label{margin-left:0;width:100%}.rafi-statusbar .control{flex:1}#overview-signals{grid-template-columns:repeat(2,minmax(0,1fr))}.rafi-meta{margin-left:0;width:100%}.drawer{padding:18px}}
+
+/* B7 operator followups, kept inside the existing Command UI. */
+.rafi-follow-dialog{max-width:560px;width:calc(100% - 32px);border:1px solid #334155;border-radius:18px;padding:24px;color:#f7f8ff;background:#0c1120}
+.rafi-follow-dialog::backdrop{background:#0009}.rafi-follow-dialog label{display:block;margin:16px 0}.rafi-follow-dialog input,.rafi-follow-dialog select{width:100%;min-height:44px}.rafi-follow-buttons{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.rafi-follow-buttons button{min-height:44px}.rafi-follow-row{border-top:1px solid #334155;padding:18px 0;overflow-wrap:anywhere}.rafi-explain dd{margin-left:12px;overflow-wrap:anywhere}.rafi-explain dt{margin-top:8px}.rafi-follow-dialog select{white-space:normal}
+
+.rafi-inline-priority{display:block;color:var(--navy,#173e44);font-size:12px;white-space:normal;overflow-wrap:anywhere}

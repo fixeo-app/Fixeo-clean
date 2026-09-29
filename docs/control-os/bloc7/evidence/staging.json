@@ -1,0 +1,56 @@
+{
+  "status": "PASS",
+  "pass": 9,
+  "fail": 0,
+  "checks": [
+    {
+      "name": "anon_all_six_RPC_denied",
+      "status": "PASS",
+      "ms": 1960
+    },
+    {
+      "name": "all_six_RPC_deny_client",
+      "status": "PASS",
+      "ms": 1578
+    },
+    {
+      "name": "all_six_RPC_deny_artisan",
+      "status": "PASS",
+      "ms": 1585
+    },
+    {
+      "name": "all_six_RPC_deny_enterprise_owner",
+      "status": "PASS",
+      "ms": 1560
+    },
+    {
+      "name": "all_six_RPC_deny_enterprise_b_owner",
+      "status": "PASS",
+      "ms": 1584
+    },
+    {
+      "name": "Admin_sources_reads_no_hidden_persistence",
+      "status": "PASS",
+      "ms": 1804
+    },
+    {
+      "name": "real_Admin_API_briefing_followups_synthesis",
+      "status": "PASS",
+      "ms": 23089
+    },
+    {
+      "name": "real_nonadmin_API_denials",
+      "status": "PASS",
+      "ms": 20345
+    },
+    {
+      "name": "Admin_missing_target_and_forged_proof_refusals",
+      "status": "PASS",
+      "ms": 21620
+    }
+  ],
+  "at": "2026-09-29T21:05:12.385Z",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "mutations": "none; existing staging identities and synthetic populations",
+  "api_harness": "Real Auth and RPC through handler; 20s test transport allowance only, production 5s unchanged"
+}

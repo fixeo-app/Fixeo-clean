@@ -5,6 +5,7 @@ const C=require('./contracts');
 const Rafi=require('./rafi-decisions');
 const Marketplace=require('./marketplace-intelligence');
 const Cohorts=require('./marketplace-cohorts');
+const Briefing=require('./rafi-briefing');
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 class ControlError extends Error{constructor(code,status=400){super(code);this.code=code;this.status=status;}}
 const fail=(code,status)=>{throw new ControlError(code,status);};
@@ -37,7 +38,7 @@ function createHandler({env=process.env,fetchImpl=fetch}={}){
    if(req.headers?.['sec-fetch-site']==='cross-site')fail('ORIGIN_REJECTED',403);
    const body=req.body||{};if(Buffer.byteLength(JSON.stringify(body))>8192)fail('PAYLOAD_TOO_LARGE',413);
    const operation=(req.path||req.url||'').split('?')[0].replace(/^\/api\/control-v1\//,'');
-   if(!['summary','operations','dossier','search','signals','decisions','dispatch-candidates','network-context','action/preview','action/execute','dossier-section','operation-context','hybrid-context','hybrid/preview','hybrid/execute','people','people-context','trust','trust-context','review-history','quotes','quote-context','finance','finance-context','marketplace','marketplace-population','marketplace-coverage','marketplace-cohorts'].includes(operation))fail('UNKNOWN_OPERATION',404);
+   if(!['summary','operations','dossier','search','signals','decisions','rafi-synthesis','rafi/preview','rafi/execute','rafi-followups','rafi-followup','rafi-followup-evidence','dispatch-candidates','network-context','action/preview','action/execute','dossier-section','operation-context','hybrid-context','hybrid/preview','hybrid/execute','people','people-context','trust','trust-context','review-history','quotes','quote-context','finance','finance-context','marketplace','marketplace-population','marketplace-coverage','marketplace-cohorts'].includes(operation))fail('UNKNOWN_OPERATION',404);
    const client=transport(env,bearer.slice(7),fetchImpl);const user=await client.user();if(!UUID.test(user?.id||''))fail('AUTH_REQUIRED',401);
    let data;
    if(operation.startsWith('marketplace')){
@@ -55,16 +56,43 @@ function createHandler({env=process.env,fetchImpl=fetch}={}){
      if(!['cohort','previous','open','waiting','profiles','claimable','verification_ready'].includes(body.kind))fail('INVALID_FILTER');
      data=await client.rpc('control_marketplace_population_v1',{p_kind:body.kind,p_filters:filters,p_after:body.after??null,p_limit:body.limit??25});
     }else data=await client.rpc('control_marketplace_coverage_v1',{p_filters:filters,p_after:id(body.after,true),p_limit:body.limit??5});
-   }else if(operation==='decisions'){
+   }else if(operation==='decisions'||operation==='rafi-synthesis'){
     allow(body,['classification']);
     const classification=body.classification??'all';
     if(!['all','production','test','internal','unclassified'].includes(classification))fail('INVALID_CLASSIFICATION');
     const entries=await Promise.all(Rafi.SOURCES.map(async source=>{
-     try{return [source,Rafi.sourceState(source,await client.rpc(source==='network'?'control_marketplace_signals_v1':'control_rafi_source_v1',{p_source:source,p_classification:classification}))];}
+     try{return [source,Rafi.sourceState(source,await client.rpc('control_rafi_source_v3',{p_source:source,p_classification:classification}))];}
      catch(error){return [source,Rafi.sourceState(source,null,error)];}
     }));
     if(entries.some(([,state])=>state.status==='FORBIDDEN'))fail('FORBIDDEN',403);
     data=Rafi.build(Object.fromEntries(entries),{classification});
+    data.briefing=Briefing.briefing(data);
+    if(operation==='rafi-synthesis')data={briefing:data.briefing,synthesis:await Briefing.synthesis(data.briefing,{env,fetchImpl})};
+   }else if(operation==='rafi/preview'){
+    allow(body,['decision_id','evidence_fingerprint','valid_until','classification','capability','target_id','payload']);
+    if(!/^rafi_[0-9a-f]{32}$/.test(body.decision_id||'')||!/^[0-9a-f]{64}$/.test(body.evidence_fingerprint||''))fail('INVALID_EVIDENCE');
+    const until=Date.parse(body.valid_until);if(!Number.isFinite(until)||until<=Date.now()||until>Date.now()+65000)fail('STALE_EVIDENCE',409);
+    const classification=body.classification??'all';if(!['all','production','test','internal','unclassified'].includes(classification))fail('INVALID_CLASSIFICATION');
+    const entries=await Promise.all(Rafi.SOURCES.map(async source=>[source,Rafi.sourceState(source,await client.rpc('control_rafi_source_v3',{p_source:source,p_classification:classification}))]));
+    const current=Rafi.build(Object.fromEntries(entries),{classification}).decisions.find(d=>d.decision_id===body.decision_id);
+    if(!current||current.evidence_fingerprint!==body.evidence_fingerprint||current.target_id!==id(body.target_id)||current.conflicts.length||!current.canonical_proof)fail('EVIDENCE_CHANGED',409);
+    const cap=current.actionability.capability,alternatives={'quote.approve':'quote.reject','claim.approve':'claim.reject'};
+    if(!cap||![cap,alternatives[cap]].includes(body.capability))fail('PROPOSAL_NOT_ADMISSIBLE',409);
+    data=await client.rpc('control_rafi_proposal_v3',{p_proof:current.canonical_proof,p_rule:current.decision_type,p_capability:body.capability,p_target_id:body.target_id,p_payload:body.payload,p_correlation_id:trace});
+    data={...data,authority:C.CAPABILITIES[body.capability].authority,effect_description:C.CAPABILITIES[body.capability].effect};
+   }else if(operation==='rafi/execute'){
+    allow(body,['preview_id','confirmed','idempotency_key']);if(body.confirmed!==true)fail('HUMAN_CONFIRMATION_REQUIRED',428);
+    data=await client.rpc('control_rafi_execute_v3',{p_preview_id:id(body.preview_id),p_confirmed:true,p_idempotency_key:id(body.idempotency_key)});
+    if(data.ok===false)return res.status(409).json({...data,contract_version:C.VERSION});
+   }else if(operation==='rafi-followups'){
+    allow(body,['after','limit']);data=await client.rpc('control_rafi_followups_v3',{p_after:id(body.after,true),p_limit:body.limit??25});
+   }else if(operation==='rafi-followup-evidence'){
+    allow(body,['id']);data=await client.rpc('control_rafi_followup_evidence_v3',{p_id:id(body.id)});
+   }else if(operation==='rafi-followup'){
+    allow(body,['operation','id','version','proof','rule','due_at','resolution_audit_id','idempotency_key']);
+    if(!['create','acknowledge','reschedule','resolve','reopen'].includes(body.operation))fail('INVALID_FOLLOWUP_COMMAND');
+    if(body.rule!=null&&!Object.hasOwn(require('./rafi-evidence').RULES,body.rule))fail('INVALID_RULE');
+    data=await client.rpc('control_rafi_followup_v3',{p_operation:body.operation,p_id:id(body.id,true),p_version:body.version??null,p_proof:body.proof??null,p_rule:body.rule??null,p_due_at:body.due_at??null,p_resolution_audit_id:id(body.resolution_audit_id,true),p_idempotency_key:id(body.idempotency_key)});
    }else if(operation==='people'){
     allow(body,['type','state','classification','city','trade','query','enterprise_id','site_id','after','limit']);
     const {after,limit,...filters}=body;
@@ -115,8 +143,9 @@ function createHandler({env=process.env,fetchImpl=fetch}={}){
    }else if(operation==='dossier'||operation==='dossier-section'){
     allow(body,operation==='dossier'?['type','id']:['type','id','section','after','limit']);if(!C.ENTITY_TYPES.includes(body.type))fail('UNSUPPORTED_ENTITY');
     data=await client.rpc('control_dossier_section_v1',{p_type:body.type,p_id:id(body.id),p_section:operation==='dossier'?'identity':body.section,p_after:body.after??null,p_limit:body.limit??25});
+    if(operation==='dossier')data.rafi_context=Briefing.context(data,{decisions:[]});
    }else if(operation==='operation-context'||operation==='hybrid-context'){
-    allow(body,['request_id']);data=await client.rpc(operation==='operation-context'?'control_operation_read_v1':'control_hybrid_read_v1',{p_request_id:id(body.request_id)});
+    allow(body,['request_id']);data=await client.rpc(operation==='operation-context'?'control_operation_read_v1':'control_hybrid_read_v1',{p_request_id:id(body.request_id)});if(operation==='hybrid-context')data.rafi_workforce=Briefing.workforce(data);
    }else if(operation==='search'){
     allow(body,['query','type','after','limit']);
     if(typeof body.query!=='string'||body.query.trim().length<2||body.query.length>120||!['all',...C.ENTITY_TYPES].includes(body.type??'all')||(body.after!=null&&(typeof body.after!=='string'||body.after.length>100)))fail('INVALID_SEARCH');
