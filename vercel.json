@@ -143,7 +143,7 @@
       "dest": "/api/server.js"
     },
     {
-      "src": "^/api/control-v1/(summary|operations|dossier|search|signals|decisions|dispatch-candidates|network-context|action/preview|action/execute|dossier-section|operation-context|hybrid-context|hybrid/preview|hybrid/execute)$",
+      "src": "^/api/control-v1/(summary|operations|dossier|search|signals|decisions|dispatch-candidates|network-context|action/preview|action/execute|dossier-section|operation-context|hybrid-context|hybrid/preview|hybrid/execute|people|people-context|trust|trust-context|review-history|quotes|quote-context|finance|finance-context)$",
       "dest": "/api/control-fn/index.js"
     },
     {

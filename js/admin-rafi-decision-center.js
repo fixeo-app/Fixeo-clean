@@ -85,6 +85,7 @@
   async function openContext(id) {
     const d=decision(id);if(!d)return;activeContext={...d.recommended_action.context};contextCursor=null;contextRows=[];
     closeDrawer();root.FixeoAdmin.navigate(activeContext.view);
+    if(activeContext.view==='network'&&root.FixeoRegisters){root.FixeoRegisters.setContext('network',{...activeContext,type:'artisan'});return;}
     if(activeContext.view==='operations'&&root.FixeoOperations){root.FixeoOperations.setContext(activeContext);return;}
     await loadContext(false);
   }

@@ -1,0 +1,61 @@
+{
+  "status": "PASS",
+  "pass": 10,
+  "fail": 0,
+  "checks": [
+    {
+      "name": "nine_new_readers_real_admin_JWT",
+      "status": "PASS",
+      "ms": 2410
+    },
+    {
+      "name": "anon_direct_RPC_grants_refused",
+      "status": "PASS",
+      "ms": 2205
+    },
+    {
+      "name": "all_readers_refuse_client",
+      "status": "PASS",
+      "ms": 2319
+    },
+    {
+      "name": "all_readers_refuse_artisan",
+      "status": "PASS",
+      "ms": 2253
+    },
+    {
+      "name": "all_readers_refuse_enterprise_owner",
+      "status": "PASS",
+      "ms": 2405
+    },
+    {
+      "name": "all_readers_refuse_enterprise_b_owner",
+      "status": "PASS",
+      "ms": 2319
+    },
+    {
+      "name": "closed_payloads_and_private_types_refused",
+      "status": "PASS",
+      "ms": 7244
+    },
+    {
+      "name": "scoped_keyset_pagination_and_totals",
+      "status": "PASS",
+      "ms": 16618
+    },
+    {
+      "name": "nine_API_routes_to_real_Auth_and_real_RPC",
+      "status": "PASS",
+      "ms": 16712
+    },
+    {
+      "name": "nine_API_routes_deny_real_nonadmin",
+      "status": "PASS",
+      "ms": 4564
+    }
+  ],
+  "environment": "isolated staging, existing synthetic Auth identities",
+  "api_harness": "20s relay allowance in test fetch injection. Production 5s deadline unchanged. Standard 5s relay attempt timed out; SQL measured 16.182ms.",
+  "missing_parent_guard": "Separate rolled-back SQL fixture required; staging currently has no orphan.",
+  "production_mutations": 0
+}

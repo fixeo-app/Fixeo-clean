@@ -2,3 +2,6 @@
 # Local test runtimes and Supabase CLI state
 **/node_modules/
 supabase/.temp/
+
+# Also ignore dependency symlinks in isolated worktrees.
+**/node_modules

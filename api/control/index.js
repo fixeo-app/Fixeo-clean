@@ -35,7 +35,7 @@ function createHandler({env=process.env,fetchImpl=fetch}={}){
    if(req.headers?.['sec-fetch-site']==='cross-site')fail('ORIGIN_REJECTED',403);
    const body=req.body||{};if(Buffer.byteLength(JSON.stringify(body))>8192)fail('PAYLOAD_TOO_LARGE',413);
    const operation=(req.path||req.url||'').split('?')[0].replace(/^\/api\/control-v1\//,'');
-   if(!['summary','operations','dossier','search','signals','decisions','dispatch-candidates','network-context','action/preview','action/execute','dossier-section','operation-context','hybrid-context','hybrid/preview','hybrid/execute'].includes(operation))fail('UNKNOWN_OPERATION',404);
+   if(!['summary','operations','dossier','search','signals','decisions','dispatch-candidates','network-context','action/preview','action/execute','dossier-section','operation-context','hybrid-context','hybrid/preview','hybrid/execute','people','people-context','trust','trust-context','review-history','quotes','quote-context','finance','finance-context'].includes(operation))fail('UNKNOWN_OPERATION',404);
    const client=transport(env,bearer.slice(7),fetchImpl);const user=await client.user();if(!UUID.test(user?.id||''))fail('AUTH_REQUIRED',401);
    let data;
    if(operation==='decisions'){
@@ -48,6 +48,36 @@ function createHandler({env=process.env,fetchImpl=fetch}={}){
     }));
     if(entries.some(([,state])=>state.status==='FORBIDDEN'))fail('FORBIDDEN',403);
     data=Rafi.build(Object.fromEntries(entries),{classification});
+   }else if(operation==='people'){
+    allow(body,['type','state','classification','city','trade','query','enterprise_id','site_id','after','limit']);
+    const {after,limit,...filters}=body;
+    if(filters.enterprise_id!=null)id(filters.enterprise_id);if(filters.site_id!=null)id(filters.site_id);
+    data=await client.rpc('control_people_page_v1',{p_filters:filters,p_after:after??null,p_limit:limit??25});
+   }else if(operation==='finance'){
+    allow(body,['queue','classification','city','trade','enterprise_id','site_id','after','limit']);const {after,limit,...filters}=body;
+    if(filters.enterprise_id!=null)id(filters.enterprise_id);if(filters.site_id!=null)id(filters.site_id);
+    data=await client.rpc('control_finance_page_v1',{p_filters:filters,p_after:after??null,p_limit:limit??25});
+   }else if(operation==='finance-context'){
+    allow(body,['type','id','after','limit']);if(!['mission','remittance'].includes(body.type))fail('UNSUPPORTED_ENTITY');
+    data=await client.rpc('control_finance_context_v1',{p_type:body.type,p_id:id(body.id),p_after:id(body.after,true),p_limit:body.limit??25});
+   }else if(operation==='quotes'){
+    allow(body,['queue','classification','city','trade','after','limit']);const {after,limit,...filters}=body;
+    data=await client.rpc('control_quotes_page_v1',{p_filters:filters,p_after:after??null,p_limit:limit??25});
+   }else if(operation==='quote-context'){
+    allow(body,['type','id']);if(!['request','quote'].includes(body.type))fail('UNSUPPORTED_ENTITY');
+    data=await client.rpc('control_quote_context_v1',{p_type:body.type,p_id:id(body.id)});
+   }else if(operation==='review-history'){
+    allow(body,['type','id','after','limit']);if(!['artisan','claim','quote','mission','remittance'].includes(body.type))fail('UNSUPPORTED_ENTITY');
+    data=await client.rpc('control_review_history_v1',{p_type:body.type,p_id:id(body.id),p_after:body.after??null,p_limit:body.limit??25});
+   }else if(operation==='trust'){
+    allow(body,['queue','state','classification','city','trade','after','limit']);const {after,limit,...filters}=body;
+    data=await client.rpc('control_trust_page_v1',{p_filters:filters,p_after:after??null,p_limit:limit??25});
+   }else if(operation==='trust-context'){
+    allow(body,['type','id','after','limit']);if(!['artisan','claim','mission'].includes(body.type))fail('UNSUPPORTED_ENTITY');
+    data=await client.rpc('control_trust_context_v1',{p_type:body.type,p_id:id(body.id),p_after:id(body.after,true),p_limit:body.limit??25});
+   }else if(operation==='people-context'){
+    allow(body,['type','id','after','limit']);if(!['artisan','client','enterprise','site','worker'].includes(body.type))fail('UNSUPPORTED_ENTITY');
+    data=await client.rpc('control_people_context_v1',{p_type:body.type,p_id:id(body.id),p_after:id(body.after,true),p_limit:body.limit??25});
    }else if(operation==='network-context'){
     allow(body,['city','trade','state','classification','after','limit']);
     if(typeof body.city!=='string'||!body.city.trim()||body.city.length>120||typeof body.trade!=='string'||!body.trade.trim()||body.trade.length>80||!['all','available','unverified','unclaimed'].includes(body.state??'all')||!['all','production','test','internal','unclassified'].includes(body.classification??'all')||!Number.isInteger(body.limit??25)||(body.limit??25)<1||(body.limit??25)>50)fail('INVALID_FILTER');
