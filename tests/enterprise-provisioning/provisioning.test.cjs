@@ -13,6 +13,9 @@ const ui = read('js/admin-enterprise-provisioning.js');
 const html = read('admin.html');
 const dossier = read('js/admin-fixeo-dossier.js');
 const invitationUi = read('js/fixeo-enterprise-invitation.js');
+const invitationHtml = read('enterprise-invitation.html');
+const workspaceRouter = read('js/fixeo-workspace-router.js');
+const provisionCss = read('css/admin-enterprise-provisioning.css');
 const invitationLifecycle = read('supabase/7c15a7-enterprise-account-lifecycle.sql');
 const api = require('../../js/admin-enterprise-provisioning.js');
 
@@ -369,4 +372,15 @@ test('Block 3 — provisioning wizard renders the phone-first three-step flow in
   confirm.dispatchEvent(new w.Event('change',{bubbles:true}));
   assert.equal(submit.disabled,false);
   dom.window.close();
+});
+
+
+test('Invitation handoff preserves the pending invite through authentication', () => {
+  assert.match(invitationHtml,/id="fxei-signup"/);
+  assert.match(invitationHtml,/Créer mon compte FIXEO/);
+  assert.match(invitationUi,/fixeo_enterprise_invitation_return/);
+  assert.match(invitationUi,/Changer de compte/);
+  assert.match(workspaceRouter,/fixeo_enterprise_invitation_return/);
+  assert.match(workspaceRouter,/ENTERPRISE_INVITATION_PENDING/);
+  assert.match(provisionCss,/button:disabled/);
 });
