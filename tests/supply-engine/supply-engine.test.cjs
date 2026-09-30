@@ -18,7 +18,8 @@ const migrations=[
   'supabase/migrations/20260930180000_supply_b11_b13_national_engine.sql',
   'supabase/migrations/20260930201500_supply_agents_rpc_bigint_fix.sql',
   'supabase/migrations/20260930204500_supply_b14_b17_learning_readiness.sql',
-  'supabase/migrations/20260930211500_supply_external_discovery_dedup_v1.sql'
+  'supabase/migrations/20260930211500_supply_external_discovery_dedup_v1.sql',
+  'supabase/migrations/20260930213000_supply_external_secure_ingestion.sql'
 ].map(p=>fs.readFileSync(path.join(ROOT,p),'utf8'));
 
 const adminHtml=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
@@ -421,3 +422,14 @@ test('External Discovery V1 stages, deduplicates and never writes canonical arti
   assert.equal(Number((await db.query('select count(*) n from public.artisans')).rows[0].n),before);
  });
 });
+
+
+test('Secure external ingestion benchmarks human decisions without canonical writes',async t=>{
+ await withDb(t,async db=>{await baseline(db);await setActor(db,id(1));
+  const before=Number((await db.query('select count(*) n from public.artisans')).rows[0].n);
+  const rows=[{external_key:'REAL-1',display_name:'New Plumber',city:'Fès',service_category:'Plomberie',phone:'0611111111',human_decision:'OUTREACH_READY',human_priority:'P1'}];
+  const x=(await db.query("select public.supply_external_ingest_v1('GENSPARK','fixture','Fès',$1::jsonb) x",[JSON.stringify(rows)])).rows[0].x;
+  const b=(await db.query('select public.supply_external_benchmark_v1($1) x',[x.batch_id])).rows[0].x;
+  assert.equal(Number(b.total),1);assert.equal(Number(b.agreement),1);assert.equal(Number(b.divergence),0);
+  assert.equal(Number((await db.query('select count(*) n from public.artisans')).rows[0].n),before);
+ });});
