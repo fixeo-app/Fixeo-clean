@@ -66,3 +66,5 @@ jobs:
 # canonical artisan schema retry
 
 # portable promotion fields retry
+
+# minimal canonical insert retry
