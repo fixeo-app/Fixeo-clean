@@ -235,6 +235,12 @@ test('Bloc 5: agent leases are exclusive and AI cost is hard-gated',async t=>{
     let agent=(await db.query('select public.supply_admin_register_agent_v1($1,$2,$3,$4,$5,$6) x',
       ['Recruiter 1','RECRUITER','v1',JSON.stringify(['contact']),'LOW_COST',100])).rows[0].x;const aid=agent.agent_id;
     await db.query('select public.supply_admin_set_agent_state_v1($1,$2,$3)',[aid,'ACTIVE',false]);
+    await db.query('select public.supply_admin_set_runtime_v1(true,100,2,1)');
+    await setActor(db,'','service_role');
+    let stopped=(await db.query('select public.supply_agent_begin_run_v1($1,$2) x',[aid,cid])).rows[0].x;
+    assert.equal(stopped.reason,'global_kill_switch');
+    await setActor(db,id(1),'authenticated');
+    await db.query('select public.supply_admin_set_runtime_v1(false,0,2,1)');
     await setActor(db,'','service_role');
     let run=(await db.query('select public.supply_agent_begin_run_v1($1,$2) x',[aid,cid])).rows[0].x;assert.equal(run.ok,true);
     let leased=await db.query('select * from public.supply_lease_work_v1($1,1,300)',[aid]);assert.equal(leased.rowCount,1);
@@ -262,6 +268,12 @@ test('Bloc 6: channel outbox remains provider-neutral and explicit STOP suppress
     let prep=(await db.query('select public.supply_prepare_channel_message_v1($1,$2,$3,$4,$5,$6,$7,$8,$9) x',
       [id(103),cid,null,'WHATSAPP','recruitment_v1','RECRUITMENT',{claim:true},new Date(),id(920)])).rows[0].x;
     assert.equal(prep.ok,true);
+    await db.query('select public.supply_set_campaign_status_v1($1,$2,$3)',[cid,'PAUSED',false]);
+    await setActor(db,'','service_role');
+    let pausedClaim=(await db.query("select public.supply_channel_claim_next_v1('WHATSAPP','worker') x")).rows[0].x;
+    assert.equal(pausedClaim.state,'EMPTY');
+    await setActor(db,id(1),'authenticated');
+    await db.query('select public.supply_set_campaign_status_v1($1,$2,$3)',[cid,'ACTIVE',false]);
     await setActor(db,'','service_role');
     let peek=(await db.query("select public.supply_channel_peek_v1('WHATSAPP') x")).rows[0].x;assert.equal(peek.state,'READY');
     let claim=(await db.query("select public.supply_channel_claim_next_v1('WHATSAPP','worker') x")).rows[0].x;assert.equal(claim.state,'CLAIMED');
