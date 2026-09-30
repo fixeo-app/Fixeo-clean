@@ -3,6 +3,8 @@
 const { createHmac, timingSafeEqual } = require('node:crypto');
 const { assertServerTarget } = require('../supabase-environment');
 
+const CANONICAL_WABA_ID = '1392741816131859';
+
 function json(res, status, body) {
   res.setHeader('Cache-Control', 'no-store');
   return res.status(status).json(body);
@@ -179,7 +181,10 @@ module.exports = async function handler(req, res) {
   const supabaseUrl = process.env.SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!appSecret || !/^\d+$/.test(expectedWabaId) || !/^\d+$/.test(expectedPhoneNumberId) ||
+  if (expectedWabaId && expectedWabaId !== CANONICAL_WABA_ID) {
+    return json(res, 503, { ok: false, error: 'WEBHOOK_WABA_MISMATCH' });
+  }
+  if (!appSecret || expectedWabaId !== CANONICAL_WABA_ID || !/^\d+$/.test(expectedPhoneNumberId) ||
       !supabaseUrl || !serviceRoleKey) {
     return json(res, 503, { ok: false, error: 'WEBHOOK_CONFIGURATION_MISSING' });
   }
