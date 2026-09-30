@@ -671,7 +671,7 @@
     var phone = (el('fxv2-request-phone') && el('fxv2-request-phone').value || (_state.profile && _state.profile.phone) || '').trim();
     if (!service) { _toast('Choisissez le service concerné.','error'); return; }
     if (!city) { _toast('Choisissez votre ville.','error'); return; }
-    if (!description) { _toast('Décrivez brièvement le problème.','error'); return; }
+    if (description.length < 3) { _toast('Décrivez le problème en au moins 3 caractères.','error'); return; }
     _state.requestDraft.city = city;
     _state.requestDraft.description = description;
     _state.requestDraft.phone = phone;
@@ -704,8 +704,7 @@
         await window.FixeoSupabase.submitServiceRequest({
           service_category:service,
           city:city,
-          description:description,
-          idempotency_key:(window.crypto && crypto.randomUUID ? crypto.randomUUID() : ('client-os-' + Date.now()))
+          description:description
         });
         _toast('Demande publiée.','success');
       }
