@@ -8,6 +8,18 @@
   var UUID_RE=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
   function clean(v){ return String(v==null?'':v).trim(); }
+  function normalizePhone(v){
+    var s=clean(v).replace(/[\s\-.()]/g,'');
+    if(s.charAt(0)==='+')s=s.slice(1);
+    if(s.slice(0,5)==='00212')s=s.slice(2);
+    if(/^0[67]\d{8}$/.test(s))s='212'+s.slice(1);
+    if(!/^212[67]\d{8}$/.test(s))return null;
+    return '+'+s;
+  }
+  function syntheticEmailFromPhone(v){
+    var p=normalizePhone(v);
+    return p?p.slice(1)+'@fixeo.ma':null;
+  }
   function esc(v){ return String(v==null?'':v).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);}); }
   function validEmail(v){ var s=clean(v).toLowerCase(); return s.length>=3&&s.length<=320&&s.indexOf('@')>0; }
   function validId(v){ return UUID_RE.test(clean(v)); }
@@ -44,12 +56,12 @@
     input=input||{};
     if(!clean(input.name)) throw new Error('NAME_REQUIRED');
     if(input.owner_mode==='existing'&&!validId(input.owner_user_id)) throw new Error('OWNER_USER_REQUIRED');
-    if(input.owner_mode==='invite'&&!validEmail(input.owner_email)) throw new Error('OWNER_EMAIL_REQUIRED');
+    if(input.owner_mode==='invite'&&!normalizePhone(input.owner_phone)) throw new Error('OWNER_PHONE_REQUIRED');
     return rpc('admin_provision_enterprise_v1',{
       p_name:clean(input.name),
       p_legal_name:clean(input.legal_name)||null,
       p_owner_user_id:input.owner_mode==='existing'?clean(input.owner_user_id):null,
-      p_owner_email:input.owner_mode==='invite'?clean(input.owner_email).toLowerCase():null,
+      p_owner_email:input.owner_mode==='invite'?syntheticEmailFromPhone(input.owner_phone):null,
       p_idempotency_key:input.idempotency_key||uuid(),
       p_invitation_expires_at:null
     });
@@ -64,7 +76,7 @@
     return rpc('admin_assign_founder_owner_v1',{
       p_enterprise_id:enterpriseId,
       p_owner_user_id:input.owner_mode==='existing'?clean(input.owner_user_id):null,
-      p_owner_email:input.owner_mode==='invite'?clean(input.owner_email).toLowerCase():null,
+      p_owner_email:input.owner_mode==='invite'?syntheticEmailFromPhone(input.owner_phone):null,
       p_invitation_expires_at:null
     });
   }
@@ -83,7 +95,7 @@
 
   var ui={
     mode:'create',step:1,busy:false,enterpriseId:null,result:null,
-    draft:{name:'',legal_name:'',owner_mode:'existing',selected:null,owner_email:'',idempotency_key:null}
+    draft:{name:'',legal_name:'',owner_mode:'existing',selected:null,owner_phone:'',idempotency_key:null}
   };
 
   function q(id){ return root&&root.document?root.document.getElementById(id):null; }
@@ -129,7 +141,7 @@
       (ui.draft.owner_mode==='existing'?
         '<form id="ep-owner-search" class="ep-form"><label>UUID, email ou téléphone exact<input class="control" name="query" minlength="3" required placeholder="Recherche exacte uniquement"></label><div class="ep-actions"><button class="btn" type="submit">Rechercher</button></div></form><div id="ep-owner-results"></div>'+selectedHtml
         :
-        '<form id="ep-owner-email" class="ep-form"><label>Email du propriétaire<input class="control" name="email" type="email" required value="'+esc(ui.draft.owner_email)+'" placeholder="direction@entreprise.ma"></label><div class="ep-truth"><b>Invitation fondatrice</b><span>Le destinataire devra se connecter avec cette adresse et accepter le lien. Le token brut ne sera jamais stocké.</span></div></form>'
+        '<form id="ep-owner-phone" class="ep-form"><label>Numéro WhatsApp du propriétaire<input class="control" name="phone" type="tel" inputmode="tel" autocomplete="tel" required value="'+esc(ui.draft.owner_phone)+'" placeholder="06 XX XX XX XX"></label><div class="ep-truth"><b>Invitation fondatrice</b><span>Le propriétaire créera ou ouvrira son compte FIXEO avec ce même numéro WhatsApp, puis acceptera le lien. Le token brut ne sera jamais stocké.</span></div></form>'
       )+
       '<div class="ep-actions split"><button class="btn" data-ep-back>← Retour</button><button class="btn primary" data-ep-next-owner '+((ui.draft.owner_mode==='existing'&&!selected)?'disabled':'')+'>Continuer →</button></div>',
       'Choisir le propriétaire','Étape 2 · Association explicite ou invitation sécurisée.');
@@ -138,7 +150,7 @@
     var assigning=!!ui.draft.assign_existing;
     var owner=ui.draft.owner_mode==='existing'
       ? (ui.draft.selected?(ui.draft.selected.full_name||ui.draft.selected.email||ui.draft.selected.phone):'—')
-      : ui.draft.owner_email;
+      : (normalizePhone(ui.draft.owner_phone)||ui.draft.owner_phone);
     renderShell(
       '<div class="ep-review"><div><span>Entreprise</span><b>'+esc(ui.draft.name)+'</b><small>'+esc(ui.draft.legal_name||'Raison sociale non renseignée')+'</small></div>'+
       '<div><span>Propriétaire</span><b>'+esc(owner)+'</b><small>'+(ui.draft.owner_mode==='existing'?(assigning?'Activation immédiate sur ce tenant':'Activation immédiate après création'):'Invitation fondatrice · 7 jours')+'</small></div>'+
@@ -157,7 +169,7 @@
     var link=invite&&result.invitation_token?invitationLink(result.invitation_token):'';
     renderShell(
       '<div class="ep-success"><span>✓</span><h3>Espace Enterprise créé</h3><p>'+esc(result.enterprise_name||ui.draft.name)+'</p><code>'+esc(result.enterprise_id)+'</code></div>'+
-      '<div class="ep-owner-status" data-state="'+esc(result.owner_state||'unknown')+'"><span>PROPRIÉTAIRE</span><b>'+esc(invite?'Invitation en attente':'Actif')+'</b><small>'+esc(result.owner_name||result.owner_email||ui.draft.owner_email||'')+'</small></div>'+
+      '<div class="ep-owner-status" data-state="'+esc(result.owner_state||'unknown')+'"><span>PROPRIÉTAIRE</span><b>'+esc(invite?'Invitation en attente':'Actif')+'</b><small>'+esc(result.owner_name||result.owner_phone||(invite?normalizePhone(ui.draft.owner_phone):result.owner_email)||'')+'</small></div>'+
       (link?'<label>Lien d’invitation fondatrice<div class="ep-copy"><input id="ep-invite-link" class="control" readonly value="'+esc(link)+'"><button class="btn" data-ep-copy>Copier</button></div></label><p class="ep-note">Ce lien n’est affiché qu’après création ou rotation. FIXEO ne stocke pas le token brut.</p>':'')+
       '<div class="ep-actions split"><button class="btn" data-ep-open-dossier>Ouvrir le dossier</button>'+(invite?'<button class="btn" data-ep-rotate>Générer un nouveau lien</button><button class="btn danger" data-ep-revoke>Révoquer</button>':'')+'<button class="btn primary" data-ep-done>Terminer</button></div>',
       'Provisioning terminé','Le tenant est enregistré dans les sources canoniques.');
@@ -186,7 +198,7 @@
   }
   function reset(){
     ui.mode='create';ui.step=1;ui.busy=false;ui.enterpriseId=null;ui.result=null;
-    ui.draft={name:'',legal_name:'',owner_mode:'existing',selected:null,owner_email:'',idempotency_key:uuid()};
+    ui.draft={name:'',legal_name:'',owner_mode:'existing',selected:null,owner_phone:'',idempotency_key:uuid()};
   }
   function openCreate(){ reset();renderStep1();setState('','');showDialog(); }
   function openManage(id){
@@ -200,7 +212,8 @@
       unauthenticated:'Session expirée.',
       owner_target_required:'Choisissez un seul propriétaire.',
       owner_user_not_found:'Utilisateur FIXEO introuvable.',
-      invalid_owner_email:'Email propriétaire invalide.',
+      OWNER_PHONE_REQUIRED:'Numéro WhatsApp propriétaire invalide.',
+      invalid_owner_email:'Identifiant propriétaire invalide.',
       founding_owner_already_set:'Un propriétaire fondateur est déjà défini.',
       idempotency_conflict:'La clé d’idempotence a été réutilisée avec un autre contenu.',
       provisioning_conflict:'Conflit de provisioning : relisez le registre avant de recommencer.',
@@ -218,7 +231,7 @@
         name:ui.draft.name,legal_name:ui.draft.legal_name,
         owner_mode:ui.draft.owner_mode,
         owner_user_id:ui.draft.selected&&ui.draft.selected.user_id,
-        owner_email:ui.draft.owner_email,
+        owner_phone:ui.draft.owner_phone,
         idempotency_key:ui.draft.idempotency_key
       });
       renderSuccess(result);
@@ -265,11 +278,11 @@
       if(b.hasAttribute('data-ep-back')){ui.step=Math.max(1,ui.step-1);ui.step===1?renderStep1():renderStep2();return;}
       if(b.hasAttribute('data-ep-next-owner')){
         if(ui.draft.owner_mode==='existing'&&!ui.draft.selected){setState('Sélectionnez un utilisateur FIXEO exact.','error');return;}
-        var emailForm=q('ep-owner-email');
+        var phoneForm=q('ep-owner-phone');
         if(ui.draft.owner_mode==='invite'){
-          var email=emailForm&&new root.FormData(emailForm).get('email');
-          if(!validEmail(email)){setState('Saisissez un email valide.','error');return;}
-          ui.draft.owner_email=clean(email).toLowerCase();
+          var phone=phoneForm&&new root.FormData(phoneForm).get('phone');
+          if(!normalizePhone(phone)){setState('Saisissez un numéro WhatsApp marocain valide.','error');return;}
+          ui.draft.owner_phone=normalizePhone(phone);
         }
         ui.step=3;renderStep3();setState('','');return;
       }
@@ -278,7 +291,7 @@
       if(b.hasAttribute('data-ep-rotate')){doRotate(b);return;}
       if(b.hasAttribute('data-ep-revoke')){doRevoke(b);return;}
       if(b.hasAttribute('data-ep-open-dossier')){closeDialog();root.FixeoDossier&&root.FixeoDossier.open&&root.FixeoDossier.open('enterprise',ui.enterpriseId);return;}
-      if(b.hasAttribute('data-ep-assign')){ui.mode='create';ui.step=2;ui.draft={name:ui.result.enterprise_name||'',legal_name:ui.result.legal_name||'',owner_mode:'existing',selected:null,owner_email:'',idempotency_key:uuid(),assign_existing:true};renderStep2();return;}
+      if(b.hasAttribute('data-ep-assign')){ui.mode='create';ui.step=2;ui.draft={name:ui.result.enterprise_name||'',legal_name:ui.result.legal_name||'',owner_mode:'existing',selected:null,owner_phone:'',idempotency_key:uuid(),assign_existing:true};renderStep2();return;}
       if(b.dataset.epOwnerId){
         var raw=b.dataset.epOwnerJson;
         try{ui.draft.selected=JSON.parse(decodeURIComponent(raw));renderStep2();setState('Utilisateur sélectionné.','success');}catch(_){setState('Sélection invalide.','error');}
@@ -314,7 +327,7 @@
     return assignOwner(ui.enterpriseId,{
       owner_mode:ui.draft.owner_mode,
       owner_user_id:ui.draft.selected&&ui.draft.selected.user_id,
-      owner_email:ui.draft.owner_email
+      owner_phone:ui.draft.owner_phone
     });
   }
 
@@ -339,6 +352,6 @@
     searchOwner:searchOwner,provision:provision,ownerState:ownerState,
     assignOwner:assignOwner,rotate:rotate,revoke:revoke,
     openCreate:openCreate,openManage:openManage,
-    _test:{clean:clean,validEmail:validEmail,validId:validId,invitationLink:invitationLink}
+    _test:{clean:clean,validEmail:validEmail,validId:validId,normalizePhone:normalizePhone,syntheticEmailFromPhone:syntheticEmailFromPhone,invitationLink:invitationLink}
   });
 });
