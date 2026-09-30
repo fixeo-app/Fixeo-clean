@@ -32,7 +32,8 @@ function baseWorkerEnv() {
     WHATSAPP_ACCESS_TOKEN: '',
     WHATSAPP_GRAPH_API_VERSION: '',
     WHATSAPP_DISPATCH_TEMPLATE_NAME: '',
-    WHATSAPP_DISPATCH_TEMPLATE_LANGUAGE: ''
+    WHATSAPP_DISPATCH_TEMPLATE_LANGUAGE: '',
+    WHATSAPP_CUTOVER_NOT_BEFORE: ''
   };
 }
 
@@ -44,7 +45,8 @@ function enableMetaEnv() {
     WHATSAPP_ACCESS_TOKEN: 'meta-token',
     WHATSAPP_GRAPH_API_VERSION: 'v99.0',
     WHATSAPP_DISPATCH_TEMPLATE_NAME: 'fixeo_nouvelle_mission_v1',
-    WHATSAPP_DISPATCH_TEMPLATE_LANGUAGE: 'fr'
+    WHATSAPP_DISPATCH_TEMPLATE_LANGUAGE: 'fr',
+    WHATSAPP_CUTOVER_NOT_BEFORE: '2026-10-01T00:00:00Z'
   });
 }
 
@@ -91,7 +93,10 @@ test('worker live success claims, calls Meta template API and finalizes SENT', a
   global.fetch = async (url, options) => {
     const u = String(url);
     calls.push({ url: u, body: options?.body });
-    if (u.endsWith('/dispatch_notification_worker_next_v1')) {
+    if (u.endsWith('/dispatch_notification_worker_next_v2')) {
+      const claimBody = JSON.parse(options.body);
+      assert.equal(claimBody.p_channel, 'WHATSAPP');
+      assert.equal(claimBody.p_not_before, '2026-10-01T00:00:00.000Z');
       return { ok: true, status: 200, text: async () => JSON.stringify([{
         notification_id: '11111111-1111-1111-1111-111111111111',
         request_id: '22222222-2222-2222-2222-222222222222',
@@ -141,7 +146,7 @@ test('worker retries explicit provider 5xx without exceeding attempt guard', asy
   let retryCalled = false;
   global.fetch = async (url, options) => {
     const u = String(url);
-    if (u.endsWith('/dispatch_notification_worker_next_v1')) {
+    if (u.endsWith('/dispatch_notification_worker_next_v2')) {
       return { ok: true, status: 200, text: async () => JSON.stringify([{
         notification_id: '11111111-1111-1111-1111-111111111111',
         attempt_count: 1,
@@ -181,7 +186,7 @@ test('worker treats network ambiguity as terminal DELIVERY_UNKNOWN, never blind-
   let failedCalled = false;
   global.fetch = async (url, options) => {
     const u = String(url);
-    if (u.endsWith('/dispatch_notification_worker_next_v1')) {
+    if (u.endsWith('/dispatch_notification_worker_next_v2')) {
       return { ok: true, status: 200, text: async () => JSON.stringify([{
         notification_id: '11111111-1111-1111-1111-111111111111',
         attempt_count: 1,
