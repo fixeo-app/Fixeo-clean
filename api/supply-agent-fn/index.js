@@ -71,6 +71,20 @@ module.exports=async function handler(req,res){
           p_worker:input.agent_id,p_limit:Number(input.limit)||5,p_lease_seconds:Number(input.lease_seconds)||300
         });
         break;
+      case 'task_brief':
+        if(!uuid(input.agent_id)||!uuid(input.run_id)||!uuid(input.task_id))
+          return res.status(400).json({ok:false,error:'INVALID_TASK_IDENTIFIERS'});
+        result=await rpc(supabaseUrl,serviceKey,'supply_agent_task_brief_v1',{
+          p_agent_id:input.agent_id,p_run_id:input.run_id,p_task_id:input.task_id
+        });
+        break;
+      case 'rules_decision':
+        if(!uuid(input.agent_id)||!uuid(input.run_id)||!uuid(input.task_id))
+          return res.status(400).json({ok:false,error:'INVALID_TASK_IDENTIFIERS'});
+        result=await rpc(supabaseUrl,serviceKey,'supply_agent_rules_decision_v1',{
+          p_agent_id:input.agent_id,p_run_id:input.run_id,p_task_id:input.task_id
+        });
+        break;
       case 'action':
         if(!uuid(input.agent_id)||!uuid(input.run_id)||!uuid(input.task_id)||!uuid(input.idempotency_key))
           return res.status(400).json({ok:false,error:'INVALID_ACTION_IDENTIFIERS'});
