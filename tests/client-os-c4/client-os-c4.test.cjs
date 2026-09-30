@@ -43,6 +43,8 @@ test('C4.3 notifications use one canonical Client OS reader', () => {
   assert.equal(html.includes('fixeo-notifications-real-v1.js'), false);
   assert.equal(html.includes('fixeo-notification-engine.js'), false);
   assert.equal(html.includes('fixeo-notification-center-v1.js'), false);
+  assert.equal(html.includes('fixeo-notification-center-v1.css'), false);
+  assert.equal(html.includes('fixeo-notifications-real-v1.css'), false);
   assert.match(js, /from\('notifications'\)/);
   assert.match(js, /postgres_changes/);
   assert.match(js, /recipient_user_id=eq\./);
