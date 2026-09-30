@@ -47,6 +47,13 @@
       '<div><span>RÈGLE CAPACITÉ</span><b>Disponibilité déclarée ≠ capacité</b></div>'+
       '<div><span>COÛT / ACTIVÉ</span><b>'+(eco.cost_per_activated==null?'—':moneyMinor(eco.cost_per_activated))+'</b></div>';
   }
+  function renderReadiness(funnel,ready){
+    var safety=q('supply-safety');if(!safety)return;
+    var existing=safety.querySelectorAll('[data-b8]');existing.forEach(function(n){n.remove();});
+    safety.insertAdjacentHTML('beforeend',
+      '<div data-b8><span>PIPELINE RECRUTEMENT</span><b>'+num(funnel&&funnel.contacted)+' contactés · '+num(funnel&&funnel.engaged)+' engagés · '+num(funnel&&funnel.activated)+' activés</b></div>'+
+      '<div data-b8><span>BASE EXISTANTE ACTIVABLE</span><b>'+num(ready&&ready.existing_base_ready)+' profils · Agent '+(ready&&ready.active_agents?'ACTIF':'EN PAUSE')+'</b></div>');
+  }
   function renderCoverage(rows){
     var e=q('supply-gaps');if(!e)return;
     e.innerHTML=(rows||[]).length?(rows||[]).map(function(x){
@@ -115,7 +122,9 @@
         rpc('supply_admin_queue_v1',{p_limit:80}),
         rpc('supply_admin_campaigns_v1'),
         rpc('supply_admin_agents_v1'),
-        rpc('supply_admin_events_v1',{p_limit:40})
+        rpc('supply_admin_events_v1',{p_limit:40}),
+        rpc('supply_admin_funnel_v1'),
+        rpc('supply_admin_recruitment_readiness_v1')
       ]);
       state.last=data;
       renderDashboard(data[0]||{});
@@ -125,6 +134,7 @@
       renderCampaigns(data[4]||[]);
       renderAgents(data[5]||[]);
       renderEvents(data[6]||[]);
+      renderReadiness(data[7]||{},data[8]||{});
       status('Supply Engine · données canoniques · '+new Date().toLocaleTimeString('fr-FR'),'success');
     }catch(e){status('Supply Engine indisponible · '+(e&&e.message?e.message:'erreur'),'error');}
     finally{state.loading=false;}
