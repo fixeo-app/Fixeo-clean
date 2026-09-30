@@ -61,7 +61,7 @@ BEGIN IF NOT fixeo_private._fixeo_is_admin() THEN RAISE EXCEPTION 'FORBIDDEN' US
    SELECT a.artisan_id INTO aid FROM public.supply_artisan_projection_v1 a WHERE
     fixeo_private.supply_norm_v1('CITY',a.city)=fixeo_private.supply_norm_v1('CITY',x.city) AND
     fixeo_private.supply_norm_v1('SERVICE',a.service_category)=fixeo_private.supply_norm_v1('SERVICE',x.service_category) AND
-    similarity(lower(a.artisan_name),lower(x.display_name))>=0.72 ORDER BY similarity(lower(a.artisan_name),lower(x.display_name)) DESC LIMIT 1;
+    fixeo_private.supply_norm_v1('NAME',a.artisan_name)=fixeo_private.supply_norm_v1('NAME',x.display_name) LIMIT 1;
    IF aid IS NOT NULL THEN score:=80;reasons:=reasons||'"NAME_CITY_SERVICE_SIMILAR"'::jsonb; END IF;
   END IF;
   dec:=CASE WHEN aid IS NOT NULL AND score=100 THEN 'EXISTING' WHEN aid IS NOT NULL THEN 'PROBABLE_DUPLICATE' WHEN ext IS NOT NULL THEN 'MERGE_EXTERNAL'
