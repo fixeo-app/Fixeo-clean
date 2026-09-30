@@ -184,7 +184,8 @@ BEGIN
     FROM dims d
   ), filtered AS (
     SELECT * FROM scored
-    WHERE (NULLIF(btrim(COALESCE(p_service,'')),'') IS NULL OR score>=34)
+    WHERE (NULLIF(btrim(COALESCE(p_service,'')),'') IS NULL OR
+           lower(btrim(service_category))=lower(btrim(p_service)) OR secondary_service)
       AND (NULLIF(btrim(COALESCE(p_city,'')),'') IS NULL OR
            lower(btrim(city))=lower(btrim(p_city)) OR secondary_city)
   )
