@@ -124,9 +124,9 @@ test('Block 6 — PostgreSQL integration: exact search, idempotent active-owner 
       CREATE SCHEMA auth;
       CREATE SCHEMA fixeo_private;
       CREATE SCHEMA extensions;
-      DO $ BEGIN CREATE ROLE anon NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $;
-      DO $ BEGIN CREATE ROLE authenticated NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $;
-      DO $ BEGIN CREATE ROLE service_role NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $;
+      DO $role$ BEGIN CREATE ROLE anon NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $role$;
+      DO $role$ BEGIN CREATE ROLE authenticated NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $role$;
+      DO $role$ BEGIN CREATE ROLE service_role NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $role$;
       CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA extensions;
 
       CREATE TABLE public.users(
