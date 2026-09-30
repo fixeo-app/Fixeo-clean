@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c40'; /* Client OS C4 closure */
+  var VERSION = 'v2c45'; /* Client OS C4 closure final */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -53,6 +53,14 @@
     { slug:'demenagement', label:'Déménagement', icon:'📦' },
     { slug:'autre', label:'Autre', icon:'＋' }
   ];
+
+  var FIXEO_CONTACTS = {
+    supportWhatsappE164:'212660484415',
+    email:'contact@fixeo.ma'
+  };
+  function _fixeoSupportWhatsAppUrl(){
+    return 'https://wa.me/' + FIXEO_CONTACTS.supportWhatsappE164;
+  }
 
   /* ── STATE ────────────────────────────────────────────────────── */
   var _state = {
@@ -1153,7 +1161,7 @@
     var evidence=active.length?_evidenceForRequest(active[0]).length:0;
     return '<section class="fxv2-c32-portfolio" aria-label="Synthèse client"><div class="fxv2-c32-head"><div><span>VOTRE ESPACE</span><strong>L’essentiel, sans surcharge</strong></div></div><div class="fxv2-c32-portfolio-grid">'
       +'<button data-action="go-requests"><span>Demandes</span><strong>'+m.total+'</strong><small>'+(m.decision+m.confirm)+' décision'+((m.decision+m.confirm)>1?'s':'')+'</small></button>'
-      +'<button data-action="go-requests"><span>Finance</span><strong>'+(f.pricedMissions?esc(f.knownTotal.toLocaleString('fr-MA'))+' MAD':'—')+'</strong><small>'+f.accepted+' devis accepté'+(f.accepted>1?'s':'')+'</small></button>'
+      +'<button data-action="go-requests"><span>Montants</span><strong>'+(f.pricedMissions?esc(f.knownTotal.toLocaleString('fr-MA'))+' MAD':'—')+'</strong><small>'+f.accepted+' devis accepté'+(f.accepted>1?'s':'')+'</small></button>'
       +'<button data-action="go-documents"><span>Dossier</span><strong>'+evidence+'</strong><small>élément'+(evidence>1?'s':'')+' disponible'+(evidence>1?'s':'')+'</small></button>'
       +'</div></section>';
   }
@@ -1252,9 +1260,9 @@
     var sec=el('fxv2-sec-messages'); if(!sec)return;
     var active=(_state.requests||[]).filter(function(r){return r._pipeline&&r._pipeline.step>=2&&r._pipeline.step<5;});
     var contacts=[]; active.forEach(function(r){var found=_findAcceptedArtisan(r),x=found?found.artisan:null;if(x&&x.phone_public){var wa=buildWA(x.phone_public,x.full_name);if(wa)contacts.push({service:r.service_category||'Intervention',city:r.city||'',name:x.full_name||'Artisan',wa:wa});}});
-    sec.innerHTML='<div class="fxv2-c39c-head"><span>COMMUNICATION CENTER</span><h2>Messages & contacts</h2><p>Les canaux réellement disponibles pour vos interventions.</p></div>'
+    sec.innerHTML='<div class="fxv2-c39c-head"><span>COMMUNICATION CENTER</span><h2>Contacts & échanges</h2><p>Les canaux réellement disponibles pour vos interventions.</p></div>'
       +(contacts.length?'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>ARTISANS JOIGNABLES</span><strong>'+contacts.length+' contact'+(contacts.length>1?'s':'')+' disponible'+(contacts.length>1?'s':'')+'</strong></div><div class="fxv2-c39c-list">'+contacts.map(function(c){return '<a href="'+esc(c.wa)+'" target="_blank" rel="noopener"><i>💬</i><span><strong>'+esc(c.name)+'</strong><small>'+esc(c.service)+(c.city?' · '+esc(c.city):'')+'</small></span><b>WhatsApp ↗</b></a>';}).join('')+'</div></section>':'<section class="fxv2-c39c-card fxv2-c39c-empty"><strong>Aucun artisan joignable actuellement</strong><p>Un canal de contact apparaîtra ici lorsqu’un numéro public est disponible pour votre intervention.</p></section>')
-      +'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>FIXEO</span><strong>Besoin d’aide ?</strong></div><div class="fxv2-c39c-actions"><a href="https://wa.me/212660484415" target="_blank" rel="noopener">💬 WhatsApp Fixeo</a><a href="mailto:contact@fixeo.ma">✉ Email Fixeo</a><button data-action="go-support">Support Center →</button></div></section><div class="fxv2-c39c-note">La messagerie intégrée FIXEO n’est pas encore disponible. Aucun faux chat n’est affiché.</div>';
+      +'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>FIXEO</span><strong>Besoin d’aide ?</strong></div><div class="fxv2-c39c-actions"><a href="'+esc(_fixeoSupportWhatsAppUrl())+'" target="_blank" rel="noopener">💬 WhatsApp Fixeo</a><a href="mailto:'+esc(FIXEO_CONTACTS.email)+'">✉ Email Fixeo</a><button data-action="go-support">Support Center →</button></div></section><div class="fxv2-c39c-note">La messagerie intégrée FIXEO n’est pas encore disponible. Aucun faux chat n’est affiché.</div>';
   }
 
   /* ── SECTION: PROFILE ─────────────────────────────────────────── */
@@ -1325,7 +1333,7 @@
     var active=(_state.requests||[]).filter(function(r){return r._pipeline&&r._pipeline.step>=0&&r._pipeline.step<5;});
     sec.innerHTML='<div class="fxv2-c39c-head"><span>FIXEO CARE</span><h2>Support Center</h2><p>Aide, dossier et canaux officiels au même endroit.</p></div>'
       +(active.length?'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>VOS INTERVENTIONS</span><strong>'+active.length+' dossier'+(active.length>1?'s':'')+' actif'+(active.length>1?'s':'')+'</strong></div><button class="fxv2-c39c-wide" data-action="go-missions">Voir mes interventions →</button></section>':'')
-      +'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>ASSISTANCE</span><strong>Choisissez votre canal</strong></div>'+_supportItem('https://wa.me/212660484415','💬','WhatsApp Support','Contacter FIXEO')+_supportItem('mailto:contact@fixeo.ma','✉','Email','contact@fixeo.ma')+'<button class="fxv2-c39c-wide fxv2-c39c-rafi" data-action="go-rafi">✦ Comprendre la situation avec RAFI</button></section><details class="fxv2-c39c-tech"><summary>Informations techniques</summary><span>Version '+esc(VERSION)+' · Fixeo Client OS</span></details>';
+      +'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>ASSISTANCE</span><strong>Choisissez votre canal</strong></div>'+_supportItem(_fixeoSupportWhatsAppUrl(),'💬','WhatsApp Support','Contacter FIXEO')+_supportItem('mailto:'+FIXEO_CONTACTS.email,'✉','Email',FIXEO_CONTACTS.email)+'<button class="fxv2-c39c-wide fxv2-c39c-rafi" data-action="go-rafi">✦ Comprendre la situation avec RAFI</button></section><details class="fxv2-c39c-tech"><summary>Informations techniques</summary><span>Version '+esc(VERSION)+' · Fixeo Client OS</span></details>';
   }
 
   function _supportItem(href, icon, label, desc) {
@@ -1418,7 +1426,7 @@
   }
   function _renderC31Documents() {
     var sec=el('fxv2-sec-documents'); if(!sec) return;
-    sec.innerHTML='<div class="fxv2-c31-pagehead fxv2-c37-pagehead"><span>MON ACTIVITÉ</span><h2>Documents & confiance</h2><p>Votre dossier FIXEO : demandes, devis, missions, montants connus et références de suivi réellement enregistrés.</p></div>'+_renderC37Documents(_state.requests||[]);
+    sec.innerHTML='<div class="fxv2-c31-pagehead fxv2-c37-pagehead"><span>MON ACTIVITÉ</span><h2>Dossier & preuves</h2><p>Votre dossier FIXEO : demandes, devis, missions, montants connus et références de suivi réellement enregistrés.</p></div>'+_renderC37Documents(_state.requests||[]);
   }
 
   /* C3.9-A — dedicated Decision Center page */
@@ -1446,14 +1454,16 @@
 
     /* Update sidebar links */
     document.querySelectorAll('.fxv2-nav-link').forEach(function (a) {
-      if (a.dataset.section === name) a.classList.add('active');
-      else a.classList.remove('active');
+      var active=a.dataset.section === name;
+      if (active) { a.classList.add('active'); a.setAttribute('aria-current','page'); }
+      else { a.classList.remove('active'); a.removeAttribute('aria-current'); }
     });
 
     /* Update bottom nav */
     document.querySelectorAll('.fxv2-bottom-btn').forEach(function (b) {
-      if (b.dataset.section === name) b.classList.add('active');
-      else b.classList.remove('active');
+      var active=b.dataset.section === name;
+      if (active) { b.classList.add('active'); b.setAttribute('aria-current','page'); }
+      else { b.classList.remove('active'); b.removeAttribute('aria-current'); }
     });
 
     /* KPI bar: only on dashboard + requests */
@@ -1462,6 +1472,13 @@
 
     /* Close mobile sidebar */
     _closeSidebar();
+  }
+
+  function _syncSidebarA11y() {
+    var s=el('fxv2-sidebar');
+    if(!s) return;
+    var desktop=!!(window.matchMedia&&window.matchMedia('(min-width: 768px)').matches);
+    s.setAttribute('aria-hidden', desktop ? 'false' : (s.classList.contains('open') ? 'false' : 'true'));
   }
 
   function _openSidebar() {
@@ -1479,11 +1496,12 @@
     var s = el('fxv2-sidebar');
     var o = el('fxv2-overlay');
     var h = el('fxv2-hamburger');
-    if (s) { s.classList.remove('open'); s.setAttribute('aria-hidden', 'true'); }
+    if (s) s.classList.remove('open');
     if (o) o.classList.remove('show');
     if (h) { h.classList.remove('open'); h.setAttribute('aria-expanded', 'false'); }
     document.body.style.overflow = '';
     document.body.classList.remove('fxv2-menu-open');
+    _syncSidebarA11y();
   }
 
   /* ── NAV BINDING (single listener each) ──────────────────────── */
@@ -1510,12 +1528,7 @@
     /* Sidebar nav links */
     document.querySelectorAll('.fxv2-nav-link').forEach(function (a) {
       a.addEventListener('click', function () {
-        var route=a.getAttribute('data-c31-route');
-        if(route==='decision'){
-          _renderC39DecisionPage(_state.requests||[]);
-          _showSection('decision');
-          return;
-        }
+        if(a.dataset.section==='decision') _renderC39DecisionPage(_state.requests||[]);
         _showSection(a.dataset.section);
       });
     });
@@ -1923,18 +1936,24 @@ if (!result.ok) {
 
 
   /* ── MODAL ────────────────────────────────────────────────────── */
+  var _modalReturnFocus=null;
   function _openModal(html) {
     var overlay = el('fxv2-modal-overlay');
     var body    = el('fxv2-modal-body');
     if (!overlay || !body) return;
+    _modalReturnFocus=document.activeElement;
     body.innerHTML = html;
     overlay.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    var close=el('fxv2-modal-close');
+    if(close) setTimeout(function(){close.focus();},0);
   }
   function _closeModal() {
     var overlay = el('fxv2-modal-overlay');
     if (overlay) overlay.classList.add('hidden');
     document.body.style.overflow = '';
+    if(_modalReturnFocus&&typeof _modalReturnFocus.focus==='function') _modalReturnFocus.focus();
+    _modalReturnFocus=null;
   }
 
   /* ── TOAST ────────────────────────────────────────────────────── */
@@ -1975,6 +1994,10 @@ if (!result.ok) {
     if (mOverlay) mOverlay.addEventListener('click', function (e) {
       if (e.target === mOverlay) _closeModal();
     });
+
+    _syncSidebarA11y();
+    window.addEventListener('resize', _syncSidebarA11y);
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') _closeModal(); });
 
     /* Show skeletons immediately */
     _showSkeleton();
