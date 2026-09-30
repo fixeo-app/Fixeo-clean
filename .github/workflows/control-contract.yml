@@ -1,7 +1,7 @@
 name: Control contract isolated certification
 on:
   push:
-    branches: [feat/control-os-bloc1-contract, feat/control-os-bloc2-rafi-decision-center]
+    branches: [feat/control-os-bloc1-contract, feat/control-os-bloc2-rafi-decision-center, feat/whatsapp-precutover-hardening]
   pull_request:
     paths:
       - 'api/control/**'
