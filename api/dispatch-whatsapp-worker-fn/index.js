@@ -5,6 +5,7 @@ const { assertServerTarget } = require('../supabase-environment');
 
 const MAX_ATTEMPTS = 3;
 const META_TIMEOUT_MS = 15000;
+const CANONICAL_WABA_ID = '1392741816131859';
 
 function json(res, status, body) {
   res.setHeader('Cache-Control', 'no-store');
@@ -173,7 +174,10 @@ module.exports = async function handler(req, res) {
     const cutoverNotBeforeRaw = String(process.env.WHATSAPP_CUTOVER_NOT_BEFORE || '').trim();
     const cutoverNotBeforeMs = Date.parse(cutoverNotBeforeRaw);
 
-    if (!/^\d+$/.test(wabaId) || !/^\d+$/.test(phoneNumberId) || !accessToken ||
+    if (wabaId !== CANONICAL_WABA_ID) {
+      return json(res, 503, { ok: false, error: 'META_WABA_MISMATCH' });
+    }
+    if (!/^\d+$/.test(phoneNumberId) || !accessToken ||
         !/^v\d+\.\d+$/.test(apiVersion) || !templateName || !templateLanguage ||
         !cutoverNotBeforeRaw || !Number.isFinite(cutoverNotBeforeMs)) {
       return json(res, 503, { ok: false, error: 'META_CONFIGURATION_MISSING' });
