@@ -80,6 +80,7 @@ jobs:
           node --check scripts/generate-authority-blog-v3.js
           node --check scripts/generate-profile-sitemap.js
           node --check api/artisan-profile-fn/index.js
+          node --test tests/whatsapp-precutover/whatsapp-precutover.test.cjs
 
       - run: npx playwright install --with-deps chromium
         working-directory: tests/control-contract
