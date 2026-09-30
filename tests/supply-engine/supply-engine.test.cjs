@@ -19,7 +19,8 @@ const migrations=[
   'supabase/migrations/20260930201500_supply_agents_rpc_bigint_fix.sql',
   'supabase/migrations/20260930204500_supply_b14_b17_learning_readiness.sql',
   'supabase/migrations/20260930211500_supply_external_discovery_dedup_v1.sql',
-  'supabase/migrations/20260930213000_supply_external_secure_ingestion.sql'
+  'supabase/migrations/20260930213000_supply_external_secure_ingestion.sql',
+  'supabase/migrations/20260930221000_supply_import_idempotence_cta.sql'
 ].map(p=>fs.readFileSync(path.join(ROOT,p),'utf8'));
 
 const adminHtml=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
@@ -175,7 +176,7 @@ async function baseline(db){
 test('static contract: Control OS exposes Supply and agent API is disabled by default',()=>{
   assert.match(adminHtml,/data-view="supply"/);
   assert.match(adminHtml,/id="sec-supply"/);
-  assert.match(adminHtml,/admin-supply-engine\.js\?v=supply15/);
+  assert.match(adminHtml,/admin-supply-engine\.js\?v=supply16/);
   assert.match(adminControl,/supply:\[\]/);
   assert.match(adminControl,/FixeoSupply\?\.refresh/);
   assert.match(adminHtml,/Budget IA à 0/);
@@ -435,3 +436,6 @@ test('Secure external ingestion benchmarks human decisions without canonical wri
   assert.equal(Number(b.total),1);assert.equal(Number(b.agreement),1);assert.equal(Number(b.divergence),0);
   assert.equal(Number((await db.query('select count(*) n from public.artisans')).rows[0].n),before);
  });});
+
+
+test('External import is idempotent for identical content',async t=>{await withDb(t,async db=>{await baseline(db);await setActor(db,id(1));const rows=[{external_key:'IDEMP-1',display_name:'One',city:'Fès',service_category:'Plomberie',phone:'0610101010',human_decision:'QUALIFIED'}];const a=(await db.query("select public.supply_external_ingest_v1('GENSPARK','same.xlsx','Fès',$1::jsonb) x",[JSON.stringify(rows)])).rows[0].x;const b=(await db.query("select public.supply_external_ingest_v1('GENSPARK','same.xlsx','Fès',$1::jsonb) x",[JSON.stringify(rows)])).rows[0].x;assert.equal(a.batch_id,b.batch_id);assert.equal(b.reused,true);assert.equal(Number((await db.query('select count(*) n from public.supply_external_batches_v1')).rows[0].n),1);});});
