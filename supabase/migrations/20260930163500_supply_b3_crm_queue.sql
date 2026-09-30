@@ -221,7 +221,7 @@ BEGIN
       AND (q.expires_at IS NULL OR q.expires_at>now())
       AND (c.id IS NULL OR (c.status='ACTIVE' AND c.kill_switch=false))
       AND COALESCE(cp.outreach_status,'ALLOWED') NOT IN('OPTED_OUT','WRONG_NUMBER','BLOCKED')
-      AND NOT (cp.outreach_status='COOLDOWN' AND cp.cooldown_until>now())
+      AND NOT (COALESCE(cp.outreach_status,'ALLOWED')='COOLDOWN' AND cp.cooldown_until>now())
     ORDER BY q.priority DESC,q.created_at
     FOR UPDATE OF q SKIP LOCKED
     LIMIT GREATEST(1,LEAST(COALESCE(p_limit,5),50))
