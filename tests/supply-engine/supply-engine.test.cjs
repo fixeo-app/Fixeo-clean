@@ -17,7 +17,8 @@ const migrations=[
   'supabase/migrations/20260930173000_supply_b8_b10_recruitment_agent_v1.sql',
   'supabase/migrations/20260930180000_supply_b11_b13_national_engine.sql',
   'supabase/migrations/20260930201500_supply_agents_rpc_bigint_fix.sql',
-  'supabase/migrations/20260930204500_supply_b14_b17_learning_readiness.sql'
+  'supabase/migrations/20260930204500_supply_b14_b17_learning_readiness.sql',
+  'supabase/migrations/20260930211500_supply_external_discovery_dedup_v1.sql'
 ].map(p=>fs.readFileSync(path.join(ROOT,p),'utf8'));
 
 const adminHtml=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
@@ -42,6 +43,8 @@ async function withDb(t,fn){
 
 async function baseline(db){
   await db.query(String.raw`
+    DROP TABLE IF EXISTS public.supply_external_candidates_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_external_batches_v1 CASCADE;
     DROP TABLE IF EXISTS public.supply_normalization_alias_v1 CASCADE;
     DROP TABLE IF EXISTS public.supply_national_cycles_v1 CASCADE;
     DROP TABLE IF EXISTS public.supply_national_cell_policy_v1 CASCADE;
@@ -397,5 +400,24 @@ test('B14-B17: learning cycle is closed, data quality normalizes aliases and rea
   const gate=(await db.query('select public.supply_national_provider_gate_v1() x')).rows[0].x;
   assert.equal(gate.allowed,false);
   assert.equal(Number((await db.query('select count(*) n from public.supply_work_queue_v1')).rows[0].n),0);
+ });
+});
+
+
+test('External Discovery V1 stages, deduplicates and never writes canonical artisans',async t=>{
+ await withDb(t,async db=>{
+  await baseline(db);await setActor(db,id(1));
+  await db.query(`insert into public.artisans(id,full_name,city,service_category,phone,claimable,claimed) values($1,'Existing Fes','Fès','Serrurerie','0612345678',true,false)`,[id(109)]);
+  const b=(await db.query("select public.supply_external_create_batch_v1('GENSPARK_OFFMAPS','fixture','Fès','Serrurerie') x")).rows[0].x;
+  await db.query("select public.supply_external_stage_v1($1,'OFF-1','Existing Fes','Fès','Serrurerie','0612345678','https://example.test/1','{}')",[b.batch_id]);
+  await db.query("select public.supply_external_stage_v1($1,'OFF-2','New Locksmith','Fès','Serrurerie','0698765432','https://example.test/2','{}')",[b.batch_id]);
+  await db.query('select public.supply_external_analyze_batch_v1($1)',[b.batch_id]);
+  const rows=await db.query('select * from public.supply_external_inbox_v1($1,20)',[b.batch_id]);
+  assert.equal(rows.rows.find(x=>x.external_key==='OFF-1').decision,'EXISTING');
+  assert.equal(rows.rows.find(x=>x.external_key==='OFF-2').decision,'NEW_CANDIDATE');
+  const before=Number((await db.query('select count(*) n from public.artisans')).rows[0].n);
+  const p=(await db.query('select public.supply_external_promote_v1($1) x',[rows.rows.find(x=>x.external_key==='OFF-2').candidate_id])).rows[0].x;
+  assert.equal(p.state,'PROMOTION_READY');
+  assert.equal(Number((await db.query('select count(*) n from public.artisans')).rows[0].n),before);
  });
 });
