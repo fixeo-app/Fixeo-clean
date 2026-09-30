@@ -2,7 +2,7 @@ name: Supply Engine certification
 
 on:
   push:
-    branches: [feat/supply-engine-agent-foundation, feat/supply-b8-b10-recruitment-agent-v1, feat/national-supply-b11-b13, fix/supply-control-resilient-loading, fix/supply-agents-rpc-bigint, feat/supply-national-command-polish, feat/supply-command-ux-final-polish, feat/supply-learning-readiness-b14-b17, feat/supply-learning-daily-scheduler, feat/supply-external-discovery-dedup-v1, feat/supply-external-secure-ingestion, feat/supply-qualified-promotion-gate, feat/supply-admin-file-import-v1, feat/supply-admin-xlsx-import-v1, fix/supply-import-idempotence-cta]
+    branches: [feat/supply-engine-agent-foundation, feat/supply-b8-b10-recruitment-agent-v1, feat/national-supply-b11-b13, fix/supply-control-resilient-loading, fix/supply-agents-rpc-bigint, feat/supply-national-command-polish, feat/supply-command-ux-final-polish, feat/supply-learning-readiness-b14-b17, feat/supply-learning-daily-scheduler, feat/supply-external-discovery-dedup-v1, feat/supply-external-secure-ingestion, feat/supply-qualified-promotion-gate, feat/supply-admin-file-import-v1, feat/supply-admin-xlsx-import-v1, fix/supply-import-idempotence-cta, feat/supply-promote-qualified-artisans-v1]
     paths:
       - 'supabase/migrations/*supply_b*'
       - 'api/supply-agent-fn/**'
@@ -62,3 +62,9 @@ jobs:
           SUPPLY_TEST_DATABASE_URL: postgresql://postgres:synthetic-ci-only@127.0.0.1:5432/supply_engine
 
 # external-dedup-v1 deterministic retry
+
+# canonical artisan schema retry
+
+# portable promotion fields retry
+
+# minimal canonical insert retry
