@@ -129,6 +129,10 @@
       "use": "@vercel/node"
     },
     {
+      "src": "api/supply-agent-fn/index.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "api/control-fn/index.js",
       "use": "@vercel/node"
     }
@@ -223,6 +227,10 @@
     {
       "src": "^/api/client-context$",
       "dest": "/api/client-context-fn/index.js"
+    },
+    {
+      "src": "^/api/supply-agent$",
+      "dest": "/api/supply-agent-fn/index.js"
     },
     {
       "src": "^/(plombier|electricien|serrurier|climatisation)-([a-z][a-z-]*)\\.html$",
