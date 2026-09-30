@@ -1,0 +1,301 @@
+'use strict';
+
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+
+const ROOT=path.resolve(__dirname,'../..');
+const migrations=[
+  'supabase/migrations/20260930162500_supply_b1_lifecycle.sql',
+  'supabase/migrations/20260930163000_supply_b2_intelligence.sql',
+  'supabase/migrations/20260930163500_supply_b3_crm_queue.sql',
+  'supabase/migrations/20260930164000_supply_b4_activation.sql',
+  'supabase/migrations/20260930164500_supply_b5_agents_cost.sql',
+  'supabase/migrations/20260930165000_supply_b6_channels.sql',
+  'supabase/migrations/20260930165500_supply_b7_control_reads.sql'
+].map(p=>fs.readFileSync(path.join(ROOT,p),'utf8'));
+
+const adminHtml=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
+const adminSupply=fs.readFileSync(path.join(ROOT,'js/admin-supply-engine.js'),'utf8');
+const adminControl=fs.readFileSync(path.join(ROOT,'js/admin-control-os-clean.js'),'utf8');
+const api=require('../../api/supply-agent-fn/index.js');
+
+function id(n){return '00000000-0000-4000-8000-'+String(n).padStart(12,'0');}
+async function setActor(db,userId,role='authenticated'){
+  await db.query("select set_config('request.jwt.claim.sub',$1,false),set_config('request.jwt.claim.role',$2,false)",[userId||'',role]);
+}
+
+async function withDb(t,fn){
+  const url=process.env.SUPPLY_TEST_DATABASE_URL;
+  if(!url){t.skip('SUPPLY_TEST_DATABASE_URL absent');return;}
+  const {Client}=require('pg');
+  const db=new Client({connectionString:url});
+  await db.connect();
+  try{await fn(db);}finally{await db.end();}
+}
+
+async function baseline(db){
+  await db.query(String.raw`
+    DROP VIEW IF EXISTS public.supply_coverage_v1 CASCADE;
+    DROP VIEW IF EXISTS public.supply_artisan_projection_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_inbound_links_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_channel_outbox_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_agent_action_log_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_ai_usage_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_agent_runs_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_agents_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_runtime_config_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_work_queue_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_recruitment_attempts_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_campaigns_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_lifecycle_events_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_contact_preferences_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_artisan_state_v1 CASCADE;
+    DROP SCHEMA IF EXISTS fixeo_private CASCADE;
+    DROP SCHEMA IF EXISTS auth CASCADE;
+    DROP SCHEMA IF EXISTS extensions CASCADE;
+    DROP TABLE IF EXISTS public.whatsapp_inbound_messages CASCADE;
+    DROP TABLE IF EXISTS public.missions CASCADE;
+    DROP TABLE IF EXISTS public.service_requests CASCADE;
+    DROP TABLE IF EXISTS public.claim_requests CASCADE;
+    DROP TABLE IF EXISTS public.artisan_service_cities CASCADE;
+    DROP TABLE IF EXISTS public.artisan_service_categories CASCADE;
+    DROP TABLE IF EXISTS public.artisans CASCADE;
+    DROP TABLE IF EXISTS public.users CASCADE;
+
+    CREATE SCHEMA auth;
+    CREATE SCHEMA fixeo_private;
+    CREATE SCHEMA extensions;
+    DO $role$ BEGIN CREATE ROLE anon NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $role$;
+    DO $role$ BEGIN CREATE ROLE authenticated NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $role$;
+    DO $role$ BEGIN CREATE ROLE service_role NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $role$;
+    CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA extensions;
+
+    CREATE TABLE public.users(
+      id uuid PRIMARY KEY,role text NOT NULL,full_name text DEFAULT '',email text,phone text
+    );
+    CREATE TABLE public.artisans(
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      legacy_id text UNIQUE,
+      full_name text NOT NULL DEFAULT '',
+      name text,
+      city text,
+      service_category text NOT NULL DEFAULT '',
+      source text DEFAULT 'admin',
+      phone_public text,
+      phone text,
+      claimable boolean DEFAULT true,
+      claimed boolean NOT NULL DEFAULT false,
+      claim_status text NOT NULL DEFAULT 'unclaimed',
+      owner_user_id uuid REFERENCES public.users(id),
+      onboarding_completed boolean NOT NULL DEFAULT false,
+      verified boolean NOT NULL DEFAULT false,
+      is_verified boolean DEFAULT false,
+      availability text NOT NULL DEFAULT 'available',
+      is_public boolean NOT NULL DEFAULT true,
+      data_classification text DEFAULT 'production',
+      updated_at timestamptz NOT NULL DEFAULT now()
+    );
+    CREATE TABLE public.artisan_service_categories(
+      artisan_id uuid NOT NULL REFERENCES public.artisans(id) ON DELETE CASCADE,
+      service_category text NOT NULL,
+      created_at timestamptz NOT NULL DEFAULT now()
+    );
+    CREATE TABLE public.artisan_service_cities(
+      artisan_id uuid NOT NULL REFERENCES public.artisans(id) ON DELETE CASCADE,
+      city text NOT NULL,
+      created_at timestamptz NOT NULL DEFAULT now()
+    );
+    CREATE TABLE public.claim_requests(
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      artisan_id uuid REFERENCES public.artisans(id),
+      artisan_legacy_id text,
+      requester_user_id uuid REFERENCES public.users(id),
+      status text NOT NULL DEFAULT 'pending',
+      created_at timestamptz NOT NULL DEFAULT now()
+    );
+    CREATE TABLE public.service_requests(
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      city text NOT NULL,service_category text NOT NULL,status text NOT NULL DEFAULT 'new',
+      created_at timestamptz DEFAULT now(),data_classification text DEFAULT 'production'
+    );
+    CREATE TABLE public.missions(
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),request_id text NOT NULL,
+      artisan_profile_id uuid REFERENCES public.artisans(id),status text NOT NULL DEFAULT 'pending',
+      created_at timestamptz DEFAULT now()
+    );
+    CREATE TABLE public.whatsapp_inbound_messages(
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),provider_message_id text NOT NULL UNIQUE,
+      from_e164 text NOT NULL,phone_number_id text,message_type text NOT NULL,
+      message_text text,media_id text,caption text,provider_timestamp timestamptz,
+      processing_status text NOT NULL DEFAULT 'RECEIVED',last_error text,
+      created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now()
+    );
+
+    CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $fn$
+      SELECT nullif(current_setting('request.jwt.claim.sub',true),'')::uuid
+    $fn$;
+    CREATE OR REPLACE FUNCTION auth.role() RETURNS text LANGUAGE sql STABLE AS $fn$
+      SELECT coalesce(nullif(current_setting('request.jwt.claim.role',true),''),'authenticated')
+    $fn$;
+    CREATE OR REPLACE FUNCTION fixeo_private._fixeo_is_admin() RETURNS boolean
+    LANGUAGE sql STABLE SECURITY DEFINER SET search_path TO '' AS $fn$
+      SELECT EXISTS(SELECT 1 FROM public.users WHERE id=auth.uid() AND role='admin')
+    $fn$;
+
+    CREATE OR REPLACE FUNCTION public.approve_artisan_claim(uuid) RETURNS jsonb
+      LANGUAGE sql SECURITY DEFINER AS $fn$ SELECT '{}'::jsonb $fn$;
+    CREATE OR REPLACE FUNCTION public.complete_artisan_onboarding() RETURNS jsonb
+      LANGUAGE sql SECURITY DEFINER AS $fn$ SELECT '{}'::jsonb $fn$;
+    CREATE OR REPLACE FUNCTION public.admin_verify_artisan_v1(uuid) RETURNS jsonb
+      LANGUAGE sql SECURITY DEFINER AS $fn$ SELECT '{}'::jsonb $fn$;
+
+    INSERT INTO public.users(id,role,full_name) VALUES
+      ('00000000-0000-4000-8000-000000000001','admin','Admin'),
+      ('00000000-0000-4000-8000-000000000002','client','Owner candidate'),
+      ('00000000-0000-4000-8000-000000000003','client','Other');
+  `);
+  for(const sql of migrations)await db.query(sql);
+}
+
+test('static contract: Control OS exposes Supply and agent API is disabled by default',()=>{
+  assert.match(adminHtml,/data-view="supply"/);
+  assert.match(adminHtml,/id="sec-supply"/);
+  assert.match(adminHtml,/admin-supply-engine\.js\?v=supply7/);
+  assert.match(adminControl,/supply:\[\]/);
+  assert.match(adminControl,/FixeoSupply\?\.refresh/);
+  assert.match(adminHtml,/Budget IA à 0/);
+  assert.match(adminSupply,/supply_admin_dashboard_v1/);
+  assert.equal(api.__test.flag(undefined),false);
+  assert.equal(api.__test.flag('true'),true);
+  assert.equal(api.__test.uuid(id(10)),true);
+  assert.equal(api.__test.uuid('bad'),false);
+});
+
+test('Bloc 1-2: declared availability is not capacity and opt-out removes recruitment candidacy',async t=>{
+  await withDb(t,async db=>{
+    await baseline(db); await setActor(db,id(1));
+    await db.query(`INSERT INTO public.artisans(id,full_name,city,service_category,phone,availability,claimable,claimed)
+      VALUES($1,'A Fes','Fès','Plomberie','0611111111','available',true,false)`,[id(100)]);
+    await db.query(`INSERT INTO public.service_requests(id,city,service_category,status) VALUES($1,'Fès','Plomberie','new')`,[id(200)]);
+    let s=(await db.query('select public.supply_admin_summary_v1() x')).rows[0].x;
+    assert.equal(Number(s.referenced),1);assert.equal(Number(s.declared_available),1);assert.equal(Number(s.operational_capacity_proven),0);
+    let intel=await db.query('select * from public.supply_intelligence_v1(10)');
+    assert.equal(intel.rowCount,1);assert.equal(intel.rows[0].coverage_status,'GAP');assert.ok(Number(intel.rows[0].recruitment_priority)>0);
+    let cand=await db.query('select * from public.supply_recruitment_candidates_v1($1,$2,10)',['Fès','Plomberie']);
+    assert.equal(cand.rowCount,1);assert.equal(cand.rows[0].artisan_id,id(100));
+    let pref=(await db.query('select public.supply_set_contact_preference_v1($1,$2,$3,$4,$5,$6) x',
+      [id(100),'OPTED_OUT','user_request',null,false,id(901)])).rows[0].x;
+    assert.equal(pref.ok,true);
+    cand=await db.query('select * from public.supply_recruitment_candidates_v1($1,$2,10)',['Fès','Plomberie']);
+    assert.equal(cand.rowCount,0);
+    const noImplicitOptIn=(await db.query('select public.supply_set_contact_preference_v1($1,$2,$3,$4,$5,$6) x',
+      [id(100),'ALLOWED','operator',null,false,id(902)])).rows[0].x;
+    assert.equal(noImplicitOptIn.reason,'explicit_opt_in_required');
+  });
+});
+
+test('Bloc 3-4: campaign queue is bounded and activation requires canonical trust plus fresh proof',async t=>{
+  await withDb(t,async db=>{
+    await baseline(db); await setActor(db,id(1));
+    await db.query(`INSERT INTO public.artisans(id,full_name,city,service_category,phone,availability,claimable,claimed)
+      VALUES($1,'B Fes','Fès','Plomberie','0622222222','available',true,false)`,[id(101)]);
+    let camp=(await db.query('select public.supply_create_campaign_v1($1,$2,$3,$4,$5,$6,$7,$8) x',
+      ['Pilot Fes','Fès','Plomberie','MANUAL',5,2,48,100])).rows[0].x;
+    assert.equal(camp.ok,true);const cid=camp.campaign_id;
+    await db.query('select public.supply_set_campaign_status_v1($1,$2,$3)',[cid,'ACTIVE',false]);
+    let enq=(await db.query('select public.supply_enqueue_campaign_v1($1,10) x',[cid])).rows[0].x;
+    assert.equal(Number(enq.enqueued),1);
+    let queue=await db.query('select * from public.supply_admin_queue_v1(20)');
+    assert.equal(queue.rowCount,1);assert.equal(queue.rows[0].status,'QUEUED');
+    let plan=(await db.query('select public.supply_activation_plan_v1($1) x',[id(101)])).rows[0].x;
+    assert.match(plan.claim_path,/rejoindre-fixeo\.html/);
+    let bad=(await db.query('select public.supply_confirm_activation_v1($1,$2,$3,$4,$5) x',
+      [id(101),'operator_assertion',{},new Date(),id(903)])).rows[0].x;
+    assert.equal(bad.reason,'activation_prerequisites_missing');
+    await db.query(`UPDATE public.artisans SET claimed=true,claim_status='approved',owner_user_id=$2,onboarding_completed=true,verified=true WHERE id=$1`,[id(101),id(2)]);
+    let ok=(await db.query('select public.supply_confirm_activation_v1($1,$2,$3,$4,$5) x',
+      [id(101),'operator_assertion',{source:'test'},new Date(),id(904)])).rows[0].x;
+    assert.equal(ok.ok,true);
+    const proj=(await db.query('select lifecycle_stage,operational_capacity_proven from public.supply_artisan_projection_v1 where artisan_id=$1',[id(101)])).rows[0];
+    assert.equal(proj.lifecycle_stage,'ACTIVATED');assert.equal(proj.operational_capacity_proven,true);
+  });
+});
+
+test('Bloc 5: agent leases are exclusive and AI cost is hard-gated',async t=>{
+  await withDb(t,async db=>{
+    await baseline(db); await setActor(db,id(1));
+    await db.query(`INSERT INTO public.artisans(id,full_name,city,service_category,phone,availability,claimable,claimed)
+      VALUES($1,'C Fes','Fès','Électricité','0633333333','available',true,false)`,[id(102)]);
+    let camp=(await db.query('select public.supply_create_campaign_v1($1,$2,$3,$4,$5,$6,$7,$8) x',
+      ['Agent Pilot','Fès','Électricité','MANUAL',10,3,48,100])).rows[0].x;const cid=camp.campaign_id;
+    await db.query('select public.supply_set_campaign_status_v1($1,$2,$3)',[cid,'ACTIVE',false]);
+    await db.query('select public.supply_enqueue_campaign_v1($1,10)',[cid]);
+    let agent=(await db.query('select public.supply_admin_register_agent_v1($1,$2,$3,$4,$5,$6) x',
+      ['Recruiter 1','RECRUITER','v1',JSON.stringify(['contact']),'LOW_COST',100])).rows[0].x;const aid=agent.agent_id;
+    await db.query('select public.supply_admin_set_agent_state_v1($1,$2,$3)',[aid,'ACTIVE',false]);
+    await db.query('select public.supply_admin_set_runtime_v1(true,100,2,1)');
+    await setActor(db,'','service_role');
+    let stopped=(await db.query('select public.supply_agent_begin_run_v1($1,$2) x',[aid,cid])).rows[0].x;
+    assert.equal(stopped.reason,'global_kill_switch');
+    await setActor(db,id(1),'authenticated');
+    await db.query('select public.supply_admin_set_runtime_v1(false,0,2,1)');
+    await setActor(db,'','service_role');
+    let run=(await db.query('select public.supply_agent_begin_run_v1($1,$2) x',[aid,cid])).rows[0].x;assert.equal(run.ok,true);
+    let leased=await db.query('select * from public.supply_lease_work_v1($1,1,300)',[aid]);assert.equal(leased.rowCount,1);
+    let leased2=await db.query('select * from public.supply_lease_work_v1($1,1,300)',[aid]);assert.equal(leased2.rowCount,0);
+    const task=leased.rows[0];
+    let blocked=(await db.query('select public.supply_agent_record_ai_usage_v1($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) x',
+      [aid,run.run_id,task.id,'classify','LOW_COST','model-x',10,5,0,1,100,null,'ok',id(910)])).rows[0].x;
+    assert.equal(blocked.reason,'ai_budget_disabled');
+    await setActor(db,id(1),'authenticated');await db.query('select public.supply_admin_set_runtime_v1(false,100,2,1)');
+    await setActor(db,'','service_role');
+    let usage=(await db.query('select public.supply_agent_record_ai_usage_v1($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) x',
+      [aid,run.run_id,task.id,'classify','LOW_COST','model-x',10,5,0,1,100,null,'ok',id(911)])).rows[0].x;
+    assert.equal(usage.ok,true);
+  });
+});
+
+test('Bloc 6: channel outbox remains provider-neutral and explicit STOP suppresses outreach',async t=>{
+  await withDb(t,async db=>{
+    await baseline(db); await setActor(db,id(1));
+    await db.query(`INSERT INTO public.artisans(id,full_name,city,service_category,phone,availability,claimable,claimed)
+      VALUES($1,'D Casa','Casablanca','Plomberie','0644444444','available',true,false)`,[id(103)]);
+    let camp=(await db.query('select public.supply_create_campaign_v1($1,$2,$3,$4,$5,$6,$7,$8) x',
+      ['WA Pilot','Casablanca','Plomberie','WHATSAPP',10,3,48,0])).rows[0].x;const cid=camp.campaign_id;
+    await db.query('select public.supply_set_campaign_status_v1($1,$2,$3)',[cid,'ACTIVE',false]);
+    let prep=(await db.query('select public.supply_prepare_channel_message_v1($1,$2,$3,$4,$5,$6,$7,$8,$9) x',
+      [id(103),cid,null,'WHATSAPP','recruitment_v1','RECRUITMENT',{claim:true},new Date(),id(920)])).rows[0].x;
+    assert.equal(prep.ok,true);
+    await db.query('select public.supply_set_campaign_status_v1($1,$2,$3)',[cid,'PAUSED',false]);
+    await setActor(db,'','service_role');
+    let pausedClaim=(await db.query("select public.supply_channel_claim_next_v1('WHATSAPP','worker') x")).rows[0].x;
+    assert.equal(pausedClaim.state,'EMPTY');
+    await setActor(db,id(1),'authenticated');
+    await db.query('select public.supply_set_campaign_status_v1($1,$2,$3)',[cid,'ACTIVE',false]);
+    await setActor(db,'','service_role');
+    let peek=(await db.query("select public.supply_channel_peek_v1('WHATSAPP') x")).rows[0].x;assert.equal(peek.state,'READY');
+    let claim=(await db.query("select public.supply_channel_claim_next_v1('WHATSAPP','worker') x")).rows[0].x;assert.equal(claim.state,'CLAIMED');
+    let sent=(await db.query("select public.supply_channel_finalize_v1($1,'SENT',$2,NULL,0) x",[claim.outbox_id,'wamid.test'])).rows[0].x;assert.equal(sent.ok,true);
+    const inbound=id(930);
+    await db.query(`INSERT INTO public.whatsapp_inbound_messages(id,provider_message_id,from_e164,message_type,message_text)
+      VALUES($1,'wamid.in','212644444444','text','STOP')`,[inbound]);
+    let proc=(await db.query('select public.supply_process_whatsapp_inbound_v1($1) x',[inbound])).rows[0].x;
+    assert.equal(proc.resolution,'SUPPRESSED');
+    const pref=(await db.query('select outreach_status from public.supply_contact_preferences_v1 where artisan_id=$1',[id(103)])).rows[0];
+    assert.equal(pref.outreach_status,'OPTED_OUT');
+  });
+});
+
+test('Bloc 7: dashboard read model exposes economics without inventing capacity',async t=>{
+  await withDb(t,async db=>{
+    await baseline(db); await setActor(db,id(1));
+    await db.query(`INSERT INTO public.artisans(id,full_name,city,service_category,phone,availability,claimable,claimed)
+      VALUES($1,'E Rabat','Rabat','Serrurerie','0655555555','available',true,false)`,[id(104)]);
+    const d=(await db.query('select public.supply_admin_dashboard_v1() x')).rows[0].x;
+    assert.equal(d.ok,true);assert.equal(d.semantics.declared_available_is_capacity,false);
+    assert.equal(Number(d.summary.declared_available),1);assert.equal(Number(d.summary.operational_capacity_proven),0);
+    assert.equal(Number(d.economics.total_cost_minor),0);
+  });
+});
