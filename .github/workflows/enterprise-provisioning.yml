@@ -1,0 +1,55 @@
+name: Enterprise provisioning certification
+
+on:
+  push:
+    branches: [feat/control-os-enterprise-provisioning]
+    paths:
+      - 'supabase/migrations/*enterprise_provisioning*'
+      - 'js/admin-enterprise-provisioning.js'
+      - 'css/admin-enterprise-provisioning.css'
+      - 'js/admin-fixeo-dossier.js'
+      - 'admin.html'
+      - 'tests/enterprise-provisioning/**'
+      - '.github/workflows/enterprise-provisioning.yml'
+  pull_request:
+    paths:
+      - 'supabase/migrations/*enterprise_provisioning*'
+      - 'js/admin-enterprise-provisioning.js'
+      - 'css/admin-enterprise-provisioning.css'
+      - 'js/admin-fixeo-dossier.js'
+      - 'admin.html'
+      - 'tests/enterprise-provisioning/**'
+      - '.github/workflows/enterprise-provisioning.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: synthetic-ci-only
+          POSTGRES_DB: enterprise_provision
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: tests/control-contract
+      - run: node --check js/admin-enterprise-provisioning.js
+      - run: node --test tests/enterprise-provisioning/provisioning.test.cjs
+        env:
+          NODE_PATH: ${{ github.workspace }}/tests/control-contract/node_modules
+          ENTERPRISE_PROVISION_TEST_DATABASE_URL: postgresql://postgres:synthetic-ci-only@127.0.0.1:5432/enterprise_provision
