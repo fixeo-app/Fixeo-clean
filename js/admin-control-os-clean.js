@@ -20,7 +20,7 @@ const ageMinutes=v=>{const t=new Date(v).getTime();return Number.isFinite(t)?Mat
 const ageLabel=v=>{const m=ageMinutes(v);if(m<60)return m+' min';const h=Math.floor(m/60);if(h<24)return h+' h';const d=Math.floor(h/24);return d+' j'};
 const tone=(status,urgency)=>{const u=norm(urgency),s=norm(status);if(u==='now'||u==='urgent')return'danger';if(['new','pending','offered'].includes(s))return'warn';if(['completed','validated','done','accepted'].includes(s))return'good';return''};
 function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
-async function client(){for(let i=0;i<30;i++){const c=window.FixeoSupabaseClient?.client;if(c)return c;await new Promise(r=>setTimeout(r,100))}throw Error('SUPABASE_UNAVAILABLE')}
+async function client(){const w=window.FixeoSupabaseClient;if(!w)throw Error('SUPABASE_UNAVAILABLE');if(typeof w.ready==='function'){const r=await w.ready();if(r&&r.client)return r.client}for(let i=0;i<30;i++){const c=w.client;if(c)return c;await new Promise(r=>setTimeout(r,100))}throw Error('SUPABASE_UNAVAILABLE')}
 async function token(){const c=await client(),r=await c.auth.getSession();return r?.data?.session?.access_token||''}
 async function api(path,payload){const t=await token();if(!t)throw Error('SESSION_REQUIRED');const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify(payload)}),j=await r.json().catch(()=>({}));if(!r.ok||j.ok===false)throw Error(j.detail||j.reason||('HTTP_'+r.status));await load();return j}
 function timeout(p,ms=8000){return Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(Error('TIMEOUT')),ms))])}
