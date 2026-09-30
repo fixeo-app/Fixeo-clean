@@ -84,7 +84,7 @@ IMMUTABLE
 SET search_path TO ''
 AS $fn$
   WITH x AS (
-    SELECT pg_catalog.regexp_replace(pg_catalog.coalesce(p_value,''),'[^0-9]','','g') AS d
+    SELECT pg_catalog.regexp_replace(COALESCE(p_value,''),'[^0-9]','','g') AS d
   )
   SELECT CASE
     WHEN pg_catalog.char_length(d)=10 AND pg_catalog.left(d,1)='0'
@@ -121,7 +121,7 @@ BEGIN
     RAISE EXCEPTION 'FORBIDDEN' USING ERRCODE='42501';
   END IF;
 
-  v_query := pg_catalog.btrim(pg_catalog.coalesce(p_query,''));
+  v_query := pg_catalog.btrim(COALESCE(p_query,''));
   IF pg_catalog.char_length(v_query) < 3 OR pg_catalog.char_length(v_query) > 320 THEN
     RETURN;
   END IF;
@@ -133,14 +133,14 @@ BEGIN
   SELECT u.id,u.full_name,u.email,u.phone,u.role
   FROM public.users u
   WHERE u.id::text=v_query
-     OR pg_catalog.lower(pg_catalog.btrim(pg_catalog.coalesce(u.email,'')))=v_email
+     OR pg_catalog.lower(pg_catalog.btrim(COALESCE(u.email,'')))=v_email
      OR (
        v_phone <> ''
        AND fixeo_private._normalize_enterprise_phone_v1(u.phone)=v_phone
      )
   ORDER BY
     CASE WHEN u.id::text=v_query THEN 0
-         WHEN pg_catalog.lower(pg_catalog.btrim(pg_catalog.coalesce(u.email,'')))=v_email THEN 1
+         WHEN pg_catalog.lower(pg_catalog.btrim(COALESCE(u.email,'')))=v_email THEN 1
          ELSE 2 END,
     u.id
   LIMIT 10;
@@ -239,7 +239,7 @@ BEGIN
     RETURN pg_catalog.jsonb_build_object('ok',false,'reason','invalid_owner_identifier');
   END IF;
 
-  v_expires_at := pg_catalog.coalesce(p_invitation_expires_at,pg_catalog.now()+interval '7 days');
+  v_expires_at := COALESCE(p_invitation_expires_at,pg_catalog.now()+interval '7 days');
   IF v_expires_at <= pg_catalog.now()
      OR v_expires_at > pg_catalog.now()+interval '30 days'
   THEN
@@ -312,7 +312,7 @@ BEGIN
     RETURN pg_catalog.jsonb_build_object('ok',false,'reason','idempotency_key_required');
   END IF;
 
-  v_name := pg_catalog.btrim(pg_catalog.coalesce(p_name,''));
+  v_name := pg_catalog.btrim(COALESCE(p_name,''));
   IF pg_catalog.char_length(v_name) < 1 OR pg_catalog.char_length(v_name) > 200 THEN
     RETURN pg_catalog.jsonb_build_object('ok',false,'reason','name_invalid');
   END IF;
@@ -339,10 +339,10 @@ BEGIN
     extensions.digest(
       pg_catalog.convert_to(
         v_name||'|'||
-        pg_catalog.coalesce(v_legal_name,'')||'|'||
-        pg_catalog.coalesce(p_owner_user_id::text,'')||'|'||
-        pg_catalog.coalesce(v_owner_email,'')||'|'||
-        pg_catalog.coalesce(p_invitation_expires_at::text,''),
+        COALESCE(v_legal_name,'')||'|'||
+        COALESCE(p_owner_user_id::text,'')||'|'||
+        COALESCE(v_owner_email,'')||'|'||
+        COALESCE(p_invitation_expires_at::text,''),
         'UTF8'
       ),
       'sha256'
@@ -379,8 +379,8 @@ BEGIN
     v_enterprise_id,v_actor,p_owner_user_id,v_owner_email,p_invitation_expires_at
   );
 
-  IF pg_catalog.coalesce((v_owner->>'ok')::boolean,false) IS NOT TRUE THEN
-    RAISE EXCEPTION 'OWNER_ASSIGNMENT_FAILED:%',pg_catalog.coalesce(v_owner->>'reason','unknown');
+  IF COALESCE((v_owner->>'ok')::boolean,false) IS NOT TRUE THEN
+    RAISE EXCEPTION 'OWNER_ASSIGNMENT_FAILED:%',COALESCE(v_owner->>'reason','unknown');
   END IF;
 
   IF v_owner->>'owner_state'='invitation_pending' THEN
@@ -500,7 +500,7 @@ BEGIN
     p_enterprise_id,v_actor,p_owner_user_id,p_owner_email,p_invitation_expires_at
   );
 
-  IF pg_catalog.coalesce((v_owner->>'ok')::boolean,false) IS NOT TRUE THEN
+  IF COALESCE((v_owner->>'ok')::boolean,false) IS NOT TRUE THEN
     RETURN v_owner;
   END IF;
 
@@ -617,7 +617,7 @@ BEGIN
       WHEN v_invitation.email_normalized ~ '^[0-9]{12}@fixeo\.ma$' THEN NULL
       ELSE v_invitation.email_normalized
     END,
-    'owner_phone',pg_catalog.coalesce(
+    'owner_phone',COALESCE(
       v_member.phone,
       CASE WHEN v_invitation.email_normalized ~ '^[0-9]{12}@fixeo\.ma$'
         THEN '+'||pg_catalog.split_part(v_invitation.email_normalized,'@',1)
@@ -690,7 +690,7 @@ BEGIN
     RETURN pg_catalog.jsonb_build_object('ok',false,'reason','founder_invitation_not_pending');
   END IF;
 
-  v_expires_at := pg_catalog.coalesce(p_expires_at,pg_catalog.now()+interval '7 days');
+  v_expires_at := COALESCE(p_expires_at,pg_catalog.now()+interval '7 days');
   IF v_expires_at <= pg_catalog.now()
      OR v_expires_at > pg_catalog.now()+interval '30 days'
   THEN
