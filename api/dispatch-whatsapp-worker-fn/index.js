@@ -170,14 +170,18 @@ module.exports = async function handler(req, res) {
     const apiVersion = String(process.env.WHATSAPP_GRAPH_API_VERSION || '').trim();
     const templateName = String(process.env.WHATSAPP_DISPATCH_TEMPLATE_NAME || '').trim();
     const templateLanguage = String(process.env.WHATSAPP_DISPATCH_TEMPLATE_LANGUAGE || '').trim();
+    const cutoverNotBeforeRaw = String(process.env.WHATSAPP_CUTOVER_NOT_BEFORE || '').trim();
+    const cutoverNotBeforeMs = Date.parse(cutoverNotBeforeRaw);
 
     if (!/^\d+$/.test(wabaId) || !/^\d+$/.test(phoneNumberId) || !accessToken ||
-        !/^v\d+\.\d+$/.test(apiVersion) || !templateName || !templateLanguage) {
+        !/^v\d+\.\d+$/.test(apiVersion) || !templateName || !templateLanguage ||
+        !cutoverNotBeforeRaw || !Number.isFinite(cutoverNotBeforeMs)) {
       return json(res, 503, { ok: false, error: 'META_CONFIGURATION_MISSING' });
     }
 
-    const claimedData = await rpc(config, 'dispatch_notification_worker_next_v1', {
-      p_channel: 'WHATSAPP'
+    const claimedData = await rpc(config, 'dispatch_notification_worker_next_v2', {
+      p_channel: 'WHATSAPP',
+      p_not_before: new Date(cutoverNotBeforeMs).toISOString()
     });
     const notification = Array.isArray(claimedData) ? claimedData[0] : claimedData;
 
