@@ -147,10 +147,32 @@ AS $fn$
 DECLARE v_outbox public.supply_channel_outbox_v1;
 BEGIN
   IF auth.role()<>'service_role' THEN RAISE EXCEPTION 'FORBIDDEN' USING ERRCODE='42501'; END IF;
+  IF EXISTS(
+    SELECT 1 FROM public.supply_runtime_config_v1 cfg
+    WHERE cfg.singleton=true AND cfg.global_kill_switch=true
+  ) THEN
+    RETURN jsonb_build_object('ok',true,'state','STOPPED_GLOBAL');
+  END IF;
+
   WITH candidate AS (
     SELECT ob.id
     FROM public.supply_channel_outbox_v1 ob
-    WHERE ob.channel=upper(p_channel) AND ob.status='READY' AND ob.not_before<=now()
+    LEFT JOIN public.supply_campaigns_v1 c ON c.id=ob.campaign_id
+    LEFT JOIN public.supply_contact_preferences_v1 cp ON cp.artisan_id=ob.artisan_id
+    WHERE ob.channel=upper(p_channel)
+      AND ob.status='READY'
+      AND ob.not_before<=now()
+      AND (c.id IS NULL OR (c.status='ACTIVE' AND c.kill_switch=false))
+      AND COALESCE(cp.outreach_status,'ALLOWED') NOT IN('OPTED_OUT','WRONG_NUMBER','BLOCKED')
+      AND NOT (COALESCE(cp.outreach_status,'ALLOWED')='COOLDOWN' AND cp.cooldown_until>now())
+      AND (
+        c.id IS NULL OR (
+          SELECT count(*) FROM public.supply_recruitment_attempts_v1 r
+          WHERE r.campaign_id=c.id
+            AND r.direction='OUTBOUND'
+            AND r.created_at>=date_trunc('day',now())
+        ) < c.daily_contact_limit
+      )
     ORDER BY ob.created_at FOR UPDATE OF ob SKIP LOCKED LIMIT 1
   )
   UPDATE public.supply_channel_outbox_v1 ob SET
