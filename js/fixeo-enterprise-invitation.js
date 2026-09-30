@@ -36,9 +36,6 @@
     }
   }
 
-  if(login)login.addEventListener('click',rememberReturn);
-  if(signup)signup.addEventListener('click',rememberReturn);
-
   async function init(){
     if(!validToken(token)){
       accept.hidden=true; login.hidden=true; if(signup)signup.hidden=true; workspace.hidden=true;
@@ -54,7 +51,7 @@
       if(!session||session.error||!session.data||!session.data.session){
         accept.hidden=true; workspace.hidden=true;
         setAuthActions({loginHidden:false,signupHidden:false,loginLabel:'Se connecter'});
-        show('Connectez-vous avec le numéro WhatsApp correspondant à cette invitation, ou créez votre compte FIXEO. Vous reviendrez ensuite automatiquement ici.');
+        show('Connectez-vous avec le numéro WhatsApp correspondant à cette invitation, ou créez votre compte FIXEO. Après connexion ou création du compte, revenez à ce lien pour accepter l’invitation.');
         return;
       }
       accept.hidden=false; login.hidden=true; if(signup)signup.hidden=true; workspace.hidden=true;
