@@ -1,0 +1,53 @@
+/* FIXEO Supply Engine — Control OS */
+#sec-supply .supply-hero{
+  display:grid;grid-template-columns:1.25fr .75fr;gap:14px;margin-bottom:14px
+}
+#sec-supply .supply-safety{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px
+}
+#sec-supply .supply-safety>div{
+  padding:12px 13px;border:1px solid rgba(255,255,255,.07);border-radius:13px;background:rgba(255,255,255,.025)
+}
+#sec-supply .supply-safety span{display:block;color:rgba(255,255,255,.36);font-size:.55rem;font-weight:900;letter-spacing:.11em}
+#sec-supply .supply-safety b{display:block;margin-top:5px;color:#fff;font-size:.72rem}
+#sec-supply .supply-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+#sec-supply .supply-grid-wide{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}
+#sec-supply .supply-row{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:11px 12px;border:0;border-bottom:1px solid rgba(255,255,255,.055);
+  background:transparent;color:inherit;text-align:left;font:inherit
+}
+#sec-supply button.supply-row{cursor:pointer}
+#sec-supply button.supply-row:hover{background:rgba(255,255,255,.025)}
+#sec-supply .supply-row:last-child{border-bottom:0}
+#sec-supply .supply-row>div:first-child{min-width:0}
+#sec-supply .supply-row b{display:block;color:#fff;font-size:.72rem}
+#sec-supply .supply-row small{display:block;margin-top:3px;color:rgba(255,255,255,.42);font-size:.59rem;line-height:1.4}
+#sec-supply .supply-row-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+#sec-supply .supply-row-actions .btn{padding:7px 9px;font-size:.58rem}
+#sec-supply .supply-context{color:rgba(255,255,255,.42);font-size:.62rem}
+#sec-supply .supply-campaign-form{
+  display:grid;grid-template-columns:1.4fr 1fr 1fr .8fr .7fr .7fr .8fr auto;gap:8px;align-items:end
+}
+#sec-supply .supply-campaign-form label{display:grid;gap:5px;color:rgba(255,255,255,.45);font-size:.56rem;font-weight:750}
+#sec-supply .supply-campaign-form .control{min-width:0}
+#sec-supply .supply-cost-note{
+  margin-top:9px;padding:10px 12px;border:1px solid rgba(52,211,153,.12);border-radius:12px;
+  background:rgba(16,185,129,.025);color:rgba(255,255,255,.46);font-size:.6rem;line-height:1.5
+}
+#sec-supply #supply-state{margin-top:8px;color:rgba(255,255,255,.45);font-size:.62rem}
+#sec-supply #supply-state[data-tone="success"]{color:#86efac}
+#sec-supply #supply-state[data-tone="error"]{color:#fca5a5}
+@media(max-width:1100px){
+  #sec-supply .supply-campaign-form{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:850px){
+  #sec-supply .supply-hero,#sec-supply .supply-grid,#sec-supply .supply-grid-wide{grid-template-columns:1fr}
+  #sec-supply .supply-campaign-form{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  #sec-supply .supply-safety{grid-template-columns:1fr}
+  #sec-supply .supply-campaign-form{grid-template-columns:1fr}
+  #sec-supply .supply-row{align-items:flex-start;flex-direction:column}
+  #sec-supply .supply-row-actions{justify-content:flex-start}
+}
