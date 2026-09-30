@@ -63,6 +63,7 @@
     missions:      [],   /* missions rows */
     artisanMap:    {},   /* id → artisan row */
     notifications: [],   /* notifications rows for current user */
+    notifChannel:  null,
     section:       'dashboard',
     requestMode:   'standard',
     requestDraft:  { service:'', city:'', description:'', phone:'' },
@@ -1790,6 +1791,30 @@ if (!result.ok) {
     } catch(e) { return []; }
   }
 
+  async function _subscribeCanonicalNotifications(uid) {
+    if (!uid || _state.notifChannel) return;
+    try {
+      var sb = await window.FixeoSupabase.getClient();
+      if (!sb || typeof sb.channel !== 'function') return;
+      var channel = sb.channel('client-os-notifications-' + String(uid).slice(0,8));
+      channel.on('postgres_changes', {
+        event:'*',
+        schema:'public',
+        table:'notifications',
+        filter:'recipient_user_id=eq.' + uid
+      }, async function () {
+        _state.notifications = await _fetchNotifications(uid);
+        _renderNotificationBell();
+        _renderNotificationsSection();
+        if (_state.section === 'dashboard') _renderDashboard();
+      });
+      channel.subscribe();
+      _state.notifChannel = channel;
+    } catch (e) {
+      console.warn('[fxv2] notification realtime unavailable:', e && e.message);
+    }
+  }
+
   async function _doMarkNotifRead(notifId) {
     if (!notifId) return;
     try {
@@ -1951,6 +1976,7 @@ if (!result.ok) {
 
       /* Render */
       _render();
+      _subscribeCanonicalNotifications(session.user.id);
 
     } catch (e) {
       console.warn('[fxv2] init error:', e && e.message);
