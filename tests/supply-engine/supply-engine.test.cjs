@@ -150,7 +150,7 @@ test('static contract: Control OS exposes Supply and agent API is disabled by de
   assert.match(adminHtml,/admin-supply-engine\.js\?v=supply7/);
   assert.match(adminControl,/supply:\[\]/);
   assert.match(adminControl,/FixeoSupply\?\.refresh/);
-  assert.match(adminSupply,/Budget IA à 0/);
+  assert.match(adminHtml,/Budget IA à 0/);
   assert.match(adminSupply,/supply_admin_dashboard_v1/);
   assert.equal(api.__test.flag(undefined),false);
   assert.equal(api.__test.flag('true'),true);
