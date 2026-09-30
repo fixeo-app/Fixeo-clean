@@ -2,7 +2,7 @@ name: Supply Engine certification
 
 on:
   push:
-    branches: [feat/supply-engine-agent-foundation]
+    branches: [feat/supply-engine-agent-foundation, feat/supply-b8-b10-recruitment-agent-v1]
     paths:
       - 'supabase/migrations/*supply_b*'
       - 'api/supply-agent-fn/**'
