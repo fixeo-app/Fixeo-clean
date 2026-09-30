@@ -16,6 +16,17 @@
   var ENTERPRISE_ROLES = Object.freeze(['owner', 'admin', 'operations_manager', 'site_manager', 'reporter', 'viewer']);
   var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   var DEFAULT_WAIT_MS = 15000;
+  var INVITATION_RETURN_KEY = 'fixeo_enterprise_invitation_return';
+
+  function consumeInvitationReturn() {
+    if (!root || !root.sessionStorage) return '';
+    var raw = '';
+    try { raw = String(root.sessionStorage.getItem(INVITATION_RETURN_KEY) || ''); }
+    catch (_) { return ''; }
+    try { root.sessionStorage.removeItem(INVITATION_RETURN_KEY); } catch (_) {}
+    if (!/^\/enterprise-invitation\.html\?token=[0-9a-f]{64}$/i.test(raw)) return '';
+    return raw;
+  }
 
   function legacyDestination(role) {
     return LEGACY[String(role || '').toLowerCase()] || 'index.html';
@@ -72,6 +83,11 @@
   }
 
   async function redirectAfterLogin(canonicalRole) {
+    var invitationReturn = consumeInvitationReturn();
+    if (invitationReturn) {
+      if (root.location) root.location.href = invitationReturn;
+      return { mode: 'invitation_return', destination: invitationReturn, reason: 'ENTERPRISE_INVITATION_PENDING' };
+    }
     var client = root.FixeoSupabaseClient && root.FixeoSupabaseClient.client;
     var result = await resolvePostLogin(client, canonicalRole);
     if (root.location) root.location.href = result.destination;
@@ -83,6 +99,7 @@
     validEnterpriseSpace: validEnterpriseSpace,
     selectorRequired: selectorRequired,
     resolvePostLogin: resolvePostLogin,
-    redirectAfterLogin: redirectAfterLogin
+    redirectAfterLogin: redirectAfterLogin,
+    consumeInvitationReturn: consumeInvitationReturn
   });
 });

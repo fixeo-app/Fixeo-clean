@@ -274,7 +274,7 @@
       if(b.id==='enterprise-provision-open'){e.preventDefault();openCreate();return;}
       if(b.dataset.enterpriseProvisionManage){e.preventDefault();openManage(b.dataset.enterpriseProvisionManage);return;}
       if(b.hasAttribute('data-ep-close')||b.hasAttribute('data-ep-done')){closeDialog();return;}
-      if(b.dataset.epMode){ui.draft.owner_mode=b.dataset.epMode;ui.draft.selected=null;renderStep2();return;}
+      if(b.dataset.epMode){ui.draft.owner_mode=b.dataset.epMode;ui.draft.selected=null;renderStep2();setState('','');return;}
       if(b.hasAttribute('data-ep-clear-owner')){ui.draft.selected=null;renderStep2();return;}
       if(b.hasAttribute('data-ep-back')){ui.step=Math.max(1,ui.step-1);ui.step===1?renderStep1():renderStep2();return;}
       if(b.hasAttribute('data-ep-next-owner')){
