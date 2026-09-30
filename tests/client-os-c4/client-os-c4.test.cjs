@@ -11,7 +11,8 @@ const html = read('dashboard-client.html');
 const js = read('js/fixeo-dashboard-v2.js');
 const css = read('css/fixeo-dashboard-v2.css');
 const vercel = JSON.parse(read('vercel.json'));
-const clientContext = require('../../api/client-context-fn/index.js')._test;
+const clientContextHandler = require('../../api/client-context-fn/index.js');
+const clientContext = clientContextHandler._test;
 
 test('C4.0 legacy empty marketing block and V4 modal entry are detached', () => {
   assert.equal(js.includes('_renderPremiumEmpty'), false);
@@ -114,4 +115,82 @@ test('cachebusters point at the C4 final assets', () => {
   assert.match(html, /fixeo-dashboard-v2\.css\?v=client-os-c4-final/);
   assert.match(html, /fixeo-dashboard-v2\.js\?v=client-os-c4-final/);
   assert.match(css, /CLIENT OS C4/);
+});
+
+
+function apiRes(){
+  return {
+    code:null,body:null,headers:{},
+    setHeader(k,v){this.headers[k.toLowerCase()]=v;},
+    status(v){this.code=v;return this;},
+    json(v){this.body=v;return this;}
+  };
+}
+function fetchResponse(status,data){
+  return {ok:status>=200&&status<300,status,text:async()=>JSON.stringify(data)};
+}
+
+test('client context handler enforces canonical client role and returns evidence-backed decision', async () => {
+  const oldEnv={...process.env}, oldFetch=global.fetch;
+  process.env.SUPABASE_URL='https://abcdefghijklmnopqrst.supabase.co';
+  process.env.SUPABASE_ANON_KEY='sb_publishable_testkey';
+  delete process.env.FIXEO_STAGING_PROJECT_REF;
+  delete process.env.VERCEL_ENV;
+  const uid='11111111-1111-1111-1111-111111111111';
+  global.fetch=async url=>{
+    const u=String(url);
+    if(u.endsWith('/auth/v1/user')) return fetchResponse(200,{id:uid});
+    if(u.includes('/rest/v1/users?')) return fetchResponse(200,[{role:'client'}]);
+    if(u.includes('/rest/v1/service_requests?')) return fetchResponse(200,[{id:'22222222-2222-2222-2222-222222222222',service_category:'plomberie',city:'Fès',status:'completed',created_at:'2026-09-30T10:00:00Z',updated_at:'2026-09-30T11:00:00Z'}]);
+    if(u.includes('/rest/v1/missions?')) return fetchResponse(200,[]);
+    if(u.includes('/rest/v1/notifications?')) return fetchResponse(200,[]);
+    if(u.includes('/rest/v1/quotes?')) return fetchResponse(200,[]);
+    throw new Error('unexpected fetch '+u);
+  };
+  try{
+    const res=apiRes();
+    await clientContextHandler({
+      method:'POST',
+      headers:{authorization:'Bearer '+('a'.repeat(32)),origin:'https://www.fixeo.ma','sec-fetch-site':'same-origin'},
+      body:{}
+    },res);
+    assert.equal(res.code,200);
+    assert.equal(res.body.ok,true);
+    assert.equal(res.body.source,'client_context_v1');
+    assert.equal(res.body.decision.kind,'confirm_completed');
+    assert.equal(res.body.evidence.active_requests,1);
+  }finally{
+    global.fetch=oldFetch;
+    for(const k of Object.keys(process.env)) if(!(k in oldEnv)) delete process.env[k];
+    Object.assign(process.env,oldEnv);
+  }
+});
+
+test('client context handler fails closed for a non-client canonical role', async () => {
+  const oldEnv={...process.env}, oldFetch=global.fetch;
+  process.env.SUPABASE_URL='https://abcdefghijklmnopqrst.supabase.co';
+  process.env.SUPABASE_ANON_KEY='sb_publishable_testkey';
+  delete process.env.FIXEO_STAGING_PROJECT_REF;
+  delete process.env.VERCEL_ENV;
+  const uid='11111111-1111-1111-1111-111111111111';
+  global.fetch=async url=>{
+    const u=String(url);
+    if(u.endsWith('/auth/v1/user')) return fetchResponse(200,{id:uid});
+    if(u.includes('/rest/v1/users?')) return fetchResponse(200,[{role:'artisan'}]);
+    throw new Error('unexpected fetch '+u);
+  };
+  try{
+    const res=apiRes();
+    await clientContextHandler({
+      method:'POST',
+      headers:{authorization:'Bearer '+('a'.repeat(32)),origin:'https://www.fixeo.ma','sec-fetch-site':'same-origin'},
+      body:{}
+    },res);
+    assert.equal(res.code,403);
+    assert.equal(res.body.error,'CLIENT_ROLE_REQUIRED');
+  }finally{
+    global.fetch=oldFetch;
+    for(const k of Object.keys(process.env)) if(!(k in oldEnv)) delete process.env[k];
+    Object.assign(process.env,oldEnv);
+  }
 });
