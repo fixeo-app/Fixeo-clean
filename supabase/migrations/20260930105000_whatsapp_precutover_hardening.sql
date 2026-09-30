@@ -75,7 +75,7 @@ RETURNS TABLE(
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
-AS $
+AS $next_v2$
 DECLARE
   v_channel text;
 BEGIN
@@ -133,7 +133,7 @@ BEGIN
   FROM claimed AS c
   JOIN public.artisans AS a ON a.id = c.artisan_id;
 END;
-$;
+$next_v2$;
 
 REVOKE ALL ON FUNCTION public.dispatch_notification_worker_next_v2(text,timestamptz)
   FROM PUBLIC, anon, authenticated;
