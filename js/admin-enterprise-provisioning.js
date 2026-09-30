@@ -185,7 +185,7 @@
     var missing=s.owner_state==='missing';
     renderShell(
       '<div class="ep-review"><div><span>Entreprise</span><b>'+esc(s.enterprise_name||s.enterprise_id)+'</b><small>'+esc(s.enterprise_status||'')+'</small></div>'+
-      '<div><span>Propriétaire</span><b>'+esc(missing?'À définir':pending?'Invitation en attente':s.owner_state||'—')+'</b><small>'+esc(s.owner_name||s.owner_email||s.invitation_email||'')+'</small></div></div>'+
+      '<div><span>Propriétaire</span><b>'+esc(missing?'À définir':pending?'Invitation en attente':s.owner_state||'—')+'</b><small>'+esc(s.owner_name||s.owner_phone||s.invitation_phone||s.owner_email||s.invitation_email||'')+'</small></div></div>'+
       (pending?'<div class="ep-actions"><button class="btn" data-ep-rotate>Générer un nouveau lien</button><button class="btn danger" data-ep-revoke>Révoquer l’invitation</button></div>':'')+
       (missing?'<div class="ep-truth"><b>Propriétaire manquant</b><span>Utilisez “Assigner un propriétaire” pour rattacher un utilisateur existant ou émettre une nouvelle invitation fondatrice.</span></div><button class="btn primary" data-ep-assign>Assigner un propriétaire</button>':'')+
       '<div class="ep-actions split"><button class="btn" data-ep-open-dossier>Ouvrir le dossier</button><button class="btn primary" data-ep-done>Fermer</button></div>',
@@ -214,6 +214,7 @@
       owner_user_not_found:'Utilisateur FIXEO introuvable.',
       OWNER_PHONE_REQUIRED:'Numéro WhatsApp propriétaire invalide.',
       invalid_owner_email:'Identifiant propriétaire invalide.',
+      invalid_owner_identifier:'Numéro WhatsApp propriétaire invalide.',
       founding_owner_already_set:'Un propriétaire fondateur est déjà défini.',
       idempotency_conflict:'La clé d’idempotence a été réutilisée avec un autre contenu.',
       provisioning_conflict:'Conflit de provisioning : relisez le registre avant de recommencer.',
