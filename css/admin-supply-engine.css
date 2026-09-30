@@ -60,3 +60,13 @@
 #sec-supply .supply-national-cell small{font-size:.61rem}
 #sec-supply .supply-national-cell .pill{min-width:64px;text-align:center}
 #sec-supply #supply-state[data-tone="warn"]{color:#fde68a}
+
+#sec-supply .supply-cell-flags{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+#sec-supply .supply-advanced{margin-top:14px;padding:0;overflow:hidden}
+#sec-supply .supply-advanced>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 17px}
+#sec-supply .supply-advanced>summary::-webkit-details-marker{display:none}
+#sec-supply .supply-advanced>summary b{display:block;color:#fff;font-size:.82rem;margin-top:3px}
+#sec-supply .supply-advanced>summary small{display:block;color:rgba(255,255,255,.42);font-size:.6rem;margin-top:3px}
+#sec-supply .supply-advanced[open]>summary{border-bottom:1px solid rgba(255,255,255,.06)}
+#sec-supply .supply-advanced-body{padding:15px 17px}
+@media(max-width:560px){#sec-supply .supply-cell-flags{justify-content:flex-start}}
