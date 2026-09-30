@@ -54,6 +54,14 @@
       '<div data-b8><span>PIPELINE RECRUTEMENT</span><b>'+num(funnel&&funnel.contacted)+' contactés · '+num(funnel&&funnel.engaged)+' engagés · '+num(funnel&&funnel.activated)+' activés</b></div>'+
       '<div data-b8><span>BASE EXISTANTE ACTIVABLE</span><b>'+num(ready&&ready.existing_base_ready)+' profils · Agent '+(ready&&ready.active_agents?'ACTIF':'EN PAUSE')+'</b></div>');
   }
+  function renderNational(n){
+    var safety=q('supply-safety');if(!safety)return;
+    safety.querySelectorAll('[data-national]').forEach(function(x){x.remove();});
+    var r=n&&n.runtime||{},cells=n&&n.cells||[];
+    safety.insertAdjacentHTML('beforeend',
+      '<div data-national><span>MOTEUR NATIONAL</span><b>'+(r.orchestration_enabled?'ACTIF':'PRÊT · OFF')+' · '+(r.dry_run?'DRY-RUN':'LIVE')+'</b></div>'+
+      '<div data-national><span>WHATSAPP PROVIDER</span><b>'+(n&&n.provider_status||'OFF')+' · '+num(cells.length)+' cellules prioritaires</b></div>');
+  }
   function renderCoverage(rows){
     var e=q('supply-gaps');if(!e)return;
     e.innerHTML=(rows||[]).length?(rows||[]).map(function(x){
@@ -124,7 +132,8 @@
         rpc('supply_admin_agents_v1'),
         rpc('supply_admin_events_v1',{p_limit:40}),
         rpc('supply_admin_funnel_v1'),
-        rpc('supply_admin_recruitment_readiness_v1')
+        rpc('supply_admin_recruitment_readiness_v1'),
+        rpc('supply_admin_national_dashboard_v1')
       ]);
       state.last=data;
       renderDashboard(data[0]||{});
@@ -135,6 +144,7 @@
       renderAgents(data[5]||[]);
       renderEvents(data[6]||[]);
       renderReadiness(data[7]||{},data[8]||{});
+      renderNational(data[9]||{});
       status('Supply Engine · données canoniques · '+new Date().toLocaleTimeString('fr-FR'),'success');
     }catch(e){status('Supply Engine indisponible · '+(e&&e.message?e.message:'erreur'),'error');}
     finally{state.loading=false;}
