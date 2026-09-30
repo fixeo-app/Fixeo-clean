@@ -113,6 +113,15 @@ module.exports=async function handler(req,res){
           p_idempotency_key:input.idempotency_key
         });
         break;
+      case 'national_plan':
+        result=await rpc(supabaseUrl,serviceKey,'supply_national_plan_v1',{});
+        break;
+      case 'national_orchestrate':
+        result=await rpc(supabaseUrl,serviceKey,'supply_national_orchestrate_v1',{});
+        break;
+      case 'national_provider_gate':
+        result=await rpc(supabaseUrl,serviceKey,'supply_national_provider_gate_v1',{});
+        break;
       case 'channel_peek':
         result=await rpc(supabaseUrl,serviceKey,'supply_channel_peek_v1',{p_channel:String(input.channel||'WHATSAPP')});
         break;
