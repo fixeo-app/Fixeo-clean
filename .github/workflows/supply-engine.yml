@@ -64,3 +64,5 @@ jobs:
 # external-dedup-v1 deterministic retry
 
 # canonical artisan schema retry
+
+# portable promotion fields retry
