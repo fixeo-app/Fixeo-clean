@@ -113,6 +113,9 @@ module.exports=async function handler(req,res){
           p_idempotency_key:input.idempotency_key
         });
         break;
+      case 'learning_cycle':
+        result=await rpc(supabaseUrl,serviceKey,'supply_learning_cycle_v1',{});
+        break;
       case 'national_plan':
         result=await rpc(supabaseUrl,serviceKey,'supply_national_plan_v1',{});
         break;
