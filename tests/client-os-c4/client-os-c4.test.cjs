@@ -87,6 +87,7 @@ test('C4.5 navigation exposes decisions, requests, interventions and canonical d
   assert.match(html, />Dossier & preuves</);
   assert.match(html, />Contacts & échanges</);
   assert.match(html, /data-section="decision" aria-label="Décisions"/);
+  assert.match(js, /_renderC39DecisionPage\(_state\.requests \|\| \[\]\)/);
 });
 
 test('C4.5 support number is centralized for later 0663 cutover', () => {
