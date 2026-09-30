@@ -2,7 +2,7 @@ name: Supply Engine certification
 
 on:
   push:
-    branches: [feat/supply-engine-agent-foundation, feat/supply-b8-b10-recruitment-agent-v1, feat/national-supply-b11-b13, fix/supply-control-resilient-loading, fix/supply-agents-rpc-bigint, feat/supply-national-command-polish, feat/supply-command-ux-final-polish, feat/supply-learning-readiness-b14-b17, feat/supply-learning-daily-scheduler]
+    branches: [feat/supply-engine-agent-foundation, feat/supply-b8-b10-recruitment-agent-v1, feat/national-supply-b11-b13, fix/supply-control-resilient-loading, fix/supply-agents-rpc-bigint, feat/supply-national-command-polish, feat/supply-command-ux-final-polish, feat/supply-learning-readiness-b14-b17, feat/supply-learning-daily-scheduler, feat/supply-external-discovery-dedup-v1]
     paths:
       - 'supabase/migrations/*supply_b*'
       - 'api/supply-agent-fn/**'
@@ -60,3 +60,5 @@ jobs:
         env:
           NODE_PATH: ${{ github.workspace }}/tests/control-contract/node_modules
           SUPPLY_TEST_DATABASE_URL: postgresql://postgres:synthetic-ci-only@127.0.0.1:5432/supply_engine
+
+# external-dedup-v1 deterministic retry
