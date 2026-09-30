@@ -183,11 +183,11 @@ BEGIN
       )) reasons
     FROM dims d
   ), filtered AS (
-    SELECT * FROM scored
+    SELECT s.* FROM scored s
     WHERE (NULLIF(btrim(COALESCE(p_service,'')),'') IS NULL OR
-           lower(btrim(service_category))=lower(btrim(p_service)) OR secondary_service)
+           lower(btrim(s.service_category))=lower(btrim(p_service)) OR s.secondary_service)
       AND (NULLIF(btrim(COALESCE(p_city,'')),'') IS NULL OR
-           lower(btrim(city))=lower(btrim(p_city)) OR secondary_city)
+           lower(btrim(s.city))=lower(btrim(p_city)) OR s.secondary_city)
   )
   SELECT row_number() OVER(ORDER BY f.score DESC,f.artisan_id),
     f.artisan_id,f.artisan_name,f.city,f.service_category,f.contact_phone,
