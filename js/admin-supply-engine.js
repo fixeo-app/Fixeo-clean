@@ -222,11 +222,15 @@
   async function importExternal(form){
     var file=q('supply-import-file').files[0],st=q('supply-import-state');if(!file)throw new Error('FILE_REQUIRED');
     if(file.size>2*1024*1024)throw new Error('FILE_TOO_LARGE');var rows=/\.xlsx$/i.test(file.name)?await xlsxRows(file):csvRows(await file.text());if(rows.length>500)throw new Error('BATCH_TOO_LARGE');
-    st.textContent='Analyse de '+rows.length+' ligne(s)…';
-    var fd=new FormData(form),out=await rpc('supply_external_ingest_v1',{p_source:String(fd.get('source')||'GENSPARK_QUALIFICATION'),p_source_ref:file.name,p_city:String(fd.get('city')||'Fès'),p_rows:rows});
-    if(!out||out.ok!==true)throw new Error(out&&out.reason||'INGEST_FAILED');
-    var bench=await rpc('supply_external_benchmark_v1',{p_batch:out.batch_id});
-    st.textContent='Lot analysé · '+Number(bench.total||0)+' profils · '+Number(bench.agreement||0)+' accord(s) · '+Number(bench.divergence||0)+' divergence(s). Aucun artisan créé.';
+    var submit=form.querySelector('button[type="submit"]'),original=submit?submit.textContent:'Analyser dans le staging';
+    if(submit){submit.disabled=true;submit.setAttribute('aria-busy','true');submit.textContent='Analyse en cours…';}
+    st.textContent='Analyse de '+rows.length+' ligne(s)… Ne recliquez pas.';
+    try{
+      var fd=new FormData(form),out=await rpc('supply_external_ingest_v1',{p_source:String(fd.get('source')||'GENSPARK_QUALIFICATION'),p_source_ref:file.name,p_city:String(fd.get('city')||'Fès'),p_rows:rows});
+      if(!out||out.ok!==true)throw new Error(out&&out.reason||'INGEST_FAILED');
+      var bench=await rpc('supply_external_benchmark_v1',{p_batch:out.batch_id});
+      st.textContent=(out.reused?'Lot déjà analysé · résultat réutilisé · ':'Analyse terminée · ')+Number(bench.total||0)+' profils · '+Number(bench.agreement||0)+' accord(s) · '+Number(bench.divergence||0)+' divergence(s). Aucun artisan créé.';
+    }finally{if(submit){submit.disabled=false;submit.removeAttribute('aria-busy');submit.textContent=original;}}
   }
   document.addEventListener('submit',function(e){
     if(e.target&&e.target.id==='supply-campaign-form'){e.preventDefault();createCampaign(e.target);return;}if(e.target&&e.target.id==='supply-import-form'){e.preventDefault();importExternal(e.target).catch(function(err){var st=q('supply-import-state');if(st)st.textContent='Import refusé · '+err.message;});}
