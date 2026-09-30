@@ -15,7 +15,8 @@ const migrations=[
   'supabase/migrations/20260930165000_supply_b6_channels.sql',
   'supabase/migrations/20260930165500_supply_b7_control_reads.sql',
   'supabase/migrations/20260930173000_supply_b8_b10_recruitment_agent_v1.sql',
-  'supabase/migrations/20260930180000_supply_b11_b13_national_engine.sql'
+  'supabase/migrations/20260930180000_supply_b11_b13_national_engine.sql',
+  'supabase/migrations/20260930201500_supply_agents_rpc_bigint_fix.sql'
 ].map(p=>fs.readFileSync(path.join(ROOT,p),'utf8'));
 
 const adminHtml=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
@@ -353,5 +354,15 @@ test('Blocs 11-13: national engine ranks city-trade cells and provider stays clo
   assert.equal(gate.allowed,false);
   const off=(await db.query('select public.supply_national_orchestrate_v1() x')).rows[0].x;
   assert.equal(off.reason,'national_orchestration_disabled');
+ });
+});
+
+
+test('Supply agents admin RPC preserves bigint return contract',async t=>{
+ await withDb(t,async db=>{
+  await baseline(db); await setActor(db,id(1));
+  await db.query("insert into public.supply_agents_v1(name,agent_type,version,status,capabilities,model_tier,daily_ai_budget_minor,kill_switch,created_by) values('Contract Agent','RECRUITER','v1','PAUSED','[]'::jsonb,'RULES_ONLY',0,false,$1)",[id(1)]);
+  const rows=await db.query('select * from public.supply_admin_agents_v1()');
+  assert.equal(rows.rowCount,1);assert.equal(rows.rows[0].name,'Contract Agent');assert.equal(Number(rows.rows[0].spend_today),0);assert.equal(Number(rows.rows[0].runs_today),0);
  });
 });
