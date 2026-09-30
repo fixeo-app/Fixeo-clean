@@ -23,9 +23,6 @@
   function rememberReturn(){
     try{ sessionStorage.setItem('fixeo_enterprise_invitation_return',returnPath()); }catch(_){}
   }
-  function rememberReturn(){
-    try{ sessionStorage.setItem('fixeo_enterprise_invitation_return',returnPath()); }catch(_){}
-  }
   function setAuthActions(options){
     options=options||{};
     if(login){
