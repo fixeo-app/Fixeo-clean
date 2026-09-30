@@ -88,7 +88,7 @@ AS $fn$
   )
   SELECT CASE
     WHEN pg_catalog.char_length(d)=10 AND pg_catalog.left(d,1)='0'
-      THEN '212'||pg_catalog.substring(d FROM 2)
+      THEN '212'||pg_catalog.substr(d,2)
     ELSE d
   END
   FROM x;
