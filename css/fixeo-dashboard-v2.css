@@ -1843,3 +1843,11 @@ a.fxv2-header-logo:hover { opacity: .8; }
   .fxv2-c40-compose-foot{display:grid;grid-template-columns:1fr 1fr}
   .fxv2-c40-truth{text-align:left}
 }
+
+.fxv2-c40-rafi-proof{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;margin-top:4px;padding:10px 12px;border:1px solid rgba(52,211,153,.15);border-radius:12px;background:rgba(16,185,129,.035)}
+.fxv2-c40-rafi-proof span{color:rgba(52,211,153,.68);font-size:.52rem;font-weight:900;letter-spacing:.11em}
+.fxv2-c40-rafi-proof strong{color:rgba(255,255,255,.82);font-size:.64rem;font-weight:700}
+.fxv2-c40-rafi-proof small{color:rgba(255,255,255,.38);font-size:.56rem}
+.fxv2-c40-rafi-proof[data-state="fallback"]{border-color:rgba(251,191,36,.15);background:rgba(251,191,36,.025)}
+.fxv2-c40-rafi-proof[data-state="fallback"] span{color:rgba(251,191,36,.65)}
+@media(max-width:620px){.fxv2-c40-rafi-proof{grid-template-columns:1fr}.fxv2-c40-rafi-proof small{text-align:left}}
