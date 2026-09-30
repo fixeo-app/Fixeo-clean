@@ -20,6 +20,9 @@
     params.set('mode',mode);
     return 'auth.html?'+params.toString()+(mode==='signup'?'#signup':'');
   }
+  function rememberReturn(){
+    try{ sessionStorage.setItem('fixeo_enterprise_invitation_return',returnPath()); }catch(_){}
+  }
   function setAuthActions(options){
     options=options||{};
     if(login){
@@ -32,6 +35,9 @@
       signup.hidden=options.signupHidden===true;
     }
   }
+
+  if(login)login.addEventListener('click',rememberReturn);
+  if(signup)signup.addEventListener('click',rememberReturn);
 
   async function init(){
     if(!validToken(token)){
