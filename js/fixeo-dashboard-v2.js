@@ -1399,6 +1399,7 @@
     _renderSidebarProfile();
     _renderNotificationBell();
     _renderDashboard();
+    _renderC39DecisionPage(_state.requests || []);
     _renderRequests();
     _renderMissions();
     _renderHistory();
