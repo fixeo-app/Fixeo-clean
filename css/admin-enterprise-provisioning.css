@@ -24,3 +24,5 @@
 .ep-copy{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:3px}.ep-note{margin:7px 0 0;color:rgba(255,255,255,.35);font-size:.58rem}.ep-loading,.ep-empty{padding:22px;text-align:center;color:rgba(255,255,255,.46);font-size:.68rem}
 @media(max-width:700px){#enterprise-provision-dialog{width:calc(100vw - 16px);max-height:94vh;border-radius:18px}.ep-dialog-shell{max-height:94vh}#enterprise-provision-body{padding:15px}.ep-review{grid-template-columns:1fr}.ep-actions.split{display:grid;grid-template-columns:1fr 1fr}.ep-actions.split>*{width:100%}.ep-copy{grid-template-columns:1fr}.ep-owner-selected{grid-template-columns:1fr}.ep-owner-selected button{grid-column:1;grid-row:auto}.ep-truth{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){#enterprise-provision-dialog *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+#enterprise-provision-dialog button:disabled{opacity:.38!important;filter:saturate(.35);cursor:not-allowed!important;box-shadow:none!important;transform:none!important}
