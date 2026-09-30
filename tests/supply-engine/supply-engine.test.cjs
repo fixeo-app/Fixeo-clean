@@ -175,7 +175,7 @@ async function baseline(db){
 test('static contract: Control OS exposes Supply and agent API is disabled by default',()=>{
   assert.match(adminHtml,/data-view="supply"/);
   assert.match(adminHtml,/id="sec-supply"/);
-  assert.match(adminHtml,/admin-supply-engine\.js\?v=supply14/);
+  assert.match(adminHtml,/admin-supply-engine\.js\?v=supply15/);
   assert.match(adminControl,/supply:\[\]/);
   assert.match(adminControl,/FixeoSupply\?\.refresh/);
   assert.match(adminHtml,/Budget IA à 0/);
@@ -188,6 +188,8 @@ test('static contract: Control OS exposes Supply and agent API is disabled by de
   assert.match(adminSupply,/POOL EXISTANT/);
   assert.match(adminSupply,/Cycle réussi/);
   assert.match(adminHtml,/class="card supply-advanced"/);
+  assert.match(adminHtml,/\.xlsx/);
+  assert.match(adminSupply,/xlsxRows/);
   assert.equal(api.__test.flag(undefined),false);
   assert.equal(api.__test.flag('true'),true);
   assert.equal(api.__test.uuid(id(10)),true);
