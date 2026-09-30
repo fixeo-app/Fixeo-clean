@@ -37,6 +37,10 @@ on:
       - 'scripts/generate-authority-blog-v3.js'
       - 'scripts/generate-profile-sitemap.js'
       - 'api/artisan-profile-fn/**'
+      - 'api/dispatch-whatsapp-worker-fn/**'
+      - 'api/whatsapp-webhook-fn/**'
+      - 'tests/whatsapp-precutover/**'
+      - 'supabase/migrations/*whatsapp_precutover*'
       - '.github/workflows/control-contract.yml'
 permissions:
   contents: read
