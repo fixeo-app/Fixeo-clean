@@ -6,6 +6,7 @@ on:
     paths:
       - 'supabase/migrations/*enterprise_provisioning*'
       - 'js/admin-enterprise-provisioning.js'
+      - 'js/fixeo-enterprise-invitation.js'
       - 'css/admin-enterprise-provisioning.css'
       - 'js/admin-fixeo-dossier.js'
       - 'admin.html'
@@ -15,6 +16,7 @@ on:
     paths:
       - 'supabase/migrations/*enterprise_provisioning*'
       - 'js/admin-enterprise-provisioning.js'
+      - 'js/fixeo-enterprise-invitation.js'
       - 'css/admin-enterprise-provisioning.css'
       - 'js/admin-fixeo-dossier.js'
       - 'admin.html'
