@@ -29,6 +29,7 @@ Live send additionally requires:
 - `WHATSAPP_GRAPH_API_VERSION`
 - `WHATSAPP_DISPATCH_TEMPLATE_NAME`
 - `WHATSAPP_DISPATCH_TEMPLATE_LANGUAGE`
+- `WHATSAPP_CUTOVER_NOT_BEFORE` — required ISO timestamp; live claims ignore older queued rows.
 
 Webhook processing additionally requires:
 - `WHATSAPP_APP_SECRET`
@@ -39,10 +40,12 @@ Existing `WHATSAPP_WEBHOOK_VERIFY_TOKEN` remains the GET callback-verification s
 
 ## Outbound contract
 
+Production currently contains **3 historical PENDING WhatsApp outbox rows** from the pre-activation period. They must never be emitted when Cloud API is enabled.
+
 When disabled, the worker never claims queue rows and never calls Meta.
 
 When enabled after cutover:
-1. claim one WHATSAPP notification through `dispatch_notification_worker_next_v1`;
+1. claim one WHATSAPP notification through `dispatch_notification_worker_next_v2`, bounded by `WHATSAPP_CUTOVER_NOT_BEFORE`;
 2. normalize the Moroccan recipient;
 3. send an approved template through the configured Graph API version and Phone Number ID;
 4. finalize `SENT` only after a provider message ID is returned;
