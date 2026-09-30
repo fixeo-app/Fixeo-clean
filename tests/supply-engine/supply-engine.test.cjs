@@ -39,6 +39,9 @@ async function withDb(t,fn){
 
 async function baseline(db){
   await db.query(String.raw`
+    DROP TABLE IF EXISTS public.supply_national_cycles_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_national_cell_policy_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_national_runtime_v1 CASCADE;
     DROP VIEW IF EXISTS public.supply_coverage_v1 CASCADE;
     DROP VIEW IF EXISTS public.supply_artisan_projection_v1 CASCADE;
     DROP TABLE IF EXISTS public.supply_inbound_links_v1 CASCADE;
