@@ -221,7 +221,7 @@ BEGIN
   SELECT * INTO m FROM public.whatsapp_inbound_messages WHERE id=p_inbound_id FOR UPDATE;
   IF NOT FOUND THEN RETURN jsonb_build_object('ok',false,'reason','inbound_not_found'); END IF;
 
-  SELECT count(*),min(p.artisan_id) INTO matches,aid
+  SELECT count(*),min(p.artisan_id::text)::uuid INTO matches,aid
   FROM public.supply_artisan_projection_v1 p
   WHERE fixeo_private.supply_normalize_e164_v1(p.contact_phone)=fixeo_private.supply_normalize_e164_v1(m.from_e164);
 
