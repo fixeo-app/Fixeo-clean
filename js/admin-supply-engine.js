@@ -123,29 +123,33 @@
     if(state.loading&&!force)return;
     state.loading=true;status('Lecture du Supply Engine…','');
     try{
-      var data=await Promise.all([
-        rpc('supply_admin_dashboard_v1'),
-        rpc('supply_intelligence_v1',{p_limit:25}),
-        rpc('supply_recruitment_candidates_v1',{p_city:state.selectedCity||null,p_service:state.selectedService||null,p_limit:30}),
-        rpc('supply_admin_queue_v1',{p_limit:80}),
-        rpc('supply_admin_campaigns_v1'),
-        rpc('supply_admin_agents_v1'),
-        rpc('supply_admin_events_v1',{p_limit:40}),
-        rpc('supply_admin_funnel_v1'),
-        rpc('supply_admin_recruitment_readiness_v1'),
-        rpc('supply_admin_national_dashboard_v1')
-      ]);
+      var jobs=[
+        ['dashboard',rpc('supply_admin_dashboard_v1')],
+        ['coverage',rpc('supply_intelligence_v1',{p_limit:25})],
+        ['candidates',rpc('supply_recruitment_candidates_v1',{p_city:state.selectedCity||null,p_service:state.selectedService||null,p_limit:30})],
+        ['queue',rpc('supply_admin_queue_v1',{p_limit:80})],
+        ['campaigns',rpc('supply_admin_campaigns_v1')],
+        ['agents',rpc('supply_admin_agents_v1')],
+        ['events',rpc('supply_admin_events_v1',{p_limit:40})],
+        ['funnel',rpc('supply_admin_funnel_v1')],
+        ['readiness',rpc('supply_admin_recruitment_readiness_v1')],
+        ['national',rpc('supply_admin_national_dashboard_v1')]
+      ];
+      var settled=await Promise.allSettled(jobs.map(function(x){return x[1];}));
+      var data={},failed=[];
+      settled.forEach(function(r,i){if(r.status==='fulfilled')data[jobs[i][0]]=r.value;else failed.push(jobs[i][0]);});
       state.last=data;
-      renderDashboard(data[0]||{});
-      renderCoverage(data[1]||[]);
-      renderCandidates(data[2]||[]);
-      renderQueue(data[3]||[]);
-      renderCampaigns(data[4]||[]);
-      renderAgents(data[5]||[]);
-      renderEvents(data[6]||[]);
-      renderReadiness(data[7]||{},data[8]||{});
-      renderNational(data[9]||{});
-      status('Supply Engine · données canoniques · '+new Date().toLocaleTimeString('fr-FR'),'success');
+      if(data.dashboard)renderDashboard(data.dashboard);
+      if(data.coverage)renderCoverage(data.coverage);
+      if(data.candidates)renderCandidates(data.candidates);
+      if(data.queue)renderQueue(data.queue);
+      if(data.campaigns)renderCampaigns(data.campaigns);
+      if(data.agents)renderAgents(data.agents);
+      if(data.events)renderEvents(data.events);
+      if(data.funnel||data.readiness)renderReadiness(data.funnel||{},data.readiness||{});
+      if(data.national)renderNational(data.national);
+      if(failed.length)status('Supply Engine · mode dégradé · '+failed.join(', ')+' indisponible(s)','warn');
+      else status('Supply Engine · données canoniques · '+new Date().toLocaleTimeString('fr-FR'),'success');
     }catch(e){status('Supply Engine indisponible · '+(e&&e.message?e.message:'erreur'),'error');}
     finally{state.loading=false;}
   }
