@@ -204,8 +204,25 @@
     }catch(e){status('Action campagne refusée · '+e.message,'error');}
   }
 
+  function csvRows(text){
+    var lines=String(text||'').replace(/^\uFEFF/,'').split(/\r?\n/).filter(function(x){return x.trim();});if(lines.length<2)throw new Error('CSV_EMPTY');
+    function split(line){var out=[],cur='',q=false;for(var i=0;i<line.length;i++){var ch=line[i];if(ch==='"'){if(q&&line[i+1]==='"'){cur+='"';i++;}else q=!q;}else if(ch===','&&!q){out.push(cur);cur='';}else cur+=ch;}out.push(cur);return out;}
+    var h=split(lines[0]).map(function(x){return x.trim();}),idx={};h.forEach(function(x,i){idx[x.toUpperCase()]=i;});
+    function v(a,n){var i=idx[n];return i==null?'':String(a[i]||'').trim();}
+    return lines.slice(1).map(function(line){var a=split(line),status=v(a,'STATUT_FINAL')||v(a,'STATUS')||v(a,'DECISION_FIXEO');
+      return {external_key:v(a,'ID'),display_name:v(a,'NOM_PROFESSIONNEL')||v(a,'NOM_COMMERCIAL'),city:v(a,'VILLE'),service_category:v(a,'METIER_PRINCIPAL'),phone:v(a,'TELEPHONE')||v(a,'TELEPHONE_NORMALISE'),source_url:v(a,'URL_SOURCE_1'),human_decision:status,human_priority:v(a,'PRIORITE_OUTREACH')};}).filter(function(x){return x.external_key;});
+  }
+  async function importExternal(form){
+    var file=q('supply-import-file').files[0],st=q('supply-import-state');if(!file)throw new Error('FILE_REQUIRED');
+    if(file.size>2*1024*1024)throw new Error('FILE_TOO_LARGE');var rows=csvRows(await file.text());if(rows.length>500)throw new Error('BATCH_TOO_LARGE');
+    st.textContent='Analyse de '+rows.length+' ligne(s)…';
+    var fd=new FormData(form),out=await rpc('supply_external_ingest_v1',{p_source:String(fd.get('source')||'GENSPARK_QUALIFICATION'),p_source_ref:file.name,p_city:String(fd.get('city')||'Fès'),p_rows:rows});
+    if(!out||out.ok!==true)throw new Error(out&&out.reason||'INGEST_FAILED');
+    var bench=await rpc('supply_external_benchmark_v1',{p_batch:out.batch_id});
+    st.textContent='Lot analysé · '+Number(bench.total||0)+' profils · '+Number(bench.agreement||0)+' accord(s) · '+Number(bench.divergence||0)+' divergence(s). Aucun artisan créé.';
+  }
   document.addEventListener('submit',function(e){
-    if(e.target&&e.target.id==='supply-campaign-form'){e.preventDefault();createCampaign(e.target);}
+    if(e.target&&e.target.id==='supply-campaign-form'){e.preventDefault();createCampaign(e.target);return;}if(e.target&&e.target.id==='supply-import-form'){e.preventDefault();importExternal(e.target).catch(function(err){var st=q('supply-import-state');if(st)st.textContent='Import refusé · '+err.message;});}
   });
   document.addEventListener('click',function(e){
     var b=e.target.closest('button');if(!b)return;
