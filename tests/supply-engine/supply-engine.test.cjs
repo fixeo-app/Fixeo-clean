@@ -20,7 +20,8 @@ const migrations=[
   'supabase/migrations/20260930204500_supply_b14_b17_learning_readiness.sql',
   'supabase/migrations/20260930211500_supply_external_discovery_dedup_v1.sql',
   'supabase/migrations/20260930213000_supply_external_secure_ingestion.sql',
-  'supabase/migrations/20260930221000_supply_import_idempotence_cta.sql'
+  'supabase/migrations/20260930221000_supply_import_idempotence_cta.sql',
+  'supabase/migrations/20260930222500_supply_promote_qualified_artisans_v1.sql'
 ].map(p=>fs.readFileSync(path.join(ROOT,p),'utf8'));
 
 const adminHtml=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
@@ -439,3 +440,6 @@ test('Secure external ingestion benchmarks human decisions without canonical wri
 
 
 test('External import is idempotent for identical content',async t=>{await withDb(t,async db=>{await baseline(db);await setActor(db,id(1));const rows=[{external_key:'IDEMP-1',display_name:'One',city:'Fès',service_category:'Plomberie',phone:'0610101010',human_decision:'QUALIFIED'}];const a=(await db.query("select public.supply_external_ingest_v1('GENSPARK','same.xlsx','Fès',$1::jsonb) x",[JSON.stringify(rows)])).rows[0].x;const b=(await db.query("select public.supply_external_ingest_v1('GENSPARK','same.xlsx','Fès',$1::jsonb) x",[JSON.stringify(rows)])).rows[0].x;assert.equal(a.batch_id,b.batch_id);assert.equal(b.reused,true);assert.equal(Number((await db.query('select count(*) n from public.supply_external_batches_v1')).rows[0].n),1);});});
+
+
+test('Qualified batch promotion creates only gated unclaimed inactive artisans and is idempotent',async t=>{await withDb(t,async db=>{await baseline(db);await setActor(db,id(1));const rows=[{external_key:'PROMO-1',display_name:'Qualified One',city:'Fès',service_category:'Plomberie',phone:'0612121212',human_decision:'QUALIFIED'},{external_key:'PROMO-2',display_name:'Review One',city:'Fès',service_category:'Plomberie',phone:'0613131313',human_decision:'VERIFY_MANUALLY'}];const x=(await db.query("select public.supply_external_ingest_v1('GENSPARK','promo.xlsx','Fès',$1::jsonb) x",[JSON.stringify(rows)])).rows[0].x;const a=(await db.query('select public.supply_external_promote_batch_v1($1) x',[x.batch_id])).rows[0].x;assert.equal(Number(a.promoted),1);const art=(await db.query("select * from public.artisans where source='genspark_qualification'")).rows;assert.equal(art.length,1);assert.equal(art[0].claimed,false);assert.equal(art[0].verified,false);assert.equal(art[0].availability,'unavailable');const b=(await db.query('select public.supply_external_promote_batch_v1($1) x',[x.batch_id])).rows[0].x;assert.equal(Number(b.promoted),0);});});
