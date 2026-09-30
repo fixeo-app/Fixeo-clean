@@ -55,12 +55,26 @@
       '<div data-b8><span>BASE EXISTANTE ACTIVABLE</span><b>'+num(ready&&ready.existing_base_ready)+' profils · Agent '+(ready&&ready.active_agents?'ACTIF':'EN PAUSE')+'</b></div>');
   }
   function renderNational(n){
-    var safety=q('supply-safety');if(!safety)return;
-    safety.querySelectorAll('[data-national]').forEach(function(x){x.remove();});
-    var r=n&&n.runtime||{},cells=n&&n.cells||[];
-    safety.insertAdjacentHTML('beforeend',
-      '<div data-national><span>MOTEUR NATIONAL</span><b>'+(r.orchestration_enabled?'ACTIF':'PRÊT · OFF')+' · '+(r.dry_run?'DRY-RUN':'LIVE')+'</b></div>'+
-      '<div data-national><span>WHATSAPP PROVIDER</span><b>'+(n&&n.provider_status||'OFF')+' · '+num(cells.length)+' cellules prioritaires</b></div>');
+    var safety=q('supply-safety'),r=n&&n.runtime||{},cells=n&&n.cells||[],cy=n&&n.last_cycle||null;
+    if(safety){
+      safety.querySelectorAll('[data-national]').forEach(function(x){x.remove();});
+      safety.insertAdjacentHTML('beforeend',
+        '<div data-national><span>MOTEUR NATIONAL</span><b>'+(r.orchestration_enabled?'ACTIF':'PRÊT · OFF')+' · '+(r.dry_run?'DRY-RUN':'LIVE')+'</b></div>'+
+        '<div data-national><span>WHATSAPP PROVIDER</span><b>'+(n&&n.provider_status||'OFF')+' · '+num(cells.length)+' cellules prioritaires</b></div>');
+    }
+    var mode=q('s-national-mode');if(mode){mode.textContent=(r.orchestration_enabled?'ACTIF':'OFF')+' · '+(r.dry_run?'DRY-RUN':'LIVE')+' · PROVIDER '+(n&&n.provider_status||'OFF');mode.className='pill '+(r.dry_run?'info':'warn');}
+    set('s-national-cells',num(cells.length));
+    var planned=cy&&cy.candidates_planned!=null?cy.candidates_planned:cells.reduce(function(a,x){return a+Math.min(Number(x.recruitment_pool||0),Number(r.max_candidates_per_cell||20));},0);
+    set('s-national-candidates',num(planned));
+    set('s-national-zero',num(cells.filter(function(x){return Number(x.recruitment_pool||0)===0;}).length));
+    set('s-national-cycle',cy?(cy.status+' · '+(cy.mode||'')):'Pas encore');
+    var e=q('supply-national-plan');if(!e)return;
+    e.innerHTML=cells.length?cells.map(function(x,i){
+      var zero=Number(x.recruitment_pool||0)===0,target=Math.min(Number(x.recruitment_pool||0),Number(r.max_candidates_per_cell||20));
+      return '<button class="supply-row supply-national-cell" data-supply-city="'+esc(x.city)+'" data-supply-service="'+esc(x.service_category)+'">'+
+        '<div><b>#'+(i+1)+' · '+esc(x.city)+' · '+esc(x.service_category)+'</b><small>'+num(x.demand_open)+' demande(s) ouverte(s) · capacité prouvée '+num(x.operational_capacity_proven)+' · '+(zero?'AUCUN CANDIDAT':'cible '+num(target)+' artisan(s)')+'</small></div>'+
+        '<span class="pill '+(zero?'danger':x.recruitment_priority>=500?'warn':'info')+'">P'+num(x.recruitment_priority)+'</span></button>';
+    }).join(''):'<div class="empty">Aucune cellule nationale prioritaire.</div>';
   }
   function renderCoverage(rows){
     var e=q('supply-gaps');if(!e)return;
