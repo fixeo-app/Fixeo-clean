@@ -1861,9 +1861,12 @@ if (!result.ok) {
         filter:'recipient_user_id=eq.' + uid
       }, async function () {
         _state.notifications = await _fetchNotifications(uid);
+        _state.rafiContext = await _fetchRafiContext();
         _renderNotificationBell();
         _renderNotificationsSection();
-        if (_state.section === 'dashboard') _renderDashboard();
+        _renderDashboard();
+        _renderC39DecisionPage(_state.requests || []);
+        _renderC31Rafi();
       });
       channel.subscribe();
       _state.notifChannel = channel;
@@ -1881,8 +1884,12 @@ if (!result.ok) {
       _state.notifications = (_state.notifications || []).map(function(n) {
         return n.id === notifId ? Object.assign({}, n, { read: true }) : n;
       });
+      _state.rafiContext = await _fetchRafiContext();
       _renderNotificationBell();
       _renderNotificationsSection();
+      _renderDashboard();
+      _renderC39DecisionPage(_state.requests || []);
+      _renderC31Rafi();
     } catch(e) { /* best-effort */ }
   }
 
