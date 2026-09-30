@@ -233,7 +233,7 @@ test('Bloc 5: agent leases are exclusive and AI cost is hard-gated',async t=>{
     await db.query('select public.supply_set_campaign_status_v1($1,$2,$3)',[cid,'ACTIVE',false]);
     await db.query('select public.supply_enqueue_campaign_v1($1,10)',[cid]);
     let agent=(await db.query('select public.supply_admin_register_agent_v1($1,$2,$3,$4,$5,$6) x',
-      ['Recruiter 1','RECRUITER','v1',['contact'],'LOW_COST',100])).rows[0].x;const aid=agent.agent_id;
+      ['Recruiter 1','RECRUITER','v1',JSON.stringify(['contact']),'LOW_COST',100])).rows[0].x;const aid=agent.agent_id;
     await db.query('select public.supply_admin_set_agent_state_v1($1,$2,$3)',[aid,'ACTIVE',false]);
     await setActor(db,'','service_role');
     let run=(await db.query('select public.supply_agent_begin_run_v1($1,$2) x',[aid,cid])).rows[0].x;assert.equal(run.ok,true);
