@@ -914,10 +914,17 @@ if (!['admin', 'artisan', 'client'].includes(role)) {
   setTimeout(async () => {
     try {
       if (window.FixeoWorkspaceRouter && typeof window.FixeoWorkspaceRouter.redirectAfterLogin === 'function') {
-        await window.FixeoWorkspaceRouter.redirectAfterLogin(role);
-        return;
+        const routed = await window.FixeoWorkspaceRouter.redirectAfterLogin(role);
+        if (routed && routed.destination) return;
       }
-    } catch (_) {}
+    } catch (routeError) {
+      console.warn('[FIXEO Auth] workspace routing failed:', routeError && routeError.message ? routeError.message : 'unknown');
+    }
+    // Multi-space safety: never silently collapse an Enterprise-capable login to the global Client dashboard.
+    if (_gatewaySpace === 'enterprise') {
+      window.location.href = 'workspace-select.html';
+      return;
+    }
     window.FixeoAuth.redirectByRole(role);
   }, 1200);
 }
