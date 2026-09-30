@@ -24,6 +24,7 @@ const adminHtml=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
 const adminSupply=fs.readFileSync(path.join(ROOT,'js/admin-supply-engine.js'),'utf8');
 const adminControl=fs.readFileSync(path.join(ROOT,'js/admin-control-os-clean.js'),'utf8');
 const api=require('../../api/supply-agent-fn/index.js');
+const learningApi=require('../../api/supply-learning-fn/index.js');
 
 function id(n){return '00000000-0000-4000-8000-'+String(n).padStart(12,'0');}
 async function setActor(db,userId,role='authenticated'){
@@ -187,6 +188,9 @@ test('static contract: Control OS exposes Supply and agent API is disabled by de
   assert.equal(api.__test.flag('true'),true);
   assert.equal(api.__test.uuid(id(10)),true);
   assert.equal(api.__test.uuid('bad'),false);
+  assert.equal(learningApi.__test.eq('same','same'),true);
+  assert.match(require('fs').readFileSync(require('path').join(ROOT,'vercel.json'),'utf8'),/\/api\/supply-learning/);
+  assert.match(require('fs').readFileSync(require('path').join(ROOT,'vercel.json'),'utf8'),/15 5 \* \* \*/);
 });
 
 test('Bloc 1-2: declared availability is not capacity and opt-out removes recruitment candidacy',async t=>{
