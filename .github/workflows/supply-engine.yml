@@ -2,7 +2,7 @@ name: Supply Engine certification
 
 on:
   push:
-    branches: [feat/supply-engine-agent-foundation, feat/supply-b8-b10-recruitment-agent-v1, feat/national-supply-b11-b13, fix/supply-control-resilient-loading, fix/supply-agents-rpc-bigint, feat/supply-national-command-polish, feat/supply-command-ux-final-polish, feat/supply-learning-readiness-b14-b17]
+    branches: [feat/supply-engine-agent-foundation, feat/supply-b8-b10-recruitment-agent-v1, feat/national-supply-b11-b13, fix/supply-control-resilient-loading, fix/supply-agents-rpc-bigint, feat/supply-national-command-polish, feat/supply-command-ux-final-polish, feat/supply-learning-readiness-b14-b17, feat/supply-learning-daily-scheduler]
     paths:
       - 'supabase/migrations/*supply_b*'
       - 'api/supply-agent-fn/**'
@@ -53,6 +53,7 @@ jobs:
       - run: npm ci --ignore-scripts --no-audit --no-fund
         working-directory: tests/control-contract
       - run: node --check api/supply-agent-fn/index.js
+          node --check api/supply-learning-fn/index.js
       - run: node --check js/admin-supply-engine.js
       - run: node -e "JSON.parse(require('fs').readFileSync('vercel.json','utf8'))"
       - run: node --test --test-concurrency=1 tests/supply-engine/supply-engine.test.cjs
