@@ -24,11 +24,11 @@
       var session=await ready.client.auth.getSession();
       if(!session||session.error||!session.data||!session.data.session){
         accept.hidden=true; login.hidden=false; workspace.hidden=true;
-        show('Connectez-vous avec l’adresse email qui a reçu cette invitation, puis ouvrez de nouveau ce lien.');
+        show('Connectez-vous avec le numéro WhatsApp ou l’adresse correspondant à cette invitation, puis ouvrez de nouveau ce lien.');
         return;
       }
       accept.hidden=false; login.hidden=true; workspace.hidden=true;
-      show('Votre session est prête. L’adresse email du compte sera vérifiée côté serveur au moment de l’acceptation.');
+      show('Votre session est prête. L’identité du compte sera vérifiée côté serveur au moment de l’acceptation.');
       accept.addEventListener('click',async function(){
         accept.disabled=true;
         try{
@@ -40,7 +40,7 @@
           show('Invitation acceptée. Votre accès Enterprise est maintenant actif.');
         }catch(error){
           var reason=error&&(error.reason||error.message)||'';
-          var text=reason==='invitation_identity_mismatch'?'Cette invitation ne correspond pas à l’adresse email de ce compte.'
+          var text=reason==='invitation_identity_mismatch'?'Cette invitation ne correspond pas à l’identité de ce compte.'
             :reason==='invitation_expired'?'Cette invitation a expiré.'
             :reason==='invitation_not_pending'?'Cette invitation n’est plus en attente.'
             :reason==='membership_conflict'?'Ce compte dispose déjà d’un accès actif ou suspendu à cette entreprise.'
