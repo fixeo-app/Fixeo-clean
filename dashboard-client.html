@@ -17,7 +17,7 @@
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
   <!-- V2 CSS only — no V1 CSS loaded -->
   <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/fixeo-dashboard-v2.css?v=client-os-c4-final">
+  <link rel="stylesheet" href="css/fixeo-dashboard-v2.css?v=client-os-header-master">
   <link rel="stylesheet" href="css/main.css">
   <!-- Supabase client (must be synchronous, before auth guard) -->
   <script src="js/supabase-client.js?v=sc2"></script>
@@ -30,14 +30,29 @@
 <!-- ══════════════════════════════════════════════════════════
      HEADER
 ════════════════════════════════════════════════════════════ -->
-<header class="fxv2-header">
-  <button class="fxv2-hamburger" id="fxv2-hamburger"
-          aria-label="Ouvrir le menu" aria-expanded="false"
-          aria-controls="fxv2-sidebar">
-    <span></span><span></span><span></span>
-  </button>
-  <div class="fxv2-header-brand"><a class="fxv2-header-logo" href="/" aria-label="Retour à l'accueil Fixeo">Fixeo</a><span>CLIENT OS</span></div>
-  <div class="fxv2-header-actions"><button class="fxv2-header-rafi" data-section="rafi" aria-label="Ouvrir RAFI"><span class="fxv2-header-rafi-star" aria-hidden="true">✦</span><b>RAFI</b></button><div id="fxv2-header-notifications"></div></div>
+<header class="fxv2-header fxv2-header-master">
+  <div class="fxv2-header-left">
+    <button class="fxv2-hamburger" id="fxv2-hamburger"
+            aria-label="Ouvrir le menu" aria-expanded="false"
+            aria-controls="fxv2-sidebar">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="fxv2-header-brand" href="/" aria-label="Retour à l'accueil Fixeo">
+      <strong class="fxv2-header-logo">Fixeo</strong>
+      <span>CLIENT OS</span>
+    </a>
+  </div>
+  <div class="fxv2-header-context" aria-hidden="true">
+    <span>ESPACE CLIENT</span>
+    <strong>Votre cockpit FIXEO</strong>
+  </div>
+  <div class="fxv2-header-actions">
+    <button class="fxv2-header-rafi" data-section="rafi" aria-label="Ouvrir RAFI">
+      <span class="fxv2-header-rafi-star" aria-hidden="true">✦</span>
+      <span class="fxv2-header-rafi-copy"><b>RAFI</b><small>Assistant client</small></span>
+    </button>
+    <div id="fxv2-header-notifications"></div>
+  </div>
 </header>
 
 <!-- ══════════════════════════════════════════════════════════
