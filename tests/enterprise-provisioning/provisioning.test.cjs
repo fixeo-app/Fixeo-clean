@@ -262,6 +262,14 @@ test('Block 6 — PostgreSQL integration: exact search, idempotent active-owner 
     assert.equal(inv.status,'pending');
     assert.equal(inv.role,'owner');
     assert.notEqual(inv.token_hash,p2.invitation_token);
+
+    const pendingState=(await client.query(
+      "select public.admin_get_enterprise_owner_state_v1($1) as x",
+      [p2.enterprise_id]
+    )).rows[0].x;
+    assert.equal(pendingState.ok,true);
+    assert.equal(pendingState.owner_state,'invitation_pending');
+    assert.equal(pendingState.invitation_id,p2.invitation_id);
     const ledger=(await client.query("select result::text result from fixeo_private.enterprise_provision_commands_v1 where idempotency_key=$1",[inviteKey])).rows[0].result;
     assert.equal(ledger.includes(p2.invitation_token),false);
 
