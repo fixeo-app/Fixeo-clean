@@ -12,6 +12,7 @@ const migration = read('supabase/migrations/20260930123000_control_os_enterprise
 const ui = read('js/admin-enterprise-provisioning.js');
 const html = read('admin.html');
 const dossier = read('js/admin-fixeo-dossier.js');
+const invitationUi = read('js/fixeo-enterprise-invitation.js');
 const invitationLifecycle = read('supabase/7c15a7-enterprise-account-lifecycle.sql');
 const api = require('../../js/admin-enterprise-provisioning.js');
 
@@ -73,12 +74,16 @@ test('Block 3 — browser module uses secured RPCs only', () => {
   assert.doesNotMatch(ui,/SUPABASE_SERVICE_ROLE|service_role/i);
 });
 
-test('Block 5 — UI validation requires exact identifiers and valid founder email', () => {
+test('Block 5 — UI validation requires exact IDs and phone-first founder identity', () => {
   assert.equal(api._test.validId('11111111-1111-4111-8111-111111111111'),true);
   assert.equal(api._test.validId('bad'),false);
-  assert.equal(api._test.validEmail('owner@example.ma'),true);
-  assert.equal(api._test.validEmail('owner'),false);
+  assert.equal(api._test.normalizePhone('06 12 34 56 78'),'+212612345678');
+  assert.equal(api._test.normalizePhone('+212612345678'),'+212612345678');
+  assert.equal(api._test.normalizePhone('0512345678'),null);
+  assert.equal(api._test.syntheticEmailFromPhone('0612345678'),'212612345678@fixeo.ma');
   assert.equal(api._test.invitationLink('a'.repeat(64)),'https://www.fixeo.ma/enterprise-invitation.html?token='+'a'.repeat(64));
+  assert.match(invitationUi,/numéro WhatsApp ou l’adresse correspondant à cette invitation/);
+  assert.doesNotMatch(invitationUi,/Connectez-vous avec l’adresse email qui a reçu cette invitation/);
 });
 
 test('Block 5 — provisioning SQL includes owner-state guards, audit and secure token rotation/revocation', () => {
@@ -259,15 +264,16 @@ test('Block 6 — PostgreSQL integration: exact search, idempotent active-owner 
     const inviteKey='22222222-2222-4222-8222-222222222222';
     const p2=(await client.query(
       "select public.admin_provision_enterprise_v1($1,$2,$3,$4,$5,$6) as x",
-      ['Nova Hotels',null,null,'direction@nova.test',inviteKey,null]
+      ['Nova Hotels',null,null,'212612345678@fixeo.ma',inviteKey,null]
     )).rows[0].x;
     assert.equal(p2.ok,true);
     assert.equal(p2.owner_state,'invitation_pending');
     assert.match(p2.invitation_token,/^[0-9a-f]{64}$/);
 
-    const inv=(await client.query("select token_hash,status,role from public.enterprise_invitations where id=$1",[p2.invitation_id])).rows[0];
+    const inv=(await client.query("select token_hash,status,role,email_normalized from public.enterprise_invitations where id=$1",[p2.invitation_id])).rows[0];
     assert.equal(inv.status,'pending');
     assert.equal(inv.role,'owner');
+    assert.equal(inv.email_normalized,'212612345678@fixeo.ma');
     assert.notEqual(inv.token_hash,p2.invitation_token);
 
     const pendingState=(await client.query(
@@ -277,6 +283,8 @@ test('Block 6 — PostgreSQL integration: exact search, idempotent active-owner 
     assert.equal(pendingState.ok,true);
     assert.equal(pendingState.owner_state,'invitation_pending');
     assert.equal(pendingState.invitation_id,p2.invitation_id);
+    assert.equal(pendingState.owner_phone,'+212612345678');
+    assert.equal(pendingState.owner_email,null);
     const ledger=(await client.query("select result::text result from fixeo_private.enterprise_provision_commands_v1 where idempotency_key=$1",[inviteKey])).rows[0].result;
     assert.equal(ledger.includes(p2.invitation_token),false);
 
