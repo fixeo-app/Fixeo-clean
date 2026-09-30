@@ -186,8 +186,17 @@ BEGIN
   WHERE id=o.id;
   IF p_status='SENT' THEN
     PERFORM public.supply_record_contact_attempt_v1(
-      o.artisan_id,o.campaign_id,o.task_id,o.channel,'DELIVERED','provider_event',
-      jsonb_build_object('outbox_id',o.id),p_provider_message_id,gen_random_uuid()
+      o.artisan_id,o.campaign_id,o.task_id,o.channel,'ATTEMPTED','provider_event',
+      jsonb_build_object('outbox_id',o.id,'provider_state','sent'),p_provider_message_id,gen_random_uuid()
+    );
+  ELSIF p_status='DELIVERED' THEN
+    INSERT INTO public.supply_recruitment_attempts_v1(
+      artisan_id,campaign_id,task_id,channel,direction,outcome,evidence_class,evidence,
+      provider_message_id,idempotency_key,actor_kind,actor_user_id
+    ) VALUES(
+      o.artisan_id,o.campaign_id,o.task_id,o.channel,'OUTBOUND','DELIVERED','provider_event',
+      jsonb_build_object('outbox_id',o.id,'provider_state','delivered'),
+      COALESCE(p_provider_message_id,o.provider_message_id),gen_random_uuid(),'system',NULL
     );
   END IF;
   RETURN jsonb_build_object('ok',true,'outbox_id',o.id,'status',p_status);
