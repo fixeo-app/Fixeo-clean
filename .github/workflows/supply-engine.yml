@@ -2,7 +2,7 @@ name: Supply Engine certification
 
 on:
   push:
-    branches: [feat/supply-engine-agent-foundation, feat/supply-b8-b10-recruitment-agent-v1, feat/national-supply-b11-b13, fix/supply-control-resilient-loading, fix/supply-agents-rpc-bigint, feat/supply-national-command-polish]
+    branches: [feat/supply-engine-agent-foundation, feat/supply-b8-b10-recruitment-agent-v1, feat/national-supply-b11-b13, fix/supply-control-resilient-loading, fix/supply-agents-rpc-bigint, feat/supply-national-command-polish, feat/supply-command-ux-final-polish]
     paths:
       - 'supabase/migrations/*supply_b*'
       - 'api/supply-agent-fn/**'
