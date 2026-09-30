@@ -16,8 +16,8 @@ BEGIN
     UPDATE public.supply_external_candidates_v1 SET decision='EXISTING',matched_artisan_id=aid,match_score=100,match_reasons='["PHONE_EXACT_AT_PROMOTION"]'::jsonb WHERE id=c.id;
     skipped:=skipped+1;CONTINUE;
   END IF;
-  INSERT INTO public.artisans(name,full_name,city,category,service_category,services,work_zone,phone,phone_public,availability,verified,is_verified,claimed,claim_status,owner_user_id,onboarding_completed,source,claimable,is_public,data_classification,description)
-  VALUES(COALESCE(NULLIF(c.display_name,''),'Artisan FIXEO'),COALESCE(NULLIF(c.display_name,''),'Artisan FIXEO'),COALESCE(c.city,''),COALESCE(c.service_category,''),COALESCE(c.service_category,''),
+  INSERT INTO public.artisans(name,full_name,city,service_category,services,work_zone,phone,phone_public,availability,verified,is_verified,claimed,claim_status,owner_user_id,onboarding_completed,source,claimable,is_public,data_classification,description)
+  VALUES(COALESCE(NULLIF(c.display_name,''),'Artisan FIXEO'),COALESCE(NULLIF(c.display_name,''),'Artisan FIXEO'),COALESCE(c.city,''),COALESCE(c.service_category,''),
     CASE WHEN COALESCE(c.service_category,'')='' THEN '[]'::jsonb ELSE jsonb_build_array(c.service_category) END,COALESCE(c.city,''),c.phone_raw,c.phone_normalized,
     'unavailable',false,false,false,'unclaimed',NULL,false,'genspark_qualification',true,true,'production','Profil référencé par FIXEO · à revendiquer.')
   RETURNING id INTO aid;
