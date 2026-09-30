@@ -26,7 +26,7 @@ BEGIN
   IF NOT fixeo_private._fixeo_is_admin() THEN RAISE EXCEPTION 'FORBIDDEN' USING ERRCODE='42501'; END IF;
   SELECT jsonb_build_object(
     'referenced',count(*),
-    'claimable',count(*) FILTER(WHERE claimable_unowned),
+    'claimable',count(*) FILTER(WHERE claimable IS TRUE AND claimed IS FALSE AND owner_user_id IS NULL),
     'contactable',count(*) FILTER(WHERE contactable),
     'candidate',count(*) FILTER(WHERE lifecycle_stage='RECRUITMENT_CANDIDATE'),
     'contacted',count(*) FILTER(WHERE lifecycle_stage='CONTACTED'),
@@ -55,10 +55,10 @@ BEGIN
   IF NOT fixeo_private._fixeo_is_admin() THEN RAISE EXCEPTION 'FORBIDDEN' USING ERRCODE='42501'; END IF;
   RETURN QUERY
   SELECT c.artisan_id,c.artisan_name,c.city,c.service_category,c.lifecycle_stage,
-    p.contactable,p.claimable_unowned,c.score,c.reasons,c.claim_path
+    p.contactable,(p.claimable IS TRUE AND p.claimed IS FALSE AND p.owner_user_id IS NULL),c.score,c.reasons,c.claim_path
   FROM public.supply_recruitment_candidates_v1(p_city,p_service,GREATEST(1,LEAST(COALESCE(p_limit,100),500))) c
   JOIN public.supply_artisan_projection_v1 p ON p.artisan_id=c.artisan_id
-  WHERE p.claimable_unowned=true AND p.contactable=true
+  WHERE p.claimable IS TRUE AND p.claimed IS FALSE AND p.owner_user_id IS NULL AND p.contactable=true
   ORDER BY c.score DESC,c.artisan_name
   LIMIT GREATEST(1,LEAST(COALESCE(p_limit,100),500));
 END
@@ -129,7 +129,7 @@ BEGIN
     'ok',true,'task_id',q.id,'task_type',q.task_type,'priority',q.priority,
     'artisan',jsonb_build_object('id',p.artisan_id,'name',p.artisan_name,'city',p.city,
       'service_category',p.service_category,'lifecycle_stage',p.lifecycle_stage,
-      'contactable',p.contactable,'claimable_unowned',p.claimable_unowned,'claim_path',p.claim_path),
+      'contactable',p.contactable,'claimable_unowned',(p.claimable IS TRUE AND p.claimed IS FALSE AND p.owner_user_id IS NULL),'claim_path','/rejoindre-fixeo.html?id='||p.artisan_id::text||'#revendique'),
     'campaign',CASE WHEN c.id IS NULL THEN NULL ELSE jsonb_build_object('id',c.id,'name',c.name,'channel',c.preferred_channel,
       'daily_contact_limit',c.daily_contact_limit,'max_attempts',c.max_attempts_per_artisan) END,
     'evidence',q.evidence,
@@ -185,7 +185,7 @@ BEGIN
   SELECT * INTO cfg FROM public.supply_runtime_config_v1 WHERE singleton=true;
   RETURN jsonb_build_object(
     'ok',true,
-    'existing_base_ready',(SELECT count(*) FROM public.supply_artisan_projection_v1 WHERE claimable_unowned AND contactable),
+    'existing_base_ready',(SELECT count(*) FROM public.supply_artisan_projection_v1 WHERE claimable IS TRUE AND claimed IS FALSE AND owner_user_id IS NULL AND contactable),
     'active_campaigns',(SELECT count(*) FROM public.supply_campaigns_v1 WHERE status='ACTIVE' AND kill_switch=false),
     'active_agents',(SELECT count(*) FROM public.supply_agents_v1 WHERE status='ACTIVE' AND kill_switch=false),
     'paused_agents',(SELECT count(*) FROM public.supply_agents_v1 WHERE status='PAUSED'),
