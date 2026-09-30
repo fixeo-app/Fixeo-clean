@@ -13,7 +13,8 @@ const migrations=[
   'supabase/migrations/20260930164000_supply_b4_activation.sql',
   'supabase/migrations/20260930164500_supply_b5_agents_cost.sql',
   'supabase/migrations/20260930165000_supply_b6_channels.sql',
-  'supabase/migrations/20260930165500_supply_b7_control_reads.sql'
+  'supabase/migrations/20260930165500_supply_b7_control_reads.sql',
+  'supabase/migrations/20260930173000_supply_b8_b10_recruitment_agent_v1.sql'
 ].map(p=>fs.readFileSync(path.join(ROOT,p),'utf8'));
 
 const adminHtml=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
@@ -297,5 +298,34 @@ test('Bloc 7: dashboard read model exposes economics without inventing capacity'
     assert.equal(d.ok,true);assert.equal(d.semantics.declared_available_is_capacity,false);
     assert.equal(Number(d.summary.declared_available),1);assert.equal(Number(d.summary.operational_capacity_proven),0);
     assert.equal(Number(d.economics.total_cost_minor),0);
+  });
+});
+
+
+test('Blocs 8-10: existing base is prioritized and Recruitment Agent V1 stays rules-first',async t=>{
+  await withDb(t,async db=>{
+    await baseline(db); await setActor(db,id(1));
+    await db.query(`INSERT INTO public.artisans(id,full_name,city,service_category,phone,availability,claimable,claimed)
+      VALUES($1,'Pilot Fes','Fès','Plomberie','0666666666','available',true,false)`,[id(105)]);
+    const base=await db.query('select * from public.supply_admin_existing_base_v1($1,$2,10)',['Fès','Plomberie']);
+    assert.equal(base.rowCount,1);assert.equal(base.rows[0].claimable_unowned,true);
+    let camp=(await db.query('select public.supply_create_campaign_v1($1,$2,$3,$4,$5,$6,$7,$8) x',
+      ['Existing Base Pilot','Fès','Plomberie','MANUAL',5,2,48,0])).rows[0].x;
+    await db.query('select public.supply_set_campaign_status_v1($1,$2,$3)',[camp.campaign_id,'ACTIVE',false]);
+    let prepared=(await db.query('select public.supply_admin_prepare_existing_base_v1($1,10) x',[camp.campaign_id])).rows[0].x;
+    assert.equal(Number(prepared.prepared),1);
+    let agent=(await db.query('select public.supply_admin_register_agent_v1($1,$2,$3,$4,$5,$6) x',
+      ['Recruitment Agent V1','RECRUITER','v1',JSON.stringify(['task_brief','rules_decision','prepare_claim']),'RULES_ONLY',0])).rows[0].x;
+    await db.query('select public.supply_admin_set_agent_state_v1($1,$2,$3)',[agent.agent_id,'ACTIVE',false]);
+    await setActor(db,'','service_role');
+    const run=(await db.query('select public.supply_agent_begin_run_v1($1,$2) x',[agent.agent_id,camp.campaign_id])).rows[0].x;
+    const leased=await db.query('select * from public.supply_lease_work_v1($1,1,300)',[agent.agent_id]);
+    assert.equal(leased.rowCount,1);
+    const decision=(await db.query('select public.supply_agent_rules_decision_v1($1,$2,$3) x',
+      [agent.agent_id,run.run_id,leased.rows[0].id])).rows[0].x;
+    assert.equal(decision.decision,'PREPARE_CLAIM_OUTREACH');assert.equal(decision.model_required,false);
+    await setActor(db,id(1));
+    const ready=(await db.query('select public.supply_admin_recruitment_readiness_v1() x')).rows[0].x;
+    assert.equal(ready.rules_first,true);assert.equal(ready.outbound_provider_enabled,false);
   });
 });
