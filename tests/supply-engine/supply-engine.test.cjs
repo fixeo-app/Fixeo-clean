@@ -14,7 +14,8 @@ const migrations=[
   'supabase/migrations/20260930164500_supply_b5_agents_cost.sql',
   'supabase/migrations/20260930165000_supply_b6_channels.sql',
   'supabase/migrations/20260930165500_supply_b7_control_reads.sql',
-  'supabase/migrations/20260930173000_supply_b8_b10_recruitment_agent_v1.sql'
+  'supabase/migrations/20260930173000_supply_b8_b10_recruitment_agent_v1.sql',
+  'supabase/migrations/20260930180000_supply_b11_b13_national_engine.sql'
 ].map(p=>fs.readFileSync(path.join(ROOT,p),'utf8'));
 
 const adminHtml=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
@@ -328,4 +329,24 @@ test('Blocs 8-10: existing base is prioritized and Recruitment Agent V1 stays ru
     const ready=(await db.query('select public.supply_admin_recruitment_readiness_v1() x')).rows[0].x;
     assert.equal(ready.rules_first,true);assert.equal(ready.outbound_provider_enabled,false);
   });
+});
+
+
+test('Blocs 11-13: national engine ranks city-trade cells and provider stays closed by default',async t=>{
+ await withDb(t,async db=>{
+  await baseline(db); await setActor(db,id(1));
+  await db.query(`INSERT INTO public.artisans(id,full_name,city,service_category,phone,claimable,claimed)
+    VALUES($1,'Casa Plumber','Casablanca','Plomberie','0677777777',true,false),($2,'Agadir AC','Agadir','Climatisation','0688888888',true,false)`,[id(106),id(107)]);
+  await db.query(`INSERT INTO public.service_requests(id,city,service_category,status) VALUES
+    ($1,'Agadir','Climatisation','new'),($2,'Agadir','Climatisation','new'),($3,'Casablanca','Plomberie','new')`,[id(210),id(211),id(212)]);
+  const cells=await db.query('select * from public.supply_national_cells_v1(10)');
+  assert.ok(cells.rowCount>=2);assert.equal(cells.rows[0].city,'Agadir');
+  const plan=(await db.query('select public.supply_national_plan_v1() x')).rows[0].x;
+  assert.equal(plan.mode,'DRY_RUN');assert.equal(plan.provider_enabled,false);
+  await setActor(db,'','service_role');
+  const gate=(await db.query('select public.supply_national_provider_gate_v1() x')).rows[0].x;
+  assert.equal(gate.allowed,false);
+  const off=(await db.query('select public.supply_national_orchestrate_v1() x')).rows[0].x;
+  assert.equal(off.reason,'national_orchestration_disabled');
+ });
 });
