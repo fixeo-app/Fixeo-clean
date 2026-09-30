@@ -82,7 +82,7 @@ test('Block 5 — UI validation requires exact IDs and phone-first founder ident
   assert.equal(api._test.normalizePhone('0512345678'),null);
   assert.equal(api._test.syntheticEmailFromPhone('0612345678'),'212612345678@fixeo.ma');
   assert.equal(api._test.invitationLink('a'.repeat(64)),'https://www.fixeo.ma/enterprise-invitation.html?token='+'a'.repeat(64));
-  assert.match(invitationUi,/numéro WhatsApp ou l’adresse correspondant à cette invitation/);
+  assert.match(invitationUi,/numéro WhatsApp correspondant à cette invitation/);
   assert.doesNotMatch(invitationUi,/Connectez-vous avec l’adresse email qui a reçu cette invitation/);
 });
 
