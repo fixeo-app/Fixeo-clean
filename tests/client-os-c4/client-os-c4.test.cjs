@@ -9,6 +9,7 @@ const ROOT = path.resolve(__dirname, '../..');
 const read = p => fs.readFileSync(path.join(ROOT,p),'utf8');
 const html = read('dashboard-client.html');
 const js = read('js/fixeo-dashboard-v2.js');
+const core = read('js/fixeo-supabase-core.js');
 const css = read('css/fixeo-dashboard-v2.css');
 const vercel = JSON.parse(read('vercel.json'));
 const clientContextHandler = require('../../api/client-context-fn/index.js');
@@ -33,7 +34,8 @@ test('C4.1 Client OS no longer loads parallel dashboard tracking truth', () => {
 
 test('C4.2 authenticated request creation is direct and idempotent', () => {
   assert.match(js, /FixeoSupabase\.submitServiceRequest/);
-  assert.match(js, /idempotency_key/);
+  assert.match(core, /payload\.idempotency_key = payload\.idempotency_key \|\| crypto\.randomUUID\(\)/);
+  assert.match(core, /create_my_service_request_v1/);
   assert.match(js, /X-Fxauth-Token/);
   assert.match(js, /fetch\('\/api\/urgent-request'/);
   assert.equal(js.includes("window.addEventListener('fixeo:client-request-created'"), false);
