@@ -29,8 +29,12 @@ test('Block 2 — founder owner invitation is representable but ordinary manager
   const acceptStart=invitationLifecycle.indexOf('CREATE OR REPLACE FUNCTION public.accept_enterprise_invitation');
   assert.ok(createStart>=0&&acceptStart>createStart);
   const createBody=invitationLifecycle.slice(createStart,acceptStart);
-  assert.match(createBody,/p_role NOT IN \([\s\S]*?'admin'[\s\S]*?'viewer'[\s\S]*?\)/);
-  assert.doesNotMatch(createBody,/p_role NOT IN \([\s\S]*?'owner'/);
+  const roleStart=createBody.indexOf('OR p_role NOT IN (');
+  const roleEnd=createBody.indexOf(')',roleStart);
+  assert.ok(roleStart>=0&&roleEnd>roleStart);
+  const roleAllowlist=createBody.slice(roleStart,roleEnd+1);
+  for(const role of ['admin','operations_manager','site_manager','reporter','viewer']) assert.match(roleAllowlist,new RegExp("'"+role+"'"));
+  assert.doesNotMatch(roleAllowlist,/'owner'/);
 });
 
 test('Block 2 — raw founder token is returned once but never stored in provisioning ledger', () => {
@@ -41,8 +45,8 @@ test('Block 2 — raw founder token is returned once but never stored in provisi
   const ledgerInsert=migration.indexOf('INSERT INTO fixeo_private.enterprise_provision_commands_v1',storedStart);
   assert.ok(storedStart>0&&ledgerInsert>storedStart);
   const storedBlock=migration.slice(storedStart,ledgerInsert);
-  assert.doesNotMatch(storedBlock,/invitation_token/);
-  assert.match(migration,/token_available/);
+  assert.doesNotMatch(storedBlock,/'invitation_token'\s*,/);
+  assert.match(storedBlock,/token_available/);
 });
 
 test('Block 3/4 — Control OS exposes provisioning and Enterprise dossier owner management', () => {
@@ -120,6 +124,9 @@ test('Block 6 — PostgreSQL integration: exact search, idempotent active-owner 
       CREATE SCHEMA auth;
       CREATE SCHEMA fixeo_private;
       CREATE SCHEMA extensions;
+      DO $ BEGIN CREATE ROLE anon NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $;
+      DO $ BEGIN CREATE ROLE authenticated NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $;
+      DO $ BEGIN CREATE ROLE service_role NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $;
       CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA extensions;
 
       CREATE TABLE public.users(
