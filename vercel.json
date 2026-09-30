@@ -133,6 +133,10 @@
       "use": "@vercel/node"
     },
     {
+      "src": "api/supply-learning-fn/index.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "api/control-fn/index.js",
       "use": "@vercel/node"
     }
@@ -231,6 +235,10 @@
     {
       "src": "^/api/supply-agent$",
       "dest": "/api/supply-agent-fn/index.js"
+    },
+    {
+      "src": "^/api/supply-learning$",
+      "dest": "/api/supply-learning-fn/index.js"
     },
     {
       "src": "^/(plombier|electricien|serrurier|climatisation)-([a-z][a-z-]*)\\.html$",
@@ -814,6 +822,10 @@
     {
       "path": "/api/notification-timeout",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/supply-learning",
+      "schedule": "15 5 * * *"
     }
   ],
   "git": {
