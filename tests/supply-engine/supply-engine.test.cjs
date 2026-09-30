@@ -37,6 +37,21 @@ async function withDb(t,fn){
 
 async function baseline(db){
   await db.query(String.raw`
+    DROP VIEW IF EXISTS public.supply_coverage_v1 CASCADE;
+    DROP VIEW IF EXISTS public.supply_artisan_projection_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_inbound_links_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_channel_outbox_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_agent_action_log_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_ai_usage_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_agent_runs_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_agents_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_runtime_config_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_work_queue_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_recruitment_attempts_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_campaigns_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_lifecycle_events_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_contact_preferences_v1 CASCADE;
+    DROP TABLE IF EXISTS public.supply_artisan_state_v1 CASCADE;
     DROP SCHEMA IF EXISTS fixeo_private CASCADE;
     DROP SCHEMA IF EXISTS auth CASCADE;
     DROP SCHEMA IF EXISTS extensions CASCADE;
