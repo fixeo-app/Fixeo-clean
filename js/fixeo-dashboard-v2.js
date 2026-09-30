@@ -155,6 +155,22 @@
     return PIPELINE.NEW;
   }
 
+  async function _fetchRafiContext() {
+    var token=_state.session&&_state.session.access_token;
+    if(!token) return null;
+    try{
+      var response=await fetch('/api/client-context',{
+        method:'POST',
+        headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},
+        body:'{}',
+        credentials:'same-origin'
+      });
+      var data=await response.json().catch(function(){return null;});
+      if(!response.ok||!data||data.ok!==true) return null;
+      return data;
+    }catch(_){return null;}
+  }
+
   /* ── FETCH ────────────────────────────────────────────────────── */
   async function _fetch() {
     var FS = window.FixeoSupabase;
@@ -233,6 +249,7 @@
     if (_state.session && _state.session.user && _state.session.user.id) {
       _state.notifications = await _fetchNotifications(_state.session.user.id);
     }
+    _state.rafiContext = await _fetchRafiContext();
   }
 
   /* ── KPIs ─────────────────────────────────────────────────────── */
@@ -832,20 +849,45 @@
   }
 
   function _clientRafiBrief(reqs) {
+    var server=_state.rafiContext&&_state.rafiContext.decision;
+    if(server&&server.title&&server.text){
+      var actionMap={
+        'go-requests':'go-requests',
+        'go-missions':'go-missions',
+        'go-notifications':'go-notifications',
+        'new-request':'new-request'
+      };
+      return {
+        tone:server.tone||'calm',
+        title:'RAFI · '+String(server.title),
+        text:String(server.text),
+        action:server.action==='new-request'?'Nouvelle demande':server.action==='go-missions'?'Voir mes interventions':server.action==='go-notifications'?'Voir les notifications':'Voir la demande',
+        actionName:actionMap[server.action]||'go-requests',
+        source:'server'
+      };
+    }
     var active = (reqs || []).filter(function (r) { return r._pipeline && r._pipeline.step >= 0 && r._pipeline.step < 5; });
     var decisions = active.filter(function (r) { return r._pipeline.step === 4 || r._pipeline === PIPELINE.PROPOSAL_RECEIVED; });
     if (!active.length) {
-      return { tone:'calm', title:'RAFI · Tout est calme', text:'Vous n’avez aucune intervention active. Je peux vous guider dès votre prochaine demande.', action:'Nouvelle demande', actionName:'new-request' };
+      return { tone:'calm', title:'RAFI · Tout est calme', text:'Vous n’avez aucune intervention active. Je peux vous guider dès votre prochaine demande.', action:'Nouvelle demande', actionName:'new-request',source:'local_fallback' };
     }
     if (decisions.length) {
       var d = decisions[0], p = d._pipeline;
-      if (p.step === 4) return { tone:'attention', title:'RAFI · Votre confirmation est attendue', text:'Une prestation est indiquée comme terminée. Vérifiez l’intervention avant de la confirmer.', action:'Voir la décision', actionName:'go-requests' };
-      return { tone:'attention', title:'RAFI · Une proposition vous attend', text:'Un devis a été reçu pour ' + (d.service_category || 'votre demande') + '. Consultez les informations avant de décider.', action:'Examiner', actionName:'go-requests' };
+      if (p.step === 4) return { tone:'attention', title:'RAFI · Votre confirmation est attendue', text:'Une prestation est indiquée comme terminée. Vérifiez l’intervention avant de la confirmer.', action:'Voir la décision', actionName:'go-requests',source:'local_fallback' };
+      return { tone:'attention', title:'RAFI · Une proposition vous attend', text:'Un devis a été reçu pour ' + (d.service_category || 'votre demande') + '. Consultez les informations avant de décider.', action:'Examiner', actionName:'go-requests',source:'local_fallback' };
     }
     var r = active[0], p2 = r._pipeline;
-    if (p2.step === 3) return { tone:'live', title:'RAFI · Intervention en cours', text:'Votre intervention ' + (r.service_category || '') + ' est actuellement indiquée en cours.', action:'Suivre', actionName:'go-requests' };
-    if (p2.step === 2) return { tone:'live', title:'RAFI · Votre demande est prise en charge', text:'Un artisan est assigné à votre demande. Les informations disponibles sont regroupées dans le Mission Command Center.', action:'Voir la mission', actionName:'go-requests' };
-    return { tone:'search', title:'RAFI · Recherche en cours', text:'FIXEO recherche actuellement un artisan éligible pour ' + (r.service_category || 'votre demande') + '.', action:'Voir la demande', actionName:'go-requests' };
+    if (p2.step === 3) return { tone:'live', title:'RAFI · Intervention en cours', text:'Votre intervention ' + (r.service_category || '') + ' est actuellement indiquée en cours.', action:'Suivre', actionName:'go-requests',source:'local_fallback' };
+    if (p2.step === 2) return { tone:'live', title:'RAFI · Votre demande est prise en charge', text:'Un artisan est assigné à votre demande. Les informations disponibles sont regroupées dans le Mission Command Center.', action:'Voir la mission', actionName:'go-requests',source:'local_fallback' };
+    return { tone:'search', title:'RAFI · Recherche en cours', text:'FIXEO recherche actuellement un artisan éligible pour ' + (r.service_category || 'votre demande') + '.', action:'Voir la demande', actionName:'go-requests',source:'local_fallback' };
+  }
+
+  function _renderRafiCanonicalProof() {
+    var ctx=_state.rafiContext;
+    if(!ctx||ctx.ok!==true||!ctx.evidence) return '<div class="fxv2-c40-rafi-proof" data-state="fallback"><span>CONTEXTE</span><strong>Lecture locale de secours</strong><small>Le contexte serveur canonique est momentanément indisponible.</small></div>';
+    var e=ctx.evidence||{},stamp='';
+    try{stamp=new Date(ctx.as_of).toLocaleTimeString('fr-MA',{hour:'2-digit',minute:'2-digit'});}catch(_){}
+    return '<div class="fxv2-c40-rafi-proof" data-state="canonical"><span>PREUVES CANONIQUES</span><strong>'+esc(e.active_requests||0)+' active'+((e.active_requests||0)>1?'s':'')+' · '+esc(e.pending_quotes||0)+' devis en attente · '+esc(e.unread_notifications||0)+' notification'+((e.unread_notifications||0)>1?'s':'')+' non lue'+((e.unread_notifications||0)>1?'s':'')+'</strong><small>Contexte serveur'+(stamp?' · '+esc(stamp):'')+'</small></div>';
   }
 
   function _rafiGovernedProposal(reqs) {
@@ -907,6 +949,7 @@
     return '<section class="fxv2-rafi-intel fxv2-c34-copilot" data-tone="' + esc(b.tone) + '" aria-label="RAFI Client Copilot">'
       + '<div class="fxv2-c34-hero"><div class="fxv2-c34-star" aria-hidden="true">✦</div><div class="fxv2-rafi-copy"><span class="fxv2-rafi-kicker">RAFI CLIENT COPILOT</span><strong>' + esc(b.title.replace(/^RAFI ·\s*/,'')) + '</strong><p>' + esc(b.text) + '</p></div></div>'
       + '<button class="fxv2-btn fxv2-rafi-action" data-action="' + esc(b.actionName) + '">' + esc(b.action) + '</button>'
+      + _renderRafiCanonicalProof()
       + '<div class="fxv2-c34-section"><span>SITUATION RÉELLE</span>'+_renderRafiSituation(reqs)+'</div>'
       + _renderRafiGovernedAction(reqs)
       + _renderRafiGuardrails()
