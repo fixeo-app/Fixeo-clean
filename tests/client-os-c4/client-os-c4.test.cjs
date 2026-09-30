@@ -115,10 +115,11 @@ test('legacy client dashboard URLs redirect at the edge', () => {
   assert.equal(redirects.get('/dashboard-client-v2.html').permanent,true);
 });
 
-test('cachebusters point at the C4 final assets', () => {
-  assert.match(html, /fixeo-dashboard-v2\.css\?v=client-os-c4-final/);
+test('cachebusters point at the certified Client OS assets', () => {
+  assert.match(html, /fixeo-dashboard-v2\.css\?v=client-os-header-master/);
   assert.match(html, /fixeo-dashboard-v2\.js\?v=client-os-c4-final/);
   assert.match(css, /CLIENT OS C4/);
+  assert.match(css, /Header Optical Master/);
 });
 
 
