@@ -174,10 +174,10 @@ module.exports = async function handler(req, res) {
     const cutoverNotBeforeRaw = String(process.env.WHATSAPP_CUTOVER_NOT_BEFORE || '').trim();
     const cutoverNotBeforeMs = Date.parse(cutoverNotBeforeRaw);
 
-    if (wabaId !== CANONICAL_WABA_ID) {
+    if (wabaId && wabaId !== CANONICAL_WABA_ID) {
       return json(res, 503, { ok: false, error: 'META_WABA_MISMATCH' });
     }
-    if (!/^\d+$/.test(phoneNumberId) || !accessToken ||
+    if (wabaId !== CANONICAL_WABA_ID || !/^\d+$/.test(phoneNumberId) || !accessToken ||
         !/^v\d+\.\d+$/.test(apiVersion) || !templateName || !templateLanguage ||
         !cutoverNotBeforeRaw || !Number.isFinite(cutoverNotBeforeMs)) {
       return json(res, 503, { ok: false, error: 'META_CONFIGURATION_MISSING' });
