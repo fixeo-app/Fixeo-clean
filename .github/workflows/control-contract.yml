@@ -41,6 +41,11 @@ on:
       - 'api/whatsapp-webhook-fn/**'
       - 'tests/whatsapp-precutover/**'
       - 'supabase/migrations/*whatsapp_precutover*'
+      - 'supabase/migrations/*enterprise_provisioning*'
+      - 'js/admin-enterprise-provisioning.js'
+      - 'css/admin-enterprise-provisioning.css'
+      - 'js/fixeo-enterprise-invitation.js'
+      - 'tests/enterprise-provisioning/**'
       - '.github/workflows/control-contract.yml'
 permissions:
   contents: read
