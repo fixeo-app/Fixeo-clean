@@ -23,7 +23,7 @@ With either gate absent/false, the deployed code remains non-mutating toward Met
 - webhook acknowledges POST events without persistence.
 
 Live send additionally requires:
-- `WHATSAPP_WABA_ID`
+- `WHATSAPP_WABA_ID` — must equal the canonical FIXEO WABA `1392741816131859`; any other account fails closed before queue claim/persistence.
 - `WHATSAPP_PHONE_NUMBER_ID`
 - `WHATSAPP_ACCESS_TOKEN`
 - `WHATSAPP_GRAPH_API_VERSION`
