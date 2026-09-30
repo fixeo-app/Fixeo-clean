@@ -51,3 +51,12 @@
   #sec-supply .supply-row{align-items:flex-start;flex-direction:column}
   #sec-supply .supply-row-actions{justify-content:flex-start}
 }
+
+#sec-supply .supply-national-command{margin-bottom:14px;border-color:rgba(96,165,250,.14);background:linear-gradient(135deg,rgba(37,99,235,.055),rgba(168,85,247,.025))}
+#sec-supply .supply-national-command .card-head{align-items:flex-start}
+#sec-supply .supply-national-kpis{margin:12px 0 6px}
+#sec-supply .supply-national-kpis .card{background:rgba(255,255,255,.018)}
+#sec-supply .supply-national-cell b{font-size:.76rem}
+#sec-supply .supply-national-cell small{font-size:.61rem}
+#sec-supply .supply-national-cell .pill{min-width:64px;text-align:center}
+#sec-supply #supply-state[data-tone="warn"]{color:#fde68a}
