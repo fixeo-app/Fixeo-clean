@@ -16,7 +16,8 @@ const migrations=[
   'supabase/migrations/20260930165500_supply_b7_control_reads.sql',
   'supabase/migrations/20260930173000_supply_b8_b10_recruitment_agent_v1.sql',
   'supabase/migrations/20260930180000_supply_b11_b13_national_engine.sql',
-  'supabase/migrations/20260930201500_supply_agents_rpc_bigint_fix.sql'
+  'supabase/migrations/20260930201500_supply_agents_rpc_bigint_fix.sql',
+  'supabase/migrations/20260930204500_supply_b14_b17_learning_readiness.sql'
 ].map(p=>fs.readFileSync(path.join(ROOT,p),'utf8'));
 
 const adminHtml=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
@@ -40,6 +41,7 @@ async function withDb(t,fn){
 
 async function baseline(db){
   await db.query(String.raw`
+    DROP TABLE IF EXISTS public.supply_normalization_alias_v1 CASCADE;
     DROP TABLE IF EXISTS public.supply_national_cycles_v1 CASCADE;
     DROP TABLE IF EXISTS public.supply_national_cell_policy_v1 CASCADE;
     DROP TABLE IF EXISTS public.supply_national_runtime_v1 CASCADE;
@@ -370,5 +372,26 @@ test('Supply agents admin RPC preserves bigint return contract',async t=>{
   await db.query("insert into public.supply_agents_v1(name,agent_type,version,status,capabilities,model_tier,daily_ai_budget_minor,kill_switch,created_by) values('Contract Agent','RECRUITER','v1','PAUSED','[]'::jsonb,'RULES_ONLY',0,false,$1)",[id(1)]);
   const rows=await db.query('select * from public.supply_admin_agents_v1()');
   assert.equal(rows.rowCount,1);assert.equal(rows.rows[0].name,'Contract Agent');assert.equal(Number(rows.rows[0].spend_today),0);assert.equal(Number(rows.rows[0].runs_today),0);
+ });
+});
+
+
+test('B14-B17: learning cycle is closed, data quality normalizes aliases and readiness stays simulation-only',async t=>{
+ await withDb(t,async db=>{
+  await baseline(db); await setActor(db,id(1));
+  await db.query(`INSERT INTO public.artisans(id,full_name,city,service_category,phone,claimable,claimed)
+   VALUES($1,'Fes Electrician','Fès','Électricité','0699999999',true,false)`,[id(108)]);
+  await db.query(`INSERT INTO public.service_requests(id,city,service_category,status) VALUES($1,'fes','electricite','new')`,[id(213)]);
+  const quality=(await db.query('select public.supply_data_quality_v1() x')).rows[0].x;
+  assert.ok(Number(quality.normalization_rescues)>=1);
+  const ready=await db.query('select * from public.supply_activation_readiness_v1()');
+  assert.ok(ready.rows.some(x=>x.activation_gate==='SIMULATION_READY'));
+  await db.query('select public.supply_admin_set_national_runtime_v1(true,true,false,10,20,100,0)');
+  await setActor(db,'','service_role');
+  const cycle=(await db.query('select public.supply_learning_cycle_v1() x')).rows[0].x;
+  assert.equal(cycle.ok,true);assert.equal(Number(cycle.stability_score),100);
+  const gate=(await db.query('select public.supply_national_provider_gate_v1() x')).rows[0].x;
+  assert.equal(gate.allowed,false);
+  assert.equal(Number((await db.query('select count(*) n from public.supply_work_queue_v1')).rows[0].n),0);
  });
 });
