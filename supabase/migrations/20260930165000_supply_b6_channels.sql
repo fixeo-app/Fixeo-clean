@@ -144,21 +144,23 @@ CREATE OR REPLACE FUNCTION public.supply_channel_claim_next_v1(p_channel text,p_
 RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
 AS $fn$
-DECLARE o public.supply_channel_outbox_v1;
+DECLARE v_outbox public.supply_channel_outbox_v1;
 BEGIN
   IF auth.role()<>'service_role' THEN RAISE EXCEPTION 'FORBIDDEN' USING ERRCODE='42501'; END IF;
   WITH candidate AS (
-    SELECT id FROM public.supply_channel_outbox_v1
-    WHERE channel=upper(p_channel) AND status='READY' AND not_before<=now()
-    ORDER BY created_at FOR UPDATE SKIP LOCKED LIMIT 1
+    SELECT ob.id
+    FROM public.supply_channel_outbox_v1 ob
+    WHERE ob.channel=upper(p_channel) AND ob.status='READY' AND ob.not_before<=now()
+    ORDER BY ob.created_at FOR UPDATE OF ob SKIP LOCKED LIMIT 1
   )
-  UPDATE public.supply_channel_outbox_v1 o SET status='CLAIMED',claimed_by=btrim(p_worker),claimed_at=now(),
-    attempt_count=attempt_count+1,updated_at=now()
-  FROM candidate c WHERE o.id=c.id RETURNING o.* INTO o;
+  UPDATE public.supply_channel_outbox_v1 ob SET
+    status='CLAIMED',claimed_by=btrim(p_worker),claimed_at=now(),
+    attempt_count=ob.attempt_count+1,updated_at=now()
+  FROM candidate c WHERE ob.id=c.id RETURNING ob.* INTO v_outbox;
   IF NOT FOUND THEN RETURN jsonb_build_object('ok',true,'state','EMPTY'); END IF;
-  RETURN jsonb_build_object('ok',true,'state','CLAIMED','outbox_id',o.id,'artisan_id',o.artisan_id,
-    'campaign_id',o.campaign_id,'task_id',o.task_id,'recipient_e164',o.recipient_e164,
-    'template_key',o.template_key,'message_kind',o.message_kind,'payload',o.payload);
+  RETURN jsonb_build_object('ok',true,'state','CLAIMED','outbox_id',v_outbox.id,'artisan_id',v_outbox.artisan_id,
+    'campaign_id',v_outbox.campaign_id,'task_id',v_outbox.task_id,'recipient_e164',v_outbox.recipient_e164,
+    'template_key',v_outbox.template_key,'message_kind',v_outbox.message_kind,'payload',v_outbox.payload);
 END
 $fn$;
 ALTER FUNCTION public.supply_channel_claim_next_v1(text,text) OWNER TO postgres;
@@ -172,34 +174,34 @@ CREATE OR REPLACE FUNCTION public.supply_channel_finalize_v1(
 RETURNS jsonb
 LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
 AS $fn$
-DECLARE o public.supply_channel_outbox_v1;
+DECLARE v_outbox public.supply_channel_outbox_v1;
 BEGIN
   IF auth.role()<>'service_role' THEN RAISE EXCEPTION 'FORBIDDEN' USING ERRCODE='42501'; END IF;
   IF p_status NOT IN('SENT','DELIVERED','READ','FAILED','CANCELLED') THEN RETURN jsonb_build_object('ok',false,'reason','invalid_status'); END IF;
-  SELECT * INTO o FROM public.supply_channel_outbox_v1 WHERE id=p_outbox_id FOR UPDATE;
+  SELECT ob.* INTO v_outbox FROM public.supply_channel_outbox_v1 ob WHERE ob.id=p_outbox_id FOR UPDATE;
   IF NOT FOUND THEN RETURN jsonb_build_object('ok',false,'reason','outbox_not_found'); END IF;
-  IF o.status NOT IN('CLAIMED','SENT','DELIVERED') THEN RETURN jsonb_build_object('ok',false,'reason','invalid_transition','current',o.status); END IF;
-  UPDATE public.supply_channel_outbox_v1 SET
-    status=p_status,provider_message_id=COALESCE(NULLIF(btrim(COALESCE(p_provider_message_id,'')),''),provider_message_id),
+  IF v_outbox.status NOT IN('CLAIMED','SENT','DELIVERED') THEN RETURN jsonb_build_object('ok',false,'reason','invalid_transition','current',v_outbox.status); END IF;
+  UPDATE public.supply_channel_outbox_v1 ob SET
+    status=p_status,provider_message_id=COALESCE(NULLIF(btrim(COALESCE(p_provider_message_id,'')),''),ob.provider_message_id),
     last_error=NULLIF(btrim(COALESCE(p_error,'')),''),
-    channel_cost_minor=GREATEST(channel_cost_minor,COALESCE(p_channel_cost_minor,0)),updated_at=now()
-  WHERE id=o.id;
+    channel_cost_minor=GREATEST(ob.channel_cost_minor,COALESCE(p_channel_cost_minor,0)),updated_at=now()
+  WHERE ob.id=v_outbox.id;
   IF p_status='SENT' THEN
     PERFORM public.supply_record_contact_attempt_v1(
-      o.artisan_id,o.campaign_id,o.task_id,o.channel,'ATTEMPTED','provider_event',
-      jsonb_build_object('outbox_id',o.id,'provider_state','sent'),p_provider_message_id,gen_random_uuid()
+      v_outbox.artisan_id,v_outbox.campaign_id,v_outbox.task_id,v_outbox.channel,'ATTEMPTED','provider_event',
+      jsonb_build_object('outbox_id',v_outbox.id,'provider_state','sent'),p_provider_message_id,gen_random_uuid()
     );
   ELSIF p_status='DELIVERED' THEN
     INSERT INTO public.supply_recruitment_attempts_v1(
       artisan_id,campaign_id,task_id,channel,direction,outcome,evidence_class,evidence,
       provider_message_id,idempotency_key,actor_kind,actor_user_id
     ) VALUES(
-      o.artisan_id,o.campaign_id,o.task_id,o.channel,'OUTBOUND','DELIVERED','provider_event',
-      jsonb_build_object('outbox_id',o.id,'provider_state','delivered'),
-      COALESCE(p_provider_message_id,o.provider_message_id),gen_random_uuid(),'system',NULL
+      v_outbox.artisan_id,v_outbox.campaign_id,v_outbox.task_id,v_outbox.channel,'OUTBOUND','DELIVERED','provider_event',
+      jsonb_build_object('outbox_id',v_outbox.id,'provider_state','delivered'),
+      COALESCE(p_provider_message_id,v_outbox.provider_message_id),gen_random_uuid(),'system',NULL
     );
   END IF;
-  RETURN jsonb_build_object('ok',true,'outbox_id',o.id,'status',p_status);
+  RETURN jsonb_build_object('ok',true,'outbox_id',v_outbox.id,'status',p_status);
 END
 $fn$;
 ALTER FUNCTION public.supply_channel_finalize_v1(uuid,text,text,text,bigint) OWNER TO postgres;
