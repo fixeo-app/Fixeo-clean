@@ -55,7 +55,7 @@ jobs:
       - run: node --check api/supply-agent-fn/index.js
       - run: node --check js/admin-supply-engine.js
       - run: node -e "JSON.parse(require('fs').readFileSync('vercel.json','utf8'))"
-      - run: node --test tests/supply-engine/supply-engine.test.cjs
+      - run: node --test --test-concurrency=1 tests/supply-engine/supply-engine.test.cjs
         env:
           NODE_PATH: ${{ github.workspace }}/tests/control-contract/node_modules
           SUPPLY_TEST_DATABASE_URL: postgresql://postgres:synthetic-ci-only@127.0.0.1:5432/supply_engine
