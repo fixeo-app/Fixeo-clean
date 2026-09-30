@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c39d'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c40'; /* Client OS C4 closure */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -40,6 +40,20 @@
     'Safi', 'Temara', 'Taza', 'Ouarzazate', 'Mohammedia'
   ];
 
+  var REQUEST_SERVICES = [
+    { slug:'plomberie', label:'Plomberie', icon:'🔧' },
+    { slug:'electricite', label:'Électricité', icon:'⚡' },
+    { slug:'serrurerie', label:'Serrurerie', icon:'🔐' },
+    { slug:'climatisation', label:'Climatisation', icon:'❄️' },
+    { slug:'menuiserie', label:'Menuiserie', icon:'🪟' },
+    { slug:'peinture', label:'Peinture', icon:'🖌️' },
+    { slug:'maconnerie', label:'Maçonnerie', icon:'🧱' },
+    { slug:'nettoyage', label:'Nettoyage', icon:'🧹' },
+    { slug:'jardinage', label:'Jardinage', icon:'🌿' },
+    { slug:'demenagement', label:'Déménagement', icon:'📦' },
+    { slug:'autre', label:'Autre', icon:'＋' }
+  ];
+
   /* ── STATE ────────────────────────────────────────────────────── */
   var _state = {
     session:       null,
@@ -50,6 +64,9 @@
     artisanMap:    {},   /* id → artisan row */
     notifications: [],   /* notifications rows for current user */
     section:       'dashboard',
+    requestMode:   'standard',
+    requestDraft:  { service:'', city:'', description:'', phone:'' },
+    rafiContext:   null,
     loading:       true,
     error:         null
   };
@@ -570,30 +587,110 @@
   }
 
   /* ── PREMIUM EMPTY STATE ───────────────────────────────────────── */
-  function _renderPremiumEmpty(profile) {
-    var name = (profile && profile.full_name) ? profile.full_name.split(' ')[0] : '';
-    var greeting = name ? ('Bonjour ' + esc(name) + ' \uD83D\uDC4B') : 'Bienvenue sur Fixeo \uD83D\uDC4B';
-
-    return '<div class="fxv2-premium-empty">'
-      + '<div class="fxv2-pe-greeting">' + greeting + '</div>'
-      + '<div class="fxv2-pe-headline">Votre espace client<br>en un seul endroit</div>'
-      + '<div class="fxv2-pe-subline">Trouvez un professionnel v\u00e9rifi\u00e9 pour n\u2019importe quel service\u00a0\u2014 plomberie, \u00e9lectricit\u00e9, menuiserie et plus.</div>'
-      /* Trust row */
-      + '<div class="fxv2-pe-trust">'
-        + '<span>\u2714\uFE0F Artisan v\u00e9rifi\u00e9 Fixeo</span>'
-        + '<span>\u2714\uFE0F Aucun paiement maintenant</span>'
-        + '<span>\u2714\uFE0F Prix confirm\u00e9 avant intervention</span>'
+  function _renderClientEmptyActions() {
+    return '<section class="fxv2-c40-empty" aria-label="Créer une demande">'
+      + '<div><span>PRÊT POUR LA PROCHAINE DEMANDE</span><strong>Que souhaitez-vous faire ?</strong><p>Créez une demande depuis Client OS sans quitter votre espace.</p></div>'
+      + '<div class="fxv2-c40-empty-actions">'
+        + '<button class="fxv2-btn fxv2-btn-primary" data-action="new-request">＋ Nouvelle demande</button>'
+        + '<button class="fxv2-btn fxv2-c40-urgent" data-action="new-urgent">⚡ Demande urgente</button>'
       + '</div>'
-      /* Primary CTA */
-      + '<button class="fxv2-btn fxv2-btn-primary fxv2-pe-cta" data-action="new-request">'
-          + '\uD83D\uDCDD Publier une demande'
-        + '</button>'
-      /* Secondary urgent */
-      + '<button class="fxv2-btn fxv2-pe-urgent-cta" data-action="new-urgent">'
-          + '\u26A1 Demande urgente'
-        + '</button>'
+    + '</section>';
+  }
+
+  function _requestServiceLabel(slug) {
+    var item = REQUEST_SERVICES.find(function(s){ return s.slug === slug; });
+    return item ? item.label : 'Autre';
+  }
+
+  function _renderRequestComposer() {
+    var sec = el('fxv2-sec-new-request');
+    if (!sec) return;
+    var mode = _state.requestMode === 'urgent' ? 'urgent' : 'standard';
+    var draft = _state.requestDraft || {};
+    var phone = draft.phone || ((_state.profile && _state.profile.phone) || ((_state.session && _state.session.user && _state.session.user.user_metadata && _state.session.user.user_metadata.phone) || ''));
+    var cityOptions = '<option value="">Choisir une ville</option>' + CITIES.map(function(city){
+      return '<option value="' + esc(city) + '"' + (draft.city === city ? ' selected' : '') + '>' + esc(city) + '</option>';
+    }).join('');
+    sec.innerHTML = '<div class="fxv2-c40-compose" data-mode="' + mode + '">'
+      + '<div class="fxv2-c40-compose-head"><div><span>' + (mode === 'urgent' ? 'URGENCE CLIENT OS' : 'NOUVELLE DEMANDE') + '</span><h2>' + (mode === 'urgent' ? 'Besoin d’une intervention rapidement ?' : 'Décrivez votre besoin') + '</h2><p>' + (mode === 'urgent' ? 'Votre demande sera enregistrée comme urgente et dispatchée via le moteur FIXEO.' : 'La demande est créée directement dans votre dossier client.') + '</p></div><button data-action="request-cancel" aria-label="Fermer">×</button></div>'
+      + '<div class="fxv2-c40-service-grid" role="group" aria-label="Choisir un service">'
+      + REQUEST_SERVICES.map(function(s){ return '<button type="button" class="fxv2-c40-service' + (draft.service === s.slug ? ' active' : '') + '" data-action="request-service" data-service="' + esc(s.slug) + '"><i>' + s.icon + '</i><span>' + esc(s.label) + '</span></button>'; }).join('')
+      + '</div>'
+      + '<div class="fxv2-c40-fields">'
+        + '<label>Ville<select id="fxv2-request-city">' + cityOptions + '</select></label>'
+        + '<label>Décrivez le problème<textarea id="fxv2-request-description" maxlength="500" rows="4" placeholder="Ex. fuite sous l’évier, prise qui ne fonctionne plus…">' + esc(draft.description || '') + '</textarea></label>'
+        + (mode === 'urgent' ? '<label>Téléphone joignable<input id="fxv2-request-phone" type="tel" autocomplete="tel" value="' + esc(phone) + '" placeholder="06XXXXXXXX"></label>' : '')
+      + '</div>'
+      + '<div class="fxv2-c40-compose-foot"><button class="fxv2-btn fxv2-btn-ghost" data-action="request-cancel">Annuler</button><button class="fxv2-btn fxv2-c40-submit" data-action="request-submit">' + (mode === 'urgent' ? '⚡ Transmettre l’urgence' : 'Publier la demande') + '</button></div>'
+      + '<p class="fxv2-c40-truth">' + (mode === 'urgent' ? 'Aucune promesse de délai n’est affichée. Le statut réel apparaîtra dans votre espace.' : 'La demande est créée avec votre identité client authentifiée et un identifiant d’idempotence.') + '</p>'
     + '</div>';
   }
+
+  function _openNativeRequest(mode) {
+    _state.requestMode = mode === 'urgent' ? 'urgent' : 'standard';
+    _state.requestDraft = {
+      service:'',
+      city:(_state.profile && _state.profile.city) || '',
+      description:'',
+      phone:(_state.profile && _state.profile.phone) || ''
+    };
+    _renderRequestComposer();
+    _showSection('new-request');
+  }
+
+  async function _submitNativeRequest(btn) {
+    var service = (_state.requestDraft && _state.requestDraft.service) || '';
+    var city = (el('fxv2-request-city') && el('fxv2-request-city').value || '').trim();
+    var description = (el('fxv2-request-description') && el('fxv2-request-description').value || '').trim();
+    var phone = (el('fxv2-request-phone') && el('fxv2-request-phone').value || (_state.profile && _state.profile.phone) || '').trim();
+    if (!service) { _toast('Choisissez le service concerné.','error'); return; }
+    if (!city) { _toast('Choisissez votre ville.','error'); return; }
+    if (!description) { _toast('Décrivez brièvement le problème.','error'); return; }
+    _state.requestDraft.city = city;
+    _state.requestDraft.description = description;
+    _state.requestDraft.phone = phone;
+    _btnBusy(btn, _state.requestMode === 'urgent' ? 'Transmission…' : 'Publication…');
+    try {
+      if (_state.requestMode === 'urgent') {
+        var normalizedPhone = phone.replace(/[ .()-]/g,'');
+        if (!/^(?:\+?212|0)[5-7]\d{8}$/.test(normalizedPhone)) throw new Error('Ajoutez un numéro marocain valide pour l’urgence.');
+        var token = _state.session && _state.session.access_token;
+        if (!token) throw new Error('Votre session a expiré. Reconnectez-vous.');
+        var urgentRes = await fetch('/api/urgent-request', {
+          method:'POST',
+          headers:{'Content-Type':'application/json','X-Fxauth-Token':token},
+          body:JSON.stringify({
+            service:service,
+            problem:_requestServiceLabel(service),
+            description:description,
+            city:city,
+            phone:phone,
+            urgency:'now',
+            mode:'emergency',
+            source:'client-os-c4'
+          })
+        });
+        var urgentData = await urgentRes.json().catch(function(){ return {}; });
+        if (!urgentRes.ok || !urgentData.ok) throw new Error(urgentData.error || 'Impossible de transmettre l’urgence.');
+        _toast('Urgence enregistrée. Le suivi réel est maintenant disponible.','success');
+      } else {
+        if (!window.FixeoSupabase || typeof window.FixeoSupabase.submitServiceRequest !== 'function') throw new Error('Service de demande indisponible.');
+        await window.FixeoSupabase.submitServiceRequest({
+          service_category:service,
+          city:city,
+          description:description,
+          idempotency_key:(window.crypto && crypto.randomUUID ? crypto.randomUUID() : ('client-os-' + Date.now()))
+        });
+        _toast('Demande publiée.','success');
+      }
+      await _refresh();
+      _showSection('dashboard');
+    } catch (e) {
+      _toast((e && e.message) ? e.message : 'Impossible de publier la demande.','error');
+      _btnReset(btn, _state.requestMode === 'urgent' ? '⚡ Transmettre l’urgence' : 'Publier la demande');
+    }
+  }
+
 
   /* ── C2.1 CLIENT CONTROL TOWER FOUNDATION ────────────────────────
      Deterministic/read-only shell over canonical dashboard state.
@@ -1031,7 +1128,7 @@
     html += _renderC32RafiBrief(reqs);
     html += _renderC32Portfolio(reqs);
 
-    if (!active.length) html += _renderPremiumEmpty(_state.profile);
+    if (!active.length) html += _renderClientEmptyActions();
     sec.innerHTML = html;
   }
 
@@ -1289,7 +1386,7 @@
   }
 
   /* ── NAVIGATION ───────────────────────────────────────────────── */
-  var SECTIONS = ['dashboard', 'decision', 'requests', 'missions', 'messages', 'history', 'notifications', 'profile', 'support', 'rafi', 'documents'];
+  var SECTIONS = ['dashboard', 'decision', 'requests', 'missions', 'messages', 'history', 'notifications', 'profile', 'support', 'rafi', 'documents', 'new-request'];
 
   function _showSection(name) {
     if (SECTIONS.indexOf(name) === -1) name = 'dashboard';
@@ -1434,8 +1531,13 @@
           if (kind === 'accept-quote') return _doAcceptQuote(id, btn);
           if (kind === 'confirm-completed') return _doConfirmDone(id, btn);
           return;
-        case 'new-request':    return _openNewRequest();
-        case 'new-urgent':     return _openUrgentRequest(btn);
+        case 'new-request':    return _openNativeRequest('standard');
+        case 'new-urgent':     return _openNativeRequest('urgent');
+        case 'request-service':
+          _state.requestDraft.service = btn.dataset.service || '';
+          return _renderRequestComposer();
+        case 'request-cancel':  return _showSection('dashboard');
+        case 'request-submit':  return _submitNativeRequest(btn);
         case 'go-requests':       return _showSection('requests');
         case 'go-missions':       return _showSection('missions');
         case 'go-rafi':           return _showSection('rafi');
@@ -1751,7 +1853,7 @@ if (!result.ok) {
       +(read.length?'<section class="fxv2-c36-group fxv2-c36-history"><h3>Historique</h3>'+read.slice(0,12).map(_renderC36NotifCard).join('')+'</section>':'');
   }
 
-  /* NEW REQUEST MODAL ────────────────────────────────────────── */
+  /* LEGACY V4 REQUEST ENTRY — retained as rollback helper only; Client OS actions no longer call it. */
   function _openNewRequest() {
     /* ── Canonical V4 request flow (fxrf4-v5e) ── */
     if (window.FixeoRequestFlowV4 && typeof window.FixeoRequestFlowV4.open === 'function') {
