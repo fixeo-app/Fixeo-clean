@@ -204,6 +204,13 @@
     }catch(e){status('Action campagne refusée · '+e.message,'error');}
   }
 
+  async function xlsxRows(file){
+    if(!root.XLSX){await new Promise(function(resolve,reject){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';s.onload=resolve;s.onerror=function(){reject(new Error('XLSX_LOADER_FAILED'));};document.head.appendChild(s);});}
+    var wb=root.XLSX.read(await file.arrayBuffer(),{type:'array'}),name=wb.SheetNames[0];if(!name)throw new Error('XLSX_EMPTY');
+    var data=root.XLSX.utils.sheet_to_json(wb.Sheets[name],{defval:'',raw:false});
+    function pick(r,names){for(var i=0;i<names.length;i++){var want=names[i].toUpperCase();for(var k in r){if(String(k).trim().toUpperCase()===want)return String(r[k]||'').trim();}}return '';}
+    return data.map(function(r,i){return {external_key:pick(r,['ID','EXTERNAL_KEY'])||('ROW-'+(i+2)),display_name:pick(r,['NOM_PROFESSIONNEL','NOM_COMMERCIAL','NOM']),city:pick(r,['VILLE','CITY']),service_category:pick(r,['METIER_PRINCIPAL','MÉTIER_PRINCIPAL','METIER','SERVICE_CATEGORY']),phone:pick(r,['TELEPHONE','TÉLÉPHONE','TELEPHONE_NORMALISE','TÉLÉPHONE_NORMALISÉ']),source_url:pick(r,['URL_SOURCE_1','SOURCE_URL','URL']),human_decision:pick(r,['STATUT_FINAL','STATUS','DECISION_FIXEO']),human_priority:pick(r,['PRIORITE_OUTREACH','PRIORITÉ_OUTREACH','PRIORITE'])};}).filter(function(x){return x.external_key;});
+  }
   function csvRows(text){
     var lines=String(text||'').replace(/^\uFEFF/,'').split(/\r?\n/).filter(function(x){return x.trim();});if(lines.length<2)throw new Error('CSV_EMPTY');
     function split(line){var out=[],cur='',q=false;for(var i=0;i<line.length;i++){var ch=line[i];if(ch==='"'){if(q&&line[i+1]==='"'){cur+='"';i++;}else q=!q;}else if(ch===','&&!q){out.push(cur);cur='';}else cur+=ch;}out.push(cur);return out;}
@@ -214,7 +221,7 @@
   }
   async function importExternal(form){
     var file=q('supply-import-file').files[0],st=q('supply-import-state');if(!file)throw new Error('FILE_REQUIRED');
-    if(file.size>2*1024*1024)throw new Error('FILE_TOO_LARGE');var rows=csvRows(await file.text());if(rows.length>500)throw new Error('BATCH_TOO_LARGE');
+    if(file.size>2*1024*1024)throw new Error('FILE_TOO_LARGE');var rows=/\.xlsx$/i.test(file.name)?await xlsxRows(file):csvRows(await file.text());if(rows.length>500)throw new Error('BATCH_TOO_LARGE');
     st.textContent='Analyse de '+rows.length+' ligne(s)…';
     var fd=new FormData(form),out=await rpc('supply_external_ingest_v1',{p_source:String(fd.get('source')||'GENSPARK_QUALIFICATION'),p_source_ref:file.name,p_city:String(fd.get('city')||'Fès'),p_rows:rows});
     if(!out||out.ok!==true)throw new Error(out&&out.reason||'INGEST_FAILED');
