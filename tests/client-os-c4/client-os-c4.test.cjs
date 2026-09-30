@@ -12,6 +12,7 @@ const js = read('js/fixeo-dashboard-v2.js');
 const core = read('js/fixeo-supabase-core.js');
 const css = read('css/fixeo-dashboard-v2.css');
 const vercel = JSON.parse(read('vercel.json'));
+const clientContextSource = read('api/client-context-fn/index.js');
 const clientContextHandler = require('../../api/client-context-fn/index.js');
 const clientContext = clientContextHandler._test;
 
@@ -196,4 +197,12 @@ test('client context handler fails closed for a non-client canonical role', asyn
     for(const k of Object.keys(process.env)) if(!(k in oldEnv)) delete process.env[k];
     Object.assign(process.env,oldEnv);
   }
+});
+
+
+test('client context selects only columns present in the production contract', () => {
+  assert.equal(clientContextSource.includes('created_at,updated_at'), false);
+  assert.match(clientContextSource, /service_requests\?client_profile_id=eq\./);
+  assert.match(clientContextSource, /missions\?client_profile_id=eq\./);
+  assert.match(clientContextSource, /quotes\?request_id=in\./);
 });

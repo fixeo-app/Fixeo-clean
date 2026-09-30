@@ -67,13 +67,13 @@ function isAssigned(s){return ['assigned','acceptée','acceptee','accepted'].inc
 
 function decisionFrom(context){
   const requests=context.requests,quotes=context.quotes,missions=context.missions,notifications=context.notifications;
-  const byUpdated=requests.slice().sort((a,b)=>new Date(b.updated_at||b.created_at||0)-new Date(a.updated_at||a.created_at||0));
+  const byUpdated=requests.slice().sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
   const awaiting=byUpdated.find(r=>isCompletedAwaiting(r.status));
   if(awaiting) return {
     kind:'confirm_completed',tone:'attention',title:'Votre confirmation est attendue',
     text:'Une intervention est indiquée comme terminée. Vérifiez la prestation avant de la confirmer.',
     action:'go-requests',target_id:awaiting.id,quote_id:null,
-    evidence:[{type:'service_request',id:awaiting.id,status:awaiting.status,updated_at:awaiting.updated_at||awaiting.created_at}]
+    evidence:[{type:'service_request',id:awaiting.id,status:awaiting.status,created_at:awaiting.created_at}]
   };
   const pendingQuote=quotes.find(q=>lower(q.status)==='pending');
   if(pendingQuote){
@@ -84,7 +84,7 @@ function decisionFrom(context){
       action:'go-requests',target_id:pendingQuote.request_id,quote_id:pendingQuote.id,
       evidence:[
         {type:'quote',id:pendingQuote.id,status:pendingQuote.status,created_at:pendingQuote.created_at},
-        request?{type:'service_request',id:request.id,status:request.status,updated_at:request.updated_at||request.created_at}:null
+        request?{type:'service_request',id:request.id,status:request.status,created_at:request.created_at}:null
       ].filter(Boolean)
     };
   }
@@ -93,14 +93,14 @@ function decisionFrom(context){
     kind:'track_mission',tone:'live',title:'Intervention en cours',
     text:'Votre intervention est actuellement indiquée en cours dans le dossier FIXEO.',
     action:'go-missions',target_id:live.id,quote_id:null,
-    evidence:[{type:'service_request',id:live.id,status:live.status,updated_at:live.updated_at||live.created_at}]
+    evidence:[{type:'service_request',id:live.id,status:live.status,created_at:live.created_at}]
   };
   const assigned=byUpdated.find(r=>isAssigned(r.status));
   if(assigned) return {
     kind:'track_mission',tone:'live',title:'Votre demande est prise en charge',
     text:'Un artisan est assigné à cette demande selon l’état canonique disponible.',
     action:'go-missions',target_id:assigned.id,quote_id:null,
-    evidence:[{type:'service_request',id:assigned.id,status:assigned.status,updated_at:assigned.updated_at||assigned.created_at}]
+    evidence:[{type:'service_request',id:assigned.id,status:assigned.status,created_at:assigned.created_at}]
   };
   const unread=notifications.find(n=>n.read===false);
   if(unread) return {
@@ -114,7 +114,7 @@ function decisionFrom(context){
     kind:'track_request',tone:'search',title:'Recherche en cours',
     text:'Votre demande est enregistrée. Le prochain état affiché dépendra uniquement des événements réellement enregistrés.',
     action:'go-requests',target_id:active.id,quote_id:null,
-    evidence:[{type:'service_request',id:active.id,status:active.status,updated_at:active.updated_at||active.created_at}]
+    evidence:[{type:'service_request',id:active.id,status:active.status,created_at:active.created_at}]
   };
   return {
     kind:'new_request',tone:'calm',title:'Tout est calme',
@@ -125,12 +125,12 @@ function decisionFrom(context){
 
 function requestPath(uid){
   return 'service_requests?client_profile_id=eq.'+encodeURIComponent(uid)
-    +'&select=id,service_category,city,status,urgency,tracking_ref,created_at,updated_at'
+    +'&select=id,service_category,city,status,urgency,tracking_ref,created_at'
     +'&order=created_at.desc&limit=40';
 }
 function missionPath(uid){
   return 'missions?client_profile_id=eq.'+encodeURIComponent(uid)
-    +'&select=id,request_id,status,agreed_price,created_at,updated_at'
+    +'&select=id,request_id,status,agreed_price,created_at'
     +'&order=created_at.desc&limit=40';
 }
 function notificationPath(uid){
@@ -141,7 +141,7 @@ function notificationPath(uid){
 function quotePath(ids){
   if(!ids.length) return null;
   return 'quotes?request_id=in.('+ids.map(encodeURIComponent).join(',')+')'
-    +'&select=id,request_id,status,proposed_price,created_at,updated_at'
+    +'&select=id,request_id,status,proposed_price,created_at'
     +'&order=created_at.desc&limit=80';
 }
 
