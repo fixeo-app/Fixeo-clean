@@ -149,7 +149,7 @@
   }
   function invitationLink(token){
     if(!token)return '';
-    return (root.location?root.location.origin:'https://www.fixeo.ma')+'/enterprise-invitation.html?token='+encodeURIComponent(token);
+    return (root&&root.location?root.location.origin:'https://www.fixeo.ma')+'/enterprise-invitation.html?token='+encodeURIComponent(token);
   }
   function renderSuccess(result){
     ui.result=result;ui.enterpriseId=result.enterprise_id;
