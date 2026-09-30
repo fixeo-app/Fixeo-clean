@@ -181,8 +181,9 @@ BEGIN
         artisan_id,campaign_id,task_type,priority,reason_codes,evidence,max_attempts,idempotency_key
       ) VALUES(
         x.artisan_id,c.id,'CONTACT',LEAST(1000,GREATEST(0,x.score*10)),
-        COALESCE(x.reasons,'{}'::jsonb)::jsonb,
-        jsonb_build_object('candidate_score',x.score,'city',x.city,'service_category',x.service_category,'source','supply_recruitment_candidates_v1'),
+        jsonb_build_array('candidate_score'),
+        jsonb_build_object('candidate_score',x.score,'city',x.city,'service_category',x.service_category,
+          'candidate_reasons',COALESCE(x.reasons,'{}'::jsonb),'source','supply_recruitment_candidates_v1'),
         c.max_attempts_per_artisan,idem
       );
       PERFORM public.supply_record_stage_v1(
