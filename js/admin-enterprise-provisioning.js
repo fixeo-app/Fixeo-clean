@@ -135,16 +135,17 @@
       'Choisir le propriétaire','Étape 2 · Association explicite ou invitation sécurisée.');
   }
   function renderStep3(){
+    var assigning=!!ui.draft.assign_existing;
     var owner=ui.draft.owner_mode==='existing'
       ? (ui.draft.selected?(ui.draft.selected.full_name||ui.draft.selected.email||ui.draft.selected.phone):'—')
       : ui.draft.owner_email;
     renderShell(
       '<div class="ep-review"><div><span>Entreprise</span><b>'+esc(ui.draft.name)+'</b><small>'+esc(ui.draft.legal_name||'Raison sociale non renseignée')+'</small></div>'+
-      '<div><span>Propriétaire</span><b>'+esc(owner)+'</b><small>'+(ui.draft.owner_mode==='existing'?'Activation immédiate après création':'Invitation fondatrice · 7 jours')+'</small></div>'+
-      '<div><span>Contrôle</span><b>Idempotence + audit</b><small>Une double validation ne crée pas deux entreprises.</small></div></div>'+
+      '<div><span>Propriétaire</span><b>'+esc(owner)+'</b><small>'+(ui.draft.owner_mode==='existing'?(assigning?'Activation immédiate sur ce tenant':'Activation immédiate après création'):'Invitation fondatrice · 7 jours')+'</small></div>'+
+      '<div><span>Contrôle</span><b>'+(assigning?'Audit + garde owner':'Idempotence + audit')+'</b><small>'+(assigning?'L’assignation est refusée si un propriétaire courant existe.':'Une double validation ne crée pas deux entreprises.')+'</small></div></div>'+
       '<label class="ep-confirm"><input type="checkbox" id="ep-confirm-check"> Je confirme l’entreprise et le propriétaire ci-dessus.</label>'+
-      '<div class="ep-actions split"><button class="btn" data-ep-back>← Retour</button><button class="btn primary" data-ep-submit disabled>Créer l’espace Entreprise</button></div>',
-      'Confirmer le provisioning','Étape 3 · Dernière vérification avant mutation.');
+      '<div class="ep-actions split"><button class="btn" data-ep-back>← Retour</button><button class="btn primary" data-ep-submit disabled>'+(assigning?'Assigner le propriétaire':'Créer l’espace Entreprise')+'</button></div>',
+      assigning?'Confirmer le propriétaire':'Confirmer le provisioning','Étape 3 · Dernière vérification avant mutation.');
   }
   function invitationLink(token){
     if(!token)return '';
