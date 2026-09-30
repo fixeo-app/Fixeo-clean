@@ -331,3 +331,42 @@ test('Block 6 — PostgreSQL integration: exact search, idempotent active-owner 
     );
   });
 });
+
+
+test('Block 3 — provisioning wizard renders the phone-first three-step flow in DOM', async () => {
+  const {JSDOM}=require('jsdom');
+  const dom=new JSDOM('<!doctype html><button id="enterprise-provision-open">open</button><dialog id="enterprise-provision-dialog"><div id="enterprise-provision-body"></div><div id="enterprise-provision-state"></div></dialog>',{
+    url:'https://www.fixeo.ma/admin.html?view=network',
+    runScripts:'outside-only'
+  });
+  const w=dom.window;
+  Object.defineProperty(w.crypto,'randomUUID',{configurable:true,value:()=> '44444444-4444-4444-8444-444444444444'});
+  w.eval(ui);
+  w.document.dispatchEvent(new w.Event('DOMContentLoaded'));
+
+  w.FixeoEnterpriseProvisioning.openCreate();
+  assert.equal(w.document.getElementById('enterprise-provision-dialog').hasAttribute('open'),true);
+  assert.ok(w.document.getElementById('ep-company-form'));
+
+  const company=w.document.getElementById('ep-company-form');
+  company.elements.name.value='Atlas Facilities';
+  company.elements.legal_name.value='Atlas Facilities SARL';
+  company.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  assert.match(w.document.getElementById('enterprise-provision-body').textContent,/Choisir le propriétaire/);
+
+  w.document.querySelector('[data-ep-mode="invite"]').click();
+  const phoneForm=w.document.getElementById('ep-owner-phone');
+  assert.ok(phoneForm);
+  phoneForm.elements.phone.value='06 12 34 56 78';
+  w.document.querySelector('[data-ep-next-owner]').click();
+  assert.match(w.document.getElementById('enterprise-provision-body').textContent,/Confirmer le provisioning/);
+  assert.match(w.document.getElementById('enterprise-provision-body').textContent,/\+212612345678/);
+
+  const submit=w.document.querySelector('[data-ep-submit]');
+  assert.equal(submit.disabled,true);
+  const confirm=w.document.getElementById('ep-confirm-check');
+  confirm.checked=true;
+  confirm.dispatchEvent(new w.Event('change',{bubbles:true}));
+  assert.equal(submit.disabled,false);
+  dom.window.close();
+});
