@@ -2,6 +2,16 @@
   "version": 2,
   "redirects": [
     {
+      "source": "/dashboard-client-v1.html",
+      "destination": "/dashboard-client.html",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard-client-v2.html",
+      "destination": "/dashboard-client.html",
+      "permanent": true
+    },
+    {
       "source": "/(.*)",
       "has": [
         {
