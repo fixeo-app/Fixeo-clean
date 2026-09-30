@@ -85,7 +85,8 @@
       controls.push(action('enterprise.retry','Préparer la relance hybride'));
     }
     for(let i=controls.length-1;i>=0;i--)if(!controls[i])controls.splice(i,1);
-    $('drawer-actions').innerHTML=`<div class="rafi-action-contract"><b>${controls.length?'ACTION DISPONIBLE · préparation':'ACTION MÉTIER NON DISPONIBLE'}</b><p>${controls.length?'Préconditions relues par le serveur ; confirmation Admin obligatoire avant exécution.':esc(dossier.hybrid?.unavailable_reason||d?.actionability.unavailable_reason||(dossier.enterprise_context?'Permission Enterprise et état courant requis.':'Aucune commande applicable à cet état.'))}</p></div>`+controls.join('')+'<div id="rafi-action-form"></div><div id="rafi-action-result" role="status" aria-live="polite"></div>';
+    const provisioning=type==='enterprise'?'<button class="btn" data-enterprise-provision-manage="'+esc(dossier.id)+'">Gérer le propriétaire</button>':'';
+    $('drawer-actions').innerHTML=`<div class="rafi-action-contract"><b>${controls.length?'ACTION DISPONIBLE · préparation':'ACTION MÉTIER NON DISPONIBLE'}</b><p>${controls.length?'Préconditions relues par le serveur ; confirmation Admin obligatoire avant exécution.':esc(dossier.hybrid?.unavailable_reason||d?.actionability.unavailable_reason||(dossier.enterprise_context?'Permission Enterprise et état courant requis.':'Aucune commande applicable à cet état.'))}</p></div>`+provisioning+controls.join('')+'<div id="rafi-action-form"></div><div id="rafi-action-result" role="status" aria-live="polite"></div>';
   }
   async function prepare(capability) {
     const dossier=currentDossier;if(!dossier||actionBusy)return;
