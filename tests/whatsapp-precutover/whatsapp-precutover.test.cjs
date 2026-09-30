@@ -246,6 +246,29 @@ test('worker requires explicit Meta config before claiming a live notification',
   }
 });
 
+test('worker refuses a non-canonical WABA before queue claim', async () => {
+  baseWorkerEnv();
+  enableMetaEnv();
+  process.env.WHATSAPP_WABA_ID = '2886110151790667';
+  const oldFetch = global.fetch;
+  let calls = 0;
+  global.fetch = async () => { calls += 1; throw new Error('should not call'); };
+  try {
+    const res = response();
+    await worker({
+      method: 'POST',
+      headers: { authorization: 'Bearer ' + process.env.DISPATCH_WHATSAPP_WORKER_SECRET },
+      query: {},
+      body: {}
+    }, res);
+    assert.equal(res.code, 503);
+    assert.equal(res.body.error, 'META_WABA_MISMATCH');
+    assert.equal(calls, 0);
+  } finally {
+    global.fetch = oldFetch;
+  }
+});
+
 test('webhook GET verification returns Meta challenge only for correct token', async () => {
   process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN = 'verify-secret';
   const ok = response();
@@ -353,6 +376,35 @@ test('webhook validates signature and persists canonical status + inbound messag
     assert.equal(res.body.statuses_recorded, 1);
     assert.equal(res.body.inbound_recorded, 1);
     assert.deepEqual(rpcNames.sort(), ['dispatch_record_whatsapp_status_v1', 'whatsapp_ingest_inbound_message_v1'].sort());
+  } finally {
+    global.fetch = oldFetch;
+  }
+});
+
+test('webhook refuses a non-canonical WABA before persistence', async () => {
+  process.env = {
+    ...process.env,
+    VERCEL_ENV: 'production',
+    WHATSAPP_WEBHOOK_PROCESS_ENABLED: 'true',
+    WHATSAPP_APP_SECRET: 'app-secret',
+    WHATSAPP_WABA_ID: '2886110151790667',
+    WHATSAPP_PHONE_NUMBER_ID: '123456789',
+    SUPABASE_URL: 'https://ztwtbgoqanqzvwiibtuh.supabase.co',
+    SUPABASE_SERVICE_ROLE_KEY: 'service-role'
+  };
+  const oldFetch = global.fetch;
+  let calls = 0;
+  global.fetch = async () => { calls += 1; throw new Error('should not call'); };
+  try {
+    const res = response();
+    await webhook({
+      method: 'POST',
+      headers: {},
+      body: '{}'
+    }, res);
+    assert.equal(res.code, 503);
+    assert.equal(res.body.error, 'WEBHOOK_WABA_MISMATCH');
+    assert.equal(calls, 0);
   } finally {
     global.fetch = oldFetch;
   }
