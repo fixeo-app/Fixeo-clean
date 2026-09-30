@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c39d'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
+  var VERSION = 'v2c45'; /* Client OS C4 closure final */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -40,6 +40,28 @@
     'Safi', 'Temara', 'Taza', 'Ouarzazate', 'Mohammedia'
   ];
 
+  var REQUEST_SERVICES = [
+    { slug:'plomberie', label:'Plomberie', icon:'🔧' },
+    { slug:'electricite', label:'Électricité', icon:'⚡' },
+    { slug:'serrurerie', label:'Serrurerie', icon:'🔐' },
+    { slug:'climatisation', label:'Climatisation', icon:'❄️' },
+    { slug:'menuiserie', label:'Menuiserie', icon:'🪟' },
+    { slug:'peinture', label:'Peinture', icon:'🖌️' },
+    { slug:'maconnerie', label:'Maçonnerie', icon:'🧱' },
+    { slug:'nettoyage', label:'Nettoyage', icon:'🧹' },
+    { slug:'jardinage', label:'Jardinage', icon:'🌿' },
+    { slug:'demenagement', label:'Déménagement', icon:'📦' },
+    { slug:'autre', label:'Autre', icon:'＋' }
+  ];
+
+  var FIXEO_CONTACTS = {
+    supportWhatsappE164:'212660484415',
+    email:'contact@fixeo.ma'
+  };
+  function _fixeoSupportWhatsAppUrl(){
+    return 'https://wa.me/' + FIXEO_CONTACTS.supportWhatsappE164;
+  }
+
   /* ── STATE ────────────────────────────────────────────────────── */
   var _state = {
     session:       null,
@@ -49,7 +71,11 @@
     missions:      [],   /* missions rows */
     artisanMap:    {},   /* id → artisan row */
     notifications: [],   /* notifications rows for current user */
+    notifChannel:  null,
     section:       'dashboard',
+    requestMode:   'standard',
+    requestDraft:  { service:'', city:'', description:'', phone:'' },
+    rafiContext:   null,
     loading:       true,
     error:         null
   };
@@ -137,6 +163,22 @@
     return PIPELINE.NEW;
   }
 
+  async function _fetchRafiContext() {
+    var token=_state.session&&_state.session.access_token;
+    if(!token) return null;
+    try{
+      var response=await fetch('/api/client-context',{
+        method:'POST',
+        headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},
+        body:'{}',
+        credentials:'same-origin'
+      });
+      var data=await response.json().catch(function(){return null;});
+      if(!response.ok||!data||data.ok!==true) return null;
+      return data;
+    }catch(_){return null;}
+  }
+
   /* ── FETCH ────────────────────────────────────────────────────── */
   async function _fetch() {
     var FS = window.FixeoSupabase;
@@ -215,6 +257,7 @@
     if (_state.session && _state.session.user && _state.session.user.id) {
       _state.notifications = await _fetchNotifications(_state.session.user.id);
     }
+    _state.rafiContext = await _fetchRafiContext();
   }
 
   /* ── KPIs ─────────────────────────────────────────────────────── */
@@ -570,30 +613,109 @@
   }
 
   /* ── PREMIUM EMPTY STATE ───────────────────────────────────────── */
-  function _renderPremiumEmpty(profile) {
-    var name = (profile && profile.full_name) ? profile.full_name.split(' ')[0] : '';
-    var greeting = name ? ('Bonjour ' + esc(name) + ' \uD83D\uDC4B') : 'Bienvenue sur Fixeo \uD83D\uDC4B';
-
-    return '<div class="fxv2-premium-empty">'
-      + '<div class="fxv2-pe-greeting">' + greeting + '</div>'
-      + '<div class="fxv2-pe-headline">Votre espace client<br>en un seul endroit</div>'
-      + '<div class="fxv2-pe-subline">Trouvez un professionnel v\u00e9rifi\u00e9 pour n\u2019importe quel service\u00a0\u2014 plomberie, \u00e9lectricit\u00e9, menuiserie et plus.</div>'
-      /* Trust row */
-      + '<div class="fxv2-pe-trust">'
-        + '<span>\u2714\uFE0F Artisan v\u00e9rifi\u00e9 Fixeo</span>'
-        + '<span>\u2714\uFE0F Aucun paiement maintenant</span>'
-        + '<span>\u2714\uFE0F Prix confirm\u00e9 avant intervention</span>'
+  function _renderClientEmptyActions() {
+    return '<section class="fxv2-c40-empty" aria-label="Créer une demande">'
+      + '<div><span>PRÊT POUR LA PROCHAINE DEMANDE</span><strong>Que souhaitez-vous faire ?</strong><p>Créez une demande depuis Client OS sans quitter votre espace.</p></div>'
+      + '<div class="fxv2-c40-empty-actions">'
+        + '<button class="fxv2-btn fxv2-btn-primary" data-action="new-request">＋ Nouvelle demande</button>'
+        + '<button class="fxv2-btn fxv2-c40-urgent" data-action="new-urgent">⚡ Demande urgente</button>'
       + '</div>'
-      /* Primary CTA */
-      + '<button class="fxv2-btn fxv2-btn-primary fxv2-pe-cta" data-action="new-request">'
-          + '\uD83D\uDCDD Publier une demande'
-        + '</button>'
-      /* Secondary urgent */
-      + '<button class="fxv2-btn fxv2-pe-urgent-cta" data-action="new-urgent">'
-          + '\u26A1 Demande urgente'
-        + '</button>'
+    + '</section>';
+  }
+
+  function _requestServiceLabel(slug) {
+    var item = REQUEST_SERVICES.find(function(s){ return s.slug === slug; });
+    return item ? item.label : 'Autre';
+  }
+
+  function _renderRequestComposer() {
+    var sec = el('fxv2-sec-new-request');
+    if (!sec) return;
+    var mode = _state.requestMode === 'urgent' ? 'urgent' : 'standard';
+    var draft = _state.requestDraft || {};
+    var phone = draft.phone || ((_state.profile && _state.profile.phone) || ((_state.session && _state.session.user && _state.session.user.user_metadata && _state.session.user.user_metadata.phone) || ''));
+    var cityOptions = '<option value="">Choisir une ville</option>' + CITIES.map(function(city){
+      return '<option value="' + esc(city) + '"' + (draft.city === city ? ' selected' : '') + '>' + esc(city) + '</option>';
+    }).join('');
+    sec.innerHTML = '<div class="fxv2-c40-compose" data-mode="' + mode + '">'
+      + '<div class="fxv2-c40-compose-head"><div><span>' + (mode === 'urgent' ? 'URGENCE CLIENT OS' : 'NOUVELLE DEMANDE') + '</span><h2>' + (mode === 'urgent' ? 'Besoin d’une intervention rapidement ?' : 'Décrivez votre besoin') + '</h2><p>' + (mode === 'urgent' ? 'Votre demande sera enregistrée comme urgente et dispatchée via le moteur FIXEO.' : 'La demande est créée directement dans votre dossier client.') + '</p></div><button data-action="request-cancel" aria-label="Fermer">×</button></div>'
+      + '<div class="fxv2-c40-service-grid" role="group" aria-label="Choisir un service">'
+      + REQUEST_SERVICES.map(function(s){ return '<button type="button" class="fxv2-c40-service' + (draft.service === s.slug ? ' active' : '') + '" data-action="request-service" data-service="' + esc(s.slug) + '"><i>' + s.icon + '</i><span>' + esc(s.label) + '</span></button>'; }).join('')
+      + '</div>'
+      + '<div class="fxv2-c40-fields">'
+        + '<label>Ville<select id="fxv2-request-city">' + cityOptions + '</select></label>'
+        + '<label>Décrivez le problème<textarea id="fxv2-request-description" maxlength="500" rows="4" placeholder="Ex. fuite sous l’évier, prise qui ne fonctionne plus…">' + esc(draft.description || '') + '</textarea></label>'
+        + (mode === 'urgent' ? '<label>Téléphone joignable<input id="fxv2-request-phone" type="tel" autocomplete="tel" value="' + esc(phone) + '" placeholder="06XXXXXXXX"></label>' : '')
+      + '</div>'
+      + '<div class="fxv2-c40-compose-foot"><button class="fxv2-btn fxv2-btn-ghost" data-action="request-cancel">Annuler</button><button class="fxv2-btn fxv2-c40-submit" data-action="request-submit">' + (mode === 'urgent' ? '⚡ Transmettre l’urgence' : 'Publier la demande') + '</button></div>'
+      + '<p class="fxv2-c40-truth">' + (mode === 'urgent' ? 'Aucune promesse de délai n’est affichée. Le statut réel apparaîtra dans votre espace.' : 'La demande est créée avec votre identité client authentifiée et un identifiant d’idempotence.') + '</p>'
     + '</div>';
   }
+
+  function _openNativeRequest(mode) {
+    _state.requestMode = mode === 'urgent' ? 'urgent' : 'standard';
+    _state.requestDraft = {
+      service:'',
+      city:(_state.profile && _state.profile.city) || '',
+      description:'',
+      phone:(_state.profile && _state.profile.phone) || ''
+    };
+    _renderRequestComposer();
+    _showSection('new-request');
+  }
+
+  async function _submitNativeRequest(btn) {
+    var service = (_state.requestDraft && _state.requestDraft.service) || '';
+    var city = (el('fxv2-request-city') && el('fxv2-request-city').value || '').trim();
+    var description = (el('fxv2-request-description') && el('fxv2-request-description').value || '').trim();
+    var phone = (el('fxv2-request-phone') && el('fxv2-request-phone').value || (_state.profile && _state.profile.phone) || '').trim();
+    if (!service) { _toast('Choisissez le service concerné.','error'); return; }
+    if (!city) { _toast('Choisissez votre ville.','error'); return; }
+    if (description.length < 3) { _toast('Décrivez le problème en au moins 3 caractères.','error'); return; }
+    _state.requestDraft.city = city;
+    _state.requestDraft.description = description;
+    _state.requestDraft.phone = phone;
+    _btnBusy(btn, _state.requestMode === 'urgent' ? 'Transmission…' : 'Publication…');
+    try {
+      if (_state.requestMode === 'urgent') {
+        var normalizedPhone = phone.replace(/[ .()-]/g,'');
+        if (!/^(?:\+?212|0)[5-7]\d{8}$/.test(normalizedPhone)) throw new Error('Ajoutez un numéro marocain valide pour l’urgence.');
+        var token = _state.session && _state.session.access_token;
+        if (!token) throw new Error('Votre session a expiré. Reconnectez-vous.');
+        var urgentRes = await fetch('/api/urgent-request', {
+          method:'POST',
+          headers:{'Content-Type':'application/json','X-Fxauth-Token':token},
+          body:JSON.stringify({
+            service:service,
+            problem:_requestServiceLabel(service),
+            description:description,
+            city:city,
+            phone:phone,
+            urgency:'now',
+            mode:'emergency',
+            source:'client-os-c4'
+          })
+        });
+        var urgentData = await urgentRes.json().catch(function(){ return {}; });
+        if (!urgentRes.ok || !urgentData.ok) throw new Error(urgentData.error || 'Impossible de transmettre l’urgence.');
+        _toast('Urgence enregistrée. Le suivi réel est maintenant disponible.','success');
+      } else {
+        if (!window.FixeoSupabase || typeof window.FixeoSupabase.submitServiceRequest !== 'function') throw new Error('Service de demande indisponible.');
+        await window.FixeoSupabase.submitServiceRequest({
+          service_category:service,
+          city:city,
+          description:description
+        });
+        _toast('Demande publiée.','success');
+      }
+      await _refresh();
+      _showSection('dashboard');
+    } catch (e) {
+      _toast((e && e.message) ? e.message : 'Impossible de publier la demande.','error');
+      _btnReset(btn, _state.requestMode === 'urgent' ? '⚡ Transmettre l’urgence' : 'Publier la demande');
+    }
+  }
+
 
   /* ── C2.1 CLIENT CONTROL TOWER FOUNDATION ────────────────────────
      Deterministic/read-only shell over canonical dashboard state.
@@ -734,20 +856,45 @@
   }
 
   function _clientRafiBrief(reqs) {
+    var server=_state.rafiContext&&_state.rafiContext.decision;
+    if(server&&server.title&&server.text){
+      var actionMap={
+        'go-requests':'go-requests',
+        'go-missions':'go-missions',
+        'go-notifications':'go-notifications',
+        'new-request':'new-request'
+      };
+      return {
+        tone:server.tone||'calm',
+        title:'RAFI · '+String(server.title),
+        text:String(server.text),
+        action:server.action==='new-request'?'Nouvelle demande':server.action==='go-missions'?'Voir mes interventions':server.action==='go-notifications'?'Voir les notifications':'Voir la demande',
+        actionName:actionMap[server.action]||'go-requests',
+        source:'server'
+      };
+    }
     var active = (reqs || []).filter(function (r) { return r._pipeline && r._pipeline.step >= 0 && r._pipeline.step < 5; });
     var decisions = active.filter(function (r) { return r._pipeline.step === 4 || r._pipeline === PIPELINE.PROPOSAL_RECEIVED; });
     if (!active.length) {
-      return { tone:'calm', title:'RAFI · Tout est calme', text:'Vous n’avez aucune intervention active. Je peux vous guider dès votre prochaine demande.', action:'Nouvelle demande', actionName:'new-request' };
+      return { tone:'calm', title:'RAFI · Tout est calme', text:'Vous n’avez aucune intervention active. Je peux vous guider dès votre prochaine demande.', action:'Nouvelle demande', actionName:'new-request',source:'local_fallback' };
     }
     if (decisions.length) {
       var d = decisions[0], p = d._pipeline;
-      if (p.step === 4) return { tone:'attention', title:'RAFI · Votre confirmation est attendue', text:'Une prestation est indiquée comme terminée. Vérifiez l’intervention avant de la confirmer.', action:'Voir la décision', actionName:'go-requests' };
-      return { tone:'attention', title:'RAFI · Une proposition vous attend', text:'Un devis a été reçu pour ' + (d.service_category || 'votre demande') + '. Consultez les informations avant de décider.', action:'Examiner', actionName:'go-requests' };
+      if (p.step === 4) return { tone:'attention', title:'RAFI · Votre confirmation est attendue', text:'Une prestation est indiquée comme terminée. Vérifiez l’intervention avant de la confirmer.', action:'Voir la décision', actionName:'go-requests',source:'local_fallback' };
+      return { tone:'attention', title:'RAFI · Une proposition vous attend', text:'Un devis a été reçu pour ' + (d.service_category || 'votre demande') + '. Consultez les informations avant de décider.', action:'Examiner', actionName:'go-requests',source:'local_fallback' };
     }
     var r = active[0], p2 = r._pipeline;
-    if (p2.step === 3) return { tone:'live', title:'RAFI · Intervention en cours', text:'Votre intervention ' + (r.service_category || '') + ' est actuellement indiquée en cours.', action:'Suivre', actionName:'go-requests' };
-    if (p2.step === 2) return { tone:'live', title:'RAFI · Votre demande est prise en charge', text:'Un artisan est assigné à votre demande. Les informations disponibles sont regroupées dans le Mission Command Center.', action:'Voir la mission', actionName:'go-requests' };
-    return { tone:'search', title:'RAFI · Recherche en cours', text:'FIXEO recherche actuellement un artisan éligible pour ' + (r.service_category || 'votre demande') + '.', action:'Voir la demande', actionName:'go-requests' };
+    if (p2.step === 3) return { tone:'live', title:'RAFI · Intervention en cours', text:'Votre intervention ' + (r.service_category || '') + ' est actuellement indiquée en cours.', action:'Suivre', actionName:'go-requests',source:'local_fallback' };
+    if (p2.step === 2) return { tone:'live', title:'RAFI · Votre demande est prise en charge', text:'Un artisan est assigné à votre demande. Les informations disponibles sont regroupées dans le Mission Command Center.', action:'Voir la mission', actionName:'go-requests',source:'local_fallback' };
+    return { tone:'search', title:'RAFI · Recherche en cours', text:'FIXEO recherche actuellement un artisan éligible pour ' + (r.service_category || 'votre demande') + '.', action:'Voir la demande', actionName:'go-requests',source:'local_fallback' };
+  }
+
+  function _renderRafiCanonicalProof() {
+    var ctx=_state.rafiContext;
+    if(!ctx||ctx.ok!==true||!ctx.evidence) return '<div class="fxv2-c40-rafi-proof" data-state="fallback"><span>CONTEXTE</span><strong>Lecture locale de secours</strong><small>Le contexte serveur canonique est momentanément indisponible.</small></div>';
+    var e=ctx.evidence||{},stamp='';
+    try{stamp=new Date(ctx.as_of).toLocaleTimeString('fr-MA',{hour:'2-digit',minute:'2-digit'});}catch(_){}
+    return '<div class="fxv2-c40-rafi-proof" data-state="canonical"><span>PREUVES CANONIQUES</span><strong>'+esc(e.active_requests||0)+' active'+((e.active_requests||0)>1?'s':'')+' · '+esc(e.pending_quotes||0)+' devis en attente · '+esc(e.unread_notifications||0)+' notification'+((e.unread_notifications||0)>1?'s':'')+' non lue'+((e.unread_notifications||0)>1?'s':'')+'</strong><small>Contexte serveur'+(stamp?' · '+esc(stamp):'')+'</small></div>';
   }
 
   function _rafiGovernedProposal(reqs) {
@@ -809,6 +956,7 @@
     return '<section class="fxv2-rafi-intel fxv2-c34-copilot" data-tone="' + esc(b.tone) + '" aria-label="RAFI Client Copilot">'
       + '<div class="fxv2-c34-hero"><div class="fxv2-c34-star" aria-hidden="true">✦</div><div class="fxv2-rafi-copy"><span class="fxv2-rafi-kicker">RAFI CLIENT COPILOT</span><strong>' + esc(b.title.replace(/^RAFI ·\s*/,'')) + '</strong><p>' + esc(b.text) + '</p></div></div>'
       + '<button class="fxv2-btn fxv2-rafi-action" data-action="' + esc(b.actionName) + '">' + esc(b.action) + '</button>'
+      + _renderRafiCanonicalProof()
       + '<div class="fxv2-c34-section"><span>SITUATION RÉELLE</span>'+_renderRafiSituation(reqs)+'</div>'
       + _renderRafiGovernedAction(reqs)
       + _renderRafiGuardrails()
@@ -1012,7 +1160,7 @@
     var evidence=active.length?_evidenceForRequest(active[0]).length:0;
     return '<section class="fxv2-c32-portfolio" aria-label="Synthèse client"><div class="fxv2-c32-head"><div><span>VOTRE ESPACE</span><strong>L’essentiel, sans surcharge</strong></div></div><div class="fxv2-c32-portfolio-grid">'
       +'<button data-action="go-requests"><span>Demandes</span><strong>'+m.total+'</strong><small>'+(m.decision+m.confirm)+' décision'+((m.decision+m.confirm)>1?'s':'')+'</small></button>'
-      +'<button data-action="go-requests"><span>Finance</span><strong>'+(f.pricedMissions?esc(f.knownTotal.toLocaleString('fr-MA'))+' MAD':'—')+'</strong><small>'+f.accepted+' devis accepté'+(f.accepted>1?'s':'')+'</small></button>'
+      +'<button data-action="go-requests"><span>Montants</span><strong>'+(f.pricedMissions?esc(f.knownTotal.toLocaleString('fr-MA'))+' MAD':'—')+'</strong><small>'+f.accepted+' devis accepté'+(f.accepted>1?'s':'')+'</small></button>'
       +'<button data-action="go-documents"><span>Dossier</span><strong>'+evidence+'</strong><small>élément'+(evidence>1?'s':'')+' disponible'+(evidence>1?'s':'')+'</small></button>'
       +'</div></section>';
   }
@@ -1031,7 +1179,7 @@
     html += _renderC32RafiBrief(reqs);
     html += _renderC32Portfolio(reqs);
 
-    if (!active.length) html += _renderPremiumEmpty(_state.profile);
+    if (!active.length) html += _renderClientEmptyActions();
     sec.innerHTML = html;
   }
 
@@ -1111,9 +1259,9 @@
     var sec=el('fxv2-sec-messages'); if(!sec)return;
     var active=(_state.requests||[]).filter(function(r){return r._pipeline&&r._pipeline.step>=2&&r._pipeline.step<5;});
     var contacts=[]; active.forEach(function(r){var found=_findAcceptedArtisan(r),x=found?found.artisan:null;if(x&&x.phone_public){var wa=buildWA(x.phone_public,x.full_name);if(wa)contacts.push({service:r.service_category||'Intervention',city:r.city||'',name:x.full_name||'Artisan',wa:wa});}});
-    sec.innerHTML='<div class="fxv2-c39c-head"><span>COMMUNICATION CENTER</span><h2>Messages & contacts</h2><p>Les canaux réellement disponibles pour vos interventions.</p></div>'
+    sec.innerHTML='<div class="fxv2-c39c-head"><span>COMMUNICATION CENTER</span><h2>Contacts & échanges</h2><p>Les canaux réellement disponibles pour vos interventions.</p></div>'
       +(contacts.length?'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>ARTISANS JOIGNABLES</span><strong>'+contacts.length+' contact'+(contacts.length>1?'s':'')+' disponible'+(contacts.length>1?'s':'')+'</strong></div><div class="fxv2-c39c-list">'+contacts.map(function(c){return '<a href="'+esc(c.wa)+'" target="_blank" rel="noopener"><i>💬</i><span><strong>'+esc(c.name)+'</strong><small>'+esc(c.service)+(c.city?' · '+esc(c.city):'')+'</small></span><b>WhatsApp ↗</b></a>';}).join('')+'</div></section>':'<section class="fxv2-c39c-card fxv2-c39c-empty"><strong>Aucun artisan joignable actuellement</strong><p>Un canal de contact apparaîtra ici lorsqu’un numéro public est disponible pour votre intervention.</p></section>')
-      +'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>FIXEO</span><strong>Besoin d’aide ?</strong></div><div class="fxv2-c39c-actions"><a href="https://wa.me/212660484415" target="_blank" rel="noopener">💬 WhatsApp Fixeo</a><a href="mailto:contact@fixeo.ma">✉ Email Fixeo</a><button data-action="go-support">Support Center →</button></div></section><div class="fxv2-c39c-note">La messagerie intégrée FIXEO n’est pas encore disponible. Aucun faux chat n’est affiché.</div>';
+      +'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>FIXEO</span><strong>Besoin d’aide ?</strong></div><div class="fxv2-c39c-actions"><a href="'+esc(_fixeoSupportWhatsAppUrl())+'" target="_blank" rel="noopener">💬 WhatsApp Fixeo</a><a href="mailto:'+esc(FIXEO_CONTACTS.email)+'">✉ Email Fixeo</a><button data-action="go-support">Support Center →</button></div></section><div class="fxv2-c39c-note">La messagerie intégrée FIXEO n’est pas encore disponible. Aucun faux chat n’est affiché.</div>';
   }
 
   /* ── SECTION: PROFILE ─────────────────────────────────────────── */
@@ -1184,7 +1332,7 @@
     var active=(_state.requests||[]).filter(function(r){return r._pipeline&&r._pipeline.step>=0&&r._pipeline.step<5;});
     sec.innerHTML='<div class="fxv2-c39c-head"><span>FIXEO CARE</span><h2>Support Center</h2><p>Aide, dossier et canaux officiels au même endroit.</p></div>'
       +(active.length?'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>VOS INTERVENTIONS</span><strong>'+active.length+' dossier'+(active.length>1?'s':'')+' actif'+(active.length>1?'s':'')+'</strong></div><button class="fxv2-c39c-wide" data-action="go-missions">Voir mes interventions →</button></section>':'')
-      +'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>ASSISTANCE</span><strong>Choisissez votre canal</strong></div>'+_supportItem('https://wa.me/212660484415','💬','WhatsApp Support','Contacter FIXEO')+_supportItem('mailto:contact@fixeo.ma','✉','Email','contact@fixeo.ma')+'<button class="fxv2-c39c-wide fxv2-c39c-rafi" data-action="go-rafi">✦ Comprendre la situation avec RAFI</button></section><details class="fxv2-c39c-tech"><summary>Informations techniques</summary><span>Version '+esc(VERSION)+' · Fixeo Client OS</span></details>';
+      +'<section class="fxv2-c39c-card"><div class="fxv2-c39c-title"><span>ASSISTANCE</span><strong>Choisissez votre canal</strong></div>'+_supportItem(_fixeoSupportWhatsAppUrl(),'💬','WhatsApp Support','Contacter FIXEO')+_supportItem('mailto:'+FIXEO_CONTACTS.email,'✉','Email',FIXEO_CONTACTS.email)+'<button class="fxv2-c39c-wide fxv2-c39c-rafi" data-action="go-rafi">✦ Comprendre la situation avec RAFI</button></section><details class="fxv2-c39c-tech"><summary>Informations techniques</summary><span>Version '+esc(VERSION)+' · Fixeo Client OS</span></details>';
   }
 
   function _supportItem(href, icon, label, desc) {
@@ -1250,6 +1398,7 @@
     _renderSidebarProfile();
     _renderNotificationBell();
     _renderDashboard();
+    _renderC39DecisionPage(_state.requests || []);
     _renderRequests();
     _renderMissions();
     _renderHistory();
@@ -1277,7 +1426,7 @@
   }
   function _renderC31Documents() {
     var sec=el('fxv2-sec-documents'); if(!sec) return;
-    sec.innerHTML='<div class="fxv2-c31-pagehead fxv2-c37-pagehead"><span>MON ACTIVITÉ</span><h2>Documents & confiance</h2><p>Votre dossier FIXEO : demandes, devis, missions, montants connus et références de suivi réellement enregistrés.</p></div>'+_renderC37Documents(_state.requests||[]);
+    sec.innerHTML='<div class="fxv2-c31-pagehead fxv2-c37-pagehead"><span>MON ACTIVITÉ</span><h2>Dossier & preuves</h2><p>Votre dossier FIXEO : demandes, devis, missions, montants connus et références de suivi réellement enregistrés.</p></div>'+_renderC37Documents(_state.requests||[]);
   }
 
   /* C3.9-A — dedicated Decision Center page */
@@ -1289,7 +1438,7 @@
   }
 
   /* ── NAVIGATION ───────────────────────────────────────────────── */
-  var SECTIONS = ['dashboard', 'decision', 'requests', 'missions', 'messages', 'history', 'notifications', 'profile', 'support', 'rafi', 'documents'];
+  var SECTIONS = ['dashboard', 'decision', 'requests', 'missions', 'messages', 'history', 'notifications', 'profile', 'support', 'rafi', 'documents', 'new-request'];
 
   function _showSection(name) {
     if (SECTIONS.indexOf(name) === -1) name = 'dashboard';
@@ -1305,14 +1454,16 @@
 
     /* Update sidebar links */
     document.querySelectorAll('.fxv2-nav-link').forEach(function (a) {
-      if (a.dataset.section === name) a.classList.add('active');
-      else a.classList.remove('active');
+      var active=a.dataset.section === name;
+      if (active) { a.classList.add('active'); a.setAttribute('aria-current','page'); }
+      else { a.classList.remove('active'); a.removeAttribute('aria-current'); }
     });
 
     /* Update bottom nav */
     document.querySelectorAll('.fxv2-bottom-btn').forEach(function (b) {
-      if (b.dataset.section === name) b.classList.add('active');
-      else b.classList.remove('active');
+      var active=b.dataset.section === name;
+      if (active) { b.classList.add('active'); b.setAttribute('aria-current','page'); }
+      else { b.classList.remove('active'); b.removeAttribute('aria-current'); }
     });
 
     /* KPI bar: only on dashboard + requests */
@@ -1321,6 +1472,13 @@
 
     /* Close mobile sidebar */
     _closeSidebar();
+  }
+
+  function _syncSidebarA11y() {
+    var s=el('fxv2-sidebar');
+    if(!s) return;
+    var desktop=!!(window.matchMedia&&window.matchMedia('(min-width: 768px)').matches);
+    s.setAttribute('aria-hidden', desktop ? 'false' : (s.classList.contains('open') ? 'false' : 'true'));
   }
 
   function _openSidebar() {
@@ -1338,11 +1496,12 @@
     var s = el('fxv2-sidebar');
     var o = el('fxv2-overlay');
     var h = el('fxv2-hamburger');
-    if (s) { s.classList.remove('open'); s.setAttribute('aria-hidden', 'true'); }
+    if (s) s.classList.remove('open');
     if (o) o.classList.remove('show');
     if (h) { h.classList.remove('open'); h.setAttribute('aria-expanded', 'false'); }
     document.body.style.overflow = '';
     document.body.classList.remove('fxv2-menu-open');
+    _syncSidebarA11y();
   }
 
   /* ── NAV BINDING (single listener each) ──────────────────────── */
@@ -1369,12 +1528,7 @@
     /* Sidebar nav links */
     document.querySelectorAll('.fxv2-nav-link').forEach(function (a) {
       a.addEventListener('click', function () {
-        var route=a.getAttribute('data-c31-route');
-        if(route==='decision'){
-          _renderC39DecisionPage(_state.requests||[]);
-          _showSection('decision');
-          return;
-        }
+        if(a.dataset.section==='decision') _renderC39DecisionPage(_state.requests||[]);
         _showSection(a.dataset.section);
       });
     });
@@ -1434,8 +1588,13 @@
           if (kind === 'accept-quote') return _doAcceptQuote(id, btn);
           if (kind === 'confirm-completed') return _doConfirmDone(id, btn);
           return;
-        case 'new-request':    return _openNewRequest();
-        case 'new-urgent':     return _openUrgentRequest(btn);
+        case 'new-request':    return _openNativeRequest('standard');
+        case 'new-urgent':     return _openNativeRequest('urgent');
+        case 'request-service':
+          _state.requestDraft.service = btn.dataset.service || '';
+          return _renderRequestComposer();
+        case 'request-cancel':  return _showSection('dashboard');
+        case 'request-submit':  return _submitNativeRequest(btn);
         case 'go-requests':       return _showSection('requests');
         case 'go-missions':       return _showSection('missions');
         case 'go-rafi':           return _showSection('rafi');
@@ -1688,6 +1847,33 @@ if (!result.ok) {
     } catch(e) { return []; }
   }
 
+  async function _subscribeCanonicalNotifications(uid) {
+    if (!uid || _state.notifChannel) return;
+    try {
+      var sb = await window.FixeoSupabase.getClient();
+      if (!sb || typeof sb.channel !== 'function') return;
+      var channel = sb.channel('client-os-notifications-' + String(uid).slice(0,8));
+      channel.on('postgres_changes', {
+        event:'*',
+        schema:'public',
+        table:'notifications',
+        filter:'recipient_user_id=eq.' + uid
+      }, async function () {
+        _state.notifications = await _fetchNotifications(uid);
+        _state.rafiContext = await _fetchRafiContext();
+        _renderNotificationBell();
+        _renderNotificationsSection();
+        _renderDashboard();
+        _renderC39DecisionPage(_state.requests || []);
+        _renderC31Rafi();
+      });
+      channel.subscribe();
+      _state.notifChannel = channel;
+    } catch (e) {
+      console.warn('[fxv2] notification realtime unavailable:', e && e.message);
+    }
+  }
+
   async function _doMarkNotifRead(notifId) {
     if (!notifId) return;
     try {
@@ -1697,8 +1883,12 @@ if (!result.ok) {
       _state.notifications = (_state.notifications || []).map(function(n) {
         return n.id === notifId ? Object.assign({}, n, { read: true }) : n;
       });
+      _state.rafiContext = await _fetchRafiContext();
       _renderNotificationBell();
       _renderNotificationsSection();
+      _renderDashboard();
+      _renderC39DecisionPage(_state.requests || []);
+      _renderC31Rafi();
     } catch(e) { /* best-effort */ }
   }
 
@@ -1751,40 +1941,26 @@ if (!result.ok) {
       +(read.length?'<section class="fxv2-c36-group fxv2-c36-history"><h3>Historique</h3>'+read.slice(0,12).map(_renderC36NotifCard).join('')+'</section>':'');
   }
 
-  /* NEW REQUEST MODAL ────────────────────────────────────────── */
-  function _openNewRequest() {
-    /* ── Canonical V4 request flow (fxrf4-v5e) ── */
-    if (window.FixeoRequestFlowV4 && typeof window.FixeoRequestFlowV4.open === 'function') {
-      window.FixeoRequestFlowV4.open({ mode: 'default', source: 'dashboard' });
-      return;
-    }
-    /* ── Hard fallback: FixeoSupabase.submitServiceRequest direct (no legacy modal) ── */
-    console.warn('[fxv2] FixeoRequestFlowV4 not available — canonical V4 engine not loaded');
-  }
-
-  function _openUrgentRequest() {
-    /* ── Canonical V4 emergency mode (fxrf4-v5e) ── */
-    if (window.FixeoRequestFlowV4 && typeof window.FixeoRequestFlowV4.open === 'function') {
-      window.FixeoRequestFlowV4.open({ mode: 'emergency', source: 'dashboard' });
-      return;
-    }
-    /* ── Hard fallback: standard mode if V4 not loaded ── */
-    _openNewRequest();
-  }
 
   /* ── MODAL ────────────────────────────────────────────────────── */
+  var _modalReturnFocus=null;
   function _openModal(html) {
     var overlay = el('fxv2-modal-overlay');
     var body    = el('fxv2-modal-body');
     if (!overlay || !body) return;
+    _modalReturnFocus=document.activeElement;
     body.innerHTML = html;
     overlay.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    var close=el('fxv2-modal-close');
+    if(close) setTimeout(function(){close.focus();},0);
   }
   function _closeModal() {
     var overlay = el('fxv2-modal-overlay');
     if (overlay) overlay.classList.add('hidden');
     document.body.style.overflow = '';
+    if(_modalReturnFocus&&typeof _modalReturnFocus.focus==='function') _modalReturnFocus.focus();
+    _modalReturnFocus=null;
   }
 
   /* ── TOAST ────────────────────────────────────────────────────── */
@@ -1825,6 +2001,10 @@ if (!result.ok) {
     if (mOverlay) mOverlay.addEventListener('click', function (e) {
       if (e.target === mOverlay) _closeModal();
     });
+
+    _syncSidebarA11y();
+    window.addEventListener('resize', _syncSidebarA11y);
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') _closeModal(); });
 
     /* Show skeletons immediately */
     _showSkeleton();
@@ -1869,6 +2049,7 @@ if (!result.ok) {
 
       /* Render */
       _render();
+      _subscribeCanonicalNotifications(session.user.id);
 
     } catch (e) {
       console.warn('[fxv2] init error:', e && e.message);
@@ -1894,163 +2075,9 @@ if (!result.ok) {
   /* ── BOOT ─────────────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', init);
 
-  /* ── P1 AUTHENTICATED PERSISTENCE BRIDGE ─────────────────────
-     Canonical V4 submit → FixeoClientRequestsStore → localStorage
-     → 'fixeo:client-request-created' → THIS BRIDGE →
-     FixeoSupabase.submitServiceRequest() → service_requests (Supabase)
-     → _refresh() to surface new row in dashboard.
-
-     Design:
-     - Uses 'fixeo:client-request-created' (authoritative non-duplicate
-       event — store dispatches this ONLY on new, non-duplicate appends)
-     - _fxv2PersistedIds guards against double-fire within the same
-       page session (Set keyed on store-generated request id)
-     - submitServiceRequest() sources client_profile_id server-side
-       from requireAuth('client') — never from caller-supplied data
-     - On Supabase failure: logs clearly, does NOT retry automatically,
-       does NOT block V4 UI (bridge is fire-and-async)
-     - _refresh() called after successful persist so row is visible
-       immediately without manual reload
-
-     Field mapping (store buildRequest → submitServiceRequest):
-       req.service   → service_category  (slug, e.g. 'plomberie')
-       req.city      → city
-       req.description → description
-       req.mode (from source='fxrf4-v5c' marker) — not mapped (no column)
-       req.phone     — not mapped (submitServiceRequest has no phone param)
-
-     IMPORTANT: submitServiceRequest() INSERT has no idempotency_key.
-     DB-level dedup: partial UNIQUE INDEX on idempotency_key only applies
-     when the key is set (NOT NULL). Rows inserted via submitServiceRequest
-     do not carry this key — dedup is in-session only via _fxv2PersistedIds.
-     This is safe for single-tab usage. Cross-tab / cross-session dedup
-     would require a schema change (out of scope). ─────────────────────── */
-
-  /* ── P1.1 EMERGENCY AUTH FETCH INTERCEPTOR ───────────────────
-     V4 emergency mode calls POST /api/urgent-request without an
-     Authorization header (V4 is unaware of the dashboard session).
-     urgent-request-fn normally inserts with client_profile_id=NULL.
-
-     This interceptor wraps window.fetch so that any dashboard POST
-     to /api/urgent-request automatically carries the authenticated
-     session token via X-Fxauth-Token header.
-
-     urgent-request-fn (updated) reads this header server-side,
-     validates the token via /auth/v1/user, and sets client_profile_id.
-
-     Rules:
-     - Only activates on POST /api/urgent-request (exact path prefix)
-     - Only adds X-Fxauth-Token when _state.session.access_token exists
-     - Original fetch is always called — never silently dropped
-     - Does NOT affect any other fetch calls
-     - Installed once at DOMContentLoaded / init time ─────────────── */
-  var _origFetch = window.fetch;
-  window.fetch = function (input, init) {
-    var url = (typeof input === 'string') ? input : (input && input.url) || '';
-    var method = (init && (init.method || '').toUpperCase()) || 'GET';
-    if (method === 'POST' && url.indexOf('/api/urgent-request') !== -1) {
-      var token = _state && _state.session && _state.session.access_token;
-      if (token) {
-        init = init || {};
-        var headers = new Headers(init.headers || {});
-        headers.set('X-Fxauth-Token', token);
-        init = Object.assign({}, init, { headers: headers });
-      }
-    }
-    return _origFetch.call(this, input, init);
-  };
-
-  /* ── P1 AUTHENTICATED PERSISTENCE BRIDGE ─────────────────────
-     Standard mode: fixeo:client-request-created → submitServiceRequest()
-     Emergency mode: SUPPRESSED here — urgent-request-fn handles the
-       canonical row (with client_profile_id injected via X-Fxauth-Token
-       interceptor above). Bridge must NOT create a second row.
-
-     Field map: req.service→service_category, req.city, req.description
-     Auth: client_profile_id sourced server-side from requireAuth('client')
-     Dedup: _fxv2PersistedIds Set (in-session guard, keyed on store req.id) */
-
-  var _fxv2PersistedIds = new Set();
-
-  window.addEventListener('fixeo:client-request-created', function (e) {
-    var req = e && e.detail;
-    if (!req) return;
-     /* Reservation COD: /api/create-request owns the canonical row.
-   Do not create a second service_requests row via submitServiceRequest(). */
-if (req.source === 'reservation_cod') {
-  console.info('[fxv2-bridge] reservation_cod — canonical row owned by /api/create-request, bridge suppressed');
-  return;
-}
-
-    /* Emergency mode: urgent-request-fn owns the canonical row (with auth
-       profile injected via fetch interceptor). Bridge must not create a
-       second row. */
-    if (req.mode === 'emergency') {
-      console.info('[fxv2-bridge] emergency mode — row owned by urgent-request-fn, bridge suppressed');
-      return;
-    }
-
-    /* Guard: skip if this store id was already submitted this session */
-    var storeId = String(req.id || '');
-    if (!storeId || _fxv2PersistedIds.has(storeId)) {
-      console.warn('[fxv2-bridge] duplicate fixeo:client-request-created for id=' + storeId + ' — skipped');
-      return;
-    }
-    _fxv2PersistedIds.add(storeId);
-
-    /* Map store fields → submitServiceRequest contract */
-    var serviceCategory = String(req.service || '').trim();
-    var city            = String(req.city    || '').trim();
-    var description     = String(req.description || '').trim();
-
-    if (!serviceCategory || !city) {
-      console.warn('[fxv2-bridge] missing service_category or city — cannot persist', req);
-      return;
-    }
-
-    /* Async — does not block V4 UI flow */
-    (async function () {
-      try {
-        if (!window.FixeoSupabase || typeof window.FixeoSupabase.submitServiceRequest !== 'function') {
-          console.warn('[fxv2-bridge] FixeoSupabase.submitServiceRequest not available');
-          return;
-        }
-        await window.FixeoSupabase.submitServiceRequest({
-          service_category: serviceCategory,
-          city:             city,
-          description:      description
-        });
-        console.info('[fxv2-bridge] service_request persisted for store id=' + storeId);
-        /* Refresh after short propagation delay */
-        setTimeout(function () {
-          if (typeof _refresh === 'function') _refresh();
-        }, 1200);
-      } catch (err) {
-        /* Log clearly — do NOT retry automatically to avoid storm */
-        console.error('[fxv2-bridge] Supabase persist failed for store id=' + storeId, err && err.message);
-        /* Keep storeId in set — do not retry on same id */
-      }
-    })();
-  });
-
-  /* ── V4 ANALYTICS EVENT — refresh only (post-persist) ────────
-     'fixeo:client-request-submit-success' fires AFTER the store write.
-     Emergency: urgent-request-fn owns the row; just refresh dashboard.
-     Standard: bridge (above) already scheduled _refresh. ───────── */
-  window.addEventListener('fixeo:client-request-submit-success', function (e) {
-    var detail = e && e.detail;
-    if (detail && detail.mode === 'emergency') {
-      setTimeout(function () {
-        if (typeof _refresh === 'function') _refresh();
-      }, 1200);
-    }
-  });
-
-  /* ── PUBLIC API — minimal surface for companion scripts ────────
-     Expose read-only access to _state and _refresh so external
-     engines (fixeo-tracking-engine.js) can observe dashboard data
-     and trigger a re-fetch without coupling to internal functions.
-     Read-only intent: callers should never mutate _state directly.  */
+  /* ── PUBLIC API — minimal read-only diagnostic surface ────────
+     Exposes current state and refresh for controlled tests/diagnostics.
+     Client OS has no companion renderer authority. */
   window.FixeoDashboardV2 = { _state: _state, _refresh: _refresh };
 
 })(window, document);

@@ -2,6 +2,16 @@
   "version": 2,
   "redirects": [
     {
+      "source": "/dashboard-client-v1.html",
+      "destination": "/dashboard-client.html",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard-client-v2.html",
+      "destination": "/dashboard-client.html",
+      "permanent": true
+    },
+    {
       "source": "/(.*)",
       "has": [
         {
@@ -115,6 +125,10 @@
       "use": "@vercel/node"
     },
     {
+      "src": "api/client-context-fn/index.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "api/control-fn/index.js",
       "use": "@vercel/node"
     }
@@ -205,6 +219,10 @@
     {
       "src": "^/api/whatsapp-webhook$",
       "dest": "/api/whatsapp-webhook-fn/index.js"
+    },
+    {
+      "src": "^/api/client-context$",
+      "dest": "/api/client-context-fn/index.js"
     },
     {
       "src": "^/(plombier|electricien|serrurier|climatisation)-([a-z][a-z-]*)\\.html$",

@@ -1,0 +1,39 @@
+name: Client OS C4 closure certification
+
+on:
+  push:
+    branches: [feat/client-os-c4-closure]
+    paths:
+      - 'dashboard-client.html'
+      - 'js/fixeo-dashboard-v2.js'
+      - 'css/fixeo-dashboard-v2.css'
+      - 'api/client-context-fn/**'
+      - 'vercel.json'
+      - 'tests/client-os-c4/**'
+      - '.github/workflows/client-os-c4.yml'
+  pull_request:
+    paths:
+      - 'dashboard-client.html'
+      - 'js/fixeo-dashboard-v2.js'
+      - 'css/fixeo-dashboard-v2.css'
+      - 'api/client-context-fn/**'
+      - 'vercel.json'
+      - 'tests/client-os-c4/**'
+      - '.github/workflows/client-os-c4.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --check js/fixeo-dashboard-v2.js
+      - run: node --check api/client-context-fn/index.js
+      - run: node -e "JSON.parse(require('fs').readFileSync('vercel.json','utf8'))"
+      - run: node --test tests/client-os-c4/client-os-c4.test.cjs
