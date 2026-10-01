@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as Crypto from 'expo-crypto';
 import { supabase } from '@/lib/supabase';
 import { createRequest } from '@/lib/magicLoop';
@@ -18,12 +18,25 @@ import { PushOptIn } from '@/components/PushOptIn';
 const ASSIGNED_STATES = new Set(['assigned', 'in_progress', 'completed', 'validated']);
 
 export default function Home() {
+  const { requestId: pushedRequestId } = useLocalSearchParams<{requestId?:string}>();
   const [problem, setProblem] = useState('');
   const [city, setCity] = useState('');
   const [rafiMessage, setRafiMessage] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [loop, setLoop] = useState<MagicLoopModel>({ state: 'idle' });
   const need = useMemo(() => understandLocally({ mode: 'text', text: problem }), [problem]);
+
+  useEffect(() => {
+    const requestId=String(pushedRequestId||'');
+    if(!/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(requestId)) return;
+    void getClientRequestStatus(requestId).then(status=>{
+      if(status && ASSIGNED_STATES.has(status)){
+        setLoop(current=>transition(current,'found',{requestId,message:'Artisan trouvé'}));
+      }else if(status==='new'){
+        setLoop(current=>transition(current,'matching',{requestId}));
+      }
+    });
+  },[pushedRequestId]);
 
   useEffect(() => {
     let channel: any;
