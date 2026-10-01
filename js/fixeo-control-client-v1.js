@@ -8,6 +8,16 @@
  const safeOperation=value=>/^[a-z0-9/_-]{1,64}$/i.test(String(value||''))?String(value):'unknown';
  const safeCode=value=>/^[A-Z0-9_]{2,80}$/.test(String(value||''))?String(value):null;
  const safeCorrelation=value=>/^[0-9a-f-]{36}$/i.test(String(value||''))?String(value):null;
+ async function client(){
+  const wrapper=root.FixeoSupabaseClient;
+  if(!wrapper)throw Error('SUPABASE_UNAVAILABLE');
+  if(typeof wrapper.ready==='function'){
+   const ready=await wrapper.ready();
+   if(ready?.client)return ready.client;
+  }
+  const c=wrapper.client;if(c)return c;
+  throw Error('SUPABASE_UNAVAILABLE');
+ }
  function recordTrace(entry){
   const trace=Object.freeze({operation:safeOperation(entry.operation),status:entry.status==='success'?'success':'error',http_status:Number.isInteger(entry.http_status)?entry.http_status:null,ms:Math.max(0,Math.round(Number(entry.ms)||0)),code:safeCode(entry.code),correlation_id:safeCorrelation(entry.correlation_id),at:new Date().toISOString()});
   traces.push(trace);if(traces.length>50)traces.splice(0,traces.length-50);
@@ -17,7 +27,7 @@
  async function request(operation,body){
   const started=now(),op=safeOperation(operation);
   try{
-   const c=root.FixeoSupabaseClient?.client;if(!c)throw Error('SUPABASE_UNAVAILABLE');
+   const c=await client();
    const s=await c.auth.getSession(),token=s.data?.session?.access_token;if(!token)throw Error('SESSION_REQUIRED');
    const response=await fetch('/api/control-v1/'+operation,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(body||{}),signal:AbortSignal.timeout(15000)});
    const data=await response.json(),correlation=response.headers?.get?.('X-Correlation-ID')||data?.correlation_id;
@@ -41,7 +51,8 @@
   dialog.append(title,text,details,warning,cancel,confirm);document.body.append(dialog);dialog.showModal();cancel.focus();
  });}
  async function command(capability,targetId,payload,decision=null){
-  const session=await root.FixeoSupabaseClient.client.auth.getSession();
+  const c=await client();
+  const session=await c.auth.getSession();
   const actor=session.data?.session?.user?.id;if(!actor)throw Error('SESSION_REQUIRED');
   const prefix=decision?.canonical_proof?'rafi':capability.startsWith('enterprise.')?'hybrid':'action';
   const key=JSON.stringify([actor,capability,targetId,payload,decision?.decision_id||null]);
