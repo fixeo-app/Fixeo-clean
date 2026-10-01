@@ -28,7 +28,7 @@ export default function Home() {
 
   useEffect(() => {
     const requestId=String(pushedRequestId||'');
-    if(!/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(requestId)) return;
+    if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId)) return;
     void getClientRequestStatus(requestId).then(status=>{
       if(status && ASSIGNED_STATES.has(status)){
         setLoop(current=>transition(current,'found',{requestId,message:'Artisan trouvé'}));
