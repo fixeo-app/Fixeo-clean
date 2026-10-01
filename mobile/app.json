@@ -15,7 +15,21 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Autorisez FIXEO à accéder à vos photos pour montrer le problème à RAFI.",
+          "cameraPermission": "Autorisez FIXEO à utiliser l’appareil photo pour montrer le problème à RAFI.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Autorisez FIXEO à utiliser le microphone pour parler à RAFI."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
