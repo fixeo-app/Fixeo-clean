@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "FIXEO",
+    "slug": "fixeo-mobile",
+    "scheme": "fixeo",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "ma.fixeo.app",
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "ma.fixeo.app"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
