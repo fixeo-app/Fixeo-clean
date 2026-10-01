@@ -14,3 +14,11 @@ test('RAFI does not invent a trade for an unknown short need', () => {
   assert.equal(need.serviceCategory,'Autre');
   assert.equal(need.needsConfirmation,true);
 });
+
+
+test('RAFI recognizes common Darija and Arabic-script trade cues', () => {
+  assert.equal(understandLocally({mode:'text',text:'kayna fuite dyal lma ta7t lavabo'}).serviceCategory,'Plomberie');
+  assert.equal(understandLocally({mode:'text',text:'الباب والقفل ما خدامينش'}).serviceCategory,'Serrurerie');
+  assert.equal(understandLocally({mode:'text',text:'المكيف ما كيبردش'}).serviceCategory,'Climatisation');
+  assert.equal(understandLocally({mode:'text',text:'البريز ما فيهاش الضو'}).serviceCategory,'Électricité');
+});
