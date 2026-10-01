@@ -1,0 +1,6 @@
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const root=path.resolve(__dirname,'../..');const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const html=read('artisan-profile.html'),v4=read('js/fixeo-artisan-profile-v4.js'),legacy=read('js/fixeo-public-artisan-profile.js'),dir=read('js/fixeo-artisan-directory-v1.js');
+test('Profile V4 owns loading state before legacy timeout can render not-found',()=>{assert.match(v4,/data-fxp4-owner','loading'/);assert.match(legacy,/getAttribute\('data-fxp4-owner'\)/);assert.match(v4,/data-fxp4-owner','ready'/)});
+test('Profile V4 has explicit retry state on genuine contract failure',()=>{assert.match(v4,/Profil momentanément indisponible/);assert.match(v4,/window\.location\.reload\(\)/);assert.match(v4,/data-fxp4-owner','error'/)});
+test('duplicate V2A transformer is removed from profile page',()=>{assert.equal((html.match(/fixeo-profile-v2a\.js\?v=fxpv3-v1b/g)||[]).length,1)});
+test('targeted artisan reservation restoration remains intact',()=>{assert.match(dir,/FixeoReservation\.open\(selected, false\)/);assert.doesNotMatch(dir,/FixeoClientRequest\.open/);assert.match(v4,/FixeoReservation\.open\(artisan\(p\),false\)/)});

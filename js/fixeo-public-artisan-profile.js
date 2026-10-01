@@ -876,6 +876,7 @@ document.addEventListener('visibilitychange', function () {
   }
   
   function renderNotFound(root) {
+    if (root && root.getAttribute('data-fxp4-owner')) return;
     updateSeoMeta({
       title: 'Profil indisponible | Fixeo',
       description: DEFAULT_PROFILE_DESCRIPTION,
