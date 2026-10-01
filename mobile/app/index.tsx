@@ -3,12 +3,19 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { createRequest } from '@/lib/magicLoop';
-import { watchClientNotifications } from '@/lib/clientWatch';
+import {
+  getClientRequestStatus,
+  watchClientNotifications,
+  watchClientRequest,
+} from '@/lib/clientWatch';
 import { understandLocally } from '@/lib/rafi';
 import { MagicLoopModel, transition } from '@/lib/magicLoopState';
 
+const ASSIGNED_STATES = new Set(['assigned', 'in_progress', 'completed', 'validated']);
+
 export default function Home() {
   const [problem, setProblem] = useState('');
+  const [city, setCity] = useState('');
   const [loop, setLoop] = useState<MagicLoopModel>({ state: 'idle' });
   const need = useMemo(() => understandLocally({ mode: 'text', text: problem }), [problem]);
 
@@ -36,19 +43,49 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    if (loop.state !== 'matching' || !loop.requestId) return;
+
+    const requestId = loop.requestId;
+    const channel = watchClientRequest(requestId, (payload: any) => {
+      const status = String(payload?.new?.status || '');
+      if (ASSIGNED_STATES.has(status)) {
+        setLoop(current => transition(current, 'found', { message: 'Artisan trouvé' }));
+      }
+    });
+
+    const interval = setInterval(() => {
+      void getClientRequestStatus(requestId).then(status => {
+        if (status && ASSIGNED_STATES.has(status)) {
+          setLoop(current => transition(current, 'found', { message: 'Artisan trouvé' }));
+        }
+      });
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+      void supabase.removeChannel(channel);
+    };
+  }, [loop.state, loop.requestId]);
+
   async function send() {
     try {
+      const normalizedCity = city.trim();
+      if (!normalizedCity) {
+        setLoop(current => transition(current, 'error', { message: 'Indiquez votre ville.' }));
+        return;
+      }
       setLoop(current => transition(current, 'creating'));
       const idempotencyKey = globalThis.crypto.randomUUID();
       const data: any = await createRequest(
         need.serviceCategory,
-        'Rabat',
+        normalizedCity,
         need.description,
         idempotencyKey,
       );
-      setLoop(current => transition(current, 'matching', {
-        requestId: String(data?.id || data?.request_id || ''),
-      }));
+      const requestId = String(data?.id || data?.request_id || '');
+      if (!requestId) throw new Error('REQUEST_ID_MISSING');
+      setLoop(current => transition(current, 'matching', { requestId }));
     } catch {
       setLoop(current => transition(current, 'error', {
         message: 'Impossible de confirmer pour le moment.',
@@ -64,14 +101,32 @@ export default function Home() {
       <View style={styles.modes}>
         <Text>🎙 Parler</Text><Text>📷 Montrer</Text><Text>⌨️ Écrire</Text>
       </View>
-      <TextInput value={problem} onChangeText={setProblem} placeholder="Décrivez le problème" style={styles.input} />
+      <TextInput
+        value={problem}
+        onChangeText={setProblem}
+        placeholder="Décrivez le problème"
+        style={styles.input}
+      />
+      <TextInput
+        value={city}
+        onChangeText={setCity}
+        placeholder="Votre ville"
+        autoCapitalize="words"
+        style={styles.input}
+      />
       {problem.length > 3 && (
         <Text style={styles.understood}>
           RAFI · {need.serviceCategory}{need.confidence === 'low' ? ' · à confirmer' : ''}
         </Text>
       )}
-      <Pressable style={styles.cta} onPress={send} disabled={!problem || loop.state === 'creating'}>
-        <Text style={styles.ctaText}>{loop.state === 'creating' ? 'RAFI prépare la demande…' : 'Confirmer la demande'}</Text>
+      <Pressable
+        style={styles.cta}
+        onPress={() => void send()}
+        disabled={!problem || loop.state === 'creating'}
+      >
+        <Text style={styles.ctaText}>
+          {loop.state === 'creating' ? 'RAFI prépare la demande…' : 'Confirmer la demande'}
+        </Text>
       </Pressable>
       {loop.state === 'matching' && <Text style={styles.ok}>Demande confirmée · recherche d’un artisan…</Text>}
       {loop.state === 'found' && <Text style={styles.ok}>✓ {loop.message}</Text>}
@@ -86,7 +141,7 @@ const styles = StyleSheet.create({
   orb: { width: 88, height: 88, borderRadius: 44, backgroundColor: '#111', alignSelf: 'center' },
   title: { fontSize: 28, fontWeight: '700', textAlign: 'center' },
   modes: { flexDirection: 'row', justifyContent: 'space-around' },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 18, padding: 16, minHeight: 64 },
+  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 18, padding: 16, minHeight: 56 },
   understood: { textAlign: 'center', fontWeight: '600' },
   cta: { backgroundColor: '#111', padding: 18, borderRadius: 18 },
   ctaText: { color: '#fff', fontWeight: '700', textAlign: 'center' },
