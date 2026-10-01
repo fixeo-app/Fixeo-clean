@@ -11,7 +11,8 @@
       "supportsTablet": false
     },
     "android": {
-      "package": "ma.fixeo.app"
+      "package": "ma.fixeo.app",
+      "googleServicesFile": "./google-services.json"
     },
     "plugins": [
       "expo-router",
