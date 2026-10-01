@@ -15,6 +15,12 @@ export async function createRequest(
     p_idempotency_key: idempotencyKey,
   });
   if (error) throw error;
+  const requestId = String((data as any)?.id || (data as any)?.request_id || '');
+  if (requestId) {
+    void supabase.functions.invoke('mobile-magic-loop-push', {
+      body: { action: 'dispatch_opportunities', request_id: requestId },
+    });
+  }
   return data;
 }
 
@@ -39,6 +45,10 @@ export async function acceptDispatchOffer(requestId: string) {
   const notification = await supabase.rpc('publish_notification_event_s1b', {
     p_event: 'mission_accepted',
     p_entity_id: requestId,
+  });
+
+  void supabase.functions.invoke('mobile-magic-loop-push', {
+    body: { action: 'mission_accepted', request_id: requestId },
   });
 
   return {
