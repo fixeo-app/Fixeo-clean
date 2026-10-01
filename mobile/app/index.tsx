@@ -13,6 +13,7 @@ import { understandLocally } from '@/lib/rafi';
 import { hasRafiServerGateway, transcribeRafiVoice } from '@/lib/rafiGateway';
 import { MagicLoopModel, transition } from '@/lib/magicLoopState';
 import { RafiInputRail } from '@/components/RafiInputRail';
+import { PushOptIn } from '@/components/PushOptIn';
 
 const ASSIGNED_STATES = new Set(['assigned', 'in_progress', 'completed', 'validated']);
 
@@ -132,6 +133,8 @@ export default function Home() {
         onVoiceReady={(uri) => void handleVoice(uri)}
         onPhotoReady={handlePhoto}
       />
+
+      <PushOptIn compact />
 
       <TextInput
         value={problem}
