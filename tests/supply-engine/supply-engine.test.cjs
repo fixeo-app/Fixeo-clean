@@ -21,7 +21,8 @@ const migrations=[
   'supabase/migrations/20260930211500_supply_external_discovery_dedup_v1.sql',
   'supabase/migrations/20260930213000_supply_external_secure_ingestion.sql',
   'supabase/migrations/20260930221000_supply_import_idempotence_cta.sql',
-  'supabase/migrations/20260930222500_supply_promote_qualified_artisans_v1.sql'
+  'supabase/migrations/20260930222500_supply_promote_qualified_artisans_v1.sql',
+  'supabase/migrations/20261001183000_supply_projection_pressure_guard.sql'
 ].map(p=>fs.readFileSync(path.join(ROOT,p),'utf8'));
 
 const adminHtml=fs.readFileSync(path.join(ROOT,'admin.html'),'utf8');
@@ -182,8 +183,14 @@ test('static contract: Control OS exposes Supply and agent API is disabled by de
   assert.match(adminControl,/FixeoSupply\?\.refresh/);
   assert.match(adminHtml,/Budget IA à 0/);
   assert.match(adminSupply,/supply_admin_dashboard_v1/);
-  assert.match(adminSupply,/Promise\.allSettled/);
+  assert.match(adminSupply,/SUPPLY_READ_CONCURRENCY=4/);
+  assert.match(adminSupply,/settleBounded\(jobs,SUPPLY_READ_CONCURRENCY\)/);
+  assert.doesNotMatch(adminSupply,/Promise\.allSettled\(jobs/);
   assert.match(adminSupply,/mode dégradé/);
+  assert.match(adminControl,/SUMMARY_REFRESH_MS=180000/);
+  assert.match(adminControl,/supply:300000/);
+  assert.match(adminControl,/shouldPeriodicLoad\(\)/);
+  assert.match(adminControl,/if\(e\.target\.closest\('#refresh'\)\)\{load\(true\);return\}/);
   assert.match(adminHtml,/id="supply-national-plan"/);
   assert.match(adminHtml,/id="s-national-candidates"/);
   assert.match(adminSupply,/RECHERCHE EXTERNE NÉCESSAIRE/);
