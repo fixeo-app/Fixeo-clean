@@ -1,2 +1,42 @@
-import {useState} from 'react';import {View,Text,TextInput,Pressable,StyleSheet} from 'react-native';import {router} from 'expo-router';import {signIn,resolveRole} from '@/lib/auth';
-export default function SignIn(){const[e,setE]=useState('');const[p,setP]=useState('');const[err,setErr]=useState('');async function go(){try{setErr('');await signIn(e.trim(),p);const r=await resolveRole();router.replace(r==='artisan'?'/artisan':'/');}catch(x){setErr('Connexion impossible.');}}return <View style={s.r}><Text style={s.t}>Connexion FIXEO</Text><TextInput autoCapitalize="none" value={e} onChangeText={setE} placeholder="Email" style={s.i}/><TextInput secureTextEntry value={p} onChangeText={setP} placeholder="Mot de passe" style={s.i}/><Pressable onPress={go} style={s.b}><Text style={s.bt}>Continuer</Text></Pressable>{!!err&&<Text>{err}</Text>}</View>}const s=StyleSheet.create({r:{flex:1,justifyContent:'center',padding:24,gap:14},t:{fontSize:28,fontWeight:'800'},i:{borderWidth:1,borderColor:'#ddd',borderRadius:16,padding:16},b:{padding:17,borderRadius:16,backgroundColor:'#111'},bt:{color:'#fff',textAlign:'center',fontWeight:'700'}});
+import {useState} from 'react';
+import {View,Text,TextInput,Pressable,StyleSheet} from 'react-native';
+import {router} from 'expo-router';
+import {signIn} from '@/lib/auth';
+import {resolveWorkspaces} from '@/lib/workspaces';
+
+export default function SignIn(){
+  const[e,setE]=useState('');
+  const[p,setP]=useState('');
+  const[err,setErr]=useState('');
+
+  async function go(){
+    try{
+      setErr('');
+      await signIn(e.trim(),p);
+      const resolution=await resolveWorkspaces();
+      if(resolution.enterprise_spaces.length>0){
+        router.replace('/spaces');
+        return;
+      }
+      router.replace(resolution.global_role==='artisan'?'/artisan':'/');
+    }catch{
+      setErr('Connexion impossible.');
+    }
+  }
+
+  return <View style={s.r}>
+    <Text style={s.t}>Connexion FIXEO</Text>
+    <TextInput autoCapitalize="none" value={e} onChangeText={setE} placeholder="Email" style={s.i}/>
+    <TextInput secureTextEntry value={p} onChangeText={setP} placeholder="Mot de passe" style={s.i}/>
+    <Pressable onPress={()=>void go()} style={s.b}><Text style={s.bt}>Continuer</Text></Pressable>
+    {!!err&&<Text>{err}</Text>}
+  </View>
+}
+
+const s=StyleSheet.create({
+  r:{flex:1,justifyContent:'center',padding:24,gap:14},
+  t:{fontSize:28,fontWeight:'800'},
+  i:{borderWidth:1,borderColor:'#ddd',borderRadius:16,padding:16},
+  b:{padding:17,borderRadius:16,backgroundColor:'#111'},
+  bt:{color:'#fff',textAlign:'center',fontWeight:'700'}
+});
