@@ -17,5 +17,6 @@ jobs:
         with:
           node-version: 20
       - run: npm install
+      - run: npm run test:contracts
       - run: npm run typecheck
       - run: npx expo export --platform web --output-dir dist-gate-a
