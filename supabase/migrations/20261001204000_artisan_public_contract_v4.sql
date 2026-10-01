@@ -162,4 +162,34 @@ GRANT EXECUTE ON FUNCTION public.artisan_public_profile_v4(uuid) TO anon, authen
 COMMENT ON FUNCTION public.artisan_public_profile_v4(uuid) IS
 'FIXEO Artisan Journey V4 public read contract. No contact/private Supply data. claimed != verified; legacy availability never proves live capacity; pricing intentionally excluded.';
 
+CREATE OR REPLACE FUNCTION public.resolve_artisan_public_profile_v4(p_ref text)
+RETURNS jsonb
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $
+  SELECT public.artisan_public_profile_v4(a.id)
+  FROM public.artisans a
+  WHERE coalesce(a.is_public,true)=true
+    AND coalesce(a.data_classification,'production')='production'
+    AND (
+      a.id::text=p_ref
+      OR a.public_slug=p_ref
+      OR a.legacy_id=p_ref
+    )
+  ORDER BY CASE
+    WHEN a.id::text=p_ref THEN 0
+    WHEN a.public_slug=p_ref THEN 1
+    ELSE 2
+  END
+  LIMIT 1;
+$;
+
+REVOKE ALL ON FUNCTION public.resolve_artisan_public_profile_v4(text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.resolve_artisan_public_profile_v4(text) TO anon, authenticated, service_role;
+
+COMMENT ON FUNCTION public.resolve_artisan_public_profile_v4(text) IS
+'Single public entry resolver for Artisan Journey V4. Accepts canonical UUID, public_slug, or legacy_id and delegates to artisan_public_profile_v4.';
+
 COMMIT;
