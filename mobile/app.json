@@ -29,7 +29,8 @@
         {
           "microphonePermission": "Autorisez FIXEO à utiliser le microphone pour parler à RAFI."
         }
-      ]
+      ],
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true
