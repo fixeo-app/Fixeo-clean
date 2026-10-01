@@ -1,0 +1,7 @@
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const root=path.resolve(__dirname,'../..');const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const html=read('artisan-profile.html'),js=read('js/fixeo-artisan-profile-v4.js'),css=read('css/fixeo-artisan-profile-v4.css');
+test('B2.1: public profile has no claim-system residue',()=>{assert.doesNotMatch(html,/claim sys|claim system|fixeo-claim-system/i)});
+test('B2.1: operational experience metadata is sanitized from public rendering',()=>{assert.match(js,/function publicExperience/);assert.match(js,/TIER\[_ -\]\?\\d/);for(const x of ['facebook','qualifier','qualification','appel','prospect','lead','genspark'])assert.ok(js.includes(x),x);assert.match(js,/publicExperience\(i\.experience_declared\)/)});
+test('B2.1: mobile CTA is contextual, not permanently duplicated',()=>{assert.match(js,/IntersectionObserver/);assert.match(js,/is-visible/);assert.match(css,/\.fxp4-mobile\.is-visible/);assert.match(css,/pointer-events:none/)});
+test('B2.1: targeted reservation remains unchanged',()=>{assert.match(js,/FixeoReservation\.open\(artisan\(p\),false\)/);assert.doesNotMatch(js,/FixeoClientRequest\.open/)});
+test('B2.1: assets have a fresh mobile cache key',()=>{assert.match(html,/fixeo-artisan-profile-v4\.js\?v=fxp4-b21/);assert.match(html,/fixeo-artisan-profile-v4\.css\?v=fxp4-b21/)});

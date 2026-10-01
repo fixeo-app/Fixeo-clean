@@ -25,3 +25,12 @@ body.fx-profile-v4 #public-artisan-root{max-width:1240px}
 .fxp4-primary-wow{width:100%;display:flex;align-items:center;justify-content:space-between;background:#fff!important;color:#14161b!important;padding:15px 16px!important}.fxp4-primary-wow b{width:30px;height:30px;border-radius:10px;background:#17191f;color:#fff;display:grid;place-items:center;font-size:1rem}.fxp4-assurance{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;color:#888d98;font-size:.6rem;font-weight:750}
 .fxp4-hero-foot{grid-area:foot;display:grid;grid-template-columns:repeat(3,1fr);position:relative;border-top:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.12)}.fxp4-hero-foot>div{padding:15px 22px;border-right:1px solid rgba(255,255,255,.07)}.fxp4-hero-foot>div:last-child{border-right:0}.fxp4-hero-foot small{display:block;color:#737883;font-size:.55rem;font-weight:900;letter-spacing:.14em;margin-bottom:4px}.fxp4-hero-foot strong{display:block;color:#dfe1e7;font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:800px){.fxp4-hero-wow{grid-template-columns:1fr;grid-template-areas:"main" "action" "foot";border-radius:26px}.fxp4-hero-main{padding:24px 20px 22px;gap:16px;align-items:flex-start}.fxp4-hero-wow .fxp4-avatar{width:92px;height:92px;flex-basis:92px;border-radius:24px}.fxp4-hero-wow .fxp4-avatar.fallback strong{font-size:1.8rem}.fxp4-photo-label{font-size:.48rem;bottom:-8px}.fxp4-brandline{font-size:.52rem;margin-bottom:8px}.fxp4-brandmark{width:19px;height:19px;border-radius:7px}.fxp4-hero-wow .fxp4-heading h1{font-size:1.75rem;line-height:1}.fxp4-role{font-size:.78rem!important;margin:7px 0 10px!important}.fxp4-signal-row{gap:5px}.fxp4-hero-wow .fxp4-status,.fxp4-availability{font-size:.58rem;padding:6px 8px}.fxp4-hero-action{padding:22px 20px;border-left:0;border-top:1px solid rgba(255,255,255,.08)}.fxp4-hero-action h2{font-size:1.35rem}.fxp4-hero-action>p{font-size:.72rem;margin-bottom:14px}.fxp4-assurance{font-size:.55rem}.fxp4-hero-foot>div{padding:12px 10px}.fxp4-hero-foot small{font-size:.48rem}.fxp4-hero-foot strong{font-size:.62rem}.fxp4-grid{margin-top:16px}}
+
+/* B2.1 — visual integrity */
+@media(max-width:800px){
+  .fxp4-mobile{opacity:0;transform:translateY(120%);pointer-events:none;transition:opacity .2s ease,transform .25s ease}
+  .fxp4-mobile.is-visible{opacity:1;transform:translateY(0);pointer-events:auto}
+  .fxp4-hero-main{padding-top:20px;padding-bottom:18px}
+  .fxp4-hero-action{padding-top:19px;padding-bottom:18px}
+  .fxp4-hero-foot>div{padding-top:10px;padding-bottom:10px}
+}
