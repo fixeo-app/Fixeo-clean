@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { acceptDispatchOffer, DispatchOffer, getDispatchOffers } from '@/lib/magicLoop';
+import { PushOptIn } from '@/components/PushOptIn';
 
 const ACCEPT_MESSAGES: Record<string, string> = {
   already_claimed: 'Cette demande a déjà été prise en charge.',
@@ -49,6 +50,7 @@ export default function Artisan() {
     <View style={styles.root}>
       <Text style={styles.kicker}>FIXEO ARTISAN</Text>
       <Text style={styles.title}>Opportunités</Text>
+      <PushOptIn />
       {!!message && <Text style={styles.message}>{message}</Text>}
       <FlatList
         data={offers}
