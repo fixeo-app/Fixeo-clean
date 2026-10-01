@@ -1,2 +1,83 @@
-import {useCallback,useEffect,useState} from 'react';import {View,Text,Pressable,FlatList,StyleSheet,RefreshControl} from 'react-native';import {getOffers,claimMission,declineMission} from '@/lib/magicLoop';
-export default function Artisan(){const[o,setO]=useState<any[]>([]);const[loading,setL]=useState(false);const load=useCallback(async()=>{setL(true);try{const d:any=await getOffers();setO(Array.isArray(d)?d:[])}finally{setL(false)}},[]);useEffect(()=>{load();const t=setInterval(load,10000);return()=>clearInterval(t)},[load]);async function claim(id:string){await claimMission(id);await load()}return <View style={s.r}><Text style={s.k}>FIXEO ARTISAN</Text><Text style={s.t}>Opportunités</Text><FlatList data={o} keyExtractor={(x:any)=>String(x.mission_id||x.id)} refreshControl={<RefreshControl refreshing={loading} onRefresh={load}/>} ListEmptyComponent={<Text>Aucune opportunité pour le moment.</Text>} renderItem={({item}:any)=><View style={s.c}><Text style={s.h}>{item.service_category||item.service||'Mission FIXEO'}</Text><Text>{item.city||''}</Text><View style={s.row}><Pressable style={s.accept} onPress={()=>claim(String(item.mission_id||item.id))}><Text style={s.white}>Accepter</Text></Pressable><Pressable style={s.decline} onPress={async()=>{await declineMission(String(item.mission_id||item.id));await load()}}><Text>Refuser</Text></Pressable></View></View>}/></View>}const s=StyleSheet.create({r:{flex:1,padding:24,paddingTop:70},k:{fontWeight:'800',letterSpacing:2},t:{fontSize:30,fontWeight:'800',marginVertical:20},c:{padding:18,borderWidth:1,borderColor:'#ddd',borderRadius:18,marginBottom:12},h:{fontSize:19,fontWeight:'700'},row:{flexDirection:'row',gap:10,marginTop:16},accept:{backgroundColor:'#111',padding:14,borderRadius:14,flex:1},decline:{padding:14,borderRadius:14,borderWidth:1,borderColor:'#ddd',flex:1},white:{color:'#fff',textAlign:'center',fontWeight:'700'}});
+import { useCallback, useEffect, useState } from 'react';
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { acceptDispatchOffer, DispatchOffer, getDispatchOffers } from '@/lib/magicLoop';
+
+const ACCEPT_MESSAGES: Record<string, string> = {
+  already_claimed: 'Cette demande a déjà été prise en charge.',
+  offer_not_found: 'Cette opportunité n’est plus disponible.',
+  offer_not_active: 'Cette opportunité n’est plus active.',
+  artisan_not_found: 'Profil artisan introuvable.',
+  unauthenticated: 'Votre session a expiré.',
+};
+
+export default function Artisan() {
+  const [offers, setOffers] = useState<DispatchOffer[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      setOffers(await getDispatchOffers());
+    } catch {
+      setMessage('Impossible de charger les opportunités.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+    const timer = setInterval(() => void load(), 10000);
+    return () => clearInterval(timer);
+  }, [load]);
+
+  async function accept(requestId: string) {
+    try {
+      setMessage('Acceptation en cours…');
+      const result = await acceptDispatchOffer(requestId);
+      setMessage(result.reason === 'already_accepted' ? 'Mission déjà acceptée.' : '✓ Mission acceptée.');
+      await load();
+    } catch (error: any) {
+      const reason = String(error?.message || 'accept_failed');
+      setMessage(ACCEPT_MESSAGES[reason] || 'Impossible d’accepter cette mission.');
+      await load();
+    }
+  }
+
+  return (
+    <View style={styles.root}>
+      <Text style={styles.kicker}>FIXEO ARTISAN</Text>
+      <Text style={styles.title}>Opportunités</Text>
+      {!!message && <Text style={styles.message}>{message}</Text>}
+      <FlatList
+        data={offers}
+        keyExtractor={(item) => item.request_id}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
+        ListEmptyComponent={<Text>Aucune opportunité active pour le moment.</Text>}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Text style={styles.heading}>{item.service_category || 'Mission FIXEO'}</Text>
+            <Text>{item.city || ''}{item.urgency ? ' · ' + item.urgency : ''}</Text>
+            <Text style={styles.meta}>Rang de matching : {item.match_rank ?? '—'}</Text>
+            <Pressable style={styles.accept} onPress={() => void accept(item.request_id)}>
+              <Text style={styles.white}>Accepter</Text>
+            </Pressable>
+          </View>
+        )}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: { flex: 1, padding: 24, paddingTop: 70 },
+  kicker: { fontWeight: '800', letterSpacing: 2 },
+  title: { fontSize: 30, fontWeight: '800', marginVertical: 20 },
+  message: { marginBottom: 14, fontWeight: '600' },
+  card: { padding: 18, borderWidth: 1, borderColor: '#ddd', borderRadius: 18, marginBottom: 12 },
+  heading: { fontSize: 19, fontWeight: '700' },
+  meta: { marginTop: 6, opacity: 0.65 },
+  accept: { backgroundColor: '#111', padding: 14, borderRadius: 14, marginTop: 16 },
+  white: { color: '#fff', textAlign: 'center', fontWeight: '700' },
+});
