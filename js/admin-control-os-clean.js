@@ -2,6 +2,9 @@
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 let canonicalSources={},currentView="overview",routeLoaded=false;
 let S={requests:[],missions:[],artisans:[],quotes:[],claims:[],users:[],enterprises:[],sites:[],notifications:[],payments:[],health:{},error:null},loading=false,lastLoad=0;
+let lastSummaryLoad=0,lastRafiLoad=0,summaryPromise=null,rafiPromise=null;
+const SUMMARY_REFRESH_MS=180000,RAFI_REFRESH_MS=60000;
+const PERIODIC_VIEW_MS={overview:60000,rafi:60000,operations:60000,urgent:120000,notifications:120000,network:180000,finance:180000,trust:180000,intelligence:180000,reservations:180000,governance:180000,supply:300000};
 const F={ops:{q:'',status:'all',urgency:'all'},network:{q:'',type:'all',state:'all'}};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=v=>String(v??'').trim().toLowerCase();
@@ -30,27 +33,40 @@ async function loadGroup(c,defs){await Promise.all(defs.map(async d=>{const key=
 function healthBanner(){const bad=Object.entries(S.health).filter(([,v])=>!v.ok);const e=$('#os-error');if(!e)return;if(!bad.length){e.hidden=true;e.textContent='';return}e.hidden=false;e.textContent='Mode dégradé · '+bad.map(([k,v])=>k+': '+(v.error||'indisponible')).join(' · ')}
 const viewSources={overview:['missions'],rafi:[],operations:[],reservations:[],network:[],supply:[],finance:[],trust:[],intelligence:[],urgent:['requests','missions','artisans'],governance:['users','notifications'],notifications:['notifications']};
 const sourceDefinitions=[['requests','service_requests','id,status,city,service_category,urgency,created_at,target_artisan_id,client_profile_id,pricing_offer_id,data_classification',700],['missions','missions','id,request_id,artisan_profile_id,status,created_at,accepted_at,agreed_price,final_price,commission_amount,pricing_offer_id',700],['artisans','artisans','id,full_name,city,service_category,category,availability,claimed,claim_status,verified,is_verified,rating,onboarding_completed',1600],['quotes','quotes','id,request_id,artisan_profile_id,proposed_price,status,created_at,review_status,quote_version',500],['claims','claim_requests','id,artisan_id,status,created_at,reviewed_at',300],['users','users','id,full_name,role,city,created_at',700],['notifications','notifications','id,title,type,read,created_at,related_entity_type,related_entity_id',300],['payments','payments','id,mission_id,amount,status,created_at',500],['enterprises','enterprise_accounts','id,name,status,created_at',300],['sites','enterprise_sites','id,enterprise_id,name,city,status',500]];
-async function load(){
+function shouldPeriodicLoad(){return Date.now()-lastLoad>=(PERIODIC_VIEW_MS[currentView]||180000)}
+function refreshCanonical(force,requestedView){
+ const now=Date.now();
+ if((requestedView==='overview'||requestedView==='rafi')&&(force||now-lastRafiLoad>=RAFI_REFRESH_MS)&&!rafiPromise){
+  rafiPromise=Promise.resolve().then(()=>window.FixeoRafi.load()).then(()=>{lastRafiLoad=Date.now()}).catch(()=>{}).finally(()=>{rafiPromise=null});
+ }
+ if((force||now-lastSummaryLoad>=SUMMARY_REFRESH_MS)&&!summaryPromise){
+  canonicalSources={};applyCanonicalMetrics();
+  summaryPromise=window.FixeoControl.summary((source,state)=>{canonicalSources[source]=state;applyCanonicalMetrics()})
+   .then(()=>{lastSummaryLoad=Date.now()})
+   .catch(()=>{canonicalSources={};applyCanonicalMetrics()})
+   .finally(()=>{summaryPromise=null});
+ }
+}
+async function load(force=false){
  if(loading)return;loading=true;const requestedView=currentView;
  try{
   const c=await client(),sess=await c.auth.getSession();if(!sess?.data?.session)throw Error('SESSION_REQUIRED');
   const role=await c.from('users').select('role').eq('id',sess.data.session.user.id).single();
   if(role.error||role.data?.role!=='admin')throw Error('FORBIDDEN');
   if(!routeLoaded){routeLoaded=true;window.FixeoDossier.fromRoute();}
-  if(requestedView==='operations')window.FixeoOperations.refresh();
-  window.FixeoRegisters?.refresh(requestedView);
-  if(requestedView==='intelligence')window.FixeoIntelligence?.refresh();
-  if(requestedView==='supply')window.FixeoSupply?.refresh();
-  S.error=null;window.FixeoRafi.load();canonicalSources={};applyCanonicalMetrics();
-  window.FixeoControl.summary((source,state)=>{canonicalSources[source]=state;applyCanonicalMetrics()}).catch(()=>{canonicalSources={};applyCanonicalMetrics()});
+  if(requestedView==='operations')window.FixeoOperations.refresh(force);
+  window.FixeoRegisters?.refresh(requestedView,force);
+  if(requestedView==='intelligence')window.FixeoIntelligence?.refresh(force);
+  if(requestedView==='supply')window.FixeoSupply?.refresh(force);
+  S.error=null;refreshCanonical(force,requestedView);
   const needed=viewSources[requestedView]||[];
   await loadGroup(c,sourceDefinitions.filter(d=>needed.includes(d[0])));
   lastLoad=Date.now();healthBanner();renderAll();
  }catch(e){S.error=e.message;if(['FORBIDDEN','SESSION_REQUIRED'].includes(e.message)){window.FixeoRegisters?.clear(e.message);window.FixeoIntelligence?.clear();window.FixeoRafiFollowups?.clear();}const el=$('#os-error');if(el){el.textContent='Session Control OS indisponible · '+e.message;el.hidden=false}}
- finally{loading=false;if(requestedView!==currentView)load()}
+ finally{loading=false;if(requestedView!==currentView)load(false)}
 }
 
-function exactMetric(id){for(const x of Object.values(canonicalSources)){const v=x.data?.metrics?.[id],age=Date.now()-Date.parse(x.as_of);if(x.status==='healthy'&&x.completeness==='complete'&&age>=-5000&&age<=60000&&(!x.data?.metric_quality?.[id]||x.data.metric_quality[id]==='complete')&&typeof v==='number')return v}return null}
+function exactMetric(id){for(const x of Object.values(canonicalSources)){const v=x.data?.metrics?.[id],age=Date.now()-Date.parse(x.as_of);if(x.status==='healthy'&&x.completeness==='complete'&&age>=-5000&&age<=SUMMARY_REFRESH_MS+15000&&(!x.data?.metric_quality?.[id]||x.data.metric_quality[id]==='complete')&&typeof v==='number')return v}return null}
 function applyCanonicalMetrics(){
  const map={'k-requests':'requests.total','k-pending':'requests.new','k-missions':'missions.active','k-artisans':'artisans.total','k-claims':'trust.claims.pending','nav-pending':'requests.new','ops-new':'requests.new','ops-assigned':'requests.assigned','ops-progress':'requests.in_progress','n-artisans':'artisans.total','n-available':'artisans.available','n-verified':'artisans.verified','n-unclaimed':'artisans.unclaimed','n-clients':'network.clients','n-enterprises':'network.enterprises','t-unverified':'artisans.non_verified','t-claiming':'artisans.claiming','t-claims':'trust.claims.pending','t-incomplete':'artisans.incomplete','u-requests':'urgency.total','u-active':'urgency.active','u-done':'urgency.fulfilled','i-available':'artisans.available'};
  for(const [id,m] of Object.entries(map)){const v=exactMetric(m);set(id,v===null?'—':id==='f-recorded'||id==='f-paid'?money(v):v)}
@@ -82,13 +98,13 @@ $('#notifications-list').innerHTML=n.length?n.slice(0,100).map(x=>{const type=no
 function renderGovernance(){set('g-users',S.users.length);set('g-notifs',S.notifications.length);set('g-bad',Object.values(S.health).filter(x=>!x.ok).length);set('g-time',new Date(lastLoad||Date.now()).toLocaleTimeString('fr-FR'));set('nav-pending',pending().length);const h=Object.entries(S.health);$('#governance-health').innerHTML=h.map(([k,v])=>'<div class="row"><b>'+esc(k)+'</b><small>'+esc(v.count)+' éléments · '+esc(v.ms)+' ms</small><span class="pill '+(v.ok?'good':'danger')+'">'+(v.ok?'Sélection partielle':v.status==='stale'?'Ancienne sélection':'Indisponible')+'</span></div>').join('')}
 
 function drawer(kind,id){return window.FixeoRafi.openDossier(kind,id)}
-async function canonicalCommand(capability,id,payload){const out=await window.FixeoControl.command(capability,id,payload);await load();return out}
-function show(id){if(!viewSources[id])return;currentView=id;const url=new URL(location.href);url.searchParams.set('view',id);history.replaceState(history.state,'',url);load();$$('.section').forEach(x=>x.classList.toggle('active',x.id==='sec-'+id));$$('[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===id));$('#side').classList.remove('open');set('page-title',({overview:'Control Tower',operations:'Operations Command Center',reservations:'Réservations & devis',network:'Network 360',finance:'Finance & Trust',trust:'Claims & Trust',intelligence:'Marketplace Intelligence',urgent:'Urgent Performance',governance:'System & Governance',rafi:'RAFI Decision Center',notifications:'Notifications',supply:'Supply Engine'}[id]||'Control OS'))}
+async function canonicalCommand(capability,id,payload){const out=await window.FixeoControl.command(capability,id,payload);await load(true);return out}
+function show(id){if(!viewSources[id])return;currentView=id;const url=new URL(location.href);url.searchParams.set('view',id);history.replaceState(history.state,'',url);load(false);$('.section').forEach(x=>x.classList.toggle('active',x.id==='sec-'+id));$$('[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===id));$('#side').classList.remove('open');set('page-title',({overview:'Control Tower',operations:'Operations Command Center',reservations:'Réservations & devis',network:'Network 360',finance:'Finance & Trust',trust:'Claims & Trust',intelligence:'Marketplace Intelligence',urgent:'Urgent Performance',governance:'System & Governance',rafi:'RAFI Decision Center',notifications:'Notifications',supply:'Supply Engine'}[id]||'Control OS'))}
 
 window.FixeoAdmin={navigate:show};
-document.addEventListener('click',e=>{const v=e.target.closest('[data-view]');if(v){show(v.dataset.view);return}const r=e.target.closest('[data-kind]');if(r){drawer(r.dataset.kind,r.dataset.id);return}if(e.target.closest('#menu')){$('#side').classList.toggle('open');return}if(e.target.closest('#refresh')){load();if(currentView==='operations')window.FixeoOperations.refresh(true);window.FixeoRegisters?.refresh(currentView,true);if(currentView==='intelligence')window.FixeoIntelligence?.refresh(true);if(currentView==='supply')window.FixeoSupply?.refresh(true);return}
+document.addEventListener('click',e=>{const v=e.target.closest('[data-view]');if(v){show(v.dataset.view);return}const r=e.target.closest('[data-kind]');if(r){drawer(r.dataset.kind,r.dataset.id);return}if(e.target.closest('#menu')){$('#side').classList.toggle('open');return}if(e.target.closest('#refresh')){load(true);return}
 
 const cp=e.target.closest('[data-copy-ref]');if(cp){navigator.clipboard?.writeText(cp.dataset.copyRef);cp.textContent='Copié ✓'}});
 
-window.addEventListener('load',()=>{const view=new URL(location.href).searchParams.get('view');if(view&&viewSources[view])show(view);else load();});setInterval(()=>{if(document.visibilityState==='visible')load()},60000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')load()});
+window.addEventListener('load',()=>{const view=new URL(location.href).searchParams.get('view');if(view&&viewSources[view])show(view);else load(false)});setInterval(()=>{if(document.visibilityState==='visible'&&shouldPeriodicLoad())load(false)},60000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&shouldPeriodicLoad())load(false)});
 })();
