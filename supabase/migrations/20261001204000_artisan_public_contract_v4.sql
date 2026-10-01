@@ -168,7 +168,7 @@ LANGUAGE sql
 STABLE
 SECURITY DEFINER
 SET search_path = public, pg_temp
-AS $
+AS $resolver$
   SELECT public.artisan_public_profile_v4(a.id)
   FROM public.artisans a
   WHERE coalesce(a.is_public,true)=true
@@ -184,7 +184,7 @@ AS $
     ELSE 2
   END
   LIMIT 1;
-$;
+$resolver$;
 
 REVOKE ALL ON FUNCTION public.resolve_artisan_public_profile_v4(text) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.resolve_artisan_public_profile_v4(text) TO anon, authenticated, service_role;
