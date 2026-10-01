@@ -2,11 +2,7 @@ claaim sys<!DOCTYPE html>
 <!-- fixeo-artisan-profile perf3 — sync JS 322KB→72KB (-78%), skeleton→content FCP optimized -->
 <html lang="fr" dir="ltr">
 <head>
-  <!-- perf2: Only truly parse-time required scripts remain sync.
-       supabase-client MUST be sync (FixeoSupabaseClient used by auth-global via closure).
-       fxprofile-perf-v1: fixeo-logout-global deferred — all nav onclick handlers use
-       the guard pattern (window.fixeoGlobalLogout && fixeoGlobalLogout()) so deferring
-       is safe; the script is available well before any user interaction. -->
+  
   <script src="/js/supabase-client.js?v=sc2"></script>
   <script src="/js/fixeo-logout-global.js?v=v2c4a" defer></script>
 
@@ -77,7 +73,7 @@ claaim sys<!DOCTYPE html>
   <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf5a">
   <!-- rf4: Preload artisan index for true cold SEO visitors. fetch-priority=low so it
        doesn't compete with CSS/fonts; crossorigin needed for fetch() CORS to reuse connection. -->
- <!-- <link rel="preload" href="/data/artisan-index.json?v=1" as="fetch" crossorigin="anonymous" fetchpriority="low"> -->
+ 
   
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- ══ LOGO OVERRIDE — image-only, no emoji, no text ══ -->
@@ -119,7 +115,7 @@ claaim sys<!DOCTYPE html>
     }
   </style>
 
-<!-- SEO-1A: Artisan profile base SEO tags (populated dynamically by fixeo-public-artisan-profile.js) -->
+
 <meta name="robots" content="noindex, follow">
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="Fixeo">
@@ -129,10 +125,7 @@ claaim sys<!DOCTYPE html>
 <meta name="twitter:site" content="@FixeoMaroc">
 <!-- Dynamic LD+JSON injected at render time by fixeo-seo-profile.js -->
 <script id="fixeo-profile-jsonld" type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Artisan Fixeo","url":"https://www.fixeo.ma/artisan-profile.html","provider":{"@type":"Organization","name":"Fixeo","url":"https://www.fixeo.ma/"}}</script>
-<!-- fxprofile-perf-v1: defer fixeo-heroes.js — pure data provider, zero DOM
-     access at parse time. Deferred scripts run at DCL in document order; all
-     callers (fixeo-public-artisan-profile.js, fixeo-profile-v2a.js) also defer,
-     so FixeoHeroes is always available before they execute. -->
+
 <script src="/js/fixeo-heroes.js?v=fxhv2a" defer></script>
 </head>
 <body data-theme="dark" class="public-artisan-page fixeo-gh-enabled">
@@ -254,8 +247,7 @@ claaim sys<!DOCTYPE html>
 
 <!-- perf2: Batch 2 — all deferred (DCL order: links → render → v2 enhance).
      All three use DCL listeners internally; defer preserves execution order. -->
-<!-- perf3: reservation.js moved before profile scripts — CTA-ready before V2 enhance fires.
-     Prevents dead-click on fast taps of the fxfp-hero CTA. -->
+
 <script src="js/reservation.js?v=av1" defer></script>
 <script src="js/reservation-v2.js?v=v2c6f-b" defer></script>
 <!-- fxresf-cod-v1: Load COD payment engine so FixeoCOD.processCOD() is available.
@@ -266,22 +258,9 @@ claaim sys<!DOCTYPE html>
 <!-- -->
 
 
-<!-- fxprofile-perf-v1: BFCache-friendly back-navigation.
-     Replaces the forced location.reload() that was preventing BFCache.
-     On BFCache restore (e.persisted): re-run the hero fast-path from
-     sessionStorage so the profile content is instantly accurate without a
-     network round-trip. Falls back to reload() only if sessionStorage is
-     unavailable or the artisan data is missing (e.g. direct URL visited in
-     a session that never came from the homepage). -->
 
-<!-- perf-profile-1: Scripts moved from sync batches to defer (saves 222KB from blocking path).
-     Load order: all defer scripts execute in DOM order after HTML parsed, before load event.
-     Dependency order preserved:
-       - notifications before auth flows (low risk, just UI)
-       - reservation before reservation-v2 (v2 extends v1 API)
-       - profile-premium-ui before client-requests-store before artisan-identity (no strict deps, all guarded)
-       - profile-v1jb last (lowest priority, already 200ms-throttled internally)
-     All 7 scripts guard against missing dependencies with typeof checks. -->
+
+
 <script src="js/notifications.js?v=v2c3b" defer></script>
 <!-- reservation.js + reservation-v2.js moved earlier (perf3) — removed from here -->
 <!-- -->    
@@ -298,26 +277,11 @@ claaim sys<!DOCTYPE html>
 <!-- V2-C3B: Claim system deferred — non-critical, loads after profile renders -->
 <!-- gf1: Global footer injection -->
 <script src="js/fixeo-footer-global.js?v=gf5a" defer></script>
-<!-- SEO-3: Dynamic profile SEO enrichment (title/description/OG/JSON-LD+FAQ updated on artisan resolve) -->
-<!-- SEO-3: Below-fold authority blocks (breadcrumb, FAQ, Voir aussi) — injected at idle -->
+
+
 <!-- -->
 <!-- fxpf-v131: Flagship profile CSS + DOM transformer. Runs after V2A enhance(). -->
-<!-- 7C.10C.0.4: In verified Estimator context, suppress the generic market-range
-     budget block (.fxpf-price "Budget indicatif / à partir de X MAD / Fourchette
-     marché locale") which contradicts the server-verified FIXEO price the user
-     already saw. Body class is applied by fixeo-public-artisan-profile.js ONLY
-     when all three estimator-return signals are present (source=estimator +
-     fx_estimator_return_v1 + fixeo_estimator_ctx_v1). Normal profile visits:
-     class absent → .fxpf-price renders as usual.
-     7C.10C.0.5: Also suppress the lower "Tarifs marché / Prestations & prix
-     indicatifs" section (.fxpf-sec containing .fxpf-prest-grid). This section
-     contains static market ranges (150–300 MAD etc) that contradict the
-     server-verified Prix FIXEO already computed for this tunnel session.
-     Selector: :has(.fxpf-prest-grid) targets ONLY the prestations section —
-     not Réalisations, Avis clients, FAQ, or Claim (none contain .fxpf-prest-grid).
-     Belt-and-suspenders fallback for pre-:has() browsers: hide the two unique
-     children (.fxpf-prest-grid + .fxpf-footnote) so no price data is shown
-     even if the section shell remains. -->
+
 
 <!-- fxresf-v11a: Reservation modal flagship presentation enhancer.
      Pure additive layer — zero engine changes. -->
@@ -326,13 +290,7 @@ claaim sys<!DOCTYPE html>
 <link rel="stylesheet" href="css/fixeo-artisan-profile-v4.css?v=fxp4-b2">
 <script src="js/fixeo-reservation-flagship-v1.js?v=fxresf-v11a" defer></script>
 <script src="js/fixeo-artisan-profile-v4.js?v=fxp4-b2" defer></script>
-<!-- fxprofile-perf-v1: Load fixeo-profile-v2a.js as a deferred script instead
-     of via window.load + 1500ms timeout. This moves the V2-A enhancement
-     (bio, badge, WhatsApp CTA, pricing) from T+load+1500ms to T+DCL order.
-     fixeo-heroes.js is now also deferred (document order) so FixeoHeroes is
-     available when fixeo-profile-v2a.js executes. The 1500ms lazy-load was
-     originally used to avoid competing with the main Supabase fetch; the
-     window.__fixeoArtisanFetch deduplication guard makes this unnecessary. -->
+
 
   
 </body>
