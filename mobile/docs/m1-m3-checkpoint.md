@@ -58,15 +58,23 @@ Recertified Staging evidence:
 
 Status: **SERVER / SOFTWARE PASS**.
 
+## EAS linkage
+- Expo organization: `fixeo-maroc`.
+- Expo project slug: `fixeo-mobile`.
+- EAS project ID: `bb76a67f-4304-48a6-ad29-ca7382d28a7a`.
+- `app.json` linked with `owner` + `extra.eas.projectId`.
+- development/preview EAS profiles receive the Staging project ID.
+- `expo-dev-client` is installed for development builds.
+- Android preview profile is configured for an installable APK.
+
 ## Remaining physical Gate B
 Not certifiable without external mobile distribution:
-1. Create/link the Expo EAS project and obtain the EAS project ID.
-2. Complete Apple Developer Organization enrollment (D&B case #34893086 is pending).
-3. Produce the signed Staging build.
-4. Install Staging on Client and Artisan physical devices.
-5. Register real Expo push tokens.
-6. Execute Client -> Artisan -> Client loop on devices.
-7. Confirm push delivery and deep-link opening.
-8. Repeat winner-race test with two Artisan devices.
+1. Complete Apple Developer Organization enrollment (D&B case #34893086 is pending) for physical iOS builds.
+2. Trigger the first EAS Staging build (Android can proceed before Apple enrollment).
+3. Install Staging on Client and Artisan physical devices.
+4. Register real Expo push tokens.
+5. Execute Client -> Artisan -> Client loop on devices.
+6. Confirm push delivery and deep-link opening.
+7. Repeat winner-race test with two Artisan devices.
 
 Until those physical checks pass, Gate B is **not physically certified**.
