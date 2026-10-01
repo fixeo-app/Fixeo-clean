@@ -5,12 +5,15 @@ SET LOCAL lock_timeout='5s';
 SET LOCAL statement_timeout='30s';
 
 DO $guard$
+DECLARE vdef text;
 BEGIN
+  vdef:=pg_get_viewdef('public.supply_artisan_projection_v1'::regclass,true);
   IF current_user <> 'postgres'
      OR to_regclass('public.supply_artisan_projection_v1') IS NULL
      OR to_regprocedure('fixeo_private.supply_derived_stage_v1(uuid)') IS NULL
-     OR md5(pg_get_viewdef('public.supply_artisan_projection_v1'::regclass,true))
-        IS DISTINCT FROM 'ecff1999060a6cedf5adb8232ca606ee'
+     OR position('fixeo_private.supply_derived_stage_v1(a.id)' in vdef)=0
+     OR position('LEFT JOIN supply_artisan_state_v1' in vdef)=0
+     OR position('LEFT JOIN supply_contact_preferences_v1' in vdef)=0
   THEN
     RAISE EXCEPTION 'SUPPLY_PROJECTION_PRESSURE_BASELINE_DRIFT';
   END IF;
