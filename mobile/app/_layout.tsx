@@ -7,15 +7,22 @@ import { configureForegroundNotifications } from '@/lib/push';
 
 configureForegroundNotifications();
 
+function safeRequestId(value: unknown) {
+  const id=String(value||'');
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id) ? id : '';
+}
+
 function routeNotification(notification: Notifications.Notification) {
   const data = notification.request.content.data || {};
   const screen = String(data.screen || '');
+  const requestId=safeRequestId(data.request_id);
+
   if (screen === 'artisan') {
-    router.push('/artisan');
+    router.push(requestId ? { pathname:'/artisan', params:{ requestId } } : '/artisan');
     return;
   }
   if (screen === 'client') {
-    router.push('/');
+    router.push(requestId ? { pathname:'/', params:{ requestId } } : '/');
   }
 }
 
