@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
+import * as Crypto from 'expo-crypto';
 import { supabase } from '@/lib/supabase';
 import { createRequest } from '@/lib/magicLoop';
 import {
@@ -9,13 +10,17 @@ import {
   watchClientRequest,
 } from '@/lib/clientWatch';
 import { understandLocally } from '@/lib/rafi';
+import { hasRafiServerGateway, transcribeRafiVoice } from '@/lib/rafiGateway';
 import { MagicLoopModel, transition } from '@/lib/magicLoopState';
+import { RafiInputRail } from '@/components/RafiInputRail';
 
 const ASSIGNED_STATES = new Set(['assigned', 'in_progress', 'completed', 'validated']);
 
 export default function Home() {
   const [problem, setProblem] = useState('');
   const [city, setCity] = useState('');
+  const [rafiMessage, setRafiMessage] = useState('');
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [loop, setLoop] = useState<MagicLoopModel>({ state: 'idle' });
   const need = useMemo(() => understandLocally({ mode: 'text', text: problem }), [problem]);
 
@@ -68,6 +73,26 @@ export default function Home() {
     };
   }, [loop.state, loop.requestId]);
 
+  async function handleVoice(uri: string) {
+    if (!hasRafiServerGateway()) {
+      setRafiMessage('Voix capturée. La transcription serveur sera activée sur le build Staging signé.');
+      return;
+    }
+    try {
+      setRafiMessage('RAFI transcrit…');
+      const transcript = await transcribeRafiVoice(uri);
+      setProblem(current => [current.trim(), transcript].filter(Boolean).join(' '));
+      setRafiMessage('Transcription prête.');
+    } catch {
+      setRafiMessage('Impossible de transcrire cet enregistrement.');
+    }
+  }
+
+  function handlePhoto(uri: string) {
+    setPhotoUri(uri);
+    setRafiMessage('Photo jointe. Le diagnostic serveur sera activé sur le build Staging signé.');
+  }
+
   async function send() {
     try {
       const normalizedCity = city.trim();
@@ -75,8 +100,12 @@ export default function Home() {
         setLoop(current => transition(current, 'error', { message: 'Indiquez votre ville.' }));
         return;
       }
+      if (!need.description.trim()) {
+        setLoop(current => transition(current, 'error', { message: 'Décrivez le problème à RAFI.' }));
+        return;
+      }
       setLoop(current => transition(current, 'creating'));
-      const idempotencyKey = globalThis.crypto.randomUUID();
+      const idempotencyKey = Crypto.randomUUID();
       const data: any = await createRequest(
         need.serviceCategory,
         normalizedCity,
@@ -98,9 +127,12 @@ export default function Home() {
       <Text style={styles.brand}>FIXEO</Text>
       <View style={styles.orb} />
       <Text style={styles.title}>Que puis-je régler pour vous ?</Text>
-      <View style={styles.modes}>
-        <Text>🎙 Parler</Text><Text>📷 Montrer</Text><Text>⌨️ Écrire</Text>
-      </View>
+
+      <RafiInputRail
+        onVoiceReady={(uri) => void handleVoice(uri)}
+        onPhotoReady={handlePhoto}
+      />
+
       <TextInput
         value={problem}
         onChangeText={setProblem}
@@ -114,6 +146,10 @@ export default function Home() {
         autoCapitalize="words"
         style={styles.input}
       />
+
+      {!!rafiMessage && <Text style={styles.rafiMessage}>{rafiMessage}</Text>}
+      {!!photoUri && <Text style={styles.attachment}>📷 Photo prête pour RAFI</Text>}
+
       {problem.length > 3 && (
         <Text style={styles.understood}>
           RAFI · {need.serviceCategory}{need.confidence === 'low' ? ' · à confirmer' : ''}
@@ -136,12 +172,13 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, padding: 24, justifyContent: 'center', gap: 18 },
+  root: { flex: 1, padding: 24, justifyContent: 'center', gap: 16 },
   brand: { fontSize: 18, fontWeight: '800', letterSpacing: 3, textAlign: 'center' },
   orb: { width: 88, height: 88, borderRadius: 44, backgroundColor: '#111', alignSelf: 'center' },
   title: { fontSize: 28, fontWeight: '700', textAlign: 'center' },
-  modes: { flexDirection: 'row', justifyContent: 'space-around' },
   input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 18, padding: 16, minHeight: 56 },
+  rafiMessage: { textAlign: 'center', opacity: 0.72 },
+  attachment: { textAlign: 'center', fontWeight: '600' },
   understood: { textAlign: 'center', fontWeight: '600' },
   cta: { backgroundColor: '#111', padding: 18, borderRadius: 18 },
   ctaText: { color: '#fff', fontWeight: '700', textAlign: 'center' },
