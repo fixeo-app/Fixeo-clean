@@ -750,21 +750,27 @@ btn.textContent =
       section.addEventListener('click', function(e) {
         var btn = e.target.closest('.artdir-btn-reserve');
         if (!btn) return;
-        var aid   = btn.getAttribute('data-artisan-id');
-        var aname = btn.getAttribute('data-artisan-name');
-
-        if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
-          window.FixeoClientRequest.open({ artisanId: aid, artisanName: aname });
-          return;
-        }
-        var trigger = document.querySelector('[data-open-request-form]');
-        if (trigger) {
-          trigger.click();
-          return;
-        }
-        if (aid) {
+        var aid = btn.getAttribute('data-artisan-id');
+        if (!aid) return;
+        var selected = _state.allResults.find(function(a) {
+          return String(a.id || a._supabase_id || '') === String(aid);
+        });
+        if (!selected) {
           window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid);
+          return;
         }
+        var tries = 0;
+        (function openTargetedReservation() {
+          if (window.FixeoReservation && typeof window.FixeoReservation.open === 'function') {
+            window.FixeoReservation.open(selected, false);
+            return;
+          }
+          if (++tries < 120) {
+            window.setTimeout(openTargetedReservation, 100);
+            return;
+          }
+          window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid);
+        })();
       });
 
       /* Keyboard: Enter on .artdir-btn-reserve (role=button already covered natively) */
