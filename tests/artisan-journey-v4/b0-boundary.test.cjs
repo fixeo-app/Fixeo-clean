@@ -29,11 +29,14 @@ test('B0: Homepage canonical surface is byte-identical to frozen baseline',()=>{
   for(const [p,sha] of Object.entries(protectedBlobs)) assert.equal(blobSha(p),sha,p);
 });
 
-test('B0: artisan profile retains current CTA and legacy engine until V4 cutover',()=>{
+test('B0: artisan profile retains targeted booking while V4 owns public rendering',()=>{
   const html=read('artisan-profile.html');
-  assert.match(html,/id="public-artisan-action"/);
+  const v4=read('js/fixeo-artisan-profile-v4.js');
+  assert.match(v4,/id="public-artisan-action"/);
+  assert.match(v4,/FixeoReservation\.open\(artisan\(p\),false\)/);
   assert.match(html,/js\/reservation\.js\?v=av1/);
-  assert.match(html,/fixeo-public-artisan-profile\.js/);
+  assert.match(html,/fixeo-artisan-profile-v4\.js\?v=fxp4-b2/);
+  assert.doesNotMatch(html,/src=["'][^"']*fixeo-public-artisan-profile\.js/);
 });
 
 test('B0: canonical targeted-request persistence invariants remain present',()=>{
