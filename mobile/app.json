@@ -34,6 +34,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "owner": "fixeo-maroc",
+    "extra": {
+      "eas": {
+        "projectId": "bb76a67f-4304-48a6-ad29-ca7382d28a7a"
+      }
     }
   }
 }
