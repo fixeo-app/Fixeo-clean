@@ -79,8 +79,6 @@ claaim sys<!DOCTYPE html>
   <link rel="stylesheet" href="css/auth-global.css?v=v2c3b">
   <link rel="stylesheet" href="css/reservation.css">
   <link rel="stylesheet" href="css/reservation-v2.css?v=3" />
-  <link rel="stylesheet" href="css/fixeo-estimation-engine-v1.css?v=faee-v1d" />
-  <link rel="stylesheet" href="css/fixeo-review-engine-v1.css?v=frev-v1b" />
   <link rel="stylesheet" href="css/reservation-v2a.css?v=v2c" />
   <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf5a">
   <!-- rf4: Preload artisan index for true cold SEO visitors. fetch-priority=low so it
@@ -144,12 +142,6 @@ claaim sys<!DOCTYPE html>
 <script src="/js/fixeo-heroes.js?v=fxhv2a" defer></script>
 </head>
 <body data-theme="dark" class="public-artisan-page fixeo-gh-enabled">
-<!-- perf-profile-1: Instant preseed — runs synchronously at body-parse time (before any other script).
-     Reads ?id from URL, finds artisan in localStorage marketplace pool,
-     writes fixeo_profile_prefetch_{id} to sessionStorage so that
-     fixeo-public-artisan-profile.js init() fast-path fires immediately at DCL
-     without waiting for collectArtisanSeeds() to parse 861 artisans. -->
-
 <a href="#main-content" class="skip-link">Aller au contenu</a>
 
 <nav class="navbar" role="navigation" aria-label="Navigation principale">
@@ -257,27 +249,6 @@ claaim sys<!DOCTYPE html>
     </section>
   </div>
 </main>
-<!-- perf3: Inline hero fast-path (~1.2KB).
-     Runs synchronously at body-parse time (after skeleton HTML exists in DOM).
-     Reads sessionStorage preseed → replaces skeleton with real hero HTML
-     using ONLY inline CSS classes already defined above.
-     Sets window.__fxHeroRendered sentinel to suppress DCL double-render. -->
-
-<!-- rf-profile-4: Cold-visit index pre-fetch (~0.3KB inline).
-     Fires immediately at body-parse time.
-     If fast-path already rendered the hero (window.__fxHeroRendered set): skips entirely.
-     Otherwise: starts fetching /data/artisan-index.json in parallel with defer scripts.
-     Stores promise as window.__fxIndexPromise.
-     When resolved: looks up artisan by id → renders minimal hero using SAME inline CSS
-     classes as perf3 fast-path → sets window.__fxHeroRendered sentinel.
-     If fetch fails or artisan not found: silent fallback — Supabase chain renders as before.
-     Average mobile timeline: 26KB gzipped fetch ~130ms on 3G vs 105KB profile-v2a.js ~525ms.
-     Hero appears ~400ms earlier on true cold visits. -->
-
-
-<!-- perf2: Batch 1 — header + auth sync (nav/auth state needed at first paint).
-     fixeo-db, fixeo-repository, fixeo-auth-supabase, fixeo-supabase-loader
-     promoted to defer here; they execute at DCL in order before the profile scripts. -->
 <script src="/js/header-unified.js?v=v2c3b"></script>
 <script src="/js/fixeo-header-global.js?v=gfnav5"></script>
 <!-- <script src="/js/auth-global.js?v=v2c3b"></script> -->
@@ -298,8 +269,6 @@ claaim sys<!DOCTYPE html>
 <script src="js/cod-payment.js?v=fxresf-cod-v1" defer></script>
 <link rel="stylesheet" href="css/fixeo-reservation-v3.css?v=fxrv3-v1a" />
 <script src="js/fixeo-reservation-v3.js?v=fxrv3-v1a" defer></script>
-<script src="js/fixeo-estimation-engine-v1.js?v=faee-v1d" defer></script>
-<script src="js/fixeo-review-engine-v1.js?v=frev-v1b" defer></script>
 <!-- -->
 
 
