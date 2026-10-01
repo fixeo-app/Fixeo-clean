@@ -7,7 +7,7 @@ const forbidden=[
 'artisan-profile-premium.css','artisan-profile-v2a.css','fixeo-profile-v1jb.css','fixeo-seo-profile-blocks.css','fixeo-profile-v3.css','fixeo-profile-flagship-v1.css'
 ];
 test('B1 Clean Room: no legacy profile producer is loaded',()=>{for(const x of forbidden)assert.equal(html.includes(x),false,x)});
-test('B1 Clean Room: V4 is the sole public profile renderer',()=>{assert.match(html,/id="public-artisan-root"/);assert.match(html,/fixeo-artisan-profile-v4\\.js\\?v=fxp4-b2-wow1/);assert.match(v4,/resolve_artisan_public_profile_v4/);assert.match(html,/data-fxp4-owner="boot"/)});
+test('B1 Clean Room: V4 is the sole public profile renderer',()=>{assert.match(html,/id="public-artisan-root"/);assert.match(html,/fixeo-artisan-profile-v4\.js\?v=fxp4-b2-wow1/);assert.match(v4,/resolve_artisan_public_profile_v4/);assert.match(html,/data-fxp4-owner="boot"/)});
 test('B1 Clean Room: legacy marketplace fast paths are absent',()=>{assert.doesNotMatch(html,/fixeo_admin_artisans_v21|fixeo_public_artisans_registry|artisan-index\.json|__fxHeroRendered|fixeo_profile_prefetch_/)});
 test('B1 Clean Room: targeted reservation stack remains intact',()=>{for(const x of ['js/reservation.js?v=av1','js/reservation-v2.js?v=v2c6f-b','js/cod-payment.js?v=fxresf-cod-v1','js/fixeo-reservation-v3.js?v=fxrv3-v1a','js/fixeo-reservation-supabase-bridge.js?v=v2','js/fixeo-reservation-flagship-v1.js?v=fxresf-v11a'])assert.ok(html.includes(x),x);assert.match(v4,/FixeoReservation\.open\(artisan\(p\),false\)/)});
 test('B1 Clean Room: only one intervention CTA is produced by profile renderer',()=>{assert.equal((v4.match(/id="public-artisan-action"/g)||[]).length,1)});
