@@ -150,7 +150,7 @@
     renderCandidates(rows||[]);
   }
   async function refresh(force){
-    if(state.loading&&!force)return;
+    if(state.loading)return;
     state.loading=true;status('Lecture du Supply Engine…','');
     try{
       var jobs=[
