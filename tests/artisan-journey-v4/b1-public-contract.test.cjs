@@ -56,3 +56,12 @@ test('B1: portfolio and multi-service/city sources are normalized',()=>{
   assert.match(sql,/'additional',b\.extra_categories/);
   assert.match(sql,/'additional_cities',b\.extra_cities/);
 });
+
+test('B1: one resolver accepts UUID, public slug and legacy id',()=>{
+  assert.match(sql,/CREATE OR REPLACE FUNCTION public\.resolve_artisan_public_profile_v4\(p_ref text\)/);
+  assert.match(sql,/a\.id::text=p_ref/);
+  assert.match(sql,/a\.public_slug=p_ref/);
+  assert.match(sql,/a\.legacy_id=p_ref/);
+  assert.match(sql,/SELECT public\.artisan_public_profile_v4\(a\.id\)/);
+  assert.match(sql,/REVOKE ALL ON FUNCTION public\.resolve_artisan_public_profile_v4\(text\) FROM PUBLIC/);
+});
