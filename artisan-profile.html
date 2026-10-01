@@ -63,13 +63,7 @@ claaim sys<!DOCTYPE html>
   <meta http-equiv="Expires" content="0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <script>
-    /* __fixeoProfileAssetPath: keeps JS Batch 1+2 working on file:// local dev */
-    window.__fixeoProfileAssetPath = (function () {
-      var isLocal = String((window.location && window.location.protocol) || '').toLowerCase() === 'file:';
-      return function (p) { return isLocal ? String(p || '').replace(/^\//, '') : p; };
-    }());
-  </script>
+  
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/style.css">
@@ -324,14 +318,7 @@ claaim sys<!DOCTYPE html>
      Belt-and-suspenders fallback for pre-:has() browsers: hide the two unique
      children (.fxpf-prest-grid + .fxpf-footnote) so no price data is shown
      even if the section shell remains. -->
-<style>
-body.fx-estimator-context .fxpf-price { display: none !important; }
-/* 7C.10C.0.5 — market tariffs section suppression in estimator context */
-body.fx-estimator-context .fxpf-sec:has(.fxpf-prest-grid) { display: none !important; }
-/* Fallback for browsers without :has() — hides price content; section shell may remain */
-body.fx-estimator-context .fxpf-prest-grid,
-body.fx-estimator-context .fxpf-footnote { display: none !important; }
-</style>
+
 <!-- fxresf-v11a: Reservation modal flagship presentation enhancer.
      Pure additive layer — zero engine changes. -->
 <link rel="stylesheet" href="css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a">
