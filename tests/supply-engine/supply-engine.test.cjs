@@ -185,6 +185,7 @@ test('static contract: Control OS exposes Supply and agent API is disabled by de
   assert.match(adminSupply,/supply_admin_dashboard_v1/);
   assert.match(adminSupply,/SUPPLY_READ_CONCURRENCY=4/);
   assert.match(adminSupply,/settleBounded\(jobs,SUPPLY_READ_CONCURRENCY\)/);
+  assert.match(adminSupply,/if\(state\.loading\)return/);
   assert.doesNotMatch(adminSupply,/Promise\.allSettled\(jobs/);
   assert.match(adminSupply,/mode dégradé/);
   assert.match(adminControl,/SUMMARY_REFRESH_MS=180000/);
