@@ -129,6 +129,20 @@
         '<span class="pill '+tone(x.to_stage)+'">'+esc(x.to_stage||x.from_stage||'EVENT')+'</span></article>';
     }).join(''):'<div class="empty">Aucun événement Supply enregistré.</div>';
   }
+  var SUPPLY_READ_CONCURRENCY=4;
+  async function settleBounded(jobs,limit){
+    var out=new Array(jobs.length),cursor=0,count=Math.max(1,Math.min(Number(limit)||1,jobs.length||1));
+    async function worker(){
+      while(true){
+        var i=cursor++;
+        if(i>=jobs.length)return;
+        try{out[i]={status:'fulfilled',value:await jobs[i][1]()};}
+        catch(error){out[i]={status:'rejected',reason:error};}
+      }
+    }
+    await Promise.all(Array.from({length:count},function(){return worker();}));
+    return out;
+  }
   async function loadCandidates(){
     var rows=await rpc('supply_recruitment_candidates_v1',{
       p_city:state.selectedCity||null,p_service:state.selectedService||null,p_limit:30
@@ -140,18 +154,18 @@
     state.loading=true;status('Lecture du Supply Engine…','');
     try{
       var jobs=[
-        ['dashboard',rpc('supply_admin_dashboard_v1')],
-        ['coverage',rpc('supply_intelligence_v1',{p_limit:25})],
-        ['candidates',rpc('supply_recruitment_candidates_v1',{p_city:state.selectedCity||null,p_service:state.selectedService||null,p_limit:30})],
-        ['queue',rpc('supply_admin_queue_v1',{p_limit:80})],
-        ['campaigns',rpc('supply_admin_campaigns_v1')],
-        ['agents',rpc('supply_admin_agents_v1')],
-        ['events',rpc('supply_admin_events_v1',{p_limit:40})],
-        ['funnel',rpc('supply_admin_funnel_v1')],
-        ['readiness',rpc('supply_admin_recruitment_readiness_v1')],
-        ['national',rpc('supply_admin_national_dashboard_v1')]
+        ['dashboard',function(){return rpc('supply_admin_dashboard_v1');}],
+        ['coverage',function(){return rpc('supply_intelligence_v1',{p_limit:25});}],
+        ['candidates',function(){return rpc('supply_recruitment_candidates_v1',{p_city:state.selectedCity||null,p_service:state.selectedService||null,p_limit:30});}],
+        ['queue',function(){return rpc('supply_admin_queue_v1',{p_limit:80});}],
+        ['campaigns',function(){return rpc('supply_admin_campaigns_v1');}],
+        ['agents',function(){return rpc('supply_admin_agents_v1');}],
+        ['events',function(){return rpc('supply_admin_events_v1',{p_limit:40});}],
+        ['funnel',function(){return rpc('supply_admin_funnel_v1');}],
+        ['readiness',function(){return rpc('supply_admin_recruitment_readiness_v1');}],
+        ['national',function(){return rpc('supply_admin_national_dashboard_v1');}]
       ];
-      var settled=await Promise.allSettled(jobs.map(function(x){return x[1];}));
+      var settled=await settleBounded(jobs,SUPPLY_READ_CONCURRENCY);
       var data={},failed=[];
       settled.forEach(function(r,i){if(r.status==='fulfilled')data[jobs[i][0]]=r.value;else failed.push(jobs[i][0]);});
       state.last=data;
