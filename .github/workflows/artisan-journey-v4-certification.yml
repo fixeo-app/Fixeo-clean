@@ -1,0 +1,35 @@
+name: Artisan Journey V4 boundary certification
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'artisan-profile.html'
+      - 'js/reservation.js'
+      - 'js/fixeo-public-artisan-profile.js'
+      - 'js/fixeo-profile-*.js'
+      - 'js/fixeo-reservation-*.js'
+      - 'tests/artisan-journey-v4/**'
+      - 'docs/blueprints/artisan-journey-v4-b0.md'
+      - 'index.html'
+      - 'js/fixeo-intake-v1.js'
+      - 'js/fixeo-estimator-v2.js'
+      - 'js/fixeo-diagnostic-v1.js'
+      - 'js/fixeo-estimator-reservation-bridge-v1.js'
+      - 'js/fixeo-hero-flagship-v1.js'
+      - 'js/fixeo-rafi-os-v1.js'
+      - 'js/fx-request-flow-v4.js'
+  push:
+    branches:
+      - 'feat/artisan-journey-v4'
+
+jobs:
+  boundary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Certify Artisan Journey V4 boundary and public contract
+        run: node --test tests/artisan-journey-v4/*.test.cjs
