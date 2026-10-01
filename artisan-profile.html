@@ -198,6 +198,19 @@ claaim sys<!DOCTYPE html>
   <a href="#" class="nav-link" data-auth="logged-in" onclick="window.fixeoGlobalLogout && fixeoGlobalLogout(); return false;">🚪 Déconnexion</a>
 </div>
 
+<script>
+(function(){
+  var PROFILE_PAGE_VERSION='20261001b21';
+  function ensureCurrentProfileDocument(ev){
+    var q=new URLSearchParams(window.location.search);
+    if(ev&&ev.persisted&&q.get('pv')!==PROFILE_PAGE_VERSION){
+      q.set('pv',PROFILE_PAGE_VERSION);
+      window.location.replace(window.location.pathname+'?'+q.toString()+window.location.hash);
+    }
+  }
+  window.addEventListener('pageshow',ensureCurrentProfileDocument);
+}());
+</script>
 <main id="main-content" class="public-artisan-wrap">
   <div id="public-artisan-root" class="container" aria-live="polite" data-fxp4-owner="boot">
     <section class="fxp4-boot" aria-label="Chargement du profil">
