@@ -87,14 +87,14 @@ export default function Home() {
     };
   }, [loop.state, loop.requestId]);
 
-  async function handleVoice(uri: string) {
+  async function handleVoice(uri: string, language: 'fr-FR'|'ar-MA') {
     if (!hasRafiServerGateway()) {
       setRafiMessage('Voix capturée. La transcription serveur sera activée sur le build Staging signé.');
       return;
     }
     try {
       setRafiMessage('RAFI transcrit…');
-      const transcript = await transcribeRafiVoice(uri);
+      const transcript = await transcribeRafiVoice(uri, language);
       setProblem(current => [current.trim(), transcript].filter(Boolean).join(' '));
       setRafiMessage('Transcription prête.');
     } catch {
@@ -143,7 +143,7 @@ export default function Home() {
       <Text style={styles.title}>Que puis-je régler pour vous ?</Text>
 
       <RafiInputRail
-        onVoiceReady={(uri) => void handleVoice(uri)}
+        onVoiceReady={(uri, language) => void handleVoice(uri, language)}
         onPhotoReady={handlePhoto}
       />
 
