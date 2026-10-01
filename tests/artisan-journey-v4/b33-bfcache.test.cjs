@@ -1,0 +1,5 @@
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const root=path.resolve(__dirname,'../..');const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const dir=read('js/fixeo-artisan-directory-v1.js'),html=read('artisan-profile.html');
+test('Safari profile navigation carries document version outside encoded artisan id',()=>{assert.match(dir,/encodeURIComponent\(String\(aid\)\) \+ '&pv=20261001b21'/);assert.doesNotMatch(dir,/encodeURIComponent\(String\(aid\) \+ '&pv=/)});
+test('targeted reservation fallbacks preserve artisan id and page version',()=>{assert.equal((dir.match(/encodeURIComponent\(aid\) \+ '&pv=20261001b21'/g)||[]).length,2);assert.match(dir,/FixeoReservation\.open\(selected, false\)/)});
+test('profile guards stale BFCache documents without changing normal navigation',()=>{assert.match(html,/PROFILE_PAGE_VERSION='20261001b21'/);assert.match(html,/ev&&ev\.persisted/);assert.match(html,/window\.location\.replace/);assert.match(html,/window\.addEventListener\('pageshow'/)});
