@@ -7,7 +7,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "gate:a": "npm run typecheck && expo export --platform web --output-dir dist-gate-a"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.0",
@@ -21,7 +22,10 @@
     "expo-status-bar": "~3.0.0",
     "react": "19.1.0",
     "react-native": "0.81.4",
-    "react-native-url-polyfill": "^2.0.0"
+    "react-native-url-polyfill": "^2.0.0",
+    "react-dom": "19.1.0",
+    "react-native-web": "^0.21.0",
+    "@expo/metro-runtime": "~6.1.2"
   },
   "devDependencies": {
     "@types/react": "~19.1.10",
