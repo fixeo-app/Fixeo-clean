@@ -31,5 +31,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Certify Artisan Journey V4 boundary
-        run: node --test tests/artisan-journey-v4/b0-boundary.test.cjs
+      - name: Certify Artisan Journey V4 boundary and public contract
+        run: node --test tests/artisan-journey-v4/*.test.cjs
