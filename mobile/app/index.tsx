@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useEffect,useState } from 'react';
 import { View,Text,TextInput,Pressable,StyleSheet } from 'react-native';
+import { router } from 'expo-router';
+import { supabase } from '@/lib/supabase';
 import { createRequest } from '@/lib/magicLoop';
-export default function Home(){const [problem,setProblem]=useState('');const [state,setState]=useState('idle');
+import { watchClientNotifications } from '@/lib/clientWatch';
+export default function Home(){const [problem,setProblem]=useState('');const [state,setState]=useState('idle');const [msg,setMsg]=useState('');
+useEffect(()=>{let ch:any;supabase.auth.getUser().then(({data})=>{if(!data.user){router.replace('/sign-in');return;}ch=watchClientNotifications(data.user.id,(p:any)=>{const n=p.new||{};setMsg(n.title||n.message||'Mise à jour FIXEO');if(/accept|assign|mission/i.test(String(n.type||'')))setState('found')})});return()=>{if(ch)supabase.removeChannel(ch)}},[]);
 async function send(){try{setState('sending');const id=globalThis.crypto.randomUUID();await createRequest('Plomberie','Rabat',problem,id);setState('matching');}catch(e){setState('error');}}
-return <View style={s.root}><Text style={s.brand}>FIXEO</Text><View style={s.orb}/><Text style={s.title}>Que puis-je régler pour vous ?</Text><TextInput value={problem} onChangeText={setProblem} placeholder="Décrivez ou montrez le problème" style={s.input}/><Pressable style={s.cta} onPress={send} disabled={!problem||state==='sending'}><Text style={s.ctat}>{state==='sending'?'RAFI analyse…':'Continuer avec RAFI'}</Text></Pressable>{state==='matching'&&<Text style={s.ok}>Demande confirmée · recherche d’un artisan…</Text>}{state==='error'&&<Text>Impossible de confirmer pour le moment.</Text>}</View>}
+return <View style={s.root}><Text style={s.brand}>FIXEO</Text><View style={s.orb}/><Text style={s.title}>Que puis-je régler pour vous ?</Text><TextInput value={problem} onChangeText={setProblem} placeholder="Décrivez ou montrez le problème" style={s.input}/><Pressable style={s.cta} onPress={send} disabled={!problem||state==='sending'}><Text style={s.ctat}>{state==='sending'?'RAFI analyse…':'Continuer avec RAFI'}</Text></Pressable>{state==='matching'&&<Text style={s.ok}>Demande confirmée · recherche d’un artisan…</Text>}{state==='found'&&<Text style={s.ok}>{msg||'Artisan trouvé.'}</Text>}{state==='error'&&<Text>Impossible de confirmer pour le moment.</Text>}</View>}
 const s=StyleSheet.create({root:{flex:1,padding:24,justifyContent:'center',gap:18},brand:{fontSize:18,fontWeight:'800',letterSpacing:3,textAlign:'center'},orb:{width:88,height:88,borderRadius:44,backgroundColor:'#111',alignSelf:'center'},title:{fontSize:28,fontWeight:'700',textAlign:'center'},input:{borderWidth:1,borderColor:'#ddd',borderRadius:18,padding:16,minHeight:64},cta:{backgroundColor:'#111',padding:18,borderRadius:18},ctat:{color:'#fff',fontWeight:'700',textAlign:'center'},ok:{textAlign:'center',fontWeight:'600'}});
