@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { Stack, router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import * as Notifications from 'expo-notifications';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { configureForegroundNotifications } from '@/lib/push';
 
 configureForegroundNotifications();
@@ -28,5 +30,10 @@ export default function Layout() {
     return () => subscription.remove();
   }, []);
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <SafeAreaProvider>
+      <StatusBar style="auto" />
+      <Stack screenOptions={{ headerShown: false }} />
+    </SafeAreaProvider>
+  );
 }
