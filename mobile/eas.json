@@ -7,13 +7,17 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_APP_ENV": "staging"
+        "EXPO_PUBLIC_APP_ENV": "staging",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://kqyhusnbybsukbcaoqtu.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_sV-PYAY5zgir1UTJ6LNl6Q_ObK78uMo"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_APP_ENV": "staging"
+        "EXPO_PUBLIC_APP_ENV": "staging",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://kqyhusnbybsukbcaoqtu.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_sV-PYAY5zgir1UTJ6LNl6Q_ObK78uMo"
       }
     }
   }
