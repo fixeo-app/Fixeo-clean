@@ -73,7 +73,6 @@ claaim sys<!DOCTYPE html>
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/artisan-profile-conversion.css">
   <link rel="stylesheet" href="css/fixeo_v5_fixes.css">
   <link rel="stylesheet" href="css/header-unified.css?v=v2c3b">
   <link rel="stylesheet" href="css/fixeo-header-global.css?v=fxgh6">
@@ -83,97 +82,11 @@ claaim sys<!DOCTYPE html>
   <link rel="stylesheet" href="css/fixeo-estimation-engine-v1.css?v=faee-v1d" />
   <link rel="stylesheet" href="css/fixeo-review-engine-v1.css?v=frev-v1b" />
   <link rel="stylesheet" href="css/reservation-v2a.css?v=v2c" />
-  <link rel="stylesheet" href="css/artisan-profile-premium.css">
-  <link rel="stylesheet" href="css/artisan-profile-v2a.css?v=v2c6f-b">
-  <link rel="stylesheet" href="css/fixeo-profile-v1jb.css?v=v2c5a">
   <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf5a">
-  <link rel="stylesheet" href="css/fixeo-seo-profile-blocks.css?v=seo3">
   <!-- rf4: Preload artisan index for true cold SEO visitors. fetch-priority=low so it
        doesn't compete with CSS/fonts; crossorigin needed for fetch() CORS to reuse connection. -->
  <!-- <link rel="preload" href="/data/artisan-index.json?v=1" as="fetch" crossorigin="anonymous" fetchpriority="low"> -->
-  <style>
-    .notif-badge:empty{display:none!important}
-    .notif-panel,.notification-panel{z-index:600!important}
-    .public-artisan-page{min-height:100vh;background:linear-gradient(135deg,#0D0D1A 0%,#1a1a2e 50%,#16213e 100%)}
-    .public-artisan-wrap{padding-top:calc(var(--header-h,84px) + 18px);padding-bottom:32px}
-    .public-artisan-shell{display:grid;gap:16px}
-    .public-profile-state,.public-profile-hero,.public-panel{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:24px;backdrop-filter:blur(16px);box-shadow:0 12px 40px rgba(0,0,0,.18)}
-    .public-profile-state{padding:40px 20px;text-align:center;color:#fff}
-    .public-state-icon{font-size:2rem;margin-bottom:10px}
-    .public-profile-hero{padding:18px;display:grid;gap:16px}
-    .public-avatar-wrap{display:flex;justify-content:center}
-    .public-avatar{width:104px;height:104px;border-radius:24px;object-fit:cover;border:2px solid rgba(255,255,255,.15);box-shadow:0 10px 30px rgba(0,0,0,.2)}
-    .public-avatar-fallback{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#E1306C,#833AB4);font-size:1.9rem;font-weight:800;color:#fff}
-    .public-hero-main{display:grid;gap:12px;color:#fff}
-    .public-hero-main h1{margin:0;font-size:1.6rem;line-height:1.15}
-    .public-hero-meta{margin:0;color:rgba(255,255,255,.78);font-size:.98rem}
-    .public-availability{display:inline-flex;align-items:center;justify-content:center;width:max-content;padding:6px 12px;border-radius:999px;font-size:.8rem;font-weight:700;border:1px solid transparent}
-    .public-availability.is-available{color:#16a34a;background:rgba(22,163,74,.15);border-color:rgba(74,222,128,.4)}
-    .public-availability.is-busy{color:#f59e0b;background:rgba(245,158,11,.15);border-color:rgba(251,191,36,.4)}
-    .public-availability.is-offline,.public-availability.is-unknown{color:#9ca3af;background:rgba(156,163,175,.12);border-color:rgba(156,163,175,.3)}
-    .public-trust-card{display:grid;gap:10px;padding:14px;border-radius:18px;background:rgba(13,18,40,.55);border:1px solid rgba(255,255,255,.08)}
-    .public-trust-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-    .public-trust-rating{font-size:1.05rem;font-weight:800;color:#fff}
-    .public-trust-sub{font-size:.84rem;color:rgba(255,255,255,.65)}
-    .public-trust-badge{display:inline-flex;align-items:center;justify-content:center;padding:7px 12px;border-radius:999px;border:1px solid transparent;font-size:.82rem;font-weight:800;white-space:nowrap}
-    .public-trust-score{font-size:1rem;font-weight:800;color:#fff}
-    .public-action-btn,.public-more-btn{width:100%}
-    .public-section-grid{display:grid;gap:16px}
-    .public-panel{padding:18px;color:#fff}
-    .public-panel h2{margin:4px 0 0;font-size:1.15rem}
-    .public-section-heading{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#a5b4fc}
-    .public-empty-copy{margin:14px 0 0;color:rgba(255,255,255,.68)}
-    .public-review-card{display:grid;gap:8px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08)}
-    .public-review-card:last-child{border-bottom:none;padding-bottom:0}
-    .public-review-head{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.92rem;color:rgba(255,255,255,.78)}
-    .public-review-head strong{color:#fbbf24;font-size:.95rem}
-    .public-review-card p{margin:0;color:rgba(255,255,255,.88);line-height:1.6}
-    .public-stats-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
-    .public-stat-card{display:grid;gap:6px;padding:14px;border-radius:18px;background:rgba(13,18,40,.45);border:1px solid rgba(255,255,255,.08)}
-    .public-stat-label{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;font-weight:700}
-    .public-stat-value{font-size:1.15rem;color:#fff}
-    .public-stat-hint{color:rgba(255,255,255,.62);font-size:.82rem}
-    @media (min-width: 768px){
-      .public-profile-hero{grid-template-columns:128px minmax(0,1fr);align-items:center;padding:22px}
-      .public-avatar-wrap{justify-content:flex-start}
-      .public-section-grid{grid-template-columns:1.08fr .92fr}
-      .public-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .public-action-btn,.public-more-btn{width:auto}
-    }
-    /* ── V2-C3B: PROFILE SKELETON ────────────────────────────────
-       Visible immediately at first paint. Replaced naturally when
-       renderProfile() sets root.innerHTML at DCL.
-       No fake data. Pure structural placeholders.
-     ──────────────────────────────────────────────────────────── */
-    .fxsk-hero{padding:18px;display:grid;gap:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:24px;backdrop-filter:blur(16px)}
-    .fxsk-top{display:flex;gap:16px;align-items:flex-start}
-    .fxsk-avatar{width:80px;height:80px;border-radius:20px;background:rgba(255,255,255,.1);flex-shrink:0}
-    .fxsk-lines{flex:1;display:grid;gap:10px;padding-top:6px}
-    .fxsk-line{border-radius:8px;background:rgba(255,255,255,.1)}
-    .fxsk-line--title{height:22px;width:65%}
-    .fxsk-line--sub{height:14px;width:45%}
-    .fxsk-line--badge{height:24px;width:30%;border-radius:999px}
-    .fxsk-cta{height:48px;border-radius:14px;background:rgba(225,48,108,.18);border:1px solid rgba(225,48,108,.3)}
-    @keyframes fxsk-pulse{0%,100%{opacity:.5}50%{opacity:1}}
-    .fxsk-hero .fxsk-avatar,.fxsk-hero .fxsk-line,.fxsk-hero .fxsk-cta{animation:fxsk-pulse 1.1s ease-in-out infinite}
-    .fxsk-hero .fxsk-line--title{animation-delay:.1s}
-    .fxsk-hero .fxsk-line--sub{animation-delay:.25s}
-    .fxsk-hero .fxsk-line--badge{animation-delay:.4s}
-    .fxsk-hero .fxsk-cta{animation-delay:.2s}
-    @media(min-width:768px){.fxsk-top{align-items:center}.fxsk-avatar{width:104px;height:104px}}
-    /* perf3: fast-path hero — matches renderProfile hero layout exactly.
-       Animates in softly; V2 enhance() replaces it without flicker. */
-    .fxfp-hero{animation:fxfp-in .22s ease-out both}
-    @keyframes fxfp-in{from{opacity:.6;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-    @media(prefers-reduced-motion:reduce){.fxfp-hero{animation:none}}
   
-    @media(max-width:768px){
-      /* fix(profile-mobile): safe-area-aware top spacing for fixed shared header */
-      body.fixeo-gh-enabled .public-artisan-wrap{
-        padding-top:calc(60px + env(safe-area-inset-top,0px) + 16px) !important;
-      }
-    }
-    </style>
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- ══ LOGO OVERRIDE — image-only, no emoji, no text ══ -->
   <style id="fixeo-logo-override">
@@ -236,24 +149,7 @@ claaim sys<!DOCTYPE html>
      writes fixeo_profile_prefetch_{id} to sessionStorage so that
      fixeo-public-artisan-profile.js init() fast-path fires immediately at DCL
      without waiting for collectArtisanSeeds() to parse 861 artisans. -->
-<script>
-(function(){
-  try {
-    var id = new URLSearchParams(window.location.search).get('id');
-    if (!id || typeof sessionStorage === 'undefined' || typeof localStorage === 'undefined') return;
-    var key = 'fixeo_profile_prefetch_' + id;
-    if (sessionStorage.getItem(key)) return; /* already seeded (pf-nav click) */
-    var raw = localStorage.getItem('fixeo_admin_artisans_v21');
-    if (!raw) return;
-    var pool = JSON.parse(raw);
-    if (!Array.isArray(pool)) return;
-    var a = pool.find(function(x) {
-      return x && (String(x.id) === id || String(x.artisan_id) === id || String(x.public_id) === id);
-    });
-    if (a) sessionStorage.setItem(key, JSON.stringify(a));
-  } catch(e) {}
-}());
-</script>
+
 <a href="#main-content" class="skip-link">Aller au contenu</a>
 
 <nav class="navbar" role="navigation" aria-label="Navigation principale">
@@ -354,19 +250,11 @@ claaim sys<!DOCTYPE html>
 </div>
 
 <main id="main-content" class="public-artisan-wrap">
-  <!-- V2-C3B: skeleton visible at first paint, replaced by renderProfile() at DCL -->
-  <div class="container public-artisan-shell" id="public-artisan-root" aria-live="polite">
-    <div class="fxsk-hero" aria-hidden="true">
-      <div class="fxsk-top">
-        <div class="fxsk-avatar"></div>
-        <div class="fxsk-lines">
-          <div class="fxsk-line fxsk-line--title"></div>
-          <div class="fxsk-line fxsk-line--sub"></div>
-          <div class="fxsk-line fxsk-line--badge"></div>
-        </div>
-      </div>
-      <div class="fxsk-cta"></div>
-    </div>
+  <div id="public-artisan-root" class="container" aria-live="polite" data-fxp4-owner="boot">
+    <section class="fxp4-boot" aria-label="Chargement du profil">
+      <div class="fxp4-boot-avatar"></div>
+      <div class="fxp4-boot-lines"><span></span><span></span><span></span></div>
+    </section>
   </div>
 </main>
 <!-- perf3: Inline hero fast-path (~1.2KB).
@@ -374,47 +262,7 @@ claaim sys<!DOCTYPE html>
      Reads sessionStorage preseed → replaces skeleton with real hero HTML
      using ONLY inline CSS classes already defined above.
      Sets window.__fxHeroRendered sentinel to suppress DCL double-render. -->
-<script>
-(function(){
-  try {
-    var id = new URLSearchParams(window.location.search).get('id');
-    if (!id) return;
-    var raw = sessionStorage.getItem('fixeo_profile_prefetch_' + id);
-    if (!raw) return;
-    var a = JSON.parse(raw);
-    if (!a || typeof a !== 'object') return;
-    var name = String(a.name || a.artisan_name || '').trim();
-    if (!name) return;
-    var svc  = String(a.category || a.service || a.speciality || '').trim() || 'Artisan';
-    var city = String(a.city || a.ville || '').trim() || 'Maroc';
-    var avail = String(a.availability || a.status || '').toLowerCase();
-    var availCls = avail === 'available' || avail === 'disponible' ? 'is-available'
-                 : avail === 'busy' || avail === 'occupé' ? 'is-busy' : 'is-unknown';
-    var availLbl = availCls === 'is-available' ? '⚡ Disponible'
-                 : availCls === 'is-busy' ? '🕐 Occupé' : '— Statut inconnu';
-    var photo = String(a.photo_url || a.avatar || a.photo || a.image || '').trim();
-    var initials = name.split(' ').map(function(w){ return w[0] || ''; }).join('').substring(0,2).toUpperCase() || '?';
-    var avatarHtml = photo
-      ? '<img class="public-avatar" src="' + photo.replace(/"/g,'&quot;') + '" alt="' + name.replace(/"/g,'&quot;') + '" loading="eager" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
-        + '<div class="public-avatar public-avatar-fallback" aria-hidden="true" style="display:none">' + initials + '</div>'
-      : '<div class="public-avatar public-avatar-fallback" aria-hidden="true">' + initials + '</div>';
-    var html = '<section class="public-profile-hero fxfp-hero">'
-      + '<div class="public-avatar-wrap">' + avatarHtml + '</div>'
-      + '<div class="public-hero-main">'
-      + '<span class="public-availability ' + availCls + '">' + availLbl + '</span>'
-      + '<h1>' + name.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</h1>'
-      + '<p class="public-hero-meta">' + svc.replace(/</g,'&lt;') + ' · ' + city.replace(/</g,'&lt;') + '</p>'
-      + '<button class="btn btn-primary public-action-btn" type="button" id="public-artisan-action">Réserver l\'intervention</button>'
-      + '</div></section>';
-    var root = document.getElementById('public-artisan-root');
-    if (root) {
-      root.innerHTML = html;
-      document.body.classList.add('fxfp-rendered');
-      window.__fxHeroRendered = id;
-    }
-  } catch(e) {}
-}());
-</script>
+
 <!-- rf-profile-4: Cold-visit index pre-fetch (~0.3KB inline).
      Fires immediately at body-parse time.
      If fast-path already rendered the hero (window.__fxHeroRendered set): skips entirely.
@@ -425,47 +273,7 @@ claaim sys<!DOCTYPE html>
      If fetch fails or artisan not found: silent fallback — Supabase chain renders as before.
      Average mobile timeline: 26KB gzipped fetch ~130ms on 3G vs 105KB profile-v2a.js ~525ms.
      Hero appears ~400ms earlier on true cold visits. -->
-<script>
-(function(){
-  try {
-    if (window.__fxHeroRendered) return; /* fast-path already fired */
-    var id = new URLSearchParams(window.location.search).get('id');
-    if (!id) return;
-    if (typeof fetch === 'undefined') return;
-    window.__fxIndexPromise = fetch('/data/artisan-index.json?v=1', {cache:'force-cache'})
-      .then(function(r){ return r.ok ? r.json() : null; })
-      .then(function(idx){
-        if (!idx || window.__fxHeroRendered) return; /* sentinel: already rendered */
-        var entry = idx[id]; /* O(1) map lookup */
-        if (!entry || !Array.isArray(entry) || !entry[0]) return;
-        var name    = String(entry[0]||'').trim();
-        var svc     = String(entry[1]||'').trim()||'Artisan';
-        var city    = String(entry[2]||'').trim()||'Maroc';
-        var avail   = entry[3] === 1;
-        var availCls = avail ? 'is-available' : 'is-busy';
-        var availLbl = avail ? '⚡ Disponible' : '🕐 Occupé';
-        var ini = name.split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase()||'?';
-        var html = '<section class="public-profile-hero fxfp-hero">'
-          +'<div class="public-avatar-wrap">'
-          +'<div class="public-avatar public-avatar-fallback" aria-hidden="true">'+ini+'</div>'
-          +'</div>'
-          +'<div class="public-hero-main">'
-          +'<span class="public-availability '+availCls+'">'+availLbl+'</span>'
-          +'<h1>'+name.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</h1>'
-          +'<p class="public-hero-meta">'+svc.replace(/</g,'&lt;')+' · '+city.replace(/</g,'&lt;')+'</p>'
-          +'<button class="btn btn-primary public-action-btn" type="button" id="public-artisan-action">Réserver l\'intervention</button>'
-          +'</div></section>';
-        var root = document.getElementById('public-artisan-root');
-        if (root && !window.__fxHeroRendered) {
-          root.innerHTML = html;
-          document.body.classList.add('fxfp-rendered');
-          window.__fxHeroRendered = id;
-        }
-      })
-      .catch(function(){});
-  } catch(e) {}
-}());
-</script>
+
 
 <!-- perf2: Batch 1 — header + auth sync (nav/auth state needed at first paint).
      fixeo-db, fixeo-repository, fixeo-auth-supabase, fixeo-supabase-loader
@@ -478,126 +286,7 @@ claaim sys<!DOCTYPE html>
      <script src="/js/fixeo-repository.js?v=s1b-candidate" defer></script>
     <script src="/js/fixeo-supabase-loader.js?v=sl2" defer></script>
     <script src="/js/fixeo-auth-supabase.js?v=p1d" defer></script>
-<script>
-  (function (window) {
-    var MARKETPLACE_KEY = 'fixeo_admin_artisans_v21';
-    var REGISTRY_KEY = 'fixeo_public_artisans_registry';
 
-    function safeJSONParse(value, fallback) {
-      try {
-        var parsed = JSON.parse(value);
-        return parsed == null ? fallback : parsed;
-      } catch (error) {
-        return fallback;
-      }
-    }
-
-    function hasValue(value) {
-      return value !== undefined && value !== null && String(value).trim() !== '';
-    }
-
-    function pickValue() {
-      for (var i = 0; i < arguments.length; i += 1) {
-        if (hasValue(arguments[i])) return String(arguments[i]).trim();
-      }
-      return '';
-    }
-
-    function uniquePush(list, value) {
-      var nextValue = String(value || '').trim();
-      if (!nextValue) return;
-      if (list.indexOf(nextValue) === -1) list.push(nextValue);
-    }
-
-    function readMarketplaceArtisans() {
-      var parsed = safeJSONParse(localStorage.getItem(MARKETPLACE_KEY) || '[]', []);
-      return Array.isArray(parsed) ? parsed : [];
-    }
-
-    function readRegistry() {
-      var parsed = safeJSONParse(localStorage.getItem(REGISTRY_KEY) || '[]', []);
-      return Array.isArray(parsed) ? parsed : [];
-    }
-
-    function writeRegistry(entries) {
-      localStorage.setItem(REGISTRY_KEY, JSON.stringify(Array.isArray(entries) ? entries : []));
-    }
-
-    function findMarketplaceArtisanByUrlId(urlId) {
-      var requestedId = String(urlId || '').trim();
-      if (!requestedId) return null;
-      var artisans = readMarketplaceArtisans();
-      for (var i = 0; i < artisans.length; i += 1) {
-        var artisan = artisans[i];
-        if (!artisan || typeof artisan !== 'object') continue;
-        var candidateIds = [
-          pickValue(artisan.id),
-          pickValue(artisan.artisan_id),
-          pickValue(artisan.public_id)
-        ].filter(Boolean);
-        if (candidateIds.indexOf(requestedId) !== -1) return artisan;
-      }
-      return null;
-    }
-
-    function ensureRegistryEntryForMarketplaceArtisan(urlId) {
-      var requestedId = String(urlId || '').trim();
-      if (!requestedId) return;
-
-      var artisan = findMarketplaceArtisanByUrlId(requestedId);
-      if (!artisan) return;
-
-      var registry = readRegistry();
-      var sourceIds = [];
-      uniquePush(sourceIds, pickValue(artisan.id));
-      uniquePush(sourceIds, pickValue(artisan.artisan_id));
-      uniquePush(sourceIds, pickValue(artisan.public_id));
-      uniquePush(sourceIds, requestedId);
-
-      var publicId = pickValue(artisan.public_id, artisan.artisan_id, artisan.id, requestedId);
-      var existingIndex = registry.findIndex(function (entry) {
-        var entryPublicId = pickValue(entry && entry.public_id, entry && entry.id);
-        var entrySourceIds = Array.isArray(entry && entry.source_ids)
-          ? entry.source_ids.map(function (value) { return String(value || '').trim(); }).filter(Boolean)
-          : [];
-        if (entryPublicId && (entryPublicId === publicId || entryPublicId === requestedId)) return true;
-        return sourceIds.some(function (value) { return entrySourceIds.indexOf(value) !== -1; });
-      });
-
-      var existing = existingIndex >= 0 && registry[existingIndex] && typeof registry[existingIndex] === 'object'
-        ? registry[existingIndex]
-        : {};
-      var mergedSourceIds = Array.isArray(existing.source_ids)
-        ? existing.source_ids.map(function (value) { return String(value || '').trim(); }).filter(Boolean)
-        : [];
-      sourceIds.forEach(function (value) { uniquePush(mergedSourceIds, value); });
-
-      var entry = {
-        public_id: pickValue(existing.public_id, publicId),
-        slug: pickValue(existing.slug),
-        name: pickValue(existing.name, artisan.name),
-        category: pickValue(existing.category, artisan.category, artisan.service, artisan.specialty, artisan.job),
-        city: pickValue(existing.city, artisan.city, artisan.ville),
-        phone: pickValue(existing.phone, artisan.phone, artisan.telephone),
-        email: pickValue(existing.email, artisan.email),
-        avatar: pickValue(existing.avatar, artisan.avatar, artisan.photo, artisan.image, artisan.picture),
-        availability: pickValue(existing.availability, artisan.availability, artisan.status),
-        trust_score: pickValue(existing.trust_score, artisan.trust_score, artisan.trustScore),
-        created_at: pickValue(existing.created_at, artisan.created_at, artisan.createdAt),
-        source_ids: mergedSourceIds
-      };
-
-      if (existingIndex >= 0) registry[existingIndex] = entry;
-      else registry.unshift(entry);
-      writeRegistry(registry);
-    }
-
-    try {
-      var params = new URLSearchParams(window.location.search || '');
-      ensureRegistryEntryForMarketplaceArtisan(params.get('id'));
-    } catch (error) {}
-  })(window);
-</script>
 <!-- perf2: Batch 2 — all deferred (DCL order: links → render → v2 enhance).
      All three use DCL listeners internally; defer preserves execution order. -->
 <!-- perf3: reservation.js moved before profile scripts — CTA-ready before V2 enhance fires.
@@ -611,174 +300,9 @@ claaim sys<!DOCTYPE html>
 <script src="js/fixeo-reservation-v3.js?v=fxrv3-v1a" defer></script>
 <script src="js/fixeo-estimation-engine-v1.js?v=faee-v1d" defer></script>
 <script src="js/fixeo-review-engine-v1.js?v=frev-v1b" defer></script>
-<script src="/js/fixeo-public-profile-links.js?v=v2c3b" defer></script>
-<script src="/js/fixeo-public-artisan-profile.js?v=hts3-estimator-price-context" defer></script>
-<!-- <script src="/js/fixeo-profile-v2a.js?v=fxpv3-v1b" defer></script> -->
-<script>
-  (function (window, document) {
-    var MARKETPLACE_KEY = 'fixeo_admin_artisans_v21';
-    var REGISTRY_KEY = 'fixeo_public_artisans_registry';
+<!-- -->
 
-    function safeJSONParse(value, fallback) {
-      try {
-        var parsed = JSON.parse(value);
-        return parsed == null ? fallback : parsed;
-      } catch (error) {
-        return fallback;
-      }
-    }
 
-    function hasValue(value) {
-      return value !== undefined && value !== null && String(value).trim() !== '';
-    }
-
-    function pickValue() {
-      for (var i = 0; i < arguments.length; i += 1) {
-        if (hasValue(arguments[i])) return String(arguments[i]).trim();
-      }
-      return '';
-    }
-
-    function readMarketplaceArtisans() {
-      var parsed = safeJSONParse(localStorage.getItem(MARKETPLACE_KEY) || '[]', []);
-      return Array.isArray(parsed) ? parsed : [];
-    }
-
-    function readRegistry() {
-      var parsed = safeJSONParse(localStorage.getItem(REGISTRY_KEY) || '[]', []);
-      return Array.isArray(parsed) ? parsed : [];
-    }
-
-    function currentUrlArtisanId() {
-      try {
-        var params = new URLSearchParams(window.location.search || '');
-        return String(params.get('id') || '').trim();
-      } catch (error) {
-        return '';
-      }
-    }
-
-    function findCurrentArtisan() {
-      var requestedId = currentUrlArtisanId();
-      if (!requestedId) return null;
-
-      var marketplaceMatch = readMarketplaceArtisans().find(function (artisan) {
-        return [
-          pickValue(artisan && artisan.id),
-          pickValue(artisan && artisan.artisan_id),
-          pickValue(artisan && artisan.public_id)
-        ].indexOf(requestedId) !== -1;
-      });
-      if (marketplaceMatch) return marketplaceMatch;
-
-      var registryMatch = readRegistry().find(function (entry) {
-        var sourceIds = Array.isArray(entry && entry.source_ids)
-          ? entry.source_ids.map(function (value) { return String(value || '').trim(); }).filter(Boolean)
-          : [];
-        return [
-          pickValue(entry && entry.id),
-          pickValue(entry && entry.public_id),
-          pickValue(entry && entry.artisan_id)
-        ].indexOf(requestedId) !== -1 || sourceIds.indexOf(requestedId) !== -1;
-      });
-      if (!registryMatch) return null;
-
-      return {
-        id: pickValue(registryMatch.id, requestedId),
-        artisan_id: pickValue(registryMatch.artisan_id, requestedId),
-        public_id: pickValue(registryMatch.public_id, requestedId),
-        name: pickValue(registryMatch.name),
-        category: pickValue(registryMatch.category),
-        service: pickValue(registryMatch.category),
-        city: pickValue(registryMatch.city),
-        avatar: pickValue(registryMatch.avatar),
-        phone: pickValue(registryMatch.phone),
-        email: pickValue(registryMatch.email),
-        availability: pickValue(registryMatch.availability),
-        trustScore: Number(registryMatch.trust_score || 0) || 0,
-        trust_score: Number(registryMatch.trust_score || 0) || 0
-      };
-    }
-
-    document.addEventListener('click', function (event) {
-      var button = event.target && event.target.closest ? event.target.closest('#public-artisan-action') : null;
-      if (!button) return;
-      if (!window.FixeoReservation || typeof window.FixeoReservation.open !== 'function') {
-        /* perf3: reservation engine not yet ready — show brief loading hint, retry in 600ms */
-        if (button && !button.dataset.fxLoading) {
-          var _origTxt = button.textContent;
-          button.dataset.fxLoading = '1';
-          button.textContent = 'Chargement…';
-          setTimeout(function(){ button.textContent = _origTxt; delete button.dataset.fxLoading; }, 1200);
-        }
-        return;
-      }
-
-      event.preventDefault();
-      event.stopPropagation();
-      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
-
-      var artisan = findCurrentArtisan();
-      if (!artisan) return;
-      /* V1-JC: Merge real Supabase trust data (review_count, score_qualification, rating)
-       * into the artisan object before opening the modal.
-       * window._fixeoCurrentArtisan is set by fixeo-profile-v2a.js after Supabase resolves.
-       */
-      var _sbArtisan = window._fixeoCurrentArtisan;
-      if (_sbArtisan && typeof _sbArtisan === 'object') {
-        artisan = Object.assign({}, artisan, {
-          rating:             parseFloat(_sbArtisan.rating) || 0,
-          reviewCount:        parseInt(_sbArtisan.review_count, 10) || 0,
-          review_count:       parseInt(_sbArtisan.review_count, 10) || 0,
-          scoreQualification: parseInt(_sbArtisan.score_qualification, 10) || 0,
-          score_qualification:parseInt(_sbArtisan.score_qualification, 10) || 0,
-          availability:       _sbArtisan.availability || artisan.availability,
-          city:               _sbArtisan.city || artisan.city,
-          /* V2-A3: Carry through Supabase identity fields so V2-A1 mirror
-           * writes canonical artisan_profile_id (UUID/numeric ID, not name slug) */
-          _supabase_id:       _sbArtisan.id || _sbArtisan._supabase_id || artisan._supabase_id || '',
-          owner_account_id:   _sbArtisan.owner_account_id || artisan.owner_account_id || '',
-          /* V2-C6F: pass photo_url through so modal can render real photo avatar */
-          photo_url:          _sbArtisan.photo_url || artisan.photo_url || artisan.avatar || '',
-          avatar:             _sbArtisan.photo_url || artisan.avatar || artisan.photo_url || ''
-        });
-      }
-      /* V2-A3: Enrich request's artisan identity before reservation bridge writes it */
-      if (window.FixeoArtisanIdentity
-          && typeof window.FixeoArtisanIdentity.resolveCanonicalId === 'function') {
-        artisan._artisan_id_canonical = window.FixeoArtisanIdentity.resolveCanonicalId(artisan);
-      }
-      window.FixeoReservation.open(artisan, false);
-    }, true);
-  })(window, document);
-</script>
-<script>
-  (function (document) {
-    function updateBookingButtonLabel() {
-      var button = document.getElementById('public-artisan-action');
-      if (!button) return false;
-      if (button.textContent !== 'Réserver cet artisan') {
-        button.textContent = 'Réserver cet artisan';
-      }
-      return true;
-    }
-
-    if (updateBookingButtonLabel()) return;
-
-    var observer = new MutationObserver(function () {
-      if (updateBookingButtonLabel()) observer.disconnect();
-    });
-
-    if (document.body) {
-      observer.observe(document.body, { childList: true, subtree: true });
-    } else {
-      document.addEventListener('DOMContentLoaded', function () {
-        updateBookingButtonLabel();
-        if (document.body) observer.observe(document.body, { childList: true, subtree: true });
-      }, { once: true });
-    }
-  })(document);
-</script>
 <!-- fxprofile-perf-v1: BFCache-friendly back-navigation.
      Replaces the forced location.reload() that was preventing BFCache.
      On BFCache restore (e.persisted): re-run the hero fast-path from
@@ -786,31 +310,7 @@ claaim sys<!DOCTYPE html>
      network round-trip. Falls back to reload() only if sessionStorage is
      unavailable or the artisan data is missing (e.g. direct URL visited in
      a session that never came from the homepage). -->
-<script>
-  (function() {
-    'use strict';
-    window.addEventListener('pageshow', function(e) {
-      if (!e.persisted) return; /* normal load — nothing to do */
-      try {
-        var id = new URLSearchParams(window.location.search).get('id');
-        if (!id) { window.location.reload(); return; }
-        var raw = sessionStorage.getItem('fixeo_profile_prefetch_' + id);
-        if (!raw) { window.location.reload(); return; }
-        /* Data available — re-run the inline fast-path logic without a reload */
-        var a = JSON.parse(raw);
-        if (!a || !a.name) { window.location.reload(); return; }
-        /* Profile content is already in the DOM from BFCache; just ensure
-           the hero sentinel matches so deferred scripts don't re-render. */
-        if (!window.__fxHeroRendered) window.__fxHeroRendered = id;
-        /* Ensure comparison bar stays hidden on back-navigation */
-        var bar = document.querySelector('.comparator-bar');
-        if (bar) bar.classList.remove('visible');
-      } catch(err) {
-        window.location.reload();
-      }
-    });
-  }());
-</script>
+
 <!-- perf-profile-1: Scripts moved from sync batches to defer (saves 222KB from blocking path).
      Load order: all defer scripts execute in DOM order after HTML parsed, before load event.
      Dependency order preserved:
@@ -821,33 +321,24 @@ claaim sys<!DOCTYPE html>
      All 7 scripts guard against missing dependencies with typeof checks. -->
 <script src="js/notifications.js?v=v2c3b" defer></script>
 <!-- reservation.js + reservation-v2.js moved earlier (perf3) — removed from here -->
-<!-- <script src="js/fixeo-profile-premium-ui.js?v=hts1" defer></script> -->    
+<!-- -->    
 <script src="js/fixeo-client-requests-store.js?v=v2c3b" defer></script>
 <!-- rf-sb1: Supabase-first mirror for reservation flow — fire-and-forget, silent on failure -->
 <script src="js/fixeo-reservation-supabase-bridge.js?v=v2" defer></script>
 <!-- app-provision-v1: Silent background profile provisioning — ensures profiles FK is satisfied -->
-<script src="js/fixeo-profile-provision.js?v=auth-p0-20260923" defer></script>
-<script src="js/fixeo-artisan-identity.js?v=v2a3" defer></script>
-<!-- <script src="js/fixeo-profile-v1jb.js?v=v2c5a" defer></script> -->
+<!-- -->
 <!-- Persistence + portfolio (were already deferred) -->
-<script src="js/fixeo-mission-mirror.js?v=v2c1" defer></script>
 <!-- V2-C6B: Mission rehydration moved from sync batch to defer — saves 28KB from critical path -->
-<!-- <script src="js/fixeo-mission-rehydration.js?v=v2c1" defer></script> -->
+<!-- -->
 <!-- V2-B1: Portfolio public read (fetchForArtisan) -->
-<!-- <script src="js/fixeo-portfolio-mirror.js?v=v2b1" defer></script> -->
+<!-- -->
 <!-- V2-C3B: Claim system deferred — non-critical, loads after profile renders -->
-<script src="js/fixeo-claim-system.js?v=ce2a" defer></script>
 <!-- gf1: Global footer injection -->
 <script src="js/fixeo-footer-global.js?v=gf5a" defer></script>
 <!-- SEO-3: Dynamic profile SEO enrichment (title/description/OG/JSON-LD+FAQ updated on artisan resolve) -->
-<script src="js/fixeo-seo-profile.js?v=seo3r" defer></script>
 <!-- SEO-3: Below-fold authority blocks (breadcrumb, FAQ, Voir aussi) — injected at idle -->
-<script src="js/fixeo-seo-profile-blocks.js?v=seo3c" defer></script>
-<link rel="stylesheet" href="css/fixeo-profile-v3.css?v=fxpv3-v1a">
-<!-- <script src="js/fixeo-profile-v3.js?v=fxpv3-v1a" defer></script> -->
+<!-- -->
 <!-- fxpf-v131: Flagship profile CSS + DOM transformer. Runs after V2A enhance(). -->
-<link rel="stylesheet" href="css/fixeo-profile-flagship-v1.css?v=fxpf-v131">
-<script src="js/fixeo-profile-flagship-v1.js?v=fxpf-v131" defer></script>
 <!-- 7C.10C.0.4: In verified Estimator context, suppress the generic market-range
      budget block (.fxpf-price "Budget indicatif / à partir de X MAD / Fourchette
      marché locale") which contradicts the server-verified FIXEO price the user
@@ -887,47 +378,7 @@ body.fx-estimator-context .fxpf-footnote { display: none !important; }
      originally used to avoid competing with the main Supabase fetch; the
      window.__fixeoArtisanFetch deduplication guard makes this unnecessary. -->
 
-  <script>
-(function () {
-  function loadPortfolio() {
-    if (window.__fxPortfolioLoaded) return;
-    window.__fxPortfolioLoaded = true;
-
-    var s = document.createElement('script');
-    s.src = 'js/fixeo-portfolio-mirror.js?v=v2b1';
-    s.defer = true;
-    document.body.appendChild(s);
-
-    console.log('[FIXEO] Portfolio lazy-loaded');
-  }
-
-  function initObserver() {
-    var portfolioSection =
-      document.querySelector('.portfolio-section') ||
-      document.querySelector('[data-portfolio]') ||
-      document.body;
-
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          loadPortfolio();
-          observer.disconnect();
-        }
-      });
-    }, {
-      rootMargin: '300px'
-    });
-
-    observer.observe(portfolioSection);
-  }
-
-  if ('IntersectionObserver' in window) {
-    window.addEventListener('load', initObserver);
-  } else {
-    setTimeout(loadPortfolio, 3000);
-  }
-})();
-</script>
+  
 </body>
 </html>
 
