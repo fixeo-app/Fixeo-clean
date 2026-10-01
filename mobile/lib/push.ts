@@ -1,0 +1,101 @@
+import { Platform } from 'react-native';
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import * as SecureStore from 'expo-secure-store';
+import * as Crypto from 'expo-crypto';
+import { supabase } from './supabase';
+
+const INSTALLATION_KEY = 'fixeo_mobile_installation_id_v1';
+
+export type PushRegistrationResult =
+  | { ok: true; token: string }
+  | { ok: false; reason: 'unsupported_platform' | 'physical_device_required' | 'permission_denied' | 'eas_project_id_missing' | 'token_unavailable' | 'registry_failed' };
+
+async function getInstallationId() {
+  const existing = await SecureStore.getItemAsync(INSTALLATION_KEY);
+  if (existing) return existing;
+  const created = Crypto.randomUUID();
+  await SecureStore.setItemAsync(INSTALLATION_KEY, created);
+  return created;
+}
+
+function getEasProjectId() {
+  return (
+    process.env.EXPO_PUBLIC_EAS_PROJECT_ID ||
+    Constants.expoConfig?.extra?.eas?.projectId ||
+    Constants.easConfig?.projectId ||
+    ''
+  );
+}
+
+export async function registerCurrentDeviceForPush(): Promise<PushRegistrationResult> {
+  if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
+    return { ok: false, reason: 'unsupported_platform' };
+  }
+  if (!Device.isDevice) {
+    return { ok: false, reason: 'physical_device_required' };
+  }
+
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('fixeo-opportunities', {
+      name: 'Opportunités FIXEO',
+      importance: Notifications.AndroidImportance.MAX,
+    });
+  }
+
+  const current = await Notifications.getPermissionsAsync();
+  let status = current.status;
+  if (status !== 'granted') {
+    status = (await Notifications.requestPermissionsAsync()).status;
+  }
+  if (status !== 'granted') {
+    return { ok: false, reason: 'permission_denied' };
+  }
+
+  const projectId = getEasProjectId();
+  if (!projectId) {
+    return { ok: false, reason: 'eas_project_id_missing' };
+  }
+
+  let token = '';
+  try {
+    token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+  } catch {
+    return { ok: false, reason: 'token_unavailable' };
+  }
+  if (!token) return { ok: false, reason: 'token_unavailable' };
+
+  const installationId = await getInstallationId();
+  const { data, error } = await supabase.rpc('register_mobile_device_v1', {
+    p_installation_id: installationId,
+    p_platform: Platform.OS,
+    p_expo_push_token: token,
+    p_device_model: Device.modelName || Device.deviceName || null,
+    p_app_version: Constants.expoConfig?.version || null,
+  });
+
+  if (error || !data || data.ok !== true) {
+    return { ok: false, reason: 'registry_failed' };
+  }
+  return { ok: true, token };
+}
+
+export async function disableCurrentDevice() {
+  const installationId = await SecureStore.getItemAsync(INSTALLATION_KEY);
+  if (!installationId) return;
+  await supabase.rpc('disable_mobile_device_v1', {
+    p_installation_id: installationId,
+  });
+}
+
+export function configureForegroundNotifications() {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowBanner: true,
+      shouldShowList: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+}
