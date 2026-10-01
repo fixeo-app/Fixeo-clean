@@ -7,3 +7,6 @@ test('B2: missing photos use deterministic non-human identity',()=>{assert.match
 test('B2: booking remains legacy engine until Bloc 3',()=>{assert.match(js,/FixeoReservation&&typeof w\.FixeoReservation\.open/);assert.match(js,/id="public-artisan-action"/);assert.match(js,/Demander une intervention/)});
 test('B2: RPC failure is a no-op legacy fallback',()=>{assert.match(js,/if\(res\.error\|\|!res\.data\|\|res\.data\.contract_version!=='artisan_public_profile_v4'\)return/);assert.match(js,/legacy fallback/)});
 test('B2: mobile sticky CTA and desktop trust surface exist',()=>{assert.match(css,/\.fxp4-mobile/);assert.match(css,/@media\(max-width:800px\)/);assert.match(js,/Confiance FIXEO/);assert.match(js,/Disponibilité à confirmer/)});
+
+test('B2 postflight: V4 waits for Supabase client instead of silently abandoning render',()=>{assert.match(js,/SUPABASE_CLIENT_TIMEOUT/);assert.match(js,/tries\+\+<30/);assert.match(js,/setTimeout\(r,100\)/)});
+test('B2 postflight: profile CTA can only open targeted FixeoReservation',()=>{assert.match(js,/targeted booking engine unavailable/);assert.match(js,/FixeoReservation&&typeof w\.FixeoReservation\.open/);assert.doesNotMatch(js,/data-open-request-form|FixeoClientRequest\.open|fx-request-flow-v4/)});
