@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
-import { acceptDispatchOffer, DispatchOffer, getDispatchOffers } from '@/lib/magicLoop';
+import { acceptDispatchOffer, getDispatchOffers } from '@/lib/magicLoop';
+import type { DispatchOffer } from '@/lib/dispatchContract';
 import { PushOptIn } from '@/components/PushOptIn';
 
 const ACCEPT_MESSAGES: Record<string, string> = {
