@@ -3,3 +3,9 @@ body.fx-profile-v4{background:#f6f7f9;color:#17191f}body.fx-profile-v4 #public-a
 body.fx-profile-v4-loading #public-artisan-root{min-height:62vh}
 .fxp4-error{max-width:620px;margin:80px auto;padding:30px;border:1px solid #e8e9ed;border-radius:24px;background:#fff;text-align:center;color:#17191f}
 .fxp4-error strong{display:block;font-size:1.35rem;margin-bottom:8px}.fxp4-error p{color:#6d727c;line-height:1.6}.fxp4-error button{border:0;border-radius:14px;background:#17191f;color:#fff;padding:13px 20px;font-weight:800}
+
+/* B1 Clean Room boot state — only V4 owns the public profile root */
+.fxp4-boot{min-height:44vh;display:flex;align-items:center;gap:22px;padding:32px;background:#fff;border:1px solid #e8e9ed;border-radius:28px}
+.fxp4-boot-avatar{width:126px;height:126px;flex:0 0 126px;border-radius:30px;background:#eceef1}
+.fxp4-boot-lines{flex:1;max-width:520px}.fxp4-boot-lines span{display:block;height:18px;margin:13px 0;border-radius:999px;background:#eceef1}.fxp4-boot-lines span:nth-child(1){width:38%;height:12px}.fxp4-boot-lines span:nth-child(2){width:72%;height:30px}.fxp4-boot-lines span:nth-child(3){width:48%}
+@media(max-width:800px){.fxp4-boot{min-height:36vh;padding:20px;border-radius:22px;gap:15px}.fxp4-boot-avatar{width:88px;height:88px;flex-basis:88px;border-radius:22px}}
