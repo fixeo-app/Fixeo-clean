@@ -1,7 +1,7 @@
 name: Mobile Gate A
 on:
   push:
-    branches: [feat/fixeo-mobile-gate-ab]
+    branches: [feat/fixeo-mobile-m1-m3-owner]
     paths: ['mobile/**', '.github/workflows/mobile-gate-a.yml']
   pull_request:
     paths: ['mobile/**', '.github/workflows/mobile-gate-a.yml']
@@ -17,6 +17,7 @@ jobs:
         with:
           node-version: 20
       - run: npm install
+      - run: npx expo-doctor@latest
       - run: npm run test:contracts
       - run: npm run typecheck
       - run: npx expo export --platform web --output-dir dist-gate-a
