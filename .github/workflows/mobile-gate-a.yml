@@ -17,6 +17,12 @@ jobs:
         with:
           node-version: 20
       - run: npm install
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mobile-package-lock
+          path: mobile/package-lock.json
+          if-no-files-found: error
+          retention-days: 1
       - run: npx expo-doctor@latest
       - run: npm run test:contracts
       - run: npm run typecheck
