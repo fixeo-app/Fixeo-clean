@@ -1509,3 +1509,71 @@ body.fx-profile-v4 #public-artisan-root{padding-bottom:24px}
     color:rgba(255,255,255,.52);
   }
 }
+
+
+/* B3.7.3 FIXEO ID MOBILE CENTER — explicit visual correction after real-device review */
+.fxp4-b371 .fxp4-fixeo-id strong{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  width:100%;
+  height:100%;
+  transform:none;
+  margin:0;
+  padding:0;
+  text-align:center;
+}
+.fxp4-b371 .fxp4-fixeo-id small{
+  left:50%;
+  right:auto;
+  width:max-content;
+  transform:translateX(-50%);
+}
+@media(max-width:800px){
+  .fxp4-b371 .fxp4-fixeo-id{
+    background:
+      radial-gradient(circle at 18% 12%,rgba(255,255,255,.07),transparent 34%),
+      linear-gradient(145deg,var(--fxid-a),var(--fxid-b) 64%,#12131a 118%);
+    box-shadow:
+      0 14px 34px rgba(0,0,0,.24),
+      inset 0 0 0 1px rgba(255,255,255,.04);
+  }
+  .fxp4-b371 .fxp4-fixeo-id:before{opacity:.14}
+  .fxp4-b371 .fxp4-fixeo-id:after{
+    opacity:.42;
+    background:linear-gradient(125deg,rgba(255,255,255,.05),transparent 31% 78%,rgba(255,255,255,.018));
+  }
+  .fxp4-b371 .fxp4-fixeo-id-code{display:none}
+  .fxp4-b371 .fxp4-fixeo-id-mesh{display:none}
+  .fxp4-b371 .fxp4-fixeo-id-brand{
+    right:7px;
+    top:7px;
+    width:12px;
+    height:12px;
+    border-radius:4px;
+    font-size:.28rem;
+    box-shadow:none;
+    opacity:.9;
+  }
+  .fxp4-b371 .fxp4-fixeo-id strong{
+    inset:0;
+    display:grid;
+    place-items:center;
+    width:100%;
+    height:100%;
+    transform:none;
+    font-size:2.22rem;
+    line-height:1;
+    letter-spacing:-.045em;
+    text-shadow:0 3px 12px rgba(0,0,0,.22);
+  }
+  .fxp4-b371 .fxp4-fixeo-id small{
+    left:50%;
+    bottom:7px;
+    transform:translateX(-50%);
+    font-size:.3rem;
+    letter-spacing:.14em;
+    color:rgba(255,255,255,.48);
+  }
+}
