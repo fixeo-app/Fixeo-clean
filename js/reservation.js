@@ -145,6 +145,7 @@
     artisan: null,
     isExpress: false,
     isUrgent: false,   // set by open() when urgentContext?.urgent === true
+    isTargeted: false, // true when open() receives a preselected artisan
     step: 1, // 1=form, 2=confirm
     selectedService: '',
     selectedDate: '',
@@ -705,6 +706,14 @@ city:
                 <div style="font-size:.82rem;font-weight:700;color:#fff">${sanitize(state.selectedService)}</div>
                 <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:2px">Prix FIXEO — ${state._estimatorCtx.amount_mad ? state._estimatorCtx.amount_mad.toLocaleString('fr-FR') + '\u00a0MAD' : ''}</div>
               </div>
+            </div>` : state.isTargeted ? `
+            <!-- TARGETED MODE: artisan trade is the canonical request category; no detailed service catalogue -->
+            <input type="hidden" id="res-service" value="${sanitize(state.selectedService)}"/>
+            <div class="fixeo-res-field" data-res-targeted-category
+                 style="padding:11px 13px;border:1px solid rgba(225,48,108,.20);border-radius:11px;background:linear-gradient(135deg,rgba(225,48,108,.07),rgba(131,58,180,.05))">
+              <div style="font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.38);font-weight:800">Intervention ciblée</div>
+              <div style="font-size:.9rem;color:#fff;font-weight:800;margin-top:3px">${sanitize(state.selectedService || catLabel)}</div>
+              <div style="font-size:.68rem;color:rgba(255,255,255,.42);margin-top:4px">Pas besoin de choisir dans un catalogue — décrivez simplement votre besoin.</div>
             </div>` : `
             <div class="fixeo-res-field">
               <label class="fixeo-res-label">🛠️ Service souhaité *</label>
@@ -774,6 +783,13 @@ city:
                         placeholder="Précisez si besoin…"
                         oninput="FixeoReservation._onDescChange(this.value)"
                         style="font-size:.85rem;padding:8px 12px">${sanitize(state.description)}</textarea>
+            </div>` : state.isTargeted ? `
+            <div class="fixeo-res-field" data-res-targeted-need>
+              <label class="fixeo-res-label">📝 Que faut-il faire ? *</label>
+              <textarea class="fixeo-res-textarea" id="res-desc" rows="3"
+                        placeholder="Ex. fuite sous l’évier, chauffe-eau en panne, prise qui ne fonctionne plus…"
+                        oninput="FixeoReservation._onDescChange(this.value)">${sanitize(state.description)}</textarea>
+              <div style="margin-top:5px;font-size:.68rem;color:rgba(255,255,255,.34);padding-left:2px">Quelques mots suffisent pour préparer l’intervention.</div>
             </div>` : `
             <div class="fixeo-res-field">
               <div id="res-desc-toggle"
@@ -1373,6 +1389,7 @@ city:
     state.step = 1;
     state.isExpress = !!isExpress;
     state.isUrgent  = false;
+    state.isTargeted = false;
     state.selectedService = '';
     state.selectedDate = todayISO();
     state.selectedSlot = 'matin';
@@ -1386,6 +1403,15 @@ city:
 
     // Resolve artisan
     state.artisan = artisanInput ? normalizeArtisan(artisanInput) : null;
+    state.isTargeted = !!(artisanInput && state.artisan);
+    if (state.isTargeted) {
+      var _targetCat = String(state.artisan.category || state.artisan.service_category || '').toLowerCase();
+      state.selectedService =
+        CATEGORY_LABELS[_targetCat] ||
+        state.artisan.service_category ||
+        state.artisan.category ||
+        'Autre';
+    }
 
     // ── Urgent mode: prefill from urgentContext ──────────────────
     // urgentContext = { urgent:true, query, city, category, source }
@@ -1510,6 +1536,7 @@ city:
     _dismissReservationLayer();
     state.artisan = null;
     state.isExpress = false;
+    state.isTargeted = false;
     /* 7C.9L.3X: true full exit — destroy hidden Estimator (if any) to prevent leak.
      * The handoff used hide() not close(), so the container may still be alive.
      * Estimator-origin reservation: destroy now that user is fully exiting the tunnel.
@@ -2075,9 +2102,14 @@ var _serviceSlug = _toServiceSlug(_serviceSource);
     // Validation
     // Urgent: service is preselected (hidden input) — skip service validation
     // Urgent: no date picker rendered — skip date validation
-    if (!state.isUrgent && !state.selectedService) {
+    if (!state.isUrgent && !state.isTargeted && !state.selectedService) {
       _showError('⚠️ Veuillez choisir un service.');
       serviceEl && serviceEl.focus();
+      return;
+    }
+    if (state.isTargeted && (!state.description || state.description.trim().length < 3)) {
+      _showError('⚠️ Décrivez brièvement votre besoin pour continuer.');
+      descEl && descEl.focus();
       return;
     }
     if (!state.isUrgent && !state.isExpress && !state.selectedDate) {
