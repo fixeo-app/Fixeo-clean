@@ -796,9 +796,7 @@ body.fxrv4-active #fixeo-reservation-backdrop{
 /* mobile master */
 @media(max-width:599px){
   body.fxrv4-active{
-    position:fixed;
     width:100%;
-    inset:0;
   }
   #fixeo-reservation-modal[data-reservation-v4="targeted"]{
     padding:0!important;
