@@ -49,14 +49,5 @@ export function buildDeclaredContext(input: {
     });
   }
 
-  if (input.serviceCategory?.trim() && input.serviceCategory !== 'Autre') {
-    facts.push({
-      label: 'Métier pressenti',
-      value: input.serviceCategory,
-      provenance: 'user_declared',
-      confidence: input.serviceConfidence || 'medium',
-    });
-  }
-
   return { facts, safetySignals: [] };
 }
