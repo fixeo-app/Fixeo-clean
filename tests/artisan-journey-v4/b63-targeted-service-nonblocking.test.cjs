@@ -11,4 +11,4 @@ test('generic and estimator booking contracts remain available',()=>{assert.matc
 
 test('profile targeted handoff remains canonical and no V4 presentation layer is remounted',()=>{assert.match(profile,/FixeoReservation\.open\(artisan\(p\),false\)/);assert.doesNotMatch(html,/fixeo-reservation-v4\.(?:js|css)/);});
 
-test('targeted service fix has a fresh reservation cache key',()=>{assert.match(html,/js\/reservation\.js\?v=av1-targeted5/);});
+test('targeted service fix has a fresh reservation cache key',()=>{assert.match(html,/js\/reservation\.js\?v=av1-card1/);});

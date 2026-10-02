@@ -271,13 +271,9 @@
    * When price_from absent → return null (no price block rendered).
    * No MAR_PRICES range fallback — directory shows artisan-specific only. */
   function _buildPricing(a) {
-    var from = a.price_from || a.priceFrom;
-    if (!from) return null;
-    var amount = parseFloat(from);
-    if (!amount || isNaN(amount) || amount <= 0) return null;
     return {
-      main: '\u00c0 partir de ' + Math.round(amount).toLocaleString('fr-FR') + '\u00a0MAD',
-      hint: 'Tarif renseign\u00e9'   /* always fixed — never priceLabel */
+      main: 'Tarif confirmé avant intervention',
+      hint: 'Paiement après intervention'
     };
   }
 
@@ -289,6 +285,7 @@
     var t = s.trim();
     if (!t) return '';
     if (t === '[object Object]' || t.charAt(0) === '[' || t.charAt(0) === '{') return '';
+    if (/sourc[ée].*(facebook|google|annuaire|interne)|source interne|prospection/i.test(t)) return '';
     return t;
   }
 
@@ -301,48 +298,36 @@
    * IMPORTANT: does NOT use _fxAvStage() — that is a homepage-only
    * inline onerror helper not available on artisans.html.
    * Uses _artdirAvStage() exposed on window (see below). */
+  function _avatarVariant(name) {
+    var s = String(name || 'FIXEO'), h = 0;
+    for (var i=0;i<s.length;i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    return Math.abs(h) % 6;
+  }
+
+  function _fixeoIdHtml(name, hidden) {
+    return '<div class="artdir-fixeo-id artdir-fixeo-id--v' + _avatarVariant(name) + '"' +
+      (hidden ? ' style="display:none"' : '') + '>' +
+      '<span class="artdir-fixeo-id-brand">F</span>' +
+      '<strong>' + _esc(_initials(name)) + '</strong>' +
+      '<small>FIXEO ID</small>' +
+    '</div>';
+  }
+
   function _buildAvatar(a, cat) {
     var photoSrc = a.photo_url || a.avatar || a.photo || '';
-    var cardHero = null;
-    if (window.FixeoHeroes && typeof window.FixeoHeroes.getCardAvatar === 'function') {
-      cardHero = window.FixeoHeroes.getCardAvatar(cat) || null;
-    }
-
-    var initStr = _esc(_initials(a.name || ''));
-    var nameStr = _esc(a.name || 'Artisan');
-
+    var nameStr = _esc(a.name || 'Artisan FIXEO');
     if (photoSrc) {
-      /* Stage 1: real photo. Métier URLs stored as data attrs, no request yet. */
       return (
         '<img class="artdir-avatar-img"' +
-          ' src="'            + _esc(photoSrc)                       + '"' +
-          ' alt="'            + nameStr                               + '"' +
+          ' src="' + _esc(photoSrc) + '"' +
+          ' alt="' + nameStr + '"' +
           ' data-stage="real-photo"' +
-          ' data-webp="'      + (cardHero ? _esc(cardHero.webp) : '') + '"' +
-          ' data-png="'       + (cardHero ? _esc(cardHero.png)  : '') + '"' +
-          ' data-initials="'  + initStr                               + '"' +
           ' width="76" height="76" loading="lazy" decoding="async"' +
           ' onerror="_artdirAvStage(this)">' +
-        '<div class="artdir-avatar-silhouette" style="display:none"></div>'
+        _fixeoIdHtml(a.name || 'Artisan FIXEO', true)
       );
-    } else if (cardHero) {
-      /* Stage 2: métier WebP. PNG stored as data attr. */
-      return (
-        '<img class="artdir-avatar-img"' +
-          ' src="'            + _esc(cardHero.webp)                  + '"' +
-          ' alt="'            + _esc(cardHero.alt)                    + '"' +
-          ' data-stage="metier-webp"' +
-          ' data-webp=""' +
-          ' data-png="'       + _esc(cardHero.png)                    + '"' +
-          ' data-initials="'  + initStr                               + '"' +
-          ' width="76" height="76" loading="lazy" decoding="async"' +
-          ' onerror="_artdirAvStage(this)">' +
-        '<div class="artdir-avatar-silhouette" style="display:none"></div>'
-      );
-    } else {
-      /* Stage 4 direct: unknown category — silhouette, zero requests. */
-      return '<div class="artdir-avatar-silhouette"></div>';
     }
+    return _fixeoIdHtml(a.name || 'Artisan FIXEO', false);
   }
 
   /* ── Card builder ─────────────────────────────────────────────────
@@ -350,96 +335,78 @@
    * All fields are truthful; every field guards against missing data. */
   function _buildCard(a) {
     var cat      = (a.category || a.service || '').toLowerCase();
-    var catIcon  = CAT_ICONS[cat] || '🔧';
-    var catLabel = CAT_LABELS[cat] || (a.category || a.service || '');
-    var name     = a.name || a.full_name || 'Artisan Fixeo';
+    var catLabel = CAT_LABELS[cat] || (a.category || a.service || 'Intervention');
+    var name     = a.name || a.full_name || 'Artisan FIXEO';
     var city     = a.city || a.ville || '';
-    var aid      = a.id || a._supabase_id || '';
+    var aid      = a._supabase_id || a.id || '';
     var pricing  = _buildPricing(a);
-    var profileHref = 'artisan-profile.html?id=' + encodeURIComponent(String(aid)) + '&pv=20261002ux3';
+    var profileHref = 'artisan-profile.html?id=' + encodeURIComponent(String(aid)) + '&pv=20261002cards1';
 
-    /* Description — same sanitize chain as homepage V3B2-1 */
     var descRaw = _sanitizeDesc(a.description)
                || _sanitizeDesc(a.shortBio)
                || _sanitizeDesc(a.bio && a.bio.fr)
                || '';
     var desc = descRaw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 
-    /* Avatar HTML */
     var avatarHtml = _buildAvatar(a, cat);
 
-    /* Header: avatar block + identity block */
     var headerHtml =
       '<div class="artdir-card-header">' +
-
-        /* Avatar container — data-category drives CSS gradient */
-        '<div class="artdir-avatar" data-category="' + _esc(cat) + '" aria-hidden="true">' +
+        '<div class="artdir-avatar artdir-avatar--passport" aria-hidden="true">' +
           avatarHtml +
-          '<span class="artdir-avatar-badge" aria-hidden="true">' + catIcon + '</span>' +
         '</div>' +
-
-        /* Identity column */
         '<div class="artdir-identity">' +
+          '<span class="artdir-passport-kicker">PROFIL PROFESSIONNEL FIXEO</span>' +
           '<h3 class="artdir-card-name" title="' + _esc(name) + '">' + _esc(name) + '</h3>' +
-          (city
-            ? '<div class="artdir-meta-line">\uD83D\uDCCD Bas\u00e9\u00a0\u00e0\u00a0' + _esc(city) + '</div>'
-            : '<div class="artdir-meta-line">Profil au Maroc</div>') +
-          '<div class="artdir-meta-line">' + catIcon + '\u00a0' + _esc(catLabel) + '</div>' +
+          '<div class="artdir-passport-meta">' +
+            _esc(catLabel) + (city ? ' · ' + _esc(city) : '') +
+          '</div>' +
         '</div>' +
-
       '</div>';
 
-    /* Description — absent when empty (no gap reserved) */
     var descHtml = desc
       ? '<p class="artdir-card-desc">' + _esc(desc) + '</p>'
-      : '';
+      : '<p class="artdir-card-desc artdir-card-desc--empty">Profil professionnel référencé sur FIXEO.</p>';
 
-    /* Trust rows — inline SVG icons (platform-independent) */
     var trustHtml =
-      '<div class="artdir-trust" role="list">' +
+      '<div class="artdir-trust artdir-trust--passport" role="list">' +
         '<span class="artdir-trust-item" role="listitem">' +
           '<span class="artdir-trust-icon">' + SVG_DIRECTORY + '</span>' +
-          'Profil r\u00e9f\u00e9renc\u00e9 sur FIXEO' +
+          'Profil référencé sur FIXEO' +
         '</span>' +
         '<span class="artdir-trust-item" role="listitem">' +
-          '<span class="artdir-trust-icon">' + SVG_PAYMENT + '</span>' +
-          'Paiement apr\u00e8s intervention' +
+          '<span class="artdir-trust-icon">◷</span>' +
+          'Disponibilité à confirmer' +
         '</span>' +
       '</div>';
 
-    /* Price block — absent when not present in data */
-    var priceHtml = pricing
-      ? '<div class="artdir-price">' +
-          '<span class="artdir-price-amount">' + _esc(pricing.main) + '</span>' +
-          '<span class="artdir-price-hint">' + _esc(pricing.hint) + '</span>' +
-        '</div>'
-      : '';
+    var priceHtml =
+      '<div class="artdir-price artdir-price--truth">' +
+        '<span class="artdir-price-amount">' + _esc(pricing.main) + '</span>' +
+        '<span class="artdir-price-hint">' + _esc(pricing.hint) + '</span>' +
+      '</div>';
 
-    /* Action area: divider → price → primary CTA → secondary profile link */
     var actionHtml =
       '<div class="artdir-action">' +
         '<div class="artdir-divider" aria-hidden="true"></div>' +
         priceHtml +
-        /* Primary: full-width orange→magenta */
-        '<button class="artdir-btn-reserve" type="button"' +
+        '<button class="artdir-btn-reserve artdir-btn-reserve--passport" type="button"' +
           ' data-artisan-id="' + _esc(String(aid)) + '"' +
           ' data-artisan-name="' + _esc(name) + '"' +
-          ' aria-label="R\u00e9server avec ' + _esc(name) + '">' +
-          'R\u00e9server maintenant \u2192' +
+          ' aria-label="Demander une intervention avec ' + _esc(name) + '">' +
+          '<span class="artdir-btn-f">F</span>' +
+          '<span>Demander une intervention</span>' +
+          '<b aria-hidden="true">→</b>' +
         '</button>' +
-        /* Secondary: quiet text link below */
         '<a class="artdir-btn-profile" href="' + _esc(profileHref) + '"' +
           ' aria-label="Voir le profil complet de ' + _esc(name) + '">' +
-          'Voir le profil complet \u203a' +
+          'Voir le profil complet ›' +
         '</a>' +
       '</div>';
 
     return (
-      '<article class="artdir-card" data-artisan-id="' + _esc(String(aid)) + '">' +
-        headerHtml +
-        descHtml +
-        trustHtml +
-        actionHtml +
+      '<article class="artdir-card artdir-card--passport" data-artisan-id="' + _esc(String(aid)) + '">' +
+        headerHtml + descHtml + trustHtml + actionHtml +
       '</article>'
     );
   }
@@ -458,35 +425,12 @@
   ══════════════════════════════════════════════════════════════ */
   function _artdirAvStage(img) {
     if (!img) return;
-    img.onerror = null; /* prevent re-entry */
-
-    var stage    = img.getAttribute('data-stage') || '';
-    var webp     = img.getAttribute('data-webp')  || '';
-    var png      = img.getAttribute('data-png')   || '';
-
-    /* Stage 1 (real-photo) failed → try métier WebP */
-    if (stage === 'real-photo' && webp) {
-      img.setAttribute('data-stage', 'metier-webp');
-      img.onerror = function() { _artdirAvStage(img); };
-      img.src = webp;
-      return;
-    }
-
-    /* Stage 2 (metier-webp) failed → try métier PNG */
-    if (stage === 'metier-webp' && png) {
-      img.setAttribute('data-stage', 'metier-png');
-      img.onerror = function() { _artdirAvStage(img); };
-      img.src = png;
-      return;
-    }
-
-    /* Stage 4: silhouette — hide img, show sibling silhouette div */
+    img.onerror = null;
     img.style.display = 'none';
     var sib = img.nextElementSibling;
-    if (sib && sib.classList.contains('artdir-avatar-silhouette')) {
-      sib.style.display = '';
-    }
+    if (sib && sib.classList.contains('artdir-fixeo-id')) sib.style.display = '';
   }
+
   /* Expose for inline onerror usage */
   window._artdirAvStage = _artdirAvStage;
 
@@ -753,10 +697,11 @@ btn.textContent =
         var aid = btn.getAttribute('data-artisan-id');
         if (!aid) return;
         var selected = _state.allResults.find(function(a) {
-          return String(a.id || a._supabase_id || '') === String(aid);
+          return String(a.id || '') === String(aid) ||
+                 String(a._supabase_id || '') === String(aid);
         });
         if (!selected) {
-          window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002ux3';
+          window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002cards1';
           return;
         }
         var tries = 0;
@@ -769,7 +714,7 @@ btn.textContent =
             window.setTimeout(openTargetedReservation, 100);
             return;
           }
-          window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002ux3';
+          window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002cards1';
         })();
       });
 

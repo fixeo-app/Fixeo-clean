@@ -1,6 +1,6 @@
 const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const root=path.resolve(__dirname,'../..');const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const html=read('artisan-profile.html'),dir=read('js/fixeo-artisan-directory-v1.js');
 test('P0 Safari gate redirects no-id route before external profile renderer',()=>{const guard=html.slice(html.indexOf("PROFILE_PAGE_VERSION"),html.indexOf('</script>',html.indexOf("PROFILE_PAGE_VERSION")));assert.match(guard,/var ref=q\.get\('id'\)\|\|q\.get\('artisan'\)/);assert.match(guard,/if\(!ref\)\{/);assert.match(guard,/window\.location\.replace\('\/artisans\.html'\)/);});
-test('P0 Safari gate canonicalizes every stale document version',()=>{assert.match(html,/PROFILE_PAGE_VERSION='20261002ux3'/);assert.match(html,/if\(q\.get\('pv'\)!==PROFILE_PAGE_VERSION\)/);assert.match(html,/if\(ev&&ev\.persisted\) replaceWithCurrentVersion\(\)/);});
+test('P0 Safari gate canonicalizes every stale document version',()=>{assert.match(html,/PROFILE_PAGE_VERSION='20261002cards1'/);assert.match(html,/if\(q\.get\('pv'\)!==PROFILE_PAGE_VERSION\)/);assert.match(html,/if\(ev&&ev\.persisted\) replaceWithCurrentVersion\(\)/);});
 test('P0 profile renderer receives a fresh cache key',()=>{assert.match(html,/fixeo-artisan-profile-v4\.js\?v=fxp4-b34dm1-b35wow1-b36p1-b37id1-b371opt1-b372freeze1-b373id2-p0rb1/);});
-test('P0 directory emits only the current profile document version',()=>{assert.doesNotMatch(dir,/20261001b21/);assert.equal((dir.match(/20261002ux3/g)||[]).length,3);});
+test('P0 directory emits only the current profile document version',()=>{assert.doesNotMatch(dir,/20261001b21/);assert.equal((dir.match(/20261002cards1/g)||[]).length,3);});

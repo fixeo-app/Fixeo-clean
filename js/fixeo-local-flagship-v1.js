@@ -84,6 +84,7 @@
       var re = new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
       s = s.replace(re, '');
     });
+    if (/sourc[ée].*(facebook|google|annuaire|interne)|source interne|prospection/i.test(s)) return '';
     return s.trim();
   }
 
@@ -92,6 +93,28 @@
     return String(s || '').replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
+  }
+
+  function _initials(name) {
+    var p = String(name || 'FX').trim().split(/\s+/).filter(Boolean);
+    if (!p.length) return 'FX';
+    if (p.length === 1) return p[0].slice(0,2).toUpperCase();
+    return ((p[0][0] || '') + (p[p.length - 1][0] || '')).toUpperCase();
+  }
+
+  function _avatarVariant(name) {
+    var s = String(name || 'FIXEO'), h = 0;
+    for (var i=0;i<s.length;i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    return Math.abs(h) % 6;
+  }
+
+  function _fixeoIdHtml(name, hidden) {
+    return '<span class="pvc-fixeo-id pvc-fixeo-id--v' + _avatarVariant(name) + '"' +
+      (hidden ? ' style="display:none"' : '') + '>' +
+      '<span class="pvc-fixeo-id-brand">F</span>' +
+      '<strong>' + _esc(_initials(name)) + '</strong>' +
+      '<small>FIXEO ID</small>' +
+    '</span>';
   }
 
   /* ── Avatar stage fallback (mirrors _fxAvStage contract) ─────── */
@@ -121,42 +144,18 @@
     + '})(this)}';
 
   function _buildAvatarHtml(artisan, svcSlug) {
-    var heroObj = _getHeroObj(svcSlug || 'plomberie');
-    var webp = heroObj ? _esc(heroObj.webp || '') : '';
-    var png  = heroObj ? _esc(heroObj.png  || '') : '';
-    var alt  = heroObj ? _esc(heroObj.alt  || 'Illustration métier : Plomberie') : 'Illustration métier : Plomberie';
+    var name = artisan.name || 'Artisan FIXEO';
     var photo = _esc(artisan.photo_url || artisan.photo || artisan.avatar || '');
-    var avatarState, imgHtml;
-
     if (photo) {
-      avatarState = 'real-photo';
-      imgHtml = '<img class="pvc-avatar-img"'
-        + ' src="' + photo + '"'
-        + ' alt="' + _esc(artisan.name || 'Artisan FIXEO') + '"'
-        + ' data-avatar-type="real-photo"'
-        + ' data-webp="' + webp + '"'
-        + ' data-png="' + png + '"'
-        + ' data-alt-metier="' + alt + '"'
-        + ' width="64" height="64" loading="lazy" decoding="async"'
-        + ' onerror="' + _esc(_onerrorFn) + '">'
-        + '<span class="pvc-avatar-silhouette" style="display:none"></span>';
-    } else if (webp) {
-      avatarState = 'illustrative-metier';
-      imgHtml = '<img class="pvc-avatar-img"'
-        + ' src="' + webp + '"'
-        + ' alt="' + alt + '"'
-        + ' data-avatar-type="illustrative-metier"'
-        + ' data-webp=""'
-        + ' data-png="' + png + '"'
-        + ' data-alt-metier="' + alt + '"'
-        + ' width="64" height="64" loading="lazy" decoding="async"'
-        + ' onerror="' + _esc(_onerrorFn) + '">'
-        + '<span class="pvc-avatar-silhouette" style="display:none"></span>';
-    } else {
-      avatarState = 'silhouette';
-      imgHtml = '<span class="pvc-avatar-silhouette"></span>';
+      return {
+        state: 'real-photo',
+        html: '<img class="pvc-avatar-img" src="' + photo + '" alt="' + _esc(name) + '"' +
+          ' width="64" height="64" loading="lazy" decoding="async"' +
+          ' onerror="this.style.display=\'none\';var n=this.nextElementSibling;if(n)n.style.display=\'grid\'">' +
+          _fixeoIdHtml(name, true)
+      };
     }
-    return { html: imgHtml, state: avatarState };
+    return { state:'fixeo-id', html:_fixeoIdHtml(name, false) };
   }
 
   /* ── Trust rows (product-truth — no "Disponible", no ratings) ── */
@@ -181,7 +180,7 @@
             '<line x1="5.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>' +
           '</svg>' +
         '</span>' +
-        'Paiement apr\u00e8s intervention' +
+        'Disponibilit\u00e9 \u00e0 confirmer' +
       '</span>' +
     '</div>';
 
@@ -212,12 +211,11 @@ var priceHint = 'Avant intervention';
       + '<div class="pvc-card-header pvc-card-header-final">'
         + '<div class="pvc-avatar" data-category="' + _esc(ctx.svcSlug) + '" data-avatar-state="' + avatar.state + '">'
           + avatar.html
-          + '<span class="pvc-avatar-badge">' + catIcon + '</span>'
         + '</div>'
         + '<div class="pvc-identity pvc-identity-final">'
+          + '<span class="pvc-passport-kicker">PROFIL PROFESSIONNEL FIXEO</span>'
           + '<h3 class="pvc-name">' + name + '</h3>'
-          + '<div class="pvc-line pvc-line-city">\uD83D\uDCCD Bas\u00e9 \u00e0 ' + city + '</div>'
-          + '<div class="pvc-line pvc-line-cat">' + catIcon + ' ' + catLbl + '</div>'
+          + '<div class="pvc-line pvc-line-passport">' + catLbl + ' · ' + city + '</div>'
         + '</div>'
       + '</div>'
 
@@ -233,11 +231,11 @@ var priceHint = 'Avant intervention';
         /* Reserve button: data-artisan-id is the only selector needed for delegation */
         + '<button class="pvc-btn-reserve-v2 fhp-btn-reserve pvc-btn-v3b fxlp-btn-reserve"'
           + ' type="button" data-artisan-id="' + id + '"'
-          + ' aria-label="R\u00e9server ' + name + ', ' + catLbl + '">'
-          + 'R\u00e9server maintenant \u2192'
+          + ' aria-label="Demander une intervention avec ' + name + ', ' + catLbl + '">'
+          + 'Demander une intervention \u2192'
         + '</button>'
         + '<a class="pvc-profile-link fhp-btn-profile pvc-profile-v3b"'
-          + ' href="/artisan-profile.html?id=' + encodeURIComponent(id) + '"'
+          + ' href="/artisan-profile.html?id=' + encodeURIComponent(id) + '&pv=20261002cards1"'
           + ' aria-label="Voir le profil complet de ' + name + '">'
           + 'Voir le profil complet \u203a'
         + '</a>'
@@ -427,7 +425,7 @@ var priceHint = 'Avant intervention';
           avatar:      row.photo_url || null,
           price_from:  row.price_from || null,
           price_label: row.price_label || null,
-          availability:'available',
+          availability:'confirmation_required',
           _source:     'supabase'
         };
       });
@@ -450,8 +448,24 @@ var priceHint = 'Avant intervention';
     });
   }
 
+  function _ensurePassportCardStyles() {
+    if (document.getElementById('fxlp-passport-card-v2-runtime')) return;
+    var st = document.createElement('style');
+    st.id = 'fxlp-passport-card-v2-runtime';
+    st.textContent =
+      '.fxlp-art-card .pvc-fixeo-id{position:relative;width:70px;height:70px;display:grid;place-items:center;border-radius:18px;overflow:hidden;background:linear-gradient(145deg,#c93a86,#664ac6 68%,#111219);border:1px solid rgba(255,255,255,.11);color:#fff}' +
+      '.fxlp-art-card .pvc-fixeo-id strong{font-size:1.36rem;font-weight:950;letter-spacing:-.055em}' +
+      '.fxlp-art-card .pvc-fixeo-id small{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);white-space:nowrap;color:rgba(255,255,255,.45);font-size:.26rem;font-weight:900;letter-spacing:.12em}' +
+      '.fxlp-art-card .pvc-fixeo-id-brand{position:absolute;top:6px;right:6px;width:13px;height:13px;display:grid;place-items:center;border-radius:4px;background:linear-gradient(135deg,#ff8a35,#ed3d91 52%,#8064ef);font-size:.28rem;font-weight:950}' +
+      '.fxlp-art-card .pvc-passport-kicker{display:block;margin-bottom:3px;color:#ef6aab;font-size:.46rem;font-weight:900;letter-spacing:.11em}' +
+      '.fxlp-art-card .pvc-line-passport{color:rgba(255,255,255,.58)!important;font-size:.68rem!important;font-weight:650!important}' +
+      '.fxlp-art-card .pvc-btn-reserve-v2{border:1px solid transparent!important;background:linear-gradient(135deg,#17181e,#101116) padding-box,linear-gradient(100deg,rgba(255,138,53,.68),rgba(237,61,145,.72) 50%,rgba(128,100,239,.68)) border-box!important}';
+    document.head.appendChild(st);
+  }
+
   /* ── Init ─────────────────────────────────────────────────── */
   function _init() {
+    _ensurePassportCardStyles();
     _wireScroll();
     var attempt = 0;
     var MAX_PATCH = 10;

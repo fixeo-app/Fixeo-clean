@@ -131,6 +131,20 @@
         avatar: pi.photo_url || ''
       };
     }
+    /* Targeted card/directory flow: use the exact object passed to FixeoReservation.open(). */
+    if (document.body.classList.contains('fixeo-targeted-booking-open') &&
+        window._fixeoCurrentReservationArtisan &&
+        typeof window._fixeoCurrentReservationArtisan === 'object') {
+      var tr = window._fixeoCurrentReservationArtisan;
+      return {
+        name: tr.name || tr.full_name || 'Artisan FIXEO',
+        category: tr.category || tr.service_category || tr.specialty || '',
+        city: tr.city || tr.ville || '',
+        photo_url: tr.photo_url || tr.photo || tr.avatar || '',
+        avatar: tr.photo_url || tr.photo || tr.avatar || ''
+      };
+    }
+
     /* Primary source: window._fixeoCurrentArtisan set by fixeo-profile-v2a.js */
     var sb = window._fixeoCurrentArtisan;
     if (sb && typeof sb === 'object') {

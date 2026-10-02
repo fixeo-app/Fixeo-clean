@@ -375,6 +375,18 @@ city:
        *   handled above). Selects same artisan. */
       if (!modal.contains(e.target)) return;
 
+      /* Priority -1 — canonical close control.
+       * Capture phase guarantees iOS/Safari close even when presentation enhancers
+       * replace or wrap the original header button. */
+      var closeBtn = e.target.closest ? e.target.closest('.fixeo-res-close') : null;
+      if (closeBtn && modal.contains(closeBtn)) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+        close();
+        return;
+      }
+
       /* Priority 0 — Back navigation ([data-res-back]) */
       var backBtn = e.target.closest ? e.target.closest('[data-res-back]') : null;
       if (backBtn && modal.contains(backBtn)) {
@@ -1486,6 +1498,34 @@ city:
     render();
   }
 
+  function _ensureTargetedShellAssets() {
+    var styleId = 'fixeo-targeted-shell-bootstrap-v1';
+    if (!document.getElementById(styleId)) {
+      var style = document.createElement('style');
+      style.id = styleId;
+      style.textContent =
+        'body.fixeo-targeted-booking-open .navbar,' +
+        'body.fixeo-targeted-booking-open .fixeo-gh-mobile-bar,' +
+        'body.fixeo-targeted-booking-open #ppui-sticky-cta,' +
+        'body.fixeo-targeted-booking-open #fixeo-floating-reserve,' +
+        'body.fixeo-targeted-booking-open .fxp4-mobile{display:none!important}' +
+        'body.fixeo-targeted-booking-open #fixeo-reservation-modal{' +
+          'position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;' +
+          'max-width:none!important;margin:0!important;z-index:12000!important;background:#08090e!important}' +
+        'body.fixeo-targeted-booking-open #fixeo-reservation-modal .fixeo-res-dialog{' +
+          'width:100%!important;height:100dvh!important;max-width:none!important;max-height:none!important;' +
+          'margin:0!important;border-radius:0!important}';
+      document.head.appendChild(style);
+    }
+    if (!document.querySelector('link[data-fixeo-targeted-shell],link[href*="fixeo-reservation-targeted-polish-v1.css"]')) {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '/css/fixeo-reservation-targeted-polish-v1.css?v=fxrt-v3';
+      link.setAttribute('data-fixeo-targeted-shell', '1');
+      document.head.appendChild(link);
+    }
+  }
+
   function _updateTargetedViewport() {
     if (!document.body.classList.contains('fixeo-targeted-booking-open')) return;
     var vv = window.visualViewport;
@@ -1530,6 +1570,8 @@ city:
     state.artisan = artisanInput ? normalizeArtisan(artisanInput) : null;
     state.isTargeted = !!(artisanInput && state.artisan);
     if (state.isTargeted) {
+      _ensureTargetedShellAssets();
+      window._fixeoCurrentReservationArtisan = state.artisan;
       var _targetCat = String(state.artisan.category || state.artisan.service_category || '').toLowerCase();
       state.selectedService =
         CATEGORY_LABELS[_targetCat] ||
@@ -1539,6 +1581,7 @@ city:
       document.body.classList.add('fixeo-targeted-booking-open');
       _bindTargetedViewport();
     } else {
+      window._fixeoCurrentReservationArtisan = null;
       document.body.classList.remove('fixeo-targeted-booking-open');
       document.documentElement.style.removeProperty('--fxrt-vv-bottom');
     }
@@ -1556,6 +1599,8 @@ city:
     }
 
     ensureBackdrop();
+    var _activeModal = ensureModal();
+    if (_activeModal) _activeModal.setAttribute('aria-hidden', 'false');
 
     // ── 7C.9L.3C: Estimator V2 context — await verification BEFORE first render ──
     // When estimator context token is in sessionStorage: verify server-side first,
@@ -1659,7 +1704,10 @@ city:
     var stickyBtn = document.getElementById('ppui-sticky-cta');
     if (stickyBtn) stickyBtn.style.removeProperty('display');
     var modal = document.getElementById(MODAL_ID);
-    if (modal) modal.classList.remove('open');
+    if (modal) {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
     removeBackdrop();
     document.body.style.overflow = '';
   }
@@ -1669,6 +1717,7 @@ city:
     state.artisan = null;
     state.isExpress = false;
     state.isTargeted = false;
+    window._fixeoCurrentReservationArtisan = null;
     /* 7C.9L.3X: true full exit — destroy hidden Estimator (if any) to prevent leak.
      * The handoff used hide() not close(), so the container may still be alive.
      * Estimator-origin reservation: destroy now that user is fully exiting the tunnel.
