@@ -1062,3 +1062,28 @@
   .artdir-fixeo-id strong{font-size:1.25rem}
   .artdir-trust--passport .artdir-trust-item{font-size:.54rem}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ANNuaire P0 — targeted booking owns the viewport on artisans.html
+   Directory-only safety layer: this stylesheet is not loaded by Homepage.
+   ═══════════════════════════════════════════════════════════════ */
+body.fixeo-targeted-booking-open .navbar,
+body.fixeo-targeted-booking-open .fixeo-gh-shell,
+body.fixeo-targeted-booking-open .fixeo-gh-universal-shell,
+body.fixeo-targeted-booking-open .fixeo-gh-source-shell,
+body.fixeo-targeted-booking-open .fixeo-gh-mobile,
+body.fixeo-targeted-booking-open #fixeo-gh-menu-portal,
+body.fixeo-targeted-booking-open .fixeo-gh-mobile-bar{
+  display:none!important;
+}
+
+body.fixeo-targeted-booking-open #fixeo-reservation-backdrop{
+  z-index:11990!important;
+}
+
+body.fixeo-targeted-booking-open #fixeo-reservation-modal{
+  position:fixed!important;
+  inset:0!important;
+  z-index:12000!important;
+}
