@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { AppState, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import * as Crypto from 'expo-crypto';
 import { supabase } from '@/lib/supabase';
@@ -335,8 +335,18 @@ export default function Home() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.hero}>
+        <View style={styles.topBar}>
           <Text style={styles.brand}>FIXEO</Text>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push('/client-workspace')}
+            style={({ pressed }) => [styles.spaceButton, pressed && styles.spaceButtonPressed]}
+          >
+            <Text style={styles.spaceButtonText}>Mon espace</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.hero}>
           <RafiOrb size={96} mode={hero.orb} />
           <Text style={styles.eyebrow}>{hero.eyebrow}</Text>
           <Text style={styles.title}>{hero.title}</Text>
@@ -467,9 +477,32 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xxl,
     gap: spacing.lg,
   },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: spacing.sm,
+  },
+  spaceButton: {
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.line,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  spaceButtonPressed: {
+    opacity: 0.72,
+    transform: [{ scale: 0.985 }],
+  },
+  spaceButtonText: {
+    fontSize: 13,
+    fontWeight: '900',
+    color: colors.text,
+  },
   hero: {
     alignItems: 'center',
-    paddingTop: spacing.lg,
+    paddingTop: spacing.sm,
     gap: spacing.md,
   },
   brand: {
