@@ -15,6 +15,10 @@ import {
 } from '@/lib/missionTerrain';
 import { understandLocally } from '@/lib/rafi';
 import { hasRafiServerGateway, transcribeRafiVoice } from '@/lib/rafiGateway';
+import {
+  analyzeMobileDiagnosticPhoto,
+  type MobileDiagnosticResult,
+} from '@/lib/mobileDiagnostic';
 import { MagicLoopModel, transition } from '@/lib/magicLoopState';
 import { RafiInputRail } from '@/components/RafiInputRail';
 import { PushOptIn } from '@/components/PushOptIn';
@@ -41,6 +45,9 @@ export default function Home() {
   const [city, setCity] = useState('');
   const [rafiMessage, setRafiMessage] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [photoMimeType, setPhotoMimeType] = useState('image/jpeg');
+  const [photoDiagnostic, setPhotoDiagnostic] = useState<MobileDiagnosticResult | null>(null);
+  const [photoDiagnosticBusy, setPhotoDiagnosticBusy] = useState(false);
   const [loop, setLoop] = useState<MagicLoopModel>({ state: 'idle' });
   const [clientReady, setClientReady] = useState(false);
   const [journeyStatus, setJourneyStatus] = useState<JourneyStatus>('idle');
@@ -231,9 +238,57 @@ export default function Home() {
     }
   }
 
-  function handlePhoto(uri: string) {
+  function handlePhoto(uri: string, mimeType = 'image/jpeg') {
     setPhotoUri(uri);
-    setRafiMessage('Photo prête. RAFI peut l’utiliser pour comprendre le problème.');
+    setPhotoMimeType(mimeType);
+    setPhotoDiagnostic(null);
+    setRafiMessage('Photo prête. Vous décidez quand RAFI peut l’analyser.');
+  }
+
+  async function analyzePhoto() {
+    if (!photoUri || photoDiagnosticBusy) return;
+    if (!city.trim()) {
+      setRafiMessage('Indiquez votre ville avant de lancer l’analyse photo.');
+      return;
+    }
+    if (!hasRafiServerGateway()) {
+      setRafiMessage('Analyse photo indisponible sur ce build.');
+      return;
+    }
+
+    setPhotoDiagnosticBusy(true);
+    setRafiMessage('RAFI analyse la photo de façon privée…');
+    try {
+      const result = await analyzeMobileDiagnosticPhoto({
+        uri: photoUri,
+        mimeType: photoMimeType,
+        city,
+        description: problem,
+      });
+      setPhotoDiagnostic(result);
+      setRafiMessage(
+        result.safety?.stop
+          ? 'RAFI a détecté un signal de sécurité à traiter en priorité.'
+          : 'Analyse prête. Confirmez uniquement ce qui correspond à votre situation.',
+      );
+    } catch (error: any) {
+      const code = String(error?.message || '');
+      setRafiMessage(
+        code === 'CITY_NOT_SUPPORTED'
+          ? 'Choisissez une ville FIXEO prise en charge pour lancer l’analyse.'
+          : code === 'DIAGNOSTIC_QUOTA_EXCEEDED'
+            ? 'Le quota d’analyse est atteint pour aujourd’hui. Vous pouvez continuer en texte.'
+            : 'RAFI n’a pas pu analyser cette photo. Vous pouvez continuer sans elle.',
+      );
+    } finally {
+      setPhotoDiagnosticBusy(false);
+    }
+  }
+
+  function confirmPhotoDiagnostic() {
+    if (!photoDiagnostic?.problem?.value) return;
+    setProblem(photoDiagnostic.problem.value);
+    setRafiMessage('✓ Description confirmée par vous à partir de l’analyse RAFI.');
   }
 
   async function send() {
@@ -357,7 +412,7 @@ export default function Home() {
           <View style={styles.inputStack}>
             <RafiInputRail
               onVoiceReady={(uri) => void handleVoice(uri)}
-              onPhotoReady={handlePhoto}
+              onPhotoReady={(uri, mimeType) => handlePhoto(uri, mimeType)}
             />
 
             <TextInput
@@ -385,7 +440,57 @@ export default function Home() {
               </FixeoCard>
             )}
 
-            {!!photoUri && <Text style={styles.attachment}>✓ Photo ajoutée au contexte</Text>}
+            {!!photoUri && (
+              <FixeoCard tone="muted" style={styles.photoCard}>
+                <Text style={styles.rafiLabel}>PHOTO PRIVÉE</Text>
+                <Text style={styles.rafiMessage}>
+                  La photo n’est pas une demande. Elle est analysée uniquement si vous le choisissez.
+                </Text>
+                {!photoDiagnostic && (
+                  <FixeoAction
+                    label={photoDiagnosticBusy ? 'RAFI analyse…' : 'Analyser la photo avec RAFI'}
+                    variant="secondary"
+                    disabled={photoDiagnosticBusy}
+                    onPress={() => void analyzePhoto()}
+                  />
+                )}
+              </FixeoCard>
+            )}
+
+            {!!photoDiagnostic && (
+              <FixeoCard style={styles.diagnosticCard}>
+                <Text style={styles.rafiLabel}>RAFI · ANALYSE INDICATIVE</Text>
+                <Text style={styles.diagnosticTitle}>
+                  {photoDiagnostic.problem?.value || 'Analyse à confirmer'}
+                </Text>
+                <View style={styles.diagnosticMetaRow}>
+                  <Text style={styles.diagnosticMeta}>
+                    Métier pressenti · {photoDiagnostic.trade?.value || 'à confirmer'}
+                  </Text>
+                  <Text style={styles.diagnosticMeta}>
+                    Urgence · {photoDiagnostic.urgency?.value || 'à confirmer'}
+                  </Text>
+                </View>
+                {!!photoDiagnostic.facts?.filter(fact => fact.provenance === 'observed').length && (
+                  <View style={styles.observedBlock}>
+                    <Text style={styles.observedLabel}>OBSERVÉ SUR LA PHOTO</Text>
+                    {photoDiagnostic.facts
+                      .filter(fact => fact.provenance === 'observed')
+                      .slice(0, 3)
+                      .map((fact, index) => (
+                        <Text key={fact.key + index} style={styles.observedText}>• {fact.value}</Text>
+                      ))}
+                  </View>
+                )}
+                <Text style={styles.diagnosticDisclaimer}>
+                  Hypothèse RAFI — jamais un diagnostic professionnel ni un prix confirmé.
+                </Text>
+                <FixeoAction
+                  label="Cette description correspond"
+                  onPress={confirmPhotoDiagnostic}
+                />
+              </FixeoCard>
+            )}
 
             {problem.length > 3 && (
               <>
@@ -566,6 +671,44 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: colors.success,
     fontWeight: '800',
+  },
+  photoCard: {
+    gap: spacing.md,
+  },
+  diagnosticCard: {
+    gap: spacing.md,
+  },
+  diagnosticTitle: {
+    fontSize: 22,
+    lineHeight: 27,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  diagnosticMetaRow: {
+    gap: spacing.xs,
+  },
+  diagnosticMeta: {
+    color: colors.textMuted,
+    fontWeight: '700',
+  },
+  observedBlock: {
+    gap: spacing.xs,
+    paddingTop: spacing.xs,
+  },
+  observedLabel: {
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+    color: colors.textMuted,
+  },
+  observedText: {
+    color: colors.text,
+    lineHeight: 20,
+  },
+  diagnosticDisclaimer: {
+    color: colors.textMuted,
+    fontSize: 13,
+    lineHeight: 18,
   },
   understoodRow: {
     alignSelf: 'center',
