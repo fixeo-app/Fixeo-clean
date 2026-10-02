@@ -340,7 +340,7 @@
     var city     = a.city || a.ville || '';
     var aid      = a._supabase_id || a.id || '';
     var pricing  = _buildPricing(a);
-    var profileHref = 'artisan-profile.html?id=' + encodeURIComponent(String(aid)) + '&pv=20261002cards1';
+    var profileHref = 'artisan-profile.html?id=' + encodeURIComponent(String(aid)) + '&pv=20261002cards2';
 
     var descRaw = _sanitizeDesc(a.description)
                || _sanitizeDesc(a.shortBio)
@@ -701,7 +701,7 @@ btn.textContent =
                  String(a._supabase_id || '') === String(aid);
         });
         if (!selected) {
-          window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002cards1';
+          window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002cards2';
           return;
         }
         var tries = 0;
@@ -714,7 +714,7 @@ btn.textContent =
             window.setTimeout(openTargetedReservation, 100);
             return;
           }
-          window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002cards1';
+          window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002cards2';
         })();
       });
 
