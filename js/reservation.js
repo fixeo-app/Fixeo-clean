@@ -2346,6 +2346,7 @@ var _serviceSlug = _toServiceSlug(_serviceSource);
             canonical_request_id: body && body.id ? body.id : '',
             artisan: a.name,
             artisanId: canonicalArtisanId,
+            city: a.city || '',
             service: bookingData.service,
             date: bookingData.date,
             timeSlot: slotLabel,
@@ -2375,7 +2376,7 @@ var _serviceSlug = _toServiceSlug(_serviceSource);
         } catch (_) {}
 
         close();
-        window.location.href = 'confirmation.html?v=targeted1';
+        window.location.href = 'confirmation.html?v=targeted2';
       },
       function(msg) {
         if (btn) {
