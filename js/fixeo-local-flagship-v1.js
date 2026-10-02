@@ -448,8 +448,24 @@ var priceHint = 'Avant intervention';
     });
   }
 
+  function _ensurePassportCardStyles() {
+    if (document.getElementById('fxlp-passport-card-v2-runtime')) return;
+    var st = document.createElement('style');
+    st.id = 'fxlp-passport-card-v2-runtime';
+    st.textContent =
+      '.fxlp-art-card .pvc-fixeo-id{position:relative;width:70px;height:70px;display:grid;place-items:center;border-radius:18px;overflow:hidden;background:linear-gradient(145deg,#c93a86,#664ac6 68%,#111219);border:1px solid rgba(255,255,255,.11);color:#fff}' +
+      '.fxlp-art-card .pvc-fixeo-id strong{font-size:1.36rem;font-weight:950;letter-spacing:-.055em}' +
+      '.fxlp-art-card .pvc-fixeo-id small{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);white-space:nowrap;color:rgba(255,255,255,.45);font-size:.26rem;font-weight:900;letter-spacing:.12em}' +
+      '.fxlp-art-card .pvc-fixeo-id-brand{position:absolute;top:6px;right:6px;width:13px;height:13px;display:grid;place-items:center;border-radius:4px;background:linear-gradient(135deg,#ff8a35,#ed3d91 52%,#8064ef);font-size:.28rem;font-weight:950}' +
+      '.fxlp-art-card .pvc-passport-kicker{display:block;margin-bottom:3px;color:#ef6aab;font-size:.46rem;font-weight:900;letter-spacing:.11em}' +
+      '.fxlp-art-card .pvc-line-passport{color:rgba(255,255,255,.58)!important;font-size:.68rem!important;font-weight:650!important}' +
+      '.fxlp-art-card .pvc-btn-reserve-v2{border:1px solid transparent!important;background:linear-gradient(135deg,#17181e,#101116) padding-box,linear-gradient(100deg,rgba(255,138,53,.68),rgba(237,61,145,.72) 50%,rgba(128,100,239,.68)) border-box!important}';
+    document.head.appendChild(st);
+  }
+
   /* ── Init ─────────────────────────────────────────────────── */
   function _init() {
+    _ensurePassportCardStyles();
     _wireScroll();
     var attempt = 0;
     var MAX_PATCH = 10;
