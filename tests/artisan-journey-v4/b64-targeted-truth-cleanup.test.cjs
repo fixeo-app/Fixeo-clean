@@ -10,7 +10,7 @@ test('targeted confirmation uses canonical request gate directly',()=>{assert.ma
 
 test('canonical gate exposes ACK body and local source reflects actual path',()=>{assert.match(engine,/bookingData\._source \|\| 'reservation_cod'/);assert.match(engine,/raw\[i\]\.source\s*=\s*_requestSource/);assert.match(engine,/onConfirmed\(body\)/);});
 
-test('confirmation hides amount when targeted request has no authoritative total',()=>{assert.match(conf,/order\.source === 'reservation_targeted' && !order\.total/);assert.match(conf,/totalRow\.style\.display = 'none'/);assert.match(conf,/tarif sera confirmé avant l\\'intervention/);});
+test('confirmation hides amount when targeted request has no authoritative total',()=>{assert.match(conf,/order\.source === 'reservation_targeted' && !order\.total/);assert.match(conf,/totalRow\.style\.display = 'none'/);assert.match(conf,/Tarif confirmé avant intervention/);assert.match(conf,/Aucun paiement maintenant/);});
 
 test('generic and estimator legacy pricing branches remain isolated and available',()=>{const generic=engine.slice(engine.indexOf('function renderStep2()'));assert.match(generic,/Frais de service \(5%\)/);assert.match(generic,/fixeo-payment-method-selector/);assert.match(generic,/_useEstimator/);});
 
