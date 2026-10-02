@@ -1348,7 +1348,7 @@ if (tradeSelect) {
 
     /* Replace the action block: find opening <div class="pvc-action-v3b"> to end of article.
      * _buildCard always closes with </div>\n</article> inside the action block. */
-    var actionStart = html.lastIndexOf('<div class="pvc-action-v3b">');
+    var actionStart = html.lastIndexOf('<div class="pvc-action-v3b pvc-action--passport">');
     if (actionStart !== -1) {
       html = html.substring(0, actionStart) + estimatorAction;
     }
