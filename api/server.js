@@ -76,6 +76,17 @@ app.use('/api/diagnostic-v1', function(err, req, res, next) {
   return res.status(err && err.type === 'entity.too.large' ? 413 : 400)
     .json({ok: false, error: 'INVALID_BODY'});
 });
+
+/* Native FIXEO Diagnostic — Bearer-authenticated transport.
+ * Web same-origin protection remains unchanged on /api/diagnostic-v1. */
+app.all('/api/mobile-diagnostic-v1', express.json({limit: '32kb', strict: true}), function(req, res) {
+  return require('./diagnostic').createHandler({ trustedAuthenticatedMobile: true })(req, res);
+});
+app.use('/api/mobile-diagnostic-v1', function(err, req, res, next) {
+  res.set('Cache-Control', 'no-store');
+  return res.status(err && err.type === 'entity.too.large' ? 413 : 400)
+    .json({ok: false, error: 'INVALID_BODY'});
+});
 app.all('/api/diagnostic-maintenance', function(req, res) {
   return require('./diagnostic/maintenance').createMaintenance()(req, res);
 });
