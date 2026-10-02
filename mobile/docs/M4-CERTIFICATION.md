@@ -74,3 +74,20 @@ Remaining M4.7 checks before final certification:
 - close/reopen after final validation on both devices;
 - one temporary network interruption/recovery check;
 - final Artisan-side validated-state confirmation.
+
+
+## M4.7 final resilience certification — PASS
+
+Physical network-loss test on Client device:
+
+- offline submit did not create a request and showed an explicit interrupted-connection state;
+- after network recovery, one tap created exactly one canonical request;
+- Artisan received the corresponding Plomberie / Fes opportunity;
+- backend verification confirmed exactly one service_request for the test;
+- dispatch queue contained the expected ranked candidates;
+- certification request was then cancelled in Staging and its queued/contacted dispatch rows were marked CANCELLED.
+
+Final M4.7 status: PASS.
+
+M4 physical certification is complete on Android Staging 0.2.1 / versionCode 3.
+Production/main remain untouched.
