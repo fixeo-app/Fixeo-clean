@@ -11,7 +11,7 @@ test('Homepage restores canonical marketplace pipeline before Passport renderer'
 
 test('Homepage loads same targeted booking stack as certified discovery flow',()=>{for(const x of ['css/reservation.css?v=fxhome-res-passport-v1','css/reservation-v2.css?v=3','css/reservation-v2a.css?v=v2c','css/fixeo-reservation-v3.css?v=fxrv3-v1a','css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a','css/fixeo-reservation-targeted-polish-v1.css?v=fxrt-v4','js/reservation.js?v=av1-card2','js/reservation-v2.js?v=v2c6f-c','js/fixeo-reservation-v3.js?v=fxrv3-v1a','js/fixeo-reservation-flagship-v1.js?v=fxresf-v11c','js/fixeo-reservation-supabase-bridge.js?v=v2'])assert.ok(html.includes(x),x);});
 
-test('Homepage Passport V2 uses canonical UUID and real-photo to FIXEO-ID identity only',()=>{assert.match(builder,/a\._supabase_id \|\| a\.id/);assert.match(builder,/a\.photo_url \|\| a\.avatar \|\| a\.photo/);assert.match(builder,/pvc-fixeo-id/);assert.doesNotMatch(builder,/FixeoHeroes|getCardAvatar|illustrative-metier|pvc-avatar-badge|pvc-avatar-silhouette/);});
+test('Homepage Passport V2 uses canonical UUID and real-photo to FIXEO-ID identity only',()=>{assert.match(builder,/a\._supabase_id \|\| a\.id/);assert.match(builder,/a\.photo_url \|\| a\.avatar \|\| a\.photo/);assert.match(builder,/_fixeoIdHtml/);assert.match(patch,/pvc-fixeo-id/);assert.doesNotMatch(builder,/FixeoHeroes|getCardAvatar|illustrative-metier|pvc-avatar-badge|pvc-avatar-silhouette/);});
 
 test('Homepage Passport V2 price surface is truth-only',()=>{assert.match(pricing,/Tarif confirmé avant intervention/);assert.match(pricing,/Paiement après intervention/);assert.doesNotMatch(pricing,/À partir de|Budget indicatif|MAR_PRICES|price_from|priceFrom/);});
 
