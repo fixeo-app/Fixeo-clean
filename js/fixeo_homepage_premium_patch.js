@@ -1329,7 +1329,7 @@ if (tradeSelect) {
     var catIcon  = CAT_ICONS[cat] || '🔧';
     var catLbl   = CAT_LABELS[cat] || (a.service || a.category || 'Service');
     var name     = a.name || a.full_name || 'Artisan Fixeo';
-    var aid      = String(a.id || a._supabase_id || '');
+    var aid      = String(a._supabase_id || a.id || '');
 
     /* Estimator action block: divider + CTA + safe profile link (new tab) */
     var estimatorAction =
