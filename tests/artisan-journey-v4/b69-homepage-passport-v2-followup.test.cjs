@@ -1,0 +1,22 @@
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const root=path.resolve(__dirname,'../..');const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const main=read('js/main.js'),premium=read('js/fixeo_homepage_premium_patch.js'),cardCss=read('css/artisan-card-conversion-v1.css'),shell=read('css/fixeo-reservation-targeted-polish-v1.css'),engine=read('js/reservation.js'),results=read('results.html'),profile=read('artisan-profile.html'),artisans=read('artisans.html'),index=read('index.html');
+
+function between(src,a,b){const i=src.indexOf(a),j=src.indexOf(b,i);assert.ok(i>=0&&j>i,a+' bounds');return src.slice(i,j)}
+
+test('P0 universal targeted shell hides the actual synthetic global header',()=>{assert.match(shell,/body\.fixeo-targeted-booking-open \.fixeo-gh-universal-shell/);assert.match(shell,/body\.fixeo-targeted-booking-open \.fixeo-gh-source-shell/);assert.match(shell,/body\.fixeo-targeted-booking-open #fixeo-gh-menu-portal/);assert.match(engine,/fixeo-gh-universal-shell/);assert.match(engine,/fixeo-reservation-targeted-polish-v1\.css\?v=fxrt-v5/);});
+
+test('results page loads the same targeted reservation presentation stack as passport entries',()=>{for(const x of ['js/reservation.js?v=av1-card3','js/reservation-v2.js?v=v2c6f-c','js/fixeo-reservation-v3.js?v=fxrv3-v1a','js/fixeo-reservation-supabase-bridge.js?v=v2','js/fixeo-reservation-flagship-v1.js?v=fxresf-v11c','css/fixeo-reservation-targeted-polish-v1.css?v=fxrt-v5'])assert.ok(results.includes(x),x);assert.match(results,/js\/main\.js\?v=homepass-v2/);assert.match(results,/artisan-card-conversion-v1\.css\?v=homepass-v2/);});
+
+test('active main.js card renderer is Passport V2 truth-first',()=>{const b=between(main,'function buildOtherArtisanCard(a, opts) {','/* 7C.9L.3C: expose for estimator-origin artisan picker');for(const x of ['homepass-card','PROFIL PROFESSIONNEL FIXEO','Tarif confirmé avant intervention','Paiement après intervention','Demander une intervention','Disponibilité à confirmer','a._supabase_id || a.id'])assert.ok(b.includes(x),x);});
+
+test('active main.js card renderer has no métier-avatar or fabricated marketplace signals',()=>{const b=between(main,'function buildOtherArtisanCard(a, opts) {','/* 7C.9L.3C: expose for estimator-origin artisan picker');for(const x of ['FixeoHeroes','Disponible maintenant','Réponse rapide','23 réservations','À partir de','trustScore','Nouveau sur FIXEO'])assert.equal(b.includes(x),false,x);});
+
+test('active card avatar contract is real photo then deterministic FIXEO ID',()=>{assert.match(main,/function _homepagePassportAvatar/);const b=between(main,'function _homepagePassportAvatar','function _homepagePassportDescription');assert.match(b,/a\.photo_url \|\| a\.avatar \|\| a\.photo/);assert.match(b,/_homepagePassportFixeoId/);assert.doesNotMatch(b,/FixeoHeroes|getAvatar|getCardAvatar/);assert.match(cardCss,/HOMEPAGE \/ RESULTS PASSPORT V2/);assert.match(cardCss,/\.homepass-fixeo-id/);});
+
+test('Homepage/results targeted booking resolves canonical Supabase UUID',()=>{const i=main.indexOf('function openHomepageArtisanBooking'),b=main.slice(i,i+3600);assert.ok(i>=0);assert.match(b,/artisan\._supabase_id/);assert.match(b,/FixeoReservation\.open\(artisanObj, false\)/);});
+
+test('Premium source renderer is also Passport V2 without being mounted as a second Homepage owner',()=>{const b=between(premium,'function _buildCard(a, idx) {','/* esc helper for v2 */');for(const x of ['homepass-card','Tarif confirmé avant intervention','Demander une intervention','Disponibilité à confirmer','a._supabase_id || a.id'])assert.ok(b.includes(x),x);for(const x of ['FixeoHeroes','Réserver maintenant','À partir de','Disponible aujourd'])assert.equal(b.includes(x),false,x);assert.doesNotMatch(index,/fixeo_homepage_premium_patch\.js/);});
+
+test('profile and directory use the fresh shared targeted shell version',()=>{for(const page of [profile,artisans]){assert.match(page,/js\/reservation\.js\?v=av1-card3/);assert.match(page,/fixeo-reservation-targeted-polish-v1\.css\?v=fxrt-v5/);}});
+
+test('Passport V2 active card CSS contains no legacy avatar badge requirement',()=>{const i=cardCss.indexOf('HOMEPAGE / RESULTS PASSPORT V2');const b=cardCss.slice(i);assert.ok(i>=0);assert.match(b,/\.homepass-avatar/);assert.match(b,/\.homepass-btn--reserve/);assert.doesNotMatch(b,/pvc-avatar-badge/);});
