@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "FIXEO",
+    "slug": "fixeo-mobile",
+    "scheme": "fixeo",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "ma.fixeo.app",
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "ma.fixeo.app",
+      "googleServicesFile": "./google-services.json"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Autorisez FIXEO à accéder à vos photos pour montrer le problème à RAFI.",
+          "cameraPermission": "Autorisez FIXEO à utiliser l’appareil photo pour montrer le problème à RAFI.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Autorisez FIXEO à utiliser le microphone pour parler à RAFI."
+        }
+      ],
+      "expo-notifications"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "owner": "fixeo-maroc",
+    "extra": {
+      "eas": {
+        "projectId": "bb76a67f-4304-48a6-ad29-ca7382d28a7a"
+      }
+    }
+  }
+}
