@@ -1080,3 +1080,158 @@ body.fx-profile-v4 #public-artisan-root{padding-bottom:24px}
   .fxp4-b36 .fxp4-mobile-copy strong{max-width:36vw}
   .fxp4-b36 .fxp4-next-person strong{max-width:36vw}
 }
+
+
+/* B3.7 FIXEO ID — deterministic professional identity, never a generated avatar */
+.fxp4-b37 .fxp4-fixeo-id{
+  --fxid-a:#ed3d91;
+  --fxid-b:#7358e8;
+  --fxid-c:#ff8738;
+  --fxid-ring:rgba(255,255,255,.16);
+  isolation:isolate;
+  display:block;
+  padding:0;
+  background:
+    radial-gradient(circle at 14% 12%,color-mix(in srgb,var(--fxid-c) 38%,transparent),transparent 45%),
+    linear-gradient(145deg,var(--fxid-a),var(--fxid-b) 58%,#12131a 118%);
+  border:1px solid var(--fxid-ring);
+  box-shadow:
+    0 22px 52px rgba(0,0,0,.32),
+    inset 0 0 0 1px rgba(255,255,255,.055);
+}
+.fxp4-b37 .fxid-v0{--fxid-a:#d72d80;--fxid-b:#6f4cdb;--fxid-c:#ff8b39}
+.fxp4-b37 .fxid-v1{--fxid-a:#be3f98;--fxid-b:#4f61df;--fxid-c:#f68b3b}
+.fxp4-b37 .fxid-v2{--fxid-a:#df3d78;--fxid-b:#7b4ece;--fxid-c:#ffa040}
+.fxp4-b37 .fxid-v3{--fxid-a:#a64bb2;--fxid-b:#4e5ac7;--fxid-c:#f06b48}
+.fxp4-b37 .fxid-v4{--fxid-a:#c93a86;--fxid-b:#664ac6;--fxid-c:#ff7a45}
+.fxp4-b37 .fxid-v5{--fxid-a:#b83f8c;--fxid-b:#5148c5;--fxid-c:#f89541}
+.fxp4-b37 .fxid-s-referenced{--fxid-ring:rgba(255,255,255,.16)}
+.fxp4-b37 .fxid-s-claim_in_progress{--fxid-ring:rgba(242,91,164,.34)}
+.fxp4-b37 .fxid-s-claimed{--fxid-ring:rgba(242,91,164,.48)}
+.fxp4-b37 .fxid-s-onboarded{--fxid-ring:rgba(145,119,255,.55)}
+.fxp4-b37 .fxid-s-verified{--fxid-ring:rgba(88,220,165,.58)}
+
+.fxp4-b37 .fxp4-fixeo-id:before{
+  content:"";
+  position:absolute;
+  inset:-28%;
+  z-index:-1;
+  border-radius:42%;
+  background:
+    conic-gradient(from 215deg,transparent 0 20%,rgba(255,255,255,.11) 31%,transparent 43% 68%,rgba(255,255,255,.065) 80%,transparent 92%);
+  filter:blur(6px);
+  transform:rotate(-8deg);
+}
+.fxp4-b37 .fxp4-fixeo-id:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:
+    linear-gradient(115deg,rgba(255,255,255,.12),transparent 26% 72%,rgba(255,255,255,.035)),
+    repeating-linear-gradient(90deg,transparent 0 17px,rgba(255,255,255,.025) 18px 19px);
+  mix-blend-mode:screen;
+}
+.fxp4-b37 .fxp4-fixeo-id-mesh{
+  position:absolute;
+  z-index:1;
+  inset:12px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:24px;
+  pointer-events:none;
+}
+.fxp4-b37 .fxp4-fixeo-id-code{
+  position:absolute;
+  z-index:1;
+  left:8%;
+  top:18%;
+  color:rgba(255,255,255,.085);
+  font-size:3.8rem;
+  font-weight:950;
+  letter-spacing:-.09em;
+  line-height:1;
+  transform:rotate(-8deg);
+  user-select:none;
+}
+.fxp4-b37 .fxp4-fixeo-id-brand{
+  position:absolute;
+  z-index:3;
+  right:11px;
+  top:11px;
+  width:25px;
+  height:25px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  background:linear-gradient(135deg,#ff8a32,#e42f87 52%,#7358eb);
+  color:#fff;
+  font-size:.68rem;
+  font-weight:950;
+  box-shadow:0 7px 18px rgba(0,0,0,.23);
+}
+.fxp4-b37 .fxp4-fixeo-id strong{
+  position:absolute;
+  z-index:3;
+  left:16px;
+  bottom:33px;
+  margin:0;
+  color:#fff;
+  font-size:3rem;
+  line-height:.9;
+  letter-spacing:-.07em;
+  text-shadow:0 4px 18px rgba(0,0,0,.2);
+}
+.fxp4-b37 .fxp4-fixeo-id small{
+  position:absolute;
+  z-index:3;
+  left:17px;
+  bottom:13px;
+  margin:0;
+  color:rgba(255,255,255,.74);
+  font-size:.5rem;
+  font-weight:900;
+  letter-spacing:.15em;
+  line-height:1;
+}
+
+/* Mini FIXEO ID continuity in sticky + final CTA */
+.fxp4-b37 .fxp4-next-avatar.fxid-v0,.fxp4-b37 .fxp4-mobile-avatar.fxid-v0,
+.fxp4-b37 .fxp4-next-avatar.fxid-v1,.fxp4-b37 .fxp4-mobile-avatar.fxid-v1,
+.fxp4-b37 .fxp4-next-avatar.fxid-v2,.fxp4-b37 .fxp4-mobile-avatar.fxid-v2,
+.fxp4-b37 .fxp4-next-avatar.fxid-v3,.fxp4-b37 .fxp4-mobile-avatar.fxid-v3,
+.fxp4-b37 .fxp4-next-avatar.fxid-v4,.fxp4-b37 .fxp4-mobile-avatar.fxid-v4,
+.fxp4-b37 .fxp4-next-avatar.fxid-v5,.fxp4-b37 .fxp4-mobile-avatar.fxid-v5{
+  background:
+    radial-gradient(circle at 18% 12%,color-mix(in srgb,var(--fxid-c) 42%,transparent),transparent 52%),
+    linear-gradient(145deg,var(--fxid-a),var(--fxid-b));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.13),0 7px 18px rgba(0,0,0,.18);
+}
+
+@media(max-width:800px){
+  .fxp4-b37 .fxp4-fixeo-id-mesh{inset:8px;border-radius:17px}
+  .fxp4-b37 .fxp4-fixeo-id-code{
+    left:7%;
+    top:17%;
+    font-size:2.45rem;
+  }
+  .fxp4-b37 .fxp4-fixeo-id-brand{
+    right:7px;
+    top:7px;
+    width:19px;
+    height:19px;
+    border-radius:7px;
+    font-size:.52rem;
+  }
+  .fxp4-b37 .fxp4-fixeo-id strong{
+    left:10px;
+    bottom:24px;
+    font-size:2rem;
+  }
+  .fxp4-b37 .fxp4-fixeo-id small{
+    left:11px;
+    bottom:9px;
+    font-size:.38rem;
+    letter-spacing:.12em;
+  }
+}
