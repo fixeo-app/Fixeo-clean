@@ -7,14 +7,9 @@
  *   _buildCard()  — new V3B-aligned card structure:
  *                   artdir-card-header / artdir-avatar / artdir-identity /
  *                   artdir-card-desc / artdir-trust / artdir-action
- *   _buildAvatar() — 3-stage fallback (real photo → métier WebP/PNG → silhouette)
- *                    using FixeoHeroes.getCardAvatar() when available
- *   _buildPricing() — fixed: "Tarif renseigné" hint replaces raw priceLabel
- *                     (was causing price duplication bug)
- *   Avatar badge    — métier emoji bottom-right corner (mirrors pvc-avatar-badge)
- *   Trust block     — inline SVG icons (mirrors V3B2-C pvc-trust-v3b)
- *   CTA hierarchy   — primary full-width "Réserver maintenant →",
- *                     secondary quiet "Voir le profil complet ›"
+ *   _buildAvatar() — canonical identity: real photo → FIXEO ID initials.
+ *   No generic métier illustration is allowed to impersonate the artisan.
+ *   CTA hierarchy   — "Demander une intervention" + "Voir le profil complet"
  *   data-category   — on .artdir-avatar for CSS gradient selection
  *
  * Engine unchanged:
@@ -23,11 +18,10 @@
  *   history.replaceState, empty state, localStorage city fallback.
  *
  * Avatar source priority:
- *   1. Real artisan photo (a.photo_url / a.avatar)
- *   2. Métier hero WebP via FixeoHeroes.getCardAvatar() (same as homepage)
- *   3. Métier hero PNG fallback
- *   4. CSS silhouette (no network request, always works)
+ *   1. Real artisan photo (a.photo_url / a.avatar / a.photo)
+ *   2. Deterministic FIXEO ID with initials
  *
+
  * Pricing fix:
  *   priceLabel in Supabase = pre-formatted "À partir de 120 DH" string.
  *   Old code: hint = priceLabel → showed "À partir de 120 DH" AFTER
@@ -35,13 +29,13 @@
  *   Fix: when price_from is present, always hint = "Tarif renseigné"
  *   (mirrors _getPricing() in fixeo_homepage_premium_patch.js).
  *
- * Dependencies loaded on artisans.html (added Phase 6B.1 + 6B.2):
- *   js/fixeo-heroes.js          → window.FixeoHeroes (métier card avatars)
- *   js/fixeo-cities.js          → window.FIXEO_CITIES_MAP (slug↔name)
+ * Dependencies loaded on artisans.html:
+ *   js/fixeo-cities.js          → window.FIXEO_CITIES_MAP
  *   js/supabase-client.js       → window.FixeoSupabaseClient
- *   js/fixeo-supabase-loader.js → window.ARTISANS + 'fixeo:artisans:loaded' event
+ *   js/fixeo-supabase-loader.js → window.ARTISANS
  *   js/fixeo-matching-engine.js → FixeoMatchingEngine.sortByMatch()
  *
+
  * ZERO dependency on:
  *   - main.js, homepage-v13.js, secondary-search.js
  *   - renderArtisans(), _renderPremiumGrid(), _buildCard() (homepage)
@@ -301,15 +295,9 @@
     return t;
   }
 
-  /* ── Avatar builder — 3-stage fallback ───────────────────────────
-   * Stage 1: real artisan photo (a.photo_url / a.avatar)
-   * Stage 2: métier hero WebP via FixeoHeroes.getCardAvatar()
-   * Stage 3: métier hero PNG (data-attr fallback in onerror)
-   * Stage 4: CSS artdir-avatar-silhouette (no request)
-   *
-   * IMPORTANT: does NOT use _fxAvStage() — that is a homepage-only
-   * inline onerror helper not available on artisans.html.
-   * Uses _artdirAvStage() exposed on window (see below). */
+  /* ── Canonical identity builder ───────────────────────────────────
+   * Real photo when genuinely present; deterministic FIXEO ID otherwise.
+   * Broken real photos fall directly to FIXEO ID. */
   function _fixeoIdHtml(a) {
     var initials = _esc(_initials(a.name || a.full_name || ''));
     var variant = _fixeoIdVariant(a);
