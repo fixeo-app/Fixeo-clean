@@ -84,6 +84,7 @@
       var re = new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
       s = s.replace(re, '');
     });
+    if (/sourc[ée].*(facebook|google|annuaire|interne)|source interne|prospection/i.test(s)) return '';
     return s.trim();
   }
 
