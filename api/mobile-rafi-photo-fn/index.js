@@ -51,12 +51,15 @@ async function inspect(req, res) {
   try {
     assertPreview(process.env);
 
-    if (!process.env.OPENAI_API_KEY || !process.env.FIXEO_DIAGNOSTIC_MODEL) {
+    const diagnosticModel =
+      process.env.FIXEO_DIAGNOSTIC_MODEL || 'gpt-4.1-mini-2025-04-14';
+
+    if (!process.env.OPENAI_API_KEY) {
       console.warn(
         JSON.stringify({
           event: 'mobile_rafi_photo_unavailable',
-          has_openai_key: Boolean(process.env.OPENAI_API_KEY),
-          has_model: Boolean(process.env.FIXEO_DIAGNOSTIC_MODEL),
+          has_openai_key: false,
+          model: diagnosticModel,
         }),
       );
       return send(res, 503, { ok: false, error: 'diagnostic_unavailable' });
@@ -111,7 +114,10 @@ async function inspect(req, res) {
     };
 
     const provider = createOpenAIAdapter({
-      env: process.env,
+      env: {
+        ...process.env,
+        FIXEO_DIAGNOSTIC_MODEL: diagnosticModel,
+      },
       timeout: 25000,
       deadline: started + 28000,
     });
