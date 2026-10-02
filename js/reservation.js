@@ -1521,10 +1521,14 @@ city:
       style.id = styleId;
       style.textContent =
         'body.fixeo-targeted-booking-open .navbar,' +
+        'body.fixeo-targeted-booking-open .fixeo-gh-universal-shell,' +
+        'body.fixeo-targeted-booking-open .fixeo-gh-source-shell,' +
+        'body.fixeo-targeted-booking-open header.site-header,' +
         'body.fixeo-targeted-booking-open .fixeo-gh-mobile-bar,' +
+        'body.fixeo-targeted-booking-open #fixeo-gh-menu-portal,' +
         'body.fixeo-targeted-booking-open #ppui-sticky-cta,' +
         'body.fixeo-targeted-booking-open #fixeo-floating-reserve,' +
-        'body.fixeo-targeted-booking-open .fxp4-mobile{display:none!important}' +
+        'body.fixeo-targeted-booking-open .fxp4-mobile{display:none!important;pointer-events:none!important}' +
         'body.fixeo-targeted-booking-open #fixeo-reservation-modal{' +
           'position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;' +
           'max-width:none!important;margin:0!important;z-index:12000!important;background:#08090e!important}' +
@@ -1536,7 +1540,7 @@ city:
     if (!document.querySelector('link[data-fixeo-targeted-shell],link[href*="fixeo-reservation-targeted-polish-v1.css"]')) {
       var link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = '/css/fixeo-reservation-targeted-polish-v1.css?v=fxrt-v4';
+      link.href = '/css/fixeo-reservation-targeted-polish-v1.css?v=fxrt-v5';
       link.setAttribute('data-fixeo-targeted-shell', '1');
       document.head.appendChild(link);
     }
