@@ -696,7 +696,8 @@ btn.textContent =
         var aid = btn.getAttribute('data-artisan-id');
         if (!aid) return;
         var selected = _state.allResults.find(function(a) {
-          return String(a.id || a._supabase_id || '') === String(aid);
+          return String(a.id || '') === String(aid) ||
+                 String(a._supabase_id || '') === String(aid);
         });
         if (!selected) {
           window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002ux3';
