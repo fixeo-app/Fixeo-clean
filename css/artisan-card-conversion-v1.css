@@ -2957,3 +2957,215 @@
 }
 
 /* End FXHOME-ARTISAN-CARD-V3B-ESTIMATOR */
+
+
+/* ═══════════════════════════════════════════════════════════════
+   HOMEPAGE ARTISAN CARD PASSPORT V2 — canonical identity + truth CTA
+   Scope: Homepage Premium vedette only.
+   ═══════════════════════════════════════════════════════════════ */
+#fixeo-homepage-vedette-grid .pvc-card--passport{
+  padding:18px 16px 15px!important;
+  border-radius:20px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
+  background:
+    radial-gradient(circle at 92% 0,rgba(128,100,239,.075),transparent 18rem),
+    radial-gradient(circle at 5% 12%,rgba(237,61,145,.055),transparent 15rem),
+    linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.014))!important;
+  border:1px solid rgba(255,255,255,.085)!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.16)!important;
+}
+#fixeo-homepage-vedette-grid .pvc-card-header--passport{
+  display:flex!important;
+  gap:12px!important;
+  align-items:center!important;
+  margin-bottom:10px!important;
+}
+#fixeo-homepage-vedette-grid .pvc-avatar--passport{
+  width:70px!important;
+  height:70px!important;
+  min-width:70px!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+  background:#111219!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.28),inset 0 0 0 1px rgba(255,255,255,.035)!important;
+}
+#fixeo-homepage-vedette-grid .pvc-avatar--passport .pvc-avatar-img{
+  width:70px!important;
+  height:70px!important;
+  border-radius:18px!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  margin:0!important;
+}
+#fixeo-homepage-vedette-grid .pvc-fixeo-id{
+  position:relative;
+  width:70px;
+  height:70px;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  border-radius:18px;
+  background:linear-gradient(145deg,#c93a86,#664ac6 68%,#111219);
+  border:1px solid rgba(255,255,255,.11);
+  color:#fff;
+}
+#fixeo-homepage-vedette-grid .pvc-fixeo-id--v1{background:linear-gradient(145deg,#d72d80,#6f4cdb 68%,#111219)}
+#fixeo-homepage-vedette-grid .pvc-fixeo-id--v2{background:linear-gradient(145deg,#be3f98,#4f61df 68%,#111219)}
+#fixeo-homepage-vedette-grid .pvc-fixeo-id--v3{background:linear-gradient(145deg,#df3d78,#7b4ece 68%,#111219)}
+#fixeo-homepage-vedette-grid .pvc-fixeo-id--v4{background:linear-gradient(145deg,#a64bb2,#4e5ac7 68%,#111219)}
+#fixeo-homepage-vedette-grid .pvc-fixeo-id--v5{background:linear-gradient(145deg,#b83f8c,#5148c5 68%,#111219)}
+#fixeo-homepage-vedette-grid .pvc-fixeo-id strong{
+  font-size:1.38rem;
+  font-weight:950;
+  letter-spacing:-.055em;
+  line-height:1;
+}
+#fixeo-homepage-vedette-grid .pvc-fixeo-id small{
+  position:absolute;
+  left:50%;
+  bottom:7px;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  color:rgba(255,255,255,.46);
+  font-size:.27rem;
+  font-weight:900;
+  letter-spacing:.12em;
+}
+#fixeo-homepage-vedette-grid .pvc-fixeo-id-brand{
+  position:absolute;
+  right:6px;
+  top:6px;
+  width:13px;
+  height:13px;
+  display:grid;
+  place-items:center;
+  border-radius:4px;
+  background:linear-gradient(135deg,#ff8a35,#ed3d91 52%,#8064ef);
+  color:#fff;
+  font-size:.28rem;
+  font-weight:950;
+}
+#fixeo-homepage-vedette-grid .pvc-passport-kicker{
+  display:block;
+  margin-bottom:3px;
+  color:#ef6aab;
+  font-size:.47rem;
+  font-weight:900;
+  letter-spacing:.11em;
+}
+#fixeo-homepage-vedette-grid .pvc-card--passport .pvc-name{
+  margin:0 0 2px!important;
+  font-size:1rem!important;
+  color:#f6f6f8!important;
+}
+#fixeo-homepage-vedette-grid .pvc-passport-meta{
+  color:rgba(255,255,255,.58);
+  font-size:.69rem;
+  font-weight:650;
+}
+#fixeo-homepage-vedette-grid .pvc-desc--passport{
+  margin:2px 0 10px!important;
+  color:rgba(255,255,255,.54)!important;
+  font-size:.72rem!important;
+  line-height:1.48!important;
+  display:-webkit-box!important;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+#fixeo-homepage-vedette-grid .pvc-desc--empty{opacity:.68}
+#fixeo-homepage-vedette-grid .pvc-trust--passport{
+  display:flex!important;
+  flex-direction:row!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+  margin:0 0 10px!important;
+}
+#fixeo-homepage-vedette-grid .pvc-trust--passport .pvc-trust-v3b-item{
+  min-height:27px!important;
+  padding:5px 8px!important;
+  border:1px solid rgba(255,255,255,.075)!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.025)!important;
+  color:rgba(255,255,255,.58)!important;
+  font-size:.58rem!important;
+}
+#fixeo-homepage-vedette-grid .pvc-action--passport{
+  margin-top:auto!important;
+}
+#fixeo-homepage-vedette-grid .pvc-price--truth{
+  margin:0 0 10px!important;
+  text-align:left!important;
+}
+#fixeo-homepage-vedette-grid .pvc-price--truth .pvc-price-amount{
+  margin:0 0 2px!important;
+  color:#f2f3f6!important;
+  font-size:.77rem!important;
+  font-weight:800!important;
+}
+#fixeo-homepage-vedette-grid .pvc-price--truth .pvc-price-from{
+  color:rgba(255,255,255,.42)!important;
+  font-size:.56rem!important;
+}
+#fixeo-homepage-vedette-grid .pvc-btn--passport{
+  min-height:52px!important;
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:9px!important;
+  padding:8px 10px!important;
+  border:1px solid transparent!important;
+  border-radius:15px!important;
+  background:
+    linear-gradient(135deg,#17181e,#101116) padding-box,
+    linear-gradient(100deg,rgba(255,138,53,.68),rgba(237,61,145,.72) 50%,rgba(128,100,239,.68)) border-box!important;
+  color:#fff!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.2)!important;
+  text-shadow:none!important;
+}
+#fixeo-homepage-vedette-grid .pvc-btn--passport:hover{
+  transform:none!important;
+  box-shadow:0 14px 32px rgba(0,0,0,.26)!important;
+}
+#fixeo-homepage-vedette-grid .pvc-passport-btn-f{
+  width:34px;
+  height:34px;
+  flex:0 0 34px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  background:linear-gradient(135deg,#ff8a35,#ed3d91 52%,#8064ef);
+  font-size:.72rem;
+  font-weight:950;
+}
+#fixeo-homepage-vedette-grid .pvc-btn--passport>b{
+  margin-left:auto;
+  width:30px;
+  height:30px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.055);
+  font-size:.8rem;
+}
+#fixeo-homepage-vedette-grid .pvc-card--passport .pvc-profile-link{
+  min-height:34px!important;
+  font-size:.7rem!important;
+  color:rgba(255,255,255,.48)!important;
+}
+@media(max-width:640px){
+  #fixeo-homepage-vedette-grid .pvc-card--passport{padding:15px 13px 13px!important}
+  #fixeo-homepage-vedette-grid .pvc-avatar--passport,
+  #fixeo-homepage-vedette-grid .pvc-avatar--passport .pvc-avatar-img,
+  #fixeo-homepage-vedette-grid .pvc-fixeo-id{
+    width:64px!important;
+    height:64px!important;
+    min-width:64px!important;
+    border-radius:17px!important;
+  }
+  #fixeo-homepage-vedette-grid .pvc-fixeo-id strong{font-size:1.25rem}
+}
