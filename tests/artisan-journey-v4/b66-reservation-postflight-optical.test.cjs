@@ -11,4 +11,4 @@ test('postflight: targeted recap header uses FIXEO mark and truthful availabilit
 
 test('postflight: confirmation uses the existing production logo asset',()=>{assert.match(confFlag,/\/img\/logo\.png/);assert.doesNotMatch(confFlag,/\/img\/fixeo-logo\.webp/);});
 
-test('postflight: Safari/document cache keys are fresh',()=>{assert.match(html,/PROFILE_PAGE_VERSION='20261002ux3'/);assert.match(html,/js\/reservation\.js\?v=av1-targeted5/);assert.match(html,/fixeo-reservation-targeted-polish-v1\.css\?v=fxrt-v3/);assert.match(html,/fixeo-reservation-flagship-v1\.js\?v=fxresf-v11b/);assert.match(conf,/fixeo-confirmation-flagship-v1\.js\?v=fxcf-v3/);assert.match(engine,/confirmation\.html\?v=targeted4/);});
+test('postflight: Safari/document cache keys are fresh',()=>{assert.match(html,/PROFILE_PAGE_VERSION='20261002ux4'/);assert.match(html,/js\/reservation\.js\?v=av1-targeted6/);assert.match(html,/fixeo-reservation-targeted-polish-v1\.css\?v=fxrt-v3/);assert.match(html,/fixeo-reservation-flagship-v1\.js\?v=fxresf-v11c/);assert.match(conf,/fixeo-confirmation-flagship-v1\.js\?v=fxcf-v3/);assert.match(engine,/confirmation\.html\?v=targeted4/);});
