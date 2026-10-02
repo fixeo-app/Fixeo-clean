@@ -1,0 +1,11 @@
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const root=path.resolve(__dirname,'../..');const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const js=read('js/fixeo-artisan-profile-v4.js'),css=read('css/fixeo-artisan-profile-v4.css'),html=read('artisan-profile.html');
+const marker='/* B3.6 FINAL OPTICAL PRECISION — air, hierarchy, fluidity, FIXEO CTA signature */';const p=css.slice(css.indexOf(marker));
+test('B3.6 adds air without touching Hero B2',()=>{assert.ok(p.startsWith(marker));assert.match(p,/--fx36-gap:14px/);assert.doesNotMatch(p,/\.fxp4-hero-wow/);});
+test('B3.6 makes performance calmer and summary expandable',()=>{assert.match(js,/Performance & réputation/);assert.match(p,/\.fxp4-metrics>div\.pending strong/);assert.match(js,/data-fxp4-about-toggle/);assert.match(js,/Voir plus/);assert.match(p,/-webkit-line-clamp:3/);});
+test('B3.6 structures declared zone and preserves truth',()=>{assert.match(js,/ZONE DÉCLARÉE/);assert.match(js,/x\.work_zone/);assert.match(p,/\.fxp4-zone-declared/);});
+test('B3.6 keeps Passport Gallery and Reputation airy',()=>{assert.match(p,/\.fxp4-passport\{gap:9px/);assert.match(p,/\.fxp4-gallery-ghosts span:nth-child\(3\)\{display:none\}/);assert.match(p,/min-width:min\(100%,360px\)/);});
+test('B3.6 CTA carries FIXEO signature on final and sticky actions',()=>{assert.match(js,/Demande ciblée par FIXEO/);assert.match(js,/Demander avec FIXEO/);assert.match(js,/fxp4-mobile-cta-mark/);assert.match(p,/linear-gradient\(135deg,#ff8a32,#e42f87 52%,#7358eb\)/);});
+test('B3.6 adapts sticky CTA to Safari visual viewport and hides earlier',()=>{assert.match(js,/function bindViewport/);assert.match(js,/w\.visualViewport/);assert.match(js,/rootMargin:'0px 0px 170px 0px'/);assert.match(p,/var\(--fxp4-vv-bottom,0px\)/);});
+test('B3.6 keeps targeted reservation and public truth boundaries',()=>{assert.match(js,/FixeoReservation\.open\(artisan\(p\),false\)/);assert.doesNotMatch(js,/FixeoClientRequest\.open/);assert.doesNotMatch(js,/price_min|price_max|starting_price|tarif.*MAD|\d+\s*MAD/i);});
+test('B3.6 has fresh real-device asset key',()=>{assert.match(html,/fxp4-b34dm1-b35wow1-b36p1/);});
