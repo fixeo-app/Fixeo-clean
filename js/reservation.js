@@ -595,8 +595,12 @@ city:
       return `<span class="fixeo-res-badge">${badge.icon} ${badge.label}</span>`;
     }).join('');
 
-    const availClass = a.availability === 'available' ? 'available' : (a.availability === 'busy' ? 'busy' : 'offline');
-    const availLabel = a.availability === 'available' ? '● Disponible' : (a.availability === 'busy' ? '● Occupé' : '● Hors ligne');
+    const availClass = state.isTargeted
+      ? 'offline'
+      : (a.availability === 'available' ? 'available' : (a.availability === 'busy' ? 'busy' : 'offline'));
+    const availLabel = state.isTargeted
+      ? '◷ Disponibilité à confirmer'
+      : (a.availability === 'available' ? '● Disponible' : (a.availability === 'busy' ? '● Occupé' : '● Hors ligne'));
 
     return `
       <div class="fixeo-res-dialog" role="document">
@@ -851,7 +855,7 @@ city:
       <div class="fixeo-res-dialog" role="document" data-res-targeted-recap>
         <div class="fixeo-res-header">
           <div class="fixeo-res-header-left">
-            <div class="fixeo-res-header-icon">${catIcon}</div>
+            <div class="fixeo-res-header-icon fxrt-header-mark">F</div>
             <div>
               <div class="fixeo-res-header-title">Récapitulatif</div>
               <div class="fixeo-res-header-sub">Étape 2 sur 2 — Vérifiez votre demande</div>
@@ -2376,7 +2380,7 @@ var _serviceSlug = _toServiceSlug(_serviceSource);
         } catch (_) {}
 
         close();
-        window.location.href = 'confirmation.html?v=targeted2';
+        window.location.href = 'confirmation.html?v=targeted3';
       },
       function(msg) {
         if (btn) {
