@@ -69,9 +69,40 @@
 
   /* ── Helpers ── */
   function _initials(name) {
-    if (!name) return '??';
-    var p = String(name).trim().split(/\s+/);
-    return ((p[0]||'?')[0] + ((p[1]||p[0]||'?')[0])).toUpperCase();
+    if (!name) return 'FX';
+    var p = String(name).trim().split(/\s+/).filter(Boolean);
+    if (p.length === 1) return p[0].slice(0,2).toUpperCase();
+    return ((p[0]||'F')[0] + ((p[p.length-1]||p[0]||'X')[0])).toUpperCase();
+  }
+
+  function _avatarVariant(name) {
+    var s = String(name || 'FIXEO'), h = 0;
+    for (var i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    return Math.abs(h) % 6;
+  }
+
+  function _fixeoIdHtml(name, hidden) {
+    return '<span class="pvc-fixeo-id pvc-fixeo-id--v' + _avatarVariant(name) + '"' +
+      (hidden ? ' style="display:none"' : '') + '>' +
+      '<span class="pvc-fixeo-id-brand">F</span>' +
+      '<strong>' + _esc(_initials(name)) + '</strong>' +
+      '<small>FIXEO ID</small>' +
+    '</span>';
+  }
+
+  function _buildPassportAvatar(a) {
+    var name = a.name || a.full_name || 'Artisan FIXEO';
+    var photo = a.photo_url || a.photo || a.avatar || '';
+    if (photo) {
+      return {
+        state:'real-photo',
+        html:'<img class="pvc-avatar-img" src="' + _esc(photo) + '" alt="' + _esc(name) + '"' +
+          ' width="70" height="70" loading="lazy" decoding="async"' +
+          ' onerror="this.style.display=\'none\';var n=this.nextElementSibling;if(n)n.style.display=\'grid\'">' +
+          _fixeoIdHtml(name, true)
+      };
+    }
+    return { state:'fixeo-id', html:_fixeoIdHtml(name, false) };
   }
   function _stars(r) {
     var f = Math.round(parseFloat(r)*2)/2, s='';
@@ -176,29 +207,10 @@
   /* _getPricing (v2a): one price message. Midpoint "Estimation Fixeo" removed.
    * Returns { main, hint, type }. Never two competing prices. */
   function _getPricing(a) {
-    var cat  = (a.category || a.service || '').toLowerCase().trim();
-    var info = MAR_PRICES[cat];
-    if (a.price_from || a.priceFrom) {
-      var pf = parseInt(a.price_from || a.priceFrom, 10);
-      if (!isNaN(pf) && pf > 100) {
-        return {
-          main: '\u00c0 partir de ' + new Intl.NumberFormat('fr-FR').format(pf) + '\u00a0MAD',
-          hint: 'Tarif renseign\u00e9',
-          type: 'artisan'
-        };
-      }
-    }
-    if (info && info.label) {
-      return {
-        main: 'Budget indicatif\u00a0: ' + info.label,
-        hint: 'Fourchette g\u00e9n\u00e9rale du service',
-        type: 'range'
-      };
-    }
     return {
-      main: 'Tarif \u00e0 confirmer',
-      hint: "Selon l\u2019intervention",
-      type: 'unknown'
+      main: 'Tarif confirmé avant intervention',
+      hint: 'Paiement après intervention',
+      type: 'confirmation'
     };
   }
 
@@ -274,259 +286,75 @@
   /* ─── Premium card builder v2 ───────────────────────────────── */
   function _buildCard(a, idx) {
     idx = idx || 0;
-    var cat      = (a.category || a.service || '').toLowerCase();
-    var catIcon  = CAT_ICONS[cat] || '🔧';
-    var catLbl   = CAT_LABELS[cat] || (a.service || a.category || 'Service');
-    var rating   = parseFloat(a.rating) || 0;
-    var reviews  = parseInt(a.reviewCount || a.reviews || a.review_count || 0, 10);
-    var trust    = parseInt(a.trustScore || 0, 10);
-    var rt       = parseInt(a.responseTime || 999, 10);
-    /* v2a.1: strict gate — verified===true ONLY; certified and trustScore removed */
-    var isVer    = (a.verified === true);
-    var isClaimed= !!(a.claimed);
-    var avail    = (a.availability || '').toLowerCase();
-    var isAvail  = avail === 'available' || a.available;
-    var isToday  = avail === 'available_today';
-    var pricing  = _getPricing(a);
-    /* rtLabel/misLabel unused since T2 chip rewrite — kept for future use */
-    var rtLabel  = null;
-    var misLabel = null;
+    var cat = String(a.category || a.service_category || a.service || '').toLowerCase();
+    var catLbl = CAT_LABELS[cat] || a.service_category || a.service || a.category || 'Service';
+    var name = a.name || a.full_name || 'Artisan FIXEO';
+    var city = a.city || a.ville || '';
+    var canonicalId = a._supabase_id || a.id;
+    var pricing = _getPricing(a);
+    var avatar = _buildPassportAvatar(a);
 
-    /* Avatar — deterministic staged fallback (fxhome-artisans-v2b1.1):
-     *
-     *   Stage 1 — real photo         src=photo   data-avatar-type="real-photo"
-     *   Stage 2 — métier WebP        src=webp    data-avatar-type="illustrative-metier"
-     *   Stage 3 — métier PNG         src=png     data-avatar-type="illustrative-metier"
-     *   Stage 4 — CSS silhouette     img hidden  silhouette span shown
-     *
-     * A single <img> carries all stages via sequential onerror assignments.
-     * No hidden <picture> with live src/srcset — zero speculative requests.
-     * Stage transitions update alt and data-avatar-type in place.
-     * _avatarSetStage() is a page-local helper (not a global).
-     */
-    var avatarSrc  = a.avatar || a.photo || a.photo_url || '';
-    var cardAvatar = (window.FixeoHeroes && window.FixeoHeroes.getCardAvatar)
-      ? window.FixeoHeroes.getCardAvatar(cat)
-      : null;
-
-    /* Encode fallback URLs as data-attributes so the onerror handler can read
-     * them without closing over mutable JS variables from the card loop.
-     *
-     * data-avatar-state on the .pvc-avatar container (fxhome-artisans-v2b1.2):
-     * CSS rules gate exactly one child visible per state.
-     * JS sets it at render time; _avatarSetStage updates it on every transition.
-     */
-    var avatarInitialState; /* "real-photo" | "illustrative-metier" | "silhouette" */
-    var avatarHtml;
-    if (avatarSrc) {
-      /* Stage 1: real photo. Métier URLs stored in data attrs — NOT assigned to
-       * src/srcset yet, so no browser request is issued until onerror fires. */
-      avatarInitialState = 'real-photo';
-      avatarHtml =
-        '<img class="pvc-avatar-img"'
-        + ' src="'                   + _esc(avatarSrc)                          + '"'
-        + ' alt="'                   + _esc(a.name)                             + '"'
-        + ' data-avatar-type="real-photo"'
-        + ' data-webp="'             + (cardAvatar ? _esc(cardAvatar.webp) : '') + '"'
-        + ' data-png="'              + (cardAvatar ? _esc(cardAvatar.png)  : '') + '"'
-        + ' data-alt-metier="'       + (cardAvatar ? _esc(cardAvatar.alt)  : '') + '"'
-        + ' width="72" height="72" loading="lazy" decoding="async"'
-        + ' onerror="_fxAvStage(this)">'
-        + '<span class="pvc-avatar-silhouette"></span>';
-    } else if (cardAvatar) {
-      /* Stage 2 start: no real photo, load WebP immediately. PNG stored in data attr. */
-      avatarInitialState = 'illustrative-metier';
-      avatarHtml =
-        '<img class="pvc-avatar-img"'
-        + ' src="'                   + _esc(cardAvatar.webp)                    + '"'
-        + ' alt="'                   + _esc(cardAvatar.alt)                     + '"'
-        + ' data-avatar-type="illustrative-metier"'
-        + ' data-webp=""'
-        + ' data-png="'              + _esc(cardAvatar.png)                     + '"'
-        + ' data-alt-metier="'       + _esc(cardAvatar.alt)                     + '"'
-        + ' width="72" height="72" loading="lazy" decoding="async"'
-        + ' onerror="_fxAvStage(this)">'
-        + '<span class="pvc-avatar-silhouette"></span>';
-    } else {
-      /* Stage 4 direct: unknown category — silhouette only, no requests. */
-      avatarInitialState = 'silhouette';
-      avatarHtml = '<span class="pvc-avatar-silhouette"></span>';
+    var reviews = parseInt(a.reviewCount || a.reviews || a.review_count || 0,10) || 0;
+    var rating = parseFloat(a.rating || 0) || 0;
+    var reputation = '';
+    if (rating > 0 && reviews > 0) {
+      reputation = '<div class="pvc-live-signals"><span class="pvc-live-signal pvc-live-signal--rating">★ ' +
+        rating.toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1}) +
+        ' · ' + reviews + (reviews===1 ? ' avis' : ' avis') + '</span></div>';
     }
 
-    /* Availability badge — v2a: only show for explicit available_today.
-     * "available" cannot be trusted: loader defaults NULL→"available".
-     * Suppress badge for all non-explicit states. */
-    var availHtml;
-    if (isToday || avail === 'available_today') {
-      availHtml = '<span class="pvc-avail-badge pvc-avail-badge--today">\ud83d\udfe1 Disponible aujourd\u2019hui</span>';
-    } else {
-      availHtml = '';
+    var desc = '';
+    var rawDesc = a.description || a.shortBio || (a.bio && a.bio.fr) || '';
+    if (typeof rawDesc === 'string') {
+      rawDesc = rawDesc.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+      if (rawDesc && rawDesc !== '[object Object]' && rawDesc.charAt(0)!=='{' && rawDesc.charAt(0)!=='[') {
+        desc = '<p class="pvc-desc-v3b">' + _esc(rawDesc) + '</p>';
+      }
     }
 
-    /* Rating — J1: tier-based credible state (no fake numbers, no "Évaluation en cours")
-     * _sq = score_qualification (master artisans 68–96); reviews already declared above.
-     * For Supabase artisans (no sq, all reviews>=100), use idSeed to rotate 3 variants
-     * so the 6 visible top-artisan cards show different text, not all "Très bien noté". */
-    var _sq = parseInt(a.score_qualification || 0, 10);
-    /* idSeed for rating — same char-sum approach as signals, but local here */
-    var _idSeedR = 0;
-    var _idStrR = String(a.id || '0');
-    for (var _rci = 0; _rci < _idStrR.length; _rci++) { _idSeedR += _idStrR.charCodeAt(_rci); }
-    var HIGH_LABELS = ['Tr\u00e8s bien not\u00e9', 'Artisan s\u00e9rieux', 'Recommand\u00e9'];
-    var _ratingStateText;
-    if (_sq >= 90 || reviews >= 100) {
-      _ratingStateText = HIGH_LABELS[_idSeedR % HIGH_LABELS.length];
-    } else if (_sq >= 80 || reviews >= 40) {
-      _ratingStateText = 'Bien not\u00e9';
-    } else if (_sq >= 70 || reviews >= 10) {
-      _ratingStateText = 'S\u00e9lectionn\u00e9 Fixeo';
-    } else {
-      /* v2a: no reliable onboarding date — neutral truthful fallback */
-      _ratingStateText = 'Profil r\u00e9f\u00e9renc\u00e9 sur FIXEO';
-    }
-    /* V1-H Phase 6: Remove static ★★★★★ for artisans without real data.
-     * Master artisans (sq≥70 or reviews≥10) earned the label — show it cleanly.
-     * New/self-registered artisans: no stars. Honest tier state only.
-     * Stars are a decoration, not data. Their absence is more honest than their presence. */
-    var hasRealQuality = (_sq >= 70 || reviews >= 10);
-    var starsHtml = (hasRealQuality
-      ? '<span class="pvc-stars-v2" aria-hidden="true">\u2605\u2605\u2605\u2605\u2605</span>'
-      : '')
-      + '<span class="pvc-rating-state' + (hasRealQuality ? '' : ' pvc-rating-state--new') + '">'
-      + _ratingStateText + '</span>';
+    var dataAttr='';
+    try { dataAttr=' data-artisan=\'' + JSON.stringify(a).replace(/'/g,'&#39;') + '\''; } catch(_){}
 
-    /* Chips — credible state only (T2: no mission counts) */
-    /* chips removed — info block is FOMO + trust-line only (T2) */
-
-    /* Trust badges — verified/premium only (T2) */
-    var badges = '';
-    if (isVer)       badges += '<span class="pvc-badge-v2 pvc-badge-v2--verified">✔ Vérifié Fixeo</span>';
-    /* v2a.3: "Premium" badge removed — trust score is not a verifiable product claim. */
-
-    /* Data attribute (for click delegation) */
-    var dataAttr;
-    try {
-      dataAttr = ' data-artisan=\'' + JSON.stringify(a).replace(/'/g, '&#39;') + '\'';
-    } catch(_) { dataAttr = ''; }
-
-    return '<article class="pvc-card fhp-card"' +
-      ' data-artisan-id="' + a.id + '"' + dataAttr +
-      ' tabindex="0" role="button"' +
-      ' aria-label="' + _esc(a.name) + ', ' + catLbl + '"' +
+    return '<article class="pvc-card fhp-card fxhome-passport-card"' +
+      ' data-artisan-id="' + _esc(String(canonicalId || '')) + '"' + dataAttr +
+      ' tabindex="0" role="button" aria-label="' + _esc(name) + ', ' + _esc(catLbl) + '"' +
       ' style="--anim-delay:' + idx + '">' +
 
-      /* — Header — */
-'<div class="pvc-card-header pvc-card-header-final">' +
-  '<div class="pvc-avatar ' + (isVer ? ' pvc-avatar--verified' : '') + '" data-category="' + cat + '" data-avatar-state="' + avatarInitialState + '">' + avatarHtml + '<span class="pvc-avatar-badge">' + catIcon + '</span></div>' +
-  '<div class="pvc-identity pvc-identity-final">' +
-    '<h3 class="pvc-name">' + _esc(a.name || '-') + '</h3>' +
-    /* v2a.1: "Basé à Maroc" forbidden — use "Profil au Maroc" for missing city */
-        (a.city
-          ? '<div class="pvc-line pvc-line-city">📍 Bas\u00e9 \u00e0 ' + _esc(a.city) + '</div>'
-          : '<div class="pvc-line pvc-line-city">Profil au Maroc</div>') +
-    '<div class="pvc-line pvc-line-cat">' + catIcon + ' ' + catLbl + '</div>' +
-    '<div class="pvc-line pvc-line-available">' + availHtml + '</div>' +
-  '</div>' +
-'</div>' +
-
-      /* ── Badges ── */
-      (badges ? '<div class="pvc-badges-v2">' + badges + '</div>' : '') +
-
-      /* ── V3B: Optional factual mini-description ─────────────────────────
-       * Source: a.description (row.description in Supabase loader — confirmed
-       * canonical field used by public artisan profile page).
-       * Processing: strip HTML tags, collapse whitespace, trim. CSS 2-line clamp.
-       * Never generated or rewritten. Empty → block absent, no gap reserved.
-       * ─────────────────────────────────────────────────────────────────── */
-      (function() {
-        /* V3B2-1: normalizeMarketplaceArtisanRecord (main.js) drops .description and .shortBio,
-         * remapping the text to a.bio.fr. Add bio.fr fallback to cover Supabase-normalised records.
-         * Guard: (1) typeof === 'string' prevents coercion of bio objects.
-         * (2) _descSanitize rejects stringified object artefacts ('[object Object]' etc.)
-         *     that can appear when normalizeMarketplaceArtisanRecord falls back to raw.bio
-         *     as a last resort (truthy object) and it later gets JSON-stringified or .toString()'d. */
-        function _descSanitize(s) {
-          if (typeof s !== 'string') return '';
-          var t = s.trim();
-          if (!t) return '';
-          // Reject JSON array/object artefacts and Object.prototype.toString artefacts
-          if (t === '[object Object]' || t.charAt(0) === '[' || t.charAt(0) === '{') return '';
-          return t;
-        }
-        var _descStr = _descSanitize(a.description)
-                    || _descSanitize(a.shortBio)
-                    || _descSanitize(a.bio && a.bio.fr)
-                    || '';
-        var raw = _descStr.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-        if (!raw) return '';
-        return '<p class="pvc-desc-v3b">' + _esc(raw) + '</p>';
-      })() +
-
-      /* ── V3B: Two compact trust rows ─────────────────────────────────────
-       * Row 1: Profil référencé sur FIXEO (neutral listing/directory signal).
-       * Row 2: Paiement après intervention (platform-level payment truth).
-       * No pill, no border, no background, no verification implication.
-       * Verified gate kept separately: if isVer, shows "Vérifié FIXEO" badge
-       * above; these two rows are always present regardless of verified state.
-       * flex-direction:column — guaranteed no horizontal overflow at any width.
-       * trust.scrollWidth <= trust.clientWidth validated in V3A.3 at all vp.
-       * ─────────────────────────────────────────────────────────────────── */
-      /* V3B2: Inline SVG icons replace platform-dependent emoji.
-       * SVG: 14×14px, currentColor, aria-hidden="true".
-       * Icon 1 (list/directory): neutral listing/profile signal — no shield, no checkmark.
-       * Icon 2 (payment): abstract coin+arrow — no handshake (colour emoji inconsistency).
-       * No external library. No network request. Stable across iPhone/Samsung/Windows. */
-      '<div class="pvc-trust-v3b" role="list">' +
-        '<span class="pvc-trust-v3b-item" role="listitem">' +
-          /* Directory/listing icon — neutral document lines */
-          '<span class="pvc-trust-v3b-icon">' +
-            '<svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">' +
-              '<rect x="2" y="1" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none"/>' +
-              '<line x1="4.5" y1="4.5" x2="9.5" y2="4.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>' +
-              '<line x1="4.5" y1="7" x2="9.5" y2="7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>' +
-              '<line x1="4.5" y1="9.5" x2="7.5" y2="9.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>' +
-            '</svg>' +
-          '</span>' +
-          'Profil r\u00e9f\u00e9renc\u00e9 sur FIXEO' +
-        '</span>' +
-        '<span class="pvc-trust-v3b-item" role="listitem">' +
-          /* Payment icon — coin with upward arrow */
-          '<span class="pvc-trust-v3b-icon">' +
-            '<svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">' +
-              '<circle cx="7" cy="7.5" r="4.5" stroke="currentColor" stroke-width="1.3" fill="none"/>' +
-              '<path d="M7 4.5 L7 2 M7 2 L5.5 3.5 M7 2 L8.5 3.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>' +
-              '<line x1="5.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>' +
-            '</svg>' +
-          '</span>' +
-          'Paiement apr\u00e8s intervention' +
-        '</span>' +
+      '<div class="pvc-card-header pvc-card-header-final">' +
+        '<div class="pvc-avatar" data-category="' + _esc(cat) + '" data-avatar-state="' + avatar.state + '">' +
+          avatar.html +
+        '</div>' +
+        '<div class="pvc-identity pvc-identity-final">' +
+          '<span class="pvc-passport-kicker">PROFIL PROFESSIONNEL FIXEO</span>' +
+          '<h3 class="pvc-name">' + _esc(name) + '</h3>' +
+          '<div class="pvc-line pvc-line-passport">' + _esc(catLbl) + (city ? ' · ' + _esc(city) : '') + '</div>' +
+        '</div>' +
       '</div>' +
 
-      /* ── V3B: Action area (margin-top:auto anchors price+CTA to bottom) ──
-       * Contains: sep divider → price block → primary CTA → secondary link.
-       * margin-top:auto on .pvc-action-v3b absorbs all surplus vertical space
-       * regardless of how much content the card above contains.
-       * This guarantees CTA vertical alignment across all 6 card states.
-       * ─────────────────────────────────────────────────────────────────── */
+      desc +
+      reputation +
+
+      '<div class="pvc-trust-v3b" role="list">' +
+        '<span class="pvc-trust-v3b-item" role="listitem">Profil référencé sur FIXEO</span>' +
+        '<span class="pvc-trust-v3b-item" role="listitem">Paiement après intervention</span>' +
+      '</div>' +
+
       '<div class="pvc-action-v3b">' +
         '<div class="pvc-divider pvc-divider-v3b"></div>' +
-        /* v2a: single price message — label/amount/hint column */
         '<div class="pvc-price-block pvc-price-v3b">' +
           '<div class="pvc-price-amount">' + _esc(pricing.main) + '</div>' +
           '<span class="pvc-price-from">' + _esc(pricing.hint) + '</span>' +
         '</div>' +
-        '<button class="pvc-btn-reserve-v2 fhp-btn-reserve pvc-btn-v3b" type="button"' +
-          ' aria-label="R\u00e9server ' + _esc(a.name) + ', ' + _esc(catLbl) + '">' +
-          'R\u00e9server maintenant \u2192' +
+        '<button class="pvc-btn-reserve-v2 fhp-btn-reserve pvc-btn-v3b fxhome-btn-reserve" type="button"' +
+          ' aria-label="Demander une intervention avec ' + _esc(name) + ', ' + _esc(catLbl) + '">' +
+          'Demander une intervention →' +
         '</button>' +
-        /* v2a: semantic anchor — href valid without JS */
         '<a class="pvc-profile-link fhp-btn-profile pvc-profile-v3b"' +
-          ' href="artisan-profile.html?id=' + encodeURIComponent(String(a.id)) + '"' +
-          ' aria-label="Voir le profil complet de ' + _esc(a.name) + '">' +
-          'Voir le profil complet \u203a' +
+          ' href="artisan-profile.html?id=' + encodeURIComponent(String(canonicalId || '')) + '&pv=20261002cards2"' +
+          ' aria-label="Voir le profil complet de ' + _esc(name) + '">' +
+          'Voir le profil complet ›' +
         '</a>' +
       '</div>' +
-
     '</article>';
   }
 
@@ -644,9 +472,9 @@
     /* Guard: ensure comparison bar stays hidden during profile navigation */
     _guardComparatorBar();
     if (window.FixeoPublicProfileLinks && typeof window.FixeoPublicProfileLinks.openBySourceId === 'function') {
-      window.FixeoPublicProfileLinks.openBySourceId(String(a.id));
+      window.FixeoPublicProfileLinks.openBySourceId(String(a._supabase_id || a.id));
     } else {
-      window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(String(a.id));
+      window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(String(a._supabase_id || a.id)) + '&pv=20261002cards2';
     }
   }
 
