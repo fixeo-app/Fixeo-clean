@@ -141,6 +141,14 @@
     if (!tarifEl || tarifEl.dataset.rv2) return;
     tarifEl.dataset.rv2 = '1';
 
+    /* Targeted artisan mode owns truth: no local estimation card, no service-price prompt. */
+    if (qs('[data-res-targeted-category]', m)) {
+      var existingTargetedEst = qs('.fxrv2-estimation', m);
+      if (existingTargetedEst) existingTargetedEst.remove();
+      tarifEl.style.display = 'none';
+      return;
+    }
+
     /* Skip urgent mode — keep as-is */
     if (isUrgent()) return;
 

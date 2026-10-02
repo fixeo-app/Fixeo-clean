@@ -34,7 +34,7 @@ test('B0: artisan profile retains targeted booking while V4 owns public renderin
   const v4=read('js/fixeo-artisan-profile-v4.js');
   assert.match(v4,/id="public-artisan-action"/);
   assert.match(v4,/FixeoReservation\.open\(artisan\(p\),false\)/);
-  assert.match(html,/js\/reservation\.js\?v=av1-targeted1/);
+  assert.match(html,/js\/reservation\.js\?v=av1-targeted2/);
   assert.match(html,/fixeo-artisan-profile-v4\.js\?v=fxp4-b34/);
   assert.doesNotMatch(html,/src=["'][^"']*fixeo-public-artisan-profile\.js/);
 });

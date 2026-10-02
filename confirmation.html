@@ -598,6 +598,20 @@
         totalRow.style.display = 'flex';
       }
 
+      /* Targeted artisan requests without authoritative estimator price:
+         never fabricate or reuse a local amount. */
+      if (order.source === 'reservation_targeted' && !order.total) {
+        if (totalRow) totalRow.style.display = 'none';
+        var noticeText = document.querySelector('.conf-notice-text');
+        if (noticeText) {
+          noticeText.innerHTML =
+            '<strong>Votre créneau est enregistré.</strong> L\'artisan peut vous contacter via WhatsApp ' +
+            'pour confirmer l\'horaire et l\'adresse.<br/>' +
+            'Le <strong>tarif sera confirmé avant l\'intervention</strong>. ' +
+            'Vous ne payez qu\'après l\'intervention.';
+        }
+      }
+
       /* ── Référence commande ── */
       var refEl = document.getElementById('conf-ref');
       if (refEl) {
