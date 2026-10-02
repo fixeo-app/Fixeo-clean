@@ -15,7 +15,7 @@ function blobSha(p){
 }
 
 const protectedBlobs={
-  'index.html':'309e85b46bcd0bd0d90134668cc1fb5b78317713',
+  'index.html':'74b71bc778407e2615e45924cf536535f939ef29',
   'js/fixeo-intake-v1.js':'4672fc11137fbe800643464ba181db3722bff936',
   'js/fixeo-estimator-v2.js':'8299df65ad21ceffea362f0fcc99b6cfa896ebd8',
   'js/fixeo-diagnostic-v1.js':'77a0ac452eafa91284284d609f88b413c6675258',
