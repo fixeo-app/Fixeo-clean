@@ -14,8 +14,8 @@ set search_path to ''
 as $function$
 declare
   v_uid uuid := auth.uid();
-  v_kind text := pg_catalog.lower(pg_catalog.trim(pg_catalog.coalesce(p_kind, '')));
-  v_bytes bigint := pg_catalog.coalesce(p_bytes, 0);
+  v_kind text := pg_catalog.lower(pg_catalog.btrim(coalesce(p_kind, '')));
+  v_bytes bigint := coalesce(p_bytes, 0);
   v_limits jsonb;
   v_delta jsonb;
 begin
