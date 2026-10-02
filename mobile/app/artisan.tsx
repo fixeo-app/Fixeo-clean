@@ -1,10 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
-import { AppState, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { AppState, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { acceptDispatchOffer, getDispatchOffers } from '@/lib/magicLoop';
 import type { DispatchOffer } from '@/lib/dispatchContract';
 import { getMyCurrentArtisanMission, type MissionSnapshot } from '@/lib/missionTerrain';
 import { PushOptIn } from '@/components/PushOptIn';
+import { FixeoAction } from '@/ui/FixeoAction';
+import { FixeoCard } from '@/ui/FixeoCard';
+import { FixeoScreen } from '@/ui/FixeoScreen';
+import { RafiOrb } from '@/ui/RafiOrb';
+import { colors, radius, spacing, type } from '@/ui/tokens';
 
 const ACCEPT_MESSAGES: Record<string, string> = {
   already_claimed: 'Cette demande a déjà été prise en charge.',
@@ -59,7 +64,7 @@ export default function Artisan() {
     if (acceptingRequestId) return;
     setAcceptingRequestId(requestId);
     try {
-      setMessage('Acceptation en cours…');
+      setMessage('FIXEO sécurise la mission…');
       const result = await acceptDispatchOffer(requestId);
       setMessage(result.reason === 'already_accepted' ? 'Mission déjà acceptée.' : '✓ Mission acceptée.');
       await load();
@@ -76,84 +81,283 @@ export default function Artisan() {
     }
   }
 
+  const cockpit = useMemo(() => {
+    if (currentMission?.request_status === 'in_progress') {
+      return {
+        eyebrow: 'MISSION EN COURS',
+        title: 'Restez concentré sur l’intervention.',
+        subtitle: 'RAFI garde le contexte et FIXEO suit les prochaines étapes.',
+        orb: 'working' as const,
+      };
+    }
+    if (currentMission?.request_status === 'completed') {
+      return {
+        eyebrow: 'VALIDATION CLIENT',
+        title: 'Intervention terminée.',
+        subtitle: 'FIXEO attend la confirmation finale du client.',
+        orb: 'success' as const,
+      };
+    }
+    if (currentMission) {
+      return {
+        eyebrow: 'PROCHAINE ACTION',
+        title: 'Une mission vous attend.',
+        subtitle: 'Ouvrez-la et laissez FIXEO vous guider jusqu’à la clôture.',
+        orb: 'success' as const,
+      };
+    }
+    if (offers.length > 0) {
+      return {
+        eyebrow: 'OPPORTUNITÉS',
+        title: 'De nouvelles missions sont disponibles.',
+        subtitle: 'La meilleure opportunité est déjà remontée pour vous.',
+        orb: 'working' as const,
+      };
+    }
+    return {
+      eyebrow: 'FIXEO ARTISAN',
+      title: 'Vous êtes prêt.',
+      subtitle: 'FIXEO vous prévient dès qu’une opportunité pertinente arrive.',
+      orb: 'idle' as const,
+    };
+  }, [currentMission, offers.length]);
+
   const header = (
-    <View>
-      <Text style={styles.kicker}>FIXEO ARTISAN</Text>
-      <Text style={styles.title}>Opportunités</Text>
-      <PushOptIn />
-      {!!message && <Text style={styles.message}>{message}</Text>}
+    <View style={styles.headerStack}>
+      <View style={styles.hero}>
+        <Text style={styles.brand}>FIXEO ARTISAN</Text>
+        <RafiOrb mode={cockpit.orb} size={76} />
+        <Text style={styles.eyebrow}>{cockpit.eyebrow}</Text>
+        <Text style={styles.title}>{cockpit.title}</Text>
+        <Text style={styles.subtitle}>{cockpit.subtitle}</Text>
+      </View>
+
+      {!!message && (
+        <FixeoCard tone="muted" style={styles.messageCard}>
+          <Text style={styles.message}>{message}</Text>
+        </FixeoCard>
+      )}
 
       {!!currentMission && (
-        <View style={styles.activeCard}>
+        <FixeoCard tone="dark" style={styles.activeCard}>
           <Text style={styles.activeEyebrow}>MISSION EN COURS</Text>
           <Text style={styles.activeTitle}>{currentMission.service_category || 'Mission FIXEO'}</Text>
           <Text style={styles.activeMeta}>
             {currentMission.city || ''} · {ACTIVE_LABELS[currentMission.request_status] || 'Suivi FIXEO'}
           </Text>
-          <Pressable
-            style={styles.openMission}
+          <FixeoAction
+            label="Ouvrir la mission"
+            variant="secondary"
             onPress={() => router.push({
               pathname: '/mission/[id]',
               params: { id: currentMission.mission_id },
             } as any)}
-          >
-            <Text style={styles.white}>Ouvrir la mission</Text>
-          </Pressable>
-        </View>
+          />
+        </FixeoCard>
       )}
 
-      <Text style={styles.sectionTitle}>Nouvelles opportunités</Text>
+      <View style={styles.sectionIntro}>
+        <Text style={styles.sectionTitle}>Opportunités maintenant</Text>
+        <Text style={styles.sectionHint}>
+          {offers.length > 0
+            ? `${offers.length} mission${offers.length > 1 ? 's' : ''} disponible${offers.length > 1 ? 's' : ''}`
+            : 'Aucune mission à traiter pour le moment'}
+        </Text>
+      </View>
     </View>
   );
 
   return (
-    <View style={styles.root}>
+    <FixeoScreen padded={false}>
       <FlatList
         data={offers}
         keyExtractor={(item) => item.request_id}
         ListHeaderComponent={header}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
-        ListEmptyComponent={<Text style={styles.empty}>Aucune opportunité active pour le moment.</Text>}
+        ListEmptyComponent={
+          <FixeoCard tone="muted" style={styles.emptyCard}>
+            <Text style={styles.emptyTitle}>Rien à faire pour l’instant.</Text>
+            <Text style={styles.empty}>
+              Gardez les alertes activées. FIXEO vous prévient dès qu’une mission correspond.
+            </Text>
+          </FixeoCard>
+        }
+        ListFooterComponent={
+          <View style={styles.footer}>
+            <PushOptIn compact />
+          </View>
+        }
         contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => {
           const accepting = acceptingRequestId === item.request_id;
           return (
-            <View style={styles.card}>
-              <Text style={styles.heading}>{item.service_category || 'Mission FIXEO'}</Text>
-              <Text>{item.city || ''}{item.urgency ? ' · ' + item.urgency : ''}</Text>
-              <Text style={styles.meta}>Rang de matching : {item.match_rank ?? '—'}</Text>
-              <Pressable
-                style={[styles.accept, accepting && styles.disabled]}
+            <FixeoCard style={styles.card}>
+              <View style={styles.offerTop}>
+                <View style={styles.offerText}>
+                  <Text style={styles.heading}>{item.service_category || 'Mission FIXEO'}</Text>
+                  <Text style={styles.city}>
+                    {item.city || ''}{item.urgency ? ' · ' + item.urgency : ''}
+                  </Text>
+                </View>
+                <View style={styles.rankPill}>
+                  <Text style={styles.rankText}>#{item.match_rank ?? '—'}</Text>
+                </View>
+              </View>
+
+              <Text style={styles.meta}>Cette opportunité correspond à votre profil FIXEO.</Text>
+
+              <FixeoAction
+                label={accepting ? 'Sécurisation de la mission…' : 'Accepter la mission'}
                 disabled={!!acceptingRequestId}
                 onPress={() => void accept(item.request_id)}
-              >
-                <Text style={styles.white}>{accepting ? 'Acceptation…' : 'Accepter'}</Text>
-              </Pressable>
-            </View>
+              />
+            </FixeoCard>
           );
         }}
       />
-    </View>
+    </FixeoScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#f7f7f7' },
-  content: { padding: 24, paddingTop: 70, paddingBottom: 40 },
-  kicker: { fontWeight: '800', letterSpacing: 2 },
-  title: { fontSize: 30, fontWeight: '800', marginVertical: 20 },
-  message: { marginVertical: 14, fontWeight: '600' },
-  activeCard: { backgroundColor: '#111', padding: 20, borderRadius: 22, marginTop: 18, marginBottom: 26, gap: 7 },
-  activeEyebrow: { color: '#aaa', fontWeight: '800', letterSpacing: 1.3, fontSize: 12 },
-  activeTitle: { color: '#fff', fontWeight: '800', fontSize: 23 },
-  activeMeta: { color: '#ddd' },
-  openMission: { marginTop: 10, padding: 14, borderRadius: 14, borderWidth: 1, borderColor: '#555' },
-  sectionTitle: { fontWeight: '800', marginBottom: 12, opacity: 0.55, letterSpacing: 1 },
-  empty: { opacity: 0.6 },
-  card: { padding: 18, backgroundColor: '#fff', borderRadius: 18, marginBottom: 12 },
-  heading: { fontSize: 19, fontWeight: '700' },
-  meta: { marginTop: 6, opacity: 0.65 },
-  accept: { backgroundColor: '#111', padding: 14, borderRadius: 14, marginTop: 16 },
-  disabled: { opacity: 0.55 },
-  white: { color: '#fff', textAlign: 'center', fontWeight: '700' },
+  content: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.xxl,
+    gap: spacing.md,
+  },
+  headerStack: {
+    gap: spacing.lg,
+  },
+  hero: {
+    alignItems: 'center',
+    paddingTop: spacing.lg,
+    gap: spacing.md,
+  },
+  brand: {
+    fontSize: 14,
+    fontWeight: '900',
+    letterSpacing: 3.2,
+    color: colors.text,
+  },
+  eyebrow: {
+    marginTop: spacing.xs,
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.6,
+    color: colors.textMuted,
+    textAlign: 'center',
+  },
+  title: {
+    maxWidth: 340,
+    fontSize: 36,
+    lineHeight: 40,
+    fontWeight: '900',
+    letterSpacing: -1.2,
+    color: colors.text,
+    textAlign: 'center',
+  },
+  subtitle: {
+    maxWidth: 330,
+    fontSize: type.body,
+    lineHeight: 23,
+    color: colors.textMuted,
+    textAlign: 'center',
+  },
+  messageCard: {
+    paddingVertical: spacing.md,
+  },
+  message: {
+    textAlign: 'center',
+    fontWeight: '800',
+    color: colors.text,
+  },
+  activeCard: {
+    gap: spacing.md,
+  },
+  activeEyebrow: {
+    color: '#9B9B9F',
+    fontWeight: '900',
+    letterSpacing: 1.4,
+    fontSize: type.eyebrow,
+  },
+  activeTitle: {
+    color: colors.inverse,
+    fontWeight: '900',
+    fontSize: 28,
+    letterSpacing: -0.6,
+  },
+  activeMeta: {
+    color: '#D8D8DA',
+    fontSize: type.body,
+  },
+  sectionIntro: {
+    paddingTop: spacing.sm,
+    gap: spacing.xs,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  sectionHint: {
+    color: colors.textMuted,
+    lineHeight: 20,
+  },
+  emptyCard: {
+    marginTop: spacing.md,
+    gap: spacing.sm,
+  },
+  emptyTitle: {
+    fontSize: 19,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  empty: {
+    color: colors.textMuted,
+    lineHeight: 21,
+  },
+  card: {
+    marginTop: spacing.md,
+    gap: spacing.md,
+  },
+  offerTop: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+  },
+  offerText: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  heading: {
+    fontSize: 23,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  city: {
+    fontSize: type.body,
+    color: colors.textMuted,
+  },
+  rankPill: {
+    minWidth: 42,
+    height: 42,
+    borderRadius: radius.pill,
+    backgroundColor: colors.ink,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.sm,
+  },
+  rankText: {
+    color: colors.inverse,
+    fontWeight: '900',
+  },
+  meta: {
+    color: colors.textMuted,
+    lineHeight: 20,
+  },
+  footer: {
+    paddingTop: spacing.lg,
+  },
 });
