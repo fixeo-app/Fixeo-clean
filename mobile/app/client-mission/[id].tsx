@@ -1,48 +1,67 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  AppState,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
   confirmCompletedRequest,
-  getMyCurrentClientMission,
+  getClientMissionDetail,
+  getMissionTimeline,
   type MissionSnapshot,
 } from '@/lib/missionTerrain';
-
-const STEPS = [
-  ['assigned', 'Artisan trouvé'],
-  ['in_progress', 'Intervention en cours'],
-  ['completed', 'Intervention terminée'],
-  ['validated', 'Mission validée'],
-] as const;
-
-function rank(status: string) {
-  const index = STEPS.findIndex(([key]) => key === status);
-  return index < 0 ? 0 : index;
-}
+import { listMissionEvidence, type MissionEvidence } from '@/lib/missionEvidence';
+import {
+  getMissionChange,
+  respondMissionChange,
+  type MissionChangeProposal,
+} from '@/lib/missionChange';
 
 export default function ClientMission() {
   const params = useLocalSearchParams<{ id?: string }>();
   const missionId = String(params.id || '');
   const [mission, setMission] = useState<MissionSnapshot | null>(null);
+  const [timeline, setTimeline] = useState<any[]>([]);
+  const [evidence, setEvidence] = useState<MissionEvidence[]>([]);
+  const [change, setChange] = useState<MissionChangeProposal | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
 
   const load = useCallback(async () => {
+    if (!missionId) return;
     try {
-      const current = await getMyCurrentClientMission();
-      if (!current || (missionId && current.mission_id !== missionId)) {
-        setMessage('Cette mission n’est plus active.');
-        return;
-      }
-      setMission(current);
+      const detail = await getClientMissionDetail(missionId);
+      setMission(detail);
+      setMessage('');
+
+      const [eventsResult, evidenceResult, changeResult] = await Promise.allSettled([
+        getMissionTimeline(missionId),
+        listMissionEvidence(missionId),
+        getMissionChange(missionId),
+      ]);
+      if (eventsResult.status === 'fulfilled') setTimeline(eventsResult.value);
+      if (evidenceResult.status === 'fulfilled') setEvidence(evidenceResult.value);
+      if (changeResult.status === 'fulfilled') setChange(changeResult.value);
     } catch {
-      setMessage('Impossible de charger le suivi.');
+      setMessage('Connexion instable. Votre suivi FIXEO reste conservé.');
     }
   }, [missionId]);
 
   useEffect(() => {
     void load();
     const timer = setInterval(() => void load(), 5000);
-    return () => clearInterval(timer);
+    const appState = AppState.addEventListener('change', state => {
+      if (state === 'active') void load();
+    });
+    return () => {
+      clearInterval(timer);
+      appState.remove();
+    };
   }, [load]);
 
   async function validate() {
@@ -60,7 +79,33 @@ export default function ClientMission() {
     }
   }
 
-  const currentRank = rank(String(mission?.request_status || 'assigned'));
+  async function decideChange(approve: boolean) {
+    if (!change?.id || busy) return;
+    setBusy(true);
+    setMessage(approve ? 'Validation de l’ajustement…' : 'Refus de l’ajustement…');
+    try {
+      await respondMissionChange(change.id, approve);
+      await load();
+      setMessage(approve ? '✓ Ajustement accepté.' : 'Ajustement refusé.');
+    } catch {
+      setMessage('Impossible d’enregistrer votre décision pour le moment.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const status = String(mission?.request_status || 'assigned');
+  const arrived = timeline.some(item => item?.event_type === 'arrived') || status !== 'assigned';
+  const inProgress = ['in_progress', 'completed', 'validated'].includes(status);
+  const completed = ['completed', 'validated'].includes(status);
+  const validated = status === 'validated';
+  const steps = [
+    { label: 'Artisan trouvé', done: true },
+    { label: 'Artisan arrivé', done: arrived },
+    { label: 'Intervention en cours', done: inProgress },
+    { label: 'Intervention terminée', done: completed },
+    { label: 'Mission validée', done: validated },
+  ];
 
   return (
     <ScrollView contentContainerStyle={styles.root}>
@@ -79,12 +124,10 @@ export default function ClientMission() {
       </View>
 
       <View style={styles.timeline}>
-        {STEPS.map(([key, label], index) => (
-          <View key={key} style={styles.step}>
-            <Text style={index <= currentRank ? styles.stepOn : styles.stepOff}>
-              {index <= currentRank ? '●' : '○'}
-            </Text>
-            <Text style={index <= currentRank ? styles.stepLabelOn : styles.stepLabelOff}>{label}</Text>
+        {steps.map(step => (
+          <View key={step.label} style={styles.step}>
+            <Text style={step.done ? styles.stepOn : styles.stepOff}>{step.done ? '●' : '○'}</Text>
+            <Text style={step.done ? styles.stepLabelOn : styles.stepLabelOff}>{step.label}</Text>
           </View>
         ))}
       </View>
@@ -96,7 +139,53 @@ export default function ClientMission() {
         </View>
       )}
 
-      {mission?.request_status === 'completed' && (
+      {!!mission?.agreed_price && (
+        <View style={styles.card}>
+          <Text style={styles.cardLabel}>Montant validé</Text>
+          <Text style={styles.price}>{mission.agreed_price} DH</Text>
+        </View>
+      )}
+
+      {change?.status === 'presented' && (
+        <View style={styles.changeCard}>
+          <Text style={styles.changeEyebrow}>AJUSTEMENT VÉRIFIÉ PAR FIXEO</Text>
+          <Text style={styles.changePrice}>{change.proposed_price} DH</Text>
+          <Text style={styles.body}>{change.reason}</Text>
+          {!!change.supplies && <Text style={styles.changeMeta}>Fournitures : {change.supplies}</Text>}
+          {!!change.estimated_duration && <Text style={styles.changeMeta}>Durée : {change.estimated_duration}</Text>}
+          <View style={styles.decisionRow}>
+            <Pressable style={styles.reject} disabled={busy} onPress={() => void decideChange(false)}>
+              <Text style={styles.rejectText}>Refuser</Text>
+            </Pressable>
+            <Pressable style={styles.accept} disabled={busy} onPress={() => void decideChange(true)}>
+              <Text style={styles.acceptText}>Accepter</Text>
+            </Pressable>
+          </View>
+        </View>
+      )}
+
+      {change?.status === 'client_accepted' && (
+        <View style={styles.doneCard}>
+          <Text style={styles.doneTitle}>✓ Ajustement accepté</Text>
+          <Text style={styles.doneText}>Le nouveau montant validé est {change.proposed_price} DH.</Text>
+        </View>
+      )}
+
+      {!!evidence.length && (
+        <View style={styles.card}>
+          <Text style={styles.cardLabel}>Preuves terrain</Text>
+          <Text style={styles.evidenceCount}>
+            {evidence.filter(item => item.kind === 'before').length} avant · {evidence.filter(item => item.kind === 'after').length} après
+          </Text>
+          <View style={styles.evidenceRow}>
+            {evidence.slice(0, 3).map(item => item.signed_url ? (
+              <Image key={item.id} source={{ uri: item.signed_url }} style={styles.evidenceImage} />
+            ) : null)}
+          </View>
+        </View>
+      )}
+
+      {status === 'completed' && (
         <Pressable style={styles.primary} disabled={busy} onPress={() => void validate()}>
           <Text style={styles.primaryText}>
             {busy ? 'Validation…' : 'Confirmer la fin de l’intervention'}
@@ -104,7 +193,7 @@ export default function ClientMission() {
         </Pressable>
       )}
 
-      {mission?.request_status === 'validated' && (
+      {status === 'validated' && (
         <View style={styles.doneCard}>
           <Text style={styles.doneTitle}>✓ Mission terminée</Text>
           <Text style={styles.doneText}>FIXEO a enregistré votre validation.</Text>
@@ -135,7 +224,20 @@ const styles = StyleSheet.create({
   stepLabelOff: { fontSize: 17, opacity: 0.35 },
   card: { backgroundColor: '#fff', borderRadius: 22, padding: 20, gap: 8 },
   cardLabel: { fontWeight: '800', opacity: 0.55 },
-  body: { fontSize: 18, lineHeight: 26 },
+  body: { fontSize: 17, lineHeight: 24 },
+  price: { fontSize: 28, fontWeight: '800' },
+  changeCard: { backgroundColor: '#fff', borderRadius: 22, padding: 20, gap: 10, borderWidth: 1, borderColor: '#d9d9d9' },
+  changeEyebrow: { fontSize: 12, fontWeight: '800', letterSpacing: 1.2, opacity: 0.55 },
+  changePrice: { fontSize: 30, fontWeight: '800' },
+  changeMeta: { opacity: 0.65 },
+  decisionRow: { flexDirection: 'row', gap: 10, marginTop: 5 },
+  reject: { flex: 1, borderWidth: 1, borderColor: '#d5d5d5', borderRadius: 15, padding: 15 },
+  rejectText: { textAlign: 'center', fontWeight: '800' },
+  accept: { flex: 1, backgroundColor: '#111', borderRadius: 15, padding: 15 },
+  acceptText: { textAlign: 'center', color: '#fff', fontWeight: '800' },
+  evidenceCount: { fontWeight: '700' },
+  evidenceRow: { flexDirection: 'row', gap: 8, marginTop: 5 },
+  evidenceImage: { width: 78, height: 78, borderRadius: 14, backgroundColor: '#eee' },
   primary: { backgroundColor: '#111', padding: 18, borderRadius: 18 },
   primaryText: { color: '#fff', textAlign: 'center', fontWeight: '800', fontSize: 17 },
   doneCard: { backgroundColor: '#fff', borderRadius: 22, padding: 20, gap: 8 },
