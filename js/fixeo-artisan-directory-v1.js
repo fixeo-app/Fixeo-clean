@@ -285,6 +285,7 @@
     var t = s.trim();
     if (!t) return '';
     if (t === '[object Object]' || t.charAt(0) === '[' || t.charAt(0) === '{') return '';
+    if (/sourc[ée].*(facebook|google|annuaire|interne)|source interne|prospection/i.test(t)) return '';
     return t;
   }
 
