@@ -49,7 +49,7 @@ review_items as (
 ),
 mission_metrics as (
   select
-    count(*) filter(where status in ('completed','validated') or completed_at is not null or validated_at is not null)::int completed_count,
+    count(*) filter(where status in ('done','validated') or completed_at is not null or validated_at is not null)::int completed_count,
     count(*) filter(where accepted_at is not null)::int accepted_count,
     round(avg(extract(epoch from (accepted_at-created_at))/60.0) filter(where accepted_at is not null and created_at is not null and accepted_at>=created_at))::int avg_response_minutes
   from public.missions where artisan_profile_id=p_artisan_id
@@ -117,7 +117,7 @@ begin
   if not found then raise exception 'MISSION_NOT_FOUND'; end if;
   if v_m.client_profile_id is distinct from v_uid then raise exception 'MISSION_FORBIDDEN'; end if;
   if v_m.artisan_profile_id is null then raise exception 'ARTISAN_NOT_ASSIGNED'; end if;
-  if not (v_m.status in ('completed','validated') or v_m.completed_at is not null or v_m.validated_at is not null) then raise exception 'MISSION_NOT_COMPLETED'; end if;
+  if not (v_m.status in ('done','validated') or v_m.completed_at is not null or v_m.validated_at is not null) then raise exception 'MISSION_NOT_COMPLETED'; end if;
 
   insert into public.reviews(mission_id,artisan_id,client_profile_id,rating,review_text,verified,response_time_score,quality_score)
   values(v_m.id,v_m.artisan_profile_id,v_uid,p_rating,nullif(btrim(p_review_text),''),true,p_response_time_score,p_quality_score)
@@ -140,7 +140,7 @@ else coalesce((
  select jsonb_build_object('authenticated',true,'eligible',true,'mission_id',m.id,'already_reviewed',exists(select 1 from public.reviews r where r.mission_id=m.id))
  from public.missions m
  where m.client_profile_id=auth.uid() and m.artisan_profile_id=p_artisan_id
-   and (m.status in ('completed','validated') or m.completed_at is not null or m.validated_at is not null)
+   and (m.status in ('done','validated') or m.completed_at is not null or m.validated_at is not null)
  order by coalesce(m.validated_at,m.completed_at,m.created_at) desc limit 1
 ),jsonb_build_object('authenticated',true,'eligible',false)) end;
 $function$;
