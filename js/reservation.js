@@ -1517,7 +1517,7 @@ city:
           'margin:0!important;border-radius:0!important}';
       document.head.appendChild(style);
     }
-    if (!document.querySelector('link[data-fixeo-targeted-shell]')) {
+    if (!document.querySelector('link[data-fixeo-targeted-shell],link[href*="fixeo-reservation-targeted-polish-v1.css"]')) {
       var link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = '/css/fixeo-reservation-targeted-polish-v1.css?v=fxrt-v3';
