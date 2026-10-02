@@ -325,14 +325,12 @@
 
   function _proofs(a) {
     var out = [];
-    var completed = parseInt(
-      a.completed_interventions || a.completed_missions || a.completedInterventions || a.missions_done || 0,
-      10
-    ) || 0;
-    var reviews = parseInt(a.reviewCount || a.review_count || a.reviews || 0, 10) || 0;
-    var rating = parseFloat(a.rating || a.average_rating || a.verified_average_rating || 0) || 0;
+    var metrics = (a && a.metrics && typeof a.metrics === 'object') ? a.metrics : {};
+    var completed = parseInt(a.completed_interventions || metrics.completed_interventions || 0, 10) || 0;
+    var reviews = parseInt(a.verified_review_count || metrics.verified_review_count || 0, 10) || 0;
+    var rating = parseFloat(a.verified_average_rating || metrics.verified_average_rating || 0) || 0;
     if (completed > 0) out.push(completed + ' intervention' + (completed > 1 ? 's' : '') + ' FIXEO');
-    if (reviews > 0 && rating > 0) out.push(rating.toFixed(1).replace('.', ',') + ' ★ · ' + reviews + ' avis');
+    if (reviews > 0 && rating > 0) out.push(rating.toFixed(1).replace('.', ',') + ' ★ · ' + reviews + ' avis vérifiés');
     return out;
   }
 
