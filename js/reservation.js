@@ -328,10 +328,16 @@ city:
   if (!window._fxResCloseCaptureBound) {
     window._fxResCloseCaptureBound = true;
     document.addEventListener('click', function(e) {
-      var btn = e.target && e.target.closest
-        ? e.target.closest('#' + MODAL_ID + ' .fixeo-res-close')
+      /* Safari/iOS can surface a non-Element event target for the glyph itself.
+       * Resolve back to an Element before closest(), then scope to the live modal. */
+      var origin = e.target && e.target.nodeType === 1
+        ? e.target
+        : (e.target && e.target.parentElement ? e.target.parentElement : null);
+      var modal = document.getElementById(MODAL_ID);
+      var btn = origin && origin.closest
+        ? origin.closest('.fixeo-res-close')
         : null;
-      if (!btn) return;
+      if (!btn || !modal || !modal.contains(btn)) return;
       e.preventDefault();
       e.stopPropagation();
       if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
@@ -391,17 +397,7 @@ city:
        *   handled above). Selects same artisan. */
       if (!modal.contains(e.target)) return;
 
-      /* Priority -1 — canonical close control.
-       * Capture phase guarantees iOS/Safari close even when presentation enhancers
-       * replace or wrap the original header button. */
-      var closeBtn = e.target.closest ? e.target.closest('.fixeo-res-close') : null;
-      if (closeBtn && modal.contains(closeBtn)) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
-        close();
-        return;
-      }
+      /* Close is owned exclusively by the dedicated P0 capture listener above. */
 
       /* Priority 0 — Back navigation ([data-res-back]) */
       var backBtn = e.target.closest ? e.target.closest('[data-res-back]') : null;
@@ -1521,6 +1517,11 @@ city:
       style.id = styleId;
       style.textContent =
         'body.fixeo-targeted-booking-open .navbar,' +
+        'body.fixeo-targeted-booking-open .fixeo-gh-shell,' +
+        'body.fixeo-targeted-booking-open .fixeo-gh-universal-shell,' +
+        'body.fixeo-targeted-booking-open .fixeo-gh-source-shell,' +
+        'body.fixeo-targeted-booking-open .fixeo-gh-mobile,' +
+        'body.fixeo-targeted-booking-open #fixeo-gh-menu-portal,' +
         'body.fixeo-targeted-booking-open .fixeo-gh-mobile-bar,' +
         'body.fixeo-targeted-booking-open #ppui-sticky-cta,' +
         'body.fixeo-targeted-booking-open #fixeo-floating-reserve,' +
@@ -1536,7 +1537,7 @@ city:
     if (!document.querySelector('link[data-fixeo-targeted-shell],link[href*="fixeo-reservation-targeted-polish-v1.css"]')) {
       var link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = '/css/fixeo-reservation-targeted-polish-v1.css?v=fxrt-v4';
+      link.href = '/css/fixeo-reservation-targeted-polish-v1.css?v=fxrt-v5';
       link.setAttribute('data-fixeo-targeted-shell', '1');
       document.head.appendChild(link);
     }
