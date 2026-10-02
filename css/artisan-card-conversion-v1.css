@@ -2968,7 +2968,9 @@
   border-radius:20px!important;
   display:flex!important;
   flex-direction:column!important;
+  height:auto!important;
   min-height:0!important;
+  max-height:none!important;
   background:
     radial-gradient(circle at 92% 0,rgba(128,100,239,.075),transparent 18rem),
     radial-gradient(circle at 5% 12%,rgba(237,61,145,.055),transparent 15rem),
