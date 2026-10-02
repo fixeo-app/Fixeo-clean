@@ -198,15 +198,25 @@
 
 <script>
 (function(){
-  var PROFILE_PAGE_VERSION='20261001b21';
-  function ensureCurrentProfileDocument(ev){
-    var q=new URLSearchParams(window.location.search);
-    if(ev&&ev.persisted&&q.get('pv')!==PROFILE_PAGE_VERSION){
-      q.set('pv',PROFILE_PAGE_VERSION);
-      window.location.replace(window.location.pathname+'?'+q.toString()+window.location.hash);
-    }
+  var PROFILE_PAGE_VERSION='20261002p0s1';
+  var q=new URLSearchParams(window.location.search);
+  var ref=q.get('id')||q.get('artisan');
+  if(!ref){
+    window.location.replace('/artisans.html');
+    return;
   }
-  window.addEventListener('pageshow',ensureCurrentProfileDocument);
+  function replaceWithCurrentVersion(){
+    var next=new URLSearchParams(window.location.search);
+    next.set('pv',PROFILE_PAGE_VERSION);
+    window.location.replace(window.location.pathname+'?'+next.toString()+window.location.hash);
+  }
+  if(q.get('pv')!==PROFILE_PAGE_VERSION){
+    replaceWithCurrentVersion();
+    return;
+  }
+  window.addEventListener('pageshow',function(ev){
+    if(ev&&ev.persisted) replaceWithCurrentVersion();
+  });
 }());
 </script>
 <main id="main-content" class="public-artisan-wrap">
@@ -264,7 +274,7 @@
 
 <!-- Artisan Journey V4 B2: canonical public profile presentation -->
 <link rel="stylesheet" href="css/fixeo-artisan-profile-v4.css?v=fxp4-b34dm1-b35wow1-b36p1-b37id1-b371opt1-b372freeze1-b373id2">
-<script src="js/fixeo-artisan-profile-v4.js?v=fxp4-b34dm1-b35wow1-b36p1-b37id1-b371opt1-b372freeze1-b373id2-rv4" defer></script>
+<script src="js/fixeo-artisan-profile-v4.js?v=fxp4-b34dm1-b35wow1-b36p1-b37id1-b371opt1-b372freeze1-b373id2-rv4-p0s1" defer></script>
 
 
   
