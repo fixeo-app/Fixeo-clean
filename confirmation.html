@@ -389,7 +389,7 @@
   </style>
   <!-- FXCONFIRM-FLAGSHIP-V1: additive presentation layer -->
   <link rel="stylesheet" href="css/fixeo-confirmation-flagship-v1.css?v=fxcf-v1">
-  <link rel="stylesheet" href="css/fixeo-confirmation-targeted-v2.css?v=fxc2-v1">
+  <link rel="stylesheet" href="css/fixeo-confirmation-targeted-v2.css?v=fxc2-v2">
   <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
   <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
@@ -568,15 +568,23 @@
       var grid = document.getElementById('conf-details-grid');
       if (grid && (order.artisan || order.service || order.date || order.timeSlot || order.phone)) {
         var rows = [];
+        var isTargeted = order.source === 'reservation_targeted';
 
-        if (order.artisan)   rows.push(['🔧 Artisan',  esc(order.artisan)]);
-        if (order.service)   rows.push([order.source === 'reservation_targeted' ? '🛠️ Métier' : '⚙️ Service', esc(order.service)]);
-        if (order.date)      rows.push(['📅 Date',      esc(order.date)]);
-        if (order.timeSlot)  rows.push(['🕐 Créneau',  esc(order.timeSlot)]);
-        if (order.address)   rows.push(['📍 Adresse',  esc(order.address)]);
-        if (order.phone)     rows.push(['📞 Téléphone',esc(order.phone)]);
-        if (order.client)    rows.push(['👤 Client',   esc(order.client)]);
-        if (order.orderID)   rows.push(['🆔 N° Commande', esc(order.orderID)]);
+        if (isTargeted) {
+          if (order.date)      rows.push(['📅 Date',      esc(order.date)]);
+          if (order.timeSlot)  rows.push(['🕐 Créneau',   esc(order.timeSlot)]);
+          if (order.address)   rows.push(['📍 Adresse',   esc(order.address)]);
+          if (order.phone)     rows.push(['📞 Téléphone', esc(order.phone)]);
+        } else {
+          if (order.artisan)   rows.push(['🔧 Artisan',  esc(order.artisan)]);
+          if (order.service)   rows.push(['⚙️ Service', esc(order.service)]);
+          if (order.date)      rows.push(['📅 Date',      esc(order.date)]);
+          if (order.timeSlot)  rows.push(['🕐 Créneau',  esc(order.timeSlot)]);
+          if (order.address)   rows.push(['📍 Adresse',  esc(order.address)]);
+          if (order.phone)     rows.push(['📞 Téléphone',esc(order.phone)]);
+          if (order.client)    rows.push(['👤 Client',   esc(order.client)]);
+          if (order.orderID)   rows.push(['🆔 N° Commande', esc(order.orderID)]);
+        }
 
         var html = rows.map(function(r) {
           return '<div class="conf-info-item">'
@@ -586,6 +594,7 @@
         }).join('');
 
         grid.innerHTML  = html;
+        grid.classList.toggle('conf-info-grid--targeted', isTargeted);
         grid.style.display = 'grid';
       }
 
@@ -606,10 +615,7 @@
         var noticeText = document.querySelector('.conf-notice-text');
         if (noticeText) {
           noticeText.innerHTML =
-            '<strong>Votre créneau est enregistré.</strong> L\'artisan peut vous contacter via WhatsApp ' +
-            'pour confirmer l\'horaire et l\'adresse.<br/>' +
-            'Le <strong>tarif sera confirmé avant l\'intervention</strong>. ' +
-            'Vous ne payez qu\'après l\'intervention.';
+            '<strong>Tarif confirmé avant intervention.</strong> Aucun paiement maintenant.';
         }
       }
 
@@ -754,7 +760,7 @@
             ? '\u2192 Voir le profil de ' + artisanName
             : '\u2192 Voir le profil de l\u2019artisan';
           linkEl.textContent = label;
-          linkEl.href = 'artisan-profile.html?id=' + encodeURIComponent(artisanId) + '&pv=20261002ux2';
+          linkEl.href = 'artisan-profile.html?id=' + encodeURIComponent(artisanId) + '&pv=20261002ux3';
           linkWrap.style.display = 'block';
         } catch (e) { /* fail silently — non-critical */ }
       })();
@@ -765,7 +771,7 @@
   <!-- V1-I: Coordination Confidence Layer -->
   <script defer src="js/supabase-client.js?v=sc2"></script>
   <script src="js/fixeo-confirmation-sync.js?v=v1" defer></script>
-  <script src="js/fixeo-coordination-v1i.js?v=v1i2" defer></script>
+  <script src="js/fixeo-coordination-v1i.js?v=v1i3" defer></script>
   <script src="js/fixeo-artisan-identity.js?v=v2a3" defer></script>
 <script src="js/fixeo-mission-rehydration.js?v=v2c1" defer></script>
   <script src="js/fixeo-mission-mirror.js?v=v2c1" defer></script>

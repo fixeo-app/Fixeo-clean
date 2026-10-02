@@ -260,3 +260,155 @@ body.fxcf-targeted .conf-ref{
     transition:none!important;
   }
 }
+
+
+/* COMPACT MASTER — targeted confirmation */
+body.fxcf-targeted .fxci-conf-block--targeted{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:14px!important;
+  margin-bottom:10px!important;
+}
+
+body.fxcf-targeted .fxci-wa-promoted{
+  margin:0!important;
+  padding:0!important;
+}
+
+body.fxcf-targeted .fxci-wa-promoted .conf-btn-wa{
+  min-height:54px!important;
+  padding:12px 15px!important;
+  border-radius:15px!important;
+  border-color:rgba(237,61,145,.25)!important;
+  background:
+    linear-gradient(135deg,#15161d,#111218) padding-box,
+    linear-gradient(100deg,rgba(255,138,53,.55),rgba(237,61,145,.6) 50%,rgba(128,100,239,.55)) border-box!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+
+body.fxcf-targeted .fxci-wa-promoted .conf-wa-hint{
+  margin-top:5px!important;
+  font-size:.66rem!important;
+  color:#777c87!important;
+}
+
+body.fxcf-targeted .fxci-next-step--targeted{
+  margin:0!important;
+  padding:12px 13px!important;
+  border-radius:14px!important;
+  min-height:0!important;
+  background:#15161d!important;
+  border:1px solid var(--fxc2-line)!important;
+}
+
+body.fxcf-targeted .fxci-next-step--targeted .fxci-next-step-label{
+  margin-bottom:4px!important;
+  font-size:.48rem!important;
+  letter-spacing:.1em!important;
+  color:#777c87!important;
+}
+
+body.fxcf-targeted .fxci-next-step--targeted .fxci-next-step-text{
+  font-size:.66rem!important;
+  line-height:1.45!important;
+  color:#a8acb5!important;
+}
+
+body.fxcf-targeted .conf-info-grid--targeted{
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+  margin:10px 0!important;
+}
+
+body.fxcf-targeted .conf-info-grid--targeted .conf-info-item{
+  min-height:0!important;
+  padding:11px 12px!important;
+  border-radius:14px!important;
+  background:#15161d!important;
+  border:1px solid var(--fxc2-line)!important;
+}
+
+body.fxcf-targeted .conf-info-grid--targeted .conf-info-label{
+  margin-bottom:4px!important;
+  font-size:.48rem!important;
+  letter-spacing:.08em!important;
+  color:#777c87!important;
+}
+
+body.fxcf-targeted .conf-info-grid--targeted .conf-info-val{
+  font-size:.68rem!important;
+  line-height:1.4!important;
+  color:#eceef2!important;
+}
+
+body.fxcf-targeted .conf-notice{
+  margin:10px 0!important;
+  padding:12px 13px!important;
+  border-radius:14px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+}
+
+body.fxcf-targeted .conf-notice-icon{
+  flex:0 0 auto!important;
+}
+
+body.fxcf-targeted .conf-notice-text{
+  font-size:.66rem!important;
+  line-height:1.45!important;
+}
+
+body.fxcf-targeted .conf-actions{
+  margin-top:10px!important;
+  gap:8px!important;
+}
+
+body.fxcf-targeted .conf-ref{
+  margin-top:10px!important;
+  font-size:.68rem!important;
+}
+
+body.fxcf-targeted .conf-security{
+  margin-top:8px!important;
+  padding-top:10px!important;
+  gap:10px!important;
+}
+
+@media(max-width:520px){
+  body.fxcf-targeted .conf-card{
+    padding:22px 12px calc(22px + env(safe-area-inset-bottom,0px))!important;
+  }
+  body.fxcf-targeted .conf-icon-wrap.fxcf-icon-fixeo{
+    width:66px!important;
+    height:66px!important;
+    border-radius:20px!important;
+  }
+  body.fxcf-targeted .conf-title{
+    margin-top:14px!important;
+  }
+  body.fxcf-targeted .conf-subtitle{
+    margin-bottom:14px!important;
+  }
+  body.fxcf-targeted .fxv2c-timeline{
+    margin:14px 0 12px!important;
+  }
+  body.fxcf-targeted .fxci-sameday-pill{
+    margin:8px auto!important;
+  }
+  body.fxcf-targeted .fxci-artisan-id-card--truth{
+    padding:11px!important;
+    border-radius:16px!important;
+  }
+  body.fxcf-targeted .conf-info-grid--targeted{
+    grid-template-columns:1fr 1fr!important;
+  }
+}
+
+@media(max-width:360px){
+  body.fxcf-targeted .conf-info-grid--targeted{
+    grid-template-columns:1fr!important;
+  }
+}
