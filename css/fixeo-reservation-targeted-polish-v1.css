@@ -54,6 +54,10 @@ body.fixeo-targeted-booking-open #fixeo-reservation-modal .fixeo-res-close{
   background:rgba(255,255,255,.045)!important;
   color:#c9ccd4!important;
   box-shadow:none!important;
+  z-index:140!important;
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
 }
 
 body.fixeo-targeted-booking-open .fxresf-hav-fixeo-id{
