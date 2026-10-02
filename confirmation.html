@@ -570,7 +570,7 @@
         var rows = [];
 
         if (order.artisan)   rows.push(['🔧 Artisan',  esc(order.artisan)]);
-        if (order.service)   rows.push(['⚙️ Service',  esc(order.service)]);
+        if (order.service)   rows.push([order.source === 'reservation_targeted' ? '🛠️ Métier' : '⚙️ Service', esc(order.service)]);
         if (order.date)      rows.push(['📅 Date',      esc(order.date)]);
         if (order.timeSlot)  rows.push(['🕐 Créneau',  esc(order.timeSlot)]);
         if (order.address)   rows.push(['📍 Adresse',  esc(order.address)]);
