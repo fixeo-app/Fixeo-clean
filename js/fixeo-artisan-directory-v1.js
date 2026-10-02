@@ -258,8 +258,17 @@
   }
 
   function _initials(name) {
-    var p = String(name || '??').trim().split(/\s+/);
-    return ((p[0]||'?')[0] + ((p[1]||p[0]||'?')[0])).toUpperCase();
+    var p = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (!p.length) return 'FX';
+    if (p.length === 1) return p[0].slice(0,2).toUpperCase();
+    return (((p[0]||'?')[0] || '') + ((p[p.length - 1]||'?')[0] || '')).toUpperCase();
+  }
+
+  function _fixeoIdVariant(a) {
+    var s = String((a && (a._supabase_id || a.id || a.legacy_id || a.name)) || 'FIXEO');
+    var h = 0;
+    for (var i=0;i<s.length;i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    return Math.abs(h) % 6;
   }
 
   /* ── Pricing ──────────────────────────────────────────────────────
@@ -301,193 +310,117 @@
    * IMPORTANT: does NOT use _fxAvStage() — that is a homepage-only
    * inline onerror helper not available on artisans.html.
    * Uses _artdirAvStage() exposed on window (see below). */
-  function _buildAvatar(a, cat) {
-    var photoSrc = a.photo_url || a.avatar || a.photo || '';
-    var cardHero = null;
-    if (window.FixeoHeroes && typeof window.FixeoHeroes.getCardAvatar === 'function') {
-      cardHero = window.FixeoHeroes.getCardAvatar(cat) || null;
-    }
-
-    var initStr = _esc(_initials(a.name || ''));
-    var nameStr = _esc(a.name || 'Artisan');
-
-    if (photoSrc) {
-      /* Stage 1: real photo. Métier URLs stored as data attrs, no request yet. */
-      return (
-        '<img class="artdir-avatar-img"' +
-          ' src="'            + _esc(photoSrc)                       + '"' +
-          ' alt="'            + nameStr                               + '"' +
-          ' data-stage="real-photo"' +
-          ' data-webp="'      + (cardHero ? _esc(cardHero.webp) : '') + '"' +
-          ' data-png="'       + (cardHero ? _esc(cardHero.png)  : '') + '"' +
-          ' data-initials="'  + initStr                               + '"' +
-          ' width="76" height="76" loading="lazy" decoding="async"' +
-          ' onerror="_artdirAvStage(this)">' +
-        '<div class="artdir-avatar-silhouette" style="display:none"></div>'
-      );
-    } else if (cardHero) {
-      /* Stage 2: métier WebP. PNG stored as data attr. */
-      return (
-        '<img class="artdir-avatar-img"' +
-          ' src="'            + _esc(cardHero.webp)                  + '"' +
-          ' alt="'            + _esc(cardHero.alt)                    + '"' +
-          ' data-stage="metier-webp"' +
-          ' data-webp=""' +
-          ' data-png="'       + _esc(cardHero.png)                    + '"' +
-          ' data-initials="'  + initStr                               + '"' +
-          ' width="76" height="76" loading="lazy" decoding="async"' +
-          ' onerror="_artdirAvStage(this)">' +
-        '<div class="artdir-avatar-silhouette" style="display:none"></div>'
-      );
-    } else {
-      /* Stage 4 direct: unknown category — silhouette, zero requests. */
-      return '<div class="artdir-avatar-silhouette"></div>';
-    }
+  function _fixeoIdHtml(a) {
+    var initials = _esc(_initials(a.name || a.full_name || ''));
+    var variant = _fixeoIdVariant(a);
+    return '<div class="artdir-fixeo-id artdir-fixeo-id-v' + variant + '" aria-label="Identité FIXEO">' +
+      '<span class="artdir-fixeo-id-brand">F</span>' +
+      '<strong>' + initials + '</strong>' +
+      '<small>FIXEO ID</small>' +
+    '</div>';
   }
 
-  /* ── Card builder ─────────────────────────────────────────────────
-   * Output HTML matches artdir-* CSS selectors defined in 6B.2 CSS.
-   * All fields are truthful; every field guards against missing data. */
+  /* Canonical card identity: real artisan photo OR deterministic FIXEO ID.
+   * Never use a métier illustration as if it represented the artisan. */
+  function _buildAvatar(a) {
+    var photoSrc = a.photo_url || a.avatar || a.photo || '';
+    var nameStr = _esc(a.name || a.full_name || 'Artisan FIXEO');
+    var idHtml = _fixeoIdHtml(a);
+    if (!photoSrc) return idHtml;
+    return '<img class="artdir-avatar-img artdir-avatar-real"' +
+      ' src="' + _esc(photoSrc) + '"' +
+      ' alt="' + nameStr + '"' +
+      ' width="76" height="76" loading="lazy" decoding="async"' +
+      ' onerror="_artdirAvStage(this)">' +
+      idHtml.replace('class="artdir-fixeo-id ', 'class="artdir-fixeo-id artdir-fixeo-id-fallback ');
+  }
+
+  function _proofs(a) {
+    var out = [];
+    var completed = parseInt(
+      a.completed_interventions || a.completed_missions || a.completedInterventions || a.missions_done || 0,
+      10
+    ) || 0;
+    var reviews = parseInt(a.reviewCount || a.review_count || a.reviews || 0, 10) || 0;
+    var rating = parseFloat(a.rating || a.average_rating || a.verified_average_rating || 0) || 0;
+    if (completed > 0) out.push(completed + ' intervention' + (completed > 1 ? 's' : '') + ' FIXEO');
+    if (reviews > 0 && rating > 0) out.push(rating.toFixed(1).replace('.', ',') + ' ★ · ' + reviews + ' avis');
+    return out;
+  }
+
+  /* ── Card builder V2 — mini Passeport Professionnel FIXEO ─────── */
   function _buildCard(a) {
     var cat      = (a.category || a.service || '').toLowerCase();
-    var catIcon  = CAT_ICONS[cat] || '🔧';
-    var catLabel = CAT_LABELS[cat] || (a.category || a.service || '');
-    var name     = a.name || a.full_name || 'Artisan Fixeo';
+    var catLabel = CAT_LABELS[cat] || (a.category || a.service || 'Intervention');
+    var name     = a.name || a.full_name || 'Artisan FIXEO';
     var city     = a.city || a.ville || '';
-    var aid      = a.id || a._supabase_id || '';
-    var pricing  = _buildPricing(a);
-    var profileHref = 'artisan-profile.html?id=' + encodeURIComponent(String(aid)) + '&pv=20261002ux3';
+    var aid      = a._supabase_id || a._artisan_id_canonical || a.id || a.legacy_id || '';
+    var profileHref = 'artisan-profile.html?id=' + encodeURIComponent(String(aid)) + '&pv=20261002card1';
 
-    /* Description — same sanitize chain as homepage V3B2-1 */
     var descRaw = _sanitizeDesc(a.description)
                || _sanitizeDesc(a.shortBio)
                || _sanitizeDesc(a.bio && a.bio.fr)
                || '';
     var desc = descRaw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 
-    /* Avatar HTML */
-    var avatarHtml = _buildAvatar(a, cat);
+    var statusLabel = a.verified === true
+      ? 'Profil vérifié sur FIXEO'
+      : (a.claimed === true
+          ? 'Profil revendiqué sur FIXEO'
+          : (a.onboarding_completed === true
+              ? 'Profil complété sur FIXEO'
+              : 'Profil référencé sur FIXEO'));
 
-    /* Header: avatar block + identity block */
-    var headerHtml =
-      '<div class="artdir-card-header">' +
+    var proof = _proofs(a);
+    var proofHtml = proof.length
+      ? '<div class="artdir-v2-proof">' + proof.map(function(x){ return '<span>' + _esc(x) + '</span>'; }).join('') + '</div>'
+      : '<div class="artdir-v2-proof artdir-v2-proof--building"><span>Réputation en construction</span></div>';
 
-        /* Avatar container — data-category drives CSS gradient */
-        '<div class="artdir-avatar" data-category="' + _esc(cat) + '" aria-hidden="true">' +
-          avatarHtml +
-          '<span class="artdir-avatar-badge" aria-hidden="true">' + catIcon + '</span>' +
-        '</div>' +
-
-        /* Identity column */
-        '<div class="artdir-identity">' +
-          '<h3 class="artdir-card-name" title="' + _esc(name) + '">' + _esc(name) + '</h3>' +
-          (city
-            ? '<div class="artdir-meta-line">\uD83D\uDCCD Bas\u00e9\u00a0\u00e0\u00a0' + _esc(city) + '</div>'
-            : '<div class="artdir-meta-line">Profil au Maroc</div>') +
-          '<div class="artdir-meta-line">' + catIcon + '\u00a0' + _esc(catLabel) + '</div>' +
-        '</div>' +
-
-      '</div>';
-
-    /* Description — absent when empty (no gap reserved) */
     var descHtml = desc
-      ? '<p class="artdir-card-desc">' + _esc(desc) + '</p>'
+      ? '<p class="artdir-card-desc artdir-v2-desc">' + _esc(desc) + '</p>'
       : '';
 
-    /* Trust rows — inline SVG icons (platform-independent) */
-    var trustHtml =
-      '<div class="artdir-trust" role="list">' +
-        '<span class="artdir-trust-item" role="listitem">' +
-          '<span class="artdir-trust-icon">' + SVG_DIRECTORY + '</span>' +
-          'Profil r\u00e9f\u00e9renc\u00e9 sur FIXEO' +
-        '</span>' +
-        '<span class="artdir-trust-item" role="listitem">' +
-          '<span class="artdir-trust-icon">' + SVG_PAYMENT + '</span>' +
-          'Paiement apr\u00e8s intervention' +
-        '</span>' +
-      '</div>';
+    var avatarHtml = _buildAvatar(a);
 
-    /* Price block — absent when not present in data */
-    var priceHtml = pricing
-      ? '<div class="artdir-price">' +
-          '<span class="artdir-price-amount">' + _esc(pricing.main) + '</span>' +
-          '<span class="artdir-price-hint">' + _esc(pricing.hint) + '</span>' +
-        '</div>'
-      : '';
-
-    /* Action area: divider → price → primary CTA → secondary profile link */
-    var actionHtml =
-      '<div class="artdir-action">' +
-        '<div class="artdir-divider" aria-hidden="true"></div>' +
-        priceHtml +
-        /* Primary: full-width orange→magenta */
-        '<button class="artdir-btn-reserve" type="button"' +
+    return '<article class="artdir-card artdir-card-v2" data-artisan-id="' + _esc(String(aid)) + '">' +
+      '<div class="artdir-card-header artdir-v2-header">' +
+        '<div class="artdir-avatar artdir-v2-avatar" aria-hidden="true">' + avatarHtml + '</div>' +
+        '<div class="artdir-identity artdir-v2-identity">' +
+          '<span class="artdir-v2-kicker">PROFIL PROFESSIONNEL FIXEO</span>' +
+          '<h3 class="artdir-card-name" title="' + _esc(name) + '">' + _esc(name) + '</h3>' +
+          '<div class="artdir-v2-meta">' + _esc(catLabel) + (city ? ' · ' + _esc(city) : '') + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="artdir-v2-signals">' +
+        '<span>' + _esc(statusLabel) + '</span>' +
+        '<span>Disponibilité à confirmer</span>' +
+      '</div>' +
+      descHtml +
+      proofHtml +
+      '<div class="artdir-action artdir-v2-action">' +
+        '<div class="artdir-v2-tariff"><small>TARIF</small><strong>Confirmé avant intervention</strong></div>' +
+        '<button class="artdir-btn-reserve artdir-v2-reserve" type="button"' +
           ' data-artisan-id="' + _esc(String(aid)) + '"' +
           ' data-artisan-name="' + _esc(name) + '"' +
-          ' aria-label="R\u00e9server avec ' + _esc(name) + '">' +
-          'R\u00e9server maintenant \u2192' +
+          ' aria-label="Demander une intervention avec ' + _esc(name) + '">' +
+          '<span class="artdir-v2-cta-mark">F</span><strong>Demander une intervention</strong><b>→</b>' +
         '</button>' +
-        /* Secondary: quiet text link below */
-        '<a class="artdir-btn-profile" href="' + _esc(profileHref) + '"' +
+        '<a class="artdir-btn-profile artdir-v2-profile" href="' + _esc(profileHref) + '"' +
           ' aria-label="Voir le profil complet de ' + _esc(name) + '">' +
-          'Voir le profil complet \u203a' +
+          'Voir le profil complet' +
         '</a>' +
-      '</div>';
-
-    return (
-      '<article class="artdir-card" data-artisan-id="' + _esc(String(aid)) + '">' +
-        headerHtml +
-        descHtml +
-        trustHtml +
-        actionHtml +
-      '</article>'
-    );
+      '</div>' +
+    '</article>';
   }
 
-  /* ══════════════════════════════════════════════════════════════
-     AVATAR STAGED FALLBACK — artisans.html context
-     Exposed on window so inline onerror="_artdirAvStage(this)" works.
-     Self-contained: no dependency on homepage _fxAvStage().
-
-     Stage machine:
-       "real-photo"  + data-webp present → try WebP  (metier-webp)
-       "real-photo"  + data-webp empty   → silhouette (stage 4)
-       "metier-webp" + data-png present  → try PNG    (metier-png)
-       "metier-webp" + data-png empty    → silhouette (stage 4)
-       "metier-png"                      → silhouette (stage 4)
-  ══════════════════════════════════════════════════════════════ */
+  /* Real-photo failure falls directly to FIXEO ID — no métier artwork. */
   function _artdirAvStage(img) {
     if (!img) return;
-    img.onerror = null; /* prevent re-entry */
-
-    var stage    = img.getAttribute('data-stage') || '';
-    var webp     = img.getAttribute('data-webp')  || '';
-    var png      = img.getAttribute('data-png')   || '';
-
-    /* Stage 1 (real-photo) failed → try métier WebP */
-    if (stage === 'real-photo' && webp) {
-      img.setAttribute('data-stage', 'metier-webp');
-      img.onerror = function() { _artdirAvStage(img); };
-      img.src = webp;
-      return;
-    }
-
-    /* Stage 2 (metier-webp) failed → try métier PNG */
-    if (stage === 'metier-webp' && png) {
-      img.setAttribute('data-stage', 'metier-png');
-      img.onerror = function() { _artdirAvStage(img); };
-      img.src = png;
-      return;
-    }
-
-    /* Stage 4: silhouette — hide img, show sibling silhouette div */
+    img.onerror = null;
     img.style.display = 'none';
     var sib = img.nextElementSibling;
-    if (sib && sib.classList.contains('artdir-avatar-silhouette')) {
-      sib.style.display = '';
-    }
+    if (sib && sib.classList.contains('artdir-fixeo-id')) sib.style.display = 'grid';
   }
-  /* Expose for inline onerror usage */
   window._artdirAvStage = _artdirAvStage;
 
   /* ══════════════════════════════════════════════════════════════
@@ -753,10 +686,15 @@ btn.textContent =
         var aid = btn.getAttribute('data-artisan-id');
         if (!aid) return;
         var selected = _state.allResults.find(function(a) {
-          return String(a.id || a._supabase_id || '') === String(aid);
+          if (!a) return false;
+          var wanted = String(aid || '').trim();
+          var ids = [a._supabase_id, a._artisan_id_canonical, a.id, a.legacy_id, a.artisan_id, a.public_id]
+            .map(function(v){ return String(v == null ? '' : v).trim(); })
+            .filter(Boolean);
+          return ids.indexOf(wanted) !== -1;
         });
         if (!selected) {
-          window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002ux3';
+          window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002card1';
           return;
         }
         var tries = 0;
@@ -769,7 +707,7 @@ btn.textContent =
             window.setTimeout(openTargetedReservation, 100);
             return;
           }
-          window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002ux3';
+          window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002card1';
         })();
       });
 
