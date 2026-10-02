@@ -5,6 +5,11 @@ import { acceptDispatchOffer, getDispatchOffers } from '@/lib/magicLoop';
 import type { DispatchOffer } from '@/lib/dispatchContract';
 import { getMyCurrentArtisanMission, type MissionSnapshot } from '@/lib/missionTerrain';
 import { PushOptIn } from '@/components/PushOptIn';
+import { DecisionCueCard } from '@/components/DecisionCueCard';
+import {
+  getMyMobileDecisionContext,
+  type MobileDecisionCue,
+} from '@/lib/decisionCenter';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
@@ -31,16 +36,19 @@ export default function Artisan() {
   const [loading, setLoading] = useState(false);
   const [acceptingRequestId, setAcceptingRequestId] = useState<string | null>(null);
   const [message, setMessage] = useState('');
+  const [decisionCue, setDecisionCue] = useState<MobileDecisionCue | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [nextOffers, mission] = await Promise.all([
+      const [nextOffers, mission, decision] = await Promise.all([
         getDispatchOffers(),
         getMyCurrentArtisanMission(),
+        getMyMobileDecisionContext().catch(() => null),
       ]);
       setOffers(nextOffers);
       setCurrentMission(mission);
+      setDecisionCue(decision?.cue || null);
     } catch {
       setMessage('Impossible de charger votre activité FIXEO.');
     } finally {
@@ -59,6 +67,19 @@ export default function Artisan() {
       appState.remove();
     };
   }, [load]);
+
+  async function actOnDecision(cue: MobileDecisionCue) {
+    if (cue.action.kind === 'open_mission') {
+      router.push({
+        pathname: '/mission/[id]',
+        params: { id: cue.action.mission_id },
+      } as any);
+      return;
+    }
+    if (cue.action.kind === 'accept_offer') {
+      await accept(cue.action.request_id);
+    }
+  }
 
   async function accept(requestId: string) {
     if (acceptingRequestId) return;
@@ -138,7 +159,14 @@ export default function Artisan() {
         </FixeoCard>
       )}
 
-      {!!currentMission && (
+      {!!decisionCue && (
+        <DecisionCueCard
+          cue={decisionCue}
+          onAction={() => void actOnDecision(decisionCue)}
+        />
+      )}
+
+      {!!currentMission && !decisionCue && (
         <FixeoCard tone="dark" style={styles.activeCard}>
           <Text style={styles.activeEyebrow}>MISSION EN COURS</Text>
           <Text style={styles.activeTitle}>{currentMission.service_category || 'Mission FIXEO'}</Text>
