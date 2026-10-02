@@ -307,7 +307,11 @@
     var rawDesc = a.description || a.shortBio || (a.bio && a.bio.fr) || '';
     if (typeof rawDesc === 'string') {
       rawDesc = rawDesc.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
-      if (rawDesc && rawDesc !== '[object Object]' && rawDesc.charAt(0)!=='{' && rawDesc.charAt(0)!=='[') {
+      if (rawDesc &&
+          rawDesc !== '[object Object]' &&
+          rawDesc.charAt(0)!=='{' &&
+          rawDesc.charAt(0)!=='[' &&
+          !/sourc[ée].*(facebook|google|annuaire|interne)|source interne|prospection/i.test(rawDesc)) {
         desc = '<p class="pvc-desc-v3b">' + _esc(rawDesc) + '</p>';
       }
     }
@@ -336,7 +340,7 @@
 
       '<div class="pvc-trust-v3b" role="list">' +
         '<span class="pvc-trust-v3b-item" role="listitem">Profil référencé sur FIXEO</span>' +
-        '<span class="pvc-trust-v3b-item" role="listitem">Paiement après intervention</span>' +
+        '<span class="pvc-trust-v3b-item" role="listitem">Disponibilité à confirmer</span>' +
       '</div>' +
 
       '<div class="pvc-action-v3b">' +
