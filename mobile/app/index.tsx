@@ -19,6 +19,13 @@ import { MagicLoopModel, transition } from '@/lib/magicLoopState';
 import { RafiInputRail } from '@/components/RafiInputRail';
 import { PushOptIn } from '@/components/PushOptIn';
 import { resolveRole } from '@/lib/auth';
+import {
+  getMyMobileDecisionContext,
+  type MobileDecisionCue,
+} from '@/lib/decisionCenter';
+import { buildDeclaredContext } from '@/lib/rafiContext';
+import { DecisionCueCard } from '@/components/DecisionCueCard';
+import { RafiContextCard } from '@/components/RafiContextCard';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
@@ -37,9 +44,39 @@ export default function Home() {
   const [loop, setLoop] = useState<MagicLoopModel>({ state: 'idle' });
   const [clientReady, setClientReady] = useState(false);
   const [journeyStatus, setJourneyStatus] = useState<JourneyStatus>('idle');
+  const [decisionCue, setDecisionCue] = useState<MobileDecisionCue | null>(null);
   const submitLockRef = useRef(false);
   const idempotencyKeyRef = useRef<string | null>(null);
   const need = useMemo(() => understandLocally({ mode: 'text', text: problem }), [problem]);
+  const rafiContext = useMemo(
+    () => buildDeclaredContext({
+      description: problem,
+      city,
+      serviceCategory: need.serviceCategory,
+      serviceConfidence: need.confidence,
+    }),
+    [problem, city, need.serviceCategory, need.confidence],
+  );
+
+  async function syncDecision() {
+    try {
+      const context = await getMyMobileDecisionContext();
+      setDecisionCue(context.cue);
+      return context.cue;
+    } catch {
+      setDecisionCue(null);
+      return null;
+    }
+  }
+
+  function actOnDecision(cue: MobileDecisionCue) {
+    if (cue.action.kind === 'open_mission') {
+      router.push({
+        pathname: '/client-mission/[id]',
+        params: { id: cue.action.mission_id },
+      } as any);
+    }
+  }
 
   async function syncCurrentMission() {
     try {
@@ -65,6 +102,7 @@ export default function Home() {
   }
 
   async function syncJourney() {
+    await syncDecision();
     const mission = await syncCurrentMission();
     if (mission) return;
 
@@ -124,7 +162,7 @@ export default function Home() {
             setLoop(current => transition(current, 'found', {
               message: notification.title || notification.message || 'Artisan trouvé',
             }));
-            void syncCurrentMission();
+            void Promise.all([syncCurrentMission(), syncDecision()]);
           }
         });
       } catch {
@@ -340,12 +378,15 @@ export default function Home() {
             {!!photoUri && <Text style={styles.attachment}>✓ Photo ajoutée au contexte</Text>}
 
             {problem.length > 3 && (
-              <View style={styles.understoodRow}>
-                <Text style={styles.understoodDot}>●</Text>
-                <Text style={styles.understood}>
-                  {need.serviceCategory}{need.confidence === 'low' ? ' · à confirmer' : ' · compris'}
-                </Text>
-              </View>
+              <>
+                <View style={styles.understoodRow}>
+                  <Text style={styles.understoodDot}>●</Text>
+                  <Text style={styles.understood}>
+                    {need.serviceCategory}{need.confidence === 'low' ? ' · à confirmer' : ' · compris'}
+                  </Text>
+                </View>
+                <RafiContextCard snapshot={rafiContext} />
+              </>
             )}
 
             <FixeoAction
@@ -364,7 +405,14 @@ export default function Home() {
           </View>
         )}
 
-        {journeyStatus === 'matching' && (
+        {isActiveJourney && decisionCue && (
+          <DecisionCueCard
+            cue={decisionCue}
+            onAction={() => actOnDecision(decisionCue)}
+          />
+        )}
+
+        {isActiveJourney && !decisionCue && journeyStatus === 'matching' && (
           <FixeoCard tone="dark" style={styles.journeyCard}>
             <Text style={styles.inverseEyebrow}>RECHERCHE ACTIVE</Text>
             <Text style={styles.inverseTitle}>Le réseau FIXEO travaille.</Text>
@@ -378,14 +426,11 @@ export default function Home() {
           </FixeoCard>
         )}
 
-        {journeyStatus !== 'idle' && journeyStatus !== 'matching' && loop.missionId && (
+        {isActiveJourney && !decisionCue && journeyStatus !== 'matching' && loop.missionId && (
           <FixeoCard tone="dark" style={styles.journeyCard}>
             <Text style={styles.inverseEyebrow}>VOTRE INTERVENTION</Text>
             <Text style={styles.inverseTitle}>
               {journeyStatus === 'completed' ? 'À vous de confirmer.' : 'FIXEO reste aux commandes.'}
-            </Text>
-            <Text style={styles.inverseBody}>
-              {problem || 'Mission FIXEO'}{city ? ` · ${city}` : ''}
             </Text>
             <FixeoAction
               label={journeyStatus === 'completed' ? 'Vérifier et valider' : 'Suivre l’intervention'}
