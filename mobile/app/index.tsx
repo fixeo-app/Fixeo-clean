@@ -18,6 +18,7 @@ import { hasRafiServerGateway, transcribeRafiVoice } from '@/lib/rafiGateway';
 import { MagicLoopModel, transition } from '@/lib/magicLoopState';
 import { RafiInputRail } from '@/components/RafiInputRail';
 import { PushOptIn } from '@/components/PushOptIn';
+import { resolveRole } from '@/lib/auth';
 
 const ASSIGNED_STATES = new Set(['assigned', 'in_progress', 'completed', 'validated']);
 
@@ -27,6 +28,7 @@ export default function Home() {
   const [rafiMessage, setRafiMessage] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [loop, setLoop] = useState<MagicLoopModel>({ state: 'idle' });
+  const [clientReady, setClientReady] = useState(false);
   const submitLockRef = useRef(false);
   const idempotencyKeyRef = useRef<string | null>(null);
   const need = useMemo(() => understandLocally({ mode: 'text', text: problem }), [problem]);
@@ -67,29 +69,53 @@ export default function Home() {
   useEffect(() => {
     let channel: any;
     let active = true;
+    let isClient = false;
 
-    supabase.auth.getUser().then(({ data }) => {
-      if (!active) return;
-      if (!data.user) {
-        router.replace('/sign-in');
-        return;
-      }
+    async function bootstrap() {
+      try {
+        const { data } = await supabase.auth.getUser();
+        if (!active) return;
 
-      void syncJourney();
-
-      channel = watchClientNotifications(data.user.id, (payload: any) => {
-        const notification = payload.new || {};
-        if (/accept|assign|mission/i.test(String(notification.type || ''))) {
-          setLoop(current => transition(current, 'found', {
-            message: notification.title || notification.message || 'Artisan trouvé',
-          }));
-          void syncCurrentMission();
+        if (!data.user) {
+          router.replace('/sign-in');
+          return;
         }
-      });
-    });
+
+        const role = await resolveRole();
+        if (!active) return;
+
+        if (role === 'artisan') {
+          router.replace('/artisan');
+          return;
+        }
+
+        if (role !== 'client') {
+          router.replace('/sign-in');
+          return;
+        }
+
+        isClient = true;
+        setClientReady(true);
+        await syncJourney();
+
+        channel = watchClientNotifications(data.user.id, (payload: any) => {
+          const notification = payload.new || {};
+          if (/accept|assign|mission/i.test(String(notification.type || ''))) {
+            setLoop(current => transition(current, 'found', {
+              message: notification.title || notification.message || 'Artisan trouvé',
+            }));
+            void syncCurrentMission();
+          }
+        });
+      } catch {
+        if (active) router.replace('/sign-in');
+      }
+    }
+
+    void bootstrap();
 
     const appState = AppState.addEventListener('change', state => {
-      if (state === 'active') void syncJourney();
+      if (state === 'active' && isClient) void syncJourney();
     });
 
     return () => {
@@ -190,6 +216,16 @@ export default function Home() {
 
   const requestLocked = loop.state === 'creating' || loop.state === 'matching' || loop.state === 'found';
 
+  if (!clientReady) {
+    return (
+      <View style={styles.loadingRoot}>
+        <Text style={styles.brand}>FIXEO</Text>
+        <View style={styles.loadingOrb} />
+        <Text style={styles.loadingText}>Ouverture de votre espace…</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.root}>
       <Text style={styles.brand}>FIXEO</Text>
@@ -272,6 +308,9 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+  loadingRoot: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 18, backgroundColor: '#f7f7f7' },
+  loadingOrb: { width: 64, height: 64, borderRadius: 32, backgroundColor: '#111' },
+  loadingText: { fontSize: 16, fontWeight: '700', opacity: 0.55 },
   root: { flex: 1, padding: 24, justifyContent: 'center', gap: 16, backgroundColor: '#f7f7f7' },
   brand: { fontSize: 18, fontWeight: '800', letterSpacing: 3, textAlign: 'center' },
   orb: { width: 88, height: 88, borderRadius: 44, backgroundColor: '#111', alignSelf: 'center' },
