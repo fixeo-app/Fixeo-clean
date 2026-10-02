@@ -568,15 +568,23 @@
       var grid = document.getElementById('conf-details-grid');
       if (grid && (order.artisan || order.service || order.date || order.timeSlot || order.phone)) {
         var rows = [];
+        var isTargeted = order.source === 'reservation_targeted';
 
-        if (order.artisan)   rows.push(['🔧 Artisan',  esc(order.artisan)]);
-        if (order.service)   rows.push([order.source === 'reservation_targeted' ? '🛠️ Métier' : '⚙️ Service', esc(order.service)]);
-        if (order.date)      rows.push(['📅 Date',      esc(order.date)]);
-        if (order.timeSlot)  rows.push(['🕐 Créneau',  esc(order.timeSlot)]);
-        if (order.address)   rows.push(['📍 Adresse',  esc(order.address)]);
-        if (order.phone)     rows.push(['📞 Téléphone',esc(order.phone)]);
-        if (order.client)    rows.push(['👤 Client',   esc(order.client)]);
-        if (order.orderID)   rows.push(['🆔 N° Commande', esc(order.orderID)]);
+        if (isTargeted) {
+          if (order.date)      rows.push(['📅 Date',      esc(order.date)]);
+          if (order.timeSlot)  rows.push(['🕐 Créneau',   esc(order.timeSlot)]);
+          if (order.address)   rows.push(['📍 Adresse',   esc(order.address)]);
+          if (order.phone)     rows.push(['📞 Téléphone', esc(order.phone)]);
+        } else {
+          if (order.artisan)   rows.push(['🔧 Artisan',  esc(order.artisan)]);
+          if (order.service)   rows.push(['⚙️ Service', esc(order.service)]);
+          if (order.date)      rows.push(['📅 Date',      esc(order.date)]);
+          if (order.timeSlot)  rows.push(['🕐 Créneau',  esc(order.timeSlot)]);
+          if (order.address)   rows.push(['📍 Adresse',  esc(order.address)]);
+          if (order.phone)     rows.push(['📞 Téléphone',esc(order.phone)]);
+          if (order.client)    rows.push(['👤 Client',   esc(order.client)]);
+          if (order.orderID)   rows.push(['🆔 N° Commande', esc(order.orderID)]);
+        }
 
         var html = rows.map(function(r) {
           return '<div class="conf-info-item">'
@@ -586,6 +594,7 @@
         }).join('');
 
         grid.innerHTML  = html;
+        grid.classList.toggle('conf-info-grid--targeted', isTargeted);
         grid.style.display = 'grid';
       }
 
@@ -606,10 +615,7 @@
         var noticeText = document.querySelector('.conf-notice-text');
         if (noticeText) {
           noticeText.innerHTML =
-            '<strong>Votre créneau est enregistré.</strong> L\'artisan peut vous contacter via WhatsApp ' +
-            'pour confirmer l\'horaire et l\'adresse.<br/>' +
-            'Le <strong>tarif sera confirmé avant l\'intervention</strong>. ' +
-            'Vous ne payez qu\'après l\'intervention.';
+            '<strong>Tarif confirmé avant intervention.</strong> Aucun paiement maintenant.';
         }
       }
 
