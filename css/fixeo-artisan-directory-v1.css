@@ -862,3 +862,242 @@
     transition: none;
   }
 }
+
+
+/* ================================================================
+   ARTISAN CARD V2 — FIXEO PROFESSIONAL PASSPORT
+   Canonical identity: real photo_url OR FIXEO ID. No trade avatars.
+   ================================================================ */
+.artdir-card-v2{
+  padding:16px;
+  border-radius:20px;
+  gap:0;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 90% 0,rgba(128,100,239,.07),transparent 15rem),
+    radial-gradient(circle at 5% 6%,rgba(237,61,145,.045),transparent 13rem),
+    linear-gradient(180deg,rgba(255,255,255,.038),rgba(255,255,255,.015));
+  border:1px solid rgba(255,255,255,.09);
+  box-shadow:0 18px 48px rgba(0,0,0,.18);
+}
+.artdir-card-v2:hover{
+  border-color:rgba(237,61,145,.19);
+  background:
+    radial-gradient(circle at 90% 0,rgba(128,100,239,.09),transparent 15rem),
+    radial-gradient(circle at 5% 6%,rgba(237,61,145,.055),transparent 13rem),
+    linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+}
+.artdir-card-v2 .artdir-card-header{
+  gap:12px;
+  margin-bottom:10px;
+}
+.artdir-card-v2 .artdir-avatar-v2{
+  width:72px;
+  height:72px;
+  min-width:72px;
+  overflow:hidden;
+  border-radius:18px;
+  background:#12131a;
+  box-shadow:0 12px 28px rgba(0,0,0,.28);
+}
+.artdir-card-v2 .artdir-avatar-img{
+  width:72px;
+  height:72px;
+  border-radius:18px;
+  object-fit:cover;
+  object-position:center;
+  border:1px solid rgba(255,255,255,.1);
+}
+.artdir-fixeo-id{
+  position:relative;
+  width:72px;
+  height:72px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.11);
+  background:linear-gradient(145deg,#c93a86,#664ac6 68%,#111219);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);
+  color:#fff;
+}
+.artdir-id-v0{background:linear-gradient(145deg,#d72d80,#6f4cdb 68%,#111219)}
+.artdir-id-v1{background:linear-gradient(145deg,#be3f98,#4f61df 68%,#111219)}
+.artdir-id-v2{background:linear-gradient(145deg,#df3d78,#7b4ece 68%,#111219)}
+.artdir-id-v3{background:linear-gradient(145deg,#a64bb2,#4e5ac7 68%,#111219)}
+.artdir-id-v4{background:linear-gradient(145deg,#c93a86,#664ac6 68%,#111219)}
+.artdir-id-v5{background:linear-gradient(145deg,#b83f8c,#5148c5 68%,#111219)}
+.artdir-fixeo-id strong{
+  font-size:1.45rem;
+  line-height:1;
+  font-weight:950;
+  letter-spacing:-.055em;
+}
+.artdir-fixeo-id small{
+  position:absolute;
+  left:50%;
+  bottom:6px;
+  transform:translateX(-50%);
+  font-size:.28rem;
+  font-weight:900;
+  letter-spacing:.13em;
+  color:rgba(255,255,255,.48);
+  white-space:nowrap;
+}
+.artdir-fixeo-id-brand{
+  position:absolute;
+  right:6px;
+  top:6px;
+  width:13px;
+  height:13px;
+  display:grid;
+  place-items:center;
+  border-radius:4px;
+  background:linear-gradient(135deg,#ff8a35,#ed3d91,#8064ef);
+  font-size:.28rem;
+  font-weight:950;
+  color:#fff;
+}
+.artdir-card-kicker{
+  display:block;
+  margin:0 0 3px;
+  font-size:.42rem;
+  line-height:1.2;
+  font-weight:900;
+  letter-spacing:.13em;
+  color:#e56aa5;
+}
+.artdir-card-v2 .artdir-card-name{
+  margin:0 0 3px;
+  font-size:1rem;
+  line-height:1.2;
+  font-weight:850;
+  letter-spacing:-.02em;
+}
+.artdir-card-meta{
+  color:#9297a2;
+  font-size:.69rem;
+  line-height:1.35;
+  font-weight:620;
+}
+.artdir-card-v2 .artdir-card-desc{
+  margin:0 0 10px;
+  font-size:.73rem;
+  line-height:1.48;
+  color:rgba(255,255,255,.53);
+  -webkit-line-clamp:2;
+}
+.artdir-v2-signals{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:0 0 11px;
+}
+.artdir-v2-signal{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  min-height:27px;
+  padding:5px 8px;
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:999px;
+  background:rgba(255,255,255,.025);
+  color:#a9adb7;
+  font-size:.52rem;
+  line-height:1.2;
+  font-weight:700;
+}
+.artdir-v2-signal i{
+  font-style:normal;
+  color:#d36fa6;
+}
+.artdir-action-v2{
+  margin-top:auto;
+  padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.065);
+}
+.artdir-v2-truth{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:0 0 10px;
+  color:#777c87;
+  font-size:.52rem;
+  line-height:1.35;
+}
+.artdir-v2-truth span:first-child{
+  color:#aaaeb8;
+  font-weight:720;
+}
+.artdir-btn-reserve-v2{
+  min-height:52px;
+  margin:0 0 5px;
+  padding:8px 10px;
+  gap:10px;
+  justify-content:flex-start;
+  border:1px solid transparent;
+  border-radius:15px;
+  background:
+    linear-gradient(135deg,#17181e,#0f1015) padding-box,
+    linear-gradient(100deg,rgba(255,138,53,.68),rgba(237,61,145,.72) 50%,rgba(128,100,239,.68)) border-box;
+  box-shadow:0 12px 26px rgba(0,0,0,.2);
+  text-shadow:none;
+  font-size:.76rem;
+  font-weight:900;
+  letter-spacing:-.01em;
+}
+.artdir-btn-reserve-v2:hover{
+  transform:translateY(-1px);
+  box-shadow:0 14px 30px rgba(0,0,0,.24);
+}
+.artdir-btn-reserve-v2 .artdir-btn-mark{
+  width:34px;
+  height:34px;
+  flex:0 0 34px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  background:linear-gradient(135deg,#ff8a35,#ed3d91 52%,#8064ef);
+  color:#fff;
+  font-size:.7rem;
+  font-weight:950;
+}
+.artdir-btn-reserve-v2 b{
+  margin-left:auto;
+  width:29px;
+  height:29px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.045);
+  font-size:.78rem;
+}
+.artdir-btn-profile-v2{
+  min-height:34px;
+  font-size:.68rem;
+  color:#8d929d;
+  font-weight:650;
+}
+.artdir-btn-profile-v2::after{
+  content:"›";
+  margin-left:4px;
+}
+@media(max-width:600px){
+  .artdir-card-v2{padding:14px}
+  .artdir-card-v2 .artdir-avatar-v2,
+  .artdir-card-v2 .artdir-avatar-img,
+  .artdir-fixeo-id{
+    width:66px;
+    height:66px;
+    min-width:66px;
+    border-radius:17px;
+  }
+  .artdir-fixeo-id strong{font-size:1.34rem}
+  .artdir-v2-truth{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:2px;
+  }
+}
