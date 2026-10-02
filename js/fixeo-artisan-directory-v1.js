@@ -348,6 +348,21 @@
                || '';
     var desc = descRaw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 
+    /* Canonical public status only. Never infer verification from score, rating,
+     * availability, response time, or imported profile completeness. */
+    var statusHtml = '';
+    if (a.verified === true) {
+      statusHtml =
+        '<span class="artdir-passport-status artdir-passport-status--verified">' +
+          '<span aria-hidden="true">✓</span> Vérifié FIXEO' +
+        '</span>';
+    } else if (a.claimed === true) {
+      statusHtml =
+        '<span class="artdir-passport-status artdir-passport-status--claimed">' +
+          '<span aria-hidden="true">•</span> Profil revendiqué' +
+        '</span>';
+    }
+
     var avatarHtml = _buildAvatar(a, cat);
 
     var headerHtml =
@@ -361,12 +376,14 @@
           '<div class="artdir-passport-meta">' +
             _esc(catLabel) + (city ? ' · ' + _esc(city) : '') +
           '</div>' +
+          statusHtml +
         '</div>' +
       '</div>';
 
+    /* No synthetic biography: absent public description means absent copy. */
     var descHtml = desc
       ? '<p class="artdir-card-desc">' + _esc(desc) + '</p>'
-      : '<p class="artdir-card-desc artdir-card-desc--empty">Profil professionnel référencé sur FIXEO.</p>';
+      : '';
 
     var trustHtml =
       '<div class="artdir-trust artdir-trust--passport" role="list">' +
@@ -382,6 +399,7 @@
 
     var priceHtml =
       '<div class="artdir-price artdir-price--truth">' +
+        '<span class="artdir-price-kicker">CONDITIONS D’INTERVENTION</span>' +
         '<span class="artdir-price-amount">' + _esc(pricing.main) + '</span>' +
         '<span class="artdir-price-hint">' + _esc(pricing.hint) + '</span>' +
       '</div>';
@@ -405,7 +423,9 @@
       '</div>';
 
     return (
-      '<article class="artdir-card artdir-card--passport" data-artisan-id="' + _esc(String(aid)) + '">' +
+      '<article class="artdir-card artdir-card--passport"' +
+        ' data-artisan-id="' + _esc(String(aid)) + '"' +
+        ' data-identity-mode="' + ((a.photo_url || a.avatar || a.photo) ? 'photo' : 'fixeo-id') + '">' +
         headerHtml + descHtml + trustHtml + actionHtml +
       '</article>'
     );
