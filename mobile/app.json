@@ -3,16 +3,18 @@
     "name": "FIXEO",
     "slug": "fixeo-mobile",
     "scheme": "fixeo",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "ma.fixeo.app",
-      "supportsTablet": false
+      "supportsTablet": false,
+      "buildNumber": "2"
     },
     "android": {
       "package": "ma.fixeo.app",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "versionCode": 2
     },
     "plugins": [
       "expo-router",
