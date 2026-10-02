@@ -157,7 +157,7 @@
     /* ── Next-step guidance (Phase 2) ── */
     var nextStepText = 'L\u2019artisan peut vous contacter via WhatsApp pour confirmer l\u2019horaire et l\u2019adresse.';
     if (timeSlot) {
-      nextStepText = 'Cr\u00e9neau pr\u00e9vu\u00a0: <strong>' + esc(timeSlot) + '</strong>. '
+      nextStepText = 'Cr\u00e9neau demand\u00e9\u00a0: <strong>' + esc(timeSlot) + '</strong>. '
         + 'L\u2019artisan vous confirme les d\u00e9tails par WhatsApp.';
     }
 
