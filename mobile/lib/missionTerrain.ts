@@ -47,20 +47,38 @@ export async function getArtisanMissionDetail(missionId: string): Promise<Missio
 }
 
 export async function startMission(missionId: string) {
+  const detail = await getArtisanMissionDetail(missionId);
   const { data, error } = await supabase.rpc('start_mission', {
     p_mission_id: missionId,
   });
   if (error) throw error;
   if (!data?.ok) throw new Error(String(data?.reason || 'start_failed'));
+
+  void supabase.rpc('publish_notification_event_s1b', {
+    p_event: 'mission_started',
+    p_entity_id: detail.request_id,
+  });
+  void supabase.functions.invoke('mobile-magic-loop-push', {
+    body: { action: 'mission_started', request_id: detail.request_id },
+  });
   return data;
 }
 
 export async function completeMission(missionId: string) {
+  const detail = await getArtisanMissionDetail(missionId);
   const { data, error } = await supabase.rpc('complete_mission', {
     p_mission_id: missionId,
   });
   if (error) throw error;
   if (!data?.ok) throw new Error(String(data?.reason || 'complete_failed'));
+
+  void supabase.rpc('publish_notification_event_s1b', {
+    p_event: 'mission_completed',
+    p_entity_id: detail.request_id,
+  });
+  void supabase.functions.invoke('mobile-magic-loop-push', {
+    body: { action: 'mission_completed', request_id: detail.request_id },
+  });
   return data;
 }
 
@@ -70,5 +88,55 @@ export async function confirmCompletedRequest(requestId: string) {
   });
   if (error) throw error;
   if (!data?.ok) throw new Error(String(data?.reason || 'validation_failed'));
+
+  void supabase.rpc('publish_notification_event_s1b', {
+    p_event: 'mission_validated',
+    p_entity_id: requestId,
+  });
+  void supabase.functions.invoke('mobile-magic-loop-push', {
+    body: { action: 'mission_validated', request_id: requestId },
+  });
   return data;
+}
+
+
+export type ClientRequestSnapshot = {
+  request_id: string;
+  service_category?: string | null;
+  city?: string | null;
+  description?: string | null;
+  urgency?: string | null;
+  status: string;
+  created_at?: string | null;
+};
+
+export async function getMyCurrentClientRequest(): Promise<ClientRequestSnapshot | null> {
+  const { data, error } = await supabase.rpc('get_my_current_client_request_v1');
+  if (error) throw error;
+  if (!data?.ok) throw new Error(String(data?.reason || 'request_unavailable'));
+  return data.request || null;
+}
+
+export async function markMissionArrived(missionId: string) {
+  const { data, error } = await supabase.rpc('mark_my_mission_arrived_v1', {
+    p_mission_id: missionId,
+  });
+  if (error) throw error;
+  if (!data?.ok) throw new Error(String(data?.reason || 'arrival_failed'));
+
+  if (data.request_id) {
+    void supabase.functions.invoke('mobile-magic-loop-push', {
+      body: { action: 'mission_arrived', request_id: data.request_id },
+    });
+  }
+  return data;
+}
+
+export async function getMissionTimeline(missionId: string) {
+  const { data, error } = await supabase.rpc('get_my_mission_timeline_v1', {
+    p_mission_id: missionId,
+  });
+  if (error) throw error;
+  if (!data?.ok) throw new Error(String(data?.reason || 'timeline_unavailable'));
+  return Array.isArray(data.events) ? data.events : [];
 }
