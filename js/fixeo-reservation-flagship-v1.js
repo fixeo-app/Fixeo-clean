@@ -118,6 +118,20 @@
 
   /* Read artisan identity from the rendered modal DOM — no state duplication */
   function _readArtisanFromDOM(modal) {
+    /* Every targeted entry point publishes the same canonical reservation artisan. */
+    if (document.body.classList.contains('fixeo-targeted-booking-open') &&
+        window.__fixeoTargetedReservationArtisan &&
+        typeof window.__fixeoTargetedReservationArtisan === 'object') {
+      var ta = window.__fixeoTargetedReservationArtisan;
+      return {
+        name: ta.name || 'Artisan FIXEO',
+        category: ta.category || ta.service_category || '',
+        city: ta.city || '',
+        photo_url: ta.photo_url || '',
+        avatar: ta.photo_url || ''
+      };
+    }
+
     /* Targeted public-profile flow: source identity only from canonical V4 contract. */
     if (document.body.classList.contains('fixeo-targeted-booking-open') &&
         window.__fixeoProfileV4 && typeof window.__fixeoProfileV4 === 'object') {
