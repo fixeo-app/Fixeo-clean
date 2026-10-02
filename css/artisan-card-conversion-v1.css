@@ -2957,3 +2957,46 @@
 }
 
 /* End FXHOME-ARTISAN-CARD-V3B-ESTIMATOR */
+
+
+/* HOMEPAGE / RESULTS PASSPORT V2 — main.js active public renderer */
+.homepass-card{
+  display:flex!important;flex-direction:column!important;min-height:100%!important;
+  padding:18px 16px 15px!important;border:1px solid rgba(255,255,255,.085)!important;
+  border-radius:22px!important;
+  background:radial-gradient(circle at 92% 0,rgba(128,100,239,.075),transparent 18rem),
+             radial-gradient(circle at 4% 12%,rgba(237,61,145,.05),transparent 15rem),
+             linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.014))!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.16)!important;overflow:hidden!important;
+}
+.homepass-header{display:flex!important;align-items:center!important;gap:13px!important;margin:0 0 12px!important}
+.homepass-avatar{position:relative!important;width:70px!important;height:70px!important;min-width:70px!important;border-radius:18px!important;overflow:hidden!important;display:grid!important;place-items:center!important;background:#111219!important}
+.homepass-avatar-img{position:absolute!important;inset:0!important;width:70px!important;height:70px!important;object-fit:cover!important;border-radius:18px!important;z-index:2!important}
+.homepass-fixeo-id{position:relative;width:70px;height:70px;display:grid;place-items:center;border-radius:18px;overflow:hidden;background:linear-gradient(145deg,#c93a86,#664ac6 68%,#111219);border:1px solid rgba(255,255,255,.11);color:#fff}
+.homepass-fixeo-id--v1{background:linear-gradient(145deg,#d72d80,#6f4cdb 68%,#111219)}
+.homepass-fixeo-id--v2{background:linear-gradient(145deg,#be3f98,#4f61df 68%,#111219)}
+.homepass-fixeo-id--v3{background:linear-gradient(145deg,#df3d78,#7b4ece 68%,#111219)}
+.homepass-fixeo-id--v4{background:linear-gradient(145deg,#a64bb2,#4e5ac7 68%,#111219)}
+.homepass-fixeo-id--v5{background:linear-gradient(145deg,#b83f8c,#5148c5 68%,#111219)}
+.homepass-fixeo-id strong{font-size:1.36rem;font-weight:950;letter-spacing:-.055em}
+.homepass-fixeo-id small{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);white-space:nowrap;color:rgba(255,255,255,.45);font-size:.26rem;font-weight:900;letter-spacing:.12em}
+.homepass-fixeo-id-brand{position:absolute;top:6px;right:6px;width:13px;height:13px;display:grid;place-items:center;border-radius:4px;background:linear-gradient(135deg,#ff8a35,#ed3d91 52%,#8064ef);font-size:.28rem;font-weight:950}
+.homepass-identity{min-width:0!important;flex:1!important}
+.homepass-kicker{display:block!important;margin-bottom:3px!important;color:#ef6aab!important;font-size:.46rem!important;font-weight:900!important;letter-spacing:.11em!important}
+.homepass-name{margin:0!important;color:#fff!important;font-size:1rem!important;line-height:1.15!important;font-weight:900!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.homepass-meta{margin-top:4px!important;color:rgba(255,255,255,.58)!important;font-size:.68rem!important;font-weight:650!important}
+.homepass-desc{margin:0 0 11px!important;color:rgba(255,255,255,.64)!important;font-size:.72rem!important;line-height:1.48!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+.homepass-desc--empty{color:rgba(255,255,255,.42)!important}
+.homepass-trust{display:flex!important;flex-wrap:wrap!important;gap:6px!important;margin-bottom:12px!important}
+.homepass-trust-item,.homepass-proof{display:inline-flex!important;align-items:center!important;min-height:27px!important;padding:5px 8px!important;border:1px solid rgba(255,255,255,.075)!important;border-radius:999px!important;background:rgba(255,255,255,.025)!important;color:rgba(255,255,255,.62)!important;font-size:.56rem!important;font-weight:700!important}
+.homepass-proof-row{display:flex!important;flex-wrap:wrap!important;gap:6px!important;width:100%!important}
+.homepass-actions{margin-top:auto!important}
+.homepass-price-truth{display:flex!important;flex-direction:column!important;gap:2px!important;margin:11px 0!important}
+.homepass-price-truth strong{color:#f2f3f6!important;font-size:.77rem!important;font-weight:850!important}
+.homepass-price-truth span{color:rgba(255,255,255,.42)!important;font-size:.56rem!important}
+.homepass-btn{width:100%!important;min-height:52px!important;border:1px solid transparent!important;border-radius:15px!important;background:linear-gradient(135deg,#17181e,#101116) padding-box,linear-gradient(100deg,rgba(255,138,53,.68),rgba(237,61,145,.72) 50%,rgba(128,100,239,.68)) border-box!important;color:#fff!important;font-weight:850!important;box-shadow:0 12px 28px rgba(0,0,0,.2)!important}
+.homepass-btn--reserve{display:grid!important;grid-template-columns:34px 1fr 30px!important;align-items:center!important;gap:8px!important;padding:8px 10px!important}
+.homepass-btn-f{width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:linear-gradient(135deg,#ff8a35,#ed3d91 52%,#8064ef);font-size:.68rem;font-weight:950}
+.homepass-btn b{width:28px;height:28px;display:grid;place-items:center;border-radius:9px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04)}
+.homepass-profile-link{display:block!important;margin-top:9px!important;color:rgba(255,255,255,.48)!important;font-size:.69rem!important;text-align:center!important;text-decoration:none!important}
+@media(max-width:640px){.homepass-card{padding:16px 14px 14px!important}.homepass-avatar,.homepass-avatar-img,.homepass-fixeo-id{width:64px!important;height:64px!important;min-width:64px!important;border-radius:17px!important}}
