@@ -41,6 +41,12 @@ async function transcribe(req, res) {
     }
 
     if (!process.env.OPENAI_API_KEY) {
+      console.warn(
+        JSON.stringify({
+          event: 'mobile_rafi_voice_unavailable',
+          has_openai_key: false,
+        }),
+      );
       return send(res, 503, { ok: false, error: 'transcription_unavailable' });
     }
 
@@ -101,6 +107,13 @@ async function transcribe(req, res) {
 
     const raw = await response.text();
     if (!response.ok) {
+      console.warn(
+        JSON.stringify({
+          event: 'mobile_rafi_voice_provider_error',
+          provider_status: response.status,
+          latency_ms: Date.now() - started,
+        }),
+      );
       return send(res, 502, { ok: false, error: 'transcription_failed' });
     }
 
@@ -133,12 +146,21 @@ async function transcribe(req, res) {
       return send(res, 504, { ok: false, error: 'transcription_timeout' });
     }
     if (error instanceof MobileRafiError) {
+      console.warn(
+        JSON.stringify({
+          event: 'mobile_rafi_voice_gateway_error',
+          code: error.code,
+          status: error.status,
+          latency_ms: Date.now() - started,
+        }),
+      );
       return send(res, error.status, { ok: false, error: error.code });
     }
     console.warn(
       JSON.stringify({
         event: 'mobile_rafi_voice_failed',
         code: String(error?.message || 'unknown').slice(0, 80),
+        latency_ms: Date.now() - started,
       }),
     );
     return send(res, 502, { ok: false, error: 'transcription_failed' });
