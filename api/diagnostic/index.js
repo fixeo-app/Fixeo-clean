@@ -105,6 +105,7 @@ function createHandler({
   mediaStore: injectedMedia,
   logger = console,
   cfg: injectedConfig,
+  trustedAuthenticatedMobile = false,
 } = {}) {
   return async function diagnosticHandler(req, res) {
     const started = Date.now();
@@ -122,7 +123,13 @@ function createHandler({
         });
       if (req.method !== 'POST')
         return send(res, 405, { ok: false, error: 'METHOD_NOT_ALLOWED' });
-      sameOrigin(req, cfg);
+      if (trustedAuthenticatedMobile) {
+        if (!/^Bearer\s+[^\s]+$/i.test(String(req.headers?.authorization || ''))) {
+          throw new DiagnosticError('AUTH_REQUIRED', 401);
+        }
+      } else {
+        sameOrigin(req, cfg);
+      }
       if (
         !/^application\/json(?:\s*;|$)/i.test(req.headers['content-type'] || '')
       )
@@ -164,8 +171,11 @@ function createHandler({
         res,
         cfg,
         transport,
-        action === 'create',
+        action === 'create' && !trustedAuthenticatedMobile,
       );
+      if (trustedAuthenticatedMobile && !actor.startsWith('u:')) {
+        throw new DiagnosticError('AUTH_REQUIRED', 401);
+      }
       const limits = quotaLimits(actor, ip, cfg);
       await transport.rpc('diagnostic_quota_v1', {
         p_limits: [limits[2]],
