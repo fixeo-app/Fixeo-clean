@@ -1,0 +1,3 @@
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const sql=fs.readFileSync(path.resolve(__dirname,'../../supabase/migrations/20261002003000_artisan_profile_b34_portfolio_identity_bridge.sql'),'utf8');
+test('portfolio bridge accepts canonical artisan id or canonical owner user id',()=>{assert.match(sql,/pi\.artisan_id=p_artisan_id::text/);assert.match(sql,/pi\.artisan_id=aa\.owner_user_id::text/);assert.match(sql,/aa\.owner_user_id is not null/)});
+test('portfolio bridge does not change review or metric truth rules',()=>{assert.match(sql,/verified is true/);assert.ok(sql.includes("status in ('done','validated')"));assert.match(sql,/accepted_count>=3/)});
