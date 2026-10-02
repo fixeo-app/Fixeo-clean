@@ -1664,7 +1664,7 @@ city:
   var _SLUG_ALLOWLIST = [
     'plomberie','electricite','serrurerie','climatisation',
     'menuiserie','peinture','maconnerie','nettoyage','jardinage',
-    'demenagement','carrelage','autre'
+    'demenagement','autre'
   ];
 
   function _toServiceSlug(raw) {
@@ -1749,25 +1749,25 @@ if (
 if (
   s.indexOf('bricol') !== -1 ||
   s.indexOf('montagemeuble') !== -1
-) return 'autre';
+) return 'bricolage';
 
 /* Chauffage */
 if (
   s.indexOf('chauffage') !== -1 ||
   s.indexOf('radiateur') !== -1
-) return 'autre';
+) return 'chauffage';
 
 /* Toiture */
 if (
   s.indexOf('toitur') !== -1 ||
   s.indexOf('etancheite') !== -1
-) return 'autre';
+) return 'toiture';
 
 /* Vitrerie */
 if (
   s.indexOf('vitr') !== -1 ||
   s.indexOf('verre') !== -1
-) return 'autre';
+) return 'vitrerie';
 
 /* Déménagement */
 if (
@@ -1780,20 +1780,20 @@ if (
   s.indexOf('surveill') !== -1 ||
   s.indexOf('camera') !== -1 ||
   s.indexOf('alarme') !== -1
-) return 'autre';
+) return 'securite';
 
 /* Énergie solaire */
 if (
   s.indexOf('solair') !== -1 ||
   s.indexOf('photovolt') !== -1 ||
   s.indexOf('panneausolaire') !== -1
-) return 'autre';
+) return 'energie_solaire';
 
 /* Corporate */
 if (
   s.indexOf('corporate') !== -1 ||
   s.indexOf('entreprise') !== -1
-) return 'autre';
+) return 'corporate';
 
 return 'autre';
   }
@@ -1837,9 +1837,8 @@ return 'autre';
         return r.reservation_ref === orderID;
       })) return null; /* already bridged */
 
-      var _requestSource = String(bookingData._source || 'reservation_cod').trim() || 'reservation_cod';
       var payload = {
-         source          : _requestSource,
+         source          : 'reservation_cod',
         reservation_ref : String(orderID || '').trim(),
         service     : String(bookingData.service     || '').trim() || 'Réservation Fixeo',
         city        : String(artisanCity             || bookingData.artisanCity || '').trim() || 'Ville à préciser',
@@ -1862,7 +1861,7 @@ return 'autre';
         var reqId = String(result.request.id);
         for (var i = raw.length - 1; i >= 0; i--) {
           if (String(raw[i].id) === reqId) {
-            raw[i].source          = _requestSource;
+            raw[i].source          = 'reservation_cod';
             raw[i].reservation_ref = orderID;
             raw[i].artisan_name    = String(bookingData.artisanName || '').trim();
             raw[i].artisan_id      = String(bookingData.artisanId   || '');
@@ -2030,7 +2029,7 @@ var _serviceSlug = _toServiceSlug(_serviceSource);
       state._canonicalInFlight = false;
 
       /* Step 11: ONLY NOW run the existing confirmation continuation */
-      onConfirmed(body);
+      onConfirmed();
     })
     .catch(function(err) {
       if (timer) clearTimeout(timer);
@@ -2470,7 +2469,6 @@ var _serviceSlug = _toServiceSlug(_serviceSource);
     _urgentConfirm,
     _proceedToPayment,
     _canonicalPersistGate,
-    _toServiceSlug,
     _initPills,
   };
 

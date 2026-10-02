@@ -38,6 +38,8 @@
   <link rel="stylesheet" href="css/fixeo-header-global.css?v=fxgh6">
   <link rel="stylesheet" href="css/auth-global.css?v=v2c3b">
   <link rel="stylesheet" href="css/reservation.css">
+  <link rel="stylesheet" href="css/reservation-v2.css?v=3" />
+  <link rel="stylesheet" href="css/reservation-v2a.css?v=v2c" />
   <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf5a">
   <!-- rf4: Preload artisan index for true cold SEO visitors. fetch-priority=low so it
        doesn't compete with CSS/fonts; crossorigin needed for fetch() CORS to reuse connection. -->
@@ -198,25 +200,17 @@
 
 <script>
 (function(){
-  var PROFILE_PAGE_VERSION='20261002p0s1';
+  var PROFILE_PAGE_VERSION='20261002p0rb1';
   var q=new URLSearchParams(window.location.search);
   var ref=q.get('id')||q.get('artisan');
-  if(!ref){
-    window.location.replace('/artisans.html');
-    return;
-  }
+  if(!ref){ window.location.replace('/artisans.html'); return; }
   function replaceWithCurrentVersion(){
     var next=new URLSearchParams(window.location.search);
     next.set('pv',PROFILE_PAGE_VERSION);
     window.location.replace(window.location.pathname+'?'+next.toString()+window.location.hash);
   }
-  if(q.get('pv')!==PROFILE_PAGE_VERSION){
-    replaceWithCurrentVersion();
-    return;
-  }
-  window.addEventListener('pageshow',function(ev){
-    if(ev&&ev.persisted) replaceWithCurrentVersion();
-  });
+  if(q.get('pv')!==PROFILE_PAGE_VERSION){ replaceWithCurrentVersion(); return; }
+  window.addEventListener('pageshow',function(ev){ if(ev&&ev.persisted) replaceWithCurrentVersion(); });
 }());
 </script>
 <main id="main-content" class="public-artisan-wrap">
@@ -239,12 +233,13 @@
 <!-- perf2: Batch 2 — all deferred (DCL order: links → render → v2 enhance).
      All three use DCL listeners internally; defer preserves execution order. -->
 
-<link rel="stylesheet" href="css/fixeo-reservation-v4.css?v=fxrv4-v1">
-<script src="js/fixeo-reservation-v4.js?v=fxrv4-v1" defer></script>
-<script src="js/reservation.js?v=av2" defer></script>
+<script src="js/reservation.js?v=av1-p0rb1" defer></script>
+<script src="js/reservation-v2.js?v=v2c6f-b" defer></script>
 <!-- fxresf-cod-v1: Load COD payment engine so FixeoCOD.processCOD() is available.
      Without this, _proceedToPayment() falls to the alert() fallback and no redirect fires. -->
 <script src="js/cod-payment.js?v=fxresf-cod-v1" defer></script>
+<link rel="stylesheet" href="css/fixeo-reservation-v3.css?v=fxrv3-v1a" />
+<script src="js/fixeo-reservation-v3.js?v=fxrv3-v1a" defer></script>
 <!-- -->
 
 
@@ -252,7 +247,7 @@
 
 
 <script src="js/notifications.js?v=v2c3b" defer></script>
-<!-- Reservation V4 targeted flow is mounted above; no legacy presentation layer is loaded on this page. -->
+<!-- reservation.js + reservation-v2.js moved earlier (perf3) — removed from here -->
 <!-- -->    
 <script src="js/fixeo-client-requests-store.js?v=v2c3b" defer></script>
 <!-- rf-sb1: Supabase-first mirror for reservation flow — fire-and-forget, silent on failure -->
@@ -272,9 +267,13 @@
 <!-- fxpf-v131: Flagship profile CSS + DOM transformer. Runs after V2A enhance(). -->
 
 
+<!-- fxresf-v11a: Reservation modal flagship presentation enhancer.
+     Pure additive layer — zero engine changes. -->
+<link rel="stylesheet" href="css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a">
 <!-- Artisan Journey V4 B2: canonical public profile presentation -->
 <link rel="stylesheet" href="css/fixeo-artisan-profile-v4.css?v=fxp4-b34dm1-b35wow1-b36p1-b37id1-b371opt1-b372freeze1-b373id2">
-<script src="js/fixeo-artisan-profile-v4.js?v=fxp4-b34dm1-b35wow1-b36p1-b37id1-b371opt1-b372freeze1-b373id2-rv4-p0s1" defer></script>
+<script src="js/fixeo-reservation-flagship-v1.js?v=fxresf-v11a" defer></script>
+<script src="js/fixeo-artisan-profile-v4.js?v=fxp4-b34dm1-b35wow1-b36p1-b37id1-b371opt1-b372freeze1-b373id2-p0rb1" defer></script>
 
 
   
