@@ -402,3 +402,66 @@ body.fixeo-targeted-booking-open .fxrt-actions .fixeo-res-btn-secondary{
     animation:none!important;
   }
 }
+
+
+/* FINAL OPTICAL — targeted recap identity, when rhythm and graphite CTA */
+.fxrt-recap-artisan-id{
+  position:relative;
+  width:48px;
+  height:48px;
+  flex:0 0 48px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(145deg,#c93a86,#664ac6 68%,#111219);
+  border:1px solid rgba(255,255,255,.12);
+  overflow:hidden;
+  color:#fff;
+}
+.fxrt-recap-artisan-id>strong{
+  font-size:1.05rem;
+  font-weight:950;
+  letter-spacing:-.05em;
+}
+.fxrt-recap-artisan-id>span{
+  position:absolute;
+  top:5px;
+  right:5px;
+  width:12px;
+  height:12px;
+  display:grid;
+  place-items:center;
+  border-radius:4px;
+  background:linear-gradient(135deg,var(--fxrt-orange),var(--fxrt-pink),var(--fxrt-violet));
+  color:#fff;
+  font-size:.26rem;
+  font-weight:950;
+}
+.fxrt-recap-when strong{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.fxrt-when-date{
+  display:block;
+  color:#f2f3f6;
+}
+.fxrt-when-slot{
+  display:block;
+  color:#a5aab5;
+  font-size:.62rem;
+  font-weight:700;
+}
+body.fixeo-targeted-booking-open #fixeo-reservation-modal .fxrt-actions .fixeo-res-btn-primary[data-res-targeted-confirm]{
+  border:1px solid transparent!important;
+  background:
+    linear-gradient(135deg,#17181e,#0f1015) padding-box,
+    linear-gradient(100deg,rgba(255,138,53,.72),rgba(237,61,145,.74) 50%,rgba(128,100,239,.72)) border-box!important;
+  color:#fff!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.26)!important;
+}
+body.fixeo-targeted-booking-open #fixeo-reservation-modal .fxrt-actions .fixeo-res-btn-primary[data-res-targeted-confirm]:hover{
+  background:
+    linear-gradient(135deg,#1b1c23,#121319) padding-box,
+    linear-gradient(100deg,rgba(255,138,53,.78),rgba(237,61,145,.8) 50%,rgba(128,100,239,.78)) border-box!important;
+}
