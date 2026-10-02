@@ -11,7 +11,7 @@ test('Block 2 preserves targeted truth contract',()=>{const a=engine.indexOf('fu
 
 test('Block 3 confirmation removes false availability and generic artisan icon',()=>{assert.doesNotMatch(coord,/var availLabel = '🟢 Disponible'/);assert.match(coord,/Disponibilité à confirmer/);assert.match(coord,/fxci-artisan-fixeo-id/);assert.match(coord,/function _initials/);assert.match(coord,/Créneau demandé aujourd/);});
 
-test('Block 3 targeted confirmation uses FIXEO branding and neutral payment wording',()=>{assert.match(flag,/fxcf-targeted/);assert.match(flag,/\/img\/fixeo-logo\.webp/);assert.match(flag,/fxcf-icon-fixeo/);assert.match(flag,/Paiement après intervention/);assert.match(conf,/Demande enregistrée — Fixeo/);assert.match(conf,/fixeo-confirmation-targeted-v2\.css\?v=fxc2-v1/);assert.match(confCss,/body\.fxcf-targeted/);assert.match(confCss,/fxci-artisan-avail--truth/);});
+test('Block 3 targeted confirmation uses FIXEO branding and neutral payment wording',()=>{assert.match(flag,/fxcf-targeted/);assert.match(flag,/\/img\/logo\.png/);assert.match(flag,/fxcf-icon-fixeo/);assert.match(flag,/Paiement après intervention/);assert.match(conf,/Demande enregistrée — Fixeo/);assert.match(conf,/fixeo-confirmation-targeted-v2\.css\?v=fxc2-v1/);assert.match(confCss,/body\.fxcf-targeted/);assert.match(confCss,/fxci-artisan-avail--truth/);});
 
 test('Block 3 confirmation still hides non-authoritative amount and keeps profile link current',()=>{assert.match(conf,/order\.source === 'reservation_targeted' && !order\.total/);assert.match(conf,/totalRow\.style\.display = 'none'/);assert.match(conf,/artisan-profile\.html\?id=.*20261002ux2/);});
 
