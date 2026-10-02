@@ -106,3 +106,28 @@ M5 may be certified only when:
 - authenticated voice/photo work on physical Staging devices;
 - Client and Artisan canonical journeys remain regression-free;
 - no Production/main merge or cutover occurred.
+
+
+## Software gate checkpoint — 2026-10-02
+
+Exact branch head before this documentation checkpoint: `6db48181409a6154da734a085c1c56aa1b9f36c3`.
+
+PASS:
+- Mobile Gate A run #206: success.
+- Vercel Preview exact branch deployment: READY.
+- Stable branch Preview alias answers both native RAFI routes.
+- GET /api/mobile-rafi-transcribe -> 405 METHOD_NOT_ALLOWED.
+- GET /api/mobile-rafi-photo -> 405 METHOD_NOT_ALLOWED.
+- Native RAFI functions are isolated Vercel functions and preview-only.
+- Staging Supabase is hard-pinned in the native RAFI server boundary.
+- public.mobile_rafi_quota_v1 has authenticated EXECUTE and anon EXECUTE revoked.
+- Transactional authenticated quota probes for voice/photo passed.
+- Anonymous quota execution is denied.
+- Supabase security advisor reports no new mutable-search-path warning for the M5 quota function; remaining mutable-search-path findings are pre-existing functions outside this M5 scope.
+- Mobile Decision Context remains authenticated-only and role-scoped.
+- Production/main were not changed by this M5 work.
+
+Current gate:
+SOFTWARE READY FOR ANDROID M5 PHYSICAL BUILD.
+
+Physical certification remains mandatory before M5 PASS.
