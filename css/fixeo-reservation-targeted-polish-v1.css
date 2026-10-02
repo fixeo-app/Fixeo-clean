@@ -16,6 +16,11 @@ body.fixeo-targeted-booking-open{
 
 /* Never let profile/navigation UI leak through the targeted flow. */
 body.fixeo-targeted-booking-open .navbar,
+body.fixeo-targeted-booking-open .fixeo-gh-shell,
+body.fixeo-targeted-booking-open .fixeo-gh-universal-shell,
+body.fixeo-targeted-booking-open .fixeo-gh-source-shell,
+body.fixeo-targeted-booking-open .fixeo-gh-mobile,
+body.fixeo-targeted-booking-open #fixeo-gh-menu-portal,
 body.fixeo-targeted-booking-open .fixeo-gh-mobile-bar,
 body.fixeo-targeted-booking-open #ppui-sticky-cta,
 body.fixeo-targeted-booking-open #fixeo-floating-reserve,
