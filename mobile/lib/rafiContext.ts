@@ -25,6 +25,7 @@ export const RAFI_PROVENANCE_LABELS: Record<RafiProvenance, string> = {
 
 export function buildDeclaredContext(input: {
   description?: string | null;
+  descriptionProvenance?: RafiProvenance;
   city?: string | null;
   serviceCategory?: string | null;
   serviceConfidence?: 'low' | 'medium' | 'high';
@@ -35,7 +36,7 @@ export function buildDeclaredContext(input: {
     facts.push({
       label: 'Problème',
       value: input.description.trim(),
-      provenance: 'user_declared',
+      provenance: input.descriptionProvenance || 'user_declared',
       confidence: 'high',
     });
   }
