@@ -835,15 +835,105 @@ city:
     `;
   }
 
+  /* Targeted artisan recap — no local price authority, no client fee, no payment selector. */
+  function renderTargetedStep2() {
+    const a = state.artisan;
+    const catIcon = CATEGORY_ICONS[a?.category] || '🛠️';
+    const slotLabel = TIME_SLOTS.find(t => t.value === state.selectedSlot)?.label || state.selectedSlot || 'À confirmer';
+    const maskedPhone = state.phone && state.phone.length >= 4
+      ? state.phone.slice(0, 2) + '••••••' + state.phone.slice(-2)
+      : state.phone;
+
+    const rows = [
+      ['Artisan', sanitize(a.name)],
+      ['Métier', sanitize(state.selectedService || a.service_category || a.category || 'Intervention')],
+      ['Date', sanitize(formatDateFR(state.selectedDate))],
+      ['Créneau', sanitize(slotLabel)],
+      ['Besoin', sanitize(state.description.substring(0, 120) + (state.description.length > 120 ? '…' : ''))],
+      ['Adresse', sanitize(state.address)],
+      ['Contact', sanitize(maskedPhone)]
+    ];
+
+    return `
+      <div class="fixeo-res-dialog" role="document" data-res-targeted-recap>
+        <div class="fixeo-res-header">
+          <div class="fixeo-res-header-left">
+            <div class="fixeo-res-header-icon">${catIcon}</div>
+            <div>
+              <div class="fixeo-res-header-title">📋 Récapitulatif</div>
+              <div class="fixeo-res-header-sub">Étape 2 sur 2 — Vérifiez votre demande</div>
+            </div>
+          </div>
+          <button class="fixeo-res-close" onclick="FixeoReservation.close()" aria-label="Fermer">✕</button>
+        </div>
+
+        <div class="fixeo-res-steps">
+          <div class="fixeo-res-step completed">
+            <div class="fixeo-res-step-dot completed">✓</div>
+            <div class="fixeo-res-step-label">Votre intervention</div>
+          </div>
+          <div class="fixeo-res-step-line active"></div>
+          <div class="fixeo-res-step active">
+            <div class="fixeo-res-step-dot active">2</div>
+            <div class="fixeo-res-step-label">Récapitulatif</div>
+          </div>
+        </div>
+
+        <div class="fixeo-res-body">
+          <div class="fixeo-res-summary">
+            ${rows.map(([label, val]) => `
+              <div class="fixeo-res-summary-row">
+                <span class="fixeo-res-summary-label">${label}</span>
+                <span class="fixeo-res-summary-val">${val}</span>
+              </div>`).join('')}
+            <div data-res-targeted-truth style="margin-top:12px;padding:13px 14px;border:1px solid rgba(225,48,108,.22);border-radius:12px;background:linear-gradient(135deg,rgba(225,48,108,.08),rgba(131,58,180,.05));">
+              <div style="font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.42);font-weight:800">Tarif</div>
+              <div style="font-size:.95rem;color:#fff;font-weight:800;margin-top:4px">Confirmé avant intervention</div>
+              <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:4px;line-height:1.5">Aucun montant n’est inventé par FIXEO. Aucun paiement maintenant.</div>
+            </div>
+          </div>
+
+          <div class="fixeo-res-trust-row fxrva-trust-row">
+            <div class="fixeo-res-trust-item"><span class="fixeo-res-trust-icon">💳</span><span>Paiement après intervention</span></div>
+            <div class="fixeo-res-trust-item"><span class="fixeo-res-trust-icon">💬</span><span>Coordination Fixeo</span></div>
+            <div class="fixeo-res-trust-item"><span class="fixeo-res-trust-icon">✓</span><span>Sans engagement</span></div>
+          </div>
+
+          <div class="fixeo-res-error" id="res-error" style="display:none"></div>
+
+          <div class="fixeo-res-actions">
+            <button type="button" class="fixeo-res-btn-secondary" data-res-back="step1">← Retour</button>
+            <button class="fixeo-res-btn-primary fixeo-res-btn-pay"
+                    data-res-targeted-confirm
+                    onclick="FixeoReservation._confirmTargetedRequest(this)">
+              ✓ Confirmer ma demande
+            </button>
+          </div>
+        </div>
+
+        <div class="fixeo-res-footer">
+          <div class="fxrva-op-strip">
+            <span>✓ Demande ciblée</span>
+            <span>💳 Paiement après intervention</span>
+            <span>💬 Coordination Fixeo</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   /* ════════════════════════════════════════════════════════
      RENDER STEP 2 — SUMMARY & CONFIRM
   ════════════════════════════════════════════════════════ */
   function renderStep2() {
     const a = state.artisan;
-    const _svcP    = !state.isUrgent ? SERVICE_PRICING[state.selectedService] : null;
-    const _svcBase = (_svcP && _svcP.from) ? _svcP.from : a.priceFrom;
     const _useEstimator = state._estimatorCtx && state._estimatorCtx.valid &&
       window.FixeoEstimatorConfig && window.FixeoEstimatorConfig.estimatorV2Enabled === true;
+    if (state.isTargeted && !_useEstimator && !state.isUrgent && !state.isExpress) {
+      return renderTargetedStep2();
+    }
+    const _svcP    = !state.isUrgent ? SERVICE_PRICING[state.selectedService] : null;
+    const _svcBase = (_svcP && _svcP.from) ? _svcP.from : a.priceFrom;
     const serviceTotal = _useEstimator ? (state._estimatorCtx.amount_mad || state._estimatorCtx.labour_amount_mad || _svcBase) : (state.isExpress && state.selectedService?.includes('Urgence') ? (_svcBase * 1.3 | 0) : _svcBase);
     const platformFee  = Math.round(serviceTotal * 0.05);
     const expressFee   = state.isExpress ? 50 : 0;
@@ -1864,8 +1954,9 @@ return 'autre';
         return r.reservation_ref === orderID;
       })) return null; /* already bridged */
 
+      var _requestSource = String(bookingData._source || 'reservation_cod').trim() || 'reservation_cod';
       var payload = {
-         source          : 'reservation_cod',
+         source          : _requestSource,
         reservation_ref : String(orderID || '').trim(),
         service     : String(bookingData.service     || '').trim() || 'Réservation Fixeo',
         city        : String(artisanCity             || bookingData.artisanCity || '').trim() || 'Ville à préciser',
@@ -1888,7 +1979,7 @@ return 'autre';
         var reqId = String(result.request.id);
         for (var i = raw.length - 1; i >= 0; i--) {
           if (String(raw[i].id) === reqId) {
-            raw[i].source          = 'reservation_cod';
+            raw[i].source          = _requestSource;
             raw[i].reservation_ref = orderID;
             raw[i].artisan_name    = String(bookingData.artisanName || '').trim();
             raw[i].artisan_id      = String(bookingData.artisanId   || '');
@@ -2056,7 +2147,7 @@ var _serviceSlug = _toServiceSlug(_serviceSource);
       state._canonicalInFlight = false;
 
       /* Step 11: ONLY NOW run the existing confirmation continuation */
-      onConfirmed();
+      onConfirmed(body);
     })
     .catch(function(err) {
       if (timer) clearTimeout(timer);
@@ -2178,6 +2269,89 @@ var _serviceSlug = _toServiceSlug(_serviceSource);
       }
       setTimeout(function() { _proceedToPayment(total); }, 900);
     }, 1200);
+  }
+
+  function _confirmTargetedRequest(btn) {
+    if (!state.isTargeted || state.isUrgent || state.isExpress) return;
+    if (state._estimatorCtx && state._estimatorCtx.valid) return;
+
+    const a = state.artisan;
+    const slotLabel = TIME_SLOTS.find(t => t.value === state.selectedSlot)?.label || state.selectedSlot || 'À confirmer';
+    const orderID = 'REQ-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+    const canonicalArtisanId =
+      a._artisan_id_canonical || a._supabase_id || a.id || a.legacy_id || '';
+
+    const bookingData = {
+      _source      : 'reservation_targeted',
+      artisanName : a.name,
+      artisanId   : canonicalArtisanId,
+      artisanCity : a.city || '',
+      service     : state.selectedService || a.service_category || a.category || 'Autre',
+      date        : formatDateFR(state.selectedDate),
+      timeSlot    : slotLabel,
+      description : state.description,
+      address     : state.address,
+      phone       : state.phone,
+      isExpress   : false
+    };
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Enregistrement…';
+    }
+
+    _canonicalPersistGate(
+      bookingData,
+      orderID,
+      a.city || '',
+      function(body) {
+        try {
+          localStorage.setItem('lastOrder', JSON.stringify({
+            orderID: orderID,
+            bookingRef: body && body.ref ? body.ref : '',
+            canonical_request_id: body && body.id ? body.id : '',
+            artisan: a.name,
+            artisanId: canonicalArtisanId,
+            service: bookingData.service,
+            date: bookingData.date,
+            timeSlot: slotLabel,
+            address: state.address,
+            phone: state.phone,
+            client: localStorage.getItem('fixeo_user_name') || 'Client',
+            status: 'new',
+            payStatus: 'pending_request',
+            paymentMethod: 'Paiement après intervention',
+            source: 'reservation_targeted'
+          }));
+        } catch (_) {}
+
+        try {
+          if (window.FixeoSlotLock && typeof window.FixeoSlotLock.onReservationCreated === 'function') {
+            window.FixeoSlotLock.onReservationCreated({
+              artisanId: canonicalArtisanId,
+              artisanName: a.name,
+              service: bookingData.service,
+              date: state.selectedDate,
+              time: state.selectedSlot,
+              timeSlot: slotLabel,
+              paid: false,
+              paymentMethod: 'Paiement après intervention'
+            });
+          }
+        } catch (_) {}
+
+        close();
+        window.location.href = 'confirmation.html?v=targeted1';
+      },
+      function(msg) {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '✓ Confirmer ma demande';
+        }
+        _showError('⚠️ ' + msg);
+        state.step = 2;
+      }
+    );
   }
 
   function _proceedToPayment(total) {
@@ -2499,6 +2673,7 @@ var _serviceSlug = _toServiceSlug(_serviceSource);
     _goToStep1,
     _goToArtisanPicker,
     _urgentConfirm,
+    _confirmTargetedRequest,
     _proceedToPayment,
     _canonicalPersistGate,
     _initPills,
