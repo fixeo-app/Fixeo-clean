@@ -62,6 +62,9 @@
       return photo;
     }
 
+    /* Targeted profile flow: no generic trade portrait may impersonate the artisan. */
+    if (document.body.classList.contains('fixeo-targeted-booking-open')) return null;
+
     /* 2–3. FixeoHeroes canonical chain */
     if (window.FixeoHeroes && typeof window.FixeoHeroes.getCardAvatar === 'function') {
       var cat = (artisan.category || artisan.specialty || '').toLowerCase();
@@ -99,8 +102,35 @@
     return MAP[(cat || '').toLowerCase()] || 'Service';
   }
 
+  function _targetedInitials(name) {
+    var parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return 'FX';
+    if (parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+    return ((parts[0][0] || '') + (parts[parts.length - 1][0] || '')).toUpperCase();
+  }
+
+  function _targetedIdentityFallback(name) {
+    var fb = _el('div', 'fxresf-hav-fixeo-id');
+    fb.setAttribute('aria-label', 'Identité FIXEO');
+    fb.innerHTML = '<span>F</span><strong>' + _esc(_targetedInitials(name)) + '</strong>';
+    return fb;
+  }
+
   /* Read artisan identity from the rendered modal DOM — no state duplication */
   function _readArtisanFromDOM(modal) {
+    /* Targeted public-profile flow: source identity only from canonical V4 contract. */
+    if (document.body.classList.contains('fixeo-targeted-booking-open') &&
+        window.__fixeoProfileV4 && typeof window.__fixeoProfileV4 === 'object') {
+      var p = window.__fixeoProfileV4;
+      var pi = p.identity || {}, ps = p.services || {}, pc = p.coverage || {};
+      return {
+        name: pi.display_name || 'Artisan FIXEO',
+        category: ps.primary || '',
+        city: pc.primary_city || '',
+        photo_url: pi.photo_url || '',
+        avatar: pi.photo_url || ''
+      };
+    }
     /* Primary source: window._fixeoCurrentArtisan set by fixeo-profile-v2a.js */
     var sb = window._fixeoCurrentArtisan;
     if (sb && typeof sb === 'object') {
@@ -159,18 +189,26 @@
       img.setAttribute('loading', 'lazy');
       img.addEventListener('error', function () {
         /* on error: replace with fallback emoji */
-        var fb = _el('div', 'fxresf-hav-fallback');
-        fb.setAttribute('aria-hidden', 'true');
-        fb.textContent = catEmoji;
+        var fb = document.body.classList.contains('fixeo-targeted-booking-open')
+          ? _targetedIdentityFallback(name)
+          : _el('div', 'fxresf-hav-fallback');
+        if (!document.body.classList.contains('fixeo-targeted-booking-open')) {
+          fb.setAttribute('aria-hidden', 'true');
+          fb.textContent = catEmoji;
+        }
         if (avWrap && avWrap.parentNode) {
           avWrap.parentNode.replaceChild(fb, avWrap);
         }
       });
       avWrap.appendChild(img);
     } else {
-      avWrap = _el('div', 'fxresf-hav-fallback');
-      avWrap.setAttribute('aria-hidden', 'true');
-      avWrap.textContent = catEmoji;
+      if (document.body.classList.contains('fixeo-targeted-booking-open')) {
+        avWrap = _targetedIdentityFallback(name);
+      } else {
+        avWrap = _el('div', 'fxresf-hav-fallback');
+        avWrap.setAttribute('aria-hidden', 'true');
+        avWrap.textContent = catEmoji;
+      }
     }
     strip.appendChild(avWrap);
 
