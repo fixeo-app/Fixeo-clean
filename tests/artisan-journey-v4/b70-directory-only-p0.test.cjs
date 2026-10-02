@@ -50,8 +50,9 @@ test('Directory-only CSS owns the targeted booking viewport',()=>{
   assert.match(css,/body\.fixeo-targeted-booking-open #fixeo-reservation-modal\{[\s\S]*?position:fixed!important;[\s\S]*?inset:0!important;[\s\S]*?z-index:12000!important/);
 });
 
-test('Directory page pins only its dedicated viewport fix asset',()=>{
-  assert.match(html,/css\/fixeo-artisan-directory-v1\.css\?v=fxdir-v4-p0/);
+test('Directory page keeps P0 local while allowing directory-only asset revisions',()=>{
+  assert.match(html,/css\/fixeo-artisan-directory-v1\.css\?v=fxdir-v5-passport-final/);
+  assert.match(html,/js\/fixeo-artisan-directory-v1\.js\?v=fxdir-v5-passport-final/);
   assert.match(html,/js\/reservation\.js\?v=av1-card2/);
   assert.match(html,/css\/fixeo-reservation-targeted-polish-v1\.css\?v=fxrt-v4/);
 });
