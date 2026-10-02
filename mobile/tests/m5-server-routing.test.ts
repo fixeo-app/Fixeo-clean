@@ -6,7 +6,7 @@ import path from 'node:path';
 const repoRoot = path.resolve(process.cwd(), '..');
 const mobileRoot = process.cwd();
 
-test('Vercel routes both authenticated M5 native RAFI endpoints through server.js', () => {
+test('Vercel routes M5 native RAFI endpoints to isolated preview functions', () => {
   const vercel = JSON.parse(
     fs.readFileSync(path.join(repoRoot, 'vercel.json'), 'utf8'),
   );
@@ -16,13 +16,20 @@ test('Vercel routes both authenticated M5 native RAFI endpoints through server.j
   );
 
   assert.equal(
-    routeMap.get('^/api/mobile-diagnostic-v1$'),
-    '/api/server.js',
+    routeMap.get('^/api/mobile-rafi-transcribe$'),
+    '/api/mobile-rafi-voice-fn/index.js',
   );
   assert.equal(
-    routeMap.get('^/api/mobile-rafi-transcribe$'),
-    '/api/server.js',
+    routeMap.get('^/api/mobile-rafi-photo$'),
+    '/api/mobile-rafi-photo-fn/index.js',
   );
+  assert.equal(routeMap.has('^/api/mobile-diagnostic-v1$'), false);
+
+  const buildSources = new Set(
+    (vercel.builds || []).map((build: any) => build.src),
+  );
+  assert.equal(buildSources.has('api/mobile-rafi-voice-fn/index.js'), true);
+  assert.equal(buildSources.has('api/mobile-rafi-photo-fn/index.js'), true);
 });
 
 test('mobile bundle never embeds privileged provider or Supabase server credentials', () => {
@@ -56,4 +63,15 @@ test('native RAFI gateways require the authenticated Supabase session token', ()
     assert.match(source, /getSession\(\)/);
     assert.match(source, /Authorization:\s*'Bearer '/);
   }
+});
+
+test('server-side native RAFI functions are preview-only and staging-pinned', () => {
+  const common = fs.readFileSync(
+    path.join(repoRoot, 'api/mobile-rafi-common.js'),
+    'utf8',
+  );
+
+  assert.match(common, /VERCEL_ENV !== 'preview'/);
+  assert.match(common, /kqyhusnbybsukbcaoqtu\.supabase\.co/);
+  assert.doesNotMatch(common, /ztwtbgoqanqzvwiibtuh/);
 });
