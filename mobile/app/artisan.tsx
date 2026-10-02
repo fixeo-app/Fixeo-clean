@@ -15,6 +15,11 @@ import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
 import { colors, radius, spacing, type } from '@/ui/tokens';
+import {
+  getArtisanWorkspaceSummary,
+  type ArtisanWorkspaceSummary,
+} from '@/lib/artisanWorkspace';
+import { WorkspaceShortcutGrid } from '@/components/WorkspaceShortcutGrid';
 
 const ACCEPT_MESSAGES: Record<string, string> = {
   already_claimed: 'Cette demande a déjà été prise en charge.',
@@ -37,18 +42,21 @@ export default function Artisan() {
   const [acceptingRequestId, setAcceptingRequestId] = useState<string | null>(null);
   const [message, setMessage] = useState('');
   const [decisionCue, setDecisionCue] = useState<MobileDecisionCue | null>(null);
+  const [workspaceSummary, setWorkspaceSummary] = useState<ArtisanWorkspaceSummary | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [nextOffers, mission, decision] = await Promise.all([
+      const [nextOffers, mission, decision, workspace] = await Promise.all([
         getDispatchOffers(),
         getMyCurrentArtisanMission(),
         getMyMobileDecisionContext().catch(() => null),
+        getArtisanWorkspaceSummary().catch(() => null),
       ]);
       setOffers(nextOffers);
       setCurrentMission(mission);
       setDecisionCue(decision?.cue || null);
+      setWorkspaceSummary(workspace);
     } catch {
       setMessage('Impossible de charger votre activité FIXEO.');
     } finally {
@@ -183,6 +191,31 @@ export default function Artisan() {
           />
         </FixeoCard>
       )}
+
+
+      <View style={styles.sectionIntro}>
+        <Text style={styles.sectionTitle}>Votre activité</Text>
+        <Text style={styles.sectionHint}>Les outils professionnels restent accessibles sans alourdir votre cockpit.</Text>
+      </View>
+
+      <WorkspaceShortcutGrid
+        items={[
+          {
+            key: 'workspace',
+            label: 'Artisan OS',
+            meta: workspaceSummary
+              ? `${workspaceSummary.clients} clients · ${workspaceSummary.quotes} devis`
+              : 'Clients · Devis · Agenda · Finance',
+            onPress: () => router.push('/artisan-workspace'),
+          },
+          {
+            key: 'availability',
+            label: 'Disponibilité',
+            meta: workspaceSummary?.availability || 'À définir',
+            onPress: () => router.push('/artisan-workspace'),
+          },
+        ]}
+      />
 
       <View style={styles.sectionIntro}>
         <Text style={styles.sectionTitle}>Opportunités maintenant</Text>
