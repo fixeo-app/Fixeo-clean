@@ -131,3 +131,11 @@ Current gate:
 SOFTWARE READY FOR ANDROID M5 PHYSICAL BUILD.
 
 Physical certification remains mandatory before M5 PASS.
+
+
+## Preview secret scope checkpoint — 2026-10-03
+
+Physical M5 RAFI testing identified that the native authenticated bridge reached the isolated Vercel Preview functions, but the Preview runtime did not inherit `OPENAI_API_KEY`.
+The existing project secret was extended in Vercel from Production-only to Production + Preview without exposing its value to the mobile bundle.
+No Production deployment or main merge is authorized by this checkpoint.
+A fresh Preview deployment is required before RAFI photo/voice physical retest.
