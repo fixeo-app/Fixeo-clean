@@ -469,6 +469,20 @@
       clean(a.city),
       function (body) {
         saveLastOrder(body || {}, booking, orderID);
+        try {
+          if (window.FixeoSlotLock && typeof window.FixeoSlotLock.onReservationCreated === 'function') {
+            window.FixeoSlotLock.onReservationCreated({
+              artisanId: booking.artisanId,
+              artisanName: booking.artisanName,
+              service: booking.service,
+              date: booking.date,
+              time: booking.timeSlot,
+              timeSlot: booking.timeSlot,
+              paid: false,
+              paymentMethod: 'Paiement après intervention'
+            });
+          }
+        } catch (_) {}
         window.FixeoReservation.close();
         window.location.href = 'confirmation.html';
       },
