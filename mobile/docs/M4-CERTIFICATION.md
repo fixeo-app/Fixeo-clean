@@ -50,3 +50,27 @@ Build Android Staging `0.2.0` / versionCode `2`, install on the two Android test
 10. repeat app close/reopen and one temporary network interruption.
 
 Production/main remain out of scope.
+
+
+## Physical certification progress — 2026-10-02
+
+PASS on two Android devices:
+
+- Client role-aware reopen -> Client universe.
+- Artisan role-aware reopen -> Artisan universe.
+- Existing accepted mission recovered on both devices.
+- Artisan arrival recorded -> Client timeline shows "Artisan arrivé".
+- Before evidence captured -> private Staging evidence status ready.
+- Mission start -> canonical request status in_progress -> Client timeline shows "Intervention en cours".
+- After evidence captured -> private Staging evidence status ready.
+- Artisan completion -> Client timeline shows "Intervention terminée".
+- Client final validation -> canonical service_request = validated and mission = validated.
+- Client and Artisan canonical validation notifications created.
+
+Physical evidence path:
+Artisan trouvé -> Artisan arrivé -> Intervention en cours -> Intervention terminée -> Mission validée.
+
+Remaining M4.7 checks before final certification:
+- close/reopen after final validation on both devices;
+- one temporary network interruption/recovery check;
+- final Artisan-side validated-state confirmation.
