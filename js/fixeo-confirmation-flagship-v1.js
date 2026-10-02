@@ -46,7 +46,7 @@
       bar.setAttribute('role', 'banner');
       bar.innerHTML = targeted
         ? '<a href="index.html" class="fxcf-brand fxcf-brand--targeted" aria-label="Fixeo — Retour à l\'accueil">' +
-            '<img src="/img/fixeo-logo.webp" alt="Fixeo" class="fxcf-brand-logo">' +
+            '<img src="/img/logo.png" alt="Fixeo" class="fxcf-brand-logo">' +
           '</a>' +
           '<div class="fxcf-status-pill" role="status" aria-live="polite">Coordination FIXEO</div>'
         : '<a href="index.html" class="fxcf-brand" aria-label="Fixeo — Retour à l\'accueil">' +
