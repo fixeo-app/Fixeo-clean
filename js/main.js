@@ -1336,133 +1336,117 @@ function getResultProfessionLabel(cat, lang = 'fr') {
   return (labels[cat] && labels[cat][lang]) || getCategoryLabel(cat, lang) || 'Artisan';
 }
 
+function _homepagePassportInitials(name) {
+  const parts = String(name || 'FIXEO').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return 'FX';
+  if (parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+  return ((parts[0][0] || '') + (parts[parts.length - 1][0] || '')).toUpperCase();
+}
+
+function _homepagePassportVariant(name) {
+  const s = String(name || 'FIXEO');
+  let h = 0;
+  for (let i=0;i<s.length;i+=1) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  return Math.abs(h) % 6;
+}
+
+function _homepagePassportFixeoId(name, hidden) {
+  return '<div class="homepass-fixeo-id homepass-fixeo-id--v' + _homepagePassportVariant(name) + '"' +
+    (hidden ? ' style="display:none"' : '') + '>' +
+      '<span class="homepass-fixeo-id-brand">F</span>' +
+      '<strong>' + _esc(_homepagePassportInitials(name)) + '</strong>' +
+      '<small>FIXEO ID</small>' +
+    '</div>';
+}
+
+function _homepagePassportAvatar(a) {
+  const name = a.name || a.full_name || 'Artisan FIXEO';
+  const photo = a.photo_url || a.avatar || a.photo || '';
+  if (photo) {
+    return '<img class="homepass-avatar-img" src="' + _esc(photo) + '" alt="' + _esc(name) + '"' +
+      ' width="70" height="70" loading="lazy" decoding="async"' +
+      ' onerror="this.style.display=\'none\';var n=this.nextElementSibling;if(n)n.style.display=\'grid\'">' +
+      _homepagePassportFixeoId(name, true);
+  }
+  return _homepagePassportFixeoId(name, false);
+}
+
+function _homepagePassportDescription(a) {
+  const vals = [a.description, a.shortBio, a.bio && a.bio.fr];
+  for (let i=0;i<vals.length;i+=1) {
+    if (typeof vals[i] !== 'string') continue;
+    const clean = vals[i].replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+    if (!clean || clean === '[object Object]' || clean.charAt(0)==='[' || clean.charAt(0)==='{') continue;
+    if (/sourc[ée].*(facebook|google|annuaire|interne)|source interne|prospection/i.test(clean)) continue;
+    return clean;
+  }
+  return '';
+}
+
 function buildOtherArtisanCard(a, opts) {
-  /* 7C.9L.3C: opts = { estimatorMode: true, hidePrice: true }
-   * estimatorMode: disables profile navigation, hides base price, whole card selects artisan.
-   * Omitting opts (all homepage calls) → pixel/behavior-equivalent to before.
-   */
-  var _estimatorMode = !!(opts && opts.estimatorMode);
-  var _hidePrice     = !!(opts && (opts.hidePrice || opts.estimatorMode));
+  const _estimatorMode = !!(opts && opts.estimatorMode);
   const lang = window.i18n ? window.i18n.lang : 'fr';
-  const service = getCategoryLabel(a.category, lang);
-  const profession = getResultProfessionLabel(a.category, lang);
-  const imageSrc = getArtisanAvatarSrc(a);
-  const safeBadges = Array.isArray(a.badges) ? a.badges : [];
-  const isAvailable = a.availability === 'available';
-  const smartSortMeta = getMarketplaceCardSortMeta(a);
-  const rating = Number(marketplacePickNumber(a.rating, smartSortMeta.average_rating, 0) || 0);
-  const reviews = Number(a.reviewCount || 0);
-  const responseTime = Number(a.responseTime || 0);
-  const visibleSkills = (Array.isArray(a.skills) ? a.skills : []).slice(0, 3);
-  const isVerified = safeBadges.includes('verified') || Number(a.trustScore || a.trust_score || smartSortMeta.trust_score || 0) >= 85;
-  const verificationPending = safeBadges.includes('pending') || a.verificationStatus === 'pending';
-  const isNewArtisan = safeBadges.includes('new') || a.onboardingStatus === 'nouveau';
-  const primaryBadge = isVerified ? '<span class="badge verified" style="box-shadow:0 8px 24px rgba(46, 204, 113, .12)">✔ Vérifié</span>' : '';
-  const availableText = a.availabilityLabel || 'Disponible maintenant';
-  const secondaryBadge = isAvailable ? `<span class="badge available" style="box-shadow:0 8px 24px rgba(32, 201, 151, .16);font-weight:800">🟢 ${availableText}</span>` : '';
-  const newBadge = isNewArtisan ? '<span class="badge new">✨ Nouveau</span>' : '';
-  const topBadge = smartSortMeta.top_artisan ? '<span class="badge" style="background:rgba(124,58,237,.16);color:#a855f7;border:1px solid rgba(167,139,250,.42);box-shadow:0 8px 24px rgba(124,58,237,.14)">Top artisan</span>' : '';
-  const pendingBadge = verificationPending ? `<span class="badge pending">${a.verificationLabel || 'Profil en vérification'}</span>` : '';
-  const responseLabel = responseTime > 0 ? `Réponse : ${responseTime} min` : 'Réponse rapide';
-  const serializedArtisanId = JSON.stringify(String(a.id));
+  const category = (a.category || a.service || '').toLowerCase();
+  const service = getCategoryLabel(category, lang) || a.service || a.category || 'Intervention';
+  const name = a.name || a.full_name || 'Artisan FIXEO';
+  const city = a.city || a.ville || '';
+  const aid = String(a._supabase_id || a.id || a.artisan_id || '');
+  const desc = _homepagePassportDescription(a);
+  const rating = Number(a.rating || 0);
+  const reviews = Number(a.reviewCount || a.reviews || a.review_count || 0);
+  const hasRating = rating > 0 && reviews > 0;
+  const isVerified = a.verified === true;
+  const avatarHtml = _homepagePassportAvatar(a);
+  const profileHref = 'artisan-profile.html?id=' + encodeURIComponent(aid) + '&pv=20261002cards2';
 
-  /* Change 6: skip skill chip if it duplicates the category label */
-  const categoryNorm = (a.category || '').toLowerCase().trim();
-  const deduped = visibleSkills.filter(sk => sk && sk.toLowerCase().trim() !== categoryNorm).slice(0, 3);
+  const proofs =
+    (isVerified ? '<span class="homepass-proof homepass-proof--verified">Vérifié FIXEO</span>' : '') +
+    (hasRating ? '<span class="homepass-proof homepass-proof--rating">★ ' +
+      _esc(rating.toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1})) +
+      ' · ' + _esc(String(reviews)) + ' avis</span>' : '');
 
-  return `
-    <!-- 7C.9L.3K: estimator-mode inline onclick removed — ID was JSON.stringify("2000") inside double-quoted
-     attr → browser truncated at first inner quote → handler never fired. Now: data-estimator-id only.
-     Delegated capture listener in reservation.js ensureModal() reads getAttribute and calls
-     _selectArtisanFromPicker. No ID in executable JS. Normal homepage path unchanged (data-id). -->
-    <article class="artisan-card other-card discover-harmonized-card result-card" ${_estimatorMode ? ('data-estimator-id="'+a.id+'" role="button" tabindex="0"') : ('data-id="'+a.id+'"')} style="position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.035));box-shadow:0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05);transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease${_estimatorMode ? ';cursor:pointer' : ''}" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 24px 54px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.07)';this.style.borderColor='rgba(225,48,108,.28)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.12)'">
-      <!-- Change 7: tighter vertical rhythm — gap 8px header, 10px meta, 12px price, 16px CTA -->
-      <div class="result-top" style="align-items:flex-start;gap:1rem;margin-bottom:8px">
-        ${(function(){
-          /* av-unity-1: consistent initials avatar — same ig-gradient as profile hero & modal */
-          /* fxhv2a: inject Hero avatar when no real photo */
-          var _ph = a.avatar || a.photo || a.image;
-          /* facp-v2c D5: derive initials from artisan name (first+last word) */
-          var _nameParts = a.name ? a.name.trim().split(/\s+/).filter(Boolean) : [];
-          var _in = a.initials || (_nameParts.length >= 2 ? (_nameParts[0][0] + _nameParts[_nameParts.length-1][0]).toUpperCase() : _nameParts.length === 1 ? _nameParts[0][0].toUpperCase() : 'FA');
-          /* facp-v2c Task2: compute hero URL always — needed for 3-layer fallback chain */
-          var _heroUrl = window.FixeoHeroes ? window.FixeoHeroes.getAvatar(a.category || a.service || '') : null;
-          /* Shared inline styles for all avatar elements */
-          var _avStyle = 'border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18)';
-          var _inStyle = 'display:none;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#E1306C 0%,#833AB4 60%,#405DE6 100%);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18);align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;letter-spacing:-.01em;flex-shrink:0';
-          var _initDiv = '<div class="artisan-avatar artisan-av-initials" style="'+_inStyle+'">'+_in+'</div>';
-          if (_ph) {
-            /* facp-v2c Task2: real photo → on fail try hero → on fail show initials */
-            if (_heroUrl) {
-              /* 3-layer chain: photo → hero → initials */
-              var _heroDiv = '<img class="artisan-avatar artisan-av-initials-hero fx-hero-card-img" src="'+_heroUrl+'" alt="'+a.name+'" loading="lazy" style="display:none;'+_avStyle+';object-fit:cover" onerror="this.style.display=\'none\';this.nextElementSibling&&(this.nextElementSibling.style.display=\'flex\');">';
-              return '<img class="artisan-avatar artisan-avatar-image" src="'+_ph+'" alt="'+a.name+'" loading="lazy" style="'+_avStyle+'" onerror="this.style.display=\'none\';var nx=this.nextElementSibling;if(nx){nx.style.display=\'block\';}">'
-                + _heroDiv + _initDiv;
-            }
-            /* 2-layer: photo → initials */
-            return '<img class="artisan-avatar artisan-avatar-image" src="'+_ph+'" alt="'+a.name+'" loading="lazy" style="'+_avStyle+'" onerror="this.style.display=\'none\';this.nextElementSibling&&(this.nextElementSibling.style.display=\'flex\');">'
-              + _initDiv;
-          }
-          if (_heroUrl) {
-            /* no photo: hero → initials */
-            return '<img class="artisan-avatar artisan-avatar-image fx-hero-card-img" src="'+_heroUrl+'" alt="'+a.name+'" loading="lazy" style="'+_avStyle+';object-fit:cover" onerror="this.style.display=\'none\';this.nextElementSibling&&(this.nextElementSibling.style.display=\'flex\');">'
-              + _initDiv;
-          }
-          return '<div class="artisan-avatar artisan-av-initials" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#E1306C 0%,#833AB4 60%,#405DE6 100%);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;letter-spacing:-.01em;flex-shrink:0">'+_in+'</div>';
-        })()}
-        <div class="artisan-main artisan-identity artisan-card-heading" style="min-width:0;flex:1">
-          <!-- facp-v2a: identity col — name → profession → badges → price (premium hierarchy) -->
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-bottom:8px">
-            <div style="min-width:0;flex:1">
-              <h3 class="artisan-name" style="margin:0;font-size:1.18rem;line-height:1.15;font-weight:800;letter-spacing:-.01em">${a.name}</h3>
-              <p class="artisan-service" style="margin:8px 0 0;color:rgba(255,255,255,.78);font-size:.92rem"><span style="color:#fff;font-weight:700">${profession}</span> • ${a.city || 'Maroc'}</p>
-              <!-- facp-v2a: badges moved here — between profession and price -->
-              <div class="artisan-badges badges" style="gap:.45rem;margin-top:8px">${primaryBadge}${topBadge}${newBadge}${secondaryBadge}${pendingBadge}</div>
-            </div>
-            <!-- facp-v2c Task1: label first in DOM (natural column flow) → "À partir de" top, price below -->
-            ${_hidePrice ? '' : '<div class="facp-price-block" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;margin-left:auto;text-align:right;flex-shrink:0">' +
-              (window._fpb ? _fpb(a) : '<span class="facp-price-label">\u00c0 partir de</span>') +
-              '<span class="facp-price-number">' + (window._fpb ? '' : (a.priceFrom && a.priceFrom > 100 ? a.priceFrom : 150)) + '<span class="facp-price-currency">' + (window._fpb ? '' : '\u00a0MAD') + '</span></span>' +
-              '</div>'}
-          </div>
-        </div>
-      </div>
+  const dataAttr = (() => {
+    try { return ' data-artisan=\'' + JSON.stringify(a).replace(/'/g,'&#39;') + '\''; }
+    catch (_) { return ''; }
+  })();
 
-      <!-- facp-v2b D2+D3: rating row — hidden when no real data; 'Nouveau sur FIXEO' when reviews===0 -->
-      ${(rating > 0 && reviews > 0) ? `<div class="artisan-rating-row artisan-rating" style="display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;margin-bottom:10px;padding:.8rem .95rem;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)">
-        <span style="font-weight:800;color:#ffd166">⭐ ${rating.toFixed(1)}</span>
-        <span style="color:rgba(255,255,255,.82);font-weight:700">(${reviews} avis)</span>
-        <span style="margin-left:auto;color:rgba(255,255,255,.5);font-size:.78rem">⚡ ${responseLabel}</span>
-      </div>` : `<div class="artisan-rating-row artisan-rating facp-new-artisan" style="display:flex;align-items:center;gap:.5rem;margin-bottom:10px;padding:.65rem .95rem;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)">
-        <span style="font-size:.72rem;color:rgba(255,255,255,.40);font-weight:500">✨ Nouveau sur FIXEO</span>
-        <span style="margin-left:auto;color:rgba(255,255,255,.28);font-size:.70rem">⚡ ${responseLabel}</span>
-      </div>`}
+  const actionHtml = _estimatorMode
+    ? '<div class="pvc-action-v3b homepass-actions">' +
+        '<div class="pvc-divider pvc-divider-v3b"></div>' +
+        '<button class="pvc-btn-reserve-v2 fhp-btn-reserve pvc-btn-v3b homepass-btn" type="button" data-estimator-select="true">Choisir cet artisan</button>' +
+        '<a class="pvc-profile-link fhp-btn-profile pvc-profile-v3b homepass-profile-link" href="' + _esc(profileHref + '&source=estimator') + '" data-estimator-profile="true">Voir le profil complet ›</a>' +
+      '</div>'
+    : '<div class="pvc-action-v3b homepass-actions">' +
+        '<div class="pvc-divider pvc-divider-v3b"></div>' +
+        '<div class="homepass-price-truth"><strong>Tarif confirmé avant intervention</strong><span>Paiement après intervention</span></div>' +
+        '<button class="pvc-btn-reserve-v2 fhp-btn-reserve pvc-btn-v3b homepass-btn homepass-btn--reserve" type="button" data-artisan-id="' + _esc(aid) + '"' +
+          ' onclick="return window.openHomepageArtisanBooking(\'' + _esc(aid) + '\', event)" aria-label="Demander une intervention avec ' + _esc(name) + '">' +
+          '<span class="homepass-btn-f">F</span><span>Demander une intervention</span><b aria-hidden="true">→</b>' +
+        '</button>' +
+        '<a class="pvc-profile-link fhp-btn-profile pvc-profile-v3b homepass-profile-link" href="' + _esc(profileHref) + '" onclick="event.stopPropagation()">Voir le profil complet ›</a>' +
+      '</div>';
 
-      <!-- Step 1 — FOMO line -->
-      <div class="pvc-fomo">🔥 23 réservations aujourd'hui dans votre zone</div>
-
-      <!-- facp-v2b D1: trust line conditional on isVerified — never claims verification for unverified artisans -->
-      ${isVerified ? '<div class="pvc-trust-line">✔️ Artisan vérifié • Paiement après intervention</div>' : '<div class="pvc-trust-line pvc-trust-line--payment">Paiement après intervention</div>'}
-
-      <!-- skills chips -->
-      <div class="artisan-skills" style="margin-bottom:12px;gap:.5rem;margin-top:8px">
-        <span style="display:inline-flex;align-items:center;padding:.42rem .78rem;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);color:#fff;font-size:.8rem;font-weight:700">${service}</span>
-        ${deduped.map(skill => `<span style="display:inline-flex;align-items:center;padding:.42rem .78rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.78);font-size:.78rem">${skill}</span>`).join('')}
-      </div>
-
-      <!-- CTAs + Step 6 under-CTA trust -->
-      <div class="result-actions card-buttons" style="display:flex;flex-direction:column;align-items:stretch;gap:.5rem;margin-top:16px">
-        <div style="display:flex;align-items:center;justify-content:flex-end;gap:.75rem;flex-wrap:wrap">
-          ${_estimatorMode ? '' : '<button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId('+serializedArtisanId+', event);}else if(window.openArtisanModal){openArtisanModal('+serializedArtisanId+');}" title="Voir le profil complet" style="font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);box-shadow:none;min-width:100px">Voir profil</button>'}
-<!-- 7C.9L.3K: estimator-mode CTA onclick removed (JSON.stringify ID inside double-quoted attr → broken).
-     data-estimator-select="true" marks this as the selection trigger; article[data-estimator-id]
-     carries the ID. Delegated listener in reservation.js reads both. Homepage path unchanged. -->
-          <button class="btn-primary fhp-btn-reserve-list" ${_estimatorMode ? 'data-estimator-select="true"' : ('onclick="event.stopPropagation();if(window.FixeoReservation){window.FixeoReservation.open('+serializedArtisanId+');}else if(window.openReservationModal){window.openReservationModal('+serializedArtisanId+');}"')} title="${_estimatorMode ? 'Choisir cet artisan' : 'Réserver cet artisan'}" style="min-width:170px;font-weight:800;background:linear-gradient(135deg,#E1306C,#833AB4);border:none;box-shadow:0 8px 22px rgba(225,48,108,.22);transition:all .2s ease" onmouseenter="this.style.transform='scale(1.02) translateY(-1px)';this.style.boxShadow='0 12px 28px rgba(225,48,108,.32)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 8px 22px rgba(225,48,108,.22)'">${_estimatorMode ? 'Choisir cet artisan' : 'R\u00e9server en 1 clic'}</button>
-        </div>
-        <!-- Step 6 — under-CTA trust text -->
-        <div class="pvc-under-cta" style="text-align:right">Sans engagement — paiement après intervention</div>
-      </div>
-    </article>`;
+  return '<article class="artisan-card other-card discover-harmonized-card result-card pvc-card fhp-card homepass-card"' +
+      ' data-artisan-id="' + _esc(aid) + '"' + dataAttr +
+      (_estimatorMode ? ' data-estimator-id="' + _esc(aid) + '" role="button" tabindex="0"' : '') +
+      ' aria-label="' + _esc(name) + ', ' + _esc(service) + '">' +
+    '<div class="pvc-card-header pvc-card-header-final homepass-header">' +
+      '<div class="pvc-avatar homepass-avatar" aria-hidden="true">' + avatarHtml + '</div>' +
+      '<div class="pvc-identity pvc-identity-final homepass-identity">' +
+        '<span class="homepass-kicker">PROFIL PROFESSIONNEL FIXEO</span>' +
+        '<h3 class="pvc-name homepass-name">' + _esc(name) + '</h3>' +
+        '<div class="homepass-meta">' + _esc(service) + (city ? ' · ' + _esc(city) : '') + '</div>' +
+      '</div>' +
+    '</div>' +
+    (desc ? '<p class="pvc-desc-v3b homepass-desc">' + _esc(desc) + '</p>' :
+      '<p class="pvc-desc-v3b homepass-desc homepass-desc--empty">Profil professionnel référencé sur FIXEO.</p>') +
+    '<div class="homepass-trust" role="list">' +
+      '<span class="homepass-trust-item" role="listitem">Profil référencé sur FIXEO</span>' +
+      '<span class="homepass-trust-item" role="listitem">◷ Disponibilité à confirmer</span>' +
+      (proofs ? '<div class="homepass-proof-row">' + proofs + '</div>' : '') +
+    '</div>' +
+    actionHtml +
+  '</article>';
 }
 
 /* 7C.9L.3C: expose for estimator-origin artisan picker in reservation.js */
@@ -1752,6 +1736,7 @@ function openHomepageArtisanBooking(artisanId, event) {
       : [];
     return [
       String(artisan.id || '').trim(),
+      String(artisan._supabase_id || '').trim(),
       String(artisan.artisan_id || '').trim(),
       String(artisan.public_id || '').trim()
     ].includes(requestedId) || sourceIds.includes(requestedId);
