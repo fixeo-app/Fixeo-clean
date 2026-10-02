@@ -42,6 +42,7 @@ type JourneyStatus = 'idle' | 'matching' | 'assigned' | 'in_progress' | 'complet
 
 export default function Home() {
   const [problem, setProblem] = useState('');
+  const [problemConfirmedFromRafi, setProblemConfirmedFromRafi] = useState(false);
   const [city, setCity] = useState('');
   const [rafiMessage, setRafiMessage] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
@@ -58,11 +59,12 @@ export default function Home() {
   const rafiContext = useMemo(
     () => buildDeclaredContext({
       description: problem,
+      descriptionProvenance: problemConfirmedFromRafi ? 'user_confirmed' : 'user_declared',
       city,
       serviceCategory: need.serviceCategory,
       serviceConfidence: need.confidence,
     }),
-    [problem, city, need.serviceCategory, need.confidence],
+    [problem, problemConfirmedFromRafi, city, need.serviceCategory, need.confidence],
   );
 
   async function syncDecision() {
@@ -231,6 +233,7 @@ export default function Home() {
     try {
       setRafiMessage('RAFI écoute…');
       const transcript = await transcribeRafiVoice(uri);
+      setProblemConfirmedFromRafi(false);
       setProblem(current => [current.trim(), transcript].filter(Boolean).join(' '));
       setRafiMessage('J’ai compris votre message.');
     } catch {
@@ -288,6 +291,7 @@ export default function Home() {
   function confirmPhotoDiagnostic() {
     if (!photoDiagnostic?.problem?.value) return;
     setProblem(photoDiagnostic.problem.value);
+    setProblemConfirmedFromRafi(true);
     setRafiMessage('✓ Description confirmée par vous à partir de l’analyse RAFI.');
   }
 
@@ -417,7 +421,10 @@ export default function Home() {
 
             <TextInput
               value={problem}
-              onChangeText={setProblem}
+              onChangeText={(value) => {
+                setProblemConfirmedFromRafi(false);
+                setProblem(value);
+              }}
               editable={!requestLocked}
               placeholder="Décrivez simplement ce qui se passe"
               placeholderTextColor={colors.textMuted}
