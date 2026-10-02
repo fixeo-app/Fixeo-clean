@@ -1571,6 +1571,7 @@ city:
     state.isTargeted = !!(artisanInput && state.artisan);
     if (state.isTargeted) {
       _ensureTargetedShellAssets();
+      window._fixeoCurrentReservationArtisan = state.artisan;
       var _targetCat = String(state.artisan.category || state.artisan.service_category || '').toLowerCase();
       state.selectedService =
         CATEGORY_LABELS[_targetCat] ||
@@ -1580,6 +1581,7 @@ city:
       document.body.classList.add('fixeo-targeted-booking-open');
       _bindTargetedViewport();
     } else {
+      window._fixeoCurrentReservationArtisan = null;
       document.body.classList.remove('fixeo-targeted-booking-open');
       document.documentElement.style.removeProperty('--fxrt-vv-bottom');
     }
@@ -1715,6 +1717,7 @@ city:
     state.artisan = null;
     state.isExpress = false;
     state.isTargeted = false;
+    window._fixeoCurrentReservationArtisan = null;
     /* 7C.9L.3X: true full exit — destroy hidden Estimator (if any) to prevent leak.
      * The handoff used hide() not close(), so the container may still be alive.
      * Estimator-origin reservation: destroy now that user is fully exiting the tunnel.
