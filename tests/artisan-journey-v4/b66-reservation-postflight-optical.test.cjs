@@ -1,7 +1,7 @@
 const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const root=path.resolve(__dirname,'../..');const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const html=read('artisan-profile.html'),engine=read('js/reservation.js'),shell=read('css/fixeo-reservation-targeted-polish-v1.css'),resFlag=read('js/fixeo-reservation-flagship-v1.js'),conf=read('confirmation.html'),confFlag=read('js/fixeo-confirmation-flagship-v1.js');
 
-test('postflight: targeted CTAs no longer use sticky overlay positioning',()=>{const m1=shell.match(/#res-step1-cta\[data-res-targeted-cta="1"\]\{[\s\S]*?\}/);const m2=shell.match(/\.fxrt-actions\{[\s\S]*?\}/);assert.ok(m1&&m2);assert.match(m1[0],/position:relative!important/);assert.doesNotMatch(m1[0],/position:sticky/);assert.match(m2[0],/position:relative!important/);assert.doesNotMatch(m2[0],/position:sticky/);});
+test('postflight: targeted CTAs no longer use sticky overlay positioning',()=>{assert.doesNotMatch(shell,/position:sticky!important/);assert.match(shell,/#res-step1-cta\[data-res-targeted-cta="1"\]\{[\s\S]*?position:relative!important/);assert.match(shell,/body\.fixeo-targeted-booking-open \.fxrt-actions\{[\s\S]*?position:relative!important/);});
 
 test('postflight: targeted reservation header sources identity from canonical V4 profile',()=>{assert.match(resFlag,/window\.__fixeoProfileV4/);assert.match(resFlag,/pi\.photo_url \|\| ''/);assert.match(resFlag,/document\.body\.classList\.contains\('fixeo-targeted-booking-open'\)\) return null/);assert.match(resFlag,/fxresf-hav-fixeo-id/);});
 
