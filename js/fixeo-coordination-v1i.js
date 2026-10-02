@@ -36,6 +36,13 @@
     return d.innerHTML;
   }
 
+  function _initials(name) {
+    var parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return 'FX';
+    if (parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+    return ((parts[0][0] || '') + (parts[parts.length - 1][0] || '')).toUpperCase();
+  }
+
   function _readRequests() {
     try {
       var raw = localStorage.getItem('fixeo_client_requests');
@@ -123,27 +130,27 @@
       .normalize('NFD').replace(/[\u0300-\u036f]/g, '').split(/[\s,/]/)[0];
     var catIcon = catIcons[catSlug] || '🔧';
 
-    /* ── Artisan identity card (Phase 2) ── */
+    /* ── Artisan identity card — factual, profile-consistent ── */
     var idCardHtml = '';
     if (artisanName) {
-      var availLabel = '🟢 Disponible';
-      idCardHtml = '<div class="fxci-artisan-id-card">'
-        + '<div class="fxci-artisan-avatar">' + catIcon + '</div>'
+      var availLabel = 'Disponibilité à confirmer';
+      idCardHtml = '<div class="fxci-artisan-id-card fxci-artisan-id-card--truth">'
+        + '<div class="fxci-artisan-avatar fxci-artisan-fixeo-id"><span>F</span><strong>' + esc(_initials(artisanName)) + '</strong></div>'
         + '<div class="fxci-artisan-body">'
         +   '<div class="fxci-artisan-name">' + esc(artisanName) + '</div>'
         +   '<div class="fxci-artisan-meta">'
-        +     (service ? esc(service) : 'Artisan Fixeo')
-        +     (city ? ' \u2014 ' + esc(city) : '')
+        +     (service ? esc(service) : 'Artisan FIXEO')
+        +     (city ? ' \u00b7 ' + esc(city) : '')
         +   '</div>'
         + '</div>'
-        + '<div class="fxci-artisan-avail">' + availLabel + '</div>'
+        + '<div class="fxci-artisan-avail fxci-artisan-avail--truth">' + availLabel + '</div>'
         + '</div>';
     }
 
     /* ── Same-day pill ── */
     var sameDayHtml = '';
     if (dateStr && _isToday(dateStr)) {
-      sameDayHtml = '<div class="fxci-sameday-pill">📅 Intervention prévue aujourd\u2019hui</div>';
+      sameDayHtml = '<div class="fxci-sameday-pill">📅 Créneau demandé aujourd\u2019hui</div>';
     }
 
     /* ── Next-step guidance (Phase 2) ── */

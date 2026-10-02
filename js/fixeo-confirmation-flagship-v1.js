@@ -24,6 +24,15 @@
     }
   }
 
+  function _lastOrder() {
+    try { return JSON.parse(localStorage.getItem('lastOrder') || '{}'); }
+    catch (_) { return {}; }
+  }
+
+  function _isTargetedOrder() {
+    return _lastOrder().source === 'reservation_targeted';
+  }
+
   /* ════════════════════════════════════════════════════════════════
      A. TOPBAR — sticky brand + "Coordination en cours" status pill
      Inserted as first child of <body> so it appears above everything.
@@ -31,19 +40,23 @@
   function _injectTopbar() {
     _try('topbar', function () {
       if (document.querySelector('.fxcf-topbar')) return; /* idempotent */
+      var targeted = _isTargetedOrder();
       var bar = document.createElement('header');
-      bar.className = 'fxcf-topbar';
+      bar.className = 'fxcf-topbar' + (targeted ? ' fxcf-topbar--targeted' : '');
       bar.setAttribute('role', 'banner');
-      bar.innerHTML =
-        '<a href="index.html" class="fxcf-brand" aria-label="Fixeo — Retour à l\'accueil">' +
-          'FIX<em>EO</em>' +
-          '<div class="fxcf-brand-sub">Artisans de confiance</div>' +
-        '</a>' +
-        '<div class="fxcf-status-pill" role="status" aria-live="polite">' +
-          'Coordination en cours' +
-        '</div>';
+      bar.innerHTML = targeted
+        ? '<a href="index.html" class="fxcf-brand fxcf-brand--targeted" aria-label="Fixeo — Retour à l\'accueil">' +
+            '<img src="/img/fixeo-logo.webp" alt="Fixeo" class="fxcf-brand-logo">' +
+          '</a>' +
+          '<div class="fxcf-status-pill" role="status" aria-live="polite">Coordination FIXEO</div>'
+        : '<a href="index.html" class="fxcf-brand" aria-label="Fixeo — Retour à l\'accueil">' +
+            'FIX<em>EO</em>' +
+            '<div class="fxcf-brand-sub">Artisans de confiance</div>' +
+          '</a>' +
+          '<div class="fxcf-status-pill" role="status" aria-live="polite">Coordination en cours</div>';
       document.body.insertBefore(bar, document.body.firstChild);
       document.body.classList.add('fxcf-active');
+      if (targeted) document.body.classList.add('fxcf-targeted');
     });
   }
 
@@ -70,7 +83,12 @@
     _try('icon', function () {
       var el = document.querySelector('.conf-icon-wrap');
       if (!el || el.getAttribute('data-fxcf-patched')) return;
-      el.textContent = '📡';
+      if (_isTargetedOrder()) {
+        el.textContent = 'F';
+        el.classList.add('fxcf-icon-fixeo');
+      } else {
+        el.textContent = '📡';
+      }
       el.setAttribute('data-fxcf-patched', '1');
     });
   }
@@ -88,7 +106,9 @@
       var pill = document.createElement('div');
       pill.className = 'fxcf-payment-pill';
       pill.setAttribute('role', 'note');
-      pill.textContent = 'Règlement en espèces après intervention';
+      pill.textContent = _isTargetedOrder()
+        ? 'Paiement après intervention'
+        : 'Règlement en espèces après intervention';
       subtitle.insertAdjacentElement('afterend', pill);
     });
   }

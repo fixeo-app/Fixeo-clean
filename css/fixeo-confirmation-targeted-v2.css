@@ -1,0 +1,262 @@
+/* ============================================================
+   FIXEO Confirmation Targeted V2 — truth + design alignment
+   Applies only when lastOrder.source === reservation_targeted
+   ============================================================ */
+
+body.fxcf-targeted{
+  --fxc2-bg:#08090e;
+  --fxc2-card:#111219;
+  --fxc2-panel:#171820;
+  --fxc2-line:rgba(255,255,255,.085);
+  --fxc2-muted:#8a8f9a;
+  --fxc2-pink:#ed3d91;
+  --fxc2-violet:#8064ef;
+  --fxc2-orange:#ff8a35;
+  background:
+    radial-gradient(circle at 88% 0,rgba(128,100,239,.09),transparent 28rem),
+    radial-gradient(circle at 5% 18%,rgba(237,61,145,.07),transparent 24rem),
+    var(--fxc2-bg)!important;
+  color:#f7f7fa!important;
+}
+
+body.fxcf-targeted #confetti-wrap{display:none!important}
+
+body.fxcf-targeted .fxcf-topbar{
+  background:rgba(8,9,14,.94)!important;
+  border-bottom:1px solid var(--fxc2-line)!important;
+  backdrop-filter:blur(18px)!important;
+  -webkit-backdrop-filter:blur(18px)!important;
+}
+
+body.fxcf-targeted .fxcf-brand--targeted{
+  display:flex!important;
+  align-items:center!important;
+  text-decoration:none!important;
+}
+
+body.fxcf-targeted .fxcf-brand-logo{
+  display:block;
+  width:auto;
+  height:29px;
+  object-fit:contain;
+}
+
+body.fxcf-targeted .fxcf-status-pill{
+  border:1px solid rgba(237,61,145,.28)!important;
+  background:linear-gradient(135deg,rgba(237,61,145,.08),rgba(128,100,239,.06))!important;
+  color:#d9a8c4!important;
+}
+
+body.fxcf-targeted .conf-card{
+  max-width:720px!important;
+  background:
+    radial-gradient(circle at 95% 0,rgba(128,100,239,.07),transparent 20rem),
+    var(--fxc2-card)!important;
+  border:1px solid var(--fxc2-line)!important;
+  box-shadow:0 28px 90px rgba(0,0,0,.42)!important;
+}
+
+body.fxcf-targeted .conf-icon-wrap.fxcf-icon-fixeo{
+  width:76px!important;
+  height:76px!important;
+  border-radius:24px!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  background:linear-gradient(135deg,var(--fxc2-orange),var(--fxc2-pink) 52%,var(--fxc2-violet))!important;
+  color:#fff!important;
+  font-size:1.5rem!important;
+  font-weight:950!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.3)!important;
+}
+
+body.fxcf-targeted .conf-title{
+  color:#fff!important;
+  background:none!important;
+  -webkit-text-fill-color:initial!important;
+}
+
+body.fxcf-targeted .fxcf-title-accent{
+  background:linear-gradient(100deg,var(--fxc2-orange),var(--fxc2-pink),var(--fxc2-violet));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+body.fxcf-targeted .conf-subtitle{
+  color:#a3a7b1!important;
+}
+
+body.fxcf-targeted .fxcf-payment-pill{
+  border:1px solid rgba(237,61,145,.24)!important;
+  background:rgba(237,61,145,.055)!important;
+  color:#d7a3c0!important;
+}
+
+body.fxcf-targeted .fxv2c-timeline{
+  --fxv2c-green:var(--fxc2-pink)!important;
+  --fxv2c-green-glow:rgba(237,61,145,.25)!important;
+}
+
+body.fxcf-targeted .fxv2c-circle{
+  background:#171820!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#9297a1!important;
+}
+
+body.fxcf-targeted .fxv2c-step.fxv2c-done .fxv2c-circle,
+body.fxcf-targeted .fxv2c-step.fxv2c-active .fxv2c-circle{
+  border-color:rgba(237,61,145,.42)!important;
+  background:linear-gradient(135deg,rgba(237,61,145,.18),rgba(128,100,239,.12))!important;
+  color:#fff!important;
+  box-shadow:0 0 0 4px rgba(237,61,145,.06)!important;
+}
+
+body.fxcf-targeted .fxci-sameday-pill{
+  border:1px solid rgba(237,61,145,.22)!important;
+  background:rgba(237,61,145,.055)!important;
+  color:#d6a0bf!important;
+}
+
+body.fxcf-targeted .fxci-artisan-id-card--truth{
+  border:1px solid var(--fxc2-line)!important;
+  background:rgba(255,255,255,.025)!important;
+  border-radius:18px!important;
+  padding:13px!important;
+}
+
+body.fxcf-targeted .fxci-artisan-fixeo-id{
+  position:relative;
+  width:58px!important;
+  height:58px!important;
+  flex:0 0 58px!important;
+  border-radius:17px!important;
+  display:grid!important;
+  place-items:center!important;
+  background:linear-gradient(145deg,#c93a86,#664ac6 68%,#111219)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  color:#fff!important;
+  overflow:hidden!important;
+}
+
+body.fxcf-targeted .fxci-artisan-fixeo-id>strong{
+  font-size:1.24rem;
+  font-weight:950;
+  letter-spacing:-.05em;
+}
+
+body.fxcf-targeted .fxci-artisan-fixeo-id>span{
+  position:absolute;
+  right:6px;
+  top:6px;
+  width:13px;
+  height:13px;
+  display:grid;
+  place-items:center;
+  border-radius:4px;
+  background:linear-gradient(135deg,var(--fxc2-orange),var(--fxc2-pink),var(--fxc2-violet));
+  font-size:.28rem;
+  font-weight:950;
+}
+
+body.fxcf-targeted .fxci-artisan-name{color:#fff!important}
+body.fxcf-targeted .fxci-artisan-meta{color:#8f949f!important}
+
+body.fxcf-targeted .fxci-artisan-avail--truth{
+  color:#9fa4ae!important;
+  background:rgba(255,255,255,.03)!important;
+  border:1px solid var(--fxc2-line)!important;
+  box-shadow:none!important;
+}
+
+body.fxcf-targeted .fxci-conf-step,
+body.fxcf-targeted .fxci-next-step,
+body.fxcf-targeted .conf-info-item{
+  background:#15161d!important;
+  border-color:var(--fxc2-line)!important;
+}
+
+body.fxcf-targeted .conf-notice{
+  background:rgba(237,61,145,.04)!important;
+  border-color:rgba(237,61,145,.17)!important;
+}
+
+body.fxcf-targeted .conf-notice-text strong{
+  color:#f075af!important;
+}
+
+body.fxcf-targeted .conf-total-row{
+  border-color:rgba(237,61,145,.2)!important;
+  background:rgba(237,61,145,.045)!important;
+}
+
+body.fxcf-targeted .conf-btn-primary{
+  position:relative;
+  overflow:hidden;
+  border:1px solid transparent!important;
+  background:
+    linear-gradient(135deg,#17181e,#0f1015) padding-box,
+    linear-gradient(100deg,rgba(255,138,53,.7),rgba(237,61,145,.72) 50%,rgba(128,100,239,.7)) border-box!important;
+  color:#fff!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.25)!important;
+}
+
+body.fxcf-targeted .conf-btn-secondary{
+  background:#15161d!important;
+  border-color:var(--fxc2-line)!important;
+  color:#b1b5be!important;
+}
+
+body.fxcf-targeted .fxcf-review-notice,
+body.fxcf-targeted .fxcf-trust-footer{
+  border-color:var(--fxc2-line)!important;
+  background:rgba(255,255,255,.022)!important;
+}
+
+body.fxcf-targeted .conf-ref{
+  color:#686d78!important;
+}
+
+@media(max-width:520px){
+  body.fxcf-targeted{
+    padding:0!important;
+    align-items:stretch!important;
+    justify-content:flex-start!important;
+  }
+
+  body.fxcf-targeted .fxcf-topbar{
+    position:sticky!important;
+    top:0!important;
+    z-index:100!important;
+    min-height:calc(64px + env(safe-area-inset-top,0px))!important;
+    padding:
+      calc(10px + env(safe-area-inset-top,0px))
+      16px
+      10px!important;
+  }
+
+  body.fxcf-targeted .conf-card{
+    max-width:none!important;
+    width:100%!important;
+    margin:0!important;
+    padding:26px 16px calc(26px + env(safe-area-inset-bottom,0px))!important;
+    border-left:0!important;
+    border-right:0!important;
+    border-radius:0!important;
+  }
+
+  body.fxcf-targeted .fxcf-brand-logo{height:25px}
+  body.fxcf-targeted .fxcf-status-pill{font-size:.72rem!important}
+  body.fxcf-targeted .fxci-artisan-id-card--truth{align-items:center!important}
+  body.fxcf-targeted .fxci-artisan-avail--truth{
+    font-size:.62rem!important;
+    padding:6px 8px!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  body.fxcf-targeted *,
+  body.fxcf-targeted *::before,
+  body.fxcf-targeted *::after{
+    animation:none!important;
+    transition:none!important;
+  }
+}

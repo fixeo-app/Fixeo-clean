@@ -815,9 +815,10 @@ city:
             <div class="fixeo-res-error" id="res-error" style="display:none"></div>
 
             <button class="fixeo-res-btn-primary" id="res-step1-cta"
+                    data-res-targeted-cta="${state.isTargeted ? '1' : '0'}"
                     style="${state.isUrgent ? 'background:linear-gradient(135deg,#ff416c,#ff4b2b);box-shadow:0 6px 20px rgba(255,65,108,.35);font-size:1rem;font-weight:800;height:52px;border-radius:14px;letter-spacing:.02em' : ''}"
                     onclick="FixeoReservation._submitStep1()">
-              ${state.isUrgent ? '\u26a1 Trouver un artisan maintenant' : 'Confirmer les d\u00e9tails \u2192'}
+              ${state.isUrgent ? '\u26a1 Trouver un artisan maintenant' : (state.isTargeted ? 'Continuer \u2192' : 'Confirmer les d\u00e9tails \u2192')}
             </button>
             ${state.isUrgent ? '' : '<div style="text-align:center;font-size:.65rem;color:rgba(255,255,255,.5);margin-top:6px">\u2714 Sans engagement \u2014 paiement apr\u00e8s intervention</div>'}
           </div>
@@ -843,16 +844,8 @@ city:
     const maskedPhone = state.phone && state.phone.length >= 4
       ? state.phone.slice(0, 2) + '••••••' + state.phone.slice(-2)
       : state.phone;
-
-    const rows = [
-      ['Artisan', sanitize(a.name)],
-      ['Métier', sanitize(state.selectedService || a.service_category || a.category || 'Intervention')],
-      ['Date', sanitize(formatDateFR(state.selectedDate))],
-      ['Créneau', sanitize(slotLabel)],
-      ['Besoin', sanitize(state.description.substring(0, 120) + (state.description.length > 120 ? '…' : ''))],
-      ['Adresse', sanitize(state.address)],
-      ['Contact', sanitize(maskedPhone)]
-    ];
+    const whenLabel = [formatDateFR(state.selectedDate), slotLabel].filter(Boolean).join(' · ');
+    const tradeLabel = sanitize(state.selectedService || a.service_category || a.category || 'Intervention');
 
     return `
       <div class="fixeo-res-dialog" role="document" data-res-targeted-recap>
@@ -860,7 +853,7 @@ city:
           <div class="fixeo-res-header-left">
             <div class="fixeo-res-header-icon">${catIcon}</div>
             <div>
-              <div class="fixeo-res-header-title">📋 Récapitulatif</div>
+              <div class="fixeo-res-header-title">Récapitulatif</div>
               <div class="fixeo-res-header-sub">Étape 2 sur 2 — Vérifiez votre demande</div>
             </div>
           </div>
@@ -880,18 +873,41 @@ city:
         </div>
 
         <div class="fixeo-res-body">
-          <div class="fixeo-res-summary">
-            ${rows.map(([label, val]) => `
-              <div class="fixeo-res-summary-row">
-                <span class="fixeo-res-summary-label">${label}</span>
-                <span class="fixeo-res-summary-val">${val}</span>
-              </div>`).join('')}
-            <div data-res-targeted-truth style="margin-top:12px;padding:13px 14px;border:1px solid rgba(225,48,108,.22);border-radius:12px;background:linear-gradient(135deg,rgba(225,48,108,.08),rgba(131,58,180,.05));">
-              <div style="font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.42);font-weight:800">Tarif</div>
-              <div style="font-size:.95rem;color:#fff;font-weight:800;margin-top:4px">Confirmé avant intervention</div>
-              <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:4px;line-height:1.5">Aucun montant n’est inventé par FIXEO. Aucun paiement maintenant.</div>
+          <section class="fxrt-recap-shell">
+            <div class="fxrt-recap-artisan">
+              <div class="fxrt-recap-artisan-mark">F</div>
+              <div>
+                <small>PROFESSIONNEL CIBLÉ</small>
+                <strong>${sanitize(a.name)}</strong>
+                <span>${tradeLabel}${a.city ? ' · ' + sanitize(a.city) : ''}</span>
+              </div>
             </div>
-          </div>
+
+            <div class="fxrt-recap-grid">
+              <div class="fxrt-recap-item fxrt-recap-item--wide">
+                <small>BESOIN</small>
+                <strong>${sanitize(state.description)}</strong>
+              </div>
+              <div class="fxrt-recap-item">
+                <small>QUAND</small>
+                <strong>${sanitize(whenLabel)}</strong>
+              </div>
+              <div class="fxrt-recap-item">
+                <small>CONTACT</small>
+                <strong>${sanitize(maskedPhone)}</strong>
+              </div>
+              <div class="fxrt-recap-item fxrt-recap-item--wide">
+                <small>OÙ</small>
+                <strong>${sanitize(state.address)}</strong>
+              </div>
+            </div>
+
+            <div class="fxrt-truth-card">
+              <small>TARIF</small>
+              <strong>Confirmé avant intervention</strong>
+              <p>Aucun montant n’est inventé par FIXEO. Aucun paiement maintenant.</p>
+            </div>
+          </section>
 
           <div class="fixeo-res-trust-row fxrva-trust-row">
             <div class="fixeo-res-trust-item"><span class="fixeo-res-trust-icon">💳</span><span>Paiement après intervention</span></div>
@@ -901,21 +917,13 @@ city:
 
           <div class="fixeo-res-error" id="res-error" style="display:none"></div>
 
-          <div class="fixeo-res-actions">
+          <div class="fixeo-res-actions fxrt-actions">
             <button type="button" class="fixeo-res-btn-secondary" data-res-back="step1">← Retour</button>
             <button class="fixeo-res-btn-primary fixeo-res-btn-pay"
                     data-res-targeted-confirm
                     onclick="FixeoReservation._confirmTargetedRequest(this)">
-              ✓ Confirmer ma demande
+              Confirmer ma demande
             </button>
-          </div>
-        </div>
-
-        <div class="fixeo-res-footer">
-          <div class="fxrva-op-strip">
-            <span>✓ Demande ciblée</span>
-            <span>💳 Paiement après intervention</span>
-            <span>💬 Coordination Fixeo</span>
           </div>
         </div>
       </div>
@@ -1470,6 +1478,25 @@ city:
     render();
   }
 
+  function _updateTargetedViewport() {
+    if (!document.body.classList.contains('fixeo-targeted-booking-open')) return;
+    var vv = window.visualViewport;
+    var bottom = 0;
+    if (vv) bottom = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+    document.documentElement.style.setProperty('--fxrt-vv-bottom', Math.round(bottom) + 'px');
+  }
+
+  function _bindTargetedViewport() {
+    if (!window.visualViewport || window._fxrtViewportBound) {
+      _updateTargetedViewport();
+      return;
+    }
+    window._fxrtViewportBound = true;
+    window.visualViewport.addEventListener('resize', _updateTargetedViewport, { passive:true });
+    window.visualViewport.addEventListener('scroll', _updateTargetedViewport, { passive:true });
+    _updateTargetedViewport();
+  }
+
   function open(artisanInput, isExpress, urgentContext) {
     document.body.classList.add('fixeo-booking-modal-open');
     document.getElementById('ppui-sticky-cta')?.style.setProperty('display', 'none', 'important');
@@ -1501,6 +1528,11 @@ city:
         state.artisan.service_category ||
         state.artisan.category ||
         'Autre';
+      document.body.classList.add('fixeo-targeted-booking-open');
+      _bindTargetedViewport();
+    } else {
+      document.body.classList.remove('fixeo-targeted-booking-open');
+      document.documentElement.style.removeProperty('--fxrt-vv-bottom');
     }
 
     // ── Urgent mode: prefill from urgentContext ──────────────────
@@ -1612,6 +1644,8 @@ city:
    * Does NOT destroy the Estimator — callers decide whether to do that. */
   function _dismissReservationLayer() {
     document.body.classList.remove('fixeo-booking-modal-open');
+    document.body.classList.remove('fixeo-targeted-booking-open');
+    document.documentElement.style.removeProperty('--fxrt-vv-bottom');
     var floatBtn = document.getElementById('fixeo-floating-reserve');
     if (floatBtn) floatBtn.style.removeProperty('display');
     var stickyBtn = document.getElementById('ppui-sticky-cta');
@@ -2312,6 +2346,7 @@ var _serviceSlug = _toServiceSlug(_serviceSource);
             canonical_request_id: body && body.id ? body.id : '',
             artisan: a.name,
             artisanId: canonicalArtisanId,
+            city: a.city || '',
             service: bookingData.service,
             date: bookingData.date,
             timeSlot: slotLabel,
@@ -2341,7 +2376,7 @@ var _serviceSlug = _toServiceSlug(_serviceSource);
         } catch (_) {}
 
         close();
-        window.location.href = 'confirmation.html?v=targeted1';
+        window.location.href = 'confirmation.html?v=targeted2';
       },
       function(msg) {
         if (btn) {

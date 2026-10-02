@@ -1,0 +1,18 @@
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const root=path.resolve(__dirname,'../..');const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const html=read('artisan-profile.html'),engine=read('js/reservation.js'),shell=read('css/fixeo-reservation-targeted-polish-v1.css'),conf=read('confirmation.html'),coord=read('js/fixeo-coordination-v1i.js'),flag=read('js/fixeo-confirmation-flagship-v1.js'),confCss=read('css/fixeo-confirmation-targeted-v2.css'),profile=read('js/fixeo-artisan-profile-v4.js');
+
+test('Block 1 targeted booking owns the mobile viewport without profile UI leakage',()=>{assert.match(engine,/fixeo-targeted-booking-open/);assert.match(engine,/window\.visualViewport/);assert.match(engine,/--fxrt-vv-bottom/);assert.match(shell,/height:100dvh!important/);assert.match(shell,/safe-area-inset-top/);assert.match(shell,/safe-area-inset-bottom/);assert.match(shell,/body\.fixeo-targeted-booking-open \.navbar/);assert.match(shell,/body\.fixeo-targeted-booking-open \.fxp4-mobile/);});
+
+test('Block 1 teardown restores page UI and clears viewport offset',()=>{assert.match(engine,/document\.body\.classList\.remove\('fixeo-targeted-booking-open'\)/);assert.match(engine,/removeProperty\('--fxrt-vv-bottom'\)/);});
+
+test('Block 2 targeted recap is compact and CTA uses FIXEO signature',()=>{assert.match(engine,/fxrt-recap-shell/);assert.match(engine,/fxrt-recap-artisan/);assert.match(engine,/fxrt-recap-grid/);assert.match(engine,/fxrt-truth-card/);assert.match(engine,/data-res-targeted-confirm/);assert.match(engine,/data-res-targeted-cta/);assert.match(shell,/linear-gradient\(100deg,rgba\(255,138,53,.7\),rgba\(237,61,145,.72\) 50%,rgba\(128,100,239,.7\)\) border-box/);assert.match(shell,/content:"F"/);});
+
+test('Block 2 preserves targeted truth contract',()=>{const a=engine.indexOf('function renderTargetedStep2()'),b=engine.indexOf('function renderStep2()',a),targeted=engine.slice(a,b);assert.match(targeted,/Confirmé avant intervention/);assert.match(targeted,/Aucun montant n’est inventé par FIXEO/);assert.doesNotMatch(targeted,/Frais de service|5%|Total à payer|Cash on Delivery|CMI|\d+\s*MAD/);});
+
+test('Block 3 confirmation removes false availability and generic artisan icon',()=>{assert.doesNotMatch(coord,/var availLabel = '🟢 Disponible'/);assert.match(coord,/Disponibilité à confirmer/);assert.match(coord,/fxci-artisan-fixeo-id/);assert.match(coord,/function _initials/);assert.match(coord,/Créneau demandé aujourd/);});
+
+test('Block 3 targeted confirmation uses FIXEO branding and neutral payment wording',()=>{assert.match(flag,/fxcf-targeted/);assert.match(flag,/\/img\/fixeo-logo\.webp/);assert.match(flag,/fxcf-icon-fixeo/);assert.match(flag,/Paiement après intervention/);assert.match(conf,/Demande enregistrée — Fixeo/);assert.match(conf,/fixeo-confirmation-targeted-v2\.css\?v=fxc2-v1/);assert.match(confCss,/body\.fxcf-targeted/);assert.match(confCss,/fxci-artisan-avail--truth/);});
+
+test('Block 3 confirmation still hides non-authoritative amount and keeps profile link current',()=>{assert.match(conf,/order\.source === 'reservation_targeted' && !order\.total/);assert.match(conf,/totalRow\.style\.display = 'none'/);assert.match(conf,/artisan-profile\.html\?id=.*20261002ux1/);});
+
+test('final 3-block rollout keeps stable profile handoff and Reservation V4 dormant',()=>{assert.match(profile,/FixeoReservation\.open\(artisan\(p\),false\)/);assert.doesNotMatch(html,/fixeo-reservation-v4\.(?:js|css)/);assert.match(html,/fixeo-reservation-targeted-polish-v1\.css\?v=fxrt-v1/);assert.match(html,/js\/reservation\.js\?v=av1-targeted3/);assert.match(html,/PROFILE_PAGE_VERSION='20261002ux1'/);});

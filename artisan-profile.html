@@ -200,7 +200,7 @@
 
 <script>
 (function(){
-  var PROFILE_PAGE_VERSION='20261002truth1';
+  var PROFILE_PAGE_VERSION='20261002ux1';
   var q=new URLSearchParams(window.location.search);
   var ref=q.get('id')||q.get('artisan');
   if(!ref){ window.location.replace('/artisans.html'); return; }
@@ -233,7 +233,7 @@
 <!-- perf2: Batch 2 — all deferred (DCL order: links → render → v2 enhance).
      All three use DCL listeners internally; defer preserves execution order. -->
 
-<script src="js/reservation.js?v=av1-targeted2" defer></script>
+<script src="js/reservation.js?v=av1-targeted3" defer></script>
 <script src="js/reservation-v2.js?v=v2c6f-c" defer></script>
 <!-- fxresf-cod-v1: Load COD payment engine so FixeoCOD.processCOD() is available.
      Without this, _proceedToPayment() falls to the alert() fallback and no redirect fires. -->
@@ -270,6 +270,7 @@
 <!-- fxresf-v11a: Reservation modal flagship presentation enhancer.
      Pure additive layer — zero engine changes. -->
 <link rel="stylesheet" href="css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a">
+<link rel="stylesheet" href="css/fixeo-reservation-targeted-polish-v1.css?v=fxrt-v1">
 <!-- Artisan Journey V4 B2: canonical public profile presentation -->
 <link rel="stylesheet" href="css/fixeo-artisan-profile-v4.css?v=fxp4-b34dm1-b35wow1-b36p1-b37id1-b371opt1-b372freeze1-b373id2">
 <script src="js/fixeo-reservation-flagship-v1.js?v=fxresf-v11a" defer></script>
