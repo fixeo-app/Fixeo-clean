@@ -37,6 +37,17 @@ export async function getMyCurrentClientMission(): Promise<MissionSnapshot | nul
   return unwrapMission(data);
 }
 
+
+
+export async function getClientMissionDetail(missionId: string): Promise<MissionSnapshot> {
+  const { data, error } = await supabase.rpc('get_my_client_mission_detail_v1', {
+    p_mission_id: missionId,
+  });
+  if (error) throw error;
+  if (!data?.ok) throw new Error(String(data?.reason || 'mission_unavailable'));
+  return data as MissionSnapshot;
+}
+
 export async function getArtisanMissionDetail(missionId: string): Promise<MissionSnapshot> {
   const { data, error } = await supabase.rpc('get_accepted_mission_detail', {
     p_mission_id: missionId,
