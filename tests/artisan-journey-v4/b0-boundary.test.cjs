@@ -15,7 +15,7 @@ function blobSha(p){
 }
 
 const protectedBlobs={
-  'index.html':'74b71bc778407e2615e45924cf536535f939ef29',
+  'index.html':'b8dbb051b2d88456c84c5a52842c491431b0e9a4',
   'js/fixeo-intake-v1.js':'4672fc11137fbe800643464ba181db3722bff936',
   'js/fixeo-estimator-v2.js':'8299df65ad21ceffea362f0fcc99b6cfa896ebd8',
   'js/fixeo-diagnostic-v1.js':'77a0ac452eafa91284284d609f88b413c6675258',
@@ -34,7 +34,7 @@ test('B0: artisan profile retains targeted booking while V4 owns public renderin
   const v4=read('js/fixeo-artisan-profile-v4.js');
   assert.match(v4,/id="public-artisan-action"/);
   assert.match(v4,/FixeoReservation\.open\(artisan\(p\),false\)/);
-  assert.match(html,/js\/reservation\.js\?v=av1-card2/);
+  assert.match(html,/js\/reservation\.js\?v=av1-card3/);
   assert.match(html,/fixeo-artisan-profile-v4\.js\?v=fxp4-b34/);
   assert.doesNotMatch(html,/src=["'][^"']*fixeo-public-artisan-profile\.js/);
 });
