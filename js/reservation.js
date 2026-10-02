@@ -848,8 +848,12 @@ city:
     const maskedPhone = state.phone && state.phone.length >= 4
       ? state.phone.slice(0, 2) + '••••••' + state.phone.slice(-2)
       : state.phone;
-    const whenLabel = [formatDateFR(state.selectedDate), slotLabel].filter(Boolean).join(' · ');
+    const whenDate = formatDateFR(state.selectedDate);
     const tradeLabel = sanitize(state.selectedService || a.service_category || a.category || 'Intervention');
+    const _nameParts = String(a?.name || '').trim().split(/\s+/).filter(Boolean);
+    const artisanInitials = _nameParts.length > 1
+      ? ((_nameParts[0][0] || '') + (_nameParts[_nameParts.length - 1][0] || '')).toUpperCase()
+      : ((_nameParts[0] || 'FX').slice(0,2).toUpperCase());
 
     return `
       <div class="fixeo-res-dialog" role="document" data-res-targeted-recap>
@@ -879,7 +883,7 @@ city:
         <div class="fixeo-res-body">
           <section class="fxrt-recap-shell">
             <div class="fxrt-recap-artisan">
-              <div class="fxrt-recap-artisan-mark">F</div>
+              <div class="fxrt-recap-artisan-mark fxrt-recap-artisan-id"><span>F</span><strong>${sanitize(artisanInitials)}</strong></div>
               <div>
                 <small>PROFESSIONNEL CIBLÉ</small>
                 <strong>${sanitize(a.name)}</strong>
@@ -892,9 +896,9 @@ city:
                 <small>BESOIN</small>
                 <strong>${sanitize(state.description)}</strong>
               </div>
-              <div class="fxrt-recap-item">
+              <div class="fxrt-recap-item fxrt-recap-when">
                 <small>QUAND</small>
-                <strong>${sanitize(whenLabel)}</strong>
+                <strong><span class="fxrt-when-date">${sanitize(whenDate)}</span><span class="fxrt-when-slot">${sanitize(slotLabel)}</span></strong>
               </div>
               <div class="fxrt-recap-item">
                 <small>CONTACT</small>
@@ -2380,7 +2384,7 @@ var _serviceSlug = _toServiceSlug(_serviceSource);
         } catch (_) {}
 
         close();
-        window.location.href = 'confirmation.html?v=targeted3';
+        window.location.href = 'confirmation.html?v=targeted4';
       },
       function(msg) {
         if (btn) {
