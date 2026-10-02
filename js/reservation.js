@@ -251,7 +251,33 @@ service_category:
 
 city:
   input.city ||
+  input.ville ||
   'Maroc',
+
+photo_url:
+  input.photo_url ||
+  '',
+
+avatar:
+  input.photo_url ||
+  '',
+
+profile_status:
+  input.profile_status ||
+  '',
+
+status_label:
+  input.status_label ||
+  '',
+
+claimed:
+  input.claimed === true,
+
+verified:
+  input.verified === true,
+
+onboarding_completed:
+  input.onboarding_completed === true,
         /* V1-JC: Do NOT fabricate rating/review defaults.
          * rating=0 and reviewCount=0 must stay 0 so _resModalTrust() gates correctly.
          * Supabase artisans arrive here from artisan-profile.html findCurrentArtisan()
@@ -463,6 +489,21 @@ city:
         return;
       }
     }, true /* capture: fires before target bubbling, handles iOS tap */);
+  }
+
+  /* Canonical close guard — works even when visual enhancers replace the header. */
+  if (!window._fxResCloseListenerBound) {
+    window._fxResCloseListenerBound = true;
+    document.addEventListener('click', function(e) {
+      var modal = document.getElementById(MODAL_ID);
+      if (!modal || !modal.classList.contains('open')) return;
+      var closeBtn = e.target && e.target.closest ? e.target.closest('.fixeo-res-close') : null;
+      if (!closeBtn || !modal.contains(closeBtn)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+      close();
+    }, true);
   }
 
   /* ════════════════════════════════════════════════════════
@@ -1529,6 +1570,7 @@ city:
     // Resolve artisan
     state.artisan = artisanInput ? normalizeArtisan(artisanInput) : null;
     state.isTargeted = !!(artisanInput && state.artisan);
+    window.__fixeoTargetedReservationArtisan = state.isTargeted ? state.artisan : null;
     if (state.isTargeted) {
       var _targetCat = String(state.artisan.category || state.artisan.service_category || '').toLowerCase();
       state.selectedService =
@@ -1654,6 +1696,7 @@ city:
     document.body.classList.remove('fixeo-booking-modal-open');
     document.body.classList.remove('fixeo-targeted-booking-open');
     document.documentElement.style.removeProperty('--fxrt-vv-bottom');
+    window.__fixeoTargetedReservationArtisan = null;
     var floatBtn = document.getElementById('fixeo-floating-reserve');
     if (floatBtn) floatBtn.style.removeProperty('display');
     var stickyBtn = document.getElementById('ppui-sticky-cta');
