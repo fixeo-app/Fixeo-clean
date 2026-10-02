@@ -1435,3 +1435,77 @@ body.fx-profile-v4 #public-artisan-root{padding-bottom:24px}
     border-radius:10px;
   }
 }
+
+
+/* B3.7.2 FREEZE POLISH — final optical micro-tuning, no product logic */
+.fxp4-b371 .fxp4-fixeo-id-mesh{
+  border:0;
+  background:linear-gradient(145deg,rgba(255,255,255,.025),transparent 48%);
+}
+.fxp4-b371 .fxp4-fixeo-id-code{
+  top:48%;
+  color:rgba(255,255,255,.026);
+  font-size:2.78rem;
+  transform:translate(-50%,-50%) rotate(-6deg);
+}
+.fxp4-b371 .fxp4-fixeo-id-brand{
+  right:8px;
+  top:8px;
+  width:18px;
+  height:18px;
+  border-radius:6px;
+  font-size:.46rem;
+  box-shadow:0 4px 10px rgba(0,0,0,.18);
+}
+.fxp4-b371 .fxp4-fixeo-id strong{
+  left:50%;
+  top:47%;
+  transform:translate(-50%,-50%);
+  color:#fff;
+  font-size:3.16rem;
+  text-shadow:0 4px 16px rgba(0,0,0,.24);
+}
+.fxp4-b371 .fxp4-fixeo-id small{
+  bottom:12px;
+  color:rgba(255,255,255,.56);
+}
+.fxp4-b371 .fxp4-primary-signature{
+  background:
+    linear-gradient(135deg,#181920,#121319) padding-box,
+    linear-gradient(100deg,rgba(255,139,52,.72),rgba(235,59,145,.7) 48%,rgba(128,101,240,.7)) border-box!important;
+  box-shadow:
+    0 12px 28px rgba(0,0,0,.22),
+    inset 0 0 0 1px rgba(255,255,255,.025);
+}
+.fxp4-b371 .fxp4-primary-signature:before{
+  background:radial-gradient(circle at 8% 0,rgba(235,59,145,.075),transparent 44%);
+}
+.fxp4-b371 .fxp4-primary-signature>b{
+  background:rgba(255,255,255,.065)!important;
+  border-color:rgba(255,255,255,.075);
+}
+@media(max-width:800px){
+  .fxp4-b371 .fxp4-hero-main{padding-bottom:24px}
+  .fxp4-b371 .fxp4-hero-action{padding-top:24px}
+  .fxp4-b371 .fxp4-fixeo-id-code{
+    top:48%;
+    color:rgba(255,255,255,.022);
+    font-size:1.9rem;
+  }
+  .fxp4-b371 .fxp4-fixeo-id-brand{
+    right:6px;
+    top:6px;
+    width:14px;
+    height:14px;
+    border-radius:5px;
+    font-size:.36rem;
+  }
+  .fxp4-b371 .fxp4-fixeo-id strong{
+    top:47%;
+    font-size:2.25rem;
+  }
+  .fxp4-b371 .fxp4-fixeo-id small{
+    bottom:7px;
+    color:rgba(255,255,255,.52);
+  }
+}
