@@ -1,5 +1,6 @@
--- B3.2-B3.4 — public metrics, verified review feed, secure review submission
--- Additive public contract; no pricing authority.
+-- B3.4 — portfolio identity bridge for the canonical public artisan profile.
+-- Reads historical portfolio rows keyed by canonical artisan id OR owner_user_id.
+-- No data rewrite, no pricing authority, no review/security mutation.
 
 create or replace function public.artisan_public_profile_v4(p_artisan_id uuid)
 returns jsonb
@@ -32,7 +33,10 @@ portfolio as (
     'city',nullif(btrim(pi.city),''),'image_url',nullif(btrim(pi.image_url),''),
     'before_image_url',nullif(btrim(pi.before_image_url),''),'after_image_url',nullif(btrim(pi.after_image_url),'')
   ) order by pi.created_at desc nulls last,pi.id) filter(where nullif(btrim(pi.image_url),'') is not null or nullif(btrim(pi.before_image_url),'') is not null or nullif(btrim(pi.after_image_url),'') is not null or nullif(btrim(pi.description),'') is not null),'[]'::jsonb) items
-  from public.portfolio_items pi\n  cross join a aa\n  where pi.artisan_id=p_artisan_id::text\n     or (aa.owner_user_id is not null and pi.artisan_id=aa.owner_user_id::text)
+  from public.portfolio_items pi
+  cross join a aa
+  where pi.artisan_id=p_artisan_id::text
+     or (aa.owner_user_id is not null and pi.artisan_id=aa.owner_user_id::text)
 ),
 review_summary as (
   select count(*) filter(where verified is true)::int review_count,
@@ -85,64 +89,3 @@ select case when not exists(select 1 from base) then null else (
  ) from base b
 ) end;
 $function$;
-
-create unique index if not exists reviews_one_per_mission_idx on public.reviews(mission_id);
-
-drop policy if exists reviews_anon_insert on public.reviews;
-drop policy if exists reviews_client_insert on public.reviews;
-revoke insert, update, delete, truncate on public.reviews from anon, authenticated;
-
-create or replace function public.submit_artisan_review_v1(
-  p_mission_id uuid,
-  p_rating smallint,
-  p_review_text text default null,
-  p_response_time_score smallint default null,
-  p_quality_score smallint default null
-) returns jsonb
-language plpgsql
-security definer
-set search_path=public,pg_temp
-as $function$
-declare
-  v_uid uuid:=auth.uid();
-  v_m public.missions%rowtype;
-  v_id uuid;
-begin
-  if v_uid is null then raise exception 'AUTH_REQUIRED'; end if;
-  if p_rating<1 or p_rating>5 then raise exception 'RATING_INVALID'; end if;
-  if p_response_time_score is not null and (p_response_time_score<1 or p_response_time_score>5) then raise exception 'RESPONSE_SCORE_INVALID'; end if;
-  if p_quality_score is not null and (p_quality_score<1 or p_quality_score>5) then raise exception 'QUALITY_SCORE_INVALID'; end if;
-
-  select * into v_m from public.missions where id=p_mission_id for share;
-  if not found then raise exception 'MISSION_NOT_FOUND'; end if;
-  if v_m.client_profile_id is distinct from v_uid then raise exception 'MISSION_FORBIDDEN'; end if;
-  if v_m.artisan_profile_id is null then raise exception 'ARTISAN_NOT_ASSIGNED'; end if;
-  if not (v_m.status in ('done','validated') or v_m.completed_at is not null or v_m.validated_at is not null) then raise exception 'MISSION_NOT_COMPLETED'; end if;
-
-  insert into public.reviews(mission_id,artisan_id,client_profile_id,rating,review_text,verified,response_time_score,quality_score)
-  values(v_m.id,v_m.artisan_profile_id,v_uid,p_rating,nullif(btrim(p_review_text),''),true,p_response_time_score,p_quality_score)
-  on conflict(mission_id) do update set
-    rating=excluded.rating,review_text=excluded.review_text,response_time_score=excluded.response_time_score,quality_score=excluded.quality_score
-  returning id into v_id;
-
-  return jsonb_build_object('ok',true,'review_id',v_id,'verified',true);
-end;
-$function$;
-
-revoke all on function public.submit_artisan_review_v1(uuid,smallint,text,smallint,smallint) from public,anon;
-grant execute on function public.submit_artisan_review_v1(uuid,smallint,text,smallint,smallint) to authenticated;
-
-create or replace function public.my_review_eligibility_v1(p_artisan_id uuid)
-returns jsonb language sql stable security definer set search_path=public,pg_temp
-as $function$
-select case when auth.uid() is null then jsonb_build_object('authenticated',false,'eligible',false)
-else coalesce((
- select jsonb_build_object('authenticated',true,'eligible',true,'mission_id',m.id,'already_reviewed',exists(select 1 from public.reviews r where r.mission_id=m.id))
- from public.missions m
- where m.client_profile_id=auth.uid() and m.artisan_profile_id=p_artisan_id
-   and (m.status in ('done','validated') or m.completed_at is not null or m.validated_at is not null)
- order by coalesce(m.validated_at,m.completed_at,m.created_at) desc limit 1
-),jsonb_build_object('authenticated',true,'eligible',false)) end;
-$function$;
-revoke all on function public.my_review_eligibility_v1(uuid) from public,anon;
-grant execute on function public.my_review_eligibility_v1(uuid) to authenticated;
