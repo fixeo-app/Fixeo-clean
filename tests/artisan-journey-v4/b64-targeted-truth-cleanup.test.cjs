@@ -6,7 +6,7 @@ test('targeted mode suppresses legacy V2 estimation card',()=>{assert.match(rv2,
 
 test('targeted recap contains no local amount, 5 percent fee or payment selector',()=>{assert.match(targeted,/Confirmé avant intervention/);assert.match(targeted,/Aucun montant n’est inventé par FIXEO/);assert.match(targeted,/Confirmer ma demande/);assert.doesNotMatch(targeted,/Frais de service|5%|Total à payer|MAD|fixeo-payment-method-selector|Cash on Delivery|CMI/);});
 
-test('targeted confirmation uses canonical request gate directly',()=>{assert.match(engine,/function _confirmTargetedRequest/);assert.match(engine,/_source\s*:\s*'reservation_targeted'/);assert.match(engine,/_canonicalPersistGate\(/);assert.match(engine,/confirmation\.html\?v=targeted1/);assert.doesNotMatch(engine.slice(engine.indexOf('function _confirmTargetedRequest'),engine.indexOf('function _proceedToPayment')),/processCOD|FixeoCOD/);});
+test('targeted confirmation uses canonical request gate directly',()=>{assert.match(engine,/function _confirmTargetedRequest/);assert.match(engine,/_source\s*:\s*'reservation_targeted'/);assert.match(engine,/_canonicalPersistGate\(/);assert.match(engine,/confirmation\.html\?v=targeted2/);assert.doesNotMatch(engine.slice(engine.indexOf('function _confirmTargetedRequest'),engine.indexOf('function _proceedToPayment')),/processCOD|FixeoCOD/);});
 
 test('canonical gate exposes ACK body and local source reflects actual path',()=>{assert.match(engine,/bookingData\._source \|\| 'reservation_cod'/);assert.match(engine,/raw\[i\]\.source\s*=\s*_requestSource/);assert.match(engine,/onConfirmed\(body\)/);});
 
