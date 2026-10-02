@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { AppState, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { acceptDispatchOffer, getDispatchOffers } from '@/lib/magicLoop';
 import type { DispatchOffer } from '@/lib/dispatchContract';
@@ -46,7 +46,13 @@ export default function Artisan() {
   useEffect(() => {
     void load();
     const timer = setInterval(() => void load(), 10000);
-    return () => clearInterval(timer);
+    const appState = AppState.addEventListener('change', state => {
+      if (state === 'active') void load();
+    });
+    return () => {
+      clearInterval(timer);
+      appState.remove();
+    };
   }, [load]);
 
   async function accept(requestId: string) {
