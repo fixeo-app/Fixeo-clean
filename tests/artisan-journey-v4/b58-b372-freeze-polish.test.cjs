@@ -1,0 +1,10 @@
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const root=path.resolve(__dirname,'../..');const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const css=read('css/fixeo-artisan-profile-v4.css'),js=read('js/fixeo-artisan-profile-v4.js'),html=read('artisan-profile.html');
+const marker='/* B3.7.2 FREEZE POLISH — final optical micro-tuning, no product logic */';const p=css.slice(css.indexOf(marker));
+test('B3.7.2 removes the inner FIXEO ID frame and centers initials',()=>{assert.ok(p.startsWith(marker));assert.match(p,/\.fxp4-b371 \.fxp4-fixeo-id-mesh\{\n  border:0/);assert.match(p,/top:47%/);assert.match(p,/transform:translate\(-50%,-50%\)/);});
+test('B3.7.2 pushes trade watermark further into the background',()=>{assert.match(p,/color:rgba\(255,255,255,\.026\)/);assert.match(p,/font-size:2\.78rem/);assert.match(p,/color:rgba\(255,255,255,\.022\)/);});
+test('B3.7.2 reduces the F brand mark',()=>{assert.match(p,/width:18px/);assert.match(p,/width:14px/);});
+test('B3.7.2 calms the hero CTA border without reverting to white',()=>{assert.match(p,/rgba\(255,139,52,\.72\)/);assert.match(p,/rgba\(235,59,145,\.7\)/);assert.doesNotMatch(p,/background:#fff!important/);});
+test('B3.7.2 adds only a little mobile breathing room',()=>{assert.match(p,/\.fxp4-b371 \.fxp4-hero-main\{padding-bottom:24px\}/);assert.match(p,/\.fxp4-b371 \.fxp4-hero-action\{padding-top:24px\}/);});
+test('B3.7.2 freezes product logic and targeted booking',()=>{assert.match(js,/FixeoReservation\.open\(artisan\(p\),false\)/);assert.match(js,/fxp4-primary-signature/);});
+test('B3.7.2 fresh asset key is isolated',()=>{assert.match(html,/b372freeze1/);});
