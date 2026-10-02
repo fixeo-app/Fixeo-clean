@@ -184,13 +184,30 @@
   }
 
   function getArtisanById(id) {
-    /* Phase 7C.9L.3O: canonical string comparison — supports numeric strings,
-     * UUID strings, and any other legitimate artisan ID shape stored in
-     * window.ARTISANS (covers Supabase UUIDs where legacy_id is absent). */
+    /* Canonical public-card resolver: accept every known artisan identifier
+     * but always return the complete artisan object before targeted booking. */
     const pool = window.ARTISANS || (typeof ARTISANS !== 'undefined' && Array.isArray(ARTISANS) ? ARTISANS : null);
     if (pool) {
-      var sid = String(id);
-      return pool.find(function(a) { return String(a.id) === sid; }) || null;
+      var sid = String(id == null ? '' : id).trim();
+      if (!sid) return null;
+      return pool.find(function(a) {
+        if (!a || typeof a !== 'object') return false;
+        var ids = [
+          a._artisan_id_canonical,
+          a._supabase_id,
+          a.id,
+          a.legacy_id,
+          a.artisan_id,
+          a.public_id
+        ].map(function(v){ return String(v == null ? '' : v).trim(); }).filter(Boolean);
+        if (Array.isArray(a.source_ids)) {
+          a.source_ids.forEach(function(v) {
+            v = String(v == null ? '' : v).trim();
+            if (v) ids.push(v);
+          });
+        }
+        return ids.indexOf(sid) !== -1;
+      }) || null;
     }
     return null;
   }
@@ -321,6 +338,22 @@ city:
       document.body.appendChild(modal);
     }
     return modal;
+  }
+
+  /* Close must never depend on inline onclick or on the page that opened
+   * the reservation. Capture phase wins over decorative/wrapper layers. */
+  if (!window._fxResCloseCaptureBound) {
+    window._fxResCloseCaptureBound = true;
+    document.addEventListener('click', function(e) {
+      var closeBtn = e.target && e.target.closest
+        ? e.target.closest('#' + MODAL_ID + ' .fixeo-res-close')
+        : null;
+      if (!closeBtn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+      close();
+    }, true);
   }
 
   /* ── 7C.9L.3I: Delegated city-chip click handler ──────────────────────────
