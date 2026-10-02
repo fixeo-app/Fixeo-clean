@@ -50,7 +50,7 @@
      CONSTANTS
   ══════════════════════════════════════════════════════════════ */
 
-  var VERSION      = '2.0';
+  var VERSION      = '3.0';
   var BATCH        = 3 ;
   var PAGE_ID      = 'artisan-directory';
   var GRID_ID      = 'artdir-grid';
