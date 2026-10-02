@@ -12,7 +12,7 @@ import { colors, radius, spacing, type } from '@/ui/tokens';
 
 type Props = {
   onVoiceReady: (uri: string) => void;
-  onPhotoReady: (uri: string) => void;
+  onPhotoReady: (uri: string, mimeType?: string) => void;
   onWrite?: () => void;
 };
 
@@ -57,7 +57,7 @@ export function RafiInputRail({ onVoiceReady, onPhotoReady, onWrite }: Props) {
 
     if (!result.canceled && result.assets[0]?.uri) {
       setMessage('Photo prête pour RAFI.');
-      onPhotoReady(result.assets[0].uri);
+      onPhotoReady(result.assets[0].uri, result.assets[0].mimeType || 'image/jpeg');
     }
   }
 
