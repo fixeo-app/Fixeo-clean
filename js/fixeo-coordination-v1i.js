@@ -107,6 +107,7 @@
     var order = {};
     try { order = JSON.parse(localStorage.getItem('lastOrder') || '{}'); } catch (e) {}
 
+    var isTargeted   = order.source === 'reservation_targeted';
     var artisanName = order.artisan || '';
     var service     = order.service || '';
     var city        = order.city    || '';
@@ -160,13 +161,13 @@
         + 'L\u2019artisan vous confirme les d\u00e9tails par WhatsApp.';
     }
 
-    var nextStepHtml = '<div class="fxci-next-step">'
-      + '<div class="fxci-next-step-label">\u00c9tape suivante</div>'
+    var nextStepHtml = '<div class="fxci-next-step' + (isTargeted ? ' fxci-next-step--targeted' : '') + '">'
+      + '<div class="fxci-next-step-label">' + (isTargeted ? 'À suivre' : '\u00c9tape suivante') + '</div>'
       + '<div class="fxci-next-step-text">' + nextStepText + '</div>'
       + '</div>';
 
     /* ── Coordination context steps (Phase 1+2) ── */
-    var coordHtml = '<div class="fxci-conf-coord">'
+    var coordHtml = isTargeted ? '' : '<div class="fxci-conf-coord">'
       + '<div class="fxci-conf-coord-label">Coordination</div>'
       + '<div class="fxci-conf-steps">'
       + '<div class="fxci-conf-step fxci-conf-step--active">'
@@ -186,9 +187,19 @@
 
     /* ── Inject block after timeline ── */
     var block = document.createElement('div');
-    block.className = 'fxci-conf-block';
+    block.className = 'fxci-conf-block' + (isTargeted ? ' fxci-conf-block--targeted' : '');
     block.innerHTML = sameDayHtml + idCardHtml + coordHtml + nextStepHtml;
     timeline.parentNode.insertBefore(block, timeline.nextSibling);
+
+    /* Targeted confirmation: move the primary WhatsApp action directly under artisan identity. */
+    if (isTargeted) {
+      var waSection = document.getElementById('conf-wa-cta');
+      var idCardEl = block.querySelector('.fxci-artisan-id-card--truth');
+      if (waSection && idCardEl) {
+        waSection.classList.add('fxci-wa-promoted');
+        idCardEl.insertAdjacentElement('afterend', waSection);
+      }
+    }
   }
 
   /* ════════════════════════════════════════════════════════
