@@ -16,4 +16,4 @@ test('generic and estimator legacy pricing branches remain isolated and availabl
 
 test('profile remains stable and Reservation V4 stays dormant',()=>{assert.match(profile,/FixeoReservation\.open\(artisan\(p\),false\)/);assert.doesNotMatch(html,/fixeo-reservation-v4\.(?:js|css)/);});
 
-test('targeted truth cleanup assets and Safari document version are fresh',()=>{assert.match(html,/js\/reservation\.js\?v=av1-targeted5/);assert.match(html,/js\/reservation-v2\.js\?v=v2c6f-c/);assert.match(html,/PROFILE_PAGE_VERSION='20261002ux3'/);});
+test('targeted truth cleanup assets and Safari document version are fresh',()=>{assert.match(html,/js\/reservation\.js\?v=av1-targeted6/);assert.match(html,/js\/reservation-v2\.js\?v=v2c6f-c/);assert.match(html,/PROFILE_PAGE_VERSION='20261002ux4'/);});
