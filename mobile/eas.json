@@ -22,7 +22,7 @@
         "EXPO_PUBLIC_SUPABASE_URL": "https://kqyhusnbybsukbcaoqtu.supabase.co",
         "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_sV-PYAY5zgir1UTJ6LNl6Q_ObK78uMo",
         "EXPO_PUBLIC_EAS_PROJECT_ID": "bb76a67f-4304-48a6-ad29-ca7382d28a7a",
-        "EXPO_PUBLIC_FIXEO_API_BASE_URL": "https://fixeo-clean-git-feat-fixeo-mo-e02dfc-elalaouibiz-3410s-projects.vercel.app"
+        "EXPO_PUBLIC_FIXEO_API_BASE_URL": "https://kqyhusnbybsukbcaoqtu.supabase.co/functions/v1/mobile-rafi-preview-proxy"
       },
       "android": {
         "buildType": "apk"
