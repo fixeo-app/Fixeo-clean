@@ -235,7 +235,7 @@ var priceHint = 'Avant intervention';
           + 'Demander une intervention \u2192'
         + '</button>'
         + '<a class="pvc-profile-link fhp-btn-profile pvc-profile-v3b"'
-          + ' href="/artisan-profile.html?id=' + encodeURIComponent(id) + '&pv=20261002cards1"'
+          + ' href="/artisan-profile.html?id=' + encodeURIComponent(id) + '&pv=20261002cards2"'
           + ' aria-label="Voir le profil complet de ' + name + '">'
           + 'Voir le profil complet \u203a'
         + '</a>'

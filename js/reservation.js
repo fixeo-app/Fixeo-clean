@@ -323,6 +323,22 @@ city:
     return modal;
   }
 
+  /* P0 close owner: dedicated capture listener.
+   * This runs before inline handlers and presentation wrappers on iOS/Safari. */
+  if (!window._fxResCloseCaptureBound) {
+    window._fxResCloseCaptureBound = true;
+    document.addEventListener('click', function(e) {
+      var btn = e.target && e.target.closest
+        ? e.target.closest('#' + MODAL_ID + ' .fixeo-res-close')
+        : null;
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+      close();
+    }, true);
+  }
+
   /* ── 7C.9L.3I: Delegated city-chip click handler ──────────────────────────
    * One listener bound once on document. Intercepts clicks on
    * [data-estimator-city] chips scoped inside #fixeo-reservation-modal.
@@ -1520,7 +1536,7 @@ city:
     if (!document.querySelector('link[data-fixeo-targeted-shell],link[href*="fixeo-reservation-targeted-polish-v1.css"]')) {
       var link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = '/css/fixeo-reservation-targeted-polish-v1.css?v=fxrt-v3';
+      link.href = '/css/fixeo-reservation-targeted-polish-v1.css?v=fxrt-v4';
       link.setAttribute('data-fixeo-targeted-shell', '1');
       document.head.appendChild(link);
     }
