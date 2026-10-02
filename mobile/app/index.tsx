@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { AppState, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import * as Crypto from 'expo-crypto';
 import { supabase } from '@/lib/supabase';
@@ -9,7 +9,10 @@ import {
   watchClientNotifications,
   watchClientRequest,
 } from '@/lib/clientWatch';
-import { getMyCurrentClientMission } from '@/lib/missionTerrain';
+import {
+  getMyCurrentClientMission,
+  getMyCurrentClientRequest,
+} from '@/lib/missionTerrain';
 import { understandLocally } from '@/lib/rafi';
 import { hasRafiServerGateway, transcribeRafiVoice } from '@/lib/rafiGateway';
 import { MagicLoopModel, transition } from '@/lib/magicLoopState';
@@ -43,9 +46,28 @@ export default function Home() {
     }
   }
 
+  async function syncJourney() {
+    const mission = await syncCurrentMission();
+    if (mission) return;
+
+    try {
+      const request = await getMyCurrentClientRequest();
+      if (!request) return;
+      setProblem(request.description || '');
+      setCity(request.city || '');
+      setLoop(current => transition(current, 'matching', {
+        requestId: request.request_id,
+        message: 'FIXEO reprend votre recherche.',
+      }));
+    } catch {
+      // Keep the current UI. Server state will be reconciled on the next foreground/poll.
+    }
+  }
+
   useEffect(() => {
     let channel: any;
     let active = true;
+
     supabase.auth.getUser().then(({ data }) => {
       if (!active) return;
       if (!data.user) {
@@ -53,7 +75,7 @@ export default function Home() {
         return;
       }
 
-      void syncCurrentMission();
+      void syncJourney();
 
       channel = watchClientNotifications(data.user.id, (payload: any) => {
         const notification = payload.new || {};
@@ -65,8 +87,14 @@ export default function Home() {
         }
       });
     });
+
+    const appState = AppState.addEventListener('change', state => {
+      if (state === 'active') void syncJourney();
+    });
+
     return () => {
       active = false;
+      appState.remove();
       if (channel) void supabase.removeChannel(channel);
     };
   }, []);
@@ -89,7 +117,7 @@ export default function Home() {
           setLoop(current => transition(current, 'found', { message: 'Artisan trouvé' }));
           void syncCurrentMission();
         }
-      });
+      }).catch(() => undefined);
     }, 5000);
 
     return () => {
@@ -152,8 +180,9 @@ export default function Home() {
       setLoop(current => transition(current, 'matching', { requestId }));
     } catch {
       setLoop(current => transition(current, 'error', {
-        message: 'Impossible de confirmer pour le moment.',
+        message: 'Connexion interrompue. FIXEO vérifie votre demande avant toute nouvelle tentative.',
       }));
+      void syncJourney();
     } finally {
       submitLockRef.current = false;
     }
@@ -237,7 +266,7 @@ export default function Home() {
         </View>
       )}
 
-      {loop.state === 'error' && <Text>{loop.message}</Text>}
+      {loop.state === 'error' && <Text style={styles.error}>{loop.message}</Text>}
     </View>
   );
 }
@@ -255,6 +284,7 @@ const styles = StyleSheet.create({
   disabled: { opacity: 0.55 },
   ctaText: { color: '#fff', fontWeight: '700', textAlign: 'center' },
   ok: { textAlign: 'center', fontWeight: '700' },
+  error: { textAlign: 'center', fontWeight: '600' },
   foundCard: { backgroundColor: '#111', borderRadius: 22, padding: 20, gap: 9 },
   foundTitle: { color: '#fff', fontSize: 22, fontWeight: '800' },
   foundText: { color: '#ddd', lineHeight: 21 },
