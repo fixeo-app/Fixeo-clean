@@ -52,6 +52,13 @@ async function inspect(req, res) {
     assertPreview(process.env);
 
     if (!process.env.OPENAI_API_KEY || !process.env.FIXEO_DIAGNOSTIC_MODEL) {
+      console.warn(
+        JSON.stringify({
+          event: 'mobile_rafi_photo_unavailable',
+          has_openai_key: Boolean(process.env.OPENAI_API_KEY),
+          has_model: Boolean(process.env.FIXEO_DIAGNOSTIC_MODEL),
+        }),
+      );
       return send(res, 503, { ok: false, error: 'diagnostic_unavailable' });
     }
 
@@ -135,10 +142,26 @@ async function inspect(req, res) {
     });
   } catch (error) {
     if (error instanceof MobileRafiError) {
+      console.warn(
+        JSON.stringify({
+          event: 'mobile_rafi_photo_gateway_error',
+          code: error.code,
+          status: error.status,
+          latency_ms: Date.now() - started,
+        }),
+      );
       return send(res, error.status, { ok: false, error: error.code });
     }
 
     if (error instanceof DiagnosticError) {
+      console.warn(
+        JSON.stringify({
+          event: 'mobile_rafi_photo_diagnostic_error',
+          code: error.code || 'diagnostic_failed',
+          status: error.status || 422,
+          latency_ms: Date.now() - started,
+        }),
+      );
       return send(res, error.status || 422, {
         ok: false,
         error: error.code || 'diagnostic_failed',
