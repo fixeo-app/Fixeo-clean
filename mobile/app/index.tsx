@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import * as Crypto from 'expo-crypto';
@@ -9,6 +9,7 @@ import {
   watchClientNotifications,
   watchClientRequest,
 } from '@/lib/clientWatch';
+import { getMyCurrentClientMission } from '@/lib/missionTerrain';
 import { understandLocally } from '@/lib/rafi';
 import { hasRafiServerGateway, transcribeRafiVoice } from '@/lib/rafiGateway';
 import { MagicLoopModel, transition } from '@/lib/magicLoopState';
@@ -23,7 +24,24 @@ export default function Home() {
   const [rafiMessage, setRafiMessage] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [loop, setLoop] = useState<MagicLoopModel>({ state: 'idle' });
+  const submitLockRef = useRef(false);
+  const idempotencyKeyRef = useRef<string | null>(null);
   const need = useMemo(() => understandLocally({ mode: 'text', text: problem }), [problem]);
+
+  async function syncCurrentMission() {
+    try {
+      const mission = await getMyCurrentClientMission();
+      if (!mission) return null;
+      setLoop(current => transition(current, 'found', {
+        requestId: mission.request_id,
+        missionId: mission.mission_id,
+        message: 'Artisan trouvé',
+      }));
+      return mission;
+    } catch {
+      return null;
+    }
+  }
 
   useEffect(() => {
     let channel: any;
@@ -34,12 +52,16 @@ export default function Home() {
         router.replace('/sign-in');
         return;
       }
+
+      void syncCurrentMission();
+
       channel = watchClientNotifications(data.user.id, (payload: any) => {
         const notification = payload.new || {};
         if (/accept|assign|mission/i.test(String(notification.type || ''))) {
           setLoop(current => transition(current, 'found', {
             message: notification.title || notification.message || 'Artisan trouvé',
           }));
+          void syncCurrentMission();
         }
       });
     });
@@ -57,6 +79,7 @@ export default function Home() {
       const status = String(payload?.new?.status || '');
       if (ASSIGNED_STATES.has(status)) {
         setLoop(current => transition(current, 'found', { message: 'Artisan trouvé' }));
+        void syncCurrentMission();
       }
     });
 
@@ -64,6 +87,7 @@ export default function Home() {
       void getClientRequestStatus(requestId).then(status => {
         if (status && ASSIGNED_STATES.has(status)) {
           setLoop(current => transition(current, 'found', { message: 'Artisan trouvé' }));
+          void syncCurrentMission();
         }
       });
     }, 5000);
@@ -73,6 +97,12 @@ export default function Home() {
       void supabase.removeChannel(channel);
     };
   }, [loop.state, loop.requestId]);
+
+  useEffect(() => {
+    if (loop.state !== 'found' || loop.missionId) return;
+    const timer = setInterval(() => void syncCurrentMission(), 1500);
+    return () => clearInterval(timer);
+  }, [loop.state, loop.missionId]);
 
   async function handleVoice(uri: string) {
     if (!hasRafiServerGateway()) {
@@ -95,6 +125,8 @@ export default function Home() {
   }
 
   async function send() {
+    if (submitLockRef.current || loop.state === 'matching' || loop.state === 'found') return;
+    submitLockRef.current = true;
     try {
       const normalizedCity = city.trim();
       if (!normalizedCity) {
@@ -105,13 +137,15 @@ export default function Home() {
         setLoop(current => transition(current, 'error', { message: 'Décrivez le problème à RAFI.' }));
         return;
       }
+
       setLoop(current => transition(current, 'creating'));
-      const idempotencyKey = Crypto.randomUUID();
+      if (!idempotencyKeyRef.current) idempotencyKeyRef.current = Crypto.randomUUID();
+
       const data: any = await createRequest(
         need.serviceCategory,
         normalizedCity,
         need.description,
-        idempotencyKey,
+        idempotencyKeyRef.current,
       );
       const requestId = String(data?.id || data?.request_id || '');
       if (!requestId) throw new Error('REQUEST_ID_MISSING');
@@ -120,8 +154,12 @@ export default function Home() {
       setLoop(current => transition(current, 'error', {
         message: 'Impossible de confirmer pour le moment.',
       }));
+    } finally {
+      submitLockRef.current = false;
     }
   }
+
+  const requestLocked = loop.state === 'creating' || loop.state === 'matching' || loop.state === 'found';
 
   return (
     <View style={styles.root}>
@@ -139,12 +177,14 @@ export default function Home() {
       <TextInput
         value={problem}
         onChangeText={setProblem}
+        editable={!requestLocked}
         placeholder="Décrivez le problème"
         style={styles.input}
       />
       <TextInput
         value={city}
         onChangeText={setCity}
+        editable={!requestLocked}
         placeholder="Votre ville"
         autoCapitalize="words"
         style={styles.input}
@@ -158,32 +198,66 @@ export default function Home() {
           RAFI · {need.serviceCategory}{need.confidence === 'low' ? ' · à confirmer' : ''}
         </Text>
       )}
-      <Pressable
-        style={styles.cta}
-        onPress={() => void send()}
-        disabled={!problem || loop.state === 'creating'}
-      >
-        <Text style={styles.ctaText}>
-          {loop.state === 'creating' ? 'RAFI prépare la demande…' : 'Confirmer la demande'}
-        </Text>
-      </Pressable>
-      {loop.state === 'matching' && <Text style={styles.ok}>Demande confirmée · recherche d’un artisan…</Text>}
-      {loop.state === 'found' && <Text style={styles.ok}>✓ {loop.message}</Text>}
+
+      {loop.state !== 'found' && (
+        <Pressable
+          style={[styles.cta, requestLocked && styles.disabled]}
+          onPress={() => void send()}
+          disabled={!problem || requestLocked}
+        >
+          <Text style={styles.ctaText}>
+            {loop.state === 'creating'
+              ? 'RAFI prépare la demande…'
+              : loop.state === 'matching'
+                ? 'Recherche de l’artisan…'
+                : 'Confirmer la demande'}
+          </Text>
+        </Pressable>
+      )}
+
+      {loop.state === 'matching' && (
+        <Text style={styles.ok}>Demande confirmée · FIXEO cherche le bon artisan…</Text>
+      )}
+
+      {loop.state === 'found' && (
+        <View style={styles.foundCard}>
+          <Text style={styles.foundTitle}>✓ Artisan trouvé</Text>
+          <Text style={styles.foundText}>FIXEO suit maintenant votre intervention jusqu’à sa clôture.</Text>
+          {!!loop.missionId && (
+            <Pressable
+              style={styles.trackButton}
+              onPress={() => router.push({
+                pathname: '/client-mission/[id]',
+                params: { id: loop.missionId },
+              } as any)}
+            >
+              <Text style={styles.trackText}>Suivre l’intervention</Text>
+            </Pressable>
+          )}
+        </View>
+      )}
+
       {loop.state === 'error' && <Text>{loop.message}</Text>}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, padding: 24, justifyContent: 'center', gap: 16 },
+  root: { flex: 1, padding: 24, justifyContent: 'center', gap: 16, backgroundColor: '#f7f7f7' },
   brand: { fontSize: 18, fontWeight: '800', letterSpacing: 3, textAlign: 'center' },
   orb: { width: 88, height: 88, borderRadius: 44, backgroundColor: '#111', alignSelf: 'center' },
   title: { fontSize: 28, fontWeight: '700', textAlign: 'center' },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 18, padding: 16, minHeight: 56 },
+  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 18, padding: 16, minHeight: 56, backgroundColor: '#fff' },
   rafiMessage: { textAlign: 'center', opacity: 0.72 },
   attachment: { textAlign: 'center', fontWeight: '600' },
   understood: { textAlign: 'center', fontWeight: '600' },
   cta: { backgroundColor: '#111', padding: 18, borderRadius: 18 },
+  disabled: { opacity: 0.55 },
   ctaText: { color: '#fff', fontWeight: '700', textAlign: 'center' },
   ok: { textAlign: 'center', fontWeight: '700' },
+  foundCard: { backgroundColor: '#111', borderRadius: 22, padding: 20, gap: 9 },
+  foundTitle: { color: '#fff', fontSize: 22, fontWeight: '800' },
+  foundText: { color: '#ddd', lineHeight: 21 },
+  trackButton: { backgroundColor: '#fff', borderRadius: 15, padding: 15, marginTop: 5 },
+  trackText: { textAlign: 'center', fontWeight: '800' },
 });
