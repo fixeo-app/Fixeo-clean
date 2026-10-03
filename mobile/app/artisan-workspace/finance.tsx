@@ -7,6 +7,7 @@ import {
   type ArtisanLedgerEntry,
 } from '@/lib/artisanWorkspace';
 import { FixeoAction } from '@/ui/FixeoAction';
+import { MobileShell } from '@/components/MobileShell';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
@@ -84,7 +85,15 @@ export default function ArtisanFinance() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View style={styles.header}>
+          <View>
+            <MobileShell
+              universe="artisan"
+              activeKey="finance"
+              statusLabel="Finance personnelle"
+              rightActionLabel="Artisan OS"
+              onRightAction={() => router.replace('/artisan-workspace')}
+            />
+            <View style={styles.header}>
             <Text style={styles.back} onPress={() => router.back()}>‹ Artisan OS</Text>
             <Text style={styles.kicker}>FINANCE</Text>
             <Text style={styles.title}>Votre activité en chiffres.</Text>
@@ -162,6 +171,7 @@ export default function ArtisanFinance() {
             )}
 
             {!!error && <Text style={styles.error}>{error}</Text>}
+            </View>
           </View>
         }
         ListEmptyComponent={

@@ -12,6 +12,7 @@ import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, spacing, type } from '@/ui/tokens';
 import { WorkspaceShortcutGrid } from '@/components/WorkspaceShortcutGrid';
+import { MobileShell } from '@/components/MobileShell';
 
 const STATUS_LABELS: Record<ArtisanAvailability, string> = {
   available: 'Disponible',
@@ -94,8 +95,19 @@ export default function ArtisanWorkspaceHome() {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
         showsVerticalScrollIndicator={false}
       >
+        <MobileShell
+          universe="artisan"
+          activeKey="workspace"
+          statusLabel={
+            summary?.availability
+              ? STATUS_LABELS[summary.availability]
+              : 'Statut à définir'
+          }
+          rightActionLabel="Cockpit"
+          onRightAction={() => router.replace('/artisan')}
+        />
+
         <View style={styles.header}>
-          <Text style={styles.back} onPress={() => router.back()}>‹ Cockpit</Text>
           <Text style={styles.kicker}>ARTISAN OS MOBILE</Text>
           <Text style={styles.title}>Votre activité, sans friction.</Text>
           <Text style={styles.subtitle}>

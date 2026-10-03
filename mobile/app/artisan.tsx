@@ -5,6 +5,7 @@ import { acceptDispatchOffer, getDispatchOffers } from '@/lib/magicLoop';
 import type { DispatchOffer } from '@/lib/dispatchContract';
 import { getMyCurrentArtisanMission, type MissionSnapshot } from '@/lib/missionTerrain';
 import { PushOptIn } from '@/components/PushOptIn';
+import { MobileShell } from '@/components/MobileShell';
 import { DecisionCueCard } from '@/components/DecisionCueCard';
 import {
   getMyMobileDecisionContext,
@@ -173,8 +174,15 @@ export default function Artisan() {
 
   const header = (
     <View style={styles.headerStack}>
+      <MobileShell
+        universe="artisan"
+        activeKey="cockpit"
+        orbMode={cockpit.orb}
+        statusLabel={currentMission ? 'Mission active' : availabilityLabel}
+        rightActionLabel="Artisan OS"
+        onRightAction={() => router.push('/artisan-workspace')}
+      />
       <View style={styles.hero}>
-        <Text style={styles.brand}>FIXEO ARTISAN</Text>
         <RafiOrb mode={cockpit.orb} size={76} />
         <Text style={styles.eyebrow}>{cockpit.eyebrow}</Text>
         <Text style={styles.title}>{cockpit.title}</Text>

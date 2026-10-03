@@ -14,6 +14,7 @@ import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
 import { colors, spacing, type } from '@/ui/tokens';
 import { WorkspaceShortcutGrid } from '@/components/WorkspaceShortcutGrid';
+import { MobileShell } from '@/components/MobileShell';
 import { clientGreetingName, isTechnicalRequestContent } from '@/lib/workspacePresentation';
 
 export default function ClientWorkspaceHome() {
@@ -93,8 +94,16 @@ export default function ClientWorkspaceHome() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
+        <MobileShell
+          universe="client"
+          activeKey="space"
+          orbMode={activeRequest ? 'working' : 'idle'}
+          statusLabel={activeRequest ? activeLabel : 'RAFI est prêt'}
+          rightActionLabel="RAFI"
+          onRightAction={() => router.replace('/')}
+        />
+
         <View style={styles.header}>
-          <Text style={styles.back} onPress={() => router.back()}>‹ RAFI</Text>
           <View style={styles.identityRow}>
             <View style={styles.identityCopy}>
               <Text style={styles.kicker}>MON ESPACE FIXEO</Text>

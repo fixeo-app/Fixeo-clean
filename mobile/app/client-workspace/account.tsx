@@ -7,6 +7,7 @@ import {
   type ClientProfile,
 } from '@/lib/clientWorkspace';
 import { FixeoAction } from '@/ui/FixeoAction';
+import { MobileShell } from '@/components/MobileShell';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
@@ -46,6 +47,13 @@ export default function ClientAccount() {
   return (
     <FixeoScreen padded={false}>
       <View style={styles.content}>
+        <MobileShell
+          universe="client"
+          activeKey="account"
+          statusLabel="Votre profil FIXEO"
+          rightActionLabel="Mon espace"
+          onRightAction={() => router.replace('/client-workspace')}
+        />
         <Text style={styles.back} onPress={() => router.back()}>‹ Mon espace</Text>
         <Text style={styles.kicker}>MON COMPTE</Text>
         <Text style={styles.title}>{clientProfileTitle(profile?.full_name)}</Text>
