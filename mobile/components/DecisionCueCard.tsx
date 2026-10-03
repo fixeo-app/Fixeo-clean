@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { MobileDecisionCue } from '@/lib/decisionCenter';
 import { FixeoAction } from '@/ui/FixeoAction';
+import { MotionReveal } from '@/components/MotionReveal';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { colors, radius, spacing, type } from '@/ui/tokens';
 
@@ -20,7 +21,8 @@ export function DecisionCueCard({ cue, onAction }: Props) {
   const hasAction = cue.action.kind !== 'none';
 
   return (
-    <FixeoCard tone={cue.priority === 'critical' ? 'dark' : 'light'} style={styles.card}>
+    <MotionReveal motionKey={cue.id}>
+      <FixeoCard tone={cue.priority === 'critical' ? 'dark' : 'light'} style={styles.card}>
       <View style={styles.topRow}>
         <Text
           style={[
@@ -70,7 +72,8 @@ export function DecisionCueCard({ cue, onAction }: Props) {
           onPress={onAction}
         />
       )}
-    </FixeoCard>
+      </FixeoCard>
+    </MotionReveal>
   );
 }
 
