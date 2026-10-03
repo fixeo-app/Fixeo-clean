@@ -1,6 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { registerCurrentDeviceForPush } from '@/lib/push';
+import {
+  isCurrentDevicePushEnabled,
+  registerCurrentDeviceForPush,
+  type PushRegistrationResult,
+} from '@/lib/push';
+import { triggerFixeoFeedback } from '@/lib/feedback';
 import { colors, radius, spacing } from '@/ui/tokens';
 
 const MESSAGES: Record<string, string> = {
@@ -10,20 +15,44 @@ const MESSAGES: Record<string, string> = {
   eas_project_id_missing: 'Le build Staging doit encore être lié à EAS.',
   token_unavailable: 'Impossible d’obtenir le token push pour le moment.',
   registry_failed: 'Impossible d’enregistrer cet appareil pour le moment.',
+  timeout: 'Le réseau met trop de temps. Réessayez quand vous le souhaitez.',
 };
 
 export function PushOptIn({ compact = false }: { compact?: boolean }) {
   const [state, setState] = useState<'idle' | 'loading' | 'done'>('idle');
   const [message, setMessage] = useState('');
 
+  useEffect(() => {
+    let active = true;
+    void isCurrentDevicePushEnabled().then(enabled => {
+      if (!active || !enabled) return;
+      setState('done');
+      setMessage('✓ Alertes FIXEO activées');
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   async function enable() {
     setState('loading');
-    const result = await registerCurrentDeviceForPush();
+    setMessage('');
+
+    const result = await Promise.race<PushRegistrationResult>([
+      registerCurrentDeviceForPush(),
+      new Promise<PushRegistrationResult>(resolve => {
+        setTimeout(() => resolve({ ok: false, reason: 'timeout' }), 16_000);
+      }),
+    ]);
+
     if (result.ok) {
+      triggerFixeoFeedback('success');
       setState('done');
       setMessage('✓ Alertes FIXEO activées');
       return;
     }
+
+    triggerFixeoFeedback(result.reason === 'permission_denied' ? 'warning' : 'selection');
     setState('idle');
     setMessage(MESSAGES[result.reason] || 'Activation impossible pour le moment.');
   }

@@ -7,10 +7,35 @@ import * as Crypto from 'expo-crypto';
 import { supabase } from './supabase';
 
 const INSTALLATION_KEY = 'fixeo_mobile_installation_id_v1';
+const PUSH_ENABLED_KEY = 'fixeo_mobile_push_enabled_v1';
 
 export type PushRegistrationResult =
   | { ok: true; token: string }
-  | { ok: false; reason: 'unsupported_platform' | 'physical_device_required' | 'permission_denied' | 'eas_project_id_missing' | 'token_unavailable' | 'registry_failed' };
+  | {
+      ok: false;
+      reason:
+        | 'unsupported_platform'
+        | 'physical_device_required'
+        | 'permission_denied'
+        | 'eas_project_id_missing'
+        | 'token_unavailable'
+        | 'registry_failed'
+        | 'timeout';
+    };
+
+async function withTimeout<T>(promise: PromiseLike<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  try {
+    return await Promise.race([
+      Promise.resolve(promise),
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(() => reject(new Error('PUSH_TIMEOUT')), ms);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
 
 async function getInstallationId() {
   const existing = await SecureStore.getItemAsync(INSTALLATION_KEY);
@@ -60,29 +85,61 @@ export async function registerCurrentDeviceForPush(): Promise<PushRegistrationRe
 
   let token = '';
   try {
-    token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-  } catch {
-    return { ok: false, reason: 'token_unavailable' };
+    token = (await withTimeout(
+      Notifications.getExpoPushTokenAsync({ projectId }),
+      12_000,
+    )).data;
+  } catch (error: any) {
+    return {
+      ok: false,
+      reason: String(error?.message || '') === 'PUSH_TIMEOUT' ? 'timeout' : 'token_unavailable',
+    };
   }
   if (!token) return { ok: false, reason: 'token_unavailable' };
 
   const installationId = await getInstallationId();
-  const { data, error } = await supabase.rpc('register_mobile_device_v1', {
-    p_installation_id: installationId,
-    p_platform: Platform.OS,
-    p_expo_push_token: token,
-    p_device_model: Device.modelName || Device.deviceName || null,
-    p_app_version: Constants.expoConfig?.version || null,
-  });
+  let registry: any;
+  try {
+    registry = await withTimeout(
+      supabase.rpc('register_mobile_device_v1', {
+        p_installation_id: installationId,
+        p_platform: Platform.OS,
+        p_expo_push_token: token,
+        p_device_model: Device.modelName || Device.deviceName || null,
+        p_app_version: Constants.expoConfig?.version || null,
+      }),
+      12_000,
+    );
+  } catch (error: any) {
+    return {
+      ok: false,
+      reason: String(error?.message || '') === 'PUSH_TIMEOUT' ? 'timeout' : 'registry_failed',
+    };
+  }
 
+  const { data, error } = registry || {};
   if (error || !data || data.ok !== true) {
     return { ok: false, reason: 'registry_failed' };
   }
+
+  await SecureStore.setItemAsync(PUSH_ENABLED_KEY, '1').catch(() => undefined);
   return { ok: true, token };
+}
+
+export async function isCurrentDevicePushEnabled() {
+  const stored = await SecureStore.getItemAsync(PUSH_ENABLED_KEY);
+  if (stored !== '1') return false;
+  try {
+    const permission = await Notifications.getPermissionsAsync();
+    return permission.status === 'granted';
+  } catch {
+    return false;
+  }
 }
 
 export async function disableCurrentDevice() {
   const installationId = await SecureStore.getItemAsync(INSTALLATION_KEY);
+  await SecureStore.deleteItemAsync(PUSH_ENABLED_KEY).catch(() => undefined);
   if (!installationId) return;
   await supabase.rpc('disable_mobile_device_v1', {
     p_installation_id: installationId,

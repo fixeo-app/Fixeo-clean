@@ -16,6 +16,7 @@ import {
   type MissionSnapshot,
 } from '@/lib/missionTerrain';
 import { listMissionEvidence, type MissionEvidence } from '@/lib/missionEvidence';
+import { triggerFixeoFeedback } from '@/lib/feedback';
 import {
   getMissionChange,
   respondMissionChange,
@@ -76,6 +77,7 @@ export default function ClientMission() {
     try {
       await confirmCompletedRequest(mission.request_id);
       await load();
+      triggerFixeoFeedback('success');
       setMessage('✓ Mission validée. Merci.');
     } catch {
       setMessage('Impossible de valider pour le moment.');
@@ -91,6 +93,7 @@ export default function ClientMission() {
     try {
       await respondMissionChange(change.id, approve);
       await load();
+      triggerFixeoFeedback(approve ? 'success' : 'impact');
       setMessage(approve ? '✓ Ajustement accepté.' : 'Ajustement refusé.');
     } catch {
       setMessage('Impossible d’enregistrer votre décision pour le moment.');

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { ContextualCockpitModel } from '@/lib/contextualCockpit';
 import { FixeoAction } from '@/ui/FixeoAction';
+import { MotionReveal } from '@/components/MotionReveal';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { colors, radius, spacing, type } from '@/ui/tokens';
 
@@ -14,7 +15,8 @@ export function ContextualCockpitCard({ model, onAction }: Props) {
   const showAction = model.action !== 'none' && !!model.actionLabel && !!onAction;
 
   return (
-    <FixeoCard tone={model.tone} style={styles.card}>
+    <MotionReveal motionKey={`${model.status}:${model.action}`}>
+      <FixeoCard tone={model.tone} style={styles.card}>
       <View style={styles.topRow}>
         <Text style={[styles.eyebrow, inverse && styles.inverseMuted]}>
           {model.eyebrow}
@@ -48,7 +50,8 @@ export function ContextualCockpitCard({ model, onAction }: Props) {
           onPress={onAction}
         />
       )}
-    </FixeoCard>
+      </FixeoCard>
+    </MotionReveal>
   );
 }
 

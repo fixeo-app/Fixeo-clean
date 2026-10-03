@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AppState, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { acceptDispatchOffer, getDispatchOffers } from '@/lib/magicLoop';
+import { triggerFixeoFeedback } from '@/lib/feedback';
 import type { DispatchOffer } from '@/lib/dispatchContract';
 import { getMyCurrentArtisanMission, type MissionSnapshot } from '@/lib/missionTerrain';
 import { PushOptIn } from '@/components/PushOptIn';
@@ -108,6 +109,7 @@ export default function Artisan() {
     try {
       setMessage('FIXEO sécurise la mission…');
       const result = await acceptDispatchOffer(requestId);
+      triggerFixeoFeedback('success');
       setMessage(result.reason === 'already_accepted' ? 'Mission déjà acceptée.' : '✓ Mission acceptée.');
       await load();
       const missionId = String(result?.mission_id || '');

@@ -25,6 +25,7 @@ import {
   type MissionChangeProposal,
 } from '@/lib/missionChange';
 import { getTerrainGuidance } from '@/lib/rafiTerrain';
+import { triggerFixeoFeedback } from '@/lib/feedback';
 import { MissionEvidenceCapture } from '@/components/MissionEvidenceCapture';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
@@ -109,6 +110,7 @@ export default function MissionTerrain() {
     try {
       await markMissionArrived(missionId);
       await load();
+      triggerFixeoFeedback('success');
       setMessage('✓ Arrivée enregistrée.');
     } catch {
       setMessage('Impossible d’enregistrer l’arrivée. Réessayez.');
@@ -120,6 +122,7 @@ export default function MissionTerrain() {
   async function begin() {
     if (!missionId || busy) return;
     if (!arrived) {
+      triggerFixeoFeedback('warning');
       setMessage('Indiquez d’abord que vous êtes arrivé sur place.');
       return;
     }
@@ -129,6 +132,7 @@ export default function MissionTerrain() {
     try {
       await startMission(missionId);
       await load();
+      triggerFixeoFeedback('success');
       setMessage('✓ Intervention démarrée.');
     } catch (error: any) {
       setMessage(String(error?.message || '') === 'not_accepted'
@@ -146,6 +150,7 @@ export default function MissionTerrain() {
     try {
       await completeMission(missionId);
       await load();
+      triggerFixeoFeedback('success');
       setMessage('✓ Intervention terminée. Validation client en attente.');
     } catch {
       setMessage('Impossible de terminer pour le moment.');
@@ -174,6 +179,7 @@ export default function MissionTerrain() {
       );
       setChangeOpen(false);
       await load();
+      triggerFixeoFeedback('success');
       setMessage('✓ Ajustement transmis à FIXEO avant présentation au client.');
     } catch {
       setMessage('Impossible de transmettre l’ajustement pour le moment.');
