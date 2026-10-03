@@ -35,6 +35,7 @@ import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
+import type { RafiOrbMode } from '@/ui/rafiOrbMotion';
 import { colors, radius, spacing, type } from '@/ui/tokens';
 
 const ASSIGNED_STATES = new Set(['assigned', 'in_progress', 'completed', 'validated']);
@@ -54,6 +55,7 @@ export default function Home() {
   const [clientReady, setClientReady] = useState(false);
   const [journeyStatus, setJourneyStatus] = useState<JourneyStatus>('idle');
   const [decisionCue, setDecisionCue] = useState<MobileDecisionCue | null>(null);
+  const [rafiOrbOverride, setRafiOrbOverride] = useState<RafiOrbMode | null>(null);
   const submitLockRef = useRef(false);
   const idempotencyKeyRef = useRef<string | null>(null);
   const need = useMemo(() => understandLocally({ mode: 'text', text: problem }), [problem]);
@@ -240,8 +242,10 @@ export default function Home() {
   }, [loop.state, loop.missionId]);
 
   async function handleVoice(uri: string) {
+    setRafiOrbOverride('working');
     if (!hasRafiServerGateway()) {
       setRafiMessage('Voix capturée. RAFI la traitera dès que le service est disponible.');
+      setRafiOrbOverride(null);
       return;
     }
     try {
@@ -252,6 +256,8 @@ export default function Home() {
       setRafiMessage('J’ai compris votre message.');
     } catch {
       setRafiMessage('Je n’ai pas pu traiter cet enregistrement. Vous pouvez écrire à la place.');
+    } finally {
+      setRafiOrbOverride(null);
     }
   }
 
@@ -274,6 +280,7 @@ export default function Home() {
     }
 
     setPhotoDiagnosticBusy(true);
+    setRafiOrbOverride('working');
     setRafiMessage('RAFI analyse la photo de façon privée…');
     try {
       const result = await analyzeMobileDiagnosticPhoto({
@@ -299,6 +306,7 @@ export default function Home() {
       );
     } finally {
       setPhotoDiagnosticBusy(false);
+      setRafiOrbOverride(null);
     }
   }
 
@@ -399,6 +407,8 @@ export default function Home() {
     };
   }, [journeyStatus]);
 
+  const effectiveOrbMode: RafiOrbMode = rafiOrbOverride || hero.orb;
+
   if (!clientReady) {
     return (
       <FixeoScreen style={styles.loadingRoot}>
@@ -419,7 +429,7 @@ export default function Home() {
         <MobileShell
           universe="client"
           activeKey="rafi"
-          orbMode={hero.orb}
+          orbMode={effectiveOrbMode}
           statusLabel={
             journeyStatus === 'matching'
               ? 'Recherche en cours'
@@ -436,7 +446,7 @@ export default function Home() {
         />
 
         <View style={styles.hero}>
-          <RafiOrb size={96} mode={hero.orb} />
+          <RafiOrb size={96} mode={effectiveOrbMode} />
           <Text style={styles.eyebrow}>{hero.eyebrow}</Text>
           <Text style={styles.title}>{hero.title}</Text>
           <Text style={styles.subtitle}>{hero.subtitle}</Text>
@@ -447,6 +457,9 @@ export default function Home() {
             <RafiInputRail
               onVoiceReady={(uri) => void handleVoice(uri)}
               onPhotoReady={(uri, mimeType) => handlePhoto(uri, mimeType)}
+              onListeningChange={(listening) => {
+                setRafiOrbOverride(listening ? 'listening' : null);
+              }}
             />
 
             <TextInput

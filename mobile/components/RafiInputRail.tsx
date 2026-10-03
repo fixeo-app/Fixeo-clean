@@ -14,9 +14,15 @@ type Props = {
   onVoiceReady: (uri: string) => void;
   onPhotoReady: (uri: string, mimeType?: string) => void;
   onWrite?: () => void;
+  onListeningChange?: (listening: boolean) => void;
 };
 
-export function RafiInputRail({ onVoiceReady, onPhotoReady, onWrite }: Props) {
+export function RafiInputRail({
+  onVoiceReady,
+  onPhotoReady,
+  onWrite,
+  onListeningChange,
+}: Props) {
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(recorder);
   const [message, setMessage] = useState('');
@@ -30,6 +36,8 @@ export function RafiInputRail({ onVoiceReady, onPhotoReady, onWrite }: Props) {
       if (recorderState.isRecording) {
         await recorder.stop();
         await setAudioModeAsync({ allowsRecording: false }).catch(() => undefined);
+
+        onListeningChange?.(false);
 
         if (recorder.uri) {
           setMessage('Voix prête pour RAFI.');
@@ -56,6 +64,7 @@ export function RafiInputRail({ onVoiceReady, onPhotoReady, onWrite }: Props) {
       });
       await recorder.prepareToRecordAsync();
       recorder.record();
+      onListeningChange?.(true);
       setMessage('RAFI écoute… Touchez Arrêter quand vous avez fini.');
     } catch (error: any) {
       console.warn(
@@ -64,6 +73,7 @@ export function RafiInputRail({ onVoiceReady, onPhotoReady, onWrite }: Props) {
           code: String(error?.message || 'unknown').slice(0, 120),
         }),
       );
+      onListeningChange?.(false);
       setMessage('Le microphone n’a pas pu démarrer. Vérifiez son autorisation puis réessayez.');
       await setAudioModeAsync({ allowsRecording: false }).catch(() => undefined);
     } finally {
