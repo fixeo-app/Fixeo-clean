@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import {
@@ -11,6 +11,14 @@ import { MobileShell } from '@/components/MobileShell';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
+import {
+  agendaDatePreview,
+  formatAgendaDateInput,
+  formatAgendaTimeInput,
+  parseAgendaDateTime,
+} from '@/lib/agendaDate';
+import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
+import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 
 function dateLabel(value: string | null) {
   if (!value) return 'À planifier';
@@ -25,13 +33,6 @@ function dateLabel(value: string | null) {
       });
 }
 
-function parseDate(value: string) {
-  const normalized = value.trim();
-  if (!normalized) return null;
-  const date = new Date(normalized);
-  return Number.isNaN(date.getTime()) ? null : date.toISOString();
-}
-
 export default function ArtisanAgenda() {
   const [items, setItems] = useState<ArtisanBusinessJob[]>([]);
   const [loading, setLoading] = useState(false);
@@ -39,16 +40,21 @@ export default function ArtisanAgenda() {
   const [showCreate, setShowCreate] = useState(false);
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState('');
-  const [scheduledAt, setScheduledAt] = useState('');
+  const [dateText, setDateText] = useState('');
+  const [timeText, setTimeText] = useState('');
   const [amount, setAmount] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setItems(await listArtisanBusinessJobs());
+      setItems(await withMobileDeadline(listArtisanBusinessJobs()));
       setError('');
-    } catch {
-      setError('Impossible de charger votre agenda.');
+    } catch (reason) {
+      setError(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Votre agenda reste intact : tirez pour réessayer.'
+          : 'Impossible de charger votre agenda.',
+      );
     } finally {
       setLoading(false);
     }
@@ -58,29 +64,43 @@ export default function ArtisanAgenda() {
     void load();
   }, [load]);
 
+  useForegroundRefresh(load);
+
+  const schedulePreview = useMemo(
+    () => agendaDatePreview(dateText, timeText),
+    [dateText, timeText],
+  );
+
   async function createJob() {
     if (creating || !title.trim()) return;
-    const parsedDate = parseDate(scheduledAt);
-    if (scheduledAt.trim() && !parsedDate) {
-      setError('Utilisez une date comme 2026-10-05 14:30.');
+
+    const hasSchedule = Boolean(dateText.trim() || timeText.trim());
+    const parsedDate = hasSchedule ? parseAgendaDateTime(dateText, timeText) : null;
+    if (hasSchedule && !parsedDate) {
+      setError('Indiquez une date complète (JJ/MM/AAAA) et une heure valide (HH:MM).');
       return;
     }
 
     setCreating(true);
     try {
-      const created = await createArtisanBusinessJob({
+      const created = await withMobileDeadline(createArtisanBusinessJob({
         title,
         scheduledAt: parsedDate,
         amount: amount.trim() ? Number(amount.replace(',', '.')) || 0 : null,
-      });
+      }));
       setItems(current => [created, ...current]);
       setTitle('');
-      setScheduledAt('');
+      setDateText('');
+      setTimeText('');
       setAmount('');
       setShowCreate(false);
       setError('');
-    } catch {
-      setError('Impossible de planifier cette intervention.');
+    } catch (reason) {
+      setError(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Rien n’a été ajouté deux fois : vérifiez l’agenda puis réessayez si nécessaire.'
+          : 'Impossible de planifier cette intervention.',
+      );
     } finally {
       setCreating(false);
     }
@@ -94,6 +114,8 @@ export default function ArtisanAgenda() {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         ListHeaderComponent={
           <View>
             <MobileShell
@@ -127,13 +149,37 @@ export default function ArtisanAgenda() {
                   placeholderTextColor={colors.textMuted}
                   style={styles.input}
                 />
-                <TextInput
-                  value={scheduledAt}
-                  onChangeText={setScheduledAt}
-                  placeholder="2026-10-05 14:30"
-                  placeholderTextColor={colors.textMuted}
-                  style={styles.input}
-                />
+                <View style={styles.dateTimeRow}>
+                  <View style={styles.dateTimeField}>
+                    <Text style={styles.fieldLabel}>Date</Text>
+                    <TextInput
+                      value={dateText}
+                      onChangeText={value => setDateText(formatAgendaDateInput(value))}
+                      placeholder="05/10/2026"
+                      placeholderTextColor={colors.textMuted}
+                      keyboardType="number-pad"
+                      maxLength={10}
+                      style={styles.input}
+                    />
+                  </View>
+                  <View style={styles.dateTimeField}>
+                    <Text style={styles.fieldLabel}>Heure</Text>
+                    <TextInput
+                      value={timeText}
+                      onChangeText={value => setTimeText(formatAgendaTimeInput(value))}
+                      placeholder="14:30"
+                      placeholderTextColor={colors.textMuted}
+                      keyboardType="number-pad"
+                      maxLength={5}
+                      style={styles.input}
+                    />
+                  </View>
+                </View>
+                {!!schedulePreview && (
+                  <View style={styles.previewPill}>
+                    <Text style={styles.previewText}>Prévu · {schedulePreview}</Text>
+                  </View>
+                )}
                 <TextInput
                   value={amount}
                   onChangeText={setAmount}
@@ -211,6 +257,32 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '900',
     color: colors.text,
+  },
+  dateTimeRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  dateTimeField: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  fieldLabel: {
+    color: colors.textMuted,
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 0.4,
+  },
+  previewPill: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceMuted,
+  },
+  previewText: {
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: '800',
   },
   input: {
     minHeight: 52,
