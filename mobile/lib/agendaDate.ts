@@ -1,5 +1,5 @@
 function digits(value: string, max: number) {
-  return value.replace(/D/g, '').slice(0, max);
+  return value.replace(/[^0-9]/g, '').slice(0, max);
 }
 
 export function formatAgendaDateInput(value: string) {
