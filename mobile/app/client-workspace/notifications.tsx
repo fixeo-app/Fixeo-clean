@@ -7,6 +7,7 @@ import {
   type ClientNotification,
 } from '@/lib/clientWorkspace';
 import { FixeoCard } from '@/ui/FixeoCard';
+import { MobileShell } from '@/components/MobileShell';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, spacing, type } from '@/ui/tokens';
 import { cleanNotificationCopy, formatWorkspaceDate } from '@/lib/workspacePresentation';
@@ -52,12 +53,21 @@ export default function ClientNotifications() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View style={styles.header}>
+          <View>
+            <MobileShell
+              universe="client"
+              activeKey="alerts"
+              statusLabel="Alertes FIXEO"
+              rightActionLabel="Mon espace"
+              onRightAction={() => router.replace('/client-workspace')}
+            />
+            <View style={styles.header}>
             <Text style={styles.back} onPress={() => router.back()}>‹ Mon espace</Text>
             <Text style={styles.kicker}>ALERTES FIXEO</Text>
             <Text style={styles.title}>Ce qui mérite votre attention.</Text>
             <Text style={styles.subtitle}>Une chronologie simple : ce qui a changé, ce qui demande votre attention, rien de plus.</Text>
             {!!error && <Text style={styles.error}>{error}</Text>}
+            </View>
           </View>
         }
         ListEmptyComponent={
