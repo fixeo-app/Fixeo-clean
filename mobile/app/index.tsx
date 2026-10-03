@@ -311,7 +311,7 @@ export default function Home() {
 
       if (need.needsConfirmation) {
         setRafiMessage(
-          'RAFI a besoin d'un detail avant de chercher. Precisez le probleme avant la recherche.',
+          'RAFI a besoin d\'un detail avant de chercher. Precisez le probleme avant la recherche.',
         );
         setJourneyStatus('idle');
         return;
