@@ -5,7 +5,7 @@
     "scheme": "fixeo",
     "version": "0.3.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "ios": {
       "bundleIdentifier": "ma.fixeo.app",
       "supportsTablet": false,
@@ -17,7 +17,9 @@
       "versionCode": 4,
       "permissions": [
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "softwareKeyboardLayoutMode": "resize",
+      "backgroundColor": "#F7F7F5"
     },
     "plugins": [
       "expo-router",
@@ -47,6 +49,10 @@
       "eas": {
         "projectId": "bb76a67f-4304-48a6-ad29-ca7382d28a7a"
       }
+    },
+    "splash": {
+      "backgroundColor": "#F7F7F5",
+      "resizeMode": "contain"
     }
   }
 }
