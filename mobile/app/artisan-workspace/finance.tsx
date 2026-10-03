@@ -1,18 +1,26 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import {
+  createArtisanLedgerEntry,
   listArtisanLedger,
   type ArtisanLedgerEntry,
 } from '@/lib/artisanWorkspace';
+import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
-import { colors, spacing, type } from '@/ui/tokens';
+import { colors, radius, spacing, type } from '@/ui/tokens';
 
 export default function ArtisanFinance() {
   const [items, setItems] = useState<ArtisanLedgerEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showCreate, setShowCreate] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [entryType, setEntryType] = useState<'income' | 'expense'>('income');
+  const [amount, setAmount] = useState('');
+  const [category, setCategory] = useState('');
+  const [note, setNote] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -41,6 +49,32 @@ export default function ArtisanFinance() {
     );
   }, [items]);
 
+  const balance = totals.income - totals.expense;
+
+  async function createEntry() {
+    const value = Number(amount.replace(',', '.')) || 0;
+    if (creating || !value) return;
+    setCreating(true);
+    try {
+      const created = await createArtisanLedgerEntry({
+        entryType,
+        amount: value,
+        category,
+        note,
+      });
+      setItems(current => [created, ...current]);
+      setAmount('');
+      setCategory('');
+      setNote('');
+      setShowCreate(false);
+      setError('');
+    } catch {
+      setError('Impossible d’enregistrer ce mouvement.');
+    } finally {
+      setCreating(false);
+    }
+  }
+
   return (
     <FixeoScreen padded={false}>
       <FlatList
@@ -55,7 +89,7 @@ export default function ArtisanFinance() {
             <Text style={styles.kicker}>FINANCE</Text>
             <Text style={styles.title}>Votre activité en chiffres.</Text>
             <Text style={styles.subtitle}>
-              Vue simple de vos encaissements et dépenses personnels enregistrés dans Artisan OS.
+              Encaissements et dépenses personnels, sans mélanger les flux marketplace FIXEO.
             </Text>
 
             <View style={styles.totalRow}>
@@ -69,6 +103,64 @@ export default function ArtisanFinance() {
               </FixeoCard>
             </View>
 
+            <FixeoCard style={styles.balanceCard}>
+              <Text style={styles.balanceLabel}>SOLDE PERSONNEL</Text>
+              <Text style={styles.balanceValue}>{Math.round(balance)} DH</Text>
+            </FixeoCard>
+
+            <FixeoAction
+              label={showCreate ? 'Fermer' : '+ Ajouter un mouvement'}
+              variant={showCreate ? 'ghost' : 'primary'}
+              onPress={() => setShowCreate(value => !value)}
+            />
+
+            {showCreate && (
+              <FixeoCard style={styles.form}>
+                <Text style={styles.formTitle}>Nouveau mouvement</Text>
+                <View style={styles.typeRow}>
+                  <FixeoAction
+                    label="Encaissement"
+                    variant={entryType === 'income' ? 'primary' : 'secondary'}
+                    style={styles.typeAction}
+                    onPress={() => setEntryType('income')}
+                  />
+                  <FixeoAction
+                    label="Dépense"
+                    variant={entryType === 'expense' ? 'primary' : 'secondary'}
+                    style={styles.typeAction}
+                    onPress={() => setEntryType('expense')}
+                  />
+                </View>
+                <TextInput
+                  value={amount}
+                  onChangeText={setAmount}
+                  placeholder="Montant en DH"
+                  placeholderTextColor={colors.textMuted}
+                  keyboardType="decimal-pad"
+                  style={styles.input}
+                />
+                <TextInput
+                  value={category}
+                  onChangeText={setCategory}
+                  placeholder="Catégorie"
+                  placeholderTextColor={colors.textMuted}
+                  style={styles.input}
+                />
+                <TextInput
+                  value={note}
+                  onChangeText={setNote}
+                  placeholder="Note facultative"
+                  placeholderTextColor={colors.textMuted}
+                  style={styles.input}
+                />
+                <FixeoAction
+                  label={creating ? 'Enregistrement…' : 'Enregistrer'}
+                  disabled={creating || !amount.trim()}
+                  onPress={() => void createEntry()}
+                />
+              </FixeoCard>
+            )}
+
             {!!error && <Text style={styles.error}>{error}</Text>}
           </View>
         }
@@ -76,7 +168,7 @@ export default function ArtisanFinance() {
           <FixeoCard tone="muted">
             <Text style={styles.emptyTitle}>Aucun mouvement enregistré.</Text>
             <Text style={styles.emptyText}>
-              Les encaissements et dépenses personnels apparaîtront ici.
+              Ajoutez votre premier encaissement ou votre première dépense pour commencer le suivi.
             </Text>
           </FixeoCard>
         }
@@ -150,9 +242,49 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '900',
   },
+  balanceCard: {
+    gap: spacing.xs,
+  },
+  balanceLabel: {
+    color: colors.textMuted,
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+  },
+  balanceValue: {
+    color: colors.text,
+    fontSize: 26,
+    fontWeight: '900',
+  },
   error: {
     color: colors.danger,
     fontWeight: '700',
+  },
+  form: {
+    gap: spacing.sm,
+  },
+  formTitle: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  typeRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  typeAction: {
+    flex: 1,
+    minHeight: 48,
+  },
+  input: {
+    minHeight: 52,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
+    paddingHorizontal: spacing.md,
+    color: colors.text,
+    fontSize: type.body,
   },
   card: { marginBottom: spacing.sm },
   row: {

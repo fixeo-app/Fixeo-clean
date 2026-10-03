@@ -10,6 +10,7 @@ import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
+import { clientProfileTitle } from '@/lib/workspacePresentation';
 
 export default function ClientAccount() {
   const [profile, setProfile] = useState<ClientProfile | null>(null);
@@ -45,10 +46,11 @@ export default function ClientAccount() {
   return (
     <FixeoScreen padded={false}>
       <View style={styles.content}>
-        <Text style={styles.back} onPress={() => router.back()}>‹ Client OS</Text>
+        <Text style={styles.back} onPress={() => router.back()}>‹ Mon espace</Text>
         <Text style={styles.kicker}>MON COMPTE</Text>
-        <Text style={styles.title}>{profile?.full_name || 'Votre profil FIXEO'}</Text>
+        <Text style={styles.title}>{clientProfileTitle(profile?.full_name)}</Text>
         <Text style={styles.email}>{profile?.email || ''}</Text>
+        <Text style={styles.helper}>Gardez uniquement les coordonnées utiles à vos interventions.</Text>
 
         <FixeoCard style={styles.form}>
           <Text style={styles.label}>Téléphone</Text>
@@ -103,6 +105,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   email: { color: colors.textMuted },
+  helper: { color: colors.textMuted, lineHeight: 20 },
   form: { gap: spacing.sm, marginTop: spacing.sm },
   label: {
     fontSize: 13,

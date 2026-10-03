@@ -116,20 +116,23 @@ export default function ArtisanWorkspaceHome() {
 
           <View style={styles.statusActions}>
             <FixeoAction
-              label={updating === 'available' ? 'Mise à jour…' : 'Disponible'}
-              variant="secondary"
+              label={updating === 'available' ? '…' : 'Disponible'}
+              variant={summary?.availability === 'available' ? 'primary' : 'secondary'}
+              style={styles.statusAction}
               disabled={!!updating}
               onPress={() => void updateStatus('available')}
             />
             <FixeoAction
-              label={updating === 'busy' ? 'Mise à jour…' : 'Occupé'}
-              variant="secondary"
+              label={updating === 'busy' ? '…' : 'Occupé'}
+              variant={summary?.availability === 'busy' ? 'primary' : 'secondary'}
+              style={styles.statusAction}
               disabled={!!updating}
               onPress={() => void updateStatus('busy')}
             />
             <FixeoAction
-              label={updating === 'unavailable' ? 'Mise à jour…' : 'Indisponible'}
-              variant="secondary"
+              label={updating === 'unavailable' ? '…' : 'Indisponible'}
+              variant={summary?.availability === 'unavailable' ? 'primary' : 'secondary'}
+              style={styles.statusAction}
               disabled={!!updating}
               onPress={() => void updateStatus('unavailable')}
             />
@@ -207,7 +210,13 @@ const styles = StyleSheet.create({
     lineHeight: 21,
   },
   statusActions: {
-    gap: spacing.sm,
+    flexDirection: 'row',
+    gap: spacing.xs,
+  },
+  statusAction: {
+    flex: 1,
+    minHeight: 48,
+    paddingHorizontal: spacing.xs,
   },
   message: {
     textAlign: 'center',

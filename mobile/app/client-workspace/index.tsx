@@ -14,6 +14,7 @@ import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
 import { colors, spacing, type } from '@/ui/tokens';
 import { WorkspaceShortcutGrid } from '@/components/WorkspaceShortcutGrid';
+import { clientGreetingName, isTechnicalRequestContent } from '@/lib/workspacePresentation';
 
 export default function ClientWorkspaceHome() {
   const [profile, setProfile] = useState<ClientProfile | null>(null);
@@ -31,9 +32,10 @@ export default function ClientWorkspaceHome() {
         listClientRequestHistory(),
         listClientNotifications(),
       ]);
+      const visibleHistory = history.filter(item => !isTechnicalRequestContent(item));
       setProfile(nextProfile);
-      setHistory(history);
-      setHistoryCount(history.length);
+      setHistory(visibleHistory);
+      setHistoryCount(visibleHistory.length);
       setUnreadCount(notifications.filter(item => !item.read).length);
       setError('');
     } catch {
@@ -60,6 +62,8 @@ export default function ClientWorkspaceHome() {
         completed: 'À confirmer',
       } as Record<string, string>)[activeRequest.status] || 'Suivi FIXEO'
     : '';
+
+  const greetingName = clientGreetingName(profile?.full_name);
 
   const shortcuts = useMemo(() => [
     {
@@ -95,13 +99,13 @@ export default function ClientWorkspaceHome() {
             <View style={styles.identityCopy}>
               <Text style={styles.kicker}>MON ESPACE FIXEO</Text>
               <Text style={styles.title}>
-                {profile?.full_name ? `Bonjour ${profile.full_name.split(' ')[0]}.` : 'Votre espace FIXEO.'}
+                {greetingName ? `Bonjour ${greetingName}.` : 'Bonjour.'}
               </Text>
             </View>
             <RafiOrb size={58} mode={activeRequest ? 'working' : 'idle'} />
           </View>
           <Text style={styles.subtitle}>
-            Une vue simple de ce qui compte maintenant, avec RAFI toujours à portée.
+            Ce qui compte maintenant, sans jargon ni bruit. RAFI reste toujours à portée.
           </Text>
         </View>
 
@@ -140,7 +144,7 @@ export default function ClientWorkspaceHome() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Votre espace</Text>
-          <Text style={styles.sectionHint}>Historique, alertes et compte restent accessibles sans encombrer l’écran principal.</Text>
+          <Text style={styles.sectionHint}>Suivi, historique, alertes et compte — chacun à sa place, sans surcharger l’écran principal.</Text>
         </View>
 
         <WorkspaceShortcutGrid items={shortcuts} />

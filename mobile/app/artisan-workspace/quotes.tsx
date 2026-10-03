@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import {
+  createArtisanBusinessQuote,
   listArtisanBusinessQuotes,
   type ArtisanBusinessQuote,
 } from '@/lib/artisanWorkspace';
+import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
@@ -18,6 +20,11 @@ export default function ArtisanQuotes() {
   const [items, setItems] = useState<ArtisanBusinessQuote[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showCreate, setShowCreate] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [title, setTitle] = useState('');
+  const [total, setTotal] = useState('');
+  const [description, setDescription] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -33,6 +40,29 @@ export default function ArtisanQuotes() {
 
   useEffect(() => { void load(); }, [load]);
 
+  async function createQuote() {
+    if (creating || !title.trim()) return;
+    setCreating(true);
+    try {
+      const amount = Number(total.replace(',', '.')) || 0;
+      const created = await createArtisanBusinessQuote({
+        title,
+        total: amount,
+        description,
+      });
+      setItems(current => [created, ...current]);
+      setTitle('');
+      setTotal('');
+      setDescription('');
+      setShowCreate(false);
+      setError('');
+    } catch {
+      setError('Impossible de créer ce brouillon de devis.');
+    } finally {
+      setCreating(false);
+    }
+  }
+
   return (
     <FixeoScreen padded={false}>
       <FlatList
@@ -47,16 +77,57 @@ export default function ArtisanQuotes() {
             <Text style={styles.kicker}>DEVIS STUDIO</Text>
             <Text style={styles.title}>Vos devis, au même endroit.</Text>
             <Text style={styles.subtitle}>
-              Le mobile lit vos devis personnels canoniques sans les confondre avec les missions marketplace.
+              Créez un brouillon personnel en quelques secondes. Les missions marketplace restent séparées.
             </Text>
+
+            <FixeoAction
+              label={showCreate ? 'Fermer' : '+ Nouveau devis'}
+              variant={showCreate ? 'ghost' : 'primary'}
+              onPress={() => setShowCreate(value => !value)}
+            />
+
+            {showCreate && (
+              <FixeoCard style={styles.form}>
+                <Text style={styles.formTitle}>Nouveau brouillon</Text>
+                <TextInput
+                  value={title}
+                  onChangeText={setTitle}
+                  placeholder="Objet du devis"
+                  placeholderTextColor={colors.textMuted}
+                  style={styles.input}
+                />
+                <TextInput
+                  value={description}
+                  onChangeText={setDescription}
+                  placeholder="Description courte"
+                  placeholderTextColor={colors.textMuted}
+                  multiline
+                  style={[styles.input, styles.multiline]}
+                />
+                <TextInput
+                  value={total}
+                  onChangeText={setTotal}
+                  placeholder="Montant total en DH"
+                  placeholderTextColor={colors.textMuted}
+                  keyboardType="decimal-pad"
+                  style={styles.input}
+                />
+                <FixeoAction
+                  label={creating ? 'Création…' : 'Créer le brouillon'}
+                  disabled={creating || !title.trim()}
+                  onPress={() => void createQuote()}
+                />
+              </FixeoCard>
+            )}
+
             {!!error && <Text style={styles.error}>{error}</Text>}
           </View>
         }
         ListEmptyComponent={
           <FixeoCard tone="muted">
-            <Text style={styles.emptyTitle}>Aucun devis personnel.</Text>
+            <Text style={styles.emptyTitle}>Devis Studio est prêt.</Text>
             <Text style={styles.emptyText}>
-              Les devis créés depuis Artisan OS apparaîtront ici.
+              Créez votre premier brouillon. Vous pourrez enrichir ensuite prestations, fournitures et conditions.
             </Text>
           </FixeoCard>
         }
@@ -68,7 +139,7 @@ export default function ArtisanQuotes() {
                 <Text style={styles.name}>{item.title || 'Devis sans titre'}</Text>
               </View>
               <View style={styles.pill}>
-                <Text style={styles.pillText}>{item.status}</Text>
+                <Text style={styles.pillText}>{item.status === 'draft' ? 'Brouillon' : item.status}</Text>
               </View>
             </View>
             <Text style={styles.total}>{money(item.total)}</Text>
@@ -105,6 +176,30 @@ const styles = StyleSheet.create({
   },
   subtitle: { color: colors.textMuted, lineHeight: 21 },
   error: { color: colors.danger, fontWeight: '700' },
+  form: {
+    gap: spacing.sm,
+    marginTop: spacing.sm,
+  },
+  formTitle: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  input: {
+    minHeight: 52,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
+    paddingHorizontal: spacing.md,
+    color: colors.text,
+    fontSize: type.body,
+  },
+  multiline: {
+    minHeight: 86,
+    paddingTop: spacing.md,
+    textAlignVertical: 'top',
+  },
   card: {
     marginBottom: spacing.sm,
     gap: spacing.md,
