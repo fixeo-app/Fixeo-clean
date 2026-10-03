@@ -10,8 +10,13 @@ import {
   View,
 } from 'react-native';
 import { router } from 'expo-router';
-import { getStableSession, resolveRole, signIn } from '@/lib/auth';
+import { getStableSession, resolveRole, signIn, type FixeoRole } from '@/lib/auth';
 import { mobileEntryRouteForRole, signInErrorMessage } from '@/lib/authEntry';
+import {
+  consumePendingNotificationIntent,
+  notificationDestinationForRole,
+} from '@/lib/notificationIntent';
+import { triggerFixeoFeedback } from '@/lib/feedback';
 import { EntryStage } from '@/components/EntryStage';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
@@ -28,6 +33,25 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
 
   const busy = entryState === 'signing_in' || entryState === 'opening';
+
+  async function openResolvedUniverse(role: FixeoRole, feedback = false) {
+    const pending = await consumePendingNotificationIntent().catch(() => null);
+    const destination = pending ? notificationDestinationForRole(pending, role) : null;
+
+    if (feedback) triggerFixeoFeedback('success');
+
+    if (destination) {
+      router.replace({
+        pathname: destination.pathname,
+        params: destination.params,
+      } as any);
+      return;
+    }
+
+    const route = mobileEntryRouteForRole(role);
+    if (!route) throw new Error('UNSUPPORTED_MOBILE_ROLE');
+    router.replace(route);
+  }
 
   useEffect(() => {
     let active = true;
@@ -53,7 +77,7 @@ export default function SignIn() {
           return;
         }
 
-        router.replace(route);
+        await openResolvedUniverse(role);
       } catch {
         if (active) setEntryState('idle');
       }
@@ -78,10 +102,7 @@ export default function SignIn() {
 
       setEntryState('opening');
       const role = await resolveRole(userId);
-      const route = mobileEntryRouteForRole(role);
-      if (!route) throw new Error('UNSUPPORTED_MOBILE_ROLE');
-
-      router.replace(route);
+      await openResolvedUniverse(role, true);
     } catch (reason) {
       setError(signInErrorMessage(reason));
       setEntryState('idle');
