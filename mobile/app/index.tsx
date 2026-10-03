@@ -309,6 +309,14 @@ export default function Home() {
         return;
       }
 
+      if (need.needsConfirmation) {
+        setRafiMessage(
+          'RAFI a besoin d’un détail avant de chercher. Précisez ce qui ne va pas : fuite, robinet, serrure, électricité, climatisation…',
+        );
+        setJourneyStatus('idle');
+        return;
+      }
+
       setLoop(current => transition(current, 'creating'));
       setJourneyStatus('matching');
       if (!idempotencyKeyRef.current) idempotencyKeyRef.current = Crypto.randomUUID();
@@ -515,7 +523,9 @@ export default function Home() {
               label={
                 loop.state === 'creating'
                   ? 'RAFI prépare votre demande…'
-                  : 'Confier le problème à FIXEO'
+                  : need.needsConfirmation
+                    ? 'Préciser le problème'
+                    : 'Confier le problème à FIXEO'
               }
               onPress={() => void send()}
               disabled={!problem || requestLocked}
