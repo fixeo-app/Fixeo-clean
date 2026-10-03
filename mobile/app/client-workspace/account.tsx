@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, TextInput } from 'react-native';
 import { router } from 'expo-router';
 import {
   getClientProfile,
@@ -12,6 +12,8 @@ import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
 import { clientProfileTitle } from '@/lib/workspacePresentation';
+import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
+import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 
 export default function ClientAccount() {
   const [profile, setProfile] = useState<ClientProfile | null>(null);
@@ -20,25 +22,41 @@ export default function ClientAccount() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    void getClientProfile()
-      .then(value => {
-        setProfile(value);
-        setPhone(value.phone || '');
-        setCity(value.city || '');
-      })
-      .catch(() => setMessage('Impossible de charger votre compte.'));
+  const load = useCallback(async () => {
+    try {
+      const value = await withMobileDeadline(getClientProfile());
+      setProfile(value);
+      setPhone(value.phone || '');
+      setCity(value.city || '');
+      setMessage('');
+    } catch (reason) {
+      setMessage(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Votre profil reste intact : réessayez dans un instant.'
+          : 'Impossible de charger votre compte.',
+      );
+    }
   }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  useForegroundRefresh(load);
 
   async function save() {
     if (saving) return;
     setSaving(true);
     try {
-      const next = await updateClientProfile({ phone, city });
+      const next = await withMobileDeadline(updateClientProfile({ phone, city }));
       setProfile(next);
       setMessage('✓ Coordonnées mises à jour.');
-    } catch {
-      setMessage('Impossible d’enregistrer ces modifications.');
+    } catch (reason) {
+      setMessage(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Vérifiez vos coordonnées avant de réessayer.'
+          : 'Impossible d’enregistrer ces modifications.',
+      );
     } finally {
       setSaving(false);
     }
@@ -46,7 +64,12 @@ export default function ClientAccount() {
 
   return (
     <FixeoScreen padded={false}>
-      <View style={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        showsVerticalScrollIndicator={false}
+      >
         <MobileShell
           universe="client"
           activeKey="account"
@@ -54,7 +77,6 @@ export default function ClientAccount() {
           rightActionLabel="Mon espace"
           onRightAction={() => router.replace('/client-workspace')}
         />
-        <Text style={styles.back} onPress={() => router.back()}>‹ Mon espace</Text>
         <Text style={styles.kicker}>MON COMPTE</Text>
         <Text style={styles.title}>{clientProfileTitle(profile?.full_name)}</Text>
         <Text style={styles.email}>{profile?.email || ''}</Text>
@@ -87,7 +109,7 @@ export default function ClientAccount() {
         </FixeoCard>
 
         {!!message && <Text style={styles.message}>{message}</Text>}
-      </View>
+      </ScrollView>
     </FixeoScreen>
   );
 }
@@ -95,10 +117,10 @@ export default function ClientAccount() {
 const styles = StyleSheet.create({
   content: {
     paddingHorizontal: spacing.lg,
-    gap: spacing.md,
     paddingTop: spacing.md,
+    paddingBottom: spacing.xxl,
+    gap: spacing.md,
   },
-  back: { color: colors.textMuted, fontWeight: '800' },
   kicker: {
     marginTop: spacing.sm,
     fontSize: type.eyebrow,
