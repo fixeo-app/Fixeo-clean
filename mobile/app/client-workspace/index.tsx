@@ -6,14 +6,18 @@ import {
   listClientNotifications,
   listClientRequestHistory,
   type ClientProfile,
+  type ClientRequestHistory,
 } from '@/lib/clientWorkspace';
+import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
+import { RafiOrb } from '@/ui/RafiOrb';
 import { colors, spacing, type } from '@/ui/tokens';
 import { WorkspaceShortcutGrid } from '@/components/WorkspaceShortcutGrid';
 
 export default function ClientWorkspaceHome() {
   const [profile, setProfile] = useState<ClientProfile | null>(null);
+  const [history, setHistory] = useState<ClientRequestHistory[]>([]);
   const [historyCount, setHistoryCount] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -28,6 +32,7 @@ export default function ClientWorkspaceHome() {
         listClientNotifications(),
       ]);
       setProfile(nextProfile);
+      setHistory(history);
       setHistoryCount(history.length);
       setUnreadCount(notifications.filter(item => !item.read).length);
       setError('');
@@ -41,6 +46,20 @@ export default function ClientWorkspaceHome() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const activeRequest = useMemo(
+    () => history.find(item => ['new', 'assigned', 'in_progress', 'completed'].includes(item.status)) || null,
+    [history],
+  );
+
+  const activeLabel = activeRequest
+    ? ({
+        new: 'Recherche en cours',
+        assigned: 'Artisan affecté',
+        in_progress: 'Intervention en cours',
+        completed: 'À confirmer',
+      } as Record<string, string>)[activeRequest.status] || 'Suivi FIXEO'
+    : '';
 
   const shortcuts = useMemo(() => [
     {
@@ -72,12 +91,17 @@ export default function ClientWorkspaceHome() {
       >
         <View style={styles.header}>
           <Text style={styles.back} onPress={() => router.back()}>‹ RAFI</Text>
-          <Text style={styles.kicker}>CLIENT OS MOBILE</Text>
-          <Text style={styles.title}>
-            {profile?.full_name ? `Bonjour ${profile.full_name.split(' ')[0]}.` : 'Votre espace FIXEO.'}
-          </Text>
+          <View style={styles.identityRow}>
+            <View style={styles.identityCopy}>
+              <Text style={styles.kicker}>MON ESPACE FIXEO</Text>
+              <Text style={styles.title}>
+                {profile?.full_name ? `Bonjour ${profile.full_name.split(' ')[0]}.` : 'Votre espace FIXEO.'}
+              </Text>
+            </View>
+            <RafiOrb size={58} mode={activeRequest ? 'working' : 'idle'} />
+          </View>
           <Text style={styles.subtitle}>
-            Vos interventions, alertes et coordonnées sans transformer l’app en tableau de bord.
+            Une vue simple de ce qui compte maintenant, avec RAFI toujours à portée.
           </Text>
         </View>
 
@@ -86,6 +110,38 @@ export default function ClientWorkspaceHome() {
             <Text style={styles.error}>{error}</Text>
           </FixeoCard>
         )}
+
+        {activeRequest ? (
+          <FixeoCard tone="dark" style={styles.activeCard}>
+            <Text style={styles.inverseKicker}>{activeLabel.toUpperCase()}</Text>
+            <Text style={styles.inverseTitle}>
+              {activeRequest.service_category || 'Votre intervention'}
+            </Text>
+            <Text style={styles.inverseBody}>
+              {activeRequest.description || 'FIXEO suit votre demande.'}
+              {activeRequest.city ? ` · ${activeRequest.city}` : ''}
+            </Text>
+            <FixeoAction
+              label={activeRequest.status === 'completed' ? 'Vérifier et confirmer' : 'Reprendre le suivi'}
+              variant="secondary"
+              onPress={() => router.replace('/')}
+            />
+          </FixeoCard>
+        ) : (
+          <FixeoCard style={styles.rafiCard}>
+            <View style={styles.rafiCopy}>
+              <Text style={styles.cardKicker}>RAFI EST PRÊT</Text>
+              <Text style={styles.cardTitle}>Un problème à régler ?</Text>
+              <Text style={styles.cardBody}>Parlez, montrez ou écrivez. RAFI vous ramène directement au bon parcours.</Text>
+            </View>
+            <FixeoAction label="Parler à RAFI" onPress={() => router.replace('/')} />
+          </FixeoCard>
+        )}
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Votre espace</Text>
+          <Text style={styles.sectionHint}>Historique, alertes et compte restent accessibles sans encombrer l’écran principal.</Text>
+        </View>
 
         <WorkspaceShortcutGrid items={shortcuts} />
       </ScrollView>
@@ -101,6 +157,16 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingTop: spacing.md,
+    gap: spacing.sm,
+  },
+  identityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+  },
+  identityCopy: {
+    flex: 1,
     gap: spacing.sm,
   },
   back: {
@@ -125,6 +191,60 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: type.body,
     lineHeight: 23,
+  },
+  activeCard: {
+    gap: spacing.md,
+  },
+  inverseKicker: {
+    color: '#A8A8AC',
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+  },
+  inverseTitle: {
+    color: colors.inverse,
+    fontSize: 28,
+    lineHeight: 32,
+    fontWeight: '900',
+    letterSpacing: -0.7,
+  },
+  inverseBody: {
+    color: '#D8D8DA',
+    lineHeight: 21,
+  },
+  rafiCard: {
+    gap: spacing.md,
+  },
+  rafiCopy: {
+    gap: spacing.xs,
+  },
+  cardKicker: {
+    color: colors.textMuted,
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.4,
+  },
+  cardTitle: {
+    color: colors.text,
+    fontSize: 24,
+    fontWeight: '900',
+    letterSpacing: -0.5,
+  },
+  cardBody: {
+    color: colors.textMuted,
+    lineHeight: 21,
+  },
+  section: {
+    gap: spacing.xs,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  sectionHint: {
+    color: colors.textMuted,
+    lineHeight: 20,
   },
   error: {
     color: colors.danger,
