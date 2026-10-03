@@ -2,32 +2,46 @@ import { useEffect } from 'react';
 import { Stack, router } from 'expo-router';
 import * as Notifications from 'expo-notifications';
 import { configureForegroundNotifications } from '@/lib/push';
+import { getStableSession, resolveRole } from '@/lib/auth';
+import {
+  consumePendingNotificationIntent,
+  notificationDestinationForRole,
+  persistPendingNotificationIntent,
+  shouldHandleNotificationResponse,
+} from '@/lib/notificationIntent';
+import { triggerFixeoFeedback } from '@/lib/feedback';
 import { startSupabaseAuthLifecycle, supabase } from '@/lib/supabase';
 
 configureForegroundNotifications();
 
-function routeNotification(notification: Notifications.Notification) {
-  const data = notification.request.content.data || {};
-  const screen = String(data.screen || '');
-  const missionId = String(data.mission_id || '');
+async function routeNotificationResponse(response: Notifications.NotificationResponse) {
+  const identifier = String(response.notification.request.identifier || '');
+  if (!(await shouldHandleNotificationResponse(identifier))) return;
 
-  if (screen === 'artisan-mission' && missionId) {
-    router.push({ pathname: '/mission/[id]', params: { id: missionId } } as any);
-    return;
-  }
+  const data = (response.notification.request.content.data || {}) as Record<string, unknown>;
+  await persistPendingNotificationIntent(data).catch(() => undefined);
 
-  if (screen === 'client-mission' && missionId) {
-    router.push({ pathname: '/client-mission/[id]', params: { id: missionId } } as any);
-    return;
-  }
+  try {
+    const session = await getStableSession();
+    if (!session) {
+      router.replace('/sign-in');
+      return;
+    }
 
-  if (screen === 'artisan') {
-    router.push('/artisan');
-    return;
-  }
+    const role = await resolveRole(session.user.id);
+    const intent = await consumePendingNotificationIntent();
+    if (!intent) return;
 
-  if (screen === 'client') {
-    router.push('/');
+    const destination = notificationDestinationForRole(intent, role);
+    if (!destination) return;
+
+    triggerFixeoFeedback('impact');
+    router.push({
+      pathname: destination.pathname,
+      params: destination.params,
+    } as any);
+  } catch {
+    // Keep the pending intent. Auth/session recovery can consume it after sign-in.
   }
 }
 
@@ -41,11 +55,14 @@ export default function Layout() {
     });
 
     const last = Notifications.getLastNotificationResponse();
-    if (last?.notification) routeNotification(last.notification);
+    if (last?.notification) {
+      void routeNotificationResponse(last);
+    }
 
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-      routeNotification(response.notification);
+      void routeNotificationResponse(response);
     });
+
     return () => {
       subscription.remove();
       authListener.subscription.unsubscribe();
@@ -58,6 +75,7 @@ export default function Layout() {
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: '#F7F7F5' },
+        animation: 'fade',
       }}
     >
       <Stack.Screen
@@ -66,6 +84,14 @@ export default function Layout() {
           animation: 'fade',
           gestureEnabled: false,
         }}
+      />
+      <Stack.Screen
+        name="mission/[id]"
+        options={{ animation: 'slide_from_right' }}
+      />
+      <Stack.Screen
+        name="client-mission/[id]"
+        options={{ animation: 'slide_from_right' }}
       />
     </Stack>
   );
