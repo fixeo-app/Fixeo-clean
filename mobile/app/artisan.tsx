@@ -16,6 +16,7 @@ import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
 import { colors, radius, spacing, type } from '@/ui/tokens';
+import { getArtisanContextualCockpit } from '@/lib/contextualCockpit';
 import {
   getArtisanWorkspaceSummary,
   type ArtisanWorkspaceSummary,
@@ -30,12 +31,6 @@ const ACCEPT_MESSAGES: Record<string, string> = {
   offer_not_active: 'Cette opportunité n’est plus active.',
   artisan_not_found: 'Profil artisan introuvable.',
   unauthenticated: 'Votre session a expiré.',
-};
-
-const ACTIVE_LABELS: Record<string, string> = {
-  assigned: 'Mission acceptée',
-  in_progress: 'Intervention en cours',
-  completed: 'Validation client en attente',
 };
 
 const AVAILABILITY_LABELS: Record<string, string> = {
