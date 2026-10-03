@@ -88,7 +88,6 @@ export default function ArtisanClients() {
               onRightAction={() => router.replace('/artisan-workspace')}
             />
             <View style={styles.header}>
-            <Text style={styles.back} onPress={() => router.back()}>‹ Artisan OS</Text>
             <Text style={styles.kicker}>CRM CLIENTS</Text>
             <Text style={styles.title}>Vos clients personnels.</Text>
             <Text style={styles.subtitle}>
@@ -171,7 +170,6 @@ const styles = StyleSheet.create({
     paddingTop: spacing.md,
     paddingBottom: spacing.lg,
   },
-  back: { color: colors.textMuted, fontWeight: '800' },
   kicker: {
     fontSize: type.eyebrow,
     fontWeight: '900',
