@@ -8,9 +8,11 @@ import {
   StyleSheet,
   Text,
   View,
+  Platform,
   useWindowDimensions,
 } from 'react-native';
 import { router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { signOut } from '@/lib/auth';
 import { RafiOrb } from '@/ui/RafiOrb';
 import { colors, radius, spacing, type } from '@/ui/tokens';
@@ -64,7 +66,10 @@ export function MobileShell({
   const slide = useRef(new Animated.Value(-1)).current;
   const fade = useRef(new Animated.Value(0)).current;
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const drawerWidth = Math.min(width * 0.86, 390);
+  const topSafe = Math.max(insets.top, Platform.OS === 'android' ? 24 : 0);
+  const bottomSafe = Math.max(insets.bottom, Platform.OS === 'android' ? 48 : 16);
   const items = universe === 'client' ? CLIENT_ITEMS : ARTISAN_ITEMS;
 
   useEffect(() => {
@@ -182,6 +187,8 @@ export function MobileShell({
               styles.drawer,
               {
                 width: drawerWidth,
+                paddingTop: topSafe + spacing.md,
+                paddingBottom: bottomSafe + spacing.md,
                 transform: [{
                   translateX: slide.interpolate({
                     inputRange: [-1, 0],
@@ -347,9 +354,7 @@ const styles = StyleSheet.create({
   },
   drawer: {
     height: '100%',
-    paddingTop: 54,
     paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xl,
     backgroundColor: colors.ink,
   },
   drawerTop: {
@@ -413,8 +418,8 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   navContent: {
-    gap: spacing.xs,
-    paddingBottom: spacing.md,
+    gap: spacing.sm,
+    paddingBottom: spacing.lg,
   },
   navItem: {
     minHeight: 64,
@@ -461,6 +466,7 @@ const styles = StyleSheet.create({
   drawerFooter: {
     gap: spacing.md,
     paddingTop: spacing.lg,
+    paddingBottom: spacing.xs,
     borderTopWidth: 1,
     borderTopColor: 'rgba(255,255,255,0.12)',
   },
