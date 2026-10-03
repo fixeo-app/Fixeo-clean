@@ -11,6 +11,8 @@ import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, spacing, type } from '@/ui/tokens';
+import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
+import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 import { WorkspaceShortcutGrid } from '@/components/WorkspaceShortcutGrid';
 import { MobileShell } from '@/components/MobileShell';
 
@@ -29,10 +31,14 @@ export default function ArtisanWorkspaceHome() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setSummary(await getArtisanWorkspaceSummary());
+      setSummary(await withMobileDeadline(getArtisanWorkspaceSummary()));
       setMessage('');
-    } catch {
-      setMessage('Impossible de charger votre espace professionnel.');
+    } catch (reason) {
+      setMessage(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Votre espace reste intact : tirez pour réessayer.'
+          : 'Impossible de charger votre espace professionnel.',
+      );
     } finally {
       setLoading(false);
     }
@@ -42,11 +48,13 @@ export default function ArtisanWorkspaceHome() {
     void load();
   }, [load]);
 
+  useForegroundRefresh(load);
+
   async function updateStatus(status: ArtisanAvailability) {
     if (updating) return;
     setUpdating(status);
     try {
-      const next = await setArtisanAvailability(status);
+      const next = await withMobileDeadline(setArtisanAvailability(status));
       setSummary(current => current ? { ...current, availability: next } : current);
       setMessage('Disponibilité mise à jour.');
     } catch (error: any) {
@@ -54,7 +62,9 @@ export default function ArtisanWorkspaceHome() {
       setMessage(
         reason === 'onboarding_required'
           ? 'Complétez votre profil avant de vous rendre disponible.'
-          : 'Impossible de modifier votre disponibilité.',
+          : isMobileUiTimeout(error)
+            ? 'Le réseau met trop de temps. Vérifiez votre statut avant de réessayer.'
+            : 'Impossible de modifier votre disponibilité.',
       );
     } finally {
       setUpdating(null);
@@ -129,6 +139,9 @@ export default function ArtisanWorkspaceHome() {
           <View style={styles.statusActions}>
             <FixeoAction
               label={updating === 'available' ? '…' : 'Disponible'}
+              labelNumberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.72}
               variant={summary?.availability === 'available' ? 'primary' : 'secondary'}
               style={styles.statusAction}
               disabled={!!updating}
@@ -136,6 +149,9 @@ export default function ArtisanWorkspaceHome() {
             />
             <FixeoAction
               label={updating === 'busy' ? '…' : 'Occupé'}
+              labelNumberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.72}
               variant={summary?.availability === 'busy' ? 'primary' : 'secondary'}
               style={styles.statusAction}
               disabled={!!updating}
@@ -143,6 +159,9 @@ export default function ArtisanWorkspaceHome() {
             />
             <FixeoAction
               label={updating === 'unavailable' ? '…' : 'Indisponible'}
+              labelNumberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.72}
               variant={summary?.availability === 'unavailable' ? 'primary' : 'secondary'}
               style={styles.statusAction}
               disabled={!!updating}
@@ -228,7 +247,7 @@ const styles = StyleSheet.create({
   statusAction: {
     flex: 1,
     minHeight: 48,
-    paddingHorizontal: spacing.xs,
+    paddingHorizontal: 3,
   },
   message: {
     textAlign: 'center',

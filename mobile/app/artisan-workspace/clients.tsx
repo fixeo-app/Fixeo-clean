@@ -11,6 +11,8 @@ import { MobileShell } from '@/components/MobileShell';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
+import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
+import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 
 export default function ArtisanClients() {
   const [items, setItems] = useState<ArtisanBusinessClient[]>([]);
@@ -25,10 +27,14 @@ export default function ArtisanClients() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setItems(await listArtisanBusinessClients());
+      setItems(await withMobileDeadline(listArtisanBusinessClients()));
       setError('');
-    } catch {
-      setError('Impossible de charger vos clients.');
+    } catch (reason) {
+      setError(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Vos clients restent intacts : tirez pour réessayer.'
+          : 'Impossible de charger vos clients.',
+      );
     } finally {
       setLoading(false);
     }
@@ -36,19 +42,27 @@ export default function ArtisanClients() {
 
   useEffect(() => { void load(); }, [load]);
 
+  useForegroundRefresh(load);
+
   async function createClient() {
     if (creating || !fullName.trim()) return;
     setCreating(true);
     try {
-      const created = await createArtisanBusinessClient({ fullName, phone, city });
+      const created = await withMobileDeadline(
+        createArtisanBusinessClient({ fullName, phone, city }),
+      );
       setItems(current => [created, ...current]);
       setFullName('');
       setPhone('');
       setCity('');
       setShowCreate(false);
       setError('');
-    } catch {
-      setError('Impossible de créer cette fiche client.');
+    } catch (reason) {
+      setError(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Vérifiez la liste avant de recréer cette fiche.'
+          : 'Impossible de créer cette fiche client.',
+      );
     } finally {
       setCreating(false);
     }
@@ -62,6 +76,8 @@ export default function ArtisanClients() {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         ListHeaderComponent={
           <View>
             <MobileShell

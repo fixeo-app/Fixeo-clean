@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { triggerFixeoFeedback } from '@/lib/feedback';
 import { colors, radius, spacing } from '@/ui/tokens';
 
 export type WorkspaceShortcut = {
@@ -19,11 +20,14 @@ export function WorkspaceShortcutGrid({ items }: Props) {
         <Pressable
           key={item.key}
           accessibilityRole="button"
-          onPress={item.onPress}
+          onPress={() => {
+            triggerFixeoFeedback('selection');
+            item.onPress();
+          }}
           style={({ pressed }) => [styles.item, pressed && styles.pressed]}
         >
-          <Text style={styles.label}>{item.label}</Text>
-          <Text style={styles.meta}>{item.meta}</Text>
+          <Text numberOfLines={2} style={styles.label}>{item.label}</Text>
+          <Text numberOfLines={2} style={styles.meta}>{item.meta}</Text>
           <Text style={styles.arrow}>→</Text>
         </Pressable>
       ))}
@@ -38,7 +42,10 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   item: {
-    width: '48%',
+    flexGrow: 1,
+    flexBasis: '46%',
+    minWidth: 128,
+    maxWidth: '100%',
     minHeight: 116,
     borderRadius: radius.lg,
     padding: spacing.md,
