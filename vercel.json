@@ -139,6 +139,14 @@
     {
       "src": "api/control-fn/index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/mobile-rafi-voice-fn/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/mobile-rafi-photo-fn/index.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -163,6 +171,14 @@
     {
       "src": "^/api/diagnostic-v1$",
       "dest": "/api/server.js"
+    },
+    {
+      "src": "^/api/mobile-rafi-transcribe$",
+      "dest": "/api/mobile-rafi-voice-fn/index.js"
+    },
+    {
+      "src": "^/api/mobile-rafi-photo$",
+      "dest": "/api/mobile-rafi-photo-fn/index.js"
     },
     {
       "src": "^/api/control-v1/(summary|operations|dossier|search|signals|decisions|rafi-synthesis|rafi-followups|rafi-followup|rafi-followup-evidence|rafi/preview|rafi/execute|dispatch-candidates|network-context|action/preview|action/execute|dossier-section|operation-context|hybrid-context|hybrid/preview|hybrid/execute|people|people-context|trust|trust-context|review-history|quotes|quote-context|finance|finance-context|marketplace|marketplace-population|marketplace-coverage|marketplace-cohorts)$",

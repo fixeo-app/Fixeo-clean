@@ -3,16 +3,23 @@
     "name": "FIXEO",
     "slug": "fixeo-mobile",
     "scheme": "fixeo",
-    "version": "0.1.0",
+    "version": "0.3.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "ios": {
       "bundleIdentifier": "ma.fixeo.app",
-      "supportsTablet": false
+      "supportsTablet": false,
+      "buildNumber": "4"
     },
     "android": {
       "package": "ma.fixeo.app",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "versionCode": 4,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "softwareKeyboardLayoutMode": "resize",
+      "backgroundColor": "#F7F7F5"
     },
     "plugins": [
       "expo-router",
@@ -22,13 +29,14 @@
         {
           "photosPermission": "Autorisez FIXEO à accéder à vos photos pour montrer le problème à RAFI.",
           "cameraPermission": "Autorisez FIXEO à utiliser l’appareil photo pour montrer le problème à RAFI.",
-          "microphonePermission": false
+          "microphonePermission": true
         }
       ],
       [
         "expo-audio",
         {
-          "microphonePermission": "Autorisez FIXEO à utiliser le microphone pour parler à RAFI."
+          "microphonePermission": "Autorisez FIXEO à utiliser le microphone pour parler à RAFI.",
+          "recordAudioAndroid": true
         }
       ],
       "expo-notifications"
@@ -41,6 +49,10 @@
       "eas": {
         "projectId": "bb76a67f-4304-48a6-ad29-ca7382d28a7a"
       }
+    },
+    "splash": {
+      "backgroundColor": "#F7F7F5",
+      "resizeMode": "contain"
     }
   }
 }

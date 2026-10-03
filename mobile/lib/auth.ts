@@ -1,3 +1,4 @@
+import type { Session } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 import { disableCurrentDevice } from './push';
 
@@ -19,14 +20,36 @@ export async function signOut() {
   if (error) throw error;
 }
 
-export async function resolveRole(): Promise<FixeoRole> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('AUTH_REQUIRED');
+export async function getStableSession(): Promise<Session | null> {
+  const { data, error } = await supabase.auth.getSession();
+  if (error) throw error;
+
+  let session = data.session;
+  if (!session) return null;
+
+  const expiresAtMs = Number(session.expires_at || 0) * 1000;
+  const shouldRefresh = expiresAtMs > 0 && expiresAtMs - Date.now() <= 60_000;
+
+  if (shouldRefresh) {
+    const refreshed = await supabase.auth.refreshSession();
+    if (refreshed.data.session) {
+      session = refreshed.data.session;
+    } else if (expiresAtMs <= Date.now()) {
+      throw refreshed.error || new Error('SESSION_REFRESH_FAILED');
+    }
+  }
+
+  return session;
+}
+
+export async function resolveRole(userId?: string): Promise<FixeoRole> {
+  const id = userId || (await getStableSession())?.user.id;
+  if (!id) throw new Error('AUTH_REQUIRED');
 
   const { data, error } = await supabase
     .from('profiles')
     .select('role')
-    .eq('id', user.id)
+    .eq('id', id)
     .single();
   if (error) throw error;
 

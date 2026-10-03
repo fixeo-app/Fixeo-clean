@@ -218,8 +218,252 @@ Deno.serve(async (req) => {
         to: device.expo_push_token,
         sound: "default",
         title: "Artisan trouvé",
-        body: "Un artisan FIXEO a accepté votre demande.",
-        data: { screen: "client", type: "artisan_assigned", request_id: requestId },
+        body: "Votre artisan est trouvé. FIXEO suit l’intervention avec vous.",
+        data: { screen: "client-mission", type: "artisan_assigned", request_id: requestId, mission_id: mission.id },
+      },
+    }));
+    const sent = await sendExpo(service, entries);
+
+    if (sent.delivered > 0 && notification?.id) {
+      await service
+        .from("notifications")
+        .update({
+          metadata: {
+            ...(notification.metadata || {}),
+            mobile_push_sent_at: new Date().toISOString(),
+          },
+        })
+        .eq("id", notification.id);
+    }
+
+    return json({ ok: true, delivered: sent.delivered });
+  }
+
+
+  if (action === "mission_arrived") {
+    const { data: mission, error: missionError } = await service
+      .from("missions")
+      .select("id,request_id,artisan_profile_id,status")
+      .eq("request_id", requestId)
+      .eq("status", "pending")
+      .maybeSingle();
+
+    if (missionError || !mission) return json({ ok: false, error: "MISSION_NOT_FOUND" }, 404);
+
+    const { data: artisan } = await service
+      .from("artisans")
+      .select("owner_user_id")
+      .eq("id", mission.artisan_profile_id)
+      .maybeSingle();
+    if (!artisan || artisan.owner_user_id !== user.id) return json({ ok: false, error: "FORBIDDEN" }, 403);
+
+    const { data: request } = await service
+      .from("service_requests")
+      .select("client_profile_id,status")
+      .eq("id", requestId)
+      .maybeSingle();
+    if (!request || !["assigned","in_progress"].includes(request.status)) {
+      return json({ ok: false, error: "INVALID_REQUEST_STATE" }, 409);
+    }
+    if (!request.client_profile_id) return json({ ok: true, delivered: 0, reason: "guest_client" });
+
+    const { data: notification } = await service
+      .from("notifications")
+      .select("id,metadata")
+      .eq("recipient_user_id", request.client_profile_id)
+      .eq("related_entity_id", requestId)
+      .eq("type", "c_artisan_arrived")
+      .maybeSingle();
+
+    if ((notification?.metadata as any)?.mobile_push_sent_at) {
+      return json({ ok: true, delivered: 0, reason: "already_pushed" });
+    }
+
+    const { data: devices, error: devicesError } = await service
+      .from("mobile_devices")
+      .select("expo_push_token")
+      .eq("user_id", request.client_profile_id)
+      .eq("enabled", true);
+    if (devicesError) return json({ ok: false, error: "DEVICE_LOOKUP_FAILED" }, 503);
+
+    const entries: PushEntry[] = (devices || []).map((device: any) => ({
+      token: device.expo_push_token,
+      message: {
+        to: device.expo_push_token,
+        sound: "default",
+        title: "Votre artisan est arrivé",
+        body: "L’artisan FIXEO est sur place. Vous gardez le suivi dans l’application.",
+        data: { screen: "client-mission", type: "artisan_arrived", request_id: requestId, mission_id: mission.id },
+      },
+    }));
+    const sent = await sendExpo(service, entries);
+
+    if (sent.delivered > 0 && notification?.id) {
+      await service
+        .from("notifications")
+        .update({
+          metadata: {
+            ...(notification.metadata || {}),
+            mobile_push_sent_at: new Date().toISOString(),
+          },
+        })
+        .eq("id", notification.id);
+    }
+
+    return json({ ok: true, delivered: sent.delivered });
+  }
+
+  if (action === "mission_started" || action === "mission_completed") {
+    const expectedMissionStatus = action === "mission_started" ? "pending" : "done";
+    const expectedRequestStatus = action === "mission_started" ? "in_progress" : "completed";
+    const eventName = action === "mission_started" ? "mission_started" : "mission_completed";
+    const notificationType = action === "mission_started" ? "c_mission_started" : "c_mission_completed";
+
+    const { data: mission, error: missionError } = await service
+      .from("missions")
+      .select("id,artisan_profile_id,status")
+      .eq("request_id", requestId)
+      .eq("status", expectedMissionStatus)
+      .maybeSingle();
+
+    if (missionError || !mission) return json({ ok: false, error: "MISSION_NOT_FOUND" }, 404);
+
+    const { data: artisan } = await service
+      .from("artisans")
+      .select("owner_user_id")
+      .eq("id", mission.artisan_profile_id)
+      .maybeSingle();
+    if (!artisan || artisan.owner_user_id !== user.id) return json({ ok: false, error: "FORBIDDEN" }, 403);
+
+    const { data: request } = await service
+      .from("service_requests")
+      .select("client_profile_id,status")
+      .eq("id", requestId)
+      .maybeSingle();
+    if (!request || request.status !== expectedRequestStatus) {
+      return json({ ok: false, error: "INVALID_REQUEST_STATE" }, 409);
+    }
+
+    const published = await userClient.rpc("publish_notification_event_s1b", {
+      p_event: eventName,
+      p_entity_id: requestId,
+    });
+    if (published.error) return json({ ok: false, error: "NOTIFICATION_EVENT_REJECTED" }, 403);
+
+    if (!request.client_profile_id) return json({ ok: true, delivered: 0, reason: "guest_client" });
+
+    const { data: notification } = await service
+      .from("notifications")
+      .select("id,metadata")
+      .eq("recipient_user_id", request.client_profile_id)
+      .eq("related_entity_id", requestId)
+      .eq("type", notificationType)
+      .maybeSingle();
+
+    if ((notification?.metadata as any)?.mobile_push_sent_at) {
+      return json({ ok: true, delivered: 0, reason: "already_pushed" });
+    }
+
+    const { data: devices, error: devicesError } = await service
+      .from("mobile_devices")
+      .select("expo_push_token")
+      .eq("user_id", request.client_profile_id)
+      .eq("enabled", true);
+    if (devicesError) return json({ ok: false, error: "DEVICE_LOOKUP_FAILED" }, 503);
+
+    const title = action === "mission_started" ? "Intervention démarrée" : "Intervention terminée";
+    const bodyText = action === "mission_started"
+      ? "Votre artisan a démarré l’intervention. FIXEO continue le suivi."
+      : "L’intervention est terminée. Confirmez la bonne fin depuis FIXEO.";
+
+    const entries: PushEntry[] = (devices || []).map((device: any) => ({
+      token: device.expo_push_token,
+      message: {
+        to: device.expo_push_token,
+        sound: "default",
+        title,
+        body: bodyText,
+        data: { screen: "client-mission", type: notificationType, request_id: requestId, mission_id: mission.id },
+      },
+    }));
+    const sent = await sendExpo(service, entries);
+
+    if (sent.delivered > 0 && notification?.id) {
+      await service
+        .from("notifications")
+        .update({
+          metadata: {
+            ...(notification.metadata || {}),
+            mobile_push_sent_at: new Date().toISOString(),
+          },
+        })
+        .eq("id", notification.id);
+    }
+
+    return json({ ok: true, delivered: sent.delivered });
+  }
+
+  if (action === "mission_validated") {
+    const { data: request, error: requestError } = await service
+      .from("service_requests")
+      .select("client_profile_id,status")
+      .eq("id", requestId)
+      .maybeSingle();
+
+    if (requestError || !request) return json({ ok: false, error: "REQUEST_NOT_FOUND" }, 404);
+    if (request.client_profile_id !== user.id) return json({ ok: false, error: "FORBIDDEN" }, 403);
+    if (request.status !== "validated") return json({ ok: false, error: "INVALID_REQUEST_STATE" }, 409);
+
+    const { data: mission, error: missionError } = await service
+      .from("missions")
+      .select("id,artisan_profile_id,status")
+      .eq("request_id", requestId)
+      .eq("status", "validated")
+      .maybeSingle();
+    if (missionError || !mission) return json({ ok: false, error: "MISSION_NOT_FOUND" }, 404);
+
+    const published = await userClient.rpc("publish_notification_event_s1b", {
+      p_event: "mission_validated",
+      p_entity_id: requestId,
+    });
+    if (published.error) return json({ ok: false, error: "NOTIFICATION_EVENT_REJECTED" }, 403);
+
+    const { data: artisan } = await service
+      .from("artisans")
+      .select("owner_user_id")
+      .eq("id", mission.artisan_profile_id)
+      .maybeSingle();
+    const artisanOwner = artisan?.owner_user_id;
+    if (!artisanOwner) return json({ ok: true, delivered: 0, reason: "artisan_unclaimed" });
+
+    const { data: notification } = await service
+      .from("notifications")
+      .select("id,metadata")
+      .eq("recipient_user_id", artisanOwner)
+      .eq("related_entity_id", requestId)
+      .eq("type", "a_mission_validated")
+      .maybeSingle();
+
+    if ((notification?.metadata as any)?.mobile_push_sent_at) {
+      return json({ ok: true, delivered: 0, reason: "already_pushed" });
+    }
+
+    const { data: devices, error: devicesError } = await service
+      .from("mobile_devices")
+      .select("expo_push_token")
+      .eq("user_id", artisanOwner)
+      .eq("enabled", true);
+    if (devicesError) return json({ ok: false, error: "DEVICE_LOOKUP_FAILED" }, 503);
+
+    const entries: PushEntry[] = (devices || []).map((device: any) => ({
+      token: device.expo_push_token,
+      message: {
+        to: device.expo_push_token,
+        sound: "default",
+        channelId: "fixeo-opportunities",
+        title: "Mission validée",
+        body: "Le client a confirmé la bonne fin de l’intervention.",
+        data: { screen: "artisan", type: "mission_validated", request_id: requestId, mission_id: mission.id },
       },
     }));
     const sent = await sendExpo(service, entries);
