@@ -126,7 +126,6 @@ export default function ArtisanAgenda() {
               onRightAction={() => router.replace('/artisan-workspace')}
             />
             <View style={styles.header}>
-            <Text style={styles.back} onPress={() => router.back()}>‹ Artisan OS</Text>
             <Text style={styles.kicker}>AGENDA</Text>
             <Text style={styles.title}>Vos prochaines interventions.</Text>
             <Text style={styles.subtitle}>
@@ -234,7 +233,6 @@ const styles = StyleSheet.create({
     paddingTop: spacing.md,
     paddingBottom: spacing.lg,
   },
-  back: { color: colors.textMuted, fontWeight: '800' },
   kicker: {
     fontSize: type.eyebrow,
     fontWeight: '900',
