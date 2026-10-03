@@ -9,6 +9,7 @@ import {
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, spacing, type } from '@/ui/tokens';
+import { cleanNotificationCopy, formatWorkspaceDate } from '@/lib/workspacePresentation';
 
 export default function ClientNotifications() {
   const [items, setItems] = useState<ClientNotification[]>([]);
@@ -52,10 +53,10 @@ export default function ClientNotifications() {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.back} onPress={() => router.back()}>‹ Client OS</Text>
+            <Text style={styles.back} onPress={() => router.back()}>‹ Mon espace</Text>
             <Text style={styles.kicker}>ALERTES FIXEO</Text>
             <Text style={styles.title}>Ce qui mérite votre attention.</Text>
-            <Text style={styles.subtitle}>Pas de bruit : seulement les événements liés à votre compte.</Text>
+            <Text style={styles.subtitle}>Une chronologie simple : ce qui a changé, ce qui demande votre attention, rien de plus.</Text>
             {!!error && <Text style={styles.error}>{error}</Text>}
           </View>
         }
@@ -72,7 +73,11 @@ export default function ClientNotifications() {
                 <Text style={styles.titleText}>{item.title}</Text>
                 {!item.read && <View style={styles.unreadDot} />}
               </View>
-              <Text style={styles.message}>{item.message}</Text>
+              <Text style={styles.message}>{cleanNotificationCopy(item.message)}</Text>
+              <View style={styles.metaRow}>
+                <Text style={styles.meta}>{formatWorkspaceDate(item.created_at)}</Text>
+                <Text style={styles.meta}>{item.read ? 'Lu' : 'Nouveau'}</Text>
+              </View>
             </FixeoCard>
           </Pressable>
         )}
@@ -126,6 +131,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.ink,
   },
   message: { color: colors.textMuted, lineHeight: 21 },
+  metaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
+  },
+  meta: {
+    color: colors.textMuted,
+    fontSize: 12,
+    fontWeight: '700',
+  },
   emptyTitle: { fontSize: 18, fontWeight: '900', color: colors.text },
   emptyText: { marginTop: spacing.sm, color: colors.textMuted },
 });
