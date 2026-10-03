@@ -11,6 +11,8 @@ import { MobileShell } from '@/components/MobileShell';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
+import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
+import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 
 export default function ArtisanFinance() {
   const [items, setItems] = useState<ArtisanLedgerEntry[]>([]);
@@ -26,10 +28,14 @@ export default function ArtisanFinance() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setItems(await listArtisanLedger());
+      setItems(await withMobileDeadline(listArtisanLedger()));
       setError('');
-    } catch {
-      setError('Impossible de charger vos mouvements.');
+    } catch (reason) {
+      setError(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Vos mouvements restent intacts : tirez pour réessayer.'
+          : 'Impossible de charger vos mouvements.',
+      );
     } finally {
       setLoading(false);
     }
@@ -38,6 +44,8 @@ export default function ArtisanFinance() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useForegroundRefresh(load);
 
   const totals = useMemo(() => {
     return items.reduce(
@@ -57,20 +65,24 @@ export default function ArtisanFinance() {
     if (creating || !value) return;
     setCreating(true);
     try {
-      const created = await createArtisanLedgerEntry({
+      const created = await withMobileDeadline(createArtisanLedgerEntry({
         entryType,
         amount: value,
         category,
         note,
-      });
+      }));
       setItems(current => [created, ...current]);
       setAmount('');
       setCategory('');
       setNote('');
       setShowCreate(false);
       setError('');
-    } catch {
-      setError('Impossible d’enregistrer ce mouvement.');
+    } catch (reason) {
+      setError(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Vérifiez la liste avant de réessayer pour éviter un doublon.'
+          : 'Impossible d’enregistrer ce mouvement.',
+      );
     } finally {
       setCreating(false);
     }
@@ -84,6 +96,8 @@ export default function ArtisanFinance() {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         ListHeaderComponent={
           <View>
             <MobileShell
@@ -129,12 +143,18 @@ export default function ArtisanFinance() {
                 <View style={styles.typeRow}>
                   <FixeoAction
                     label="Encaissement"
+                    labelNumberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.78}
                     variant={entryType === 'income' ? 'primary' : 'secondary'}
                     style={styles.typeAction}
                     onPress={() => setEntryType('income')}
                   />
                   <FixeoAction
                     label="Dépense"
+                    labelNumberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.78}
                     variant={entryType === 'expense' ? 'primary' : 'secondary'}
                     style={styles.typeAction}
                     onPress={() => setEntryType('expense')}
@@ -285,6 +305,7 @@ const styles = StyleSheet.create({
   typeAction: {
     flex: 1,
     minHeight: 48,
+    paddingHorizontal: spacing.sm,
   },
   input: {
     minHeight: 52,
