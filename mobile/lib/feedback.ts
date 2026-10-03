@@ -27,6 +27,7 @@ export function triggerFixeoFeedback(kind: FixeoFeedbackKind = 'selection') {
 
   try {
     if (Platform.OS === 'ios') {
+      if (kind === 'selection') return;
       Vibration.vibrate();
       return;
     }
