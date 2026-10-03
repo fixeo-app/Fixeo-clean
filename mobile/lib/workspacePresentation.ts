@@ -34,3 +34,11 @@ export function cleanNotificationCopy(value: string | null | undefined) {
     .replace(/\s+([.,;:!?])/g, '$1')
     .trim();
 }
+
+export function isTechnicalRequestContent(input: {
+  service_category?: string | null;
+  description?: string | null;
+}) {
+  const value = `${input.service_category || ''} ${input.description || ''}`;
+  return /synthetic|fixture|test\s*r[eé]seau|mobile[_\s-]?staging/i.test(value);
+}
