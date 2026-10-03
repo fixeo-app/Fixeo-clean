@@ -11,6 +11,8 @@ import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
 import { formatWorkspaceDate, isTechnicalRequestContent } from '@/lib/workspacePresentation';
+import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
+import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 
 const STATUS: Record<string, string> = {
   new: 'Recherche',
@@ -30,11 +32,15 @@ export default function ClientHistory() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const history = await listClientRequestHistory();
+      const history = await withMobileDeadline(listClientRequestHistory());
       setItems(history.filter(item => !isTechnicalRequestContent(item)));
       setError('');
-    } catch {
-      setError('Impossible de charger vos interventions.');
+    } catch (reason) {
+      setError(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Votre historique reste intact : tirez pour réessayer.'
+          : 'Impossible de charger vos interventions.',
+      );
     } finally {
       setLoading(false);
     }
@@ -43,6 +49,8 @@ export default function ClientHistory() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useForegroundRefresh(load);
 
   return (
     <FixeoScreen padded={false}>
@@ -62,7 +70,6 @@ export default function ClientHistory() {
               onRightAction={() => router.replace('/client-workspace')}
             />
             <View style={styles.header}>
-            <Text style={styles.back} onPress={() => router.back()}>‹ Mon espace</Text>
             <Text style={styles.kicker}>MES INTERVENTIONS</Text>
             <Text style={styles.title}>Votre historique FIXEO.</Text>
             <Text style={styles.subtitle}>
@@ -119,7 +126,6 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
     gap: spacing.sm,
   },
-  back: { color: colors.textMuted, fontWeight: '800' },
   kicker: {
     fontSize: type.eyebrow,
     fontWeight: '900',
