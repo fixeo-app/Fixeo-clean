@@ -31,6 +31,12 @@ export function ContextualCockpitCard({ model, onAction }: Props) {
         {model.title}
       </Text>
 
+      {!!model.context && (
+        <Text style={[styles.context, inverse && styles.inverseMuted]}>
+          {model.context}
+        </Text>
+      )}
+
       <Text style={[styles.detail, inverse && styles.inverseMuted]}>
         {model.detail}
       </Text>
@@ -96,6 +102,13 @@ const styles = StyleSheet.create({
     lineHeight: 31,
     fontWeight: '900',
     letterSpacing: -0.7,
+  },
+  context: {
+    color: colors.text,
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: '900',
+    letterSpacing: 0.2,
   },
   detail: {
     color: colors.textMuted,
