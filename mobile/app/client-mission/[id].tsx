@@ -16,6 +16,7 @@ import {
   type MissionSnapshot,
 } from '@/lib/missionTerrain';
 import { listMissionEvidence, type MissionEvidence } from '@/lib/missionEvidence';
+import { triggerFixeoFeedback } from '@/lib/feedback';
 import {
   getMissionChange,
   respondMissionChange,
