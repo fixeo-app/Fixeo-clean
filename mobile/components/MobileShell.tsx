@@ -4,6 +4,7 @@ import {
   BackHandler,
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -192,7 +193,9 @@ export function MobileShell({
           >
             <View style={styles.drawerTop}>
               <View style={styles.identityRow}>
-                <RafiOrb size={58} mode={orbMode} />
+                <View style={styles.orbPlate}>
+                  <RafiOrb size={52} mode={orbMode} />
+                </View>
                 <View style={styles.identityCopy}>
                   <Text style={styles.drawerBrand}>FIXEO</Text>
                   <Text style={styles.drawerUniverse}>
@@ -209,7 +212,11 @@ export function MobileShell({
               </View>
             </View>
 
-            <View style={styles.nav}>
+            <ScrollView
+              style={styles.nav}
+              contentContainerStyle={styles.navContent}
+              showsVerticalScrollIndicator={false}
+            >
               {items.map(item => {
                 const active = activeKey === item.key;
                 return (
@@ -237,7 +244,7 @@ export function MobileShell({
                   </Pressable>
                 );
               })}
-            </View>
+            </ScrollView>
 
             <View style={styles.drawerFooter}>
               <Text style={styles.footerMicro}>
@@ -356,6 +363,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
   },
+  orbPlate: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surface,
+  },
   identityCopy: {
     flex: 1,
     gap: 4,
@@ -395,8 +410,11 @@ const styles = StyleSheet.create({
   },
   nav: {
     flex: 1,
-    paddingTop: spacing.lg,
+    marginTop: spacing.md,
+  },
+  navContent: {
     gap: spacing.xs,
+    paddingBottom: spacing.md,
   },
   navItem: {
     minHeight: 64,
