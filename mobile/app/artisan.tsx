@@ -20,6 +20,7 @@ import {
   type ArtisanWorkspaceSummary,
 } from '@/lib/artisanWorkspace';
 import { WorkspaceShortcutGrid } from '@/components/WorkspaceShortcutGrid';
+import { shouldShowArtisanActivityLoadError } from '@/lib/artisanActivityLoad';
 
 const ACCEPT_MESSAGES: Record<string, string> = {
   already_claimed: 'Cette demande a déjà été prise en charge.',
@@ -41,24 +42,33 @@ export default function Artisan() {
   const [loading, setLoading] = useState(false);
   const [acceptingRequestId, setAcceptingRequestId] = useState<string | null>(null);
   const [message, setMessage] = useState('');
+  const [activityLoadError, setActivityLoadError] = useState(false);
   const [decisionCue, setDecisionCue] = useState<MobileDecisionCue | null>(null);
   const [workspaceSummary, setWorkspaceSummary] = useState<ArtisanWorkspaceSummary | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [nextOffers, mission, decision, workspace] = await Promise.all([
-        getDispatchOffers(),
-        getMyCurrentArtisanMission(),
+      const [offersResult, missionResult, decision, workspace] = await Promise.all([
+        getDispatchOffers()
+          .then(value => ({ ok: true as const, value }))
+          .catch(() => ({ ok: false as const, value: null })),
+        getMyCurrentArtisanMission()
+          .then(value => ({ ok: true as const, value }))
+          .catch(() => ({ ok: false as const, value: null })),
         getMyMobileDecisionContext().catch(() => null),
         getArtisanWorkspaceSummary().catch(() => null),
       ]);
-      setOffers(nextOffers);
-      setCurrentMission(mission);
+
+      if (offersResult.ok) setOffers(offersResult.value);
+      if (missionResult.ok) setCurrentMission(missionResult.value);
       setDecisionCue(decision?.cue || null);
       setWorkspaceSummary(workspace);
+      setActivityLoadError(
+        shouldShowArtisanActivityLoadError(offersResult.ok, missionResult.ok),
+      );
     } catch {
-      setMessage('Impossible de charger votre activité FIXEO.');
+      setActivityLoadError(true);
     } finally {
       setLoading(false);
     }
@@ -160,6 +170,12 @@ export default function Artisan() {
         <Text style={styles.title}>{cockpit.title}</Text>
         <Text style={styles.subtitle}>{cockpit.subtitle}</Text>
       </View>
+
+      {activityLoadError && (
+        <FixeoCard tone="muted" style={styles.messageCard}>
+          <Text style={styles.message}>Impossible de charger votre activité FIXEO.</Text>
+        </FixeoCard>
+      )}
 
       {!!message && (
         <FixeoCard tone="muted" style={styles.messageCard}>
