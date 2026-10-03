@@ -11,6 +11,8 @@ import { MobileShell } from '@/components/MobileShell';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, spacing, type } from '@/ui/tokens';
 import { cleanNotificationCopy, formatWorkspaceDate } from '@/lib/workspacePresentation';
+import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
+import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 
 export default function ClientNotifications() {
   const [items, setItems] = useState<ClientNotification[]>([]);
