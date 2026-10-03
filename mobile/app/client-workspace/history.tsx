@@ -9,7 +9,7 @@ import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
-import { formatWorkspaceDate } from '@/lib/workspacePresentation';
+import { formatWorkspaceDate, isTechnicalRequestContent } from '@/lib/workspacePresentation';
 
 const STATUS: Record<string, string> = {
   new: 'Recherche',
@@ -29,7 +29,8 @@ export default function ClientHistory() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setItems(await listClientRequestHistory());
+      const history = await listClientRequestHistory();
+      setItems(history.filter(item => !isTechnicalRequestContent(item)));
       setError('');
     } catch {
       setError('Impossible de charger vos interventions.');
