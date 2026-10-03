@@ -169,7 +169,7 @@ export default function SignIn() {
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
                 autoCorrect={false}
-                autoComplete="password"
+                autoComplete="current-password"
                 textContentType="password"
                 value={password}
                 onChangeText={setPassword}
