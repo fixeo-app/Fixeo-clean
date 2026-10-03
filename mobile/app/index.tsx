@@ -23,6 +23,7 @@ import { MagicLoopModel, transition } from '@/lib/magicLoopState';
 import { RafiInputRail } from '@/components/RafiInputRail';
 import { PushOptIn } from '@/components/PushOptIn';
 import { MobileShell } from '@/components/MobileShell';
+import { EntryStage } from '@/components/EntryStage';
 import { getStableSession, resolveRole } from '@/lib/auth';
 import {
   getMyMobileDecisionContext,
@@ -412,9 +413,14 @@ export default function Home() {
   if (!clientReady) {
     return (
       <FixeoScreen style={styles.loadingRoot}>
-        <Text style={styles.brand}>FIXEO</Text>
-        <RafiOrb size={72} mode="working" />
-        <Text style={styles.loadingText}>Ouverture de votre espace…</Text>
+        <EntryStage
+          eyebrow="RAFI · FIXEO"
+          title="Ouverture de votre espace."
+          subtitle="RAFI sécurise votre session et reprend exactement votre contexte."
+          status="Synchronisation de votre univers…"
+          mode="working"
+          compact
+        />
       </FixeoScreen>
     );
   }
@@ -620,14 +626,8 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   loadingRoot: {
-    alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.lg,
-  },
-  loadingText: {
-    fontSize: type.body,
-    fontWeight: '700',
-    color: colors.textMuted,
+    paddingHorizontal: spacing.lg,
   },
   scrollContent: {
     paddingHorizontal: spacing.lg,
