@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { uploadMissionEvidence } from '@/lib/missionEvidence';
+import { triggerFixeoFeedback } from '@/lib/feedback';
 import { colors, radius, spacing } from '@/ui/tokens';
 
 type Props = {
@@ -20,6 +21,7 @@ export function MissionEvidenceCapture({ missionId, kind, label, onUploaded }: P
 
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
+      triggerFixeoFeedback('warning');
       setMessage('Caméra non autorisée.');
       return;
     }
@@ -40,6 +42,7 @@ export function MissionEvidenceCapture({ missionId, kind, label, onUploaded }: P
         asset.uri,
         asset.mimeType || 'image/jpeg',
       );
+      triggerFixeoFeedback('success');
       setMessage('✓ Preuve enregistrée.');
       onUploaded?.();
     } catch {
