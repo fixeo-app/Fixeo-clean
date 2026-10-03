@@ -17,6 +17,8 @@ import { MobileShell } from '@/components/MobileShell';
 import { ContextualCockpitCard } from '@/components/ContextualCockpitCard';
 import { clientGreetingName, isTechnicalRequestContent } from '@/lib/workspacePresentation';
 import { getClientContextualCockpit } from '@/lib/contextualCockpit';
+import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
+import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 
 export default function ClientWorkspaceHome() {
   const [profile, setProfile] = useState<ClientProfile | null>(null);
@@ -29,19 +31,25 @@ export default function ClientWorkspaceHome() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [nextProfile, history, notifications] = await Promise.all([
-        getClientProfile(),
-        listClientRequestHistory(),
-        listClientNotifications(),
-      ]);
+      const [nextProfile, history, notifications] = await withMobileDeadline(
+        Promise.all([
+          getClientProfile(),
+          listClientRequestHistory(),
+          listClientNotifications(),
+        ]),
+      );
       const visibleHistory = history.filter(item => !isTechnicalRequestContent(item));
       setProfile(nextProfile);
       setHistory(visibleHistory);
       setHistoryCount(visibleHistory.length);
       setUnreadCount(notifications.filter(item => !item.read).length);
       setError('');
-    } catch {
-      setError('Impossible de charger votre espace Client.');
+    } catch (reason) {
+      setError(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Votre espace reste intact : tirez pour réessayer.'
+          : 'Impossible de charger votre espace Client.',
+      );
     } finally {
       setLoading(false);
     }
@@ -50,6 +58,8 @@ export default function ClientWorkspaceHome() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useForegroundRefresh(load);
 
   const activeRequest = useMemo(
     () => history.find(item => ['new', 'assigned', 'in_progress', 'completed'].includes(item.status)) || null,
