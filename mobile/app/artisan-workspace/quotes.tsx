@@ -11,6 +11,8 @@ import { MobileShell } from '@/components/MobileShell';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
+import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
+import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 
 function money(value: number | null) {
   if (value == null) return 'Montant à définir';
@@ -30,10 +32,14 @@ export default function ArtisanQuotes() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setItems(await listArtisanBusinessQuotes());
+      setItems(await withMobileDeadline(listArtisanBusinessQuotes()));
       setError('');
-    } catch {
-      setError('Impossible de charger vos devis.');
+    } catch (reason) {
+      setError(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Vos devis restent intacts : tirez pour réessayer.'
+          : 'Impossible de charger vos devis.',
+      );
     } finally {
       setLoading(false);
     }
@@ -41,24 +47,30 @@ export default function ArtisanQuotes() {
 
   useEffect(() => { void load(); }, [load]);
 
+  useForegroundRefresh(load);
+
   async function createQuote() {
     if (creating || !title.trim()) return;
     setCreating(true);
     try {
       const amount = Number(total.replace(',', '.')) || 0;
-      const created = await createArtisanBusinessQuote({
+      const created = await withMobileDeadline(createArtisanBusinessQuote({
         title,
         total: amount,
         description,
-      });
+      }));
       setItems(current => [created, ...current]);
       setTitle('');
       setTotal('');
       setDescription('');
       setShowCreate(false);
       setError('');
-    } catch {
-      setError('Impossible de créer ce brouillon de devis.');
+    } catch (reason) {
+      setError(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Vérifiez vos devis avant de recréer ce brouillon.'
+          : 'Impossible de créer ce brouillon de devis.',
+      );
     } finally {
       setCreating(false);
     }
@@ -72,6 +84,8 @@ export default function ArtisanQuotes() {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         ListHeaderComponent={
           <View>
             <MobileShell
