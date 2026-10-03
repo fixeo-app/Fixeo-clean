@@ -27,7 +27,7 @@
         {
           "photosPermission": "Autorisez FIXEO à accéder à vos photos pour montrer le problème à RAFI.",
           "cameraPermission": "Autorisez FIXEO à utiliser l’appareil photo pour montrer le problème à RAFI.",
-          "microphonePermission": false
+          "microphonePermission": true
         }
       ],
       [
