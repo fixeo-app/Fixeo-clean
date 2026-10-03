@@ -1,18 +1,25 @@
 import { useCallback, useEffect, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import {
+  createArtisanBusinessClient,
   listArtisanBusinessClients,
   type ArtisanBusinessClient,
 } from '@/lib/artisanWorkspace';
+import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
-import { colors, spacing, type } from '@/ui/tokens';
+import { colors, radius, spacing, type } from '@/ui/tokens';
 
 export default function ArtisanClients() {
   const [items, setItems] = useState<ArtisanBusinessClient[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showCreate, setShowCreate] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [city, setCity] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -28,6 +35,24 @@ export default function ArtisanClients() {
 
   useEffect(() => { void load(); }, [load]);
 
+  async function createClient() {
+    if (creating || !fullName.trim()) return;
+    setCreating(true);
+    try {
+      const created = await createArtisanBusinessClient({ fullName, phone, city });
+      setItems(current => [created, ...current]);
+      setFullName('');
+      setPhone('');
+      setCity('');
+      setShowCreate(false);
+      setError('');
+    } catch {
+      setError('Impossible de créer cette fiche client.');
+    } finally {
+      setCreating(false);
+    }
+  }
+
   return (
     <FixeoScreen padded={false}>
       <FlatList
@@ -42,16 +67,57 @@ export default function ArtisanClients() {
             <Text style={styles.kicker}>CRM CLIENTS</Text>
             <Text style={styles.title}>Vos clients personnels.</Text>
             <Text style={styles.subtitle}>
-              Cet espace reste séparé des clients marketplace FIXEO.
+              Un carnet professionnel séparé du marketplace FIXEO.
             </Text>
+
+            <FixeoAction
+              label={showCreate ? 'Fermer' : '+ Ajouter un client'}
+              variant={showCreate ? 'ghost' : 'primary'}
+              onPress={() => setShowCreate(value => !value)}
+            />
+
+            {showCreate && (
+              <FixeoCard style={styles.form}>
+                <Text style={styles.formTitle}>Nouvelle fiche client</Text>
+                <TextInput
+                  value={fullName}
+                  onChangeText={setFullName}
+                  placeholder="Nom du client"
+                  placeholderTextColor={colors.textMuted}
+                  style={styles.input}
+                />
+                <TextInput
+                  value={phone}
+                  onChangeText={setPhone}
+                  placeholder="Téléphone"
+                  placeholderTextColor={colors.textMuted}
+                  keyboardType="phone-pad"
+                  style={styles.input}
+                />
+                <TextInput
+                  value={city}
+                  onChangeText={setCity}
+                  placeholder="Ville"
+                  placeholderTextColor={colors.textMuted}
+                  autoCapitalize="words"
+                  style={styles.input}
+                />
+                <FixeoAction
+                  label={creating ? 'Création…' : 'Créer la fiche'}
+                  disabled={creating || !fullName.trim()}
+                  onPress={() => void createClient()}
+                />
+              </FixeoCard>
+            )}
+
             {!!error && <Text style={styles.error}>{error}</Text>}
           </View>
         }
         ListEmptyComponent={
           <FixeoCard tone="muted">
-            <Text style={styles.emptyTitle}>Aucun client personnel.</Text>
+            <Text style={styles.emptyTitle}>Votre CRM est prêt.</Text>
             <Text style={styles.emptyText}>
-              Vos futures fiches CRM apparaîtront ici sans mélanger le marketplace FIXEO.
+              Ajoutez votre premier client personnel pour préparer devis et interventions sans mélanger le marketplace FIXEO.
             </Text>
           </FixeoCard>
         }
@@ -99,6 +165,25 @@ const styles = StyleSheet.create({
   error: {
     color: colors.danger,
     fontWeight: '700',
+  },
+  form: {
+    gap: spacing.sm,
+    marginTop: spacing.sm,
+  },
+  formTitle: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  input: {
+    minHeight: 52,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
+    paddingHorizontal: spacing.md,
+    color: colors.text,
+    fontSize: type.body,
   },
   card: {
     marginBottom: spacing.sm,
