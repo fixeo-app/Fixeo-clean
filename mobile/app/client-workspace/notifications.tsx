@@ -20,10 +20,14 @@ export default function ClientNotifications() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      setItems(await listClientNotifications());
+      setItems(await withMobileDeadline(listClientNotifications()));
       setError('');
-    } catch {
-      setError('Impossible de charger vos alertes.');
+    } catch (reason) {
+      setError(
+        isMobileUiTimeout(reason)
+          ? 'Le réseau met trop de temps. Vos alertes restent intactes : tirez pour réessayer.'
+          : 'Impossible de charger vos alertes.',
+      );
     } finally {
       setLoading(false);
     }
@@ -36,7 +40,7 @@ export default function ClientNotifications() {
   async function open(item: ClientNotification) {
     if (!item.read) {
       try {
-        await markClientNotificationRead(item.id);
+        await withMobileDeadline(markClientNotificationRead(item.id));
         setItems(current => current.map(row => row.id === item.id ? { ...row, read: true } : row));
       } catch {
         // Reading the message is still allowed if the acknowledgement fails.
@@ -62,7 +66,6 @@ export default function ClientNotifications() {
               onRightAction={() => router.replace('/client-workspace')}
             />
             <View style={styles.header}>
-            <Text style={styles.back} onPress={() => router.back()}>‹ Mon espace</Text>
             <Text style={styles.kicker}>ALERTES FIXEO</Text>
             <Text style={styles.title}>Ce qui mérite votre attention.</Text>
             <Text style={styles.subtitle}>Une chronologie simple : ce qui a changé, ce qui demande votre attention, rien de plus.</Text>
@@ -107,7 +110,6 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
     gap: spacing.sm,
   },
-  back: { color: colors.textMuted, fontWeight: '800' },
   kicker: {
     fontSize: type.eyebrow,
     fontWeight: '900',
