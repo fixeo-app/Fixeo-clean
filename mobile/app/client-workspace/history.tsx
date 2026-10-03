@@ -5,9 +5,11 @@ import {
   listClientRequestHistory,
   type ClientRequestHistory,
 } from '@/lib/clientWorkspace';
+import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
+import { formatWorkspaceDate } from '@/lib/workspacePresentation';
 
 const STATUS: Record<string, string> = {
   new: 'Recherche',
@@ -50,11 +52,11 @@ export default function ClientHistory() {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.back} onPress={() => router.back()}>‹ Client OS</Text>
+            <Text style={styles.back} onPress={() => router.back()}>‹ Mon espace</Text>
             <Text style={styles.kicker}>MES INTERVENTIONS</Text>
             <Text style={styles.title}>Votre historique FIXEO.</Text>
             <Text style={styles.subtitle}>
-              Chaque demande reste lisible par état, sans jargon opérationnel.
+              Retrouvez vos demandes, leur état et leur date — sans jargon technique.
             </Text>
             {!!error && <Text style={styles.error}>{error}</Text>}
           </View>
@@ -77,6 +79,17 @@ export default function ClientHistory() {
               </View>
             </View>
             {!!item.description && <Text style={styles.description}>{item.description}</Text>}
+            <View style={styles.footerRow}>
+              <Text style={styles.date}>{formatWorkspaceDate(item.created_at)}</Text>
+              {['new', 'assigned', 'in_progress', 'completed'].includes(item.status) && (
+                <FixeoAction
+                  label={item.status === 'completed' ? 'Vérifier' : 'Reprendre le suivi'}
+                  variant="ghost"
+                  style={styles.compactAction}
+                  onPress={() => router.replace('/')}
+                />
+              )}
+            </View>
           </FixeoCard>
         )}
       />
@@ -127,6 +140,22 @@ const styles = StyleSheet.create({
   },
   pillText: { fontSize: 11, fontWeight: '900', color: colors.textMuted },
   description: { color: colors.text, lineHeight: 21 },
+  footerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
+  },
+  date: {
+    color: colors.textMuted,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  compactAction: {
+    minHeight: 40,
+    paddingVertical: 8,
+    paddingHorizontal: spacing.sm,
+  },
   emptyTitle: { fontSize: 18, fontWeight: '900', color: colors.text },
   emptyText: { marginTop: spacing.sm, color: colors.textMuted, lineHeight: 21 },
 });
