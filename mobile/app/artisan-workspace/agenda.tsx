@@ -7,6 +7,7 @@ import {
   type ArtisanBusinessJob,
 } from '@/lib/artisanWorkspace';
 import { FixeoAction } from '@/ui/FixeoAction';
+import { MobileShell } from '@/components/MobileShell';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
@@ -94,7 +95,15 @@ export default function ArtisanAgenda() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View style={styles.header}>
+          <View>
+            <MobileShell
+              universe="artisan"
+              activeKey="agenda"
+              statusLabel="Agenda professionnel"
+              rightActionLabel="Artisan OS"
+              onRightAction={() => router.replace('/artisan-workspace')}
+            />
+            <View style={styles.header}>
             <Text style={styles.back} onPress={() => router.back()}>‹ Artisan OS</Text>
             <Text style={styles.kicker}>AGENDA</Text>
             <Text style={styles.title}>Vos prochaines interventions.</Text>
@@ -142,6 +151,7 @@ export default function ArtisanAgenda() {
             )}
 
             {!!error && <Text style={styles.error}>{error}</Text>}
+            </View>
           </View>
         }
         ListEmptyComponent={
