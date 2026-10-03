@@ -158,3 +158,113 @@ export async function listArtisanLedger(limit = 60): Promise<ArtisanLedgerEntry[
     amount: Number(row.amount || 0),
   })) as ArtisanLedgerEntry[];
 }
+
+
+export async function createArtisanBusinessClient(input: {
+  fullName: string;
+  phone?: string | null;
+  city?: string | null;
+}): Promise<ArtisanBusinessClient> {
+  const ownerUserId = await currentUserId();
+  const fullName = input.fullName.trim();
+  if (!fullName) throw new Error('CLIENT_NAME_REQUIRED');
+
+  const { data, error } = await supabase
+    .from('artisan_business_clients')
+    .insert({
+      owner_user_id: ownerUserId,
+      full_name: fullName,
+      phone: input.phone?.trim() || null,
+      city: input.city?.trim() || null,
+    })
+    .select('id,full_name,phone,city,updated_at')
+    .single();
+  if (error) throw error;
+  return data as ArtisanBusinessClient;
+}
+
+export async function createArtisanBusinessQuote(input: {
+  title: string;
+  total?: number | null;
+  description?: string | null;
+}): Promise<ArtisanBusinessQuote> {
+  const ownerUserId = await currentUserId();
+  const title = input.title.trim();
+  if (!title) throw new Error('QUOTE_TITLE_REQUIRED');
+  const total = Math.max(0, Number(input.total || 0));
+  const quoteNumber = `DEV-${Date.now().toString(36).toUpperCase()}`;
+
+  const { data, error } = await supabase
+    .from('artisan_business_quotes')
+    .insert({
+      owner_user_id: ownerUserId,
+      quote_number: quoteNumber,
+      title,
+      description: input.description?.trim() || null,
+      subtotal: total,
+      total,
+      status: 'draft',
+    })
+    .select('id,quote_number,title,status,total,updated_at')
+    .single();
+  if (error) throw error;
+  return {
+    ...data,
+    total: data.total == null ? null : Number(data.total),
+  } as ArtisanBusinessQuote;
+}
+
+export async function createArtisanBusinessJob(input: {
+  title: string;
+  scheduledAt?: string | null;
+  amount?: number | null;
+}): Promise<ArtisanBusinessJob> {
+  const ownerUserId = await currentUserId();
+  const title = input.title.trim();
+  if (!title) throw new Error('JOB_TITLE_REQUIRED');
+
+  const { data, error } = await supabase
+    .from('artisan_business_jobs')
+    .insert({
+      owner_user_id: ownerUserId,
+      title,
+      scheduled_at: input.scheduledAt || null,
+      amount: input.amount == null ? null : Math.max(0, Number(input.amount)),
+      status: 'planned',
+    })
+    .select('id,title,status,scheduled_at,amount,updated_at')
+    .single();
+  if (error) throw error;
+  return {
+    ...data,
+    amount: data.amount == null ? null : Number(data.amount),
+  } as ArtisanBusinessJob;
+}
+
+export async function createArtisanLedgerEntry(input: {
+  entryType: 'income' | 'expense';
+  amount: number;
+  category?: string | null;
+  note?: string | null;
+}): Promise<ArtisanLedgerEntry> {
+  const ownerUserId = await currentUserId();
+  const amount = Math.max(0, Number(input.amount || 0));
+  if (!amount) throw new Error('LEDGER_AMOUNT_REQUIRED');
+
+  const { data, error } = await supabase
+    .from('artisan_business_ledger')
+    .insert({
+      owner_user_id: ownerUserId,
+      entry_type: input.entryType,
+      amount,
+      category: input.category?.trim() || 'other',
+      note: input.note?.trim() || null,
+    })
+    .select('id,entry_type,category,amount,occurred_on,note')
+    .single();
+  if (error) throw error;
+  return {
+    ...data,
+    amount: Number(data.amount || 0),
+  } as ArtisanLedgerEntry;
+}
