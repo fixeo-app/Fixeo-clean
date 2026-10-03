@@ -14,7 +14,7 @@ import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
 import { colors, spacing, type } from '@/ui/tokens';
 import { WorkspaceShortcutGrid } from '@/components/WorkspaceShortcutGrid';
-import { clientGreetingName } from '@/lib/workspacePresentation';
+import { clientGreetingName, isTechnicalRequestContent } from '@/lib/workspacePresentation';
 
 export default function ClientWorkspaceHome() {
   const [profile, setProfile] = useState<ClientProfile | null>(null);
@@ -32,9 +32,10 @@ export default function ClientWorkspaceHome() {
         listClientRequestHistory(),
         listClientNotifications(),
       ]);
+      const visibleHistory = history.filter(item => !isTechnicalRequestContent(item));
       setProfile(nextProfile);
-      setHistory(history);
-      setHistoryCount(history.length);
+      setHistory(visibleHistory);
+      setHistoryCount(visibleHistory.length);
       setUnreadCount(notifications.filter(item => !item.read).length);
       setError('');
     } catch {
