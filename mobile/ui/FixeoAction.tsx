@@ -1,4 +1,10 @@
-import { Pressable, StyleSheet, Text, type PressableProps } from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  type PressableProps,
+  type TextStyle,
+} from 'react-native';
 import { triggerFixeoFeedback, type FixeoFeedbackKind } from '@/lib/feedback';
 import { colors, radius, spacing, type } from './tokens';
 
@@ -6,6 +12,10 @@ type Props = PressableProps & {
   label: string;
   variant?: 'primary' | 'secondary' | 'ghost';
   feedback?: FixeoFeedbackKind;
+  labelNumberOfLines?: number;
+  labelStyle?: TextStyle;
+  adjustsFontSizeToFit?: boolean;
+  minimumFontScale?: number;
 };
 
 export function FixeoAction({
@@ -15,6 +25,10 @@ export function FixeoAction({
   disabled,
   style,
   onPress,
+  labelNumberOfLines,
+  labelStyle,
+  adjustsFontSizeToFit = false,
+  minimumFontScale = 0.82,
   ...props
 }: Props) {
   return (
@@ -35,9 +49,13 @@ export function FixeoAction({
       ]}
     >
       <Text
+        numberOfLines={labelNumberOfLines}
+        adjustsFontSizeToFit={adjustsFontSizeToFit}
+        minimumFontScale={minimumFontScale}
         style={[
           styles.label,
           variant !== 'primary' && styles.labelDark,
+          labelStyle,
         ]}
       >
         {label}
