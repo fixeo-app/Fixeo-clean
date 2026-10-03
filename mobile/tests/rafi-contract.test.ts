@@ -14,3 +14,11 @@ test('RAFI does not invent a trade for an unknown short need', () => {
   assert.equal(need.serviceCategory,'Autre');
   assert.equal(need.needsConfirmation,true);
 });
+
+
+test('RAFI keeps ambiguous room-level requests unclassified until the user adds a concrete problem', () => {
+  const need=understandLocally({mode:'text',text:'Je veux corriger ma salle de bain.'});
+  assert.equal(need.serviceCategory,'Autre');
+  assert.equal(need.confidence,'low');
+  assert.equal(need.needsConfirmation,true);
+});
