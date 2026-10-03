@@ -22,7 +22,7 @@ import {
 import { MagicLoopModel, transition } from '@/lib/magicLoopState';
 import { RafiInputRail } from '@/components/RafiInputRail';
 import { PushOptIn } from '@/components/PushOptIn';
-import { resolveRole } from '@/lib/auth';
+import { getStableSession, resolveRole } from '@/lib/auth';
 import {
   getMyMobileDecisionContext,
   type MobileDecisionCue,
@@ -137,18 +137,19 @@ export default function Home() {
     let channel: any;
     let active = true;
     let isClient = false;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
-    async function bootstrap() {
+    async function bootstrap(attempt = 0) {
       try {
-        const { data } = await supabase.auth.getUser();
+        const session = await getStableSession();
         if (!active) return;
 
-        if (!data.user) {
+        if (!session) {
           router.replace('/sign-in');
           return;
         }
 
-        const role = await resolveRole();
+        const role = await resolveRole(session.user.id);
         if (!active) return;
 
         if (role === 'artisan') {
@@ -165,7 +166,7 @@ export default function Home() {
         setClientReady(true);
         await syncJourney();
 
-        channel = watchClientNotifications(data.user.id, (payload: any) => {
+        channel = watchClientNotifications(session.user.id, (payload: any) => {
           const notification = payload.new || {};
           if (/accept|assign|mission/i.test(String(notification.type || ''))) {
             setLoop(current => transition(current, 'found', {
@@ -174,8 +175,19 @@ export default function Home() {
             void Promise.all([syncCurrentMission(), syncDecision()]);
           }
         });
-      } catch {
-        if (active) router.replace('/sign-in');
+      } catch (error: any) {
+        if (!active) return;
+
+        const reason = String(error?.message || '');
+        if (reason === 'AUTH_REQUIRED' || reason === 'ROLE_INVALID') {
+          router.replace('/sign-in');
+          return;
+        }
+
+        retryTimer = setTimeout(
+          () => void bootstrap(attempt + 1),
+          Math.min(3000, 700 + attempt * 500),
+        );
       }
     }
 
@@ -188,6 +200,7 @@ export default function Home() {
     return () => {
       active = false;
       appState.remove();
+      if (retryTimer) clearTimeout(retryTimer);
       if (channel) void supabase.removeChannel(channel);
     };
   }, []);
