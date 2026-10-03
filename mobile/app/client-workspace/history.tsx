@@ -6,6 +6,7 @@ import {
   type ClientRequestHistory,
 } from '@/lib/clientWorkspace';
 import { FixeoAction } from '@/ui/FixeoAction';
+import { MobileShell } from '@/components/MobileShell';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
@@ -52,7 +53,15 @@ export default function ClientHistory() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View style={styles.header}>
+          <View>
+            <MobileShell
+              universe="client"
+              activeKey="history"
+              statusLabel="Historique FIXEO"
+              rightActionLabel="Mon espace"
+              onRightAction={() => router.replace('/client-workspace')}
+            />
+            <View style={styles.header}>
             <Text style={styles.back} onPress={() => router.back()}>‹ Mon espace</Text>
             <Text style={styles.kicker}>MES INTERVENTIONS</Text>
             <Text style={styles.title}>Votre historique FIXEO.</Text>
@@ -60,6 +69,7 @@ export default function ClientHistory() {
               Retrouvez vos demandes, leur état et leur date — sans jargon technique.
             </Text>
             {!!error && <Text style={styles.error}>{error}</Text>}
+            </View>
           </View>
         }
         ListEmptyComponent={
