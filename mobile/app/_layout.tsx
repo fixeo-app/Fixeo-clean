@@ -53,5 +53,20 @@ export default function Layout() {
     };
   }, []);
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: '#F7F7F5' },
+      }}
+    >
+      <Stack.Screen
+        name="sign-in"
+        options={{
+          animation: 'fade',
+          gestureEnabled: false,
+        }}
+      />
+    </Stack>
+  );
 }
