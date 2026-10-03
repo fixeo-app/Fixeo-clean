@@ -39,6 +39,8 @@ export default function ClientNotifications() {
     void load();
   }, [load]);
 
+  useForegroundRefresh(load);
+
   async function open(item: ClientNotification) {
     if (!item.read) {
       try {
