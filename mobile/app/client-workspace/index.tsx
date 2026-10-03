@@ -8,14 +8,15 @@ import {
   type ClientProfile,
   type ClientRequestHistory,
 } from '@/lib/clientWorkspace';
-import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
 import { colors, spacing, type } from '@/ui/tokens';
 import { WorkspaceShortcutGrid } from '@/components/WorkspaceShortcutGrid';
 import { MobileShell } from '@/components/MobileShell';
+import { ContextualCockpitCard } from '@/components/ContextualCockpitCard';
 import { clientGreetingName, isTechnicalRequestContent } from '@/lib/workspacePresentation';
+import { getClientContextualCockpit } from '@/lib/contextualCockpit';
 
 export default function ClientWorkspaceHome() {
   const [profile, setProfile] = useState<ClientProfile | null>(null);
@@ -65,6 +66,35 @@ export default function ClientWorkspaceHome() {
     : '';
 
   const greetingName = clientGreetingName(profile?.full_name);
+
+  const contextualCockpit = useMemo(
+    () => getClientContextualCockpit({
+      activeStatus: activeRequest?.status,
+      unreadCount,
+      subject: activeRequest?.service_category,
+      city: activeRequest?.city,
+    }),
+    [
+      activeRequest?.status,
+      activeRequest?.service_category,
+      activeRequest?.city,
+      unreadCount,
+    ],
+  );
+
+  function actOnContextualCockpit() {
+    if (contextualCockpit.action === 'client_alerts') {
+      router.push('/client-workspace/notifications');
+      return;
+    }
+
+    if (
+      contextualCockpit.action === 'client_follow' ||
+      contextualCockpit.action === 'client_rafi'
+    ) {
+      router.replace('/');
+    }
+  }
 
   const shortcuts = useMemo(() => [
     {
@@ -124,32 +154,10 @@ export default function ClientWorkspaceHome() {
           </FixeoCard>
         )}
 
-        {activeRequest ? (
-          <FixeoCard tone="dark" style={styles.activeCard}>
-            <Text style={styles.inverseKicker}>{activeLabel.toUpperCase()}</Text>
-            <Text style={styles.inverseTitle}>
-              {activeRequest.service_category || 'Votre intervention'}
-            </Text>
-            <Text style={styles.inverseBody}>
-              {activeRequest.description || 'FIXEO suit votre demande.'}
-              {activeRequest.city ? ` · ${activeRequest.city}` : ''}
-            </Text>
-            <FixeoAction
-              label={activeRequest.status === 'completed' ? 'Vérifier et confirmer' : 'Reprendre le suivi'}
-              variant="secondary"
-              onPress={() => router.replace('/')}
-            />
-          </FixeoCard>
-        ) : (
-          <FixeoCard style={styles.rafiCard}>
-            <View style={styles.rafiCopy}>
-              <Text style={styles.cardKicker}>RAFI EST PRÊT</Text>
-              <Text style={styles.cardTitle}>Un problème à régler ?</Text>
-              <Text style={styles.cardBody}>Parlez, montrez ou écrivez. RAFI vous ramène directement au bon parcours.</Text>
-            </View>
-            <FixeoAction label="Parler à RAFI" onPress={() => router.replace('/')} />
-          </FixeoCard>
-        )}
+        <ContextualCockpitCard
+          model={contextualCockpit}
+          onAction={actOnContextualCockpit}
+        />
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Votre espace</Text>

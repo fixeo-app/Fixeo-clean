@@ -16,11 +16,13 @@ import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
 import { colors, radius, spacing, type } from '@/ui/tokens';
+import { getArtisanContextualCockpit } from '@/lib/contextualCockpit';
 import {
   getArtisanWorkspaceSummary,
   type ArtisanWorkspaceSummary,
 } from '@/lib/artisanWorkspace';
 import { WorkspaceShortcutGrid } from '@/components/WorkspaceShortcutGrid';
+import { ContextualCockpitCard } from '@/components/ContextualCockpitCard';
 import { shouldShowArtisanActivityLoadError } from '@/lib/artisanActivityLoad';
 
 const ACCEPT_MESSAGES: Record<string, string> = {
@@ -29,12 +31,6 @@ const ACCEPT_MESSAGES: Record<string, string> = {
   offer_not_active: 'Cette opportunité n’est plus active.',
   artisan_not_found: 'Profil artisan introuvable.',
   unauthenticated: 'Votre session a expiré.',
-};
-
-const ACTIVE_LABELS: Record<string, string> = {
-  assigned: 'Mission acceptée',
-  in_progress: 'Intervention en cours',
-  completed: 'Validation client en attente',
 };
 
 const AVAILABILITY_LABELS: Record<string, string> = {
@@ -172,6 +168,46 @@ export default function Artisan() {
     ? AVAILABILITY_LABELS[workspaceSummary.availability] || 'À définir'
     : 'À définir';
 
+  const contextualCockpit = useMemo(
+    () => getArtisanContextualCockpit({
+      missionStatus: currentMission?.request_status,
+      offersCount: offers.length,
+      availability: workspaceSummary?.availability,
+      jobsCount: workspaceSummary?.jobs ?? 0,
+      quotesCount: workspaceSummary?.quotes ?? 0,
+      missionSubject: currentMission?.service_category,
+      missionCity: currentMission?.city,
+    }),
+    [
+      currentMission?.request_status,
+      currentMission?.service_category,
+      currentMission?.city,
+      offers.length,
+      workspaceSummary?.availability,
+      workspaceSummary?.jobs,
+      workspaceSummary?.quotes,
+    ],
+  );
+
+  function actOnContextualCockpit() {
+    if (contextualCockpit.action === 'artisan_mission' && currentMission) {
+      router.push({
+        pathname: '/mission/[id]',
+        params: { id: currentMission.mission_id },
+      } as any);
+      return;
+    }
+
+    if (contextualCockpit.action === 'artisan_agenda') {
+      router.push('/artisan-workspace/agenda');
+      return;
+    }
+
+    if (contextualCockpit.action === 'artisan_workspace') {
+      router.push('/artisan-workspace');
+    }
+  }
+
   const header = (
     <View style={styles.headerStack}>
       <MobileShell
@@ -188,6 +224,18 @@ export default function Artisan() {
         <Text style={styles.title}>{cockpit.title}</Text>
         <Text style={styles.subtitle}>{cockpit.subtitle}</Text>
       </View>
+
+      {decisionCue ? (
+        <DecisionCueCard
+          cue={decisionCue}
+          onAction={() => void actOnDecision(decisionCue)}
+        />
+      ) : (
+        <ContextualCockpitCard
+          model={contextualCockpit}
+          onAction={actOnContextualCockpit}
+        />
+      )}
 
       {!currentMission && (
         <FixeoCard tone="dark" style={styles.liveCard}>
@@ -220,32 +268,6 @@ export default function Artisan() {
           <Text style={styles.message}>{message}</Text>
         </FixeoCard>
       )}
-
-      {!!decisionCue && (
-        <DecisionCueCard
-          cue={decisionCue}
-          onAction={() => void actOnDecision(decisionCue)}
-        />
-      )}
-
-      {!!currentMission && !decisionCue && (
-        <FixeoCard tone="dark" style={styles.activeCard}>
-          <Text style={styles.activeEyebrow}>MISSION EN COURS</Text>
-          <Text style={styles.activeTitle}>{currentMission.service_category || 'Mission FIXEO'}</Text>
-          <Text style={styles.activeMeta}>
-            {currentMission.city || ''} · {ACTIVE_LABELS[currentMission.request_status] || 'Suivi FIXEO'}
-          </Text>
-          <FixeoAction
-            label="Ouvrir la mission"
-            variant="secondary"
-            onPress={() => router.push({
-              pathname: '/mission/[id]',
-              params: { id: currentMission.mission_id },
-            } as any)}
-          />
-        </FixeoCard>
-      )}
-
 
       <View style={styles.sectionIntro}>
         <Text style={styles.sectionTitle}>Votre cockpit professionnel</Text>
