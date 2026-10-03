@@ -1,22 +1,30 @@
 import { Pressable, StyleSheet, Text, type PressableProps } from 'react-native';
+import { triggerFixeoFeedback, type FixeoFeedbackKind } from '@/lib/feedback';
 import { colors, radius, spacing, type } from './tokens';
 
 type Props = PressableProps & {
   label: string;
   variant?: 'primary' | 'secondary' | 'ghost';
+  feedback?: FixeoFeedbackKind;
 };
 
 export function FixeoAction({
   label,
   variant = 'primary',
+  feedback = 'selection',
   disabled,
   style,
+  onPress,
   ...props
 }: Props) {
   return (
     <Pressable
       {...props}
       disabled={disabled}
+      onPress={(event) => {
+        if (!disabled) triggerFixeoFeedback(feedback);
+        onPress?.(event);
+      }}
       style={({ pressed }) => [
         styles.base,
         variant === 'secondary' && styles.secondary,
