@@ -36,6 +36,12 @@ const ACTIVE_LABELS: Record<string, string> = {
   completed: 'Validation client en attente',
 };
 
+const AVAILABILITY_LABELS: Record<string, string> = {
+  available: 'Disponible',
+  busy: 'Occupé',
+  unavailable: 'Indisponible',
+};
+
 export default function Artisan() {
   const [offers, setOffers] = useState<DispatchOffer[]>([]);
   const [currentMission, setCurrentMission] = useState<MissionSnapshot | null>(null);
@@ -154,12 +160,16 @@ export default function Artisan() {
       };
     }
     return {
-      eyebrow: 'FIXEO ARTISAN',
+      eyebrow: 'COCKPIT ARTISAN',
       title: 'Vous êtes prêt.',
-      subtitle: 'FIXEO vous prévient dès qu’une opportunité pertinente arrive.',
+      subtitle: 'FIXEO surveille les opportunités pendant que vous gardez votre activité sous contrôle.',
       orb: 'idle' as const,
     };
   }, [currentMission, offers.length]);
+
+  const availabilityLabel = workspaceSummary?.availability
+    ? AVAILABILITY_LABELS[workspaceSummary.availability] || 'À définir'
+    : 'À définir';
 
   const header = (
     <View style={styles.headerStack}>
@@ -170,6 +180,26 @@ export default function Artisan() {
         <Text style={styles.title}>{cockpit.title}</Text>
         <Text style={styles.subtitle}>{cockpit.subtitle}</Text>
       </View>
+
+      {!currentMission && (
+        <FixeoCard tone="dark" style={styles.liveCard}>
+          <Text style={styles.liveEyebrow}>COCKPIT LIVE</Text>
+          <View style={styles.liveMetrics}>
+            <View style={styles.liveMetric}>
+              <Text style={styles.liveValue}>{availabilityLabel}</Text>
+              <Text style={styles.liveLabel}>Disponibilité</Text>
+            </View>
+            <View style={styles.liveMetric}>
+              <Text style={styles.liveValue}>{offers.length}</Text>
+              <Text style={styles.liveLabel}>Opportunités</Text>
+            </View>
+            <View style={styles.liveMetric}>
+              <Text style={styles.liveValue}>{workspaceSummary?.clients ?? 0}</Text>
+              <Text style={styles.liveLabel}>Clients</Text>
+            </View>
+          </View>
+        </FixeoCard>
+      )}
 
       {activityLoadError && (
         <FixeoCard tone="muted" style={styles.messageCard}>
@@ -210,8 +240,8 @@ export default function Artisan() {
 
 
       <View style={styles.sectionIntro}>
-        <Text style={styles.sectionTitle}>Votre activité</Text>
-        <Text style={styles.sectionHint}>Les outils professionnels restent accessibles sans alourdir votre cockpit.</Text>
+        <Text style={styles.sectionTitle}>Votre cockpit professionnel</Text>
+        <Text style={styles.sectionHint}>Les actions utiles sont à portée de pouce. Le reste reste dans Artisan OS.</Text>
       </View>
 
       <WorkspaceShortcutGrid
@@ -225,9 +255,21 @@ export default function Artisan() {
             onPress: () => router.push('/artisan-workspace'),
           },
           {
+            key: 'agenda',
+            label: 'Agenda',
+            meta: `${workspaceSummary?.jobs ?? 0} intervention${workspaceSummary?.jobs === 1 ? '' : 's'}`,
+            onPress: () => router.push('/artisan-workspace/agenda'),
+          },
+          {
+            key: 'quotes',
+            label: 'Devis',
+            meta: `${workspaceSummary?.quotes ?? 0} devis`,
+            onPress: () => router.push('/artisan-workspace/quotes'),
+          },
+          {
             key: 'availability',
             label: 'Disponibilité',
-            meta: workspaceSummary?.availability || 'À définir',
+            meta: availabilityLabel,
             onPress: () => router.push('/artisan-workspace'),
           },
         ]}
@@ -253,9 +295,9 @@ export default function Artisan() {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
         ListEmptyComponent={
           <FixeoCard tone="muted" style={styles.emptyCard}>
-            <Text style={styles.emptyTitle}>Rien à faire pour l’instant.</Text>
+            <Text style={styles.emptyTitle}>Vous êtes en veille.</Text>
             <Text style={styles.empty}>
-              Gardez les alertes activées. FIXEO vous prévient dès qu’une mission correspond.
+              Rien à traiter maintenant. Gardez les alertes actives : FIXEO vous remettra en mouvement dès qu’une mission correspond.
             </Text>
           </FixeoCard>
         }
@@ -340,6 +382,33 @@ const styles = StyleSheet.create({
     lineHeight: 23,
     color: colors.textMuted,
     textAlign: 'center',
+  },
+  liveCard: {
+    gap: spacing.md,
+  },
+  liveEyebrow: {
+    color: '#A8A8AC',
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+  },
+  liveMetrics: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  liveMetric: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  liveValue: {
+    color: colors.inverse,
+    fontSize: 18,
+    fontWeight: '900',
+  },
+  liveLabel: {
+    color: '#BFC0C4',
+    fontSize: 12,
+    fontWeight: '700',
   },
   messageCard: {
     paddingVertical: spacing.md,
