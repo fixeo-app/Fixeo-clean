@@ -17,13 +17,17 @@ export type ContextualCockpitModel = {
   tone: ContextualCockpitTone;
   action: ContextualCockpitAction;
   actionLabel?: string;
+  context?: string;
 };
 
 export function getClientContextualCockpit(input: {
   activeStatus?: string | null;
   unreadCount: number;
+  subject?: string | null;
+  city?: string | null;
 }): ContextualCockpitModel {
   const status = String(input.activeStatus || '');
+  const context = [input.subject, input.city].filter(Boolean).join(' · ') || undefined;
 
   if (status === 'completed') {
     return {
@@ -34,6 +38,7 @@ export function getClientContextualCockpit(input: {
       tone: 'dark',
       action: 'client_follow',
       actionLabel: 'Vérifier l’intervention',
+      context,
     };
   }
 
@@ -46,6 +51,7 @@ export function getClientContextualCockpit(input: {
       tone: 'dark',
       action: 'client_follow',
       actionLabel: 'Suivre l’intervention',
+      context,
     };
   }
 
@@ -58,6 +64,7 @@ export function getClientContextualCockpit(input: {
       tone: 'light',
       action: 'client_follow',
       actionLabel: 'Voir le suivi',
+      context,
     };
   }
 
@@ -70,6 +77,7 @@ export function getClientContextualCockpit(input: {
       tone: 'light',
       action: 'client_follow',
       actionLabel: 'Reprendre le suivi',
+      context,
     };
   }
 
@@ -102,9 +110,12 @@ export function getArtisanContextualCockpit(input: {
   availability?: string | null;
   jobsCount: number;
   quotesCount: number;
+  missionSubject?: string | null;
+  missionCity?: string | null;
 }): ContextualCockpitModel {
   const missionStatus = String(input.missionStatus || '');
   const availability = String(input.availability || '');
+  const missionContext = [input.missionSubject, input.missionCity].filter(Boolean).join(' · ') || undefined;
 
   if (missionStatus === 'in_progress') {
     return {
@@ -115,6 +126,7 @@ export function getArtisanContextualCockpit(input: {
       tone: 'dark',
       action: 'artisan_mission',
       actionLabel: 'Reprendre la mission',
+      context: missionContext,
     };
   }
 
@@ -127,6 +139,7 @@ export function getArtisanContextualCockpit(input: {
       tone: 'dark',
       action: 'artisan_mission',
       actionLabel: 'Voir la mission',
+      context: missionContext,
     };
   }
 
@@ -139,6 +152,7 @@ export function getArtisanContextualCockpit(input: {
       tone: 'dark',
       action: 'artisan_mission',
       actionLabel: 'Ouvrir la mission',
+      context: missionContext,
     };
   }
 
