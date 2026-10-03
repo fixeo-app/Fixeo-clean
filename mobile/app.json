@@ -14,7 +14,10 @@
     "android": {
       "package": "ma.fixeo.app",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 4
+      "versionCode": 4,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -30,7 +33,8 @@
       [
         "expo-audio",
         {
-          "microphonePermission": "Autorisez FIXEO à utiliser le microphone pour parler à RAFI."
+          "microphonePermission": "Autorisez FIXEO à utiliser le microphone pour parler à RAFI.",
+          "recordAudioAndroid": true
         }
       ],
       "expo-notifications"
