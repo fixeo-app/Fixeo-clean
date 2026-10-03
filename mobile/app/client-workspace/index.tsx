@@ -8,7 +8,6 @@ import {
   type ClientProfile,
   type ClientRequestHistory,
 } from '@/lib/clientWorkspace';
-import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
