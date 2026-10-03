@@ -7,6 +7,7 @@ import {
   type ArtisanBusinessClient,
 } from '@/lib/artisanWorkspace';
 import { FixeoAction } from '@/ui/FixeoAction';
+import { MobileShell } from '@/components/MobileShell';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { colors, radius, spacing, type } from '@/ui/tokens';
@@ -62,7 +63,15 @@ export default function ArtisanClients() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View style={styles.header}>
+          <View>
+            <MobileShell
+              universe="artisan"
+              activeKey="clients"
+              statusLabel="CRM personnel"
+              rightActionLabel="Artisan OS"
+              onRightAction={() => router.replace('/artisan-workspace')}
+            />
+            <View style={styles.header}>
             <Text style={styles.back} onPress={() => router.back()}>‹ Artisan OS</Text>
             <Text style={styles.kicker}>CRM CLIENTS</Text>
             <Text style={styles.title}>Vos clients personnels.</Text>
@@ -111,6 +120,7 @@ export default function ArtisanClients() {
             )}
 
             {!!error && <Text style={styles.error}>{error}</Text>}
+            </View>
           </View>
         }
         ListEmptyComponent={
