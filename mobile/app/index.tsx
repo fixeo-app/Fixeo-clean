@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { AppState, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import * as Crypto from 'expo-crypto';
 import { supabase } from '@/lib/supabase';
@@ -15,28 +15,90 @@ import {
 } from '@/lib/missionTerrain';
 import { understandLocally } from '@/lib/rafi';
 import { hasRafiServerGateway, transcribeRafiVoice } from '@/lib/rafiGateway';
+import {
+  analyzeMobileDiagnosticPhoto,
+  type MobileDiagnosticResult,
+} from '@/lib/mobileDiagnostic';
 import { MagicLoopModel, transition } from '@/lib/magicLoopState';
 import { RafiInputRail } from '@/components/RafiInputRail';
 import { PushOptIn } from '@/components/PushOptIn';
 import { resolveRole } from '@/lib/auth';
+import {
+  getMyMobileDecisionContext,
+  type MobileDecisionCue,
+} from '@/lib/decisionCenter';
+import { buildDeclaredContext } from '@/lib/rafiContext';
+import { DecisionCueCard } from '@/components/DecisionCueCard';
+import { RafiContextCard } from '@/components/RafiContextCard';
+import { FixeoAction } from '@/ui/FixeoAction';
+import { FixeoCard } from '@/ui/FixeoCard';
+import { FixeoScreen } from '@/ui/FixeoScreen';
+import { RafiOrb } from '@/ui/RafiOrb';
+import { colors, radius, spacing, type } from '@/ui/tokens';
 
 const ASSIGNED_STATES = new Set(['assigned', 'in_progress', 'completed', 'validated']);
 
+type JourneyStatus = 'idle' | 'matching' | 'assigned' | 'in_progress' | 'completed';
+
 export default function Home() {
   const [problem, setProblem] = useState('');
+  const [problemConfirmedFromRafi, setProblemConfirmedFromRafi] = useState(false);
   const [city, setCity] = useState('');
   const [rafiMessage, setRafiMessage] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [photoMimeType, setPhotoMimeType] = useState('image/jpeg');
+  const [photoDiagnostic, setPhotoDiagnostic] = useState<MobileDiagnosticResult | null>(null);
+  const [photoDiagnosticBusy, setPhotoDiagnosticBusy] = useState(false);
   const [loop, setLoop] = useState<MagicLoopModel>({ state: 'idle' });
   const [clientReady, setClientReady] = useState(false);
+  const [journeyStatus, setJourneyStatus] = useState<JourneyStatus>('idle');
+  const [decisionCue, setDecisionCue] = useState<MobileDecisionCue | null>(null);
   const submitLockRef = useRef(false);
   const idempotencyKeyRef = useRef<string | null>(null);
   const need = useMemo(() => understandLocally({ mode: 'text', text: problem }), [problem]);
+  const rafiContext = useMemo(
+    () => buildDeclaredContext({
+      description: problem,
+      descriptionProvenance: problemConfirmedFromRafi ? 'user_confirmed' : 'user_declared',
+      city,
+      serviceCategory: need.serviceCategory,
+      serviceConfidence: need.confidence,
+    }),
+    [problem, problemConfirmedFromRafi, city, need.serviceCategory, need.confidence],
+  );
+
+  async function syncDecision() {
+    try {
+      const context = await getMyMobileDecisionContext();
+      setDecisionCue(context.cue);
+      return context.cue;
+    } catch {
+      setDecisionCue(null);
+      return null;
+    }
+  }
+
+  function actOnDecision(cue: MobileDecisionCue) {
+    if (cue.action.kind === 'open_mission') {
+      router.push({
+        pathname: '/client-mission/[id]',
+        params: { id: cue.action.mission_id },
+      } as any);
+    }
+  }
 
   async function syncCurrentMission() {
     try {
       const mission = await getMyCurrentClientMission();
-      if (!mission) return null;
+      if (!mission) {
+        setJourneyStatus(current => current === 'matching' ? current : 'idle');
+        return null;
+      }
+
+      const status = String(mission.request_status || 'assigned') as JourneyStatus;
+      setJourneyStatus(
+        status === 'in_progress' || status === 'completed' ? status : 'assigned',
+      );
       setLoop(current => transition(current, 'found', {
         requestId: mission.request_id,
         missionId: mission.mission_id,
@@ -49,20 +111,25 @@ export default function Home() {
   }
 
   async function syncJourney() {
+    await syncDecision();
     const mission = await syncCurrentMission();
     if (mission) return;
 
     try {
       const request = await getMyCurrentClientRequest();
-      if (!request) return;
+      if (!request) {
+        setJourneyStatus('idle');
+        return;
+      }
       setProblem(request.description || '');
       setCity(request.city || '');
+      setJourneyStatus('matching');
       setLoop(current => transition(current, 'matching', {
         requestId: request.request_id,
         message: 'FIXEO reprend votre recherche.',
       }));
     } catch {
-      // Keep the current UI. Server state will be reconciled on the next foreground/poll.
+      // Keep the current UI. Server state will be reconciled on next foreground.
     }
   }
 
@@ -104,7 +171,7 @@ export default function Home() {
             setLoop(current => transition(current, 'found', {
               message: notification.title || notification.message || 'Artisan trouvé',
             }));
-            void syncCurrentMission();
+            void Promise.all([syncCurrentMission(), syncDecision()]);
           }
         });
       } catch {
@@ -160,22 +227,72 @@ export default function Home() {
 
   async function handleVoice(uri: string) {
     if (!hasRafiServerGateway()) {
-      setRafiMessage('Voix capturée. La transcription serveur sera activée sur le build Staging signé.');
+      setRafiMessage('Voix capturée. RAFI la traitera dès que le service est disponible.');
       return;
     }
     try {
-      setRafiMessage('RAFI transcrit…');
+      setRafiMessage('RAFI écoute…');
       const transcript = await transcribeRafiVoice(uri);
+      setProblemConfirmedFromRafi(false);
       setProblem(current => [current.trim(), transcript].filter(Boolean).join(' '));
-      setRafiMessage('Transcription prête.');
+      setRafiMessage('J’ai compris votre message.');
     } catch {
-      setRafiMessage('Impossible de transcrire cet enregistrement.');
+      setRafiMessage('Je n’ai pas pu traiter cet enregistrement. Vous pouvez écrire à la place.');
     }
   }
 
-  function handlePhoto(uri: string) {
+  function handlePhoto(uri: string, mimeType = 'image/jpeg') {
     setPhotoUri(uri);
-    setRafiMessage('Photo jointe. Le diagnostic serveur sera activé sur le build Staging signé.');
+    setPhotoMimeType(mimeType);
+    setPhotoDiagnostic(null);
+    setRafiMessage('Photo prête. Vous décidez quand RAFI peut l’analyser.');
+  }
+
+  async function analyzePhoto() {
+    if (!photoUri || photoDiagnosticBusy) return;
+    if (!city.trim()) {
+      setRafiMessage('Indiquez votre ville avant de lancer l’analyse photo.');
+      return;
+    }
+    if (!hasRafiServerGateway()) {
+      setRafiMessage('Analyse photo indisponible sur ce build.');
+      return;
+    }
+
+    setPhotoDiagnosticBusy(true);
+    setRafiMessage('RAFI analyse la photo de façon privée…');
+    try {
+      const result = await analyzeMobileDiagnosticPhoto({
+        uri: photoUri,
+        mimeType: photoMimeType,
+        city,
+        description: problem,
+      });
+      setPhotoDiagnostic(result);
+      setRafiMessage(
+        result.safety?.stop
+          ? 'RAFI a détecté un signal de sécurité à traiter en priorité.'
+          : 'Analyse prête. Confirmez uniquement ce qui correspond à votre situation.',
+      );
+    } catch (error: any) {
+      const code = String(error?.message || '');
+      setRafiMessage(
+        code === 'CITY_NOT_SUPPORTED'
+          ? 'Choisissez une ville FIXEO prise en charge pour lancer l’analyse.'
+          : code === 'DIAGNOSTIC_QUOTA_EXCEEDED'
+            ? 'Le quota d’analyse est atteint pour aujourd’hui. Vous pouvez continuer en texte.'
+            : 'RAFI n’a pas pu analyser cette photo. Vous pouvez continuer sans elle.',
+      );
+    } finally {
+      setPhotoDiagnosticBusy(false);
+    }
+  }
+
+  function confirmPhotoDiagnostic() {
+    if (!photoDiagnostic?.problem?.value) return;
+    setProblem(photoDiagnostic.problem.value);
+    setProblemConfirmedFromRafi(true);
+    setRafiMessage('✓ Description confirmée par vous à partir de l’analyse RAFI.');
   }
 
   async function send() {
@@ -192,7 +309,16 @@ export default function Home() {
         return;
       }
 
+      if (need.needsConfirmation) {
+        setRafiMessage(
+          'RAFI a besoin d\'un detail avant de chercher. Precisez le probleme avant la recherche.',
+        );
+        setJourneyStatus('idle');
+        return;
+      }
+
       setLoop(current => transition(current, 'creating'));
+      setJourneyStatus('matching');
       if (!idempotencyKeyRef.current) idempotencyKeyRef.current = Crypto.randomUUID();
 
       const data: any = await createRequest(
@@ -205,6 +331,7 @@ export default function Home() {
       if (!requestId) throw new Error('REQUEST_ID_MISSING');
       setLoop(current => transition(current, 'matching', { requestId }));
     } catch {
+      setJourneyStatus('idle');
       setLoop(current => transition(current, 'error', {
         message: 'Connexion interrompue. FIXEO vérifie votre demande avant toute nouvelle tentative.',
       }));
@@ -215,118 +342,453 @@ export default function Home() {
   }
 
   const requestLocked = loop.state === 'creating' || loop.state === 'matching' || loop.state === 'found';
+  const isActiveJourney = journeyStatus !== 'idle';
+
+  const hero = useMemo(() => {
+    if (journeyStatus === 'matching') {
+      return {
+        eyebrow: 'FIXEO CHERCHE POUR VOUS',
+        title: 'On trouve le bon artisan.',
+        subtitle: 'Vous pouvez poser le téléphone. FIXEO suit la recherche.',
+        orb: 'working' as const,
+      };
+    }
+    if (journeyStatus === 'in_progress') {
+      return {
+        eyebrow: 'INTERVENTION EN COURS',
+        title: 'FIXEO suit chaque étape.',
+        subtitle: 'Votre artisan est sur la mission. Vous gardez le contrôle.',
+        orb: 'working' as const,
+      };
+    }
+    if (journeyStatus === 'completed') {
+      return {
+        eyebrow: 'INTERVENTION TERMINÉE',
+        title: 'Une dernière vérification.',
+        subtitle: 'Consultez les preuves puis confirmez la bonne fin de mission.',
+        orb: 'success' as const,
+      };
+    }
+    if (journeyStatus === 'assigned') {
+      return {
+        eyebrow: 'ARTISAN TROUVÉ',
+        title: 'FIXEO a pris le relais.',
+        subtitle: 'Votre intervention est désormais suivie jusqu’à sa clôture.',
+        orb: 'success' as const,
+      };
+    }
+    return {
+      eyebrow: 'RAFI · VOTRE ASSISTANT FIXEO',
+      title: 'Que puis-je régler pour vous ?',
+      subtitle: 'Parlez, montrez ou écrivez. RAFI comprend, FIXEO agit.',
+      orb: 'idle' as const,
+    };
+  }, [journeyStatus]);
 
   if (!clientReady) {
     return (
-      <View style={styles.loadingRoot}>
+      <FixeoScreen style={styles.loadingRoot}>
         <Text style={styles.brand}>FIXEO</Text>
-        <View style={styles.loadingOrb} />
+        <RafiOrb size={72} mode="working" />
         <Text style={styles.loadingText}>Ouverture de votre espace…</Text>
-      </View>
+      </FixeoScreen>
     );
   }
 
   return (
-    <View style={styles.root}>
-      <Text style={styles.brand}>FIXEO</Text>
-      <View style={styles.orb} />
-      <Text style={styles.title}>Que puis-je régler pour vous ?</Text>
+    <FixeoScreen padded={false}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.topBar}>
+          <Text style={styles.brand}>FIXEO</Text>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push('/client-workspace')}
+            style={({ pressed }) => [styles.spaceButton, pressed && styles.spaceButtonPressed]}
+          >
+            <Text style={styles.spaceButtonText}>Mon espace</Text>
+          </Pressable>
+        </View>
 
-      <RafiInputRail
-        onVoiceReady={(uri) => void handleVoice(uri)}
-        onPhotoReady={handlePhoto}
-      />
+        <View style={styles.hero}>
+          <RafiOrb size={96} mode={hero.orb} />
+          <Text style={styles.eyebrow}>{hero.eyebrow}</Text>
+          <Text style={styles.title}>{hero.title}</Text>
+          <Text style={styles.subtitle}>{hero.subtitle}</Text>
+        </View>
 
-      <PushOptIn compact />
+        {!isActiveJourney && (
+          <View style={styles.inputStack}>
+            <RafiInputRail
+              onVoiceReady={(uri) => void handleVoice(uri)}
+              onPhotoReady={(uri, mimeType) => handlePhoto(uri, mimeType)}
+            />
 
-      <TextInput
-        value={problem}
-        onChangeText={setProblem}
-        editable={!requestLocked}
-        placeholder="Décrivez le problème"
-        style={styles.input}
-      />
-      <TextInput
-        value={city}
-        onChangeText={setCity}
-        editable={!requestLocked}
-        placeholder="Votre ville"
-        autoCapitalize="words"
-        style={styles.input}
-      />
+            <TextInput
+              value={problem}
+              onChangeText={(value) => {
+                setProblemConfirmedFromRafi(false);
+                setProblem(value);
+              }}
+              editable={!requestLocked}
+              placeholder="Décrivez simplement ce qui se passe"
+              placeholderTextColor={colors.textMuted}
+              style={styles.input}
+            />
+            <TextInput
+              value={city}
+              onChangeText={setCity}
+              editable={!requestLocked}
+              placeholder="Votre ville"
+              placeholderTextColor={colors.textMuted}
+              autoCapitalize="words"
+              style={styles.input}
+            />
 
-      {!!rafiMessage && <Text style={styles.rafiMessage}>{rafiMessage}</Text>}
-      {!!photoUri && <Text style={styles.attachment}>📷 Photo prête pour RAFI</Text>}
+            {!!rafiMessage && (
+              <FixeoCard tone="muted" style={styles.rafiCard}>
+                <Text style={styles.rafiLabel}>RAFI</Text>
+                <Text style={styles.rafiMessage}>{rafiMessage}</Text>
+              </FixeoCard>
+            )}
 
-      {problem.length > 3 && (
-        <Text style={styles.understood}>
-          RAFI · {need.serviceCategory}{need.confidence === 'low' ? ' · à confirmer' : ''}
-        </Text>
-      )}
+            {!!photoUri && (
+              <FixeoCard tone="muted" style={styles.photoCard}>
+                <Text style={styles.rafiLabel}>PHOTO PRIVÉE</Text>
+                <Text style={styles.rafiMessage}>
+                  La photo n’est pas une demande. Elle est analysée uniquement si vous le choisissez.
+                </Text>
+                {!photoDiagnostic && (
+                  <FixeoAction
+                    label={photoDiagnosticBusy ? 'RAFI analyse…' : 'Analyser la photo avec RAFI'}
+                    variant="secondary"
+                    disabled={photoDiagnosticBusy}
+                    onPress={() => void analyzePhoto()}
+                  />
+                )}
+              </FixeoCard>
+            )}
 
-      {loop.state !== 'found' && (
-        <Pressable
-          style={[styles.cta, requestLocked && styles.disabled]}
-          onPress={() => void send()}
-          disabled={!problem || requestLocked}
-        >
-          <Text style={styles.ctaText}>
-            {loop.state === 'creating'
-              ? 'RAFI prépare la demande…'
-              : loop.state === 'matching'
-                ? 'Recherche de l’artisan…'
-                : 'Confirmer la demande'}
-          </Text>
-        </Pressable>
-      )}
+            {!!photoDiagnostic && (
+              <FixeoCard style={styles.diagnosticCard}>
+                <Text style={styles.rafiLabel}>RAFI · ANALYSE INDICATIVE</Text>
+                <Text style={styles.diagnosticTitle}>
+                  {photoDiagnostic.problem?.value || 'Analyse à confirmer'}
+                </Text>
+                <View style={styles.diagnosticMetaRow}>
+                  <Text style={styles.diagnosticMeta}>
+                    Métier pressenti · {photoDiagnostic.trade?.value || 'à confirmer'}
+                  </Text>
+                  <Text style={styles.diagnosticMeta}>
+                    Urgence · {photoDiagnostic.urgency?.value || 'à confirmer'}
+                  </Text>
+                </View>
+                {!!photoDiagnostic.facts?.filter(fact => fact.provenance === 'observed').length && (
+                  <View style={styles.observedBlock}>
+                    <Text style={styles.observedLabel}>OBSERVÉ SUR LA PHOTO</Text>
+                    {photoDiagnostic.facts
+                      .filter(fact => fact.provenance === 'observed')
+                      .slice(0, 3)
+                      .map((fact, index) => (
+                        <Text key={fact.key + index} style={styles.observedText}>• {fact.value}</Text>
+                      ))}
+                  </View>
+                )}
+                <Text style={styles.diagnosticDisclaimer}>
+                  Hypothèse RAFI — jamais un diagnostic professionnel ni un prix confirmé.
+                </Text>
+                <FixeoAction
+                  label="Cette description correspond"
+                  onPress={confirmPhotoDiagnostic}
+                />
+              </FixeoCard>
+            )}
 
-      {loop.state === 'matching' && (
-        <Text style={styles.ok}>Demande confirmée · FIXEO cherche le bon artisan…</Text>
-      )}
+            {problem.length > 3 && (
+              <>
+                <View style={styles.understoodRow}>
+                  <Text style={styles.understoodDot}>●</Text>
+                  <Text style={styles.understood}>
+                    {need.serviceCategory}{need.confidence === 'low' ? ' · à confirmer' : ' · compris'}
+                  </Text>
+                </View>
+                <RafiContextCard snapshot={rafiContext} />
+              </>
+            )}
 
-      {loop.state === 'found' && (
-        <View style={styles.foundCard}>
-          <Text style={styles.foundTitle}>✓ Artisan trouvé</Text>
-          <Text style={styles.foundText}>FIXEO suit maintenant votre intervention jusqu’à sa clôture.</Text>
-          {!!loop.missionId && (
-            <Pressable
-              style={styles.trackButton}
+            <FixeoAction
+              label={
+                loop.state === 'creating'
+                  ? 'RAFI prépare votre demande…'
+                  : need.needsConfirmation
+                    ? 'Préciser le problème'
+                    : 'Confier le problème à FIXEO'
+              }
+              onPress={() => void send()}
+              disabled={!problem || requestLocked}
+            />
+
+            {loop.state === 'error' && (
+              <Text style={styles.error}>{loop.message}</Text>
+            )}
+          </View>
+        )}
+
+        {isActiveJourney && decisionCue && (
+          <DecisionCueCard
+            cue={decisionCue}
+            onAction={() => actOnDecision(decisionCue)}
+          />
+        )}
+
+        {isActiveJourney && !decisionCue && journeyStatus === 'matching' && (
+          <FixeoCard tone="dark" style={styles.journeyCard}>
+            <Text style={styles.inverseEyebrow}>RECHERCHE ACTIVE</Text>
+            <Text style={styles.inverseTitle}>Le réseau FIXEO travaille.</Text>
+            <Text style={styles.inverseBody}>
+              {problem || 'Votre demande'}{city ? ` · ${city}` : ''}
+            </Text>
+            <View style={styles.pulseLine}>
+              <View style={styles.pulseDot} />
+              <Text style={styles.pulseText}>Matching en cours</Text>
+            </View>
+          </FixeoCard>
+        )}
+
+        {isActiveJourney && !decisionCue && journeyStatus !== 'matching' && loop.missionId && (
+          <FixeoCard tone="dark" style={styles.journeyCard}>
+            <Text style={styles.inverseEyebrow}>VOTRE INTERVENTION</Text>
+            <Text style={styles.inverseTitle}>
+              {journeyStatus === 'completed' ? 'À vous de confirmer.' : 'FIXEO reste aux commandes.'}
+            </Text>
+            <FixeoAction
+              label={journeyStatus === 'completed' ? 'Vérifier et valider' : 'Suivre l’intervention'}
+              variant="secondary"
               onPress={() => router.push({
                 pathname: '/client-mission/[id]',
                 params: { id: loop.missionId },
               } as any)}
-            >
-              <Text style={styles.trackText}>Suivre l’intervention</Text>
-            </Pressable>
-          )}
-        </View>
-      )}
+            />
+          </FixeoCard>
+        )}
 
-      {loop.state === 'error' && <Text style={styles.error}>{loop.message}</Text>}
-    </View>
+        <View style={styles.pushWrap}>
+          <PushOptIn compact />
+        </View>
+      </ScrollView>
+    </FixeoScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  loadingRoot: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 18, backgroundColor: '#f7f7f7' },
-  loadingOrb: { width: 64, height: 64, borderRadius: 32, backgroundColor: '#111' },
-  loadingText: { fontSize: 16, fontWeight: '700', opacity: 0.55 },
-  root: { flex: 1, padding: 24, justifyContent: 'center', gap: 16, backgroundColor: '#f7f7f7' },
-  brand: { fontSize: 18, fontWeight: '800', letterSpacing: 3, textAlign: 'center' },
-  orb: { width: 88, height: 88, borderRadius: 44, backgroundColor: '#111', alignSelf: 'center' },
-  title: { fontSize: 28, fontWeight: '700', textAlign: 'center' },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 18, padding: 16, minHeight: 56, backgroundColor: '#fff' },
-  rafiMessage: { textAlign: 'center', opacity: 0.72 },
-  attachment: { textAlign: 'center', fontWeight: '600' },
-  understood: { textAlign: 'center', fontWeight: '600' },
-  cta: { backgroundColor: '#111', padding: 18, borderRadius: 18 },
-  disabled: { opacity: 0.55 },
-  ctaText: { color: '#fff', fontWeight: '700', textAlign: 'center' },
-  ok: { textAlign: 'center', fontWeight: '700' },
-  error: { textAlign: 'center', fontWeight: '600' },
-  foundCard: { backgroundColor: '#111', borderRadius: 22, padding: 20, gap: 9 },
-  foundTitle: { color: '#fff', fontSize: 22, fontWeight: '800' },
-  foundText: { color: '#ddd', lineHeight: 21 },
-  trackButton: { backgroundColor: '#fff', borderRadius: 15, padding: 15, marginTop: 5 },
-  trackText: { textAlign: 'center', fontWeight: '800' },
+  loadingRoot: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.lg,
+  },
+  loadingText: {
+    fontSize: type.body,
+    fontWeight: '700',
+    color: colors.textMuted,
+  },
+  scrollContent: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.xxl,
+    gap: spacing.lg,
+  },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: spacing.sm,
+  },
+  spaceButton: {
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.line,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  spaceButtonPressed: {
+    opacity: 0.72,
+    transform: [{ scale: 0.985 }],
+  },
+  spaceButtonText: {
+    fontSize: 13,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  hero: {
+    alignItems: 'center',
+    paddingTop: spacing.sm,
+    gap: spacing.md,
+  },
+  brand: {
+    fontSize: 16,
+    fontWeight: '900',
+    letterSpacing: 4,
+    color: colors.text,
+  },
+  eyebrow: {
+    marginTop: spacing.sm,
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.8,
+    color: colors.textMuted,
+    textAlign: 'center',
+  },
+  title: {
+    fontSize: type.display,
+    lineHeight: 47,
+    fontWeight: '900',
+    letterSpacing: -1.6,
+    color: colors.text,
+    textAlign: 'center',
+  },
+  subtitle: {
+    maxWidth: 330,
+    fontSize: type.body,
+    lineHeight: 23,
+    color: colors.textMuted,
+    textAlign: 'center',
+  },
+  inputStack: {
+    gap: spacing.md,
+  },
+  input: {
+    minHeight: 62,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.line,
+    color: colors.text,
+    fontSize: type.body,
+  },
+  rafiCard: {
+    gap: spacing.xs,
+  },
+  rafiLabel: {
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.4,
+    color: colors.textMuted,
+  },
+  rafiMessage: {
+    fontSize: type.body,
+    lineHeight: 22,
+    color: colors.text,
+  },
+  attachment: {
+    textAlign: 'center',
+    color: colors.success,
+    fontWeight: '800',
+  },
+  photoCard: {
+    gap: spacing.md,
+  },
+  diagnosticCard: {
+    gap: spacing.md,
+  },
+  diagnosticTitle: {
+    fontSize: 22,
+    lineHeight: 27,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  diagnosticMetaRow: {
+    gap: spacing.xs,
+  },
+  diagnosticMeta: {
+    color: colors.textMuted,
+    fontWeight: '700',
+  },
+  observedBlock: {
+    gap: spacing.xs,
+    paddingTop: spacing.xs,
+  },
+  observedLabel: {
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+    color: colors.textMuted,
+  },
+  observedText: {
+    color: colors.text,
+    lineHeight: 20,
+  },
+  diagnosticDisclaimer: {
+    color: colors.textMuted,
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  understoodRow: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceMuted,
+  },
+  understoodDot: {
+    fontSize: 10,
+    color: colors.success,
+  },
+  understood: {
+    fontWeight: '800',
+    color: colors.text,
+  },
+  error: {
+    textAlign: 'center',
+    color: colors.danger,
+    fontWeight: '700',
+    lineHeight: 21,
+  },
+  journeyCard: {
+    gap: spacing.md,
+  },
+  inverseEyebrow: {
+    color: '#9B9B9F',
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.7,
+  },
+  inverseTitle: {
+    color: colors.inverse,
+    fontSize: 27,
+    lineHeight: 32,
+    fontWeight: '900',
+    letterSpacing: -0.7,
+  },
+  inverseBody: {
+    color: '#D8D8DA',
+    fontSize: type.body,
+    lineHeight: 22,
+  },
+  pulseLine: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingTop: spacing.xs,
+  },
+  pulseDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.inverse,
+  },
+  pulseText: {
+    color: colors.inverse,
+    fontWeight: '800',
+  },
+  pushWrap: {
+    paddingTop: spacing.xs,
+  },
 });

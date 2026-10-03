@@ -21,6 +21,11 @@ import {
   respondMissionChange,
   type MissionChangeProposal,
 } from '@/lib/missionChange';
+import { FixeoAction } from '@/ui/FixeoAction';
+import { FixeoCard } from '@/ui/FixeoCard';
+import { FixeoScreen } from '@/ui/FixeoScreen';
+import { RafiOrb } from '@/ui/RafiOrb';
+import { colors, radius, spacing, type } from '@/ui/tokens';
 
 export default function ClientMission() {
   const params = useLocalSearchParams<{ id?: string }>();
@@ -99,6 +104,9 @@ export default function ClientMission() {
   const inProgress = ['in_progress', 'completed', 'validated'].includes(status);
   const completed = ['completed', 'validated'].includes(status);
   const validated = status === 'validated';
+  const beforeCount = evidence.filter(item => item.kind === 'before').length;
+  const afterCount = evidence.filter(item => item.kind === 'after').length;
+
   const steps = [
     { label: 'Artisan trouvé', done: true },
     { label: 'Artisan arrivé', done: arrived },
@@ -107,142 +115,407 @@ export default function ClientMission() {
     { label: 'Mission validée', done: validated },
   ];
 
+  const stateCopy =
+    status === 'validated'
+      ? { eyebrow: 'MISSION VALIDÉE', title: 'C’est terminé.', subtitle: 'Votre intervention est clôturée côté FIXEO.', orb: 'success' as const }
+      : status === 'completed'
+        ? { eyebrow: 'À VOUS DE CONFIRMER', title: 'Vérifiez avant de valider.', subtitle: 'Les preuves terrain sont disponibles ci-dessous.', orb: 'success' as const }
+        : status === 'in_progress'
+          ? { eyebrow: 'INTERVENTION EN COURS', title: 'FIXEO suit chaque étape.', subtitle: 'Vous gardez une vue claire sur l’avancement.', orb: 'working' as const }
+          : { eyebrow: 'ARTISAN AFFECTÉ', title: 'Votre intervention est prise en charge.', subtitle: 'FIXEO suit l’arrivée et la suite de la mission.', orb: 'working' as const };
+
   return (
-    <ScrollView contentContainerStyle={styles.root}>
-      <Pressable onPress={() => router.replace('/')}>
-        <Text style={styles.back}>‹ RAFI</Text>
-      </Pressable>
-
-      <Text style={styles.kicker}>FIXEO S’OCCUPE DE TOUT</Text>
-      <Text style={styles.title}>{mission?.service_category || 'Votre intervention'}</Text>
-      <Text style={styles.city}>{mission?.city || ''}</Text>
-
-      <View style={styles.hero}>
-        <Text style={styles.heroSmall}>VOTRE ARTISAN</Text>
-        <Text style={styles.heroName}>{mission?.artisan_name || 'Artisan FIXEO'}</Text>
-        {mission?.artisan_verified && <Text style={styles.verified}>✓ Profil vérifié FIXEO</Text>}
-      </View>
-
-      <View style={styles.timeline}>
-        {steps.map(step => (
-          <View key={step.label} style={styles.step}>
-            <Text style={step.done ? styles.stepOn : styles.stepOff}>{step.done ? '●' : '○'}</Text>
-            <Text style={step.done ? styles.stepLabelOn : styles.stepLabelOff}>{step.label}</Text>
-          </View>
-        ))}
-      </View>
-
-      {!!mission?.description && (
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>Votre demande</Text>
-          <Text style={styles.body}>{mission.description}</Text>
+    <FixeoScreen padded={false}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.topBar}>
+          <Pressable onPress={() => router.replace('/')}>
+            <Text style={styles.back}>‹ RAFI</Text>
+          </Pressable>
+          <Text style={styles.brand}>FIXEO</Text>
         </View>
-      )}
 
-      {!!mission?.agreed_price && (
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>Montant validé</Text>
-          <Text style={styles.price}>{mission.agreed_price} DH</Text>
+        <View style={styles.stateHero}>
+          <RafiOrb mode={stateCopy.orb} size={72} />
+          <Text style={styles.eyebrow}>{stateCopy.eyebrow}</Text>
+          <Text style={styles.title}>{stateCopy.title}</Text>
+          <Text style={styles.subtitle}>{stateCopy.subtitle}</Text>
         </View>
-      )}
 
-      {change?.status === 'presented' && (
-        <View style={styles.changeCard}>
-          <Text style={styles.changeEyebrow}>AJUSTEMENT VÉRIFIÉ PAR FIXEO</Text>
-          <Text style={styles.changePrice}>{change.proposed_price} DH</Text>
-          <Text style={styles.body}>{change.reason}</Text>
-          {!!change.supplies && <Text style={styles.changeMeta}>Fournitures : {change.supplies}</Text>}
-          {!!change.estimated_duration && <Text style={styles.changeMeta}>Durée : {change.estimated_duration}</Text>}
-          <View style={styles.decisionRow}>
-            <Pressable style={styles.reject} disabled={busy} onPress={() => void decideChange(false)}>
-              <Text style={styles.rejectText}>Refuser</Text>
-            </Pressable>
-            <Pressable style={styles.accept} disabled={busy} onPress={() => void decideChange(true)}>
-              <Text style={styles.acceptText}>Accepter</Text>
-            </Pressable>
-          </View>
-        </View>
-      )}
-
-      {change?.status === 'client_accepted' && (
-        <View style={styles.doneCard}>
-          <Text style={styles.doneTitle}>✓ Ajustement accepté</Text>
-          <Text style={styles.doneText}>Le nouveau montant validé est {change.proposed_price} DH.</Text>
-        </View>
-      )}
-
-      {!!evidence.length && (
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>Preuves terrain</Text>
-          <Text style={styles.evidenceCount}>
-            {evidence.filter(item => item.kind === 'before').length} avant · {evidence.filter(item => item.kind === 'after').length} après
+        <FixeoCard tone="dark" style={styles.artisanCard}>
+          <Text style={styles.inverseEyebrow}>VOTRE ARTISAN</Text>
+          <Text style={styles.artisanName}>{mission?.artisan_name || 'Artisan FIXEO'}</Text>
+          <Text style={styles.artisanMeta}>
+            {[mission?.service_category, mission?.city].filter(Boolean).join(' · ')}
           </Text>
-          <View style={styles.evidenceRow}>
-            {evidence.slice(0, 3).map(item => item.signed_url ? (
-              <Image key={item.id} source={{ uri: item.signed_url }} style={styles.evidenceImage} />
-            ) : null)}
-          </View>
-        </View>
-      )}
+          {mission?.artisan_verified && (
+            <Text style={styles.verified}>✓ Profil vérifié FIXEO</Text>
+          )}
+        </FixeoCard>
 
-      {status === 'completed' && (
-        <Pressable style={styles.primary} disabled={busy} onPress={() => void validate()}>
-          <Text style={styles.primaryText}>
-            {busy ? 'Validation…' : 'Confirmer la fin de l’intervention'}
-          </Text>
-        </Pressable>
-      )}
+        <FixeoCard style={styles.timeline}>
+          <Text style={styles.sectionKicker}>SUIVI EN DIRECT</Text>
+          {steps.map((step, index) => (
+            <View key={step.label} style={styles.step}>
+              <View style={styles.stepRail}>
+                <View style={[styles.stepDot, step.done && styles.stepDotDone]} />
+                {index < steps.length - 1 && (
+                  <View style={[styles.stepLine, step.done && steps[index + 1]?.done && styles.stepLineDone]} />
+                )}
+              </View>
+              <Text style={[styles.stepLabel, !step.done && styles.stepLabelOff]}>
+                {step.label}
+              </Text>
+            </View>
+          ))}
+        </FixeoCard>
 
-      {status === 'validated' && (
-        <View style={styles.doneCard}>
-          <Text style={styles.doneTitle}>✓ Mission terminée</Text>
-          <Text style={styles.doneText}>FIXEO a enregistré votre validation.</Text>
-        </View>
-      )}
+        {!!mission?.description && (
+          <FixeoCard tone="muted" style={styles.card}>
+            <Text style={styles.cardLabel}>VOTRE DEMANDE</Text>
+            <Text style={styles.body}>{mission.description}</Text>
+          </FixeoCard>
+        )}
 
-      <Text style={styles.promise}>FIXEO reste présent jusqu’à la clôture de l’intervention.</Text>
-      {!!message && <Text style={styles.message}>{message}</Text>}
-    </ScrollView>
+        {!!mission?.agreed_price && (
+          <FixeoCard style={styles.card}>
+            <Text style={styles.cardLabel}>MONTANT VALIDÉ</Text>
+            <Text style={styles.price}>{mission.agreed_price} DH</Text>
+          </FixeoCard>
+        )}
+
+        {change?.status === 'presented' && (
+          <FixeoCard style={styles.changeCard}>
+            <Text style={styles.changeEyebrow}>AJUSTEMENT VÉRIFIÉ PAR FIXEO</Text>
+            <Text style={styles.changePrice}>{change.proposed_price} DH</Text>
+            <Text style={styles.body}>{change.reason}</Text>
+            {!!change.supplies && (
+              <Text style={styles.changeMeta}>Fournitures : {change.supplies}</Text>
+            )}
+            {!!change.estimated_duration && (
+              <Text style={styles.changeMeta}>Durée : {change.estimated_duration}</Text>
+            )}
+            <View style={styles.decisionRow}>
+              <View style={styles.decisionButton}>
+                <FixeoAction
+                  label="Refuser"
+                  variant="secondary"
+                  disabled={busy}
+                  onPress={() => void decideChange(false)}
+                />
+              </View>
+              <View style={styles.decisionButton}>
+                <FixeoAction
+                  label="Accepter"
+                  disabled={busy}
+                  onPress={() => void decideChange(true)}
+                />
+              </View>
+            </View>
+          </FixeoCard>
+        )}
+
+        {change?.status === 'client_accepted' && (
+          <FixeoCard tone="muted" style={styles.card}>
+            <Text style={styles.doneTitle}>✓ Ajustement accepté</Text>
+            <Text style={styles.doneText}>
+              Le nouveau montant validé est {change.proposed_price} DH.
+            </Text>
+          </FixeoCard>
+        )}
+
+        {!!evidence.length && (
+          <FixeoCard style={styles.card}>
+            <View style={styles.evidenceHeader}>
+              <View style={styles.evidenceCopy}>
+                <Text style={styles.cardLabel}>PREUVES TERRAIN</Text>
+                <Text style={styles.evidenceCount}>{beforeCount} avant · {afterCount} après</Text>
+              </View>
+              <Text style={styles.privateLabel}>PRIVÉ</Text>
+            </View>
+            <View style={styles.evidenceRow}>
+              {evidence.slice(0, 4).map(item => item.signed_url ? (
+                <Image
+                  key={item.id}
+                  source={{ uri: item.signed_url }}
+                  style={styles.evidenceImage}
+                />
+              ) : null)}
+            </View>
+          </FixeoCard>
+        )}
+
+        {status === 'completed' && (
+          <FixeoCard tone="dark" style={styles.validationCard}>
+            <Text style={styles.validationTitle}>Tout est prêt pour votre validation.</Text>
+            <Text style={styles.validationBody}>
+              Confirmez uniquement après avoir vérifié la bonne fin de l’intervention.
+            </Text>
+            <FixeoAction
+              label={busy ? 'Validation…' : 'Confirmer la fin de l’intervention'}
+              variant="secondary"
+              disabled={busy}
+              onPress={() => void validate()}
+            />
+          </FixeoCard>
+        )}
+
+        {status === 'validated' && (
+          <FixeoCard tone="muted" style={styles.card}>
+            <Text style={styles.doneTitle}>✓ Mission terminée</Text>
+            <Text style={styles.doneText}>FIXEO a enregistré votre validation.</Text>
+          </FixeoCard>
+        )}
+
+        {!!message && (
+          <FixeoCard tone="muted">
+            <Text style={styles.message}>{message}</Text>
+          </FixeoCard>
+        )}
+
+        <Text style={styles.promise}>FIXEO reste présent jusqu’à la clôture de l’intervention.</Text>
+      </ScrollView>
+    </FixeoScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flexGrow: 1, padding: 24, paddingTop: 64, gap: 16, backgroundColor: '#f7f7f7' },
-  back: { fontSize: 16, fontWeight: '700' },
-  kicker: { marginTop: 12, fontWeight: '800', letterSpacing: 1.5 },
-  title: { fontSize: 34, fontWeight: '800' },
-  city: { fontSize: 18, opacity: 0.6 },
-  hero: { backgroundColor: '#111', borderRadius: 26, padding: 22, gap: 7 },
-  heroSmall: { color: '#aaa', fontSize: 12, fontWeight: '800', letterSpacing: 1.4 },
-  heroName: { color: '#fff', fontSize: 25, fontWeight: '800' },
-  verified: { color: '#fff', opacity: 0.8, fontWeight: '700' },
-  timeline: { backgroundColor: '#fff', borderRadius: 22, padding: 20, gap: 15 },
-  step: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  stepOn: { fontSize: 18 },
-  stepOff: { fontSize: 18, opacity: 0.25 },
-  stepLabelOn: { fontSize: 17, fontWeight: '700' },
-  stepLabelOff: { fontSize: 17, opacity: 0.35 },
-  card: { backgroundColor: '#fff', borderRadius: 22, padding: 20, gap: 8 },
-  cardLabel: { fontWeight: '800', opacity: 0.55 },
-  body: { fontSize: 17, lineHeight: 24 },
-  price: { fontSize: 28, fontWeight: '800' },
-  changeCard: { backgroundColor: '#fff', borderRadius: 22, padding: 20, gap: 10, borderWidth: 1, borderColor: '#d9d9d9' },
-  changeEyebrow: { fontSize: 12, fontWeight: '800', letterSpacing: 1.2, opacity: 0.55 },
-  changePrice: { fontSize: 30, fontWeight: '800' },
-  changeMeta: { opacity: 0.65 },
-  decisionRow: { flexDirection: 'row', gap: 10, marginTop: 5 },
-  reject: { flex: 1, borderWidth: 1, borderColor: '#d5d5d5', borderRadius: 15, padding: 15 },
-  rejectText: { textAlign: 'center', fontWeight: '800' },
-  accept: { flex: 1, backgroundColor: '#111', borderRadius: 15, padding: 15 },
-  acceptText: { textAlign: 'center', color: '#fff', fontWeight: '800' },
-  evidenceCount: { fontWeight: '700' },
-  evidenceRow: { flexDirection: 'row', gap: 8, marginTop: 5 },
-  evidenceImage: { width: 78, height: 78, borderRadius: 14, backgroundColor: '#eee' },
-  primary: { backgroundColor: '#111', padding: 18, borderRadius: 18 },
-  primaryText: { color: '#fff', textAlign: 'center', fontWeight: '800', fontSize: 17 },
-  doneCard: { backgroundColor: '#fff', borderRadius: 22, padding: 20, gap: 8 },
-  doneTitle: { fontSize: 20, fontWeight: '800' },
-  doneText: { opacity: 0.7 },
-  promise: { textAlign: 'center', opacity: 0.6, lineHeight: 21 },
-  message: { textAlign: 'center', fontWeight: '600' },
+  content: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.xxl,
+    gap: spacing.lg,
+  },
+  topBar: {
+    paddingTop: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  back: {
+    fontSize: type.body,
+    fontWeight: '800',
+    color: colors.textMuted,
+  },
+  brand: {
+    fontSize: 14,
+    fontWeight: '900',
+    letterSpacing: 3,
+    color: colors.text,
+  },
+  stateHero: {
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
+  },
+  eyebrow: {
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.6,
+    color: colors.textMuted,
+    textAlign: 'center',
+  },
+  title: {
+    maxWidth: 340,
+    fontSize: 36,
+    lineHeight: 40,
+    fontWeight: '900',
+    letterSpacing: -1.2,
+    color: colors.text,
+    textAlign: 'center',
+  },
+  subtitle: {
+    maxWidth: 330,
+    fontSize: type.body,
+    lineHeight: 22,
+    color: colors.textMuted,
+    textAlign: 'center',
+  },
+  artisanCard: {
+    gap: spacing.sm,
+  },
+  inverseEyebrow: {
+    color: '#A8A8AC',
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+  },
+  artisanName: {
+    color: colors.inverse,
+    fontSize: 27,
+    lineHeight: 31,
+    fontWeight: '900',
+    letterSpacing: -0.6,
+  },
+  artisanMeta: {
+    color: '#D8D8DA',
+    fontSize: type.body,
+  },
+  verified: {
+    color: colors.inverse,
+    fontWeight: '800',
+  },
+  timeline: {
+    gap: 0,
+  },
+  sectionKicker: {
+    marginBottom: spacing.md,
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.4,
+    color: colors.textMuted,
+  },
+  step: {
+    minHeight: 54,
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  stepRail: {
+    width: 18,
+    alignItems: 'center',
+  },
+  stepDot: {
+    width: 13,
+    height: 13,
+    borderRadius: 7,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
+  },
+  stepDotDone: {
+    borderColor: colors.ink,
+    backgroundColor: colors.ink,
+  },
+  stepLine: {
+    flex: 1,
+    width: 2,
+    backgroundColor: colors.line,
+  },
+  stepLineDone: {
+    backgroundColor: colors.ink,
+  },
+  stepLabel: {
+    paddingTop: 0,
+    flex: 1,
+    fontSize: type.body,
+    fontWeight: '800',
+    color: colors.text,
+  },
+  stepLabelOff: {
+    color: colors.textMuted,
+    fontWeight: '600',
+  },
+  card: {
+    gap: spacing.sm,
+  },
+  cardLabel: {
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.3,
+    color: colors.textMuted,
+  },
+  body: {
+    fontSize: type.bodyLarge,
+    lineHeight: 25,
+    color: colors.text,
+  },
+  price: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  changeCard: {
+    gap: spacing.md,
+  },
+  changeEyebrow: {
+    fontSize: type.eyebrow,
+    fontWeight: '900',
+    letterSpacing: 1.2,
+    color: colors.textMuted,
+  },
+  changePrice: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  changeMeta: {
+    color: colors.textMuted,
+    lineHeight: 20,
+  },
+  decisionRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  decisionButton: {
+    flex: 1,
+  },
+  doneTitle: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: colors.text,
+  },
+  doneText: {
+    color: colors.textMuted,
+    lineHeight: 21,
+  },
+  evidenceHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.md,
+  },
+  evidenceCopy: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  evidenceCount: {
+    fontWeight: '900',
+    color: colors.text,
+  },
+  privateLabel: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 5,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceMuted,
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 0.7,
+    color: colors.textMuted,
+  },
+  evidenceRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    marginTop: spacing.xs,
+  },
+  evidenceImage: {
+    width: 86,
+    height: 86,
+    borderRadius: radius.md,
+    backgroundColor: colors.surfaceMuted,
+  },
+  validationCard: {
+    gap: spacing.md,
+  },
+  validationTitle: {
+    color: colors.inverse,
+    fontSize: 24,
+    lineHeight: 29,
+    fontWeight: '900',
+  },
+  validationBody: {
+    color: '#D8D8DA',
+    lineHeight: 21,
+  },
+  message: {
+    textAlign: 'center',
+    fontWeight: '800',
+    color: colors.text,
+  },
+  promise: {
+    textAlign: 'center',
+    color: colors.textMuted,
+    lineHeight: 21,
+    paddingBottom: spacing.md,
+  },
 });

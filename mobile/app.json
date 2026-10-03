@@ -3,18 +3,21 @@
     "name": "FIXEO",
     "slug": "fixeo-mobile",
     "scheme": "fixeo",
-    "version": "0.2.1",
+    "version": "0.3.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "ma.fixeo.app",
       "supportsTablet": false,
-      "buildNumber": "3"
+      "buildNumber": "4"
     },
     "android": {
       "package": "ma.fixeo.app",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 3
+      "versionCode": 4,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -24,13 +27,14 @@
         {
           "photosPermission": "Autorisez FIXEO à accéder à vos photos pour montrer le problème à RAFI.",
           "cameraPermission": "Autorisez FIXEO à utiliser l’appareil photo pour montrer le problème à RAFI.",
-          "microphonePermission": false
+          "microphonePermission": true
         }
       ],
       [
         "expo-audio",
         {
-          "microphonePermission": "Autorisez FIXEO à utiliser le microphone pour parler à RAFI."
+          "microphonePermission": "Autorisez FIXEO à utiliser le microphone pour parler à RAFI.",
+          "recordAudioAndroid": true
         }
       ],
       "expo-notifications"
