@@ -426,12 +426,7 @@ export default function Home() {
   }
 
   return (
-    <FixeoScreen padded={false}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
+    <FixeoScreen padded={false} header={
         <MobileShell
           universe="client"
           activeKey="rafi"
@@ -448,9 +443,15 @@ export default function Home() {
                     : 'RAFI est prêt'
           }
           rightActionLabel="Mon espace"
-          onRightAction={() => router.push('/client-workspace')}
+          rightDestination="/client-workspace"
+          rightNavigation="detail"
         />
-
+      }>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.hero}>
           <RafiOrb size={96} mode={effectiveOrbMode} />
           <Text style={styles.eyebrow}>{hero.eyebrow}</Text>

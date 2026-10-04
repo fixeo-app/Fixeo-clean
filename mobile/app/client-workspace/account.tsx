@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput } from 'react-native';
-import { router } from 'expo-router';
 import {
   getClientProfile,
   updateClientProfile,
@@ -63,20 +62,22 @@ export default function ClientAccount() {
   }
 
   return (
-    <FixeoScreen padded={false}>
+    <FixeoScreen padded={false} header={
+        <MobileShell
+          universe="client"
+          activeKey="account"
+          statusLabel="Votre profil FIXEO"
+          rightActionLabel="Mon espace"
+          rightDestination="/client-workspace"
+        />
+      }>
       <ScrollView
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
       >
-        <MobileShell
-          universe="client"
-          activeKey="account"
-          statusLabel="Votre profil FIXEO"
-          rightActionLabel="Mon espace"
-          onRightAction={() => router.replace('/client-workspace')}
-        />
+
         <Text style={styles.kicker}>MON COMPTE</Text>
         <Text style={styles.title}>{clientProfileTitle(profile?.full_name)}</Text>
         <Text style={styles.email}>{profile?.email || ''}</Text>

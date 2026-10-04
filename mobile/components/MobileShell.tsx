@@ -1,490 +1,180 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Animated,
-  BackHandler,
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-  useWindowDimensions,
+  AccessibilityInfo, Animated, findNodeHandle, Keyboard, Modal, Platform,
+  Pressable, StyleSheet, View, useWindowDimensions,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect, usePathname } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { signOut } from '@/lib/auth';
-import { RafiOrb } from '@/ui/RafiOrb';
-import { colors, radius, spacing, type } from '@/ui/tokens';
+import { FixeoText } from '@/ui/FixeoText';
+import { ShellControl, ShellIcon } from '@/ui/ShellControl';
+import { activeShellKey, getShellDestinations, navigateShell, type ShellIcon as IconName, type ShellPath, type ShellUniverse } from '@/ui/shellContract';
+import { getScreenMetrics } from '@/ui/screenMetrics';
+import { resolveMotion } from '@/ui/motionContract';
+import { motionEasing } from '@/ui/motionEasing';
+import { useReducedMotion } from '@/ui/useReducedMotion';
+import { interaction, semanticColors, space } from '@/ui/tokens';
+import { PremiumDrawer } from './PremiumDrawer';
 
-type Universe = 'client' | 'artisan';
-
-type MenuItem = {
-  key: string;
-  label: string;
-  meta?: string;
-  path: string;
-};
-
-type Props = {
-  universe: Universe;
-  activeKey: string;
-  statusLabel?: string;
-  rightActionLabel?: string;
-  onRightAction?: () => void;
+export type MobileShellProps = {
+  universe: ShellUniverse; activeKey: string; statusLabel?: string;
+  rightActionLabel?: string; onRightAction?: () => void;
+  rightActionIcon?: IconName; rightDestination?: ShellPath; rightNavigation?: 'switch' | 'detail';
   orbMode?: 'idle' | 'listening' | 'working' | 'success';
 };
 
-const CLIENT_ITEMS: MenuItem[] = [
-  { key: 'rafi', label: 'RAFI', meta: 'Votre assistant FIXEO', path: '/' },
-  { key: 'space', label: 'Mon espace', meta: 'Vue d’ensemble', path: '/client-workspace' },
-  { key: 'history', label: 'Interventions', meta: 'Historique et suivi', path: '/client-workspace/history' },
-  { key: 'alerts', label: 'Alertes', meta: 'Ce qui demande votre attention', path: '/client-workspace/notifications' },
-  { key: 'account', label: 'Mon compte', meta: 'Coordonnées et préférences', path: '/client-workspace/account' },
-];
-
-const ARTISAN_ITEMS: MenuItem[] = [
-  { key: 'cockpit', label: 'Cockpit', meta: 'Priorités et opportunités', path: '/artisan' },
-  { key: 'workspace', label: 'Artisan OS', meta: 'Votre activité professionnelle', path: '/artisan-workspace' },
-  { key: 'clients', label: 'Clients', meta: 'CRM personnel', path: '/artisan-workspace/clients' },
-  { key: 'quotes', label: 'Devis', meta: 'Devis Studio', path: '/artisan-workspace/quotes' },
-  { key: 'agenda', label: 'Agenda', meta: 'Interventions personnelles', path: '/artisan-workspace/agenda' },
-  { key: 'finance', label: 'Finance', meta: 'Encaissements et dépenses', path: '/artisan-workspace/finance' },
-];
-
-export function MobileShell({
-  universe,
-  activeKey,
-  statusLabel,
-  rightActionLabel,
-  onRightAction,
-  orbMode = 'idle',
-}: Props) {
-  const [open, setOpen] = useState(false);
+export function MobileShell({ universe, activeKey, statusLabel, rightActionLabel, onRightAction,
+  rightActionIcon, rightDestination, rightNavigation = 'switch', orbMode = 'idle' }: MobileShellProps) {
   const [mounted, setMounted] = useState(false);
+  const [open, setOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
-  const slide = useRef(new Animated.Value(-1)).current;
-  const fade = useRef(new Animated.Value(0)).current;
+  const phase = useRef<'closed' | 'open' | 'closing'>('closed');
+  const afterClose = useRef<(() => void) | undefined>(undefined);
+  const logoutBusy = useRef(false);
+  const navigating = useRef(false);
+  const progress = useRef(new Animated.Value(0)).current;
+  const menuRef = useRef<View>(null);
+  const closeRef = useRef<View>(null);
+  const pathname = usePathname();
+  const reduceMotion = useReducedMotion();
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const drawerWidth = Math.min(width * 0.86, 390);
-  const topSafe = Math.max(insets.top, Platform.OS === 'android' ? 24 : 0);
-  const bottomSafe = Math.max(insets.bottom, Platform.OS === 'android' ? 48 : 16);
-  const items = universe === 'client' ? CLIENT_ITEMS : ARTISAN_ITEMS;
+  const safe = getScreenMetrics(insets, { padded: false });
+  const drawerWidth = Math.min(width - space.lg, 390);
+  const currentKey = activeShellKey(universe, pathname, activeKey);
+  const destination = getShellDestinations(universe).find(item => item.path === rightDestination);
+  const rightIcon = rightActionIcon ?? destination?.icon;
+  const rightLabel = rightActionLabel ?? destination?.label;
+  const hasAction = !!rightLabel && (!!onRightAction || !!rightDestination);
+
+  function focus(ref: typeof menuRef) {
+    if (Platform.OS === 'web') { ref.current?.focus?.(); return; }
+    const handle = findNodeHandle(ref.current);
+    if (handle) AccessibilityInfo.setAccessibilityFocus(handle);
+  }
+
+  useFocusEffect(useCallback(() => {
+    navigating.current = false;
+    return () => {
+      // A notification/deep link may change route while the menu is open.
+      phase.current = 'closed';
+      afterClose.current = undefined;
+      progress.stopAnimation();
+      setOpen(false);
+      setMounted(false);
+    };
+  }, [progress]));
 
   useEffect(() => {
-    if (!open) return;
-    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
-      close();
-      return true;
-    });
-    return () => subscription.remove();
-  }, [open]);
+    if (!mounted) return;
+    const transition = resolveMotion(open ? 'transition' : 'control', reduceMotion);
+    const complete = () => {
+      if (open || phase.current !== 'closing') return;
+      phase.current = 'closed';
+      setMounted(false);
+      const after = afterClose.current;
+      afterClose.current = undefined;
+      after?.();
+      if (!navigating.current && Platform.OS !== 'ios') focus(menuRef);
+    };
+    if (!transition.duration) {
+      progress.setValue(open ? 1 : 0);
+      complete();
+      return;
+    }
+    const animation = Animated.timing(progress, { toValue: open ? 1 : 0, duration: transition.duration,
+      easing: motionEasing[transition.easing], useNativeDriver: true });
+    animation.start(({ finished }) => { if (finished) complete(); });
+    return () => animation.stop();
+  }, [mounted, open, progress, reduceMotion]);
 
   function openDrawer() {
+    if (phase.current !== 'closed') return;
+    Keyboard.dismiss();
+    phase.current = 'open';
+    progress.setValue(reduceMotion ? 1 : 0);
     setMounted(true);
     setOpen(true);
-    slide.setValue(-1);
-    fade.setValue(0);
-    Animated.parallel([
-      Animated.timing(slide, {
-        toValue: 0,
-        duration: 230,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fade, {
-        toValue: 1,
-        duration: 190,
-        useNativeDriver: true,
-      }),
-    ]).start();
   }
 
   function close(after?: () => void) {
+    if (phase.current !== 'open') return;
+    phase.current = 'closing';
+    afterClose.current = after;
     setOpen(false);
-    Animated.parallel([
-      Animated.timing(slide, {
-        toValue: -1,
-        duration: 190,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fade, {
-        toValue: 0,
-        duration: 170,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      setMounted(false);
-      after?.();
-    });
-  }
-
-  function navigate(path: string) {
-    close(() => router.replace(path as any));
   }
 
   async function logout() {
-    if (signingOut) return;
+    if (logoutBusy.current) return;
+    logoutBusy.current = true;
     setSigningOut(true);
-    try {
-      await signOut();
-    } finally {
+    try { await signOut(); }
+    finally {
+      logoutBusy.current = false;
       setSigningOut(false);
+      phase.current = 'closed';
       setMounted(false);
       setOpen(false);
       router.replace('/sign-in');
     }
   }
 
-  return (
-    <>
-      <View style={styles.topbar}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Ouvrir le menu FIXEO"
-          onPress={openDrawer}
-          style={({ pressed }) => [styles.menuButton, pressed && styles.pressed]}
-        >
-          <View style={styles.menuGlyph}>
-            <View style={styles.menuLine} />
-            <View style={[styles.menuLine, styles.menuLineShort]} />
-            <View style={styles.menuLine} />
-          </View>
-        </Pressable>
-
-        <View style={styles.brandWrap}>
-          <Text style={styles.brand}>FIXEO</Text>
-          <Text style={styles.universe}>{universe === 'client' ? 'CLIENT' : 'ARTISAN'}</Text>
-        </View>
-
-        {rightActionLabel && onRightAction ? (
-          <Pressable
-            accessibilityRole="button"
-            onPress={onRightAction}
-            style={({ pressed }) => [styles.rightAction, pressed && styles.pressed]}
-          >
-            <Text style={styles.rightActionText}>{rightActionLabel}</Text>
-          </Pressable>
-        ) : (
-          <View style={styles.rightSpacer} />
-        )}
+  return <>
+    <View style={styles.topbar}>
+      <View style={[styles.side, hasAction && !rightIcon && styles.legacySide]}>
+        <ShellControl ref={menuRef} accessibilityLabel="Ouvrir le menu FIXEO"
+          accessibilityState={{ expanded: mounted }} onPress={openDrawer} style={styles.menu}>
+          <ShellIcon name="menu-outline" />
+        </ShellControl>
       </View>
-
-      <Modal
-        visible={mounted}
-        transparent
-        animationType="none"
-        statusBarTranslucent
-        onRequestClose={() => close()}
-      >
-        <View style={styles.modalRoot}>
-          <Animated.View style={[styles.backdrop, { opacity: fade }]}>
-            <Pressable style={StyleSheet.absoluteFill} onPress={() => close()} />
-          </Animated.View>
-
-          <Animated.View
-            style={[
-              styles.drawer,
-              {
-                width: drawerWidth,
-                paddingTop: topSafe + spacing.md,
-                paddingBottom: bottomSafe + spacing.md,
-                transform: [{
-                  translateX: slide.interpolate({
-                    inputRange: [-1, 0],
-                    outputRange: [-drawerWidth, 0],
-                  }),
-                }],
-              },
-            ]}
-          >
-            <View style={styles.drawerTop}>
-              <View style={styles.identityRow}>
-                <View style={styles.orbPlate}>
-                  <RafiOrb size={52} mode={orbMode} />
-                </View>
-                <View style={styles.identityCopy}>
-                  <Text style={styles.drawerBrand}>FIXEO</Text>
-                  <Text style={styles.drawerUniverse}>
-                    {universe === 'client' ? 'ESPACE CLIENT' : 'ESPACE ARTISAN'}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.statusPill}>
-                <View style={styles.statusDot} />
-                <Text style={styles.statusText}>
-                  {statusLabel || (universe === 'client' ? 'RAFI est prêt' : 'Cockpit connecté')}
-                </Text>
-              </View>
-            </View>
-
-            <ScrollView
-              style={styles.nav}
-              contentContainerStyle={styles.navContent}
-              showsVerticalScrollIndicator={false}
-            >
-              {items.map(item => {
-                const active = activeKey === item.key;
-                return (
-                  <Pressable
-                    key={item.key}
-                    accessibilityRole="button"
-                    onPress={() => navigate(item.path)}
-                    style={({ pressed }) => [
-                      styles.navItem,
-                      active && styles.navItemActive,
-                      pressed && styles.navPressed,
-                    ]}
-                  >
-                    <View style={styles.navCopy}>
-                      <Text style={[styles.navLabel, active && styles.navLabelActive]}>
-                        {item.label}
-                      </Text>
-                      {!!item.meta && (
-                        <Text style={[styles.navMeta, active && styles.navMetaActive]}>
-                          {item.meta}
-                        </Text>
-                      )}
-                    </View>
-                    <Text style={[styles.navArrow, active && styles.navArrowActive]}>→</Text>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
-
-            <View style={styles.drawerFooter}>
-              <Text style={styles.footerMicro}>
-                RAFI reste accessible dans tout votre univers FIXEO.
-              </Text>
-              <Pressable
-                accessibilityRole="button"
-                disabled={signingOut}
-                onPress={() => void logout()}
-                style={({ pressed }) => [styles.logout, pressed && styles.pressed]}
-              >
-                <Text style={styles.logoutText}>
-                  {signingOut ? 'Déconnexion…' : 'Se déconnecter'}
-                </Text>
-              </Pressable>
-            </View>
-          </Animated.View>
-        </View>
-      </Modal>
-    </>
-  );
+      <View style={styles.brandWrap} accessible accessibilityLabel={`FIXEO, espace ${universe}`}>
+        <FixeoText variant="bodyLarge" style={styles.brand}>FIXEO</FixeoText>
+        <FixeoText variant="caption" tone="secondary">{universe === 'client' ? 'Client' : 'Artisan'}</FixeoText>
+      </View>
+      <View style={[styles.side, styles.right, hasAction && !rightIcon && styles.legacySide]}>
+        {hasAction && <ShellControl accessibilityLabel={rightLabel} onPress={() => {
+          if (rightDestination) {
+            if (navigating.current) return;
+            navigating.current = navigateShell(router, pathname, rightDestination, rightNavigation);
+          } else onRightAction?.();
+        }} style={styles.rightAction}>
+          {rightIcon ? <ShellIcon name={rightIcon} /> : <FixeoText variant="supporting" style={styles.actionLabel}>{rightLabel}</FixeoText>}
+        </ShellControl>}
+      </View>
+    </View>
+    <Modal visible={mounted} transparent animationType="none" statusBarTranslucent navigationBarTranslucent
+      onShow={() => focus(closeRef)} onDismiss={() => { if (!navigating.current) focus(menuRef); }}
+      onRequestClose={() => close()}>
+      <View style={styles.modalRoot}>
+        <Animated.View style={[styles.backdrop, { opacity: progress }]}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => close()} accessible={false}
+            importantForAccessibility="no" tabIndex={-1} />
+        </Animated.View>
+        <Animated.View style={[styles.drawer, { width: drawerWidth, paddingTop: safe.paddingTop,
+          paddingBottom: safe.paddingBottom, paddingLeft: insets.left,
+          transform: [{ translateX: reduceMotion ? 0 : progress.interpolate({ inputRange: [0, 1], outputRange: [-drawerWidth, 0] }) }] }]}>
+          {mounted && <PremiumDrawer universe={universe} activeKey={currentKey} statusLabel={statusLabel}
+            orbMode={orbMode} signingOut={signingOut} closeRef={closeRef} onClose={() => close()}
+            onNavigate={item => {
+              if (signingOut) return;
+              close(() => { navigating.current = navigateShell(router, pathname, item.path); });
+            }} onLogout={() => void logout()} />}
+        </Animated.View>
+      </View>
+    </Modal>
+  </>;
 }
-
 const styles = StyleSheet.create({
-  topbar: {
-    minHeight: 52,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
-  },
-  menuButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.line,
-  },
-  menuGlyph: {
-    width: 18,
-    gap: 4,
-  },
-  menuLine: {
-    height: 2,
-    borderRadius: 2,
-    backgroundColor: colors.ink,
-  },
-  menuLineShort: {
-    width: 12,
-  },
-  brandWrap: {
-    alignItems: 'center',
-    gap: 1,
-  },
-  brand: {
-    fontSize: 15,
-    fontWeight: '900',
-    letterSpacing: 3.4,
-    color: colors.text,
-  },
-  universe: {
-    fontSize: 9,
-    fontWeight: '900',
-    letterSpacing: 1.8,
-    color: colors.textMuted,
-  },
-  rightAction: {
-    minWidth: 86,
-    minHeight: 40,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.pill,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.line,
-  },
-  rightActionText: {
-    fontSize: 12,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  rightSpacer: {
-    width: 44,
-  },
-  pressed: {
-    opacity: 0.72,
-    transform: [{ scale: 0.98 }],
-  },
-  modalRoot: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.42)',
-  },
-  drawer: {
-    height: '100%',
-    paddingHorizontal: spacing.lg,
-    backgroundColor: colors.ink,
-  },
-  drawerTop: {
-    gap: spacing.lg,
-    paddingBottom: spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.12)',
-  },
-  identityRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  orbPlate: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.surface,
-  },
-  identityCopy: {
-    flex: 1,
-    gap: 4,
-  },
-  drawerBrand: {
-    color: colors.inverse,
-    fontSize: 19,
-    fontWeight: '900',
-    letterSpacing: 3.8,
-  },
-  drawerUniverse: {
-    color: '#99999F',
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.6,
-  },
-  statusPill: {
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#FFFFFF',
-  },
-  statusText: {
-    color: '#D8D8DA',
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  nav: {
-    flex: 1,
-    marginTop: spacing.md,
-  },
-  navContent: {
-    gap: spacing.sm,
-    paddingBottom: spacing.lg,
-  },
-  navItem: {
-    minHeight: 64,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.md,
-  },
-  navItemActive: {
-    backgroundColor: colors.inverse,
-  },
-  navPressed: {
-    opacity: 0.74,
-  },
-  navCopy: {
-    flex: 1,
-    gap: 2,
-  },
-  navLabel: {
-    color: colors.inverse,
-    fontSize: 17,
-    fontWeight: '900',
-  },
-  navLabelActive: {
-    color: colors.ink,
-  },
-  navMeta: {
-    color: '#8D8D93',
-    fontSize: 11,
-    lineHeight: 15,
-  },
-  navMetaActive: {
-    color: colors.textMuted,
-  },
-  navArrow: {
-    color: '#7B7B80',
-    fontSize: 19,
-    fontWeight: '900',
-  },
-  navArrowActive: {
-    color: colors.ink,
-  },
-  drawerFooter: {
-    gap: spacing.md,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.xs,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.12)',
-  },
-  footerMicro: {
-    color: '#85858B',
-    fontSize: 11,
-    lineHeight: 16,
-  },
-  logout: {
-    minHeight: 46,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.18)',
-  },
-  logoutText: {
-    color: colors.inverse,
-    fontWeight: '800',
-  },
+  topbar: { minHeight: 64, flexDirection: 'row', alignItems: 'center', gap: space.xs },
+  side: { width: interaction.minTarget, minWidth: interaction.minTarget, alignItems: 'flex-start' },
+  legacySide: { flex: 1 },
+  right: { alignItems: 'flex-end' },
+  menu: { width: interaction.minTarget, backgroundColor: semanticColors.background.surface },
+  brandWrap: { alignItems: 'center', flex: 1, minWidth: 0, paddingVertical: space.xxs },
+  brand: { fontWeight: '600', letterSpacing: 2.4, maxWidth: '100%', textAlign: 'center' },
+  rightAction: { paddingHorizontal: space.xxs, width: '100%' },
+  actionLabel: { textAlign: 'center', width: '100%' },
+  modalRoot: { flex: 1, flexDirection: 'row' },
+  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.42)' },
+  drawer: { height: '100%', backgroundColor: semanticColors.background.inverse },
 });

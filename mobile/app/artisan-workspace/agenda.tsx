@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
-import { router } from 'expo-router';
 import {
   createArtisanBusinessJob,
   listArtisanBusinessJobs,
@@ -107,7 +106,15 @@ export default function ArtisanAgenda() {
   }
 
   return (
-    <FixeoScreen padded={false}>
+    <FixeoScreen padded={false} header={
+        <MobileShell
+          universe="artisan"
+          activeKey="agenda"
+          statusLabel="Agenda professionnel"
+          rightActionLabel="Artisan OS"
+          rightDestination="/artisan-workspace"
+        />
+      }>
       <FlatList
         data={items}
         keyExtractor={item => item.id}
@@ -118,13 +125,6 @@ export default function ArtisanAgenda() {
         keyboardDismissMode="on-drag"
         ListHeaderComponent={
           <View>
-            <MobileShell
-              universe="artisan"
-              activeKey="agenda"
-              statusLabel="Agenda professionnel"
-              rightActionLabel="Artisan OS"
-              onRightAction={() => router.replace('/artisan-workspace')}
-            />
             <View style={styles.header}>
             <Text style={styles.kicker}>AGENDA</Text>
             <Text style={styles.title}>Vos prochaines interventions.</Text>

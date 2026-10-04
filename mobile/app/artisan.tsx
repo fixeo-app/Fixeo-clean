@@ -212,14 +212,6 @@ export default function Artisan() {
 
   const header = (
     <View style={styles.headerStack}>
-      <MobileShell
-        universe="artisan"
-        activeKey="cockpit"
-        orbMode={cockpit.orb}
-        statusLabel={currentMission ? 'Mission active' : availabilityLabel}
-        rightActionLabel="Artisan OS"
-        onRightAction={() => router.push('/artisan-workspace')}
-      />
       <View style={styles.hero}>
         <RafiOrb mode={cockpit.orb} size={76} />
         <Text style={styles.eyebrow}>{cockpit.eyebrow}</Text>
@@ -319,7 +311,17 @@ export default function Artisan() {
   );
 
   return (
-    <FixeoScreen padded={false}>
+    <FixeoScreen padded={false} header={
+        <MobileShell
+          universe="artisan"
+          activeKey="cockpit"
+          orbMode={cockpit.orb}
+          statusLabel={currentMission ? 'Mission active' : availabilityLabel}
+          rightActionLabel="Artisan OS"
+          rightDestination="/artisan-workspace"
+          rightNavigation="detail"
+        />
+      }>
       <FlatList
         data={offers}
         keyExtractor={(item) => item.request_id}
