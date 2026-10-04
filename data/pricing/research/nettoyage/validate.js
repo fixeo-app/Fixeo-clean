@@ -185,14 +185,14 @@ const { execSync } = require('child_process');
 let productionDiff = '';
 try {
   productionDiff = execSync(
-    'git diff HEAD -- js/ css/ *.html api/ rafi/ supabase/ vercel.json 2>/dev/null',
+    'git diff HEAD -- js/ css/ *.html api/ rafi/ supabase/ vercel.legacy.json 2>/dev/null',
     { cwd: path.join(__dirname, '../../../../'), encoding: 'utf8' }
   ).trim();
 } catch (e) {
   productionDiff = '';
 }
 check(
-  'Production runtime diff = 0 (no changes to js/, css/, html, api, rafi, supabase, vercel.json)',
+  'Production runtime diff = 0 (no changes to js/, css/, html, api, rafi, supabase, vercel.legacy.json)',
   productionDiff === '',
   productionDiff.substring(0, 100) || undefined
 );

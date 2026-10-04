@@ -56,7 +56,7 @@ test('SEO-1 Wave-1 masters self-canonicalize and expose support graph', () => {
 });
 
 test('SEO-1 legacy first-four service routes redirect permanently to clean canonical URLs', () => {
-  const v = JSON.parse(read('vercel.json'));
+  const v = JSON.parse(read('vercel.legacy.json'));
   const routes = v.routes || [];
   const redirect = routes.find(r => String(r.src).includes('(plombier|electricien|serrurier|climatisation)-') && r.status === 301);
   assert.ok(redirect, 'legacy service-city redirect missing');

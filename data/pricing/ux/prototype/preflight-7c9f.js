@@ -212,17 +212,17 @@ check('Bridge uses fixeo_estimator_ctx_v1 sessionStorage key', function() {
 /* ── SECTION 9: Vercel routing ── */
 console.log('\n── 9. Vercel routing ──');
 
-check('/estimation route in vercel.json', function() {
-  return read('vercel.json').includes('/estimation');
+check('/estimation route in vercel.legacy.json', function() {
+  return read('vercel.legacy.json').includes('/estimation');
 });
-check('/api/estimator-v1 route in vercel.json', function() {
-  return read('vercel.json').includes('/api/estimator-v1');
+check('/api/estimator-v1 route in vercel.legacy.json', function() {
+  return read('vercel.legacy.json').includes('/api/estimator-v1');
 });
 check('estimation.html exists', function() {
   return exists('estimation.html');
 });
-check('api/estimator-v1/index.js build entry in vercel.json', function() {
-  return read('vercel.json').includes('api/estimator-v1/index.js');
+check('api/estimator-v1/index.js build entry in vercel.legacy.json', function() {
+  return read('vercel.legacy.json').includes('api/estimator-v1/index.js');
 });
 
 /* ── SECTION 10: Canonical pricing unchanged ── */
