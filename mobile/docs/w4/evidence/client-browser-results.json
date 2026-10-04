@@ -1,0 +1,235 @@
+{
+  "results": [
+    {
+      "scene": "idle",
+      "width": 390,
+      "primaryVisible": true,
+      "heroDiameter": 160
+    },
+    {
+      "scene": "idle",
+      "width": 320,
+      "primaryVisible": true,
+      "heroDiameter": 120
+    },
+    {
+      "scene": "matching",
+      "onePrimaryAction": true,
+      "exactMissionRoute": false
+    },
+    {
+      "scene": "assigned",
+      "onePrimaryAction": true,
+      "exactMissionRoute": true
+    },
+    {
+      "scene": "intervention",
+      "onePrimaryAction": true,
+      "exactMissionRoute": true
+    },
+    {
+      "scene": "validation",
+      "onePrimaryAction": true,
+      "exactMissionRoute": true
+    },
+    {
+      "scene": "workspace",
+      "width": 390,
+      "geometry": true
+    },
+    {
+      "scene": "workspace",
+      "width": 320,
+      "geometry": true
+    },
+    {
+      "scene": "history",
+      "width": 390,
+      "geometry": true
+    },
+    {
+      "scene": "history",
+      "width": 320,
+      "geometry": true
+    },
+    {
+      "scene": "alerts",
+      "width": 390,
+      "geometry": true
+    },
+    {
+      "scene": "alerts",
+      "width": 320,
+      "geometry": true
+    },
+    {
+      "scene": "account",
+      "width": 390,
+      "geometry": true
+    },
+    {
+      "scene": "account",
+      "width": 320,
+      "geometry": true
+    },
+    {
+      "scene": "mission",
+      "width": 390,
+      "geometry": true
+    },
+    {
+      "scene": "mission",
+      "width": 320,
+      "geometry": true
+    },
+    {
+      "scene": "validation",
+      "originalCallback": true,
+      "canonicalId": true,
+      "validatedState": true
+    },
+    {
+      "scene": "account-alerts",
+      "editDisclosure": true,
+      "profileContract": true,
+      "readAcknowledgement": true
+    },
+    {
+      "scene": "geolocation",
+      "scenario": "success",
+      "manualCorrection": true,
+      "normalizedCity": true,
+      "requestArguments": 4
+    },
+    {
+      "scene": "geolocation",
+      "scenario": "denied",
+      "manualCorrection": true,
+      "normalizedCity": true,
+      "requestArguments": 4
+    },
+    {
+      "scene": "geolocation",
+      "scenario": "blocked",
+      "manualCorrection": true,
+      "normalizedCity": true,
+      "requestArguments": 4
+    },
+    {
+      "scene": "geolocation",
+      "scenario": "unavailable",
+      "manualCorrection": true,
+      "normalizedCity": true,
+      "requestArguments": 4
+    },
+    {
+      "scene": "geolocation",
+      "scenario": "no_city",
+      "manualCorrection": true,
+      "normalizedCity": true,
+      "requestArguments": 4
+    },
+    {
+      "scene": "geolocation",
+      "scenario": "timeout",
+      "manualCorrection": true,
+      "normalizedCity": true,
+      "requestArguments": 4
+    },
+    {
+      "scene": "geolocation",
+      "scenario": "web",
+      "manualCorrection": true,
+      "normalizedCity": true,
+      "requestArguments": 4
+    },
+    {
+      "scene": "geolocation-late",
+      "manualInputCannotBeOverwritten": true
+    },
+    {
+      "scene": "diagnostic",
+      "safety": false,
+      "oneQuestion": true,
+      "confirmationBeforeRequest": true,
+      "provenancePreserved": true
+    },
+    {
+      "scene": "diagnostic",
+      "safety": true,
+      "oneQuestion": true,
+      "confirmationBeforeRequest": true,
+      "provenancePreserved": true
+    },
+    {
+      "scene": "diagnostic-choice",
+      "requiresServerReview": true,
+      "requestBlocked": true
+    },
+    {
+      "scene": "estimator-contract",
+      "outcome": "question",
+      "gatewayConnected": false,
+      "requests": 0
+    },
+    {
+      "scene": "estimator-contract",
+      "outcome": "price",
+      "gatewayConnected": false,
+      "requests": 0
+    },
+    {
+      "scene": "estimator-contract",
+      "outcome": "diagnostic",
+      "gatewayConnected": false,
+      "requests": 0
+    },
+    {
+      "scene": "estimator-contract",
+      "outcome": "labour",
+      "gatewayConnected": false,
+      "requests": 0
+    },
+    {
+      "scene": "estimator-contract",
+      "outcome": "addon",
+      "gatewayConnected": false,
+      "requests": 0
+    },
+    {
+      "scene": "estimator-contract",
+      "outcome": "quote",
+      "gatewayConnected": false,
+      "requests": 0
+    },
+    {
+      "scene": "estimator-contract",
+      "outcome": "route",
+      "gatewayConnected": false,
+      "requests": 0
+    },
+    {
+      "scene": "estimator-contract",
+      "outcome": "safety",
+      "gatewayConnected": false,
+      "requests": 0
+    },
+    {
+      "scene": "estimator-contract",
+      "outcome": "more",
+      "gatewayConnected": false,
+      "requests": 0
+    },
+    {
+      "scene": "accessibility",
+      "fontScale": 2,
+      "screens": 6,
+      "cityFallback": true,
+      "reducedMotionStable": true,
+      "runtimeMotion": true
+    }
+  ],
+  "pageErrors": [],
+  "externalRequests": [],
+  "fixtureNotice": "Real Client React Native components; typed UI-only services; no backend or physical device."
+}

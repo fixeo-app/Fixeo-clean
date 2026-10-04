@@ -1,21 +1,24 @@
 import { useCallback, useEffect, useState } from 'react';
-import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { SectionList, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
 import {
   listClientNotifications,
   markClientNotificationRead,
   type ClientNotification,
 } from '@/lib/clientWorkspace';
-import { FixeoCard } from '@/ui/FixeoCard';
+import { FixeoText } from '@/ui/FixeoText';
+import { ClientPageIntro, ClientSection, clientStyles } from '@/components/ClientEditorial';
+import { clientNotificationSections } from '@/lib/clientExperience';
+import { PushOptIn } from '@/components/PushOptIn';
 import { MobileShell } from '@/components/MobileShell';
 import { FixeoScreen } from '@/ui/FixeoScreen';
-import { colors, spacing, type } from '@/ui/tokens';
+import { semanticColors, space } from '@/ui/tokens';
 import { cleanNotificationCopy, formatWorkspaceDate } from '@/lib/workspacePresentation';
 import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
 import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 
 export default function ClientNotifications() {
   const [items, setItems] = useState<ClientNotification[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const load = useCallback(async () => {
@@ -61,102 +64,46 @@ export default function ClientNotifications() {
           rightDestination="/client-workspace"
         />
       }>
-      <FlatList
-        data={items}
+      <SectionList
+        sections={clientNotificationSections(items)}
+        stickySectionHeadersEnabled={false}
         keyExtractor={item => item.id}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
-          <View>
-            <View style={styles.header}>
-            <Text style={styles.kicker}>ALERTES FIXEO</Text>
-            <Text style={styles.title}>Ce qui mérite votre attention.</Text>
-            <Text style={styles.subtitle}>Une chronologie simple : ce qui a changé, ce qui demande votre attention, rien de plus.</Text>
-            {!!error && <Text style={styles.error}>{error}</Text>}
-            </View>
+        ListHeaderComponent={<View style={styles.header}>
+          <ClientPageIntro eyebrow="ALERTES" title="L’essentiel,
+au bon moment." detail="Les événements de vos interventions." />
+          {!!error && <FixeoText accessibilityRole="alert" style={clientStyles.error}>{error}</FixeoText>}
+        </View>}
+        ListEmptyComponent={<ClientSection>
+          <FixeoText variant="heading">{loading ? 'Chargement de vos alertes…' : error ? 'Alertes indisponibles.' : 'Tout est calme.'}</FixeoText>
+          {!loading && !error && <FixeoText tone="secondary">Les nouvelles étapes de vos interventions apparaîtront ici.</FixeoText>}
+        </ClientSection>}
+        renderSectionHeader={({ section }) => <FixeoText accessibilityRole="header" variant="eyebrow" tone="secondary" style={styles.sectionTitle}>{section.title}</FixeoText>}
+        renderItem={({ item }) => <Pressable accessibilityRole="button"
+          accessibilityLabel={`${cleanNotificationCopy(item.title)}. ${item.read ? 'Déjà lu' : 'Marquer comme lu'}`}
+          onPress={() => void open(item)} style={({ pressed }) => [clientStyles.row, pressed && styles.pressed]}>
+          <View style={styles.titleRow}>
+            <FixeoText variant={item.read ? 'body' : 'heading'} tone={item.read ? 'secondary' : 'primary'} style={styles.title}>{cleanNotificationCopy(item.title)}</FixeoText>
+            {!item.read && <View style={styles.unreadDot} />}
           </View>
-        }
-        ListEmptyComponent={
-          <FixeoCard tone="muted">
-            <Text style={styles.emptyTitle}>Tout est calme.</Text>
-            <Text style={styles.emptyText}>Aucune alerte à afficher.</Text>
-          </FixeoCard>
-        }
-        renderItem={({ item }) => (
-          <Pressable onPress={() => void open(item)}>
-            <FixeoCard tone={item.read ? 'light' : 'muted'} style={styles.card}>
-              <View style={styles.row}>
-                <Text style={styles.titleText}>{item.title}</Text>
-                {!item.read && <View style={styles.unreadDot} />}
-              </View>
-              <Text style={styles.message}>{cleanNotificationCopy(item.message)}</Text>
-              <View style={styles.metaRow}>
-                <Text style={styles.meta}>{formatWorkspaceDate(item.created_at)}</Text>
-                <Text style={styles.meta}>{item.read ? 'Lu' : 'Nouveau'}</Text>
-              </View>
-            </FixeoCard>
-          </Pressable>
-        )}
+          <FixeoText variant="supporting" tone="secondary">{cleanNotificationCopy(item.message)}</FixeoText>
+          <FixeoText variant="caption" tone="tertiary">{formatWorkspaceDate(item.created_at)} · {item.read ? 'Lu' : 'Non lu'}</FixeoText>
+        </Pressable>}
+        ListFooterComponent={<View style={styles.push}><PushOptIn compact /></View>}
       />
     </FixeoScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxl,
-    gap: spacing.sm,
-  },
-  header: {
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-    gap: spacing.sm,
-  },
-  kicker: {
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.5,
-    color: colors.textMuted,
-  },
-  title: {
-    fontSize: 34,
-    lineHeight: 38,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  subtitle: { color: colors.textMuted, lineHeight: 21 },
-  error: { color: colors.danger, fontWeight: '700' },
-  card: { marginBottom: spacing.sm, gap: spacing.sm },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  titleText: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  unreadDot: {
-    width: 9,
-    height: 9,
-    borderRadius: 5,
-    backgroundColor: colors.ink,
-  },
-  message: { color: colors.textMuted, lineHeight: 21 },
-  metaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
-  },
-  meta: {
-    color: colors.textMuted,
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  emptyTitle: { fontSize: 18, fontWeight: '900', color: colors.text },
-  emptyText: { marginTop: spacing.sm, color: colors.textMuted },
+  content: { ...clientStyles.content, gap: 0 },
+  header: { gap: space.md, paddingBottom: space.lg },
+  sectionTitle: { paddingTop: space.lg },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
+  title: { flex: 1, minWidth: 0 },
+  unreadDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: semanticColors.text.primary },
+  pressed: { backgroundColor: semanticColors.interaction.pressed },
+  push: { paddingTop: space.xl },
 });

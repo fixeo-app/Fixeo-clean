@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import {
   getClientProfile,
@@ -8,15 +8,18 @@ import {
   type ClientProfile,
   type ClientRequestHistory,
 } from '@/lib/clientWorkspace';
-import { FixeoCard } from '@/ui/FixeoCard';
+import { FixeoAction } from '@/ui/FixeoAction';
+import { FixeoText } from '@/ui/FixeoText';
+import { ClientPageIntro, ClientSection, clientStyles } from '@/components/ClientEditorial';
+import { clientAttentionRequest } from '@/lib/clientExperience';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
-import { colors, spacing, type } from '@/ui/tokens';
+import { space } from '@/ui/tokens';
 import { useWorkspaceDock } from '@/components/useWorkspaceDock';
 import { MobileShell } from '@/components/MobileShell';
-import { ContextualCockpitCard } from '@/components/ContextualCockpitCard';
 import { clientGreetingName, isTechnicalRequestContent } from '@/lib/workspacePresentation';
 import { getClientContextualCockpit } from '@/lib/contextualCockpit';
+import { getClientRafiPresence } from '@/ui/rafiPresence';
 import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
 import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 
@@ -25,7 +28,7 @@ export default function ClientWorkspaceHome() {
   const [history, setHistory] = useState<ClientRequestHistory[]>([]);
   const [historyCount, setHistoryCount] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const load = useCallback(async () => {
@@ -62,7 +65,7 @@ export default function ClientWorkspaceHome() {
   useForegroundRefresh(load);
 
   const activeRequest = useMemo(
-    () => history.find(item => ['new', 'assigned', 'in_progress', 'completed'].includes(item.status)) || null,
+    () => clientAttentionRequest(history),
     [history],
   );
 
@@ -113,7 +116,7 @@ export default function ClientWorkspaceHome() {
         <MobileShell
           universe="client"
           activeKey="space"
-          orbMode={activeRequest ? 'working' : 'idle'}
+          orbMode={getClientRafiPresence({ journeyStatus: activeRequest?.status === 'new' ? 'matching' : activeRequest?.status })}
           statusLabel={activeRequest ? activeLabel : 'RAFI est prêt'}
           rightActionLabel="Mon compte"
           rightDestination="/client-workspace/account"
@@ -125,135 +128,30 @@ export default function ClientWorkspaceHome() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
-          <View style={styles.identityRow}>
-            <View style={styles.identityCopy}>
-              <Text style={styles.kicker}>MON ESPACE FIXEO</Text>
-              <Text style={styles.title}>
-                {greetingName ? `Bonjour ${greetingName}.` : 'Bonjour.'}
-              </Text>
-            </View>
-            <RafiOrb size={58} mode={activeRequest ? 'working' : 'idle'} />
+        <ClientPageIntro eyebrow="MON ESPACE" title={greetingName ? `Bonjour ${greetingName}.` : 'Bonjour.'}
+          detail="Tout ce qui mérite votre attention." />
+
+        {!!error && <FixeoText accessibilityRole="alert" style={clientStyles.error}>{error}</FixeoText>}
+        {loading && !history.length && !profile ? <ClientSection>
+          <FixeoText accessibilityLiveRegion="polite" tone="secondary">Votre espace se prépare…</FixeoText>
+        </ClientSection> : !error || profile ? <ClientSection testID="client-workspace-attention">
+          <View style={styles.presence}>
+            <RafiOrb size={72} mode={getClientRafiPresence({ journeyStatus: activeRequest?.status === 'new' ? 'matching' : activeRequest?.status })} />
           </View>
-          <Text style={styles.subtitle}>
-            Ce qui compte maintenant, sans jargon ni bruit. RAFI reste toujours à portée.
-          </Text>
-        </View>
-
-        {!!error && (
-          <FixeoCard tone="muted">
-            <Text style={styles.error}>{error}</Text>
-          </FixeoCard>
-        )}
-
-        <ContextualCockpitCard
-          model={contextualCockpit}
-          onAction={actOnContextualCockpit}
-        />
+          <FixeoText variant="eyebrow" tone="secondary">{contextualCockpit.eyebrow}</FixeoText>
+          <FixeoText accessibilityRole="header" variant="title">{contextualCockpit.title}</FixeoText>
+          {!!contextualCockpit.context && <FixeoText>{contextualCockpit.context}</FixeoText>}
+          {contextualCockpit.actionLabel ? <FixeoAction testID="client-primary-action"
+            label={contextualCockpit.actionLabel} onPress={actOnContextualCockpit} style={styles.action} /> : null}
+          <FixeoText tone="secondary">{contextualCockpit.detail}</FixeoText>
+        </ClientSection> : null}
       </ScrollView>
     </FixeoScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxl,
-    gap: spacing.lg,
-  },
-  header: {
-    paddingTop: spacing.md,
-    gap: spacing.sm,
-  },
-  identityRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-  },
-  identityCopy: {
-    flex: 1,
-    gap: spacing.sm,
-  },
-  back: {
-    color: colors.textMuted,
-    fontWeight: '800',
-    marginBottom: spacing.sm,
-  },
-  kicker: {
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.6,
-    color: colors.textMuted,
-  },
-  title: {
-    fontSize: 36,
-    lineHeight: 40,
-    fontWeight: '900',
-    letterSpacing: -1.2,
-    color: colors.text,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: type.body,
-    lineHeight: 23,
-  },
-  activeCard: {
-    gap: spacing.md,
-  },
-  inverseKicker: {
-    color: '#A8A8AC',
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.5,
-  },
-  inverseTitle: {
-    color: colors.inverse,
-    fontSize: 28,
-    lineHeight: 32,
-    fontWeight: '900',
-    letterSpacing: -0.7,
-  },
-  inverseBody: {
-    color: '#D8D8DA',
-    lineHeight: 21,
-  },
-  rafiCard: {
-    gap: spacing.md,
-  },
-  rafiCopy: {
-    gap: spacing.xs,
-  },
-  cardKicker: {
-    color: colors.textMuted,
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.4,
-  },
-  cardTitle: {
-    color: colors.text,
-    fontSize: 24,
-    fontWeight: '900',
-    letterSpacing: -0.5,
-  },
-  cardBody: {
-    color: colors.textMuted,
-    lineHeight: 21,
-  },
-  section: {
-    gap: spacing.xs,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  sectionHint: {
-    color: colors.textMuted,
-    lineHeight: 20,
-  },
-  error: {
-    color: colors.danger,
-    fontWeight: '700',
-  },
+  content: clientStyles.content,
+  presence: { alignItems: 'center', paddingVertical: space.xs },
+  action: { marginTop: space.md },
 });

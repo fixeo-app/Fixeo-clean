@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import {
   getClientProfile,
   updateClientProfile,
@@ -7,14 +7,16 @@ import {
 } from '@/lib/clientWorkspace';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { MobileShell } from '@/components/MobileShell';
-import { FixeoCard } from '@/ui/FixeoCard';
+import { FixeoText } from '@/ui/FixeoText';
+import { ClientPageIntro, ClientSection, clientStyles } from '@/components/ClientEditorial';
 import { FixeoScreen } from '@/ui/FixeoScreen';
-import { colors, radius, spacing, type } from '@/ui/tokens';
+import { semanticColors, space } from '@/ui/tokens';
 import { clientProfileTitle } from '@/lib/workspacePresentation';
 import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
 import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 
 export default function ClientAccount() {
+  const [editing, setEditing] = useState(false);
   const [profile, setProfile] = useState<ClientProfile | null>(null);
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState('');
@@ -49,6 +51,7 @@ export default function ClientAccount() {
     try {
       const next = await withMobileDeadline(updateClientProfile({ phone, city }));
       setProfile(next);
+      setEditing(false);
       setMessage('✓ Coordonnées mises à jour.');
     } catch (reason) {
       setMessage(
@@ -78,85 +81,40 @@ export default function ClientAccount() {
         showsVerticalScrollIndicator={false}
       >
 
-        <Text style={styles.kicker}>MON COMPTE</Text>
-        <Text style={styles.title}>{clientProfileTitle(profile?.full_name)}</Text>
-        <Text style={styles.email}>{profile?.email || ''}</Text>
-        <Text style={styles.helper}>Gardez uniquement les coordonnées utiles à vos interventions.</Text>
-
-        <FixeoCard style={styles.form}>
-          <Text style={styles.label}>Téléphone</Text>
-          <TextInput
-            value={phone}
-            onChangeText={setPhone}
-            keyboardType="phone-pad"
-            placeholder="Votre numéro"
-            style={styles.input}
-          />
-
-          <Text style={styles.label}>Ville</Text>
-          <TextInput
-            value={city}
-            onChangeText={setCity}
-            autoCapitalize="words"
-            placeholder="Votre ville"
-            style={styles.input}
-          />
-
-          <FixeoAction
-            label={saving ? 'Enregistrement…' : 'Enregistrer'}
-            disabled={saving}
-            onPress={() => void save()}
-          />
-        </FixeoCard>
-
-        {!!message && <Text style={styles.message}>{message}</Text>}
+        <ClientPageIntro eyebrow="MON COMPTE" title={clientProfileTitle(profile?.full_name)} detail="Vos coordonnées, simplement." />
+        {!!profile?.email && <FixeoText variant="supporting" tone="secondary">{profile.email}</FixeoText>}
+        {profile ? <ClientSection label="Pour vos interventions">
+          {editing ? <View style={styles.form}>
+            <FixeoText variant="supporting" tone="secondary">Téléphone</FixeoText>
+            <TextInput accessibilityLabel="Votre téléphone" value={phone} onChangeText={setPhone} keyboardType="phone-pad"
+              placeholder="Votre numéro" placeholderTextColor={semanticColors.text.tertiary} editable={!saving} style={clientStyles.input} />
+            <FixeoText variant="supporting" tone="secondary">Ville</FixeoText>
+            <TextInput accessibilityLabel="Votre ville" value={city} onChangeText={setCity} autoCapitalize="words"
+              placeholder="Votre ville" placeholderTextColor={semanticColors.text.tertiary} editable={!saving} style={clientStyles.input} />
+            <FixeoAction label={saving ? 'Enregistrement…' : 'Enregistrer les coordonnées'} busy={saving}
+              disabled={saving} onPress={() => void save()} />
+            <FixeoAction label="Annuler" variant="ghost" disabled={saving} onPress={() => {
+              setPhone(profile.phone || ''); setCity(profile.city || ''); setEditing(false);
+            }} />
+          </View> : <>
+            <View style={clientStyles.row}>
+              <FixeoText variant="caption" tone="secondary">Téléphone</FixeoText>
+              <FixeoText variant="bodyLarge">{profile.phone || 'À renseigner'}</FixeoText>
+            </View>
+            <View style={clientStyles.row}>
+              <FixeoText variant="caption" tone="secondary">Ville</FixeoText>
+              <FixeoText variant="bodyLarge">{profile.city || 'À renseigner'}</FixeoText>
+            </View>
+            <FixeoAction label="Modifier mes coordonnées" variant="ghost" onPress={() => setEditing(true)} />
+          </>}
+        </ClientSection> : !message ? <FixeoText accessibilityLiveRegion="polite" tone="secondary">Chargement de vos coordonnées…</FixeoText> : null}
+        {!!message && <FixeoText accessibilityLiveRegion="polite" variant="supporting" tone="secondary">{message}</FixeoText>}
       </ScrollView>
     </FixeoScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.xxl,
-    gap: spacing.md,
-  },
-  kicker: {
-    marginTop: spacing.sm,
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.5,
-    color: colors.textMuted,
-  },
-  title: {
-    fontSize: 34,
-    lineHeight: 38,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  email: { color: colors.textMuted },
-  helper: { color: colors.textMuted, lineHeight: 20 },
-  form: { gap: spacing.sm, marginTop: spacing.sm },
-  label: {
-    fontSize: 13,
-    fontWeight: '900',
-    color: colors.textMuted,
-    marginTop: spacing.xs,
-  },
-  input: {
-    minHeight: 56,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
-    paddingHorizontal: spacing.md,
-    color: colors.text,
-    fontSize: type.body,
-  },
-  message: {
-    textAlign: 'center',
-    fontWeight: '800',
-    color: colors.textMuted,
-  },
+  content: clientStyles.content,
+  form: { gap: space.sm, paddingTop: space.md },
 });

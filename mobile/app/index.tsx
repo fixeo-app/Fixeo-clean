@@ -12,6 +12,7 @@ import {
 import {
   getMyCurrentClientMission,
   getMyCurrentClientRequest,
+  type MissionSnapshot,
 } from '@/lib/missionTerrain';
 import { understandLocally } from '@/lib/rafi';
 import { hasRafiServerGateway, transcribeRafiVoice } from '@/lib/rafiGateway';
@@ -21,7 +22,9 @@ import {
 } from '@/lib/mobileDiagnostic';
 import { MagicLoopModel, transition } from '@/lib/magicLoopState';
 import { RafiInputRail } from '@/components/RafiInputRail';
-import { PushOptIn } from '@/components/PushOptIn';
+import { ClientDiagnostic } from '@/components/ClientDiagnostic';
+import { canSendClientIntake } from '@/lib/clientDiagnostic';
+import { ClientLocationField } from '@/components/ClientLocationField';
 import { MobileShell } from '@/components/MobileShell';
 import { EntryStage } from '@/components/EntryStage';
 import { getStableSession, resolveRole } from '@/lib/auth';
@@ -30,21 +33,24 @@ import {
   type MobileDecisionCue,
 } from '@/lib/decisionCenter';
 import { buildDeclaredContext } from '@/lib/rafiContext';
-import { DecisionCueCard } from '@/components/DecisionCueCard';
-import { RafiContextCard } from '@/components/RafiContextCard';
+import { RAFI_PROVENANCE_LABELS } from '@/lib/rafiContext';
+import { ClientHero, ClientSection, clientStyles } from '@/components/ClientEditorial';
+import { clientHomeCopy } from '@/lib/clientExperience';
+import { FixeoText } from '@/ui/FixeoText';
 import { FixeoAction } from '@/ui/FixeoAction';
-import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
-import { RafiOrb } from '@/ui/RafiOrb';
 import type { RafiOrbMode } from '@/ui/rafiOrbMotion';
 import { getClientRafiPresence } from '@/ui/rafiPresence';
-import { colors, radius, spacing, type } from '@/ui/tokens';
+import { colors, semanticColors, space, typography, spacing } from '@/ui/tokens';
 
 const ASSIGNED_STATES = new Set(['assigned', 'in_progress', 'completed', 'validated']);
 
 type JourneyStatus = 'idle' | 'matching' | 'assigned' | 'in_progress' | 'completed';
 
 export default function Home() {
+  const [writing, setWriting] = useState(false);
+  const [showContext, setShowContext] = useState(false);
+  const [missionSummary, setMissionSummary] = useState<MissionSnapshot | null>(null);
   const [problem, setProblem] = useState('');
   const [problemConfirmedFromRafi, setProblemConfirmedFromRafi] = useState(false);
   const [city, setCity] = useState('');
@@ -52,6 +58,7 @@ export default function Home() {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [photoMimeType, setPhotoMimeType] = useState('image/jpeg');
   const [photoDiagnostic, setPhotoDiagnostic] = useState<MobileDiagnosticResult | null>(null);
+  const [reviewedDiagnostic, setReviewedDiagnostic] = useState<MobileDiagnosticResult | null>(null);
   const [photoDiagnosticBusy, setPhotoDiagnosticBusy] = useState(false);
   const [loop, setLoop] = useState<MagicLoopModel>({ state: 'idle' });
   const [clientReady, setClientReady] = useState(false);
@@ -96,6 +103,7 @@ export default function Home() {
   async function syncCurrentMission() {
     try {
       const mission = await getMyCurrentClientMission();
+      setMissionSummary(mission);
       if (!mission) {
         setJourneyStatus(current => current === 'matching' ? current : 'idle');
         return null;
@@ -355,7 +363,12 @@ export default function Home() {
       const requestId = String(data?.id || data?.request_id || '');
       if (!requestId) throw new Error('REQUEST_ID_MISSING');
       setLoop(current => transition(current, 'matching', { requestId }));
-    } catch {
+    } catch (error: any) {
+      if (String(error?.message || '').includes('CITY_NOT_SUPPORTED')) {
+        setJourneyStatus('idle');
+        setLoop(current => transition(current, 'error', { message: 'Cette ville n’est pas encore prise en charge. Choisissez une autre ville.' }));
+        return;
+      }
       setJourneyStatus('idle');
       setLoop(current => transition(current, 'error', {
         message: 'Connexion interrompue. FIXEO vérifie votre demande avant toute nouvelle tentative.',
@@ -366,49 +379,25 @@ export default function Home() {
     }
   }
 
+  const intakeReady = canSendClientIntake({ busy: photoDiagnosticBusy, diagnostic: photoDiagnostic, reviewed: reviewedDiagnostic === photoDiagnostic });
+  function sendQualifiedIntake() {
+    if (!intakeReady) return;
+    void send();
+  }
+
   const requestLocked = loop.state === 'creating' || loop.state === 'matching' || loop.state === 'found';
   const isActiveJourney = journeyStatus !== 'idle';
-
-  const hero = useMemo(() => {
-    if (journeyStatus === 'matching') {
-      return {
-        eyebrow: 'FIXEO CHERCHE POUR VOUS',
-        title: 'On trouve le bon artisan.',
-        subtitle: 'Vous pouvez poser le téléphone. FIXEO suit la recherche.',
-      };
-    }
-    if (journeyStatus === 'in_progress') {
-      return {
-        eyebrow: 'INTERVENTION EN COURS',
-        title: 'FIXEO suit chaque étape.',
-        subtitle: 'Votre artisan est sur la mission. Vous gardez le contrôle.',
-      };
-    }
-    if (journeyStatus === 'completed') {
-      return {
-        eyebrow: 'INTERVENTION TERMINÉE',
-        title: 'Une dernière vérification.',
-        subtitle: 'Consultez les preuves puis confirmez la bonne fin de mission.',
-      };
-    }
-    if (journeyStatus === 'assigned') {
-      return {
-        eyebrow: 'ARTISAN TROUVÉ',
-        title: 'FIXEO a pris le relais.',
-        subtitle: 'Votre intervention est désormais suivie jusqu’à sa clôture.',
-      };
-    }
-    return {
-      eyebrow: 'RAFI · VOTRE ASSISTANT FIXEO',
-      title: 'Que puis-je régler pour vous ?',
-      subtitle: 'Parlez, montrez ou écrivez. RAFI comprend, FIXEO agit.',
-    };
-  }, [journeyStatus]);
 
   const effectiveOrbMode = getClientRafiPresence({
     override: rafiOrbOverride, loopState: loop.state, journeyStatus,
     photoDiagnosticBusy, safetyStop: !isActiveJourney && photoDiagnostic?.safety?.stop,
   });
+
+  const hero = clientHomeCopy(journeyStatus, effectiveOrbMode, loop.state === 'creating');
+  const inputExpanded = writing || !!problem || !!photoUri || !!rafiMessage;
+  useEffect(() => {
+    if (writing) problemInputRef.current?.focus();
+  }, [writing]);
 
   if (!clientReady) {
     return (
@@ -452,17 +441,13 @@ export default function Home() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.hero}>
-          <RafiOrb size={96} mode={effectiveOrbMode} eventKey={loop.missionId || loop.requestId} />
-          <Text style={styles.eyebrow}>{hero.eyebrow}</Text>
-          <Text style={styles.title}>{hero.title}</Text>
-          <Text style={styles.subtitle}>{hero.subtitle}</Text>
-        </View>
+        <ClientHero {...hero} mode={effectiveOrbMode} eventKey={loop.missionId || loop.requestId} />
 
-        {!isActiveJourney && (
+        {!isActiveJourney && photoDiagnostic?.safety.stop && <ClientDiagnostic result={photoDiagnostic} confirmed={false} onConfirm={() => {}} />}
+        {!isActiveJourney && !photoDiagnostic?.safety.stop && (
           <View style={styles.inputStack}>
             <RafiInputRail
-              onWrite={() => problemInputRef.current?.focus()}
+              onWrite={() => { setWriting(true); problemInputRef.current?.focus(); }}
               onVoiceReady={(uri) => void handleVoice(uri)}
               onPhotoReady={(uri, mimeType) => handlePhoto(uri, mimeType)}
               onListeningChange={(listening) => {
@@ -470,6 +455,10 @@ export default function Home() {
               }}
             />
 
+            {!inputExpanded && <FixeoText variant="caption" tone="tertiary" style={styles.center}>
+              Une demande commence avec vous.
+            </FixeoText>}
+            {inputExpanded && <View testID="client-request-fields" style={styles.inputStack}>
             <TextInput
               ref={problemInputRef}
               accessibilityLabel="Décrivez le problème"
@@ -479,30 +468,22 @@ export default function Home() {
                 setProblem(value);
               }}
               editable={!requestLocked}
+              multiline
               placeholder="Décrivez simplement ce qui se passe"
               placeholderTextColor={colors.textMuted}
-              style={styles.input}
+              style={clientStyles.input}
             />
-            <TextInput
-              accessibilityLabel="Votre ville"
-              value={city}
-              onChangeText={setCity}
-              editable={!requestLocked}
-              placeholder="Votre ville"
-              placeholderTextColor={colors.textMuted}
-              autoCapitalize="words"
-              style={styles.input}
-            />
+            <ClientLocationField city={city} onChangeCity={setCity} disabled={requestLocked} />
 
             {!!rafiMessage && (
-              <FixeoCard tone="muted" style={styles.rafiCard}>
+              <ClientSection>
                 <Text style={styles.rafiLabel}>RAFI</Text>
-                <Text style={styles.rafiMessage}>{rafiMessage}</Text>
-              </FixeoCard>
+                <Text style={styles.rafiMessage} accessibilityLiveRegion="polite">{rafiMessage}</Text>
+              </ClientSection>
             )}
 
             {!!photoUri && (
-              <FixeoCard tone="muted" style={styles.photoCard}>
+              <ClientSection surface>
                 <Text style={styles.rafiLabel}>PHOTO PRIVÉE</Text>
                 <Text style={styles.rafiMessage}>
                   La photo n’est pas une demande. Elle est analysée uniquement si vous le choisissez.
@@ -515,43 +496,19 @@ export default function Home() {
                     onPress={() => void analyzePhoto()}
                   />
                 )}
-              </FixeoCard>
+              </ClientSection>
             )}
 
-            {!!photoDiagnostic && (
-              <FixeoCard style={styles.diagnosticCard}>
-                <Text style={styles.rafiLabel}>RAFI · ANALYSE INDICATIVE</Text>
-                <Text style={styles.diagnosticTitle}>
-                  {photoDiagnostic.problem?.value || 'Analyse à confirmer'}
-                </Text>
-                <View style={styles.diagnosticMetaRow}>
-                  <Text style={styles.diagnosticMeta}>
-                    Métier pressenti · {photoDiagnostic.trade?.value || 'à confirmer'}
-                  </Text>
-                  <Text style={styles.diagnosticMeta}>
-                    Urgence · {photoDiagnostic.urgency?.value || 'à confirmer'}
-                  </Text>
-                </View>
-                {!!photoDiagnostic.facts?.filter(fact => fact.provenance === 'observed').length && (
-                  <View style={styles.observedBlock}>
-                    <Text style={styles.observedLabel}>OBSERVÉ SUR LA PHOTO</Text>
-                    {photoDiagnostic.facts
-                      .filter(fact => fact.provenance === 'observed')
-                      .slice(0, 3)
-                      .map((fact, index) => (
-                        <Text key={fact.key + index} style={styles.observedText}>• {fact.value}</Text>
-                      ))}
-                  </View>
-                )}
-                <Text style={styles.diagnosticDisclaimer}>
-                  Hypothèse RAFI — jamais un diagnostic professionnel ni un prix confirmé.
-                </Text>
-                <FixeoAction
-                  label="Cette description correspond"
-                  onPress={confirmPhotoDiagnostic}
-                />
-              </FixeoCard>
-            )}
+            {photoDiagnostic && !photoDiagnostic.safety.stop && <ClientDiagnostic
+              key={photoUri}
+              result={photoDiagnostic}
+              confirmed={reviewedDiagnostic === photoDiagnostic}
+              onConfirm={(description) => {
+                confirmPhotoDiagnostic();
+                setProblem(description);
+                setReviewedDiagnostic(photoDiagnostic);
+              }}
+            />}
 
             {problem.length > 3 && (
               <>
@@ -561,7 +518,14 @@ export default function Home() {
                     {need.serviceCategory}{need.confidence === 'low' ? ' · à confirmer' : ' · compris'}
                   </Text>
                 </View>
-                <RafiContextCard snapshot={rafiContext} />
+                <FixeoAction label={showContext ? 'Masquer le récapitulatif' : 'Ce que RAFI a compris'}
+                  variant="ghost" accessibilityState={{ expanded: showContext }} onPress={() => setShowContext(value => !value)} />
+                {showContext && <ClientSection label="Votre récapitulatif">
+                  {rafiContext.facts.map((fact, index) => <View key={fact.label + index} style={styles.fact}>
+                    <FixeoText variant="caption" tone="secondary">{fact.label} · {RAFI_PROVENANCE_LABELS[fact.provenance]}</FixeoText>
+                    <FixeoText>{fact.value}</FixeoText>
+                  </View>)}
+                </ClientSection>}
               </>
             )}
 
@@ -573,239 +537,69 @@ export default function Home() {
                     ? 'Préciser le problème'
                     : 'Confier le problème à FIXEO'
               }
-              onPress={() => void send()}
-              disabled={!problem || requestLocked}
+              variant={!intakeReady ? 'secondary' : 'primary'}
+              onPress={sendQualifiedIntake}
+              disabled={!problem || requestLocked || !intakeReady}
             />
 
             {loop.state === 'error' && (
-              <Text style={styles.error}>{loop.message}</Text>
+              <Text accessibilityRole="alert" style={styles.error}>{loop.message}</Text>
             )}
+            </View>}
           </View>
         )}
 
-        {isActiveJourney && decisionCue && (
-          <DecisionCueCard
-            cue={decisionCue}
-            onAction={() => actOnDecision(decisionCue)}
-          />
-        )}
-
-        {isActiveJourney && !decisionCue && journeyStatus === 'matching' && (
-          <FixeoCard tone="dark" style={styles.journeyCard}>
-            <Text style={styles.inverseEyebrow}>RECHERCHE ACTIVE</Text>
-            <Text style={styles.inverseTitle}>Le réseau FIXEO travaille.</Text>
-            <Text style={styles.inverseBody}>
-              {problem || 'Votre demande'}{city ? ` · ${city}` : ''}
-            </Text>
-            <View style={styles.pulseLine}>
-              <View style={styles.pulseDot} />
-              <Text style={styles.pulseText}>Matching en cours</Text>
-            </View>
-          </FixeoCard>
-        )}
-
-        {isActiveJourney && !decisionCue && journeyStatus !== 'matching' && loop.missionId && (
-          <FixeoCard tone="dark" style={styles.journeyCard}>
-            <Text style={styles.inverseEyebrow}>VOTRE INTERVENTION</Text>
-            <Text style={styles.inverseTitle}>
-              {journeyStatus === 'completed' ? 'À vous de confirmer.' : 'FIXEO reste aux commandes.'}
-            </Text>
-            <FixeoAction
+        {isActiveJourney && loop.state !== 'creating' && (
+          <ClientSection testID="client-active-situation">
+            {missionSummary?.artisan_name ? <View style={styles.artisan}>
+              <FixeoText variant="caption" tone="secondary">VOTRE ARTISAN</FixeoText>
+              <FixeoText variant="heading">{missionSummary.artisan_name}</FixeoText>
+              <FixeoText variant="supporting" tone="secondary">
+                {[missionSummary.service_category, missionSummary.city].filter(Boolean).join(' · ')}
+              </FixeoText>
+              {missionSummary.artisan_verified ? <FixeoText variant="caption" tone="secondary">Profil vérifié FIXEO</FixeoText> : null}
+            </View> : null}
+            {journeyStatus === 'matching' && (problem || city) ? <View style={styles.request}>
+              <FixeoText variant="caption" tone="secondary">VOTRE DEMANDE</FixeoText>
+              {!!problem && <FixeoText>{problem}</FixeoText>}
+              {!!city && <FixeoText variant="supporting" tone="secondary">{city}</FixeoText>}
+            </View> : null}
+            {decisionCue ? <FixeoText variant="supporting" tone="secondary" style={styles.center}>{decisionCue.detail}</FixeoText> : null}
+            {decisionCue?.action.kind === 'open_mission' ? <FixeoAction
+              testID="client-primary-action"
               label={journeyStatus === 'completed' ? 'Vérifier et valider' : 'Suivre l’intervention'}
-              variant="secondary"
-              onPress={() => router.push({
-                pathname: '/client-mission/[id]',
-                params: { id: loop.missionId },
-              } as any)}
-            />
-          </FixeoCard>
+              onPress={() => actOnDecision(decisionCue)}
+            /> : loop.missionId && journeyStatus !== 'matching' ? <FixeoAction
+              testID="client-primary-action"
+              label={journeyStatus === 'completed' ? 'Vérifier et valider' : 'Suivre l’intervention'}
+              onPress={() => router.push({ pathname: '/client-mission/[id]', params: { id: loop.missionId } } as any)}
+            /> : null}
+          </ClientSection>
         )}
-
-        <View style={styles.pushWrap}>
-          <PushOptIn compact />
-        </View>
       </ScrollView>
     </FixeoScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  loadingRoot: {
-    justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
-  },
-  scrollContent: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxl,
-    gap: spacing.lg,
-  },
-  hero: {
-    alignItems: 'center',
-    paddingTop: spacing.sm,
-    gap: spacing.md,
-  },
-  brand: {
-    fontSize: 16,
-    fontWeight: '900',
-    letterSpacing: 4,
-    color: colors.text,
-  },
-  eyebrow: {
-    marginTop: spacing.sm,
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.8,
-    color: colors.textMuted,
-    textAlign: 'center',
-  },
-  title: {
-    fontSize: type.display,
-    lineHeight: 47,
-    fontWeight: '900',
-    letterSpacing: -1.6,
-    color: colors.text,
-    textAlign: 'center',
-  },
-  subtitle: {
-    maxWidth: 330,
-    fontSize: type.body,
-    lineHeight: 23,
-    color: colors.textMuted,
-    textAlign: 'center',
-  },
-  inputStack: {
-    gap: spacing.md,
-  },
-  input: {
-    minHeight: 62,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.line,
-    color: colors.text,
-    fontSize: type.body,
-  },
-  rafiCard: {
-    gap: spacing.xs,
-  },
-  rafiLabel: {
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.4,
-    color: colors.textMuted,
-  },
-  rafiMessage: {
-    fontSize: type.body,
-    lineHeight: 22,
-    color: colors.text,
-  },
-  attachment: {
-    textAlign: 'center',
-    color: colors.success,
-    fontWeight: '800',
-  },
-  photoCard: {
-    gap: spacing.md,
-  },
-  diagnosticCard: {
-    gap: spacing.md,
-  },
-  diagnosticTitle: {
-    fontSize: 22,
-    lineHeight: 27,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  diagnosticMetaRow: {
-    gap: spacing.xs,
-  },
-  diagnosticMeta: {
-    color: colors.textMuted,
-    fontWeight: '700',
-  },
-  observedBlock: {
-    gap: spacing.xs,
-    paddingTop: spacing.xs,
-  },
-  observedLabel: {
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.2,
-    color: colors.textMuted,
-  },
-  observedText: {
-    color: colors.text,
-    lineHeight: 20,
-  },
-  diagnosticDisclaimer: {
-    color: colors.textMuted,
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  understoodRow: {
-    alignSelf: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
-    backgroundColor: colors.surfaceMuted,
-  },
-  understoodDot: {
-    fontSize: 10,
-    color: colors.success,
-  },
-  understood: {
-    fontWeight: '800',
-    color: colors.text,
-  },
-  error: {
-    textAlign: 'center',
-    color: colors.danger,
-    fontWeight: '700',
-    lineHeight: 21,
-  },
-  journeyCard: {
-    gap: spacing.md,
-  },
-  inverseEyebrow: {
-    color: '#9B9B9F',
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.7,
-  },
-  inverseTitle: {
-    color: colors.inverse,
-    fontSize: 27,
-    lineHeight: 32,
-    fontWeight: '900',
-    letterSpacing: -0.7,
-  },
-  inverseBody: {
-    color: '#D8D8DA',
-    fontSize: type.body,
-    lineHeight: 22,
-  },
-  pulseLine: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingTop: spacing.xs,
-  },
-  pulseDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: colors.inverse,
-  },
-  pulseText: {
-    color: colors.inverse,
-    fontWeight: '800',
-  },
-  pushWrap: {
-    paddingTop: spacing.xs,
-  },
+  loadingRoot: { justifyContent: 'center', paddingHorizontal: spacing.lg },
+  scrollContent: { ...clientStyles.content, gap: space.lg },
+  inputStack: { gap: space.md },
+  center: { textAlign: 'center' },
+  rafiLabel: { ...typography.eyebrow, color: semanticColors.text.secondary },
+  rafiMessage: { ...typography.supporting, color: semanticColors.text.primary },
+  diagnosticTitle: { ...typography.heading, color: semanticColors.text.primary },
+  diagnosticMetaRow: { gap: space.xxs },
+  diagnosticMeta: { ...typography.supporting, color: semanticColors.text.secondary },
+  observedBlock: { gap: space.xxs, paddingVertical: space.xs },
+  observedLabel: { ...typography.eyebrow, color: semanticColors.text.secondary },
+  observedText: { ...typography.supporting, color: semanticColors.text.primary },
+  diagnosticDisclaimer: { ...typography.caption, color: semanticColors.text.secondary },
+  understoodRow: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
+  understoodDot: { ...typography.caption, color: semanticColors.text.secondary },
+  understood: { ...typography.supporting, color: semanticColors.text.secondary, flex: 1 },
+  fact: { gap: space.xxs, paddingVertical: space.xs },
+  error: { ...typography.supporting, color: semanticColors.status.danger.text },
+  artisan: { gap: space.xs, paddingVertical: space.md, alignItems: 'center' },
+  request: { gap: space.xs, padding: space.lg, borderRadius: 24, backgroundColor: semanticColors.background.surface },
 });
