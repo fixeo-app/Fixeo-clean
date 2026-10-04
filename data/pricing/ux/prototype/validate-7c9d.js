@@ -27,7 +27,7 @@ const rm   = read('js/fixeo-request-modal-v2.js');
 const rafi = read('js/fixeo-rafi-os-v1.js');
 const cfg  = read('js/fixeo-estimator-config.js');
 const idx  = read('index.html');
-const vj   = read('vercel.json');
+const vj   = read('vercel.legacy.json');
 const br   = read('js/fixeo-estimator-reservation-bridge-v1.js');
 const api  = read('js/fixeo-estimator-api-v1.js');
 

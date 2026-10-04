@@ -1,0 +1,14 @@
+{
+  "status": 200,
+  "ok": true,
+  "hasReference": true,
+  "privacy": {
+    "persisted": true,
+    "raw_photo_retained": false,
+    "sanitized_photo_retained": true
+  },
+  "safetyStop": false,
+  "provenances": [
+    "user_declared"
+  ]
+}

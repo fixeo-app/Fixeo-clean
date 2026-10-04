@@ -15,10 +15,10 @@ function selectTariff(session,entries=catalogue.entries){
   (!t.quantity_guard || (()=>{try{quantityUnits(t.quantity_guard,session.known_inputs);return true;}catch{return false;}})()) &&
   Object.entries(t.inputs).every(([k,v])=>session.known_inputs?.[k]===v)) || null;
 }
-async function attachOffer(session,payload,{entries=catalogue.entries,fetchImpl=fetch,env=process.env}={}){
+async function attachOffer(session,payload,{entries=catalogue.entries,fetchImpl=fetch,env=process.env,persistOffer}={}){
  const tariff=selectTariff(session,entries);if(!tariff){if(/^(plomberie|electricite|climatisation|serrurerie|jardinage|carrelage|maconnerie|demenagement|peinture)\./.test(session.service_code||''))throw Error('Service scope or city not eligible for VAP');return null;}
  const breakdown=tariffBreakdown(tariff,session.known_inputs);
- if(!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY)throw Error('VAP persistence unavailable');
+ if(!persistOffer && (!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY))throw Error('VAP persistence unavailable');
  const id=crypto.randomUUID();
  const row={id,offer_key:crypto.randomUUID(),pricing_version:VERSION,currency:'MAD',service_code:payload.service_code,
  catalogue_version:tariff.catalogue_version,city:payload.city_slug,
@@ -26,8 +26,11 @@ async function attachOffer(session,payload,{entries=catalogue.entries,fetchImpl=
     ...(session.entry_context?.diagnostic ? {diagnostic:session.entry_context.diagnostic} : {})},
  vap_minor:breakdown.vapMinor,materials_minor:breakdown.materialsMinor,commission_minor:breakdown.commissionMinor,
  client_total_minor:breakdown.clientTotalMinor,expires_at:new Date(payload.expires_at).toISOString()};
- const r=await fetchImpl(env.SUPABASE_URL+'/rest/v1/fixeo_pricing_offers_v1',{method:'POST',headers:{'Content-Type':'application/json',apikey:env.SUPABASE_SERVICE_ROLE_KEY,Authorization:'Bearer '+env.SUPABASE_SERVICE_ROLE_KEY,Prefer:'return=minimal'},body:JSON.stringify(row),signal:AbortSignal.timeout(10000)});
- if(!r.ok)throw Error('VAP persistence failed');
+ if(persistOffer) { const r=await persistOffer(row);if(r?.ok!==true||r.offer_id!==id)throw Error('VAP persistence failed'); }
+ else {
+  const r=await fetchImpl(env.SUPABASE_URL+'/rest/v1/fixeo_pricing_offers_v1',{method:'POST',headers:{'Content-Type':'application/json',apikey:env.SUPABASE_SERVICE_ROLE_KEY,Authorization:'Bearer '+env.SUPABASE_SERVICE_ROLE_KEY,Prefer:'return=minimal'},body:JSON.stringify(row),signal:AbortSignal.timeout(10000)});
+  if(!r.ok)throw Error('VAP persistence failed');
+ }
  payload.pricing_version=VERSION;payload.offer_id=id;payload.financial_breakdown=breakdown;
  payload.amount_mad=breakdown.clientTotalMinor/100;
  if(payload.outcome_type==='LABOUR_PLUS_PART_READY')payload.labour_amount_mad=payload.amount_mad;

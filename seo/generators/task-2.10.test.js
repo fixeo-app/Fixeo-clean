@@ -14,7 +14,7 @@ const ROOT = path.join(__dirname, '..', '..');
 const { generateServiceHubPage } = require('./service-hub-v3');
 const { check: contentGuardCheck } = require('./shared/content-guard');
 const { generateAll, checkDeterminism, SLUGS, OUTFILES } = require('./generate-service-hubs');
-const vercelJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+const vercelJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.legacy.json'), 'utf8'));
 const sitemapStaticXml = fs.readFileSync(path.join(ROOT, 'sitemap-static.xml'), 'utf8');
 
 let passed = 0; let failed = 0; const failures = [];
@@ -268,10 +268,10 @@ test('27. all referenced local SEO assets exist on disk', () => {
 // ── 28–30: Routing ───────────────────────────────────────────────────────────
 console.log('── 28–30. Routing ──────────────────────────────────────────────');
 
-test('28. vercel.json contains hub route rule for all 8 slugs', () => {
+test('28. vercel.legacy.json contains hub route rule for all 8 slugs', () => {
   const hubRule = vercelJson.routes.find(r =>
     r.src === '^/(plombier|electricien|serrurier|climatisation|peintre|menuisier|macon|nettoyage)$');
-  assert(hubRule, 'Hub route rule not found in vercel.json');
+  assert(hubRule, 'Hub route rule not found in vercel.legacy.json');
   assertEquals(hubRule.dest, '/$1.html', `Hub dest wrong: ${hubRule.dest}`);
   // Confirm it's a rewrite (200), not redirect
   assert(!hubRule.status || hubRule.status === 200,

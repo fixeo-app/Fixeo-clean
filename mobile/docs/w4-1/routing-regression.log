@@ -1,0 +1,54 @@
+✔ SEO-0 master map is frozen and covers the 11 Wave-1 intents (2.738076ms)
+✔ SEO-1 Wave-1 masters self-canonicalize and expose support graph (6.678096ms)
+✔ SEO-1 legacy first-four service routes redirect permanently to clean canonical URLs (0.817545ms)
+✔ SEO-2 generated V3 service-city pages own the same support graph contract (0.444748ms)
+✔ SEO-3 high-value refreshed blog pages are current and truthful at metadata level (3.044929ms)
+✔ SEO-3 authority generator points internal links to clean canonical local routes (0.782558ms)
+✔ SEO-4 pSEO corpus is frozen and uses canonical URL shapes (2.480907ms)
+✔ SEO-5 profile sitemap excludes unresolved and anonymous placeholder identities (5.796702ms)
+✔ SEO-6 sitemap index and robots advertise only the canonical sitemap host (0.45352ms)
+✔ SEO-6 no DB migration is part of this consolidation contract (0.284557ms)
+✔ SEO hotfix: climatisation Agadir blog keeps its own editorial canonical (0.309166ms)
+✔ C4.0 legacy empty marketing block and V4 modal entry are detached (1.833298ms)
+✔ C4.1 Client OS no longer loads parallel dashboard tracking truth (0.634683ms)
+✔ C4.2 authenticated request creation is direct and idempotent (0.997909ms)
+✔ C4.3 notifications use one canonical Client OS reader (0.379289ms)
+✔ C4.4 RAFI is grounded in the server context contract (0.692785ms)
+✔ C4.4 server decision contract prioritizes confirmation then quote then live state (0.755395ms)
+✔ C4.5 navigation exposes decisions, requests, interventions and canonical dossier labels (0.418899ms)
+✔ C4.5 support number is centralized for later 0663 cutover (0.379397ms)
+✔ C4.5 desktop sidebar accessibility and modal focus are explicit (0.477632ms)
+✔ legacy client dashboard URLs redirect at the edge (0.403519ms)
+✔ cachebusters point at the certified Client OS assets (0.74755ms)
+✔ client context handler enforces canonical client role and returns evidence-backed decision (4.381238ms)
+✔ client context handler fails closed for a non-client canonical role (2.919696ms)
+✔ client context selects only columns present in the production contract (0.253078ms)
+✔ B6 deployed and local routes reach the canonical handler and revised assets bypass old caches (4.378862ms)
+✔ 6.1 Cube API has three controlled parallel readers, public key/user JWT and no-store (8.90799ms)
+✔ 6.1 Slow/error source preserves other facts with null, never zero (2.609068ms)
+✔ 6.1 Any source Auth/ACL rejection fails the whole Admin response closed (2.171823ms)
+✔ 6.1 API closed contracts reject table/RPC selection and bad identities (2.182425ms)
+✔ 6.1 Freshness, malformed provenance and concurrent pagination are explicit (0.776955ms)
+✔ 6.3 Cohort API has a single fixed read RPC, with explicit timeout and malformed-source refusal (1.323266ms)
+✔ static contract: Control OS exposes Supply and agent API is disabled by default (2.499585ms)
+﹣ Bloc 1-2: declared availability is not capacity and opt-out removes recruitment candidacy (0.453464ms) # SUPPLY_TEST_DATABASE_URL absent
+﹣ Bloc 3-4: campaign queue is bounded and activation requires canonical trust plus fresh proof (0.29384ms) # SUPPLY_TEST_DATABASE_URL absent
+﹣ Bloc 5: agent leases are exclusive and AI cost is hard-gated (0.362793ms) # SUPPLY_TEST_DATABASE_URL absent
+﹣ Bloc 6: channel outbox remains provider-neutral and explicit STOP suppresses outreach (1.780708ms) # SUPPLY_TEST_DATABASE_URL absent
+﹣ Bloc 7: dashboard read model exposes economics without inventing capacity (0.337219ms) # SUPPLY_TEST_DATABASE_URL absent
+﹣ Blocs 8-10: existing base is prioritized and Recruitment Agent V1 stays rules-first (0.394216ms) # SUPPLY_TEST_DATABASE_URL absent
+﹣ Blocs 11-13: national engine ranks city-trade cells and provider stays closed by default (0.395736ms) # SUPPLY_TEST_DATABASE_URL absent
+﹣ Supply agents admin RPC preserves bigint return contract (0.345588ms) # SUPPLY_TEST_DATABASE_URL absent
+﹣ B14-B17: learning cycle is closed, data quality normalizes aliases and readiness stays simulation-only (0.449348ms) # SUPPLY_TEST_DATABASE_URL absent
+﹣ External Discovery V1 stages, deduplicates and never writes canonical artisans (0.310391ms) # SUPPLY_TEST_DATABASE_URL absent
+﹣ Secure external ingestion benchmarks human decisions without canonical writes (0.250069ms) # SUPPLY_TEST_DATABASE_URL absent
+﹣ External import is idempotent for identical content (0.180002ms) # SUPPLY_TEST_DATABASE_URL absent
+﹣ Qualified batch promotion creates only gated unclaimed inactive artisans and is idempotent (0.186376ms) # SUPPLY_TEST_DATABASE_URL absent
+ℹ tests 46
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 13
+ℹ todo 0
+ℹ duration_ms 199.165665

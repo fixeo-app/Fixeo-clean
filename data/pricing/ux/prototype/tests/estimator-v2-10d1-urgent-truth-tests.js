@@ -8,7 +8,7 @@
  * 3. _persistEmergencyRequest() exists and is emergency-only
  * 4. _renderRetry() exists for failure state
  * 5. Standard mode unchanged
- * 6. API endpoint registered in vercel.json
+ * 6. API endpoint registered in vercel.legacy.json
  * 7. urgent-request-fn validation rules correct
  * 8. No Estimator / pricing / reservation calls added
  * 9. Cache key bumped correctly
@@ -25,7 +25,7 @@ var REPO     = path.resolve(__dirname, '../../../../..');
 var FXRF4_JS = path.join(REPO, 'js/fx-request-flow-v4.js');
 var FXRF4_CSS= path.join(REPO, 'css/fx-request-flow-v4.css');
 var INDEX_HTML = path.join(REPO, 'index.html');
-var VERCEL_JSON = path.join(REPO, 'vercel.json');
+var VERCEL_JSON = path.join(REPO, 'vercel.legacy.json');
 var API_FN   = path.join(REPO, 'api/urgent-request-fn/index.js');
 var API_PKG  = path.join(REPO, 'api/urgent-request-fn/package.json');
 var RESERVATION_JS = path.join(REPO, 'js/reservation.js');
@@ -258,16 +258,16 @@ test('5.3 Standard mode copy unchanged: "RAFI sélectionne déjà"', function ()
 });
 
 /* ── 6. API ENDPOINT REGISTERED ────────────────────────────── */
-console.log('\n[10D.1] vercel.json registration');
+console.log('\n[10D.1] vercel.legacy.json registration');
 
 test('6.1 urgent-request-fn registered in builds', function () {
   assert.ok(ver.includes('api/urgent-request-fn/index.js'),
-    'urgent-request-fn must be in vercel.json builds');
+    'urgent-request-fn must be in vercel.legacy.json builds');
 });
 
 test('6.2 /api/urgent-request route registered', function () {
   assert.ok(ver.includes('/api/urgent-request'),
-    '/api/urgent-request route must be in vercel.json');
+    '/api/urgent-request route must be in vercel.legacy.json');
 });
 
 /* ── 7. API FUNCTION VALIDATION ─────────────────────────────── */

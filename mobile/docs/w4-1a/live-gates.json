@@ -1,0 +1,20 @@
+{
+  "proxy": "BLOCKED_CONFIG_NOT_CERTIFIED",
+  "physical_purge": "NOT_RUN",
+  "worker": "NOT_PROVISIONED",
+  "scheduler": "NOT_ENABLED",
+  "real_mobile_tests": "NOT_RUN_AFTER_CUTOVER_NO_CUTOVER",
+  "purge_matrix": "NOT_RUN_NO_STORAGE_DELETE",
+  "service_role_used": false,
+  "claim_side_effect_outside_w41": {
+    "session_id": "20000000-0000-4000-8000-000000000400",
+    "state": "bound",
+    "owner_user_id": "10000000-0000-4000-8000-000000000001",
+    "observation": "Selected by canonical expired-dossier DELETE predicate; query not executed"
+  },
+  "existing_objects": 5,
+  "raw_objects_present": 0,
+  "eligible_media": 4,
+  "eligible_paths": "raw only; already absent; existing clean objects not eligible",
+  "gate_enabled": false
+}

@@ -1,0 +1,23 @@
+{
+  "server": {
+    "pass": 191,
+    "fail": 0
+  },
+  "mobile_contracts": {
+    "pass": 85,
+    "fail": 0
+  },
+  "gate_a": {
+    "typecheck": "PASS",
+    "web_export": "PASS",
+    "physical_build": false
+  },
+  "secret_scan": {
+    "files": 13,
+    "web_files": 24,
+    "secret_values_found": 0
+  },
+  "runtime_diff_from_checkpoint": "none",
+  "physical_purge": "NOT_RUN",
+  "shared_mobile_path": "NOT_RUN"
+}

@@ -1,0 +1,68 @@
+{
+  "baseline_unchanged": true,
+  "created": [
+    {
+      "key": "FIXEO_ESTIMATOR_SECRET",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+      "id": "2pK3pNQBklMnLClz",
+      "updatedAt": 1791137739183
+    },
+    {
+      "key": "FIXEO_DIAGNOSTIC_SECRET",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+      "id": "EcLwpC8pUscNvH6V",
+      "updatedAt": 1791137739183
+    },
+    {
+      "key": "FIXEO_W41_ATTESTATION_SECRET",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+      "id": "xoFywiYVAZvtMDh0",
+      "updatedAt": 1791137739183
+    },
+    {
+      "key": "SUPABASE_URL",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+      "id": "95PAUD9kEvGHYFd2",
+      "updatedAt": 1791137739182
+    },
+    {
+      "key": "FIXEO_STAGING_PROJECT_REF",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+      "id": "4hfNmOy5EFBOTOGZ",
+      "updatedAt": 1791137739182
+    },
+    {
+      "key": "SUPABASE_ANON_KEY",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+      "id": "1dyqsYItaT6iRQHM",
+      "updatedAt": 1791137739182
+    },
+    {
+      "key": "FIXEO_DIAGNOSTIC_MODEL",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+      "id": "NUU8KVazHzOuljn3",
+      "updatedAt": 1791137739182
+    }
+  ]
+}

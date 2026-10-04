@@ -295,23 +295,23 @@ test('21. verifyContext returns Promise', function() {
 });
 
 // ─────────────────────────────────────────────────────────────────
-// 22-23: vercel.json routes
+// 22-23: vercel.legacy.json routes
 // ─────────────────────────────────────────────────────────────────
 
-test('22. vercel.json has /estimation route', function() {
-  const v = JSON.parse(fs.readFileSync(r('vercel.json'), 'utf8'));
+test('22. vercel.legacy.json has /estimation route', function() {
+  const v = JSON.parse(fs.readFileSync(r('vercel.legacy.json'), 'utf8'));
   const hasEstimation = v.routes.some(function(route) {
     return route.src && route.src.includes('/estimation') && route.dest && route.dest.includes('estimation.html');
   });
-  assert(hasEstimation, 'vercel.json missing /estimation route');
+  assert(hasEstimation, 'vercel.legacy.json missing /estimation route');
 });
 
-test('23. vercel.json has /api/estimator-v1 route', function() {
-  const v = JSON.parse(fs.readFileSync(r('vercel.json'), 'utf8'));
+test('23. vercel.legacy.json has /api/estimator-v1 route', function() {
+  const v = JSON.parse(fs.readFileSync(r('vercel.legacy.json'), 'utf8'));
   const hasApi = v.routes.some(function(route) {
     return route.src && route.src.includes('estimator-v1') && route.dest && route.dest.includes('estimator-v1');
   });
-  assert(hasApi, 'vercel.json missing /api/estimator-v1 route');
+  assert(hasApi, 'vercel.legacy.json missing /api/estimator-v1 route');
 });
 
 // ─────────────────────────────────────────────────────────────────

@@ -1,0 +1,24 @@
+{
+  "id": "595f13c1-119b-4a2b-9b69-bcfe12c16ca3",
+  "slug": "mobile-rafi-preview-proxy",
+  "version": 2,
+  "status": "ACTIVE",
+  "verify_jwt": true,
+  "import_map": false,
+  "entrypoint_path": "/tmp/user_fn_kqyhusnbybsukbcaoqtu_595f13c1-119b-4a2b-9b69-bcfe12c16ca3_2/source/index.ts",
+  "ezbr_sha256": "8f8f32ac1a9a8b2ffb912a9d5861d7cd64ea1bc29e591df4bf7185616b9c70dd",
+  "source_sha256": "3c507895202e112bb4ad134f44849b89e9ee322f308a2c3e9394b017a03c6070",
+  "source_exact_privately_preserved": true,
+  "git_sha": "not supplied by Edge deployment metadata",
+  "routes": [
+    "/api/mobile-rafi-photo",
+    "/api/mobile-rafi-transcribe"
+  ],
+  "reads_candidate_env_names": false,
+  "configuration_source": "embedded origin and share token in v2 source; values withheld",
+  "old_origin_differs_from_candidate": true,
+  "values_displayed": false,
+  "rollback_payload_prepared": true,
+  "rollback_executed": false,
+  "rollback_runtime_tested": false
+}

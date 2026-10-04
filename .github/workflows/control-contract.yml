@@ -33,6 +33,8 @@ on:
       - 'sitemap*.xml'
       - 'robots.txt'
       - 'vercel.json'
+      - 'vercel.ts'
+      - 'vercel.legacy.json'
       - 'scripts/generate-blog-v2.js'
       - 'scripts/generate-authority-blog-v3.js'
       - 'scripts/generate-profile-sitemap.js'

@@ -440,31 +440,31 @@ test('O.1 No new Supabase migration files in 7C.9B', function() {
    ════════════════════════════════════════════════════════════ */
 console.log('\n── P. Vercel routes ──');
 
-test('P.1 vercel.json has /estimation route', function() {
-  const json = JSON.parse(read('vercel.json'));
+test('P.1 vercel.legacy.json has /estimation route', function() {
+  const json = JSON.parse(read('vercel.legacy.json'));
   const routes = json.routes || [];
   const hasEstimation = routes.some(r =>
     r.dest === '/estimation.html' || (r.src && r.src.includes('estimation'))
   );
-  assert(hasEstimation, 'vercel.json must have /estimation route');
+  assert(hasEstimation, 'vercel.legacy.json must have /estimation route');
 });
 
-test('P.2 vercel.json has /api/estimator-v1 route', function() {
-  const json = JSON.parse(read('vercel.json'));
+test('P.2 vercel.legacy.json has /api/estimator-v1 route', function() {
+  const json = JSON.parse(read('vercel.legacy.json'));
   const routes = json.routes || [];
   const hasApi = routes.some(r =>
     r.dest && r.dest.includes('estimator-v1')
   );
-  assert(hasApi, 'vercel.json must have /api/estimator-v1 route');
+  assert(hasApi, 'vercel.legacy.json must have /api/estimator-v1 route');
 });
 
-test('P.3 vercel.json builds include api/estimator-v1/index.js', function() {
-  const json = JSON.parse(read('vercel.json'));
+test('P.3 vercel.legacy.json builds include api/estimator-v1/index.js', function() {
+  const json = JSON.parse(read('vercel.legacy.json'));
   const builds = json.builds || [];
   const hasBuild = builds.some(b =>
     b.src && b.src.includes('estimator-v1')
   );
-  assert(hasBuild, 'vercel.json builds must include api/estimator-v1/index.js');
+  assert(hasBuild, 'vercel.legacy.json builds must include api/estimator-v1/index.js');
 });
 
 /* ════════════════════════════════════════════════════════════

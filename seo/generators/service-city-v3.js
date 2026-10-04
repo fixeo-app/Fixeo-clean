@@ -6,7 +6,7 @@
  * This is the reference generator for the entire V3 SEO matrix.
  *
  * FIRST IMPLEMENTATION: Plombier × Casablanca
- * TARGET ROUTE: /plombier/casablanca (vercel.json rewrite → plombier-casablanca.html)
+ * TARGET ROUTE: /plombier/casablanca (vercel.legacy.json rewrite → plombier-casablanca.html)
  * CANONICAL URL: https://www.fixeo.ma/plombier/casablanca
  *
  * CONSUMPTION CONTRACT:
