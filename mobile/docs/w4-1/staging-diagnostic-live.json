@@ -1,0 +1,20 @@
+{
+  "mode": "local-server-real-staging",
+  "passed": [
+    "DIAGNOSTIC_PERSISTED_REAL_STORAGE_PROVENANCE",
+    "DIAGNOSTIC_REFERENCE_VALID",
+    "DIAGNOSTIC_CROSS_USER_REJECTED",
+    "DIAGNOSTIC_TAMPER_REJECTED",
+    "DIAGNOSTIC_EXPIRED_REJECTED",
+    "DIAGNOSTIC_QUOTE_ATOMIC_CLIENT_BINDING",
+    "DIAGNOSTIC_TRUE_STOP_NO_HANDOFF",
+    "STORAGE_ARBITRARY_PATH_REJECTED"
+  ],
+  "requests": [
+    "577023cf-950e-42c2-beb7-6c8e739200cb"
+  ],
+  "diagnostics": [
+    "6d117691-4c6b-4dad-8bb8-01315c25cbdf"
+  ],
+  "status": "PASS"
+}

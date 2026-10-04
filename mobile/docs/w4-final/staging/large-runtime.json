@@ -1,0 +1,74 @@
+{
+  "kind": "integrated-client-os-real-staging",
+  "candidate": "3e9724819ef5d15053436a516064a29fa96d6356",
+  "started_at": "2026-10-04T23:20:49.694Z",
+  "transport": "native HTTP forwarding; real staging responses; synthetic hardware",
+  "calls": [
+    {
+      "page": "large-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 4961,
+      "reference_present": false
+    },
+    {
+      "page": "large-final",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 344,
+      "reference_present": false
+    },
+    {
+      "page": "large-final",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 312,
+      "reference_present": false
+    },
+    {
+      "page": "large-final",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 307,
+      "reference_present": false
+    },
+    {
+      "page": "large-final",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 252,
+      "reference_present": false
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "large-text-200.png",
+      "page": "large-final",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-04T23:20:56.988Z"
+    },
+    {
+      "file": "large-text-200-active-request.png",
+      "page": "large-final",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-04T23:20:57.071Z"
+    }
+  ],
+  "passed": [
+    "REAL_CURRENT_REQUEST_320_FONT_SIZE_200_PERCENT"
+  ],
+  "errors": [],
+  "status": "PASS",
+  "finished_at": "2026-10-04T23:20:57.071Z"
+}

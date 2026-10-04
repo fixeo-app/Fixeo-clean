@@ -32,7 +32,7 @@ const auth      = read('api/fixeo-booking-authority-v1.js');
 const srv       = read('api/server.js');
 const cfg       = read('js/fixeo-estimator-config.js');
 const idx       = read('index.html');
-const vercelJ   = read('vercel.json');
+const vercelJ   = read('vercel.legacy.json');
 
 /* ── A. Migration file existence & identity ── */
 console.log('\n── A. Migration file existence & identity ──');
@@ -337,13 +337,13 @@ test('K.3 No secret literal in idempotency module', function() {
 /* ── L. Vercel dependency resolution ── */
 console.log('\n── L. Vercel dependency preflight ──');
 
-test('L.1 vercel.json has estimator-v1 build entry', function() {
+test('L.1 vercel.legacy.json has estimator-v1 build entry', function() {
   ok(vercelJ.includes('api/estimator-v1/index.js'));
 });
-test('L.2 /api/estimator-v1 route in vercel.json', function() {
+test('L.2 /api/estimator-v1 route in vercel.legacy.json', function() {
   ok(vercelJ.includes('/api/estimator-v1'));
 });
-test('L.3 /estimation route in vercel.json', function() {
+test('L.3 /estimation route in vercel.legacy.json', function() {
   ok(vercelJ.includes('/estimation'));
 });
 test('L.4 estimation.html exists', function() {

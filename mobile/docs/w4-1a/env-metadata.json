@@ -1,0 +1,467 @@
+[
+  {
+    "id": "2pK3pNQBklMnLClz",
+    "key": "FIXEO_ESTIMATOR_SECRET",
+    "target": [
+      "preview"
+    ],
+    "type": "sensitive",
+    "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+    "updatedAt": 1791137739183
+  },
+  {
+    "id": "EcLwpC8pUscNvH6V",
+    "key": "FIXEO_DIAGNOSTIC_SECRET",
+    "target": [
+      "preview"
+    ],
+    "type": "sensitive",
+    "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+    "updatedAt": 1791137739183
+  },
+  {
+    "id": "xoFywiYVAZvtMDh0",
+    "key": "FIXEO_W41_ATTESTATION_SECRET",
+    "target": [
+      "preview"
+    ],
+    "type": "sensitive",
+    "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+    "updatedAt": 1791137739183
+  },
+  {
+    "id": "95PAUD9kEvGHYFd2",
+    "key": "SUPABASE_URL",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+    "updatedAt": 1791137739182
+  },
+  {
+    "id": "4hfNmOy5EFBOTOGZ",
+    "key": "FIXEO_STAGING_PROJECT_REF",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+    "updatedAt": 1791137739182
+  },
+  {
+    "id": "1dyqsYItaT6iRQHM",
+    "key": "SUPABASE_ANON_KEY",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+    "updatedAt": 1791137739182
+  },
+  {
+    "id": "NUU8KVazHzOuljn3",
+    "key": "FIXEO_DIAGNOSTIC_MODEL",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+    "updatedAt": 1791137739182
+  },
+  {
+    "id": "7XOvecSvt6rsYrEe",
+    "key": "WHATSAPP_DISPATCH_TEMPLATE_NAME",
+    "target": [
+      "production"
+    ],
+    "type": "encrypted",
+    "updatedAt": 1790898972534
+  },
+  {
+    "id": "ksXurzW449QdButc",
+    "key": "WHATSAPP_GRAPH_API_VERSION",
+    "target": [
+      "production"
+    ],
+    "type": "encrypted",
+    "updatedAt": 1790896524334
+  },
+  {
+    "id": "3rhzfQPeFEOqdm2t",
+    "key": "WHATSAPP_WEBHOOK_PROCESS_ENABLED",
+    "target": [
+      "production"
+    ],
+    "type": "encrypted",
+    "updatedAt": 1790895739161
+  },
+  {
+    "id": "SMDEkPAcZQu9BTe0",
+    "key": "WHATSAPP_APP_SECRET",
+    "target": [
+      "production"
+    ],
+    "type": "sensitive",
+    "updatedAt": 1790893827375
+  },
+  {
+    "id": "cZ2PPgMOQVeVTwVE",
+    "key": "WHATSAPP_WABA_ID",
+    "target": [
+      "production"
+    ],
+    "type": "sensitive",
+    "updatedAt": 1790893446234
+  },
+  {
+    "id": "YXgudDPUgHbjIM29",
+    "key": "SUPABASE_URL",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc2-rafi-decision-center",
+    "updatedAt": 1790649966978
+  },
+  {
+    "id": "avl6LItserg9AyUn",
+    "key": "SUPABASE_ANON_KEY",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc2-rafi-decision-center",
+    "updatedAt": 1790649966978
+  },
+  {
+    "id": "asmLkVrLzjMFfimy",
+    "key": "FIXEO_STAGING_PROJECT_REF",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc2-rafi-decision-center",
+    "updatedAt": 1790649966978
+  },
+  {
+    "id": "dVWOtAGJqVkXfaSO",
+    "key": "SUPABASE_SERVICE_ROLE_KEY",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc2-rafi-decision-center",
+    "updatedAt": 1790649966978
+  },
+  {
+    "id": "6Kkk1XEmi3HeXjW7",
+    "key": "DISPATCH_WHATSAPP_WORKER_SECRET",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc2-rafi-decision-center",
+    "updatedAt": 1790649966978
+  },
+  {
+    "id": "XOBv5ZuA8V4sRGgw",
+    "key": "WHATSAPP_ACCESS_TOKEN",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc2-rafi-decision-center",
+    "updatedAt": 1790649966978
+  },
+  {
+    "id": "JkE5L9YJMBYi4Y1y",
+    "key": "WHATSAPP_PHONE_NUMBER_ID",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc2-rafi-decision-center",
+    "updatedAt": 1790649966978
+  },
+  {
+    "id": "w5BSgrHRgT3RtjNz",
+    "key": "WHATSAPP_WEBHOOK_VERIFY_TOKEN",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc2-rafi-decision-center",
+    "updatedAt": 1790649966978
+  },
+  {
+    "id": "HRIzhv3JfajOCyoM",
+    "key": "FIXEO_ESTIMATOR_SECRET",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc2-rafi-decision-center",
+    "updatedAt": 1790649966978
+  },
+  {
+    "id": "LlRCzKMg6vafINFd",
+    "key": "FIXEO_ESTIMATOR_SECRET",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc1-contract",
+    "updatedAt": 1790637034625
+  },
+  {
+    "id": "o2dYS4UWago9Wtvf",
+    "key": "SUPABASE_URL",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc1-contract",
+    "updatedAt": 1790637034624
+  },
+  {
+    "id": "f8iIyFyhFD5iGL19",
+    "key": "SUPABASE_ANON_KEY",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc1-contract",
+    "updatedAt": 1790637034624
+  },
+  {
+    "id": "yTgVUuM6w60ZisJe",
+    "key": "FIXEO_STAGING_PROJECT_REF",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc1-contract",
+    "updatedAt": 1790637034624
+  },
+  {
+    "id": "rMYCogFoBEfu34QF",
+    "key": "SUPABASE_SERVICE_ROLE_KEY",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc1-contract",
+    "updatedAt": 1790637034624
+  },
+  {
+    "id": "081IluKCGR9qMkeH",
+    "key": "DISPATCH_WHATSAPP_WORKER_SECRET",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc1-contract",
+    "updatedAt": 1790637034624
+  },
+  {
+    "id": "HLCZoGhBO9HeYXly",
+    "key": "WHATSAPP_ACCESS_TOKEN",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc1-contract",
+    "updatedAt": 1790637034624
+  },
+  {
+    "id": "fUEDPPw9uk2FAYr8",
+    "key": "WHATSAPP_PHONE_NUMBER_ID",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc1-contract",
+    "updatedAt": 1790637034624
+  },
+  {
+    "id": "SlcgXGjnJrSPkWAr",
+    "key": "WHATSAPP_WEBHOOK_VERIFY_TOKEN",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "gitBranch": "feat/control-os-bloc1-contract",
+    "updatedAt": 1790637034624
+  },
+  {
+    "id": "mseyVZhYVfgxOOmX",
+    "key": "FIXEO_DIAGNOSTIC_COST_REVIEWED",
+    "target": [
+      "production"
+    ],
+    "type": "encrypted",
+    "updatedAt": 1790042524406
+  },
+  {
+    "id": "DGIuC0U69SPi2U5G",
+    "key": "FIXEO_DIAGNOSTIC_MAINTENANCE_READY",
+    "target": [
+      "production"
+    ],
+    "type": "encrypted",
+    "updatedAt": 1790042524406
+  },
+  {
+    "id": "5D8zjoQV6KNbWZqd",
+    "key": "FIXEO_DIAGNOSTIC_STORAGE_READY",
+    "target": [
+      "production"
+    ],
+    "type": "encrypted",
+    "updatedAt": 1790042524406
+  },
+  {
+    "id": "un60CZAzmwu4EyG3",
+    "key": "FIXEO_DIAGNOSTIC_RUNTIME_READY",
+    "target": [
+      "production"
+    ],
+    "type": "encrypted",
+    "updatedAt": 1790042524406
+  },
+  {
+    "id": "oj2ZzmW7nrqLxU6Y",
+    "key": "FIXEO_DIAGNOSTIC_PRIVACY_REVIEWED",
+    "target": [
+      "production"
+    ],
+    "type": "encrypted",
+    "updatedAt": 1790042524406
+  },
+  {
+    "id": "eYHmuL4agEws5AxJ",
+    "key": "FIXEO_DIAGNOSTIC_ENABLED",
+    "target": [
+      "production"
+    ],
+    "type": "encrypted",
+    "updatedAt": 1790056681768
+  },
+  {
+    "id": "OstpxlZLi0iaChlH",
+    "key": "FIXEO_DIAGNOSTIC_MODEL",
+    "target": [
+      "production"
+    ],
+    "type": "encrypted",
+    "updatedAt": 1790041775223
+  },
+  {
+    "id": "5t6WYuWds1Jxs8rS",
+    "key": "CRON_SECRET",
+    "target": [
+      "production"
+    ],
+    "type": "sensitive",
+    "updatedAt": 1790041354758
+  },
+  {
+    "id": "3gusvpSHSFZg1BHn",
+    "key": "FIXEO_DIAGNOSTIC_SECRET",
+    "target": [
+      "production"
+    ],
+    "type": "sensitive",
+    "updatedAt": 1790041307688
+  },
+  {
+    "id": "eymMZhTDnZKfbAHU",
+    "key": "OPENAI_API_KEY",
+    "target": [
+      "production",
+      "preview"
+    ],
+    "type": "sensitive",
+    "updatedAt": 1790983521624
+  },
+  {
+    "id": "7Ah6snfflzOy64dI",
+    "key": "WHATSAPP_ACCESS_TOKEN",
+    "target": [
+      "production",
+      "preview"
+    ],
+    "type": "sensitive",
+    "updatedAt": 1790896385546
+  },
+  {
+    "id": "ykzMGhhvs1QoKT6e",
+    "key": "WHATSAPP_PHONE_NUMBER_ID",
+    "target": [
+      "production",
+      "preview"
+    ],
+    "type": "sensitive",
+    "updatedAt": 1790894254336
+  },
+  {
+    "id": "1oA8iw9ZDkVJq5Cf",
+    "key": "DISPATCH_WHATSAPP_WORKER_SECRET",
+    "target": [
+      "production",
+      "preview"
+    ],
+    "type": "sensitive",
+    "updatedAt": 1787434628719
+  },
+  {
+    "id": "EtqyDSNveupMAuXi",
+    "key": "WHATSAPP_WEBHOOK_VERIFY_TOKEN",
+    "target": [
+      "preview",
+      "production"
+    ],
+    "type": "sensitive",
+    "updatedAt": 1787321005370
+  },
+  {
+    "id": "6PX0ENsCuVuyQbXW",
+    "key": "VERCEL_AUTOMATION_BYPASS_SECRET",
+    "target": [
+      "preview"
+    ],
+    "type": "encrypted",
+    "updatedAt": 1786368144584
+  },
+  {
+    "id": "i4EKtIaqrB076tgP",
+    "key": "FIXEO_ESTIMATOR_SECRET",
+    "target": [
+      "production",
+      "preview"
+    ],
+    "type": "sensitive",
+    "updatedAt": 1786370876055
+  },
+  {
+    "id": "Oaz6CFb1FOgW34kR",
+    "key": "SUPABASE_URL",
+    "target": [
+      "production",
+      "preview"
+    ],
+    "type": "sensitive",
+    "updatedAt": 1786366954774
+  },
+  {
+    "id": "nc3zgAdCWKIEIqX3",
+    "key": "SUPABASE_SERVICE_ROLE_KEY",
+    "target": [
+      "preview",
+      "production"
+    ],
+    "type": "sensitive",
+    "updatedAt": 1784304989830
+  }
+]

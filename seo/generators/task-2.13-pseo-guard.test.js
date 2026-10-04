@@ -8,7 +8,7 @@
  *   1. Invoking generate-pseo-v2.js exits non-zero
  *   2. Expected safety message is emitted on stderr
  *   3. No SEO HTML file is modified by the attempt
- *   4. vercel.json and sitemap-index.xml are not modified
+ *   4. vercel.legacy.json and sitemap-index.xml are not modified
  *   5. No active tooling dependency is broken
  *   6. V3 fleet remains 77/77 pages, V3 generators remain operational
  *   7. P1-2 guard on generate-lps.js is still intact
@@ -51,7 +51,7 @@ function assertNotContains(str, sub, msg) {
 /* ── helpers ─────────────────────────────────────────────────────────────── */
 const PSEO_SCRIPT  = path.join(ROOT, 'scripts', 'generate-pseo-v2.js');
 const LPS_SCRIPT   = path.join(ROOT, 'scripts', 'generate-lps.js');
-const VERCEL_JSON  = path.join(ROOT, 'vercel.json');
+const VERCEL_JSON  = path.join(ROOT, 'vercel.legacy.json');
 const SITEMAP_IDX  = path.join(ROOT, 'sitemap-index.xml');
 
 /** Run the PSEO generator and capture result without throwing. */
@@ -74,7 +74,7 @@ function snapshotMtimes(files) {
 
 /* Critical files that must NOT be modified by the PSEO generator */
 const CRITICAL_FILES = [
-  path.join(ROOT, 'vercel.json'),
+  path.join(ROOT, 'vercel.legacy.json'),
   path.join(ROOT, 'sitemap-index.xml'),
   path.join(ROOT, 'sitemap-pseo.xml'),
   path.join(ROOT, 'plombier-casablanca.html'),
@@ -92,7 +92,7 @@ console.log('── Section 1: Safety guard behaviour ────────�
 const EXPECTED_BLOCKED  = 'BLOCKED: legacy PSEO V2 generator';
 const EXPECTED_FROZEN   = 'generate-pseo-v2.js) is FROZEN';
 const EXPECTED_V3_PATH  = 'generate-service-cities-v3.js';
-const EXPECTED_VERCEL   = 'vercel.json routes (DESTRUCTIVE)';
+const EXPECTED_VERCEL   = 'vercel.legacy.json routes (DESTRUCTIVE)';
 
 const runNoArgs = runPseo([]);
 
@@ -116,8 +116,8 @@ test('PG-5. canonical V3 generator path present in stderr', () => {
   assertContains(runNoArgs.stderr, EXPECTED_V3_PATH, 'V3 generator path');
 });
 
-test('PG-6. vercel.json DESTRUCTIVE warning present in stderr', () => {
-  assertContains(runNoArgs.stderr, EXPECTED_VERCEL, 'vercel.json destructive warning');
+test('PG-6. vercel.legacy.json DESTRUCTIVE warning present in stderr', () => {
+  assertContains(runNoArgs.stderr, EXPECTED_VERCEL, 'vercel.legacy.json destructive warning');
 });
 
 test('PG-7. no page-generation output on stdout', () => {
@@ -137,11 +137,11 @@ runPseo([]);
 
 const mtimesAfter = snapshotMtimes(CRITICAL_FILES);
 
-test('PG-8. vercel.json mtime unchanged after guard invocation', () => {
+test('PG-8. vercel.legacy.json mtime unchanged after guard invocation', () => {
   if (mtimesBefore[VERCEL_JSON] !== undefined) {
     assert(
       mtimesBefore[VERCEL_JSON] === mtimesAfter[VERCEL_JSON],
-      'vercel.json was modified by the PSEO generator'
+      'vercel.legacy.json was modified by the PSEO generator'
     );
   }
 });
@@ -184,9 +184,9 @@ test('PG-13. scripts/generate-pseo-v2.js has no module.exports', () => {
   assertNotContains(src, 'module.exports', 'module.exports found — file may be imported');
 });
 
-test('PG-14. vercel.json does not reference generate-pseo', () => {
+test('PG-14. vercel.legacy.json does not reference generate-pseo', () => {
   const src = fs.readFileSync(VERCEL_JSON, 'utf8');
-  assertNotContains(src, 'generate-pseo', 'vercel.json references generate-pseo');
+  assertNotContains(src, 'generate-pseo', 'vercel.legacy.json references generate-pseo');
 });
 
 test('PG-15. api/package.json scripts do not reference generate-pseo', () => {

@@ -1,0 +1,9 @@
+# Client OS staging renderer (operator-only)
+
+Real integrated Home and Client routes with real application business modules. Test-only adapters cover native media capture, secure memory storage and navigation. The runner forwards browser-originated HTTP as native HTTP to the single hard-locked Supabase staging host; status/body are not synthesized. Origin refusal is tested separately. No backend service module is aliased.
+
+Inputs: `W41_AUTH_FILE` containing ONLY fresh authorized W4.1 fixture sessions (never archived JWTs), `W41_AUDIO_FILE` containing synthetic WAV, `W4_RUNTIME_ROOT`, `W4_RUNTIME_REPORT`, `W4_PLAYWRIGHT_MODULE`, `W4_CHROMIUM_EXECUTABLE`, `W4_CHROMIUM_ARGS`. Never commit the auth file. The public publishable key is not a service-role key. Gate/session opening and closing are explicit operator operations outside this renderer.
+
+Build with `node mobile/tests/staging/prepare-client-runtime.cjs <scratch-output>`. Run `node mobile/tests/staging/run-client-runtime.cjs` with the above environment. The normal run prepares independent Client pages before creating requests; it requires the second synthetic Client to have no active request at preparation time. Historical data must never be deleted to satisfy this precondition. Operator commands are read only from local stdin, never from a network endpoint. They drive the actual UI; `STOP` closes the renderer. A–H steps and observations are in `mobile/docs/w4-final/REVIEW.md` and the sanitized runtime call log.
+
+`W4_CAPTURE_ONLY=1` accepts a one-session auth file and reads the existing active request with the gate closed. It captures actual text enlarged 200% at 320px, then exits. This is layout emulation, not physical-device Dynamic Type certification. Every opened Auth session must be revoked, then SQL must verify zero sessions/leases and gate=false. No cleanup or purge is performed by this runner.

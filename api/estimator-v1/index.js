@@ -1027,7 +1027,8 @@ function handleSelectService(
 
 async function handleEvaluate(
   body,
-  secret
+  secret,
+  dependencies = {}
 ) {
   const {
     session_token,
@@ -1139,7 +1140,7 @@ async function handleEvaluate(
           evaluated
         );
 
-      const financial = await attachOffer(evaluated, pricingPayload);
+      const financial = await attachOffer(evaluated, pricingPayload, dependencies);
       if (financial) {
         outcome.price = Object.assign({}, outcome.price, {amount_mad:pricingPayload.amount_mad});
         if (pricingPayload.outcome_type === 'LABOUR_PLUS_PART_READY') outcome.price.labour_amount_mad=pricingPayload.amount_mad;
@@ -1599,7 +1600,8 @@ async function callEstimatorDispatch(
 
 async function handleConfirmRequest(
   body,
-  secret
+  secret,
+  dependencies = {}
 ) {
   const pricingToken =
     body.pricing_context_token;
@@ -1815,7 +1817,7 @@ async function handleConfirmRequest(
 
   try {
     confirmation =
-      await callEstimatorConfirmationRpc({
+      await (dependencies.confirmRpc || callEstimatorConfirmationRpc)({
         ...(payload.diagnostic ? {p_diagnostic:{...payload.diagnostic,
           qualification_answers:payload.diagnostic_qualification_answers || []}} : {}),
         ...(financial ? {p_offer_id:payload.offer_id} : {}),
@@ -1850,6 +1852,9 @@ async function handleConfirmRequest(
           guestTokenHash,
       });
   } catch (e) {
+    if (dependencies.confirmRpc && /^(MOBILE_|DIAGNOSTIC_)/.test(e?.code || '')) {
+      return {status:e.status || 409,body:{ok:false,error:e.code}};
+    }
     if (
       e &&
       e.code ===
@@ -1934,7 +1939,7 @@ async function handleConfirmRequest(
    * the request committed but the first HTTP response was lost before dispatch.
    */
   const dispatch =
-    await callEstimatorDispatch(
+    await (dependencies.dispatch || callEstimatorDispatch)(
       requestId
     );
 
@@ -2427,3 +2432,37 @@ async function handler(
   );
 };
 
+
+// Internal server composition only; no new HTTP action or browser authority.
+module.exports.confirmRequest = handleConfirmRequest;
+
+// Internal composition: dependencies are server closures, never HTTP body fields.
+// Mobile uses the SAME canonical engine and token formats with explicit JWT persistence.
+module.exports.mobileAction = async function(body, secret, dependencies) {
+  if (!dependencies?.persistOffer || !dependencies.confirmRpc || !dependencies.dispatch)
+    throw new Error('Mobile server dependencies required');
+  switch (body.action) {
+    case 'start': return handleStart(body,secret,dependencies.diagnosticReference);
+    case 'answer': return handleAnswer(body,secret);
+    case 'select_service': return handleSelectService(body,secret);
+    case 'evaluate': return handleEvaluate(body,secret,dependencies);
+    case 'verify_pricing_context': return handleVerifyPricingContext(body,secret);
+    case 'confirm_request': return handleConfirmRequest(body,secret,dependencies);
+    default: throw new Error('Invalid mobile action');
+  }
+};
+
+// One clarification policy is server-side. Missing inputs are never guessed.
+// The canonical mapper provides an unpriced quote (or a real Safety STOP).
+module.exports.mobileFallback = function(token,secret,safety) {
+  const session=reconstructSession(unsealToken(token,secret));
+  const mapper=require('../../data/pricing/orchestrator/estimator-outcome-mapper-v1');
+  session.outcome=safety?.stop ? mapper.buildSafetyStop(session.service_code,'server_safety',safety.signals.join(','))
+    : mapper.mapQuoteRequired(session.service_code,'MOBILE_QUALIFICATION_LIMIT');
+  session.state=session.outcome.outcome_type;
+  session.qualification_status=session.state;
+  session.pending_questions=[];
+  return {status:200,body:{ok:true,session:normalizeSessionView(session,secret),
+    outcome:normalizeOutcomeView(session),next_step:null,pricing_context_token:null,
+    qualification_limit_reached:!safety?.stop,...(safety?.stop?{safety}:{})}};
+};

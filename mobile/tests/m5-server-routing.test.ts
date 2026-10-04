@@ -8,7 +8,7 @@ const mobileRoot = process.cwd();
 
 test('Vercel routes M5 native RAFI endpoints to isolated preview functions', () => {
   const vercel = JSON.parse(
-    fs.readFileSync(path.join(repoRoot, 'vercel.json'), 'utf8'),
+    fs.readFileSync(path.join(repoRoot, 'vercel.legacy.json'), 'utf8'),
   );
 
   const routeMap = new Map(

@@ -1,0 +1,16 @@
+{
+  "kind": "local-component-regression-with-fixtures",
+  "staging_certified": false,
+  "passed": [
+    "price_without_diagnostic_double_tap_one_handoff",
+    "uncertain_confirmation_frozen_identical_manual_retry",
+    "one_qualification_quote_no_price_direct_request",
+    "persisted_consent_diagnostic_quote_bridge_canonical_id",
+    "server_stop_removes_commercial_actions",
+    "gatewayError_recoverable_no_false_success",
+    "expired_recoverable_no_false_success",
+    "authError_recoverable_no_false_success",
+    "offline_bootstrap_bounded_manual_retry"
+  ],
+  "errors": []
+}

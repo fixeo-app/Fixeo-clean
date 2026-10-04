@@ -17,7 +17,7 @@ const { SLUGS, OUTFILES, checkDeterminism } = require('./generate-service-hubs')
 const countsJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'seo/data/artisan-counts.json'), 'utf8'));
 const citiesJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'seo/data/cities.json'), 'utf8'));
 const citySlugs  = Object.keys(citiesJson).filter(k => k !== '_meta');
-const vercelJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+const vercelJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.legacy.json'), 'utf8'));
 const sitemapXml = fs.readFileSync(path.join(ROOT, 'sitemap-static.xml'), 'utf8');
 
 // Load committed HTML files

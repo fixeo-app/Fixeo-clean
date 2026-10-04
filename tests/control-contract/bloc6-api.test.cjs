@@ -3,7 +3,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),M=require
 const id='00000000-0000-4000-8000-000000000001',env={SUPABASE_URL:'https://abcdefghijklmnopqrst.supabase.co',SUPABASE_ANON_KEY:'sb_publishable_SYNTHETIC',FIXEO_STAGING_PROJECT_REF:'abcdefghijklmnopqrst'};
 const reply=(data,status=200)=>({ok:status<400,status,text:async()=>JSON.stringify(data)});
 test('B6 deployed and local routes reach the canonical handler and revised assets bypass old caches',()=>{
- const fs=require('node:fs'),path=require('node:path'),root=path.resolve(__dirname,'../..'),config=JSON.parse(fs.readFileSync(path.join(root,'vercel.json'),'utf8'));
+ const fs=require('node:fs'),path=require('node:path'),root=path.resolve(__dirname,'../..'),config=JSON.parse(fs.readFileSync(path.join(root,'vercel.legacy.json'),'utf8'));
  const server=fs.readFileSync(path.join(root,'api/server.js'),'utf8'),pattern=server.match(/app\.all\((\/\^\\\/api\\\/control-v1.*?\$\/), function/)[1],local=new RegExp(pattern.slice(1,-1));
  for(const op of ['marketplace','marketplace-population','marketplace-coverage','marketplace-cohorts']){const url='/api/control-v1/'+op;assert.equal(config.routes.find(r=>new RegExp(r.src).test(url))?.dest,'/api/control-fn/index.js');assert.ok(local.test(url));}
  const html=fs.readFileSync(path.join(root,'admin.html'),'utf8');for(const script of ['admin-fixeo-intelligence','admin-rafi-decision-center','admin-control-os-clean'])assert.ok(html.includes(script+'.js?v='+ (['admin-rafi-decision-center','admin-control-os-clean'].includes(script)?'bloc7':'bloc6')));

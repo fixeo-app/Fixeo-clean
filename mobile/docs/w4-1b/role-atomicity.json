@@ -1,0 +1,8 @@
+{
+  "scope": "staging SQL fault injection in rolled-back transaction",
+  "forced_error_after_owner_attach": true,
+  "request_rolled_back": true,
+  "redemption_rolled_back": true,
+  "receipt_rolled_back": true,
+  "temporary_trigger_remaining": false
+}

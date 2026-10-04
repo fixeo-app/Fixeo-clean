@@ -14,7 +14,7 @@
  * ║  It writes:                                             ║
  * ║    - ~394 legacy HTML pages (problem/price/quartier)    ║
  * ║    - sitemap-pseo.xml + sitemap-index.xml               ║
- * ║    - vercel.json routes (DESTRUCTIVE)                   ║
+ * ║    - vercel.legacy.json routes (DESTRUCTIVE)                   ║
  * ║                                                         ║
  * ║  SEO V3 canonical generators:                           ║
  * ║    seo/generators/generate-service-cities-v3.js         ║
@@ -38,7 +38,7 @@
    SAFETY GUARD — DO NOT REMOVE
    This generator is LEGACY / FROZEN.
    SEO V3 owns all service×city and SEO page generation.
-   This file also writes vercel.json and sitemap-index.xml —
+   This file also writes vercel.legacy.json and sitemap-index.xml —
    accidental execution is DESTRUCTIVE.
    Canonical V3 generators:
      seo/generators/generate-service-cities-v3.js
@@ -56,7 +56,7 @@
     '║  Accidental execution would overwrite:                  ║',
     '║    - ~394 legacy HTML pages (problem/price/quartier)    ║',
     '║    - sitemap-pseo.xml + sitemap-index.xml               ║',
-    '║    - vercel.json routes (DESTRUCTIVE)                   ║',
+    '║    - vercel.legacy.json routes (DESTRUCTIVE)                   ║',
     '║                                                         ║',
     '║  Use the canonical V3 generators instead:              ║',
     '║    node seo/generators/generate-service-cities-v3.js   ║',
@@ -1431,7 +1431,7 @@ function updateSitemapIndex() {
    VERCEL ROUTES UPDATE
 ══════════════════════════════════════════════════════════ */
 function updateVercelRoutes() {
-  const vercelPath = path.join(ROOT, 'vercel.json');
+  const vercelPath = path.join(ROOT, 'vercel.legacy.json');
   const vercel = JSON.parse(fs.readFileSync(vercelPath, 'utf8'));
 
   // New routes to add
@@ -1480,7 +1480,7 @@ function updateVercelRoutes() {
   const newRoutesToAdd = allNewRoutes.filter(r => !existingSrcs.has(r.src));
 
   if (newRoutesToAdd.length === 0) {
-    console.log('ℹ️  All vercel.json routes already present');
+    console.log('ℹ️  All vercel.legacy.json routes already present');
     return;
   }
 
@@ -1503,7 +1503,7 @@ function updateVercelRoutes() {
   vercel.routes = [...before, ...others, ...quartierOnly, ...after];
 
   fs.writeFileSync(vercelPath, JSON.stringify(vercel, null, 2), 'utf8');
-  console.log(`✅ vercel.json: added ${newRoutesToAdd.length} new routes`);
+  console.log(`✅ vercel.legacy.json: added ${newRoutesToAdd.length} new routes`);
 }
 
 /* ═══════════════════════════════════════════════════════════

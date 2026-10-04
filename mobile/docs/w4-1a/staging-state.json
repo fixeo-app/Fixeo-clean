@@ -1,0 +1,78 @@
+{
+  "gate": false,
+  "collected_at": "2026-10-04T19:28:17.555442+00:00",
+  "fixture_ownership": [
+    {
+      "state": "ready",
+      "media_id": "31c8d92a-0825-426d-aeb4-f3fa53b32bc0",
+      "raw_path": "raw/11d7514d-da03-4102-ac8f-1d09ee58733c/31c8d92a-0825-426d-aeb4-f3fa53b32bc0",
+      "clean_path": "safe/11d7514d-da03-4102-ac8f-1d09ee58733c/31c8d92a-0825-426d-aeb4-f3fa53b32bc0.webp",
+      "expires_at": "2026-10-05T18:41:24.946069+00:00",
+      "session_id": "11d7514d-da03-4102-ac8f-1d09ee58733c",
+      "purge_after": "2026-10-04T18:41:24.946069+00:00",
+      "owner_user_id": "58054a6b-a5c1-4dc3-b178-f1d300234c55",
+      "raw_finalized": false,
+      "purge_attempts": 0,
+      "upload_expires_at": "2026-10-04T20:41:24.946069+00:00"
+    },
+    {
+      "state": "ready",
+      "media_id": "6fdfdb97-c932-462c-837c-484afe7a7a8b",
+      "raw_path": "raw/6d117691-4c6b-4dad-8bb8-01315c25cbdf/6fdfdb97-c932-462c-837c-484afe7a7a8b",
+      "clean_path": "safe/6d117691-4c6b-4dad-8bb8-01315c25cbdf/6fdfdb97-c932-462c-837c-484afe7a7a8b.webp",
+      "expires_at": "2027-01-02T18:46:36.282679+00:00",
+      "session_id": "6d117691-4c6b-4dad-8bb8-01315c25cbdf",
+      "purge_after": "2026-10-04T18:44:30.815309+00:00",
+      "owner_user_id": "58054a6b-a5c1-4dc3-b178-f1d300234c55",
+      "raw_finalized": false,
+      "purge_attempts": 0,
+      "upload_expires_at": "2026-10-04T20:44:30.815309+00:00"
+    },
+    {
+      "state": "ready",
+      "media_id": "994357f9-0e28-4429-bb86-97676bf488ce",
+      "raw_path": "raw/1afa81dd-fd0a-4e68-aa77-5e3cbefffb45/994357f9-0e28-4429-bb86-97676bf488ce",
+      "clean_path": "safe/1afa81dd-fd0a-4e68-aa77-5e3cbefffb45/994357f9-0e28-4429-bb86-97676bf488ce.webp",
+      "expires_at": "2026-10-05T18:47:02.177239+00:00",
+      "session_id": "1afa81dd-fd0a-4e68-aa77-5e3cbefffb45",
+      "purge_after": "2026-10-04T18:47:02.177239+00:00",
+      "owner_user_id": "58054a6b-a5c1-4dc3-b178-f1d300234c55",
+      "raw_finalized": false,
+      "purge_attempts": 0,
+      "upload_expires_at": "2026-10-04T20:47:02.177239+00:00"
+    },
+    {
+      "state": "ready",
+      "media_id": "50202ec5-cea8-49ab-9af8-9d651630fb30",
+      "raw_path": "raw/c3edac63-938c-492f-882c-a8e444e1f3c2/50202ec5-cea8-49ab-9af8-9d651630fb30",
+      "clean_path": "safe/c3edac63-938c-492f-882c-a8e444e1f3c2/50202ec5-cea8-49ab-9af8-9d651630fb30.webp",
+      "expires_at": "2026-10-05T18:48:53.858098+00:00",
+      "session_id": "c3edac63-938c-492f-882c-a8e444e1f3c2",
+      "purge_after": "2026-10-04T18:48:53.858098+00:00",
+      "owner_user_id": "58054a6b-a5c1-4dc3-b178-f1d300234c55",
+      "raw_finalized": false,
+      "purge_attempts": 0,
+      "upload_expires_at": "2026-10-04T20:48:53.858098+00:00"
+    },
+    {
+      "state": "validating",
+      "media_id": "e1044e4d-5e74-46f5-bd48-39e40cab5876",
+      "raw_path": "raw/251d4aa2-1a8b-47ca-8a98-8d06cd6b946d/e1044e4d-5e74-46f5-bd48-39e40cab5876",
+      "clean_path": "safe/251d4aa2-1a8b-47ca-8a98-8d06cd6b946d/e1044e4d-5e74-46f5-bd48-39e40cab5876.webp",
+      "expires_at": "2026-10-05T18:53:48.839297+00:00",
+      "session_id": "251d4aa2-1a8b-47ca-8a98-8d06cd6b946d",
+      "purge_after": "2026-10-04T18:53:48.839297+00:00",
+      "owner_user_id": "14c15c92-5166-4232-a62e-0e20cd4d55de",
+      "raw_finalized": false,
+      "purge_attempts": 0,
+      "upload_expires_at": "2026-10-04T20:53:48.839297+00:00"
+    }
+  ],
+  "active_purge_leases": 0,
+  "anon_cleanup_access": false,
+  "running_diagnostics": 0,
+  "scheduler_extensions": [],
+  "client_cleanup_access": false,
+  "fixture_auth_sessions": 0,
+  "diagnostic_storage_objects": 5
+}

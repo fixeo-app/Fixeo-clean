@@ -29,7 +29,7 @@ var FN_PATH    = path.join(ROOT, 'api/admin-settle-mission-fn/index.js');
 var PRE_PATH   = path.join(ROOT, 'supabase/7c11f6-financial-settlement-precheck.sql');
 var MIG_PATH   = path.join(ROOT, 'supabase/7c11f6-financial-settlement.sql');
 var V4_PATH    = path.join(ROOT, 'js/admin-command-center-v4.js');
-var VERCEL     = path.join(ROOT, 'vercel.json');
+var VERCEL     = path.join(ROOT, 'vercel.legacy.json');
 
 var results = { pass: 0, fail: 0, failures: [] };
 function pass(name) { results.pass++; process.stdout.write('  \u2713 [PASS] ' + name + '\n'); }
@@ -397,12 +397,12 @@ check('Route /api/admin/missions/settle registered',
     return (r.src || '').includes('admin/missions/settle') &&
            (r.dest || '').includes('admin-settle-mission-fn');
   }),
-  '/api/admin/missions/settle route missing from vercel.json');
+  '/api/admin/missions/settle route missing from vercel.legacy.json');
 check('Build entry for admin-settle-mission-fn registered',
   vercel.builds.some(function(b) {
     return (b.src || '').includes('admin-settle-mission-fn');
   }),
-  'admin-settle-mission-fn build entry missing from vercel.json');
+  'admin-settle-mission-fn build entry missing from vercel.legacy.json');
 
 /* ── RESULTS ─────────────────────────────────────────────── */
 console.log('\n' + '\u2500'.repeat(58));

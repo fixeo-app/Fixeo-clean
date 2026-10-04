@@ -212,10 +212,10 @@ test('LG-16. scripts/generate-lps.js has no module.exports', () => {
   assertNotContains(src, 'module.exports', 'module.exports found — file may be imported by other scripts');
 });
 
-test('LG-17. vercel.json does not reference generate-lps', () => {
-  const vercelJson = path.join(ROOT, 'vercel.json');
+test('LG-17. vercel.legacy.json does not reference generate-lps', () => {
+  const vercelJson = path.join(ROOT, 'vercel.legacy.json');
   const src = fs.readFileSync(vercelJson, 'utf8');
-  assertNotContains(src, 'generate-lps', 'vercel.json references generate-lps');
+  assertNotContains(src, 'generate-lps', 'vercel.legacy.json references generate-lps');
 });
 
 test('LG-18. api/package.json scripts do not reference generate-lps', () => {

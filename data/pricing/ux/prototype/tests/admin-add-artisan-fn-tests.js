@@ -21,8 +21,8 @@
  *   T13 lifecycle fields forced server-side (caller-immutable)
  *   T14 duplicate (23505) returns 409 conflict
  *   T15 insert failure surfaced truthfully (no fake success)
- *   T16 route registered in vercel.json
- *   T17 build entry registered in vercel.json
+ *   T16 route registered in vercel.legacy.json
+ *   T17 build entry registered in vercel.legacy.json
  *   T18 phone_public validation (min 8 digits)
  *   T19 field trimming and length limits
  *   T20 success response includes backward-compat fields
@@ -36,7 +36,7 @@ var path = require('path');
 var ROOT     = path.resolve(__dirname, '../../../../..');
 var FN_PATH  = path.join(ROOT, 'api/admin-add-artisan-fn/index.js');
 var ADMIN_JS = path.join(ROOT, 'js/admin-artisans.js');
-var VERCEL   = path.join(ROOT, 'vercel.json');
+var VERCEL   = path.join(ROOT, 'vercel.legacy.json');
 var ANY_BROWSER_JS = [
   'js/admin-artisans.js',
   'js/admin-canonical-sync-v1.js',
@@ -292,22 +292,22 @@ check('T15.3 server_config_error for ENV_MISSING',
   fn.includes('server_config_error'),
   'ENV_MISSING error not surfaced truthfully');
 
-/* ── T16: route in vercel.json ───────────────────────────── */
-console.log('\nT16: Route in vercel.json');
+/* ── T16: route in vercel.legacy.json ───────────────────────────── */
+console.log('\nT16: Route in vercel.legacy.json');
 check('T16.1 /api/admin/artisans/add route exists',
   vercel.routes.some(function(r) {
     return (r.src || '').includes('admin/artisans/add') &&
            (r.dest || '').includes('admin-add-artisan-fn');
   }),
-  '/api/admin/artisans/add route missing from vercel.json');
+  '/api/admin/artisans/add route missing from vercel.legacy.json');
 
-/* ── T17: build entry in vercel.json ────────────────────── */
-console.log('\nT17: Build entry in vercel.json');
+/* ── T17: build entry in vercel.legacy.json ────────────────────── */
+console.log('\nT17: Build entry in vercel.legacy.json');
 check('T17.1 admin-add-artisan-fn build entry exists',
   vercel.builds.some(function(b) {
     return (b.src || '').includes('admin-add-artisan-fn');
   }),
-  'admin-add-artisan-fn build entry missing from vercel.json');
+  'admin-add-artisan-fn build entry missing from vercel.legacy.json');
 
 /* ── T18: phone_public validation ────────────────────────── */
 console.log('\nT18: phone_public validation');

@@ -46,6 +46,8 @@ const frames=async(page,count=4)=>page.evaluate(n=>new Promise(resolve=>{const t
    await open(scene,width);await geometry();
    if(scene==='client'){
     await page.getByRole('button',{name:'Écrire à RAFI',exact:true}).click();await page.getByRole('textbox',{name:'Décrivez le problème',exact:true}).evaluate(el=>{if(document.activeElement!==el)throw new Error('write failed to focus');el.blur();});
+    assert.equal(await page.getByRole('textbox',{name:'Votre ville',exact:true}).count(),0);
+    await page.getByRole('textbox',{name:'Décrivez le problème',exact:true}).fill('Une fuite sous le lavabo.');
     assert.equal(await page.getByRole('textbox',{name:'Votre ville',exact:true}).count(),1);
    }
    await page.screenshot({path:path.join(output,`rafi-${scene}-presence${width===320?'-320':''}.png`)});

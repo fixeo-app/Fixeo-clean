@@ -1,0 +1,96 @@
+{
+  "results": [
+    {
+      "scene": "states",
+      "width": 390,
+      "states": 8,
+      "stable": true
+    },
+    {
+      "scene": "states",
+      "width": 320,
+      "states": 8,
+      "stable": true
+    },
+    {
+      "scene": "client",
+      "width": 390,
+      "compact": 55,
+      "backend": "disabled / empty boundaries"
+    },
+    {
+      "scene": "client",
+      "width": 320,
+      "compact": 55,
+      "backend": "disabled / empty boundaries"
+    },
+    {
+      "scene": "artisan",
+      "width": 390,
+      "compact": 55,
+      "backend": "disabled / empty boundaries"
+    },
+    {
+      "scene": "artisan",
+      "width": 320,
+      "compact": 55,
+      "backend": "disabled / empty boundaries"
+    },
+    {
+      "scene": "composer",
+      "callbacks": true,
+      "denied": true,
+      "largeText": true
+    },
+    {
+      "scene": "runtime",
+      "successNoLoop": true,
+      "successNoResumeReplay": true,
+      "background": true,
+      "focus": true,
+      "reducedMotion": true,
+      "cleanup": true,
+      "stats": {
+        "loopStarts": 4,
+        "timingStarts": 3,
+        "timingStops": 5,
+        "activitySubscriptions": 1,
+        "activityStops": 1,
+        "events": []
+      }
+    },
+    {
+      "scene": "runtime-motion",
+      "states": [
+        "listening",
+        "attention",
+        "matching",
+        "success"
+      ],
+      "observed": true
+    },
+    {
+      "scene": "asset-error",
+      "automaticFallback": true,
+      "singleSignature": true
+    },
+    {
+      "scene": "hero-closeup",
+      "cssDiameter": 96,
+      "deviceScaleFactor": 3
+    },
+    {
+      "scene": "master-sizes",
+      "sizes": [
+        96,
+        76,
+        44
+      ],
+      "deterministic": true,
+      "compactProcedural": true,
+      "comparison": true
+    }
+  ],
+  "pageErrors": [],
+  "externalRequests": []
+}

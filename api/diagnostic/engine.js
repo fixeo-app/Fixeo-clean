@@ -12,7 +12,7 @@ const {
 } = require("./photo-grounding");
 const indicative =
   "Diagnostic indicatif — à confirmer par l’artisan si nécessaire.";
-async function analyze(snapshot, { provider, mediaStore }) {
+async function analyze(snapshot, { provider, mediaStore, qualificationMode = "diagnostic" }) {
   const input = snapshot.input;
   const before = evaluateSafety(
     input,
@@ -104,7 +104,13 @@ async function analyze(snapshot, { provider, mediaStore }) {
     ...photos.flatMap((photo) => photo.safety_signals),
   ]);
   const electricalRisk = safety.signals.includes("electrical_risk");
-  const questions = qualificationQuestions(input, model, photos, safety);
+  const proposedQuestions = qualificationQuestions(input, model, photos, safety);
+  // Server-only mobile policy: defer OPTIONAL prompts to the canonical Estimator.
+  // No fabricated answer, changed provenance or alteration of safety evaluation.
+  const deferredQuestions = qualificationMode === "estimator"
+    ? proposedQuestions.filter((question) => question.optional === true) : [];
+  const questions = qualificationMode === "estimator"
+    ? proposedQuestions.filter((question) => question.optional !== true) : proposedQuestions;
   return {
     result: {
       version: VERSION,
@@ -169,7 +175,7 @@ async function analyze(snapshot, { provider, mediaStore }) {
           ? "questions"
           : "qualification",
     },
-    usage: output.usage,
+    usage: { ...output.usage, ...(deferredQuestions.length ? { deferred_qualification: deferredQuestions } : {}) },
     providerCalled: true,
   };
 }

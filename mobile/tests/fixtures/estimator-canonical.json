@@ -1,0 +1,184 @@
+{
+  "source": "Existing canonical orchestrator + normalizeOutcomeView; offline, no token, no activation, no reservation.",
+  "question": {
+    "type": "QUESTION",
+    "question_id": "plumbing_scope@plomberie.fuite_simple",
+    "input_id": "plumbing_scope",
+    "prompt_key": "plumbing_scope",
+    "prompt_fr": "Le besoin concerne-t-il un seul équipement accessible, sans canalisation encastrée ni réseau collectif ?",
+    "answer_type": "enum",
+    "options": [
+      "LOCAL_ACCESSIBLE",
+      "COMPLEX",
+      "UNKNOWN"
+    ],
+    "priority": "ROUTING_BOUNDARY",
+    "blocking": true,
+    "measurement_note": null,
+    "ui_recommendation": "MODAL_OK",
+    "questions_remaining": 3
+  },
+  "outcomes": {
+    "price": {
+      "outcome_type": "PRICE_READY",
+      "service_code": "plomberie.fuite_simple",
+      "service_label": null,
+      "commercial_output_type": "FIXEO_PRICE",
+      "scope_summary": [
+        "Fuite simple visible",
+        "Un raccord sanitaire visible et accessible : resserrage ou joint standard, puis contrôle d’étanchéité. Petits consommables inclus jusqu’à 50 DH. Sans remplacement de tuyau, flexible ou robinet, corrosion, soudure, chauffe-eau, gaz ni réseau collectif.",
+        "Déplacement dans la ville sélectionnée inclus, sans majoration automatique.",
+        "Consommables courants inclus dans le périmètre défini."
+      ],
+      "exclusions_summary": [
+        "Travaux supplémentaires hors du périmètre confirmé."
+      ],
+      "parts_notice_required": false,
+      "diagnostic_notice_required": false,
+      "next_action": "CONTINUE_TO_RESERVATION",
+      "price": {
+        "amount_mad": 280,
+        "labour_amount_mad": null,
+        "currency": "MAD"
+      }
+    },
+    "diagnostic": {
+      "outcome_type": "DIAGNOSTIC_READY",
+      "service_code": "plomberie.diagnostic",
+      "service_label": null,
+      "commercial_output_type": "FIXEO_DIAGNOSTIC",
+      "scope_summary": [
+        "Diagnostic plomberie seul",
+        "Contrôle visuel et vérifications simples d’un problème accessible, avec explication. Sans réparation, recherche instrumentée, démontage lourd, ouverture de mur, rapport certifié ni seconde visite.",
+        "Déplacement dans la ville sélectionnée inclus, sans majoration automatique."
+      ],
+      "exclusions_summary": [
+        "Les réparations et pièces éventuelles ne sont pas comprises dans le diagnostic.",
+        "Travaux supplémentaires hors du périmètre confirmé."
+      ],
+      "parts_notice_required": false,
+      "diagnostic_notice_required": true,
+      "next_action": "BOOK_DIAGNOSTIC",
+      "price": {
+        "amount_mad": 220,
+        "labour_amount_mad": null,
+        "currency": "MAD"
+      },
+      "diagnostic_price_mad": 220,
+      "absorption_possible": true
+    },
+    "labour": {
+      "outcome_type": "LABOUR_PLUS_PART_READY",
+      "service_code": "menuiserie.remplacement_charniere",
+      "service_label": null,
+      "commercial_output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "scope_summary": [
+        "Remplacement charnière — main-d'œuvre",
+        "Consommables courants inclus dans le périmètre défini."
+      ],
+      "exclusions_summary": [
+        "Pièces de remplacement facturées séparément, après votre accord.",
+        "Travaux supplémentaires hors du périmètre confirmé."
+      ],
+      "parts_notice_required": true,
+      "diagnostic_notice_required": false,
+      "next_action": "CONTINUE_TO_RESERVATION",
+      "price": {
+        "amount_mad": null,
+        "labour_amount_mad": 300,
+        "currency": "MAD"
+      },
+      "variable_part_separate": true
+    },
+    "addon": {
+      "outcome_type": "ADD_ON_READY",
+      "service_code": "peinture.preparation_surface",
+      "service_label": null,
+      "commercial_output_type": "FIXEO_ADD_ON",
+      "scope_summary": [
+        "Supplément préparation surface (enduit/ponçage) — sur devis",
+        "Consommables courants inclus dans le périmètre défini."
+      ],
+      "exclusions_summary": [
+        "Travaux supplémentaires hors du périmètre confirmé."
+      ],
+      "parts_notice_required": false,
+      "diagnostic_notice_required": false,
+      "next_action": "CONTINUE_TO_RESERVATION",
+      "price": {
+        "amount_mad": null,
+        "labour_amount_mad": null,
+        "currency": "MAD"
+      }
+    },
+    "quote": {
+      "outcome_type": "QUOTE_REQUIRED",
+      "service_code": "plomberie.fuite_simple",
+      "service_label": null,
+      "commercial_output_type": null,
+      "scope_summary": [],
+      "exclusions_summary": [],
+      "parts_notice_required": false,
+      "diagnostic_notice_required": false,
+      "next_action": "REQUEST_QUOTE",
+      "price": {
+        "amount_mad": null,
+        "labour_amount_mad": null,
+        "currency": "MAD"
+      }
+    },
+    "route": {
+      "outcome_type": "ROUTE_REQUIRED",
+      "service_code": "climatisation.recharge_gaz_r22",
+      "service_label": null,
+      "commercial_output_type": null,
+      "scope_summary": [],
+      "exclusions_summary": [],
+      "parts_notice_required": false,
+      "diagnostic_notice_required": false,
+      "next_action": "CHANGE_SERVICE",
+      "price": {
+        "amount_mad": null,
+        "labour_amount_mad": null,
+        "currency": "MAD"
+      },
+      "route": {
+        "target_service": "climatisation.diagnostic",
+        "target_external": null,
+        "message": "La cause, le fluide et les travaux nécessaires doivent être identifiés avant un devis. Commencez par un diagnostic ; aucune recharge ni réparation n’est incluse."
+      }
+    },
+    "safety": {
+      "outcome_type": "SAFETY_STOP",
+      "service_code": "peinture.mur_interieur.all_in",
+      "service_label": null,
+      "commercial_output_type": null,
+      "scope_summary": [],
+      "exclusions_summary": [],
+      "parts_notice_required": false,
+      "diagnostic_notice_required": false,
+      "next_action": "STOP_FOR_SAFETY",
+      "price": {
+        "amount_mad": null,
+        "labour_amount_mad": null,
+        "currency": "MAD"
+      }
+    },
+    "more": {
+      "outcome_type": "REQUALIFY",
+      "service_code": "plomberie.fuite_simple",
+      "service_label": null,
+      "commercial_output_type": null,
+      "scope_summary": [],
+      "exclusions_summary": [],
+      "parts_notice_required": false,
+      "diagnostic_notice_required": false,
+      "next_action": "PROVIDE_MORE_INFORMATION",
+      "price": {
+        "amount_mad": null,
+        "labour_amount_mad": null,
+        "currency": "MAD"
+      }
+    }
+  }
+}
