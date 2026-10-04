@@ -51,10 +51,13 @@ async function inspect(req, res) {
   try {
     assertPreview(process.env);
 
-    const diagnosticModel =
-      process.env.FIXEO_DIAGNOSTIC_MODEL || 'gpt-4.1-mini-2025-04-14';
+    const {runtime,BRANCH}=require('../mobile-intelligence-fn/runtime');
+    const providerEnv=process.env.VERCEL_GIT_COMMIT_REF===BRANCH?runtime(process.env):process.env;
 
-    if (!process.env.OPENAI_API_KEY) {
+    const diagnosticModel =
+      providerEnv.FIXEO_DIAGNOSTIC_MODEL || 'gpt-4.1-mini-2025-04-14';
+
+    if (!providerEnv.OPENAI_API_KEY) {
       console.warn(
         JSON.stringify({
           event: 'mobile_rafi_photo_unavailable',
@@ -72,7 +75,7 @@ async function inspect(req, res) {
       return send(res, 400, { ok: false, error: 'photo_required' });
     }
 
-    normalizeCity(req.body?.city);
+    const city = normalizeCity(req.body?.city);
 
     const description = String(req.body?.description || '').trim();
     if (description.length > 2000) {
@@ -84,6 +87,11 @@ async function inspect(req, res) {
       req.file.mimetype,
       req.file.size,
     );
+
+    if (req.body?.persist === 'true') {
+      const persisted = await require('../mobile-intelligence-fn/diagnostic').persistPhoto(req, sanitized, description, city);
+      return send(res, 200, persisted);
+    }
 
     await consumeQuota(token, 'photo', sanitized.bytes.length);
 
@@ -115,7 +123,7 @@ async function inspect(req, res) {
 
     const provider = createOpenAIAdapter({
       env: {
-        ...process.env,
+        ...providerEnv,
         FIXEO_DIAGNOSTIC_MODEL: diagnosticModel,
       },
       timeout: 25000,

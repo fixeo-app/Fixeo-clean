@@ -147,17 +147,9 @@
     {
       "src": "api/mobile-rafi-photo-fn/index.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "api/mobile-intelligence-fn/index.js",
-      "use": "@vercel/node"
     }
   ],
   "routes": [
-    {
-      "src": "^/api/mobile-estimator-v1$",
-      "dest": "/api/mobile-intelligence-fn/index.js"
-    },
     {
       "src": "^/js/supabase-client\\.js$",
       "dest": "/api/server.js",
@@ -854,11 +846,7 @@
   ],
   "git": {
     "deploymentEnabled": {
-      "feat/diagnostic-v1": false,
-      "feat/fixeo-mobile-w4-1-intelligence-gateway": false
+      "feat/diagnostic-v1": false
     }
-  },
-  "proxy": {
-    "entrypoint": "middleware.ts"
   }
 }
