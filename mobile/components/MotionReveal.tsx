@@ -1,17 +1,20 @@
-import { type PropsWithChildren, useEffect, useRef, useState } from 'react';
+import { type PropsWithChildren, useEffect, useRef } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
-  Easing,
   StyleSheet,
-  View,
   type ViewStyle,
+  type StyleProp,
 } from 'react-native';
+import { useReducedMotion } from '@/ui/useReducedMotion';
+import { resolveMotion } from '@/ui/motionContract';
+import { motionEasing } from '@/ui/motionEasing';
+import { motionGeometry } from '@/ui/tokens';
 
 type Props = PropsWithChildren<{
   motionKey?: string;
   delay?: number;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
+  preset?: 'reveal' | 'orchestration';
 }>;
 
 export function MotionReveal({
@@ -19,23 +22,11 @@ export function MotionReveal({
   motionKey = 'default',
   delay = 0,
   style,
+  preset = 'reveal',
 }: Props) {
   const progress = useRef(new Animated.Value(1)).current;
-  const [reduceMotion, setReduceMotion] = useState(false);
-
-  useEffect(() => {
-    let mounted = true;
-    void AccessibilityInfo.isReduceMotionEnabled().then(value => {
-      if (mounted) setReduceMotion(Boolean(value));
-    });
-    const subscription = AccessibilityInfo.addEventListener?.('reduceMotionChanged', value => {
-      setReduceMotion(Boolean(value));
-    });
-    return () => {
-      mounted = false;
-      subscription?.remove?.();
-    };
-  }, []);
+  const reduceMotion = useReducedMotion();
+  const geometry = motionGeometry[preset];
 
   useEffect(() => {
     progress.stopAnimation();
@@ -46,14 +37,17 @@ export function MotionReveal({
     }
 
     progress.setValue(0);
-    Animated.timing(progress, {
+    const timing = resolveMotion(preset, reduceMotion, delay);
+    const animation = Animated.timing(progress, {
       toValue: 1,
-      delay,
-      duration: 360,
-      easing: Easing.out(Easing.cubic),
+      delay: timing.delay,
+      duration: timing.duration,
+      easing: motionEasing[timing.easing],
       useNativeDriver: true,
-    }).start();
-  }, [delay, motionKey, progress, reduceMotion]);
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [delay, motionKey, preset, progress, reduceMotion]);
 
   return (
     <Animated.View
@@ -61,18 +55,18 @@ export function MotionReveal({
         styles.root,
         style,
         {
-          opacity: progress,
-          transform: [
+          opacity: reduceMotion ? 1 : progress,
+          transform: reduceMotion ? [] : [
             {
               translateY: progress.interpolate({
                 inputRange: [0, 1],
-                outputRange: [8, 0],
+                outputRange: [geometry.translateY, 0],
               }),
             },
             {
               scale: progress.interpolate({
                 inputRange: [0, 1],
-                outputRange: [0.992, 1],
+                outputRange: [geometry.scale, 1],
               }),
             },
           ],

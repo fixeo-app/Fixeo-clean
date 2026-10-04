@@ -1,15 +1,19 @@
 import type { PropsWithChildren } from 'react';
-import { StyleSheet, View, type ViewStyle } from 'react-native';
-import { colors, radius, spacing } from './tokens';
+import { StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import { FixeoSurface } from './FixeoSurface';
+import { semanticColors, spacing } from './tokens';
 
 type Props = PropsWithChildren<{
   tone?: 'light' | 'dark' | 'muted';
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }>;
 
 export function FixeoCard({ children, tone = 'light', style }: Props) {
   return (
-    <View
+    <FixeoSurface
+      tone={tone === 'dark' ? 'focus' : tone === 'muted' ? 'subtle' : 'surface'}
+      rounding="card"
+      border="subtle"
       style={[
         styles.base,
         tone === 'dark' && styles.dark,
@@ -18,24 +22,18 @@ export function FixeoCard({ children, tone = 'light', style }: Props) {
       ]}
     >
       {children}
-    </View>
+    </FixeoSurface>
   );
 }
 
 const styles = StyleSheet.create({
   base: {
     padding: spacing.lg,
-    borderRadius: radius.lg,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.line,
   },
   dark: {
-    backgroundColor: colors.ink,
-    borderColor: colors.ink,
+    borderColor: semanticColors.background.focus,
   },
   muted: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.surfaceMuted,
+    borderColor: semanticColors.background.subtle,
   },
 });

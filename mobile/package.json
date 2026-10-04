@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "gate:a": "npm run typecheck && expo export --platform web --output-dir dist-gate-a",
     "ci:gate-a": "npm run typecheck && expo export --platform web --output-dir dist-gate-a",
-    "test:contracts": "tsx --test tests/*.test.ts"
+    "test:contracts": "node --import tsx --test tests/*.test.ts"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.0",
