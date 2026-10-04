@@ -58,6 +58,21 @@
         "activityStops": 1,
         "events": []
       }
+    },
+    {
+      "scene": "runtime-motion",
+      "states": [
+        "listening",
+        "attention",
+        "matching",
+        "success"
+      ],
+      "observed": true
+    },
+    {
+      "scene": "hero-closeup",
+      "cssDiameter": 96,
+      "deviceScaleFactor": 3
     }
   ],
   "pageErrors": [],

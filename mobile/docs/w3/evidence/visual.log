@@ -6,4 +6,5 @@ PASS artisan 390
 PASS artisan 320
 PASS composer
 PASS runtime
-{"passed":8,"pageErrors":0,"externalRequests":0,"output":"/workspace/scratch/ca0c6f5989ca/fixeo-w3/mobile/docs/w3/evidence"}
+PASS runtime motion amplitudes
+{"passed":10,"pageErrors":0,"externalRequests":0,"output":"/workspace/scratch/ca0c6f5989ca/fixeo-w3/mobile/docs/w3/evidence"}

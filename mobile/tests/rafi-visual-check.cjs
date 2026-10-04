@@ -74,6 +74,38 @@ const frames=async(page,count=4)=>page.evaluate(n=>new Promise(resolve=>{const t
   await page.evaluate(()=>__w3.setMounted(false));await frames(page);assert.equal(await page.evaluate(()=>__w3.stats.activitySubscriptions-__w3.stats.activityStops),0);assert.equal(await page.evaluate(()=>__w3.navigationListeners.focus.size+__w3.navigationListeners.blur.size),0);
   results.push({scene:'runtime',successNoLoop:true,successNoResumeReplay:true,background:true,focus:true,reducedMotion:true,cleanup:true,stats:await page.evaluate(()=>__w3.stats)});console.log('PASS runtime');
   await open('runtime',390,'no-preference','&compact=1');await frames(page,15);assert.equal(await page.evaluate(()=>__w3.stats.loopStarts),0);assert.equal(await page.evaluate(()=>__w3.stats.activitySubscriptions),0);
+  const motionEvidence=[];
+  for(const [mode,duration] of [['listening',2000],['attention',4200],['matching',1400],['success',1100]]){
+   await open('runtime',390,'no-preference');
+   const samples=await page.evaluate(({mode,duration})=>new Promise(resolve=>{
+    const samples=[],start=performance.now();__w3.setMode(mode);
+    const sample=()=>{
+     const style=id=>getComputedStyle(document.querySelector('[data-testid="'+id+'"]'));
+     const scale=id=>new DOMMatrixReadOnly(style(id).transform).a;
+     const orbit=document.querySelector('[data-testid="rafi-orbit"]');
+     const matrix=orbit?new DOMMatrixReadOnly(getComputedStyle(orbit).transform):null;
+     samples.push({ms:Math.round(performance.now()-start),core:scale('rafi-core'),halo:scale('rafi-halo'),
+      opacity:Number(style('rafi-halo').opacity),orbitDegrees:matrix?Math.atan2(matrix.b,matrix.a)*180/Math.PI:null});
+     if(performance.now()-start<duration)requestAnimationFrame(sample);else resolve(samples);
+    };requestAnimationFrame(sample);
+   }),{mode,duration});
+   const range=key=>[Math.min(...samples.map(s=>s[key])),Math.max(...samples.map(s=>s[key]))];
+   const evidence={mode,durationMs:duration,sampleCount:samples.length,coreScale:range('core'),haloScale:range('halo'),haloOpacity:range('opacity'),last:samples.at(-1)};
+   if(mode==='listening'){assert.ok(evidence.coreScale[1]>1.030);assert.ok(evidence.haloScale[1]>1.075);}
+   if(mode==='attention'){assert.ok(evidence.haloScale[1]>1.06);assert.ok(evidence.haloOpacity[1]>.97);}
+   if(mode==='matching'){assert.ok(evidence.last.orbitDegrees>35);assert.equal(await page.getByTestId('rafi-orbit').count(),1);}
+   if(mode==='success'){assert.ok(evidence.haloScale[1]>1.15);assert.equal(evidence.last.core,1);assert.equal(evidence.last.halo,1);}
+   await geometry();motionEvidence.push(evidence);
+  }
+  fs.writeFileSync(path.join(output,'runtime-motion.json'),JSON.stringify(motionEvidence,null,2)+'\n');
+  results.push({scene:'runtime-motion',states:motionEvidence.map(s=>s.mode),observed:true});console.log('PASS runtime motion amplitudes');
+  const detail=await browser.newPage({viewport:{width:390,height:520},deviceScaleFactor:3,reducedMotion:'reduce'});
+  detail.on('pageerror',error=>errors.push(error.message));
+  await detail.route('**/*',route=>{const url=route.request().url();if(url.startsWith(base)||url.startsWith('data:'))return route.continue();requests.push(url);return route.abort();});
+  await detail.goto(base+'/?scene=hero');await detail.getByTestId('rafi-orb').first().waitFor();await detail.evaluate(()=>document.fonts.ready);await frames(detail);
+  assert.equal((await detail.getByTestId('rafi-core').first().boundingBox()).width,96);
+  await detail.screenshot({path:path.join(output,'rafi-hero-closeup.png')});
+  results.push({scene:'hero-closeup',cssDiameter:96,deviceScaleFactor:3});
   assert.deepEqual(errors,[]);assert.deepEqual(requests,[]);fs.writeFileSync(path.join(output,'browser-results.json'),JSON.stringify({results,pageErrors:errors,externalRequests:requests},null,2));console.log(JSON.stringify({passed:results.length,pageErrors:errors.length,externalRequests:requests.length,output}));
  } finally {await browser.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(error=>{console.error(error);process.exitCode=1;});

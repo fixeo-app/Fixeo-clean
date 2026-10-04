@@ -50,6 +50,13 @@ function Fixture() {
   if (scene === 'runtime') return <NavigationContext.Provider value={navigation as any}>
     <View style={styles.page}>{mounted && <RafiOrb mode={mode} eventKey={eventKey} size={params.has('compact') ? 44 : 96} />}</View>
   </NavigationContext.Provider>;
+  if (scene === 'hero') return <View style={[styles.page, { alignItems: 'center', justifyContent: 'center', gap: 24 }]}>
+    <FixeoText variant="eyebrow" tone="secondary">RAFI · HERO 96</FixeoText>
+    <RafiOrb size={96} active={false} />
+    <FixeoText variant="supporting" tone="secondary">96 px réels · capture densité ×3</FixeoText>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 24 }}><RafiOrb size={76} active={false} /><RafiOrb size={44} active={false} /></View>
+    <FixeoText variant="caption" tone="secondary">Medium 76 · Compact 44</FixeoText>
+  </View>;
   if (scene === 'composer') return <View style={styles.page}>
     <FixeoText variant="eyebrow" tone="secondary">RAFI · FIXEO</FixeoText>
     <RafiOrb size={96} active={false} />

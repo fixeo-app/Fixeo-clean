@@ -162,6 +162,20 @@ export const rafiVisualTokens = {
   haloOuter: 'rgba(198,174,132,0.035)', haloMiddle: 'rgba(198,174,132,0.055)',
   haloInner: 'rgba(198,174,132,0.10)', orbit: 'rgba(198,174,132,0.38)',
   transparent: 'transparent',
+  /** Optical finish only. Compact retains the certified palette above. */
+  finish: {
+    graphiteLight: '#57595C', graphite: '#26282C', rim: '#A29E94', deepRim: '#242629',
+    signature: '#FBE8BD', signatureGlow: 'rgba(231,195,130,0.30)',
+    bounce: 'rgba(209,175,117,0.18)',
+    medium: {
+      haloOuter: 'rgba(198,174,132,0.060)', haloMiddle: 'rgba(198,174,132,0.085)', haloInner: 'rgba(198,174,132,0.13)',
+      specular: 'rgba(255,237,207,0.38)', arcWidth: 0.36, arcHeight: 0.19, arcStroke: 0.023,
+    },
+    hero: {
+      haloOuter: 'rgba(198,174,132,0.080)', haloMiddle: 'rgba(198,174,132,0.11)', haloInner: 'rgba(198,174,132,0.16)',
+      specular: 'rgba(255,237,207,0.54)', arcWidth: 0.39, arcHeight: 0.19, arcStroke: 0.025,
+    },
+  },
 } as const;
 export const rafiMotionTokens = {
   idle: { breathDuration: 3600, orbitDuration: 0 },

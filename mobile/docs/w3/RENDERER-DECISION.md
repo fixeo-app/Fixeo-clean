@@ -14,3 +14,7 @@ Spike d'architecture sur le renderer réel : 8 Views (4 Animated), 3 valeurs Ani
 La version gradient provient de `expo/bundledNativeModules.json` local et de la [documentation Expo SDK 54](https://docs.expo.dev/versions/v54.0.0/sdk/linear-gradient/), qui documente Android/iOS/Web. Les contrôles de bundle/export/Doctor suivront après implémentation. Cette comparaison porte sur le graphe d'animation et le rendu requis ; elle ne prétend pas être un benchmark matériel.
 
 Cible : une horloge native au maximum par Orb animée, aucune horloge compact/Reduced Motion/background/hors focus, un listener AppState partagé entre les Orbs animables, nettoyage de toutes les subscriptions. Success ne possède pas de boucle ; l'événement est consommé même si l'animation est suspendue. Frame compact 55 px pour size 44, contenu dans le logement W2 inchangé.
+
+## Addendum — polish visuel ciblé
+
+Architecture conservée. Un quatrième gradient **statique**, uniquement Hero >=96, apporte un retour chaud au bord inférieur droit. Medium garde trois gradients, Compact un. Aucun wrapper animé, horloge ou dépendance supplémentaire. Détails et verdict dans [VISUAL-REVIEW.md](VISUAL-REVIEW.md).

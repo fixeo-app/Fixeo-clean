@@ -3,25 +3,25 @@
     "file": "rafi-artisan-presence-320.png",
     "width": 320,
     "height": 844,
-    "sha256": "f16370b230f55a557274912e6fc4c7dd935260b86ed0ef5d29f78f7fe80540f7"
+    "sha256": "40399f428574e9b130bc5c5bbcd2d92f0e4213247e28e27c2aab48a6e3950147"
   },
   {
     "file": "rafi-artisan-presence.png",
     "width": 390,
     "height": 844,
-    "sha256": "c4f1d5e84202746f309a6c11c67871ccb2ab7fabeec50d9e4903b83cffc2fef9"
+    "sha256": "32e3c979362fc264f9995f8d8bfa81a4b99925519da831a492d54771eba131e9"
   },
   {
     "file": "rafi-client-presence-320.png",
     "width": 320,
     "height": 844,
-    "sha256": "c70d72b1753a0737eaa2063ca2332e96cfc659bca3bd8766d6365553ebc98422"
+    "sha256": "d5f92fede45aab0b5bea98f2ae1a155fae438f99ed27ea0df7557fc9ce8dea54"
   },
   {
     "file": "rafi-client-presence.png",
     "width": 390,
     "height": 844,
-    "sha256": "34ab35edfd2d63865a2916910c95f2ed5151180e2ef60c9fdc79efca05627ca0"
+    "sha256": "b6e0838198dc5eeb831e1d59204bda16c6812946a4b31f947eeab0cbeca254ef"
   },
   {
     "file": "rafi-compact-drawer.png",
@@ -33,30 +33,36 @@
     "file": "rafi-composer-large-text.png",
     "width": 320,
     "height": 952,
-    "sha256": "f9d5cb8b40b117eefba4b70dcc13b6b55370f9412700d5d6f0c0f54f64013f5c"
+    "sha256": "ae125936a5d9724408b06a46920793040aef8ebd803e0d54e2507a746243417f"
   },
   {
     "file": "rafi-composer.png",
     "width": 390,
     "height": 844,
-    "sha256": "e54630e73efcae073aa4c8499ce6ba4ab243b5f97da53f0683af3cdfce4081e5"
+    "sha256": "cf25dd2455a1a666c7c54a6f3fb1a8491420b236c97265ae73fcdeab53aa4780"
+  },
+  {
+    "file": "rafi-hero-closeup.png",
+    "width": 1170,
+    "height": 1560,
+    "sha256": "25bde48b7fe180403a2cf9bb863e083afdf32fa7f6367c8688f9ca9b29dc814c"
   },
   {
     "file": "rafi-reduced-motion.png",
     "width": 390,
     "height": 1122,
-    "sha256": "c20deac97e905ab3bf47eeafa1e6967ed728e34d5311676337bb7113e5210f7d"
+    "sha256": "fe26031baf010ecf4a6b6dbe79d4fbd9e3079b0b73c0a6dff7341a84cc5cc9c6"
   },
   {
     "file": "rafi-states-320.png",
     "width": 320,
     "height": 1292,
-    "sha256": "5d64e45d7f39fa7014b0831bb17b191075beea4d2ba7f21602927f2c6fdf6013"
+    "sha256": "bc7f47350bae886f1cc1a6cf785eafc4e50c8a41bf7814aae630f0f7dbd52bca"
   },
   {
     "file": "rafi-states-390.png",
     "width": 390,
     "height": 1122,
-    "sha256": "9526471cd666e9f450a96836708a7d20c95439fde8cab9db3d4599d9d06ff6fb"
+    "sha256": "54a8c4836ddf7319b6f327670469b5e0b48e72e3bece1a807296104eabeb7633"
   }
 ]

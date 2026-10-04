@@ -1,6 +1,8 @@
 # W3 — RAFI WOW / Presence Engine V2
 
-Candidat pour revue visuelle indépendante, exclusivement branche mobile. Ce dossier couvre le renderer, son contrat de présence et le composer ; les écrans actuels conservent leur composition W2.
+**Mise à jour :** la passe de polish et son verdict **STOP — RAFI NORTH STAR NOT REACHED** sont documentés dans [VISUAL-REVIEW.md](VISUAL-REVIEW.md). Ce verdict remplace la conclusion visuelle initiale ci-dessous.
+
+Dossier initial du candidat pour revue visuelle indépendante, exclusivement branche mobile. Ce dossier couvre le renderer, son contrat de présence et le composer ; les écrans actuels conservent leur composition W2.
 
 ## A. Checkpoint / concurrence
 
@@ -25,7 +27,7 @@ Capture multimodale existante : permission micro explicite, HIGH_QUALITY, stop p
 
 Voir [RENDERER-DECISION.md](RENDERER-DECISION.md), rédigé avant ajout de dépendance.
 
-**Animated natif + couches natives + expo-linear-gradient `~15.0.8`**. Version installée : `15.0.8`, compatible avec le manifeste SDK 54 installé et Expo Doctor. Trois gradients statiques medium/hero, un compact ; aucune couleur ou dimension animée. Une seule valeur/horloge pilote transform et opacity. Reanimated n'apporte pas de bénéfice nécessaire ici ; Skia/Lottie/WebGL/3D absents.
+**Animated natif + couches natives + expo-linear-gradient `~15.0.8`**. Version installée : `15.0.8`, compatible avec le manifeste SDK 54 installé et Expo Doctor. Après polish : trois gradients statiques medium, quatre hero, un compact ; aucune couleur ou dimension animée. Une seule valeur/horloge pilote transform et opacity. Reanimated n'apporte pas de bénéfice nécessaire ici ; Skia/Lottie/WebGL/3D absents.
 
 Aucune autre version de dépendance n'a changé dans le lockfile local comparé à W2. Le lockfile généré reste exclu du dépôt, conformément à la configuration préexistante ; CI conserve `npm install` et l'archivage de son lockfile. Pas de modification des workflows ni de configuration Expo/EAS.
 
@@ -82,7 +84,7 @@ Le callback texte est relié au focus du champ problème existant. Valeur, valid
 - 0 horloge compact, Reduced Motion, inactive/background, écran sans focus. Pause et nettoyage testés avec de vrais Animated RN Web et des événements AppState/navigation contrôlés côté fixture.
 - Un listener AppState partagé pour les instances animables ; au maximum deux abonnements focus/blur par instance animable. Tous libérés. Le store Reduced Motion W1 est réutilisé sans modification.
 - Success utilise une séquence non bouclée ; aucune animation de célébration pendant les minutes où un statut reste assigned.
-- Export web comparé au post-W2 : augmentation d'environ **8,7 kB brut / 3,1 kB gzip** (moins de 1 %). Les chiffres exacts du candidat figurent dans `evidence/bundle-impact.json`.
+- Export web comparé au post-W2 : augmentation d'environ **9,7 kB brut / 3,4 kB gzip** (moins de 1 %). Les chiffres exacts du candidat figurent dans `evidence/bundle-impact.json`.
 - Les mesures CPU/GPU/batterie natives ne sont pas certifiées par un navigateur. Elles appartiennent au hardening et à la certification physique ultérieurs.
 
 ## H. Accessibilité
@@ -105,7 +107,7 @@ Preuves obligatoires, dans `evidence/` :
 - `rafi-compact-drawer.png` : vrai Drawer W2, orb compacte, destination RAFI sélectionnée.
 - `rafi-composer.png` : vrais composants, trois intentions dans une surface.
 
-Compléments : `rafi-client-presence-320.png`, `rafi-artisan-presence-320.png`, `rafi-composer-large-text.png`. Résolutions et SHA-256 dans `evidence/manifest.json`. Scénarios/assertions dans `browser-results.json` ; non-régression Shell dans `shell-browser-results.json` ; contrôle des fonctions gelées dans `scope-review.json`.
+Compléments : `rafi-hero-closeup.png` (96 px CSS, DPR 3), `rafi-client-presence-320.png`, `rafi-artisan-presence-320.png`, `rafi-composer-large-text.png`. Résolutions et SHA-256 dans `evidence/manifest.json`. Scénarios/assertions dans `browser-results.json` ; non-régression Shell dans `shell-browser-results.json` ; contrôle des fonctions gelées dans `scope-review.json`.
 
 ## J. Tests / gates locaux
 
@@ -118,7 +120,7 @@ Exécutés depuis `mobile/` :
 | `npx expo-doctor@1.20.4` | 18/18 PASS |
 | `npm run gate:a` | PASS, export web uniquement |
 | `git diff --check` | PASS |
-| `node tests/fixtures/prepare-rafi-visual.cjs` puis `node tests/rafi-visual-check.cjs` | 8 scénarios principaux + tests complémentaires, 0 erreur JS, 0 requête externe |
+| `node tests/fixtures/prepare-rafi-visual.cjs` puis `node tests/rafi-visual-check.cjs` | 10 scénarios principaux + tests complémentaires après polish, 0 erreur JS, 0 requête externe |
 | `node tests/fixtures/prepare-shell-visual.cjs` puis `node tests/shell-visual-check.cjs` | 8 scénarios W2 + compatibilité legacy / texte ×2 : PASS |
 
 Le runner accepte les chemins optionnels build/output et `W3_PLAYWRIGHT_MODULE`, `W3_CHROMIUM_EXECUTABLE`, `W3_CHROMIUM_ARGS` (JSON). Le navigateur de vérification est fourni par l'environnement, sans dépendance applicative ajoutée. Les contrats W3 couvrent : huit états, API legacy, labels, mappings, success transitoire, pause/cleanup, bornes géométriques, palette centralisée, absence backend/haptics/per-frame, sources mission/evidence identiques. Les callbacks, permissions refusées, navigation focus et Reduced Motion sont également exercés avec les vrais composants par le runner navigateur.
@@ -135,7 +137,9 @@ Diff nul sur les deux sources mission, MissionEvidenceCapture, tout `mobile/lib`
 
 **Décision utilisateur du 4 octobre 2026 : aucun build physique après W3.** Premier build uniquement après **W8 CLOSED — POSTMERGE PASS** : « BUILD PHYSIQUE #1 — FIXEO MOBILE WOW RC CANDIDATE ». W9 sera la certification physique. Après fermeture postmerge de chaque bloc W3 → W8 : arrêt et nouvelle exécution propriétaire du bloc suivant. Ce mandat s'arrête déjà au candidat W3 + preuves + PR Draft.
 
-## M. Limites réelles / quality gate
+## M. Limites réelles / quality gate initial
+
+Cette évaluation initiale précède la revue ciblée. Le verdict courant figure dans [VISUAL-REVIEW.md](VISUAL-REVIEW.md) : **STOP — RAFI NORTH STAR NOT REACHED**.
 
 Question posée : « Est-ce que RAFI ressemble désormais à la sphère centrale d’un produit technologique international premium, ou simplement à un composant React Native animé ? »
 
