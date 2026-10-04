@@ -4,6 +4,9 @@ on:
     paths:
       - 'api/mobile-intelligence-fn/**'
       - 'api/mobile-rafi-photo-fn/**'
+      - 'api/mobile-rafi-voice-fn/**'
+      - 'api/mobile-rafi-common.js'
+      - 'supabase/functions/mobile-rafi-preview-proxy/**'
       - 'api/diagnostic/engine.js'
       - 'api/estimator-v1/index.js'
       - 'api/estimator-v1/fixeo-vap-offers-v1.js'

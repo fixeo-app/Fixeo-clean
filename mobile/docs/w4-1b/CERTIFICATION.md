@@ -1,5 +1,7 @@
 # STOP — W4.1 SHARED PROXY NOT CERTIFIED
 
+> Rapport historique du premier preflight W4.1B. La reprise après configuration et correction du contrat de rôles est documentée dans [ROLE_CERTIFICATION.md](ROLE_CERTIFICATION.md). Le statut final du nouveau SHA et de sa CI figure dans la PR Draft #148.
+
 W4.1B, 4 octobre 2026. La purge physique ne bloque plus le PASS fonctionnel W4.1. Elle devient le [gate obligatoire W8 Release](../w4-1/DEFERRED_TO_W8.md), encore OPEN. Aucune purge n'est lancée.
 
 ## Checkpoint

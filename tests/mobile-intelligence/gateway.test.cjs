@@ -17,7 +17,7 @@ function api(body,{user=uid,role='client',auth=true,transport,headers={},canonic
 }
 const start={action:'start',entry_context:{city_slug:'rabat',description:'Une petite intervention',service_hint:'bricolage.visite_minimum'}};
 test('auth, Client, exact target, no privileged fallback, strict inputs',async()=>{
- for(const [opts,status] of [[{headers:{authorization:''}},401],[{auth:false},401],[{role:'artisan'},403],[{headers:{origin:'https://hostile.invalid'}},403]])assert.equal((await api(start,opts)).status,status);
+ for(const [opts,status] of [[{headers:{authorization:''}},401],[{auth:false},401],[{role:'artisan'},403],[{role:'admin'},403],[{headers:{origin:'https://hostile.invalid'}},403]])assert.equal((await api(start,opts)).status,status);
  assert.equal((await api({...start,user_id:other})).status,400);
  assert.equal((await api({...start,entry_context:{...start.entry_context,known_inputs:{price:1}}})).status,400);
  assert.equal((await api(start)).status,200);
