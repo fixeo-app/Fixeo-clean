@@ -14,7 +14,7 @@ export function estimatorConfirmation(response: MobileEstimatorResponse, context
   if (estimatorStopped(response)) return null;
   const outcome = estimatorOutcome(response);
   if (!outcome) return null;
-  if (['PRICE_READY', 'DIAGNOSTIC_READY', 'LABOUR_PLUS_PART_READY'].includes(outcome.outcome_type) && response.pricing_context_token) {
+  if (['PRICE_READY', 'DIAGNOSTIC_READY', 'LABOUR_PLUS_PART_READY'].includes(outcome.outcome_type) && response.pricing_context_token && typeof outcome.service_code === 'string') {
     return { action: 'confirm_request', pricing_context_token: response.pricing_context_token, client_phone: phone,
       service_code: outcome.service_code, city_slug: context.city, confirmed: true };
   }

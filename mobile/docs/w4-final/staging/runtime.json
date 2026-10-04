@@ -1,0 +1,1831 @@
+{
+  "kind": "integrated-client-os-real-staging",
+  "started_at": "2026-10-04T23:11:25.024Z",
+  "transport": "native HTTP forwarding; real staging responses; synthetic hardware",
+  "calls": [
+    {
+      "page": "direct",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6937,
+      "reference_present": false
+    },
+    {
+      "page": "direct",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 593,
+      "reference_present": false
+    },
+    {
+      "page": "direct",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 257,
+      "reference_present": false
+    },
+    {
+      "page": "direct",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 261,
+      "reference_present": false
+    },
+    {
+      "page": "direct",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 245,
+      "reference_present": false
+    },
+    {
+      "page": "voice",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 207,
+      "reference_present": false
+    },
+    {
+      "page": "voice",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 214,
+      "reference_present": false
+    },
+    {
+      "page": "voice",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 245,
+      "reference_present": false
+    },
+    {
+      "page": "voice",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 255,
+      "reference_present": false
+    },
+    {
+      "page": "voice",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 241,
+      "reference_present": false
+    },
+    {
+      "page": "ephemeral",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 220,
+      "reference_present": false
+    },
+    {
+      "page": "ephemeral",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 244,
+      "reference_present": false
+    },
+    {
+      "page": "ephemeral",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 243,
+      "reference_present": false
+    },
+    {
+      "page": "ephemeral",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 265,
+      "reference_present": false
+    },
+    {
+      "page": "ephemeral",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 268,
+      "reference_present": false
+    },
+    {
+      "page": "persistent",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 225,
+      "reference_present": false
+    },
+    {
+      "page": "persistent",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 267,
+      "reference_present": false
+    },
+    {
+      "page": "persistent",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 254,
+      "reference_present": false
+    },
+    {
+      "page": "persistent",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 253,
+      "reference_present": false
+    },
+    {
+      "page": "persistent",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 284,
+      "reference_present": false
+    },
+    {
+      "page": "estimate",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 216,
+      "reference_present": false
+    },
+    {
+      "page": "estimate",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 248,
+      "reference_present": false
+    },
+    {
+      "page": "estimate",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 241,
+      "reference_present": false
+    },
+    {
+      "page": "estimate",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 243,
+      "reference_present": false
+    },
+    {
+      "page": "estimate",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 297,
+      "reference_present": false
+    },
+    {
+      "page": "safety",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 219,
+      "reference_present": false
+    },
+    {
+      "page": "safety",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 266,
+      "reference_present": false
+    },
+    {
+      "page": "safety",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 299,
+      "reference_present": false
+    },
+    {
+      "page": "safety",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 296,
+      "reference_present": false
+    },
+    {
+      "page": "safety",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 245,
+      "reference_present": false
+    },
+    {
+      "page": "large",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 219,
+      "reference_present": false
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 242,
+      "reference_present": false
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 247,
+      "reference_present": false
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 242,
+      "reference_present": false
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 291,
+      "reference_present": false
+    },
+    {
+      "page": "estimate",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 4349,
+      "reference_present": false
+    },
+    {
+      "page": "estimate",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 270,
+      "reference_present": false
+    },
+    {
+      "page": "safety",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 4599,
+      "reference_present": false
+    },
+    {
+      "page": "safety",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 257,
+      "reference_present": false
+    },
+    {
+      "page": "safety",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "start",
+      "status": 422,
+      "latency_ms": 4881,
+      "error": "CITY_NOT_SUPPORTED",
+      "reference_present": false
+    },
+    {
+      "page": "estimate",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "start",
+      "status": 422,
+      "latency_ms": 5116,
+      "error": "CITY_NOT_SUPPORTED",
+      "reference_present": false
+    },
+    {
+      "page": "voice",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-rafi-transcribe",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6673,
+      "reference_present": false
+    },
+    {
+      "page": "ephemeral",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-rafi-photo",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 8531,
+      "privacy": {
+        "persisted": false,
+        "raw_photo_retained": false,
+        "sanitized_photo_retained": false
+      },
+      "reference_present": false,
+      "safety_stop": false
+    },
+    {
+      "page": "persistent",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-rafi-photo",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 10944,
+      "privacy": {
+        "persisted": true,
+        "raw_photo_retained": false,
+        "sanitized_photo_retained": true
+      },
+      "reference_present": true,
+      "safety_stop": false
+    },
+    {
+      "page": "estimate-fixed",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6406,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-fixed",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 224,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-fixed",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 267,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-fixed",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 252,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-fixed",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 255,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-fixed",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 210,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-fixed",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 254,
+      "reference_present": false
+    },
+    {
+      "page": "safety-fixed",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5029,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-fixed",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "start",
+      "status": 200,
+      "latency_ms": 6267,
+      "next_step": "METIER_SELECTION",
+      "reference_present": false
+    },
+    {
+      "page": "safety-fixed",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5162,
+      "reference_present": false
+    },
+    {
+      "page": "safety-fixed",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5298,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-fixed",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 4126,
+      "reference_present": false
+    },
+    {
+      "page": "safety-fixed",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 252,
+      "reference_present": false
+    },
+    {
+      "page": "safety-fixed",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 4621,
+      "reference_present": false
+    },
+    {
+      "page": "safety-fixed",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 254,
+      "reference_present": false
+    },
+    {
+      "page": "safety-fixed",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 280,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-fixed",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 534,
+      "reference_present": false
+    },
+    {
+      "page": "safety-fixed",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "start",
+      "status": 200,
+      "latency_ms": 5011,
+      "outcome": "SAFETY_STOP",
+      "reference_present": false
+    },
+    {
+      "page": "persistent-fixed",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 219,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-fixed",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 204,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-fixed",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 238,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-fixed",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-rafi-photo",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6012,
+      "privacy": {
+        "persisted": true,
+        "raw_photo_retained": false,
+        "sanitized_photo_retained": true
+      },
+      "reference_present": true,
+      "safety_stop": false
+    },
+    {
+      "page": "quote-fixed",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 227,
+      "reference_present": false
+    },
+    {
+      "page": "quote-fixed",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 299,
+      "reference_present": false
+    },
+    {
+      "page": "quote-fixed",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 259,
+      "reference_present": false
+    },
+    {
+      "page": "quote-fixed",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 238,
+      "reference_present": false
+    },
+    {
+      "page": "quote-fixed",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 253,
+      "reference_present": false
+    },
+    {
+      "page": "quote-fixed",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 207,
+      "reference_present": false
+    },
+    {
+      "page": "quote-fixed",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 256,
+      "reference_present": false
+    },
+    {
+      "page": "quote-fixed",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "start",
+      "status": 200,
+      "latency_ms": 4956,
+      "next_step": "METIER_SELECTION",
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5031,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-fixed",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5385,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 244,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-fixed",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 261,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 307,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 245,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 257,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-fixed",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "start",
+      "status": 200,
+      "latency_ms": 7015,
+      "next_step": "SERVICE_SELECTION",
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 212,
+      "reference_present": false
+    },
+    {
+      "page": "safety-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 221,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 273,
+      "reference_present": false
+    },
+    {
+      "page": "safety-final",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 250,
+      "reference_present": false
+    },
+    {
+      "page": "safety-final",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 213,
+      "reference_present": false
+    },
+    {
+      "page": "safety-final",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 253,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "start",
+      "status": 200,
+      "latency_ms": 1203,
+      "next_step": "METIER_SELECTION",
+      "reference_present": false
+    },
+    {
+      "page": "safety-final",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 255,
+      "reference_present": false
+    },
+    {
+      "page": "safety-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 210,
+      "reference_present": false
+    },
+    {
+      "page": "quote-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 208,
+      "reference_present": false
+    },
+    {
+      "page": "safety-final",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 254,
+      "reference_present": false
+    },
+    {
+      "page": "quote-final",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 237,
+      "reference_present": false
+    },
+    {
+      "page": "safety-final",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "start",
+      "status": 200,
+      "latency_ms": 820,
+      "outcome": "SAFETY_STOP",
+      "reference_present": false
+    },
+    {
+      "page": "quote-final",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 221,
+      "reference_present": false
+    },
+    {
+      "page": "quote-final",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 274,
+      "reference_present": false
+    },
+    {
+      "page": "quote-final",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 254,
+      "reference_present": false
+    },
+    {
+      "page": "quote-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 221,
+      "reference_present": false
+    },
+    {
+      "page": "quote-final",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 252,
+      "reference_present": false
+    },
+    {
+      "page": "quote-final",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "start",
+      "status": 200,
+      "latency_ms": 1692,
+      "next_step": "METIER_SELECTION",
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5750,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 220,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 265,
+      "reference_present": false
+    },
+    {
+      "page": "quote-final",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "start",
+      "status": 200,
+      "latency_ms": 6658,
+      "next_step": "SERVICE_SELECTION",
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 242,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 209,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-fixed",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "select_service",
+      "status": 200,
+      "latency_ms": 7249,
+      "outcome": "QUOTE_REQUIRED",
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "start",
+      "status": 200,
+      "latency_ms": 7472,
+      "next_step": "SERVICE_SELECTION",
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-rafi-photo",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 4355,
+      "privacy": {
+        "persisted": true,
+        "raw_photo_retained": false,
+        "sanitized_photo_retained": true
+      },
+      "reference_present": true,
+      "safety_stop": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5381,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 291,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "select_service",
+      "status": 200,
+      "latency_ms": 6245,
+      "next_step": "READY",
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "start",
+      "status": 200,
+      "latency_ms": 6242,
+      "next_step": "SERVICE_SELECTION",
+      "reference_present": false
+    },
+    {
+      "page": "quote-final",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "select_service",
+      "status": 200,
+      "latency_ms": 6475,
+      "outcome": "QUOTE_REQUIRED",
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "evaluate",
+      "status": 200,
+      "latency_ms": 642,
+      "outcome": "PRICE_READY",
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "select_service",
+      "status": 200,
+      "latency_ms": 1224,
+      "outcome": "QUOTE_REQUIRED",
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5227,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 208,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 253,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 250,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 294,
+      "reference_present": false
+    },
+    {
+      "page": "large-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 216,
+      "reference_present": false
+    },
+    {
+      "page": "large-final",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 242,
+      "reference_present": false
+    },
+    {
+      "page": "large-final",
+      "path": "/rest/v1/rpc/get_my_mobile_decision_context_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 270,
+      "reference_present": false
+    },
+    {
+      "page": "large-final",
+      "path": "/rest/v1/rpc/get_my_current_client_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 266,
+      "reference_present": false
+    },
+    {
+      "page": "large-final",
+      "path": "/rest/v1/rpc/get_my_current_client_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 284,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/rpc/create_my_service_request_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5395,
+      "reference_present": false,
+      "request_id": "39c65283-8bf2-4bab-8fa5-e7901076704e"
+    },
+    {
+      "page": "direct-final",
+      "path": "/functions/v1/mobile-magic-loop-push",
+      "method": "POST",
+      "action": "dispatch_opportunities",
+      "status": 200,
+      "latency_ms": 2631,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 212,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "confirm_request",
+      "status": 200,
+      "latency_ms": 6597,
+      "reference_present": false,
+      "request_id": "7669bf15-3e97-4333-8d74-6b9d6930bf12"
+    },
+    {
+      "page": "persistent-final",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-estimator-v1",
+      "method": "POST",
+      "action": "confirm_quote",
+      "status": 200,
+      "latency_ms": 1598,
+      "reference_present": false,
+      "request_id": "22b478d2-0c1a-4052-bd6b-e7710643dcbf"
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 225,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 218,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 255,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 207,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 263,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 252,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 218,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 195,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 263,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 206,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 249,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 265,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 225,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 210,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 248,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 207,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 261,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 223,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 207,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 224,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 220,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 214,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 203,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 205,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 220,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 204,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 223,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 201,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 224,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 221,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 218,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 198,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/profiles",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 257,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 216,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 261,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 214,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 7904,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8040,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8108,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 258,
+      "reference_present": false
+    },
+    {
+      "page": "direct-final",
+      "path": "/rest/v1/notifications",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 218,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 255,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 256,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 225,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 260,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 295,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 229,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 227,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 214,
+      "reference_present": false
+    },
+    {
+      "page": "estimate-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 254,
+      "reference_present": false
+    },
+    {
+      "page": "persistent-final",
+      "path": "/rest/v1/service_requests",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 215,
+      "reference_present": false
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "home-idle.png",
+      "page": "direct",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:11:44.235Z"
+    },
+    {
+      "file": "composer-active.png",
+      "page": "direct",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:11:44.350Z"
+    },
+    {
+      "file": "city.png",
+      "page": "direct",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:11:44.420Z"
+    },
+    {
+      "file": "large-text-200.png",
+      "page": "large",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:11:44.919Z"
+    },
+    {
+      "file": "city-320.png",
+      "page": "direct",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-04T23:11:44.960Z"
+    },
+    {
+      "file": "initial-city-slug-failure.png",
+      "page": "estimate",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:12:49.014Z"
+    },
+    {
+      "file": "diagnostic-persistent.png",
+      "page": "persistent",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:12:49.097Z"
+    },
+    {
+      "file": "photo-ephemeral.png",
+      "page": "ephemeral",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:12:49.130Z"
+    },
+    {
+      "file": "voice-transcribed.png",
+      "page": "voice",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:12:49.166Z"
+    },
+    {
+      "file": "safety-stop.png",
+      "page": "safety-final",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:16:01.412Z"
+    },
+    {
+      "file": "diagnostic-persistent-final.png",
+      "page": "persistent-final",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:16:45.422Z"
+    },
+    {
+      "file": "voice-client-continuation.png",
+      "page": "voice",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:16:51.961Z"
+    },
+    {
+      "file": "safety-stop-390.png",
+      "page": "safety-final",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:16:51.988Z"
+    },
+    {
+      "file": "safety-stop-320.png",
+      "page": "safety-final",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-04T23:16:52.025Z"
+    },
+    {
+      "file": "home-idle.png",
+      "page": "direct-final",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:17:22.221Z"
+    },
+    {
+      "file": "composer-active.png",
+      "page": "direct-final",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:17:22.319Z"
+    },
+    {
+      "file": "city.png",
+      "page": "direct-final",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:17:22.382Z"
+    },
+    {
+      "file": "city-320.png",
+      "page": "direct-final",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-04T23:17:22.414Z"
+    },
+    {
+      "file": "large-text-200.png",
+      "page": "large-final",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:17:24.202Z"
+    },
+    {
+      "file": "estimator-price.png",
+      "page": "estimate-final",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:17:24.267Z"
+    },
+    {
+      "file": "estimator-price-320.png",
+      "page": "estimate-final",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-04T23:17:24.312Z"
+    },
+    {
+      "file": "quote-required.png",
+      "page": "quote-final",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:17:24.368Z"
+    },
+    {
+      "file": "estimator-confirmation.png",
+      "page": "estimate-final",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-04T23:17:24.480Z"
+    },
+    {
+      "file": "direct-confirmation.png",
+      "page": "direct-final",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-04T23:17:24.598Z"
+    },
+    {
+      "file": "simple-request-matching.png",
+      "page": "direct-final",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-04T23:17:34.729Z"
+    },
+    {
+      "file": "estimator-request-matching.png",
+      "page": "estimate-final",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-04T23:17:41.596Z"
+    },
+    {
+      "file": "diagnostic-estimator-request-matching.png",
+      "page": "persistent-final",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-04T23:17:43.448Z"
+    },
+    {
+      "file": "active-request.png",
+      "page": "direct-final",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-04T23:18:14.946Z"
+    },
+    {
+      "file": "client-workspace-active-request.png",
+      "page": "direct-final",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-04T23:18:36.274Z"
+    },
+    {
+      "file": "client-workspace-active-request.png",
+      "page": "direct-final",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-04T23:18:48.763Z"
+    }
+  ],
+  "passed": [
+    "H_SERVER_SAFETY_STOP_NO_COMMERCIAL_UI",
+    "G_CANONICAL_QUOTE_WITHOUT_AMOUNT",
+    "A_SIMPLE_REQUEST_NO_DIAGNOSTIC_NO_ESTIMATOR_DOUBLE_TAP_ONE_REQUEST",
+    "E_ESTIMATOR_WITHOUT_DIAGNOSTIC_CANONICAL_PRICE_CONFIRM_REQUEST",
+    "D_PERSISTED_DIAGNOSTIC_REAL_SIGNED_REFERENCE",
+    "F_DIAGNOSTIC_ESTIMATOR_CANONICAL_QUOTE_HANDOFF",
+    "B_REAL_VOICE_TRANSCRIPT_EDITABLE_IN_CLIENT",
+    "C_REAL_EPHEMERAL_PHOTO_NO_PERSISTENCE"
+  ],
+  "errors": [],
+  "completed_at": "2026-10-04T23:19:09.086Z",
+  "status": "PASS_FINAL_PATHS",
+  "tested_build_sha256": "a7359c9f6abfbdc4fcd0e58ac983fc535f3107f13d2bbcd8b54c97dd1b7294e5",
+  "finished_at": "2026-10-04T23:19:09.115Z",
+  "base_candidate": "3e9724819ef5d15053436a516064a29fa96d6356",
+  "superseded_attempts": {
+    "estimate": "CITY_NOT_SUPPORTED before slug correction",
+    "safety": "CITY_NOT_SUPPORTED before slug correction",
+    "safety-fixed": "canonical SAFETY_STOP with null service code rejected before validator correction",
+    "estimate-fixed": "non-actionable METIER_SELECTION before UI correction",
+    "quote-fixed": "non-actionable METIER_SELECTION before UI correction"
+  },
+  "large_text_evidence": "large-runtime.json"
+}

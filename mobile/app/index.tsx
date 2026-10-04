@@ -416,7 +416,7 @@ export default function Home() {
     if (diagnosticReference && diagnosticCity !== normalized) {
       setRafiMessage('Cette analyse correspond à une autre ville. Reprenez la photo pour le lieu choisi.'); return;
     }
-    setEstimateContext({ city: normalized, description: problem.trim(), diagnosticReference });
+    setEstimateContext({ city: normalized.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, '-'), description: problem.trim(), diagnosticReference });
   }
   function intelligenceCreated(requestId: string) {
     setEstimateContext(null); setJourneyStatus('matching');

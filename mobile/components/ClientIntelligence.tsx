@@ -13,6 +13,8 @@ import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoText } from '@/ui/FixeoText';
 import optionLabels from '@/lib/clientEstimatorLabels.generated.json';
 
+const metierLabels: Record<string, string> = { plomberie: 'Plomberie', electricite: 'Électricité', serrurerie: 'Serrurerie', climatisation: 'Climatisation', bricolage: 'Bricolage', menuiserie: 'Menuiserie', peinture: 'Peinture', maconnerie: 'Maçonnerie', nettoyage: 'Nettoyage', jardinage: 'Jardinage', demenagement: 'Déménagement', carrelage: 'Carrelage', autre: 'Autre' };
+
 /** One optional, server-owned journey. No price, token decoding or local STOP release. */
 export function ClientIntelligence({ context, onCreated, onClose, onStop }: {
   context: ClientIntelligenceContext; onCreated: (id: string) => void; onClose: () => void; onStop: (message?: string) => void;
@@ -58,8 +60,8 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop }: {
       if (view.kind === 'safety') { stopped.current = true; onStop(); }
     } finally { lock.current = false; if (active.current) setBusy(false); }
   }
-  function start() {
-    void run({ action: 'start', entry_context: { city_slug: initial.city, description: initial.description,
+  function start(metier?: string) {
+    void run({ action: 'start', entry_context: { city_slug: initial.city, description: initial.description, ...(metier ? { metier_hint: metier } : {}),
       ...(initial.diagnosticReference ? { diagnostic_token: initial.diagnosticReference } : {}) } });
   }
   useEffect(() => {
@@ -117,7 +119,10 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop }: {
           question_id: step.question_id, answer: step.answer_type === 'number' ? Number(answer) : answer })} />
       </>}
     </ClientSection>}
-    {!outcome && step?.type === 'METIER_SELECTION' && <FixeoText>Précisez le métier dans votre description pour que RAFI puisse vous orienter.</FixeoText>}
+    {!outcome && step?.type === 'METIER_SELECTION' && <ClientSection label="Précisons votre besoin">
+      <FixeoText>Quel métier correspond à votre besoin ?</FixeoText>
+      {step.candidate_metiers?.map(metier => <FixeoAction key={metier} label={metierLabels[metier] || metier} variant="secondary" disabled={blocked} onPress={() => start(metier)} />)}
+    </ClientSection>}
     {canConfirm && !confirming && <FixeoAction label={outcome?.outcome_type === 'QUOTE_REQUIRED' ? 'Préparer ma demande de devis' : 'Continuer avec cette estimation'} disabled={blocked} onPress={() => setConfirming(true)} />}
     {confirming && <ClientSection testID="client-estimator-confirmation" label="Votre confirmation">
       <FixeoText>{initial.description}</FixeoText><FixeoText tone="secondary">{initial.city}</FixeoText>

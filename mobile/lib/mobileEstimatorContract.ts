@@ -42,11 +42,12 @@ export function validateMobileEstimatorResponse(value: unknown): MobileEstimator
       (body.session && (typeof body.session.session_token !== 'string' || typeof body.session.state !== 'string')) ||
       (body.pricing_context_token != null && typeof body.pricing_context_token !== 'string')) throw new Error('ESTIMATOR_UNAVAILABLE');
   for (const outcome of [body.outcome, body.session?.outcome]) {
-    if (outcome && (typeof outcome.outcome_type !== 'string' || typeof outcome.service_code !== 'string' ||
+    if (outcome && (typeof outcome.outcome_type !== 'string' || (typeof outcome.service_code !== 'string' && !(outcome.service_code === null && ['SAFETY_STOP', 'QUOTE_REQUIRED', 'ROUTE_REQUIRED', 'REQUALIFY'].includes(outcome.outcome_type))) ||
       !Array.isArray(outcome.scope_summary) || !outcome.scope_summary.every(line => typeof line === 'string') ||
       !Array.isArray(outcome.exclusions_summary) || !outcome.exclusions_summary.every(line => typeof line === 'string'))) throw new Error('ESTIMATOR_UNAVAILABLE');
   }
   if (body.next_step && (typeof body.next_step.type !== 'string' ||
+    (body.next_step.candidate_metiers != null && (!Array.isArray(body.next_step.candidate_metiers) || !body.next_step.candidate_metiers.every(item => typeof item === 'string'))) ||
     (body.next_step.options != null && !Array.isArray(body.next_step.options)) ||
     (body.next_step.candidate_services != null && (!Array.isArray(body.next_step.candidate_services) ||
       !body.next_step.candidate_services.every(item => item && typeof item.service_code === 'string'))))) throw new Error('ESTIMATOR_UNAVAILABLE');

@@ -1,0 +1,235 @@
+{
+  "mode": "real-shared-proxy",
+  "started_at": "2026-10-04T23:11:54.613Z",
+  "passed": [
+    "ESTIMATOR_OPTIONAL_DIAGNOSTIC_NO_SAFETY_QUESTION",
+    "CANONICAL_PRICE_READY",
+    "HANDOFF_IDEMPOTENCY_DOUBLE_TAP_RETRY_CONFLICT",
+    "REQUEST_OWNER_FROM_JWT",
+    "ONE_CLARIFICATION_CANONICAL_QUOTE_REQUIRED",
+    "TRUE_STOP_NO_PRICING_NO_REQUEST_NO_LOCAL_LIFT",
+    "DIRECT_WITHOUT_DIAGNOSTIC_ESTIMATOR_PRICING"
+  ],
+  "calls": [
+    {
+      "label": "ESTIMATOR_START_WITHOUT_DIAGNOSTIC",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 8420,
+      "response_bytes": 2475
+    },
+    {
+      "label": "SESSION_CROSS_USER",
+      "scope": "shared proxy",
+      "status": 403,
+      "error": "ESTIMATOR_SESSION_INVALID",
+      "latency_ms": 1038,
+      "response_bytes": 48
+    },
+    {
+      "label": "SESSION_TAMPER",
+      "scope": "shared proxy",
+      "status": 400,
+      "error": "ESTIMATOR_SESSION_INVALID",
+      "latency_ms": 1032,
+      "response_bytes": 48
+    },
+    {
+      "label": "ESTIMATOR_EVALUATE",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 627,
+      "response_bytes": 6666
+    },
+    {
+      "label": "PRICING_VALID",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 1004,
+      "response_bytes": 245
+    },
+    {
+      "label": "PRICING_EXPIRED",
+      "scope": "shared proxy",
+      "status": 410,
+      "error": "PRICING_CONTEXT_EXPIRED",
+      "latency_ms": 968,
+      "response_bytes": 46
+    },
+    {
+      "label": "PRICING_TAMPER",
+      "scope": "shared proxy",
+      "status": 400,
+      "error": "PRICING_CONTEXT_INVALID",
+      "latency_ms": 1003,
+      "response_bytes": 46
+    },
+    {
+      "label": "HANDOFF_CROSS_USER",
+      "scope": "shared proxy",
+      "status": 403,
+      "error": "PRICING_CONTEXT_INVALID",
+      "latency_ms": 848,
+      "response_bytes": 46
+    },
+    {
+      "label": "HANDOFF_ARTISAN",
+      "scope": "shared proxy",
+      "status": 403,
+      "error": "ROLE_FORBIDDEN",
+      "latency_ms": 488,
+      "response_bytes": 37
+    },
+    {
+      "label": "HANDOFF_CITY_MISMATCH",
+      "scope": "shared proxy",
+      "status": 409,
+      "error": "PRICING_CONTEXT_INVALID",
+      "latency_ms": 1012,
+      "response_bytes": 46
+    },
+    {
+      "label": "HANDOFF_SERVICE_MISMATCH",
+      "scope": "shared proxy",
+      "status": 409,
+      "error": "PRICING_CONTEXT_INVALID",
+      "latency_ms": 664,
+      "response_bytes": 46
+    },
+    {
+      "label": "HANDOFF_PRICE_INJECTION",
+      "scope": "shared proxy",
+      "status": 400,
+      "error": "INVALID_BODY",
+      "latency_ms": 607,
+      "response_bytes": 35
+    },
+    {
+      "label": "HANDOFF_DOUBLE_TAP_A",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 1357,
+      "response_bytes": 312
+    },
+    {
+      "label": "HANDOFF_DOUBLE_TAP_B",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 5991,
+      "response_bytes": 311
+    },
+    {
+      "label": "HANDOFF_RETRY_IDENTICAL",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 6883,
+      "response_bytes": 311
+    },
+    {
+      "label": "HANDOFF_PAYLOAD_CONFLICT",
+      "scope": "shared proxy",
+      "status": 409,
+      "error": "MOBILE_IDEMPOTENCY_CONFLICT",
+      "latency_ms": 6351,
+      "response_bytes": 50
+    },
+    {
+      "label": "REEVALUATE",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 1004,
+      "response_bytes": 6666
+    },
+    {
+      "label": "RECONFIRM",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 1507,
+      "response_bytes": 311
+    },
+    {
+      "label": "QUALIFICATION_START",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 690,
+      "response_bytes": 7136
+    },
+    {
+      "label": "ANSWER",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 821,
+      "response_bytes": 4583
+    },
+    {
+      "label": "REAL_SAFETY_STOP",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 675,
+      "response_bytes": 4674
+    },
+    {
+      "label": "STOP_evaluate",
+      "scope": "shared proxy",
+      "status": 409,
+      "error": "DIAGNOSTIC_SAFETY_STOP",
+      "latency_ms": 664,
+      "response_bytes": 45
+    },
+    {
+      "label": "STOP_select_service",
+      "scope": "shared proxy",
+      "status": 409,
+      "error": "DIAGNOSTIC_SAFETY_STOP",
+      "latency_ms": 1768,
+      "response_bytes": 45
+    },
+    {
+      "label": "STOP_confirm_quote",
+      "scope": "shared proxy",
+      "status": 409,
+      "error": "DIAGNOSTIC_SAFETY_STOP",
+      "latency_ms": 1004,
+      "response_bytes": 45
+    },
+    {
+      "label": "DIRECT_CLIENT_REQUEST",
+      "scope": "JWT canonical RPC",
+      "status": 200,
+      "latency_ms": 292,
+      "response_bytes": 685
+    },
+    {
+      "label": "DIRECT_IDENTICAL_RETRY",
+      "scope": "JWT canonical RPC",
+      "status": 200,
+      "latency_ms": 268,
+      "response_bytes": 685
+    },
+    {
+      "label": "DIRECT_ARTISAN_REFUSED",
+      "scope": "JWT canonical RPC",
+      "status": 403,
+      "latency_ms": 320,
+      "response_bytes": 65
+    },
+    {
+      "label": "PERSISTED_DIAGNOSTIC_CLIENT",
+      "scope": "shared proxy",
+      "status": 429,
+      "error": "DIAGNOSTIC_QUOTA_EXCEEDED",
+      "latency_ms": 1812,
+      "response_bytes": 48
+    }
+  ],
+  "requests": [
+    "4f494517-ee4a-45b6-85eb-aabf780a2a94",
+    "9e56766a-990f-4c64-8063-fbe6ff44831c"
+  ],
+  "diagnostics": [],
+  "storage": [],
+  "status": "FAIL",
+  "failure_class": "AssertionError",
+  "failure": "diagnostic: DIAGNOSTIC_QUOTA_EXCEEDED\n\n429 !== 200\n",
+  "finished_at": "2026-10-04T23:12:42.833Z"
+}

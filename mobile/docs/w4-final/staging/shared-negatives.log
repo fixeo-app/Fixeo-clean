@@ -1,0 +1,9 @@
+{"label":"METHOD_REFUSED","scope":"shared proxy","status":405,"error":"METHOD_NOT_ALLOWED","latency_ms":5273,"response_bytes":41}
+{"label":"UNKNOWN_ROUTE","scope":"shared proxy","status":404,"error":"ROUTE_NOT_FOUND","latency_ms":166,"response_bytes":38}
+{"label":"OVERSIZE","scope":"shared proxy","status":413,"error":"BODY_TOO_LARGE","latency_ms":263,"response_bytes":37}
+{"label":"MALFORMED_JSON_FAILS_CLOSED","scope":"shared proxy","status":503,"error":"GATEWAY_UNAVAILABLE","latency_ms":1288,"response_bytes":42}
+{"label":"CLIENT_BYPASS_OVERRIDE_IGNORED","scope":"shared proxy","status":400,"error":"INVALID_ACTION","latency_ms":1275,"response_bytes":37}
+{"label":"ATTESTATION_TAMPER","scope":"JWT canonical RPC","status":403,"latency_ms":640,"response_bytes":82}
+{"label":"ATTESTATION_CROSS_USER","scope":"JWT canonical RPC","status":403,"latency_ms":261,"response_bytes":80}
+{"label":"ATTESTATION_EXPIRED","scope":"JWT canonical RPC","status":403,"latency_ms":248,"response_bytes":82}
+PASS BOUNDED_PROXY_AND_CANONICAL_ATTESTATION_NEGATIVES

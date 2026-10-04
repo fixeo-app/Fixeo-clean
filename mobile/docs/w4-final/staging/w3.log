@@ -1,0 +1,11 @@
+PASS states 390
+PASS states 320
+PASS client 390
+PASS client 320
+PASS artisan 390
+PASS artisan 320
+PASS composer
+PASS runtime
+PASS runtime motion amplitudes
+PASS image failure fallback
+{"passed":12,"pageErrors":0,"externalRequests":0,"output":"/workspace/scratch/110561605de8/w4-live/rafi-results"}

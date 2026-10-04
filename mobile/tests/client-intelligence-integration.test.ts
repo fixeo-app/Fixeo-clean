@@ -53,3 +53,10 @@ test('malformed server output fails closed, canonical quote id is accepted', () 
   assert.deepEqual(canonicalOption({ value: false, label_fr: 'Non' }), { value: false, label: 'Non' });
   assert.equal(canonicalOption({ unexpected: true }), null);
 });
+
+test('unclassified canonical safety outcome remains blocking without a service code', () => {
+  const response = validateMobileEstimatorResponse({ ok: true, session: { ...session, state: 'SAFETY_STOP' }, outcome: { ...fixtures.outcomes.safety, service_code: null } });
+  assert.equal(estimatorStopped(response), true);
+  assert.equal(estimatorConfirmation(response, context, '0612345678'), null);
+  assert.throws(() => validateMobileEstimatorResponse({ ok: true, outcome: { ...fixtures.outcomes.price, service_code: null } }));
+});

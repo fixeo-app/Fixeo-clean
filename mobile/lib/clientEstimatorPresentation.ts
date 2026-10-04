@@ -1,7 +1,7 @@
 /** Public normalized server view only. No transport, token storage, pricing engine or reservation. */
 export type ClientEstimatorOutcome = {
   outcome_type: string;
-  service_code: string;
+  service_code: string | null;
   service_label?: string | null;
   scope_summary: string[];
   exclusions_summary: string[];

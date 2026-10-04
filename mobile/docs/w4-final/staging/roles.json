@@ -1,0 +1,83 @@
+{
+  "results": [
+    {
+      "label": "VOICE_ANON_REFUSED",
+      "status": 401,
+      "error": "AUTH_REQUIRED",
+      "transcript_nonempty": false,
+      "latency_ms": 5976,
+      "response_bytes": 36
+    },
+    {
+      "label": "VOICE_INVALID_JWT_REFUSED",
+      "status": 401,
+      "transcript_nonempty": false,
+      "latency_ms": 213,
+      "response_bytes": 66
+    },
+    {
+      "label": "VOICE_CLIENT_ACCEPTED",
+      "status": 200,
+      "transcript_nonempty": true,
+      "latency_ms": 2192,
+      "response_bytes": 68
+    },
+    {
+      "label": "VOICE_ARTISAN_ACCEPTED",
+      "status": 200,
+      "transcript_nonempty": true,
+      "latency_ms": 2700,
+      "response_bytes": 68
+    },
+    {
+      "label": "ESTIMATOR_ARTISAN_REFUSED",
+      "status": 403,
+      "error": "ROLE_FORBIDDEN",
+      "transcript_nonempty": false,
+      "latency_ms": 792,
+      "response_bytes": 37
+    },
+    {
+      "label": "PERSISTED_PHOTO_ARTISAN_REFUSED",
+      "status": 403,
+      "error": "ROLE_FORBIDDEN",
+      "transcript_nonempty": false,
+      "latency_ms": 1083,
+      "response_bytes": 37
+    },
+    {
+      "label": "EPHEMERAL_PHOTO_CLIENT_ACCEPTED",
+      "status": 200,
+      "transcript_nonempty": false,
+      "privacy": {
+        "persisted": false,
+        "raw_photo_retained": false,
+        "sanitized_photo_retained": false
+      },
+      "safety_stop": true,
+      "latency_ms": 788,
+      "response_bytes": 1030
+    },
+    {
+      "label": "EPHEMERAL_PHOTO_ARTISAN_ACCEPTED",
+      "status": 200,
+      "transcript_nonempty": false,
+      "privacy": {
+        "persisted": false,
+        "raw_photo_retained": false,
+        "sanitized_photo_retained": false
+      },
+      "safety_stop": true,
+      "latency_ms": 919,
+      "response_bytes": 1030
+    },
+    {
+      "label": "VOICE_REVOKED_SESSION_REFUSED",
+      "status": 401,
+      "error": "AUTH_REQUIRED",
+      "transcript_nonempty": false,
+      "latency_ms": 5947,
+      "response_bytes": 36
+    }
+  ]
+}
