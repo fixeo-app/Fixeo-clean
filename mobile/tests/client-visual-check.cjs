@@ -186,11 +186,14 @@ const frames = (page, count = 8) => page.evaluate(n => new Promise(resolve => { 
   await page.getByRole('textbox', { name: 'Votre ville', exact: true }).fill('Autre ville');
   await page.getByRole('button', { name: 'Analyser la photo avec RAFI', exact: true }).click();
   await page.getByText('Choisissez une ville FIXEO prise en charge pour lancer l’analyse.', { exact: true }).waitFor();
+  assert.equal(await page.getByText('LA SÉCURITÉ D’ABORD', { exact: true }).count(), 0);
+  assert.equal(await page.getByTestId('client-diagnostic-safety').count(), 0);
   assert.equal((await page.evaluate(() => __w4.calls)).filter(call => call.name === 'createRequest').length, 0);
   await open('idle', 320, '&requestCityError=1'); await writeProblem();
   await page.getByRole('textbox', {name:'Votre ville',exact:true}).fill('Autre ville');
   await page.getByRole('button', {name:'Confier le problème à FIXEO',exact:true}).click();
   await page.getByText('Cette ville n’est pas encore prise en charge. Choisissez une autre ville.',{exact:true}).waitFor();
+  assert.equal(await page.getByText('LA SÉCURITÉ D’ABORD', { exact: true }).count(), 0);
   assert.equal(await page.getByRole('textbox',{name:'Votre ville',exact:true}).count(),1);
   for (const safety of [false, true]) {
    await open('idle', 320, '&ai=1' + (safety ? '&safety=1' : ''));
@@ -208,16 +211,14 @@ const frames = (page, count = 8) => page.evaluate(n => new Promise(resolve => { 
     assert.equal(await page.getByRole('button', {name:'Cette description correspond',exact:true}).count(),0);
     assert.equal(await page.getByTestId('client-request-fields').count(), 0);
     assert.equal(await page.getByTestId('rafi-composer').count(), 0);
+    await page.getByRole('button',{name:'Revenir à mon espace',exact:true}).click();
+    assert.equal((await page.evaluate(()=>__w4.navigations)).at(-1),'/client-workspace');
+    assert.equal(await page.getByTestId('client-diagnostic-safety').count(),1);
+    assert.equal((await page.evaluate(()=>__w4.calls)).filter(c=>c.name==='createRequest').length,0);
    } else {
-    assert.equal(await page.getByTestId('client-diagnostic-question').count(),1);
-    assert.equal(await page.getByRole('textbox', {name:'Depuis quand constatez-vous ce problème ?'}).count(),0);
-    await page.getByRole('textbox', {name:'À quel moment le problème apparaît-il ?'}).fill('Quand l’eau coule.');
-    await page.getByRole('button', {name:'Confirmer cette précision',exact:true}).click();
-    await page.getByRole('textbox', {name:'Depuis quand constatez-vous ce problème ?'}).fill('Non.');
-    await page.getByRole('button', {name:'Confirmer cette précision',exact:true}).click();
-    assert.equal((await page.evaluate(() => __w4.calls)).filter(c => c.name === 'createRequest').length, 0);
+    assert.equal(await page.getByTestId('client-diagnostic-question').count(),0);
     await page.getByRole('button', {name:'Cette description correspond',exact:true}).click();
-    assert.ok((await page.getByRole('textbox', {name:'Décrivez le problème'}).inputValue()).includes('Quand l’eau coule.'));
+    assert.ok((await page.getByRole('textbox', {name:'Décrivez le problème'}).inputValue()).includes('fuite possible'));
     await page.getByRole('button', {name:'Comprendre l’analyse',exact:true}).click();
     assert.ok((await diagnostic.innerText()).includes('HYPOTHÈSE · Joint possiblement usé'));
     await page.getByRole('textbox', {name:'Décrivez le problème'}).fill('Une fuite au lavabo, description corrigée.');
@@ -226,17 +227,45 @@ const frames = (page, count = 8) => page.evaluate(n => new Promise(resolve => { 
     const requests=(await page.evaluate(() => __w4.calls)).filter(c => c.name === 'createRequest');
     assert.equal(requests.length,1); assert.equal(requests[0].args[2],'Une fuite au lavabo, description corrigée.');
    }
-   results.push({scene:'diagnostic',safety,oneQuestion:true,confirmationBeforeRequest:true,provenancePreserved:true});
+   results.push({scene:'diagnostic',safety,safetyQuestions:0,confirmationBeforeRequest:true,provenancePreserved:true});
   }
   await open('idle',320,'&ai=1&choice=1');
   await page.getByRole('button',{name:'Montrer une photo à RAFI',exact:true}).click();
   await page.getByRole('textbox',{name:'Votre ville',exact:true}).fill('Rabat');
   await page.getByRole('button',{name:'Analyser la photo avec RAFI',exact:true}).click();
-  await page.getByTestId('client-diagnostic-review').waitFor();
-  assert.equal(await page.getByRole('button',{name:'Cette description correspond',exact:true}).count(),0);
-  assert.equal(await page.getByRole('button',{name:'Préciser le problème',exact:true}).getAttribute('aria-disabled'),'true');
-  assert.equal((await page.evaluate(()=>__w4.calls)).filter(c=>c.name==='createRequest').length,0);
-  results.push({scene:'diagnostic-choice',requiresServerReview:true,requestBlocked:true});
+  await page.getByTestId('client-diagnostic').waitFor();
+  assert.equal(await page.getByTestId('client-diagnostic-question').count(),0);
+  assert.equal(await page.getByTestId('client-diagnostic-review').count(),0);
+  assert.ok(!(await page.locator('body').innerText()).includes('L’eau se propage-t-elle rapidement ?'));
+  await page.getByRole('button',{name:'Cette description correspond',exact:true}).click();
+  await page.getByRole('button',{name:'Confier le problème à FIXEO',exact:true}).click();
+  await page.getByTestId('client-active-situation').waitFor();
+  const normalCalls=await page.evaluate(()=>__w4.calls);
+  assert.equal(normalCalls.filter(c=>c.name==='createRequest').length,1);
+  assert.equal(normalCalls.filter(c=>c.name==='analyzePhoto').length,1);
+  results.push({scene:'diagnostic-normal-preventive-prompts',safetyQuestions:0,extraAnalyses:0,requestAllowed:true});
+  for (const skip of [false,true]) {
+   await open('idle',320,'&ai=1&qualification=1');
+   await page.getByRole('button',{name:'Montrer une photo à RAFI',exact:true}).click();
+   await page.getByRole('textbox',{name:'Votre ville',exact:true}).fill('Rabat');
+   await page.getByRole('button',{name:'Analyser la photo avec RAFI',exact:true}).click();
+   await page.getByTestId('client-diagnostic-question').waitFor();
+   assert.equal(await page.getByRole('textbox',{name:'Depuis quand constatez-vous ce problème ?'}).count(),0);
+   if(!skip) {
+    await page.getByTestId('client-diagnostic-question').scrollIntoViewIfNeeded();
+    await capture('client-diagnostic-clarification-320');
+   }
+   if(skip) await page.getByRole('button',{name:'Continuer sans cette précision',exact:true}).click();
+   else {
+    await page.getByRole('textbox',{name:'À quel moment le problème apparaît-il ?'}).fill('Quand l’eau coule.');
+    await page.getByRole('button',{name:'Confirmer cette précision',exact:true}).click();
+    assert.equal(await page.getByTestId('client-diagnostic-question').count(),0);
+    await page.getByRole('button',{name:'Cette description correspond',exact:true}).click();
+    assert.ok((await page.getByRole('textbox',{name:'Décrivez le problème'}).inputValue()).includes('Quand l’eau coule.'));
+   }
+   assert.equal((await page.evaluate(()=>__w4.calls)).filter(c=>c.name==='analyzePhoto').length,1);
+   results.push({scene:'diagnostic-qualification',maxClarifications:1,optionalSkipped:skip,serverLoop:false});
+  }
   for (const outcome of ['question','price','diagnostic','labour','addon','quote','route','safety','more']) {
    await open('estimator',320,'&outcome='+outcome); await capture('client-estimator-'+outcome+'-320');
    if (outcome === 'labour') assert.equal(await page.getByTestId('parts-separate').count(),1);

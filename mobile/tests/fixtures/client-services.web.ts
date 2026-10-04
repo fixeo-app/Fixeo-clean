@@ -1,5 +1,5 @@
 /** W4 UI-only service boundaries. Typed contract shapes; no real account or backend. */
-import { diagnosticResult, diagnosticSafety } from './diagnostic-results';
+import { diagnosticResult, diagnosticSafety, diagnosticQualification } from './diagnostic-results';
 import canonicalEstimator from './estimator-canonical.json';
 import type { MissionSnapshot } from '../../lib/missionTerrain';
 import type { ClientNotification, ClientProfile, ClientRequestHistory } from '../../lib/clientWorkspace';
@@ -45,6 +45,7 @@ export async function analyzeMobileDiagnosticPhoto(input: unknown) {
   log('analyzePhoto', input);
   if (params.has('photoHold')) await new Promise(() => {});
   if (params.has('cityError')) throw new Error('CITY_NOT_SUPPORTED');
+  if (params.has('qualification')) return diagnosticQualification;
   if (params.has('choice')) return {...diagnosticResult, questions:[{id:'water_spreading', label:'L’eau se propage-t-elle rapidement ?', type:'choice'}]};
   return params.has('safety') ? diagnosticSafety : diagnosticResult;
 }

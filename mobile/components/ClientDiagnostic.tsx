@@ -1,25 +1,22 @@
 import { useState } from 'react';
 import { TextInput, View } from 'react-native';
 import type { MobileDiagnosticResult } from '@/lib/mobileDiagnostic';
-import { confirmedDiagnosticDescription, diagnosticProvenance, diagnosticQuestions } from '@/lib/clientDiagnostic';
-import { ClientSection, clientStyles } from './ClientEditorial';
+import { confirmedDiagnosticDescription, diagnosticProvenance, diagnosticQuestions, diagnosticSafetyMessage } from '@/lib/clientDiagnostic';
+import { ClientHero, ClientSection, clientStyles } from './ClientEditorial';
 import { FixeoText } from '@/ui/FixeoText';
 import { FixeoAction } from '@/ui/FixeoAction';
 
-export function ClientDiagnostic({ result, confirmed, onConfirm }: {
-  result: MobileDiagnosticResult; confirmed: boolean; onConfirm: (description: string) => void;
+export function ClientDiagnostic({ result, confirmed, onConfirm, onExit }: {
+  result: MobileDiagnosticResult; confirmed: boolean; onConfirm: (description: string) => void; onExit?: () => void;
 }) {
   const [answers, setAnswers] = useState<string[]>([]);
   const [answer, setAnswer] = useState('');
   const [details, setDetails] = useState(false);
   const questions = diagnosticQuestions(result);
   const next = questions[answers.length];
-  if (result.safety.stop) return <ClientSection testID="client-diagnostic-safety" label="LA SÉCURITÉ D’ABORD">
-    <FixeoText variant="heading" accessibilityRole="alert">Mettez-vous en sécurité.</FixeoText>
-    <FixeoText>N’intervenez pas vous-même. Contactez un professionnel qualifié avant de poursuivre.</FixeoText>
-    {!!result.urgency.reason && <FixeoText>{result.urgency.reason}</FixeoText>}
-    {result.checks.map((check, i) => <FixeoText key={i}>{check}</FixeoText>)}
-    <FixeoText variant="caption" tone="secondary">La demande est suspendue par le signal de sécurité de RAFI.</FixeoText>
+  if (result.safety.stop) return <ClientSection testID="client-diagnostic-safety">
+    <View accessibilityRole="alert"><ClientHero eyebrow="RAFI · SÉCURITÉ" title="Cette situation peut présenter un risque." detail={diagnosticSafetyMessage(result)} mode="attention" compact /></View>
+    {onExit && <FixeoAction label="Revenir à mon espace" variant="secondary" onPress={onExit} />}
   </ClientSection>;
   return <ClientSection testID="client-diagnostic" label="RAFI · AVEC VOUS">
     <FixeoText variant="caption" tone="secondary">{diagnosticProvenance(result.problem.provenance)}</FixeoText>
@@ -29,13 +26,11 @@ export function ClientDiagnostic({ result, confirmed, onConfirm }: {
       <FixeoText>{fact.value}</FixeoText>
     </View>)}
     {!!result.urgency.reason && <FixeoText variant="supporting">{diagnosticProvenance(result.urgency.provenance)} · {result.urgency.reason}</FixeoText>}
-    {result.questions.some(question => question.type === 'choice') ? <View testID="client-diagnostic-review" style={{ gap: 12 }}>
-      <FixeoText variant="heading">{result.questions.find(question => question.type === 'choice')?.label}</FixeoText>
-      <FixeoText accessibilityRole="alert">RAFI ne peut pas vérifier cette précision dans l’application pour le moment. Faites vérifier la situation par un professionnel avant de poursuivre.</FixeoText>
-    </View> : confirmed ? <FixeoText accessibilityLiveRegion="polite">CONFIRMÉ PAR VOUS · La description reste modifiable avant envoi.</FixeoText> : next ? <View style={{ gap: 12 }} testID="client-diagnostic-question">
+    {confirmed ? <FixeoText accessibilityLiveRegion="polite">CONFIRMÉ PAR VOUS · La description reste modifiable avant envoi.</FixeoText> : next ? <View style={{ gap: 12 }} testID="client-diagnostic-question">
       <FixeoText variant="heading">{next.label}</FixeoText>
       <TextInput accessibilityLabel={next.label} value={answer} onChangeText={setAnswer} multiline style={clientStyles.input} placeholder="Votre réponse, ou ce que vous ignorez" />
-      <FixeoAction label="Confirmer cette précision" disabled={!answer.trim()} onPress={() => { setAnswers(current => [...current, answer.trim()]); setAnswer(''); }} />
+      <FixeoAction label="Confirmer cette précision" disabled={!answer.trim()} onPress={() => { setAnswers([answer.trim()]); setAnswer(''); }} />
+      {next.optional && <FixeoAction label="Continuer sans cette précision" variant="ghost" onPress={() => onConfirm(confirmedDiagnosticDescription(result, []))} />}
     </View> : <FixeoAction label="Cette description correspond" onPress={() => onConfirm(confirmedDiagnosticDescription(result, answers))} />}
     {answers.map((value, i) => <FixeoText key={i} variant="supporting" tone="secondary">CONFIRMÉ · {questions[i].label} {value}</FixeoText>)}
     <FixeoAction variant="ghost" label={details ? 'Masquer les détails de l’analyse' : 'Comprendre l’analyse'} accessibilityState={{ expanded: details }} onPress={() => setDetails(value => !value)} />

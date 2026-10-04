@@ -150,21 +150,34 @@
     {
       "scene": "diagnostic",
       "safety": false,
-      "oneQuestion": true,
+      "safetyQuestions": 0,
       "confirmationBeforeRequest": true,
       "provenancePreserved": true
     },
     {
       "scene": "diagnostic",
       "safety": true,
-      "oneQuestion": true,
+      "safetyQuestions": 0,
       "confirmationBeforeRequest": true,
       "provenancePreserved": true
     },
     {
-      "scene": "diagnostic-choice",
-      "requiresServerReview": true,
-      "requestBlocked": true
+      "scene": "diagnostic-normal-preventive-prompts",
+      "safetyQuestions": 0,
+      "extraAnalyses": 0,
+      "requestAllowed": true
+    },
+    {
+      "scene": "diagnostic-qualification",
+      "maxClarifications": 1,
+      "optionalSkipped": false,
+      "serverLoop": false
+    },
+    {
+      "scene": "diagnostic-qualification",
+      "maxClarifications": 1,
+      "optionalSkipped": true,
+      "serverLoop": false
     },
     {
       "scene": "estimator-contract",

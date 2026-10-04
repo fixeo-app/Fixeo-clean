@@ -13,12 +13,22 @@ export const diagnosticResult: MobileDiagnosticResult = {
   hypotheses: [{ value: 'Joint possiblement usé', provenance: 'ai_inferred' }],
   possible_parts: [{ value: 'Joint de siphon', provenance: 'ai_inferred', certain: false }],
   checks: ['Étanchéité du raccord à confirmer sur place.'],
-  questions: [{ id: 'occurrence', label: 'À quel moment le problème apparaît-il ?', type: 'text' }, { id: 'onset', label: 'Depuis quand constatez-vous ce problème ?', type: 'text' }],
+  questions: [],
   safety: { stop: false, level: 'NORMAL', signals: [] },
-  urgency: { value: 'moderate', provenance: 'ai_inferred', reason: 'Écoulement localisé déclaré par le client.' }, next: 'questions',
+  urgency: { value: 'moderate', provenance: 'ai_inferred', reason: 'Écoulement localisé déclaré par le client.' }, next: 'qualification',
 };
 export const diagnosticSafety: MobileDiagnosticResult = {
   ...diagnosticResult, problem: {value: 'Danger immédiat signalé — évaluation professionnelle nécessaire après mise en sécurité.', provenance: 'ai_inferred'},
   facts: [], hypotheses: [], possible_parts: [], checks: [], questions: [],
   safety: { stop: true, level: 'CRITICAL', signals: ['electrical_risk'] }, urgency: {value:'critical',provenance:'ai_inferred'}, next:'safety_stop',
+};
+
+export const diagnosticQualification: MobileDiagnosticResult = {
+  ...diagnosticResult,
+  problem: { value: 'Le problème reste à préciser.', provenance: 'ai_inferred' },
+  questions: [
+    { id: 'occurrence', label: 'À quel moment le problème apparaît-il ?', type: 'text', optional: true },
+    { id: 'onset', label: 'Depuis quand constatez-vous ce problème ?', type: 'text', optional: true },
+  ] as (MobileDiagnosticResult['questions'][number] & { optional: boolean })[],
+  next: 'questions',
 };

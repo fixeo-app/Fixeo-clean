@@ -10,7 +10,7 @@ Le candidat améliore les six écrans Client, la géolocalisation volontaire et 
 - Base exacte : `5d772c463d7b3fe2511553cc3aab48de228f8551`, W3 fermé. Préflight local/distant identique, divergence 0/0.
 - Branche isolée : `feat/fixeo-mobile-w4-client-os-wow`. Autres worktrees initialement propres ; aucun verrou Git ou écrivain concurrent W4 identifié.
 - Base distante revérifiée avant publication : inchangée. MAIN observé `f8e59d5ad7294dd5493bf7b0219740248d2a8d64`, inchangé pendant le travail. Aucune commande d’écriture vers MAIN.
-- Audit de l’attachement initial et des trois addenda : geolocation, intelligence, Mobile > Web. Matrice complète : [MOBILE-CAPABILITY-AUDIT.md](MOBILE-CAPABILITY-AUDIT.md).
+- Audit de l’attachement initial et des quatre addenda : geolocation, intelligence, Mobile > Web, Safety by Exception. Matrice complète : [MOBILE-CAPABILITY-AUDIT.md](MOBILE-CAPABILITY-AUDIT.md).
 
 ## B. AUDIT CLIENT
 
@@ -29,7 +29,7 @@ L’entrée reste RAFI : parler, écrire ou montrer. Le client n’a pas à choi
 
 Priorité de présentation : sécurité avant demande ; analyse en cours ; prochaine question diagnostic ; confirmation explicite ; demande non tarifée existante. Ensuite validation > intervention > affectation > recherche > repos. L’écran de création montre un enregistrement en cours, sans fausse affectation.
 
-Le diagnostic conserve ses provenances originales après confirmation. Les questions textuelles non vides du résultat sont posées une à une, sans répétition de label. Les questions `choice` du contrat diagnostic portent des signaux de danger : faute de route de réanalyse structurée, elles restent bloquantes, avec une explication visible ; aucune réponse locale ne lève ce blocage. Les réponses restent en mémoire et sont ajoutées à la description explicitement confirmée ; elles ne deviennent pas des known_inputs Estimator. La description et la ville restent corrigeables avant send. Les hypothèses, pièces possibles et vérifications détaillées sont secondaires et dépliables. Safety stop masque la confirmation diagnostic et bloque l’envoi.
+Le diagnostic conserve ses provenances originales après confirmation. Les questions préventives de sécurité ne sont ni affichées ni bloquantes lorsque safety.stop=false. Les identifiants safety sont générés depuis les métadonnées hazard du contrat réel, pas déduits du type choice (un choix métier reste métier). Une ambiguïté peut afficher au maximum la première précision métier proposée par le serveur ; les propositions optional=true restent contournables. Aucun interrogatoire ni aller-retour serveur supplémentaire. Les réponses restent en mémoire et sont ajoutées à la description explicitement confirmée ; elles ne deviennent pas des known_inputs Estimator. La description et la ville restent corrigeables avant send. Les hypothèses, pièces possibles et vérifications détaillées sont secondaires et dépliables. Seul un vrai safety.stop masque l’entrée et bloque l’envoi. Il affiche un message bref et une consigne sûre issue du serveur (ou le fallback prudent), puis « Revenir à mon espace », sans action de levée locale ni questionnaire préalable.
 
 La partie suivante (qualification Estimator, sélection service, prix/devis puis confirmation tarifée) n’est **pas branchée** : GAP-01/02/03, sans contournement par createRequest. Un résultat seul n’autorise jamais une réservation.
 
@@ -50,7 +50,7 @@ RAFI W3 utilise sa matière hybride et ses animations existantes, avec une compo
 | Assigned | Suivi unique ; identité/badge seulement si le snapshot les fournit |
 | Intervention | Étapes et photos accessibles par le suivi |
 | Validation | « Une dernière vérification. » puis preuves/validation |
-| Safety | Sécurité prioritaire, demande bloquée ; aucun résultat financier |
+| Safety stop réel | Message bref, consigne sûre, retour à l’espace ; demande bloquée, aucun résultat financier |
 
 `createRequest(need.serviceCategory, normalizedCity, need.description, idempotencyKeyRef.current)` reste à quatre arguments. `normalizedCity = city.trim()` est conservé. Pas de latitude/longitude ni prix transmis. CITY_NOT_SUPPORTED à l’analyse **et** à l’envoi est expliqué avec champ ville toujours éditable.
 
@@ -94,7 +94,7 @@ Preuves principales :
 - `client-home-matching-390.png`, `client-home-assigned-390.png`, `client-home-intervention-390.png`, `client-home-validation-390.png`
 - `client-workspace-390.png`, `client-history-390.png`, `client-alerts-390.png`, `client-account-390.png`, `client-mission-390.png` et variantes 320
 - `client-large-text.png`, variantes de chaque écran, `client-city-large-text-320.png`, `client-reduced-motion.png`
-- `client-city-detected-390.png`, `client-diagnostic-result-320.png`, `client-diagnostic-safety-320.png`
+- `client-city-detected-390.png`, `client-diagnostic-result-320.png`, `client-diagnostic-safety-320.png`, `client-diagnostic-clarification-320.png`
 - `client-estimator-question/price/diagnostic/labour/addon/quote/route/safety/more-320.png`
 
 Résultats structurés et intégrité PNG : `evidence/client-browser-results.json`, `shell-browser-results.json`, `rafi-browser-results.json`, `manifest.json`.
@@ -104,15 +104,15 @@ Résultats structurés et intégrité PNG : `evidence/client-browser-results.jso
 | Gate local | Résultat |
 |---|---|
 | `npm run typecheck` | PASS |
-| `npm run test:contracts` | 81/81 PASS, 0 skip |
+| `npm run test:contracts` | 84/84 PASS, 0 skip |
 | `npx expo-doctor@1.20.4` | 18/18 PASS |
 | `npm run gate:a` | PASS, export web uniquement |
 | `git diff --check` | PASS |
 | W2 `prepare-shell-visual.cjs` + `shell-visual-check.cjs` | 8 scénarios + compatibilité/texte agrandi PASS |
 | W3 `prepare-rafi-visual.cjs` + `rafi-visual-check.cjs` | 12 scénarios, 0 erreur JS, 0 requête externe |
-| W4 `prepare-client-visual.cjs` + `client-visual-check.cjs` | 39 groupes de scénarios, 0 erreur JS, 0 requête externe |
+| W4 `prepare-client-visual.cjs` + `client-visual-check.cjs` | 41 groupes de scénarios, 0 erreur JS, 0 requête externe |
 
-Les scénarios W4 exercent les vrais callbacks UI : correction city puis quatre arguments, granted/denied/blocked/GPS/timeout/no_city/web, résultat tardif, CITY_NOT_SUPPORTED, création en cours, photo, questions successives, provenance, confirmation avant demande, safety, navigation mission exacte depuis Home, validation request_id, ajustement, profil, lecture alerte, erreurs, preuves, reduced motion et texte ×2. Les résultats Estimator ne créent aucune demande et n’ont aucune autorité de réservation.
+Les scénarios W4 exercent les vrais callbacks UI : correction city puis quatre arguments, granted/denied/blocked/GPS/timeout/no_city/web, résultat tardif, CITY_NOT_SUPPORTED, création en cours, photo, absence de questionnaire sécurité, clarification métier unique et optionnelle, provenance, confirmation avant demande, safety, navigation mission exacte depuis Home, validation request_id, ajustement, profil, lecture alerte, erreurs, preuves, reduced motion et texte ×2. Les résultats Estimator ne créent aucune demande et n’ont aucune autorité de réservation.
 
 La garde historique W3 qui hachait l’écran Client mission entier a été remplacée par une garde W4 des callbacks originaux et services ; les sources Artisan restent hachées. Les seules exceptions AST déclarées sont trois affectations de présentation et le message CITY_NOT_SUPPORTED. La nouvelle garde intake avant send est testée séparément. Aucun garde W2/W3 de renderer, capture ou service n’a été supprimé.
 
@@ -126,7 +126,7 @@ Moteur mission, backend/API/Supabase, matching/dispatch, Control OS, Enterprise,
 
 ## N. RISQUES / DETTE
 
-1. GAP-01/02/03 bloquent la parité intelligence web : passerelle Estimator, dossier diagnostic signé, handoff vers demande authentifiée. Mandat backend distinct requis, pas une autorisation implicite W4.
+1. GAP-01/02/03 bloquent la parité intelligence web : passerelle Estimator, dossier diagnostic signé, handoff vers demande authentifiée. Ce sont, dans cet ordre, les priorités du futur W4.1. La réévaluation Safety est ciblée uniquement sur la modification/levée d’un vrai STOP ; son absence ne bloque pas le parcours normal. Mandat backend distinct requis, pas une autorisation implicite W4.
 2. Historique/notifications ne garantissent pas l’ouverture d’une ancienne demande précise sans mission_id. La navigation existante est conservée.
 3. Les photos diagnostiquées/réponses restent en mémoire ; fermeture du processus ne restaure pas un dossier diagnostic. Le serveur photo actuel est volontairement non persistant.
 4. Permissions natives, précision ville réelle, push, deep links cold-start et performance appareil attendent la certification physique ultérieure autorisée.

@@ -9,20 +9,19 @@ npm warn Unknown env config "http-proxy". This will stop working in the next maj
 > tsc --noEmit
 
 Starting Metro Bundler
-| (node:54) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (node:290) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 | (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:61) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (node:286) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 | (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:62) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (node:287) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 | (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:81) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (node:288) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 | (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:75) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (node:296) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 | (Use `node --trace-warnings ...` to show where the warning was created)
-| (node:60) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (node:295) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 | (Use `node --trace-warnings ...` to show where the warning was created)
-Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 83.2% (717/786)
-Web Bundled 2933ms node_modules/expo-router/entry.js (1033 modules)
+Web Bundled 1756ms node_modules/expo-router/entry.js (1034 modules)
 
 › Assets (20):
 assets/rafi/rafi-master-core-v1.e9ede671f86eafae6aee3b38881b276d.png (1.11 MB)
@@ -41,8 +40,8 @@ node_modules/expo-router/assets/sitemap.412dd9275b6b48ad28f5e3d81bb1f626.png (46
 node_modules/expo-router/assets/unmatched.20e71bdf79e3a97bf55fd9e164041578.png (4.75 kB)
 
 › web bundles (2):
-_expo/static/js/web/entry-cf5541bb8a8a1ad0f6cba8b988b0a68f.js (1.83 MB)
-_expo/static/js/web/index-f7982747156bd71b061538ca3da16400.js (11.2 kB)
+_expo/static/js/web/entry-0513c429dbd2da3ae9715f22ca22a4c4.js (1.83 MB)
+_expo/static/js/web/index-d7ffe2134aaada9945df02677ca2c6f6.js (11.2 kB)
 
 › Files (2):
 index.html (1.17 kB)

@@ -19,6 +19,8 @@ test('W4 creation and understanding cannot masquerade as an active artisan searc
   assert.equal(clientHomeCopy('matching', 'working', true).eyebrow, 'VOTRE DEMANDE');
   assert.equal(clientHomeCopy('idle', 'understanding', false).eyebrow, 'RAFI COMPREND');
   assert.equal(clientHomeCopy('matching', 'matching', false).eyebrow, 'RECHERCHE EN COURS');
+  // W3 also uses attention for confirmation and recoverable errors, not just safety.
+  assert.equal(clientHomeCopy('idle', 'attention', false).eyebrow, 'RAFI · VOTRE ASSISTANT');
 });
 
 test('W4 larger RAFI fits both small and standard canvases without changing W3 geometry', () => {

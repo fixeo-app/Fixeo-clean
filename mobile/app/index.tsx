@@ -441,9 +441,9 @@ export default function Home() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <ClientHero {...hero} mode={effectiveOrbMode} eventKey={loop.missionId || loop.requestId} />
+        {(isActiveJourney || !photoDiagnostic?.safety.stop) && <ClientHero {...hero} mode={effectiveOrbMode} eventKey={loop.missionId || loop.requestId} />}
 
-        {!isActiveJourney && photoDiagnostic?.safety.stop && <ClientDiagnostic result={photoDiagnostic} confirmed={false} onConfirm={() => {}} />}
+        {!isActiveJourney && photoDiagnostic?.safety.stop && <ClientDiagnostic result={photoDiagnostic} confirmed={false} onConfirm={() => {}} onExit={() => router.push('/client-workspace')} />}
         {!isActiveJourney && !photoDiagnostic?.safety.stop && (
           <View style={styles.inputStack}>
             <RafiInputRail
