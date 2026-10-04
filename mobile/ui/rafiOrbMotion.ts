@@ -1,3 +1,5 @@
+import { rafiMotionTokens } from './tokens';
+
 export type RafiOrbMode = 'idle' | 'listening' | 'working' | 'success';
 
 export type RafiOrbMotion = {
@@ -12,8 +14,7 @@ export type RafiOrbMotion = {
 
 const MOTION: Record<RafiOrbMode, RafiOrbMotion> = {
   idle: {
-    breathDuration: 2200,
-    orbitDuration: 7600,
+    ...rafiMotionTokens.idle,
     coreScale: [0.985, 1.025],
     haloScale: [0.96, 1.045],
     haloOpacity: [0.28, 0.42],
@@ -21,8 +22,7 @@ const MOTION: Record<RafiOrbMode, RafiOrbMotion> = {
     orbitOpacity: 0.52,
   },
   listening: {
-    breathDuration: 980,
-    orbitDuration: 2500,
+    ...rafiMotionTokens.listening,
     coreScale: [0.97, 1.055],
     haloScale: [0.94, 1.08],
     haloOpacity: [0.34, 0.58],
@@ -30,8 +30,7 @@ const MOTION: Record<RafiOrbMode, RafiOrbMotion> = {
     orbitOpacity: 0.82,
   },
   working: {
-    breathDuration: 720,
-    orbitDuration: 1600,
+    ...rafiMotionTokens.working,
     coreScale: [0.955, 1.075],
     haloScale: [0.92, 1.11],
     haloOpacity: [0.4, 0.68],
@@ -39,8 +38,7 @@ const MOTION: Record<RafiOrbMode, RafiOrbMotion> = {
     orbitOpacity: 0.9,
   },
   success: {
-    breathDuration: 1200,
-    orbitDuration: 3600,
+    ...rafiMotionTokens.success,
     coreScale: [1, 1.045],
     haloScale: [0.98, 1.16],
     haloOpacity: [0.36, 0.62],

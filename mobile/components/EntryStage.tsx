@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { MotionReveal } from './MotionReveal';
 import { RafiOrb } from '@/ui/RafiOrb';
 import type { RafiOrbMode } from '@/ui/rafiOrbMotion';
 import { colors, radius, spacing, type } from '@/ui/tokens';
@@ -21,34 +21,8 @@ export function EntryStage({
   mode = 'idle',
   compact = false,
 }: Props) {
-  const entrance = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    entrance.setValue(0);
-    Animated.timing(entrance, {
-      toValue: 1,
-      duration: 520,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-  }, [entrance]);
-
   return (
-    <Animated.View
-      style={[
-        styles.root,
-        compact && styles.compact,
-        {
-          opacity: entrance,
-          transform: [{
-            translateY: entrance.interpolate({
-              inputRange: [0, 1],
-              outputRange: [10, 0],
-            }),
-          }],
-        },
-      ]}
-    >
+    <MotionReveal preset="orchestration" style={[styles.root, compact && styles.compact]}>
       <Text style={styles.brand}>FIXEO</Text>
       <RafiOrb size={compact ? 76 : 96} mode={mode} />
       <Text style={styles.eyebrow}>{eyebrow}</Text>
@@ -61,7 +35,7 @@ export function EntryStage({
           <Text style={styles.statusText}>{status}</Text>
         </View>
       )}
-    </Animated.View>
+    </MotionReveal>
   );
 }
 

@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import {
-  AccessibilityInfo,
   Animated,
-  Easing,
   StyleSheet,
   View,
 } from 'react-native';
-import { colors } from './tokens';
+import { colors, rafiMotionTokens } from './tokens';
+import { useReducedMotion } from './useReducedMotion';
+import { motionEasing } from './motionEasing';
 import {
   getRafiOrbAccessibilityLabel,
   getRafiOrbMotion,
@@ -22,22 +22,8 @@ export function RafiOrb({ mode = 'idle', size = 92 }: Props) {
   const breath = useRef(new Animated.Value(0)).current;
   const orbit = useRef(new Animated.Value(0)).current;
   const success = useRef(new Animated.Value(0)).current;
-  const [reduceMotion, setReduceMotion] = useState(false);
+  const reduceMotion = useReducedMotion();
   const motion = getRafiOrbMotion(mode);
-
-  useEffect(() => {
-    let mounted = true;
-    void AccessibilityInfo.isReduceMotionEnabled().then(value => {
-      if (mounted) setReduceMotion(Boolean(value));
-    });
-    const listener = AccessibilityInfo.addEventListener?.('reduceMotionChanged', value => {
-      setReduceMotion(Boolean(value));
-    });
-    return () => {
-      mounted = false;
-      listener?.remove?.();
-    };
-  }, []);
 
   useEffect(() => {
     breath.stopAnimation();
@@ -54,13 +40,13 @@ export function RafiOrb({ mode = 'idle', size = 92 }: Props) {
         Animated.timing(breath, {
           toValue: 1,
           duration: motion.breathDuration,
-          easing: Easing.inOut(Easing.quad),
+          easing: motionEasing[rafiMotionTokens.easing.breath],
           useNativeDriver: true,
         }),
         Animated.timing(breath, {
           toValue: 0,
           duration: motion.breathDuration,
-          easing: Easing.inOut(Easing.quad),
+          easing: motionEasing[rafiMotionTokens.easing.breath],
           useNativeDriver: true,
         }),
       ]),
@@ -70,7 +56,7 @@ export function RafiOrb({ mode = 'idle', size = 92 }: Props) {
       Animated.timing(orbit, {
         toValue: 1,
         duration: motion.orbitDuration,
-        easing: Easing.linear,
+        easing: motionEasing[rafiMotionTokens.easing.orbit],
         useNativeDriver: true,
       }),
     );
@@ -81,17 +67,17 @@ export function RafiOrb({ mode = 'idle', size = 92 }: Props) {
     let successAnimation: Animated.CompositeAnimation | null = null;
     if (mode === 'success') {
       successAnimation = Animated.sequence([
-        Animated.delay(70),
+        Animated.delay(rafiMotionTokens.completion.delay),
         Animated.timing(success, {
           toValue: 1,
-          duration: 360,
-          easing: Easing.out(Easing.cubic),
+          duration: rafiMotionTokens.completion.enter,
+          easing: motionEasing[rafiMotionTokens.easing.successIn],
           useNativeDriver: true,
         }),
         Animated.timing(success, {
           toValue: 0,
-          duration: 620,
-          easing: Easing.inOut(Easing.quad),
+          duration: rafiMotionTokens.completion.exit,
+          easing: motionEasing[rafiMotionTokens.easing.successOut],
           useNativeDriver: true,
         }),
       ]);
