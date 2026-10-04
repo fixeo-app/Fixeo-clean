@@ -30,7 +30,7 @@ Canonical pricing/offer validation, ownership checks, optional diagnostic bindin
 
 ## Product and Safety
 
-`create_my_service_request_v1` and the W4 simple-request UI remain unchanged. Diagnostic and Estimator are optional transports awaiting W4 integration review. No Safety questionnaire is shown in normal Estimator qualification. At most one useful trade clarification is accepted; insufficient data yields canonical QUOTE_REQUIRED without inventing answers or calculating a price locally. A true server STOP yields no diagnostic reference or pricing handoff and cannot be cleared through a new RPC or local continuation. No new STOP re-evaluation UI is introduced.
+`create_my_service_request_v1` and the W4 simple-request UI remain unchanged. Diagnostic and Estimator are optional transports awaiting W4 integration review. No Safety questionnaire is shown in normal Estimator qualification. At most one useful trade clarification (including service selection) is accepted; insufficient data yields canonical QUOTE_REQUIRED without inventing answers or calculating a price locally. A true server STOP yields no diagnostic reference or pricing handoff and cannot be cleared through a new RPC or local continuation. No new STOP re-evaluation UI is introduced.
 
 ## Storage policies
 

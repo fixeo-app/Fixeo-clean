@@ -78,5 +78,10 @@ test('JWT SQL: attestation, owner, canonical offer, atomic confirmation, retry/c
   assert.equal((await db.query('DELETE FROM storage.objects RETURNING name')).rows.length,0);
   await db.exec('RESET ROLE');await db.query('DELETE FROM auth.sessions');await db.exec('SET ROLE authenticated');
   await assert.rejects(call('mobile_estimator_offer_v1','offer',row),/SESSION_REVOKED/);
+  await db.exec('RESET ROLE');
+  await db.exec(read('mobile/docs/w4-1/ROLLBACK.sql'));
+  assert.equal((await db.query("SELECT to_regprocedure('public.mobile_diagnostic_state_v1(text,text)') removed")).rows[0].removed,null);
+  assert.equal((await db.query('SELECT count(*)::int n FROM service_requests')).rows[0].n,1);
+  assert.equal((await db.query('SELECT enabled FROM fixeo_private.mobile_intelligence_config_v1')).rows[0].enabled,false);
  }finally{await db.close()}
 });

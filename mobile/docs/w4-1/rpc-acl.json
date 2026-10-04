@@ -1,0 +1,52 @@
+[
+  {
+    "proname": "confirm_mobile_estimator_request_v2",
+    "prosecdef": false,
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "anon_execute": false,
+    "authenticated_execute": true,
+    "service_execute": false
+  },
+  {
+    "proname": "dispatch_my_estimator_request_v1",
+    "prosecdef": false,
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "anon_execute": false,
+    "authenticated_execute": true,
+    "service_execute": false
+  },
+  {
+    "proname": "mobile_diagnostic_state_v1",
+    "prosecdef": false,
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "anon_execute": false,
+    "authenticated_execute": true,
+    "service_execute": false
+  },
+  {
+    "proname": "mobile_estimator_offer_v1",
+    "prosecdef": false,
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "anon_execute": false,
+    "authenticated_execute": true,
+    "service_execute": false
+  },
+  {
+    "proname": "mobile_intelligence_quota_v1",
+    "prosecdef": false,
+    "proconfig": [
+      "search_path=\"\""
+    ],
+    "anon_execute": false,
+    "authenticated_execute": true,
+    "service_execute": false
+  }
+]
