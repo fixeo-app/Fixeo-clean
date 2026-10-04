@@ -12,7 +12,7 @@ import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
 import { colors, spacing, type } from '@/ui/tokens';
-import { WorkspaceShortcutGrid } from '@/components/WorkspaceShortcutGrid';
+import { useWorkspaceDock } from '@/components/useWorkspaceDock';
 import { MobileShell } from '@/components/MobileShell';
 import { ContextualCockpitCard } from '@/components/ContextualCockpitCard';
 import { clientGreetingName, isTechnicalRequestContent } from '@/lib/workspacePresentation';
@@ -106,43 +106,25 @@ export default function ClientWorkspaceHome() {
     }
   }
 
-  const shortcuts = useMemo(() => [
-    {
-      key: 'history',
-      label: 'Interventions',
-      meta: `${historyCount} demande${historyCount === 1 ? '' : 's'}`,
-      onPress: () => router.push('/client-workspace/history'),
-    },
-    {
-      key: 'notifications',
-      label: 'Alertes',
-      meta: unreadCount ? `${unreadCount} à lire` : 'Tout est à jour',
-      onPress: () => router.push('/client-workspace/notifications'),
-    },
-    {
-      key: 'account',
-      label: 'Mon compte',
-      meta: profile?.city || 'Coordonnées',
-      onPress: () => router.push('/client-workspace/account'),
-    },
-  ], [historyCount, unreadCount, profile?.city]);
+  const contextDock = useWorkspaceDock('client', { history: historyCount, alerts: unreadCount });
 
   return (
-    <FixeoScreen padded={false}>
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
+    <FixeoScreen padded={false} contextDock={contextDock} header={
         <MobileShell
           universe="client"
           activeKey="space"
           orbMode={activeRequest ? 'working' : 'idle'}
           statusLabel={activeRequest ? activeLabel : 'RAFI est prêt'}
-          rightActionLabel="RAFI"
-          onRightAction={() => router.replace('/')}
+          rightActionLabel="Mon compte"
+          rightDestination="/client-workspace/account"
+          rightNavigation="detail"
         />
-
+      }>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <View style={styles.identityRow}>
             <View style={styles.identityCopy}>
@@ -168,13 +150,6 @@ export default function ClientWorkspaceHome() {
           model={contextualCockpit}
           onAction={actOnContextualCockpit}
         />
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Votre espace</Text>
-          <Text style={styles.sectionHint}>Suivi, historique, alertes et compte — chacun à sa place, sans surcharger l’écran principal.</Text>
-        </View>
-
-        <WorkspaceShortcutGrid items={shortcuts} />
       </ScrollView>
     </FixeoScreen>
   );

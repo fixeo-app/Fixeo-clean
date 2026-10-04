@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
-import { router } from 'expo-router';
 import {
   createArtisanBusinessQuote,
   listArtisanBusinessQuotes,
@@ -77,7 +76,15 @@ export default function ArtisanQuotes() {
   }
 
   return (
-    <FixeoScreen padded={false}>
+    <FixeoScreen padded={false} header={
+        <MobileShell
+          universe="artisan"
+          activeKey="quotes"
+          statusLabel="Devis Studio"
+          rightActionLabel="Artisan OS"
+          rightDestination="/artisan-workspace"
+        />
+      }>
       <FlatList
         data={items}
         keyExtractor={item => item.id}
@@ -88,13 +95,6 @@ export default function ArtisanQuotes() {
         keyboardDismissMode="on-drag"
         ListHeaderComponent={
           <View>
-            <MobileShell
-              universe="artisan"
-              activeKey="quotes"
-              statusLabel="Devis Studio"
-              rightActionLabel="Artisan OS"
-              onRightAction={() => router.replace('/artisan-workspace')}
-            />
             <View style={styles.header}>
             <Text style={styles.kicker}>DEVIS STUDIO</Text>
             <Text style={styles.title}>Vos devis, au même endroit.</Text>

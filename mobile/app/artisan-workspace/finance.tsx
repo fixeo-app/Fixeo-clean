@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
-import { router } from 'expo-router';
 import {
   createArtisanLedgerEntry,
   listArtisanLedger,
@@ -89,7 +88,15 @@ export default function ArtisanFinance() {
   }
 
   return (
-    <FixeoScreen padded={false}>
+    <FixeoScreen padded={false} header={
+        <MobileShell
+          universe="artisan"
+          activeKey="finance"
+          statusLabel="Finance personnelle"
+          rightActionLabel="Artisan OS"
+          rightDestination="/artisan-workspace"
+        />
+      }>
       <FlatList
         data={items}
         keyExtractor={item => item.id}
@@ -100,13 +107,6 @@ export default function ArtisanFinance() {
         keyboardDismissMode="on-drag"
         ListHeaderComponent={
           <View>
-            <MobileShell
-              universe="artisan"
-              activeKey="finance"
-              statusLabel="Finance personnelle"
-              rightActionLabel="Artisan OS"
-              onRightAction={() => router.replace('/artisan-workspace')}
-            />
             <View style={styles.header}>
             <Text style={styles.kicker}>FINANCE</Text>
             <Text style={styles.title}>Votre activité en chiffres.</Text>

@@ -53,7 +53,15 @@ export default function ClientHistory() {
   useForegroundRefresh(load);
 
   return (
-    <FixeoScreen padded={false}>
+    <FixeoScreen padded={false} header={
+        <MobileShell
+          universe="client"
+          activeKey="history"
+          statusLabel="Historique FIXEO"
+          rightActionLabel="Mon espace"
+          rightDestination="/client-workspace"
+        />
+      }>
       <FlatList
         data={items}
         keyExtractor={item => item.id}
@@ -62,13 +70,6 @@ export default function ClientHistory() {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <View>
-            <MobileShell
-              universe="client"
-              activeKey="history"
-              statusLabel="Historique FIXEO"
-              rightActionLabel="Mon espace"
-              onRightAction={() => router.replace('/client-workspace')}
-            />
             <View style={styles.header}>
             <Text style={styles.kicker}>MES INTERVENTIONS</Text>
             <Text style={styles.title}>Votre historique FIXEO.</Text>

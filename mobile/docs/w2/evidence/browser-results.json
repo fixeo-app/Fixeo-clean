@@ -1,0 +1,70 @@
+[
+  {
+    "universe": "client",
+    "width": 320,
+    "passed": [
+      "targets",
+      "content reservation",
+      "stable header",
+      "selected destination",
+      "active no-op",
+      "Escape",
+      "backdrop",
+      "navigation",
+      "logout busy"
+    ],
+    "pageErrors": 0
+  },
+  {
+    "universe": "client",
+    "width": 390,
+    "passed": [
+      "targets",
+      "content reservation",
+      "stable header",
+      "selected destination",
+      "active no-op",
+      "Escape",
+      "backdrop",
+      "navigation",
+      "logout busy"
+    ],
+    "pageErrors": 0
+  },
+  {
+    "universe": "artisan",
+    "width": 320,
+    "passed": [
+      "targets",
+      "content reservation",
+      "stable header",
+      "selected destination",
+      "active no-op",
+      "Escape",
+      "backdrop",
+      "navigation",
+      "logout busy"
+    ],
+    "pageErrors": 0
+  },
+  {
+    "universe": "artisan",
+    "width": 390,
+    "passed": [
+      "targets",
+      "content reservation",
+      "stable header",
+      "selected destination",
+      "active no-op",
+      "Escape",
+      "backdrop",
+      "navigation",
+      "logout busy"
+    ],
+    "pageErrors": 0
+  },
+  {
+    "legacyCompatibility": true,
+    "largeTextEmulation": true
+  }
+]

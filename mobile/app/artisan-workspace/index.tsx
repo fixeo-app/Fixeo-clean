@@ -14,6 +14,7 @@ import { colors, spacing, type } from '@/ui/tokens';
 import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
 import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 import { WorkspaceShortcutGrid } from '@/components/WorkspaceShortcutGrid';
+import { useWorkspaceDock } from '@/components/useWorkspaceDock';
 import { MobileShell } from '@/components/MobileShell';
 
 const STATUS_LABELS: Record<ArtisanAvailability, string> = {
@@ -79,18 +80,6 @@ export default function ArtisanWorkspaceHome() {
       onPress: () => router.push('/artisan-workspace/clients'),
     },
     {
-      key: 'quotes',
-      label: 'Devis',
-      meta: `${summary?.quotes ?? 0} devis`,
-      onPress: () => router.push('/artisan-workspace/quotes'),
-    },
-    {
-      key: 'agenda',
-      label: 'Agenda',
-      meta: `${summary?.jobs ?? 0} intervention${summary?.jobs === 1 ? '' : 's'}`,
-      onPress: () => router.push('/artisan-workspace/agenda'),
-    },
-    {
       key: 'finance',
       label: 'Finance',
       meta: `${summary?.ledgerEntries ?? 0} mouvement${summary?.ledgerEntries === 1 ? '' : 's'}`,
@@ -98,13 +87,10 @@ export default function ArtisanWorkspaceHome() {
     },
   ], [summary]);
 
+  const contextDock = useWorkspaceDock('artisan');
+
   return (
-    <FixeoScreen padded={false}>
-      <ScrollView
-        contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
-        showsVerticalScrollIndicator={false}
-      >
+    <FixeoScreen contextDock={contextDock} padded={false} header={
         <MobileShell
           universe="artisan"
           activeKey="workspace"
@@ -113,10 +99,13 @@ export default function ArtisanWorkspaceHome() {
               ? STATUS_LABELS[summary.availability]
               : 'Statut à définir'
           }
-          rightActionLabel="Cockpit"
-          onRightAction={() => router.replace('/artisan')}
         />
-
+      }>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <Text style={styles.kicker}>ARTISAN OS MOBILE</Text>
           <Text style={styles.title}>Votre activité, sans friction.</Text>

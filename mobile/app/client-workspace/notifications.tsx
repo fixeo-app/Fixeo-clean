@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
-import { router } from 'expo-router';
 import {
   listClientNotifications,
   markClientNotificationRead,
@@ -53,7 +52,15 @@ export default function ClientNotifications() {
   }
 
   return (
-    <FixeoScreen padded={false}>
+    <FixeoScreen padded={false} header={
+        <MobileShell
+          universe="client"
+          activeKey="alerts"
+          statusLabel="Alertes FIXEO"
+          rightActionLabel="Mon espace"
+          rightDestination="/client-workspace"
+        />
+      }>
       <FlatList
         data={items}
         keyExtractor={item => item.id}
@@ -62,13 +69,6 @@ export default function ClientNotifications() {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <View>
-            <MobileShell
-              universe="client"
-              activeKey="alerts"
-              statusLabel="Alertes FIXEO"
-              rightActionLabel="Mon espace"
-              onRightAction={() => router.replace('/client-workspace')}
-            />
             <View style={styles.header}>
             <Text style={styles.kicker}>ALERTES FIXEO</Text>
             <Text style={styles.title}>Ce qui mérite votre attention.</Text>

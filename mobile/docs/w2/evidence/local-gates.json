@@ -1,0 +1,27 @@
+[
+  {
+    "command": "npm run typecheck",
+    "exit_code": 0,
+    "seconds": 11.32
+  },
+  {
+    "command": "npm run test:contracts",
+    "exit_code": 0,
+    "seconds": 1.62
+  },
+  {
+    "command": "npx expo-doctor@1.20.4",
+    "exit_code": 0,
+    "seconds": 19.83
+  },
+  {
+    "command": "npm run gate:a",
+    "exit_code": 0,
+    "seconds": 16.27
+  },
+  {
+    "command": "git diff --check",
+    "exit_code": 0,
+    "seconds": 0.01
+  }
+]
