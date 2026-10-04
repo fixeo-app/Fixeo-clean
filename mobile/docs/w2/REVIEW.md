@@ -83,7 +83,7 @@ Commandes exécutées depuis `mobile/` :
 | Commande | Résultat |
 |---|---|
 | `npm run typecheck` | PASS |
-| `npm run test:contracts` | 52 PASS, 0 échec, 0 skip |
+| `npm run test:contracts` | 55 PASS, 0 échec, 0 skip |
 | `npx expo-doctor@1.20.4` | 18/18 PASS |
 | `npm run gate:a` | PASS — export web uniquement |
 | `git diff --check` | PASS |
@@ -92,7 +92,7 @@ Le lockfile local généré utilisé pour W1 a été repris avec les mêmes dép
 
 Tests ciblés : routes Client/Artisan existantes et actives, limites Dock, caché/clavier/contexts interdits, réservations et texte agrandi, min-target, Reduced Motion, vrai StackRouter (absence de pile infinie), AST des 11 intégrations (un Shell hors scroller), rendu réel React Native Web des composants et de leurs états accessibles. Aucun snapshot cosmétique.
 
-Vérification navigateur locale : composants réels React Native Web, **frontières router/auth simulées explicitement**, quatre scénarios Client/Artisan × 320×568 et 390×844 ; Reduced Motion et animation normale ; header stable, cibles >=48, dernier CTA au-dessus du Dock, selected, fermeture sur destination active, Escape, backdrop, navigation, logout busy, absence d’erreur JS. Compatibilité ancienne action et émulation texte ×2 vérifiées. Captures dans `evidence/`.
+Vérification navigateur locale : composants réels React Native Web, **frontières router/auth simulées explicitement**, huit scénarios Client/Artisan × 320×568 et 390×844 × Reduced Motion et animation normale ; header stable, cibles >=48, dernier CTA au-dessus du Dock, selected, fermeture sur destination active, Escape, backdrop, navigation, logout busy, absence d’erreur JS. Compatibilité ancienne action et émulation texte ×2 vérifiées. Captures dans `evidence/`.
 
 Reproduction, avec Playwright/Chromium disponibles dans l’environnement de test :
 
@@ -123,3 +123,26 @@ MAIN / Production, backend, Enterprise / Control OS intacts par W2. RAFI V2, Cli
 ## L. Verdict
 
 Le verdict de livraison dépend de la CI du SHA candidat final ; les gates et preuves locales ci-dessus sont acquis. Le message final donnera exactement le verdict demandé après contrôle de cette CI.
+
+
+## M. Correction ciblée des preuves Drawer — PR #145
+
+Correction relue depuis le candidat `5a06f2006c2a22477ba51e8d257050a0e28ee5ef`, base canonique inchangée. Aucun fichier produit modifié par cette correction.
+
+**Cause confirmée : course de timing dans la fixture.** `close.waitFor()` garantit le montage/état visible Playwright du bouton, mais pas son intersection avec le viewport ni la fin de la translation du panneau. Sur le code produit inchangé, juste après cette attente, les deux panneaux mesurent 366 px de large à **x = −358,701 px** : environ 7,3 px seulement sont à l’écran. Les observations rAF suivantes atteignent spontanément x = 0 et la matrice identité, environ 213–215 ms après le début du relevé. La transition normale DS2 reste active ; aucun défaut d’ouverture produit constaté. Voir `evidence/drawer-timing.json`.
+
+Le vérificateur attend désormais, à chaque ouverture, le panneau réel identifié depuis le bouton de fermeture dans le Modal : polling `requestAnimationFrame` jusqu’à x = 0, largeur contractuelle et transformation identité. Le timeout de 5 s est une borne d’échec, pas une pause ; aucun sleep, désactivation d’animation ou hook produit ajouté. Chaque capture Drawer passe ensuite par une assertion bloquante indépendante juste avant le screenshot.
+
+Contrôles obligatoires : panneau visible et intégralement dans le viewport, origine (0, 0), largeur `min(viewport − 24, 390)`, hauteur du viewport, matrice identité, bouton fermer et destination sélectionnée entièrement visibles, non masqués et atteignables au point central, aucun débordement horizontal ou troncature de texte/contrôle. Toutes les destinations et la déconnexion sont aussi vérifiées individuellement après défilement, puis la position initiale du scroller est restaurée. Sur petit écran ou pour une destination profonde, le défilement vertical reste normal ; une ligne hors de la fenêtre du scroller n’est pas assimilée à un débordement horizontal. Le garde de capture exige toujours la sélection dans la zone visible.
+
+| Preuve | Viewport | Panneau final | Sélection visible | Fermer visible |
+|---|---|---|---|---|
+| `evidence/client-drawer.png` | 390×844, animation normale | x=0, y=0, 366×844 | Mon espace | oui, 48×48 |
+| `evidence/artisan-drawer.png` | 390×844, animation normale | x=0, y=0, 366×844 | Artisan OS | oui, 48×48 |
+| Matrice navigateur, 8 scénarios | 320×568 / 390×844, deux modes | x=0, largeur 296 / 366 | oui | oui |
+
+Les deux PNG ci-dessus remplacent les anciennes captures prématurées ; les captures Shell sans Drawer restent inchangées. Inspection visuelle des nouveaux PNG réalisée. La déconnexion Artisan se trouve plus bas dans le scroller et a été vérifiée entièrement visible après défilement. L’émulation texte ×2 conserve la sélection et la fermeture visibles au screenshot, sans débordement ; tous ses contrôles restent accessibles par défilement. Résultats géométriques complets dans `evidence/browser-results.json`.
+
+Trois nouveaux tests de contrat protègent le garde : géométrie finale et plafond de largeur acceptés ; panneau monté mais hors écran/translation non terminée refusé ; mauvaise largeur, contrôles critiques masqués et débordement refusés. Ils s’ajoutent aux 52 tests existants.
+
+Gates de cette correction : typecheck PASS, 55 contrats PASS, Expo Doctor 18/18 PASS, Gate A PASS (export web requis uniquement), diff check PASS. Le SHA final et la CI Mobile Gate A correspondante sont consignés dans la description de PR et la livraison après publication. PR #145 conservée Draft, non mergée ; aucune modification mission/evidence métier/backend/MAIN/Production, aucun build physique, aucun W3.
