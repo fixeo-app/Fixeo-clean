@@ -32,6 +32,7 @@ export type MobileEstimatorResponse = {
   outcome?: MobileEstimatorOutcome | null;
   pricing_context_token?: string | null;
   request_id?: string;
+  id?: string;
   replayed?: boolean;
   qualification_limit_reached?: boolean;
 };
@@ -40,5 +41,15 @@ export function validateMobileEstimatorResponse(value: unknown): MobileEstimator
   if (!body || typeof body !== 'object' || body.ok !== true ||
       (body.session && (typeof body.session.session_token !== 'string' || typeof body.session.state !== 'string')) ||
       (body.pricing_context_token != null && typeof body.pricing_context_token !== 'string')) throw new Error('ESTIMATOR_UNAVAILABLE');
+  for (const outcome of [body.outcome, body.session?.outcome]) {
+    if (outcome && (typeof outcome.outcome_type !== 'string' || typeof outcome.service_code !== 'string' ||
+      !Array.isArray(outcome.scope_summary) || !outcome.scope_summary.every(line => typeof line === 'string') ||
+      !Array.isArray(outcome.exclusions_summary) || !outcome.exclusions_summary.every(line => typeof line === 'string'))) throw new Error('ESTIMATOR_UNAVAILABLE');
+  }
+  if (body.next_step && (typeof body.next_step.type !== 'string' ||
+    (body.next_step.options != null && !Array.isArray(body.next_step.options)) ||
+    (body.next_step.candidate_services != null && (!Array.isArray(body.next_step.candidate_services) ||
+      !body.next_step.candidate_services.every(item => item && typeof item.service_code === 'string'))))) throw new Error('ESTIMATOR_UNAVAILABLE');
+  for (const id of [body.id, body.request_id]) if (id != null && (typeof id !== 'string' || !/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(id))) throw new Error('ESTIMATOR_UNAVAILABLE');
   return body;
 }

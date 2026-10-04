@@ -1,0 +1,21 @@
+{
+  "kind": "web-export-only",
+  "physical_build": false,
+  "staging": true,
+  "source_markers": [
+    "client-intelligence",
+    "client-estimator-confirmation",
+    "client-safety-stop"
+  ],
+  "verified": true,
+  "bundles": [
+    {
+      "file": "entry-f462717f5c3f6665a993f92e2ae626ba.js",
+      "sha256": "2b5530942ed537099ecfe824b42fd6ffdbadc385952a27fa4d66aa4438f7276f"
+    },
+    {
+      "file": "index-7111243eb341334576e3a474944e706f.js",
+      "sha256": "fdace717bc478bd5c40ff85dc05c10556e8c8e0922173ffdf4d6e60092c7d181"
+    }
+  ]
+}

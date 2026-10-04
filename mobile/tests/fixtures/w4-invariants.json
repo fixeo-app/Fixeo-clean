@@ -79,13 +79,8 @@
       "actOnDecision": "191b371c451dd9cf93461a5c7eb93fc5f172a483f86803629910e0b3f51dc377",
       "syncCurrentMission": "a16640e815f15104c13399db7b604437702f960f8c28f4c0d52454c1200ee6c5",
       "syncJourney": "538e2aa0f9333b85a9fc86040e25a5e7a18f5682931d91e9d3a140c07a38c7e5",
-      "hook-0": "dd76ee1de00c1aca24cd239f8e2c78d5cfc5fa1b252cd8ca223ec9f05f610958",
-      "bootstrap": "f96891fd3bfa8d43b42ed4a1581b08f85dd08a9b109f7501cf9ebeaa342e7cdb",
       "hook-1": "9d47dee4dbeb4382ff721249970b48127f2ce5cfda7950c71b456ea1d104cf43",
       "hook-2": "c24f2d6e2729b0eff695a1cc1ecf97f6072c62175d582ef503b7967b63f66402",
-      "handleVoice": "b5f93effd301908d596995d9a3584af9322473156c112217c98425e849bbbfc6",
-      "handlePhoto": "495cb190ee2e76a8b1c9eb2218b871b9ce4b939ab473c5e0005a1ee72e7b4921",
-      "analyzePhoto": "12fa1738ac3f2e37df1bfa4cf3641ac623f1815bcdb5f1d87e162d1b21f8f7c0",
       "confirmPhotoDiagnostic": "4681541cb6f9ff26705bbecdfd8b7bb8aeb6af53a92c0d3ae7ccce8bb721c778",
       "send": "c281176ab41fba16e5ec4abb1b212d471cdb85700366efc94cada301dae8e8cd"
     },
@@ -114,5 +109,12 @@
       "validate": "841161b847174cb4309d25822ef051193e0c54c5f730ebeec96f4a00f0b81de2",
       "decideChange": "56ed0420d2a649fa8e7deae81125ddeb06005f1893f9b003265d94f61880ac39"
     }
+  },
+  "w4FinalReplacedCallbacks": {
+    "handlePhoto": "495cb190ee2e76a8b1c9eb2218b871b9ce4b939ab473c5e0005a1ee72e7b4921",
+    "analyzePhoto": "12fa1738ac3f2e37df1bfa4cf3641ac623f1815bcdb5f1d87e162d1b21f8f7c0",
+    "handleVoice": "b5f93effd301908d596995d9a3584af9322473156c112217c98425e849bbbfc6",
+    "hook-0": "dd76ee1de00c1aca24cd239f8e2c78d5cfc5fa1b252cd8ca223ec9f05f610958",
+    "bootstrap": "f96891fd3bfa8d43b42ed4a1581b08f85dd08a9b109f7501cf9ebeaa342e7cdb"
   }
 }

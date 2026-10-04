@@ -44,7 +44,8 @@ test('mobile consumes no pricing engine, legacy import or estimator secret; sour
     assert.doesNotMatch(source,/FIXEO_ESTIMATOR_SECRET|pricing-engine|fixeo-pricing|data\/pricing|PRICE_MAP|amount\s*[*+\/-]/);
   }
   const home=readFileSync('app/index.tsx','utf8');
-  assert.match(home,/if \(!intakeReady\) return;\s*void send\(\)/);
+  assert.match(home,/if \(!intakeReady\) return;[\s\S]*setConfirmDirect\(true\)/);
+  assert.match(home,/label="Confirmer et chercher un artisan"[\s\S]*void send\(\)/);
   assert.match(home,/onPress=\{sendQualifiedIntake\}/);
   assert.doesNotMatch(home,/onPress=\{\(\) => void send\(\)/);
   const result=readFileSync('components/ClientFixeoResult.tsx','utf8');

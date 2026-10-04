@@ -152,6 +152,8 @@ const frames = (page, count = 8) => page.evaluate(n => new Promise(resolve => { 
    if (geo === 'web') assert.deepEqual(await page.evaluate(() => __w4.locationCalls), []);
    await page.getByRole('textbox', { name: 'Votre ville', exact: true }).fill('  Fès  ');
    await page.getByRole('button', { name: 'Confier le problème à FIXEO', exact: true }).click();
+  assert.equal((await page.evaluate(() => __w4.calls)).filter(c=>c.name==='createRequest').length,0);
+  await page.getByRole('button',{name:'Confirmer et chercher un artisan',exact:true}).click();
    await page.getByTestId('client-active-situation').waitFor();
    const requests = (await page.evaluate(() => __w4.calls)).filter(call => call.name === 'createRequest');
    assert.equal(requests.length, 1); assert.equal(requests[0].args.length, 4); assert.equal(requests[0].args[1], 'Fès');
@@ -172,6 +174,8 @@ const frames = (page, count = 8) => page.evaluate(n => new Promise(resolve => { 
   await open('idle', 390, '&hold=1'); await writeProblem();
   await page.getByRole('textbox', { name: 'Votre ville', exact: true }).fill('Rabat');
   await page.getByRole('button', { name: 'Confier le problème à FIXEO', exact: true }).click();
+  assert.equal((await page.evaluate(() => __w4.calls)).filter(c=>c.name==='createRequest').length,0);
+  await page.getByRole('button',{name:'Confirmer et chercher un artisan',exact:true}).click();
   await page.getByText('On prépare la suite.', { exact: true }).waitFor();
   await capture('client-home-creating-390');
   assert.equal((await page.evaluate(() => __w4.calls)).filter(call => call.name === 'createRequest').length, 1);
@@ -192,6 +196,8 @@ const frames = (page, count = 8) => page.evaluate(n => new Promise(resolve => { 
   await open('idle', 320, '&requestCityError=1'); await writeProblem();
   await page.getByRole('textbox', {name:'Votre ville',exact:true}).fill('Autre ville');
   await page.getByRole('button', {name:'Confier le problème à FIXEO',exact:true}).click();
+  assert.equal((await page.evaluate(() => __w4.calls)).filter(c=>c.name==='createRequest').length,0);
+  await page.getByRole('button',{name:'Confirmer et chercher un artisan',exact:true}).click();
   await page.getByText('Cette ville n’est pas encore prise en charge. Choisissez une autre ville.',{exact:true}).waitFor();
   assert.equal(await page.getByText('LA SÉCURITÉ D’ABORD', { exact: true }).count(), 0);
   assert.equal(await page.getByRole('textbox',{name:'Votre ville',exact:true}).count(),1);
@@ -223,6 +229,8 @@ const frames = (page, count = 8) => page.evaluate(n => new Promise(resolve => { 
     assert.ok((await diagnostic.innerText()).includes('HYPOTHÈSE · Joint possiblement usé'));
     await page.getByRole('textbox', {name:'Décrivez le problème'}).fill('Une fuite au lavabo, description corrigée.');
     await page.getByRole('button', {name:'Confier le problème à FIXEO',exact:true}).click();
+  assert.equal((await page.evaluate(() => __w4.calls)).filter(c=>c.name==='createRequest').length,0);
+  await page.getByRole('button',{name:'Confirmer et chercher un artisan',exact:true}).click();
     await page.getByTestId('client-active-situation').waitFor();
     const requests=(await page.evaluate(() => __w4.calls)).filter(c => c.name === 'createRequest');
     assert.equal(requests.length,1); assert.equal(requests[0].args[2],'Une fuite au lavabo, description corrigée.');
@@ -239,6 +247,8 @@ const frames = (page, count = 8) => page.evaluate(n => new Promise(resolve => { 
   assert.ok(!(await page.locator('body').innerText()).includes('L’eau se propage-t-elle rapidement ?'));
   await page.getByRole('button',{name:'Cette description correspond',exact:true}).click();
   await page.getByRole('button',{name:'Confier le problème à FIXEO',exact:true}).click();
+  assert.equal((await page.evaluate(() => __w4.calls)).filter(c=>c.name==='createRequest').length,0);
+  await page.getByRole('button',{name:'Confirmer et chercher un artisan',exact:true}).click();
   await page.getByTestId('client-active-situation').waitFor();
   const normalCalls=await page.evaluate(()=>__w4.calls);
   assert.equal(normalCalls.filter(c=>c.name==='createRequest').length,1);

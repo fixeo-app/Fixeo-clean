@@ -6,7 +6,7 @@ import type { ClientNotification, ClientProfile, ClientRequestHistory } from '..
 import type { MissionEvidence } from '../../lib/missionEvidence';
 import type { MobileDecisionContext } from '../../lib/decisionCenter';
 import type { MissionChangeProposal } from '../../lib/missionChange';
-export { getStableSession, resolveRole, signOut, supabase, watchClientNotifications, watchClientRequest,
+export { resolveRole, signOut, supabase, watchClientNotifications, watchClientRequest,
   isCurrentDevicePushEnabled, registerCurrentDeviceForPush } from './rafi-empty-services.web';
 
 const params = new URLSearchParams(location.search);
@@ -78,3 +78,35 @@ export async function confirmCompletedRequest(id: string) { log('confirmComplete
 let change: MissionChangeProposal | null = params.has('change') ? { id: 'change-1', mission_id: missionId, proposed_price: canonicalEstimator.outcomes.price.price.amount_mad, reason: 'Fourniture supplémentaire à confirmer.', version: 1, status: 'presented' } : null;
 export async function getMissionChange(id: string) { log('getMissionChange', id); return change; }
 export async function respondMissionChange(id: string, approve: boolean) { log('respondMissionChange', id, approve); if (change) change = { ...change, status: approve ? 'client_accepted' : 'client_rejected' }; return { ok: true }; }
+
+// W4 Final component regression only. These are never staging or visual certification.
+export async function analyzePersistedMobilePhoto(input: unknown) {
+  log('persistedPhoto', input);
+  return { result: await analyzeMobileDiagnosticPhoto(input), diagnostic_reference: 'opaque-fixture-reference', diagnostic_reference_expires_in: 900,
+    privacy: { persisted: true, raw_photo_retained: false, sanitized_photo_retained: true } };
+}
+let confirmationAttempts = 0;
+export async function mobileEstimator(input: any): Promise<any> {
+  log('mobileEstimator', input);
+  if (params.has('gatewayError')) throw new Error('GATEWAY_UNAVAILABLE');
+  if (params.has('expired')) throw new Error('DIAGNOSTIC_LINK_EXPIRED');
+  if (params.has('authError')) throw new Error('AUTH_REQUIRED');
+  const outcome = canonicalEstimator.outcomes[params.has('estimateSafety') ? 'safety' : params.has('quote') ? 'quote' : 'price'];
+  const session = { session_token: 'opaque-fixture-session', state: params.has('estimateSafety') ? 'SAFETY_STOP' : 'READY', metier: 'Plomberie', service_code: outcome.service_code, outcome: null };
+  if (input.action.startsWith('confirm_')) {
+    confirmationAttempts++;
+    if (params.has('confirmRetry') && confirmationAttempts === 1) throw new Error('GATEWAY_UNAVAILABLE');
+    await new Promise(resolve => setTimeout(resolve, 60));
+    status = 'new'; return { ok: true, ...(input.action === 'confirm_quote' ? { id: requestId } : { request_id: requestId }) };
+  }
+  if (input.action === 'start' && params.has('question')) return { ok: true, session,
+    next_step: { type: 'QUESTION', question_id: 'scope', answer_type: 'enum', prompt_fr: 'Le besoin concerne-t-il un seul équipement accessible ?', options: ['LOCAL_ACCESSIBLE', 'UNKNOWN'] } };
+  if (input.action === 'start' && !params.has('estimateSafety')) return { ok: true, session, next_step: { type: 'READY' } };
+  return { ok: true, session, outcome, next_step: null, pricing_context_token: params.has('quote') || params.has('estimateSafety') ? null : 'opaque-fixture-pricing' };
+}
+
+export async function getStableSession() {
+  log('getStableSession');
+  if (params.has('bootstrapOffline')) throw new Error('OFFLINE');
+  return { user: { id: 'visual-fixture-only' } };
+}

@@ -20,6 +20,10 @@ import {
   analyzeMobileDiagnosticPhoto,
   type MobileDiagnosticResult,
 } from '@/lib/mobileDiagnostic';
+import { analyzePersistedMobilePhoto } from '@/lib/mobileDiagnosticReference';
+import { ClientIntelligence } from '@/components/ClientIntelligence';
+import { canonicalCity } from '@/lib/clientLocation';
+import { wantsEstimate, type ClientIntelligenceContext } from '@/lib/clientIntelligence';
 import { MagicLoopModel, transition } from '@/lib/magicLoopState';
 import { RafiInputRail } from '@/components/RafiInputRail';
 import { ClientDiagnostic } from '@/components/ClientDiagnostic';
@@ -27,6 +31,7 @@ import { canSendClientIntake } from '@/lib/clientDiagnostic';
 import { ClientLocationField } from '@/components/ClientLocationField';
 import { MobileShell } from '@/components/MobileShell';
 import { EntryStage } from '@/components/EntryStage';
+import { withMobileDeadline } from '@/lib/mobileResilience';
 import { getStableSession, resolveRole } from '@/lib/auth';
 import {
   getMyMobileDecisionContext,
@@ -48,6 +53,14 @@ const ASSIGNED_STATES = new Set(['assigned', 'in_progress', 'completed', 'valida
 type JourneyStatus = 'idle' | 'matching' | 'assigned' | 'in_progress' | 'completed';
 
 export default function Home() {
+  const [estimateContext, setEstimateContext] = useState<ClientIntelligenceContext | null>(null);
+  const [diagnosticReference, setDiagnosticReference] = useState<string | undefined>();
+  const [diagnosticCity, setDiagnosticCity] = useState('');
+  const [persistPhoto, setPersistPhoto] = useState(false);
+  const [safetyMessage, setSafetyMessage] = useState('Ne poursuivez pas cette intervention. Faites vérifier la situation par un professionnel.');
+  const [safetyStopped, setSafetyStopped] = useState(false);
+  const [confirmDirect, setConfirmDirect] = useState(false);
+  const photoLock = useRef(false);
   const [writing, setWriting] = useState(false);
   const [showContext, setShowContext] = useState(false);
   const [missionSummary, setMissionSummary] = useState<MissionSnapshot | null>(null);
@@ -61,6 +74,8 @@ export default function Home() {
   const [reviewedDiagnostic, setReviewedDiagnostic] = useState<MobileDiagnosticResult | null>(null);
   const [photoDiagnosticBusy, setPhotoDiagnosticBusy] = useState(false);
   const [loop, setLoop] = useState<MagicLoopModel>({ state: 'idle' });
+  const [sessionError, setSessionError] = useState(false);
+  const [sessionRetry, setSessionRetry] = useState(0);
   const [clientReady, setClientReady] = useState(false);
   const [journeyStatus, setJourneyStatus] = useState<JourneyStatus>('idle');
   const [decisionCue, setDecisionCue] = useState<MobileDecisionCue | null>(null);
@@ -155,7 +170,7 @@ export default function Home() {
 
     async function bootstrap(attempt = 0) {
       try {
-        const session = await getStableSession();
+        const session = await withMobileDeadline(getStableSession());
         if (!active) return;
 
         if (!session) {
@@ -163,7 +178,7 @@ export default function Home() {
           return;
         }
 
-        const role = await resolveRole(session.user.id);
+        const role = await withMobileDeadline(resolveRole(session.user.id));
         if (!active) return;
 
         if (role === 'artisan') {
@@ -198,6 +213,7 @@ export default function Home() {
           return;
         }
 
+        if (attempt >= 2) { setSessionError(true); return; }
         retryTimer = setTimeout(
           () => void bootstrap(attempt + 1),
           Math.min(3000, 700 + attempt * 500),
@@ -217,7 +233,7 @@ export default function Home() {
       if (retryTimer) clearTimeout(retryTimer);
       if (channel) void supabase.removeChannel(channel);
     };
-  }, []);
+  }, [sessionRetry]);
 
   useEffect(() => {
     if (loop.state !== 'matching' || !loop.requestId) return;
@@ -253,6 +269,7 @@ export default function Home() {
   }, [loop.state, loop.missionId]);
 
   async function handleVoice(uri: string) {
+    if (idempotencyKeyRef.current || safetyStopped || photoLock.current) return;
     setRafiOrbOverride('understanding');
     if (!hasRafiServerGateway()) {
       setRafiMessage('Voix capturée. RAFI la traitera dès que le service est disponible.');
@@ -273,6 +290,8 @@ export default function Home() {
   }
 
   function handlePhoto(uri: string, mimeType = 'image/jpeg') {
+    if (safetyStopped || photoLock.current || idempotencyKeyRef.current) return;
+    setDiagnosticReference(undefined); setPersistPhoto(false); setReviewedDiagnostic(null);
     setPhotoUri(uri);
     setPhotoMimeType(mimeType);
     setPhotoDiagnostic(null);
@@ -280,7 +299,7 @@ export default function Home() {
   }
 
   async function analyzePhoto() {
-    if (!photoUri || photoDiagnosticBusy) return;
+    if (!photoUri || photoLock.current || safetyStopped) return;
     if (!city.trim()) {
       setRafiMessage('Indiquez votre ville avant de lancer l’analyse photo.');
       return;
@@ -290,16 +309,17 @@ export default function Home() {
       return;
     }
 
+    photoLock.current = true;
     setPhotoDiagnosticBusy(true);
     setRafiOrbOverride('understanding');
     setRafiMessage('RAFI analyse la photo de façon privée…');
     try {
-      const result = await analyzeMobileDiagnosticPhoto({
-        uri: photoUri,
-        mimeType: photoMimeType,
-        city,
-        description: problem,
-      });
+      const input = { uri: photoUri, mimeType: photoMimeType, city: canonicalCity(city) || city.trim(), description: problem };
+      const persisted = persistPhoto ? await analyzePersistedMobilePhoto({ ...input, consentVersion: 'diagnostic-privacy-v1' }) : null;
+      const result = persisted ? persisted.result : await analyzeMobileDiagnosticPhoto(input);
+      setDiagnosticReference(persisted?.diagnostic_reference || undefined);
+      setDiagnosticCity(input.city);
+      if (result.safety?.stop) setSafetyStopped(true);
       setPhotoDiagnostic(result);
       setRafiMessage(
         result.safety?.stop
@@ -316,6 +336,7 @@ export default function Home() {
             : 'RAFI n’a pas pu analyser cette photo. Vous pouvez continuer sans elle.',
       );
     } finally {
+      photoLock.current = false;
       setPhotoDiagnosticBusy(false);
       setRafiOrbOverride(null);
     }
@@ -365,6 +386,7 @@ export default function Home() {
       setLoop(current => transition(current, 'matching', { requestId }));
     } catch (error: any) {
       if (String(error?.message || '').includes('CITY_NOT_SUPPORTED')) {
+        idempotencyKeyRef.current = null;
         setJourneyStatus('idle');
         setLoop(current => transition(current, 'error', { message: 'Cette ville n’est pas encore prise en charge. Choisissez une autre ville.' }));
         return;
@@ -379,10 +401,26 @@ export default function Home() {
     }
   }
 
-  const intakeReady = canSendClientIntake({ busy: photoDiagnosticBusy, diagnostic: photoDiagnostic, reviewed: reviewedDiagnostic === photoDiagnostic });
+  const intakeReady = !safetyStopped && canSendClientIntake({ busy: photoDiagnosticBusy, diagnostic: photoDiagnostic, reviewed: reviewedDiagnostic === photoDiagnostic });
   function sendQualifiedIntake() {
     if (!intakeReady) return;
-    void send();
+    if (!city.trim()) { setRafiMessage('Indiquez le lieu d’intervention pour continuer.'); return; }
+    if (need.needsConfirmation) { setRafiMessage('Précisez le problème ou demandez à RAFI de vous orienter.'); return; }
+    setConfirmDirect(true);
+  }
+
+  function openEstimate() {
+    if (!intakeReady || !problem.trim() || estimateContext || idempotencyKeyRef.current) return;
+    const normalized = canonicalCity(city);
+    if (!normalized) { setRafiMessage('Choisissez une ville FIXEO pour cette estimation.'); return; }
+    if (diagnosticReference && diagnosticCity !== normalized) {
+      setRafiMessage('Cette analyse correspond à une autre ville. Reprenez la photo pour le lieu choisi.'); return;
+    }
+    setEstimateContext({ city: normalized, description: problem.trim(), diagnosticReference });
+  }
+  function intelligenceCreated(requestId: string) {
+    setEstimateContext(null); setJourneyStatus('matching');
+    setLoop(current => transition(current, 'matching', { requestId }));
   }
 
   const requestLocked = loop.state === 'creating' || loop.state === 'matching' || loop.state === 'found';
@@ -390,7 +428,7 @@ export default function Home() {
 
   const effectiveOrbMode = getClientRafiPresence({
     override: rafiOrbOverride, loopState: loop.state, journeyStatus,
-    photoDiagnosticBusy, safetyStop: !isActiveJourney && photoDiagnostic?.safety?.stop,
+    photoDiagnosticBusy, safetyStop: !isActiveJourney && (safetyStopped || photoDiagnostic?.safety?.stop),
   });
 
   const hero = clientHomeCopy(journeyStatus, effectiveOrbMode, loop.state === 'creating');
@@ -404,12 +442,13 @@ export default function Home() {
       <FixeoScreen style={styles.loadingRoot}>
         <EntryStage
           eyebrow="RAFI · FIXEO"
-          title="Ouverture de votre espace."
-          subtitle="RAFI sécurise votre session et reprend exactement votre contexte."
-          status="Synchronisation de votre univers…"
-          mode="working"
+          title={sessionError ? 'Votre espace est indisponible.' : 'Ouverture de votre espace.'}
+          subtitle={sessionError ? 'Vérifiez votre connexion, puis réessayez.' : 'RAFI sécurise votre session et reprend exactement votre contexte.'}
+          status={sessionError ? undefined : 'Synchronisation de votre univers…'}
+          mode={sessionError ? 'attention' : 'working'}
           compact
         />
+        {sessionError && <FixeoAction label="Réessayer l’ouverture de mon espace" onPress={() => { setSessionError(false); setSessionRetry(value => value + 1); }} />}
       </FixeoScreen>
     );
   }
@@ -441,24 +480,36 @@ export default function Home() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {(isActiveJourney || !photoDiagnostic?.safety.stop) && <ClientHero {...hero} mode={effectiveOrbMode} eventKey={loop.missionId || loop.requestId} />}
+        {(isActiveJourney || !safetyStopped) && <ClientHero {...hero} compact={!!estimateContext || confirmDirect || inputExpanded} mode={effectiveOrbMode} eventKey={loop.missionId || loop.requestId} />}
 
+        {!isActiveJourney && safetyStopped && !photoDiagnostic?.safety.stop && <ClientSection testID="client-safety-stop">
+          <ClientHero eyebrow="RAFI · SÉCURITÉ" title="La sécurité d’abord." detail={safetyMessage} mode="attention" compact />
+          <FixeoAction label="Revenir à mon espace" variant="secondary" onPress={() => router.push('/client-workspace')} />
+        </ClientSection>}
         {!isActiveJourney && photoDiagnostic?.safety.stop && <ClientDiagnostic result={photoDiagnostic} confirmed={false} onConfirm={() => {}} onExit={() => router.push('/client-workspace')} />}
-        {!isActiveJourney && !photoDiagnostic?.safety.stop && (
+        {!isActiveJourney && !safetyStopped && (
           <View style={styles.inputStack}>
-            <RafiInputRail
+            {!estimateContext && !confirmDirect && !photoDiagnosticBusy && !idempotencyKeyRef.current && <RafiInputRail
               onWrite={() => { setWriting(true); problemInputRef.current?.focus(); }}
               onVoiceReady={(uri) => void handleVoice(uri)}
               onPhotoReady={(uri, mimeType) => handlePhoto(uri, mimeType)}
               onListeningChange={(listening) => {
                 setRafiOrbOverride(listening ? 'listening' : null);
               }}
-            />
+            />}
 
             {!inputExpanded && <FixeoText variant="caption" tone="tertiary" style={styles.center}>
               Une demande commence avec vous.
             </FixeoText>}
-            {inputExpanded && <View testID="client-request-fields" style={styles.inputStack}>
+            {estimateContext && <ClientIntelligence context={estimateContext} onCreated={intelligenceCreated} onStop={message => { if (message) setSafetyMessage(message); setSafetyStopped(true); }} onClose={() => setEstimateContext(null)} />}
+            {confirmDirect && <ClientSection testID="client-direct-confirmation" label="Votre demande">
+              <FixeoText variant="heading">{problem}</FixeoText>
+              <FixeoText tone="secondary">{city} · {need.serviceCategory}</FixeoText>
+              <FixeoText variant="supporting">FIXEO recherche un artisan. Le prix sera annoncé avant intervention.</FixeoText>
+              <FixeoAction label="Confirmer et chercher un artisan" disabled={requestLocked} onPress={() => { setConfirmDirect(false); void send(); }} />
+              <FixeoAction label="Modifier ma demande" variant="ghost" onPress={() => setConfirmDirect(false)} />
+            </ClientSection>}
+            {inputExpanded && !estimateContext && !confirmDirect && <View testID="client-request-fields" style={styles.inputStack}>
             <TextInput
               ref={problemInputRef}
               accessibilityLabel="Décrivez le problème"
@@ -467,13 +518,13 @@ export default function Home() {
                 setProblemConfirmedFromRafi(false);
                 setProblem(value);
               }}
-              editable={!requestLocked}
+              editable={!requestLocked && !photoDiagnosticBusy && !(loop.state === 'error' && !!idempotencyKeyRef.current)}
               multiline
               placeholder="Décrivez simplement ce qui se passe"
               placeholderTextColor={colors.textMuted}
               style={clientStyles.input}
             />
-            <ClientLocationField city={city} onChangeCity={setCity} disabled={requestLocked} />
+            {(!!problem.trim() || !!photoUri) && <ClientLocationField city={city} onChangeCity={setCity} disabled={requestLocked || photoDiagnosticBusy || (loop.state === 'error' && !!idempotencyKeyRef.current)} />}
 
             {!!rafiMessage && (
               <ClientSection>
@@ -488,6 +539,8 @@ export default function Home() {
                 <Text style={styles.rafiMessage}>
                   La photo n’est pas une demande. Elle est analysée uniquement si vous le choisissez.
                 </Text>
+                {!photoDiagnostic && <FixeoAction label={persistPhoto ? '✓ Conserver l’analyse pour la suite' : 'Conserver l’analyse pour la suite'} variant="ghost" disabled={photoDiagnosticBusy} accessibilityRole="checkbox" accessibilityState={{ checked: persistPhoto }} onPress={() => setPersistPhoto(value => !value)} />}
+                {!photoDiagnostic && persistPhoto && <FixeoText variant="caption" tone="secondary">J’accepte la conservation privée de la photo nettoyée et de l’analyse pour poursuivre ce besoin. La photo originale n’est pas conservée.</FixeoText>}
                 {!photoDiagnostic && (
                   <FixeoAction
                     label={photoDiagnosticBusy ? 'RAFI analyse…' : 'Analyser la photo avec RAFI'}
@@ -529,6 +582,7 @@ export default function Home() {
               </>
             )}
 
+            {problem.trim().length >= 8 && <FixeoAction label={wantsEstimate(problem) ? 'Obtenir mon estimation avec RAFI' : 'Voir aussi une estimation'} variant={wantsEstimate(problem) ? 'primary' : 'ghost'} disabled={requestLocked || !intakeReady} onPress={openEstimate} />}
             <FixeoAction
               label={
                 loop.state === 'creating'
@@ -537,7 +591,7 @@ export default function Home() {
                     ? 'Préciser le problème'
                     : 'Confier le problème à FIXEO'
               }
-              variant={!intakeReady ? 'secondary' : 'primary'}
+              variant={!intakeReady || wantsEstimate(problem) ? 'secondary' : 'primary'}
               onPress={sendQualifiedIntake}
               disabled={!problem || requestLocked || !intakeReady}
             />

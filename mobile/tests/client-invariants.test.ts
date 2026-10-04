@@ -12,6 +12,8 @@ test('W4 preserves all existing services, mission engine, W2, W3, Auth and Artis
   for (const [file, digest] of Object.entries(manifest.protectedFiles)) assert.equal(sha(readFileSync(file)), digest, file);
 });
 
+// Intake and bounded bootstrap callbacks are updated by the explicitly authorized W4.1 integration;
+// their former hashes remain in w4FinalReplacedCallbacks and UI behavior is tested separately.
 test('W4 keeps original request, auth, watch, load, evidence, validation and adjustment callbacks', () => {
   for (const [file, expected] of Object.entries(manifest.callbacks)) {
     // Only new presentation state assignments are omitted; no service call,
