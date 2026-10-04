@@ -153,14 +153,27 @@ export const motionGeometry = {
   reveal: { translateY: 8, scale: 0.992 },
   orchestration: { translateY: 10, scale: 1 },
 } as const;
-/** Preserve the existing RAFI rhythm. W3 owns its redesign. */
+/** RAFI V2 — one material, independent from semantic status colors. */
+export const rafiVisualTokens = {
+  core: '#08090B', graphite: '#26272A', graphiteLight: '#454548',
+  rim: '#71706D', deepRim: '#161719', champagne: '#C6AE84',
+  signature: '#F3E1BA', signatureGlow: 'rgba(218,189,139,0.18)',
+  highlight: 'rgba(255,247,229,0.14)', highlightClear: 'rgba(255,247,229,0)',
+  haloOuter: 'rgba(198,174,132,0.035)', haloMiddle: 'rgba(198,174,132,0.055)',
+  haloInner: 'rgba(198,174,132,0.10)', orbit: 'rgba(198,174,132,0.38)',
+  transparent: 'transparent',
+} as const;
 export const rafiMotionTokens = {
-  idle: { breathDuration: 2200, orbitDuration: 7600 },
-  listening: { breathDuration: 980, orbitDuration: 2500 },
-  working: { breathDuration: 720, orbitDuration: 1600 },
-  success: { breathDuration: 1200, orbitDuration: 3600 },
+  idle: { breathDuration: 3600, orbitDuration: 0 },
+  listening: { breathDuration: 1800, orbitDuration: 0 },
+  understanding: { breathDuration: 2600, orbitDuration: 0 },
+  working: { breathDuration: 1500, orbitDuration: 0 },
+  matching: { breathDuration: 6000, orbitDuration: 12000 },
+  intervention: { breathDuration: 4800, orbitDuration: 0 },
+  success: { breathDuration: 3600, orbitDuration: 0 },
+  attention: { breathDuration: 4000, orbitDuration: 0 },
   easing: { breath: 'breathe', orbit: 'linear', successIn: 'enter', successOut: 'breathe' },
-  completion: { delay: 70, enter: 360, exit: 620 },
+  completion: { delay: 0, enter: 280, exit: 600 },
   reduced: 'static',
 } as const;
 

@@ -16,6 +16,7 @@ import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
+import { getArtisanRafiPresence } from '@/ui/rafiPresence';
 import { colors, radius, spacing, type } from '@/ui/tokens';
 import { getArtisanContextualCockpit } from '@/lib/contextualCockpit';
 import {
@@ -131,7 +132,6 @@ export default function Artisan() {
         eyebrow: 'MISSION EN COURS',
         title: 'Restez concentré sur l’intervention.',
         subtitle: 'RAFI garde le contexte et FIXEO suit les prochaines étapes.',
-        orb: 'working' as const,
       };
     }
     if (currentMission?.request_status === 'completed') {
@@ -139,7 +139,6 @@ export default function Artisan() {
         eyebrow: 'VALIDATION CLIENT',
         title: 'Intervention terminée.',
         subtitle: 'FIXEO attend la confirmation finale du client.',
-        orb: 'success' as const,
       };
     }
     if (currentMission) {
@@ -147,7 +146,6 @@ export default function Artisan() {
         eyebrow: 'PROCHAINE ACTION',
         title: 'Une mission vous attend.',
         subtitle: 'Ouvrez-la et laissez FIXEO vous guider jusqu’à la clôture.',
-        orb: 'success' as const,
       };
     }
     if (offers.length > 0) {
@@ -155,14 +153,12 @@ export default function Artisan() {
         eyebrow: 'OPPORTUNITÉS',
         title: 'De nouvelles missions sont disponibles.',
         subtitle: 'La meilleure opportunité est déjà remontée pour vous.',
-        orb: 'working' as const,
       };
     }
     return {
       eyebrow: 'COCKPIT ARTISAN',
       title: 'Vous êtes prêt.',
       subtitle: 'FIXEO surveille les opportunités pendant que vous gardez votre activité sous contrôle.',
-      orb: 'idle' as const,
     };
   }, [currentMission, offers.length]);
 
@@ -210,10 +206,13 @@ export default function Artisan() {
     }
   }
 
+  const rafiPresence = getArtisanRafiPresence({ missionStatus: currentMission?.request_status,
+    offersCount: offers.length, accepting: !!acceptingRequestId, loadError: activityLoadError });
+
   const header = (
     <View style={styles.headerStack}>
       <View style={styles.hero}>
-        <RafiOrb mode={cockpit.orb} size={76} />
+        <RafiOrb mode={rafiPresence} size={76} />
         <Text style={styles.eyebrow}>{cockpit.eyebrow}</Text>
         <Text style={styles.title}>{cockpit.title}</Text>
         <Text style={styles.subtitle}>{cockpit.subtitle}</Text>
@@ -315,7 +314,7 @@ export default function Artisan() {
         <MobileShell
           universe="artisan"
           activeKey="cockpit"
-          orbMode={cockpit.orb}
+          orbMode={rafiPresence}
           statusLabel={currentMission ? 'Mission active' : availabilityLabel}
           rightActionLabel="Artisan OS"
           rightDestination="/artisan-workspace"

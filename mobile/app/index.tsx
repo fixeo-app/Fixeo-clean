@@ -37,6 +37,7 @@ import { FixeoCard } from '@/ui/FixeoCard';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
 import type { RafiOrbMode } from '@/ui/rafiOrbMotion';
+import { getClientRafiPresence } from '@/ui/rafiPresence';
 import { colors, radius, spacing, type } from '@/ui/tokens';
 
 const ASSIGNED_STATES = new Set(['assigned', 'in_progress', 'completed', 'validated']);
@@ -57,6 +58,7 @@ export default function Home() {
   const [journeyStatus, setJourneyStatus] = useState<JourneyStatus>('idle');
   const [decisionCue, setDecisionCue] = useState<MobileDecisionCue | null>(null);
   const [rafiOrbOverride, setRafiOrbOverride] = useState<RafiOrbMode | null>(null);
+  const problemInputRef = useRef<TextInput>(null);
   const submitLockRef = useRef(false);
   const idempotencyKeyRef = useRef<string | null>(null);
   const need = useMemo(() => understandLocally({ mode: 'text', text: problem }), [problem]);
@@ -243,14 +245,14 @@ export default function Home() {
   }, [loop.state, loop.missionId]);
 
   async function handleVoice(uri: string) {
-    setRafiOrbOverride('working');
+    setRafiOrbOverride('understanding');
     if (!hasRafiServerGateway()) {
       setRafiMessage('Voix capturée. RAFI la traitera dès que le service est disponible.');
       setRafiOrbOverride(null);
       return;
     }
     try {
-      setRafiMessage('RAFI écoute…');
+      setRafiMessage('RAFI transcrit votre message…');
       const transcript = await transcribeRafiVoice(uri);
       setProblemConfirmedFromRafi(false);
       setProblem(current => [current.trim(), transcript].filter(Boolean).join(' '));
@@ -281,7 +283,7 @@ export default function Home() {
     }
 
     setPhotoDiagnosticBusy(true);
-    setRafiOrbOverride('working');
+    setRafiOrbOverride('understanding');
     setRafiMessage('RAFI analyse la photo de façon privée…');
     try {
       const result = await analyzeMobileDiagnosticPhoto({
@@ -373,7 +375,6 @@ export default function Home() {
         eyebrow: 'FIXEO CHERCHE POUR VOUS',
         title: 'On trouve le bon artisan.',
         subtitle: 'Vous pouvez poser le téléphone. FIXEO suit la recherche.',
-        orb: 'working' as const,
       };
     }
     if (journeyStatus === 'in_progress') {
@@ -381,7 +382,6 @@ export default function Home() {
         eyebrow: 'INTERVENTION EN COURS',
         title: 'FIXEO suit chaque étape.',
         subtitle: 'Votre artisan est sur la mission. Vous gardez le contrôle.',
-        orb: 'working' as const,
       };
     }
     if (journeyStatus === 'completed') {
@@ -389,7 +389,6 @@ export default function Home() {
         eyebrow: 'INTERVENTION TERMINÉE',
         title: 'Une dernière vérification.',
         subtitle: 'Consultez les preuves puis confirmez la bonne fin de mission.',
-        orb: 'success' as const,
       };
     }
     if (journeyStatus === 'assigned') {
@@ -397,18 +396,19 @@ export default function Home() {
         eyebrow: 'ARTISAN TROUVÉ',
         title: 'FIXEO a pris le relais.',
         subtitle: 'Votre intervention est désormais suivie jusqu’à sa clôture.',
-        orb: 'success' as const,
       };
     }
     return {
       eyebrow: 'RAFI · VOTRE ASSISTANT FIXEO',
       title: 'Que puis-je régler pour vous ?',
       subtitle: 'Parlez, montrez ou écrivez. RAFI comprend, FIXEO agit.',
-      orb: 'idle' as const,
     };
   }, [journeyStatus]);
 
-  const effectiveOrbMode: RafiOrbMode = rafiOrbOverride || hero.orb;
+  const effectiveOrbMode = getClientRafiPresence({
+    override: rafiOrbOverride, loopState: loop.state, journeyStatus,
+    photoDiagnosticBusy, safetyStop: !isActiveJourney && photoDiagnostic?.safety?.stop,
+  });
 
   if (!clientReady) {
     return (
@@ -453,7 +453,7 @@ export default function Home() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.hero}>
-          <RafiOrb size={96} mode={effectiveOrbMode} />
+          <RafiOrb size={96} mode={effectiveOrbMode} eventKey={loop.missionId || loop.requestId} />
           <Text style={styles.eyebrow}>{hero.eyebrow}</Text>
           <Text style={styles.title}>{hero.title}</Text>
           <Text style={styles.subtitle}>{hero.subtitle}</Text>
@@ -462,6 +462,7 @@ export default function Home() {
         {!isActiveJourney && (
           <View style={styles.inputStack}>
             <RafiInputRail
+              onWrite={() => problemInputRef.current?.focus()}
               onVoiceReady={(uri) => void handleVoice(uri)}
               onPhotoReady={(uri, mimeType) => handlePhoto(uri, mimeType)}
               onListeningChange={(listening) => {
@@ -470,6 +471,8 @@ export default function Home() {
             />
 
             <TextInput
+              ref={problemInputRef}
+              accessibilityLabel="Décrivez le problème"
               value={problem}
               onChangeText={(value) => {
                 setProblemConfirmedFromRafi(false);
@@ -481,6 +484,7 @@ export default function Home() {
               style={styles.input}
             />
             <TextInput
+              accessibilityLabel="Votre ville"
               value={city}
               onChangeText={setCity}
               editable={!requestLocked}

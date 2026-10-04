@@ -1,0 +1,62 @@
+[
+  {
+    "file": "rafi-artisan-presence-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "f16370b230f55a557274912e6fc4c7dd935260b86ed0ef5d29f78f7fe80540f7"
+  },
+  {
+    "file": "rafi-artisan-presence.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "c4f1d5e84202746f309a6c11c67871ccb2ab7fabeec50d9e4903b83cffc2fef9"
+  },
+  {
+    "file": "rafi-client-presence-320.png",
+    "width": 320,
+    "height": 844,
+    "sha256": "c70d72b1753a0737eaa2063ca2332e96cfc659bca3bd8766d6365553ebc98422"
+  },
+  {
+    "file": "rafi-client-presence.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "34ab35edfd2d63865a2916910c95f2ed5151180e2ef60c9fdc79efca05627ca0"
+  },
+  {
+    "file": "rafi-compact-drawer.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "f891cc701c4ce28397bb1927dc9b58f72661c089b5a86c23e419925a57742b98"
+  },
+  {
+    "file": "rafi-composer-large-text.png",
+    "width": 320,
+    "height": 952,
+    "sha256": "f9d5cb8b40b117eefba4b70dcc13b6b55370f9412700d5d6f0c0f54f64013f5c"
+  },
+  {
+    "file": "rafi-composer.png",
+    "width": 390,
+    "height": 844,
+    "sha256": "e54630e73efcae073aa4c8499ce6ba4ab243b5f97da53f0683af3cdfce4081e5"
+  },
+  {
+    "file": "rafi-reduced-motion.png",
+    "width": 390,
+    "height": 1122,
+    "sha256": "c20deac97e905ab3bf47eeafa1e6967ed728e34d5311676337bb7113e5210f7d"
+  },
+  {
+    "file": "rafi-states-320.png",
+    "width": 320,
+    "height": 1292,
+    "sha256": "5d64e45d7f39fa7014b0831bb17b191075beea4d2ba7f21602927f2c6fdf6013"
+  },
+  {
+    "file": "rafi-states-390.png",
+    "width": 390,
+    "height": 1122,
+    "sha256": "9526471cd666e9f450a96836708a7d20c95439fde8cab9db3d4599d9d06ff6fb"
+  }
+]

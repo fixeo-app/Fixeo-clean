@@ -1,0 +1,76 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> fixeo-mobile@0.1.0 test:contracts
+> node --import tsx --test tests/*.test.ts
+
+✔ artisan activity does not show a blocking load error when offers load (1.268755ms)
+✔ artisan activity does not show a blocking load error when current mission loads (0.232865ms)
+✔ artisan activity shows a load error only when both primary activity sources fail (0.244824ms)
+✔ mobile auth entry resolves only supported mobile universes (1.100119ms)
+✔ mobile auth entry hides technical credential and network errors (0.31362ms)
+✔ Client cockpit always prioritizes an active intervention over alerts (0.963095ms)
+✔ Artisan cockpit prioritizes mission, then offers, then availability and private activity (0.358122ms)
+✔ DS2 real primitives render their accessible states with the installed React Native Web adapter (851.107521ms)
+✔ DS2 retains every P1–P7 token value while new screens opt into semantic roles (1.708056ms)
+✔ DS2 supported foreground/surface pairings preserve readable contrast (0.61105ms)
+✔ DS2 typography reserves readable line height and moderate emphasis (0.256707ms)
+✔ screen metrics preserve portrait padding, protect side cutouts and reserve floating controls once (0.339474ms)
+✔ busy and disabled states cannot be weakened by accessibility overrides (0.244071ms)
+✔ reduced motion retains press feedback without spatial transform; disabled never presses (0.180208ms)
+✔ all motion presets remove both duration and orchestration delay under Reduced Motion (0.480844ms)
+✔ motion preference shares one native subscription, defaults static and releases it (0.449577ms)
+✔ late preference read cannot override a newer native event or an unmounted generation (0.293193ms)
+✔ preference read failures leave content static and visible (1.827182ms)
+✔ Agenda inputs format naturally without technical ISO syntax (1.524352ms)
+✔ Agenda rejects impossible dates and invalid times (1.024039ms)
+✔ Mobile UI deadline resolves fast work and bounds stalled work (16.365661ms)
+✔ dispatch feed accepts only canonical active queue offers (2.223898ms)
+✔ dispatch feed fails closed on malformed RPC payload (0.176369ms)
+✔ W2 Drawer capture accepts final geometry and the 390px width cap (3.527478ms)
+✔ W2 Drawer capture rejects mounted controls while the panel is off-screen or moving (5.376359ms)
+✔ W2 Drawer capture rejects wrong width, hidden critical controls and overflow (1.897809ms)
+✔ Vercel routes M5 native RAFI endpoints to isolated preview functions (1.83232ms)
+✔ mobile bundle never embeds privileged provider or Supabase server credentials (0.619924ms)
+✔ native RAFI gateways require the authenticated Supabase session token (0.455445ms)
+✔ server-side native RAFI functions are preview-only and staging-pinned (0.320347ms)
+✔ Magic Loop retains canonical request id across matching to found (1.005824ms)
+✔ notification routing opens the exact mission for the matching universe (2.160395ms)
+✔ notification routing never crosses Client and Artisan universes (0.36355ms)
+✔ notification routing supports useful workspace destinations and safe fallback (0.232936ms)
+✔ RAFI local rules classify common FIXEO needs without AI cost (1.318048ms)
+✔ RAFI does not invent a trade for an unknown short need (0.396019ms)
+✔ RAFI keeps ambiguous room-level requests unclassified until the user adds a concrete problem (0.252941ms)
+✔ W3 eight semantic states and French labels are exhaustive; legacy calls retain identity (3.738038ms)
+✔ W3 client maps only known facts, keeps creation distinct from matching and validation from success (0.343187ms)
+✔ W3 artisan derives priorities from the actual mission, offers, acceptance and load-error inputs (0.325141ms)
+✔ success is consumed once, never replayed by polling, focus, or Reduced Motion changes (0.348564ms)
+✔ all sizes and motion peaks stay within frame; compact fits unchanged W2 56px host (0.613998ms)
+✔ activity shares one native listener and cleans up the last subscriber (0.475561ms)
+✔ presence engine has no backend or per-frame React side effects; visual material is centralized (0.717021ms)
+✔ W3 keeps certified mission/evidence source byte-identical to post-W2 (0.939281ms)
+✔ RAFI keeps manual problem and city as user-declared facts (2.408479ms)
+✔ RAFI preserves explicit user confirmation of an AI-assisted description (0.320721ms)
+✔ RAFI context omits empty facts (0.261152ms)
+✔ Shell subpages do not render legacy duplicate back rows (13.282598ms)
+✔ Client workspace detail pages use bounded loading and foreground refresh (8.211916ms)
+✔ W2 client: real Drawer routes and active state (1.900915ms)
+✔ W2 artisan: real Drawer routes and active state (0.441724ms)
+✔ W2 Dock opts in only workspace roots, excludes forms/auth/missions/unknown/cross-role routes (1.130184ms)
+✔ W2 Dock limits, duplicate guard, visibility and badges (0.586446ms)
+✔ W2 floating reservation and enlarged text: safe area + height + gaps counted once (0.576495ms)
+✔ W2 targets and Reduced Motion: DS2, no pressed transform, no delayed close (0.566218ms)
+✔ W2 installed StackRouter: no duplicate roots, detail preserves return history (2.129602ms)
+✔ W2 actual JSX: one stable Shell per screen; docks only on the two overviews (103.00027ms)
+✔ W2 Dock yields space to content when enlarged header/toolbar or landscape leaves insufficient room (0.596182ms)
+✔ W2 root right-actions preserve their parent context; subpage right-actions return to an existing root (15.95035ms)
+"shadow*" style props are deprecated. Use "boxShadow".
+props.pointerEvents is deprecated. Use style.pointerEvents
+✔ W2 real Drawer/Dock/controls render accessible states with React Native Web (778.329253ms)
+ℹ tests 61
+ℹ suites 0
+ℹ pass 61
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1549.236243

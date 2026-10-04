@@ -1,0 +1,15 @@
+{
+  "baseline": {
+    "file": "entry-e4f38faface674999f33037043168357.js",
+    "rawBytes": 1809391,
+    "gzipBytes": 484300
+  },
+  "candidate": {
+    "file": "entry-875dd2c5a51ca9bbd55f025386505fd2.js",
+    "rawBytes": 1818051,
+    "gzipBytes": 487403
+  },
+  "deltaRawBytes": 8660,
+  "deltaGzipBytes": 3103,
+  "nativeMeasured": false
+}
