@@ -1,0 +1,156 @@
+{
+  "scheduling": null,
+  "media_counts": {
+    "total": 5,
+    "eligible": 4
+  },
+  "storage_bucket": [
+    {
+      "id": "diagnostic-private-v1",
+      "public": false
+    }
+  ],
+  "storage_policies": [
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "w41_diagnostic_safe_insert",
+      "schemaname": "storage",
+      "with_check": "((bucket_id = 'diagnostic-private-v1'::text) AND fixeo_private.w41_media_access_v1(name, true))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "((bucket_id = 'diagnostic-private-v1'::text) AND fixeo_private.w41_media_access_v1(name, false))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "w41_diagnostic_safe_select",
+      "schemaname": "storage",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "portfolio_authenticated_upload",
+      "schemaname": "storage",
+      "with_check": "(bucket_id = 'portfolio'::text)"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "((bucket_id = 'artisan-media'::text) AND ((storage.foldername(name))[1] = 'profiles'::text) AND ((storage.foldername(name))[2] = (auth.uid())::text))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "artisan_media_owner_delete",
+      "schemaname": "storage",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "((bucket_id = 'artisan-media'::text) AND ((storage.foldername(name))[1] = 'profiles'::text) AND ((storage.foldername(name))[2] = (auth.uid())::text))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "artisan_media_owner_update",
+      "schemaname": "storage",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "artisan_media_owner_upload",
+      "schemaname": "storage",
+      "with_check": "((bucket_id = 'artisan-media'::text) AND ((storage.foldername(name))[1] = 'profiles'::text) AND ((storage.foldername(name))[2] = (auth.uid())::text))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(bucket_id = 'artisan-media'::text)",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "artisan_media_public_read",
+      "schemaname": "storage",
+      "with_check": null
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(bucket_id = 'portfolio'::text)",
+      "roles": [
+        "anon",
+        "authenticated"
+      ],
+      "tablename": "objects",
+      "permissive": "PERMISSIVE",
+      "policyname": "portfolio_public_read",
+      "schemaname": "storage",
+      "with_check": null
+    }
+  ],
+  "vault_proxy_names": null,
+  "maintenance_functions": [
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "name": "_fixeo_generate_maintenance_request_v1",
+      "schema": "fixeo_private"
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "name": "_fixeo_link_generated_maintenance_equipment_v1",
+      "schema": "fixeo_private"
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "name": "_fixeo_next_maintenance_due",
+      "schema": "fixeo_private"
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "name": "diagnostic_cleanup_v1",
+      "schema": "public"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "name": "get_enterprise_preventive_maintenance_v1",
+      "schema": "public"
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "name": "run_enterprise_maintenance_scheduler_v1",
+      "schema": "public"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "name": "set_enterprise_equipment_maintenance_link_v1",
+      "schema": "public"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "name": "upsert_enterprise_maintenance_plan_v1",
+      "schema": "public"
+    }
+  ]
+}
