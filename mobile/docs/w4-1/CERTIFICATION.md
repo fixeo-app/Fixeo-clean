@@ -1,6 +1,6 @@
 # STOP — W4.1 INTELLIGENCE GATEWAY NOT CERTIFIED
 
-État historique W4.1. Le GO limité W4.1A a depuis été reçu ; consulter le [rapport d'activation W4.1A](../w4-1a/CERTIFICATION.md) pour le nouvel audit, les blocages techniques et le verdict actuel.
+État historique W4.1. Consulter le [rapport W4.1B](../w4-1b/CERTIFICATION.md) pour le verdict fonctionnel actuel. La purge physique est [reportée au gate obligatoire W8 Release](DEFERRED_TO_W8.md). Le [rapport W4.1A](../w4-1a/CERTIFICATION.md) conserve l'audit précédent.
 
 Livraison staging du 4 octobre 2026. PR draft [#148](https://github.com/fixeo-app/Fixeo-clean/pull/148), cible `feat/fixeo-mobile-w4-client-os-wow`. Aucun merge. Aucune modification de MAIN, Production ou Development. Aucun build physique, aucune extension W5.
 

@@ -1,5 +1,7 @@
 # STOP — W4.1 ACTIVATION GATES NOT CERTIFIED
 
+État historique : la décision W4.1B reporte la purge physique au gate W8 Release. Elle ne bloque plus le PASS fonctionnel W4.1. Voir le [rapport actuel W4.1B](../w4-1b/CERTIFICATION.md) et [DEFERRED_TO_W8.md](../w4-1/DEFERRED_TO_W8.md).
+
 Audit W4.1A du 4 octobre 2026, staging exclusivement. L'autorisation W4.1A est reçue ; le blocage est une absence de preuve et d'accès technique, pas une demande de renouvellement du GO. Aucun code du cœur W4.1 n'a été reconstruit.
 
 ## A. PREFLIGHT
