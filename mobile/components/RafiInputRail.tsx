@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {
   AudioModule,
@@ -8,7 +7,7 @@ import {
   useAudioRecorder,
   useAudioRecorderState,
 } from 'expo-audio';
-import { colors, radius, spacing, type } from '@/ui/tokens';
+import { RafiComposer } from './RafiComposer';
 
 type Props = {
   onVoiceReady: (uri: string) => void;
@@ -99,112 +98,6 @@ export function RafiInputRail({
     }
   }
 
-  return (
-    <View style={styles.root}>
-      <View style={styles.row}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{
-            selected: recorderState.isRecording,
-            busy: voiceBusy,
-            disabled: voiceBusy,
-          }}
-          disabled={voiceBusy}
-          style={({ pressed }) => [
-            styles.mode,
-            recorderState.isRecording && styles.recording,
-            pressed && !voiceBusy && styles.pressed,
-            voiceBusy && styles.busy,
-          ]}
-          onPress={() => void toggleVoice()}
-        >
-          <Text style={[styles.icon, recorderState.isRecording && styles.inverse]}>
-            {recorderState.isRecording ? '■' : '●'}
-          </Text>
-          <Text style={[styles.label, recorderState.isRecording && styles.inverse]}>
-            {recorderState.isRecording
-              ? 'Arrêter'
-              : voiceBusy
-                ? 'Préparation…'
-                : 'Parler'}
-          </Text>
-        </Pressable>
-
-        <Pressable
-          accessibilityRole="button"
-          style={({ pressed }) => [styles.mode, pressed && styles.pressed]}
-          onPress={() => void takePhoto()}
-        >
-          <Text style={styles.icon}>◉</Text>
-          <Text style={styles.label}>Montrer</Text>
-        </Pressable>
-
-        <Pressable
-          accessibilityRole="button"
-          style={({ pressed }) => [styles.mode, pressed && styles.pressed]}
-          onPress={onWrite}
-        >
-          <Text style={styles.icon}>⌨</Text>
-          <Text style={styles.label}>Écrire</Text>
-        </Pressable>
-      </View>
-
-      {!!message && (
-        <Text accessibilityLiveRegion="polite" style={styles.message}>
-          {message}
-        </Text>
-      )}
-    </View>
-  );
+  return <RafiComposer recording={recorderState.isRecording} voiceBusy={voiceBusy} message={message}
+    onVoice={() => void toggleVoice()} onPhoto={() => void takePhoto()} onWrite={onWrite} />;
 }
-
-const styles = StyleSheet.create({
-  root: {
-    gap: spacing.sm,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  mode: {
-    flex: 1,
-    minHeight: 64,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 5,
-    borderWidth: 1,
-    borderColor: colors.line,
-    borderRadius: radius.md,
-    backgroundColor: colors.surface,
-  },
-  recording: {
-    backgroundColor: colors.ink,
-    borderColor: colors.ink,
-  },
-  pressed: {
-    transform: [{ scale: 0.985 }],
-    opacity: 0.86,
-  },
-  busy: {
-    opacity: 0.62,
-  },
-  icon: {
-    color: colors.text,
-    fontSize: 13,
-    fontWeight: '900',
-  },
-  label: {
-    color: colors.text,
-    fontSize: type.body,
-    fontWeight: '800',
-  },
-  inverse: {
-    color: colors.inverse,
-  },
-  message: {
-    textAlign: 'center',
-    color: colors.textMuted,
-    fontSize: 13,
-    fontWeight: '700',
-  },
-});

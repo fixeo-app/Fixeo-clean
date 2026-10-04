@@ -153,14 +153,46 @@ export const motionGeometry = {
   reveal: { translateY: 8, scale: 0.992 },
   orchestration: { translateY: 10, scale: 1 },
 } as const;
-/** Preserve the existing RAFI rhythm. W3 owns its redesign. */
+/** RAFI V2 — one material, independent from semantic status colors. */
+export const rafiVisualTokens = {
+  core: '#08090B', graphite: '#26272A', graphiteLight: '#454548',
+  rim: '#71706D', deepRim: '#161719', champagne: '#C6AE84',
+  signature: '#F3E1BA', signatureGlow: 'rgba(218,189,139,0.18)',
+  highlight: 'rgba(255,247,229,0.14)', highlightClear: 'rgba(255,247,229,0)',
+  haloOuter: 'rgba(198,174,132,0.035)', haloMiddle: 'rgba(198,174,132,0.055)',
+  haloInner: 'rgba(198,174,132,0.10)', orbit: 'rgba(198,174,132,0.38)',
+  transparent: 'transparent',
+  /** The master texture already carries its illuminated rim; only a quiet external breath remains. */
+  masterHalo: {
+    medium: { haloOuter: 'rgba(198,174,132,0.035)', haloMiddle: 'rgba(198,174,132,0.050)', haloInner: 'rgba(198,174,132,0.070)' },
+    hero: { haloOuter: 'rgba(198,174,132,0.045)', haloMiddle: 'rgba(198,174,132,0.065)', haloInner: 'rgba(198,174,132,0.090)' },
+  },
+  /** Optical finish only. Compact retains the certified palette above. */
+  finish: {
+    graphiteLight: '#57595C', graphite: '#26282C', rim: '#A29E94', deepRim: '#242629',
+    signature: '#FBE8BD', signatureGlow: 'rgba(231,195,130,0.30)',
+    bounce: 'rgba(209,175,117,0.18)',
+    medium: {
+      haloOuter: 'rgba(198,174,132,0.060)', haloMiddle: 'rgba(198,174,132,0.085)', haloInner: 'rgba(198,174,132,0.13)',
+      specular: 'rgba(255,237,207,0.38)', arcWidth: 0.36, arcHeight: 0.19, arcStroke: 0.023,
+    },
+    hero: {
+      haloOuter: 'rgba(198,174,132,0.080)', haloMiddle: 'rgba(198,174,132,0.11)', haloInner: 'rgba(198,174,132,0.16)',
+      specular: 'rgba(255,237,207,0.54)', arcWidth: 0.39, arcHeight: 0.19, arcStroke: 0.025,
+    },
+  },
+} as const;
 export const rafiMotionTokens = {
-  idle: { breathDuration: 2200, orbitDuration: 7600 },
-  listening: { breathDuration: 980, orbitDuration: 2500 },
-  working: { breathDuration: 720, orbitDuration: 1600 },
-  success: { breathDuration: 1200, orbitDuration: 3600 },
+  idle: { breathDuration: 3600, orbitDuration: 0 },
+  listening: { breathDuration: 1800, orbitDuration: 0 },
+  understanding: { breathDuration: 2600, orbitDuration: 0 },
+  working: { breathDuration: 1500, orbitDuration: 0 },
+  matching: { breathDuration: 6000, orbitDuration: 12000 },
+  intervention: { breathDuration: 4800, orbitDuration: 0 },
+  success: { breathDuration: 3600, orbitDuration: 0 },
+  attention: { breathDuration: 4000, orbitDuration: 0 },
   easing: { breath: 'breathe', orbit: 'linear', successIn: 'enter', successOut: 'breathe' },
-  completion: { delay: 70, enter: 360, exit: 620 },
+  completion: { delay: 0, enter: 280, exit: 600 },
   reduced: 'static',
 } as const;
 

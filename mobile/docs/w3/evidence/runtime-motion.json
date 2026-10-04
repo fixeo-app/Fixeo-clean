@@ -1,0 +1,98 @@
+[
+  {
+    "mode": "listening",
+    "durationMs": 2000,
+    "sampleCount": 121,
+    "coreScale": [
+      1,
+      1.032
+    ],
+    "haloScale": [
+      1,
+      1.08
+    ],
+    "haloOpacity": [
+      0.7,
+      0.94
+    ],
+    "last": {
+      "ms": 2016,
+      "core": 1.03134,
+      "halo": 1.07835,
+      "opacity": 0.935039,
+      "orbitDegrees": null
+    }
+  },
+  {
+    "mode": "attention",
+    "durationMs": 4200,
+    "sampleCount": 253,
+    "coreScale": [
+      1,
+      1.008
+    ],
+    "haloScale": [
+      1.02,
+      1.065
+    ],
+    "haloOpacity": [
+      0.86,
+      0.98
+    ],
+    "last": {
+      "ms": 4213,
+      "core": 1.00797,
+      "halo": 1.06481,
+      "opacity": 0.979498,
+      "orbitDegrees": null
+    }
+  },
+  {
+    "mode": "matching",
+    "durationMs": 1400,
+    "sampleCount": 85,
+    "coreScale": [
+      1,
+      1.00186
+    ],
+    "haloScale": [
+      1,
+      1.00697
+    ],
+    "haloOpacity": [
+      0.65,
+      0.696467
+    ],
+    "last": {
+      "ms": 1413,
+      "core": 1.00186,
+      "halo": 1.00697,
+      "opacity": 0.696467,
+      "orbitDegrees": 41.820026051314684
+    }
+  },
+  {
+    "mode": "success",
+    "durationMs": 1100,
+    "sampleCount": 67,
+    "coreScale": [
+      1,
+      1.035
+    ],
+    "haloScale": [
+      1,
+      1.17
+    ],
+    "haloOpacity": [
+      0.55,
+      1
+    ],
+    "last": {
+      "ms": 1114,
+      "core": 1,
+      "halo": 1,
+      "opacity": 0.55,
+      "orbitDegrees": null
+    }
+  }
+]

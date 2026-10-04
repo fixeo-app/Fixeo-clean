@@ -15,12 +15,13 @@ import { motionEasing } from '@/ui/motionEasing';
 import { useReducedMotion } from '@/ui/useReducedMotion';
 import { interaction, semanticColors, space } from '@/ui/tokens';
 import { PremiumDrawer } from './PremiumDrawer';
+import type { RafiOrbMode } from '@/ui/rafiOrbMotion';
 
 export type MobileShellProps = {
   universe: ShellUniverse; activeKey: string; statusLabel?: string;
   rightActionLabel?: string; onRightAction?: () => void;
   rightActionIcon?: IconName; rightDestination?: ShellPath; rightNavigation?: 'switch' | 'detail';
-  orbMode?: 'idle' | 'listening' | 'working' | 'success';
+  orbMode?: RafiOrbMode;
 };
 
 export function MobileShell({ universe, activeKey, statusLabel, rightActionLabel, onRightAction,

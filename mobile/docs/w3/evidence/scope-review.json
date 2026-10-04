@@ -1,0 +1,23 @@
+{
+  "base": "3a809035ffea579e1f18798bf5493c2022f0b58e",
+  "byteIdentical": [
+    "mobile/app/index.tsx:syncDecision",
+    "mobile/app/index.tsx:actOnDecision",
+    "mobile/app/index.tsx:syncCurrentMission",
+    "mobile/app/index.tsx:syncJourney",
+    "mobile/app/index.tsx:send",
+    "mobile/app/index.tsx:handlePhoto",
+    "mobile/app/index.tsx:confirmPhotoDiagnostic",
+    "mobile/app/artisan.tsx:actOnDecision",
+    "mobile/app/artisan.tsx:accept",
+    "mobile/app/artisan.tsx:actOnContextualCockpit",
+    "mobile/components/RafiInputRail.tsx:toggleVoice",
+    "mobile/components/RafiInputRail.tsx:takePhoto",
+    "mobile/app/client-mission/[id].tsx",
+    "mobile/app/mission/[id].tsx",
+    "mobile/components/MissionEvidenceCapture.tsx",
+    "mobile/components/PremiumDrawer.tsx",
+    "mobile/components/EntryStage.tsx"
+  ],
+  "libBackendAuthDiff": "empty"
+}
