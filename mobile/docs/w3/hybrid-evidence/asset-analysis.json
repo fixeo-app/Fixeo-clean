@@ -1,0 +1,60 @@
+{
+  "format": "PNG",
+  "mode": "RGBA",
+  "dimensions": [
+    1230,
+    1278
+  ],
+  "encodedBytes": 1110997,
+  "sha256": "b08ce64b07953205c03317e08737ce9dbfef7aeec79179792d8820833c3311d6",
+  "originalBytesPreserved": true,
+  "alphaRange": [
+    0,
+    255
+  ],
+  "transparentPixels": 662841,
+  "totalPixels": 1571940,
+  "rawAlphaBounds": [
+    0,
+    9,
+    1212,
+    1260
+  ],
+  "usefulBoundsAlphaAbove8": [
+    70,
+    93,
+    1160,
+    1154
+  ],
+  "usefulMargins": {
+    "left": 70,
+    "right": 70,
+    "top": 93,
+    "bottom": 124
+  },
+  "extractionDust": "alpha <= 8 only outside the circular viewport",
+  "viewport": {
+    "left": 63,
+    "top": 71,
+    "size": 1104,
+    "center": [
+      615,
+      623
+    ]
+  },
+  "visiblePixelsClippedAboveAlpha8": 0,
+  "centerRGBA": [
+    2,
+    1,
+    2,
+    252
+  ],
+  "rgbaTheoreticalBytes": 6287760,
+  "rgbaTheoreticalMiB": 5.9964752197265625,
+  "visualInspection": {
+    "bakedBackground": false,
+    "bakedRafiSignature": false,
+    "businessState": false,
+    "physicalRimAndSpecularReflections": true
+  }
+}

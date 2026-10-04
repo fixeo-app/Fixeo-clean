@@ -162,6 +162,11 @@ export const rafiVisualTokens = {
   haloOuter: 'rgba(198,174,132,0.035)', haloMiddle: 'rgba(198,174,132,0.055)',
   haloInner: 'rgba(198,174,132,0.10)', orbit: 'rgba(198,174,132,0.38)',
   transparent: 'transparent',
+  /** The master texture already carries its illuminated rim; only a quiet external breath remains. */
+  masterHalo: {
+    medium: { haloOuter: 'rgba(198,174,132,0.035)', haloMiddle: 'rgba(198,174,132,0.050)', haloInner: 'rgba(198,174,132,0.070)' },
+    hero: { haloOuter: 'rgba(198,174,132,0.045)', haloMiddle: 'rgba(198,174,132,0.065)', haloInner: 'rgba(198,174,132,0.090)' },
+  },
   /** Optical finish only. Compact retains the certified palette above. */
   finish: {
     graphiteLight: '#57595C', graphite: '#26282C', rim: '#A29E94', deepRim: '#242629',

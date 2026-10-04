@@ -1,0 +1,21 @@
+{
+  "parent": {
+    "sha": "37733f0af1f2df61d04e0bd692fb76e2029831df",
+    "file": "entry-34901f4cde213e2aa65b3e1751ee8d08.js",
+    "rawBytes": 1819134,
+    "gzipBytes": 487741
+  },
+  "candidate": {
+    "file": "entry-439b203aaf296abb57c63455afb71370.js",
+    "rawBytes": 1820867,
+    "gzipBytes": 488254
+  },
+  "deltaJSRawBytes": 1733,
+  "deltaJSGzipBytes": 513,
+  "bundledTextureBytes": 1110997,
+  "parentExportBytes": 2230340,
+  "candidateExportBytes": 3343070,
+  "totalExportDeltaBytes": 1112730,
+  "assetExportCopies": 1,
+  "nativeMeasured": false
+}

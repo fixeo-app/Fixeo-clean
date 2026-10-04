@@ -1,6 +1,6 @@
 # W3 — RAFI WOW / Presence Engine V2
 
-**Mise à jour :** la passe de polish et son verdict **STOP — RAFI NORTH STAR NOT REACHED** sont documentés dans [VISUAL-REVIEW.md](VISUAL-REVIEW.md). Ce verdict remplace la conclusion visuelle initiale ci-dessous.
+**Mise à jour hybride :** [HYBRID-REVIEW.md](HYBRID-REVIEW.md) porte le verdict courant **PASS W3 VISUAL REVIEW — NORTH STAR CERTIFIED**. Les décisions et mesures du présent dossier initial restent historiques ; les preuves actuelles sont dans `hybrid-evidence/`.
 
 Dossier initial du candidat pour revue visuelle indépendante, exclusivement branche mobile. Ce dossier couvre le renderer, son contrat de présence et le composer ; les écrans actuels conservent leur composition W2.
 

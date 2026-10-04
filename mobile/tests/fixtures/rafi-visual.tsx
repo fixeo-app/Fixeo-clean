@@ -50,6 +50,23 @@ function Fixture() {
   if (scene === 'runtime') return <NavigationContext.Provider value={navigation as any}>
     <View style={styles.page}>{mounted && <RafiOrb mode={mode} eventKey={eventKey} size={params.has('compact') ? 44 : 96} />}</View>
   </NavigationContext.Provider>;
+  if (scene === 'material') {
+    const size = Number(params.get('size') || 96);
+    return <View style={[styles.page, { alignItems: 'center', justifyContent: 'center', gap: 24 }]}>
+      <FixeoText variant="eyebrow" tone="secondary">RAFI · {size === 96 ? 'HERO' : size === 76 ? 'MEDIUM' : 'COMPACT'} {size}</FixeoText>
+      <RafiOrb size={size} active={false} materialMode={params.has('procedural') ? 'procedural' : 'master'} />
+      <FixeoText variant="supporting" tone="secondary">{size} px réels · capture densité ×3</FixeoText>
+      <FixeoText variant="caption" tone="secondary">{size === 44 ? 'Matière compacte conservée' : 'Master Core V1 · signature runtime'}</FixeoText>
+    </View>;
+  }
+  if (scene === 'comparison') return <View style={[styles.page, { alignItems: 'center', justifyContent: 'center', gap: 24 }]}>
+    <FixeoText variant="eyebrow" tone="secondary">RAFI · HERO 96 · AVANT / APRÈS</FixeoText>
+    <View style={{ flexDirection: 'row', gap: 20 }}>
+      <View style={{ alignItems: 'center', gap: 12 }}><RafiOrb size={96} active={false} materialMode="procedural" /><FixeoText variant="caption">Core W3 précédent</FixeoText></View>
+      <View style={{ alignItems: 'center', gap: 12 }}><RafiOrb size={96} active={false} /><FixeoText variant="caption">Master Core V1</FixeoText></View>
+    </View>
+    <FixeoText variant="supporting" tone="secondary">96 px réels · capture densité ×3</FixeoText>
+  </View>;
   if (scene === 'hero') return <View style={[styles.page, { alignItems: 'center', justifyContent: 'center', gap: 24 }]}>
     <FixeoText variant="eyebrow" tone="secondary">RAFI · HERO 96</FixeoText>
     <RafiOrb size={96} active={false} />

@@ -1,5 +1,7 @@
 # W3 — passe de polish RAFI / revue North Star
 
+**Rapport historique du polish procédural.** Son STOP a été remplacé par la revue du renderer hybride : [HYBRID-REVIEW.md](HYBRID-REVIEW.md).
+
 **STOP — RAFI NORTH STAR NOT REACHED**
 
 Une passe ciblée sur le candidat `eb1776de080346632cdb4518887312caca3c71ef`, base canonique `3a809035ffea579e1f18798bf5493c2022f0b58e`. Le SHA publié et sa CI sont consignés dans la description de la PR #146 ; ce dossier appartient au nouveau commit candidat.

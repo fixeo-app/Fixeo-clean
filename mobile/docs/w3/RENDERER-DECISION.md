@@ -18,3 +18,7 @@ Cible : une horloge native au maximum par Orb animée, aucune horloge compact/Re
 ## Addendum — polish visuel ciblé
 
 Architecture conservée. Un quatrième gradient **statique**, uniquement Hero >=96, apporte un retour chaud au bord inférieur droit. Medium garde trois gradients, Compact un. Aucun wrapper animé, horloge ou dépendance supplémentaire. Détails et verdict dans [VISUAL-REVIEW.md](VISUAL-REVIEW.md).
+
+## Addendum — Master Core V1 hybride
+
+La matière Medium/Hero est désormais une seule Image PNG locale dans le wrapper Animated existant. Halo, orbit et signature restent runtime. Ancien matériau conservé en fallback interne/testable ; Compact reste procédural. Aucun moteur, dépendance, horloge ou wrapper animé supplémentaire. Mesures et certification visuelle actuelles : [HYBRID-REVIEW.md](HYBRID-REVIEW.md).

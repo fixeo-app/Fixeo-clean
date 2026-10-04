@@ -6,15 +6,22 @@ const output=path.resolve(process.argv[3] || 'docs/w3/evidence');
 const frames=async(page,count=4)=>page.evaluate(n=>new Promise(resolve=>{const tick=()=>--n<=0?resolve():requestAnimationFrame(tick);requestAnimationFrame(tick);}),count);
 (async()=>{
  fs.mkdirSync(output,{recursive:true});
- const server=http.createServer((req,res)=>{const file=req.url.split('?')[0]==='/app.js'?'app.js':'index.html';res.setHeader('Content-Type',file.endsWith('.js')?'application/javascript':'text/html');res.end(fs.readFileSync(path.join(root,file)));});
+ const server=http.createServer((req,res)=>{const file=req.url.split('?')[0]==='/app.js'?'app.js':/\.png$/.test(req.url.split('?')[0])?require('node:path').basename(req.url.split('?')[0]):'index.html';res.setHeader('Content-Type',file.endsWith('.js')?'application/javascript':file.endsWith('.png')?'image/png':'text/html');res.end(fs.readFileSync(path.join(root,file)));});
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const base=`http://127.0.0.1:${server.address().port}`;
  const browser=await chromium.launch({headless:true,executablePath:process.env.W3_CHROMIUM_EXECUTABLE,args:JSON.parse(process.env.W3_CHROMIUM_ARGS || '["--no-sandbox","--disable-dev-shm-usage"]')});
  const page=await browser.newPage();const errors=[],requests=[],results=[];
  page.on('pageerror',error=>errors.push(error.message));
- await page.route('**/*',route=>{const url=route.request().url();if(url.startsWith(base)||url.startsWith('data:'))return route.continue();requests.push(url);return route.abort();});
+ await page.route('**/*',route=>{const url=route.request().url();if(url.startsWith(base)&&url.endsWith('.png')&&page.url().includes('assetError=1'))return route.fulfill({status:404,body:''});if(url.startsWith(base)||url.startsWith('data:'))return route.continue();requests.push(url);return route.abort();});
  async function open(scene,width=390,reduce='reduce',extra=''){
   await page.setViewportSize({width,height:844});await page.emulateMedia({reducedMotion:reduce});
-  await page.goto(`${base}/?scene=${scene}${extra}`);await page.getByTestId('rafi-orb').first().waitFor();await page.evaluate(()=>document.fonts.ready);await frames(page);
+  await page.goto(`${base}/?scene=${scene}${extra}`);await page.getByTestId('rafi-orb').first().waitFor();await page.evaluate(()=>document.fonts.ready);
+  if(extra.includes('assetError=1'))await page.getByTestId('rafi-procedural-material').waitFor();else await readyImages(page);
+  await frames(page);
+ }
+ async function readyImages(target){
+  await target.waitForFunction(()=>[...document.querySelectorAll('[data-testid="rafi-master-material"]')].every(el=>{
+   const img=el.querySelector('img');return img&&img.complete&&img.naturalWidth===1230&&img.naturalHeight===1278;
+  }));
  }
  async function geometry(){
   const violations=await page.evaluate(()=>{
@@ -99,13 +106,31 @@ const frames=async(page,count=4)=>page.evaluate(n=>new Promise(resolve=>{const t
   }
   fs.writeFileSync(path.join(output,'runtime-motion.json'),JSON.stringify(motionEvidence,null,2)+'\n');
   results.push({scene:'runtime-motion',states:motionEvidence.map(s=>s.mode),observed:true});console.log('PASS runtime motion amplitudes');
+  await open('material',390,'reduce','&size=96&assetError=1');
+  assert.equal(await page.getByTestId('rafi-master-material').count(),0);
+  assert.equal(await page.getByTestId('rafi-procedural-material').count(),1);
+  assert.equal(await page.getByTestId('rafi-signature').count(),1);await geometry();
+  results.push({scene:'asset-error',automaticFallback:true,singleSignature:true});console.log('PASS image failure fallback');
   const detail=await browser.newPage({viewport:{width:390,height:520},deviceScaleFactor:3,reducedMotion:'reduce'});
   detail.on('pageerror',error=>errors.push(error.message));
   await detail.route('**/*',route=>{const url=route.request().url();if(url.startsWith(base)||url.startsWith('data:'))return route.continue();requests.push(url);return route.abort();});
-  await detail.goto(base+'/?scene=hero');await detail.getByTestId('rafi-orb').first().waitFor();await detail.evaluate(()=>document.fonts.ready);await frames(detail);
+  await detail.goto(base+'/?scene=hero');await detail.getByTestId('rafi-orb').first().waitFor();await detail.evaluate(()=>document.fonts.ready);await readyImages(detail);await frames(detail);
   assert.equal((await detail.getByTestId('rafi-core').first().boundingBox()).width,96);
   await detail.screenshot({path:path.join(output,'rafi-hero-closeup.png')});
   results.push({scene:'hero-closeup',cssDiameter:96,deviceScaleFactor:3});
+  for(const size of [96,76,44]){
+   await detail.goto(base+'/?scene=material&size='+size);await detail.getByTestId('rafi-core').waitFor();
+   await readyImages(detail);await detail.evaluate(()=>document.fonts.ready);await frames(detail);
+   assert.equal((await detail.getByTestId('rafi-core').boundingBox()).width,size);
+   assert.equal(await detail.getByTestId('rafi-master-material').count(),size===44?0:1);
+   const screenshot=await detail.screenshot();await frames(detail,10);assert.ok(screenshot.equals(await detail.screenshot()),'master pose deterministic');
+   fs.writeFileSync(path.join(output,`rafi-master-${size===96?'hero':size===76?'medium':'compact'}-${size}.png`),screenshot);
+  }
+  await detail.goto(base+'/?scene=comparison');await detail.getByTestId('rafi-master-material').waitFor();await readyImages(detail);await detail.evaluate(()=>document.fonts.ready);await frames(detail);
+  assert.equal(await detail.getByTestId('rafi-master-material').count(),1);assert.equal(await detail.getByTestId('rafi-procedural-material').count(),1);
+  await detail.screenshot({path:path.join(output,'rafi-before-after-hero.png')});
+  for(const [source,target] of [['rafi-client-presence.png','rafi-master-client.png'],['rafi-artisan-presence.png','rafi-master-artisan.png'],['rafi-states-390.png','rafi-master-states-390.png'],['rafi-reduced-motion.png','rafi-master-reduced-motion.png']])fs.copyFileSync(path.join(output,source),path.join(output,target));
+  results.push({scene:'master-sizes',sizes:[96,76,44],deterministic:true,compactProcedural:true,comparison:true});
   assert.deepEqual(errors,[]);assert.deepEqual(requests,[]);fs.writeFileSync(path.join(output,'browser-results.json'),JSON.stringify({results,pageErrors:errors,externalRequests:requests},null,2));console.log(JSON.stringify({passed:results.length,pageErrors:errors.length,externalRequests:requests.length,output}));
  } finally {await browser.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(error=>{console.error(error);process.exitCode=1;});

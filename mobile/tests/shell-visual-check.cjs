@@ -3,7 +3,7 @@ const http=require('node:http'), fs=require('node:fs'), assert=require('node:ass
 const {waitForDrawerOpen, checkDrawerContent, captureDrawer}=require('./fixtures/drawer-visual-assertions.cjs');
 (async()=>{
  const root=require('node:path').resolve(process.argv[2] || 'node_modules/.w2-visual');
- const server=http.createServer((req,res)=>{const file=req.url.split('?')[0]==='/app.js'?'app.js':'index.html';res.setHeader('Content-Type',file.endsWith('.js')?'application/javascript':'text/html');res.end(fs.readFileSync(root+'/'+file));});
+ const server=http.createServer((req,res)=>{const file=req.url.split('?')[0]==='/app.js'?'app.js':/\.png$/.test(req.url.split('?')[0])?require('node:path').basename(req.url.split('?')[0]):'index.html';res.setHeader('Content-Type',file.endsWith('.js')?'application/javascript':file.endsWith('.png')?'image/png':'text/html');res.end(fs.readFileSync(root+'/'+file));});
  await new Promise(resolve=>server.listen(8124,'127.0.0.1',resolve));
  const browser=await chromium.launch({headless:true,timeout:20000,executablePath:process.env.W2_CHROMIUM_EXECUTABLE,args:JSON.parse(process.env.W2_CHROMIUM_ARGS || '["--no-sandbox","--disable-dev-shm-usage"]')});
  const results=[];
