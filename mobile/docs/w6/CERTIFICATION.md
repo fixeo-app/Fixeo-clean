@@ -42,6 +42,23 @@ aucun JWT réutilisé. CI, artefact Preview, puis Client réel (une seule tentat
 restent à certifier. Artisan ne sera demandé qu'après PASS Client.
 **NATIVE PHYSICAL DEEP LINK = DEFERRED TO PHYSICAL BUILD CERTIFICATION.**
 
+### Correction complémentaire du routage W6, avant tout email
+
+Le candidat `4009152bbf5185a47cd380aab59b329c4bca73ff` a obtenu les cinq
+workflows GitHub SUCCESS et un déploiement Vercel READY
+`dpl_8KNyu6PHqzi6BPH9THZjhNDSnwjq`, mais `/entry` répondait 404 dans la
+session Vercel autorisée. Le Dashboard Resources montre les 25 fichiers sous
+`/mobile/`, tandis que la route fallback W6 ciblait `/index.html` inexistant.
+READY n'a donc pas été présenté comme une certification fonctionnelle.
+
+Correction uniquement dans la branche conditionnelle W6 de `vercel.ts` : les
+chemins Expo `/_expo/*`, `/assets/*`, `/auth-return.js` sont résolus vers leurs
+fichiers `/mobile/*`, et le fallback vise `/mobile/index.html`. Aucun changement
+Root Directory, protection, domaine ou réglage global Vercel. Un contrat
+supplémentaire vérifie les cibles et l'égalité stricte avec la configuration
+legacy sur MAIN et une branche tierce. Contrats mobile : **114/114 PASS**.
+L'artefact corrigé et sa CI doivent encore être relus avant le premier recovery.
+
 ## Acquis réels et nettoyage
 
 | Contrôle staging | Client | Artisan |

@@ -69,6 +69,29 @@ test('callback binds web origin, rejects bearer fragments and accepts only autho
     assert.equal(parsed.legacyTokenRejected, true); assert.equal(parsed.code, '');
   }
 });
+test('W6 deployment maps Expo root URLs to nested build output without changing other branches', () => {
+  const source = ts.transpileModule(readFileSync('../vercel.ts', 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true },
+  }).outputText;
+  const legacy = JSON.parse(readFileSync('../vercel.legacy.json', 'utf8'));
+  function config(branch: string) {
+    const exports: Record<string, any> = {};
+    vm.runInNewContext(source, { exports, process: { env: { VERCEL_GIT_COMMIT_REF: branch } }, require: () => legacy });
+    return exports.config;
+  }
+  assert.deepEqual(config('main'), legacy);
+  assert.deepEqual(config('unrelated-branch'), legacy);
+  const w6 = config('feat/fixeo-mobile-w6-entry-auth-trust');
+  function target(path: string) {
+    const route = w6.routes.find((r: { src?: string; dest?: string }) => r.dest && new RegExp('^' + r.src + '$').test(path));
+    return path.replace(new RegExp('^' + route.src + '$'), route.dest);
+  }
+  assert.equal(w6.builds[0].src, 'mobile/package.json');
+  assert.equal(target('/_expo/static/js/web/entry.js'), '/mobile/_expo/static/js/web/entry.js');
+  assert.equal(target('/assets/rafi.png'), '/mobile/assets/rafi.png');
+  assert.equal(target('/auth-return.js'), '/mobile/auth-return.js');
+  for (const path of ['/entry', '/sign-in', '/forgot-password', '/auth-callback']) assert.equal(target(path), '/mobile/index.html');
+});
 test('pre-router callback scrubs the URL and discards legacy tokens before any SDK', () => {
   const script = readFileSync('public/auth-return.js', 'utf8');
   for (const legacy of [true, false]) {

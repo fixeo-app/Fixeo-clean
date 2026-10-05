@@ -14,8 +14,11 @@ export const config = w6 ? {
   builds: [{ src: 'mobile/package.json', use: '@vercel/static-build', config: { distDir: 'dist' } }],
   routes: [
     { src: '/(.*)', headers: { 'Referrer-Policy': 'no-referrer', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }, continue: true },
+    // A nested static-build emits resources under /mobile, while Expo URLs use /.
+    { src: '/(_expo|assets)/(.*)', dest: '/mobile/$1/$2' },
+    { src: '/auth-return\\.js', dest: '/mobile/auth-return.js' },
     { handle: 'filesystem' },
-    { src: '/(.*)', dest: '/index.html' },
+    { src: '/(.*)', dest: '/mobile/index.html' },
   ],
   git: { deploymentEnabled: { [w6Branch]: true } },
 } : isolated ? {
