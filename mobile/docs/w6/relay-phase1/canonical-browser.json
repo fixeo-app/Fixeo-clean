@@ -1,0 +1,154 @@
+{
+  "at": "2026-10-05T16:00:22.836Z",
+  "method": "Real Chromium CUA navigations and DOM observations, transcribed from tool output",
+  "origin": "https://w6-auth-staging.fixeo.ma",
+  "syntheticOnly": true,
+  "realAuth": false,
+  "nativeHandoff": false,
+  "results": [
+    {
+      "case": "well-formed synthetic code",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": true,
+      "pass": true
+    },
+    {
+      "case": "missing code",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "malformed code",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "access_token query",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "access_token fragment",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "refresh_token query",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "refresh_token fragment",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "provider_token query",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "provider_token fragment",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "provider_refresh_token query",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "provider_refresh_token fragment",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "redirect refused",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "redirectTo refused",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "next refused",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "returnUrl refused",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "callbackUrl refused",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "unexpected refused",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "type refused",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "duplicate code",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "mixed success/error",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": false,
+      "pass": true
+    },
+    {
+      "case": "expired error",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": true,
+      "pass": true
+    },
+    {
+      "case": "invalid error",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": true,
+      "pass": true
+    },
+    {
+      "case": "denied error",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": true,
+      "pass": true
+    },
+    {
+      "case": "unknown error",
+      "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "button": true,
+      "pass": true
+    }
+  ]
+}

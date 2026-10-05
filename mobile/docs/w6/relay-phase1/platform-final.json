@@ -1,0 +1,74 @@
+{
+  "at": "2026-10-05T16:00:04.439Z",
+  "certificate": {
+    "id": "cert_DCGrkPkxezoMXGPRywyufWHZ",
+    "createdAt": 1791215157029,
+    "expiresAt": 1798987644000,
+    "autoRenew": true,
+    "cns": [
+      "w6-auth-staging.fixeo.ma"
+    ]
+  },
+  "certificateExpiresISO": "2027-01-03T14:47:24.000Z",
+  "originalProject": {
+    "at": "2026-10-05T15:59:26.628Z",
+    "id": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+    "name": "fixeo-clean",
+    "updatedAt": 1791206683553,
+    "ssoProtection": {
+      "enabled": true,
+      "deploymentType": "all_except_custom_domains"
+    },
+    "passwordProtection": {
+      "enabled": false,
+      "deploymentType": null
+    },
+    "domains": [
+      "www.fixeo.ma",
+      "fixeo-clean.vercel.app",
+      "fixeo.ma",
+      "fixeo-clean-elalaouibiz-3410s-projects.vercel.app",
+      "fixeo-clean-git-main-elalaouibiz-3410s-projects.vercel.app"
+    ],
+    "projectDomains": [
+      {
+        "name": "fixeo-clean.vercel.app",
+        "apexName": "vercel.app",
+        "projectId": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+        "redirect": null,
+        "gitBranch": null,
+        "customEnvironmentId": null,
+        "updatedAt": 1775676367230,
+        "createdAt": 1775676367230,
+        "verified": true
+      },
+      {
+        "name": "fixeo.ma",
+        "apexName": "fixeo.ma",
+        "projectId": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+        "redirect": "www.fixeo.ma",
+        "redirectStatusCode": 301,
+        "gitBranch": null,
+        "customEnvironmentId": null,
+        "updatedAt": 1783732302652,
+        "createdAt": 1774860802372,
+        "verified": true
+      },
+      {
+        "name": "www.fixeo.ma",
+        "apexName": "fixeo.ma",
+        "projectId": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+        "redirect": null,
+        "redirectStatusCode": null,
+        "gitBranch": null,
+        "customEnvironmentId": null,
+        "updatedAt": 1775676787627,
+        "createdAt": 1774860802064,
+        "verified": true
+      }
+    ]
+  },
+  "supabaseCalls": 0,
+  "supabaseMutations": 0,
+  "authEmails": 0
+}

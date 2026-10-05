@@ -1,0 +1,454 @@
+{
+  "at": "2026-10-05T15:56:33.880808+00:00",
+  "anonymous": true,
+  "cookies": false,
+  "authorization": false,
+  "redirectsFollowed": false,
+  "tlsValidation": "Python default certificate and hostname validation enabled",
+  "results": [
+    {
+      "method": "GET",
+      "path": "/auth-callback",
+      "status": 200,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "headers": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Origin": "*",
+        "Age": "324",
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Disposition": "inline; filename=\"callback.html\"",
+        "Content-Length": "4957",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/html; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:18 GMT",
+        "Etag": "\"ac2ee725b67df610c2b66a827145820e\"",
+        "Last-Modified": "Mon, 05 Oct 2026 15:50:53 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Cache": "HIT",
+        "X-Vercel-Id": "cle1::thlj6-1791215778185-e6e04292a725",
+        "Connection": "close"
+      },
+      "bytes": 4957,
+      "sha256": "1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2",
+      "certificate": {
+        "subject": [
+          [
+            [
+              "commonName",
+              "w6-auth-staging.fixeo.ma"
+            ]
+          ]
+        ],
+        "issuer": [
+          [
+            [
+              "countryName",
+              "US"
+            ]
+          ],
+          [
+            [
+              "stateOrProvinceName",
+              "California"
+            ]
+          ],
+          [
+            [
+              "localityName",
+              "San Francisco"
+            ]
+          ],
+          [
+            [
+              "organizationName",
+              "OpenAI, LLC"
+            ]
+          ],
+          [
+            [
+              "commonName",
+              "openai.com"
+            ]
+          ]
+        ],
+        "version": 3,
+        "serialNumber": "14B5FA6C38580481105E75AC443FEE998CFC6CCE",
+        "notBefore": "Oct  3 15:50:53 2026 GMT",
+        "notAfter": "Apr 20 15:50:53 2027 GMT",
+        "subjectAltName": [
+          [
+            "DNS",
+            "w6-auth-staging.fixeo.ma"
+          ]
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "status": 404,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Length": "79",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:18 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Error": "NOT_FOUND",
+        "X-Vercel-Id": "cle1::zslhz-1791215778110-bfde7b2a6e23",
+        "Connection": "close"
+      },
+      "bytes": 79,
+      "sha256": "9fcacbcca2db6b38f1574d25dcdcc006236c0a5df4c1d1e9c73a49d7161f3511",
+      "certificate": null
+    },
+    {
+      "method": "GET",
+      "path": "/entry",
+      "status": 404,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/entry",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Length": "79",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:18 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Error": "NOT_FOUND",
+        "X-Vercel-Id": "cle1::tqmxw-1791215778300-11e68c4d1a59",
+        "Connection": "close"
+      },
+      "bytes": 79,
+      "sha256": "7e72d86f00849d732b9aaf6a5db3d33fdc3091159921a38ea8555ec95259f568",
+      "certificate": null
+    },
+    {
+      "method": "GET",
+      "path": "/sign-in",
+      "status": 404,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/sign-in",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Length": "79",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:18 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Error": "NOT_FOUND",
+        "X-Vercel-Id": "cle1::9qzm7-1791215778154-fbe1e069aca7",
+        "Connection": "close"
+      },
+      "bytes": 79,
+      "sha256": "460a7def703a02b8379e01f300df4d123f862dcdeb74ef204ab0e2e1f2cb89b9",
+      "certificate": null
+    },
+    {
+      "method": "GET",
+      "path": "/artisan",
+      "status": 404,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/artisan",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Length": "79",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:18 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Error": "NOT_FOUND",
+        "X-Vercel-Id": "cle1::hzc6n-1791215778209-f3cdea9bf2ba",
+        "Connection": "close"
+      },
+      "bytes": 79,
+      "sha256": "6e7d59f34b11de2f27e0faf0821279cc81ee954230218ee34e6965cc68e445d9",
+      "certificate": null
+    },
+    {
+      "method": "GET",
+      "path": "/client",
+      "status": 404,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/client",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Length": "79",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:27 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Error": "NOT_FOUND",
+        "X-Vercel-Id": "cle1::gnbl8-1791215787127-b074b2eb58e7",
+        "Connection": "close"
+      },
+      "bytes": 79,
+      "sha256": "c7cefd8afa718d375b626dd989aecc426845ab1d78064716fba5ae2fc0a238cb",
+      "certificate": null
+    },
+    {
+      "method": "GET",
+      "path": "/random-test",
+      "status": 404,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/random-test",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Length": "79",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:27 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Error": "NOT_FOUND",
+        "X-Vercel-Id": "cle1::wbhzk-1791215787262-a9c2344ec42c",
+        "Connection": "close"
+      },
+      "bytes": 79,
+      "sha256": "bb1f9e2217a723a6809d44772527833fd10d1a291ac2cce938e4862c99aeccc2",
+      "certificate": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/test",
+      "status": 404,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/api/test",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Length": "79",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:27 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Error": "NOT_FOUND",
+        "X-Vercel-Id": "cle1::76ghz-1791215787161-8ab0ee5b16a0",
+        "Connection": "close"
+      },
+      "bytes": 79,
+      "sha256": "7ac6949bb4aa9a4ced103b2a219bcc09bab9880c98365776328ec60feaac54b5",
+      "certificate": null
+    },
+    {
+      "method": "GET",
+      "path": "/callback.html",
+      "status": 404,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/callback.html",
+      "headers": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Origin": "*",
+        "Age": "333",
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Disposition": "inline; filename=\"callback.html\"",
+        "Content-Length": "4957",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/html; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:27 GMT",
+        "Etag": "\"ac2ee725b67df610c2b66a827145820e\"",
+        "Last-Modified": "Mon, 05 Oct 2026 15:50:53 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Cache": "HIT",
+        "X-Vercel-Id": "cle1::rplfc-1791215787214-2478922d563b",
+        "Connection": "close"
+      },
+      "bytes": 4957,
+      "sha256": "1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2",
+      "certificate": null
+    },
+    {
+      "method": "GET",
+      "path": "/auth-callback/",
+      "status": 404,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/auth-callback/",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Length": "79",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:27 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Error": "NOT_FOUND",
+        "X-Vercel-Id": "cle1::vvr2x-1791215787212-6290d632d883",
+        "Connection": "close"
+      },
+      "bytes": 79,
+      "sha256": "6152c2015bda5c90f9da8e6ca67de286396f510351c439ac18ce8e96eb2a9ff4",
+      "certificate": null
+    },
+    {
+      "method": "GET",
+      "path": "/AUTH-CALLBACK",
+      "status": 404,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/AUTH-CALLBACK",
+      "headers": {
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Length": "79",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:33 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Error": "NOT_FOUND",
+        "X-Vercel-Id": "cle1::4zhgs-1791215793628-11675c5919d8",
+        "Connection": "close"
+      },
+      "bytes": 79,
+      "sha256": "dd44a79fb88134d9fa1067310b3aedb909c36fe5bcae770348c7bd8104111eeb",
+      "certificate": null
+    },
+    {
+      "method": "HEAD",
+      "path": "/auth-callback",
+      "status": 405,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "headers": {
+        "Allow": "GET",
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Length": "72",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:33 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Error": "NOT_ALLOWED",
+        "X-Vercel-Id": "cle1::hlvd8-1791215793653-e1b468817a6b",
+        "Connection": "close"
+      },
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "certificate": null
+    },
+    {
+      "method": "POST",
+      "path": "/auth-callback",
+      "status": 405,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "headers": {
+        "Allow": "GET",
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Length": "72",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:33 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Error": "NOT_ALLOWED",
+        "X-Vercel-Id": "cle1::9qb9p-1791215793613-25280db9c69a",
+        "Connection": "close"
+      },
+      "bytes": 72,
+      "sha256": "3be12f033d28b533bc44fa9302d97e1870b9e8084fc88d2d38da917fabdb137d",
+      "certificate": null
+    },
+    {
+      "method": "OPTIONS",
+      "path": "/auth-callback",
+      "status": 405,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "headers": {
+        "Allow": "GET",
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Length": "72",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:56:33 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Error": "NOT_ALLOWED",
+        "X-Vercel-Id": "cle1::jpcvj-1791215793814-763f573dcf5e",
+        "Connection": "close"
+      },
+      "bytes": 72,
+      "sha256": "15214ba5da342f6510470aef9e1578ada0f043c39686dee0ee3b985844951789",
+      "certificate": null
+    }
+  ]
+}

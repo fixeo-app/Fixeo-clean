@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-05T15:12:56.910Z",
-  "scope": "Phase 1 Dashboard fallback only",
+  "checkedAt": "2026-10-05T16:02:00Z",
+  "scope": "Phase 1 canonical DNS/TLS and public certification only",
   "vercel": {
     "name": "fixeo-w6-auth-relay",
     "id": "prj_EMFXZ4PVcdKhnJxqCCC5LOm4WPzs",
@@ -15,11 +15,13 @@
     "node": "24.x",
     "framework": "Other",
     "deployment": {
-      "id": "dpl_7SFfLZVduxcTd9WngJn6AfaWCXbx",
-      "url": "https://fixeo-w6-auth-relay-nxjn0mx6p-elalaouibiz-3410s-projects.vercel.app",
+      "id": "dpl_GuPRN2Tq79Zxf7Wo1rQtHdP8LumZ",
+      "url": "https://fixeo-w6-auth-relay-c0blb6idu-elalaouibiz-3410s-projects.vercel.app",
       "target": "Preview",
       "state": "Ready",
-      "sha": "80600c8a96b8353cd61528d5d274684c23ea519d",
+      "sha": "d006e9bffd604e3aef7c9d25856bd193c7ebb482",
+      "sourceUnchangedSince": "80600c8a96b8353cd61528d5d274684c23ea519d",
+      "canonicalDomainListed": true,
       "durationSeconds": 6
     },
     "firstFailedDeployment": {
@@ -40,7 +42,7 @@
       "attached": true,
       "environment": "Preview",
       "branch": "feat/fixeo-mobile-w6-entry-auth-trust",
-      "status": "Invalid Configuration"
+      "status": "DNS Change Recommended; legacy target explicitly supported"
     },
     "originalBefore": {
       "id": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
@@ -74,27 +76,42 @@
         "fixeo-clean-git-main-elalaouibiz-3410s-projects.vercel.app"
       ]
     },
-    "originalSettingsUnchanged": true
+    "originalSettingsUnchanged": true,
+    "initialCertifiedPreview": {
+      "id": "dpl_7SFfLZVduxcTd9WngJn6AfaWCXbx",
+      "url": "https://fixeo-w6-auth-relay-nxjn0mx6p-elalaouibiz-3410s-projects.vercel.app",
+      "target": "Preview",
+      "state": "Ready",
+      "sha": "80600c8a96b8353cd61528d5d274684c23ea519d",
+      "durationSeconds": 6
+    }
   },
   "dns": {
     "type": "CNAME",
     "name": "w6-auth-staging",
     "fqdn": "w6-auth-staging.fixeo.ma",
-    "value": "06244978d8b6e6ea.vercel-dns-016.com.",
-    "source": "Vercel Domains UI after attachment",
+    "value": "cname.vercel-dns.com",
+    "ttlObserved": 14400,
+    "source": "User manual Clouder addition, verified by Google and Cloudflare DNS",
     "before": "NXDOMAIN",
-    "after": "NXDOMAIN",
-    "writes": 0,
-    "blocker": "Clouder authentication not acquired; Email or Password Invalid",
-    "tlsCanonical": "NOT CERTIFIED"
+    "after": "CNAME resolves",
+    "agentWrites": 0,
+    "userWritesReported": 1,
+    "vercelRecommendedTarget": "06244978d8b6e6ea.vercel-dns-016.com.",
+    "legacyTargetSupported": true,
+    "tlsCanonical": "PASS",
+    "certificateId": "cert_DCGrkPkxezoMXGPRywyufWHZ"
   },
   "tests": {
     "contracts": 17,
     "localChromium": 12,
     "liveVercelBrowser": 10,
-    "anonymousRoutes": "PASS on deployment URL; custom domain pending",
+    "anonymousRoutes": "PASS on canonical domain; only GET /auth-callback returns 200",
     "nativeDeepLink": "NOT EXECUTED",
-    "realAuth": "NOT EXECUTED"
+    "realAuth": "NOT EXECUTED",
+    "canonicalBrowser": 24,
+    "canonicalHttp": 14,
+    "htmlSha256": "1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2"
   },
   "supabaseCalls": 0,
   "supabaseMutations": 0,
@@ -103,5 +120,5 @@
   "productionImpact": "NONE",
   "mainChanged": false,
   "merged": false,
-  "verdict": "STOP — W6 RELAY PHASE 1 NOT CERTIFIED"
+  "verdict": "PASS W6 RELAY PHASE 1 \u2014 READY FOR SUPABASE ALLOWLIST REVIEW"
 }

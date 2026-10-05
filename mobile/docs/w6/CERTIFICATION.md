@@ -69,13 +69,15 @@ VoiceOver natif, clavier natif, dialogues OS et deep link sur appareil ne sont p
 
 ## Reprise minimale pour la certification réelle
 
+Ces étapes futures restent interdites pendant la Phase 1 et nécessitent le nouveau GO distinct.
+
 1. Vérifier en lecture seule Site URL/Redirect URLs staging et l’accessibilité anonyme du callback Preview exact.
 2. Si nécessaire, présenter le manifeste d’ajout de cette seule URL, attendre GO ; autrement documenter la correspondance existante.
 3. Activer l’envoi applicatif après cette preuve, avec les mêmes deux comptes.
 4. Après renouvellement du quota, demander uniquement les recovery manquants. Vérifier réception réelle, code PKCE, changement de mot de passe, reconnexion, profil Artisan, retry/idempotence, account switch et révocation réelle. Garder tout secret uniquement en mémoire de la procédure.
 5. Révoquer toutes les nouvelles sessions synthétiques, relire le compteur et documenter les fixtures retenues. PASS final seulement après ces preuves.
 
-## Clôture de cette exécution : nouveau hard blocker confirmé
+## Historique — Preview W6 protégée, avant le relais distinct
 
 PR Draft : https://github.com/fixeo-app/Fixeo-clean/pull/150
 Commit applicatif : `82e79558ca383fd8446687baaa99531de06899b9`.
@@ -95,12 +97,13 @@ Dernière relecture DB : pour chaque fixture, 1 user canonique, 1 profil, email 
 Autorisation : DISTINCT RELAY GO, puis CREATION FALLBACK Dashboard / CLI,
 5 octobre 2026. Le connecteur `create_git_project` n'a plus été utilisé.
 
-**Verdict : STOP — W6 RELAY PHASE 1 NOT CERTIFIED.**
-Le projet et son déploiement Preview public existent ; la matrice HTTP anonyme
-sur `vercel.app` est PASS. Le domaine est attaché au seul relais.
-**DNS bloqué par l'accès Clouder : connexion non acquise, message
-« Email or Password Invalid ». Aucune écriture DNS.** Le sous-domaine reste
-NXDOMAIN ; son TLS et sa certification canonique restent à réaliser.
+**PASS W6 RELAY PHASE 1 — READY FOR SUPABASE ALLOWLIST REVIEW.**
+Certification du 5 octobre 2026, 15:50–16:02 UTC : domaine canonique public,
+DNS propagé sur Google et Cloudflare, HTTPS opérationnel, certificat Vercel
+provisionné, routes et matrice sécurité PASS. Le blocage DNS précédent est résolu
+par l'ajout manuel de l'utilisateur dans Clouder. Aucune écriture DNS par l'agent.
+La Phase 1 est terminée ; aucun parcours Auth réel n'est certifié par ce verdict.
+**STOP après Phase 1. Nouveau GO distinct requis avant toute action Supabase.**
 
 ### A–C. Projet, déploiement et source exacts
 
@@ -109,12 +112,12 @@ NXDOMAIN ; son TLS et sa certification canonique restent à réaliser.
 | Projet Vercel | `fixeo-w6-auth-relay` |
 | Project ID | `prj_EMFXZ4PVcdKhnJxqCCC5LOm4WPzs` |
 | Équipe | `team_KoJ7znqtpla8FkrqAznod5PD` / `elalaouibiz-3410s-projects` |
-| Déploiement Ready | `dpl_7SFfLZVduxcTd9WngJn6AfaWCXbx` |
+| Déploiement canonique certifié Ready | `dpl_GuPRN2Tq79Zxf7Wo1rQtHdP8LumZ` |
 | Environnement Vercel | **Preview**, staging uniquement ; durée de build 6 s |
-| URL exacte | `https://fixeo-w6-auth-relay-nxjn0mx6p-elalaouibiz-3410s-projects.vercel.app` |
+| URL exacte | `https://fixeo-w6-auth-relay-c0blb6idu-elalaouibiz-3410s-projects.vercel.app` |
 | Alias de branche | `fixeo-w6-auth-relay-git-feat-7093f2-elalaouibiz-3410s-projects.vercel.app` |
 | Source | `fixeo-app/Fixeo-clean`, `feat/fixeo-mobile-w6-entry-auth-trust` |
-| SHA déployé | `80600c8a96b8353cd61528d5d274684c23ea519d` |
+| SHA déployé lors de la certification | `d006e9bffd604e3aef7c9d25856bd193c7ebb482` ; source du relais inchangée depuis `80600c8a96b8353cd61528d5d274684c23ea519d` |
 | Root Directory | `staging/w6-auth-relay` ; inclusion des fichiers extérieurs **désactivée** |
 | Build | Framework Other, Node 24, `node build.mjs`, install command vide |
 | Variables | Zéro variable de projet et zéro variable partagée rattachée, vérifiés dans le Dashboard |
@@ -134,6 +137,12 @@ Le commit `80600c8` retire seulement `directoryListing` et `public` du fichier
 de configuration du relais. Le builder, les routes et le script Auth sont
 inchangés. Le déploiement suivant est bien **Preview / Ready**.
 Aucun artefact Production n'a été construit ou promu.
+Le premier Preview certifié `dpl_7SFfLZVduxcTd9WngJn6AfaWCXbx`
+(`fixeo-w6-auth-relay-nxjn0mx6p-elalaouibiz-3410s-projects.vercel.app`)
+a été suivi du Preview Git documentaire `dpl_GuPRN2Tq79Zxf7Wo1rQtHdP8LumZ`.
+Le Dashboard confirme que ce dernier porte le domaine canonique et la branche W6.
+Une publication documentaire ultérieure peut générer un nouveau Preview identique ;
+les IDs ci-dessus identifient les déploiements effectivement observés à certification.
 
 Fichiers exacts : `package.json`, `vercel.json`, `build.mjs`, `.gitignore`,
 `src/callback.html`, `src/relay.js`, `test/relay.test.mjs`,
@@ -151,26 +160,37 @@ Le domaine `w6-auth-staging.fixeo.ma` est attaché **uniquement** au projet
 branche `feat/fixeo-mobile-w6-entry-auth-trust`.
 Cette opération a été effectuée **après** le PASS HTTP anonyme de `vercel.app`.
 
-Valeurs lues dans le Dashboard Vercel après attachement, consignées avant écriture :
+Avant : **NXDOMAIN**, aucun CNAME. Après ajout manuel annoncé par l'utilisateur :
 
-| TYPE | NAME | VALUE |
-| --- | --- | --- |
-| CNAME | `w6-auth-staging` | `06244978d8b6e6ea.vercel-dns-016.com.` |
+| TYPE | NAME | FQDN | VALUE | TTL observé |
+| --- | --- | --- | --- | --- |
+| CNAME | `w6-auth-staging` | `w6-auth-staging.fixeo.ma` | `cname.vercel-dns.com` | 14400 s |
 
-FQDN : `w6-auth-staging.fixeo.ma`. DNS externe, serveurs
-`ns1.nameservers.ma` à `ns4.nameservers.ma`.
-**Avant : NXDOMAIN. Après : NXDOMAIN. Écritures : 0.**
-Le TTL n'a pas été fixé puisqu'aucun formulaire DNS n'a été soumis.
-Aucun autre record, apex, www, MX, TXT ou serveur de noms n'a été modifié.
+Google DNS et Cloudflare DNS renvoient tous deux ce CNAME, statut DNS 0.
+Le premier contrôle avait un SERVFAIL transitoire sur une requête CNAME ;
+la relecture réussit sur les deux résolveurs. Aucune modification d'autre record,
+apex, www, MX, TXT ou serveur de noms par l'agent ; l'utilisateur confirme n'avoir
+ajouté que ce CNAME.
 
-TLS `vercel.app` : HTTPS valide, validation de certificat active, HSTS présent.
-TLS `w6-auth-staging.fixeo.ma` : **NON CERTIFIÉ**, DNS non provisionné.
-Statut Vercel du domaine : Invalid Configuration.
+Vercel affiche **DNS Change Recommended**, pas Invalid Configuration.
+Il recommande `06244978d8b6e6ea.vercel-dns-016.com.` et indique explicitement
+que la cible historique `cname.vercel-dns.com` continue de fonctionner.
+La recommandation n'a entraîné aucune nouvelle écriture DNS.
+
+URL canonique certifiée : **https://w6-auth-staging.fixeo.ma/auth-callback**.
+HTTPS : PASS, sans exception de certificat ni écran intermédiaire navigateur.
+Certificat Vercel `cert_DCGrkPkxezoMXGPRywyufWHZ`, nom exact
+`w6-auth-staging.fixeo.ma`, renouvellement automatique,
+expiration **2027-01-03 14:47:24 UTC** (lecture API Vercel).
+HSTS reçu : `max-age=63072000`.
+Le certificat vu par Python appartient au proxy TLS de l'environnement : il
+n'est pas présenté comme le certificat d'origine. La preuve d'origine repose
+sur la lecture Vercel, complétée par HTTPS et le navigateur sans interstitial.
 
 ### F–H. Routes et sécurité publiques
 
 Requêtes HTTP réelles, sans cookies, Authorization, lien de partage ou bypass,
-sur le déploiement exact ci-dessus :
+sur le **domaine canonique**, sans redirection vers une authentification :
 
 | Route GET | Statut |
 | --- | --- |
@@ -183,11 +203,14 @@ sur le déploiement exact ci-dessus :
 | `/random-test` | **404** |
 | `/api/test` | **404** |
 | `/callback.html` | **404** |
+| `/auth-callback/` | **404** |
+| `/AUTH-CALLBACK` | **404** |
 
 Aucun SPA fallback. Le fichier interne peut être renvoyé avec statut 404 sur son
 nom direct ; son script refuse ce path et ne propose aucun transfert.
-Les méthodes autres que GET sur le callback sont prévues en 405 / Allow GET
-et testées par contrat ; leur contrôle distant reste à compléter avec le domaine.
+HEAD, POST et OPTIONS `/auth-callback` : **405**, `Allow: GET`, vérifiés à distance.
+Le catch-all 404 est confirmé par contrat de build ; aucune règle filesystem
+ou SPA fallback ne sert d'autre écran.
 
 Headers effectivement reçus : `Cache-Control: no-store`,
 `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`.
@@ -196,23 +219,28 @@ CSP à empreintes, `connect-src 'none'`, `form-action 'none'`,
 Le HTML déployé est identique octet pour octet à l'artefact testé :
 SHA-256 `1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2`.
 
-| Cas | Preuve actuelle |
+| Cas sur domaine canonique | Résultat |
 | --- | --- |
-| Code absent ou malformé | Contrats PASS ; navigateur réel vercel.app : URL nettoyée, refus neutre, aucun bouton |
-| Quatre bearer tokens interdits | Contrats query/hash, noms encodés, casse et valeurs vides PASS ; cas réels sur vercel.app refusés |
-| Redirect arbitraire / paramètre inconnu | Contrats PASS ; navigateur réel : refus sans transfert |
-| Duplications / mélange code-erreur | Contrats PASS |
-| Nettoyage avant rendu, hashchange/popstate | Contrats et Chromium local PASS |
-| Erreurs filtrées | Mapping local PASS vers expired/invalid/denied/unknown ; aucune description brute |
-| Code bien formé / erreur connue sur vercel.app | Refus attendu : origin non canonique, aucun transfert |
-| Code / erreurs sur le domaine canonique | **À CERTIFIER après DNS/TLS** |
+| Code bien formé factice | URL nettoyée ; bouton Ouvrir FIXEO, code invisible |
+| Code absent / malformé | Refus neutre, aucun bouton ni transfert |
+| access_token / refresh_token / provider_token / provider_refresh_token | Refus en query et fragment, URL nettoyée, aucun bouton |
+| redirect / redirectTo / next / returnUrl / callbackUrl | Refus sans transfert |
+| Query inattendue / type inattendu | Refus sans transfert |
+| Code dupliqué / mélange code-erreur | Refus sans transfert |
+| Erreurs expired / invalid / denied / unknown | Écran neutre, URL nettoyée, bouton ; description brute invisible |
+| Mapping exact et destination fixe du deep link | Contrats PASS : uniquement code ou erreur interne, un seul transfert sur action |
+| Nettoyage avant rendu, hashchange/popstate | Contrats PASS ; tests locaux Chromium antérieurs PASS |
 | Échange PKCE réel / session / deep link physique | Non exécutés ; hors Phase 1 / aucun build physique |
 
-**17/17 contrats PASS**, **12/12 cas Chromium locaux PASS**,
-**10/10 contrôles navigateur sur le vrai déploiement vercel.app PASS**
-pour nettoyage et refus d'origin. Les tests locaux utilisent une réponse HTTP
-interceptée sous l'origin canonique ; ils ne remplacent pas sa certification publique.
-Les tests distants n'ont utilisé que des marqueurs factices, aucun token réel.
+**17/17 contrats rejoués PASS**, **24/24 cas navigateur réel sur domaine
+canonique PASS**, **14/14 contrôles HTTP anonymes PASS** (11 GET + 3 méthodes).
+Les 12 cas Chromium locaux et 10 contrôles vercel.app antérieurs restent des
+preuves complémentaires. Les tests n'utilisent que des marqueurs synthétiques,
+aucun code Auth ou bearer token réel.
+Le mapping exact des erreurs et la destination deep link sont prouvés par les
+contrats du script ; les tests du navigateur distant vérifient nettoyage,
+absence d'affichage sensible et présence/absence du bouton, sans lancer d'app.
+Le HTML canonique téléchargé est identique à l'artefact local testé.
 
 Contrat : le premier script retire query/hash avant parsing et rendu. Un échec
 de nettoyage bloque tout rendu/transfert. La présence de access_token,
@@ -237,45 +265,39 @@ Même `updatedAt=1791206683553`, mêmes protections et domaines qu'avant.
 Le domaine relais n'apparaît pas dans ses domaines.
 Aucun réglage de root directory, protection ou domaine de fixeo-clean n'a été écrit.
 
-Nouvelle vérification HTTP anonyme de la Preview W6 à 15:10 UTC :
+Nouvelle vérification HTTP anonyme de la Preview W6 à **16:00 UTC** :
 `/entry` et `/auth-callback` → 302 vers Vercel SSO → 307 vers `/login`.
 Les nouveaux commits W6 peuvent déclencher la Preview Git habituelle ;
 cela ne déploie pas le relais dans fixeo-clean et ne change pas ses réglages.
 
-### K. Rollback exact et reprise
+### K. Rollback exact
 
 Rollback Phase 1, non exécuté :
+
 1. Détacher seulement `w6-auth-staging.fixeo.ma` du projet
    `prj_EMFXZ4PVcdKhnJxqCCC5LOm4WPzs`.
-2. Supprimer seulement le CNAME `w6-auth-staging` pointant vers
-   `06244978d8b6e6ea.vercel-dns-016.com.` **s'il a été créé**.
-   À ce checkpoint, aucun DNS à supprimer.
+2. Supprimer seulement le CNAME créé manuellement dans Clouder :
+   NAME `w6-auth-staging`, VALUE `cname.vercel-dns.com`.
 3. Désactiver/supprimer uniquement `fixeo-w6-auth-relay` et ses déploiements.
-4. Préserver fixeo-clean, ses domaines et sa protection.
+4. Préserver fixeo-clean, ses domaines, root directory et protection.
 5. Aucune action Supabase à annuler ; aucun retour localhost.
-
-Reprise Phase 1 : obtenir l'accès au gestionnaire DNS, ajouter seulement
-l'enregistrement ci-dessus après relecture de son absence, attendre TLS,
-rejouer la matrice complète sur le domaine canonique puis revalider fixeo-clean.
-Aucun nouveau GO n'est nécessaire pour ces actions Phase 1 déjà autorisées,
-mais le blocage de connexion doit être résolu.
 
 ### L. PR, preuves et frontière Supabase
 
 PR #150 reste **Draft**, ouverte, non mergée.
 Preuves dans `relay-phase1/` :
-- `infrastructure.json` : IDs, isolation, réglages et blocage courant ;
-- `vercel-app-public.json` : statuts et headers des requêtes anonymes ;
-- `fallback-external-checks.json` : NXDOMAIN et empreinte du HTML distant ;
-- `live-vercel-browser.json` : nettoyage/refus sur le déploiement réel ;
-- `protected-preview.json` : redirections anonymes W6, query strings exclues ;
-- `dashboard-preview-ready.jpg`, `dashboard-relay-public.jpg`,
-  `dashboard-dns-required.jpg` : captures du Dashboard ;
-- `local-browser.json` et captures locales : preuves locales antérieures.
 
-Historique : le connecteur de création avait échoué avant ce fallback
-(validation de réponse). Le nouveau blocage est **l'accès DNS**, distinct de
-ce blocage d'outil résolu et du quota email.
+- `infrastructure.json` : IDs, isolation, DNS réel et verdict Phase 1 ;
+- `canonical-dns-tls.json` : premières observations et propagation finale ;
+- `platform-final.json` : certificat Vercel et configuration fixeo-clean relue ;
+- `canonical-public-http.json` : 14 statuts/headers anonymes, empreinte du HTML ;
+- `canonical-browser.json` : 24 cas sur le vrai domaine canonique ;
+- `canonical-valid.jpg`, `canonical-token-refused.jpg` : rendu réel sans secret ;
+- `dashboard-dns-ready.jpg` : CNAME historique accepté, recommandation distincte ;
+- `protected-preview.json` : redirections anonymes W6, query strings exclues ;
+- `vercel-app-public.json`, `fallback-external-checks.json`,
+  `live-vercel-browser.json`, anciennes captures Dashboard et preuves locales :
+  historique conservé, y compris le NXDOMAIN antérieur résolu.
 
 Aucun Analytics, pixel, stockage ou log applicatif de query string.
 L'absence de logger applicatif ne certifie pas la politique de conservation
@@ -287,7 +309,9 @@ URL candidate seulement :
 `https://w6-auth-staging.fixeo.ma/auth-callback`, sans wildcard.
 Site URL, confirmation, templates, SMTP, quotas et rate limits inchangés.
 `EXPO_PUBLIC_AUTH_CALLBACK_APPROVED` reste non activé ; W6 reste fail-closed.
-Recovery : **DEFERRED — 429 over_email_send_rate_limit**, séparé du DNS.
+Recovery : **DEFERRED — 429 over_email_send_rate_limit**, séparé de la certification du relais. Aucun nouvel essai Phase 1.
 
 **Production impact = NONE.** MAIN inchangé. Aucun build physique, merge ou W7.
-**STOP — W6 RELAY PHASE 1 NOT CERTIFIED.**
+**PASS W6 RELAY PHASE 1 — READY FOR SUPABASE ALLOWLIST REVIEW.**
+
+**STOP. Aucune action Supabase ni poursuite Auth avant nouveau GO distinct.**
