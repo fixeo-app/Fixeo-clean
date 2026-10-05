@@ -1,0 +1,37 @@
+{
+  "verdict": "BLOCKED_UPDATED_AT_TRIGGER_CONFLICT",
+  "environment": "isolated PGlite; actual live trigger definition; actor guard stubbed only for this local side-effect reproduction",
+  "migration": "20261005104459_mobile_w5_artisan_bio.sql",
+  "sha256": "82b3dbb281b39867b9c20227ffbf689e2a8cceb902461c7d37aa7e8e78cfb0ef",
+  "literal": {
+    "DROP": 0,
+    "DELETE": 0,
+    "TRUNCATE": 0
+  },
+  "data_changes_at_definition": 0,
+  "rpc_changed_columns": [
+    "description",
+    "updated_at"
+  ],
+  "strict_description_only_requirement_met": false,
+  "trigger_modified_or_disabled": false,
+  "before": {
+    "id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    "city": "Rabat",
+    "name": "Fixture locale",
+    "verified": false,
+    "updated_at": "2026-10-01T00:00:00+00:00",
+    "description": "Bio initiale",
+    "owner_user_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+  },
+  "after": {
+    "id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    "city": "Rabat",
+    "name": "Fixture locale",
+    "verified": false,
+    "updated_at": "2026-10-05T10:46:51.193+00:00",
+    "description": "Bio modifiée",
+    "owner_user_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+  },
+  "staging_application_performed": false
+}

@@ -4,6 +4,8 @@
 
 La sécurité V2 est appliquée et vérifiée sur staging. Les parcours Artisan ont été exécutés contre le backend réel. Le profil reste incomplet : aucune autorité de mutation de bio accessible à Mobile n'existe dans le périmètre autorisé. La tentative authentifiée a été refusée ; aucun contournement, grant complémentaire ou seconde migration n'a été appliqué. La bio est explicitement en lecture seule. Le candidat doit rester en PR Draft.
 
+Actualisation après GO Bio : la proposition est autorisée, mais son preflight révèle le trigger existant `artisans_updated_at`, qui modifierait aussi `updated_at`. Le GO impose pourtant « aucune autre colonne modifiée ». L'application Bio est suspendue avant toute mutation staging. Le [dossier Bio](bio-preflight/README.md) contient la migration candidate non appliquée et une reproduction PostgreSQL isolée. Une exception explicite pour ce timestamp canonique est nécessaire.
+
 ## A — Preflight et périmètre
 
 - Dépôt : `fixeo-app/Fixeo-clean` ; base exacte `4ece6bdf352518eddc21610d9f68aa573c9fff22`, branche `feat/fixeo-mobile-m4-terrain`.
@@ -144,4 +146,4 @@ PR **Draft** exclusivement vers `feat/fixeo-mobile-m4-terrain`. Pas de merge. To
 
 `staging-closure.json` confirme 21 comptes Auth (aucun nouveau), **zéro session pour les deux identités synthétiques réutilisées**, Artisan indisponible, ancienne définition/ACL conservées et une seule migration du jour. Les autres sessions du projet ne sont pas des sessions de ce test et n'ont pas été révoquées. Les fixtures métier W5 restent documentées, sans nettoyage destructif. Après l'application, les RPC de profil ont synchronisé ville et téléphone dans les projections publiques `users`/`profiles` du compte Artisan synthétique réutilisé ; ces effets E2E sont distincts de l'absence de mutation pendant l'application de V2. Les anciennes missions, devis, clients et médias sont inchangés.
 
-Le prochain GO nécessaire porte sur une autorité canonique de bio à examiner, puis son intégration et ses tests. Le refus d'offre dispatch et l'édition de galerie restent bornés aux contrats disponibles décrits ci-dessus. Aucune certification North Star tant que le profil attendu n'est pas complet. Le sujet W8 `PHYSICAL_DIAGNOSTIC_MEDIA_PURGE_CERTIFICATION` reste reporté ; aucune exécution W8.
+Le GO Bio a depuis été accordé. La décision encore nécessaire porte sur l'effet automatique `updated_at` décrit dans le dossier Bio ; l'intégration et les tests attendent sa résolution. Le refus d'offre dispatch et l'édition de galerie restent bornés aux contrats disponibles décrits ci-dessus. Aucune certification North Star tant que le profil attendu n'est pas complet. Le sujet W8 `PHYSICAL_DIAGNOSTIC_MEDIA_PURGE_CERTIFICATION` reste reporté ; aucune exécution W8.

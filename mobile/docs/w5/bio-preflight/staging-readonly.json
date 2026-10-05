@@ -1,0 +1,43 @@
+{
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "checked_at": "2026-10-05T10:46:48.343Z",
+  "source": "Supabase execute_sql SELECT only; no live mutation or Auth session",
+  "state": [
+    {
+      "database_name": "postgres",
+      "bio_function": null,
+      "synthetic_sessions": 0,
+      "authenticated_update_column_grants": 0,
+      "timestamp_trigger_enabled": "O",
+      "historical_activity_md5": "043db6c4dfed6bcbbe2650c73807fdd3",
+      "today_migrations": [
+        {
+          "name": "mobile_w5_artisan_authority_v2",
+          "version": "20261005091927"
+        }
+      ]
+    }
+  ],
+  "triggers": [
+    {
+      "tgname": "artisans_updated_at",
+      "definition": "CREATE TRIGGER artisans_updated_at BEFORE UPDATE ON public.artisans FOR EACH ROW EXECUTE FUNCTION update_updated_at()",
+      "function_definition": "CREATE OR REPLACE FUNCTION public.update_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$ BEGIN NEW.updated_at = NOW(); RETURN NEW; END; $function$\n"
+    },
+    {
+      "tgname": "classification_guard_v1",
+      "definition": "CREATE TRIGGER classification_guard_v1 BEFORE INSERT OR UPDATE OF data_classification ON public.artisans FOR EACH ROW EXECUTE FUNCTION fixeo_private.classification_guard_v1()",
+      "function_definition": "CREATE OR REPLACE FUNCTION fixeo_private.classification_guard_v1()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nBEGIN\n IF (TG_OP='INSERT' AND NEW.data_classification IS DISTINCT FROM 'production') OR (TG_OP='UPDATE' AND NEW.data_classification IS DISTINCT FROM OLD.data_classification) THEN\n  IF NOT coalesce(public.is_admin(),false) AND coalesce(auth.role(),'')<>'service_role' THEN RAISE EXCEPTION 'CLASSIFICATION_AUTHORITY_REQUIRED' USING ERRCODE='42501'; END IF;\n END IF;\n RETURN NEW;\nEND $function$\n"
+    },
+    {
+      "tgname": "control_audit_artisans_v1",
+      "definition": "CREATE TRIGGER control_audit_artisans_v1 AFTER INSERT OR UPDATE ON public.artisans FOR EACH ROW EXECUTE FUNCTION fixeo_private.control_event_capture_v1()",
+      "function_definition": "CREATE OR REPLACE FUNCTION fixeo_private.control_event_capture_v1()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nDECLARE oldj jsonb:='{}'; newj jsonb:=to_jsonb(NEW); delta jsonb; k text; keys text[];\nBEGIN\n IF TG_OP='UPDATE' THEN oldj:=to_jsonb(OLD); END IF;\n keys:=CASE TG_TABLE_NAME\n WHEN 'service_requests' THEN ARRAY['status','data_classification']\n WHEN 'missions' THEN ARRAY['status','accepted_at','started_at','completed_at','validated_at','final_price','commission_amount']\n WHEN 'quotes' THEN ARRAY['status','review_status','quote_version','reviewed_version','proposed_price']\n WHEN 'claim_requests' THEN ARRAY['status']\n WHEN 'artisans' THEN ARRAY['verified','is_verified','claimed','data_classification']\n WHEN 'enterprise_accounts' THEN ARRAY['data_classification'] ELSE ARRAY[]::text[] END;\n delta:='{}';\n FOREACH k IN ARRAY keys LOOP\n  IF oldj->k IS DISTINCT FROM newj->k THEN delta:=delta||jsonb_build_object(k,jsonb_build_object('before',oldj->k,'after',newj->k)); END IF;\n END LOOP;\n IF delta<>'{}' THEN PERFORM fixeo_private.authority_audit_v1(TG_TABLE_NAME,NEW.id,'canonical.'||TG_TABLE_NAME,lower(TG_OP),'succeeded',delta); END IF;\n RETURN NEW;\nEND $function$\n"
+    },
+    {
+      "tgname": "verified_canonical_v1",
+      "definition": "CREATE TRIGGER verified_canonical_v1 BEFORE INSERT OR UPDATE OF verified, is_verified ON public.artisans FOR EACH ROW EXECUTE FUNCTION fixeo_private.verified_canonical_v1()",
+      "function_definition": "CREATE OR REPLACE FUNCTION fixeo_private.verified_canonical_v1()\n RETURNS trigger\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nBEGIN NEW.is_verified:=coalesce(NEW.verified,false); RETURN NEW; END $function$\n"
+    }
+  ]
+}
