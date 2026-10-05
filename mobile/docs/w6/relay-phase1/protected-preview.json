@@ -1,0 +1,46 @@
+{
+  "checkedAt": "2026-10-05T14:14:18.299665+00:00",
+  "scope": "Anonymous HTTP, no cookies/Authorization/bypass",
+  "results": [
+    {
+      "path": "/entry",
+      "finalStatus": 200,
+      "finalHost": "vercel.com",
+      "redirects": [
+        {
+          "status": 302,
+          "fromHost": "fixeo-clean-git-feat-fixeo-mo-e1fd0b-elalaouibiz-3410s-projects.vercel.app",
+          "toHost": "vercel.com",
+          "toPath": "/sso-api"
+        },
+        {
+          "status": 307,
+          "fromHost": "vercel.com",
+          "toHost": "vercel.com",
+          "toPath": "/login"
+        }
+      ],
+      "vercelAuthenticationPage": true
+    },
+    {
+      "path": "/auth-callback",
+      "finalStatus": 200,
+      "finalHost": "vercel.com",
+      "redirects": [
+        {
+          "status": 302,
+          "fromHost": "fixeo-clean-git-feat-fixeo-mo-e1fd0b-elalaouibiz-3410s-projects.vercel.app",
+          "toHost": "vercel.com",
+          "toPath": "/sso-api"
+        },
+        {
+          "status": 307,
+          "fromHost": "vercel.com",
+          "toHost": "vercel.com",
+          "toPath": "/login"
+        }
+      ],
+      "vercelAuthenticationPage": true
+    }
+  ]
+}

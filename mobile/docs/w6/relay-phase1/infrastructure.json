@@ -1,0 +1,62 @@
+{
+  "checkedAt": "2026-10-05T14:17:27.127Z",
+  "scope": "W6 relay Phase 1 only; no Supabase calls or auth email",
+  "vercel": {
+    "requestedName": "fixeo-w6-auth-relay",
+    "creationError": "Failed to look up projects linked to fixeo-app/Fixeo-clean: Vercel API error 200: Response validation failed",
+    "projectCreated": false,
+    "deployment": null,
+    "domainAttached": false,
+    "originalProjectBefore": {
+      "id": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+      "name": "fixeo-clean",
+      "ssoProtection": {
+        "enabled": true,
+        "deploymentType": "all_except_custom_domains"
+      },
+      "passwordProtection": {
+        "enabled": false,
+        "deploymentType": null
+      }
+    },
+    "originalProjectAfter": {
+      "id": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+      "name": "fixeo-clean",
+      "ssoProtection": {
+        "enabled": true,
+        "deploymentType": "all_except_custom_domains"
+      },
+      "passwordProtection": {
+        "enabled": false,
+        "deploymentType": null
+      }
+    }
+  },
+  "dns": {
+    "name": "w6-auth-staging.fixeo.ma",
+    "before": {
+      "CNAME": "NXDOMAIN",
+      "A": "NXDOMAIN",
+      "AAAA": "NXDOMAIN"
+    },
+    "after": "unchanged; no write",
+    "requiredType": "CNAME",
+    "requiredName": "w6-auth-staging",
+    "requiredValue": null,
+    "reason": "Dedicated Vercel project not created; exact project target unavailable",
+    "authoritativeNameservers": [
+      "ns1.nameservers.ma",
+      "ns2.nameservers.ma",
+      "ns3.nameservers.ma",
+      "ns4.nameservers.ma"
+    ]
+  },
+  "localTests": {
+    "contracts": 17,
+    "chromiumCases": 12,
+    "publicDeployedCertification": false
+  },
+  "supabaseMutations": 0,
+  "authEmailsSent": 0,
+  "productionMutations": 0
+}

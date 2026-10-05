@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "node build.mjs",
+  "installCommand": "",
+  "directoryListing": false,
+  "public": false,
+  "git": { "deploymentEnabled": { "**": false, "feat/fixeo-mobile-w6-entry-auth-trust": true } }
+}
