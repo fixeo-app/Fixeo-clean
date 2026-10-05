@@ -1,0 +1,52 @@
+{
+  "at": "2026-10-05T16:41:45Z",
+  "source": "User explicit report of manual authorized addition, not a Dashboard read by the agent",
+  "project": {
+    "name": "fixeo-diagnostic-staging",
+    "ref": "kqyhusnbybsukbcaoqtu"
+  },
+  "beforeReported": {
+    "siteUrl": "http://localhost:3000",
+    "redirectUrls": []
+  },
+  "afterReported": {
+    "siteUrl": "http://localhost:3000",
+    "redirectUrls": [
+      "https://w6-auth-staging.fixeo.ma/auth-callback"
+    ]
+  },
+  "reportedChecks": {
+    "exactRedirectCount": 1,
+    "siteUrlUnchanged": true,
+    "wildcard": false,
+    "otherAuthSettingsChanged": false
+  },
+  "agentIndependentRead": {
+    "dashboardConfigurationVisible": false,
+    "observedPage": "Sign in",
+    "pathsTried": [
+      "Retained project URL Configuration tab",
+      "Supabase home navigation to Dashboard"
+    ],
+    "otherSignedInSupabaseTabAvailable": false,
+    "authLoginInitiatedThisFollowup": false,
+    "configWriteAttempted": false,
+    "status": "NOT CERTIFIED - current configuration inaccessible in the control browser"
+  },
+  "relayIndependentRead": "PASS; see relay-public-manual-followup.json",
+  "scope": "Read and documentation only",
+  "agentMutations": {
+    "supabase": 0,
+    "vercel": 0,
+    "dns": 0
+  },
+  "applicationActivation": false,
+  "authEmailSent": false,
+  "recoveryAttempted": false,
+  "syntheticSessionOpened": false,
+  "jwtUsed": false,
+  "realPKCETested": false,
+  "productionImpact": "NONE",
+  "verdict": "STOP \u2014 W6 PHASE 2A NOT CERTIFIED",
+  "reason": "Manual addition reported; mandatory independent Dashboard read unavailable"
+}

@@ -375,3 +375,45 @@ sans nouvel essai ni modification des limites.
 Documentation seulement. PR #150 reste Draft, ouverte, non mergée.
 **Production impact = NONE.** MAIN inchangé ; aucun build physique, merge ou W7.
 **STOP — W6 PHASE 2A NOT CERTIFIED : accès Dashboard non acquis.**
+
+### Reprise après ajout manuel — 5 octobre 2026, 16:41 UTC
+
+L'utilisateur confirme avoir effectué lui-même l'ajout autorisé sur
+`fixeo-diagnostic-staging` / `kqyhusnbybsukbcaoqtu`. Cette reprise est
+**lecture et documentation uniquement**, sans autorisation d'écriture Supabase.
+
+| Configuration | Avant déclaré par l'utilisateur | Après déclaré par l'utilisateur | Relecture indépendante |
+| --- | --- | --- | --- |
+| Site URL | `http://localhost:3000` | `http://localhost:3000` | Non accessible |
+| Redirect URLs | Aucune (0) | Une URL (1) | Non accessible |
+| URL exacte | Absente | `https://w6-auth-staging.fixeo.ma/auth-callback` | Non accessible |
+| Autres réglages Auth | État initial | Inchangés selon l'utilisateur | Pas de comparaison indépendante possible |
+
+L'ajout rapporté est strictement additif, sans wildcard ni autre URL.
+Ce tableau est une attestation utilisateur, pas une capture ou lecture du Dashboard.
+
+Le contrôle reprend l'onglet Supabase existant : Sign in. Aucun autre onglet
+Supabase connecté n'est disponible dans le navigateur de contrôle. La navigation
+par l'accueil Supabase puis son lien Dashboard retourne également à Sign in.
+Aucune connexion supplémentaire n'a été initiée, aucune configuration écrite.
+L'absence d'accès dans ce navigateur ne contredit pas l'ajout manuel confirmé.
+
+Relais revalidé à **16:42:53 UTC** : HTTPS **200**, URL finale identique, accès
+anonyme sans cookies, Authorization, paramètre ou redirection. Marqueur
+`X-Fixeo-Relay: w6-phase-1`, no-store / no-referrer / nosniff ; HTML identique
+à la Phase 1. Preuve : `phase2a/relay-public-manual-followup.json`.
+État déclaré et limite de vérification : `phase2a/manual-configuration-report.json`.
+
+**STOP — W6 PHASE 2A NOT CERTIFIED.** L'ajout manuel est consigné ;
+la relecture obligatoire du Dashboard, l'occurrence unique et la comparaison
+indépendante de Site URL restent à constater. Aucun PASS de relecture n'est
+revendiqué à partir de la seule confirmation textuelle.
+
+Rollback théorique après l'ajout manuel, non exécuté : retirer uniquement
+`https://w6-auth-staging.fixeo.ma/auth-callback` de l'allowlist staging,
+sans toucher à Site URL ni à tout autre réglage.
+
+Aucun changement Supabase/Vercel/DNS par cette reprise, aucun email/recovery,
+aucune session synthétique/JWT/vrai PKCE, aucune activation applicative.
+PR #150 Draft, ouverte et non mergée ; documentation uniquement.
+**Production impact = NONE. Aucun build physique, merge ou W7.**

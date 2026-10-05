@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-05T16:42:53.247775+00:00",
+  "url": "https://w6-auth-staging.fixeo.ma/auth-callback",
+  "status": 200,
+  "finalUrl": "https://w6-auth-staging.fixeo.ma/auth-callback",
+  "anonymous": true,
+  "cookies": false,
+  "authorization": false,
+  "redirectsFollowed": false,
+  "queryParameters": false,
+  "tlsValidationEnabled": true,
+  "relayMarker": "w6-phase-1",
+  "headers": {
+    "Cache-Control": "no-store",
+    "Referrer-Policy": "no-referrer",
+    "X-Content-Type-Options": "nosniff",
+    "Strict-Transport-Security": "max-age=63072000"
+  },
+  "sha256": "1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2"
+}
