@@ -6,6 +6,42 @@ Seul backend autorisé : `fixeo-diagnostic-staging` (`kqyhusnbybsukbcaoqtu`).
 
 **Verdict actuel : W6 NOT REACHED.** Le code et les tests locaux ne constituent pas une certification de recovery réel. Aucun merge, aucune Production, aucun build physique, aucun W7.
 
+## Phase 2B — activation canonique autorisée, candidat avant Auth réel
+
+GO utilisateur du 5 octobre 2026, checkpoint `bd3863d1d8cbe7a6fe99cfc15e6196d650a5c5b2`.
+La clôture Phase 2A ci-dessous reste acquise **WITH MANUAL DASHBOARD EVIDENCE** :
+aucune prétention de relecture indépendante du Dashboard Supabase.
+Le commit documentaire `d1bc1dd9960dab0ac6175f2530c010715b2a6233`, auparavant
+sans déplacement de branche pour respecter le STOP builds, est intégré avec ce candidat.
+
+- `assertCallbackUrl()` accepte seulement la chaîne exacte
+  `https://w6-auth-staging.fixeo.ma/auth-callback`. Aucune normalisation permissive.
+- L'export fixe cette URL et `EXPO_PUBLIC_AUTH_CALLBACK_APPROVED=true` seulement
+  après le double garde `VERCEL_ENV=preview` et branche W6 exacte.
+  Aucune variable Vercel globale ni configuration Production modifiée.
+- Les anciens paragraphes de cet historique décrivant `VERCEL_BRANCH_URL` et le
+  flag absent décrivent les étapes antérieures, remplacées par ce GO Phase 2B.
+- Configuration Supabase, DNS, projet relais, domaine et certificat gelés.
+  `fixeo-clean` conserve `ssoProtection.enabled=true` et
+  `deploymentType=all_except_custom_domains` (relecture API avant publication).
+
+Préflight local : TypeScript PASS ; contrats mobile **113/113** ; serveur
+**201/201** ; Client C4 **14/14** ; Expo Doctor 1.20.4 **18/18** ; Gate A PASS ;
+`git diff --check` PASS. Le premier lancement serveur manquait des dépendances
+de test locales ; réinstallation par `npm ci` depuis le lockfile existant,
+puis relance complète PASS, sans changement de dépendance versionnée.
+
+Les nouveaux contrats prouvent l'allowlist exacte, les rejets Production/www,
+autres domaines/sous-domaines/paths, localhost/IP privées, credentials, HTTP,
+query/hash, ancienne Preview et les refus signup/recovery avant réseau lorsque
+le flag n'est pas approuvé. L'export refuse Production, une autre branche et
+un environnement absent. Les résultats contractuels ne valent pas Auth réel.
+
+À ce checkpoint : **0 recovery Phase 2B**, aucun signup, aucune nouvelle session,
+aucun JWT réutilisé. CI, artefact Preview, puis Client réel (une seule tentative)
+restent à certifier. Artisan ne sera demandé qu'après PASS Client.
+**NATIVE PHYSICAL DEEP LINK = DEFERRED TO PHYSICAL BUILD CERTIFICATION.**
+
 ## Acquis réels et nettoyage
 
 | Contrôle staging | Client | Artisan |

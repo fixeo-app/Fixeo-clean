@@ -1,12 +1,11 @@
 const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 if (process.env.VERCEL_ENV !== 'preview' || process.env.VERCEL_GIT_COMMIT_REF !== 'feat/fixeo-mobile-w6-entry-auth-trust') throw new Error('W6_PREVIEW_ONLY');
-const origin = process.env.VERCEL_BRANCH_URL;
-if (!origin || !/^[a-z0-9.-]+\.vercel\.app$/.test(origin)) throw new Error('W6_PREVIEW_ORIGIN_REQUIRED');
 if (!/^sb_publishable_/.test(process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '')) throw new Error('W6_PUBLISHABLE_KEY_REQUIRED');
 const env = { ...process.env,
   EXPO_PUBLIC_APP_ENV: 'staging', EXPO_PUBLIC_SUPABASE_URL: 'https://kqyhusnbybsukbcaoqtu.supabase.co',
-  EXPO_PUBLIC_AUTH_CALLBACK_URL: 'https://' + origin + '/auth-callback',
+  EXPO_PUBLIC_AUTH_CALLBACK_URL: 'https://w6-auth-staging.fixeo.ma/auth-callback',
+  EXPO_PUBLIC_AUTH_CALLBACK_APPROVED: 'true',
   EXPO_PUBLIC_FIXEO_API_BASE_URL: 'https://kqyhusnbybsukbcaoqtu.supabase.co/functions/v1/mobile-rafi-preview-proxy',
 };
 const result = spawnSync(process.execPath, ['node_modules/expo/bin/cli', 'export', '--platform', 'web', '--output-dir', 'dist'], { env, stdio: 'inherit' });

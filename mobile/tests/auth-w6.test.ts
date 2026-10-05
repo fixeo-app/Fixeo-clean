@@ -2,11 +2,63 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
+import ts from 'typescript';
 import { assertCallbackUrl, parseAuthCallback, authIssue, createAuthState, routeAllowed } from '../lib/authContract';
-const callback = 'https://fixeo-w6-preview.vercel.app/auth-callback';
-test('remote callback fails closed without a canonical HTTPS destination', () => {
-  for (const bad of [undefined, 'null', 'http://localhost:3000', 'https://127.0.0.1/auth-callback', 'https://10.0.0.1/auth-callback', 'https://fixeo.ma/auth-callback', 'https://staging.fixeo.ma/auth-callback', callback + '#recovery', callback + '?x=1', 'https://user:pass@host.test/auth-callback']) assert.throws(() => assertCallbackUrl(bad));
+const callback = 'https://w6-auth-staging.fixeo.ma/auth-callback';
+test('callback configuration accepts only the exact certified staging URL', () => {
+  for (const bad of [
+    undefined, '', 'null', 'http://localhost:3000', 'https://localhost/auth-callback',
+    'https://127.0.0.1/auth-callback', 'https://10.0.0.1/auth-callback',
+    'https://192.168.1.1/auth-callback', 'https://172.16.0.1/auth-callback',
+    'https://[::1]/auth-callback', 'https://fixeo.ma/auth-callback',
+    'https://www.fixeo.ma/auth-callback', 'https://staging.fixeo.ma/auth-callback',
+    'https://fixeo-w6-preview.vercel.app/auth-callback', 'https://unrelated.test/auth-callback',
+    callback.replace('https:', 'http:'), callback.replace('https://', 'https://user:pass@'),
+    callback + '#recovery', callback + '?x=1', callback + '?', callback + '#',
+    callback + '/', callback.replace('/auth-callback', '/entry'), ' ' + callback,
+    callback.replace('.ma/', '.ma:443/'), callback.replace('/auth-callback', '/%61uth-callback'),
+  ]) assert.throws(() => assertCallbackUrl(bad), `Must reject ${bad}`);
   assert.equal(assertCallbackUrl(callback), callback);
+});
+test('unapproved callback blocks both signup and recovery before any Auth request', async () => {
+  const source = ts.transpileModule(readFileSync('lib/authFlows.ts', 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText;
+  for (const approved of [undefined, '', 'false', 'TRUE']) {
+    let requests = 0;
+    const exports: Record<string, any> = {};
+    vm.runInNewContext(source, { exports, process: { env: {
+      EXPO_PUBLIC_AUTH_CALLBACK_URL: callback, EXPO_PUBLIC_AUTH_CALLBACK_APPROVED: approved,
+    } }, require: (name: string) => name === './authContract' ? { assertCallbackUrl, parseAuthCallback }
+      : name === './supabase' ? { supabase: { auth: new Proxy({}, { get: () => () => { requests++; throw new Error('UNEXPECTED_AUTH_REQUEST'); } }) } } : {} });
+    await assert.rejects(exports.requestRecovery('fixture@example.invalid'), /AUTH_CALLBACK_NOT_APPROVED/);
+    await assert.rejects(exports.createAccount({ role: 'client', name: 'Synthetic', email: 'fixture@example.invalid', password: 'synthetic-test-only' }), /AUTH_CALLBACK_NOT_APPROVED/);
+    assert.equal(requests, 0);
+  }
+});
+test('export activates the exact callback only for the W6 Preview branch', () => {
+  const script = readFileSync('scripts/w6-web-export.cjs', 'utf8');
+  const branch = 'feat/fixeo-mobile-w6-entry-auth-trust';
+  for (const [environment, ref, allowed] of [
+    ['preview', branch, true], ['production', branch, false], ['development', branch, false],
+    ['preview', 'main', false], ['preview', branch + '-other', false], [undefined, branch, false],
+  ] as const) {
+    let spawned = 0;
+    const env = { VERCEL_ENV: environment, VERCEL_GIT_COMMIT_REF: ref,
+      EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_synthetic_contract_only',
+      VERCEL_BRANCH_URL: 'old-protected-preview.vercel.app',
+      EXPO_PUBLIC_AUTH_CALLBACK_URL: 'http://localhost:3000', EXPO_PUBLIC_AUTH_CALLBACK_APPROVED: 'false' };
+    const run = () => vm.runInNewContext(script, { process: { env, execPath: 'node' }, require: (name: string) =>
+      name === 'node:child_process' ? { spawnSync: (_: string, args: string[], options: { env: Record<string, string> }) => {
+        spawned++; assert.equal(options.env.EXPO_PUBLIC_AUTH_CALLBACK_URL, callback);
+        assert.equal(options.env.EXPO_PUBLIC_AUTH_CALLBACK_APPROVED, 'true');
+        assert.equal(options.env.EXPO_PUBLIC_SUPABASE_URL, 'https://kqyhusnbybsukbcaoqtu.supabase.co');
+        assert.ok(args.includes('web')); return { status: 0 };
+      } } : { readFileSync: () => '<head></head>', writeFileSync: () => undefined } });
+    if (allowed) { run(); assert.equal(spawned, 1); }
+    else { assert.throws(run, /W6_PREVIEW_ONLY/); assert.equal(spawned, 0); }
+    assert.equal(env.EXPO_PUBLIC_AUTH_CALLBACK_APPROVED, 'false');
+  }
 });
 test('callback binds web origin, rejects bearer fragments and accepts only authorization codes', () => {
   assert.equal(parseAuthCallback(callback + '?code=code-for-local-contract', callback).error, null);

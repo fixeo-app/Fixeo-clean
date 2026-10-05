@@ -29,13 +29,11 @@ export const authCopy: Record<AuthIssue, { title: string; detail: string }> = {
 
 export function assertCallbackUrl(value: string | undefined): string {
   if (!value) throw new Error('AUTH_CALLBACK_NOT_CONFIGURED');
-  let url: URL; try { url = new URL(value); } catch { throw new Error('AUTH_CALLBACK_INVALID'); }
-  if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash ||
-      /^(localhost|127\.|0\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|\[)/.test(url.hostname) ||
-      /(^|\.)fixeo\.ma$/i.test(url.hostname) || url.pathname !== '/auth-callback') {
+  // Exact staging allowlist. Do not normalize or infer a Preview/Production URL.
+  if (value !== 'https://w6-auth-staging.fixeo.ma/auth-callback') {
     throw new Error('AUTH_CALLBACK_INVALID');
   }
-  return url.toString();
+  return value;
 }
 
 export type CallbackInput = { code: string; error: AuthIssue | null; legacyTokenRejected: boolean };
