@@ -1,0 +1,61 @@
+{
+  "acceptedAt": "2026-10-05T16:47:50Z",
+  "acceptedBy": "User explicit instruction: acceptance of manual Dashboard evidence",
+  "verdict": "PASS W6 PHASE 2A \u2014 SUPABASE CALLBACK ALLOWLIST CERTIFIED WITH MANUAL DASHBOARD EVIDENCE",
+  "project": {
+    "name": "fixeo-diagnostic-staging",
+    "ref": "kqyhusnbybsukbcaoqtu"
+  },
+  "dashboardEvidence": {
+    "provenance": "USER-OBSERVED / MANUAL EVIDENCE",
+    "screenshotsVerifiedBy": "User",
+    "screenshotsIndependentlyInspectedByAgent": false,
+    "agentDashboardRead": false,
+    "before": {
+      "siteUrl": "http://localhost:3000",
+      "redirectUrls": []
+    },
+    "after": {
+      "siteUrl": "http://localhost:3000",
+      "redirectUrls": [
+        "https://w6-auth-staging.fixeo.ma/auth-callback"
+      ]
+    },
+    "exactUrlOccurrenceCount": 1,
+    "siteUrlUnchanged": true,
+    "wildcardsAdded": false,
+    "otherAuthSettingsChanged": false,
+    "limitation": "Other Auth settings unchanged according to user evidence and no agent mutation; not an independent global Auth configuration diff."
+  },
+  "automatedReadOnlyChecks": {
+    "at": "2026-10-05T16:50:45.426880+00:00",
+    "httpsCallbackStatus": 200,
+    "offCallback404Count": 10,
+    "previewW6Protected": true,
+    "originalSsoProtectionUnchanged": true,
+    "originalProjectUpdatedAtUnchanged": true,
+    "dnsCnameUnchanged": true,
+    "relayArtifactHashUnchanged": true,
+    "functionalGitChangesSincePhase2A": 0
+  },
+  "historicalVercelActivity": "Two earlier docs commits triggered 4 Preview deployments and automatic alias assignments; no project configuration change events in the inspected interval. No zero-activity claim.",
+  "closureActions": {
+    "supabaseLoginAttempts": 0,
+    "supabaseApiCalls": 0,
+    "supabaseWrites": 0,
+    "vercelWrites": 0,
+    "dnsWrites": 0,
+    "authEmails": 0,
+    "syntheticSessions": 0,
+    "realPKCE": 0,
+    "applicationActivation": false,
+    "buildCommands": 0,
+    "branchPush": false,
+    "merge": false,
+    "W7": false
+  },
+  "publication": "Documentation-only Git object referenced in PR #150 without moving its branch, to avoid another automatic Preview build.",
+  "rollback": "Remove only https://w6-auth-staging.fixeo.ma/auth-callback from the staging redirect allowlist; not executed.",
+  "productionImpact": "NONE",
+  "nextPhase": "STOP. Phase 2B requires a new distinct GO."
+}

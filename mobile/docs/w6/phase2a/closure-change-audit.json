@@ -1,0 +1,133 @@
+{
+  "checkedAt": "2026-10-05T16:51:41.355Z",
+  "windowStart": "2026-10-05T16:13:00Z",
+  "git": {
+    "base": "9f517aae2004ee7b6715742d1a5bca628b8941bb",
+    "head": "bd3863d1d8cbe7a6fe99cfc15e6196d650a5c5b2",
+    "commits": 2,
+    "files": [
+      "mobile/docs/w6/CERTIFICATION.md",
+      "mobile/docs/w6/phase2a/configuration-preflight.json",
+      "mobile/docs/w6/phase2a/dashboard-login-blocked.jpg",
+      "mobile/docs/w6/phase2a/manual-configuration-report.json",
+      "mobile/docs/w6/phase2a/relay-public-manual-followup.json",
+      "mobile/docs/w6/phase2a/relay-public.json"
+    ],
+    "functionalChanges": 0
+  },
+  "originalProject": {
+    "id": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+    "name": "fixeo-clean",
+    "updatedAt": 1791206683553,
+    "ssoProtection": {
+      "enabled": true,
+      "deploymentType": "all_except_custom_domains"
+    },
+    "passwordProtection": {
+      "enabled": false,
+      "deploymentType": null
+    },
+    "domains": [
+      "www.fixeo.ma",
+      "fixeo-clean.vercel.app",
+      "fixeo.ma",
+      "fixeo-clean-elalaouibiz-3410s-projects.vercel.app",
+      "fixeo-clean-git-main-elalaouibiz-3410s-projects.vercel.app"
+    ],
+    "projectDomains": [
+      {
+        "name": "fixeo-clean.vercel.app",
+        "apexName": "vercel.app",
+        "projectId": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+        "redirect": null,
+        "gitBranch": null,
+        "customEnvironmentId": null,
+        "updatedAt": 1775676367230,
+        "createdAt": 1775676367230,
+        "verified": true
+      },
+      {
+        "name": "fixeo.ma",
+        "apexName": "fixeo.ma",
+        "projectId": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+        "redirect": "www.fixeo.ma",
+        "redirectStatusCode": 301,
+        "gitBranch": null,
+        "customEnvironmentId": null,
+        "updatedAt": 1783732302652,
+        "createdAt": 1774860802372,
+        "verified": true
+      },
+      {
+        "name": "www.fixeo.ma",
+        "apexName": "fixeo.ma",
+        "projectId": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+        "redirect": null,
+        "redirectStatusCode": null,
+        "gitBranch": null,
+        "customEnvironmentId": null,
+        "updatedAt": 1775676787627,
+        "createdAt": 1774860802064,
+        "verified": true
+      }
+    ]
+  },
+  "vercelEvents": [
+    {
+      "id": "uev_sQrKQAA5bQdED85kf5YluOSK",
+      "type": "aliases-assigned",
+      "at": "2026-10-05T16:46:19.233Z",
+      "text": "fixeo-app assigned an alias to fixeo-clean-at7xnpfss-elalaouibiz-3410s-projects.vercel.app"
+    },
+    {
+      "id": "uev_cx31JmLzgDm3pw6mB7boaLaT",
+      "type": "aliases-assigned",
+      "at": "2026-10-05T16:45:47.372Z",
+      "text": "fixeo-app assigned 2 aliases to fixeo-w6-auth-relay-ecc4vll22-elalaouibiz-3410s-projects.vercel.app"
+    },
+    {
+      "id": "uev_ATDnOedKM6zLNyObcCy4QOSe",
+      "type": "deployment",
+      "at": "2026-10-05T16:45:40.964Z",
+      "text": "You deployed fixeo-clean from fixeo-app/Fixeo-clean (bd3863d in feat/fixeo-mobile-w6-entry-auth-trust) to fixeo-clean-git-feat-fixeo-mo-e1fd0b-elalaouibiz-3410s-projects.vercel.app"
+    },
+    {
+      "id": "uev_0nqFj90VGATOkbSpJdJkS3Hw",
+      "type": "deployment",
+      "at": "2026-10-05T16:45:40.848Z",
+      "text": "You deployed fixeo-w6-auth-relay from fixeo-app/Fixeo-clean (bd3863d in feat/fixeo-mobile-w6-entry-auth-trust) to fixeo-w6-auth-relay-git-feat-7093f2-elalaouibiz-3410s-projects.vercel.app"
+    },
+    {
+      "id": "uev_4G7HpS21LYJW8ajSFAH8xHlS",
+      "type": "aliases-assigned",
+      "at": "2026-10-05T16:37:13.728Z",
+      "text": "fixeo-app assigned an alias to fixeo-clean-l9kpwbl1o-elalaouibiz-3410s-projects.vercel.app"
+    },
+    {
+      "id": "uev_NPSlkWyL68V9kTkw1QV0Aeqk",
+      "type": "aliases-assigned",
+      "at": "2026-10-05T16:36:44.338Z",
+      "text": "fixeo-app assigned 2 aliases to fixeo-w6-auth-relay-c7rp9dfr0-elalaouibiz-3410s-projects.vercel.app"
+    },
+    {
+      "id": "uev_bpXPpMjOvcfrGzms3DvtlJy6",
+      "type": "deployment",
+      "at": "2026-10-05T16:36:39.461Z",
+      "text": "You deployed fixeo-clean from fixeo-app/Fixeo-clean (d2591fe in feat/fixeo-mobile-w6-entry-auth-trust) to fixeo-clean-git-feat-fixeo-mo-e1fd0b-elalaouibiz-3410s-projects.vercel.app"
+    },
+    {
+      "id": "uev_CAHladO8quqiArQxcY9HY0Dp",
+      "type": "deployment",
+      "at": "2026-10-05T16:36:39.051Z",
+      "text": "You deployed fixeo-w6-auth-relay from fixeo-app/Fixeo-clean (d2591fe in feat/fixeo-mobile-w6-entry-auth-trust) to fixeo-w6-auth-relay-git-feat-7093f2-elalaouibiz-3410s-projects.vercel.app"
+    }
+  ],
+  "eventSummary": "4 Git-triggered Preview deployments and 4 automatic alias assignments for the two documentation commits; no project-setting change events returned in the scoped interval. Do not describe this as zero Vercel activity.",
+  "additionalSupabaseChanges": {
+    "source": "USER-OBSERVED / MANUAL EVIDENCE plus agent action record",
+    "agentWrites": 0,
+    "manualChange": "Only exact callback URL added as reported by user",
+    "independentDashboardRead": false
+  },
+  "closureBuildPolicy": "No new push to the W6 branch because its Git integrations trigger automatic Preview builds. Update PR description and provide updated CERTIFICATION.md without launching a build."
+}

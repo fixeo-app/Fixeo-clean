@@ -1,0 +1,244 @@
+{
+  "at": "2026-10-05T16:50:45.426880+00:00",
+  "mode": "Read-only, anonymous, no cookies/Authorization/bypass/query parameters/Auth calls",
+  "tlsValidationEnabled": true,
+  "routes": [
+    {
+      "path": "/auth-callback",
+      "status": 200,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "Location": null
+      },
+      "bytes": 4957,
+      "sha256": "1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2"
+    },
+    {
+      "path": "/",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "Location": null
+      },
+      "bytes": 79,
+      "sha256": "a2e641f7b3f75480eeea63f482c414832dfbf4002ea0aacbf1ea44a8e150f54d"
+    },
+    {
+      "path": "/entry",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "Location": null
+      },
+      "bytes": 79,
+      "sha256": "f39a2b15f9438ca9a748f9d603e055f6c54252c99088ffb93ead873b3dc92ecf"
+    },
+    {
+      "path": "/sign-in",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "Location": null
+      },
+      "bytes": 79,
+      "sha256": "ba17b225ad52c6c36e1bb43adbe6af611198491084516f08847c6a1ab0915048"
+    },
+    {
+      "path": "/artisan",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "Location": null
+      },
+      "bytes": 79,
+      "sha256": "908a66a4b8b9b298eb5d05f85ca96a9c5cdda0f642178d76948cfeb5ea0fa899"
+    },
+    {
+      "path": "/client",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "Location": null
+      },
+      "bytes": 79,
+      "sha256": "9c1b0477e7a5f8fee3cfe7bd8746254cdcb6afcc4407ecf079e02031d7f739a5"
+    },
+    {
+      "path": "/random-test",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "Location": null
+      },
+      "bytes": 79,
+      "sha256": "66b3aef4ff03d3d141da97d4ea26a284ec766799ca6127b375bf3773cc33efc7"
+    },
+    {
+      "path": "/api/test",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "Location": null
+      },
+      "bytes": 79,
+      "sha256": "850ceaf08d8acb2b77221df8a40f60148bf3ac847ce7e5abc4b1bb8454e0873f"
+    },
+    {
+      "path": "/callback.html",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "Location": null
+      },
+      "bytes": 4957,
+      "sha256": "1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2"
+    },
+    {
+      "path": "/auth-callback/",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "Location": null
+      },
+      "bytes": 79,
+      "sha256": "c1e383a0c9de0f8490df6bf9df0531db811edd678af3df164553eb4a495e90e3"
+    },
+    {
+      "path": "/AUTH-CALLBACK",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "Location": null
+      },
+      "bytes": 79,
+      "sha256": "1f72a18cdec6323305bdaffa8a100700f2f114519d0c906947788b666b3f7dd8"
+    }
+  ],
+  "protectedPreview": [
+    {
+      "requestedPath": "/entry",
+      "chain": [
+        {
+          "status": 302,
+          "host": "fixeo-clean-git-feat-fixeo-mo-e1fd0b-elalaouibiz-3410s-projects.vercel.app",
+          "path": "/entry",
+          "redirectHost": "vercel.com",
+          "redirectPath": "/sso-api"
+        },
+        {
+          "status": 307,
+          "host": "vercel.com",
+          "path": "/sso-api",
+          "redirectHost": "vercel.com",
+          "redirectPath": "/login"
+        },
+        {
+          "status": 200,
+          "host": "vercel.com",
+          "path": "/login",
+          "redirectHost": null,
+          "redirectPath": null
+        }
+      ],
+      "protected": true
+    },
+    {
+      "requestedPath": "/auth-callback",
+      "chain": [
+        {
+          "status": 302,
+          "host": "fixeo-clean-git-feat-fixeo-mo-e1fd0b-elalaouibiz-3410s-projects.vercel.app",
+          "path": "/auth-callback",
+          "redirectHost": "vercel.com",
+          "redirectPath": "/sso-api"
+        },
+        {
+          "status": 307,
+          "host": "vercel.com",
+          "path": "/sso-api",
+          "redirectHost": "vercel.com",
+          "redirectPath": "/login"
+        },
+        {
+          "status": 200,
+          "host": "vercel.com",
+          "path": "/login",
+          "redirectHost": null,
+          "redirectPath": null
+        }
+      ],
+      "protected": true
+    }
+  ],
+  "dns": [
+    {
+      "provider": "Google",
+      "status": 0,
+      "answers": [
+        {
+          "name": "w6-auth-staging.fixeo.ma.",
+          "type": 5,
+          "TTL": 14400,
+          "data": "cname.vercel-dns.com."
+        }
+      ]
+    },
+    {
+      "provider": "Cloudflare",
+      "status": 0,
+      "answers": [
+        {
+          "name": "w6-auth-staging.fixeo.ma",
+          "type": 5,
+          "TTL": 14400,
+          "data": "cname.vercel-dns.com."
+        }
+      ]
+    }
+  ],
+  "pass": true
+}

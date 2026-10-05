@@ -316,7 +316,100 @@ Recovery : **DEFERRED — 429 over_email_send_rate_limit**, séparé de la certi
 
 **STOP. Aucune action Supabase ni poursuite Auth avant nouveau GO distinct.**
 
-## Phase 2A — allowlist Supabase, préflight bloqué
+## Clôture Phase 2A — preuve Dashboard manuelle acceptée
+
+**PASS W6 PHASE 2A — SUPABASE CALLBACK ALLOWLIST CERTIFIED WITH MANUAL DASHBOARD EVIDENCE**
+
+Décision explicite de l'utilisateur du 5 octobre 2026 à 16:47:50 UTC :
+la preuve Dashboard avant/après vérifiée manuellement est acceptée pour clôturer
+Phase 2A. La limitation de session du navigateur contrôlé n'est pas classée
+comme une anomalie de configuration. Aucun nouvel accès/essai de connexion
+Supabase n'a été effectué pour cette clôture.
+
+### Provenance et état certifié
+
+**USER-OBSERVED / MANUAL EVIDENCE** : captures Dashboard vérifiées par
+l'utilisateur ; elles n'ont pas été relues par l'agent. Projet exact :
+`fixeo-diagnostic-staging` / `kqyhusnbybsukbcaoqtu`.
+
+| Réglage | Avant manuel | Après manuel | Provenance |
+| --- | --- | --- | --- |
+| Site URL | `http://localhost:3000` | `http://localhost:3000` | USER-OBSERVED / MANUAL EVIDENCE |
+| Nombre de Redirect URLs | 0 | 1 | USER-OBSERVED / MANUAL EVIDENCE |
+| Liste complète | Vide | `https://w6-auth-staging.fixeo.ma/auth-callback` | USER-OBSERVED / MANUAL EVIDENCE |
+| Wildcard / autre URL | Aucun ajout | Aucun | USER-OBSERVED / MANUAL EVIDENCE |
+| Autres réglages Auth | État initial | Inchangés selon la preuve utilisateur | USER-OBSERVED / MANUAL EVIDENCE |
+
+L'URL exacte est donc certifiée présente **une seule fois sur la base de la
+preuve manuelle acceptée**. Site URL reste localhost ; aucun remplacement
+n'entre dans cette phase. Aucune lecture indépendante du Dashboard ni comparaison
+automatique de l'intégralité des réglages Auth n'est revendiquée.
+
+### Revalidations automatiques en lecture seule
+
+Contrôles du 5 octobre 2026 à **16:50:45 UTC**, sans cookies, Authorization,
+bypass, paramètres Auth ou émission d'email :
+
+| Contrôle | Résultat observé par l'agent |
+| --- | --- |
+| HTTPS `https://w6-auth-staging.fixeo.ma/auth-callback` | **200**, sans redirection, validation TLS active |
+| `/`, `/entry`, `/sign-in`, `/artisan`, `/client` | **404** chacun |
+| `/random-test`, `/api/test`, `/callback.html`, `/auth-callback/`, `/AUTH-CALLBACK` | **404** chacun |
+| Confidentialité | no-store / no-referrer / nosniff présents |
+| Artefact relais | Empreinte identique à Phase 1 |
+| Preview W6 `/entry` et `/auth-callback` | 302 Vercel SSO → 307 Vercel Login |
+| fixeo-clean | SSO enabled=true / all_except_custom_domains, mêmes domaines et updatedAt |
+| DNS Google + Cloudflare | CNAME `w6-auth-staging` → `cname.vercel-dns.com`, TTL 14400 s |
+
+Empreinte SHA-256 du relais :
+`1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2`.
+fixeo-clean `updatedAt=1791206683553`, inchangé depuis Phase 1.
+
+### Vérification des changements et publication sans build
+
+Comparaison Git de `9f517aae2004ee7b6715742d1a5bca628b8941bb` à
+`bd3863d1d8cbe7a6fe99cfc15e6196d650a5c5b2` : deux commits,
+uniquement `mobile/docs/w6/`, **zéro changement fonctionnel**.
+Le code applicatif et le relais n'ont pas été modifiés pendant Phase 2A.
+
+Le journal Vercel filtré sur les deux projets depuis 16:13 UTC contient
+quatre Previews Git et quatre affectations automatiques d'alias, associés aux
+commits documentaires `d2591fe` et `bd3863d`. Aucun événement de modification
+des réglages projet n'est renvoyé dans cet intervalle. Ces déploiements
+automatiques sont explicitement documentés : « aucune activité Vercel » serait
+inexact. Les protections, domaines et le contenu fonctionnel vérifiés sont
+inchangés ; aucun réglage Vercel n'a été écrit par l'agent en Phase 2A.
+
+Pour respecter **aucun build** dans cette clôture, le document et les preuves
+sont publiés sous forme de commit documentaire référencé dans la description
+PR #150, **sans déplacement de la branche**. Son HEAD reste `bd3863d`.
+Aucune commande build, push de branche, déploiement, modification DNS/Vercel
+ou requête Supabase n'est exécutée dans cette clôture.
+L'absence de modification Auth supplémentaire repose sur la preuve manuelle
+acceptée et le journal des opérations de l'agent, pas sur un audit global
+indépendant des actions de tous les administrateurs.
+
+Preuves de clôture : `phase2a/manual-dashboard-acceptance.json`,
+`phase2a/closure-public-checks.json`, `phase2a/closure-change-audit.json`.
+Les tentatives bloquées conservées ci-dessous sont **historiques** ; leurs
+verdicts sont remplacés par cette clôture sous preuve manuelle acceptée.
+
+### Rollback et frontière de Phase 2B
+
+Rollback non exécuté : retirer seulement
+`https://w6-auth-staging.fixeo.ma/auth-callback` de l'allowlist staging.
+Conserver Site URL et tout autre réglage.
+
+`EXPO_PUBLIC_AUTH_CALLBACK_APPROVED` n'est pas activé. Aucun signup, recovery,
+email Auth, nouvelle session synthétique, JWT ou vrai code PKCE. Le recovery
+reste **DEFERRED — 429 over_email_send_rate_limit**, sans nouvel essai.
+PR #150 reste Draft, ouverte et non mergée. **Production impact = NONE.**
+Aucun build physique, merge ou W7. Le PASS porte sur l'allowlist avec la provenance
+ci-dessus ; les parcours Auth réels ne sont pas certifiés.
+
+**STOP — Phase 2B nécessite un nouveau GO distinct.**
+
+## Historique Phase 2A — préflight bloqué avant acceptation manuelle
 
 GO explicite limité du 5 octobre 2026. Checkpoint d'entrée :
 `9f517aae2004ee7b6715742d1a5bca628b8941bb`, PR #150 Draft, ouverte, non mergée.
