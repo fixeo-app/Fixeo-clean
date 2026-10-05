@@ -4,7 +4,88 @@ Date : 5 octobre 2026. Base : `7256eeda9898639debe7c5a4e574a463d6fb2234`.
 Branche : `feat/fixeo-mobile-w6-entry-auth-trust`, cible PR : `feat/fixeo-mobile-m4-terrain`.
 Seul backend autorisé : `fixeo-diagnostic-staging` (`kqyhusnbybsukbcaoqtu`).
 
-**Verdict actuel : W6 NOT REACHED.** Le code et les tests locaux ne constituent pas une certification de recovery réel. Aucun merge, aucune Production, aucun build physique, aucun W7.
+**Verdict actuel : STOP — W6 PHASE 2B NOT CERTIFIED.** Activation canonique et Preview vérifiées ; handoff PKCE réel en mémoire non réalisable avec les API du navigateur contrôlé disponibles. Aucun recovery Phase 2B envoyé. Aucun merge, aucune Production, aucun build physique, aucun W7.
+
+## Phase 2B — clôture de cette exécution, 5 octobre 2026
+
+### Acquis vérifiés automatiquement
+
+Candidat fonctionnel **`ca97f43c39fe5fed269a868446f0b5d9c5eb148c`**,
+déploiement **`dpl_5LcSSPZdX6RotGTn3XssRJ5zKRP4`**,
+Preview `https://fixeo-clean-lgkhkyceu-elalaouibiz-3410s-projects.vercel.app`.
+Les cinq workflows GitHub sont SUCCESS sur ce SHA : Mobile Gate A, Mobile
+Intelligence, Client C4, Supply Engine et Control. Vercel READY.
+
+Le bundle **réel téléchargé depuis Vercel Output**
+`entry-8a2b6bfc438f3a81c667020d9c9efcea.js` (1 918 457 octets), SHA-256
+`16efee0fa9e643663cc670b9f2ec996b6de35cee96c8bb7f73f38e0dff91dfb3`,
+contient la destination canonique exacte. Son module Auth exécuté avec un SDK
+stub transmet exclusivement cette URL à signup et recovery. Le garde
+d'approbation est compilé en passage direct : **approved=true effectif**.
+Il ne reste aucun fallback localhost ou Preview dans ce module de destination.
+Ce contrôle de l'artefact n'a émis aucune requête Auth et ne vaut pas PKCE réel.
+
+Dans le navigateur autorisé Vercel : Entry, Login et formulaire recovery sont
+accessibles ; focus clavier Email → Mot de passe vérifié sans saisie ; aucun
+formulaire soumis. Capture non authentifiée : `phase2b/entry-candidate.jpg`.
+
+Relais public : HTTPS vérifié, callback 200, dix chemins hors callback 404,
+en-têtes `no-store`, `no-referrer`, `nosniff`. HTML identique à Phase 1
+(SHA-256 `1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2`).
+Les quatre classes de bearer, avec des marqueurs purement synthétiques en query
+ou fragment, donnent URL nettoyée et aucun bouton de transfert dans le vrai
+navigateur. Les 17 contrats relais passent également.
+
+Relecture API `fixeo-clean` avant/après : `updatedAt=1791206683553`,
+`ssoProtection.enabled=true`, `deploymentType=all_except_custom_domains`,
+strictement inchangés. Contrôle HTTP anonyme de la Preview : **302 vers Vercel
+SSO**. Les déploiements Preview Git attendus ne sont pas des changements de
+protection, de domaine ou de Root Directory.
+
+### Blocage exact et portée non certifiée
+
+**Blocage d'outillage, avant toute demande email.** Le contrat Web demandé impose
+de transférer le code reçu par le relais dans la mémoire du même contexte W6
+Preview qui conserve le vérificateur PKCE. Le relais expose seulement le bouton
+vers `fixeo://auth-callback` ; aucune interface de handoff Web n'est exposée.
+Les API disponibles du navigateur contrôlé permettent les interactions UI et
+l'inspection DOM en lecture seule, mais pas l'injection du callback dans la
+mémoire de l'application ni l'interception du deep link. Le canal sécurisé
+`browserAuth` couvre les champs de connexion ; il n'expose pas ce transfert.
+L'autorisation utilisateur du handoff est acquise, sa capacité d'exécution
+manque dans ce canal. Aucun passage par fichier, presse-papiers, log ou chat
+n'a été tenté avec un code réel. Aucun contournement des restrictions du
+navigateur, de la protection Vercel ou du contrat du relais.
+
+| Parcours réel Phase 2B | État |
+| --- | --- |
+| Demandes recovery Client / Artisan | **0 / 0** |
+| Envoi signup / nouveau compte | **0 / 0** |
+| PKCE réel / changement de mot de passe / login | NON TESTÉS |
+| Profil métier Artisan / ownership après finalisation | NON TESTÉS, aucune écriture |
+| Account switch réel / révocation réelle / message après redémarrage | NON TESTÉS |
+| Cleanup des sessions créées par cette exécution | Sans objet : aucune créée ; aucun décompte global backend prétendu |
+| Quota email | 429 historique seulement, aucune nouvelle observation ni retry |
+| Deep link Android/iPhone physique | **DEFERRED TO PHYSICAL BUILD CERTIFICATION** |
+
+Non-régression contractuelle relancée : W4, W4.1, W5, rôle canonique,
+mission/evidence, RAFI Voice, photo éphémère, Safety by Exception et Reduced
+Motion PASS dans les suites mobile/serveur. Les captures et simulations 320 px
+et texte 200 % antérieures restent historiques ; ces deux scénarios n'ont pas
+été rejoués sur le nouveau candidat et ne sont pas déclarés PASS Phase 2B.
+
+Supabase Auth et Database : aucune mutation. DNS, configuration du relais,
+certificat et domaine inchangés. Aucun secret créé ou conservé. Les deux fixtures
+existantes sont conservées. PR #150 Draft, ouverte, non mergée.
+**Production impact = NONE.**
+
+Preuves : `phase2b/deployed-artifact.json`, `phase2b/certification-status.json`,
+`phase2b/public-relay-checks.json`. Ce STOP ne doit pas être renommé
+« DEFERRED BY AUTH EMAIL RATE LIMIT » : aucune tentative Phase 2B n'a atteint
+le service d'envoi. Reprendre uniquement avec un canal de certification capable
+du handoff PKCE en mémoire exigé, en conservant Client d'abord et max une demande.
+
+**STOP — W6 PHASE 2B NOT CERTIFIED.**
 
 ## Phase 2B — activation canonique autorisée, candidat avant Auth réel
 
