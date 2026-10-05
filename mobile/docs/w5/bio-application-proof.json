@@ -1,0 +1,1123 @@
+{
+  "project": "kqyhusnbybsukbcaoqtu",
+  "migration": "20261005104459_mobile_w5_artisan_bio.sql",
+  "sourceSha256": "52e0248623e9db010f157a848fd410dbee9728b0ffa94b820a4b9fd82dbc4913",
+  "application": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true}"
+      }
+    ],
+    "isError": false
+  },
+  "data": {
+    "before": [
+      {
+        "table_name": "public.artisan_business_clients",
+        "row_count": 3,
+        "content_md5": "e5cc77d242a516ff782b27d4aa9a4387"
+      },
+      {
+        "table_name": "public.artisan_business_quotes",
+        "row_count": 3,
+        "content_md5": "0a14a8b09afe37b2a2f86d37a9986c5e"
+      },
+      {
+        "table_name": "public.artisan_business_jobs",
+        "row_count": 4,
+        "content_md5": "e36a21fa80a5d3a536a0fec2ce95cf4c"
+      },
+      {
+        "table_name": "public.artisan_business_ledger",
+        "row_count": 5,
+        "content_md5": "94b431dafc4c5108e5aa6248b2f9eef8"
+      },
+      {
+        "table_name": "public.artisans",
+        "row_count": 7,
+        "content_md5": "61feead775dbf0d251aee4e9c5644de4"
+      },
+      {
+        "table_name": "public.artisan_service_categories",
+        "row_count": 4,
+        "content_md5": "a5fdce1b17a31367c6c33bb7e307c696"
+      },
+      {
+        "table_name": "public.artisan_service_cities",
+        "row_count": 4,
+        "content_md5": "4af7ac1bd8b29b0e1c3a6f9e9e79fa30"
+      },
+      {
+        "table_name": "public.users",
+        "row_count": 21,
+        "content_md5": "ae9d82a326c0e04fadf10fbcfc17acc9"
+      },
+      {
+        "table_name": "public.profiles",
+        "row_count": 21,
+        "content_md5": "f500402b1fff14067dc0602e8c432151"
+      },
+      {
+        "table_name": "public.missions",
+        "row_count": 24,
+        "content_md5": "9381a4d98a794571ef07b889de153bcc"
+      },
+      {
+        "table_name": "public.service_requests",
+        "row_count": 879,
+        "content_md5": "e9881f7e52987f88e2d45f6b6a4285a5"
+      },
+      {
+        "table_name": "public.dispatch_execution_queue",
+        "row_count": 51,
+        "content_md5": "71c503cd6c557541f4db02f94436219c"
+      },
+      {
+        "table_name": "public.quotes",
+        "row_count": 15,
+        "content_md5": "02b463f1ab6020870f71acdd01ea8105"
+      },
+      {
+        "table_name": "public.notifications",
+        "row_count": 45,
+        "content_md5": "9c1ef515922eb6912fff48231ff9c383"
+      },
+      {
+        "table_name": "public.enterprise_request_context",
+        "row_count": 6,
+        "content_md5": "4470ce615029cb8ec29a722635b4ec7e"
+      },
+      {
+        "table_name": "fixeo_private.mobile_mission_events_v1",
+        "row_count": 3,
+        "content_md5": "e20acac1d5400013f437a9ec62b72612"
+      },
+      {
+        "table_name": "fixeo_private.mobile_mission_change_proposals_v1",
+        "row_count": 0,
+        "content_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "table_name": "public.mobile_mission_evidence_v1",
+        "row_count": 6,
+        "content_md5": "3a1cdcc66db52f959a52c9cd279b7b50"
+      },
+      {
+        "table_name": "auth.users",
+        "row_count": 21,
+        "content_md5": "501cd2f8e2ceb61002a8b55d76c3f88e"
+      },
+      {
+        "table_name": "auth.sessions",
+        "row_count": 38,
+        "content_md5": "3ebdc4c221ed15ec23572ed8c10b9e51"
+      },
+      {
+        "table_name": "storage.objects",
+        "row_count": 16,
+        "content_md5": "52c3d70a3f2ecd0567c249f2facd9f37"
+      }
+    ],
+    "after": [
+      {
+        "table_name": "public.artisan_business_clients",
+        "row_count": 3,
+        "content_md5": "e5cc77d242a516ff782b27d4aa9a4387"
+      },
+      {
+        "table_name": "public.artisan_business_quotes",
+        "row_count": 3,
+        "content_md5": "0a14a8b09afe37b2a2f86d37a9986c5e"
+      },
+      {
+        "table_name": "public.artisan_business_jobs",
+        "row_count": 4,
+        "content_md5": "e36a21fa80a5d3a536a0fec2ce95cf4c"
+      },
+      {
+        "table_name": "public.artisan_business_ledger",
+        "row_count": 5,
+        "content_md5": "94b431dafc4c5108e5aa6248b2f9eef8"
+      },
+      {
+        "table_name": "public.artisans",
+        "row_count": 7,
+        "content_md5": "61feead775dbf0d251aee4e9c5644de4"
+      },
+      {
+        "table_name": "public.artisan_service_categories",
+        "row_count": 4,
+        "content_md5": "a5fdce1b17a31367c6c33bb7e307c696"
+      },
+      {
+        "table_name": "public.artisan_service_cities",
+        "row_count": 4,
+        "content_md5": "4af7ac1bd8b29b0e1c3a6f9e9e79fa30"
+      },
+      {
+        "table_name": "public.users",
+        "row_count": 21,
+        "content_md5": "ae9d82a326c0e04fadf10fbcfc17acc9"
+      },
+      {
+        "table_name": "public.profiles",
+        "row_count": 21,
+        "content_md5": "f500402b1fff14067dc0602e8c432151"
+      },
+      {
+        "table_name": "public.missions",
+        "row_count": 24,
+        "content_md5": "9381a4d98a794571ef07b889de153bcc"
+      },
+      {
+        "table_name": "public.service_requests",
+        "row_count": 879,
+        "content_md5": "e9881f7e52987f88e2d45f6b6a4285a5"
+      },
+      {
+        "table_name": "public.dispatch_execution_queue",
+        "row_count": 51,
+        "content_md5": "71c503cd6c557541f4db02f94436219c"
+      },
+      {
+        "table_name": "public.quotes",
+        "row_count": 15,
+        "content_md5": "02b463f1ab6020870f71acdd01ea8105"
+      },
+      {
+        "table_name": "public.notifications",
+        "row_count": 45,
+        "content_md5": "9c1ef515922eb6912fff48231ff9c383"
+      },
+      {
+        "table_name": "public.enterprise_request_context",
+        "row_count": 6,
+        "content_md5": "4470ce615029cb8ec29a722635b4ec7e"
+      },
+      {
+        "table_name": "fixeo_private.mobile_mission_events_v1",
+        "row_count": 3,
+        "content_md5": "e20acac1d5400013f437a9ec62b72612"
+      },
+      {
+        "table_name": "fixeo_private.mobile_mission_change_proposals_v1",
+        "row_count": 0,
+        "content_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "table_name": "public.mobile_mission_evidence_v1",
+        "row_count": 6,
+        "content_md5": "3a1cdcc66db52f959a52c9cd279b7b50"
+      },
+      {
+        "table_name": "auth.users",
+        "row_count": 21,
+        "content_md5": "501cd2f8e2ceb61002a8b55d76c3f88e"
+      },
+      {
+        "table_name": "auth.sessions",
+        "row_count": 38,
+        "content_md5": "3ebdc4c221ed15ec23572ed8c10b9e51"
+      },
+      {
+        "table_name": "storage.objects",
+        "row_count": 16,
+        "content_md5": "52c3d70a3f2ecd0567c249f2facd9f37"
+      }
+    ],
+    "unchanged": true
+  },
+  "metadata": {
+    "migration": [
+      {
+        "name": "mobile_w5_artisan_bio",
+        "version": "20261005105159"
+      }
+    ],
+    "function": {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "config": [
+        "search_path=\"\""
+      ],
+      "signature": "w5_update_my_artisan_bio_v1(text)",
+      "security_definer": true
+    },
+    "table_acl": "{postgres=arwdDxtm/postgres,anon=r/postgres,authenticated=ard/postgres,service_role=arwdDxt/postgres}",
+    "column_acls": [
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "id"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "name"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "city"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "category"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "phone"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "description"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "rating"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "created_at"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "legacy_id"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "public_slug"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "full_name"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "experience"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "photo_url"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "service_category"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "services"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "work_zone"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "phone_public"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "availability"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "verified"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "claimed"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "claim_status"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "owner_user_id"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "onboarding_completed"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "review_count"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "price_from"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "price_label"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "source"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "updated_at"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "starting_price"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "is_verified"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "is_featured"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "claimable"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "response_time_min"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "completed_missions"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "badge_label"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "avatar_color"
+      },
+      {
+        "acl": "{authenticated=a/postgres}",
+        "name": "is_public"
+      },
+      {
+        "acl": null,
+        "name": "data_classification"
+      }
+    ],
+    "timestamp_function_md5": "851d138bca797d724f043debc2f68e90",
+    "timestamp_trigger": "CREATE TRIGGER artisans_updated_at BEFORE UPDATE ON public.artisans FOR EACH ROW EXECUTE FUNCTION update_updated_at()",
+    "legacy_md5": "043db6c4dfed6bcbbe2650c73807fdd3",
+    "anon_execute": false,
+    "authenticated_execute": true
+  },
+  "columns": {
+    "before": [
+      {
+        "id": "20000000-0000-4000-8000-000000000020",
+        "allowed_test_owner": false,
+        "full_md5": "c1604843075875ec6bf620547268aefe",
+        "other_columns_md5": "afa3316c77695b0994312c7c5a59b51f",
+        "column_hashes": {
+          "id": "fea67c9808339ff664654e5b30564093",
+          "city": "4a2843dcccf43384a35242e59fda6eee",
+          "name": "37a6259cc0c1dae299a7866489dff0bd",
+          "phone": "b37700a4d17736ebc3758f0abe35f879",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "ce47ed6ea9b0b9fa7ef967ee34510624",
+          "services": "c99c80b98fe630615d1f4b82734646a4",
+          "verified": "b326b5062b2f0e69046810717534cb09",
+          "claimable": "b326b5062b2f0e69046810717534cb09",
+          "full_name": "1e505a4e024c072906478a2efaa4ce06",
+          "is_public": "b326b5062b2f0e69046810717534cb09",
+          "legacy_id": "37a6259cc0c1dae299a7866489dff0bd",
+          "photo_url": "29d0048173548afdea198f0ee43e8a07",
+          "work_zone": "4ba41d3c82e376ab201b220647c9aced",
+          "created_at": "4b32c98726a8e7746adf81726e55381a",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "ef6b6358466acbbfc56421c7b3296c54",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "37a6259cc0c1dae299a7866489dff0bd",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "b326b5062b2f0e69046810717534cb09",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "cb009d610d03e8ea2e0dfcde46ada000",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "9d4568c009d203ab10e33ea9953a0264",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "6b35f09c9a0e6454caed201a75522e66",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "ce47ed6ea9b0b9fa7ef967ee34510624",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "303b5c8988601647873b4ffd247d83cb",
+          "onboarding_completed": "b326b5062b2f0e69046810717534cb09"
+        }
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000021",
+        "allowed_test_owner": false,
+        "full_md5": "488ae2870ceade9bc8ca6cfe6a84f187",
+        "other_columns_md5": "a3e98df3f354d6353fde108aa4623cc1",
+        "column_hashes": {
+          "id": "ff2a13270ef049b279b053e5547deee9",
+          "city": "4a2843dcccf43384a35242e59fda6eee",
+          "name": "37a6259cc0c1dae299a7866489dff0bd",
+          "phone": "b66365c1b4253c9c71027f360ef12279",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "37a6259cc0c1dae299a7866489dff0bd",
+          "services": "d751713988987e9331980363e24189ce",
+          "verified": "b326b5062b2f0e69046810717534cb09",
+          "claimable": "b326b5062b2f0e69046810717534cb09",
+          "full_name": "60448aa913c0bcb7526293e6a895dfe0",
+          "is_public": "b326b5062b2f0e69046810717534cb09",
+          "legacy_id": "37a6259cc0c1dae299a7866489dff0bd",
+          "photo_url": "9d4568c009d203ab10e33ea9953a0264",
+          "work_zone": "9d4568c009d203ab10e33ea9953a0264",
+          "created_at": "4b32c98726a8e7746adf81726e55381a",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "832f30bd24cd30368651ba4ad1228a9a",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "37a6259cc0c1dae299a7866489dff0bd",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "b326b5062b2f0e69046810717534cb09",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "cb009d610d03e8ea2e0dfcde46ada000",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "9d4568c009d203ab10e33ea9953a0264",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "9d410531b14b99b51a3a06015584c4ac",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "000129e060b155d382630d77d8362165",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "303b5c8988601647873b4ffd247d83cb",
+          "onboarding_completed": "b326b5062b2f0e69046810717534cb09"
+        }
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000022",
+        "allowed_test_owner": false,
+        "full_md5": "8ed0d6e0f505fe71e32e0344e97e5285",
+        "other_columns_md5": "4d62af99b4eb74e0e3f0c19c7fa7cc4e",
+        "column_hashes": {
+          "id": "5b19738753e749e7e9f4222e77edc4ac",
+          "city": "4a2843dcccf43384a35242e59fda6eee",
+          "name": "37a6259cc0c1dae299a7866489dff0bd",
+          "phone": "37a6259cc0c1dae299a7866489dff0bd",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "37a6259cc0c1dae299a7866489dff0bd",
+          "services": "d751713988987e9331980363e24189ce",
+          "verified": "68934a3e9455fa72420237eb05902327",
+          "claimable": "b326b5062b2f0e69046810717534cb09",
+          "full_name": "9048c4528243c5410b465b532d52935f",
+          "is_public": "b326b5062b2f0e69046810717534cb09",
+          "legacy_id": "65b77fdd4abf38ed27c98c72f6d7e018",
+          "photo_url": "9d4568c009d203ab10e33ea9953a0264",
+          "work_zone": "9d4568c009d203ab10e33ea9953a0264",
+          "created_at": "4b32c98726a8e7746adf81726e55381a",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "7ba79d6b5d766928b1956fabfdad578b",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "37a6259cc0c1dae299a7866489dff0bd",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "68934a3e9455fa72420237eb05902327",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "0dec653eab65de84632e80ca122e8def",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "9d4568c009d203ab10e33ea9953a0264",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "4b63ebf666affeb26a8f3f644b7ec618",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "000129e060b155d382630d77d8362165",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "303b5c8988601647873b4ffd247d83cb",
+          "onboarding_completed": "68934a3e9455fa72420237eb05902327"
+        }
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000023",
+        "allowed_test_owner": false,
+        "full_md5": "43b0e6e223152dc94a8b703b2a70f395",
+        "other_columns_md5": "831477ba8873786a06ab3c94267bfe5c",
+        "column_hashes": {
+          "id": "1a3c8e377ba688c8b03d2144d41c0b03",
+          "city": "f0ed795fcf59cf50be2a92fcbe499d0c",
+          "name": "37a6259cc0c1dae299a7866489dff0bd",
+          "phone": "37a6259cc0c1dae299a7866489dff0bd",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "37a6259cc0c1dae299a7866489dff0bd",
+          "services": "d751713988987e9331980363e24189ce",
+          "verified": "68934a3e9455fa72420237eb05902327",
+          "claimable": "b326b5062b2f0e69046810717534cb09",
+          "full_name": "aeda68b8da8dd16546222ca91ab113b1",
+          "is_public": "b326b5062b2f0e69046810717534cb09",
+          "legacy_id": "89341648615991315bd453eaa5bf3e3e",
+          "photo_url": "9d4568c009d203ab10e33ea9953a0264",
+          "work_zone": "9d4568c009d203ab10e33ea9953a0264",
+          "created_at": "4b32c98726a8e7746adf81726e55381a",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "f33008c3bb77a95d4300a8b7d782c011",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "37a6259cc0c1dae299a7866489dff0bd",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "68934a3e9455fa72420237eb05902327",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "0dec653eab65de84632e80ca122e8def",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "9d4568c009d203ab10e33ea9953a0264",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "23ad86157f454753905f015fc2ef5572",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "ce47ed6ea9b0b9fa7ef967ee34510624",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "e82d756b09b2b69c3acba115fd194664",
+          "onboarding_completed": "68934a3e9455fa72420237eb05902327"
+        }
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000024",
+        "allowed_test_owner": false,
+        "full_md5": "25e76604b73d0aa30469815cbd689f53",
+        "other_columns_md5": "8a7c4703fb6c713634c66440005ba7da",
+        "column_hashes": {
+          "id": "fdc9bf6e4a8e7960c219c2f288dbb986",
+          "city": "4a2843dcccf43384a35242e59fda6eee",
+          "name": "46a172520a3c4a362bbb8f03832eeea0",
+          "phone": "37a6259cc0c1dae299a7866489dff0bd",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "000129e060b155d382630d77d8362165",
+          "services": "d751713988987e9331980363e24189ce",
+          "verified": "b326b5062b2f0e69046810717534cb09",
+          "claimable": "68934a3e9455fa72420237eb05902327",
+          "full_name": "46a172520a3c4a362bbb8f03832eeea0",
+          "is_public": "68934a3e9455fa72420237eb05902327",
+          "legacy_id": "853d208c4a78b564df8ea5a64232e444",
+          "photo_url": "9d4568c009d203ab10e33ea9953a0264",
+          "work_zone": "4a2843dcccf43384a35242e59fda6eee",
+          "created_at": "4b32c98726a8e7746adf81726e55381a",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "2474f80049e392c996299305da528efb",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "37a6259cc0c1dae299a7866489dff0bd",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "b326b5062b2f0e69046810717534cb09",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "cb009d610d03e8ea2e0dfcde46ada000",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "9d4568c009d203ab10e33ea9953a0264",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "e459bec70fb6633a7153ce3c6de40f75",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "000129e060b155d382630d77d8362165",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "37a6259cc0c1dae299a7866489dff0bd",
+          "onboarding_completed": "b326b5062b2f0e69046810717534cb09"
+        }
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000025",
+        "allowed_test_owner": false,
+        "full_md5": "f2df4eba877a3b3a345bd4dc1d322822",
+        "other_columns_md5": "5cfc4b32e2ffca4c8942835f631c331f",
+        "column_hashes": {
+          "id": "ec58ee2fa4a4766e4ff952d01d7bdaee",
+          "city": "f0ed795fcf59cf50be2a92fcbe499d0c",
+          "name": "37a6259cc0c1dae299a7866489dff0bd",
+          "phone": "37a6259cc0c1dae299a7866489dff0bd",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "37a6259cc0c1dae299a7866489dff0bd",
+          "services": "d751713988987e9331980363e24189ce",
+          "verified": "68934a3e9455fa72420237eb05902327",
+          "claimable": "b326b5062b2f0e69046810717534cb09",
+          "full_name": "cbe7f9ecdfd097e8c249318eb2f34b6d",
+          "is_public": "b326b5062b2f0e69046810717534cb09",
+          "legacy_id": "92840561463011bc9fd4b6fb4eeaf0d4",
+          "photo_url": "9d4568c009d203ab10e33ea9953a0264",
+          "work_zone": "9d4568c009d203ab10e33ea9953a0264",
+          "created_at": "5dc8bfca255d323c1b25106dcafe3a14",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "ff6f67238222fa681502be1b50565240",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "37a6259cc0c1dae299a7866489dff0bd",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "68934a3e9455fa72420237eb05902327",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "0dec653eab65de84632e80ca122e8def",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "9d4568c009d203ab10e33ea9953a0264",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "f83546335871f78343646ac36b197d47",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "ce47ed6ea9b0b9fa7ef967ee34510624",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "303b5c8988601647873b4ffd247d83cb",
+          "onboarding_completed": "68934a3e9455fa72420237eb05902327"
+        }
+      },
+      {
+        "id": "79f9fca5-20b4-48a5-a525-dd047132e37b",
+        "allowed_test_owner": true,
+        "full_md5": "d32781e1aa1be6c407d01a1d5e39cfde",
+        "other_columns_md5": "c37635467e872a6f2c1b6faa46dc56ae",
+        "column_hashes": {
+          "id": "68b8a16d98d29acb6f8f8a0d768b822b",
+          "city": "f0ed795fcf59cf50be2a92fcbe499d0c",
+          "name": "916716e4ac15e3dd64ffb87a1c22ee00",
+          "phone": "12589857385321e0dac25ef092a8eb8a",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "000129e060b155d382630d77d8362165",
+          "services": "8124ebaa3ad4aa9aa3254630c8029614",
+          "verified": "68934a3e9455fa72420237eb05902327",
+          "claimable": "b326b5062b2f0e69046810717534cb09",
+          "full_name": "916716e4ac15e3dd64ffb87a1c22ee00",
+          "is_public": "68934a3e9455fa72420237eb05902327",
+          "legacy_id": "d5394b445df4571c72f74118c0584b78",
+          "photo_url": "9d4568c009d203ab10e33ea9953a0264",
+          "work_zone": "f0ed795fcf59cf50be2a92fcbe499d0c",
+          "created_at": "817f44ff39362e5533cec07a85142541",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "801d4acdb0df100afcd727354bd3f7ff",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "baa157c5d224cfffcd12dfa1fa2b947b",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "68934a3e9455fa72420237eb05902327",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "0dec653eab65de84632e80ca122e8def",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "12589857385321e0dac25ef092a8eb8a",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "c57b7c18d152a2374be26bddf3e03500",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "000129e060b155d382630d77d8362165",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "303b5c8988601647873b4ffd247d83cb",
+          "onboarding_completed": "b326b5062b2f0e69046810717534cb09"
+        }
+      }
+    ],
+    "after": [
+      {
+        "id": "20000000-0000-4000-8000-000000000020",
+        "allowed_test_owner": false,
+        "full_md5": "c1604843075875ec6bf620547268aefe",
+        "other_columns_md5": "afa3316c77695b0994312c7c5a59b51f",
+        "column_hashes": {
+          "id": "fea67c9808339ff664654e5b30564093",
+          "city": "4a2843dcccf43384a35242e59fda6eee",
+          "name": "37a6259cc0c1dae299a7866489dff0bd",
+          "phone": "b37700a4d17736ebc3758f0abe35f879",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "ce47ed6ea9b0b9fa7ef967ee34510624",
+          "services": "c99c80b98fe630615d1f4b82734646a4",
+          "verified": "b326b5062b2f0e69046810717534cb09",
+          "claimable": "b326b5062b2f0e69046810717534cb09",
+          "full_name": "1e505a4e024c072906478a2efaa4ce06",
+          "is_public": "b326b5062b2f0e69046810717534cb09",
+          "legacy_id": "37a6259cc0c1dae299a7866489dff0bd",
+          "photo_url": "29d0048173548afdea198f0ee43e8a07",
+          "work_zone": "4ba41d3c82e376ab201b220647c9aced",
+          "created_at": "4b32c98726a8e7746adf81726e55381a",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "ef6b6358466acbbfc56421c7b3296c54",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "37a6259cc0c1dae299a7866489dff0bd",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "b326b5062b2f0e69046810717534cb09",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "cb009d610d03e8ea2e0dfcde46ada000",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "9d4568c009d203ab10e33ea9953a0264",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "6b35f09c9a0e6454caed201a75522e66",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "ce47ed6ea9b0b9fa7ef967ee34510624",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "303b5c8988601647873b4ffd247d83cb",
+          "onboarding_completed": "b326b5062b2f0e69046810717534cb09"
+        }
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000021",
+        "allowed_test_owner": false,
+        "full_md5": "488ae2870ceade9bc8ca6cfe6a84f187",
+        "other_columns_md5": "a3e98df3f354d6353fde108aa4623cc1",
+        "column_hashes": {
+          "id": "ff2a13270ef049b279b053e5547deee9",
+          "city": "4a2843dcccf43384a35242e59fda6eee",
+          "name": "37a6259cc0c1dae299a7866489dff0bd",
+          "phone": "b66365c1b4253c9c71027f360ef12279",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "37a6259cc0c1dae299a7866489dff0bd",
+          "services": "d751713988987e9331980363e24189ce",
+          "verified": "b326b5062b2f0e69046810717534cb09",
+          "claimable": "b326b5062b2f0e69046810717534cb09",
+          "full_name": "60448aa913c0bcb7526293e6a895dfe0",
+          "is_public": "b326b5062b2f0e69046810717534cb09",
+          "legacy_id": "37a6259cc0c1dae299a7866489dff0bd",
+          "photo_url": "9d4568c009d203ab10e33ea9953a0264",
+          "work_zone": "9d4568c009d203ab10e33ea9953a0264",
+          "created_at": "4b32c98726a8e7746adf81726e55381a",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "832f30bd24cd30368651ba4ad1228a9a",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "37a6259cc0c1dae299a7866489dff0bd",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "b326b5062b2f0e69046810717534cb09",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "cb009d610d03e8ea2e0dfcde46ada000",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "9d4568c009d203ab10e33ea9953a0264",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "9d410531b14b99b51a3a06015584c4ac",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "000129e060b155d382630d77d8362165",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "303b5c8988601647873b4ffd247d83cb",
+          "onboarding_completed": "b326b5062b2f0e69046810717534cb09"
+        }
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000022",
+        "allowed_test_owner": false,
+        "full_md5": "8ed0d6e0f505fe71e32e0344e97e5285",
+        "other_columns_md5": "4d62af99b4eb74e0e3f0c19c7fa7cc4e",
+        "column_hashes": {
+          "id": "5b19738753e749e7e9f4222e77edc4ac",
+          "city": "4a2843dcccf43384a35242e59fda6eee",
+          "name": "37a6259cc0c1dae299a7866489dff0bd",
+          "phone": "37a6259cc0c1dae299a7866489dff0bd",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "37a6259cc0c1dae299a7866489dff0bd",
+          "services": "d751713988987e9331980363e24189ce",
+          "verified": "68934a3e9455fa72420237eb05902327",
+          "claimable": "b326b5062b2f0e69046810717534cb09",
+          "full_name": "9048c4528243c5410b465b532d52935f",
+          "is_public": "b326b5062b2f0e69046810717534cb09",
+          "legacy_id": "65b77fdd4abf38ed27c98c72f6d7e018",
+          "photo_url": "9d4568c009d203ab10e33ea9953a0264",
+          "work_zone": "9d4568c009d203ab10e33ea9953a0264",
+          "created_at": "4b32c98726a8e7746adf81726e55381a",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "7ba79d6b5d766928b1956fabfdad578b",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "37a6259cc0c1dae299a7866489dff0bd",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "68934a3e9455fa72420237eb05902327",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "0dec653eab65de84632e80ca122e8def",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "9d4568c009d203ab10e33ea9953a0264",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "4b63ebf666affeb26a8f3f644b7ec618",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "000129e060b155d382630d77d8362165",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "303b5c8988601647873b4ffd247d83cb",
+          "onboarding_completed": "68934a3e9455fa72420237eb05902327"
+        }
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000023",
+        "allowed_test_owner": false,
+        "full_md5": "43b0e6e223152dc94a8b703b2a70f395",
+        "other_columns_md5": "831477ba8873786a06ab3c94267bfe5c",
+        "column_hashes": {
+          "id": "1a3c8e377ba688c8b03d2144d41c0b03",
+          "city": "f0ed795fcf59cf50be2a92fcbe499d0c",
+          "name": "37a6259cc0c1dae299a7866489dff0bd",
+          "phone": "37a6259cc0c1dae299a7866489dff0bd",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "37a6259cc0c1dae299a7866489dff0bd",
+          "services": "d751713988987e9331980363e24189ce",
+          "verified": "68934a3e9455fa72420237eb05902327",
+          "claimable": "b326b5062b2f0e69046810717534cb09",
+          "full_name": "aeda68b8da8dd16546222ca91ab113b1",
+          "is_public": "b326b5062b2f0e69046810717534cb09",
+          "legacy_id": "89341648615991315bd453eaa5bf3e3e",
+          "photo_url": "9d4568c009d203ab10e33ea9953a0264",
+          "work_zone": "9d4568c009d203ab10e33ea9953a0264",
+          "created_at": "4b32c98726a8e7746adf81726e55381a",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "f33008c3bb77a95d4300a8b7d782c011",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "37a6259cc0c1dae299a7866489dff0bd",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "68934a3e9455fa72420237eb05902327",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "0dec653eab65de84632e80ca122e8def",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "9d4568c009d203ab10e33ea9953a0264",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "23ad86157f454753905f015fc2ef5572",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "ce47ed6ea9b0b9fa7ef967ee34510624",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "e82d756b09b2b69c3acba115fd194664",
+          "onboarding_completed": "68934a3e9455fa72420237eb05902327"
+        }
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000024",
+        "allowed_test_owner": false,
+        "full_md5": "25e76604b73d0aa30469815cbd689f53",
+        "other_columns_md5": "8a7c4703fb6c713634c66440005ba7da",
+        "column_hashes": {
+          "id": "fdc9bf6e4a8e7960c219c2f288dbb986",
+          "city": "4a2843dcccf43384a35242e59fda6eee",
+          "name": "46a172520a3c4a362bbb8f03832eeea0",
+          "phone": "37a6259cc0c1dae299a7866489dff0bd",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "000129e060b155d382630d77d8362165",
+          "services": "d751713988987e9331980363e24189ce",
+          "verified": "b326b5062b2f0e69046810717534cb09",
+          "claimable": "68934a3e9455fa72420237eb05902327",
+          "full_name": "46a172520a3c4a362bbb8f03832eeea0",
+          "is_public": "68934a3e9455fa72420237eb05902327",
+          "legacy_id": "853d208c4a78b564df8ea5a64232e444",
+          "photo_url": "9d4568c009d203ab10e33ea9953a0264",
+          "work_zone": "4a2843dcccf43384a35242e59fda6eee",
+          "created_at": "4b32c98726a8e7746adf81726e55381a",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "2474f80049e392c996299305da528efb",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "37a6259cc0c1dae299a7866489dff0bd",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "b326b5062b2f0e69046810717534cb09",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "cb009d610d03e8ea2e0dfcde46ada000",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "9d4568c009d203ab10e33ea9953a0264",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "e459bec70fb6633a7153ce3c6de40f75",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "000129e060b155d382630d77d8362165",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "37a6259cc0c1dae299a7866489dff0bd",
+          "onboarding_completed": "b326b5062b2f0e69046810717534cb09"
+        }
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000025",
+        "allowed_test_owner": false,
+        "full_md5": "f2df4eba877a3b3a345bd4dc1d322822",
+        "other_columns_md5": "5cfc4b32e2ffca4c8942835f631c331f",
+        "column_hashes": {
+          "id": "ec58ee2fa4a4766e4ff952d01d7bdaee",
+          "city": "f0ed795fcf59cf50be2a92fcbe499d0c",
+          "name": "37a6259cc0c1dae299a7866489dff0bd",
+          "phone": "37a6259cc0c1dae299a7866489dff0bd",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "37a6259cc0c1dae299a7866489dff0bd",
+          "services": "d751713988987e9331980363e24189ce",
+          "verified": "68934a3e9455fa72420237eb05902327",
+          "claimable": "b326b5062b2f0e69046810717534cb09",
+          "full_name": "cbe7f9ecdfd097e8c249318eb2f34b6d",
+          "is_public": "b326b5062b2f0e69046810717534cb09",
+          "legacy_id": "92840561463011bc9fd4b6fb4eeaf0d4",
+          "photo_url": "9d4568c009d203ab10e33ea9953a0264",
+          "work_zone": "9d4568c009d203ab10e33ea9953a0264",
+          "created_at": "5dc8bfca255d323c1b25106dcafe3a14",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "ff6f67238222fa681502be1b50565240",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "37a6259cc0c1dae299a7866489dff0bd",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "68934a3e9455fa72420237eb05902327",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "0dec653eab65de84632e80ca122e8def",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "9d4568c009d203ab10e33ea9953a0264",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "f83546335871f78343646ac36b197d47",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "ce47ed6ea9b0b9fa7ef967ee34510624",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "303b5c8988601647873b4ffd247d83cb",
+          "onboarding_completed": "68934a3e9455fa72420237eb05902327"
+        }
+      },
+      {
+        "id": "79f9fca5-20b4-48a5-a525-dd047132e37b",
+        "allowed_test_owner": true,
+        "full_md5": "a5418af875483941309d1aa8e5a909f1",
+        "other_columns_md5": "c37635467e872a6f2c1b6faa46dc56ae",
+        "column_hashes": {
+          "id": "68b8a16d98d29acb6f8f8a0d768b822b",
+          "city": "f0ed795fcf59cf50be2a92fcbe499d0c",
+          "name": "916716e4ac15e3dd64ffb87a1c22ee00",
+          "phone": "12589857385321e0dac25ef092a8eb8a",
+          "rating": "cfcd208495d565ef66e7dff9f98764da",
+          "source": "6a4deaae9e6ac5e15cfc1a07374d311b",
+          "claimed": "b326b5062b2f0e69046810717534cb09",
+          "category": "000129e060b155d382630d77d8362165",
+          "services": "8124ebaa3ad4aa9aa3254630c8029614",
+          "verified": "68934a3e9455fa72420237eb05902327",
+          "claimable": "b326b5062b2f0e69046810717534cb09",
+          "full_name": "916716e4ac15e3dd64ffb87a1c22ee00",
+          "is_public": "68934a3e9455fa72420237eb05902327",
+          "legacy_id": "d5394b445df4571c72f74118c0584b78",
+          "photo_url": "9d4568c009d203ab10e33ea9953a0264",
+          "work_zone": "f0ed795fcf59cf50be2a92fcbe499d0c",
+          "created_at": "817f44ff39362e5533cec07a85142541",
+          "experience": "9d4568c009d203ab10e33ea9953a0264",
+          "price_from": "37a6259cc0c1dae299a7866489dff0bd",
+          "updated_at": "cc6f6d997da250f5b3cb5615db5d214e",
+          "badge_label": "37a6259cc0c1dae299a7866489dff0bd",
+          "description": "dc484f3c0bd14ab72a564b07a0371c88",
+          "is_featured": "68934a3e9455fa72420237eb05902327",
+          "is_verified": "68934a3e9455fa72420237eb05902327",
+          "price_label": "9d4568c009d203ab10e33ea9953a0264",
+          "public_slug": "37a6259cc0c1dae299a7866489dff0bd",
+          "availability": "0dec653eab65de84632e80ca122e8def",
+          "avatar_color": "37a6259cc0c1dae299a7866489dff0bd",
+          "claim_status": "3bb1e256eeba64eb74539038e2d4c70a",
+          "phone_public": "12589857385321e0dac25ef092a8eb8a",
+          "review_count": "cfcd208495d565ef66e7dff9f98764da",
+          "owner_user_id": "c57b7c18d152a2374be26bddf3e03500",
+          "starting_price": "37a6259cc0c1dae299a7866489dff0bd",
+          "service_category": "000129e060b155d382630d77d8362165",
+          "response_time_min": "37a6259cc0c1dae299a7866489dff0bd",
+          "completed_missions": "37a6259cc0c1dae299a7866489dff0bd",
+          "data_classification": "303b5c8988601647873b4ffd247d83cb",
+          "onboarding_completed": "b326b5062b2f0e69046810717534cb09"
+        }
+      }
+    ],
+    "comparisons": [
+      {
+        "id": "20000000-0000-4000-8000-000000000020",
+        "allowed_test_owner": false,
+        "changed_columns": [],
+        "other_columns_unchanged": true,
+        "full_row_unchanged": true
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000021",
+        "allowed_test_owner": false,
+        "changed_columns": [],
+        "other_columns_unchanged": true,
+        "full_row_unchanged": true
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000022",
+        "allowed_test_owner": false,
+        "changed_columns": [],
+        "other_columns_unchanged": true,
+        "full_row_unchanged": true
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000023",
+        "allowed_test_owner": false,
+        "changed_columns": [],
+        "other_columns_unchanged": true,
+        "full_row_unchanged": true
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000024",
+        "allowed_test_owner": false,
+        "changed_columns": [],
+        "other_columns_unchanged": true,
+        "full_row_unchanged": true
+      },
+      {
+        "id": "20000000-0000-4000-8000-000000000025",
+        "allowed_test_owner": false,
+        "changed_columns": [],
+        "other_columns_unchanged": true,
+        "full_row_unchanged": true
+      },
+      {
+        "id": "79f9fca5-20b4-48a5-a525-dd047132e37b",
+        "allowed_test_owner": true,
+        "changed_columns": [
+          "updated_at",
+          "description"
+        ],
+        "other_columns_unchanged": true,
+        "full_row_unchanged": false
+      }
+    ],
+    "pass": true
+  },
+  "advisors": {
+    "beforeCategories": 5,
+    "afterCategories": 5,
+    "added": [
+      {
+        "kind": "authenticated_security_definer_function_executable",
+        "detail": "Function `public.w5_update_my_artisan_bio_v1(p_description text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/w5_update_my_artisan_bio_v1`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable"
+      }
+    ]
+  }
+}

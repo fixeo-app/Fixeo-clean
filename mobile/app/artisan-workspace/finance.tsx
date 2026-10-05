@@ -1,352 +1,223 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useState } from "react";
+import { View } from "react-native";
+import * as Crypto from "expo-crypto";
 import {
-  createArtisanLedgerEntry,
-  listArtisanLedger,
-  type ArtisanLedgerEntry,
-} from '@/lib/artisanWorkspace';
-import { FixeoAction } from '@/ui/FixeoAction';
-import { MobileShell } from '@/components/MobileShell';
-import { FixeoCard } from '@/ui/FixeoCard';
-import { FixeoScreen } from '@/ui/FixeoScreen';
-import { colors, radius, spacing, type } from '@/ui/tokens';
-import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
-import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
-
-export default function ArtisanFinance() {
-  const [items, setItems] = useState<ArtisanLedgerEntry[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [showCreate, setShowCreate] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [entryType, setEntryType] = useState<'income' | 'expense'>('income');
-  const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState('');
-  const [note, setNote] = useState('');
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      setItems(await withMobileDeadline(listArtisanLedger()));
-      setError('');
-    } catch (reason) {
-      setError(
-        isMobileUiTimeout(reason)
-          ? 'Le réseau met trop de temps. Vos mouvements restent intacts : tirez pour réessayer.'
-          : 'Impossible de charger vos mouvements.',
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
-
-  useForegroundRefresh(load);
-
-  const totals = useMemo(() => {
-    return items.reduce(
-      (acc, item) => {
-        const key = item.entry_type === 'expense' ? 'expense' : 'income';
-        acc[key] += Number(item.amount || 0);
-        return acc;
-      },
-      { income: 0, expense: 0 },
-    );
-  }, [items]);
-
-  const balance = totals.income - totals.expense;
-
-  async function createEntry() {
-    const value = Number(amount.replace(',', '.')) || 0;
-    if (creating || !value) return;
-    setCreating(true);
-    try {
-      const created = await withMobileDeadline(createArtisanLedgerEntry({
-        entryType,
-        amount: value,
-        category,
-        note,
-      }));
-      setItems(current => [created, ...current]);
-      setAmount('');
-      setCategory('');
-      setNote('');
-      setShowCreate(false);
-      setError('');
-    } catch (reason) {
-      setError(
-        isMobileUiTimeout(reason)
-          ? 'Le réseau met trop de temps. Vérifiez la liste avant de réessayer pour éviter un doublon.'
-          : 'Impossible d’enregistrer ce mouvement.',
-      );
-    } finally {
-      setCreating(false);
-    }
-  }
-
+  loadBusinessClients,
+  loadBusinessJobs,
+  loadLedger,
+  saveLedgerEntry,
+} from "@/lib/artisanOS";
+import { ledgerTotals, localDay, money } from "@/lib/artisanExperience";
+import {
+  ArtisanPage,
+  ArtisanSection,
+  ArtisanCue,
+  ArtisanEmpty,
+  ArtisanMessage,
+  ArtisanField,
+  ArtisanChoices,
+  useArtisanQuery,
+  useArtisanAction,
+  art,
+} from "@/components/ArtisanEditorial";
+import { FixeoText } from "@/ui/FixeoText";
+import { FixeoAction } from "@/ui/FixeoAction";
+const load = async () => {
+  const [ledger, clients, jobs] = await Promise.all([
+    loadLedger(),
+    loadBusinessClients(),
+    loadBusinessJobs(),
+  ]);
+  return { ledger, clients, jobs };
+};
+export default function Finance() {
+  const q = useArtisanQuery(load),
+    a = useArtisanAction();
+  const [open, setOpen] = useState(false),
+    [period, setPeriod] = useState("month"),
+    [kind, setKind] = useState("income"),
+    [amount, setAmount] = useState(""),
+    [note, setNote] = useState(""),
+    [date, setDate] = useState(localDay()),
+    [clientId, setClientId] = useState(""),
+    [jobId, setJobId] = useState(""),
+    [id, setId] = useState(() => Crypto.randomUUID());
+  const rows = q.data?.ledger.filter(
+    (r) =>
+      period === "all" ||
+      (period === "today"
+        ? r.occurred_on === localDay()
+        : r.occurred_on.startsWith(localDay().slice(0, 7))),
+  );
+  const totals = rows ? ledgerTotals(rows) : null;
   return (
-    <FixeoScreen padded={false} header={
-        <MobileShell
-          universe="artisan"
-          activeKey="finance"
-          statusLabel="Finance personnelle"
-          rightActionLabel="Artisan OS"
-          rightDestination="/artisan-workspace"
-        />
-      }>
-      <FlatList
-        data={items}
-        keyExtractor={item => item.id}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
-        ListHeaderComponent={
-          <View>
-            <View style={styles.header}>
-            <Text style={styles.kicker}>FINANCE</Text>
-            <Text style={styles.title}>Votre activité en chiffres.</Text>
-            <Text style={styles.subtitle}>
-              Encaissements et dépenses personnels, sans mélanger les flux marketplace FIXEO.
-            </Text>
-
-            <View style={styles.totalRow}>
-              <FixeoCard tone="dark" style={styles.totalCard}>
-                <Text style={styles.inverseKicker}>ENCAISSÉ</Text>
-                <Text style={styles.inverseTotal}>{Math.round(totals.income)} DH</Text>
-              </FixeoCard>
-              <FixeoCard tone="muted" style={styles.totalCard}>
-                <Text style={styles.kicker}>DÉPENSES</Text>
-                <Text style={styles.total}>{Math.round(totals.expense)} DH</Text>
-              </FixeoCard>
-            </View>
-
-            <FixeoCard style={styles.balanceCard}>
-              <Text style={styles.balanceLabel}>SOLDE PERSONNEL</Text>
-              <Text style={styles.balanceValue}>{Math.round(balance)} DH</Text>
-            </FixeoCard>
-
-            <FixeoAction
-              label={showCreate ? 'Fermer' : '+ Ajouter un mouvement'}
-              variant={showCreate ? 'ghost' : 'primary'}
-              onPress={() => setShowCreate(value => !value)}
-            />
-
-            {showCreate && (
-              <FixeoCard style={styles.form}>
-                <Text style={styles.formTitle}>Nouveau mouvement</Text>
-                <View style={styles.typeRow}>
-                  <FixeoAction
-                    label="Encaissement"
-                    labelNumberOfLines={1}
-                    adjustsFontSizeToFit
-                    minimumFontScale={0.78}
-                    variant={entryType === 'income' ? 'primary' : 'secondary'}
-                    style={styles.typeAction}
-                    onPress={() => setEntryType('income')}
-                  />
-                  <FixeoAction
-                    label="Dépense"
-                    labelNumberOfLines={1}
-                    adjustsFontSizeToFit
-                    minimumFontScale={0.78}
-                    variant={entryType === 'expense' ? 'primary' : 'secondary'}
-                    style={styles.typeAction}
-                    onPress={() => setEntryType('expense')}
-                  />
-                </View>
-                <TextInput
-                  value={amount}
-                  onChangeText={setAmount}
-                  placeholder="Montant en DH"
-                  placeholderTextColor={colors.textMuted}
-                  keyboardType="decimal-pad"
-                  style={styles.input}
-                />
-                <TextInput
-                  value={category}
-                  onChangeText={setCategory}
-                  placeholder="Catégorie"
-                  placeholderTextColor={colors.textMuted}
-                  style={styles.input}
-                />
-                <TextInput
-                  value={note}
-                  onChangeText={setNote}
-                  placeholder="Note facultative"
-                  placeholderTextColor={colors.textMuted}
-                  style={styles.input}
-                />
-                <FixeoAction
-                  label={creating ? 'Enregistrement…' : 'Enregistrer'}
-                  disabled={creating || !amount.trim()}
-                  onPress={() => void createEntry()}
-                />
-              </FixeoCard>
-            )}
-
-            {!!error && <Text style={styles.error}>{error}</Text>}
-            </View>
-          </View>
-        }
-        ListEmptyComponent={
-          <FixeoCard tone="muted">
-            <Text style={styles.emptyTitle}>Aucun mouvement enregistré.</Text>
-            <Text style={styles.emptyText}>
-              Ajoutez votre premier encaissement ou votre première dépense pour commencer le suivi.
-            </Text>
-          </FixeoCard>
-        }
-        renderItem={({ item }) => (
-          <FixeoCard style={styles.card}>
-            <View style={styles.row}>
-              <View style={styles.copy}>
-                <Text style={styles.name}>{item.category || item.entry_type}</Text>
-                <Text style={styles.meta}>
-                  {item.occurred_on}{item.note ? ` · ${item.note}` : ''}
-                </Text>
-              </View>
-              <Text style={styles.amount}>
-                {item.entry_type === 'expense' ? '−' : '+'}{Math.round(item.amount)} DH
-              </Text>
-            </View>
-          </FixeoCard>
-        )}
+    <ArtisanPage
+      title="Votre activité, en clair."
+      eyebrow="FINANCES"
+      detail="Les encaissements et dépenses que vous avez enregistrés."
+      activeKey="finance"
+      loading={q.loading}
+      onRefresh={() => void q.reload()}
+    >
+      <ArtisanMessage
+        message={q.error || a.message}
+        retry={q.error ? () => void q.reload() : undefined}
       />
-    </FixeoScreen>
+      <ArtisanChoices
+        label="Période financière"
+        value={period}
+        onChange={setPeriod}
+        options={[
+          { value: "today", label: "Aujourd’hui" },
+          { value: "month", label: "Ce mois" },
+          { value: "all", label: "Historique" },
+        ]}
+      />
+      {totals && (
+        <ArtisanSection label="MOUVEMENTS ENREGISTRÉS" dark>
+          <FixeoText variant="eyebrow" tone="inverseSecondary">
+            ENCAISSEMENTS
+          </FixeoText>
+          <FixeoText variant="title" tone="inverse">
+            {money(totals.income)}
+          </FixeoText>
+          <FixeoText tone="inverseSecondary">
+            Dépenses · {money(totals.expense)}
+          </FixeoText>
+          <FixeoText variant="supporting" tone="inverseSecondary">
+            Lecture des 200 derniers mouvements disponibles.
+          </FixeoText>
+        </ArtisanSection>
+      )}
+      <ArtisanCue
+        title="RAFI · Lire votre activité"
+        text={
+          rows?.length
+            ? `${rows.length} mouvement(s) enregistré(s) sur cette période. Ces montants décrivent les saisies, pas un solde bancaire ni un bénéfice.`
+            : "Vos prochains encaissements et dépenses apparaîtront ici après enregistrement."
+        }
+      />
+      <FixeoAction
+        label={open ? "Fermer la saisie" : "Ajouter un mouvement"}
+        onPress={() => setOpen((v) => !v)}
+      />
+      {open && q.data && (
+        <ArtisanSection label="MOUVEMENT PERSONNEL">
+          <ArtisanChoices
+            label="Type de mouvement"
+            value={kind}
+            onChange={setKind}
+            options={[
+              { value: "income", label: "Encaissement" },
+              { value: "expense", label: "Dépense" },
+            ]}
+          />
+          <ArtisanField
+            label="Montant en MAD"
+            value={amount}
+            onChangeText={setAmount}
+            keyboardType="decimal-pad"
+          />
+          <ArtisanField
+            label="Date du mouvement — AAAA-MM-JJ"
+            value={date}
+            onChangeText={setDate}
+          />
+          <ArtisanChoices
+            label="Client lié au mouvement"
+            value={clientId}
+            onChange={(v) => {
+              setClientId(v);
+              setJobId("");
+            }}
+            options={[
+              { value: "", label: "Aucun" },
+              ...q.data.clients.map((c) => ({
+                value: c.id,
+                label: c.full_name,
+              })),
+            ]}
+          />
+          <ArtisanChoices
+            label="Intervention liée"
+            value={jobId}
+            onChange={setJobId}
+            options={[
+              { value: "", label: "Aucune" },
+              ...q.data.jobs
+                .filter(
+                  (j) =>
+                    j.source === "personal" &&
+                    (!clientId || j.client_id === clientId),
+                )
+                .map((j) => ({ value: j.id, label: j.title })),
+            ]}
+          />
+          <ArtisanField
+            label="Note du mouvement"
+            value={note}
+            onChangeText={setNote}
+            multiline
+          />
+          <FixeoAction
+            label="Confirmer le mouvement"
+            busy={a.busy}
+            onPress={() => {
+              const n = Number(amount.replace(",", "."));
+              if (
+                !Number.isFinite(n) ||
+                n <= 0 ||
+                !/^\d{4}-\d{2}-\d{2}$/.test(date)
+              ) {
+                a.setMessage(
+                  "Renseignez un montant positif et une date valide.",
+                );
+                return;
+              }
+              void a.run(async () => {
+                const r = await saveLedgerEntry({
+                  id,
+                  entry_type: kind as "income" | "expense",
+                  amount: n,
+                  occurred_on: date,
+                  note,
+                  client_id: clientId || null,
+                  job_id: jobId || null,
+                });
+                setOpen(false);
+                setAmount("");
+                setNote("");
+                setId(Crypto.randomUUID());
+                await q.reload();
+                return r;
+              }, "Mouvement enregistré.");
+            }}
+          />
+        </ArtisanSection>
+      )}
+      {rows?.map((r) => (
+        <View style={art.row} key={r.id}>
+          <FixeoText variant="eyebrow" tone="secondary">
+            {r.occurred_on} · {r.source === "fixeo" ? "FIXEO" : "PERSONNEL"}
+          </FixeoText>
+          <FixeoText variant="heading">
+            {r.entry_type === "income" ? "+" : "−"} {money(r.amount)}
+          </FixeoText>
+          <FixeoText>{r.note || r.category || "Mouvement"}</FixeoText>
+          {r.client_id && (
+            <FixeoText tone="secondary">
+              {q.data?.clients.find((c) => c.id === r.client_id)?.full_name ||
+                "Client lié"}
+            </FixeoText>
+          )}
+        </View>
+      ))}
+      {rows?.length === 0 && (
+        <ArtisanEmpty
+          title="Vos mouvements commenceront ici."
+          detail="Enregistrez un encaissement reçu ou une dépense réelle."
+        />
+      )}
+    </ArtisanPage>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxl,
-    gap: spacing.sm,
-  },
-  header: {
-    gap: spacing.sm,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-  },
-  kicker: {
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.5,
-    color: colors.textMuted,
-  },
-  title: {
-    fontSize: 34,
-    lineHeight: 38,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  subtitle: { color: colors.textMuted, lineHeight: 21 },
-  totalRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-  },
-  totalCard: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  inverseKicker: {
-    color: '#A8A8AC',
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.2,
-  },
-  inverseTotal: {
-    color: colors.inverse,
-    fontSize: 24,
-    fontWeight: '900',
-  },
-  total: {
-    color: colors.text,
-    fontSize: 24,
-    fontWeight: '900',
-  },
-  balanceCard: {
-    gap: spacing.xs,
-  },
-  balanceLabel: {
-    color: colors.textMuted,
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.2,
-  },
-  balanceValue: {
-    color: colors.text,
-    fontSize: 26,
-    fontWeight: '900',
-  },
-  error: {
-    color: colors.danger,
-    fontWeight: '700',
-  },
-  form: {
-    gap: spacing.sm,
-  },
-  formTitle: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  typeRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  typeAction: {
-    flex: 1,
-    minHeight: 48,
-    paddingHorizontal: spacing.sm,
-  },
-  input: {
-    minHeight: 52,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
-    paddingHorizontal: spacing.md,
-    color: colors.text,
-    fontSize: type.body,
-  },
-  card: { marginBottom: spacing.sm },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  copy: {
-    flex: 1,
-    gap: 4,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  meta: {
-    color: colors.textMuted,
-    fontSize: 13,
-  },
-  amount: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  emptyText: {
-    marginTop: spacing.sm,
-    color: colors.textMuted,
-    lineHeight: 21,
-  },
-});

@@ -1,0 +1,112 @@
+{
+  "at": "2026-10-05T11:05:13.031Z",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "checks": [
+    {
+      "name": "active_artisan",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "client_get_my_mobile_artisan_access_v1",
+      "status": 403,
+      "code": "42501",
+      "reason": "ARTISAN_REQUIRED",
+      "pass": true
+    },
+    {
+      "name": "client_get_my_dispatch_offers_v1",
+      "status": 403,
+      "code": "42501",
+      "reason": "ARTISAN_REQUIRED",
+      "pass": true
+    },
+    {
+      "name": "client_list_my_mobile_artisan_missions_v1",
+      "status": 403,
+      "code": "42501",
+      "reason": "ARTISAN_REQUIRED",
+      "pass": true
+    },
+    {
+      "name": "client_activity_wrapper",
+      "status": 403,
+      "code": "42501",
+      "reason": "ARTISAN_REQUIRED",
+      "pass": true
+    },
+    {
+      "name": "legacy_direct_refused",
+      "status": 403,
+      "code": "42501",
+      "reason": "permission denied for function update_my_artisan_activity_v1",
+      "pass": true
+    },
+    {
+      "name": "artisan_business_clients_foreign_read",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_clients_foreign_write",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_quotes_foreign_read",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_quotes_foreign_write",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_jobs_foreign_read",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_jobs_foreign_write",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_ledger_foreign_read",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_ledger_foreign_write",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "foreign_mission",
+      "status": 200,
+      "reason": "not_your_mission",
+      "pass": true
+    },
+    {
+      "name": "foreign_quote_acceptance",
+      "status": 400,
+      "code": "P0001",
+      "reason": "QUOTE_NOT_FOUND",
+      "pass": true
+    },
+    {
+      "name": "artisan_estimator_denied",
+      "status": 403,
+      "reason": "ROLE_FORBIDDEN",
+      "pass": true
+    },
+    {
+      "name": "artisan_persisted_diagnostic_denied",
+      "status": 403,
+      "reason": "ROLE_FORBIDDEN",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

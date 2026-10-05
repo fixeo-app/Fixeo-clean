@@ -49,8 +49,19 @@ Deno.serve(async (req) => {
   const user = userData?.user;
   if (userError || !user) return json({ ok: false, error: "UNAUTHENTICATED" }, 401);
 
+  // Canonical role is read server-side. A revoked Artisan JWT cannot use a
+  // still-valid signature to obtain new upload tickets or signed reads.
+  const { data: actor, error: actorError } = await service.from("users").select("role").eq("id", user.id).maybeSingle();
+  if (actorError || !actor) return json({ ok: false, error: "FORBIDDEN" }, 403);
+  if (actor.role === "artisan") {
+    const { data: access, error: accessError } = await userClient.rpc("get_my_mobile_artisan_access_v1");
+    if (accessError || !access?.ok) return json({ ok: false, error: "ARTISAN_SESSION_REQUIRED" }, 403);
+  }
+
   const body = await req.json().catch(() => null);
   const action = String(body?.action || "");
+
+  if (action !== "list" && actor.role !== "artisan") return json({ ok: false, error: "ARTISAN_REQUIRED" }, 403);
 
   if (action === "create_upload") {
     const missionId = body?.mission_id;

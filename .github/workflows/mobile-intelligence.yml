@@ -2,6 +2,7 @@ name: Mobile Intelligence Contracts
 on:
   pull_request:
     paths:
+      - 'supabase/migrations/*mobile_w5*'
       - 'api/mobile-intelligence-fn/**'
       - 'api/mobile-rafi-photo-fn/**'
       - 'api/mobile-rafi-voice-fn/**'
@@ -13,6 +14,8 @@ on:
       - 'vercel.ts'
       - 'vercel.legacy.json'
       - 'tests/mobile-intelligence/**'
+      - 'tests/mobile-artisan/**'
+      - 'supabase/functions/mobile-mission-evidence/**'
       - 'supabase/migrations/*mobile_intelligence*'
       - '.github/workflows/mobile-intelligence.yml'
 jobs:
@@ -28,4 +31,4 @@ jobs:
       - name: Server authority and regression
         env:
           NODE_PATH: ./api/node_modules:./tests/mobile-intelligence/node_modules
-        run: node --test tests/mobile-intelligence/*.test.cjs tests/diagnostic/*.test.cjs tests/estimator/vap-handler.test.cjs tests/estimator/vap-offers-api.test.cjs tests/estimator/vap-bp33.test.cjs tests/estimator/route-public-view.test.cjs tests/estimator/plumbing-pilot.test.cjs
+        run: node --test tests/mobile-artisan/*.test.cjs tests/mobile-intelligence/*.test.cjs tests/diagnostic/*.test.cjs tests/estimator/vap-handler.test.cjs tests/estimator/vap-offers-api.test.cjs tests/estimator/vap-bp33.test.cjs tests/estimator/route-public-view.test.cjs tests/estimator/plumbing-pilot.test.cjs

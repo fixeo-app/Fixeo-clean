@@ -1,0 +1,22 @@
+✔ C4.0 legacy empty marketing block and V4 modal entry are detached (1.290853ms)
+✔ C4.1 Client OS no longer loads parallel dashboard tracking truth (0.242836ms)
+✔ C4.2 authenticated request creation is direct and idempotent (0.185222ms)
+✔ C4.3 notifications use one canonical Client OS reader (0.258219ms)
+✔ C4.4 RAFI is grounded in the server context contract (0.217299ms)
+✔ C4.4 server decision contract prioritizes confirmation then quote then live state (0.307952ms)
+✔ C4.5 navigation exposes decisions, requests, interventions and canonical dossier labels (0.180355ms)
+✔ C4.5 support number is centralized for later 0663 cutover (0.208035ms)
+✔ C4.5 desktop sidebar accessibility and modal focus are explicit (0.293852ms)
+✔ legacy client dashboard URLs redirect at the edge (0.213343ms)
+✔ cachebusters point at the certified Client OS assets (0.158963ms)
+✔ client context handler enforces canonical client role and returns evidence-backed decision (5.504624ms)
+✔ client context handler fails closed for a non-client canonical role (1.496625ms)
+✔ client context selects only columns present in the production contract (0.135349ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 96.674057

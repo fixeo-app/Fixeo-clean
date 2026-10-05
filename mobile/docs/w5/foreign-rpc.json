@@ -1,0 +1,30 @@
+[
+  {
+    "role": "artisan",
+    "name": "get_accepted_mission_detail",
+    "status": 200,
+    "ok": false,
+    "reason": "not_your_mission"
+  },
+  {
+    "role": "artisan",
+    "name": "artisan_business_accept_quote",
+    "status": 400,
+    "reason": "QUOTE_NOT_FOUND",
+    "code": "P0001"
+  },
+  {
+    "role": "client",
+    "name": "get_my_dispatch_offers_v1",
+    "status": 403,
+    "reason": "ARTISAN_REQUIRED",
+    "code": "42501"
+  },
+  {
+    "role": "client",
+    "name": "list_my_mobile_artisan_missions_v1",
+    "status": 403,
+    "reason": "ARTISAN_REQUIRED",
+    "code": "42501"
+  }
+]

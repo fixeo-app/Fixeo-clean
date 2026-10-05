@@ -15,6 +15,7 @@ on:
       - '.github/workflows/client-os-c4.yml'
   pull_request:
     paths:
+      - 'supabase/migrations/*mobile_w5*'
       - 'dashboard-client.html'
       - 'js/fixeo-dashboard-v2.js'
       - 'css/fixeo-dashboard-v2.css'

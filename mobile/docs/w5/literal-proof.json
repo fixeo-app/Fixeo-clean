@@ -1,0 +1,11 @@
+{
+  "file": "20261005085640_mobile_w5_artisan_authority_v2.sql",
+  "sha256": "6f017c6f97c7df25d0acc6117da5bc93c57bd9f7025ed199cdfd1f9f2cae7ed2",
+  "DROP": 0,
+  "DELETE": 0,
+  "TRUNCATE": 0,
+  "UPDATE_statements_in_function_bodies": 17,
+  "UPDATE_without_WHERE": 0,
+  "top_level_business_DML": 0,
+  "reference": "tests/mobile-artisan/authority-v2.test.cjs; application-proof.json before/after 21 table digests"
+}

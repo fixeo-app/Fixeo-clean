@@ -1,0 +1,21 @@
+{
+  "target": "fixeo-diagnostic-staging",
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "database": [
+    {
+      "checked_at": "2026-10-05 10:23:32.656893+00",
+      "auth_user_count": 21,
+      "synthetic_active_sessions": 0,
+      "historical_function_md5": "043db6c4dfed6bcbbe2650c73807fdd3",
+      "historical_acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "wrapper_acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "fixture_availability": "unavailable",
+      "today_migrations": [
+        {
+          "name": "mobile_w5_artisan_authority_v2",
+          "version": "20261005091927"
+        }
+      ]
+    }
+  ]
+}

@@ -23,7 +23,7 @@ jobs:
           path: mobile/package-lock.json
           if-no-files-found: error
           retention-days: 1
-      - run: npx expo-doctor@latest
+      - run: npx expo-doctor@1.20.4
       - run: npm run test:contracts
       - run: npm run typecheck
       - run: npx expo export --platform web --output-dir dist-gate-a
