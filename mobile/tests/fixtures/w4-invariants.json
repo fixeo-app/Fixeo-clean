@@ -2,13 +2,6 @@
   "base": "5d772c463d7b3fe2511553cc3aab48de228f8551",
   "protectedFiles": {
     "app/_layout.tsx": "ba7aaf81d49dd3ce98e1b68aa15de40aaea2f46d6201098e7db5c4c5bae27857",
-    "app/artisan-workspace/agenda.tsx": "d29207069d48c069af61170fc3accef94b70791d778e2e2035b3f0cb12a8b288",
-    "app/artisan-workspace/clients.tsx": "ff420ea641c0486b8a191e10ff980b27126a38c405f33f7be403ab7ff223c8e6",
-    "app/artisan-workspace/finance.tsx": "ea3f590da9a25e095be4ff596eef39f10f8e75b43721ea84cdbe162f43e0f1c8",
-    "app/artisan-workspace/index.tsx": "aa9cc696e95a7edbadff2eafe68ad70576f4bad4fae0042aab73f1db9158637f",
-    "app/artisan-workspace/quotes.tsx": "25fb0c6a39d11a363dcf1e7fd17524567154224a306071efaebdedc6f7c786aa",
-    "app/artisan.tsx": "c00467584fee267ff813cceca9a36be5bf3ea5622275cca855953504802022c2",
-    "app/mission/[id].tsx": "fb56559e6e1f8b6dfa53cb546124a82eb70a67a4915df91236f993eac32ecd91",
     "app/sign-in.tsx": "82367908f902744ae4a8c0780985de8e7ff853df9392c9552d5ee83c0e194f07",
     "assets/rafi/rafi-master-core-v1.png": "b08ce64b07953205c03317e08737ce9dbfef7aeec79179792d8820833c3311d6",
     "components/ContextualCockpitCard.tsx": "2f5df76813dd645e6c7a9754ce9e74c452d5e42f9173da52dc29084aa4a316ac",
@@ -68,7 +61,6 @@
     "ui/rafiOrbMotion.ts": "72d5059286536df71ff7cb124996bda493c0ef9d896fc439ebc920204cfaa6c8",
     "ui/rafiPresence.ts": "6418ab66c378d34a7343ff7ea437e4ca984cf2ec4ca9b7b7abc8b288038b8112",
     "ui/screenMetrics.ts": "29bba5d4003145edc6332139eb3c3aa6bb40715b615f8b60d0c751ea2b496eea",
-    "ui/shellContract.ts": "5de006835e4a9dae577561b9eb92295db211a41e1fa6d27a28d13707594a953b",
     "ui/tokens.ts": "58fa9b18211340550e823c5e6d9b8c5419a404f04ee71f7b7a4a5883970759ef",
     "ui/useRafiActivity.ts": "d79dbe7f543958009d6ad45d389965a98c80d19227f4e51e0e27b53494c45b68",
     "ui/useReducedMotion.ts": "6d32dcbaea47c7af8fec16a442521ad0666b9cf5c381f2a1e86ef3d64ec97b25"
@@ -116,5 +108,15 @@
     "handleVoice": "b5f93effd301908d596995d9a3584af9322473156c112217c98425e849bbbfc6",
     "hook-0": "dd76ee1de00c1aca24cd239f8e2c78d5cfc5fa1b252cd8ca223ec9f05f610958",
     "bootstrap": "f96891fd3bfa8d43b42ed4a1581b08f85dd08a9b109f7501cf9ebeaa342e7cdb"
+  },
+  "w5ReplacedPresentation": {
+    "app/artisan-workspace/agenda.tsx": "d29207069d48c069af61170fc3accef94b70791d778e2e2035b3f0cb12a8b288",
+    "app/artisan-workspace/clients.tsx": "ff420ea641c0486b8a191e10ff980b27126a38c405f33f7be403ab7ff223c8e6",
+    "app/artisan-workspace/finance.tsx": "ea3f590da9a25e095be4ff596eef39f10f8e75b43721ea84cdbe162f43e0f1c8",
+    "app/artisan-workspace/index.tsx": "aa9cc696e95a7edbadff2eafe68ad70576f4bad4fae0042aab73f1db9158637f",
+    "app/artisan-workspace/quotes.tsx": "25fb0c6a39d11a363dcf1e7fd17524567154224a306071efaebdedc6f7c786aa",
+    "app/artisan.tsx": "c00467584fee267ff813cceca9a36be5bf3ea5622275cca855953504802022c2",
+    "app/mission/[id].tsx": "fb56559e6e1f8b6dfa53cb546124a82eb70a67a4915df91236f993eac32ecd91",
+    "ui/shellContract.ts": "5de006835e4a9dae577561b9eb92295db211a41e1fa6d27a28d13707594a953b"
   }
 }

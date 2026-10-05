@@ -1,0 +1,2686 @@
+{
+  "kind": "integrated-artisan-os-real-staging",
+  "started_at": "2026-10-05T09:36:36.799Z",
+  "transport": "native HTTP forwarding; real staging; synthetic camera/microphone",
+  "calls": [
+    {
+      "page": "main",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6151
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 179,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 225,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7437,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 7298,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 7300,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 7310,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_current_artisan_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7494,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5990,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 256,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/update_artisan_availability",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5783,
+      "ok": false,
+      "reason": "onboarding_required"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7722,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_current_artisan_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7743,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7795,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 212,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 233,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 236,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 9500,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8937
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 200,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 233,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7782,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_current_artisan_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7812,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 7610,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 7614,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 7616,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7682,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 238,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 189,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 213,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5237,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5276,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5280,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6863,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "POST",
+      "status": 201,
+      "latency_ms": 246
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 236,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 249,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6140,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6165,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6450,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5268,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5288,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 218,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 7624,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6548,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 257,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/artisan_business_next_quote_number",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 225
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "POST",
+      "status": 201,
+      "latency_ms": 240
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 236,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 211,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7138,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6901,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6924,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7194,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6981,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6458,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "PATCH",
+      "status": 200,
+      "latency_ms": 259
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 229,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 243,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6917,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7156,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6616,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/artisan_business_accept_quote",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 241
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 232,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 216,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6299,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6104,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/list_my_mobile_artisan_missions_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6779,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6798,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 220,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 243,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 179,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "POST",
+      "status": 201,
+      "latency_ms": 242
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/list_my_mobile_artisan_missions_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 193,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 220,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 223,
+      "count": 2
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 226,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 13500,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 246,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8620,
+      "count": 2
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8645,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 10187,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 240,
+      "count": 0
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6867,
+      "count": 2
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6920,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7876,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "POST",
+      "status": 201,
+      "latency_ms": 232
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 233,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 216,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6067,
+      "count": 2
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6119,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6274,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "POST",
+      "status": 201,
+      "latency_ms": 240
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 232,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 224,
+      "count": 2
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5939,
+      "count": 2
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5999,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5946,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 226,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 8676,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 264,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 182,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 236,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6852,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6714,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6569,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/submit_artisan_quote_v2",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 254
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 233,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 217,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5650,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5869,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 232,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/accept_my_dispatch_offer_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 243,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e",
+      "reason": "accepted"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/publish_notification_event_s1b",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 238,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-magic-loop-push",
+      "method": "POST",
+      "action": "mission_accepted",
+      "status": 200,
+      "latency_ms": 2345,
+      "ok": true,
+      "reason": "guest_client"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6215,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 202,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mission_timeline_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 187,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "list",
+      "status": 200,
+      "latency_ms": 2822,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_mission_change_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5473,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/mark_my_mission_arrived_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7324,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-magic-loop-push",
+      "method": "POST",
+      "action": "mission_arrived",
+      "status": 200,
+      "latency_ms": 1932,
+      "ok": true,
+      "reason": "guest_client"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6394,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7909,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "list",
+      "status": 200,
+      "latency_ms": 1838,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mission_timeline_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5923,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_mission_change_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5936,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8715
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "list",
+      "status": 200,
+      "latency_ms": 1711,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_mission_change_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6918,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6964,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mission_timeline_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6983,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7427,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "list",
+      "status": 200,
+      "latency_ms": 9669,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "create_upload",
+      "status": 200,
+      "latency_ms": 2235,
+      "ok": true,
+      "id": "9dc911e2-4c4a-4a05-90dd-2b882a0bf602"
+    },
+    {
+      "page": "main",
+      "path": "/storage/v1/object/upload/sign/mission-evidence-private-v1/missions/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e/before/9dc911e2-4c4a-4a05-90dd-2b882a0bf602.png",
+      "method": "PUT",
+      "status": 200,
+      "latency_ms": 591
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "confirm_upload",
+      "status": 200,
+      "latency_ms": 1624,
+      "ok": true,
+      "id": "9dc911e2-4c4a-4a05-90dd-2b882a0bf602"
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "list",
+      "status": 200,
+      "latency_ms": 1937,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6820,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mission_timeline_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7493,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_mission_change_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7495,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7524,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/storage/v1/object/sign/mission-evidence-private-v1/missions/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e/before/9dc911e2-4c4a-4a05-90dd-2b882a0bf602.png",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8248
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "list",
+      "status": 200,
+      "latency_ms": 8782,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 194,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/start_mission",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 244,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 176,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_mission_change_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 203,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mission_timeline_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 208,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-magic-loop-push",
+      "method": "POST",
+      "action": "mission_started",
+      "status": 200,
+      "latency_ms": 1087,
+      "ok": true,
+      "reason": "guest_client"
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "list",
+      "status": 200,
+      "latency_ms": 1646,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 193,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "list",
+      "status": 200,
+      "latency_ms": 1732,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/storage/v1/object/sign/mission-evidence-private-v1/missions/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e/before/9dc911e2-4c4a-4a05-90dd-2b882a0bf602.png",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 689
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "create_upload",
+      "status": 200,
+      "latency_ms": 1420,
+      "ok": true,
+      "id": "eb942fdc-5d43-4e8f-892c-fe9ef814692b"
+    },
+    {
+      "page": "main",
+      "path": "/storage/v1/object/upload/sign/mission-evidence-private-v1/missions/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e/after/eb942fdc-5d43-4e8f-892c-fe9ef814692b.png",
+      "method": "PUT",
+      "status": 200,
+      "latency_ms": 564
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "confirm_upload",
+      "status": 200,
+      "latency_ms": 1180,
+      "ok": true,
+      "id": "eb942fdc-5d43-4e8f-892c-fe9ef814692b"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 215,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "list",
+      "status": 200,
+      "latency_ms": 1872,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/storage/v1/object/sign/mission-evidence-private-v1/missions/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e/before/9dc911e2-4c4a-4a05-90dd-2b882a0bf602.png",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 516
+    },
+    {
+      "page": "main",
+      "path": "/storage/v1/object/sign/mission-evidence-private-v1/missions/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e/after/eb942fdc-5d43-4e8f-892c-fe9ef814692b.png",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 754
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_mission_change_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7551,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7583,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mission_timeline_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 7599,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "list",
+      "status": 200,
+      "latency_ms": 9052,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 191,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/complete_mission",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 241,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 190,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mission_timeline_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 198,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-magic-loop-push",
+      "method": "POST",
+      "action": "mission_completed",
+      "status": 200,
+      "latency_ms": 1352,
+      "ok": true,
+      "reason": "guest_client"
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "list",
+      "status": 200,
+      "latency_ms": 1457,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_mission_change_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6194,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6661,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 240,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_service_cities",
+      "method": "GET",
+      "status": 403,
+      "latency_ms": 6016,
+      "code": "42501"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 8957,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 243,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_service_cities",
+      "method": "GET",
+      "status": 403,
+      "latency_ms": 5776,
+      "code": "42501"
+    },
+    {
+      "page": "main",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8705
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 220,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 254,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 222,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "PATCH",
+      "status": 403,
+      "latency_ms": 243,
+      "code": "42501"
+    },
+    {
+      "page": "main",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8565
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 209,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 255,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 222,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/update_my_artisan_contact_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 245,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 236,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 243,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 196,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/notifications",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 242,
+      "count": 4
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/list_my_mobile_artisan_missions_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 8500,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6568,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/notifications",
+      "method": "PATCH",
+      "status": 200,
+      "latency_ms": 237
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 229,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/notifications",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 237,
+      "count": 4
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/list_my_mobile_artisan_missions_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 8416,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6385,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6434,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_current_artisan_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6452,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 225,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8048,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8078,
+      "count": 2
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8144,
+      "count": 2
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-rafi-transcribe",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 9787,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/functions/v1/mobile-rafi-preview-proxy/api/mobile-rafi-photo",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 12838,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 275,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 301,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/update_artisan_availability",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 211,
+      "ok": true,
+      "reason": "updated"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 217,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 248,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/list_my_mobile_artisan_missions_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 202,
+      "ok": true
+    },
+    {
+      "page": "small",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 11266
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 202,
+      "ok": true
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 245,
+      "count": 1
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 8598,
+      "ok": true
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8441,
+      "count": 2
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8455,
+      "count": 2
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/rpc/get_my_current_artisan_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 8678,
+      "ok": true
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8476,
+      "count": 1
+    },
+    {
+      "page": "small",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5805
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 210,
+      "ok": true
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 242,
+      "count": 1
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/rpc/get_my_current_artisan_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5653,
+      "ok": true
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5664,
+      "ok": true
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5490,
+      "count": 2
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5709,
+      "count": 2
+    },
+    {
+      "page": "small",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5741,
+      "count": 1
+    },
+    {
+      "page": "large",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6430
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 237,
+      "ok": true
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 220,
+      "count": 1
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6786,
+      "ok": true
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/rpc/get_my_current_artisan_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6833,
+      "ok": true
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6613,
+      "count": 1
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6628,
+      "count": 2
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6641,
+      "count": 2
+    },
+    {
+      "page": "keyboard",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6023
+    },
+    {
+      "page": "keyboard",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 193,
+      "ok": true
+    },
+    {
+      "page": "keyboard",
+      "path": "/rest/v1/artisan_business_clients",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 220,
+      "count": 1
+    },
+    {
+      "page": "keyboard",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 5766,
+      "ok": true
+    },
+    {
+      "page": "keyboard",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 5630,
+      "count": 1
+    },
+    {
+      "page": "proof",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 10408
+    },
+    {
+      "page": "proof",
+      "path": "/functions/v1/mobile-mission-evidence",
+      "method": "POST",
+      "action": "list",
+      "status": 200,
+      "latency_ms": 3011,
+      "ok": true
+    },
+    {
+      "page": "proof",
+      "path": "/rest/v1/rpc/get_accepted_mission_detail",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6796,
+      "ok": true,
+      "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e"
+    },
+    {
+      "page": "proof",
+      "path": "/storage/v1/object/sign/mission-evidence-private-v1/missions/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e/before/9dc911e2-4c4a-4a05-90dd-2b882a0bf602.png",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 618
+    },
+    {
+      "page": "proof",
+      "path": "/storage/v1/object/sign/mission-evidence-private-v1/missions/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e/after/eb942fdc-5d43-4e8f-892c-fe9ef814692b.png",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 718
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 277,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 245,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/update_artisan_availability",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 220,
+      "ok": true,
+      "reason": "updated"
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 239,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 240,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 193,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 214,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 255,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_current_artisan_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 6230,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6044,
+      "count": 2
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6050,
+      "count": 2
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 6053,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 9201
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 203,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 240,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 9266,
+      "count": 1
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 9495,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/rpc/get_my_current_artisan_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 9532,
+      "ok": true
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 9325,
+      "count": 2
+    },
+    {
+      "page": "main",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 9359,
+      "count": 2
+    },
+    {
+      "page": "large",
+      "path": "/auth/v1/user",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 7487
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/rpc/get_my_mobile_artisan_access_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 177,
+      "ok": true
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/artisans",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 208,
+      "count": 1
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/rpc/get_my_dispatch_offers_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 8839,
+      "ok": true
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/rpc/get_my_current_artisan_mission_v1",
+      "method": "POST",
+      "status": 200,
+      "latency_ms": 8890,
+      "ok": true
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/artisan_business_ledger",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8715,
+      "count": 2
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/artisan_business_quotes",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8739,
+      "count": 1
+    },
+    {
+      "page": "large",
+      "path": "/rest/v1/artisan_business_jobs",
+      "method": "GET",
+      "status": 200,
+      "latency_ms": 8767,
+      "count": 2
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "home-idle.png",
+      "page": "main",
+      "route": "/artisan",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:36:51.544Z"
+    },
+    {
+      "file": "availability.png",
+      "page": "main",
+      "route": "/artisan-workspace",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:37:45.593Z"
+    },
+    {
+      "file": "home-timeout.png",
+      "page": "main",
+      "route": "/artisan",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:40:33.307Z"
+    },
+    {
+      "file": "home-opportunities.png",
+      "page": "main",
+      "route": "/artisan",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:41:29.352Z"
+    },
+    {
+      "file": "crm-empty.png",
+      "page": "main",
+      "route": "/artisan-workspace/clients",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:41:37.791Z"
+    },
+    {
+      "file": "crm-form.png",
+      "page": "main",
+      "route": "/artisan-workspace/client/new",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:42:36.333Z"
+    },
+    {
+      "file": "crm-client.png",
+      "page": "main",
+      "route": "/artisan-workspace/client/b48cc47a-792d-4f38-be98-de87884ebf2f",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:42:50.305Z"
+    },
+    {
+      "file": "quote-studio.png",
+      "page": "main",
+      "route": "/artisan-workspace/quote/new?clientId=b48cc47a-792d-4f38-be98-de87884ebf2f",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:44:00.243Z"
+    },
+    {
+      "file": "quote-preview.png",
+      "page": "main",
+      "route": "/artisan-workspace/quote/new?clientId=b48cc47a-792d-4f38-be98-de87884ebf2f",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:44:00.359Z"
+    },
+    {
+      "file": "quote-accepted.png",
+      "page": "main",
+      "route": "/artisan-workspace/quote/b7efdd4f-82ae-4a7a-99ea-f37935efa519",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:45:37.189Z"
+    },
+    {
+      "file": "agenda-form.png",
+      "page": "main",
+      "route": "/artisan-workspace/agenda",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:45:44.770Z"
+    },
+    {
+      "file": "agenda.png",
+      "page": "main",
+      "route": "/artisan-workspace/agenda",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:45:46.171Z"
+    },
+    {
+      "file": "finance.png",
+      "page": "main",
+      "route": "/artisan-workspace/finance",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:49:40.035Z"
+    },
+    {
+      "file": "opportunities.png",
+      "page": "main",
+      "route": "/artisan-workspace/opportunities",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:49:46.395Z"
+    },
+    {
+      "file": "opportunity-detail.png",
+      "page": "main",
+      "route": "/artisan-workspace/opportunity/ef64b36c-d888-4d96-9d99-c02792084ed6",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:50:51.052Z"
+    },
+    {
+      "file": "quote-fixeo-confirmation.png",
+      "page": "main",
+      "route": "/artisan-workspace/quote/new?origin=fixeo&requestId=ef64b36c-d888-4d96-9d99-c02792084ed6",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:50:58.536Z"
+    },
+    {
+      "file": "quotes-two-authorities.png",
+      "page": "main",
+      "route": "/artisan-workspace/quotes",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:51:11.466Z"
+    },
+    {
+      "file": "opportunity-accept-confirmation.png",
+      "page": "main",
+      "route": "/artisan-workspace/opportunity/3e59b46b-02cd-4f26-a5d1-c57417c627e7",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:51:17.875Z"
+    },
+    {
+      "file": "mission-accepted.png",
+      "page": "main",
+      "route": "/mission/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:51:30.783Z"
+    },
+    {
+      "file": "evidence-before.png",
+      "page": "main",
+      "route": "/artisan-workspace/evidence/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:55:33.498Z"
+    },
+    {
+      "file": "mission-active.png",
+      "page": "main",
+      "route": "/mission/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:55:44.760Z"
+    },
+    {
+      "file": "evidence-after.png",
+      "page": "main",
+      "route": "/artisan-workspace/evidence/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:55:51.812Z"
+    },
+    {
+      "file": "mission-completion-confirmation.png",
+      "page": "main",
+      "route": "/mission/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:57:26.906Z"
+    },
+    {
+      "file": "mission-completed.png",
+      "page": "main",
+      "route": "/mission/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T09:57:33.808Z"
+    },
+    {
+      "file": "profile.png",
+      "page": "main",
+      "route": "/artisan-workspace/profile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T10:05:59.833Z"
+    },
+    {
+      "file": "notifications.png",
+      "page": "main",
+      "route": "/artisan-workspace/notifications",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T10:06:24.151Z"
+    },
+    {
+      "file": "rafi.png",
+      "page": "main",
+      "route": "/artisan-workspace/rafi",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T10:06:39.102Z"
+    },
+    {
+      "file": "rafi-listening-reduced-motion.png",
+      "page": "main",
+      "route": "/artisan-workspace/rafi",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T10:06:39.175Z"
+    },
+    {
+      "file": "rafi-voice.png",
+      "page": "main",
+      "route": "/artisan-workspace/rafi",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T10:06:49.175Z"
+    },
+    {
+      "file": "rafi-photo.png",
+      "page": "main",
+      "route": "/artisan-workspace/rafi",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T10:08:36.018Z"
+    },
+    {
+      "file": "availability-updated.png",
+      "page": "main",
+      "route": "/artisan-workspace",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T10:08:37.764Z"
+    },
+    {
+      "file": "missions-history.png",
+      "page": "main",
+      "route": "/artisan-workspace/missions",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T10:08:38.090Z"
+    },
+    {
+      "file": "drawer.png",
+      "page": "main",
+      "route": "/artisan-workspace/missions",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T10:08:38.196Z"
+    },
+    {
+      "file": "home-320.png",
+      "page": "small",
+      "route": "/artisan",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-05T10:11:44.231Z"
+    },
+    {
+      "file": "home-awaiting-client-320.png",
+      "page": "small",
+      "route": "/artisan",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-05T10:13:10.716Z"
+    },
+    {
+      "file": "large-text-200.png",
+      "page": "large",
+      "route": "/artisan",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-05T10:13:24.708Z"
+    },
+    {
+      "file": "large-text-200-priority.png",
+      "page": "large",
+      "route": "/artisan",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-05T10:13:24.785Z"
+    },
+    {
+      "file": "keyboard-320.png",
+      "page": "keyboard",
+      "route": "/artisan-workspace/quote/new",
+      "viewport": {
+        "width": 320,
+        "height": 360
+      },
+      "at": "2026-10-05T10:13:37.153Z"
+    },
+    {
+      "file": "evidence-images-loaded.png",
+      "page": "proof",
+      "route": "/artisan-workspace/evidence/c6488b9d-5a94-44de-b128-ce8a1b3f3e5e",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T10:14:59.643Z"
+    },
+    {
+      "file": "home-final.png",
+      "page": "main",
+      "route": "/artisan",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "at": "2026-10-05T10:20:42.782Z"
+    },
+    {
+      "file": "large-text-200.png",
+      "page": "large",
+      "route": "/artisan",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-05T10:20:59.913Z"
+    },
+    {
+      "file": "large-text-200-priority.png",
+      "page": "large",
+      "route": "/artisan",
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "at": "2026-10-05T10:20:59.998Z"
+    }
+  ],
+  "passed": [
+    "REAL_TIMEOUT_SAFE_ERROR_NO_FAKE_DATA",
+    "CRM_CREATE_DOUBLE_TAP_ONE_ROW",
+    "PERSONAL_QUOTE_TWO_LINES_DISCOUNT_200",
+    "PERSONAL_QUOTE_SENT_ACCEPTED_CANONICAL_JOB",
+    "AGENDA_PERSONAL_CLIENT_JOB_CREATED",
+    "MANUAL_RETRY_AFTER_REAL_TIMEOUT",
+    "FINANCE_INCOME_200_EXPENSE_30_NO_DUPLICATE",
+    "MARKETPLACE_QUOTE_EXPLICIT_CONFIRMATION_REVIEW_SUBMITTED",
+    "OPPORTUNITY_ACCEPTED_ONE_MISSION",
+    "EVIDENCE_BEFORE_PRIVATE_STORAGE_CONFIRMED",
+    "MISSION_ARRIVED_STARTED",
+    "EVIDENCE_AFTER_PRIVATE_STORAGE_CONFIRMED",
+    "MISSION_COMPLETED_AWAITING_CLIENT_NO_VALIDATION_INVENTED",
+    "PROFILE_PHONE_CANONICAL_RPC",
+    "NOTIFICATIONS_RECIPIENT_OWN_MARK_READ",
+    "RAFI_ARTISAN_VOICE_SHARED_PROXY",
+    "RAFI_EPHEMERAL_PHOTO_SHARED_PROXY",
+    "AVAILABILITY_CANONICAL_RPC",
+    "320PX_NO_OVERFLOW_48PX_TARGETS_REDUCED_MOTION",
+    "LARGE_TEXT_200_PERCENT_320PX_SCROLL",
+    "SIMULATED_NATIVE_KEYBOARD_DOCK_HIDDEN",
+    "SYNTHETIC_ARTISAN_UNAVAILABLE_AT_END",
+    "LARGE_TEXT_200_PERCENT_NARROW_DOCK_YIELDS_TO_DRAWER"
+  ],
+  "errors": [],
+  "client_id": "b48cc47a-792d-4f38-be98-de87884ebf2f",
+  "personal_quote_id": "b7efdd4f-82ae-4a7a-99ea-f37935efa519",
+  "mission_id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e",
+  "blockers": [
+    {
+      "code": "PROFILE_BIO_WRITE_AUTHORITY_MISSING",
+      "observed": "authenticated PATCH public.artisans description returns 403/42501; all UPDATE column grants absent; no existing bio-update RPC; V2 unchanged"
+    }
+  ],
+  "status": "STOP_PROFILE_BIO_WRITE_AUTHORITY_MISSING",
+  "finished_at": "2026-10-05T10:21:17.321Z"
+}

@@ -1,320 +1,245 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useState } from "react";
+import { View } from "react-native";
+import * as Crypto from "expo-crypto";
+import { router, useLocalSearchParams } from "expo-router";
 import {
-  createArtisanBusinessJob,
-  listArtisanBusinessJobs,
-  type ArtisanBusinessJob,
-} from '@/lib/artisanWorkspace';
-import { FixeoAction } from '@/ui/FixeoAction';
-import { MobileShell } from '@/components/MobileShell';
-import { FixeoCard } from '@/ui/FixeoCard';
-import { FixeoScreen } from '@/ui/FixeoScreen';
-import { colors, radius, spacing, type } from '@/ui/tokens';
+  loadBusinessClients,
+  loadBusinessJobs,
+  loadArtisanMissions,
+  saveBusinessJob,
+} from "@/lib/artisanOS";
 import {
-  agendaDatePreview,
+  agendaConflicts,
+  businessStatus,
+  localDay,
+  when,
+} from "@/lib/artisanExperience";
+import {
   formatAgendaDateInput,
   formatAgendaTimeInput,
   parseAgendaDateTime,
-} from '@/lib/agendaDate';
-import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
-import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
-
-function dateLabel(value: string | null) {
-  if (!value) return 'À planifier';
-  const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? 'À planifier'
-    : date.toLocaleString('fr-FR', {
-        day: '2-digit',
-        month: 'short',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-}
-
-export default function ArtisanAgenda() {
-  const [items, setItems] = useState<ArtisanBusinessJob[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [showCreate, setShowCreate] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [title, setTitle] = useState('');
-  const [dateText, setDateText] = useState('');
-  const [timeText, setTimeText] = useState('');
-  const [amount, setAmount] = useState('');
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      setItems(await withMobileDeadline(listArtisanBusinessJobs()));
-      setError('');
-    } catch (reason) {
-      setError(
-        isMobileUiTimeout(reason)
-          ? 'Le réseau met trop de temps. Votre agenda reste intact : tirez pour réessayer.'
-          : 'Impossible de charger votre agenda.',
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
-
-  useForegroundRefresh(load);
-
-  const schedulePreview = useMemo(
-    () => agendaDatePreview(dateText, timeText),
-    [dateText, timeText],
-  );
-
-  async function createJob() {
-    if (creating || !title.trim()) return;
-
-    const hasSchedule = Boolean(dateText.trim() || timeText.trim());
-    const parsedDate = hasSchedule ? parseAgendaDateTime(dateText, timeText) : null;
-    if (hasSchedule && !parsedDate) {
-      setError('Indiquez une date complète (JJ/MM/AAAA) et une heure valide (HH:MM).');
-      return;
-    }
-
-    setCreating(true);
-    try {
-      const created = await withMobileDeadline(createArtisanBusinessJob({
-        title,
-        scheduledAt: parsedDate,
-        amount: amount.trim() ? Number(amount.replace(',', '.')) || 0 : null,
-      }));
-      setItems(current => [created, ...current]);
-      setTitle('');
-      setDateText('');
-      setTimeText('');
-      setAmount('');
-      setShowCreate(false);
-      setError('');
-    } catch (reason) {
-      setError(
-        isMobileUiTimeout(reason)
-          ? 'Le réseau met trop de temps. Rien n’a été ajouté deux fois : vérifiez l’agenda puis réessayez si nécessaire.'
-          : 'Impossible de planifier cette intervention.',
-      );
-    } finally {
-      setCreating(false);
-    }
-  }
-
+} from "@/lib/agendaDate";
+import {
+  ArtisanPage,
+  ArtisanSection,
+  ArtisanCue,
+  ArtisanEmpty,
+  ArtisanMessage,
+  ArtisanField,
+  ArtisanChoices,
+  useArtisanQuery,
+  useArtisanAction,
+  art,
+} from "@/components/ArtisanEditorial";
+import { FixeoText } from "@/ui/FixeoText";
+import { FixeoAction } from "@/ui/FixeoAction";
+const load = async () => {
+  const [jobs, clients, missions] = await Promise.all([
+    loadBusinessJobs(),
+    loadBusinessClients(),
+    loadArtisanMissions(),
+  ]);
+  return { jobs, clients, missions };
+};
+export default function Agenda() {
+  const params = useLocalSearchParams<{ clientId?: string; new?: string }>(),
+    q = useArtisanQuery(load),
+    a = useArtisanAction();
+  const [open, setOpen] = useState(params.new === "1"),
+    [period, setPeriod] = useState("today"),
+    [id, setId] = useState(() => Crypto.randomUUID()),
+    [title, setTitle] = useState(""),
+    [clientId, setClientId] = useState(params.clientId || ""),
+    [date, setDate] = useState(""),
+    [time, setTime] = useState(""),
+    [notes, setNotes] = useState("");
+  const day = localDay(),
+    weekEnd = new Date();
+  weekEnd.setDate(weekEnd.getDate() + 7);
+  const jobs = q.data?.jobs
+    .filter(
+      (j) =>
+        period === "all" ||
+        (!!j.scheduled_at &&
+          (period === "today"
+            ? localDay(j.scheduled_at) === day
+            : localDay(j.scheduled_at) >= day &&
+              localDay(j.scheduled_at) < localDay(weekEnd))),
+    )
+    .sort(
+      (x, y) =>
+        (Date.parse(x.scheduled_at || "") || Infinity) -
+        (Date.parse(y.scheduled_at || "") || Infinity),
+    );
+  const conflicts = agendaConflicts(q.data?.jobs || []);
   return (
-    <FixeoScreen padded={false} header={
-        <MobileShell
-          universe="artisan"
-          activeKey="agenda"
-          statusLabel="Agenda professionnel"
-          rightActionLabel="Artisan OS"
-          rightDestination="/artisan-workspace"
-        />
-      }>
-      <FlatList
-        data={items}
-        keyExtractor={item => item.id}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
-        ListHeaderComponent={
-          <View>
-            <View style={styles.header}>
-            <Text style={styles.kicker}>AGENDA</Text>
-            <Text style={styles.title}>Vos prochaines interventions.</Text>
-            <Text style={styles.subtitle}>
-              Planifiez vos interventions personnelles sans les confondre avec les missions marketplace.
-            </Text>
-
-            <FixeoAction
-              label={showCreate ? 'Fermer' : '+ Planifier une intervention'}
-              variant={showCreate ? 'ghost' : 'primary'}
-              onPress={() => setShowCreate(value => !value)}
-            />
-
-            {showCreate && (
-              <FixeoCard style={styles.form}>
-                <Text style={styles.formTitle}>Nouvelle intervention</Text>
-                <TextInput
-                  value={title}
-                  onChangeText={setTitle}
-                  placeholder="Objet de l’intervention"
-                  placeholderTextColor={colors.textMuted}
-                  style={styles.input}
-                />
-                <View style={styles.dateTimeRow}>
-                  <View style={styles.dateTimeField}>
-                    <Text style={styles.fieldLabel}>Date</Text>
-                    <TextInput
-                      value={dateText}
-                      onChangeText={value => setDateText(formatAgendaDateInput(value))}
-                      placeholder="05/10/2026"
-                      placeholderTextColor={colors.textMuted}
-                      keyboardType="number-pad"
-                      maxLength={10}
-                      style={styles.input}
-                    />
-                  </View>
-                  <View style={styles.dateTimeField}>
-                    <Text style={styles.fieldLabel}>Heure</Text>
-                    <TextInput
-                      value={timeText}
-                      onChangeText={value => setTimeText(formatAgendaTimeInput(value))}
-                      placeholder="14:30"
-                      placeholderTextColor={colors.textMuted}
-                      keyboardType="number-pad"
-                      maxLength={5}
-                      style={styles.input}
-                    />
-                  </View>
-                </View>
-                {!!schedulePreview && (
-                  <View style={styles.previewPill}>
-                    <Text style={styles.previewText}>Prévu · {schedulePreview}</Text>
-                  </View>
-                )}
-                <TextInput
-                  value={amount}
-                  onChangeText={setAmount}
-                  placeholder="Montant prévu en DH"
-                  placeholderTextColor={colors.textMuted}
-                  keyboardType="decimal-pad"
-                  style={styles.input}
-                />
-                <FixeoAction
-                  label={creating ? 'Planification…' : 'Ajouter à l’agenda'}
-                  disabled={creating || !title.trim()}
-                  onPress={() => void createJob()}
-                />
-              </FixeoCard>
-            )}
-
-            {!!error && <Text style={styles.error}>{error}</Text>}
-            </View>
-          </View>
-        }
-        ListEmptyComponent={
-          <FixeoCard tone="muted">
-            <Text style={styles.emptyTitle}>Agenda libre.</Text>
-            <Text style={styles.emptyText}>
-              Planifiez votre première intervention personnelle pour commencer à organiser votre activité.
-            </Text>
-          </FixeoCard>
-        }
-        renderItem={({ item }) => (
-          <FixeoCard style={styles.card}>
-            <Text style={styles.date}>{dateLabel(item.scheduled_at)}</Text>
-            <Text style={styles.name}>{item.title}</Text>
-            <Text style={styles.meta}>
-              {item.status === 'planned' ? 'Planifiée' : item.status}
-              {item.amount != null ? ` · ${Math.round(item.amount)} DH` : ''}
-            </Text>
-          </FixeoCard>
-        )}
+    <ArtisanPage
+      title="Une journée bien menée."
+      eyebrow="VOTRE AGENDA"
+      detail="Vos interventions personnelles et missions FIXEO."
+      activeKey="agenda"
+      loading={q.loading}
+      onRefresh={() => void q.reload()}
+    >
+      <ArtisanMessage
+        message={q.error || a.message}
+        retry={q.error ? () => void q.reload() : undefined}
       />
-    </FixeoScreen>
+      <FixeoAction
+        label={open ? "Fermer la planification" : "Planifier une intervention"}
+        onPress={() => setOpen((v) => !v)}
+      />
+      {open && q.data && (
+        <ArtisanSection label="INTERVENTION PERSONNELLE">
+          <ArtisanField
+            label="Titre de l’intervention"
+            value={title}
+            onChangeText={setTitle}
+          />
+          <ArtisanChoices
+            label="Client concerné"
+            value={clientId}
+            onChange={setClientId}
+            options={[
+              { value: "", label: "À renseigner" },
+              ...q.data.clients.map((c) => ({
+                value: c.id,
+                label: c.full_name,
+              })),
+            ]}
+          />
+          <ArtisanField
+            label="Date — JJ/MM/AAAA"
+            value={date}
+            keyboardType="number-pad"
+            onChangeText={(v) => setDate(formatAgendaDateInput(v))}
+          />
+          <ArtisanField
+            label="Heure — HH:MM"
+            value={time}
+            keyboardType="number-pad"
+            onChangeText={(v) => setTime(formatAgendaTimeInput(v))}
+          />
+          <FixeoText variant="supporting" tone="secondary">
+            Saisie dans le fuseau horaire de votre appareil.
+          </FixeoText>
+          <ArtisanField
+            label="Notes de l’intervention"
+            value={notes}
+            onChangeText={setNotes}
+            multiline
+          />
+          <FixeoAction
+            label="Enregistrer l’intervention"
+            busy={a.busy}
+            onPress={() => {
+              const at = parseAgendaDateTime(date, time);
+              if (!at || !title.trim()) {
+                a.setMessage(
+                  "Renseignez le titre, une date et une heure valides.",
+                );
+                return;
+              }
+              void a.run(async () => {
+                const result = await saveBusinessJob({
+                  id,
+                  title,
+                  client_id: clientId || null,
+                  scheduled_at: at,
+                  notes,
+                });
+                setOpen(false);
+                setTitle("");
+                setNotes("");
+                setId(Crypto.randomUUID());
+                await q.reload();
+                return result;
+              }, "Intervention planifiée.");
+            }}
+          />
+        </ArtisanSection>
+      )}
+      <ArtisanChoices
+        label="Période"
+        value={period}
+        onChange={setPeriod}
+        options={[
+          { value: "today", label: "Aujourd’hui" },
+          { value: "week", label: "7 jours" },
+          { value: "all", label: "Tout" },
+        ]}
+      />
+      <ArtisanCue
+        title="RAFI · Organiser la journée"
+        text={
+          conflicts.size
+            ? "Plusieurs interventions commencent à la même heure. Vérifiez leurs créneaux avant de vous engager."
+            : jobs?.length
+              ? `${jobs.length} intervention(s) personnelle(s) sur cette période.`
+              : "Aucune intervention personnelle à cet horizon. Gardez votre disponibilité à jour."
+        }
+      />
+      {jobs?.map((j) => (
+        <View style={art.row} key={j.id}>
+          <FixeoText variant="eyebrow" tone="secondary">
+            {when(j.scheduled_at)}
+          </FixeoText>
+          <FixeoText variant="heading">{j.title}</FixeoText>
+          <FixeoText tone="secondary">
+            {q.data?.clients.find((c) => c.id === j.client_id)?.full_name ||
+              "Client non renseigné"}{" "}
+            · {businessStatus[j.status] || j.status}
+          </FixeoText>
+          {j.scheduled_at &&
+            conflicts.has(new Date(j.scheduled_at).toISOString()) && (
+              <FixeoText>Créneau à vérifier : début simultané.</FixeoText>
+            )}
+          {j.notes && <FixeoText>{j.notes}</FixeoText>}
+        </View>
+      ))}
+      {jobs?.length === 0 && (
+        <ArtisanEmpty
+          title="Votre agenda est libre."
+          detail="Planifiez une intervention ou préparez vos prochains rendez-vous."
+        />
+      )}
+      {q.data && (
+        <ArtisanSection label="MISSIONS FIXEO EN COURS">
+          {q.data.missions
+            .filter(
+              (m) => !["validated", "cancelled"].includes(m.request_status),
+            )
+            .map((m) => (
+              <View key={m.mission_id} style={art.row}>
+                <FixeoText variant="heading">
+                  {m.service_category || "Mission FIXEO"}
+                </FixeoText>
+                <FixeoText tone="secondary">
+                  {m.city} ·{" "}
+                  {businessStatus[m.request_status] || m.request_status}
+                </FixeoText>
+                <FixeoText variant="supporting">
+                  Créneau non communiqué dans le suivi actuel.
+                </FixeoText>
+                <FixeoAction
+                  label="Ouvrir la mission"
+                  variant="secondary"
+                  onPress={() =>
+                    router.push({
+                      pathname: "/mission/[id]",
+                      params: { id: m.mission_id },
+                    })
+                  }
+                />
+              </View>
+            ))}
+          {!q.data.missions.some(
+            (m) => !["validated", "cancelled"].includes(m.request_status),
+          ) && (
+            <FixeoText tone="secondary">Aucune mission FIXEO active.</FixeoText>
+          )}
+        </ArtisanSection>
+      )}
+    </ArtisanPage>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxl,
-    gap: spacing.sm,
-  },
-  header: {
-    gap: spacing.sm,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-  },
-  kicker: {
-    fontSize: type.eyebrow,
-    fontWeight: '900',
-    letterSpacing: 1.5,
-    color: colors.textMuted,
-  },
-  title: {
-    fontSize: 34,
-    lineHeight: 38,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  subtitle: { color: colors.textMuted, lineHeight: 21 },
-  error: { color: colors.danger, fontWeight: '700' },
-  form: {
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-  },
-  formTitle: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  dateTimeRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  dateTimeField: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  fieldLabel: {
-    color: colors.textMuted,
-    fontSize: 12,
-    fontWeight: '900',
-    letterSpacing: 0.4,
-  },
-  previewPill: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
-    backgroundColor: colors.surfaceMuted,
-  },
-  previewText: {
-    color: colors.text,
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  input: {
-    minHeight: 52,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
-    paddingHorizontal: spacing.md,
-    color: colors.text,
-    fontSize: type.body,
-  },
-  card: {
-    marginBottom: spacing.sm,
-    gap: spacing.xs,
-  },
-  date: {
-    fontSize: 12,
-    fontWeight: '900',
-    letterSpacing: 1,
-    color: colors.textMuted,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  meta: { color: colors.textMuted },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: colors.text,
-  },
-  emptyText: {
-    marginTop: spacing.sm,
-    color: colors.textMuted,
-  },
-});

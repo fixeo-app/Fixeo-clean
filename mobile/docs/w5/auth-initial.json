@@ -1,0 +1,48 @@
+{
+  "project": "kqyhusnbybsukbcaoqtu",
+  "at": "2026-10-05T09:26:55.528Z",
+  "fresh_password_sessions": true,
+  "checks": [
+    {
+      "name": "active_artisan",
+      "status": 200,
+      "ok": true,
+      "pass": true
+    },
+    {
+      "name": "client_denied",
+      "status": 403,
+      "code": "42501",
+      "reason": "ARTISAN_REQUIRED",
+      "pass": true
+    },
+    {
+      "name": "client_wrapper_denied",
+      "status": 403,
+      "code": "42501",
+      "reason": "ARTISAN_REQUIRED",
+      "pass": true
+    },
+    {
+      "name": "old_rpc_authenticated_denied",
+      "status": 403,
+      "code": "42501",
+      "reason": "permission denied for function update_my_artisan_activity_v1",
+      "pass": true
+    },
+    {
+      "name": "invalid_jwt_denied",
+      "status": 401,
+      "code": "PGRST301",
+      "reason": "No suitable key or wrong key type",
+      "pass": true
+    },
+    {
+      "name": "active_artisan_missions",
+      "status": 200,
+      "ok": true,
+      "pass": true
+    }
+  ],
+  "pass": true
+}

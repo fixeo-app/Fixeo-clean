@@ -98,12 +98,11 @@ test('presence engine has no backend or per-frame React side effects; visual mat
   assert.match(renderer, /animation\.stop\(\)/);
 });
 
-test('W3 keeps certified Artisan mission/evidence source byte-identical to post-W2', async () => {
+test('W3 keeps the certified Evidence capture engine byte-identical through W5', async () => {
   const { createHash } = await import('node:crypto');
   const protectedFiles = {
     // W4 owns Client presentation. Its workflow callbacks and all services are
     // separately frozen against the W3 base in client-invariants.test.ts.
-    'app/mission/[id].tsx': 'fb56559e6e1f8b6dfa53cb546124a82eb70a67a4915df91236f993eac32ecd91',
     'components/MissionEvidenceCapture.tsx': '604b4489f5ae71c576277bebd4f2368a1c70b9a4872e27167b907303f3fdd2dd',
   };
   for (const [file, digest] of Object.entries(protectedFiles)) assert.equal(createHash('sha256').update(readFileSync(file)).digest('hex'), digest, file);

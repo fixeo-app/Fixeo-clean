@@ -1,0 +1,14 @@
+[
+  {
+    "name": "ARTISAN_ESTIMATOR_DENIED",
+    "status": 403,
+    "error": "ROLE_FORBIDDEN",
+    "pass": true
+  },
+  {
+    "name": "ARTISAN_PERSISTED_DIAGNOSTIC_DENIED",
+    "status": 403,
+    "error": "ROLE_FORBIDDEN",
+    "pass": true
+  }
+]

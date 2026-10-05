@@ -1,0 +1,90 @@
+{
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "classification": "synthetic staging fixtures retained; no historical cleanup; no new Auth accounts",
+  "artisan_user_id": "b477433a-b643-4d29-8bd7-8d246847e719",
+  "client_user_id": "58054a6b-a5c1-4dc3-b178-f1d300234c55",
+  "client_usage": "role boundary tests only; guest service requests have no client profile or phone",
+  "artisan_profile_id": "79f9fca5-20b4-48a5-a525-dd047132e37b",
+  "artisan_final_availability": "unavailable",
+  "own_business": [
+    {
+      "kind": "clients",
+      "id": "b48cc47a-792d-4f38-be98-de87884ebf2f",
+      "status": null
+    },
+    {
+      "kind": "personal_quotes",
+      "id": "b7efdd4f-82ae-4a7a-99ea-f37935efa519",
+      "status": "accepted"
+    },
+    {
+      "kind": "personal_jobs",
+      "id": "10121566-6449-4213-b2bd-37a3ce229b80",
+      "status": "planned"
+    },
+    {
+      "kind": "personal_jobs",
+      "id": "bce46542-01c7-4276-9789-aa773cc9d172",
+      "status": "planned"
+    },
+    {
+      "kind": "personal_ledger",
+      "id": "3073f452-f089-436f-9f88-251bc54a5692",
+      "status": "income"
+    },
+    {
+      "kind": "personal_ledger",
+      "id": "3ee19e41-cdb4-4614-985c-764a76f7682b",
+      "status": "expense"
+    }
+  ],
+  "requests": [
+    {
+      "id": "3e59b46b-02cd-4f26-a5d1-c57417c627e7",
+      "purpose": "mission",
+      "state": "completed"
+    },
+    {
+      "id": "ef64b36c-d888-4d96-9d99-c02792084ed6",
+      "purpose": "marketplace quote review",
+      "state": "pending review"
+    }
+  ],
+  "marketplace_quote": {
+    "id": "b9d33088-ffce-4d9b-a448-95b9c4aef896",
+    "price": 450,
+    "review_status": "submitted",
+    "presented_at": null
+  },
+  "mission": {
+    "id": "c6488b9d-5a94-44de-b128-ce8a1b3f3e5e",
+    "status": "done",
+    "client_validation": "not performed",
+    "final_price": null
+  },
+  "evidence": [
+    {
+      "id": "9dc911e2-4c4a-4a05-90dd-2b882a0bf602",
+      "kind": "before",
+      "status": "ready"
+    },
+    {
+      "id": "eb942fdc-5d43-4e8f-892c-fe9ef814692b",
+      "kind": "after",
+      "status": "ready"
+    }
+  ],
+  "media": "two synthetic flat-color PNGs, private mission-evidence-private-v1; no personal photo",
+  "notification_id": "c9e21e6c-d6fd-4f8d-9e80-de404fe6f72a",
+  "foreign_owner_sentinel": {
+    "owner_uuid": "27a5cdcf-430b-460b-9c68-27e825137966",
+    "auth_account_created": false,
+    "client": "6a539b64-724a-4b10-8464-5c734e70cfbb",
+    "quote": "b5b1c321-ff42-4144-8674-13ca00a9f6c6",
+    "job": "a28ce5d5-c9b9-4b48-a1f3-98d1f829d98c",
+    "ledger": "940c049e-5f46-49c8-9083-ae2010c989b6",
+    "negative_test_mutations": 0
+  },
+  "historical_foreign_mission_readonly": "0bd8f8fa-97da-4db6-9346-5f218cc91749",
+  "session_cleanup": "all sessions for both reused Auth identities globally revoked; SQL confirms zero"
+}

@@ -13,7 +13,7 @@ import { interaction, layout } from '../ui/tokens';
 for (const universe of ['client', 'artisan'] as const) {
   test(`W2 ${universe}: real Drawer routes and active state`, () => {
     const items = getShellDestinations(universe);
-    assert.equal(items.length, universe === 'client' ? 5 : 6);
+    assert.equal(items.length, universe === 'client' ? 5 : 11);
     assert.equal(new Set(items.map(item => item.path)).size, items.length);
     for (const item of items) {
       const relative = item.path === '/' ? '/index' : item.path;
@@ -94,10 +94,10 @@ test('W2 installed StackRouter: no duplicate roots, detail preserves return hist
 function walkFiles(directory: string): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap(item => item.isDirectory() ? walkFiles(path.join(directory, item.name)) : [path.join(directory, item.name)]);
 }
-test('W2 actual JSX: one stable Shell per screen; docks only on the two overviews', () => {
+test('W2 actual JSX: one stable Shell per screen, including the shared W5 Artisan frame', () => {
   const dockFiles: string[] = [];
   let shellCount = 0;
-  for (const file of walkFiles('app').filter(name => name.endsWith('.tsx'))) {
+  for (const file of [...walkFiles('app').filter(name => name.endsWith('.tsx')), 'components/ArtisanEditorial.tsx']) {
     const source = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
     let shells = 0;
     function visit(node: ts.Node) {
@@ -114,8 +114,8 @@ test('W2 actual JSX: one stable Shell per screen; docks only on the two overview
     assert.ok(shells <= 1, file);
     shellCount += shells;
   }
-  assert.equal(shellCount, 11);
-  assert.deepEqual(dockFiles.sort(), ['app/artisan-workspace/index.tsx', 'app/client-workspace/index.tsx']);
+  assert.equal(shellCount, 6);
+  assert.deepEqual(dockFiles.sort(), ['app/client-workspace/index.tsx', 'components/ArtisanEditorial.tsx']);
 });
 
 test('W2 Dock yields space to content when enlarged header/toolbar or landscape leaves insufficient room', () => {
@@ -126,7 +126,7 @@ test('W2 Dock yields space to content when enlarged header/toolbar or landscape 
 });
 
 test('W2 root right-actions preserve their parent context; subpage right-actions return to an existing root', () => {
-  for (const file of ['app/index.tsx', 'app/artisan.tsx', 'app/client-workspace/index.tsx']) {
+  for (const file of ['app/index.tsx', 'components/ArtisanEditorial.tsx', 'app/client-workspace/index.tsx']) {
     const source = ts.createSourceFile(file, readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
     let preservesParent = false;
     function visit(node: ts.Node) {

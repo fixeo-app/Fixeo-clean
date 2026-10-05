@@ -17,6 +17,7 @@ on:
       - '.github/workflows/supply-engine.yml'
   pull_request:
     paths:
+      - 'supabase/migrations/*mobile_w5*'
       - 'supabase/migrations/*supply_b*'
       - 'api/supply-agent-fn/**'
       - 'js/admin-supply-engine.js'

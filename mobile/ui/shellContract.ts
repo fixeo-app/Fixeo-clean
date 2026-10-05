@@ -7,7 +7,7 @@ export type ShellIcon = ComponentProps<typeof Ionicons>['name'];
 export type ShellPath = '/' | '/client-workspace' | '/client-workspace/history' |
   '/client-workspace/notifications' | '/client-workspace/account' | '/artisan' |
   '/artisan-workspace' | '/artisan-workspace/clients' | '/artisan-workspace/quotes' |
-  '/artisan-workspace/agenda' | '/artisan-workspace/finance';
+  '/artisan-workspace/agenda' | '/artisan-workspace/finance' | '/artisan-workspace/opportunities' | '/artisan-workspace/missions' | '/artisan-workspace/profile' | '/artisan-workspace/notifications' | '/artisan-workspace/rafi';
 export type ShellDestination = {
   key: string; label: string; meta: string; path: ShellPath; icon: ShellIcon;
   section: string;
@@ -21,12 +21,17 @@ const CLIENT_ITEMS: readonly ShellDestination[] = [
   { key: 'account', label: 'Mon compte', meta: 'Coordonnées et préférences', path: '/client-workspace/account', icon: 'person-outline', section: 'Personnel' },
 ];
 const ARTISAN_ITEMS: readonly ShellDestination[] = [
-  { key: 'cockpit', label: 'Cockpit', meta: 'Priorités et opportunités', path: '/artisan', icon: 'compass-outline', section: 'Pilotage' },
-  { key: 'workspace', label: 'Artisan OS', meta: 'Vue d’ensemble de l’activité', path: '/artisan-workspace', icon: 'grid-outline', section: 'Pilotage' },
+  { key: 'cockpit', label: 'Accueil', meta: 'Priorités et opportunités', path: '/artisan', icon: 'compass-outline', section: 'Pilotage' },
+  { key: 'opportunities', label: 'Opportunités', meta: 'Demandes proposées par FIXEO', path: '/artisan-workspace/opportunities', icon: 'flash-outline', section: 'Pilotage' },
+  { key: 'missions', label: 'Missions', meta: 'Interventions et preuves', path: '/artisan-workspace/missions', icon: 'construct-outline', section: 'Pilotage' },
+  { key: 'rafi', label: 'RAFI', meta: 'Votre copilote professionnel', path: '/artisan-workspace/rafi', icon: 'sparkles-outline', section: 'Pilotage' },
+  { key: 'agenda', label: 'Agenda', meta: 'Votre journée et vos interventions', path: '/artisan-workspace/agenda', icon: 'calendar-outline', section: 'Votre activité' },
   { key: 'clients', label: 'Clients', meta: 'Vos relations professionnelles', path: '/artisan-workspace/clients', icon: 'people-outline', section: 'Votre activité' },
   { key: 'quotes', label: 'Devis', meta: 'Devis Studio', path: '/artisan-workspace/quotes', icon: 'document-text-outline', section: 'Votre activité' },
-  { key: 'agenda', label: 'Agenda', meta: 'Interventions personnelles', path: '/artisan-workspace/agenda', icon: 'calendar-outline', section: 'Votre activité' },
   { key: 'finance', label: 'Finance', meta: 'Encaissements et dépenses', path: '/artisan-workspace/finance', icon: 'wallet-outline', section: 'Votre activité' },
+  { key: 'workspace', label: 'Disponibilité', meta: 'Votre rythme et votre statut', path: '/artisan-workspace', icon: 'grid-outline', section: 'Personnel' },
+  { key: 'profile', label: 'Profil', meta: 'Votre signature professionnelle', path: '/artisan-workspace/profile', icon: 'person-outline', section: 'Personnel' },
+  { key: 'alerts', label: 'Notifications', meta: 'Le fil de votre activité', path: '/artisan-workspace/notifications', icon: 'notifications-outline', section: 'Personnel' },
 ];
 export function getShellDestinations(universe: ShellUniverse) {
   return universe === 'client' ? CLIENT_ITEMS : ARTISAN_ITEMS;
