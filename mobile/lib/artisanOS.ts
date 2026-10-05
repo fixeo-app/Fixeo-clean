@@ -1,5 +1,6 @@
+import { inFlightRead } from "./artisanProgressive";
 import { supabase } from "./supabase";
-import { calculateQuote, type QuoteLine } from "./artisanExperience";
+import { calculateQuote, localDay, type QuoteLine } from "./artisanExperience";
 import { getDispatchOffers } from "./magicLoop";
 import { getMyCurrentArtisanMission } from "./missionTerrain";
 
@@ -109,15 +110,24 @@ type ArtisanActor = {
   user_id: string;
   artisan_id: string | null;
 };
-let pendingAccess: Promise<ArtisanActor> | null = null;
-// Share only concurrent checks. Every later load checks the live session again.
-export function artisanAccess(): Promise<ArtisanActor> {
-  if (!pendingAccess) {
-    pendingAccess = readArtisanAccess().finally(() => {
-      pendingAccess = null;
-    });
-  }
-  return pendingAccess;
+// Local session state is used only as a concurrency key. It never authorizes a
+// read: the canonical role/live-session RPC below remains mandatory.
+async function artisanReadScope(): Promise<string> {
+  const { data, error } = await supabase.auth.getSession();
+  if (error || !data.session?.access_token) throw new Error("AUTH_REQUIRED");
+  return data.session.access_token;
+}
+const pendingAccess = new Map<string, Promise<ArtisanActor>>();
+export async function artisanAccess(): Promise<ArtisanActor> {
+  const key = await artisanReadScope();
+  if (!pendingAccess.has(key))
+    pendingAccess.set(
+      key,
+      readArtisanAccess().finally(() => {
+        pendingAccess.delete(key);
+      }),
+    );
+  return pendingAccess.get(key)!;
 }
 async function readArtisanAccess(): Promise<ArtisanActor> {
   const { data, error } = await supabase.rpc("get_my_mobile_artisan_access_v1");
@@ -169,7 +179,9 @@ export const loadLedger = () =>
     "occurred_on",
     200,
   );
-export async function loadArtisanProfile(): Promise<ArtisanProfile | null> {
+export async function loadArtisanProfile(
+  automaticRetry = true,
+): Promise<ArtisanProfile | null> {
   const actor = await artisanAccess();
   const { data, error } = await supabase
     .from("artisans")
@@ -177,7 +189,8 @@ export async function loadArtisanProfile(): Promise<ArtisanProfile | null> {
       "id,owner_user_id,name,city,work_zone,description,phone_public,service_category,services,availability,rating,review_count,completed_missions,response_time_min,badge_label,verified,photo_url",
     )
     .eq("owner_user_id", actor.user_id)
-    .maybeSingle();
+    .maybeSingle()
+    .retry(automaticRetry);
   if (error) throw error;
   return data;
 }
@@ -457,6 +470,33 @@ type ProfileEdit = {
   services: string[];
   cities: string[];
 };
+export async function saveArtisanBio(description: string) {
+  const expected = description.trim();
+  if (Array.from(expected).length > 4000) throw new Error("BIO_TOO_LONG");
+  // This RPC derives its actor and owned profile on the server.
+  const { data, error } = await supabase.rpc("w5_update_my_artisan_bio_v1", {
+    p_description: description,
+  });
+  if (error) throw error;
+  if (!data?.ok || !data.artisan_id) throw new Error("PROFILE_UPDATE_FAILED");
+  // An acknowledged write alone is not enough to claim the displayed bio is saved.
+  const readback = await supabase
+    .from("artisans")
+    .select("id,description,updated_at")
+    .eq("id", data.artisan_id)
+    .single();
+  if (
+    readback.error ||
+    readback.data?.description !== expected ||
+    !readback.data?.updated_at
+  )
+    throw new Error("BIO_CONFIRMATION_PENDING");
+  return readback.data as {
+    id: string;
+    description: string;
+    updated_at: string;
+  };
+}
 export async function saveArtisanProfile(
   input: ProfileEdit,
   previous?: ProfileEdit,
@@ -488,29 +528,57 @@ export async function saveArtisanProfile(
       throw new Error(String(data?.reason || "PROFILE_UPDATE_FAILED"));
   }
 }
-export async function loadArtisanHome() {
-  const access = artisanAccess();
-  const pending = Promise.allSettled([
-    getDispatchOffers(),
-    getMyCurrentArtisanMission(),
-    loadArtisanProfile(),
-    loadBusinessJobs(),
-    loadBusinessQuotes(),
-    loadLedger(),
-  ]);
-  await access;
-  const results = await pending;
-  const value = <T>(i: number): T | null =>
-    results[i].status === "fulfilled"
-      ? (results[i] as PromiseFulfilledResult<T>).value
-      : null;
-  return {
-    offers: value<Awaited<ReturnType<typeof getDispatchOffers>>>(0),
-    mission: value<Awaited<ReturnType<typeof getMyCurrentArtisanMission>>>(1),
-    profile: value<ArtisanProfile>(2),
-    jobs: value<BusinessJob[]>(3),
-    quotes: value<BusinessQuote[]>(4),
-    ledger: value<LedgerEntry[]>(5),
-    partial: results.some((r) => r.status === "rejected"),
-  };
+// Home loads no CRM, notification feed, mission history or full quote history.
+// Each table read shares the concurrent authority request and retains ownership.
+async function loadHomeJobs(): Promise<BusinessJob[]> {
+  const actor = await artisanAccess();
+  const { data, error } = await supabase
+    .from("artisan_business_jobs")
+    .select(
+      "id,title,status,scheduled_at,amount,client_id,quote_id,source,notes,updated_at",
+    )
+    .eq("owner_user_id", actor.user_id)
+    .not("status", "in", "(completed,cancelled)")
+    .gte("scheduled_at", new Date().toISOString())
+    .order("scheduled_at", { ascending: true })
+    .limit(3)
+    .retry(false);
+  if (error) throw error;
+  return data || [];
 }
+async function loadHomeDrafts(): Promise<
+  Pick<BusinessQuote, "id" | "title" | "status" | "updated_at">[]
+> {
+  const actor = await artisanAccess();
+  const { data, error } = await supabase
+    .from("artisan_business_quotes")
+    .select("id,title,status,updated_at")
+    .eq("owner_user_id", actor.user_id)
+    .eq("status", "draft")
+    .order("updated_at", { ascending: false })
+    .limit(3)
+    .retry(false);
+  if (error) throw error;
+  return data || [];
+}
+async function loadHomeLedger(): Promise<
+  Pick<LedgerEntry, "id" | "entry_type" | "amount" | "occurred_on">[]
+> {
+  const actor = await artisanAccess();
+  const { data, error } = await supabase
+    .from("artisan_business_ledger")
+    .select("id,entry_type,amount,occurred_on")
+    .eq("owner_user_id", actor.user_id)
+    .eq("occurred_on", localDay())
+    .retry(false);
+  if (error) throw error;
+  return data || [];
+}
+export const artisanHomeReaders = {
+  mission: inFlightRead(getMyCurrentArtisanMission, artisanReadScope),
+  offers: inFlightRead(getDispatchOffers, artisanReadScope),
+  jobs: inFlightRead(loadHomeJobs, artisanReadScope),
+  profile: inFlightRead(() => loadArtisanProfile(false), artisanReadScope),
+  quotes: inFlightRead(loadHomeDrafts, artisanReadScope),
+  ledger: inFlightRead(loadHomeLedger, artisanReadScope),
+};

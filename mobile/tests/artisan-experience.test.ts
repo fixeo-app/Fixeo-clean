@@ -77,3 +77,14 @@ test("W5 auth and ownership failures are actionable without exposing server inte
     /secret|trace|eyJ/,
   );
 });
+test("W5 Bio separates size rejection from a write whose readback is unconfirmed", () => {
+  assert.match(artisanError({ message: "BIO_TOO_LONG" }), /4 000/);
+  assert.match(
+    artisanError({ message: "BIO_CONFIRMATION_PENDING" }),
+    /pas pu être confirmé/,
+  );
+  assert.doesNotMatch(
+    artisanError({ message: "BIO_CONFIRMATION_PENDING" }),
+    /enregistrée|réussie/,
+  );
+});

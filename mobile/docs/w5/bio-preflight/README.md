@@ -1,3 +1,5 @@
+> **Archive avant addendum — blocage résolu.** L’addendum utilisateur autorise `updated_at` via le trigger canonique inchangé. La migration Bio a depuis été appliquée et testée ; voir [le complément final](../BIO_PERFORMANCE_FINAL.md). Les constats et le verdict ci-dessous décrivent uniquement le preflight historique.
+
 # W5 Bio — conflit de contrat détecté avant application
 
 **STOP — W5 ARTISAN OS NORTH STAR NOT REACHED**

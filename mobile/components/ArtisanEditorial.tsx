@@ -41,7 +41,7 @@ export function useArtisanQuery<T>(fetcher: () => Promise<T>) {
     const version = ++generation.current;
     setLoading(true);
     try {
-      const value = await withMobileDeadline(fetcher(), 20000);
+      const value = await withMobileDeadline(fetcher(), 30000);
       if (mounted.current && generation.current === version) {
         setData(value);
         setError("");
@@ -377,3 +377,47 @@ export const art = StyleSheet.create({
   inverse: { color: semanticColors.text.inverse },
   muted: { color: semanticColors.text.secondary },
 });
+
+export function ArtisanModuleStatus({
+  label,
+  state,
+  retry,
+  testID,
+}: {
+  label: string;
+  state: { status: "loading" | "ready" | "unavailable"; error: unknown };
+  retry: () => void;
+  testID?: string;
+}) {
+  return (
+    <View testID={testID} accessibilityLabel={`${label} : ${state.status}`}>
+      {state.status === "loading" && (
+        <View style={art.loading}>
+          <ActivityIndicator
+            size="small"
+            color={semanticColors.text.secondary}
+          />
+          <FixeoText
+            variant="supporting"
+            tone="secondary"
+            accessibilityLiveRegion="polite"
+          >
+            {label} · Actualisation…
+          </FixeoText>
+        </View>
+      )}
+      {state.status === "unavailable" && (
+        <View style={art.actions}>
+          <FixeoText tone="secondary">
+            {label} indisponible pour le moment. {artisanError(state.error)}
+          </FixeoText>
+          <FixeoAction
+            label={`Réessayer · ${label}`}
+            variant="ghost"
+            onPress={retry}
+          />
+        </View>
+      )}
+    </View>
+  );
+}

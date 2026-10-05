@@ -4,6 +4,7 @@ import {
   loadArtisanProfile,
   artisanProfileCities,
   saveArtisanProfile,
+  saveArtisanBio,
 } from "@/lib/artisanOS";
 import { availabilityLabels } from "@/lib/artisanExperience";
 import {
@@ -24,10 +25,13 @@ const load = async () => {
 };
 export default function Profile() {
   const q = useArtisanQuery(load),
-    a = useArtisanAction();
+    a = useArtisanAction(),
+    bioAction = useArtisanAction();
   const [phone, setPhone] = useState(""),
     [services, setServices] = useState(""),
-    [cities, setCities] = useState("");
+    [cities, setCities] = useState(""),
+    [bio, setBio] = useState(""),
+    [savedBio, setSavedBio] = useState("");
   const p = q.data?.profile;
   useEffect(() => {
     if (p) {
@@ -40,6 +44,10 @@ export default function Profile() {
       );
     }
   }, [p, q.data?.cities]);
+  useEffect(() => {
+    setBio(p?.description || "");
+    setSavedBio(p?.description || "");
+  }, [p?.id, p?.description]);
   return (
     <ArtisanPage
       title="Votre signature professionnelle."
@@ -78,15 +86,6 @@ export default function Profile() {
             value={cities}
             onChangeText={setCities}
           />
-          <ArtisanSection label="VOTRE PRÉSENTATION">
-            <FixeoText>
-              {p.description || "Présentation non renseignée."}
-            </FixeoText>
-            <FixeoText tone="secondary">
-              La modification de cette présentation n’est pas encore disponible
-              ici.
-            </FixeoText>
-          </ArtisanSection>
           <FixeoAction
             label="Enregistrer mon profil"
             busy={a.busy}
@@ -125,6 +124,39 @@ export default function Profile() {
               }, "Profil enregistré.");
             }}
           />
+          <ArtisanSection label="VOTRE PRÉSENTATION">
+            <ArtisanField
+              label="Présentation professionnelle"
+              value={bio}
+              onChangeText={(value) => {
+                setBio(value);
+                bioAction.setMessage("");
+              }}
+              multiline
+              maxLength={4000}
+              editable={!bioAction.busy}
+              placeholder="Votre expérience, votre savoir-faire et votre façon de travailler."
+            />
+            <FixeoText variant="supporting" tone="secondary">
+              {Array.from(bio).length} / 4 000 caractères
+            </FixeoText>
+            <FixeoAction
+              label="Enregistrer ma présentation"
+              busyLabel="Enregistrement…"
+              busy={bioAction.busy}
+              disabled={bio.trim() === savedBio}
+              onPress={() => {
+                void bioAction.run(async () => {
+                  const confirmed = await saveArtisanBio(bio);
+                  setBio(confirmed.description);
+                  setSavedBio(confirmed.description);
+                  void q.reload();
+                  return confirmed;
+                }, "Présentation enregistrée.");
+              }}
+            />
+            <ArtisanMessage message={bioAction.message} />
+          </ArtisanSection>
           <ArtisanSection label="RÉPUTATION & PERFORMANCE">
             {[
               ["Missions terminées", p.completed_missions],

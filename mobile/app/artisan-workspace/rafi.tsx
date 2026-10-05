@@ -1,20 +1,20 @@
 import { useState } from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
-import { loadArtisanHome } from "@/lib/artisanOS";
+import { useArtisanHome } from "@/lib/useArtisanHome";
 import { transcribeRafiVoice } from "@/lib/rafiGateway";
 import {
   analyzeMobileDiagnosticPhoto,
   type MobileDiagnosticResult,
 } from "@/lib/mobileDiagnostic";
-import { businessStatus, when } from "@/lib/artisanExperience";
+import { businessStatus, when, artisanError } from "@/lib/artisanExperience";
 import {
   ArtisanPage,
   ArtisanSection,
   ArtisanCue,
   ArtisanMessage,
   ArtisanField,
-  useArtisanQuery,
+  ArtisanModuleStatus,
   useArtisanAction,
   art,
 } from "@/components/ArtisanEditorial";
@@ -23,7 +23,7 @@ import { RafiOrb } from "@/ui/RafiOrb";
 import { FixeoText } from "@/ui/FixeoText";
 import { FixeoAction } from "@/ui/FixeoAction";
 export default function RafiArtisan() {
-  const q = useArtisanQuery(loadArtisanHome),
+  const q = useArtisanHome(),
     a = useArtisanAction();
   const [text, setText] = useState(""),
     [write, setWrite] = useState(false),
@@ -35,12 +35,20 @@ export default function RafiArtisan() {
       title="Un regard sur votre journée."
       eyebrow="RAFI · COPILOTE PROFESSIONNEL"
       activeKey="rafi"
-      loading={q.loading}
+      loading={q.authority.status === "loading"}
       onRefresh={() => void q.reload()}
     >
       <ArtisanMessage
-        message={q.error || a.message}
-        retry={q.error ? () => void q.reload() : undefined}
+        message={
+          q.authority.status === "unavailable"
+            ? artisanError(q.authority.error)
+            : a.message
+        }
+        retry={
+          q.authority.status === "unavailable"
+            ? () => void q.reload()
+            : undefined
+        }
       />
       <View style={{ alignItems: "center" }}>
         <RafiOrb
@@ -62,6 +70,12 @@ export default function RafiArtisan() {
               }, "Transcription prête à relire.")
             }
             onPhotoReady={(uri, mimeType) => {
+              if (q.modules.profile.status !== "ready") {
+                a.setMessage(
+                  "Votre profil n’est pas encore disponible. Réessayez après son chargement.",
+                );
+                return;
+              }
               if (!d.profile?.city) {
                 a.setMessage(
                   "Renseignez votre ville dans le profil avant d’analyser une photo.",
@@ -132,9 +146,10 @@ export default function RafiArtisan() {
                 ? `Votre mission ${d.mission.service_category || "FIXEO"} est ${businessStatus[d.mission.request_status]?.toLowerCase() || d.mission.request_status}. Consultez les preuves avant la prochaine étape.`
                 : d.offers?.length
                   ? `${d.offers.length} opportunité(s) vous sont proposées. Vérifiez votre disponibilité avant acceptation.`
-                  : d.partial
-                    ? "Une partie de votre activité est indisponible. Actualisez avant de décider de la prochaine étape."
-                    : "Aucune mission active n’est remontée dans votre activité actuelle."
+                  : q.modules.mission.status === "ready" &&
+                      q.modules.offers.status === "ready"
+                    ? "Aucune mission active n’est remontée dans votre activité actuelle."
+                    : "Votre contexte s’enrichit au fil des informations reçues."
             }
           />
           {d.mission && (
@@ -148,6 +163,22 @@ export default function RafiArtisan() {
               }
             />
           )}
+          {(
+            [
+              ["mission", "Mission"],
+              ["offers", "Opportunités"],
+              ["profile", "Profil"],
+              ["jobs", "Agenda"],
+              ["quotes", "Devis"],
+            ] as const
+          ).map(([key, label]) => (
+            <ArtisanModuleStatus
+              key={key}
+              label={label}
+              state={q.modules[key]}
+              retry={() => void q.retry(key)}
+            />
+          ))}
           <ArtisanSection label="À PRÉPARER">
             {d.quotes
               ?.filter((x) => x.status === "draft")

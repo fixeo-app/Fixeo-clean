@@ -153,6 +153,10 @@ export function artisanError(error: unknown) {
     return "Votre profil doit être approuvé par FIXEO avant cette action.";
   if (/invalid_phone/i.test(message))
     return "Renseignez un numéro de téléphone marocain valide.";
+  if (/BIO_TOO_LONG/.test(message))
+    return "Votre présentation doit contenir au maximum 4 000 caractères.";
+  if (/BIO_CONFIRMATION_PENDING/.test(message))
+    return "L’enregistrement n’a pas pu être confirmé. Actualisez votre profil avant de réessayer.";
   if (
     /PRICING_CHANGE_AUTHORITY_REQUIRED|ENTERPRISE_QUOTE_AUTHORITY_REQUIRED|REQUEST_NOT_QUOTABLE/.test(
       message,

@@ -6,7 +6,19 @@
   "client_usage": "role boundary tests only; guest service requests have no client profile or phone",
   "artisan_profile_id": "79f9fca5-20b4-48a5-a525-dd047132e37b",
   "artisan_final_availability": "unavailable",
-  "reused_artisan_public_projections": {"tables": ["public.users", "public.profiles"], "fields_synchronized_by_existing_rpcs": ["city", "phone"], "city": "Rabat", "phone": "0600000053", "timing": "E2E after V2 application; no direct Auth write"},
+  "reused_artisan_public_projections": {
+    "tables": [
+      "public.users",
+      "public.profiles"
+    ],
+    "fields_synchronized_by_existing_rpcs": [
+      "city",
+      "phone"
+    ],
+    "city": "Rabat",
+    "phone": "0600000053",
+    "timing": "E2E after V2 application; no direct Auth write"
+  },
   "own_business": [
     {
       "kind": "clients",
@@ -87,5 +99,16 @@
     "negative_test_mutations": 0
   },
   "historical_foreign_mission_readonly": "0bd8f8fa-97da-4db6-9346-5f218cc91749",
-  "session_cleanup": "all sessions for both reused Auth identities globally revoked; SQL confirms zero"
+  "session_cleanup": "all sessions for both reused Auth identities globally revoked; SQL confirms zero",
+  "bio_tests": {
+    "new_business_rows": 0,
+    "changed_artisan_columns": [
+      "description",
+      "updated_at"
+    ],
+    "timestamp_authority": "unchanged canonical artisans_updated_at trigger",
+    "other_artisan_columns_unchanged": 36,
+    "foreign_artisan_rows_unchanged": 6,
+    "final_description": "Atelier W5 — plomberie à Rabat.\nIntervention soignée, explications claires et prix confirmé avant travaux."
+  }
 }

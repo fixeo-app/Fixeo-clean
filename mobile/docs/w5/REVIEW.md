@@ -1,10 +1,8 @@
 # W5 — Artisan OS : dossier de revue
 
-**Verdict : STOP — W5 ARTISAN OS NORTH STAR NOT REACHED.**
+**Candidat : PASS W5 — ARTISAN OS NORTH STAR READY FOR REVIEW.**
 
-La sécurité V2 est appliquée et vérifiée sur staging. Les parcours Artisan ont été exécutés contre le backend réel. Le profil reste incomplet : aucune autorité de mutation de bio accessible à Mobile n'existe dans le périmètre autorisé. La tentative authentifiée a été refusée ; aucun contournement, grant complémentaire ou seconde migration n'a été appliqué. La bio est explicitement en lecture seule. Le candidat doit rester en PR Draft.
-
-Actualisation après GO Bio : la proposition est autorisée, mais son preflight révèle le trigger existant `artisans_updated_at`, qui modifierait aussi `updated_at`. Le GO impose pourtant « aucune autre colonne modifiée ». L'application Bio est suspendue avant toute mutation staging. Le [dossier Bio](bio-preflight/README.md) contient la migration candidate non appliquée et une reproduction PostgreSQL isolée. Une exception explicite pour ce timestamp canonique est nécessaire.
+Les addenda Bio/updated_at et Home progressive sont intégrés. La RPC Bio est appliquée uniquement en staging et testée avec de nouvelles sessions synthétiques ; l’éditeur attend la relecture serveur avant tout succès. La Home rend le shell et une action locale immédiatement, puis chaque module indépendamment sous autorité canonique. Le [complément final Bio et performance](BIO_PERFORMANCE_FINAL.md) contient les preuves et limites de mesure. Le verdict publié reste conditionné aux six contrôles CI du SHA final, consignés dans la Draft PR #149.
 
 ## A — Preflight et périmètre
 
@@ -16,9 +14,9 @@ Actualisation après GO Bio : la proposition est autorisée, mais son preflight 
 
 ## B — Architecture et sécurité
 
-`artisanOS.ts` expose les lectures bornées et mutations canoniques. `artisanExperience.ts` concentre les calculs explicites, dates, erreurs et rapprochements. `ArtisanEditorial.tsx` réutilise Shell V2, composants et RAFI W3, avec chargement, échéance de 20 secondes, reprise manuelle et verrouillage des actions concurrentes.
+`artisanOS.ts` expose les lectures bornées et mutations canoniques. `artisanExperience.ts` concentre les calculs explicites, dates, erreurs et rapprochements. `ArtisanEditorial.tsx` réutilise Shell V2, composants et RAFI W3, avec chargement, échéance de secours de 30 secondes par lecture, actions bornées à 20 secondes, reprise manuelle et verrouillage des actions concurrentes. Home et RAFI publient chaque résultat indépendamment via `artisanProgressive.ts` ; aucune barrière de rendu globale.
 
-La seule migration appliquée est `20261005085640_mobile_w5_artisan_authority_v2.sql`, SHA-256 `6f017c6f97c7df25d0acc6117da5bc93c57bd9f7025ed199cdfd1f9f2cae7ed2`. Le MCP a enregistré le nom `mobile_w5_artisan_authority_v2` sous la version serveur **`20261005091927`**. Cette correspondance est documentée ; ne pas réappliquer le fichier via CLI ni réparer l'historique sans revue distincte.
+La migration sécurité appliquée est `20261005085640_mobile_w5_artisan_authority_v2.sql`, SHA-256 `6f017c6f97c7df25d0acc6117da5bc93c57bd9f7025ed199cdfd1f9f2cae7ed2`. Le MCP a enregistré le nom `mobile_w5_artisan_authority_v2` sous la version serveur **`20261005091927`**. Cette correspondance est documentée ; ne pas réappliquer le fichier via CLI ni réparer l'historique sans revue distincte.
 
 | Contrôle du fichier V2 figé | Résultat |
 | --- | --- |
@@ -29,7 +27,7 @@ La seule migration appliquée est `20261005085640_mobile_w5_artisan_authority_v2
 | DML métier au niveau d'application | 0 |
 | Comparaison avant/après application | 21 tables : effectifs et empreintes inchangés |
 
-Les empreintes ont été relevées avant toute ouverture de session ou création de fixture E2E. Les écritures synthétiques ultérieures sont décrites séparément dans `fixture-manifest.json`. Les advisors conservent leurs cinq constats antérieurs, sans nouveau constat.
+Les empreintes ont été relevées avant toute ouverture de session ou création de fixture E2E. Les écritures synthétiques ultérieures sont décrites séparément dans `fixture-manifest.json`. Pour V2, les advisors conservent leurs cinq catégories de constats antérieurs. La migration Bio ultérieure ajoute un constat informatif attendu pour sa RPC SECURITY DEFINER exécutable par authenticated ; son guard, son search_path vide et son ownership sont vérifiés. Voir le complément Bio.
 
 Le guard lit `public.users.role`, l'identité Auth et la session canonique `auth.sessions`, pas un rôle ou owner fourni par Mobile. Dix-neuf RPC existantes sont durcies sans changer leurs décisions métier ; quatre nouvelles fonctions fournissent le guard, deux lectures et le wrapper. Les 24 ACL finales vérifiées incluent la RPC historique conservée.
 
@@ -47,11 +45,13 @@ Evidence a reçu un durcissement staging v5 : rôle canonique et session Artisan
 
 ## C — Home
 
+Shell W2, identité générique Artisan, présence RAFI, structure et accès agenda immédiats. L’identité nominative est enrichie après lecture réelle du profil. Autorité/session puis mission, opportunité et prochaine intervention ; le premier résultat critique autorisé rend sa prochaine action sans attendre les autres. Profil enrichi, brouillons et mouvements du jour terminent séparément. Aucun CRM, feed notifications ou historique complet n’est lu par la Home. Chaque module a loading/ready/unavailable et retry ciblé, sans polling. Les lectures qui se chevauchent partagent une requête uniquement pour la même session, sans cache d’autorisation.
+
 Priorité à la mission/opportunité, décision RAFI, journée et mouvements personnels ; les outils restent secondaires. Une mission terminée affiche « Le relais est au client » et « Suivre la validation », sans inventer une validation Client. Une lecture partielle ou un timeout n'est pas remplacé par une fausse activité vide.
 
 ## D — RAFI Artisan
 
-RAFI W3 est conservé. Les conseils reposent sur opportunités, mission, agenda, devis et mouvements disponibles. Aucun prix, KPI ou pouvoir de décision n'est inféré. Voice a traversé le proxy et produit une transcription réelle ; la photo éphémère a répondu 200. Estimator et Diagnostic persistant ont réellement refusé le rôle Artisan avec `ROLE_FORBIDDEN` (403).
+RAFI W3 est conservé. Le rail voix/photo/texte est disponible dès l’autorité confirmée ; son contexte s’enrichit par résultats indépendants, sans attendre finances, CRM ou historique. Un profil encore en chargement n’est pas présenté comme une ville manquante. Les conseils reposent sur opportunités, mission, agenda, devis et mouvements disponibles. Aucun prix, KPI ou pouvoir de décision n'est inféré. Voice a traversé le proxy et produit une transcription réelle ; la photo éphémère a répondu 200. Estimator et Diagnostic persistant ont réellement refusé le rôle Artisan avec `ROLE_FORBIDDEN` (403).
 
 ## E — Opportunités
 
@@ -81,13 +81,11 @@ Deux autorités distinctes. Personnel : lignes prestation/fourniture/main-d'œuv
 
 200 MAD d'encaissement et 30 MAD de dépense personnels enregistrés, sans doublon. Périodes et mouvements restent explicites. Aucun bénéfice, fiscalité, solde, commission ou paiement marketplace supposé. Les montants absents restent absents.
 
-## L — Profil : blocage restant
+## L — Profil et Bio validés
 
-Téléphone, métiers/villes et disponibilité utilisent les RPC canoniques. Téléphone réellement modifié par UI ; wrapper activités testé positivement ; disponibilité testée puis laissée `unavailable` en clôture. Les villes sont lues dans `artisans.work_zone`, maintenu par l'autorité d'activité : la table de jointure n'accorde pas la lecture directe à Mobile.
+Téléphone, métiers/villes et disponibilité utilisent les RPC canoniques déjà certifiées. La nouvelle RPC `public.w5_update_my_artisan_bio_v1(text)` dérive son acteur via le guard W5, borne la bio à 4000 caractères et ne cible que son profil propriétaire. Le trigger canonique conserve son effet sur `updated_at`. Aucune autre colonne n’a changé. Aucun privilège UPDATE direct n’est accordé sur artisans.
 
-**`PROFILE_BIO_WRITE_AUTHORITY_MISSING`** : le PATCH authentifié de description a répondu 403/42501 ; aucune des 38 colonnes `artisans` n'accorde UPDATE à `authenticated`, et aucune RPC de bio applicable à un profil existant n'est disponible. Une policy n'accorde pas à elle seule ce privilège. L'application affiche la bio en lecture seule et explique cette limite. Aucun faux succès, grant global ou écriture par service role pour masquer l'échec.
-
-`PROFILE_BIO_PROPOSAL_NOT_APPLIED.sql` est une proposition séparée, hors migration runner : RPC dédiée, guard W5, ownership canonique, limite 4000 caractères, UPDATE avec WHERE. **Non appliquée, à valider séparément puis tester avant tout verdict PASS.** La galerie présente uniquement la photo canonique disponible ; aucune nouvelle autorité de galerie ou préférence n'est inventée. Réputation : valeurs réelles disponibles, sinon « En cours de calcul ».
+L’éditeur propose modification, chargement, erreur et succès après RPC **puis lecture exacte**. Un double appui ne produit qu’un appel. La perte simulée de la relecture après une vraie écriture staging affiche « non confirmé », sans faux succès ; une sauvegarde ultérieure confirme la valeur exacte. Client, JWT invalide, session révoquée, cible étrangère et dépassement de taille sont testés réellement. La proposition historique `PROFILE_BIO_PROPOSAL_NOT_APPLIED.sql` et le preflight sont conservés comme archives ; leur blocage est résolu par les GO et l’addendum timestamp. Galerie et réputation restent bornées aux autorités existantes.
 
 ## M — Notifications
 
@@ -107,6 +105,10 @@ Drawer Artisan à onze destinations, dock Home limité à Opportunités/RAFI/Age
 | Ancienne RPC / authenticated | 403 `42501` |
 | Session révoquée / accès, missions, offres, wrapper, CRM | 403 `SESSION_REVOKED` |
 | Session révoquée / Evidence | 401 `UNAUTHENTICATED` |
+| Bio actif / lecture exacte / 4000 caractères | 200 / PASS |
+| Bio Client / session révoquée | 403, refus canonique |
+| Bio 4001 caractères | 400 `BIO_TOO_LONG` |
+| Bio cible étrangère ou PATCH direct | 404 contrat sans cible / 403 |
 | JWT invalide | 401 `PGRST301` |
 | Autre owner / clients, devis, jobs, ledger | aucune ligne lue ou modifiée |
 | Mission étrangère / RPC détail | `not_your_mission` |
@@ -119,14 +121,16 @@ Le renderer monte les vrais écrans TSX et services Mobile avec Auth et HTTP sta
 
 ## P — Captures
 
+Le rejeu final figure dans `bio-runtime/` et `progressive-runtime/` : Bio chargement/succès/échec de confirmation, cinq scénarios de latence, Profile, mission, opportunités, CRM, devis, agenda, finances, notifications, RAFI voix/photo, 320 px, texte 200 %, Drawer et clavier. Les délais artificiels et réponses 503 sont des fautes de transport simulées ; les réponses métier et sessions viennent de staging réel.
+
 Captures réelles dans `runtime/` : Home finale, opportunité/confirmation, mission, Evidence chargée, agenda, CRM, devis aperçu/accord, finances, profil, notifications, RAFI voice/photo, drawer. `home-awaiting-client-320.png`, `large-text-200.png`, `large-text-200-priority.png`, `keyboard-320.png` couvrent étroitesse, texte à 200 %, Reduced Motion et clavier simulé. Aucun débordement horizontal constaté. La correction du dock à grand texte est limitée à W5 ; les prises de vue précédentes restent des traces intermédiaires, les dernières prises homonymes montrent la correction.
 
 ## Q — Non-régression et validation locale
 
 | Vérification | Résultat |
 | --- | --- |
-| Contrats Mobile | 98 PASS, 0 FAIL, 0 SKIP |
-| Autorité W5 + Intelligence + Diagnostic + Estimator | 199 PASS, 0 FAIL, 0 SKIP |
+| Contrats Mobile | 105 PASS, 0 FAIL, 0 SKIP |
+| Autorité W5 + Intelligence + Diagnostic + Estimator | 201 PASS, 0 FAIL, 0 SKIP |
 | Client C4 local | 14 PASS |
 | Typecheck + export web Gate A | PASS |
 | Expo Doctor 1.20.4 | 18/18 |
@@ -140,10 +144,10 @@ Les workflows Mobile Intelligence, Mobile Gate A, Supply, Client C4 et Control s
 
 ## S — Git et revue
 
-PR **Draft** exclusivement vers `feat/fixeo-mobile-m4-terrain`. Pas de merge. Tous les éléments nécessaires à la revue sont versionnés ici : migration figée, ACL, empreintes, matrice, fixtures, captures, logs, rollback non exécuté et proposition bio non appliquée. Aucun credential, mot de passe, token, refresh token ou lien de média signé n'est versionné. Le package-lock Mobile généré localement reste une sortie de validation, suivant le workflow de base.
+PR **Draft** exclusivement vers `feat/fixeo-mobile-m4-terrain`. Pas de merge. Tous les éléments nécessaires à la revue sont versionnés ici : migration figée, ACL, empreintes, matrice, fixtures, captures, logs, rollback non exécuté et proposition Bio historique. Aucun credential, mot de passe, token, refresh token ou lien de média signé n'est versionné. Le package-lock Mobile généré localement reste une sortie de validation, suivant le workflow de base.
 
-## T — Clôture et reste à faire
+## T — Clôture
 
-`staging-closure.json` confirme 21 comptes Auth (aucun nouveau), **zéro session pour les deux identités synthétiques réutilisées**, Artisan indisponible, ancienne définition/ACL conservées et une seule migration du jour. Les autres sessions du projet ne sont pas des sessions de ce test et n'ont pas été révoquées. Les fixtures métier W5 restent documentées, sans nettoyage destructif. Après l'application, les RPC de profil ont synchronisé ville et téléphone dans les projections publiques `users`/`profiles` du compte Artisan synthétique réutilisé ; ces effets E2E sont distincts de l'absence de mutation pendant l'application de V2. Les anciennes missions, devis, clients et médias sont inchangés.
+`bio-staging-closure.json` documente la clôture finale : 21 comptes Auth (aucun nouveau), zéro session synthétique, définition/ACL historique inchangées, trigger inchangé et les deux migrations autorisées du jour. `bio-final-revocation.json` couvre aussi le refus de la nouvelle RPC après révocation. Les autres sessions du projet n’ont pas été touchées.
 
-Le GO Bio a depuis été accordé. La décision encore nécessaire porte sur l'effet automatique `updated_at` décrit dans le dossier Bio ; l'intégration et les tests attendent sa résolution. Le refus d'offre dispatch et l'édition de galerie restent bornés aux contrats disponibles décrits ci-dessus. Aucune certification North Star tant que le profil attendu n'est pas complet. Le sujet W8 `PHYSICAL_DIAGNOSTIC_MEDIA_PURGE_CERTIFICATION` reste reporté ; aucune exécution W8.
+Les fixtures W5 sont conservées sans nettoyage destructif. À l’application de chaque migration, les 21 tables suivies étaient strictement identiques. Les tests Bio ultérieurs n’affectent que description et timestamp automatique du profil synthétique autorisé : 36 autres colonnes et six profils étrangers inchangés. Aucune suppression, Production, configuration Auth globale, build physique, merge ou W6. Le sujet W8 `PHYSICAL_DIAGNOSTIC_MEDIA_PURGE_CERTIFICATION` reste reporté.
