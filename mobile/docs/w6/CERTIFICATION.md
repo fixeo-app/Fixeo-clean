@@ -315,3 +315,63 @@ Recovery : **DEFERRED — 429 over_email_send_rate_limit**, séparé de la certi
 **PASS W6 RELAY PHASE 1 — READY FOR SUPABASE ALLOWLIST REVIEW.**
 
 **STOP. Aucune action Supabase ni poursuite Auth avant nouveau GO distinct.**
+
+## Phase 2A — allowlist Supabase, préflight bloqué
+
+GO explicite limité du 5 octobre 2026. Checkpoint d'entrée :
+`9f517aae2004ee7b6715742d1a5bca628b8941bb`, PR #150 Draft, ouverte, non mergée.
+
+**STOP — W6 PHASE 2A NOT CERTIFIED.**
+
+Le connecteur confirme le projet exact `fixeo-diagnostic-staging`
+(`kqyhusnbybsukbcaoqtu`), ACTIVE_HEALTHY. Il n'expose pas les réglages Auth.
+L'ouverture du Dashboard Authentication > URL Configuration redirige vers
+la connexion Supabase. Après le parcours de connexion sécurisé et la reprise
+manuelle, une nouvelle navigation vers la page staging retourne encore à
+Sign in (constat final 16:34 UTC). Aucun écran de configuration authentifié
+n'a été observé ; aucune erreur de mot de passe ou restriction du compte
+n'est inférée de ce seul constat.
+
+| Champ | Avant | Après | Écriture par l'agent |
+| --- | --- | --- | --- |
+| Site URL | Non lisible | Non certifiée | Aucune |
+| Redirect URLs complètes | Non lisibles | Non certifiées | Aucune |
+| Présence/nombre de l'URL exacte | Inconnu | Inconnu | Aucune |
+| Autres réglages Auth | Pas d'audit de leurs valeurs | Pas de comparaison globale possible | Aucune |
+
+Les valeurs inconnues ne signifient ni une liste vide ni une absence du callback.
+Aucune mutation n'a été tentée : le préflight exact avant écriture est obligatoire.
+L'ancien localhost observé dans les emails n'est pas présenté comme une lecture
+actuelle de Site URL. Aucun ajout, doublon, suppression ou remplacement d'URL.
+
+Revalidation publique du relais à 16:15 UTC :
+`https://w6-auth-staging.fixeo.ma/auth-callback` → **200**, aucune redirection,
+aucun cookie/Authorization/code PKCE. Marqueur `w6-phase-1`,
+headers no-store / no-referrer / nosniff, SHA-256 identique au relais Phase 1 :
+`1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2`.
+Aucune modification DNS ou Vercel ; la certification Phase 1 reste acquise.
+
+Preuves : `phase2a/configuration-preflight.json`,
+`phase2a/dashboard-login-blocked.jpg`, `phase2a/relay-public.json`.
+
+Reprise autorisée une fois l'accès Dashboard disponible : relever Site URL
+et l'intégralité de l'allowlist, ajouter seulement
+`https://w6-auth-staging.fixeo.ma/auth-callback` si absent, puis relire et comparer.
+Pas de wildcard ; conserver toutes les URLs, y compris localhost.
+Le GO Phase 2A existant reste limité à cette opération.
+
+Rollback : aucune écriture à annuler à ce checkpoint. Si l'ajout est effectué
+lors de la reprise, retirer uniquement cette URL exacte de l'allowlist staging.
+
+Aucun changement de confirmation email, Secure email change, SMTP, templates,
+providers, CAPTCHA, JWT, sessions, rate limits, OTP, politique de mot de passe
+ou Auth hooks. Cette affirmation porte sur les opérations de l'agent, pas sur
+une comparaison de valeurs qui n'a pas été possible.
+`EXPO_PUBLIC_AUTH_CALLBACK_APPROVED` reste non activé par cette exécution.
+Aucun signup, recovery, email Auth, nouvelle session synthétique, JWT ou vrai
+code PKCE utilisé. Recovery toujours **DEFERRED — 429 over_email_send_rate_limit**,
+sans nouvel essai ni modification des limites.
+
+Documentation seulement. PR #150 reste Draft, ouverte, non mergée.
+**Production impact = NONE.** MAIN inchangé ; aucun build physique, merge ou W7.
+**STOP — W6 PHASE 2A NOT CERTIFIED : accès Dashboard non acquis.**
