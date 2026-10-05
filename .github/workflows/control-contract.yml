@@ -4,6 +4,7 @@ on:
     branches: [feat/control-os-bloc1-contract, feat/control-os-bloc2-rafi-decision-center]
   pull_request:
     paths:
+      - 'supabase/migrations/*mobile_w5*'
       - 'api/control/**'
       - 'tests/control-contract/**'
       - 'tests/admin-control-os/cross-universe-contract.test.cjs'
@@ -33,6 +34,8 @@ on:
       - 'sitemap*.xml'
       - 'robots.txt'
       - 'vercel.json'
+      - 'vercel.ts'
+      - 'vercel.legacy.json'
       - 'scripts/generate-blog-v2.js'
       - 'scripts/generate-authority-blog-v3.js'
       - 'scripts/generate-profile-sitemap.js'

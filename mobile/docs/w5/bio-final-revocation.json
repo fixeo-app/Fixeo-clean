@@ -1,0 +1,97 @@
+{
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "at": "2026-10-05T11:38:41.048Z",
+  "new_password_sessions": [
+    {
+      "id": "b477433a-b643-4d29-8bd7-8d246847e719",
+      "role": "artisan",
+      "session_id": "f88118f4-cfe2-446b-89ee-1b40c32beff5"
+    },
+    {
+      "id": "58054a6b-a5c1-4dc3-b178-f1d300234c55",
+      "role": "client",
+      "session_id": "85bda999-83a4-4586-8420-db42ac25a0ad"
+    }
+  ],
+  "checks": [
+    {
+      "name": "final_active_artisan",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "final_client_refused",
+      "status": 403,
+      "code": "42501",
+      "reason": "ARTISAN_REQUIRED",
+      "pass": true
+    },
+    {
+      "name": "final_direct_legacy_refused",
+      "status": 403,
+      "code": "42501",
+      "reason": "permission denied for function update_my_artisan_activity_v1",
+      "pass": true
+    },
+    {
+      "name": "global_revoke_artisan",
+      "status": 204,
+      "pass": true
+    },
+    {
+      "name": "global_revoke_client",
+      "status": 204,
+      "pass": true
+    },
+    {
+      "name": "final_revoked_get_my_mobile_artisan_access_v1",
+      "status": 403,
+      "code": "42501",
+      "reason": "SESSION_REVOKED",
+      "pass": true
+    },
+    {
+      "name": "final_revoked_list_my_mobile_artisan_missions_v1",
+      "status": 403,
+      "code": "42501",
+      "reason": "SESSION_REVOKED",
+      "pass": true
+    },
+    {
+      "name": "final_revoked_get_my_dispatch_offers_v1",
+      "status": 403,
+      "code": "42501",
+      "reason": "SESSION_REVOKED",
+      "pass": true
+    },
+    {
+      "name": "final_revoked_wrapper",
+      "status": 403,
+      "code": "42501",
+      "reason": "SESSION_REVOKED",
+      "pass": true
+    },
+    {
+      "name": "final_revoked_bio",
+      "status": 403,
+      "code": "42501",
+      "reason": "SESSION_REVOKED",
+      "pass": true
+    },
+    {
+      "name": "final_revoked_evidence",
+      "status": 401,
+      "reason": "UNAUTHENTICATED",
+      "pass": true
+    },
+    {
+      "name": "final_invalid_jwt",
+      "status": 401,
+      "code": "PGRST301",
+      "reason": "Expected 3 parts in JWT; got 1",
+      "pass": true
+    }
+  ],
+  "pass": true,
+  "finished_at": "2026-10-05T11:39:12.904Z"
+}

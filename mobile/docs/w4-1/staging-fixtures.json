@@ -1,0 +1,50 @@
+[
+  {
+    "fixtures": {
+      "users": 3,
+      "requests": [
+        "24d070bb-bfe6-4454-8dd8-27e735ab2740",
+        "5232e59d-06a4-4329-84f9-cf11b3a8924f",
+        "577023cf-950e-42c2-beb7-6c8e739200cb",
+        "b2fb9fe3-0e80-4861-99dc-a30bebeb0bdd",
+        "ab14d545-0fc2-4ea9-9726-bb8bcbdba3c0",
+        "b174c86e-9bc4-49e1-80c9-83ec5b8a2417"
+      ],
+      "diagnostics": [
+        "c3edac63-938c-492f-882c-a8e444e1f3c2",
+        "11d7514d-da03-4102-ac8f-1d09ee58733c",
+        "251d4aa2-1a8b-47ca-8a98-8d06cd6b946d",
+        "6d117691-4c6b-4dad-8bb8-01315c25cbdf",
+        "1afa81dd-fd0a-4e68-aa77-5e3cbefffb45"
+      ],
+      "storage_objects": [
+        {
+          "path": "safe/11d7514d-da03-4102-ac8f-1d09ee58733c/31c8d92a-0825-426d-aeb4-f3fa53b32bc0.webp",
+          "state": "ready",
+          "bucket": "diagnostic-private-v1"
+        },
+        {
+          "path": "safe/1afa81dd-fd0a-4e68-aa77-5e3cbefffb45/994357f9-0e28-4429-bb86-97676bf488ce.webp",
+          "state": "ready",
+          "bucket": "diagnostic-private-v1"
+        },
+        {
+          "path": "safe/251d4aa2-1a8b-47ca-8a98-8d06cd6b946d/e1044e4d-5e74-46f5-bd48-39e40cab5876.webp",
+          "state": "validating",
+          "bucket": "diagnostic-private-v1"
+        },
+        {
+          "path": "safe/6d117691-4c6b-4dad-8bb8-01315c25cbdf/6fdfdb97-c932-462c-837c-484afe7a7a8b.webp",
+          "state": "ready",
+          "bucket": "diagnostic-private-v1"
+        },
+        {
+          "path": "safe/c3edac63-938c-492f-882c-a8e444e1f3c2/50202ec5-cea8-49ab-9af8-9d651630fb30.webp",
+          "state": "ready",
+          "bucket": "diagnostic-private-v1"
+        }
+      ],
+      "active_auth_sessions": 0
+    }
+  }
+]

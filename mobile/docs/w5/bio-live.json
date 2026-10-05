@@ -1,0 +1,122 @@
+{
+  "project_ref": "kqyhusnbybsukbcaoqtu",
+  "started_at": "2026-10-05T10:53:39.623Z",
+  "sessions": [
+    {
+      "id": "b477433a-b643-4d29-8bd7-8d246847e719",
+      "role": "artisan",
+      "session_id": "07c41cff-f15a-4370-909f-fb0e9ddcc94e"
+    },
+    {
+      "id": "58054a6b-a5c1-4dc3-b178-f1d300234c55",
+      "role": "client",
+      "session_id": "1e30805c-4688-4c48-a274-53b331b18947"
+    }
+  ],
+  "checks": [
+    {
+      "name": "active_artisan_rpc",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "active_artisan_readback_and_column_integrity",
+      "status": 200,
+      "pass": true,
+      "column_count": 38,
+      "changed_columns": [
+        "description",
+        "updated_at"
+      ],
+      "description_matches": true
+    },
+    {
+      "name": "boundary_4000_rpc",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "boundary_4000_readback_and_column_integrity",
+      "status": 200,
+      "pass": true,
+      "column_count": 38,
+      "changed_columns": [
+        "description",
+        "updated_at"
+      ],
+      "description_matches": true
+    },
+    {
+      "name": "over_4000_refused",
+      "status": 400,
+      "reason": "BIO_TOO_LONG",
+      "code": "22023",
+      "pass": true
+    },
+    {
+      "name": "client_refused",
+      "status": 403,
+      "reason": "ARTISAN_REQUIRED",
+      "code": "42501",
+      "pass": true
+    },
+    {
+      "name": "caller_cannot_select_foreign_artisan",
+      "status": 404,
+      "reason": "Could not find the function public.w5_update_my_artisan_bio_v1(p_artisan_id, p_description) in the schema cache",
+      "code": "PGRST202",
+      "pass": true
+    },
+    {
+      "name": "direct_update_still_refused",
+      "status": 403,
+      "reason": "permission denied for table artisans",
+      "code": "42501",
+      "pass": true
+    },
+    {
+      "name": "invalid_jwt_refused",
+      "status": 401,
+      "reason": "Expected 3 parts in JWT; got 1",
+      "code": "PGRST301",
+      "pass": true
+    },
+    {
+      "name": "final_api_bio_rpc",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "final_api_bio_readback_and_column_integrity",
+      "status": 200,
+      "pass": true,
+      "column_count": 38,
+      "changed_columns": [
+        "description",
+        "updated_at"
+      ],
+      "description_matches": true
+    },
+    {
+      "name": "global_revoke_artisan",
+      "status": 204,
+      "pass": true
+    },
+    {
+      "name": "global_revoke_client",
+      "status": 204,
+      "pass": true
+    },
+    {
+      "name": "revoked_session_refused",
+      "status": 403,
+      "reason": "SESSION_REVOKED",
+      "code": "42501",
+      "pass": true
+    }
+  ],
+  "final_description": "Atelier W5 synthétique — plomberie à Rabat.\nIntervention expliquée et prix confirmé avant travaux.",
+  "final_row_hash": "fd582c798659f614121b4528fc327a49b5b1567f5792a78e0b1c719df3d3c27f",
+  "finished_at": "2026-10-05T10:54:50.180Z",
+  "pass": true
+}

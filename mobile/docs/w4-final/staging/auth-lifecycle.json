@@ -1,0 +1,26 @@
+[
+  {
+    "user_id": "58054a6b-a5c1-4dc3-b178-f1d300234c55",
+    "role": "client",
+    "session_id": "aae031f0-1bf5-43e7-bdf1-94fa3a848455",
+    "opened_at": "2026-10-04T23:08:22.842Z",
+    "logout_status": 204,
+    "logout_at": "2026-10-04T23:19:45.249Z"
+  },
+  {
+    "user_id": "14c15c92-5166-4232-a62e-0e20cd4d55de",
+    "role": "client",
+    "session_id": "2b1820d1-afd9-4fa7-b412-f97ac767f069",
+    "opened_at": "2026-10-04T23:08:23.582Z",
+    "logout_status": 204,
+    "logout_at": "2026-10-04T23:19:50.551Z"
+  },
+  {
+    "user_id": "b477433a-b643-4d29-8bd7-8d246847e719",
+    "role": "artisan",
+    "session_id": "1482c1c8-5398-4bb8-b909-bd8ddc2af12f",
+    "opened_at": "2026-10-04T23:08:24.298Z",
+    "logout_status": 403,
+    "logout_at": "2026-10-04T23:19:56.257Z"
+  }
+]

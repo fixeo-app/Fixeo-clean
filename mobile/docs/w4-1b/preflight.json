@@ -1,0 +1,137 @@
+{
+  "checkpoint": {
+    "sha": "841fc80feb05051084166cf75c75abe0cd5bd9db",
+    "pr": 148,
+    "draft": true,
+    "merged": false,
+    "branch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+    "base_sha": "31df5b08cfb62a4e8841bbb18055826bf87ef62a",
+    "clean": true
+  },
+  "project": {
+    "name": "fixeo-diagnostic-staging",
+    "ref": "kqyhusnbybsukbcaoqtu",
+    "gate_enabled": false,
+    "fixture_auth_sessions": 0,
+    "running_diagnostics": 0
+  },
+  "preview": {
+    "id": "dpl_D4QLVH73Ga1DA1vcHc8dN6noDnku",
+    "sha": "841fc80feb05051084166cf75c75abe0cd5bd9db",
+    "ready_state": "READY",
+    "target": "preview",
+    "https": true,
+    "domain_verified": true,
+    "origin_value": "WITHHELD"
+  },
+  "bypass": {
+    "source_env_id": "6PX0ENsCuVuyQbXW",
+    "source_key": "VERCEL_AUTOMATION_BYPASS_SECRET",
+    "source_target": [
+      "preview"
+    ],
+    "source_modified": false,
+    "value": "WITHHELD",
+    "qualification": "NOT_CERTIFIED_HTTP_PROTECTION_REFUSAL"
+  },
+  "direct_post_checks": [
+    {
+      "route": "photo",
+      "status": 401,
+      "protection_layer": "Vercel Authentication",
+      "application_auth_reached": false,
+      "json": true,
+      "redirect": false,
+      "latency_ms": 7167,
+      "response_bytes": 618
+    },
+    {
+      "route": "transcribe",
+      "status": 401,
+      "protection_layer": "Vercel Authentication",
+      "application_auth_reached": false,
+      "json": true,
+      "redirect": false,
+      "latency_ms": 7186,
+      "response_bytes": 623
+    },
+    {
+      "route": "estimator",
+      "status": 401,
+      "protection_layer": "Vercel Authentication",
+      "application_auth_reached": false,
+      "json": true,
+      "redirect": false,
+      "latency_ms": 7212,
+      "response_bytes": 620
+    }
+  ],
+  "bypass_controls": [
+    {
+      "case": "absent",
+      "status": 401,
+      "protection_layer": "Vercel Authentication",
+      "response_bytes": 620
+    },
+    {
+      "case": "invalid",
+      "status": 401,
+      "protection_layer": "Vercel Authentication",
+      "response_bytes": 620
+    }
+  ],
+  "authenticated_connector_get_checks": [
+    {
+      "route": "photo",
+      "status": 405,
+      "error": "METHOD_NOT_ALLOWED",
+      "scope": "ROUTE_PRESENCE_ONLY"
+    },
+    {
+      "route": "transcribe",
+      "status": 405,
+      "error": "METHOD_NOT_ALLOWED",
+      "scope": "ROUTE_PRESENCE_ONLY"
+    },
+    {
+      "route": "estimator",
+      "status": 405,
+      "error": "METHOD_NOT_ALLOWED",
+      "scope": "ROUTE_PRESENCE_ONLY"
+    }
+  ],
+  "edge": {
+    "proxy": "mobile-rafi-preview-proxy",
+    "version": 2,
+    "verify_jwt": true,
+    "status": "ACTIVE",
+    "source_sha256": "3c507895202e112bb4ad134f44849b89e9ee322f308a2c3e9394b017a03c6070",
+    "candidate_deployed": false,
+    "secrets_inventory": "BLOCKED_CLI_AUTHENTICATION_MISSING",
+    "secrets_modified": [],
+    "rollback": "PRIVATE_EXACT_SOURCE_PAYLOAD_PREPARED"
+  },
+  "remote_mutations": {
+    "sql": 0,
+    "storage": 0,
+    "edge_functions": 0,
+    "edge_secrets": 0,
+    "vercel_env": 0,
+    "production": 0
+  },
+  "shared_proxy_certification": "NOT_RUN",
+  "purge": {
+    "executed": false,
+    "blocks_functional_w41": false,
+    "W8_RELEASE_BLOCKER": "PHYSICAL_DIAGNOSTIC_MEDIA_PURGE_CERTIFICATION",
+    "release_blocker_status": "OPEN"
+  },
+  "tests": {
+    "server_pass": 191,
+    "server_fail": 0,
+    "mobile_pass": 85,
+    "mobile_fail": 0,
+    "mobile_build_started": false
+  },
+  "verdict": "STOP — W4.1 SHARED PROXY NOT CERTIFIED"
+}

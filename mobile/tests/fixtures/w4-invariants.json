@@ -1,0 +1,122 @@
+{
+  "base": "5d772c463d7b3fe2511553cc3aab48de228f8551",
+  "protectedFiles": {
+    "app/_layout.tsx": "ba7aaf81d49dd3ce98e1b68aa15de40aaea2f46d6201098e7db5c4c5bae27857",
+    "app/sign-in.tsx": "82367908f902744ae4a8c0780985de8e7ff853df9392c9552d5ee83c0e194f07",
+    "assets/rafi/rafi-master-core-v1.png": "b08ce64b07953205c03317e08737ce9dbfef7aeec79179792d8820833c3311d6",
+    "components/ContextualCockpitCard.tsx": "2f5df76813dd645e6c7a9754ce9e74c452d5e42f9173da52dc29084aa4a316ac",
+    "components/DecisionCueCard.tsx": "eb3816f6059529ddbd9ace156c6d328d98674b3f4974345210e36a3b49a8add1",
+    "components/EntryStage.tsx": "19fa91e488f7fc5f45d947e0c4b47f1f530c3bd434c40b4af7936ebefd50c56f",
+    "components/MissionEvidenceCapture.tsx": "604b4489f5ae71c576277bebd4f2368a1c70b9a4872e27167b907303f3fdd2dd",
+    "components/MobileShell.tsx": "dda34cb4131df892b4fdc4556690a107ea1ba2f0b222b03a3bda5a815376c7ad",
+    "components/MotionReveal.tsx": "6a0985978e80808e47304b0f5394e9c1849d6b73f686a3646d7af5fa0d0b08d8",
+    "components/PremiumDrawer.tsx": "02876ff3ead5374541c253f13a0130bc0214f4dcdd213d237437e4a9fc9fde9e",
+    "components/PushOptIn.tsx": "85e12e2d6772e0c3b80224dba165a83a2b6e81721e8a5cdfadb09f020c2248f1",
+    "components/RafiComposer.tsx": "49495dac554071da121520c43c4d12f6024a6a2983d34c1de74c6705ed756988",
+    "components/RafiContextCard.tsx": "59a18aba473e4bbad89a52037f7ec19253ddd85e366bcb7eed21d77eb02278a7",
+    "components/RafiInputRail.tsx": "763c1b6dcac2018c9609e6f75275162d528a54e6b815fd1beb4580b2b9c413a9",
+    "components/WorkspaceShortcutGrid.tsx": "04a8b7858b57e05ae67b251bfd3fec19c2f74ecefc62c51cc3a31c422390b429",
+    "components/useWorkspaceDock.ts": "5a6f02258268cb1beb57d07defbe5edc830d426d8b8bf91406d51e82e0dd59fe",
+    "lib/agendaDate.ts": "5878efc0df6a6a01c2a0e4ec56734d7236768a52ed7bd6473148616d95a396ca",
+    "lib/artisanActivityLoad.ts": "9712101475399176fcb66cfe6501faf8c7d0e9149e1c957eca82ae553a5fb963",
+    "lib/artisanWorkspace.ts": "0dd7e58dbae41b724365a76456663d6863a0b8c2d5cf4717ee06110a58352006",
+    "lib/auth.ts": "2e2ef13d11daec2e1acd20d52d90de95afe4c2f6262ac70617e96c9649895af5",
+    "lib/authEntry.ts": "dc258832236fd55457c6df6ae5c2993653bfcc8565d45d803fc117c9d7402bca",
+    "lib/clientWatch.ts": "d0fb88a448851112f287f4e8cc15eaae8540a252f0106dbb350c2f427c066302",
+    "lib/clientWorkspace.ts": "71c1e7ad91b89c3aa07729c5ccc61327649eb4ff673b98dd1c38e1aa481d60ba",
+    "lib/contextualCockpit.ts": "6b7b4b9a39b7ce5f078851f06f30a4821c4372dc53ac524da3ed0c583ee662ce",
+    "lib/decisionCenter.ts": "26bd7c90d01b48183c701777c01ae7f94b0a5f347d5965b17c1b50d53c77a294",
+    "lib/dispatchContract.ts": "b7d925bd494ed1118ce6e9aa7ad14e8d42880f32d4e74c276ee895f154e3f1ab",
+    "lib/feedback.ts": "379625c862381528ebb3b2d5bfda5e5dc5c54d642ccc8ec1a7f9ccac1cd489a5",
+    "lib/feedbackContract.ts": "9e65e3480d63089962d8ad48785959c9a5964c253d63e219d5b502e832ab61e6",
+    "lib/magicLoop.ts": "7f8a53d6a2f7c82365742de4047fbda01450eb0e9c0c31106736d8fb0c479e87",
+    "lib/magicLoopState.ts": "99b7e9380478f6fef1b4dc8ba125abbda962a895eaba5dc308c9fe206d9bb53e",
+    "lib/missionChange.ts": "eab63777cea1aabe1b663912f1ae4382f4b00b3e95f077b8aa553db841b1a239",
+    "lib/missionEvidence.ts": "ad3ea58ee0c382861badd293c82bbec17abb4476ab9bd9ee7f7884187bfc9bac",
+    "lib/missionTerrain.ts": "80c8f01694d591eee90389942b93eccfa1257218dfb6ea8ff97cb86c39959761",
+    "lib/mobileDiagnostic.ts": "8c76689a2dd5f5a7346fc575e37ae60dfec455a84ec64cda39183a4ced76f2a8",
+    "lib/mobileResilience.ts": "fcf41a45836501d0cbe4b02e741880c379ea36e728fedce66cb1fff81beb1194",
+    "lib/notificationIntent.ts": "3f982384e679a57e7d5a1c2d9613bb313d84e44f5ace9f0e22d5d5233fa74d98",
+    "lib/notificationRouting.ts": "11e0d2e3b70e868352eb7d7f56d90b06551a95b428c3afc9e45df2bf09dbf62c",
+    "lib/push.ts": "afa92d2be3cd7d9cce86f2285a94c4cbb6fa15c1ef1b9b6c544622b0cf623f1a",
+    "lib/rafi.ts": "7fb1c9a24fe818c43633c3b9c95a82806c71ee39357ff108985c0a9cc0359c71",
+    "lib/rafiContext.ts": "398544396f3466ad490e39cbf4bcf9efe3c2679b9ca5f89f2fe55a3ec2c0bafa",
+    "lib/rafiGateway.ts": "7722bc978d1050a150f7e10b84b9b02941840e66bd7e560b3209f225d7a16859",
+    "lib/rafiTerrain.ts": "62b1db7ff94219d2b0e709cc36bddee1d3d1333b694864d39fc5820d0f49c002",
+    "lib/supabase.ts": "0b7fdb4c2d0780f1545341fe742ff58e318540bcb5a69c4964c534d04cc0b1ff",
+    "lib/useForegroundRefresh.ts": "2f661a027fbdac12dfcedaddc35efbda16a41b1c26a50402dd304bf4d9d5c9e6",
+    "lib/workspacePresentation.ts": "ce5e934cefc57913f17491aa490937bbfcb47549c0e7cd831f17f0871978b17d",
+    "ui/FixeoAction.tsx": "be4ccf9026af986ba318288e4484bca6f415ee58aa466a4883a470564e0c21be",
+    "ui/FixeoCard.tsx": "42d36eb76e6dce6a0414c800c20f5e6b09a6271fea2b09ccf185140d830c16a0",
+    "ui/FixeoContextDock.tsx": "492c604ccc84af30ff5fae9381a11c7cadc163b995df46b11530ab305a954040",
+    "ui/FixeoScreen.tsx": "cebe71fa3a6e194003e57b7f6df28443ae05ec9ee73366cfa8609bbd8d2da6c1",
+    "ui/FixeoSurface.tsx": "4ff09803afbf5132f6995f55781206faf07b8300901a58e7eff8c1f52ba6a6ac",
+    "ui/FixeoText.tsx": "f2d6d8984c1c9df326c5d5f4876d16374db147336dda4f37c63882b229044bd5",
+    "ui/RafiCoreMaterial.tsx": "0a83af51a461a169c20d84bd57fe0cd91e626c3b77316b5afe259352b6786544",
+    "ui/RafiOrb.tsx": "5b032b527295612c6eb883ab6db984eac62f277b72c96f7191f6055222dcf4ec",
+    "ui/ShellControl.tsx": "d1416c90855251875564e9663eefe214793d291b4ee195a9e0e3e79603faeb25",
+    "ui/interactionContract.ts": "4fd34848213d83dee13b8fd9b5a7221c8d58278b696fd10bba51ae0383604184",
+    "ui/motionContract.ts": "ee8e82713e9f69986d6cc0e44c312b3c0a02f473ec14df7fba4922c4832f7a5e",
+    "ui/motionEasing.ts": "3cd16502cc7f92fe50c3a7581b5364190c64ac1776b448bb8233f2e738f93d31",
+    "ui/rafiOrbMotion.ts": "72d5059286536df71ff7cb124996bda493c0ef9d896fc439ebc920204cfaa6c8",
+    "ui/rafiPresence.ts": "6418ab66c378d34a7343ff7ea437e4ca984cf2ec4ca9b7b7abc8b288038b8112",
+    "ui/screenMetrics.ts": "29bba5d4003145edc6332139eb3c3aa6bb40715b615f8b60d0c751ea2b496eea",
+    "ui/tokens.ts": "58fa9b18211340550e823c5e6d9b8c5419a404f04ee71f7b7a4a5883970759ef",
+    "ui/useRafiActivity.ts": "d79dbe7f543958009d6ad45d389965a98c80d19227f4e51e0e27b53494c45b68",
+    "ui/useReducedMotion.ts": "6d32dcbaea47c7af8fec16a442521ad0666b9cf5c381f2a1e86ef3d64ec97b25"
+  },
+  "callbacks": {
+    "app/index.tsx": {
+      "syncDecision": "a5f0c2d29771a0378ada0aa6aeb0f8f6ba260a32e6a5d9fa1cc01f3fcf1e2be8",
+      "actOnDecision": "191b371c451dd9cf93461a5c7eb93fc5f172a483f86803629910e0b3f51dc377",
+      "syncCurrentMission": "a16640e815f15104c13399db7b604437702f960f8c28f4c0d52454c1200ee6c5",
+      "syncJourney": "538e2aa0f9333b85a9fc86040e25a5e7a18f5682931d91e9d3a140c07a38c7e5",
+      "hook-1": "9d47dee4dbeb4382ff721249970b48127f2ce5cfda7950c71b456ea1d104cf43",
+      "hook-2": "c24f2d6e2729b0eff695a1cc1ecf97f6072c62175d582ef503b7967b63f66402",
+      "confirmPhotoDiagnostic": "4681541cb6f9ff26705bbecdfd8b7bb8aeb6af53a92c0d3ae7ccce8bb721c778",
+      "send": "c281176ab41fba16e5ec4abb1b212d471cdb85700366efc94cada301dae8e8cd"
+    },
+    "app/client-workspace/index.tsx": {
+      "hook-0": "5d2fdead40e4f280fa8eccef9fa672d90a67854434007543b162781d202b84a8",
+      "hook-1": "61aff2a1c32faf39a23cb35d177f5a3fe0c0a5d1dd972215609994cc7bdb288a",
+      "actOnContextualCockpit": "5e65078e2d30d9758f5658260db952b4c113f25c62275785ef2abd4fcd5ba913"
+    },
+    "app/client-workspace/history.tsx": {
+      "hook-0": "f41a09c25471df31dd22b8b0c3dc10b867cba86d911a7ca49f7c13de520a50f5",
+      "hook-1": "61aff2a1c32faf39a23cb35d177f5a3fe0c0a5d1dd972215609994cc7bdb288a"
+    },
+    "app/client-workspace/notifications.tsx": {
+      "hook-0": "5e46234eb44619fd36cae64835d7717c67323d5eab0723c9f4773ea56d864c40",
+      "hook-1": "61aff2a1c32faf39a23cb35d177f5a3fe0c0a5d1dd972215609994cc7bdb288a",
+      "open": "e78b8864f1003e83eb1619345dc744f0ae1d9a39bb6003f9be1dc900289ba19a"
+    },
+    "app/client-workspace/account.tsx": {
+      "hook-0": "4539b49a90ae173ac4672b4f114fb7b21e5e6353e61762c36a3de24b5219b2e8",
+      "hook-1": "61aff2a1c32faf39a23cb35d177f5a3fe0c0a5d1dd972215609994cc7bdb288a",
+      "save": "1e5878235880b760c1affc464db450f44bc91114c2f3d979363982431fd730c5"
+    },
+    "app/client-mission/[id].tsx": {
+      "hook-0": "f5988b0339a9c5e8ec2446366056c950f21dff4897925ea4112c6876b38435d2",
+      "hook-1": "368fdcc0ee3d3ed8789963c1c36190a344f4d9669c034f93547b5c803ee7b539",
+      "validate": "841161b847174cb4309d25822ef051193e0c54c5f730ebeec96f4a00f0b81de2",
+      "decideChange": "56ed0420d2a649fa8e7deae81125ddeb06005f1893f9b003265d94f61880ac39"
+    }
+  },
+  "w4FinalReplacedCallbacks": {
+    "handlePhoto": "495cb190ee2e76a8b1c9eb2218b871b9ce4b939ab473c5e0005a1ee72e7b4921",
+    "analyzePhoto": "12fa1738ac3f2e37df1bfa4cf3641ac623f1815bcdb5f1d87e162d1b21f8f7c0",
+    "handleVoice": "b5f93effd301908d596995d9a3584af9322473156c112217c98425e849bbbfc6",
+    "hook-0": "dd76ee1de00c1aca24cd239f8e2c78d5cfc5fa1b252cd8ca223ec9f05f610958",
+    "bootstrap": "f96891fd3bfa8d43b42ed4a1581b08f85dd08a9b109f7501cf9ebeaa342e7cdb"
+  },
+  "w5ReplacedPresentation": {
+    "app/artisan-workspace/agenda.tsx": "d29207069d48c069af61170fc3accef94b70791d778e2e2035b3f0cb12a8b288",
+    "app/artisan-workspace/clients.tsx": "ff420ea641c0486b8a191e10ff980b27126a38c405f33f7be403ab7ff223c8e6",
+    "app/artisan-workspace/finance.tsx": "ea3f590da9a25e095be4ff596eef39f10f8e75b43721ea84cdbe162f43e0f1c8",
+    "app/artisan-workspace/index.tsx": "aa9cc696e95a7edbadff2eafe68ad70576f4bad4fae0042aab73f1db9158637f",
+    "app/artisan-workspace/quotes.tsx": "25fb0c6a39d11a363dcf1e7fd17524567154224a306071efaebdedc6f7c786aa",
+    "app/artisan.tsx": "c00467584fee267ff813cceca9a36be5bf3ea5622275cca855953504802022c2",
+    "app/mission/[id].tsx": "fb56559e6e1f8b6dfa53cb546124a82eb70a67a4915df91236f993eac32ecd91",
+    "ui/shellContract.ts": "5de006835e4a9dae577561b9eb92295db211a41e1fa6d27a28d13707594a953b"
+  }
+}

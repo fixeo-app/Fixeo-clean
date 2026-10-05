@@ -1,0 +1,35 @@
+{
+  "checkpoint_sha": "6eb4e587260f9b7c6e017f3452988751020fc585",
+  "pr": 148,
+  "draft": true,
+  "merged": false,
+  "base_branch": "feat/fixeo-mobile-w4-client-os-wow",
+  "base_sha": "31df5b08cfb62a4e8841bbb18055826bf87ef62a",
+  "branch": "feat/fixeo-mobile-w4-1-intelligence-gateway",
+  "tracked_clean": true,
+  "untracked_previous_execution_artifacts_archived": true,
+  "clean_after_archive": true,
+  "concurrent_local_test_or_build_processes_observed": false,
+  "other_active_application_queries_observed": false,
+  "concurrency_limit": "Point-in-time observations; no global exclusive lock asserted.",
+  "project": {
+    "id": "kqyhusnbybsukbcaoqtu",
+    "ref": "kqyhusnbybsukbcaoqtu",
+    "organization_id": "vkiqfdjgrbaunhsjziqp",
+    "organization_slug": "vkiqfdjgrbaunhsjziqp",
+    "name": "fixeo-diagnostic-staging",
+    "region": "eu-west-1",
+    "status": "ACTIVE_HEALTHY",
+    "database": {
+      "host": "db.kqyhusnbybsukbcaoqtu.supabase.co",
+      "version": "17.6.1.166",
+      "postgres_engine": "17",
+      "release_channel": "ga"
+    },
+    "created_at": "2026-09-21T19:42:02.710145Z"
+  },
+  "read_only_staging_audit": true,
+  "cli_version": "2.119.0",
+  "edge_secret_inventory": "BLOCKED_NO_AUTHENTICATED_CLI_AND_NO_CONNECTOR_CAPABILITY",
+  "remote_mutations": []
+}

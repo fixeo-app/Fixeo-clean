@@ -1,5 +1,6 @@
 import 'react-native-url-polyfill/auto';
 import * as SecureStore from 'expo-secure-store';
+import { AppState, Platform } from 'react-native';
 import { createClient } from '@supabase/supabase-js';
 
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
@@ -37,3 +38,25 @@ export const supabase = createClient(url, key, {
     detectSessionInUrl: false,
   },
 });
+
+
+export function startSupabaseAuthLifecycle() {
+  if (Platform.OS === 'web') return () => undefined;
+
+  if (AppState.currentState === 'active') {
+    supabase.auth.startAutoRefresh();
+  }
+
+  const subscription = AppState.addEventListener('change', state => {
+    if (state === 'active') {
+      supabase.auth.startAutoRefresh();
+    } else {
+      supabase.auth.stopAutoRefresh();
+    }
+  });
+
+  return () => {
+    subscription.remove();
+    supabase.auth.stopAutoRefresh();
+  };
+}

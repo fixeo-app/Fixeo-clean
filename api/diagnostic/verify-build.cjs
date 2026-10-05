@@ -42,7 +42,7 @@ if (process.env.VERCEL_ENV === "production") {
   if (process.env.FIXEO_DIAGNOSTIC_ENABLED === "1")
     assert.equal(cfg.enabled, true);
   assert.ok(
-    require("../../vercel.json").crons.some(
+    require("../../vercel.legacy.json").crons.some(
       (c) =>
         c.path === "/api/diagnostic-maintenance" && c.schedule === "0 * * * *",
     ),

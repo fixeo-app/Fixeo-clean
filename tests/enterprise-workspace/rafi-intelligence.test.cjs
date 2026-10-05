@@ -63,7 +63,7 @@ test('G04 image is ephemeral: no storage upload/persistence in RAFI backend',()=
 
 test('G05 shared server and Vercel route expose enterprise RAFI without a new function build',()=>{
   const server=fs.readFileSync(path.join(root,'api/server.js'),'utf8');
-  const vercel=fs.readFileSync(path.join(root,'vercel.json'),'utf8');
+  const vercel=fs.readFileSync(path.join(root,'vercel.legacy.json'),'utf8');
   assert.match(server,/\/api\/enterprise-rafi/);
   assert.match(server,/enterpriseRafiImageUpload/);
   assert.match(vercel,/"src": "\^\/api\/enterprise-rafi\$"[\s\S]*"dest": "\/api\/server\.js"/);

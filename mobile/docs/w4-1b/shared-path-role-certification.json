@@ -1,0 +1,565 @@
+{
+  "status": "FUNCTIONAL_PASS",
+  "runtime_sha": "53989181a9afcfc14f5cb18dd8466447dcadb209",
+  "proxy_version": 8,
+  "verify_jwt": true,
+  "route_authority": "VOICE Client+Artisan; persisted Diagnostic/Estimator/Request Client-only",
+  "roles": [
+    {
+      "label": "VOICE_ANON_REFUSED",
+      "status": 401,
+      "error": "AUTH_REQUIRED",
+      "transcript_nonempty": false,
+      "latency_ms": 7065,
+      "response_bytes": 36
+    },
+    {
+      "label": "VOICE_INVALID_JWT_REFUSED",
+      "status": 401,
+      "transcript_nonempty": false,
+      "latency_ms": 215,
+      "response_bytes": 66
+    },
+    {
+      "label": "VOICE_CLIENT_ACCEPTED",
+      "status": 200,
+      "transcript_nonempty": true,
+      "latency_ms": 3236,
+      "response_bytes": 68
+    },
+    {
+      "label": "VOICE_ARTISAN_ACCEPTED",
+      "status": 200,
+      "transcript_nonempty": true,
+      "latency_ms": 2856,
+      "response_bytes": 68
+    },
+    {
+      "label": "PERSISTED_PHOTO_ARTISAN_REFUSED",
+      "status": 403,
+      "error": "ROLE_FORBIDDEN",
+      "transcript_nonempty": false,
+      "latency_ms": 1228,
+      "response_bytes": 37
+    },
+    {
+      "label": "EPHEMERAL_PHOTO_CLIENT_ACCEPTED",
+      "status": 200,
+      "transcript_nonempty": false,
+      "privacy": {
+        "persisted": false,
+        "raw_photo_retained": false,
+        "sanitized_photo_retained": false
+      },
+      "safety_stop": true,
+      "latency_ms": 940,
+      "response_bytes": 1030
+    },
+    {
+      "label": "EPHEMERAL_PHOTO_ARTISAN_ACCEPTED",
+      "status": 200,
+      "transcript_nonempty": false,
+      "privacy": {
+        "persisted": false,
+        "raw_photo_retained": false,
+        "sanitized_photo_retained": false
+      },
+      "safety_stop": true,
+      "latency_ms": 729,
+      "response_bytes": 1030
+    },
+    {
+      "label": "VOICE_REVOKED_SESSION_REFUSED",
+      "status": 401,
+      "error": "AUTH_REQUIRED",
+      "transcript_nonempty": false,
+      "latency_ms": 7565,
+      "response_bytes": 36
+    }
+  ],
+  "functional_checks": [
+    "ESTIMATOR_OPTIONAL_DIAGNOSTIC_NO_SAFETY_QUESTION",
+    "CANONICAL_PRICE_READY",
+    "HANDOFF_IDEMPOTENCY_DOUBLE_TAP_RETRY_CONFLICT",
+    "REQUEST_OWNER_FROM_JWT",
+    "ONE_CLARIFICATION_CANONICAL_QUOTE_REQUIRED",
+    "TRUE_STOP_NO_PRICING_NO_REQUEST_NO_LOCAL_LIFT",
+    "DIRECT_WITHOUT_DIAGNOSTIC_ESTIMATOR_PRICING",
+    "DIAGNOSTIC_PERSISTENCE_SERVER_HASH_PROVENANCE_OWNERSHIP",
+    "DIAGNOSTIC_ESTIMATOR_QUOTE_HANDOFF",
+    "PERSISTED_STOP_NO_HANDOFF"
+  ],
+  "functional_calls": [
+    {
+      "label": "ESTIMATOR_START_WITHOUT_DIAGNOSTIC",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 7506,
+      "response_bytes": 2475
+    },
+    {
+      "label": "SESSION_CROSS_USER",
+      "scope": "shared proxy",
+      "status": 403,
+      "error": "ESTIMATOR_SESSION_INVALID",
+      "latency_ms": 1258,
+      "response_bytes": 48
+    },
+    {
+      "label": "SESSION_TAMPER",
+      "scope": "shared proxy",
+      "status": 400,
+      "error": "ESTIMATOR_SESSION_INVALID",
+      "latency_ms": 844,
+      "response_bytes": 48
+    },
+    {
+      "label": "ESTIMATOR_EVALUATE",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 856,
+      "response_bytes": 6666
+    },
+    {
+      "label": "PRICING_VALID",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 699,
+      "response_bytes": 245
+    },
+    {
+      "label": "PRICING_EXPIRED",
+      "scope": "shared proxy",
+      "status": 410,
+      "error": "PRICING_CONTEXT_EXPIRED",
+      "latency_ms": 570,
+      "response_bytes": 46
+    },
+    {
+      "label": "PRICING_TAMPER",
+      "scope": "shared proxy",
+      "status": 400,
+      "error": "PRICING_CONTEXT_INVALID",
+      "latency_ms": 628,
+      "response_bytes": 46
+    },
+    {
+      "label": "HANDOFF_CROSS_USER",
+      "scope": "shared proxy",
+      "status": 403,
+      "error": "PRICING_CONTEXT_INVALID",
+      "latency_ms": 624,
+      "response_bytes": 46
+    },
+    {
+      "label": "HANDOFF_ARTISAN",
+      "scope": "shared proxy",
+      "status": 403,
+      "error": "ROLE_FORBIDDEN",
+      "latency_ms": 524,
+      "response_bytes": 37
+    },
+    {
+      "label": "HANDOFF_CITY_MISMATCH",
+      "scope": "shared proxy",
+      "status": 409,
+      "error": "PRICING_CONTEXT_INVALID",
+      "latency_ms": 679,
+      "response_bytes": 46
+    },
+    {
+      "label": "HANDOFF_SERVICE_MISMATCH",
+      "scope": "shared proxy",
+      "status": 409,
+      "error": "PRICING_CONTEXT_INVALID",
+      "latency_ms": 609,
+      "response_bytes": 46
+    },
+    {
+      "label": "HANDOFF_PRICE_INJECTION",
+      "scope": "shared proxy",
+      "status": 400,
+      "error": "INVALID_BODY",
+      "latency_ms": 675,
+      "response_bytes": 35
+    },
+    {
+      "label": "HANDOFF_DOUBLE_TAP_A",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 1121,
+      "response_bytes": 312
+    },
+    {
+      "label": "HANDOFF_DOUBLE_TAP_B",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 6936,
+      "response_bytes": 311
+    },
+    {
+      "label": "HANDOFF_RETRY_IDENTICAL",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 6807,
+      "response_bytes": 311
+    },
+    {
+      "label": "HANDOFF_PAYLOAD_CONFLICT",
+      "scope": "shared proxy",
+      "status": 409,
+      "error": "MOBILE_IDEMPOTENCY_CONFLICT",
+      "latency_ms": 6798,
+      "response_bytes": 50
+    },
+    {
+      "label": "REEVALUATE",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 1002,
+      "response_bytes": 6666
+    },
+    {
+      "label": "RECONFIRM",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 1628,
+      "response_bytes": 311
+    },
+    {
+      "label": "QUALIFICATION_START",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 664,
+      "response_bytes": 7136
+    },
+    {
+      "label": "ANSWER",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 907,
+      "response_bytes": 4583
+    },
+    {
+      "label": "REAL_SAFETY_STOP",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 651,
+      "response_bytes": 4674
+    },
+    {
+      "label": "STOP_evaluate",
+      "scope": "shared proxy",
+      "status": 409,
+      "error": "DIAGNOSTIC_SAFETY_STOP",
+      "latency_ms": 1196,
+      "response_bytes": 45
+    },
+    {
+      "label": "STOP_select_service",
+      "scope": "shared proxy",
+      "status": 409,
+      "error": "DIAGNOSTIC_SAFETY_STOP",
+      "latency_ms": 608,
+      "response_bytes": 45
+    },
+    {
+      "label": "STOP_confirm_quote",
+      "scope": "shared proxy",
+      "status": 409,
+      "error": "DIAGNOSTIC_SAFETY_STOP",
+      "latency_ms": 604,
+      "response_bytes": 45
+    },
+    {
+      "label": "DIRECT_CLIENT_REQUEST",
+      "scope": "JWT canonical RPC",
+      "status": 200,
+      "latency_ms": 589,
+      "response_bytes": 685
+    },
+    {
+      "label": "DIRECT_IDENTICAL_RETRY",
+      "scope": "JWT canonical RPC",
+      "status": 200,
+      "latency_ms": 247,
+      "response_bytes": 685
+    },
+    {
+      "label": "DIRECT_ARTISAN_REFUSED",
+      "scope": "JWT canonical RPC",
+      "status": 403,
+      "latency_ms": 237,
+      "response_bytes": 65
+    },
+    {
+      "label": "PERSISTED_DIAGNOSTIC_CLIENT",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 6299,
+      "response_bytes": 3163
+    },
+    {
+      "label": "DIAGNOSTIC_REFERENCE_VALID",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 6275,
+      "response_bytes": 3938
+    },
+    {
+      "label": "DIAGNOSTIC_REFERENCE_CROSS_USER",
+      "scope": "shared proxy",
+      "status": 403,
+      "error": "DIAGNOSTIC_INVALID",
+      "latency_ms": 6176,
+      "response_bytes": 41
+    },
+    {
+      "label": "DIAGNOSTIC_REFERENCE_TAMPER",
+      "scope": "shared proxy",
+      "status": 400,
+      "error": "DIAGNOSTIC_INVALID",
+      "latency_ms": 635,
+      "response_bytes": 41
+    },
+    {
+      "label": "DIAGNOSTIC_REFERENCE_EXPIRED",
+      "scope": "shared proxy",
+      "status": 410,
+      "error": "DIAGNOSTIC_EXPIRED",
+      "latency_ms": 1065,
+      "response_bytes": 41
+    },
+    {
+      "label": "DIAGNOSTIC_QUALIFY",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 1342,
+      "response_bytes": 5106
+    },
+    {
+      "label": "DIAGNOSTIC_QUOTE_HANDOFF",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 1966,
+      "response_bytes": 237
+    },
+    {
+      "label": "PERSISTED_DIAGNOSTIC_TRUE_STOP",
+      "scope": "shared proxy",
+      "status": 200,
+      "latency_ms": 3652,
+      "response_bytes": 1101
+    },
+    {
+      "label": "METHOD_REFUSED",
+      "scope": "shared proxy",
+      "status": 405,
+      "error": "METHOD_NOT_ALLOWED",
+      "latency_ms": 152,
+      "response_bytes": 41
+    },
+    {
+      "label": "UNKNOWN_ROUTE",
+      "scope": "shared proxy",
+      "status": 404,
+      "error": "ROUTE_NOT_FOUND",
+      "latency_ms": 163,
+      "response_bytes": 38
+    },
+    {
+      "label": "OVERSIZE",
+      "scope": "shared proxy",
+      "status": 413,
+      "error": "BODY_TOO_LARGE",
+      "latency_ms": 252,
+      "response_bytes": 37
+    },
+    {
+      "label": "UPSTREAM_NON_JSON",
+      "scope": "shared proxy",
+      "status": 503,
+      "error": "GATEWAY_UNAVAILABLE",
+      "latency_ms": 688,
+      "response_bytes": 42
+    }
+  ],
+  "negative_checks": {
+    "mode": "real-shared-proxy",
+    "started_at": "2026-10-04T21:53:04.491Z",
+    "passed": [
+      "BOUNDED_PROXY_AND_CANONICAL_ATTESTATION_NEGATIVES"
+    ],
+    "calls": [
+      {
+        "label": "METHOD_REFUSED",
+        "scope": "shared proxy",
+        "status": 405,
+        "error": "METHOD_NOT_ALLOWED",
+        "latency_ms": 6987,
+        "response_bytes": 41
+      },
+      {
+        "label": "UNKNOWN_ROUTE",
+        "scope": "shared proxy",
+        "status": 404,
+        "error": "ROUTE_NOT_FOUND",
+        "latency_ms": 157,
+        "response_bytes": 38
+      },
+      {
+        "label": "OVERSIZE",
+        "scope": "shared proxy",
+        "status": 413,
+        "error": "BODY_TOO_LARGE",
+        "latency_ms": 248,
+        "response_bytes": 37
+      },
+      {
+        "label": "MALFORMED_JSON_FAILS_CLOSED",
+        "scope": "shared proxy",
+        "status": 503,
+        "error": "GATEWAY_UNAVAILABLE",
+        "latency_ms": 1128,
+        "response_bytes": 42
+      },
+      {
+        "label": "CLIENT_BYPASS_OVERRIDE_IGNORED",
+        "scope": "shared proxy",
+        "status": 400,
+        "error": "INVALID_ACTION",
+        "latency_ms": 896,
+        "response_bytes": 37
+      },
+      {
+        "label": "ATTESTATION_TAMPER",
+        "scope": "JWT canonical RPC",
+        "status": 403,
+        "latency_ms": 258,
+        "response_bytes": 82
+      },
+      {
+        "label": "ATTESTATION_CROSS_USER",
+        "scope": "JWT canonical RPC",
+        "status": 403,
+        "latency_ms": 236,
+        "response_bytes": 80
+      },
+      {
+        "label": "ATTESTATION_EXPIRED",
+        "scope": "JWT canonical RPC",
+        "status": 403,
+        "latency_ms": 240,
+        "response_bytes": 82
+      }
+    ],
+    "requests": [],
+    "diagnostics": [],
+    "storage": [],
+    "status": "PASS",
+    "finished_at": "2026-10-04T21:53:14.647Z"
+  },
+  "supplement": {
+    "checks": [
+      "ATTESTED_READ_RECHECKED_WITHOUT_MUTATION",
+      "READS_NOT_CACHED_AS_MUTATION_AUTHORITY",
+      "DIAGNOSTIC_RPC_CROSS_USER_REFUSED",
+      "STORAGE_CROSS_USER_READ_REFUSED",
+      "PROVENANCE_NOT_PROMOTED_TO_USER_CONFIRMED",
+      "SELECT_SERVICE_CANONICAL",
+      "DIAGNOSTIC_TARIFF_NOT_INVENTED_AFTER_ONE_CLARIFICATION",
+      "PARTS_PRICE_NOT_INVENTED_AFTER_ONE_CLARIFICATION",
+      "CALLER_ORIGIN_NOT_AUTHORITY"
+    ],
+    "calls": [
+      {
+        "label": "SELECT_SERVICE_START",
+        "status": 200,
+        "next_step": "SERVICE_SELECTION",
+        "latency_ms": 6399
+      },
+      {
+        "label": "SELECT_SERVICE",
+        "status": 200,
+        "next_step": "READY",
+        "latency_ms": 7154
+      },
+      {
+        "label": "SELECTED_SERVICE_EVALUATE",
+        "status": 200,
+        "outcome": "PRICE_READY",
+        "latency_ms": 1096
+      },
+      {
+        "label": "DIAGNOSTIC_TARIFF_START",
+        "status": 200,
+        "next_step": "QUESTION",
+        "latency_ms": 1068
+      },
+      {
+        "label": "DIAGNOSTIC_TARIFF_ONE_ANSWER",
+        "status": 200,
+        "outcome": "QUOTE_REQUIRED",
+        "latency_ms": 856
+      },
+      {
+        "label": "PARTS_TARIFF_START",
+        "status": 200,
+        "next_step": "QUESTION",
+        "latency_ms": 835
+      },
+      {
+        "label": "PARTS_TARIFF_ONE_ANSWER",
+        "status": 200,
+        "outcome": "QUOTE_REQUIRED",
+        "latency_ms": 660
+      },
+      {
+        "label": "ORIGIN_REJECTED",
+        "status": 403,
+        "error": "ORIGIN_REJECTED",
+        "latency_ms": 316
+      }
+    ],
+    "provenances": [
+      "user_declared",
+      "ai_inferred"
+    ],
+    "status": "PASS"
+  },
+  "requests": [
+    "fccc36bc-656f-4f5d-adda-4396794259e9",
+    "31888685-b76b-47a0-9209-bc298b169c76",
+    "f7f1d53e-28ec-417a-83d7-d2f29fa6f26d"
+  ],
+  "diagnostics": [
+    "c890386d-6eda-45e4-aa2d-ddb1200d517c"
+  ],
+  "storage": [
+    {
+      "session_id": "c890386d-6eda-45e4-aa2d-ddb1200d517c",
+      "path": "safe/c890386d-6eda-45e4-aa2d-ddb1200d517c/e5a307c8-2e0c-4458-b7c1-167ec6fa29ba.webp",
+      "state": "ready",
+      "hash_verified": true
+    }
+  ],
+  "performance": {
+    "measured_calls": 63,
+    "median_ms": 856,
+    "p95_ms": 6987,
+    "max_ms": 7565,
+    "max_response_bytes": 7136
+  },
+  "harness_corrections": [
+    "READY is a valid next_step without a question.",
+    "Malformed JSON returned sanitized application 503; it did not produce a non-JSON upstream response. Expected refusal broadened, then negative phase rerun successfully.",
+    "Attested diagnostic get is intentionally uncached and does not create mutation receipts. Mutation replay/conflict tested through live confirmation.",
+    "select_service returns READY; evaluate provides the canonical outcome."
+  ],
+  "fault_injection_scope": {
+    "upstream_timeout": "isolated execution of exact proxy source; not injected on shared staging",
+    "upstream_non_json": "isolated execution of exact proxy source; not induced by malformed live request",
+    "invalid_server_bypass": "direct protected Preview controls only; shared Edge secrets not mutated for injection"
+  },
+  "remaining_release_blocker": "PHYSICAL_DIAGNOSTIC_MEDIA_PURGE_CERTIFICATION"
+}

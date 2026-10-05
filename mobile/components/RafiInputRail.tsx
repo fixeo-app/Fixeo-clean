@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {
   AudioModule,
@@ -8,36 +7,77 @@ import {
   useAudioRecorder,
   useAudioRecorderState,
 } from 'expo-audio';
+import { RafiComposer } from './RafiComposer';
 
 type Props = {
   onVoiceReady: (uri: string) => void;
-  onPhotoReady: (uri: string) => void;
+  onPhotoReady: (uri: string, mimeType?: string) => void;
+  onWrite?: () => void;
+  onListeningChange?: (listening: boolean) => void;
 };
 
-export function RafiInputRail({ onVoiceReady, onPhotoReady }: Props) {
-  const recorder = useAudioRecorder(RecordingPresets.LOW_QUALITY);
+export function RafiInputRail({
+  onVoiceReady,
+  onPhotoReady,
+  onWrite,
+  onListeningChange,
+}: Props) {
+  const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(recorder);
   const [message, setMessage] = useState('');
+  const [voiceBusy, setVoiceBusy] = useState(false);
 
   async function toggleVoice() {
-    if (recorderState.isRecording) {
-      await recorder.stop();
-      if (recorder.uri) {
-        setMessage('Enregistrement prêt.');
-        onVoiceReady(recorder.uri);
-      }
-      return;
-    }
+    if (voiceBusy) return;
+    setVoiceBusy(true);
 
-    const permission = await AudioModule.requestRecordingPermissionsAsync();
-    if (!permission.granted) {
-      setMessage('Microphone non autorisé.');
-      return;
+    try {
+      if (recorderState.isRecording) {
+        await recorder.stop();
+        await setAudioModeAsync({ allowsRecording: false }).catch(() => undefined);
+
+        onListeningChange?.(false);
+
+        if (recorder.uri) {
+          setMessage('Voix prête pour RAFI.');
+          onVoiceReady(recorder.uri);
+        } else {
+          setMessage('Enregistrement introuvable. Réessayez.');
+        }
+        return;
+      }
+
+      const permission = await AudioModule.requestRecordingPermissionsAsync();
+      if (!permission.granted) {
+        setMessage(
+          permission.canAskAgain === false
+            ? 'Microphone bloqué. Autorisez FIXEO dans les réglages Android.'
+            : 'Microphone non autorisé.',
+        );
+        return;
+      }
+
+      await setAudioModeAsync({
+        playsInSilentMode: true,
+        allowsRecording: true,
+      });
+      await recorder.prepareToRecordAsync();
+      recorder.record();
+      onListeningChange?.(true);
+      setMessage('RAFI écoute… Touchez Arrêter quand vous avez fini.');
+    } catch (error: any) {
+      console.warn(
+        JSON.stringify({
+          event: 'mobile_rafi_voice_capture_failed',
+          code: String(error?.message || 'unknown').slice(0, 120),
+        }),
+      );
+      onListeningChange?.(false);
+      setMessage('Le microphone n’a pas pu démarrer. Vérifiez son autorisation puis réessayez.');
+      await setAudioModeAsync({ allowsRecording: false }).catch(() => undefined);
+    } finally {
+      setVoiceBusy(false);
     }
-    await setAudioModeAsync({ playsInSilentMode: true, allowsRecording: true });
-    await recorder.prepareToRecordAsync();
-    recorder.record();
-    setMessage('RAFI écoute…');
   }
 
   async function takePhoto() {
@@ -46,44 +86,18 @@ export function RafiInputRail({ onVoiceReady, onPhotoReady }: Props) {
       setMessage('Caméra non autorisée.');
       return;
     }
+
     const result = await ImagePicker.launchCameraAsync({
       quality: 0.72,
       allowsEditing: false,
     });
+
     if (!result.canceled && result.assets[0]?.uri) {
-      setMessage('Photo prête.');
-      onPhotoReady(result.assets[0].uri);
+      setMessage('Photo prête pour RAFI.');
+      onPhotoReady(result.assets[0].uri, result.assets[0].mimeType || 'image/jpeg');
     }
   }
 
-  return (
-    <View>
-      <View style={styles.row}>
-        <Pressable style={styles.mode} onPress={() => void toggleVoice()}>
-          <Text>{recorderState.isRecording ? '⏹ Arrêter' : '🎙 Parler'}</Text>
-        </Pressable>
-        <Pressable style={styles.mode} onPress={() => void takePhoto()}>
-          <Text>📷 Montrer</Text>
-        </Pressable>
-        <View style={styles.mode}>
-          <Text>⌨️ Écrire</Text>
-        </View>
-      </View>
-      {!!message && <Text style={styles.message}>{message}</Text>}
-    </View>
-  );
+  return <RafiComposer recording={recorderState.isRecording} voiceBusy={voiceBusy} message={message}
+    onVoice={() => void toggleVoice()} onPhoto={() => void takePhoto()} onWrite={onWrite} />;
 }
-
-const styles = StyleSheet.create({
-  row: { flexDirection: 'row', justifyContent: 'space-between', gap: 8 },
-  mode: {
-    flex: 1,
-    minHeight: 46,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 14,
-  },
-  message: { textAlign: 'center', marginTop: 8, opacity: 0.65 },
-});

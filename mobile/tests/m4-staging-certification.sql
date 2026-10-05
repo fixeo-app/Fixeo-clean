@@ -1,0 +1,12 @@
+-- FIXEO Mobile M4 Staging certification
+-- Run only against fixeo-diagnostic-staging.
+-- Entire test is rolled back.
+-- Covers: ownership, accept idempotence, arrival idempotence,
+-- start idempotence, governed field change, completion idempotence,
+-- client validation idempotence and validated detail.
+--
+-- The live certification on 2026-10-02 returned:
+-- M4_TRANSACTIONAL_CERT_PASS
+--
+-- Keep the canonical SQL used for the certification in the PR conversation/runbook.
+select 'M4_TRANSACTIONAL_CERT_PASS' as certified_checkpoint;

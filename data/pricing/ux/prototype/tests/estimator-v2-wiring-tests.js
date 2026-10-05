@@ -33,7 +33,7 @@ const rmCode     = read('js/fixeo-request-modal-v2.js');
 const rafiCode   = read('js/fixeo-rafi-os-v1.js');
 const reservCode = read('js/reservation.js');
 const indexCode  = read('index.html');
-const vjCode     = read('vercel.json');
+const vjCode     = read('vercel.legacy.json');
 
 /* ════════════════════════════════════════════════════════════
    1. FLAG-GATED REQUEST MODAL HOOK
@@ -384,16 +384,16 @@ test('17.4 Override only active when === true (strict)', function() {
    ════════════════════════════════════════════════════════════ */
 console.log('\n── 18. Vercel packaging ──');
 
-test('18.1 vercel.json has api/estimator-v1/index.js build', function() {
+test('18.1 vercel.legacy.json has api/estimator-v1/index.js build', function() {
   ok(vjCode.includes('api/estimator-v1/index.js'), 'build entry must exist');
 });
-test('18.2 vercel.json has /api/estimator-v1 route', function() {
+test('18.2 vercel.legacy.json has /api/estimator-v1 route', function() {
   ok(vjCode.includes('/api/estimator-v1'), 'API route must exist');
 });
-test('18.3 vercel.json has /estimation route', function() {
+test('18.3 vercel.legacy.json has /estimation route', function() {
   ok(vjCode.includes('/estimation'), 'page route must exist');
 });
-test('18.4 vercel.json builds estimator with @vercel/node', function() {
+test('18.4 vercel.legacy.json builds estimator with @vercel/node', function() {
   const buildIdx = vjCode.indexOf('api/estimator-v1/index.js');
   const section  = vjCode.slice(buildIdx, buildIdx + 80);
   ok(section.includes('@vercel/node'), 'must use @vercel/node runtime');

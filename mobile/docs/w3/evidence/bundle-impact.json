@@ -1,0 +1,23 @@
+{
+  "baseline": {
+    "file": "entry-e4f38faface674999f33037043168357.js",
+    "rawBytes": 1809391,
+    "gzipBytes": 484300
+  },
+  "previousW3": {
+    "sha": "eb1776de080346632cdb4518887312caca3c71ef",
+    "file": "entry-875dd2c5a51ca9bbd55f025386505fd2.js",
+    "rawBytes": 1818051,
+    "gzipBytes": 487403
+  },
+  "candidate": {
+    "file": "entry-34901f4cde213e2aa65b3e1751ee8d08.js",
+    "rawBytes": 1819134,
+    "gzipBytes": 487741
+  },
+  "deltaRawBytes": 9743,
+  "deltaGzipBytes": 3441,
+  "polishDeltaRawBytes": 1083,
+  "polishDeltaGzipBytes": 338,
+  "nativeMeasured": false
+}

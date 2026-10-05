@@ -1,0 +1,10 @@
+[
+  {
+    "result": {
+      "receipt_rolled_back": true,
+      "request_rolled_back": true,
+      "redemption_rolled_back": true,
+      "forced_error_after_owner_attach": true
+    }
+  }
+]

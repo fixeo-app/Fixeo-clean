@@ -11,10 +11,13 @@ on:
       - 'admin.html'
       - 'js/admin-control-os-clean.js'
       - 'vercel.json'
+      - 'vercel.ts'
+      - 'vercel.legacy.json'
       - 'tests/supply-engine/**'
       - '.github/workflows/supply-engine.yml'
   pull_request:
     paths:
+      - 'supabase/migrations/*mobile_w5*'
       - 'supabase/migrations/*supply_b*'
       - 'api/supply-agent-fn/**'
       - 'js/admin-supply-engine.js'
@@ -22,6 +25,8 @@ on:
       - 'admin.html'
       - 'js/admin-control-os-clean.js'
       - 'vercel.json'
+      - 'vercel.ts'
+      - 'vercel.legacy.json'
       - 'tests/supply-engine/**'
       - '.github/workflows/supply-engine.yml'
 
@@ -55,7 +60,7 @@ jobs:
       - run: node --check api/supply-agent-fn/index.js
           node --check api/supply-learning-fn/index.js
       - run: node --check js/admin-supply-engine.js
-      - run: node -e "JSON.parse(require('fs').readFileSync('vercel.json','utf8'))"
+      - run: node -e "JSON.parse(require('fs').readFileSync('vercel.legacy.json','utf8'))"
       - run: node --test --test-concurrency=1 tests/supply-engine/supply-engine.test.cjs
         env:
           NODE_PATH: ${{ github.workspace }}/tests/control-contract/node_modules

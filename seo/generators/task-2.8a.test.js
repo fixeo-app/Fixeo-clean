@@ -49,9 +49,9 @@ test('2. problems.json entries exist (data exists) but no public route does', ()
     assert(!fs.existsSync(htmlFile), `/probleme-${p.slug}.html must not exist`);
   });
   // No vercel route for /probleme/*
-  const vercel = require(path.join(ROOT, 'vercel.json'));
+  const vercel = require(path.join(ROOT, 'vercel.legacy.json'));
   const hasProblemeRoute = (vercel.routes || []).some(r => r.src && r.src.includes('probleme'));
-  assert(!hasProblemeRoute, 'vercel.json must have no /probleme/ route');
+  assert(!hasProblemeRoute, 'vercel.legacy.json must have no /probleme/ route');
 });
 
 test('3. publishedProblemSlugs is [] for plombier (no live destinations)', () => {

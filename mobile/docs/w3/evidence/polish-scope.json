@@ -1,0 +1,20 @@
+{
+  "parentCandidate": "eb1776de080346632cdb4518887312caca3c71ef",
+  "productionFilesModified": [
+    "mobile/ui/RafiOrb.tsx",
+    "mobile/ui/rafiOrbMotion.ts",
+    "mobile/ui/tokens.ts"
+  ],
+  "animationEffectAndInterpolationByteIdentical": true,
+  "compactScreenshotByteIdentical": true,
+  "routesComponentsLibDependenciesWorkflowsDiff": "empty",
+  "extraAnimatedLayers": 0,
+  "extraClocks": 0,
+  "extraDependencies": 0,
+  "staticGradients": {
+    "compact": 1,
+    "medium": 3,
+    "hero": 4
+  },
+  "heroStaticGradientDelta": 1
+}

@@ -1,0 +1,175 @@
+[
+  {
+    "value": "Casablanca",
+    "label": "Casablanca",
+    "priority": true,
+    "aliases": [
+      "casablanca",
+      "casa"
+    ]
+  },
+  {
+    "value": "Rabat",
+    "label": "Rabat",
+    "priority": true,
+    "aliases": [
+      "rabat"
+    ]
+  },
+  {
+    "value": "Marrakech",
+    "label": "Marrakech",
+    "priority": true,
+    "aliases": [
+      "marrakech",
+      "marrakesh"
+    ]
+  },
+  {
+    "value": "Fès",
+    "label": "Fès",
+    "priority": true,
+    "aliases": [
+      "fes",
+      "fès",
+      "fez"
+    ]
+  },
+  {
+    "value": "Tanger",
+    "label": "Tanger",
+    "priority": true,
+    "aliases": [
+      "tanger",
+      "tangier",
+      "tanja"
+    ]
+  },
+  {
+    "value": "Agadir",
+    "label": "Agadir",
+    "priority": false,
+    "aliases": [
+      "agadir"
+    ]
+  },
+  {
+    "value": "Meknès",
+    "label": "Meknès",
+    "priority": false,
+    "aliases": [
+      "meknes",
+      "meknès"
+    ]
+  },
+  {
+    "value": "Oujda",
+    "label": "Oujda",
+    "priority": false,
+    "aliases": [
+      "oujda"
+    ]
+  },
+  {
+    "value": "Kénitra",
+    "label": "Kénitra",
+    "priority": false,
+    "aliases": [
+      "kenitra",
+      "kénitra"
+    ]
+  },
+  {
+    "value": "Tétouan",
+    "label": "Tétouan",
+    "priority": false,
+    "aliases": [
+      "tetouan",
+      "tétouan"
+    ]
+  },
+  {
+    "value": "Safi",
+    "label": "Safi",
+    "priority": false,
+    "aliases": [
+      "safi"
+    ]
+  },
+  {
+    "value": "El Jadida",
+    "label": "El Jadida",
+    "priority": false,
+    "aliases": [
+      "el jadida",
+      "eljadida"
+    ]
+  },
+  {
+    "value": "Salé",
+    "label": "Salé",
+    "priority": false,
+    "aliases": [
+      "sale",
+      "salé"
+    ]
+  },
+  {
+    "value": "Temara",
+    "label": "Témara",
+    "priority": false,
+    "aliases": [
+      "temara",
+      "témara"
+    ]
+  },
+  {
+    "value": "Béni Mellal",
+    "label": "Béni Mellal",
+    "priority": false,
+    "aliases": [
+      "beni mellal",
+      "béni mellal"
+    ]
+  },
+  {
+    "value": "Nador",
+    "label": "Nador",
+    "priority": false,
+    "aliases": [
+      "nador"
+    ]
+  },
+  {
+    "value": "Khouribga",
+    "label": "Khouribga",
+    "priority": false,
+    "aliases": [
+      "khouribga"
+    ]
+  },
+  {
+    "value": "Taza",
+    "label": "Taza",
+    "priority": false,
+    "aliases": [
+      "taza"
+    ]
+  },
+  {
+    "value": "Ouarzazate",
+    "label": "Ouarzazate",
+    "priority": false,
+    "aliases": [
+      "ouarzazate"
+    ]
+  },
+  {
+    "value": "Mohammedia",
+    "label": "Mohammedia",
+    "priority": false,
+    "aliases": [
+      "mohammedia"
+    ]
+  }
+]

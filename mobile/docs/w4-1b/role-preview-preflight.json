@@ -1,0 +1,65 @@
+{
+  "scope": "DIRECT_PREVIEW_PREFLIGHT_ONLY_NOT_SHARED_PROXY_CERTIFICATION",
+  "https": true,
+  "vercel_domain_expected": true,
+  "bypass_source": "New Automation Bypass: W4.1 Supabase staging proxy",
+  "values_displayed": false,
+  "routes": [
+    {
+      "path": "/api/mobile-rafi-photo",
+      "bypass_case": "valid",
+      "status": 401,
+      "json": true,
+      "expected_auth_error": true,
+      "safe_error": "AUTH_REQUIRED",
+      "latency_ms": 9737,
+      "response_bytes": 36,
+      "redirect": false
+    },
+    {
+      "path": "/api/mobile-rafi-transcribe",
+      "bypass_case": "valid",
+      "status": 401,
+      "json": true,
+      "expected_auth_error": true,
+      "safe_error": "AUTH_REQUIRED",
+      "latency_ms": 9685,
+      "response_bytes": 36,
+      "redirect": false
+    },
+    {
+      "path": "/api/mobile-estimator-v1",
+      "bypass_case": "valid",
+      "status": 401,
+      "json": true,
+      "expected_auth_error": true,
+      "safe_error": "AUTH_REQUIRED",
+      "latency_ms": 9604,
+      "response_bytes": 36,
+      "redirect": false
+    }
+  ],
+  "controls": [
+    {
+      "path": "/api/mobile-estimator-v1",
+      "bypass_case": "absent",
+      "status": 401,
+      "json": true,
+      "expected_auth_error": false,
+      "latency_ms": 106,
+      "response_bytes": 635,
+      "redirect": false
+    },
+    {
+      "path": "/api/mobile-estimator-v1",
+      "bypass_case": "invalid",
+      "status": 401,
+      "json": true,
+      "expected_auth_error": false,
+      "latency_ms": 108,
+      "response_bytes": 635,
+      "redirect": false
+    }
+  ],
+  "status": "PASS"
+}

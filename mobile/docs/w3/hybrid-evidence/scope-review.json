@@ -1,0 +1,44 @@
+{
+  "parentCandidate": "37733f0af1f2df61d04e0bd692fb76e2029831df",
+  "protectedPaths": [
+    "mobile/app",
+    "mobile/components",
+    "mobile/lib",
+    "mobile/ui/rafiPresence.ts",
+    "mobile/ui/useRafiActivity.ts",
+    "mobile/ui/useReducedMotion.ts",
+    "mobile/ui/rafiOrbMotion.ts",
+    "mobile/package.json",
+    "mobile/app.json",
+    "mobile/eas.json",
+    ".github/workflows",
+    "api",
+    "supabase"
+  ],
+  "protectedDiff": "empty",
+  "animatedEffectAndInterpolationByteIdentical": true,
+  "signatureJSXByteIdentical": true,
+  "motionProfilesByteIdentical": true,
+  "compactDrawerBytesIdentical": true,
+  "newAnimatedLayers": 0,
+  "newClocks": 0,
+  "newDependencies": 0,
+  "materialPrimitivesBeforeAfter": {
+    "hero": {
+      "before": "4 static gradients",
+      "after": "1 static Image",
+      "delta": -3
+    },
+    "medium": {
+      "before": "3 static gradients",
+      "after": "1 static Image",
+      "delta": -2
+    },
+    "compact": {
+      "before": "1 static gradient",
+      "after": "1 static gradient",
+      "delta": 0
+    }
+  },
+  "nativeGpuLayerCountMeasured": false
+}

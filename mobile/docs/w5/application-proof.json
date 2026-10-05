@@ -1,0 +1,500 @@
+{
+  "migrationSource": "20261005085640_mobile_w5_artisan_authority_v2.sql",
+  "migrationHistoryVersion": "20261005091927",
+  "project": "kqyhusnbybsukbcaoqtu",
+  "sha256": "6f017c6f97c7df25d0acc6117da5bc93c57bd9f7025ed199cdfd1f9f2cae7ed2",
+  "applyResult": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true}"
+      }
+    ],
+    "isError": false
+  },
+  "data": {
+    "before": [
+      {
+        "table_name": "public.artisan_business_clients",
+        "row_count": 1,
+        "content_md5": "e0194a19ee50bd9e988da1aa6db9f36e"
+      },
+      {
+        "table_name": "public.artisan_business_quotes",
+        "row_count": 1,
+        "content_md5": "308992414c21846d4150502780545a62"
+      },
+      {
+        "table_name": "public.artisan_business_jobs",
+        "row_count": 1,
+        "content_md5": "7a4224c3505044ce9165c67c19a76c24"
+      },
+      {
+        "table_name": "public.artisan_business_ledger",
+        "row_count": 2,
+        "content_md5": "ac04a978a3184235c9d7b72ebe30e93a"
+      },
+      {
+        "table_name": "public.artisans",
+        "row_count": 6,
+        "content_md5": "4ecd1e1fb0a9fa6761418f02d98b69c0"
+      },
+      {
+        "table_name": "public.artisan_service_categories",
+        "row_count": 3,
+        "content_md5": "98608bd57f8a1f1521350f9d5b38921e"
+      },
+      {
+        "table_name": "public.artisan_service_cities",
+        "row_count": 3,
+        "content_md5": "1ce433c2fa3b97e8a8b04caf01dab077"
+      },
+      {
+        "table_name": "public.users",
+        "row_count": 21,
+        "content_md5": "4f569af8866dfbf389191cac97cd5ba0"
+      },
+      {
+        "table_name": "public.profiles",
+        "row_count": 21,
+        "content_md5": "61477ddcd90be403cffba6223d394f1d"
+      },
+      {
+        "table_name": "public.missions",
+        "row_count": 23,
+        "content_md5": "dfe63cff1a7639f676cc7f7e771695f0"
+      },
+      {
+        "table_name": "public.service_requests",
+        "row_count": 877,
+        "content_md5": "c270e22128b7767314dbfea8887c18e5"
+      },
+      {
+        "table_name": "public.dispatch_execution_queue",
+        "row_count": 47,
+        "content_md5": "a7718d55b6cd85970af9efdade030025"
+      },
+      {
+        "table_name": "public.quotes",
+        "row_count": 14,
+        "content_md5": "cda774e3698d1ed1b62760ed2399e530"
+      },
+      {
+        "table_name": "public.notifications",
+        "row_count": 39,
+        "content_md5": "e8747df8e411e68be768531dec9a7ad2"
+      },
+      {
+        "table_name": "public.enterprise_request_context",
+        "row_count": 6,
+        "content_md5": "070a8e7f4f48748064b30bc8dfdea7b9"
+      },
+      {
+        "table_name": "fixeo_private.mobile_mission_events_v1",
+        "row_count": 2,
+        "content_md5": "711d4a85f05894635560ef5f3a427661"
+      },
+      {
+        "table_name": "fixeo_private.mobile_mission_change_proposals_v1",
+        "row_count": 0,
+        "content_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "table_name": "public.mobile_mission_evidence_v1",
+        "row_count": 4,
+        "content_md5": "dee392e043606b3b435fb919f75081bb"
+      },
+      {
+        "table_name": "auth.users",
+        "row_count": 21,
+        "content_md5": "a9f4f61217c14740f73d574d55d6e16d"
+      },
+      {
+        "table_name": "auth.sessions",
+        "row_count": 40,
+        "content_md5": "9cf226323c6bbcfcad73ecc0db384960"
+      },
+      {
+        "table_name": "storage.objects",
+        "row_count": 14,
+        "content_md5": "43d79ee7560c03817fd40dbd974919a7"
+      }
+    ],
+    "after": [
+      {
+        "table_name": "public.artisan_business_clients",
+        "row_count": 1,
+        "content_md5": "e0194a19ee50bd9e988da1aa6db9f36e"
+      },
+      {
+        "table_name": "public.artisan_business_quotes",
+        "row_count": 1,
+        "content_md5": "308992414c21846d4150502780545a62"
+      },
+      {
+        "table_name": "public.artisan_business_jobs",
+        "row_count": 1,
+        "content_md5": "7a4224c3505044ce9165c67c19a76c24"
+      },
+      {
+        "table_name": "public.artisan_business_ledger",
+        "row_count": 2,
+        "content_md5": "ac04a978a3184235c9d7b72ebe30e93a"
+      },
+      {
+        "table_name": "public.artisans",
+        "row_count": 6,
+        "content_md5": "4ecd1e1fb0a9fa6761418f02d98b69c0"
+      },
+      {
+        "table_name": "public.artisan_service_categories",
+        "row_count": 3,
+        "content_md5": "98608bd57f8a1f1521350f9d5b38921e"
+      },
+      {
+        "table_name": "public.artisan_service_cities",
+        "row_count": 3,
+        "content_md5": "1ce433c2fa3b97e8a8b04caf01dab077"
+      },
+      {
+        "table_name": "public.users",
+        "row_count": 21,
+        "content_md5": "4f569af8866dfbf389191cac97cd5ba0"
+      },
+      {
+        "table_name": "public.profiles",
+        "row_count": 21,
+        "content_md5": "61477ddcd90be403cffba6223d394f1d"
+      },
+      {
+        "table_name": "public.missions",
+        "row_count": 23,
+        "content_md5": "dfe63cff1a7639f676cc7f7e771695f0"
+      },
+      {
+        "table_name": "public.service_requests",
+        "row_count": 877,
+        "content_md5": "c270e22128b7767314dbfea8887c18e5"
+      },
+      {
+        "table_name": "public.dispatch_execution_queue",
+        "row_count": 47,
+        "content_md5": "a7718d55b6cd85970af9efdade030025"
+      },
+      {
+        "table_name": "public.quotes",
+        "row_count": 14,
+        "content_md5": "cda774e3698d1ed1b62760ed2399e530"
+      },
+      {
+        "table_name": "public.notifications",
+        "row_count": 39,
+        "content_md5": "e8747df8e411e68be768531dec9a7ad2"
+      },
+      {
+        "table_name": "public.enterprise_request_context",
+        "row_count": 6,
+        "content_md5": "070a8e7f4f48748064b30bc8dfdea7b9"
+      },
+      {
+        "table_name": "fixeo_private.mobile_mission_events_v1",
+        "row_count": 2,
+        "content_md5": "711d4a85f05894635560ef5f3a427661"
+      },
+      {
+        "table_name": "fixeo_private.mobile_mission_change_proposals_v1",
+        "row_count": 0,
+        "content_md5": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "table_name": "public.mobile_mission_evidence_v1",
+        "row_count": 4,
+        "content_md5": "dee392e043606b3b435fb919f75081bb"
+      },
+      {
+        "table_name": "auth.users",
+        "row_count": 21,
+        "content_md5": "a9f4f61217c14740f73d574d55d6e16d"
+      },
+      {
+        "table_name": "auth.sessions",
+        "row_count": 40,
+        "content_md5": "9cf226323c6bbcfcad73ecc0db384960"
+      },
+      {
+        "table_name": "storage.objects",
+        "row_count": 14,
+        "content_md5": "43d79ee7560c03817fd40dbd974919a7"
+      }
+    ],
+    "unchanged": true
+  },
+  "acl": [
+    {
+      "schema": "fixeo_private",
+      "signature": "fixeo_private.w5_artisan_actor_v1()",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "5958f14e5e9211917540292094904fe0"
+    },
+    {
+      "schema": "public",
+      "signature": "accept_my_dispatch_offer_v1(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "03f243b04a9f7f15c1b85930be55ba6d"
+    },
+    {
+      "schema": "public",
+      "signature": "artisan_business_accept_quote(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "832207b9519412ac46b36b325ccde281"
+    },
+    {
+      "schema": "public",
+      "signature": "artisan_business_next_quote_number()",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "6efc5796c06618e45ff9d3cfc675ba00"
+    },
+    {
+      "schema": "public",
+      "signature": "claim_mission(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "949516614034aa693944744f8c549435"
+    },
+    {
+      "schema": "public",
+      "signature": "complete_mission(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "e27a22be7660d4594cf7e4f9cf86750b"
+    },
+    {
+      "schema": "public",
+      "signature": "decline_mission(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "8cadab6968921aee17fbfb57cc5a3a60"
+    },
+    {
+      "schema": "public",
+      "signature": "get_accepted_mission_detail(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "f961b8c6cd18897530762f6d2a3fd5d4"
+    },
+    {
+      "schema": "public",
+      "signature": "get_my_current_artisan_mission_v1()",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "23d900fff84d5523d14649b50067d287"
+    },
+    {
+      "schema": "public",
+      "signature": "get_my_dispatch_offers_v1()",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "3d62cd58f31d2de97543542421d4b962"
+    },
+    {
+      "schema": "public",
+      "signature": "get_my_mission_offers()",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "369e6bab4b34fb345c50c2fc9b73c999"
+    },
+    {
+      "schema": "public",
+      "signature": "get_my_mission_timeline_v1(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "2177d26155302033037740c9ac252986"
+    },
+    {
+      "schema": "public",
+      "signature": "get_my_mobile_artisan_access_v1()",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "ecb8a70552dc072b2485a847c5eee7cc"
+    },
+    {
+      "schema": "public",
+      "signature": "get_my_mobile_mission_change_v1(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "9609e795297f27ea357c1071276a35b3"
+    },
+    {
+      "schema": "public",
+      "signature": "list_my_mobile_artisan_missions_v1()",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "1c2458103a8595c5865337ba8a759e85"
+    },
+    {
+      "schema": "public",
+      "signature": "mark_my_mission_arrived_v1(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "d288a4be8a61cc927514591f787c3580"
+    },
+    {
+      "schema": "public",
+      "signature": "start_mission(uuid)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "fed5bc223df07e6a53246c9731256f49"
+    },
+    {
+      "schema": "public",
+      "signature": "submit_artisan_quote_v2(uuid,numeric,text,text,text,text)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "5451038b0447e1d06ca338456ba4816d"
+    },
+    {
+      "schema": "public",
+      "signature": "submit_mobile_mission_change_v1(uuid,numeric,text,text,text)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "1f3458f1092d0f83d758b046b6e5a179"
+    },
+    {
+      "schema": "public",
+      "signature": "update_artisan_availability(text)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "23d470feff645b929155b483606defec"
+    },
+    {
+      "schema": "public",
+      "signature": "update_my_artisan_activity_v1(text[],text[])",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "043db6c4dfed6bcbbe2650c73807fdd3"
+    },
+    {
+      "schema": "public",
+      "signature": "update_my_artisan_contact_v1(text)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "689f8902d9dfc09ee3a718cc1552c83e"
+    },
+    {
+      "schema": "public",
+      "signature": "update_my_artisan_photo_v1(text)",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "79705d99aec2d42e122c81ae2df777b2"
+    },
+    {
+      "schema": "public",
+      "signature": "w5_update_my_artisan_activity_v1(text[],text[])",
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "security_definer": true,
+      "definition_md5": "810bb346970dca1c7707eb8964e172f7"
+    }
+  ],
+  "policies": [
+    {
+      "tablename": "artisan_business_clients",
+      "policyname": "w5_artisan_session",
+      "permissive": "RESTRICTIVE",
+      "roles": "{authenticated}",
+      "cmd": "ALL",
+      "qual": "(owner_user_id = ( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1))",
+      "with_check": "(owner_user_id = ( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1))"
+    },
+    {
+      "tablename": "artisan_business_jobs",
+      "policyname": "w5_artisan_session",
+      "permissive": "RESTRICTIVE",
+      "roles": "{authenticated}",
+      "cmd": "ALL",
+      "qual": "(owner_user_id = ( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1))",
+      "with_check": "(owner_user_id = ( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1))"
+    },
+    {
+      "tablename": "artisan_business_ledger",
+      "policyname": "w5_artisan_session",
+      "permissive": "RESTRICTIVE",
+      "roles": "{authenticated}",
+      "cmd": "ALL",
+      "qual": "(owner_user_id = ( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1))",
+      "with_check": "(owner_user_id = ( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1))"
+    },
+    {
+      "tablename": "artisan_business_quotes",
+      "policyname": "w5_artisan_session",
+      "permissive": "RESTRICTIVE",
+      "roles": "{authenticated}",
+      "cmd": "ALL",
+      "qual": "(owner_user_id = ( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1))",
+      "with_check": "(owner_user_id = ( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1))"
+    },
+    {
+      "tablename": "artisans",
+      "policyname": "w5_artisan_profile_update",
+      "permissive": "RESTRICTIVE",
+      "roles": "{authenticated}",
+      "cmd": "UPDATE",
+      "qual": "\nCASE\n    WHEN is_admin() THEN true\n    ELSE (owner_user_id = ( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1))\nEND",
+      "with_check": "\nCASE\n    WHEN is_admin() THEN true\n    ELSE (owner_user_id = ( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1))\nEND"
+    },
+    {
+      "tablename": "notifications",
+      "policyname": "w5_artisan_session",
+      "permissive": "RESTRICTIVE",
+      "roles": "{authenticated}",
+      "cmd": "ALL",
+      "qual": "\nCASE\n    WHEN (EXISTS ( SELECT 1\n       FROM users\n      WHERE ((users.id = auth.uid()) AND (users.role = 'artisan'::text)))) THEN (( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1) IS NOT NULL)\n    ELSE true\nEND",
+      "with_check": "\nCASE\n    WHEN (EXISTS ( SELECT 1\n       FROM users\n      WHERE ((users.id = auth.uid()) AND (users.role = 'artisan'::text)))) THEN (( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1) IS NOT NULL)\n    ELSE true\nEND"
+    },
+    {
+      "tablename": "quotes",
+      "policyname": "w5_artisan_session",
+      "permissive": "RESTRICTIVE",
+      "roles": "{authenticated}",
+      "cmd": "ALL",
+      "qual": "\nCASE\n    WHEN (EXISTS ( SELECT 1\n       FROM users\n      WHERE ((users.id = auth.uid()) AND (users.role = 'artisan'::text)))) THEN (( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1) IS NOT NULL)\n    ELSE true\nEND",
+      "with_check": "\nCASE\n    WHEN (EXISTS ( SELECT 1\n       FROM users\n      WHERE ((users.id = auth.uid()) AND (users.role = 'artisan'::text)))) THEN (( SELECT fixeo_private.w5_artisan_actor_v1() AS w5_artisan_actor_v1) IS NOT NULL)\n    ELSE true\nEND"
+    }
+  ],
+  "ownership": [
+    {
+      "jsonb_build_object": {
+        "forged_rows": 0,
+        "foreign_unchanged": true,
+        "first_test_sessions": 0
+      }
+    }
+  ]
+}

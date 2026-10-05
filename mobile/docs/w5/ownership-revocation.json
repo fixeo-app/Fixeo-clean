@@ -1,0 +1,119 @@
+{
+  "project": "kqyhusnbybsukbcaoqtu",
+  "at": "2026-10-05T09:29:27.769Z",
+  "checks": [
+    {
+      "name": "wrapper_active_synthetic_profile",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_clients_foreign_read",
+      "status": 200,
+      "count": 0,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_clients_foreign_write",
+      "status": 200,
+      "count": 0,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_quotes_foreign_read",
+      "status": 200,
+      "count": 0,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_quotes_foreign_write",
+      "status": 200,
+      "count": 0,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_jobs_foreign_read",
+      "status": 200,
+      "count": 0,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_jobs_foreign_write",
+      "status": 200,
+      "count": 0,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_ledger_foreign_read",
+      "status": 200,
+      "count": 0,
+      "pass": true
+    },
+    {
+      "name": "artisan_business_ledger_foreign_write",
+      "status": 200,
+      "count": 0,
+      "pass": true
+    },
+    {
+      "name": "client_cannot_create_own_crm_with_supplied_owner",
+      "status": 403,
+      "code": "42501",
+      "reason": "ARTISAN_REQUIRED",
+      "pass": true
+    },
+    {
+      "name": "artisan_cannot_forge_owner",
+      "status": 403,
+      "code": "42501",
+      "reason": "new row violates row-level security policy for table \"artisan_business_clients\"",
+      "pass": true
+    },
+    {
+      "name": "revoke_fixture_sessions_artisan",
+      "status": 204,
+      "pass": true
+    },
+    {
+      "name": "revoke_fixture_sessions_client",
+      "status": 204,
+      "pass": true
+    },
+    {
+      "name": "revoked_get_my_mobile_artisan_access_v1",
+      "status": 403,
+      "code": "42501",
+      "reason": "SESSION_REVOKED",
+      "pass": true
+    },
+    {
+      "name": "revoked_list_my_mobile_artisan_missions_v1",
+      "status": 403,
+      "code": "42501",
+      "reason": "SESSION_REVOKED",
+      "pass": true
+    },
+    {
+      "name": "revoked_get_my_dispatch_offers_v1",
+      "status": 403,
+      "code": "42501",
+      "reason": "SESSION_REVOKED",
+      "pass": true
+    },
+    {
+      "name": "revoked_wrapper",
+      "status": 403,
+      "code": "42501",
+      "reason": "SESSION_REVOKED",
+      "pass": true
+    },
+    {
+      "name": "revoked_private_crm",
+      "status": 403,
+      "code": "42501",
+      "reason": "SESSION_REVOKED",
+      "pass": true
+    }
+  ],
+  "pass": true
+}

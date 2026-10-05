@@ -1,0 +1,6 @@
+# Frozen reviewed SQL contains pg_get_functiondef bodies with original CRLF.
+# Preserve the approved bytes; permit CR as a line ending only on these files.
+/supabase/migrations/20261005085640_mobile_w5_artisan_authority_v2.sql -text whitespace=cr-at-eol
+/mobile/docs/w5/ROLLBACK.sql -text whitespace=cr-at-eol
+/mobile/docs/w5/ROLLBACK_V2.sql -text whitespace=cr-at-eol
+/mobile/docs/w5/rejected/20261005001812_mobile_w5_artisan_authority.sql -text whitespace=cr-at-eol

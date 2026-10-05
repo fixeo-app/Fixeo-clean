@@ -26,7 +26,7 @@ var path = require('path');
 var ROOT    = path.resolve(__dirname, '../../../../..');
 var FN_PATH = path.join(ROOT, 'api/admin-verify-artisan-fn/index.js');
 var CS_PATH = path.join(ROOT, 'js/admin-canonical-sync-v1.js');
-var VERCEL  = path.join(ROOT, 'vercel.json');
+var VERCEL  = path.join(ROOT, 'vercel.legacy.json');
 
 var results = { pass: 0, fail: 0, failures: [] };
 function pass(name) { results.pass++; process.stdout.write('  \u2713 [PASS] ' + name + '\n'); }
@@ -267,12 +267,12 @@ check('Route /api/admin/artisans/verify registered',
     return (r.src || '').includes('admin/artisans/verify') &&
            (r.dest || '').includes('admin-verify-artisan-fn');
   }),
-  '/api/admin/artisans/verify route missing from vercel.json');
+  '/api/admin/artisans/verify route missing from vercel.legacy.json');
 check('Build entry for admin-verify-artisan-fn registered',
   vercel.builds.some(function(b) {
     return (b.src || '').includes('admin-verify-artisan-fn');
   }),
-  'admin-verify-artisan-fn build entry missing from vercel.json');
+  'admin-verify-artisan-fn build entry missing from vercel.legacy.json');
 
 /* ── RESULTS ─────────────────────────────────────────────── */
 console.log('\n' + '\u2500'.repeat(58));

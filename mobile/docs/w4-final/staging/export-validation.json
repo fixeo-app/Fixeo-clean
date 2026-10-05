@@ -1,0 +1,11 @@
+{
+  "markers": [
+    "client-intelligence",
+    "client-estimator-confirmation",
+    "client-safety-stop",
+    "Quel m\\xe9tier correspond \\xe0 votre besoin",
+    "candidate_metiers"
+  ],
+  "all_present": true,
+  "javascript_bundles": 2
+}

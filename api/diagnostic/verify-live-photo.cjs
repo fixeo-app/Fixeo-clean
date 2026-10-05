@@ -30,7 +30,7 @@ async function verify() {
   assert.ok(cfg.secret.length >= 32 && cfg.maintenanceSecret.length >= 32);
   assert.ok(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.OPENAI_API_KEY && cfg.model);
   if (process.env.FIXEO_DIAGNOSTIC_ENABLED === '1') assert.equal(cfg.enabled, true);
-  const cron = require('../../vercel.json').crons;
+  const cron = require('../../vercel.legacy.json').crons;
   assert.ok(cron.some(c => c.path === '/api/diagnostic-maintenance' && c.schedule === '0 * * * *'));
   const quiet = { info() {}, warn() {} };
   // Test-only dependency injection. The deployed public handler still reads its

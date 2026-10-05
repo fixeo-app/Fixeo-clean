@@ -1,0 +1,34 @@
+name: Mobile Intelligence Contracts
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/*mobile_w5*'
+      - 'api/mobile-intelligence-fn/**'
+      - 'api/mobile-rafi-photo-fn/**'
+      - 'api/mobile-rafi-voice-fn/**'
+      - 'api/mobile-rafi-common.js'
+      - 'supabase/functions/mobile-rafi-preview-proxy/**'
+      - 'api/diagnostic/engine.js'
+      - 'api/estimator-v1/index.js'
+      - 'api/estimator-v1/fixeo-vap-offers-v1.js'
+      - 'vercel.ts'
+      - 'vercel.legacy.json'
+      - 'tests/mobile-intelligence/**'
+      - 'tests/mobile-artisan/**'
+      - 'supabase/functions/mobile-mission-evidence/**'
+      - 'supabase/migrations/*mobile_intelligence*'
+      - '.github/workflows/mobile-intelligence.yml'
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci --prefix api --no-audit --no-fund
+      - run: npm ci --prefix tests/mobile-intelligence --no-audit --no-fund
+      - name: Server authority and regression
+        env:
+          NODE_PATH: ./api/node_modules:./tests/mobile-intelligence/node_modules
+        run: node --test tests/mobile-artisan/*.test.cjs tests/mobile-intelligence/*.test.cjs tests/diagnostic/*.test.cjs tests/estimator/vap-handler.test.cjs tests/estimator/vap-offers-api.test.cjs tests/estimator/vap-bp33.test.cjs tests/estimator/route-public-view.test.cjs tests/estimator/plumbing-pilot.test.cjs

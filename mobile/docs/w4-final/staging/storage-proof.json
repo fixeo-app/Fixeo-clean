@@ -1,0 +1,33 @@
+{
+  "checks": [
+    "DIAGNOSTIC_OWNER_PROVENANCE",
+    "STORAGE_SERVER_HASH",
+    "CROSS_CLIENT_DIAGNOSTIC_REFUSED",
+    "CROSS_CLIENT_STORAGE_REFUSED",
+    "BROWSER_ORIGIN_STILL_REFUSED"
+  ],
+  "media": [
+    {
+      "session_id": "e8e514ca-20ae-4d39-b1ea-bd49c9859335",
+      "path": "safe/e8e514ca-20ae-4d39-b1ea-bd49c9859335/e5d4a8fc-be42-4cef-8b53-6c23f2fe32c1.webp",
+      "state": "ready",
+      "owner_hash_verified": true,
+      "cross_client_denied": true
+    },
+    {
+      "session_id": "95576f17-ecb2-4358-8367-ce43491cec8a",
+      "path": "safe/95576f17-ecb2-4358-8367-ce43491cec8a/f25d6e19-ab8a-4bc6-b09a-7d4f1c4915a6.webp",
+      "state": "ready",
+      "owner_hash_verified": true,
+      "cross_client_denied": true
+    },
+    {
+      "session_id": "f50a6c30-0492-4d2b-80c0-25303d968255",
+      "path": "safe/f50a6c30-0492-4d2b-80c0-25303d968255/843ea1fc-91e6-49f6-9fd4-d8835e04516d.webp",
+      "state": "ready",
+      "owner_hash_verified": true,
+      "cross_client_denied": true
+    }
+  ],
+  "status": "PASS"
+}
