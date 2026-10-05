@@ -74,3 +74,34 @@ VoiceOver natif, clavier natif, dialogues OS et deep link sur appareil ne sont p
 3. Activer l’envoi applicatif après cette preuve, avec les mêmes deux comptes.
 4. Après renouvellement du quota, demander uniquement les recovery manquants. Vérifier réception réelle, code PKCE, changement de mot de passe, reconnexion, profil Artisan, retry/idempotence, account switch et révocation réelle. Garder tout secret uniquement en mémoire de la procédure.
 5. Révoquer toutes les nouvelles sessions synthétiques, relire le compteur et documenter les fixtures retenues. PASS final seulement après ces preuves.
+
+## Clôture de cette exécution : nouveau hard blocker confirmé
+
+PR Draft : https://github.com/fixeo-app/Fixeo-clean/pull/150
+Commit applicatif : `82e79558ca383fd8446687baaa99531de06899b9`.
+CI de ce commit : **Mobile Gate A, Mobile Intelligence, Control, Client C4, Supply Engine = SUCCESS**. Vercel Preview = READY.
+
+Callback effectivement déployé :
+`https://fixeo-clean-git-feat-fixeo-mo-e1fd0b-elalaouibiz-3410s-projects.vercel.app/auth-callback`
+
+**HARD BLOCKER — callback non accessible anonymement.** Les requêtes anonymes vers Entry et callback aboutissent à `vercel.com` (connexion Vercel), pas à l’application. Le connecteur Vercel confirme `ssoProtection.enabled=true`, `deploymentType=all_except_custom_domains`. Un statut READY ou HTTP 200 après redirection ne constitue pas une preuve d’accessibilité du callback.
+
+Aucun lien de bypass n’a été créé. Aucune protection Vercel n’a été désactivée. Aucune configuration Auth Supabase n’a été modifiée. La clé publique staging a seulement été configurée pour **Preview + branche W6 exacte** ; aucune clé privilégiée.
+
+Dernière relecture DB : pour chaque fixture, 1 user canonique, 1 profil, email confirmé, bon rôle ; **0 session restante**. Profil métier Artisan toujours absent. Ce constat est distinct des parcours simulés.
+
+### Manifeste en attente de GO — aucune action ci-dessous appliquée
+
+| Périmètre | Action précise / condition |
+| --- | --- |
+| Hébergement W6 uniquement | Fournir une URL HTTPS publique stable pour ce callback. Ne pas désactiver la protection globale du projet existant. Option à valider : domaine dédié `w6-auth-staging.fixeo.ma`, lié uniquement à la branche W6 ; vérifier DNS, TLS et accès anonyme avant tout email. |
+| Application W6 | Après validation du domaine, fixer explicitement le callback `https://w6-auth-staging.fixeo.ma/auth-callback` et son contrôle d’origin. La version actuelle reste liée à l’alias Preview ci-dessus. Aucun changement natif/Production. |
+| Supabase staging `kqyhusnbybsukbcaoqtu` | Lire Site URL et Redirect URLs dans le dashboard ou recevoir leur export expurgé. Le connecteur Supabase n’expose pas ces champs. |
+| Redirect URLs staging, seulement si nécessaire | Après contrôle d’accessibilité et GO distinct, ajouter **la seule URL exacte** `https://w6-auth-staging.fixeo.ma/auth-callback` si ce domaine est retenu et si elle est absente. Aucun wildcard. Ne pas supprimer d’URL existante. |
+| Paramètres inchangés | Site URL, confirmation email, limites, SMTP, templates et toute Production. |
+| Application, après preuve de l’allowlist | Autoriser les envois W6, rejouer seulement les recovery manquants avec les mêmes comptes après renouvellement du quota ; ne pas recréer de compte. |
+| Rollback | Retirer uniquement le nouveau domaine/ajout d’allowlist W6 s’ils ont été créés ; désactiver l’envoi applicatif. Aucun changement aux protections globales. |
+
+Le domaine dédié est une proposition précise, pas une URL déjà provisionnée ni une preuve DNS. Si une autre URL publique est choisie, mettre à jour ce manifeste avant l’ajout Supabase.
+
+**STOP — W6 ENTRY AUTH TRUST NORTH STAR NOT REACHED.** Le nouveau hard blocker est l’hébergement du callback ; le recovery réel reste non certifié. Toute autorisation de reprise doit préserver la séparation staging/Production et la validation réelle du canal email.
