@@ -110,6 +110,7 @@ export function MobileShell({ universe, activeKey, statusLabel, rightActionLabel
     logoutBusy.current = true;
     setSigningOut(true);
     try { await signOut(); }
+    catch { /* Auth owner has already closed local access; reconnection stays explicit. */ }
     finally {
       logoutBusy.current = false;
       setSigningOut(false);

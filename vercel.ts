@@ -7,7 +7,18 @@ const isolated = process.env.VERCEL_GIT_COMMIT_REF === branch ||
 // W4.1 builds only the JWT gateway and existing mobile media endpoints.
 // Legacy server entrypoints cannot execute with inherited project credentials.
 // Other branches retain the exact W4 configuration until integration review.
-export const config = isolated ? {
+const w6Branch = 'feat/fixeo-mobile-w6-entry-auth-trust';
+const w6 = process.env.VERCEL_GIT_COMMIT_REF === w6Branch;
+export const config = w6 ? {
+  version: 2,
+  builds: [{ src: 'mobile/package.json', use: '@vercel/static-build', config: { distDir: 'dist' } }],
+  routes: [
+    { src: '/(.*)', headers: { 'Referrer-Policy': 'no-referrer', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }, continue: true },
+    { handle: 'filesystem' },
+    { src: '/(.*)', dest: '/index.html' },
+  ],
+  git: { deploymentEnabled: { [w6Branch]: true } },
+} : isolated ? {
   version: 2,
   builds: [
     {src: 'api/mobile-intelligence-fn/index.js', use: '@vercel/node'},

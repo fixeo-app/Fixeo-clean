@@ -1,6 +1,9 @@
 import type { Session } from '@supabase/supabase-js';
-import { supabase } from './supabase';
+import { supabase, discardLocalAuthStorage } from './supabase';
 import { disableCurrentDevice } from './push';
+import { rejectPrivateSession } from './authEvents';
+import { clearPrivateNotificationState } from './notificationIntent';
+import { withMobileDeadline } from './mobileResilience';
 
 export type FixeoRole = 'client' | 'artisan' | 'admin';
 
@@ -11,13 +14,21 @@ export async function signIn(email: string, password: string) {
 }
 
 export async function signOut() {
+  rejectPrivateSession('logout');
+  await clearPrivateNotificationState().catch(() => undefined);
   try {
-    await disableCurrentDevice();
+    await withMobileDeadline(disableCurrentDevice(), 2500);
   } catch {
     // Sign-out must remain available even if device cleanup is temporarily unavailable.
   }
-  const { error } = await supabase.auth.signOut();
-  if (error) throw error;
+  try {
+    const { error } = await withMobileDeadline(supabase.auth.signOut());
+    if (error) throw error;
+  } finally {
+    // Logout always closes this device. A server failure is not reported as remote revocation.
+    await discardLocalAuthStorage();
+    rejectPrivateSession('logout');
+  }
 }
 
 export async function getStableSession(): Promise<Session | null> {

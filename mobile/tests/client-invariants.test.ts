@@ -8,7 +8,7 @@ import manifest from './fixtures/w4-invariants.json';
 const sha = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
 const printer = ts.createPrinter({ removeComments: true });
 
-test('W5 preserves W4 services, mission engine, W2/W3 components and Auth byte-for-byte', () => {
+test('W6 preserves W4/W5 business services, mission engine and unchanged W2/W3 components byte-for-byte', () => {
   for (const [file, digest] of Object.entries(manifest.protectedFiles)) assert.equal(sha(readFileSync(file)), digest, file);
 });
 

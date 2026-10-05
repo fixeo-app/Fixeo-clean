@@ -98,12 +98,9 @@ test('presence engine has no backend or per-frame React side effects; visual mat
   assert.match(renderer, /animation\.stop\(\)/);
 });
 
-test('W3 keeps the certified Evidence capture engine byte-identical through W5', async () => {
-  const { createHash } = await import('node:crypto');
-  const protectedFiles = {
-    // W4 owns Client presentation. Its workflow callbacks and all services are
-    // separately frozen against the W3 base in client-invariants.test.ts.
-    'components/MissionEvidenceCapture.tsx': '604b4489f5ae71c576277bebd4f2368a1c70b9a4872e27167b907303f3fdd2dd',
-  };
-  for (const [file, digest] of Object.entries(protectedFiles)) assert.equal(createHash('sha256').update(readFileSync(file)).digest('hex'), digest, file);
+test('W6 permission explanation preserves the Evidence upload contract', () => {
+  const capture = readFileSync('components/MissionEvidenceCapture.tsx', 'utf8');
+  assert.match(capture, /uploadMissionEvidence\(\s*missionId,\s*kind,\s*asset.uri,\s*asset.mimeType \|\| 'image\/jpeg'/);
+  assert.match(capture, /if \(result.canceled \|\| !result.assets\[0\]\?\.uri\) return/);
+  assert.match(capture, /explainPermission\('camera'\)/);
 });

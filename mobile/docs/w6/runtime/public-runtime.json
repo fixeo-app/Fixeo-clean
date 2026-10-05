@@ -1,0 +1,11 @@
+{
+  "scope": "Real Expo web export, signed-out UI; no authenticated staging certification",
+  "entryMs": 567.6000000014901,
+  "viewport320": true,
+  "text200Web": true,
+  "keyboardFocus": "Mot de passe",
+  "privateRoutesBlocked": true,
+  "legacyCallbackScrubbed": true,
+  "errors": [],
+  "requests": []
+}

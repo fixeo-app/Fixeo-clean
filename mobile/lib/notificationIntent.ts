@@ -1,4 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 import {
   normalizeNotificationIntent,
   type NotificationIntentData,
@@ -9,6 +10,11 @@ export { notificationDestinationForRole } from './notificationRouting';
 const PENDING_NOTIFICATION_KEY = 'fixeo_pending_notification_intent_v1';
 const LAST_NOTIFICATION_RESPONSE_KEY = 'fixeo_last_notification_response_v1';
 const MAX_PENDING_AGE_MS = 24 * 60 * 60 * 1000;
+
+export async function clearPrivateNotificationState() {
+  if (Platform.OS === 'web') return;
+  await Promise.all([PENDING_NOTIFICATION_KEY, LAST_NOTIFICATION_RESPONSE_KEY].map(key => SecureStore.deleteItemAsync(key)));
+}
 
 type StoredNotificationIntent = {
   data: NotificationIntentData;
@@ -41,6 +47,7 @@ export async function consumePendingNotificationIntent(): Promise<NotificationIn
 }
 
 export async function shouldHandleNotificationResponse(responseId: string) {
+  if (Platform.OS === 'web') return false;
   if (!responseId) return true;
 
   const previous = await SecureStore.getItemAsync(LAST_NOTIFICATION_RESPONSE_KEY);
