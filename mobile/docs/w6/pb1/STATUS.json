@@ -1,12 +1,12 @@
 {
   "phase": "PB1",
-  "status": "STOP_AUTOMATIC_APPROVAL_REVIEW",
-  "sourceCheckpoint": "38e454ab2e022a0c601091a8505e087605e54d1e",
+  "status": "GITHUB_BUILD_CONFIGURATION_READY_LINK_PENDING",
+  "sourceCheckpoint": "fcb190491ee03c8784edaa82228bdbf0ca02827b",
   "branch": "feat/fixeo-mobile-w6-entry-auth-trust",
   "pr": 150,
   "profile": "w6-physical-certification",
   "distribution": "internal",
-  "environment": "staging",
+  "environment": "preview",
   "platform": "android",
   "artifactType": "apk",
   "androidPackage": "ma.fixeo.app",
@@ -21,19 +21,26 @@
   "supabaseMutations": 0,
   "authRecoveryRequests": 0,
   "cli": "eas-cli/24.10.0",
-  "cliAuthentication": "Not logged in",
-  "browserAuthentication": "Expo Log in displayed",
+  "cliAuthentication": "Not logged in; official OAuth return blocked by browser URL policy, no workaround",
+  "browserAuthentication": "Connected: fixeo-ma / fixeo-maroc",
   "remoteChecksPending": [
-    "EAS account/project access",
-    "EAS staging environment availability and variable metadata",
-    "existing signing credentials",
-    "latest versionCode and in-progress builds",
-    "quota availability"
+    "GitHub installation restricted to fixeo-app/Fixeo-clean",
+    "Expo project linked; no automatic trigger/workflow",
+    "Final exact SHA and 5 CI",
+    "Final quota and absence of another PB1 build",
+    "Manual Android-only APK launch"
   ],
-  "recordedAtUtc": "2026-10-05T17:53:17.610578+00:00",
-  "commitPublication": "LOCAL_ONLY",
-  "remoteHeadVerified": "38e454ab2e022a0c601091a8505e087605e54d1e",
-  "blockedActions": [
+  "recordedAtUtc": "2026-10-05T18:23:14.323643+00:00",
+  "commitPublication": "PUBLISHED_SOURCE_REVIEWED",
+  "remoteHeadVerified": "fcb190491ee03c8784edaa82228bdbf0ca02827b",
+  "requiredUserAction": null,
+  "appEnvironment": "staging",
+  "authorizedContinuation": "2026-10-05: user explicitly authorizes Expo GitHub linkage only to fixeo-app/Fixeo-clean and preview EAS environment only for this staging profile",
+  "buildImage": "ubuntu-24.04-jdk-17-ndk-r27b",
+  "priorCI": "5/5 SUCCESS on fcb190491ee03c8784edaa82228bdbf0ca02827b; final configuration CI pending",
+  "existingAndroidCredentials": "Observed existing default JKS for ma.fixeo.app and FCM V1 service key; neither downloaded nor changed",
+  "quotaObserved": "Starter, 0 USD used of 45 USD build credit",
+  "previousBlockedActions": [
     {
       "action": "git push origin HEAD:refs/heads/feat/fixeo-mobile-w6-entry-auth-trust",
       "reason": "Automatic review rejected transmission to an unverified remote and shared branch mutation without trusted end-user authorization."
@@ -42,6 +49,5 @@
       "action": "Open Expo Log in in cloud browser",
       "reason": "Automatic review rejected account session access without trusted end-user authorization."
     }
-  ],
-  "requiredUserAction": "Explicitly authorize publishing the prepared PB1 commit to the exact W6 branch and signing into the existing Expo/EAS account."
+  ]
 }

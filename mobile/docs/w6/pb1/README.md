@@ -1,5 +1,21 @@
 # PB1 — Android physical certification preparation
 
+## Authorized continuation, 2026-10-05
+
+PB1 source was published as `fcb190491ee03c8784edaa82228bdbf0ca02827b`, with the exact same source tree `56ed09e9a2f9c1b466de3dcc7cb12dfcd45dc3f0` as the prepared local commit. The GitHub connector supplied commit metadata, hence the different commit SHA. All five GitHub CI workflows passed. PR #150 remains open, Draft and unmerged.
+
+The user now explicitly authorizes linking Expo only to `fixeo-app/Fixeo-clean`, with no automatic builds or push triggers, and using EAS environment `preview` only for `w6-physical-certification`. The FIXEO application environment remains `staging`, and the Supabase URL, publishable key, exact approved callback and native scheme/package are unchanged.
+
+The GitHub build profile explicitly selects the documented SDK 54 Android image `ubuntu-24.04-jdk-17-ndk-r27b`; Expo's GitHub build documentation requires an explicit image. No new application logic or dependency change is introduced in this continuation.
+
+Expo browser account `fixeo-ma` / `fixeo-maroc` is signed in. Existing JKS and FCM V1 credentials are present for `ma.fixeo.app`. Starter build usage was 0 USD out of 45 USD credit. No active PB1 build was displayed. The official CLI browser login return was rejected by the browser URL policy; the CLI remains disconnected and its waiting login process was stopped. No callback, code, credential or session was copied or bridged.
+
+Before the single manual build: verify the limited GitHub installation and linkage, absence of automation, exact final source SHA and all five CI results, existing credentials/quota, and the final Android profile. This document does not claim that a build has been launched or that W6 has passed physical certification.
+
+The sections below retain the original local preparation and blocker history; their original EAS `staging` namespace and approval status are superseded by this authorized continuation and `STATUS.json`.
+
+## Original preparation history
+
 Local preflight PASS. STOP — automatic approval review blocked Git push and Expo sign-in.
 This is not an APK delivery and does not certify physical W6 Auth.
 
