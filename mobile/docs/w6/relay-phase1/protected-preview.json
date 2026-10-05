@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-05T14:14:18.299665+00:00",
-  "scope": "Anonymous HTTP, no cookies/Authorization/bypass",
+  "checkedAt": "2026-10-05T15:10:45.655542+00:00",
+  "scope": "Anonymous HTTP; no cookies/Authorization/bypass",
   "results": [
     {
       "path": "/entry",

@@ -1,62 +1,107 @@
 {
-  "checkedAt": "2026-10-05T14:17:27.127Z",
-  "scope": "W6 relay Phase 1 only; no Supabase calls or auth email",
+  "checkedAt": "2026-10-05T15:12:56.910Z",
+  "scope": "Phase 1 Dashboard fallback only",
   "vercel": {
-    "requestedName": "fixeo-w6-auth-relay",
-    "creationError": "Failed to look up projects linked to fixeo-app/Fixeo-clean: Vercel API error 200: Response validation failed",
-    "projectCreated": false,
-    "deployment": null,
-    "domainAttached": false,
-    "originalProjectBefore": {
-      "id": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
-      "name": "fixeo-clean",
-      "ssoProtection": {
-        "enabled": true,
-        "deploymentType": "all_except_custom_domains"
-      },
-      "passwordProtection": {
-        "enabled": false,
-        "deploymentType": null
-      }
+    "name": "fixeo-w6-auth-relay",
+    "id": "prj_EMFXZ4PVcdKhnJxqCCC5LOm4WPzs",
+    "teamId": "team_KoJ7znqtpla8FkrqAznod5PD",
+    "creation": "Created empty as project-4i1cx, renamed immediately before any deployment",
+    "rootDirectory": "staging/w6-auth-relay",
+    "outsideRootDirectory": false,
+    "repo": "fixeo-app/Fixeo-clean",
+    "branch": "feat/fixeo-mobile-w6-entry-auth-trust",
+    "build": "node build.mjs",
+    "installCommand": "",
+    "node": "24.x",
+    "framework": "Other",
+    "deployment": {
+      "id": "dpl_7SFfLZVduxcTd9WngJn6AfaWCXbx",
+      "url": "https://fixeo-w6-auth-relay-nxjn0mx6p-elalaouibiz-3410s-projects.vercel.app",
+      "target": "Preview",
+      "state": "Ready",
+      "sha": "80600c8a96b8353cd61528d5d274684c23ea519d",
+      "durationSeconds": 6
     },
-    "originalProjectAfter": {
+    "firstFailedDeployment": {
+      "id": "dpl_8NNaRufYgjZX4UqfGhvJPEzycau4",
+      "sha": "f31306e6e2ef3997584cc0d1a6c78d57f6551b82",
+      "reason": "vercel.json directoryListing schema rejection before build",
+      "note": "Creation control said Preview; initial failed deployment labeled Production by Vercel. No Production artifact built/promoted."
+    },
+    "configFix": "Removed directoryListing and public from relay vercel.json; callback artifact unchanged",
+    "public": true,
+    "toolbar": false,
+    "projectVariables": 0,
+    "sharedVariables": 0,
+    "analytics": false,
+    "speedInsights": false,
+    "domain": {
+      "name": "w6-auth-staging.fixeo.ma",
+      "attached": true,
+      "environment": "Preview",
+      "branch": "feat/fixeo-mobile-w6-entry-auth-trust",
+      "status": "Invalid Configuration"
+    },
+    "originalBefore": {
       "id": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
       "name": "fixeo-clean",
+      "updatedAt": 1791206683553,
       "ssoProtection": {
         "enabled": true,
         "deploymentType": "all_except_custom_domains"
       },
-      "passwordProtection": {
-        "enabled": false,
-        "deploymentType": null
-      }
-    }
+      "domains": [
+        "www.fixeo.ma",
+        "fixeo-clean.vercel.app",
+        "fixeo.ma",
+        "fixeo-clean-elalaouibiz-3410s-projects.vercel.app",
+        "fixeo-clean-git-main-elalaouibiz-3410s-projects.vercel.app"
+      ]
+    },
+    "originalAfter": {
+      "id": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+      "name": "fixeo-clean",
+      "updatedAt": 1791206683553,
+      "ssoProtection": {
+        "enabled": true,
+        "deploymentType": "all_except_custom_domains"
+      },
+      "domains": [
+        "www.fixeo.ma",
+        "fixeo-clean.vercel.app",
+        "fixeo.ma",
+        "fixeo-clean-elalaouibiz-3410s-projects.vercel.app",
+        "fixeo-clean-git-main-elalaouibiz-3410s-projects.vercel.app"
+      ]
+    },
+    "originalSettingsUnchanged": true
   },
   "dns": {
-    "name": "w6-auth-staging.fixeo.ma",
-    "before": {
-      "CNAME": "NXDOMAIN",
-      "A": "NXDOMAIN",
-      "AAAA": "NXDOMAIN"
-    },
-    "after": "unchanged; no write",
-    "requiredType": "CNAME",
-    "requiredName": "w6-auth-staging",
-    "requiredValue": null,
-    "reason": "Dedicated Vercel project not created; exact project target unavailable",
-    "authoritativeNameservers": [
-      "ns1.nameservers.ma",
-      "ns2.nameservers.ma",
-      "ns3.nameservers.ma",
-      "ns4.nameservers.ma"
-    ]
+    "type": "CNAME",
+    "name": "w6-auth-staging",
+    "fqdn": "w6-auth-staging.fixeo.ma",
+    "value": "06244978d8b6e6ea.vercel-dns-016.com.",
+    "source": "Vercel Domains UI after attachment",
+    "before": "NXDOMAIN",
+    "after": "NXDOMAIN",
+    "writes": 0,
+    "blocker": "Clouder authentication not acquired; Email or Password Invalid",
+    "tlsCanonical": "NOT CERTIFIED"
   },
-  "localTests": {
+  "tests": {
     "contracts": 17,
-    "chromiumCases": 12,
-    "publicDeployedCertification": false
+    "localChromium": 12,
+    "liveVercelBrowser": 10,
+    "anonymousRoutes": "PASS on deployment URL; custom domain pending",
+    "nativeDeepLink": "NOT EXECUTED",
+    "realAuth": "NOT EXECUTED"
   },
+  "supabaseCalls": 0,
   "supabaseMutations": 0,
-  "authEmailsSent": 0,
-  "productionMutations": 0
+  "authEmails": 0,
+  "callbackApproved": false,
+  "productionImpact": "NONE",
+  "mainChanged": false,
+  "merged": false,
+  "verdict": "STOP — W6 RELAY PHASE 1 NOT CERTIFIED"
 }

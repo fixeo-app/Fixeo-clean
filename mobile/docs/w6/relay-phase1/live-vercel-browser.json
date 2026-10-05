@@ -1,0 +1,76 @@
+{
+  "origin": "vercel.app deployment",
+  "scope": "Live sanitation and origin refusal; canonical code/error mapping still requires DNS",
+  "cases": [
+    {
+      "name": "code-absent",
+      "cleanUrl": true,
+      "neutral": true,
+      "buttonAbsent": true,
+      "syntheticValueAbsent": true
+    },
+    {
+      "name": "code-malforme",
+      "cleanUrl": true,
+      "neutral": true,
+      "buttonAbsent": true,
+      "syntheticValueAbsent": true
+    },
+    {
+      "name": "access-token-query",
+      "cleanUrl": true,
+      "neutral": true,
+      "buttonAbsent": true,
+      "syntheticValueAbsent": true
+    },
+    {
+      "name": "refresh-token-fragment",
+      "cleanUrl": true,
+      "neutral": true,
+      "buttonAbsent": true,
+      "syntheticValueAbsent": true
+    },
+    {
+      "name": "provider-token-fragment",
+      "cleanUrl": true,
+      "neutral": true,
+      "buttonAbsent": true,
+      "syntheticValueAbsent": true
+    },
+    {
+      "name": "provider-refresh-token-query",
+      "cleanUrl": true,
+      "neutral": true,
+      "buttonAbsent": true,
+      "syntheticValueAbsent": true
+    },
+    {
+      "name": "redirect-arbitraire",
+      "cleanUrl": true,
+      "neutral": true,
+      "buttonAbsent": true,
+      "syntheticValueAbsent": true
+    },
+    {
+      "name": "parametre-inconnu",
+      "cleanUrl": true,
+      "neutral": true,
+      "buttonAbsent": true,
+      "syntheticValueAbsent": true
+    },
+    {
+      "name": "erreur-connue-origine-non-canonique",
+      "cleanUrl": true,
+      "neutral": true,
+      "buttonAbsent": true,
+      "syntheticValueAbsent": true
+    },
+    {
+      "name": "code-forme-valide-origine-non-canonique",
+      "cleanUrl": true,
+      "neutral": true,
+      "buttonAbsent": true,
+      "syntheticValueAbsent": true
+    }
+  ]
+}

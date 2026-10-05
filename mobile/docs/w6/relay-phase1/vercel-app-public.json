@@ -1,0 +1,133 @@
+{
+  "at": "2026-10-05T14:51:38.499039+00:00",
+  "host": "fixeo-w6-auth-relay-nxjn0mx6p-elalaouibiz-3410s-projects.vercel.app",
+  "anonymous": true,
+  "authorization": false,
+  "cookies": false,
+  "requests": [
+    {
+      "path": "/auth-callback",
+      "status": 200,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "text/html; charset=utf-8",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1"
+      },
+      "relay_marker": true,
+      "bytes": 4957
+    },
+    {
+      "path": "/",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Vercel-Error": "NOT_FOUND"
+      },
+      "relay_marker": false,
+      "bytes": 79
+    },
+    {
+      "path": "/entry",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Vercel-Error": "NOT_FOUND"
+      },
+      "relay_marker": false,
+      "bytes": 79
+    },
+    {
+      "path": "/sign-in",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Vercel-Error": "NOT_FOUND"
+      },
+      "relay_marker": false,
+      "bytes": 79
+    },
+    {
+      "path": "/artisan",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Vercel-Error": "NOT_FOUND"
+      },
+      "relay_marker": false,
+      "bytes": 79
+    },
+    {
+      "path": "/random-test",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Vercel-Error": "NOT_FOUND"
+      },
+      "relay_marker": false,
+      "bytes": 79
+    },
+    {
+      "path": "/client",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Vercel-Error": "NOT_FOUND"
+      },
+      "relay_marker": false,
+      "bytes": 79
+    },
+    {
+      "path": "/api/test",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Vercel-Error": "NOT_FOUND"
+      },
+      "relay_marker": false,
+      "bytes": 79
+    },
+    {
+      "path": "/callback.html",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Content-Type": "text/html; charset=utf-8",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1"
+      },
+      "relay_marker": true,
+      "bytes": 4957
+    }
+  ]
+}

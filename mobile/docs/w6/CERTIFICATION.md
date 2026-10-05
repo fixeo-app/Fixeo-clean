@@ -92,123 +92,202 @@ Dernière relecture DB : pour chaque fixture, 1 user canonique, 1 profil, email 
 
 ## Relais distinct — manifeste révisé et exécution Phase 1
 
-Autorisation : DISTINCT RELAY GO, Phase 1 uniquement, 5 octobre 2026.
-Le manifeste précédent est remplacé par celui-ci. **Aucun rattachement du domaine
-au projet fixeo-clean ni à son export Expo n'est autorisé.**
+Autorisation : DISTINCT RELAY GO, puis CREATION FALLBACK Dashboard / CLI,
+5 octobre 2026. Le connecteur `create_git_project` n'a plus été utilisé.
 
-**Verdict Phase 1 : STOP — W6 RELAY PHASE 1 NOT CERTIFIED.**
-Le relais est préparé et testé localement. La création Vercel a échoué avant
-création du projet ; aucun déploiement, domaine, DNS ou TLS n'est certifié.
+**Verdict : STOP — W6 RELAY PHASE 1 NOT CERTIFIED.**
+Le projet et son déploiement Preview public existent ; la matrice HTTP anonyme
+sur `vercel.app` est PASS. Le domaine est attaché au seul relais.
+**DNS bloqué par l'accès Clouder : connexion non acquise, message
+« Email or Password Invalid ». Aucune écriture DNS.** Le sous-domaine reste
+NXDOMAIN ; son TLS et sa certification canonique restent à réaliser.
 
-### Manifeste effectif
+### A–C. Projet, déploiement et source exacts
 
-| Élément | Contrat exact |
+| Élément | État constaté |
 | --- | --- |
-| Nouveau projet exclusivement dédié | `fixeo-w6-auth-relay`, distinct de `fixeo-clean` |
-| Source | `staging/w6-auth-relay/` dans la branche W6 actuelle ; PR #150 reste Draft |
-| Root Directory Vercel | `staging/w6-auth-relay` |
-| Environnement | Preview/staging uniquement ; jamais Production |
-| Build | Node 24, `node build.mjs`, sans installation ni dépendance npm |
-| Tests | `node --test test/*.test.mjs` |
-| Sortie | `.vercel/output/config.json` et un seul document `.vercel/output/static/callback.html` |
-| Fonctionnement | Page autonome ; zéro fonction serveur, Expo, SDK Supabase, clé, base, API ou donnée métier |
-| Domaine candidat | `w6-auth-staging.fixeo.ma`, sur le seul projet relais |
-| Protection cible | Projet relais protégé ; seule exception de domaine exacte autorisée ; aucun changement fixeo-clean |
-| Callback | `https://w6-auth-staging.fixeo.ma/auth-callback` |
-| Route publique fonctionnelle | Uniquement `GET /auth-callback` |
-| Autres routes | 404, notamment `/`, `/entry`, `/sign-in`, `/artisan`, `/client`, `/api/*`, `/random-test`, `/callback.html` ; aucun SPA fallback |
-| Autres méthodes sur callback | 405, `Allow: GET` |
-| Transfert | Seulement code PKCE vers `fixeo://auth-callback?code=...`, après action explicite sur Ouvrir FIXEO |
-| Erreurs transférables | Seulement `expired`, `invalid`, `denied`, `unknown` ; aucune description brute |
-| Privacy | no-store navigateur/CDN, no-referrer, nosniff, CSP par empreintes, zéro ressource externe, stockage ou logger applicatif |
-| Guards de build | Refus Production, projet fixeo-clean et branche autre que W6 |
+| Projet Vercel | `fixeo-w6-auth-relay` |
+| Project ID | `prj_EMFXZ4PVcdKhnJxqCCC5LOm4WPzs` |
+| Équipe | `team_KoJ7znqtpla8FkrqAznod5PD` / `elalaouibiz-3410s-projects` |
+| Déploiement Ready | `dpl_7SFfLZVduxcTd9WngJn6AfaWCXbx` |
+| Environnement Vercel | **Preview**, staging uniquement ; durée de build 6 s |
+| URL exacte | `https://fixeo-w6-auth-relay-nxjn0mx6p-elalaouibiz-3410s-projects.vercel.app` |
+| Alias de branche | `fixeo-w6-auth-relay-git-feat-7093f2-elalaouibiz-3410s-projects.vercel.app` |
+| Source | `fixeo-app/Fixeo-clean`, `feat/fixeo-mobile-w6-entry-auth-trust` |
+| SHA déployé | `80600c8a96b8353cd61528d5d274684c23ea519d` |
+| Root Directory | `staging/w6-auth-relay` ; inclusion des fichiers extérieurs **désactivée** |
+| Build | Framework Other, Node 24, `node build.mjs`, install command vide |
+| Variables | Zéro variable de projet et zéro variable partagée rattachée, vérifiés dans le Dashboard |
+| Protection du relais | Vercel Authentication désactivée **sur ce nouveau projet uniquement**, conformément au GO public |
+| Vercel Toolbar | Off en Preview et Production ; Analytics et Speed Insights non activés |
 
-Fichiers du relais : `package.json`, `vercel.json`, `build.mjs`, `.gitignore`,
-`src/callback.html`, `src/relay.js`, `test/relay.test.mjs`, `test/routes.test.mjs`,
-`README.md`. Aucun fichier fonctionnel W6 existant n'est changé par cette phase.
-Les déploiements Git du relais sont limités à la branche W6 ; aucune Production
-ne peut produire l'artefact, grâce aux guards indépendants dans le builder.
+Le Dashboard a créé un projet vide avec le nom automatique `project-4i1cx`,
+immédiatement renommé avant tout déploiement. Son alias automatique
+`project-4i1cx.vercel.app` indique No Deployment ; aucun domaine métier existant
+n'a été déplacé.
 
-Le premier script nettoie query/hash avant validation et rendu. Les changements
-ultérieurs de fragment et l'historique sont aussi nettoyés. La présence dans query
-ou fragment de `access_token`, `refresh_token`, `provider_token` ou
-`provider_refresh_token` provoque un refus sans transfert, même d'un code d'erreur.
-Les noms encodés/casse alternative, valeurs vides, duplications, redirections
-arbitraires, paramètres inconnus et mélanges code/erreur sont refusés.
-Si le nettoyage de l'URL échoue, aucun rendu ou transfert n'est effectué.
+La première création, demandée via « Create Preview Deployment », a été
+étiquetée Production par Vercel puis refusée **avant build** :
+`dpl_8NNaRufYgjZX4UqfGhvJPEzycau4`, SHA `f31306e`,
+propriété `directoryListing` non admise dans `vercel.json`.
+Le commit `80600c8` retire seulement `directoryListing` et `public` du fichier
+de configuration du relais. Le builder, les routes et le script Auth sont
+inchangés. Le déploiement suivant est bien **Preview / Ready**.
+Aucun artefact Production n'a été construit ou promu.
+
+Fichiers exacts : `package.json`, `vercel.json`, `build.mjs`, `.gitignore`,
+`src/callback.html`, `src/relay.js`, `test/relay.test.mjs`,
+`test/routes.test.mjs`, `README.md`.
+Zéro dépendance npm, fonction serveur, Expo, Client OS, Artisan OS, RAFI, SDK ou
+clé Supabase, accès DB, API métier, donnée métier, stockage ou logger applicatif.
+Sortie : `.vercel/output/config.json` et un document statique `callback.html`.
+Les guards refusent Vercel Production, le project ID fixeo-clean et toute
+branche différente de W6. Aucun fichier fonctionnel W6 existant n'a été changé.
+
+### D–E. Domaine et DNS exacts
+
+Le domaine `w6-auth-staging.fixeo.ma` est attaché **uniquement** au projet
+`prj_EMFXZ4PVcdKhnJxqCCC5LOm4WPzs`, environnement Preview,
+branche `feat/fixeo-mobile-w6-entry-auth-trust`.
+Cette opération a été effectuée **après** le PASS HTTP anonyme de `vercel.app`.
+
+Valeurs lues dans le Dashboard Vercel après attachement, consignées avant écriture :
+
+| TYPE | NAME | VALUE |
+| --- | --- | --- |
+| CNAME | `w6-auth-staging` | `06244978d8b6e6ea.vercel-dns-016.com.` |
+
+FQDN : `w6-auth-staging.fixeo.ma`. DNS externe, serveurs
+`ns1.nameservers.ma` à `ns4.nameservers.ma`.
+**Avant : NXDOMAIN. Après : NXDOMAIN. Écritures : 0.**
+Le TTL n'a pas été fixé puisqu'aucun formulaire DNS n'a été soumis.
+Aucun autre record, apex, www, MX, TXT ou serveur de noms n'a été modifié.
+
+TLS `vercel.app` : HTTPS valide, validation de certificat active, HSTS présent.
+TLS `w6-auth-staging.fixeo.ma` : **NON CERTIFIÉ**, DNS non provisionné.
+Statut Vercel du domaine : Invalid Configuration.
+
+### F–H. Routes et sécurité publiques
+
+Requêtes HTTP réelles, sans cookies, Authorization, lien de partage ou bypass,
+sur le déploiement exact ci-dessus :
+
+| Route GET | Statut |
+| --- | --- |
+| `/auth-callback` | **200**, marqueur `X-Fixeo-Relay: w6-phase-1` |
+| `/` | **404** |
+| `/entry` | **404** |
+| `/sign-in` | **404** |
+| `/artisan` | **404** |
+| `/client` | **404** |
+| `/random-test` | **404** |
+| `/api/test` | **404** |
+| `/callback.html` | **404** |
+
+Aucun SPA fallback. Le fichier interne peut être renvoyé avec statut 404 sur son
+nom direct ; son script refuse ce path et ne propose aucun transfert.
+Les méthodes autres que GET sur le callback sont prévues en 405 / Allow GET
+et testées par contrat ; leur contrôle distant reste à compléter avec le domaine.
+
+Headers effectivement reçus : `Cache-Control: no-store`,
+`Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`.
+CSP à empreintes, `connect-src 'none'`, `form-action 'none'`,
+`base-uri 'none'`, `frame-ancestors 'none'`.
+Le HTML déployé est identique octet pour octet à l'artefact testé :
+SHA-256 `1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2`.
+
+| Cas | Preuve actuelle |
+| --- | --- |
+| Code absent ou malformé | Contrats PASS ; navigateur réel vercel.app : URL nettoyée, refus neutre, aucun bouton |
+| Quatre bearer tokens interdits | Contrats query/hash, noms encodés, casse et valeurs vides PASS ; cas réels sur vercel.app refusés |
+| Redirect arbitraire / paramètre inconnu | Contrats PASS ; navigateur réel : refus sans transfert |
+| Duplications / mélange code-erreur | Contrats PASS |
+| Nettoyage avant rendu, hashchange/popstate | Contrats et Chromium local PASS |
+| Erreurs filtrées | Mapping local PASS vers expired/invalid/denied/unknown ; aucune description brute |
+| Code bien formé / erreur connue sur vercel.app | Refus attendu : origin non canonique, aucun transfert |
+| Code / erreurs sur le domaine canonique | **À CERTIFIER après DNS/TLS** |
+| Échange PKCE réel / session / deep link physique | Non exécutés ; hors Phase 1 / aucun build physique |
+
+**17/17 contrats PASS**, **12/12 cas Chromium locaux PASS**,
+**10/10 contrôles navigateur sur le vrai déploiement vercel.app PASS**
+pour nettoyage et refus d'origin. Les tests locaux utilisent une réponse HTTP
+interceptée sous l'origin canonique ; ils ne remplacent pas sa certification publique.
+Les tests distants n'ont utilisé que des marqueurs factices, aucun token réel.
+
+Contrat : le premier script retire query/hash avant parsing et rendu. Un échec
+de nettoyage bloque tout rendu/transfert. La présence de access_token,
+refresh_token, provider_token ou provider_refresh_token dans query ou fragment
+interdit tout transfert, même d'une erreur. Aucun redirect fourni par l'utilisateur
+n'est accepté. Destination unique : `fixeo://auth-callback`.
+Seul un code bien formé ou une erreur interne filtrée peut être transmis,
+après action sur « Ouvrir FIXEO », au maximum une fois.
 
 Le relais ne valide pas l'authenticité du code et ne crée aucune session.
-Seule l'application qui conserve le vérificateur PKCE effectue l'échange canonique.
-Un flux initié dans Web Preview n'est pas interchangeable avec un flux natif.
-Le clic du bouton émet au maximum une destination fixe ; aucun token bearer
-ni vérificateur n'est placé dans cette destination.
+L'application d'origine conserve son vérificateur PKCE, effectue l'échange puis
+la résolution canonique du rôle avant tout accès Client OS / Artisan OS.
+Un flux initié en Web Preview n'est pas interchangeable avec un flux natif.
 
-### Exécution constatée et preuves
+### I–J. fixeo-clean inchangé
 
-| Contrôle | Résultat réel |
-| --- | --- |
-| Projet avant tentative | Absent, recherche Vercel exacte |
-| Création via connecteur Vercel | ÉCHEC avant création : `Vercel API error 200: Response validation failed` lors de la recherche des projets liés au dépôt |
-| Relecture après échec | Projet `fixeo-w6-auth-relay` toujours absent |
-| Déploiement / alias / TLS | Non réalisés, aucun ID à déclarer |
-| DNS avant | CNAME, A, AAAA : NXDOMAIN (résolveur DNS public) |
-| DNS après | Inchangé, aucune écriture |
-| DNS nécessaire | TYPE=CNAME, NAME=w6-auth-staging, VALUE=non disponible avant création du projet dédié ; aucune valeur inventée |
-| Gestion DNS | Externe à Vercel ; nameservers `ns1.nameservers.ma` à `ns4.nameservers.ma` |
-| Contrats locaux | **17/17 PASS** |
-| Chromium local | **12/12 PASS**, zéro erreur applicative et zéro requête autre que le document |
-| Captures locales | Rendu inspecté, messages neutres et aucune valeur Auth affichée |
-| Public HTTPS anonyme du relais | NON CERTIFIÉ : domaine non provisionné |
-| fixeo-clean après tentative | SSO enabled=true, deploymentType=all_except_custom_domains, passwordProtection.enabled=false, inchangés |
-| Domaine relais sur fixeo-clean | Absent |
-| Preview W6 anonyme | `/entry` et `/auth-callback` : 302 vers Vercel SSO, puis 307 vers `/login` ; protection conservée |
+Relecture après création, déploiement et attachement du domaine :
+`prj_U909VA6lAGunWRVCoSQ37uEOcz5c`,
+`ssoProtection.enabled=true`,
+`deploymentType=all_except_custom_domains`.
+Même `updatedAt=1791206683553`, mêmes protections et domaines qu'avant.
+Le domaine relais n'apparaît pas dans ses domaines.
+Aucun réglage de root directory, protection ou domaine de fixeo-clean n'a été écrit.
 
-Preuves versionnées dans `relay-phase1/` :
-- `infrastructure.json` : tentative, relecture et état DNS/protections, sans secrets ;
-- `protected-preview.json` : requêtes anonymes réelles, hôtes/paths seulement, query strings exclues ;
-- `local-browser.json` : matrice Chromium locale, explicitement sans certification publique ;
-- `local-valid-shaped-code.png`, `local-access-query.png` : captures de l'artefact local.
+Nouvelle vérification HTTP anonyme de la Preview W6 à 15:10 UTC :
+`/entry` et `/auth-callback` → 302 vers Vercel SSO → 307 vers `/login`.
+Les nouveaux commits W6 peuvent déclencher la Preview Git habituelle ;
+cela ne déploie pas le relais dans fixeo-clean et ne change pas ses réglages.
 
-La matrice Chromium utilise le vrai HTML construit et ses headers CSP, avec une
-réponse HTTP interceptée localement : elle vérifie le navigateur, mais **ne prouve
-ni DNS, ni certificat TLS, ni routage Vercel déployé**. Les seules entrées utilisées
-sont des marqueurs factices ; aucune session Auth réelle et aucun deep link natif
-n'ont été ouverts. Le handoff fixe et à usage unique est contrôlé dans les tests.
-L'outil agent-browser a échoué au démarrage ; la vérification locale a été effectuée
-avec Chromium/Playwright. Aucun navigateur connecté Vercel/DNS n'a été utilisé.
+### K. Rollback exact et reprise
 
-### Logs et limites explicites
+Rollback Phase 1, non exécuté :
+1. Détacher seulement `w6-auth-staging.fixeo.ma` du projet
+   `prj_EMFXZ4PVcdKhnJxqCCC5LOm4WPzs`.
+2. Supprimer seulement le CNAME `w6-auth-staging` pointant vers
+   `06244978d8b6e6ea.vercel-dns-016.com.` **s'il a été créé**.
+   À ce checkpoint, aucun DNS à supprimer.
+3. Désactiver/supprimer uniquement `fixeo-w6-auth-relay` et ses déploiements.
+4. Préserver fixeo-clean, ses domaines et sa protection.
+5. Aucune action Supabase à annuler ; aucun retour localhost.
 
-Aucun log applicatif de query string, stockage, Analytics ou pixel.
-Aucun Drain renvoyé par la lecture de l'équipe lors du manifeste.
-L'absence de logs applicatifs ne certifie pas l'absence de conservation interne
-par Vercel. Les journaux de plateforme peuvent inclure les query strings ; cette
-limite demeure documentée, sans tentative de contourner une protection.
+Reprise Phase 1 : obtenir l'accès au gestionnaire DNS, ajouter seulement
+l'enregistrement ci-dessus après relecture de son absence, attendre TLS,
+rejouer la matrice complète sur le domaine canonique puis revalider fixeo-clean.
+Aucun nouveau GO n'est nécessaire pour ces actions Phase 1 déjà autorisées,
+mais le blocage de connexion doit être résolu.
 
-### Frontière Phase 2 — strictement interdite ici
+### L. PR, preuves et frontière Supabase
 
-**Zéro appel Supabase pendant Phase 1, zéro email Auth envoyé.** Aucune Redirect URL,
-Site URL, confirmation, template, SMTP, quota ou rate limit modifié. L'URL candidate
-est seulement documentée ; `EXPO_PUBLIC_AUTH_CALLBACK_APPROVED` n'est pas activé.
-Le code W6 existant reste fail-closed. Recovery :
-**DEFERRED — 429 over_email_send_rate_limit**, distinct du blocage d'hébergement.
+PR #150 reste **Draft**, ouverte, non mergée.
+Preuves dans `relay-phase1/` :
+- `infrastructure.json` : IDs, isolation, réglages et blocage courant ;
+- `vercel-app-public.json` : statuts et headers des requêtes anonymes ;
+- `fallback-external-checks.json` : NXDOMAIN et empreinte du HTML distant ;
+- `live-vercel-browser.json` : nettoyage/refus sur le déploiement réel ;
+- `protected-preview.json` : redirections anonymes W6, query strings exclues ;
+- `dashboard-preview-ready.jpg`, `dashboard-relay-public.jpg`,
+  `dashboard-dns-required.jpg` : captures du Dashboard ;
+- `local-browser.json` et captures locales : preuves locales antérieures.
 
-### Reprise minimale et rollback
+Historique : le connecteur de création avait échoué avant ce fallback
+(validation de réponse). Le nouveau blocage est **l'accès DNS**, distinct de
+ce blocage d'outil résolu et du quota email.
 
-Le connecteur Vercel n'a pas créé le projet. Un accès opérationnel permettant la
-création du projet dédié est nécessaire. Le repli vers un navigateur connecté
-Vercel / gestionnaire DNS n'a pas été utilisé : il requiert l'autorisation de
-repli prévue par les règles de l'outil navigateur après insuffisance du connecteur.
+Aucun Analytics, pixel, stockage ou log applicatif de query string.
+L'absence de logger applicatif ne certifie pas la politique de conservation
+interne de Vercel ; aucune garantie absolue de non-journalisation d'infrastructure
+n'est revendiquée.
 
-Après création/déploiement autorisés : relever la cible DNS exacte, publier
-uniquement l'enregistrement nécessaire, certifier TLS et toutes les routes/méthodes
-anonymement, recontrôler fixeo-clean, puis STOP avant toute revue Supabase.
+**Zéro appel ou mutation Supabase, zéro email Auth envoyé pendant Phase 1.**
+URL candidate seulement :
+`https://w6-auth-staging.fixeo.ma/auth-callback`, sans wildcard.
+Site URL, confirmation, templates, SMTP, quotas et rate limits inchangés.
+`EXPO_PUBLIC_AUTH_CALLBACK_APPROVED` reste non activé ; W6 reste fail-closed.
+Recovery : **DEFERRED — 429 over_email_send_rate_limit**, séparé du DNS.
 
-Rollback Phase 1 autorisé : détacher uniquement le domaine du relais ; supprimer
-uniquement le DNS ajouté pour ce sous-domaine ; désactiver/supprimer uniquement
-`fixeo-w6-auth-relay` ; conserver fixeo-clean intact. À ce checkpoint aucun de ces
-objets n'existe, donc aucune mutation distante Phase 1 n'est à annuler.
-Aucune action Supabase à annuler. Ne jamais réintroduire localhost.
-
-Production impact = NONE. MAIN inchangé. Aucun build physique, aucun merge,
-aucun W7. **STOP — W6 RELAY PHASE 1 NOT CERTIFIED.**
+**Production impact = NONE.** MAIN inchangé. Aucun build physique, merge ou W7.
+**STOP — W6 RELAY PHASE 1 NOT CERTIFIED.**
