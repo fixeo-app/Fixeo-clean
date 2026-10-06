@@ -1,6 +1,6 @@
 # PB1 Correction + RAFI Living Sphere — checkpoint de revue
 
-**PB1 : EN ATTENTE de matrice staging authentifiée, puis du seul build Android final.**
+**PB1 : chantier logiciel en cours, matrice staging authentifiée en attente. Aucun build Android autorisé avant gel logiciel et GO explicite séparé.**
 **RAFI : PASS RAFI LIVING SPHERE — READY FOR PHYSICAL REVIEW** pour les contrôles logiciels décrits ci-dessous uniquement. Aucun résultat navigateur ne certifie la fluidité, la chauffe, les permissions ou le rendu du téléphone Android PB1.
 
 ## A–B. Source et périmètre
@@ -85,8 +85,14 @@ Trois modules natifs compatibles Expo SDK 54 ont été ajoutés : datetimepicker
 ## J–M. Build et suite
 
 Nouveau build ID : **aucun**. Lien APK corrigé : **aucun**. Builds Android lancés : **0**.
-Après authentification sécurisée des fixtures existantes, terminer la matrice staging et les points Auth ouverts ; vérifier à nouveau le SHA/CI/PR, l'accès Expo, les credentials existants et le quota. Lancer alors une seule compilation Android du SHA final, profil `w6-physical-certification`, environnement EAS `preview`, backend staging exclusivement. Ne pas recréer de credentials ni activer d'automatisation.
+Après authentification sécurisée des fixtures existantes, terminer la matrice staging et les points Auth ouverts ; obtenir la CI complète, revoir le diff et vérifier le SHA/PR/Main/Production. Publier alors **PB1 SOFTWARE CANDIDATE — FINAL FREEZE**, puis **STOP et attendre le GO explicite séparé** pour le seul build Android physique. Profil réservé : `w6-physical-certification`, environnement EAS `preview`, backend staging exclusivement. Aucun build intermédiaire ou de validation, aucune recréation de credentials ou activation d’automatisation.
 
 La re-certification manuelle doit couvrir les deux OS, permissions et contexte, RAFI IDLE/tap/LISTENING/THINKING/SUCCESS/RETRY, DatePicker/TimePicker, barres/clavier, fluidité et chauffe. Aucun PASS physique n'est revendiqué.
 
 **MAIN UNTOUCHED — PRODUCTION UNTOUCHED — PR #150 DRAFT — NO MERGE.**
+
+## Reprise logiciel — 6 octobre 2026
+
+Auth staging clarifié en lecture seule : le Client canonique existe, email confirmé, mot de passe configuré, aucun bannissement ni suppression. Les logs Auth de la fenêtre de connexion portent `400 / invalid_credentials` sur `/token` ; le formulaire affiche la même erreur. Cela ne valide pas une session ni la matrice connectée. Les valeurs de mot de passe, hashes et tokens n’ont pas été lus. Voir `auth-clarification.json`.
+
+Le CI Control du checkpoint `5efa818d84987d13072e1d53f80f8efc42585b58` échouait parce que ses fixtures statiques du 5 septembre étaient sorties de la fenêtre glissante de 30 jours. La rectification autorisée fixe **uniquement dans `tests/control-contract/browser-bloc6.cjs`** les champs UI de période au `[2026-09-01, 2026-09-19)` ; la cohorte précédente inclut le 20 août. Les assertions SMALL_SAMPLE/Wilson, les données et le métier Control sont inchangés. Rejeu local réel UI → handler → SQL isolé : **10 contrôles PASS, 0 exécution métier**, voir `control-fixture-runtime.json`. La CI complète du prochain SHA reste à relever après publication.

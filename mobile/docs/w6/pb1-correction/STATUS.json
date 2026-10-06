@@ -1,5 +1,5 @@
 {
-  "status": "STAGING_AUTH_REQUIRED_BEFORE_FINAL_ANDROID_BUILD",
+  "status": "SOFTWARE_IN_PROGRESS_BUILD_REQUIRES_SEPARATE_GO",
   "initialHead": "48b54c2795d72bc26cb5927a344e21bdd938901e",
   "branch": "feat/fixeo-mobile-w6-entry-auth-trust",
   "pr": 150,
@@ -26,5 +26,8 @@
   "appEnvironment": "staging",
   "package": "ma.fixeo.app",
   "version": "0.3.0",
-  "versionCode": 5
+  "versionCode": 5,
+  "authClient": "IDENTITY_CONFIRMED_CREDENTIALS_REJECTED_SESSION_REQUIRED",
+  "controlFixtureFix": "TEST_ONLY_FIXED_UI_COHORT_WINDOW_LOCAL_PASS_10_CHECKS",
+  "buildAuthorization": "NOT_AUTHORIZED_AWAIT_SEPARATE_GO_AFTER_SOFTWARE_FINAL_FREEZE"
 }

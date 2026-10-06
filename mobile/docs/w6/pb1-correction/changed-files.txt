@@ -60,6 +60,7 @@ mobile/docs/w6/pb1-correction/after/rafi-confirmation-retry.png
 mobile/docs/w6/pb1-correction/after/rafi-retry.png
 mobile/docs/w6/pb1-correction/after/runtime.json
 mobile/docs/w6/pb1-correction/android-export.log
+mobile/docs/w6/pb1-correction/auth-clarification.json
 mobile/docs/w6/pb1-correction/auth-public.log
 mobile/docs/w6/pb1-correction/auth-session.log
 mobile/docs/w6/pb1-correction/auth/callback-rejected-320.png
@@ -103,6 +104,8 @@ mobile/docs/w6/pb1-correction/before/rafi-retry.png
 mobile/docs/w6/pb1-correction/before/runtime.json
 mobile/docs/w6/pb1-correction/changed-files.txt
 mobile/docs/w6/pb1-correction/contracts.log
+mobile/docs/w6/pb1-correction/control-fixture-runtime.json
+mobile/docs/w6/pb1-correction/control-fixture-runtime.log
 mobile/docs/w6/pb1-correction/expo-doctor.log
 mobile/docs/w6/pb1-correction/final-exports.log
 mobile/docs/w6/pb1-correction/gate-a.log
@@ -195,3 +198,4 @@ mobile/ui/rafiOrbMotion.ts
 mobile/ui/rafiPresence.ts
 mobile/ui/shellContract.ts
 mobile/ui/tokens.ts
+tests/control-contract/browser-bloc6.cjs
