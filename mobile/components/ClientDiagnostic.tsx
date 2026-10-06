@@ -23,9 +23,13 @@ export function ClientDiagnostic({ result, confirmed, onConfirm, onExit }: {
     <FixeoText variant="heading">{result.problem.value || 'Quelques précisions utiles.'}</FixeoText>
     {result.facts.filter(fact => fact.provenance !== 'ai_inferred').map((fact, i) => <View key={fact.key + i} style={{ gap: 4 }}>
       <FixeoText variant="caption" tone="secondary">{diagnosticProvenance(fact.provenance)}</FixeoText>
-      <FixeoText>{fact.value}</FixeoText>
+      <FixeoText>{fact.value || (fact.provenance === 'user_declared' ? 'Aucun problème déclaré.' : 'Non précisé.')}</FixeoText>
     </View>)}
     {!!result.urgency.reason && <FixeoText variant="supporting">{diagnosticProvenance(result.urgency.provenance)} · {result.urgency.reason}</FixeoText>}
+    <FixeoText variant="caption" tone="secondary">HYPOTHÈSE</FixeoText>
+    <FixeoText>{result.hypotheses.map(item => item.value).join('\n') || 'Aucune hypothèse établie.'}</FixeoText>
+    <FixeoText variant="caption" tone="secondary">INCERTITUDE</FixeoText>
+    <FixeoText>Une photo ne permet pas de confirmer une cause ou un défaut caché. Les hypothèses restent à vérifier sur place.</FixeoText>
     {confirmed ? <FixeoText accessibilityLiveRegion="polite">CONFIRMÉ PAR VOUS · La description reste modifiable avant envoi.</FixeoText> : next ? <View style={{ gap: 12 }} testID="client-diagnostic-question">
       <FixeoText variant="heading">{next.label}</FixeoText>
       <TextInput accessibilityLabel={next.label} value={answer} onChangeText={setAnswer} multiline style={clientStyles.input} placeholder="Votre réponse, ou ce que vous ignorez" />

@@ -1,3 +1,4 @@
+import { CityField } from '@/components/CityField';
 import { useCallback, useEffect, useState } from "react";
 import { Linking, View } from "react-native";
 import * as Crypto from "expo-crypto";
@@ -134,7 +135,7 @@ export default function ClientDetail() {
               onChangeText={setPhone}
               keyboardType="phone-pad"
             />
-            <ArtisanField label="Ville" value={city} onChangeText={setCity} />
+            <CityField label="Ville" value={city} onChange={setCity} />
             <ArtisanField
               label="Adresse"
               value={address}

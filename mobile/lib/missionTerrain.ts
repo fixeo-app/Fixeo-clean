@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { withCanonicalCity } from './clientLocation';
 
 export type MissionSnapshot = {
   mission_id: string;
@@ -22,7 +23,7 @@ function unwrapMission(data: any): MissionSnapshot | null {
     if (reason === 'mission_unavailable') return null;
     throw new Error(reason);
   }
-  return data.mission || null;
+  return data.mission ? withCanonicalCity(data.mission) : null;
 }
 
 export async function getMyCurrentArtisanMission(): Promise<MissionSnapshot | null> {
@@ -45,7 +46,7 @@ export async function getClientMissionDetail(missionId: string): Promise<Mission
   });
   if (error) throw error;
   if (!data?.ok) throw new Error(String(data?.reason || 'mission_unavailable'));
-  return data as MissionSnapshot;
+  return withCanonicalCity(data as MissionSnapshot);
 }
 
 export async function getArtisanMissionDetail(missionId: string): Promise<MissionSnapshot> {
@@ -54,7 +55,7 @@ export async function getArtisanMissionDetail(missionId: string): Promise<Missio
   });
   if (error) throw error;
   if (!data?.ok) throw new Error(String(data?.reason || 'mission_unavailable'));
-  return data as MissionSnapshot;
+  return withCanonicalCity(data as MissionSnapshot);
 }
 
 export async function startMission(missionId: string) {
@@ -125,7 +126,7 @@ export async function getMyCurrentClientRequest(): Promise<ClientRequestSnapshot
   const { data, error } = await supabase.rpc('get_my_current_client_request_v1');
   if (error) throw error;
   if (!data?.ok) throw new Error(String(data?.reason || 'request_unavailable'));
-  return data.request || null;
+  return data.request ? withCanonicalCity(data.request) : null;
 }
 
 export async function markMissionArrived(missionId: string) {

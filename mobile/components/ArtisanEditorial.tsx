@@ -82,6 +82,7 @@ export function useArtisanAction() {
   const run = async <T,>(
     action: () => Promise<T>,
     success: string,
+    timeoutMs = 20000,
   ): Promise<T | undefined> => {
     if (locked.current) return;
     locked.current = true;
@@ -89,7 +90,7 @@ export function useArtisanAction() {
     setFailed(false);
     setMessage("");
     try {
-      const value = await withMobileDeadline(action(), 20000);
+      const value = await withMobileDeadline(action(), timeoutMs);
       if (alive.current) { setMessage(success); setCompletion(value => Math.max(Date.now(), value + 1)); }
       return value;
     } catch (e) {

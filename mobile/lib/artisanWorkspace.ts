@@ -1,3 +1,5 @@
+import { withMobileDeadline } from './mobileResilience';
+import { loadArtisanProfile } from './artisanOS';
 import { supabase } from './supabase';
 
 export type ArtisanAvailability = 'available' | 'unavailable' | 'busy';
@@ -93,12 +95,15 @@ export async function getArtisanWorkspaceSummary(): Promise<ArtisanWorkspaceSumm
 export async function setArtisanAvailability(
   status: ArtisanAvailability,
 ): Promise<ArtisanAvailability> {
-  const { data, error } = await supabase.rpc('update_artisan_availability', {
+  const { data, error } = await withMobileDeadline(supabase.rpc('update_artisan_availability', {
     p_status: status,
-  });
+  }), 10000);
   if (error) throw error;
   if (!data?.ok) throw new Error(String(data?.reason || 'AVAILABILITY_UPDATE_FAILED'));
-  return String(data.status) as ArtisanAvailability;
+  if (data.status !== status) throw new Error('AVAILABILITY_CONFIRMATION_PENDING');
+  const profile = await withMobileDeadline(loadArtisanProfile(false), 8000);
+  if (profile?.availability !== status) throw new Error('AVAILABILITY_CONFIRMATION_PENDING');
+  return status;
 }
 
 export async function listArtisanBusinessClients(limit = 40): Promise<ArtisanBusinessClient[]> {

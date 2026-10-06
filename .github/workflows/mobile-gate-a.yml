@@ -25,5 +25,10 @@ jobs:
           retention-days: 1
       - run: npx expo-doctor@1.20.4
       - run: npm run test:contracts
+      - name: Execute RAFI material shaders without a browser
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libegl1 libegl-mesa0 libgl1-mesa-dri
+          python3 tests/pb1-shader-gate.py
       - run: npm run typecheck
       - run: npx expo export --platform web --output-dir dist-gate-a

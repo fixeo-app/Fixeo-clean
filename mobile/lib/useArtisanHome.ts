@@ -17,7 +17,7 @@ export function useArtisanHome() {
     );
   const c = controller.current;
   const reload = useCallback(async () => {
-    await c.refresh();
+    await c.refresh(true);
   }, [c]);
   useFocusEffect(
     useCallback(() => {

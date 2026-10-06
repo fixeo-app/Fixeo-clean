@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { router } from "expo-router";
 import { loadArtisanProfile } from "@/lib/artisanOS";
 import {
@@ -18,6 +19,9 @@ import { FixeoAction } from "@/ui/FixeoAction";
 export default function Availability() {
   const q = useArtisanQuery(loadArtisanProfile),
     a = useArtisanAction();
+  const [confirmed, setConfirmed] = useState<string | null>(null);
+  useEffect(() => { setConfirmed(null); }, [q.data]);
+  const currentStatus = confirmed || q.data?.availability;
   return (
     <ArtisanPage
       rafi={a.rafi}
@@ -36,7 +40,7 @@ export default function Availability() {
         <>
           <ArtisanSection label="VOTRE STATUT ACTUEL" dark>
             <FixeoText variant="title" tone="inverse">
-              {availabilityLabels[q.data.availability] || "À définir"}
+              {availabilityLabels[currentStatus || ''] || "À définir"}
             </FixeoText>
           </ArtisanSection>
           <ArtisanCue text="Choisissez le statut qui correspond à votre situation. FIXEO garde la décision d’attribution de chaque mission." />
@@ -44,18 +48,21 @@ export default function Availability() {
             <FixeoAction
               key={value}
               label={label}
-              variant={value === q.data?.availability ? "primary" : "secondary"}
-              disabled={a.busy}
-              accessibilityState={{ selected: value === q.data?.availability }}
+              variant={value === currentStatus ? "primary" : "secondary"}
+              disabled={a.busy || value === currentStatus}
+              busy={a.busy && value !== currentStatus} busyLabel="Enregistrement…"
+              accessibilityState={{ selected: value === currentStatus }}
               onPress={() =>
                 void a.run(async () => {
-                  await setArtisanAvailability(value as ArtisanAvailability);
+                  const status = await setArtisanAvailability(value as ArtisanAvailability);
+                  setConfirmed(status);
                   await q.reload();
                   return true;
                 }, "Disponibilité enregistrée.")
               }
             />
           ))}
+          <ArtisanMessage message={a.message} />
           <FixeoText tone="secondary">
             Votre prochain créneau n’est pas encore renseigné par le système.
           </FixeoText>

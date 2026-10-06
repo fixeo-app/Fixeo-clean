@@ -11,23 +11,25 @@ export function CityField({ value, onChange, label = 'Votre ville', disabled = f
   value: string; onChange: (value: string) => void; label?: string; disabled?: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const options = citySuggestions(value);
+  const [query, setQuery] = useState('');
+  const options = citySuggestions(query);
   return <View style={styles.root}>
     <FixeoText variant="supporting" tone="secondary">{label}</FixeoText>
     <View style={styles.inputRow}>
-      <TextInput accessibilityLabel={label} value={value} editable={!disabled}
-        placeholder="Choisir une ville" placeholderTextColor={semanticColors.text.tertiary}
-        autoCapitalize="words" autoCorrect={false}
-        onFocus={() => setExpanded(true)}
-        onChangeText={text => { onChange(text); setExpanded(true); }}
-        onBlur={() => { const city = canonicalCity(value); if (city && city !== value) onChange(city); }}
-        style={[clientStyles.input, styles.input]} />
+      <ShellControl accessibilityLabel={label} style={[clientStyles.input, styles.input]}
+        accessibilityState={{ expanded }} disabled={disabled} onPress={() => { setQuery(''); setExpanded(!expanded); }}>
+        <FixeoText>{canonicalCity(value) || value || 'Choisir une ville'}</FixeoText>
+      </ShellControl>
       <ShellControl accessibilityLabel={expanded ? 'Fermer la liste des villes' : 'Afficher les villes'}
-        accessibilityState={{ expanded }} disabled={disabled} onPress={() => setExpanded(!expanded)}>
+        accessibilityState={{ expanded }} disabled={disabled} onPress={() => { setQuery(''); setExpanded(!expanded); }}>
         <ShellIcon name={expanded ? 'chevron-up-outline' : 'chevron-down-outline'} />
       </ShellControl>
     </View>
     {expanded && !disabled && <View style={styles.options}>
+      <TextInput accessibilityLabel="Rechercher une ville" placeholder="Rechercher une ville : Fes, Rabat…"
+        value={query} autoCorrect={false} autoCapitalize="none" onChangeText={setQuery}
+        onSubmitEditing={() => { const city = canonicalCity(query); if(city) { onChange(city); setExpanded(false); } }}
+        style={clientStyles.input} />
       <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="always" style={styles.list}>
         {options.map(item => <ShellControl key={item.value} accessibilityLabel={`Choisir ${item.label}`}
           accessibilityState={{ selected: canonicalCity(value) === item.value }}
@@ -47,7 +49,7 @@ export function CityZonesField({ values, onChange, disabled = false }: {
   const [query, setQuery] = useState('');
   return <View style={styles.root}>
     {values.map((city, index) => <View key={city} style={styles.zone}>
-      <View style={styles.input}><FixeoText>{city}</FixeoText>
+      <View style={styles.input}><FixeoText>{canonicalCity(city) || city}</FixeoText>
         <FixeoText variant="caption" tone="secondary">{index === 0 ? 'Ville principale' : 'Zone de travail'}</FixeoText></View>
       <ShellControl accessibilityLabel={`Retirer ${city}`} disabled={disabled} onPress={() => onChange(values.filter((_, i) => i !== index))}>
         <ShellIcon name="close-outline" />

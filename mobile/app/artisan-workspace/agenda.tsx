@@ -16,7 +16,7 @@ import {
   when,
 } from "@/lib/artisanExperience";
 import {
-  parseAgendaDateTime,
+  parseAgendaDateTime, pickerDateParts,
 } from "@/lib/agendaDate";
 import {
   ArtisanPage,
@@ -41,7 +41,7 @@ const load = async () => {
   return { jobs, clients, missions };
 };
 export default function Agenda() {
-  const params = useLocalSearchParams<{ clientId?: string; new?: string }>(),
+  const params = useLocalSearchParams<{ clientId?: string; new?: string; day?: string }>(),
     q = useArtisanQuery(load),
     a = useArtisanAction();
   const [open, setOpen] = useState(params.new === "1"),
@@ -49,7 +49,7 @@ export default function Agenda() {
     [id, setId] = useState(() => Crypto.randomUUID()),
     [title, setTitle] = useState(""),
     [clientId, setClientId] = useState(params.clientId || ""),
-    [date, setDate] = useState(""),
+    [date, setDate] = useState(() => { if (params.day !== "tomorrow") return ""; const day=new Date(); day.setDate(day.getDate()+1); return pickerDateParts(day).date; }),
     [time, setTime] = useState(""),
     [notes, setNotes] = useState("");
   const day = localDay(),

@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
+import { understandArtisanCommand, type CopilotCommand } from '@/lib/artisanCopilot';
+import { loadBusinessClients, loadBusinessQuotes } from '@/lib/artisanOS';
+import { setArtisanAvailability } from '@/lib/artisanWorkspace';
+import { RafiPhotoPreview } from '@/components/RafiPhotoPreview';
 import { useArtisanHome } from "@/lib/useArtisanHome";
 import { transcribeRafiVoice } from "@/lib/rafiGateway";
 import {
@@ -29,7 +33,28 @@ export default function RafiArtisan() {
     [write, setWrite] = useState(false),
     [listening, setListening] = useState(false),
     [photo, setPhoto] = useState<MobileDiagnosticResult | null>(null);
+  const [proposal, setProposal] = useState<CopilotCommand | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<{uri:string;mimeType:string} | null>(null);
+  const alive = useRef(true);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   const d = q.data;
+  async function understand(value: string) {
+    const [clients,quotes] = /client|devis/i.test(value) ? await Promise.all([loadBusinessClients(),loadBusinessQuotes()]) : [[],[]];
+    if (alive.current) setProposal(understandArtisanCommand(value, {clients, quotes}));
+  }
+  function choosePhoto(uri: string, mimeType = 'image/jpeg') {
+    setSelectedPhoto({uri,mimeType}); setPhoto(null);
+    a.setMessage('Photo prête. Vous décidez quand RAFI peut l’analyser.');
+  }
+  async function analyzePhoto() {
+    if (!selectedPhoto || a.busy) return;
+    if (!d?.profile?.city) { a.setMessage('Renseignez votre ville dans le profil avant l’analyse.'); return; }
+    await a.run(async () => {
+      const result = await analyzeMobileDiagnosticPhoto({...selectedPhoto, city:d.profile!.city, description:text});
+      if (alive.current) setPhoto(result);
+      return result;
+    }, 'Lecture photo reçue.', 65000);
+  }
   return (
     <ArtisanPage
       rafi={a.rafi}
@@ -65,52 +90,48 @@ export default function RafiArtisan() {
             onVoiceReady={(uri) =>
               void a.run(async () => {
                 const result = await transcribeRafiVoice(uri);
+                if (!alive.current) return;
                 setText(result);
                 setWrite(true);
+                await understand(result);
                 return result;
-              }, "Transcription prête à relire.")
+              }, "Commande prête à relire.")
             }
-            onPhotoReady={(uri, mimeType) => {
-              if (q.modules.profile.status !== "ready") {
-                a.setMessage(
-                  "Votre profil n’est pas encore disponible. Réessayez après son chargement.",
-                );
-                return;
-              }
-              if (!d.profile?.city) {
-                a.setMessage(
-                  "Renseignez votre ville dans le profil avant d’analyser une photo.",
-                );
-                return;
-              }
-              void a.run(async () => {
-                const result = await analyzeMobileDiagnosticPhoto({
-                  uri,
-                  mimeType,
-                  city: d.profile!.city,
-                  description: text,
-                });
-                setPhoto(result);
-                return result;
-              }, "Lecture photo reçue.");
-            }}
+            onPhotoReady={choosePhoto}
           />
           {write && (
             <ArtisanField
               label="Votre note pour RAFI"
               value={text}
-              onChangeText={setText}
+              editable={!a.busy}
+              onChangeText={value => { setText(value); setProposal(null); setPhoto(null); }}
               multiline
             />
           )}
           {text && (
             <ArtisanSection label="VOTRE NOTE · À CONFIRMER">
               <FixeoText>{text}</FixeoText>
+              <FixeoAction label="Comprendre ma commande" disabled={a.busy || !text.trim()} onPress={() => void a.run(() => understand(text), 'Proposition prête.')} />
               <FixeoText tone="secondary">
                 Cette note ne déclenche aucune action sur votre activité.
               </FixeoText>
             </ArtisanSection>
           )}
+          {proposal && <ArtisanSection label="PROPOSITION RAFI">
+            <FixeoText>{proposal.message}</FixeoText>
+            {proposal.kind !== 'unsupported' && <FixeoAction label={proposal.kind === 'availability' ? 'Confirmer le changement de statut' : 'Ouvrir'} busy={a.busy}
+              onPress={() => {
+                const command = proposal;
+                if (command.kind === 'navigate') { setProposal(null); router.push({pathname:command.path,params:command.params} as any); }
+                else if(command.kind === 'availability') void a.run(async () => { const status=await setArtisanAvailability(command.status); setProposal(null); await q.retry('profile'); return status; }, 'Disponibilité confirmée.');
+              }} />}
+            <FixeoAction label="Annuler la proposition" variant="ghost" disabled={a.busy} onPress={() => setProposal(null)} />
+          </ArtisanSection>}
+          {selectedPhoto && <ArtisanSection label="PHOTO PRIVÉE">
+            <RafiPhotoPreview uri={selectedPhoto.uri} busy={a.busy} onChange={choosePhoto}
+              onRemove={() => { setSelectedPhoto(null); setPhoto(null); }} onClarify={() => setWrite(true)} />
+            {!photo && <FixeoAction label="Analyser la photo avec RAFI" busy={a.busy} onPress={() => void analyzePhoto()} />}
+          </ArtisanSection>}
           {photo && (
             <ArtisanSection label="LECTURE PHOTO ÉPHÉMÈRE">
               <FixeoText variant="heading">
@@ -132,9 +153,13 @@ export default function RafiArtisan() {
                         ? "DÉCLARÉ"
                         : "HYPOTHÈSE À VÉRIFIER"}
                   </FixeoText>
-                  <FixeoText>{String(f.value)}</FixeoText>
+                  <FixeoText>{String(f.value || (f.provenance === 'user_declared' ? 'Aucun problème déclaré.' : 'Non précisé.'))}</FixeoText>
                 </View>
               ))}
+              <FixeoText variant="caption" tone="secondary">HYPOTHÈSE</FixeoText>
+              <FixeoText>{photo.hypotheses.map(item => item.value).join('\n') || 'Aucune hypothèse établie.'}</FixeoText>
+              <FixeoText variant="caption" tone="secondary">INCERTITUDE</FixeoText>
+              <FixeoText>Une photo ne permet pas de confirmer une cause ou un défaut caché. Les hypothèses restent à vérifier sur place.</FixeoText>
               <FixeoText variant="supporting" tone="secondary">
                 Cette lecture ne constitue pas une preuve mission. Ajoutez une
                 preuve depuis la mission lorsque nécessaire.

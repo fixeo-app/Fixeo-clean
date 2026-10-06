@@ -1,0 +1,33 @@
+{
+  "lib/missionTerrain.ts": {
+    "previous_sha256": "80c8f01694d591eee90389942b93eccfa1257218dfb6ea8ff97cb86c39959761",
+    "authorized_functions": [
+      "unwrapMission",
+      "getClientMissionDetail",
+      "getArtisanMissionDetail",
+      "getMyCurrentClientRequest"
+    ],
+    "unchanged_statements": [
+      "de259c44e969fdfa9f18f5aa6b87ce80d374a1747d8b459f07318b9980def5b8",
+      "42221f0bbd440b517c564c7612e54d7cd5fbcf9feec3977baf1dfaab95639738",
+      "9f3c66da3d7722b349985560eac804b693772c18a7f143ae7955c5f2458e2555",
+      "23a938aa983edbca2901ea0fa2e596d382f757fd40ebd462be93ec4c92b4acac",
+      "87ae9b7fe273ff56070a8ecd478636532c7ba24cf1cd0f52e52f6206be5f167f",
+      "2bd5fdc7c63c5d5fbd69dbd02f1f8d5c7dcd82531d1807c031216a5919221731",
+      "267791f92f4d4ffb642ff7ed0756f088b9fafc3af0a51f3dd048fafa8f120206",
+      "781f61293bbc946c6b85188de5031b1f6cd0c3a23a4e187a70329b0357d2d912",
+      "a5718a12c7634371efee45909d8f0dcd503c45229ed38769d086eabe2d827132"
+    ]
+  },
+  "lib/mobileDiagnostic.ts": {
+    "previous_sha256": "8c76689a2dd5f5a7346fc575e37ae60dfec455a84ec64cda39183a4ced76f2a8",
+    "authorized_functions": [
+      "analyzeMobileDiagnosticPhoto"
+    ],
+    "unchanged_statements": [
+      "875dc27c6924e1d824ccf078766addc7c442ba2256b52fecf8aac815e23cd5bc",
+      "9c5adf1ac01a219792164375a546bea51b592f6909f294ead8b36f33909a1037",
+      "3fbc76a1f7992e72915968cb9fe045ef0a4d7b39396c1bf71dc748fc6cbf5ccb"
+    ]
+  }
+}

@@ -97,9 +97,9 @@ export function createArtisanProgressive<R extends Readers>(
     get state() {
       return state;
     },
-    refresh() {
+    refresh(preserveReady = false) {
       if (pending.size) return Promise.all([...pending.values()]);
-      const check = access();
+      const check = access(preserveReady);
       return Promise.all(Object.keys(readers).map((k) => run(k, check)));
     },
     retry(key: keyof R) {

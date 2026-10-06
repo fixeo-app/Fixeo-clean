@@ -1,4 +1,4 @@
-import { requireCanonicalCity } from './clientLocation';
+import { requireCanonicalCity, withCanonicalCity } from './clientLocation';
 import { supabase } from './supabase';
 
 export type ClientProfile = {
@@ -43,7 +43,7 @@ export async function getClientProfile(): Promise<ClientProfile> {
     .eq('id', userId)
     .single();
   if (error) throw error;
-  return data as ClientProfile;
+  return withCanonicalCity(data as ClientProfile);
 }
 
 export async function updateClientProfile(input: {
@@ -62,7 +62,7 @@ export async function updateClientProfile(input: {
     .select('id,full_name,phone,city,email')
     .single();
   if (error) throw error;
-  return data as ClientProfile;
+  return withCanonicalCity(data as ClientProfile);
 }
 
 export async function listClientRequestHistory(limit = 50): Promise<ClientRequestHistory[]> {
@@ -74,7 +74,7 @@ export async function listClientRequestHistory(limit = 50): Promise<ClientReques
     .order('created_at', { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data || []) as ClientRequestHistory[];
+  return (data || []).map(withCanonicalCity) as ClientRequestHistory[];
 }
 
 export async function listClientNotifications(limit = 60): Promise<ClientNotification[]> {

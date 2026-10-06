@@ -147,6 +147,8 @@ export function artisanError(error: unknown) {
     return "Le réseau met trop de temps. Vérifiez l’état puis réessayez.";
   if (/already_claimed|offer_not_active|offer_not_found/i.test(message))
     return "Cette opportunité n’est plus disponible. Actualisez la liste.";
+  if (/AVAILABILITY_CONFIRMATION_PENDING/.test(message))
+    return "Le statut n’a pas pu être confirmé. Actualisez avant de réessayer.";
   if (/onboarding_required|profile_incomplete/i.test(message))
     return "Complétez votre profil Artisan avant de vous rendre disponible.";
   if (/not_approved/i.test(message))

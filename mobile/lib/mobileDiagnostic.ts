@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { fetchMobileJson } from './mobileResilience';
 
 const baseUrl = String(process.env.EXPO_PUBLIC_FIXEO_API_BASE_URL || '').replace(/\/$/, '');
 
@@ -59,15 +60,13 @@ export async function analyzeMobileDiagnosticPhoto(input: {
   form.append('city', input.city.trim());
   form.append('description', String(input.description || '').trim());
 
-  const response = await fetch(baseUrl + '/api/mobile-rafi-photo', {
+  const { response, body } = await fetchMobileJson(baseUrl + '/api/mobile-rafi-photo', {
     method: 'POST',
     headers: {
       Authorization: 'Bearer ' + token,
     },
     body: form,
-  });
-
-  const body = await response.json().catch(() => null);
+  }, 60000);
   if (!response.ok || !body || body.ok !== true || !body.result) {
     throw new Error(String(body?.error || 'DIAGNOSTIC_FAILED'));
   }

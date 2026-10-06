@@ -1,3 +1,4 @@
+import { useLocalSearchParams } from 'expo-router';
 import { ledgerDetailLabel, ledgerTypeLabel, ledgerJobLabel } from '@/lib/ledgerPresentation';
 import { useState } from "react";
 import { View } from "react-native";
@@ -32,12 +33,13 @@ const load = async () => {
   return { ledger, clients, jobs };
 };
 export default function Finance() {
+  const params=useLocalSearchParams<{new?:string;kind?:string;amount?:string}>();
   const q = useArtisanQuery(load),
     a = useArtisanAction();
-  const [open, setOpen] = useState(false),
+  const [open, setOpen] = useState(params.new === "1"),
     [period, setPeriod] = useState("month"),
-    [kind, setKind] = useState("income"),
-    [amount, setAmount] = useState(""),
+    [kind, setKind] = useState(params.kind === "expense" ? "expense" : "income"),
+    [amount, setAmount] = useState(/^\d{1,6}(?:[.,]\d{1,2})?$/.test(params.amount || "") ? params.amount! : ""),
     [note, setNote] = useState(""),
     [date, setDate] = useState(localDay()),
     [clientId, setClientId] = useState(""),

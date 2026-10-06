@@ -1,4 +1,4 @@
-import { canonicalCities } from './clientLocation';
+import { canonicalCities, canonicalCity, requireCanonicalCity, withCanonicalCity } from './clientLocation';
 import { inFlightRead } from "./artisanProgressive";
 import { supabase } from "./supabase";
 import { calculateQuote, localDay, type QuoteLine } from "./artisanExperience";
@@ -150,7 +150,7 @@ async function owned<T>(
     .order(order, { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data || []) as T[];
+  return (data || []).map((row: any) => withCanonicalCity(row)) as T[];
 }
 export const loadBusinessClients = () =>
   owned<BusinessClient>(
@@ -193,7 +193,7 @@ export async function loadArtisanProfile(
     .maybeSingle()
     .retry(automaticRetry);
   if (error) throw error;
-  return data;
+  return data ? withCanonicalCity(data) : null;
 }
 export function artisanProfileCities(profile: ArtisanProfile | null): string[] {
   if (!profile) return [];
@@ -201,7 +201,7 @@ export function artisanProfileCities(profile: ArtisanProfile | null): string[] {
   // Association tables are intentionally not exposed to authenticated clients.
   const cities = (profile.work_zone || "")
     .split(",")
-    .map((v) => v.trim())
+    .map((v) => canonicalCity(v) || v.trim())
     .filter(Boolean);
   return cities.length ? cities : profile.city ? [profile.city] : [];
 }
@@ -271,6 +271,7 @@ export async function saveBusinessClient(
   const payload = {
     ...input,
     full_name: input.full_name.trim(),
+    city: input.city.trim() ? requireCanonicalCity(input.city) : null,
     owner_user_id: actor.user_id,
     updated_at: new Date().toISOString(),
   };
@@ -504,8 +505,8 @@ export async function saveArtisanProfile(
 ) {
   await artisanAccess();
   const sameValues = (a: string[], b: string[]) =>
-    JSON.stringify([...new Set(a.map((v) => v.trim()))].sort()) ===
-    JSON.stringify([...new Set(b.map((v) => v.trim()))].sort());
+    JSON.stringify([...new Set(a.map((v) => canonicalCity(v) || v.trim()))].sort()) ===
+    JSON.stringify([...new Set(b.map((v) => canonicalCity(v) || v.trim()))].sort());
   for (const [name, args] of [
     ["update_my_artisan_contact_v1", { p_phone: input.phone }],
     [

@@ -48,3 +48,23 @@ test('W4 request contract remains four arguments including normalized city and n
   assert.match(home, /<ClientLocationField city=\{city\} onChangeCity=\{setCity\}/);
   assert.match(home, /code === 'CITY_NOT_SUPPORTED'/);
 });
+
+// PB1 V2 explicitly authorizes availability correction. Every other byte in the
+// previous service module is retained; executable write/refusal tests cover the replacement.
+test('PB1 V2 changes availability only within the former protected workspace service', () => {
+  const expected = JSON.parse(readFileSync('tests/fixtures/pb1-v2-availability-preserved.json', 'utf8'));
+  const rest = readFileSync('lib/artisanWorkspace.ts', 'utf8')
+    .replace(/^import .*?;\n/gm, '')
+    .replace(/export async function setArtisanAvailability\([\s\S]*?\n}\n/, 'AVAILABILITY_REPLACED\n');
+  assert.equal(sha(rest), expected.sha256);
+});
+
+test('PB1 V2 city projections and photo timeout preserve all other mission/auth/result statements', () => {
+  const fixture: Record<string, {authorized_functions:string[];unchanged_statements:string[]}> = JSON.parse(readFileSync('tests/fixtures/pb1-v2-read-boundaries.json','utf8'));
+  for(const [file,expected] of Object.entries(fixture)) {
+    const source=ts.createSourceFile(file,readFileSync(file,'utf8'),ts.ScriptTarget.Latest,true);
+    const actual=source.statements.filter(node=>!ts.isImportDeclaration(node)&&!(ts.isFunctionDeclaration(node)&&expected.authorized_functions.includes(node.name?.text || '')))
+      .map(node=>sha(printer.printNode(ts.EmitHint.Unspecified,node,source)));
+    assert.deepEqual(actual,expected.unchanged_statements,file);
+  }
+});

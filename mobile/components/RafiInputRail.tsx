@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import * as ImagePicker from 'expo-image-picker';
+import { AppState } from 'react-native';
+import { captureRafiPhoto } from '@/lib/rafiPhotoCapture';
 import {
   AudioModule,
   RecordingPresets,
@@ -28,14 +29,28 @@ export function RafiInputRail({
   const [message, setMessage] = useState('');
   const [voiceBusy, setVoiceBusy] = useState(false);
   const active = useRef(true);
-  useEffect(() => { active.current = true; return () => { active.current = false; void recorder.stop().catch(() => undefined); }; }, [recorder]);
+  const captureLock = useRef(false), recording = useRef(false);
+  const listeningChanged = useRef(onListeningChange);
+  listeningChanged.current = onListeningChange;
+  useEffect(() => {
+    active.current = true;
+    const stop = () => { recording.current = false; void recorder.stop().catch(() => undefined).finally(() => setAudioModeAsync({ allowsRecording: false }).catch(() => undefined)); };
+    const subscription = AppState.addEventListener('change', state => {
+      if (state === 'active' || !recording.current) return;
+      stop(); listeningChanged.current?.(false);
+      setMessage('Enregistrement interrompu. Touchez le micro pour recommencer.');
+    });
+    return () => { active.current = false; subscription.remove(); stop(); };
+  }, [recorder]);
 
   async function toggleVoice() {
-    if (voiceBusy) return;
+    if (captureLock.current) return;
+    captureLock.current = true;
     setVoiceBusy(true);
 
     try {
       if (recorderState.isRecording) {
+        recording.current = false;
         await recorder.stop();
         await setAudioModeAsync({ allowsRecording: false }).catch(() => undefined);
         if (!active.current) return;
@@ -51,8 +66,9 @@ export function RafiInputRail({
         return;
       }
 
-      if (!(await explainPermission('microphone'))) return;
-      const permission = await AudioModule.requestRecordingPermissionsAsync();
+      if (!(await explainPermission('microphone')) || !active.current) return;
+      const existing = await AudioModule.getRecordingPermissionsAsync();
+      const permission = existing.granted ? existing : await AudioModule.requestRecordingPermissionsAsync();
       if (!active.current) return;
       if (!permission.granted) {
         setMessage(permissionRefused('microphone', permission.canAskAgain !== false));
@@ -66,30 +82,32 @@ export function RafiInputRail({
       await recorder.prepareToRecordAsync();
       if (!active.current) return;
       recorder.record();
+      recording.current = true;
       onListeningChange?.(true);
       setMessage('RAFI écoute… Touchez Arrêter quand vous avez fini.');
     } catch {
-      onListeningChange?.(false);
-      setMessage('Le microphone n’a pas pu démarrer. Vérifiez son autorisation puis réessayez.');
+      recording.current = false;
+      if (active.current) { onListeningChange?.(false);
+        setMessage('Le microphone n’a pas pu démarrer. Vérifiez son autorisation puis réessayez.'); }
       await setAudioModeAsync({ allowsRecording: false }).catch(() => undefined);
     } finally {
-      setVoiceBusy(false);
+      captureLock.current = false;
+      if (active.current) setVoiceBusy(false);
     }
   }
 
   async function takePhoto() {
-    if (!(await explainPermission('camera'))) return;
+    if (captureLock.current) return;
+    if (recording.current) { setMessage('Arrêtez l’enregistrement avant de prendre une photo.'); return; }
+    captureLock.current = true;
     try {
-      const permission = await ImagePicker.requestCameraPermissionsAsync();
-      if (!active.current) return;
-      if (!permission.granted) { setMessage(permissionRefused('camera', permission.canAskAgain !== false)); return; }
-      const result = await ImagePicker.launchCameraAsync({ quality: 0.72, allowsEditing: false });
-      if (!active.current) return;
-      if (!result.canceled && result.assets[0]?.uri) {
-        setMessage('Photo prête pour RAFI.');
-        onPhotoReady(result.assets[0].uri, result.assets[0].mimeType || 'image/jpeg');
+      const photo = await captureRafiPhoto('camera', () => active.current);
+      if (photo) {
+        setMessage('Photo prête. Vous choisissez quand l’analyser.');
+        onPhotoReady(photo.uri, photo.mimeType);
       }
-    } catch { setMessage('La caméra n’est pas disponible. Vous pouvez écrire votre demande.'); }
+    } catch { if (active.current) setMessage('La caméra n’est pas disponible. Vous pouvez écrire votre demande.'); }
+    finally { captureLock.current = false; }
   }
 
   return <RafiComposer recording={recorderState.isRecording} voiceBusy={voiceBusy} message={message}

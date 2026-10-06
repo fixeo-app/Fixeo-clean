@@ -30,3 +30,16 @@ test('PB1 descriptive photo policy is opt-in; web safety and provenance are reta
  assert.match(photoInstructions,/an unrelated scene/);assert.doesNotMatch(descriptivePhotoInstructions,/an unrelated scene/);
  for(const term of ['Ignore people and personal data','No repair instructions','No visible defect is different from no visible object'])assert.ok(descriptivePhotoInstructions.includes(term));
 });
+test('PB1 live proof gate rejects generic fallback, declarations used as observations and lost privacy',()=>{
+ const {verifyResult}=require('./pb1-vision-live.cjs');
+ const body={ok:true,privacy:{persisted:false,raw_photo_retained:false,sanitized_photo_retained:false},result:{
+  facts:[{key:'user_description',value:'',provenance:'user_declared'},{value:'Des bâtiments sont visibles.',provenance:'observed',media_ids:[id]}],
+  photo_assessments:[{media_id:id,status:'informative'}],hypotheses:[],problem:{value:'Aucun défaut identifiable uniquement à partir de cette image.'},checks:[],safety:{stop:false}}};
+ assert.equal(verifyResult(body).generic_fallback,false);
+ const fallback=structuredClone(body);fallback.result.problem.value='Aucune observation photo claire disponible. À confirmer sur place.';
+ assert.throws(()=>verifyResult(fallback),/GENERIC_PHOTO_FALLBACK/);
+ const declaration=structuredClone(body);declaration.result.facts[1].provenance='user_declared';
+ assert.throws(()=>verifyResult(declaration),/OBSERVED_EMPTY/);
+ const retained=structuredClone(body);retained.privacy.persisted=true;
+ assert.throws(()=>verifyResult(retained),/EPHEMERAL_PRIVACY/);
+});

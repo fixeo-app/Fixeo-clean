@@ -27,6 +27,7 @@ import { ClientIntelligence } from '@/components/ClientIntelligence';
 import { canonicalCity } from '@/lib/clientLocation';
 import { wantsEstimate, type ClientIntelligenceContext } from '@/lib/clientIntelligence';
 import { MagicLoopModel, transition } from '@/lib/magicLoopState';
+import { RafiPhotoPreview } from '@/components/RafiPhotoPreview';
 import { RafiInputRail } from '@/components/RafiInputRail';
 import { ClientDiagnostic } from '@/components/ClientDiagnostic';
 import { canSendClientIntake } from '@/lib/clientDiagnostic';
@@ -501,7 +502,10 @@ export default function Home() {
           <ClientHero eyebrow="RAFI · SÉCURITÉ" title="La sécurité d’abord." detail={safetyMessage} mode="attention" compact />
           <FixeoAction label="Revenir à mon espace" variant="secondary" onPress={() => router.push('/client-workspace')} />
         </ClientSection>}
-        {!isActiveJourney && photoDiagnostic?.safety.stop && <ClientDiagnostic result={photoDiagnostic} confirmed={false} onConfirm={() => {}} onExit={() => router.push('/client-workspace')} />}
+        {!isActiveJourney && photoDiagnostic?.safety.stop && <>
+          {!!photoUri && <RafiPhotoPreview uri={photoUri} readOnly onChange={() => {}} onRemove={() => {}} onClarify={() => {}} />}
+          <ClientDiagnostic result={photoDiagnostic} confirmed={false} onConfirm={() => {}} onExit={() => router.push('/client-workspace')} />
+        </>}
         {!isActiveJourney && !safetyStopped && (
           <View style={styles.inputStack}>
             {!estimateContext && !confirmDirect && !photoDiagnosticBusy && !idempotencyKeyRef.current && <RafiInputRail
@@ -532,6 +536,7 @@ export default function Home() {
               onChangeText={(value) => {
                 setProblemConfirmedFromRafi(false);
                 setProblem(value);
+                setPhotoDiagnostic(null); setReviewedDiagnostic(null); setDiagnosticReference(undefined);
               }}
               editable={!requestLocked && !photoDiagnosticBusy && !(loop.state === 'error' && !!idempotencyKeyRef.current)}
               multiline
@@ -551,6 +556,9 @@ export default function Home() {
             {!!photoUri && (
               <ClientSection surface>
                 <Text style={styles.rafiLabel}>PHOTO PRIVÉE</Text>
+                <RafiPhotoPreview uri={photoUri} busy={photoDiagnosticBusy || requestLocked}
+                  onChange={handlePhoto} onClarify={() => { setWriting(true); problemInputRef.current?.focus(); }}
+                  onRemove={() => { if (photoLock.current) return; setPhotoUri(null); setPhotoDiagnostic(null); setReviewedDiagnostic(null); setDiagnosticReference(undefined); setPersistPhoto(false); setRafiMessage('Photo retirée. Vous pouvez continuer avec votre description.'); }} />
                 <Text style={styles.rafiMessage}>
                   La photo n’est pas une demande. Elle est analysée uniquement si vous le choisissez.
                 </Text>
