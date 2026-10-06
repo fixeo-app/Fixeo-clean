@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { SessionRevalidation } from '@/components/SessionRevalidation';
 import { Stack, router, usePathname, useRootNavigationState } from 'expo-router';
 import * as Notifications from 'expo-notifications';
 import { configureForegroundNotifications } from '@/lib/push';
@@ -13,7 +15,7 @@ const artisanScreens = ['artisan', 'mission/[id]', 'artisan-workspace/index', 'a
 async function routeNotificationResponse(response: Notifications.NotificationResponse) {
   const before = authState.snapshot();
   // A notification has no authority to open an account or survive an account switch.
-  if (before.phase !== 'ready' || !before.role) return;
+  if (before.phase !== 'ready' || before.revalidating || before.issue || !before.role) return;
   if (!(await shouldHandleNotificationResponse(String(response.notification.request.identifier || '')))) return;
   if (!authState.isCurrent(before.epoch)) return;
   const destination = notificationDestinationForRole(normalizeNotificationIntent(response.notification.request.content.data), before.role);
@@ -35,7 +37,7 @@ export default function Layout() {
     const subscription = Notifications.addNotificationResponseReceivedListener(response => void routeNotificationResponse(response));
     return () => subscription.remove();
   }, []);
-  return <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#F7F7F5' }, animation: 'fade' }}>
+  return <><StatusBar style="dark" /><Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#F7F7F5' }, animation: 'fade' }}>
     <Stack.Screen name="entry" />
     <Stack.Screen name="sign-in" options={{ gestureEnabled: false }} />
     <Stack.Screen name="sign-up" /><Stack.Screen name="forgot-password" /><Stack.Screen name="auth-callback" /><Stack.Screen name="auth-status" />
@@ -43,5 +45,5 @@ export default function Layout() {
     <Stack.Protected guard={state.phase === 'onboarding' && state.role === 'artisan'}><Stack.Screen name="complete-profile" /></Stack.Protected>
     <Stack.Protected guard={state.phase === 'ready' && state.role === 'client'}>{clientScreens.map(name => <Stack.Screen key={name} name={name} />)}</Stack.Protected>
     <Stack.Protected guard={state.phase === 'ready' && state.role === 'artisan'}>{artisanScreens.map(name => <Stack.Screen key={name} name={name} />)}</Stack.Protected>
-  </Stack>;
+  </Stack><SessionRevalidation /></>;
 }

@@ -1,3 +1,5 @@
+import { CityField } from '@/components/CityField';
+import { useWorkspaceDock } from '@/components/useWorkspaceDock';
 import { useCallback, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import {
@@ -64,8 +66,9 @@ export default function ClientAccount() {
     }
   }
 
+  const contextDock = useWorkspaceDock('client');
   return (
-    <FixeoScreen padded={false} header={
+    <FixeoScreen padded={false} contextDock={{ ...contextDock, hidden: editing }} header={
         <MobileShell
           universe="client"
           activeKey="account"
@@ -88,9 +91,7 @@ export default function ClientAccount() {
             <FixeoText variant="supporting" tone="secondary">Téléphone</FixeoText>
             <TextInput accessibilityLabel="Votre téléphone" value={phone} onChangeText={setPhone} keyboardType="phone-pad"
               placeholder="Votre numéro" placeholderTextColor={semanticColors.text.tertiary} editable={!saving} style={clientStyles.input} />
-            <FixeoText variant="supporting" tone="secondary">Ville</FixeoText>
-            <TextInput accessibilityLabel="Votre ville" value={city} onChangeText={setCity} autoCapitalize="words"
-              placeholder="Votre ville" placeholderTextColor={semanticColors.text.tertiary} editable={!saving} style={clientStyles.input} />
+            <CityField value={city} onChange={setCity} disabled={saving} />
             <FixeoAction label={saving ? 'Enregistrement…' : 'Enregistrer les coordonnées'} busy={saving}
               disabled={saving} onPress={() => void save()} />
             <FixeoAction label="Annuler" variant="ghost" disabled={saving} onPress={() => {

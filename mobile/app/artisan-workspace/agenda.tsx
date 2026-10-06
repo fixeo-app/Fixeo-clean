@@ -1,3 +1,4 @@
+import { AgendaDateTimeField } from '@/components/AgendaDateTimeField';
 import { useState } from "react";
 import { View } from "react-native";
 import * as Crypto from "expo-crypto";
@@ -15,8 +16,6 @@ import {
   when,
 } from "@/lib/artisanExperience";
 import {
-  formatAgendaDateInput,
-  formatAgendaTimeInput,
   parseAgendaDateTime,
 } from "@/lib/agendaDate";
 import {
@@ -74,10 +73,12 @@ export default function Agenda() {
   const conflicts = agendaConflicts(q.data?.jobs || []);
   return (
     <ArtisanPage
+      rafi={a.rafi}
       title="Une journée bien menée."
       eyebrow="VOTRE AGENDA"
       detail="Vos interventions personnelles et missions FIXEO."
       activeKey="agenda"
+      transactional={open}
       loading={q.loading}
       onRefresh={() => void q.reload()}
     >
@@ -108,18 +109,7 @@ export default function Agenda() {
               })),
             ]}
           />
-          <ArtisanField
-            label="Date — JJ/MM/AAAA"
-            value={date}
-            keyboardType="number-pad"
-            onChangeText={(v) => setDate(formatAgendaDateInput(v))}
-          />
-          <ArtisanField
-            label="Heure — HH:MM"
-            value={time}
-            keyboardType="number-pad"
-            onChangeText={(v) => setTime(formatAgendaTimeInput(v))}
-          />
+          <AgendaDateTimeField date={date} time={time} onDate={setDate} onTime={setTime} />
           <FixeoText variant="supporting" tone="secondary">
             Saisie dans le fuseau horaire de votre appareil.
           </FixeoText>

@@ -2,7 +2,7 @@
 // This is not evidence of real email delivery or a real Supabase session.
 const fs=require('fs'),http=require('http'),path=require('path'),assert=require('node:assert/strict');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
-const root=path.resolve(__dirname,'../../dist-gate-a'),out=path.resolve(__dirname,'../../docs/w6/runtime');
+const root=path.resolve(process.env.W6_EXPORT_DIR||path.resolve(__dirname,'../../dist-gate-a')),out=path.resolve(process.env.W6_EVIDENCE_DIR||path.resolve(__dirname,'../../docs/w6/runtime'));fs.mkdirSync(out,{recursive:true});
 const srv=http.createServer((req,res)=>{let f=path.join(root,new URL(req.url,'http://local').pathname);if(!fs.existsSync(f)||fs.statSync(f).isDirectory())f=path.join(root,'index.html');res.setHeader('Content-Type',f.endsWith('.js')?'text/javascript':f.endsWith('.png')?'image/png':f.endsWith('.ttf')?'font/ttf':'text/html');res.end(fs.readFileSync(f));});
 (async()=>{await new Promise(r=>srv.listen(4177,'127.0.0.1',r));const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined,args:process.env.CHROMIUM_ARGS_MODULE?require(process.env.CHROMIUM_ARGS_MODULE).default.args:[]});
 const page=await browser.newPage({viewport:{width:390,height:844}});let role='client',revoked=false,delayRole=false,releaseRole;

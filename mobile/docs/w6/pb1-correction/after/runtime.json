@@ -1,0 +1,28 @@
+{
+  "scope": "Actual Expo export + synthetic HTTP only, not live staging",
+  "before": false,
+  "results": [
+    "client Mon espace",
+    "client Interventions",
+    "client Alertes",
+    "client Mon compte",
+    "foreground preserves RAFI draft and step",
+    "RAFI estimator is thinking during HTTP",
+    "native-compatible estimator and identical confirmation retry",
+    "artisan Opportunités",
+    "artisan Missions",
+    "artisan RAFI",
+    "artisan Agenda",
+    "artisan Clients",
+    "artisan Devis",
+    "artisan Finance",
+    "artisan Disponibilité",
+    "artisan action drives thinking and acknowledged success",
+    "artisan Profil",
+    "artisan Notifications"
+  ],
+  "errors": [],
+  "confirmedIntents": 1,
+  "nativePickers": "Not exercised: web renderer",
+  "physicalCertification": false
+}

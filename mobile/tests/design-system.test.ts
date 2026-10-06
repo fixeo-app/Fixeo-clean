@@ -88,7 +88,7 @@ test('all motion presets remove both duration and orchestration delay under Redu
   }
   assert.equal(resolveMotion('reveal', false, -1).delay, 0);
   assert.equal(resolveMotion('reveal', false, NaN).delay, 0);
-  assert.equal(rafiMotionTokens.reduced, 'static');
+  assert.equal(rafiMotionTokens.reduced, 'light-only');
 });
 
 test('motion preference shares one native subscription, defaults static and releases it', async () => {

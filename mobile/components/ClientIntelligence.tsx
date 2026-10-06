@@ -12,12 +12,14 @@ import { ClientSection, clientStyles } from './ClientEditorial';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoText } from '@/ui/FixeoText';
 import optionLabels from '@/lib/clientEstimatorLabels.generated.json';
+import type { RafiPresenceState } from '@/ui/rafiPresence';
 
 const metierLabels: Record<string, string> = { plomberie: 'Plomberie', electricite: 'Électricité', serrurerie: 'Serrurerie', climatisation: 'Climatisation', bricolage: 'Bricolage', menuiserie: 'Menuiserie', peinture: 'Peinture', maconnerie: 'Maçonnerie', nettoyage: 'Nettoyage', jardinage: 'Jardinage', demenagement: 'Déménagement', carrelage: 'Carrelage', autre: 'Autre' };
 
 /** One optional, server-owned journey. No price, token decoding or local STOP release. */
-export function ClientIntelligence({ context, onCreated, onClose, onStop }: {
+export function ClientIntelligence({ context, onCreated, onClose, onStop, onPresenceChange }: {
   context: ClientIntelligenceContext; onCreated: (id: string) => void; onClose: () => void; onStop: (message?: string) => void;
+  onPresenceChange?: (state: RafiPresenceState | null) => void;
 }) {
   const [result, setResult] = useState<MobileEstimatorResponse | null>(null);
   const [busy, setBusy] = useState(false);
@@ -34,6 +36,9 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop }: {
   const directKey = useRef<string | null>(null);
   const initial = useRef(context).current;
   const outcome = estimatorOutcome(result);
+  useEffect(() => {
+    onPresenceChange?.(busy ? 'thinking' : error ? 'attention' : result ? 'success' : 'idle');
+  }, [busy, error, result, onPresenceChange]);
 
   async function run(action: MobileEstimatorRequest) {
     if (lock.current || stopped.current) return;

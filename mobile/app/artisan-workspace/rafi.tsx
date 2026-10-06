@@ -32,6 +32,7 @@ export default function RafiArtisan() {
   const d = q.data;
   return (
     <ArtisanPage
+      rafi={a.rafi}
       title="Un regard sur votre journée."
       eyebrow="RAFI · COPILOTE PROFESSIONNEL"
       activeKey="rafi"
@@ -52,7 +53,7 @@ export default function RafiArtisan() {
       />
       <View style={{ alignItems: "center" }}>
         <RafiOrb
-          mode={listening ? "listening" : a.busy ? "working" : "idle"}
+          mode={listening ? "listening" : a.rafi.mode} eventKey={a.rafi.eventKey}
           size={96}
         />
       </View>

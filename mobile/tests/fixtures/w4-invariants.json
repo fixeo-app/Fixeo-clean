@@ -6,30 +6,24 @@
     "components/DecisionCueCard.tsx": "eb3816f6059529ddbd9ace156c6d328d98674b3f4974345210e36a3b49a8add1",
     "components/EntryStage.tsx": "19fa91e488f7fc5f45d947e0c4b47f1f530c3bd434c40b4af7936ebefd50c56f",
     "components/MotionReveal.tsx": "6a0985978e80808e47304b0f5394e9c1849d6b73f686a3646d7af5fa0d0b08d8",
-    "components/PremiumDrawer.tsx": "02876ff3ead5374541c253f13a0130bc0214f4dcdd213d237437e4a9fc9fde9e",
     "components/PushOptIn.tsx": "85e12e2d6772e0c3b80224dba165a83a2b6e81721e8a5cdfadb09f020c2248f1",
     "components/RafiComposer.tsx": "49495dac554071da121520c43c4d12f6024a6a2983d34c1de74c6705ed756988",
     "components/RafiContextCard.tsx": "59a18aba473e4bbad89a52037f7ec19253ddd85e366bcb7eed21d77eb02278a7",
     "components/WorkspaceShortcutGrid.tsx": "04a8b7858b57e05ae67b251bfd3fec19c2f74ecefc62c51cc3a31c422390b429",
-    "components/useWorkspaceDock.ts": "5a6f02258268cb1beb57d07defbe5edc830d426d8b8bf91406d51e82e0dd59fe",
-    "lib/agendaDate.ts": "5878efc0df6a6a01c2a0e4ec56734d7236768a52ed7bd6473148616d95a396ca",
     "lib/artisanActivityLoad.ts": "9712101475399176fcb66cfe6501faf8c7d0e9149e1c957eca82ae553a5fb963",
     "lib/artisanWorkspace.ts": "0dd7e58dbae41b724365a76456663d6863a0b8c2d5cf4717ee06110a58352006",
     "lib/authEntry.ts": "dc258832236fd55457c6df6ae5c2993653bfcc8565d45d803fc117c9d7402bca",
     "lib/clientWatch.ts": "d0fb88a448851112f287f4e8cc15eaae8540a252f0106dbb350c2f427c066302",
-    "lib/clientWorkspace.ts": "71c1e7ad91b89c3aa07729c5ccc61327649eb4ff673b98dd1c38e1aa481d60ba",
     "lib/contextualCockpit.ts": "6b7b4b9a39b7ce5f078851f06f30a4821c4372dc53ac524da3ed0c583ee662ce",
     "lib/decisionCenter.ts": "26bd7c90d01b48183c701777c01ae7f94b0a5f347d5965b17c1b50d53c77a294",
     "lib/dispatchContract.ts": "b7d925bd494ed1118ce6e9aa7ad14e8d42880f32d4e74c276ee895f154e3f1ab",
     "lib/feedback.ts": "379625c862381528ebb3b2d5bfda5e5dc5c54d642ccc8ec1a7f9ccac1cd489a5",
     "lib/feedbackContract.ts": "9e65e3480d63089962d8ad48785959c9a5964c253d63e219d5b502e832ab61e6",
-    "lib/magicLoop.ts": "7f8a53d6a2f7c82365742de4047fbda01450eb0e9c0c31106736d8fb0c479e87",
     "lib/magicLoopState.ts": "99b7e9380478f6fef1b4dc8ba125abbda962a895eaba5dc308c9fe206d9bb53e",
     "lib/missionChange.ts": "eab63777cea1aabe1b663912f1ae4382f4b00b3e95f077b8aa553db841b1a239",
     "lib/missionEvidence.ts": "ad3ea58ee0c382861badd293c82bbec17abb4476ab9bd9ee7f7884187bfc9bac",
     "lib/missionTerrain.ts": "80c8f01694d591eee90389942b93eccfa1257218dfb6ea8ff97cb86c39959761",
     "lib/mobileDiagnostic.ts": "8c76689a2dd5f5a7346fc575e37ae60dfec455a84ec64cda39183a4ced76f2a8",
-    "lib/mobileResilience.ts": "fcf41a45836501d0cbe4b02e741880c379ea36e728fedce66cb1fff81beb1194",
     "lib/notificationRouting.ts": "11e0d2e3b70e868352eb7d7f56d90b06551a95b428c3afc9e45df2bf09dbf62c",
     "lib/rafi.ts": "7fb1c9a24fe818c43633c3b9c95a82806c71ee39357ff108985c0a9cc0359c71",
     "lib/rafiContext.ts": "398544396f3466ad490e39cbf4bcf9efe3c2679b9ca5f89f2fe55a3ec2c0bafa",
@@ -44,15 +38,11 @@
     "ui/FixeoSurface.tsx": "4ff09803afbf5132f6995f55781206faf07b8300901a58e7eff8c1f52ba6a6ac",
     "ui/FixeoText.tsx": "f2d6d8984c1c9df326c5d5f4876d16374db147336dda4f37c63882b229044bd5",
     "ui/RafiCoreMaterial.tsx": "0a83af51a461a169c20d84bd57fe0cd91e626c3b77316b5afe259352b6786544",
-    "ui/RafiOrb.tsx": "5b032b527295612c6eb883ab6db984eac62f277b72c96f7191f6055222dcf4ec",
     "ui/ShellControl.tsx": "d1416c90855251875564e9663eefe214793d291b4ee195a9e0e3e79603faeb25",
     "ui/interactionContract.ts": "4fd34848213d83dee13b8fd9b5a7221c8d58278b696fd10bba51ae0383604184",
     "ui/motionContract.ts": "ee8e82713e9f69986d6cc0e44c312b3c0a02f473ec14df7fba4922c4832f7a5e",
     "ui/motionEasing.ts": "3cd16502cc7f92fe50c3a7581b5364190c64ac1776b448bb8233f2e738f93d31",
-    "ui/rafiOrbMotion.ts": "72d5059286536df71ff7cb124996bda493c0ef9d896fc439ebc920204cfaa6c8",
-    "ui/rafiPresence.ts": "6418ab66c378d34a7343ff7ea437e4ca984cf2ec4ca9b7b7abc8b288038b8112",
     "ui/screenMetrics.ts": "29bba5d4003145edc6332139eb3c3aa6bb40715b615f8b60d0c751ea2b496eea",
-    "ui/tokens.ts": "58fa9b18211340550e823c5e6d9b8c5419a404f04ee71f7b7a4a5883970759ef",
     "ui/useRafiActivity.ts": "d79dbe7f543958009d6ad45d389965a98c80d19227f4e51e0e27b53494c45b68",
     "ui/useReducedMotion.ts": "6d32dcbaea47c7af8fec16a442521ad0666b9cf5c381f2a1e86ef3d64ec97b25"
   },
@@ -120,5 +110,57 @@
     "components/MobileShell.tsx": "dda34cb4131df892b4fdc4556690a107ea1ba2f0b222b03a3bda5a815376c7ad",
     "components/RafiInputRail.tsx": "763c1b6dcac2018c9609e6f75275162d528a54e6b815fd1beb4580b2b9c413a9",
     "components/MissionEvidenceCapture.tsx": "604b4489f5ae71c576277bebd4f2368a1c70b9a4872e27167b907303f3fdd2dd"
+  },
+  "pb1ReplacedProtectedFiles": {
+    "components/PremiumDrawer.tsx": {
+      "previousSha256": "02876ff3ead5374541c253f13a0130bc0214f4dcdd213d237437e4a9fc9fde9e",
+      "reason": "PB1 4.2: ivory drawer, unchanged navigation callbacks",
+      "replacementCoverage": "tests/pb1-correction.test.ts"
+    },
+    "components/useWorkspaceDock.ts": {
+      "previousSha256": "5a6f02258268cb1beb57d07defbe5edc830d426d8b8bf91406d51e82e0dd59fe",
+      "reason": "PB1 4.1: persistent top-level navigation, selected/no-op state",
+      "replacementCoverage": "tests/pb1-correction.test.ts"
+    },
+    "lib/agendaDate.ts": {
+      "previousSha256": "5878efc0df6a6a01c2a0e4ec56734d7236768a52ed7bd6473148616d95a396ca",
+      "reason": "PB1 6.2: add picker conversions; existing masks/parser preserved",
+      "replacementCoverage": "tests/pb1-correction.test.ts"
+    },
+    "lib/clientWorkspace.ts": {
+      "previousSha256": "71c1e7ad91b89c3aa07729c5ccc61327649eb4ff673b98dd1c38e1aa481d60ba",
+      "reason": "PB1 5.1: canonical city at profile write boundary",
+      "replacementCoverage": "tests/pb1-correction.test.ts"
+    },
+    "lib/magicLoop.ts": {
+      "previousSha256": "7f8a53d6a2f7c82365742de4047fbda01450eb0e9c0c31106736d8fb0c479e87",
+      "reason": "PB1 5.1/5.3: canonical city at request boundary; RPC/idempotency unchanged",
+      "replacementCoverage": "tests/pb1-correction.test.ts"
+    },
+    "lib/mobileResilience.ts": {
+      "previousSha256": "fcf41a45836501d0cbe4b02e741880c379ea36e728fedce66cb1fff81beb1194",
+      "reason": "PB1 5.3: bounded RN-compatible fetch; existing deadline unchanged",
+      "replacementCoverage": "tests/pb1-correction.test.ts"
+    },
+    "ui/RafiOrb.tsx": {
+      "previousSha256": "5b032b527295612c6eb883ab6db984eac62f277b72c96f7191f6055222dcf4ec",
+      "reason": "Explicit PB1 Living Sphere addendum: shared motion/state engine; master pixels and material renderer remain protected",
+      "replacementCoverage": "tests/rafi-living.test.ts; tests/pb1-living-runtime.cjs"
+    },
+    "ui/rafiOrbMotion.ts": {
+      "previousSha256": "72d5059286536df71ff7cb124996bda493c0ef9d896fc439ebc920204cfaa6c8",
+      "reason": "Explicit PB1 Living Sphere addendum: shared motion/state engine; master pixels and material renderer remain protected",
+      "replacementCoverage": "tests/rafi-living.test.ts; tests/pb1-living-runtime.cjs"
+    },
+    "ui/rafiPresence.ts": {
+      "previousSha256": "6418ab66c378d34a7343ff7ea437e4ca984cf2ec4ca9b7b7abc8b288038b8112",
+      "reason": "Explicit PB1 Living Sphere addendum: shared motion/state engine; master pixels and material renderer remain protected",
+      "replacementCoverage": "tests/rafi-living.test.ts; tests/pb1-living-runtime.cjs"
+    },
+    "ui/tokens.ts": {
+      "previousSha256": "58fa9b18211340550e823c5e6d9b8c5419a404f04ee71f7b7a4a5883970759ef",
+      "reason": "Explicit PB1 Living Sphere addendum: shared motion/state engine; master pixels and material renderer remain protected",
+      "replacementCoverage": "tests/rafi-living.test.ts; tests/pb1-living-runtime.cjs"
+    }
   }
 }

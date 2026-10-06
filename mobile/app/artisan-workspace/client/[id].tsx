@@ -107,6 +107,7 @@ export default function ClientDetail() {
   };
   return (
     <ArtisanPage
+      rafi={a.rafi}
       title={
         fresh ? "Une nouvelle relation." : client?.full_name || "Fiche client."
       }

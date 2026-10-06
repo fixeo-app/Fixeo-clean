@@ -1,5 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
+import { useWorkspaceDock } from '@/components/useWorkspaceDock';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AppState, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import * as Crypto from 'expo-crypto';
 import { supabase } from '@/lib/supabase';
@@ -53,6 +55,7 @@ const ASSIGNED_STATES = new Set(['assigned', 'in_progress', 'completed', 'valida
 type JourneyStatus = 'idle' | 'matching' | 'assigned' | 'in_progress' | 'completed';
 
 export default function Home() {
+  const contextDock = useWorkspaceDock('client');
   const [estimateContext, setEstimateContext] = useState<ClientIntelligenceContext | null>(null);
   const [diagnosticReference, setDiagnosticReference] = useState<string | undefined>();
   const [diagnosticCity, setDiagnosticCity] = useState('');
@@ -80,6 +83,11 @@ export default function Home() {
   const [journeyStatus, setJourneyStatus] = useState<JourneyStatus>('idle');
   const [decisionCue, setDecisionCue] = useState<MobileDecisionCue | null>(null);
   const [rafiOrbOverride, setRafiOrbOverride] = useState<RafiOrbMode | null>(null);
+  const [rafiCompletion, setRafiCompletion] = useState(0);
+  const reportRafiPresence = useCallback((mode: RafiOrbMode | null) => {
+    setRafiOrbOverride(mode);
+    if (mode === 'success') setRafiCompletion(value => value + 1);
+  }, []);
   const problemInputRef = useRef<TextInput>(null);
   const submitLockRef = useRef(false);
   const idempotencyKeyRef = useRef<string | null>(null);
@@ -270,7 +278,7 @@ export default function Home() {
 
   async function handleVoice(uri: string) {
     if (idempotencyKeyRef.current || safetyStopped || photoLock.current) return;
-    setRafiOrbOverride('understanding');
+    reportRafiPresence('thinking');
     if (!hasRafiServerGateway()) {
       setRafiMessage('Voix capturée. RAFI la traitera dès que le service est disponible.');
       setRafiOrbOverride(null);
@@ -282,10 +290,10 @@ export default function Home() {
       setProblemConfirmedFromRafi(false);
       setProblem(current => [current.trim(), transcript].filter(Boolean).join(' '));
       setRafiMessage('J’ai compris votre message.');
+      reportRafiPresence('success');
     } catch {
       setRafiMessage('Je n’ai pas pu traiter cet enregistrement. Vous pouvez écrire à la place.');
-    } finally {
-      setRafiOrbOverride(null);
+      reportRafiPresence('attention');
     }
   }
 
@@ -311,7 +319,7 @@ export default function Home() {
 
     photoLock.current = true;
     setPhotoDiagnosticBusy(true);
-    setRafiOrbOverride('understanding');
+    reportRafiPresence('thinking');
     setRafiMessage('RAFI analyse la photo de façon privée…');
     try {
       const input = { uri: photoUri, mimeType: photoMimeType, city: canonicalCity(city) || city.trim(), description: problem };
@@ -321,12 +329,14 @@ export default function Home() {
       setDiagnosticCity(input.city);
       if (result.safety?.stop) setSafetyStopped(true);
       setPhotoDiagnostic(result);
+      reportRafiPresence(result.safety?.stop ? 'attention' : 'success');
       setRafiMessage(
         result.safety?.stop
           ? 'RAFI a détecté un signal de sécurité à traiter en priorité.'
           : 'Analyse prête. Confirmez uniquement ce qui correspond à votre situation.',
       );
     } catch (error: any) {
+      reportRafiPresence('attention');
       const code = String(error?.message || '');
       setRafiMessage(
         code === 'CITY_NOT_SUPPORTED'
@@ -338,7 +348,6 @@ export default function Home() {
     } finally {
       photoLock.current = false;
       setPhotoDiagnosticBusy(false);
-      setRafiOrbOverride(null);
     }
   }
 
@@ -419,6 +428,7 @@ export default function Home() {
     setEstimateContext({ city: normalized.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, '-'), description: problem.trim(), diagnosticReference });
   }
   function intelligenceCreated(requestId: string) {
+    reportRafiPresence('success');
     setEstimateContext(null); setJourneyStatus('matching');
     setLoop(current => transition(current, 'matching', { requestId }));
   }
@@ -433,9 +443,14 @@ export default function Home() {
 
   const hero = clientHomeCopy(journeyStatus, effectiveOrbMode, loop.state === 'creating');
   const inputExpanded = writing || !!problem || !!photoUri || !!rafiMessage;
+  const previousLoopState = useRef(loop.state);
   useEffect(() => {
     if (writing) problemInputRef.current?.focus();
   }, [writing]);
+  useEffect(() => {
+    if (previousLoopState.current === 'creating' && loop.state === 'matching') reportRafiPresence('success');
+    previousLoopState.current = loop.state;
+  }, [loop.state, reportRafiPresence]);
 
   if (!clientReady) {
     return (
@@ -454,7 +469,7 @@ export default function Home() {
   }
 
   return (
-    <FixeoScreen padded={false} header={
+    <FixeoScreen padded={false} contextDock={{ ...contextDock, hidden: !!estimateContext || confirmDirect || writing }} header={
         <MobileShell
           universe="client"
           activeKey="rafi"
@@ -480,7 +495,7 @@ export default function Home() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {(isActiveJourney || !safetyStopped) && <ClientHero {...hero} compact={!!estimateContext || confirmDirect || inputExpanded} mode={effectiveOrbMode} eventKey={loop.missionId || loop.requestId} />}
+        {(isActiveJourney || !safetyStopped) && <ClientHero {...hero} compact={!!estimateContext || confirmDirect || inputExpanded} mode={effectiveOrbMode} eventKey={`${loop.missionId || loop.requestId || 'need'}:${rafiCompletion}`} />}
 
         {!isActiveJourney && safetyStopped && !photoDiagnostic?.safety.stop && <ClientSection testID="client-safety-stop">
           <ClientHero eyebrow="RAFI · SÉCURITÉ" title="La sécurité d’abord." detail={safetyMessage} mode="attention" compact />
@@ -501,7 +516,7 @@ export default function Home() {
             {!inputExpanded && <FixeoText variant="caption" tone="tertiary" style={styles.center}>
               Une demande commence avec vous.
             </FixeoText>}
-            {estimateContext && <ClientIntelligence context={estimateContext} onCreated={intelligenceCreated} onStop={message => { if (message) setSafetyMessage(message); setSafetyStopped(true); }} onClose={() => setEstimateContext(null)} />}
+            {estimateContext && <ClientIntelligence context={estimateContext} onPresenceChange={reportRafiPresence} onCreated={intelligenceCreated} onStop={message => { if (message) setSafetyMessage(message); setSafetyStopped(true); }} onClose={() => { setEstimateContext(null); reportRafiPresence(null); }} />}
             {confirmDirect && <ClientSection testID="client-direct-confirmation" label="Votre demande">
               <FixeoText variant="heading">{problem}</FixeoText>
               <FixeoText tone="secondary">{city} · {need.serviceCategory}</FixeoText>
@@ -524,7 +539,7 @@ export default function Home() {
               placeholderTextColor={colors.textMuted}
               style={clientStyles.input}
             />
-            {(!!problem.trim() || !!photoUri) && <ClientLocationField city={city} onChangeCity={setCity} disabled={requestLocked || photoDiagnosticBusy || (loop.state === 'error' && !!idempotencyKeyRef.current)} />}
+            {(!!problem.trim() || !!photoUri) && <ClientLocationField city={city} onChangeCity={setCity} onPresenceChange={reportRafiPresence} disabled={requestLocked || photoDiagnosticBusy || (loop.state === 'error' && !!idempotencyKeyRef.current)} />}
 
             {!!rafiMessage && (
               <ClientSection>

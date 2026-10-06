@@ -36,25 +36,34 @@ export function isPasswordRecovery() { return recovery; }
 export async function resolveAuthSession(refresh = false): Promise<void> {
   if (recovery) return;
   if (operation && authState.isCurrent(operation.epoch)) return operation.promise;
-  const epoch = authState.invalidate();
+  const before = authState.snapshot();
+  const preserving = refresh && before.phase === 'ready' && !!before.userId && !!before.role;
+  const epoch = (preserving ? authState.revalidate() : null) ?? authState.invalidate();
   const task = async () => {
     try {
       const current = await withMobileDeadline(supabase.auth.getSession());
+      if (!authState.isCurrent(epoch)) return;
       if (current.error) throw current.error;
       if (!current.data.session) {
         authState.publish(epoch, { phase: 'signed_out', userId: null, role: null, issue: null }); return;
       }
       expectedId = current.data.session.user.id;
+      if (preserving && expectedId !== before.userId) throw new Error('SESSION_REVOKED');
       if (refresh) {
         const renewed = await withMobileDeadline(supabase.auth.refreshSession());
+        if (!authState.isCurrent(epoch)) return;
         if (renewed.error) throw renewed.error;
         if (!renewed.data.session) throw new Error('SESSION_REVOKED');
       }
       const verified = await withMobileDeadline(supabase.auth.getUser());
+      if (!authState.isCurrent(epoch)) return;
       if (verified.error) throw verified.error;
       const id = verified.data.user?.id;
       if (!id) throw new Error('SESSION_REVOKED');
+      if (id !== expectedId) throw new Error('SESSION_REVOKED');
       const role = await withMobileDeadline(resolveRole(id));
+      if (!authState.isCurrent(epoch)) return;
+      if (preserving && role !== before.role) throw new Error('ROLE_INVALID');
       if (role === 'admin') throw new Error('UNSUPPORTED_MOBILE_ROLE');
       let onboarding = false;
       if (role === 'artisan') {
@@ -63,11 +72,17 @@ export async function resolveAuthSession(refresh = false): Promise<void> {
         onboarding = !profile.data?.id;
       }
       if (!authState.isCurrent(epoch)) return;
-      await clearPrivateNotificationState();
+      if (!preserving) await clearPrivateNotificationState();
       authState.publish(epoch, { phase: onboarding ? 'onboarding' : 'ready', userId: id, role, issue: null });
     } catch (error) {
       if (!authState.isCurrent(epoch)) return;
       const issue = authIssue(error);
+      if (preserving && ['network', 'rate_limit', 'unknown'].includes(issue)) {
+        // The veil stays closed; only retry/logout are exposed. No unsaved
+        // intake or media is discarded because the network is unavailable.
+        authState.publish(epoch, { phase: 'ready', userId: before.userId, role: before.role, issue, revalidating: false });
+        return;
+      }
       authState.publish(epoch, { phase: ['revoked', 'expired', 'disabled'].includes(issue) ? 'signed_out' : 'blocked', userId: null, role: null, issue });
       if (['revoked', 'expired', 'disabled'].includes(issue)) {
         await supabase.auth.signOut({ scope: 'local' }).catch(() => undefined);

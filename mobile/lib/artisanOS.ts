@@ -1,3 +1,4 @@
+import { canonicalCities } from './clientLocation';
 import { inFlightRead } from "./artisanProgressive";
 import { supabase } from "./supabase";
 import { calculateQuote, localDay, type QuoteLine } from "./artisanExperience";
@@ -509,7 +510,7 @@ export async function saveArtisanProfile(
     ["update_my_artisan_contact_v1", { p_phone: input.phone }],
     [
       "w5_update_my_artisan_activity_v1",
-      { p_services: input.services, p_cities: input.cities },
+      { p_services: input.services, p_cities: canonicalCities(input.cities) },
     ],
   ] as const) {
     // The loaded form snapshot only avoids redundant writes; server guards

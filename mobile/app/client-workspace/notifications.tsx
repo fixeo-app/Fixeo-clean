@@ -1,3 +1,4 @@
+import { useWorkspaceDock } from '@/components/useWorkspaceDock';
 import { useCallback, useEffect, useState } from 'react';
 import { SectionList, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
 import {
@@ -54,8 +55,9 @@ export default function ClientNotifications() {
     }
   }
 
+  const contextDock = useWorkspaceDock('client');
   return (
-    <FixeoScreen padded={false} header={
+    <FixeoScreen padded={false} contextDock={contextDock} header={
         <MobileShell
           universe="client"
           activeKey="alerts"

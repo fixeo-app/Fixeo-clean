@@ -1,12 +1,13 @@
-import { useCallback, useRef, useState, type PropsWithChildren } from "react";
+import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
+import { useCallback, useEffect, useRef, useState, type PropsWithChildren } from "react";
+import { RafiSignalContext } from '@/ui/RafiSignal';
+import { rafiActionState, type RafiSignal } from '@/ui/rafiPresence';
 import {
   ActivityIndicator,
   RefreshControl,
-  ScrollView,
   StyleSheet,
   TextInput,
   View,
-  useWindowDimensions,
   type TextInputProps,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
@@ -15,6 +16,7 @@ import { FixeoAction } from "@/ui/FixeoAction";
 import { FixeoScreen } from "@/ui/FixeoScreen";
 import { RafiOrb } from "@/ui/RafiOrb";
 import { MobileShell } from "./MobileShell";
+import { useWorkspaceDock } from './useWorkspaceDock';
 import {
   layout,
   radii,
@@ -74,6 +76,9 @@ export function useArtisanAction() {
   const [busy, setBusy] = useState(false),
     [message, setMessage] = useState("");
   const locked = useRef(false);
+  const alive = useRef(true);
+  const [completion, setCompletion] = useState(0), [failed, setFailed] = useState(false);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   const run = async <T,>(
     action: () => Promise<T>,
     success: string,
@@ -81,20 +86,22 @@ export function useArtisanAction() {
     if (locked.current) return;
     locked.current = true;
     setBusy(true);
+    setFailed(false);
     setMessage("");
     try {
       const value = await withMobileDeadline(action(), 20000);
-      setMessage(success);
+      if (alive.current) { setMessage(success); setCompletion(value => Math.max(Date.now(), value + 1)); }
       return value;
     } catch (e) {
-      setMessage(artisanError(e));
+      if (alive.current) { setMessage(artisanError(e)); setFailed(true); }
       return undefined;
     } finally {
       locked.current = false;
-      setBusy(false);
+      if (alive.current) setBusy(false);
     }
   };
-  return { busy, message, setMessage, run };
+  const rafi: RafiSignal = { mode: rafiActionState(busy, failed, completion), eventKey: String(completion) };
+  return { busy, message, setMessage, run, rafi };
 }
 export function ArtisanPage({
   title,
@@ -105,6 +112,8 @@ export function ArtisanPage({
   loading = false,
   onRefresh,
   dock,
+  transactional = false,
+  rafi,
   back = true,
 }: PropsWithChildren<{
   title: string;
@@ -114,16 +123,15 @@ export function ArtisanPage({
   loading?: boolean;
   onRefresh?: () => void;
   dock?: ContextDockSpec;
+  transactional?: boolean;
+  rafi?: RafiSignal;
   back?: boolean;
 }>) {
-  const { width, fontScale } = useWindowDimensions();
-  // The drawer keeps every destination available when enlarged text needs the space.
-  const accessibleDock = dock && {
-    ...dock,
-    hidden: dock.hidden || (width <= 360 && fontScale >= 1.7),
-  };
+  const workspaceDock = useWorkspaceDock('artisan');
+  const activeDock = workspaceDock.items.length ? workspaceDock : dock;
+  const accessibleDock = activeDock && { ...activeDock, hidden: transactional || activeDock.hidden };
   return (
-    <FixeoScreen
+    <RafiSignalContext.Provider value={rafi || null}><FixeoScreen
       padded={false}
       contextDock={accessibleDock}
       header={
@@ -179,7 +187,7 @@ export function ArtisanPage({
         )}
         {children}
       </ScrollView>
-    </FixeoScreen>
+    </FixeoScreen></RafiSignalContext.Provider>
   );
 }
 export function ArtisanSection({
@@ -211,7 +219,7 @@ export function ArtisanCue({
 }) {
   return (
     <View style={art.cue}>
-      <RafiOrb mode="idle" size={44} />
+      <RafiOrb size={44} />
       <View style={art.flex}>
         <FixeoText variant="eyebrow">{title}</FixeoText>
         <FixeoText tone="secondary">{text}</FixeoText>

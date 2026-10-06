@@ -1,0 +1,24 @@
+{
+  "scope": "Actual Expo export + synthetic HTTP only, not live staging",
+  "before": true,
+  "results": [
+    "client Mon espace",
+    "client Interventions",
+    "client Alertes",
+    "client Mon compte",
+    "artisan Opportunités",
+    "artisan Missions",
+    "artisan RAFI",
+    "artisan Agenda",
+    "artisan Clients",
+    "artisan Devis",
+    "artisan Finance",
+    "artisan Disponibilité",
+    "artisan Profil",
+    "artisan Notifications"
+  ],
+  "errors": [],
+  "confirmedIntents": 0,
+  "nativePickers": "Not exercised: web renderer",
+  "physicalCertification": false
+}

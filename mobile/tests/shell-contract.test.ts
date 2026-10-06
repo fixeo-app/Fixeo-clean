@@ -23,10 +23,16 @@ for (const universe of ['client', 'artisan'] as const) {
     assert.equal(activeShellKey(universe, '/mission/abc'), '');
   });
 }
-test('W2 Dock opts in only workspace roots, excludes forms/auth/missions/unknown/cross-role routes', () => {
-  assert.deepEqual(workspaceDockDestinations('client', '/client-workspace').map(item => item.key), ['rafi', 'history', 'alerts']);
-  assert.deepEqual(workspaceDockDestinations('artisan', '/artisan-workspace').map(item => item.key), ['cockpit', 'agenda', 'quotes']);
-  for (const universe of ['client', 'artisan'] as const) for (const route of ['/', '/sign-in', '/artisan', '/mission/123', '/client-mission/123', '/client-workspace/account', '/artisan-workspace/quotes', '/artisan-workspace/agenda', '/unknown']) assert.deepEqual(workspaceDockDestinations(universe, route), [], route);
+test('PB1 dock persists on every canonical top-level route, excludes details/auth/cross-role', () => {
+  for (const universe of ['client', 'artisan'] as const) {
+    const expected = universe === 'client' ? ['rafi', 'history', 'alerts'] : ['opportunities', 'rafi', 'agenda'];
+    for (const destination of getShellDestinations(universe)) {
+      assert.deepEqual(workspaceDockDestinations(universe, destination.path).map(item => item.key), expected);
+      assert.deepEqual(workspaceDockDestinations(universe, destination.path + '/?test=1').map(item => item.key), expected);
+    }
+    for (const route of ['/sign-in', '/complete-profile', '/mission/123', '/client-mission/123', '/artisan-workspace/quote/new', '/unknown'])
+      assert.deepEqual(workspaceDockDestinations(universe, route), []);
+  }
   assert.deepEqual(workspaceDockDestinations('artisan', '/client-workspace'), []);
   assert.deepEqual(workspaceDockDestinations('client', '/artisan-workspace'), []);
 });
@@ -115,7 +121,7 @@ test('W2 actual JSX: one stable Shell per screen, including the shared W5 Artisa
     shellCount += shells;
   }
   assert.equal(shellCount, 6);
-  assert.deepEqual(dockFiles.sort(), ['app/client-workspace/index.tsx', 'components/ArtisanEditorial.tsx']);
+  assert.deepEqual(dockFiles.sort(), ['app/client-workspace/account.tsx', 'app/client-workspace/history.tsx', 'app/client-workspace/index.tsx', 'app/client-workspace/notifications.tsx', 'app/index.tsx', 'components/ArtisanEditorial.tsx']);
 });
 
 test('W2 Dock yields space to content when enlarged header/toolbar or landscape leaves insufficient room', () => {

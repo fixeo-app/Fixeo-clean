@@ -1,3 +1,5 @@
+import { CityField } from '@/components/CityField';
+import { canonicalCity } from '@/lib/clientLocation';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { authStyles } from '@/components/AuthFrame';
@@ -21,8 +23,8 @@ export default function CompleteProfile() {
     <Text style={authStyles.label}>Vos services</Text>
     <View style={{ gap: 8 }}>{trades.map(trade => <FixeoAction key={trade} label={trade} variant="secondary" selected={services.includes(trade)} disabled={busy}
       onPress={() => setServices(previous => previous.includes(trade) ? previous.filter(x => x !== trade) : [...previous, trade])} />)}</View>
-    <AuthField label="Ville principale" placeholder="Casablanca" value={city} onChangeText={setCity} autoCapitalize="words" editable={!busy} />
-    <FixeoAction label="Ouvrir Artisan OS" busy={busy} busyLabel="Création de votre profil…" disabled={name.trim().length < 3 || services.length === 0 || !city.trim()} onPress={() => void submit()} />
+    <CityField label="Ville principale" value={city} onChange={setCity} disabled={busy} />
+    <FixeoAction label="Ouvrir Artisan OS" busy={busy} busyLabel="Création de votre profil…" disabled={name.trim().length < 3 || services.length === 0 || !canonicalCity(city)} onPress={() => void submit()} />
     <FixeoAction label="Me déconnecter" variant="ghost" disabled={busy} onPress={() => void signOut().catch(e => setError(authIssue(e)))} />
   </AuthFrame>;
 }

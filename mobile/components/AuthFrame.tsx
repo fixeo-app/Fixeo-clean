@@ -1,5 +1,6 @@
+import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
 import { useState, type PropsWithChildren } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
 import { router } from 'expo-router';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { FixeoAction } from '@/ui/FixeoAction';
@@ -13,7 +14,7 @@ export function AuthFrame({ title, detail, children, back = '/entry', hero = fal
       <View style={s.canvas}>
         <View style={s.brandRow}><Text style={s.brand}>FIXEO</Text>{back && <FixeoAction label="Retour" variant="ghost" onPress={() => router.replace(back as any)} />}</View>
         <View style={hero ? s.hero : s.intro}>
-          <RafiOrb size={hero ? 156 : 64} mode="idle" />
+          <RafiOrb size={hero ? 156 : 64} mode="idle" subtle />
           <Text style={s.kicker}>RAFI · À VOS CÔTÉS</Text>
           <Text accessibilityRole="header" style={[s.title, hero && s.heroTitle]}>{title}</Text>
           <Text style={s.detail}>{detail}</Text>

@@ -1,3 +1,4 @@
+import { requireCanonicalCity } from './clientLocation';
 import { supabase } from './supabase';
 
 export type ClientProfile = {
@@ -52,7 +53,7 @@ export async function updateClientProfile(input: {
   const userId = await currentUserId();
   const patch: Record<string, string | null> = {};
   if ('phone' in input) patch.phone = input.phone?.trim() || null;
-  if ('city' in input) patch.city = input.city?.trim() || null;
+  if ('city' in input) patch.city = input.city?.trim() ? requireCanonicalCity(input.city) : null;
 
   const { data, error } = await supabase
     .from('profiles')

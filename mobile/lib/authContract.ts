@@ -60,7 +60,7 @@ export function parseAuthCallback(value: string, expectedUrl?: string): Callback
 
 export type MobileRole = 'client' | 'artisan' | 'admin';
 export type AuthPhase = 'unknown' | 'resolving' | 'signed_out' | 'ready' | 'onboarding' | 'recovery' | 'blocked';
-export type AuthSnapshot = { phase: AuthPhase; userId: string | null; role: MobileRole | null; issue: AuthIssue | null; epoch: number };
+export type AuthSnapshot = { phase: AuthPhase; userId: string | null; role: MobileRole | null; issue: AuthIssue | null; epoch: number; revalidating?: boolean };
 /** An identity transition invalidates all in-flight publications before any await. */
 export function createAuthState() {
   let state: AuthSnapshot = { phase: 'unknown', userId: null, role: null, issue: null, epoch: 0 };
@@ -71,6 +71,13 @@ export function createAuthState() {
     subscribe(fn: () => void) { listeners.add(fn); return () => { listeners.delete(fn); }; },
     invalidate(phase: AuthPhase = 'resolving', issue: AuthIssue | null = null) {
       state = { phase, userId: null, role: null, issue, epoch: state.epoch + 1 }; emit(); return state.epoch;
+    },
+    revalidate() {
+      // Keep the verified screen tree mounted behind a blocking veil. Logout,
+      // identity changes and revoked sessions still invalidate it synchronously.
+      if (state.phase !== 'ready' || !state.userId || !state.role) return null;
+      state = { ...state, revalidating: true, issue: null, epoch: state.epoch + 1 };
+      emit(); return state.epoch;
     },
     publish(epoch: number, next: Omit<AuthSnapshot, 'epoch'>) {
       if (epoch !== state.epoch) return false;
@@ -83,7 +90,7 @@ export function routeAllowed(path: string, state: AuthSnapshot) {
   if (['/entry', '/sign-in', '/sign-up', '/forgot-password', '/auth-callback'].includes(path)) return true;
   if (path === '/reset-password') return state.phase === 'recovery';
   if (path === '/complete-profile') return state.phase === 'onboarding' && state.role === 'artisan';
-  if (state.phase !== 'ready') return false;
+  if (state.phase !== 'ready' || state.revalidating || state.issue) return false;
   return state.role === 'client'
     ? path === '/' || /^\/client-(workspace|mission)(\/|$)/.test(path)
     : state.role === 'artisan' && (path === '/artisan' || /^\/(artisan-workspace|mission)(\/|$)/.test(path));

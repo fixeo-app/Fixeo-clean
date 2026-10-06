@@ -1,7 +1,7 @@
+import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
 import { useCallback, useEffect, useState } from 'react';
 import {
   AppState,
-  ScrollView,
   StyleSheet,
   View,
 } from 'react-native';

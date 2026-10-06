@@ -20,7 +20,7 @@ export const CLIENT_STATUS: Readonly<Record<string, string>> = {
 export function clientHomeCopy(journey: string, presence: RafiPresenceState, creating: boolean) {
   if (creating) return { eyebrow: 'VOTRE DEMANDE', title: 'On prépare la suite.', detail: 'FIXEO enregistre votre demande. Un instant.' };
   if (presence === 'listening') return { eyebrow: 'RAFI VOUS ÉCOUTE', title: 'Dites-moi tout.', detail: 'Décrivez ce qui se passe, avec vos mots.' };
-  if (presence === 'understanding') return { eyebrow: 'RAFI COMPREND', title: 'Je regarde avec vous.', detail: 'Vous pourrez vérifier et confirmer avant de continuer.' };
+  if (presence === 'understanding' || presence === 'thinking') return { eyebrow: 'RAFI COMPREND', title: 'Je regarde avec vous.', detail: 'Vous pourrez vérifier et confirmer avant de continuer.' };
   if (journey === 'completed') return { eyebrow: 'À VOUS DE CONFIRMER', title: 'Une dernière\nvérification.', detail: 'Vérifiez l’intervention et les photos avant de valider.' };
   if (journey === 'in_progress') return { eyebrow: 'EN CE MOMENT', title: 'Votre intervention\navance.', detail: 'Retrouvez les étapes et les photos dans votre suivi.' };
   if (journey === 'assigned') return { eyebrow: 'ARTISAN TROUVÉ', title: 'Vous êtes\naccompagné.', detail: 'Votre artisan et la prochaine étape, au même endroit.' };

@@ -1,5 +1,6 @@
+import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { RefreshControl, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import {
   getClientProfile,

@@ -1,21 +1,29 @@
 import { rafiMotionTokens } from './tokens';
-import { RAFI_LABELS, type RafiPresenceState } from './rafiPresence';
-/** Additive API: all four legacy modes remain valid. */
+import { RAFI_LABELS, canonicalRafiState, type RafiPresenceState } from './rafiPresence';
 export type RafiOrbMode = RafiPresenceState;
 export type RafiOrbMotion = {
   breathDuration: number; orbitDuration: number;
   coreScale: [number, number]; haloScale: [number, number]; haloOpacity: [number, number];
   signatureScale: [number, number]; signatureLift: number; orbitOpacity: number;
+  lift: number; reflection: number;
 };
-const MOTION: Record<RafiOrbMode, RafiOrbMotion> = {
-  idle: { ...rafiMotionTokens.idle, coreScale: [1, 1.012], haloScale: [1, 1.03], haloOpacity: [0.55, 0.7], signatureScale: [1, 1.015], signatureLift: 0, orbitOpacity: 0 },
-  listening: { ...rafiMotionTokens.listening, coreScale: [1, 1.032], haloScale: [1, 1.08], haloOpacity: [0.7, 0.94], signatureScale: [1.04, 1.12], signatureLift: -0.01, orbitOpacity: 0 },
-  understanding: { ...rafiMotionTokens.understanding, coreScale: [1, 0.987], haloScale: [1.03, 1], haloOpacity: [0.7, 0.86], signatureScale: [0.94, 0.90], signatureLift: -0.02, orbitOpacity: 0 },
-  working: { ...rafiMotionTokens.working, coreScale: [1, 1.018], haloScale: [1, 1.05], haloOpacity: [0.72, 0.95], signatureScale: [1, 1.025], signatureLift: 0, orbitOpacity: 0 },
-  matching: { ...rafiMotionTokens.matching, coreScale: [1, 1.008], haloScale: [1, 1.03], haloOpacity: [0.65, 0.85], signatureScale: [1, 1.015], signatureLift: 0, orbitOpacity: 0.82 },
-  intervention: { ...rafiMotionTokens.intervention, coreScale: [1, 1.004], haloScale: [1, 1.012], haloOpacity: [0.42, 0.50], signatureScale: [1, 1], signatureLift: 0, orbitOpacity: 0 },
-  success: { ...rafiMotionTokens.success, coreScale: [1, 1.035], haloScale: [1, 1.17], haloOpacity: [0.65, 1], signatureScale: [1, 1.14], signatureLift: 0, orbitOpacity: 0 },
-  attention: { ...rafiMotionTokens.attention, coreScale: [1, 1.008], haloScale: [1.02, 1.065], haloOpacity: [0.86, 0.98], signatureScale: [1.02, 1.065], signatureLift: -0.006, orbitOpacity: 0 },
-};
-export function getRafiOrbMotion(mode: RafiOrbMode): RafiOrbMotion { return MOTION[mode]; }
+const profiles = {
+  idle: { coreScale: [1, 1.009], haloScale: [1, 1.025], haloOpacity: [0.55, 0.69], signatureScale: [1, 1.012], lift: -0.006, reflection: 0.12 },
+  listening: { coreScale: [1, 1.017], haloScale: [1, 1.045], haloOpacity: [0.66, 0.84], signatureScale: [1, 1.035], lift: -0.004, reflection: 0.17 },
+  thinking: { coreScale: [1, 0.994], haloScale: [1.015, 1], haloOpacity: [0.62, 0.76], signatureScale: [1, 0.985], lift: -0.003, reflection: 0.22 },
+  speaking: { coreScale: [1, 1.014], haloScale: [1, 1.034], haloOpacity: [0.63, 0.79], signatureScale: [1, 1.025], lift: -0.002, reflection: 0.15 },
+  success: { coreScale: [1, 1.02], haloScale: [1, 1.075], haloOpacity: [0.55, 0.88], signatureScale: [1, 1.05], lift: -0.005, reflection: 0.26 },
+  attention: { coreScale: [1, 1.003], haloScale: [1, 1.012], haloOpacity: [0.43, 0.50], signatureScale: [1, 1.004], lift: -0.002, reflection: 0.06 },
+} as const;
+export function getRafiOrbMotion(mode: RafiOrbMode, size = 96, reduced = false, subtle = false): RafiOrbMotion {
+  const state = canonicalRafiState(mode), p = profiles[state];
+  const amount = (size <= 58 ? 0.22 : size < 96 ? 0.65 : 1) * (subtle ? 0.4 : 1);
+  const scale = (pair: readonly [number, number]): [number, number] => reduced ? [1, 1] : pair.map(x => 1 + (x - 1) * amount) as [number, number];
+  return { ...rafiMotionTokens[mode], orbitDuration: 0, orbitOpacity: 0, signatureLift: 0,
+    breathDuration: reduced ? 6500 : rafiMotionTokens[mode].breathDuration * (subtle ? 1.25 : 1),
+    coreScale: scale(p.coreScale), haloScale: scale(p.haloScale), signatureScale: scale(p.signatureScale),
+    haloOpacity: [p.haloOpacity[0], p.haloOpacity[0] + (reduced ? 0.025 : (p.haloOpacity[1] - p.haloOpacity[0]) * amount)],
+    lift: reduced ? 0 : p.lift * amount, reflection: reduced ? 0 : p.reflection * amount,
+  };
+}
 export function getRafiOrbAccessibilityLabel(mode: RafiOrbMode) { return RAFI_LABELS[mode]; }

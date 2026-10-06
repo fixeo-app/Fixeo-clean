@@ -1,3 +1,4 @@
+import { canonicalCities } from './clientLocation';
 import { supabase } from './supabase';
 import { assertCallbackUrl, parseAuthCallback } from './authContract';
 import { beginAuthOperation, clearAuthPresentation, enterPasswordRecovery, isPasswordRecovery, resolveAuthSession } from './authSession';
@@ -102,7 +103,7 @@ export function finishArtisan(input: { name: string; phone: string; services: st
     const authority = await supabase.from('users').select('role').eq('id', me.data.user.id).single();
     if (authority.error || authority.data?.role !== 'artisan') throw new Error('ROLE_INVALID');
     const result = await supabase.rpc('finalize_artisan_signup_v1', {
-      p_full_name: input.name.trim(), p_phone: input.phone.trim(), p_services: input.services, p_cities: input.cities,
+      p_full_name: input.name.trim(), p_phone: input.phone.trim(), p_services: input.services, p_cities: canonicalCities(input.cities),
     });
     if (result.error || result.data?.ok !== true) throw result.error || new Error('ARTISAN_PROFILE_INCOMPLETE');
     if (input.available) {

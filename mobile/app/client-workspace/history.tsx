@@ -1,3 +1,4 @@
+import { useWorkspaceDock } from '@/components/useWorkspaceDock';
 import { useCallback, useEffect, useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
@@ -44,8 +45,9 @@ export default function ClientHistory() {
 
   useForegroundRefresh(load);
 
+  const contextDock = useWorkspaceDock('client');
   return (
-    <FixeoScreen padded={false} header={
+    <FixeoScreen padded={false} contextDock={contextDock} header={
         <MobileShell
           universe="client"
           activeKey="history"

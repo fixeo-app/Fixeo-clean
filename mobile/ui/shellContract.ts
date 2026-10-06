@@ -74,12 +74,11 @@ export function isDockVisible({ hidden = false, keyboardVisible = false, itemCou
 export function dockBadgeLabel(badge?: number) {
   return badge && Number.isFinite(badge) && badge > 0 ? (badge > 99 ? '99+' : String(Math.floor(badge))) : '';
 }
-/** W2 intentionally opts in only the two workspace overviews. */
+/** Every top-level screen shares its universe's navigation. */
 export function workspaceDockDestinations(universe: ShellUniverse, pathname: string) {
   const current = normalizeShellPath(pathname);
-  const allowed = universe === 'client' ? '/client-workspace' : '/artisan-workspace';
-  if (current !== allowed) return [];
-  const keys = universe === 'client' ? ['rafi', 'history', 'alerts'] : ['cockpit', 'agenda', 'quotes'];
+  if (!getShellDestinations(universe).some(item => item.path === current)) return [];
+  const keys = universe === 'client' ? ['rafi', 'history', 'alerts'] : ['opportunities', 'rafi', 'agenda'];
   return keys.map(key => getShellDestinations(universe).find(item => item.key === key)!);
 }
 /** Conservative first-layout reservation. Actual height replaces it on layout. */

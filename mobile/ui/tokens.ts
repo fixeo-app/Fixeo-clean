@@ -183,17 +183,19 @@ export const rafiVisualTokens = {
   },
 } as const;
 export const rafiMotionTokens = {
-  idle: { breathDuration: 3600, orbitDuration: 0 },
-  listening: { breathDuration: 1800, orbitDuration: 0 },
+  idle: { breathDuration: 4400, orbitDuration: 0 },
+  listening: { breathDuration: 1900, orbitDuration: 0 },
+  thinking: { breathDuration: 2600, orbitDuration: 0 },
+  speaking: { breathDuration: 1100, orbitDuration: 0 },
   understanding: { breathDuration: 2600, orbitDuration: 0 },
-  working: { breathDuration: 1500, orbitDuration: 0 },
-  matching: { breathDuration: 6000, orbitDuration: 12000 },
+  working: { breathDuration: 2400, orbitDuration: 0 },
+  matching: { breathDuration: 3200, orbitDuration: 0 },
   intervention: { breathDuration: 4800, orbitDuration: 0 },
   success: { breathDuration: 3600, orbitDuration: 0 },
-  attention: { breathDuration: 4000, orbitDuration: 0 },
+  attention: { breathDuration: 5400, orbitDuration: 0 },
   easing: { breath: 'breathe', orbit: 'linear', successIn: 'enter', successOut: 'breathe' },
   completion: { delay: 0, enter: 280, exit: 600 },
-  reduced: 'static',
+  reduced: 'light-only',
 } as const;
 
 export const iconography = {

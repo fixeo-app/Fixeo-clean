@@ -1,0 +1,178 @@
+{
+  "scope": "Actual React Native Web RAFI renderer, synthetic states, 10 FPS evidence recordings; not a native performance benchmark",
+  "results": [
+    "idle breath animates",
+    "success returns to living idle",
+    "background stops and resumes without replaying success",
+    "navigation blur pauses",
+    "viewport scroll pauses and resumes",
+    "touch compresses and settles without overshoot",
+    "reduced motion keeps transforms still",
+    "unmount cleans app/focus subscriptions and animations",
+    "compact has restrained living motion",
+    "animation failure retains canonical static sphere",
+    "actual microphone controls drive listening/start and thinking/stop with hardware adapter",
+    {
+      "state": "idle",
+      "durationMs": 9000,
+      "samples": [
+        {
+          "frame": 0,
+          "pose": "matrix(1.00001, 0, 0, 1.00001, 0, -0.00143922)"
+        },
+        {
+          "frame": 10,
+          "pose": "matrix(1.00114, 0, 0, 1.00114, 0, -0.1182)"
+        },
+        {
+          "frame": 20,
+          "pose": "matrix(1.00419, 0, 0, 1.00419, 0, -0.437226)"
+        },
+        {
+          "frame": 30,
+          "pose": "matrix(1.00744, 0, 0, 1.00744, 0, -0.779599)"
+        },
+        {
+          "frame": 40,
+          "pose": "matrix(1.00893, 0, 0, 1.00893, 0, -0.936817)"
+        },
+        {
+          "frame": 50,
+          "pose": "matrix(1.00852, 0, 0, 1.00852, 0, -0.893984)"
+        },
+        {
+          "frame": 60,
+          "pose": "matrix(1.00621, 0, 0, 1.00621, 0, -0.649607)"
+        },
+        {
+          "frame": 70,
+          "pose": "matrix(1.00264, 0, 0, 1.00264, 0, -0.274934)"
+        },
+        {
+          "frame": 80,
+          "pose": "matrix(1.00043, 0, 0, 1.00043, 0, -0.0452586)"
+        }
+      ],
+      "videoFPS": 10,
+      "androidPerformanceClaim": false
+    },
+    {
+      "state": "listening",
+      "durationMs": 4200,
+      "samples": [
+        {
+          "frame": 0,
+          "pose": "matrix(1.00002, 0, 0, 1.00002, 0, -0.000796525)"
+        },
+        {
+          "frame": 10,
+          "pose": "matrix(1.00989, 0, 0, 1.00989, 0, -0.366525)"
+        },
+        {
+          "frame": 20,
+          "pose": "matrix(1.01674, 0, 0, 1.01674, 0, -0.624641)"
+        },
+        {
+          "frame": 30,
+          "pose": "matrix(1.00461, 0, 0, 1.00461, 0, -0.170178)"
+        },
+        {
+          "frame": 40,
+          "pose": "matrix(1.00177, 0, 0, 1.00177, 0, -0.0652314)"
+        }
+      ],
+      "videoFPS": 10,
+      "androidPerformanceClaim": false
+    },
+    {
+      "state": "thinking",
+      "durationMs": 5600,
+      "samples": [
+        {
+          "frame": 0,
+          "pose": "matrix(0.999991, 0, 0, 0.999991, 0, -0.000717778)"
+        },
+        {
+          "frame": 10,
+          "pose": "matrix(0.998024, 0, 0, 0.998024, 0, -0.153807)"
+        },
+        {
+          "frame": 20,
+          "pose": "matrix(0.994497, 0, 0, 0.994497, 0, -0.42689)"
+        },
+        {
+          "frame": 30,
+          "pose": "matrix(0.994385, 0, 0, 0.994385, 0, -0.435473)"
+        },
+        {
+          "frame": 40,
+          "pose": "matrix(0.997717, 0, 0, 0.997717, 0, -0.177649)"
+        },
+        {
+          "frame": 50,
+          "pose": "matrix(0.999968, 0, 0, 0.999968, 0, -0.00248614)"
+        }
+      ],
+      "videoFPS": 10,
+      "androidPerformanceClaim": false
+    },
+    {
+      "state": "success",
+      "durationMs": 1600,
+      "samples": [
+        {
+          "frame": 0,
+          "pose": "matrix(1.00725, 0, 0, 1.00725, 0, -0.284687)"
+        },
+        {
+          "frame": 10,
+          "pose": "matrix(1.00002, 0, 0, 1.00002, 0, -0.00211803)"
+        }
+      ],
+      "videoFPS": 10,
+      "androidPerformanceClaim": false
+    },
+    {
+      "state": "attention",
+      "durationMs": 3000,
+      "samples": [
+        {
+          "frame": 0,
+          "pose": "matrix(1, 0, 0, 1, 0, -1.23259e-05)"
+        },
+        {
+          "frame": 10,
+          "pose": "matrix(1.00022, 0, 0, 1.00022, 0, -0.0224435)"
+        },
+        {
+          "frame": 20,
+          "pose": "matrix(1.00086, 0, 0, 1.00086, 0, -0.0892185)"
+        }
+      ],
+      "videoFPS": 10,
+      "androidPerformanceClaim": false
+    },
+    {
+      "state": "speaking",
+      "durationMs": 3000,
+      "samples": [
+        {
+          "frame": 0,
+          "pose": "matrix(1.00005, 0, 0, 1.00005, 0, -0.00109128)"
+        },
+        {
+          "frame": 10,
+          "pose": "matrix(1.01388, 0, 0, 1.01388, 0, -0.313696)"
+        },
+        {
+          "frame": 20,
+          "pose": "matrix(1.00077, 0, 0, 1.00077, 0, -0.0172837)"
+        }
+      ],
+      "videoFPS": 10,
+      "androidPerformanceClaim": false
+    }
+  ],
+  "errors": [],
+  "physicalReview": "PENDING"
+}

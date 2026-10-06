@@ -24,3 +24,21 @@ export async function withMobileDeadline<T>(
 export function isMobileUiTimeout(error: unknown) {
   return String((error as any)?.message || '') === 'MOBILE_UI_TIMEOUT';
 }
+
+/** RN 0.81 installs abort-controller, which has no AbortSignal.timeout(). */
+export async function fetchMobileJson(url: string, init: RequestInit, timeoutMs: number) {
+  const controller = new AbortController();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      (async () => {
+        const response = await fetch(url, { ...init, signal: controller.signal });
+        const body = await response.json().catch(() => null);
+        return { response, body };
+      })(),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => { controller.abort(); reject(new Error('GATEWAY_UNAVAILABLE')); }, timeoutMs);
+      }),
+    ]);
+  } finally { if (timer) clearTimeout(timer); }
+}

@@ -1,3 +1,5 @@
+import { CityZonesField } from '@/components/CityField';
+import { canonicalCity } from '@/lib/clientLocation';
 import { useEffect, useState } from "react";
 import { Image, View } from "react-native";
 import {
@@ -29,7 +31,7 @@ export default function Profile() {
     bioAction = useArtisanAction();
   const [phone, setPhone] = useState(""),
     [services, setServices] = useState(""),
-    [cities, setCities] = useState(""),
+    [cities, setCities] = useState<string[]>([]),
     [bio, setBio] = useState(""),
     [savedBio, setSavedBio] = useState("");
   const p = q.data?.profile;
@@ -40,7 +42,7 @@ export default function Profile() {
         p.services?.length ? p.services.join(", ") : p.service_category || "",
       );
       setCities(
-        q.data!.cities.length ? q.data!.cities.join(", ") : p.city || "",
+        (q.data!.cities.length ? q.data!.cities : p.city ? [p.city] : []).map(value => canonicalCity(value) || value),
       );
     }
   }, [p, q.data?.cities]);
@@ -50,6 +52,7 @@ export default function Profile() {
   }, [p?.id, p?.description]);
   return (
     <ArtisanPage
+      rafi={bioAction.busy ? bioAction.rafi : a.busy || Number(a.rafi.eventKey) >= Number(bioAction.rafi.eventKey) ? a.rafi : bioAction.rafi}
       title="Votre signature professionnelle."
       eyebrow="MON PROFIL ARTISAN"
       activeKey="profile"
@@ -81,11 +84,7 @@ export default function Profile() {
             value={services}
             onChangeText={setServices}
           />
-          <ArtisanField
-            label="Villes — séparées par des virgules"
-            value={cities}
-            onChangeText={setCities}
-          />
+          <CityZonesField values={cities} onChange={setCities} disabled={a.busy} />
           <FixeoAction
             label="Enregistrer mon profil"
             busy={a.busy}
@@ -94,10 +93,7 @@ export default function Profile() {
                   .split(",")
                   .map((x) => x.trim())
                   .filter(Boolean),
-                c = cities
-                  .split(",")
-                  .map((x) => x.trim())
-                  .filter(Boolean);
+                c = cities;
               if (!s.length || !c.length || !phone.trim()) {
                 a.setMessage(
                   "Renseignez un téléphone, au moins un métier et une ville.",

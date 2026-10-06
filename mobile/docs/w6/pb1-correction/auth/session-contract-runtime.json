@@ -1,0 +1,13 @@
+{
+  "scope": "Deterministic HTTP simulation against actual Expo screens; NOT live staging Auth",
+  "timings": {
+    "artisanLoginMs": 115,
+    "logoutMs": 431,
+    "clientLoginMs": 178
+  },
+  "canonicalRoleOverridesUntrustedMetadata": true,
+  "artisanClientArtisanSwitch": true,
+  "noPrivateScreenBeforeRole": true,
+  "revokedBootstrapClosed": true,
+  "errors": []
+}

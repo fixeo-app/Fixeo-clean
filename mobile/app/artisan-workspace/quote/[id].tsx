@@ -193,6 +193,7 @@ export default function QuoteStudio() {
   };
   return (
     <ArtisanPage
+      rafi={a.rafi}
       title={preview ? "Votre proposition." : "Chaque détail compte."}
       eyebrow="DEVIS STUDIO"
       activeKey="quotes"

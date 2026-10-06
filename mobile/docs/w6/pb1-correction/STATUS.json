@@ -1,0 +1,30 @@
+{
+  "status": "STAGING_AUTH_REQUIRED_BEFORE_FINAL_ANDROID_BUILD",
+  "initialHead": "48b54c2795d72bc26cb5927a344e21bdd938901e",
+  "branch": "feat/fixeo-mobile-w6-entry-auth-trust",
+  "pr": 150,
+  "draft": true,
+  "merged": false,
+  "localContracts": {
+    "passed": 127,
+    "failed": 0
+  },
+  "syntheticProductFlows": 18,
+  "nativePrebuildChecks": 17,
+  "expoDoctorChecks": 18,
+  "rafiSoftwareVerdict": "PASS RAFI LIVING SPHERE — READY FOR PHYSICAL REVIEW",
+  "rafiPhysicalVerdict": "PENDING",
+  "fullPB1Verdict": "PENDING_LIVE_STAGING",
+  "supabaseMutations": 0,
+  "newUsers": 0,
+  "authRecoveryRequests": 0,
+  "buildsLaunched": 0,
+  "buildId": null,
+  "apkUrl": null,
+  "profile": "w6-physical-certification",
+  "environment": "preview",
+  "appEnvironment": "staging",
+  "package": "ma.fixeo.app",
+  "version": "0.3.0",
+  "versionCode": 5
+}

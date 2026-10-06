@@ -1,5 +1,6 @@
+import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
 import type { ComponentProps, Ref } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { RafiOrb } from '@/ui/RafiOrb';
 import { FixeoText } from '@/ui/FixeoText';
 import { ShellControl, ShellIcon } from '@/ui/ShellControl';
@@ -16,37 +17,37 @@ export function PremiumDrawer({ universe, activeKey, statusLabel, orbMode, signi
   const items = getShellDestinations(universe);
   return <View style={styles.root} accessibilityViewIsModal onAccessibilityEscape={onClose}>
     <View style={styles.heading}>
-      <FixeoText variant="eyebrow" tone="inverseSecondary" style={styles.grow}>
+      <FixeoText variant="eyebrow" tone="secondary" style={styles.grow}>
         {universe === 'client' ? 'Espace Client' : 'Espace Artisan'}
       </FixeoText>
       <ShellControl ref={closeRef} accessibilityLabel="Fermer le menu FIXEO" onPress={onClose}>
-        <ShellIcon name="close-outline" color={semanticColors.text.inverse} />
+        <ShellIcon name="close-outline" color={semanticColors.text.primary} />
       </ShellControl>
     </View>
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}
       keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator>
       <View style={styles.identity}>
         <View style={styles.orb} accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          <RafiOrb size={44} mode={orbMode} />
+          <RafiOrb size={44} mode={orbMode} subtle />
         </View>
         <View style={styles.grow}>
-          <FixeoText variant="heading" tone="inverse" style={styles.brand}>FIXEO</FixeoText>
-          <FixeoText variant="supporting" tone="inverseSecondary">{statusLabel || 'Votre espace FIXEO'}</FixeoText>
+          <FixeoText variant="heading" tone="primary" style={styles.brand}>FIXEO</FixeoText>
+          <FixeoText variant="supporting" tone="secondary">{statusLabel || 'Votre espace FIXEO'}</FixeoText>
         </View>
       </View>
       {items.map((item, index) => {
         const selected = activeKey === item.key;
-        const color = selected ? semanticColors.text.primary : semanticColors.text.inverse;
+        const color = semanticColors.text.primary;
         return <View key={item.key}>
-          {item.section !== items[index - 1]?.section && <FixeoText variant="eyebrow" tone="inverseSecondary"
+          {item.section !== items[index - 1]?.section && <FixeoText variant="eyebrow" tone="secondary"
             style={styles.section}>{item.section}</FixeoText>}
           <ShellControl accessibilityLabel={item.label} accessibilityHint={item.meta}
             accessibilityState={{ selected, disabled: signingOut }} disabled={signingOut}
             onPress={() => onNavigate(item)} style={[styles.item, selected && styles.active]}>
             <ShellIcon name={item.icon} color={color} />
             <View style={styles.grow}>
-              <FixeoText variant="body" tone={selected ? 'primary' : 'inverse'} style={styles.label}>{item.label}</FixeoText>
-              <FixeoText variant="supporting" tone={selected ? 'secondary' : 'inverseSecondary'}>{item.meta}</FixeoText>
+              <FixeoText variant="body" tone="primary" style={styles.label}>{item.label}</FixeoText>
+              <FixeoText variant="supporting" tone="secondary">{item.meta}</FixeoText>
             </View>
             {selected && <ShellIcon name="checkmark-outline" color={color} />}
           </ShellControl>
@@ -56,8 +57,8 @@ export function PremiumDrawer({ universe, activeKey, statusLabel, orbMode, signi
         <ShellControl accessibilityLabel={signingOut ? 'Déconnexion en cours' : 'Se déconnecter'}
           accessibilityState={{ busy: signingOut, disabled: signingOut }} disabled={signingOut}
           onPress={onLogout} style={styles.logout}>
-          <ShellIcon name="log-out-outline" color={semanticColors.text.inverseSecondary} />
-          <FixeoText variant="supporting" tone="inverseSecondary" style={styles.grow}>
+          <ShellIcon name="log-out-outline" color={semanticColors.text.secondary} />
+          <FixeoText variant="supporting" tone="secondary" style={styles.grow}>
             {signingOut ? 'Déconnexion…' : 'Se déconnecter'}
           </FixeoText>
         </ShellControl>
@@ -77,8 +78,8 @@ const styles = StyleSheet.create({
   brand: { letterSpacing: 2, marginBottom: space.xxs },
   section: { marginTop: space.lg, marginBottom: space.xs, marginHorizontal: space.sm },
   item: { flexDirection: 'row', gap: space.sm, paddingHorizontal: space.sm, paddingVertical: space.sm, marginBottom: space.xxs },
-  active: { backgroundColor: semanticColors.background.surface, borderRadius: radii.control },
+  active: { backgroundColor: '#EEEAE2', borderRadius: radii.control, borderWidth: StyleSheet.hairlineWidth, borderColor: '#D9D1C3' },
   label: { fontWeight: '600' },
-  footer: { marginTop: space.lg, paddingTop: space.sm, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: semanticColors.border.inverse },
+  footer: { marginTop: space.lg, paddingTop: space.sm, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: semanticColors.border.subtle },
   logout: { flexDirection: 'row', gap: space.sm, paddingHorizontal: space.sm, paddingVertical: space.sm },
 });

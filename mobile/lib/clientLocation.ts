@@ -7,8 +7,16 @@ export function canonicalCity(value: string) {
 }
 export function citySuggestions(value: string) {
   const query = fold(value);
-  if (!query || canonicalCity(value)) return [];
-  return catalogue.filter(item => [item.value, item.label, ...item.aliases].some(alias => fold(alias).includes(query))).slice(0, 4);
+  return catalogue.filter(item => !query || [item.value, item.label, ...item.aliases].some(alias => fold(alias).includes(query)));
+}
+
+export function requireCanonicalCity(value: string) {
+  const city = canonicalCity(value);
+  if (!city) throw new Error('CITY_NOT_SUPPORTED');
+  return city;
+}
+export function canonicalCities(values: readonly string[]) {
+  return [...new Set(values.filter(value => value.trim()).map(requireCanonicalCity))];
 }
 
 type Address = { city?: string | null; subregion?: string | null; district?: string | null; isoCountryCode?: string | null };

@@ -1,7 +1,7 @@
 const fs=require('fs'),http=require('http'),path=require('path');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
-const root=path.resolve(__dirname,'../../dist-gate-a');
-const out=path.resolve(__dirname,'../../docs/w6/runtime');fs.mkdirSync(out,{recursive:true});
+const root=path.resolve(process.env.W6_EXPORT_DIR||path.resolve(__dirname,'../../dist-gate-a'));
+const out=path.resolve(process.env.W6_EVIDENCE_DIR||path.resolve(__dirname,'../../docs/w6/runtime'));fs.mkdirSync(out,{recursive:true});
 const srv=http.createServer((req,res)=>{let file=path.join(root,new URL(req.url,'http://local').pathname);if(!fs.existsSync(file)||fs.statSync(file).isDirectory())file=path.join(root,'index.html');res.setHeader('Content-Type',file.endsWith('.js')?'text/javascript':file.endsWith('.png')?'image/png':file.endsWith('.ttf')?'font/ttf':'text/html');res.end(fs.readFileSync(file));});
 (async()=>{await new Promise(r=>srv.listen(4176,'127.0.0.1',r));const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH || undefined,args:process.env.CHROMIUM_ARGS_MODULE ? require(process.env.CHROMIUM_ARGS_MODULE).default.args : []});
 const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1});const errors=[],requests=[];page.on('request',r=>{if(r.url().includes('supabase.co'))requests.push({method:r.method(),path:new URL(r.url()).pathname});});page.on('pageerror',e=>errors.push(e.stack));

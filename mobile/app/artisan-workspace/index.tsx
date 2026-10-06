@@ -20,6 +20,7 @@ export default function Availability() {
     a = useArtisanAction();
   return (
     <ArtisanPage
+      rafi={a.rafi}
       title="À votre rythme."
       eyebrow="DISPONIBILITÉ"
       detail="Un statut clair pour organiser vos prochaines opportunités."

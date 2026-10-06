@@ -1,3 +1,4 @@
+import { ledgerDetailLabel, ledgerTypeLabel, ledgerJobLabel } from '@/lib/ledgerPresentation';
 import { useState } from "react";
 import { View } from "react-native";
 import * as Crypto from "expo-crypto";
@@ -52,10 +53,12 @@ export default function Finance() {
   const totals = rows ? ledgerTotals(rows) : null;
   return (
     <ArtisanPage
+      rafi={a.rafi}
       title="Votre activité, en clair."
       eyebrow="FINANCES"
       detail="Les encaissements et dépenses que vous avez enregistrés."
       activeKey="finance"
+      transactional={open}
       loading={q.loading}
       onRefresh={() => void q.reload()}
     >
@@ -198,18 +201,19 @@ export default function Finance() {
       {rows?.map((r) => (
         <View style={art.row} key={r.id}>
           <FixeoText variant="eyebrow" tone="secondary">
-            {r.occurred_on} · {r.source === "fixeo" ? "FIXEO" : "PERSONNEL"}
+            {r.occurred_on} · {ledgerTypeLabel(r)}
           </FixeoText>
           <FixeoText variant="heading">
             {r.entry_type === "income" ? "+" : "−"} {money(r.amount)}
           </FixeoText>
-          <FixeoText>{r.note || r.category || "Mouvement"}</FixeoText>
+          {ledgerDetailLabel(r) !== ledgerTypeLabel(r) && <FixeoText>{ledgerDetailLabel(r)}</FixeoText>}
           {r.client_id && (
             <FixeoText tone="secondary">
               {q.data?.clients.find((c) => c.id === r.client_id)?.full_name ||
                 "Client lié"}
             </FixeoText>
           )}
+          {!!r.job_id && <FixeoText variant="supporting" tone="secondary">Intervention · {ledgerJobLabel(r, q.data?.jobs || [])}</FixeoText>}
         </View>
       ))}
       {rows?.length === 0 && (

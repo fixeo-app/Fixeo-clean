@@ -28,6 +28,7 @@ export default function Notifications() {
     a = useArtisanAction();
   return (
     <ArtisanPage
+      rafi={a.rafi}
       title="Gardez le fil."
       eyebrow="VOS NOTIFICATIONS"
       activeKey="alerts"

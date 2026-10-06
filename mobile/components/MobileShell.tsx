@@ -178,5 +178,5 @@ const styles = StyleSheet.create({
   actionLabel: { textAlign: 'center', width: '100%' },
   modalRoot: { flex: 1, flexDirection: 'row' },
   backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.42)' },
-  drawer: { height: '100%', backgroundColor: semanticColors.background.inverse },
+  drawer: { height: '100%', backgroundColor: semanticColors.background.canvas },
 });

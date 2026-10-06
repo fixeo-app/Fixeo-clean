@@ -67,3 +67,14 @@ export function agendaDatePreview(dateValue: string, timeValue: string) {
     minute: '2-digit',
   });
 }
+
+export function pickerDateParts(value: Date) {
+  const two = (n: number) => String(n).padStart(2, '0');
+  return { date: `${two(value.getDate())}/${two(value.getMonth() + 1)}/${value.getFullYear()}`,
+    time: `${two(value.getHours())}:${two(value.getMinutes())}` };
+}
+export function agendaPickerValue(date: string, time: string, now = new Date()) {
+  const fallback = pickerDateParts(now);
+  const parsed = parseAgendaDateTime(date || fallback.date, time || fallback.time);
+  return parsed ? new Date(parsed) : now;
+}

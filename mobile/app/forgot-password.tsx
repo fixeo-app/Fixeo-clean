@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { OpenMailbox } from '@/components/OpenMailbox';
 import { router } from 'expo-router';
 import { AuthFrame, AuthField, AuthError } from '@/components/AuthFrame';
 import { FixeoAction } from '@/ui/FixeoAction';
@@ -11,6 +12,7 @@ export default function ForgotPassword() {
     <AuthError issue={error} />
     {!sent && <><AuthField label="Email" value={email} onChangeText={setEmail} autoComplete="email" keyboardType="email-address" editable={!busy} onSubmitEditing={() => void submit()} />
     <FixeoAction label="Recevoir un lien" busy={busy} busyLabel="Demande en cours…" disabled={!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())} onPress={() => void submit()} /></>}
-    <FixeoAction label="Retour à la connexion" variant={sent ? 'primary' : 'ghost'} onPress={() => router.replace('/sign-in')} />
+    {sent && <OpenMailbox />}
+    <FixeoAction label="Retour à la connexion" variant="ghost" onPress={() => router.replace('/sign-in')} />
   </AuthFrame>;
 }

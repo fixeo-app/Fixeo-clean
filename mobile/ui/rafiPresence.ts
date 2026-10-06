@@ -1,5 +1,6 @@
 /** Presentation only. No requests, mission transitions, haptics or timers here. */
-export const RAFI_STATES = ['idle', 'listening', 'understanding', 'working', 'matching', 'intervention', 'success', 'attention'] as const;
+export const RAFI_STATE = { IDLE: 'idle', LISTENING: 'listening', THINKING: 'thinking', SPEAKING: 'speaking', SUCCESS: 'success', ATTENTION: 'attention' } as const;
+export const RAFI_STATES = ['idle', 'listening', 'thinking', 'speaking', 'understanding', 'working', 'matching', 'intervention', 'success', 'attention'] as const;
 export type RafiPresenceState = typeof RAFI_STATES[number];
 export type RafiSettleState = Exclude<RafiPresenceState, 'success'>;
 export type LegacyRafiMode = 'idle' | 'listening' | 'working' | 'success';
@@ -7,7 +8,20 @@ export const RAFI_LABELS: Record<RafiPresenceState, string> = {
   idle: 'RAFI est prêt', listening: 'RAFI écoute', understanding: 'RAFI comprend votre demande',
   working: 'RAFI travaille', matching: 'FIXEO recherche un artisan', intervention: 'Intervention en cours',
   success: 'RAFI a terminé cette étape', attention: 'Une action demande votre attention',
+  thinking: 'RAFI réfléchit', speaking: 'RAFI parle',
 };
+export function canonicalRafiState(mode: RafiPresenceState) {
+  if (['understanding', 'working', 'matching'].includes(mode)) return RAFI_STATE.THINKING;
+  if (mode === 'intervention') return RAFI_STATE.IDLE;
+  return mode as typeof RAFI_STATE[keyof typeof RAFI_STATE];
+}
+export type RafiSignal = { mode: RafiPresenceState; eventKey: string };
+export function rafiActionState(busy: boolean, failed: boolean, completed: number): RafiPresenceState {
+  return busy ? 'thinking' : failed ? 'attention' : completed > 0 ? 'success' : 'idle';
+}
+export function rafiIntersectsViewport(y: number, height: number, top: number, bottom: number) {
+  return Number.isFinite(y) && height > 0 && bottom > top && y + height > top && y < bottom;
+}
 export function fromLegacyRafiMode(mode: LegacyRafiMode): RafiPresenceState { return mode; }
 
 export function getClientRafiPresence(input: {
@@ -16,9 +30,9 @@ export function getClientRafiPresence(input: {
 }): RafiPresenceState {
   if (input.override === 'listening') return 'listening';
   if (input.photoDiagnosticBusy || input.override === 'understanding') return 'understanding';
-  if (input.override) return input.override;
-  if (input.safetyStop || input.loopState === 'error') return 'attention';
   if (input.loopState === 'creating') return 'working';
+  if (input.safetyStop || input.loopState === 'error') return 'attention';
+  if (input.override) return input.override;
   if (input.journeyStatus === 'completed') return 'attention';
   if (input.journeyStatus === 'in_progress') return 'intervention';
   if (input.journeyStatus === 'assigned') return 'success';

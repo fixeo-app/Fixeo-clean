@@ -26,7 +26,7 @@ const {waitForDrawerOpen, checkDrawerContent, captureDrawer}=require('./fixtures
    const menuAfter=await menu.boundingBox();assert.equal(menuBefore.y,menuAfter.y);
    await page.getByTestId('final-action').click();assert.equal(await page.title(),'FINAL_ACTION_PASS');
    await menu.click({timeout:5000});await waitForDrawerOpen(page);
-   const selected=page.getByRole('button',{name:universe==='client'?'Mon espace':'Artisan OS',exact:true});
+   const selected=page.getByRole('button',{name:universe==='client'?'Mon espace':'Disponibilité',exact:true});
    assert.equal(await selected.getAttribute('aria-selected'),'true');
    await selected.click();await close.waitFor({state:'hidden'});
    await menu.click({timeout:5000});await waitForDrawerOpen(page);
@@ -36,14 +36,15 @@ const {waitForDrawerOpen, checkDrawerContent, captureDrawer}=require('./fixtures
    await menu.click({timeout:5000});await waitForDrawerOpen(page);
    const target=universe==='client'?'Interventions':'Devis';
    await page.getByRole('button',{name:target,exact:true}).click();await close.waitFor({state:'hidden'});
-   assert.equal(await toolbar.count(),0);
-   await menu.click({timeout:5000});await waitForDrawerOpen(page);await page.getByRole('button',{name:universe==='client'?'Mon espace':'Artisan OS',exact:true}).click();await close.waitFor({state:'hidden'});
+   assert.equal(await toolbar.count(),1);
+   await menu.click({timeout:5000});await waitForDrawerOpen(page);await page.getByRole('button',{name:universe==='client'?'Mon espace':'Disponibilité',exact:true}).click();await close.waitFor({state:'hidden'});
    await toolbar.waitFor();
    await page.getByTestId('workspace-scroll').evaluate(el=>{el.scrollTop=0;});
    await page.screenshot({path:root+`/${universe}-${width}-${reducedMotion}.png`});
    await menu.click({timeout:5000});
    const panel=await waitForDrawerOpen(page);
-   const reachableControls=await checkDrawerContent(panel,universe==='client'?5:6);
+   const reachableControls=await checkDrawerContent(panel,universe==='client'?5:11);
+   await page.getByRole('button',{name:universe==='client'?'Mon espace':'Disponibilité',exact:true}).scrollIntoViewIfNeeded();
    const drawer=await captureDrawer(page,panel,root+`/${universe}-drawer-${width}-${reducedMotion}.png`);
    await page.getByRole('button',{name:'Se déconnecter',exact:true}).click();
    const busy=page.getByRole('button',{name:'Déconnexion en cours'});await busy.waitFor();assert.equal(await busy.getAttribute('aria-disabled'),'true');

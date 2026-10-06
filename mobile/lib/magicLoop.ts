@@ -1,3 +1,4 @@
+import { requireCanonicalCity } from './clientLocation';
 import { supabase } from './supabase';
 
 import { DispatchOffer, normalizeDispatchOffers } from './dispatchContract';
@@ -10,7 +11,7 @@ export async function createRequest(
 ) {
   const { data, error } = await supabase.rpc('create_my_service_request_v1', {
     p_service_category: service,
-    p_city: city,
+    p_city: requireCanonicalCity(city),
     p_description: description,
     p_idempotency_key: idempotencyKey,
   });

@@ -6,9 +6,9 @@ import { RAFI_STATES, RAFI_LABELS, fromLegacyRafiMode, getRafiGeometry,
 import { readFileSync } from 'node:fs';
 import { rafiMotionTokens } from '../ui/tokens';
 
-test('W3 eight semantic states and French labels are exhaustive; legacy calls retain identity', () => {
-  assert.deepEqual(RAFI_STATES, ['idle', 'listening', 'understanding', 'working', 'matching', 'intervention', 'success', 'attention']);
-  assert.deepEqual(Object.values(RAFI_LABELS), ['RAFI est prêt', 'RAFI écoute', 'RAFI comprend votre demande', 'RAFI travaille', 'FIXEO recherche un artisan', 'Intervention en cours', 'RAFI a terminé cette étape', 'Une action demande votre attention']);
+test('PB1 canonical and legacy semantic states and French labels are exhaustive; legacy calls retain identity', () => {
+  assert.deepEqual(RAFI_STATES, ['idle', 'listening', 'thinking', 'speaking', 'understanding', 'working', 'matching', 'intervention', 'success', 'attention']);
+  assert.deepEqual(Object.values(RAFI_LABELS), ['RAFI est prêt', 'RAFI écoute', 'RAFI comprend votre demande', 'RAFI travaille', 'FIXEO recherche un artisan', 'Intervention en cours', 'RAFI a terminé cette étape', 'Une action demande votre attention', 'RAFI réfléchit', 'RAFI parle']);
   for (const state of RAFI_STATES) {
     assert.equal(getRafiOrbAccessibilityLabel(state), RAFI_LABELS[state]);
     const motion = getRafiOrbMotion(state);
@@ -16,10 +16,10 @@ test('W3 eight semantic states and French labels are exhaustive; legacy calls re
       assert.ok(pair.every(value => Number.isFinite(value) && value > 0));
     }
     assert.ok(motion.haloOpacity.every(value => value <= 1));
-    assert.equal(motion.orbitDuration > 0, state === 'matching');
+    assert.equal(motion.orbitDuration, 0);
   }
   for (const mode of ['idle', 'listening', 'working', 'success'] as const) assert.equal(fromLegacyRafiMode(mode), mode);
-  assert.ok(getRafiOrbMotion('working').breathDuration < getRafiOrbMotion('listening').breathDuration);
+  assert.ok(getRafiOrbMotion('working').breathDuration > getRafiOrbMotion('listening').breathDuration);
   assert.ok(getRafiOrbMotion('listening').breathDuration < getRafiOrbMotion('idle').breathDuration);
   assert.equal(rafiMotionTokens.completion.delay, 0);
 });
@@ -95,7 +95,7 @@ test('presence engine has no backend or per-frame React side effects; visual mat
   assert.doesNotMatch(renderer, /#[0-9a-fA-F]{3,8}\b|rgba?\(/);
   assert.match(renderer, /useNativeDriver: true/);
   assert.match(renderer, /isInteraction: false/);
-  assert.match(renderer, /animation\.stop\(\)/);
+  assert.match(renderer, /animation\?\.stop\(\)/);
 });
 
 test('W6 permission explanation preserves the Evidence upload contract', () => {

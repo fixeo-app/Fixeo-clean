@@ -31,7 +31,7 @@ export function intelligenceFailure(error: unknown) {
   if (/QUOTA/.test(code)) return { kind: 'quota', message: 'RAFI a atteint sa limite d’analyse pour le moment. Votre demande simple reste possible.' };
   if (/CITY_NOT_SUPPORTED/.test(code)) return { kind: 'city', message: 'Choisissez une ville FIXEO prise en charge.' };
   if (/INVALID_PHONE/.test(code)) return { kind: 'phone', message: 'Vérifiez votre numéro de téléphone marocain.' };
-  return { kind: 'retry', message: 'La connexion avec RAFI est indisponible. Réessayez quand vous êtes connecté.' };
+  return { kind: 'retry', message: 'RAFI ne répond pas pour le moment. Votre besoin et votre ville sont conservés. Réessayez dans un instant.' };
 }
 
 export function canonicalOption(option: unknown): { value: string | number | boolean; label: string } | null {
