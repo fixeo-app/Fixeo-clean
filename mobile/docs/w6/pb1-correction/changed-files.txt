@@ -30,6 +30,7 @@ mobile/components/OpenMailbox.tsx
 mobile/components/PremiumDrawer.tsx
 mobile/components/SessionRevalidation.tsx
 mobile/components/useWorkspaceDock.ts
+mobile/docs/w6/pb1-correction/FINAL_FREEZE.md
 mobile/docs/w6/pb1-correction/README.md
 mobile/docs/w6/pb1-correction/STATUS.json
 mobile/docs/w6/pb1-correction/after/agenda-manual.png
@@ -108,6 +109,10 @@ mobile/docs/w6/pb1-correction/control-fixture-runtime.json
 mobile/docs/w6/pb1-correction/control-fixture-runtime.log
 mobile/docs/w6/pb1-correction/expo-doctor.log
 mobile/docs/w6/pb1-correction/final-exports.log
+mobile/docs/w6/pb1-correction/freeze-android-export.log
+mobile/docs/w6/pb1-correction/freeze-contracts.log
+mobile/docs/w6/pb1-correction/freeze-review.json
+mobile/docs/w6/pb1-correction/freeze-typecheck.log
 mobile/docs/w6/pb1-correction/gate-a.log
 mobile/docs/w6/pb1-correction/living-runtime.log
 mobile/docs/w6/pb1-correction/native-prebuild.log

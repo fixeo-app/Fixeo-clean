@@ -1,0 +1,26 @@
+{
+  "scope": "PB1 full incremental diff vs observed physical build source",
+  "initialSHA": "48b54c2795d72bc26cb5927a344e21bdd938901e",
+  "previousPublishedSHA": "9024dbc5dcded60f01d2169dd0c1d5e4b40b4275",
+  "reviewedPublishedTree": "bf65444178e47e28ff81fcf4e415db0b968a06d5",
+  "runtimeContentSHA256": "fa84e5d496f8d2f285fc2e5161b89668d2f656a4f7507682bf9bb68b959780e7",
+  "nativeSourceChangesSince5efa818": false,
+  "outsideMobileChanges": [
+    "tests/control-contract/browser-bloc6.cjs"
+  ],
+  "controlChange": "Explicit UI cohort date filter only; assertions and business code unchanged",
+  "canonicalMaterialByteIdentical": {
+    "mobile/assets/rafi/rafi-master-core-v1.png": "b08ce64b07953205c03317e08737ce9dbfef7aeec79179792d8820833c3311d6",
+    "mobile/ui/RafiCoreMaterial.tsx": "0a83af51a461a169c20d84bd57fe0cd91e626c3b77316b5afe259352b6786544"
+  },
+  "supabaseMigrations": 0,
+  "productionWrites": 0,
+  "passwordChanges": 0,
+  "physicalBuildsStarted": 0,
+  "reviewFindings": "No further blocking code defect identified. Native runtime and signed-in business certification are explicitly deferred to physical Android per user instruction.",
+  "noMobileAbortSignalTimeoutCalls": true,
+  "lint": "No dedicated lint script configured; TypeScript, contracts and diff whitespace checked",
+  "manualPreviewTesting": "STOPPED_BY_USER",
+  "finalSHARecording": "Exact published freeze SHA and final CI are recorded on PR #150 and in the delivery message after publication, to avoid a self-referential commit SHA.",
+  "runtimeFilesFingerprinted": 145
+}

@@ -1,5 +1,5 @@
 {
-  "status": "SOFTWARE_IN_PROGRESS_BUILD_REQUIRES_SEPARATE_GO",
+  "status": "PB1 SOFTWARE CANDIDATE — FINAL FREEZE",
   "initialHead": "48b54c2795d72bc26cb5927a344e21bdd938901e",
   "branch": "feat/fixeo-mobile-w6-entry-auth-trust",
   "pr": 150,
@@ -14,7 +14,7 @@
   "expoDoctorChecks": 18,
   "rafiSoftwareVerdict": "PASS RAFI LIVING SPHERE — READY FOR PHYSICAL REVIEW",
   "rafiPhysicalVerdict": "PENDING",
-  "fullPB1Verdict": "PENDING_LIVE_STAGING",
+  "fullPB1Verdict": "NOT_DECLARED_PHYSICAL_CERTIFICATION_PENDING",
   "supabaseMutations": 0,
   "newUsers": 0,
   "authRecoveryRequests": 0,
@@ -27,7 +27,29 @@
   "package": "ma.fixeo.app",
   "version": "0.3.0",
   "versionCode": 5,
-  "authClient": "IDENTITY_CONFIRMED_CREDENTIALS_REJECTED_SESSION_REQUIRED",
-  "controlFixtureFix": "TEST_ONLY_FIXED_UI_COHORT_WINDOW_LOCAL_PASS_10_CHECKS",
-  "buildAuthorization": "NOT_AUTHORIZED_AWAIT_SEPARATE_GO_AFTER_SOFTWARE_FINAL_FREEZE"
+  "authClient": "DEFERRED TO PHYSICAL CERTIFICATION",
+  "controlFixtureFix": "TEST_ONLY_FIXED_UI_COHORT_WINDOW_PASS_LOCAL_AND_CI",
+  "buildAuthorization": "NOT_AUTHORIZED_WAIT_FOR_GO_PB1_SINGLE_FINAL_ANDROID_BUILD",
+  "readiness": "READY FOR SINGLE PHYSICAL BUILD",
+  "previousPublishedSHA": "9024dbc5dcded60f01d2169dd0c1d5e4b40b4275",
+  "authPreview": "DEFERRED TO PHYSICAL CERTIFICATION",
+  "realStagingMatrix": "DEFERRED TO PHYSICAL CERTIFICATION_BY_USER",
+  "softwareResults": {
+    "clientOS": "PASS logiciel",
+    "artisanOS": "PASS logiciel",
+    "rafiTimeoutRetry": "PASS logiciel",
+    "rafiLivingSphere": "PASS logiciel",
+    "entryAuthTrustCode": "PASS logiciel",
+    "typecheck": "PASS",
+    "contracts": "127/127 PASS",
+    "androidHermesExport": "PASS"
+  },
+  "ciBeforeDocumentationCommit": {
+    "sha": "9024dbc5dcded60f01d2169dd0c1d5e4b40b4275",
+    "passed": 5,
+    "failed": 0
+  },
+  "finalCIRecord": "PR #150, exact freeze SHA, verified after publication",
+  "passwordChanges": 0,
+  "manualPreviewTesting": "STOPPED"
 }

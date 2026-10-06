@@ -1,13 +1,16 @@
-# PB1 Correction + RAFI Living Sphere — checkpoint de revue
+# PB1 Correction + RAFI Living Sphere — dossier de gel logiciel
 
-**PB1 : chantier logiciel en cours, matrice staging authentifiée en attente. Aucun build Android autorisé avant gel logiciel et GO explicite séparé.**
+**PB1 SOFTWARE CANDIDATE — FINAL FREEZE**
+**READY FOR SINGLE PHYSICAL BUILD**
+
+Le mandat final reporte explicitement toute recette utilisateur réelle à Android physique après le seul build, lequel reste interdit sans nouveau GO. Voir `FINAL_FREEZE.md`.
 **RAFI : PASS RAFI LIVING SPHERE — READY FOR PHYSICAL REVIEW** pour les contrôles logiciels décrits ci-dessous uniquement. Aucun résultat navigateur ne certifie la fluidité, la chauffe, les permissions ou le rendu du téléphone Android PB1.
 
 ## A–B. Source et périmètre
 
 Checkpoint initial vérifié sur GitHub : `48b54c2795d72bc26cb5927a344e21bdd938901e`.
 Dépôt `fixeo-app/Fixeo-clean`, seule branche `feat/fixeo-mobile-w6-entry-auth-trust`, PR #150 ouverte, Draft, non mergée, base `feat/fixeo-mobile-m4-terrain`.
-Le commit contenant ce dossier constitue le checkpoint de revue ; il ne vaut pas autorisation de lancer le build tant que la matrice réelle reste en attente. Le SHA publié est relevé séparément après la publication.
+Le commit final contenant ce dossier constitue le gel logiciel. Le SHA exact publié et sa CI finale sont relevés sur PR #150 et dans le compte-rendu après publication. Ce gel n’autorise aucun build. Le code applicatif est identique à celui de `5efa818d84987d13072e1d53f80f8efc42585b58` ; `9024dbc5dcded60f01d2169dd0c1d5e4b40b4275` ajoute uniquement la période du test Control et sa documentation.
 
 ## C–D. Correctifs
 
@@ -65,7 +68,7 @@ Le fichier MASTER et `RafiCoreMaterial.tsx` sont inchangés octet pour octet, co
 | Public Auth | 320 px, texte 200 %, clavier, routes privées fermées et callback legacy nettoyé : PASS |
 | RAFI vivant | Six états, retour IDLE, toucher, navigation, background, viewport, compact, Reduce Motion, cleanup, fallback d'animation et commandes micro : PASS |
 | Staging DB | Lecture seule des fixtures : PASS, données PB1 intactes |
-| Matrice produit staging authentifiée | EN ATTENTE : aucune session FIXEO disponible dans la Preview |
+| Auth Preview / matrice utilisateur staging réelle | DEFERRED TO PHYSICAL CERTIFICATION — instruction finale utilisateur, aucune session Preview certifiée |
 | Certification physique Android | NON EXÉCUTÉE |
 
 Les tests HTTP simulés ne contactent pas le backend. Le snapshot staging est uniquement une lecture DB ; il ne remplace pas les tests Auth/RLS et les parcours connectés. Les erreurs de harnais intermédiaires (export brut sans script callback, ancien libellé de menu, événements tactiles artificiels incomplets) ont été corrigées ; seuls les résultats finaux sont utilisés.
@@ -85,7 +88,7 @@ Trois modules natifs compatibles Expo SDK 54 ont été ajoutés : datetimepicker
 ## J–M. Build et suite
 
 Nouveau build ID : **aucun**. Lien APK corrigé : **aucun**. Builds Android lancés : **0**.
-Après authentification sécurisée des fixtures existantes, terminer la matrice staging et les points Auth ouverts ; obtenir la CI complète, revoir le diff et vérifier le SHA/PR/Main/Production. Publier alors **PB1 SOFTWARE CANDIDATE — FINAL FREEZE**, puis **STOP et attendre le GO explicite séparé** pour le seul build Android physique. Profil réservé : `w6-physical-certification`, environnement EAS `preview`, backend staging exclusivement. Aucun build intermédiaire ou de validation, aucune recréation de credentials ou activation d’automatisation.
+La stratégie finale remplace la matrice Preview par une recette sur Android physique après build. Les contrôles automatiques et la revue logicielle sont clos, Auth Preview est différée. Après publication du SHA et CI finale : **STOP**. Attendre exactement **GO PB1 — SINGLE FINAL ANDROID BUILD**. Profil réservé : `w6-physical-certification`, environnement EAS `preview`, backend staging exclusivement. Aucun build intermédiaire ou de validation, aucune recréation de credentials ou activation d’automatisation.
 
 La re-certification manuelle doit couvrir les deux OS, permissions et contexte, RAFI IDLE/tap/LISTENING/THINKING/SUCCESS/RETRY, DatePicker/TimePicker, barres/clavier, fluidité et chauffe. Aucun PASS physique n'est revendiqué.
 
@@ -95,4 +98,6 @@ La re-certification manuelle doit couvrir les deux OS, permissions et contexte, 
 
 Auth staging clarifié en lecture seule : le Client canonique existe, email confirmé, mot de passe configuré, aucun bannissement ni suppression. Les logs Auth de la fenêtre de connexion portent `400 / invalid_credentials` sur `/token` ; le formulaire affiche la même erreur. Cela ne valide pas une session ni la matrice connectée. Les valeurs de mot de passe, hashes et tokens n’ont pas été lus. Voir `auth-clarification.json`.
 
-Le CI Control du checkpoint `5efa818d84987d13072e1d53f80f8efc42585b58` échouait parce que ses fixtures statiques du 5 septembre étaient sorties de la fenêtre glissante de 30 jours. La rectification autorisée fixe **uniquement dans `tests/control-contract/browser-bloc6.cjs`** les champs UI de période au `[2026-09-01, 2026-09-19)` ; la cohorte précédente inclut le 20 août. Les assertions SMALL_SAMPLE/Wilson, les données et le métier Control sont inchangés. Rejeu local réel UI → handler → SQL isolé : **10 contrôles PASS, 0 exécution métier**, voir `control-fixture-runtime.json`. La CI complète du prochain SHA reste à relever après publication.
+Le CI Control du checkpoint `5efa818d84987d13072e1d53f80f8efc42585b58` échouait parce que ses fixtures statiques du 5 septembre étaient sorties de la fenêtre glissante de 30 jours. La rectification autorisée fixe **uniquement dans `tests/control-contract/browser-bloc6.cjs`** les champs UI de période au `[2026-09-01, 2026-09-19)` ; la cohorte précédente inclut le 20 août. Les assertions SMALL_SAMPLE/Wilson, les données et le métier Control sont inchangés. Rejeu local réel UI → handler → SQL isolé : **10 contrôles PASS, 0 exécution métier**, voir `control-fixture-runtime.json`. La CI sur `9024dbc5dcded60f01d2169dd0c1d5e4b40b4275` est **5/5 PASS**. Le dernier commit ajoute uniquement le dossier de gel et les contrôles automatiques actualisés ; sa CI finale est relevée après publication sur PR #150.
+
+La dernière tentative de connexion confidentielle a aussi été refusée. Le GO temporaire de modification du mot de passe n’a produit aucune écriture : accès Dashboard non établi. Le mandat final annule cette démarche à ce stade. Aucun mot de passe n’a été changé, aucun recovery/email/signup déclenché. **Auth Preview : DEFERRED TO PHYSICAL CERTIFICATION.**
