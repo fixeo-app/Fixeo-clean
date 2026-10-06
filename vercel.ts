@@ -20,7 +20,7 @@ export const config = w6 ? {
     { handle: 'filesystem' },
     { src: '/(.*)', dest: '/mobile/index.html' },
   ],
-  git: { deploymentEnabled: { [w6Branch]: true } },
+  git: { deploymentEnabled: { [w6Branch]: false } },
 } : isolated ? {
   version: 2,
   builds: [

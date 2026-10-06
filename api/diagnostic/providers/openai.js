@@ -7,6 +7,7 @@ const {
 const { boundedBody, DiagnosticError } = require("../transport");
 const {
   photoInstructions,
+  descriptivePhotoInstructions,
   photoSchema,
   validatePhotoEvidence,
   isUniformPhoto,
@@ -44,6 +45,7 @@ function createOpenAIAdapter({
   fetchImpl = fetch,
   timeout = 25000,
   deadline = Infinity,
+  photoPolicy = "diagnostic",
 } = {}) {
   const model = env.FIXEO_DIAGNOSTIC_MODEL;
   return {
@@ -135,7 +137,7 @@ function createOpenAIAdapter({
         const photos = validatePhotoEvidence(
           await request(
             content,
-            photoInstructions,
+            photoPolicy === "descriptive" ? descriptivePhotoInstructions : photoInstructions,
             apiSchema(photoSchema),
             "fixeo_photo_evidence_v1",
             1024,
@@ -158,7 +160,7 @@ function createOpenAIAdapter({
             }),
           },
         ],
-        instructions,
+        photoPolicy === "descriptive" ? instructions + '\nRecognizable objects do not establish a fault. If no defect is identifiable, state: Aucun défaut identifiable uniquement à partir de cette image. Never say no clear photo observation when photo_evidence contains observations. Do not turn scene recognition into a request or an asserted fault.' : instructions,
         responseSchema,
         "fixeo_diagnostic_v1",
         2048,
