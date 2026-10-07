@@ -38,4 +38,11 @@ const runtimeConfig = w6 ? {
 } : legacy;
 
 // Git webhook evaluation may not expose VERCEL_GIT_COMMIT_REF. The branch deny rule must be unconditional.
-export const config = { ...runtimeConfig, git: { ...runtimeConfig.git, deploymentEnabled: { ...runtimeConfig.git?.deploymentEnabled, [w6Branch]: false } } };
+export const config = {
+  ...runtimeConfig,
+  // Vercel reads git rules statically before it evaluates runtimeConfig.
+  git: { deploymentEnabled: {
+    'feat/diagnostic-v1': false,
+    'feat/fixeo-mobile-w6-entry-auth-trust': false,
+  } },
+};

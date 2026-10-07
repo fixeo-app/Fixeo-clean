@@ -27,3 +27,9 @@ La CI du SHA publié, le backend STAGING et le gel exact sont vérifiés et cons
 ## Publication et limites
 
 La publication CLI n'a pas d'identité GitHub disponible. Utiliser le connecteur authentifié, comparer l'arbre intégral publié à l'arbre local testé, puis déplacer la seule ref W6 avec contrôle du parent attendu, sans force. PR Draft, aucun merge, aucun Main, aucune Production, aucune Preview UI, aucune validation visuelle intermédiaire. Le dernier build distant observé avant cette reprise était `b037efcb-032e-45e6-a593-0e8d9d71ee01` (0.3.0 (6), ancien SHA). Il ne s'agit pas du nouveau build autorisé.
+
+## Contrôle après publication
+
+Le premier SHA de reprise `c7880c4452a69c8868256ea8989b2a8eed562668` a déclenché un contrôle automatique Vercel qui a refusé la configuration : les propriétés `git` doivent être statiques, et ne peuvent contenir les spreads du commit local récupéré. Le correctif remplace uniquement cette déclaration par les deux exclusions littérales, sans changer les routes ou les autres branches. Un test de régression couvre cette erreur de configuration. Aucune Preview UI n'a été ouverte ou certifiée.
+
+Le déploiement API de calibration Vision a été refusé par l'approbation automatique avant toute mutation : contexte de branche historique du backend distinct de W6 et cible non explicite. La calibration est versionnée et testée mais reste NON DÉPLOYÉE tant que ce point n'est pas levé. Aucun PASS PB1 FINAL global ne doit être annoncé tant que la correction Vision n'est pas servie en STAGING. Backend précédent conservé, aucun changement Production.

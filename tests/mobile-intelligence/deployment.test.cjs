@@ -17,3 +17,9 @@ test('W41 builds only three JWT mobile endpoints; legacy routing preserved for o
  assert.equal(build({env:{}},legacy).git.deploymentEnabled['feat/fixeo-mobile-w6-entry-auth-trust'],false);
  assert.deepEqual(build({env:{FIXEO_STAGING_PROJECT_REF:'kqyhusnbybsukbcaoqtu'}},legacy).builds,config.builds);
 });
+
+test('PB1 Git deployment exclusions are literal static properties before runtime evaluation',()=>{
+ const configExport=source.slice(source.indexOf('const config ='));
+ assert.match(configExport,/git: \{ deploymentEnabled: \{\s*'feat\/diagnostic-v1': false,\s*'feat\/fixeo-mobile-w6-entry-auth-trust': false,/);
+ assert.doesNotMatch(configExport,/\.\.\.runtimeConfig\.git|\[w6Branch\]/);
+});
