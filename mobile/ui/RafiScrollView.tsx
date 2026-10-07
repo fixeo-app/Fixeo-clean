@@ -14,7 +14,7 @@ export const RafiScrollView = forwardRef<ScrollView, ScrollViewProps>(function R
     subscribe(fn) { listeners.add(fn); return () => { listeners.delete(fn); }; },
     measure(fn) { scroll.current?.getNativeScrollRef()?.measureInWindow((_x, y, _w, h) => fn(y, y + h)); },
   }), [listeners]);
-  return <RafiViewport.Provider value={viewport}><ScrollView {...props}
+  return <RafiViewport.Provider value={viewport}><ScrollView {...props} style={[{ flex: 1, minHeight: 0 }, props.style]}
     ref={value => { scroll.current = value; if (typeof forwarded === 'function') forwarded(value); else if (forwarded) forwarded.current = value; }}
     scrollEventThrottle={Math.max(160, props.scrollEventThrottle || 0)}
     onScroll={event => { notify(); props.onScroll?.(event); }}

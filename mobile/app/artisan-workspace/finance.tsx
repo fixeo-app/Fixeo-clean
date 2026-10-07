@@ -1,3 +1,4 @@
+import { formatWorkspaceDate } from '@/lib/workspacePresentation';
 import { DateField } from '@/components/DateField';
 import { useLocalSearchParams } from 'expo-router';
 import { ledgerDetailLabel, ledgerTypeLabel, ledgerJobLabel } from '@/lib/ledgerPresentation';
@@ -91,7 +92,7 @@ export default function Finance() {
             Dépenses · {money(totals.expense)}
           </FixeoText>
           <FixeoText variant="supporting" tone="inverseSecondary">
-            Lecture des 200 derniers mouvements disponibles.
+            Vos mouvements récents, pour suivre votre activité.
           </FixeoText>
         </ArtisanSection>
       )}
@@ -200,7 +201,7 @@ export default function Finance() {
       {rows?.map((r) => (
         <View style={art.row} key={r.id}>
           <FixeoText variant="eyebrow" tone="secondary">
-            {r.occurred_on} · {ledgerTypeLabel(r)}
+            {formatWorkspaceDate(r.occurred_on)} · {ledgerTypeLabel(r)}
           </FixeoText>
           <FixeoText variant="heading">
             {r.entry_type === "income" ? "+" : "−"} {money(r.amount)}

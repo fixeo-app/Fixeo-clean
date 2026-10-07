@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
-import { Keyboard, Platform, View } from 'react-native';
+import { useEffect, useRef, useState, type Ref } from 'react';
+import { Keyboard, Platform, View, TextInput } from 'react-native';
 import { formatAgendaDateInput, formatAgendaTimeInput, agendaPickerValue, pickerDateParts } from '@/lib/agendaDate';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoText } from '@/ui/FixeoText';
 import { ArtisanField } from './ArtisanEditorial';
 
-export function AgendaDateTimeField({ date, time, onDate, onTime }: {
+export function AgendaDateTimeField({ date, time, onDate, onTime, errors, dateRef, timeRef }: {
+  errors?: { date?: string; time?: string }; dateRef?: Ref<TextInput>; timeRef?: Ref<TextInput>;
   date: string; time: string; onDate: (value: string) => void; onTime: (value: string) => void;
 }) {
   const mounted = useRef(true), opening = useRef(false);
@@ -30,9 +31,9 @@ export function AgendaDateTimeField({ date, time, onDate, onTime }: {
     } catch { opening.current = false; if (mounted.current) setError('La saisie manuelle reste disponible.'); }
   }
   return <View style={{ gap: 12 }}>
-    <ArtisanField label="Date — JJ/MM/AAAA" value={date} keyboardType="number-pad" onChangeText={value => onDate(formatAgendaDateInput(value))} />
+    <ArtisanField error={errors?.date} inputRef={dateRef} label="Date — JJ/MM/AAAA" value={date} keyboardType="number-pad" onChangeText={value => onDate(formatAgendaDateInput(value))} />
     {Platform.OS === 'android' && <FixeoAction label="Choisir la date" variant="secondary" onPress={() => void open('date')} />}
-    <ArtisanField label="Heure — HH:MM" value={time} keyboardType="number-pad" onChangeText={value => onTime(formatAgendaTimeInput(value))} />
+    <ArtisanField error={errors?.time} inputRef={timeRef} label="Heure — HH:MM" value={time} keyboardType="number-pad" onChangeText={value => onTime(formatAgendaTimeInput(value))} />
     {Platform.OS === 'android' && <FixeoAction label="Choisir l’heure" variant="secondary" onPress={() => void open('time')} />}
     {!!error && <FixeoText accessibilityLiveRegion="polite" tone="secondary">{error}</FixeoText>}
   </View>;

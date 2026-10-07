@@ -4,6 +4,7 @@ import { loadArtisanMissions } from "@/lib/artisanOS";
 import { businessStatus, when } from "@/lib/artisanExperience";
 import {
   ArtisanPage,
+  ArtisanCue,
   ArtisanEmpty,
   ArtisanMessage,
   useArtisanQuery,
@@ -21,6 +22,7 @@ export default function Missions() {
       loading={q.loading}
       onRefresh={() => void q.reload()}
     >
+      <ArtisanCue title="RAFI · Suivre votre mission" text="Retrouvez chaque mission et sa prochaine étape, de l’acceptation à la validation." />
       <ArtisanMessage message={q.error} retry={() => void q.reload()} />
       {q.data?.map((m) => (
         <View style={art.row} key={m.mission_id}>

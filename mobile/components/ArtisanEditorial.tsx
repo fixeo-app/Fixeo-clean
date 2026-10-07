@@ -1,7 +1,7 @@
 import { BackButton } from '@/ui/BackButton';
 import { pageLayout } from '@/ui/pageLayout';
 import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
-import { useCallback, useEffect, useRef, useState, type PropsWithChildren } from "react";
+import { useCallback, useEffect, useRef, useState, type PropsWithChildren, type ReactNode, type Ref } from "react";
 import { RafiSignalContext } from '@/ui/RafiSignal';
 import { rafiActionState, type RafiSignal } from '@/ui/rafiPresence';
 import {
@@ -116,6 +116,7 @@ export function ArtisanPage({
   transactional: _transactional = false,
   rafi,
   back = true,
+  hero,
 }: PropsWithChildren<{
   title: string;
   eyebrow?: string;
@@ -127,8 +128,10 @@ export function ArtisanPage({
   transactional?: boolean;
   rafi?: RafiSignal;
   back?: boolean;
+  hero?: ReactNode;
 }>) {
   const workspaceDock = useWorkspaceDock('artisan');
+  const contextualItems = dock?.items.filter(item => !workspaceDock?.items.some(global => global.label === item.label)) || [];
   const accessibleDock = workspaceDock; // Global navigation is independent of contextual actions.
   return (
     <RafiSignalContext.Provider value={rafi || null}><FixeoScreen
@@ -148,6 +151,7 @@ export function ArtisanPage({
       }
     >
       <ScrollView
+        style={{ flex: 1, minHeight: 0 }}
         contentContainerStyle={art.content}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
@@ -158,15 +162,16 @@ export function ArtisanPage({
         }
       >
         {back && <BackButton />}
-        <View style={art.intro}>
-          <View style={art.signature} />
+        {hero}
+        <View style={[art.intro, hero ? { alignItems: 'center', marginBottom: 8 } : undefined]}>
+          {!hero && <View style={art.signature} />}
           <FixeoText variant="eyebrow" tone="secondary">
             {eyebrow}
           </FixeoText>
-          <FixeoText variant="hero" accessibilityRole="header">
+          <FixeoText variant="hero" accessibilityRole="header" style={hero ? { textAlign: 'center' } : undefined}>
             {title}
           </FixeoText>
-          {detail && <FixeoText tone="secondary">{detail}</FixeoText>}
+          {detail && <FixeoText tone="secondary" style={hero ? { textAlign: 'center' } : undefined}>{detail}</FixeoText>}
         </View>
         {loading && (
           <View style={art.loading}>
@@ -177,12 +182,11 @@ export function ArtisanPage({
           </View>
         )}
         {children}
-      </ScrollView>
         {dock && !dock.hidden && <View accessibilityLabel="Actions de cette page" style={art.contextActions}>
-          {dock.items.map(item => <FixeoAction key={item.key} label={item.label} variant="secondary"
+          {contextualItems.map(item => <FixeoAction key={item.key} label={item.label} variant="secondary"
             accessibilityLabel={item.accessibilityLabel} disabled={item.disabled} onPress={item.action} style={art.choice} />)}
         </View>}
-
+      </ScrollView>
     </FixeoScreen></RafiSignalContext.Provider>
   );
 }
@@ -270,22 +274,25 @@ export function ArtisanMessage({
   );
 }
 export function ArtisanField({
-  label,
+  label, error, inputRef,
   ...props
-}: TextInputProps & { label: string }) {
+}: TextInputProps & { label: string; error?: string; inputRef?: Ref<TextInput> }) {
   return (
     <View style={art.field}>
       <FixeoText variant="supporting">{label}</FixeoText>
       <TextInput
+        ref={inputRef}
         accessibilityLabel={label}
         placeholderTextColor={semanticColors.text.secondary}
         {...props}
         style={[
           art.input,
+          error && { borderWidth: 2, borderColor: semanticColors.text.secondary },
           props.multiline && { minHeight: 100, textAlignVertical: "top" },
           props.style,
         ]}
       />
+      {error && <FixeoText accessibilityRole="alert" accessibilityLiveRegion="polite">ⓘ {error}</FixeoText>}
     </View>
   );
 }
@@ -296,7 +303,7 @@ export function ArtisanChoices({
   onChange,
 }: {
   label: string;
-  options: { value: string; label: string }[];
+  options: { value: string; label: string; disabled?: boolean }[];
   value: string;
   onChange: (v: string) => void;
 }) {
@@ -309,7 +316,8 @@ export function ArtisanChoices({
             key={o.value}
             label={o.label}
             variant={value === o.value ? "primary" : "secondary"}
-            accessibilityState={{ selected: value === o.value }}
+            disabled={o.disabled}
+            accessibilityState={{ selected: value === o.value, disabled: !!o.disabled }}
             onPress={() => onChange(o.value)}
             style={art.choice}
           />

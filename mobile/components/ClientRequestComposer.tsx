@@ -1,4 +1,7 @@
 import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
+import { ClientDraftRecovery } from './ClientDraftRecovery';
+import { loadClientDrafts, saveClientDraft, removeClientDraft, draftStorageGeneration, type EstimatorDraft } from '@/lib/clientDrafts';
+import { privateSessionGeneration } from '@/lib/authEvents';
 import { useWorkspaceDock } from '@/components/useWorkspaceDock';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
@@ -41,7 +44,27 @@ import { colors, semanticColors, space, typography, spacing } from '@/ui/tokens'
 
 type JourneyStatus = 'idle' | 'matching' | 'assigned' | 'in_progress' | 'completed';
 
-export default function ClientRequestComposer({ back = true }: { back?: boolean }) {
+export default function ClientRequestComposer({ back = true, resumeDraftId }: { back?: boolean; resumeDraftId?: string }) {
+  const [draftId] = useState(() => resumeDraftId || Crypto.randomUUID());
+  const draftOwner = useRef('');
+  const draftStorageEpoch = useRef(draftStorageGeneration());
+  const draftGeneration = useRef(privateSessionGeneration());
+  const draftFinished = useRef(false);
+  const [draftLoaded, setDraftLoaded] = useState(false);
+  const [estimatorDraft, setEstimatorDraft] = useState<EstimatorDraft | null>(null);
+  const [discardPrompt, setDiscardPrompt] = useState(false);
+  const [cityError, setCityError] = useState(false);
+  const [cityFocus, setCityFocus] = useState(0);
+  const scrollRef = useRef<import('react-native').ScrollView>(null);
+  const cityAnchor = useRef<View>(null), scrollOffset = useRef(0);
+  const needCity = () => {
+    setCityError(true); setCityFocus(value => value + 1);
+    cityAnchor.current?.measureInWindow((_x, fieldY) => {
+      scrollRef.current?.getNativeScrollRef()?.measureInWindow((_sx, viewportY) => {
+        scrollRef.current?.scrollTo({ y: Math.max(0, scrollOffset.current + fieldY - viewportY - 16), animated: true });
+      });
+    });
+  };
   const contextDock = useWorkspaceDock('client');
   const [estimateOpen, setEstimateOpen] = useState(false);
   const [estimateContext, setEstimateContext] = useState<ClientIntelligenceContext | null>(null);
@@ -97,22 +120,47 @@ export default function ClientRequestComposer({ back = true }: { back?: boolean 
 
   useEffect(() => {
     let active = true;
+    const generation = privateSessionGeneration(), storageEpoch = draftStorageGeneration();
     void (async () => {
       try {
         const session = await withMobileDeadline(getStableSession());
-        if (!active) return;
+        if (!active || draftGeneration.current !== privateSessionGeneration() || draftStorageEpoch.current !== draftStorageGeneration()) return;
         if (!session) { router.replace('/sign-in'); return; }
         const role = await withMobileDeadline(resolveRole(session.user.id));
-        if (!active) return;
+        if (!active || generation !== privateSessionGeneration() || storageEpoch !== draftStorageGeneration()) return;
         if (role !== 'client') { router.replace(role === 'artisan' ? '/artisan' : '/sign-in'); return; }
-        setClientReady(true);
+        draftOwner.current = session.user.id;
+        draftGeneration.current = generation; draftStorageEpoch.current = storageEpoch;
+        const drafts = await loadClientDrafts(session.user.id);
+        if (!active || generation !== privateSessionGeneration() || storageEpoch !== draftStorageGeneration()) return;
+        const saved = resumeDraftId && drafts.find(item => item.id === resumeDraftId);
+        if (saved) {
+          setProblem(saved.problem); setCity(saved.city); setDeclaredService(saved.declaredService);
+          setProblemConfirmedFromRafi(saved.problemConfirmedFromRafi); setWriting(true);
+          setPhotoUri(saved.photoUri); setPhotoMimeType(saved.photoMimeType);
+          setPhotoDiagnostic(saved.photoDiagnostic); setReviewedDiagnostic(saved.photoReviewed ? saved.photoDiagnostic : null);
+          setDiagnosticReference(saved.diagnosticReference); setDiagnosticCity(saved.diagnosticCity); setPersistPhoto(saved.persistPhoto);
+          setSafetyStopped(saved.safetyStopped); setSafetyMessage(saved.safetyMessage);
+          setEstimateContext(saved.estimateContext); setEstimateOpen(saved.estimateOpen); setEstimatorDraft(saved.estimator);
+          idempotencyKeyRef.current = saved.submissionKey;
+          if (saved.submissionKey) setLoop({ state: 'error', message: 'Votre confirmation est conservée. Vérifiez la demande avant de poursuivre.' });
+        }
+        setDraftLoaded(true); setClientReady(true);
         const profile = await getClientProfile().catch(() => null);
         if (active && profile?.city) setCity(value => value || profile.city!);
       } catch { if (active) setSessionError(true); }
     })();
     return () => { active = false; };
-  }, [sessionRetry]);
+  }, [sessionRetry, resumeDraftId]);
+  useEffect(() => {
+    if (!draftLoaded || draftFinished.current || draftGeneration.current !== privateSessionGeneration() || draftStorageEpoch.current !== draftStorageGeneration()) return;
+    saveClientDraft(draftOwner.current, { id: draftId, updatedAt: Date.now(), problem, city, declaredService,
+      problemConfirmedFromRafi, photoUri, photoMimeType, photoDiagnostic, photoReviewed: !!photoDiagnostic && reviewedDiagnostic === photoDiagnostic,
+      diagnosticReference, diagnosticCity, persistPhoto, safetyStopped, safetyMessage, estimateContext, estimateOpen, estimator: estimatorDraft, submissionKey: idempotencyKeyRef.current });
+  }, [draftLoaded, draftId, problem, city, declaredService, problemConfirmedFromRafi, photoUri, photoMimeType, photoDiagnostic, reviewedDiagnostic, diagnosticReference, diagnosticCity, persistPhoto, safetyStopped, safetyMessage, estimateContext, estimateOpen, estimatorDraft, loop.state]);
   function openCreatedRequest(requestId: string) {
+    if (draftGeneration.current !== privateSessionGeneration() || draftStorageEpoch.current !== draftStorageGeneration()) return;
+    draftFinished.current = true; removeClientDraft(draftOwner.current, draftId);
     if (mounted.current) router.replace({ pathname: '/client-request/[id]' as any, params: { id: requestId } });
   }
 
@@ -151,7 +199,7 @@ export default function ClientRequestComposer({ back = true }: { back?: boolean 
   async function analyzePhoto() {
     if (!photoUri || photoLock.current || safetyStopped) return;
     if (!city.trim()) {
-      setRafiMessage('Indiquez votre ville avant de lancer l’analyse photo.');
+      needCity();
       return;
     }
     if (!hasRafiServerGateway()) {
@@ -206,7 +254,7 @@ export default function ClientRequestComposer({ back = true }: { back?: boolean 
     try {
       const normalizedCity = city.trim();
       if (!normalizedCity) {
-        setLoop(current => transition(current, 'error', { message: 'Indiquez votre ville.' }));
+        needCity();
         return;
       }
       if (!need.description.trim()) {
@@ -256,7 +304,7 @@ export default function ClientRequestComposer({ back = true }: { back?: boolean 
   const intakeReady = !safetyStopped && canSendClientIntake({ busy: photoDiagnosticBusy, diagnostic: photoDiagnostic, reviewed: reviewedDiagnostic === photoDiagnostic || (!!photoDiagnostic && !need.needsConfirmation && problem !== photoDiagnostic.problem.value) });
   function sendQualifiedIntake() {
     if (!intakeReady) { setRafiMessage('Vérifiez l’analyse avant de poursuivre.'); return; }
-    if (!city.trim()) { setRafiMessage('Indiquez le lieu d’intervention pour continuer.'); return; }
+    if (!canonicalCity(city)) { needCity(); return; }
     if (need.needsConfirmation) { setWriting(true); problemInputRef.current?.focus(); setRafiMessage('Décrivez ce qui ne fonctionne pas, par exemple une fuite ou une prise en panne.'); return; }
     setConfirmDirect(true);
   }
@@ -264,13 +312,14 @@ export default function ClientRequestComposer({ back = true }: { back?: boolean 
   function openEstimate() {
     if (!intakeReady || !problem.trim() || idempotencyKeyRef.current) return;
     const normalized = canonicalCity(city);
-    if (!normalized) { setRafiMessage('Choisissez une ville FIXEO pour cette estimation.'); return; }
+    if (!normalized) { needCity(); return; }
     if (diagnosticReference && diagnosticCity !== normalized) {
       setRafiMessage('Cette analyse correspond à une autre ville. Reprenez la photo pour le lieu choisi.'); return;
     }
     const citySlug = normalized.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, '-');
     setEstimateOpen(true);
     if (estimateContext?.city === citySlug && estimateContext.description === problem.trim() && estimateContext.diagnosticReference === diagnosticReference) return;
+    setEstimatorDraft(null);
     setEstimateContext({ city: citySlug, description: problem.trim(), diagnosticReference });
   }
   function intelligenceCreated(requestId: string) {
@@ -338,10 +387,13 @@ export default function ClientRequestComposer({ back = true }: { back?: boolean 
         />
       }>
       <ScrollView
+        ref={scrollRef}
+        onScroll={event => { scrollOffset.current = event.nativeEvent.contentOffset.y; }}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
+        <ClientDraftRecovery excludeId={draftId} />
         {back && !estimateOpen && <BackButton disabled={loop.state === 'creating'} onPress={confirmDirect ? () => setConfirmDirect(false) : undefined} />}
         {(isActiveJourney || !safetyStopped) && <ClientHero {...hero} compact={!!estimateOpen || confirmDirect || inputExpanded} mode={effectiveOrbMode} eventKey={`${loop.missionId || loop.requestId || 'need'}:${rafiCompletion}`} />}
 
@@ -367,7 +419,7 @@ export default function ClientRequestComposer({ back = true }: { back?: boolean 
             {!inputExpanded && <FixeoText variant="caption" tone="tertiary" style={styles.center}>
               Une demande commence avec vous.
             </FixeoText>}
-            {estimateContext && <View style={!estimateOpen ? { display: 'none' } : undefined}><ClientIntelligence key={`${estimateContext.city}:${estimateContext.description}`} visible={estimateOpen} context={estimateContext} onPresenceChange={reportRafiPresence} onCreated={intelligenceCreated} onStop={message => { if (message) setSafetyMessage(message); setSafetyStopped(true); }} onClose={() => { setEstimateOpen(false); reportRafiPresence(null); }} /></View>}
+            {estimateContext && <View style={!estimateOpen ? { display: 'none' } : undefined}><ClientIntelligence key={`${estimateContext.city}:${estimateContext.description}`} visible={estimateOpen} context={estimateContext} initialDraft={estimatorDraft} onDraftChange={setEstimatorDraft} onPresenceChange={reportRafiPresence} onCreated={intelligenceCreated} onStop={message => { if (message) setSafetyMessage(message); setSafetyStopped(true); }} onClose={() => { setEstimateOpen(false); reportRafiPresence(null); }} /></View>}
             {confirmDirect && <ClientSection testID="client-direct-confirmation" label="Votre demande">
               <FixeoText variant="heading">{problem}</FixeoText>
               <FixeoText tone="secondary">{city} · {need.serviceCategory}</FixeoText>
@@ -392,7 +444,7 @@ export default function ClientRequestComposer({ back = true }: { back?: boolean 
               placeholderTextColor={colors.textMuted}
               style={clientStyles.input}
             />
-            {(!!problem.trim() || !!photoUri) && <ClientLocationField city={city} onChangeCity={setCity} onPresenceChange={reportRafiPresence} disabled={requestLocked || photoDiagnosticBusy || (loop.state === 'error' && !!idempotencyKeyRef.current)} />}
+            {(!!problem.trim() || !!photoUri) && <View ref={cityAnchor} collapsable={false}><ClientLocationField city={city} error={cityError ? 'Choisissez votre ville pour continuer.' : undefined} focusRequest={cityFocus} onChangeCity={value => { setCity(value); setCityError(false); }} onPresenceChange={reportRafiPresence} disabled={requestLocked || photoDiagnosticBusy || (loop.state === 'error' && !!idempotencyKeyRef.current)} /></View>}
             {problem.trim().length >= 8 && <ServiceField values={declaredService ? [declaredService] : []} onChange={values => setDeclaredService(values[0] || '')} disabled={requestLocked || photoDiagnosticBusy || !!idempotencyKeyRef.current} />}
 
             {!!rafiMessage && (
@@ -476,6 +528,14 @@ export default function ClientRequestComposer({ back = true }: { back?: boolean 
           </View>
         )}
 
+        {(!!problem.trim() || !!photoUri) && !requestLocked && !idempotencyKeyRef.current && !estimatorDraft?.pendingConfirmation && <View style={styles.inputStack}>
+          <FixeoAction label="Commencer une nouvelle demande" variant="secondary" onPress={() => router.push({ pathname: '/new-request', params: { draftId: Crypto.randomUUID() } } as any)} />
+          <FixeoText variant="supporting" tone="secondary">Ce brouillon reste disponible dans RAFI.</FixeoText>
+          <FixeoAction label="Abandonner ce brouillon" variant="ghost" onPress={() => setDiscardPrompt(true)} />
+          {discardPrompt && <ClientSection label="ABANDONNER CE BROUILLON ?"><FixeoText>Votre besoin et ses réponses seront effacés. Vos demandes confirmées restent intactes.</FixeoText>
+            <FixeoAction label="Confirmer l’abandon" onPress={() => { draftFinished.current = true; removeClientDraft(draftOwner.current, draftId); router.replace({ pathname: '/new-request', params: { draftId: Crypto.randomUUID() } } as any); }} />
+            <FixeoAction label="Garder mon brouillon" variant="secondary" onPress={() => setDiscardPrompt(false)} /></ClientSection>}
+        </View>}
       </ScrollView>
     </FixeoScreen>
   );

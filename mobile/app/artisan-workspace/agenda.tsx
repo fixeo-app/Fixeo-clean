@@ -1,6 +1,6 @@
 import { AgendaDateTimeField } from '@/components/AgendaDateTimeField';
-import { useState } from "react";
-import { View } from "react-native";
+import { useRef, useState } from "react";
+import { View, TextInput } from "react-native";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import {
@@ -52,6 +52,13 @@ export default function Agenda() {
     [date, setDate] = useState(() => { if (params.day !== "tomorrow") return ""; const day=new Date(); day.setDate(day.getDate()+1); return pickerDateParts(day).date; }),
     [time, setTime] = useState(""),
     [notes, setNotes] = useState("");
+  const titleRef = useRef<TextInput>(null), dateRef = useRef<TextInput>(null), timeRef = useRef<TextInput>(null);
+  const [attempted, setAttempted] = useState(false);
+  const errors = {
+    title: !title.trim() ? 'Renseignez le titre de l’intervention.' : '',
+    date: !date.trim() ? 'Choisissez une date.' : !parseAgendaDateTime(date, '12:00') ? 'Vérifiez la date de l’intervention.' : '',
+    time: !time.trim() ? 'Choisissez une heure.' : !parseAgendaDateTime('01/01/2026', time) ? 'Vérifiez l’heure de l’intervention.' : '',
+  };
   const day = localDay(),
     weekEnd = new Date();
   weekEnd.setDate(weekEnd.getDate() + 7);
@@ -87,12 +94,14 @@ export default function Agenda() {
         retry={q.error ? () => void q.reload() : undefined}
       />
       <FixeoAction
-        label={open ? "Fermer la planification" : "Planifier une intervention"}
+        label={open ? "Annuler la planification" : "Planifier une intervention"}
         onPress={() => setOpen((v) => !v)}
       />
       {open && q.data && (
         <ArtisanSection label="INTERVENTION PERSONNELLE">
           <ArtisanField
+            inputRef={titleRef}
+            error={attempted ? errors.title : undefined}
             label="Titre de l’intervention"
             value={title}
             onChangeText={setTitle}
@@ -109,7 +118,7 @@ export default function Agenda() {
               })),
             ]}
           />
-          <AgendaDateTimeField date={date} time={time} onDate={setDate} onTime={setTime} />
+          <AgendaDateTimeField errors={attempted ? errors : undefined} dateRef={dateRef} timeRef={timeRef} date={date} time={time} onDate={setDate} onTime={setTime} />
           <FixeoText variant="supporting" tone="secondary">
             Saisie dans le fuseau horaire de votre appareil.
           </FixeoText>
@@ -123,11 +132,11 @@ export default function Agenda() {
             label="Enregistrer l’intervention"
             busy={a.busy}
             onPress={() => {
+              setAttempted(true);
               const at = parseAgendaDateTime(date, time);
               if (!at || !title.trim()) {
-                a.setMessage(
-                  "Renseignez le titre, une date et une heure valides.",
-                );
+                a.setMessage(errors.title || errors.date || errors.time);
+                (errors.title ? titleRef : errors.date ? dateRef : timeRef).current?.focus();
                 return;
               }
               void a.run(async () => {
@@ -138,6 +147,7 @@ export default function Agenda() {
                   scheduled_at: at,
                   notes,
                 });
+                setAttempted(false);
                 setOpen(false);
                 setTitle("");
                 setNotes("");

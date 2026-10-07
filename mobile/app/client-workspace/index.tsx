@@ -1,7 +1,7 @@
 import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import {
   getClientProfile,
   listClientNotifications,
@@ -12,7 +12,8 @@ import {
 import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoText } from '@/ui/FixeoText';
 import { ClientPageIntro, ClientSection, clientStyles } from '@/components/ClientEditorial';
-import { clientAttentionRequest } from '@/lib/clientExperience';
+import { ClientDraftRecovery } from '@/components/ClientDraftRecovery';
+import { clientAttentionRequest, CLIENT_STATUS } from '@/lib/clientExperience';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { RafiOrb } from '@/ui/RafiOrb';
 import { space } from '@/ui/tokens';
@@ -59,12 +60,11 @@ export default function ClientWorkspaceHome() {
     }
   }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useFocusEffect(useCallback(() => { void load(); }, [load]));
 
   useForegroundRefresh(load);
 
+  const activeRequests = history.filter(item => ['new', 'assigned', 'in_progress', 'completed'].includes(item.status));
   const activeRequest = useMemo(
     () => clientAttentionRequest(history),
     [history],
@@ -106,6 +106,7 @@ export default function ClientWorkspaceHome() {
       contextualCockpit.action === 'client_follow' ||
       contextualCockpit.action === 'client_rafi'
     ) {
+      if (activeRequests.length > 1) { router.push('/client-workspace/history'); return; }
       if (activeRequest) router.push({ pathname: '/client-request/[id]' as any, params: { id: activeRequest.id } });
       else router.push('/new-request' as any);
     }
@@ -131,6 +132,7 @@ export default function ClientWorkspaceHome() {
         showsVerticalScrollIndicator={false}
       >
         <FixeoAction label="+ Nouvelle demande" onPress={() => router.push('/new-request' as any)} />
+        <ClientDraftRecovery />
         <ClientPageIntro eyebrow="MON ESPACE" title={greetingName ? `Bonjour ${greetingName}.` : 'Bonjour.'}
           detail="Tout ce qui mérite votre attention." />
 
@@ -141,13 +143,20 @@ export default function ClientWorkspaceHome() {
           <View style={styles.presence}>
             <RafiOrb size={72} mode={getClientRafiPresence({ journeyStatus: activeRequest?.status === 'new' ? 'matching' : activeRequest?.status })} />
           </View>
+          {activeRequests.length > 0 && <FixeoText variant="heading">{activeRequests.length} demande{activeRequests.length > 1 ? 's' : ''} en cours</FixeoText>}
           <FixeoText variant="eyebrow" tone="secondary">{contextualCockpit.eyebrow}</FixeoText>
           <FixeoText accessibilityRole="header" variant="title">{contextualCockpit.title}</FixeoText>
           {!!contextualCockpit.context && <FixeoText>{contextualCockpit.context}</FixeoText>}
           {contextualCockpit.actionLabel ? <FixeoAction testID="client-primary-action"
-            label={contextualCockpit.actionLabel} onPress={actOnContextualCockpit} style={styles.action} /> : null}
+            label={activeRequests.length > 1 && contextualCockpit.action === 'client_follow' ? 'Choisir une demande à suivre' : contextualCockpit.actionLabel} onPress={actOnContextualCockpit} style={styles.action} /> : null}
           <FixeoText tone="secondary">{contextualCockpit.detail}</FixeoText>
         </ClientSection> : null}
+        {activeRequests.length > 1 && activeRequests.map(item => <ClientSection key={item.id} surface>
+          <FixeoText variant="caption" tone="secondary">{CLIENT_STATUS[item.status]}</FixeoText>
+          <FixeoText variant="heading">{item.description || item.service_category}</FixeoText>
+          <FixeoText tone="secondary">{item.city} · {item.service_category}</FixeoText>
+          <FixeoAction label={`Suivre · ${item.service_category || 'cette demande'}`} variant="secondary" onPress={() => router.push({ pathname: '/client-request/[id]', params: { id: item.id } } as any)} />
+        </ClientSection>)}
       </ScrollView>
     </FixeoScreen>
   );

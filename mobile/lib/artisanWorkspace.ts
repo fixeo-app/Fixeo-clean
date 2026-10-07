@@ -99,7 +99,7 @@ export async function setArtisanAvailability(
     p_status: status,
   }), 10000);
   if (error) throw error;
-  if (!data?.ok) throw new Error(String(data?.reason || 'AVAILABILITY_UPDATE_FAILED'));
+  if (!data?.ok) { const error = new Error(String(data?.reason || 'AVAILABILITY_UPDATE_FAILED')); Object.assign(error, { missingFields: data?.missing_fields }); throw error; }
   if (data.status !== status) throw new Error('AVAILABILITY_CONFIRMATION_PENDING');
   const profile = await withMobileDeadline(loadArtisanProfile(false), 8000);
   if (profile?.availability !== status) throw new Error('AVAILABILITY_CONFIRMATION_PENDING');

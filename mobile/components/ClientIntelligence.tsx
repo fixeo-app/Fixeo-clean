@@ -1,3 +1,4 @@
+import type { EstimatorDraft } from '@/lib/clientDrafts';
 import { BackButton } from '@/ui/BackButton';
 import { useEffect, useRef, useState } from 'react';
 import { Keyboard, TextInput, View } from 'react-native';
@@ -18,27 +19,32 @@ import type { RafiPresenceState } from '@/ui/rafiPresence';
 const metierLabels: Record<string, string> = { plomberie: 'Plomberie', electricite: 'Électricité', serrurerie: 'Serrurerie', climatisation: 'Climatisation', bricolage: 'Bricolage', menuiserie: 'Menuiserie', peinture: 'Peinture', maconnerie: 'Maçonnerie', nettoyage: 'Nettoyage', jardinage: 'Jardinage', demenagement: 'Déménagement', carrelage: 'Carrelage', autre: 'Autre' };
 
 /** One optional, server-owned journey. No price, token decoding or local STOP release. */
-export function ClientIntelligence({ context, onCreated, onClose, onStop, onPresenceChange, visible = true }: {
+export function ClientIntelligence({ context, onCreated, onClose, onStop, onPresenceChange, visible = true, initialDraft, onDraftChange }: {
+  initialDraft?: EstimatorDraft | null; onDraftChange?: (draft: EstimatorDraft) => void;
   visible?: boolean; context: ClientIntelligenceContext; onCreated: (id: string) => void; onClose: () => void; onStop: (message?: string) => void;
   onPresenceChange?: (state: RafiPresenceState | null) => void;
 }) {
-  const [result, setResult] = useState<MobileEstimatorResponse | null>(null);
+  const [result, setResult] = useState<MobileEstimatorResponse | null>(initialDraft?.result || null);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<ReturnType<typeof intelligenceFailure> | null>(null);
-  const [answer, setAnswer] = useState<string | number | boolean>('');
-  const [started, setStarted] = useState(false);
-  const [history, setHistory] = useState<{ result: MobileEstimatorResponse; label: string; answer: string | number | boolean }[]>([]);
-  const [phone, setPhone] = useState('');
-  const [confirming, setConfirming] = useState(false);
+  const [error, setError] = useState<ReturnType<typeof intelligenceFailure> | null>(initialDraft?.error || null);
+  const [answer, setAnswer] = useState<string | number | boolean>(initialDraft?.answer ?? '');
+  const [started, setStarted] = useState(initialDraft?.started || false);
+  const [history, setHistory] = useState<{ result: MobileEstimatorResponse; label: string; answer: string | number | boolean }[]>(initialDraft?.history || []);
+  const [phone, setPhone] = useState(initialDraft?.phone || '');
+  const [confirming, setConfirming] = useState(initialDraft?.confirming || false);
   const lock = useRef(false);
   const active = useRef(true);
-  const stopped = useRef(false);
-  const lastAction = useRef<MobileEstimatorRequest | null>(null);
+  const stopped = useRef(initialDraft?.stopped || false);
+  const lastAction = useRef<MobileEstimatorRequest | null>(initialDraft?.lastAction || null);
   // After an ambiguous confirmation only the identical payload may be retried.
-  const pendingConfirmation = useRef<MobileEstimatorRequest | 'direct' | null>(null);
-  const directKey = useRef<string | null>(null);
+  const pendingConfirmation = useRef<MobileEstimatorRequest | 'direct' | null>(initialDraft?.pendingConfirmation || null);
+  const directKey = useRef<string | null>(initialDraft?.directKey || null);
   const initial = useRef(context).current;
   const outcome = estimatorOutcome(result);
+  useEffect(() => {
+    onDraftChange?.({ result, answer, started, history, phone, confirming, error, stopped: stopped.current,
+      lastAction: lastAction.current, pendingConfirmation: pendingConfirmation.current, directKey: directKey.current });
+  }, [result, answer, started, history, phone, confirming, error, busy, onDraftChange]);
   useEffect(() => {
     if (!visible) return;
     onPresenceChange?.(busy ? 'thinking' : error ? 'attention' : result ? 'success' : 'idle');
@@ -73,7 +79,7 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
   }
   useEffect(() => {
     active.current = true;
-    void getClientProfile().then(profile => { if (active.current) setPhone(profile.phone || ''); }).catch(() => undefined);
+    void getClientProfile().then(profile => { if (active.current) setPhone(current => current || profile.phone || ''); }).catch(() => undefined);
     return () => { active.current = false; };
   }, []);
 
@@ -134,6 +140,7 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
       {error.kind === 'auth' ? <FixeoAction label="Me reconnecter" onPress={() => router.replace('/sign-in')} /> :
         error.kind === 'retry' && <FixeoAction label={pendingConfirmation.current ? 'Vérifier et réessayer la confirmation' : 'Réessayer avec RAFI'} disabled={busy}
           onPress={() => pendingConfirmation.current ? void confirm() : lastAction.current && void run(lastAction.current)} />}
+      {!pendingConfirmation.current && !stopped.current && ['retry', 'quota'].includes(error.kind) && <FixeoAction label="Continuer sans estimation" variant="secondary" disabled={busy} onPress={onClose} />}
       {pendingConfirmation.current && <FixeoText variant="supporting">Votre confirmation est conservée. Cette vérification ne crée pas une seconde demande.</FixeoText>}
       {error.kind === 'expired' && <FixeoAction label="Recommencer l’estimation" disabled={busy} onPress={() => { setResult(null); setHistory([]); setAnswer(''); setStarted(false); setConfirming(false); setError(null); }} />}
     </View>}

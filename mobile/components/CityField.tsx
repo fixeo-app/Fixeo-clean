@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FlatList, Keyboard, KeyboardAvoidingView, Modal, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { canonicalCity, citySuggestions } from '@/lib/clientLocation';
@@ -8,9 +8,11 @@ import { semanticColors, space, radii } from '@/ui/tokens';
 import { clientStyles } from './ClientEditorial';
 
 /** Shared canonical catalogue; selection and submission use the same backend value. */
-export function CityField({ value, onChange, label = 'Votre ville', disabled = false }: {
-  value: string; onChange: (value: string) => void; label?: string; disabled?: boolean;
+export function CityField({ value, onChange, label = 'Votre ville', disabled = false, focusRequest = 0 }: {
+  value: string; onChange: (value: string) => void; label?: string; disabled?: boolean; focusRequest?: number;
 }) {
+  const control = useRef<View>(null);
+  useEffect(() => { if (focusRequest) control.current?.focus?.(); }, [focusRequest]);
   const [expanded, setExpanded] = useState(false);
   const [query, setQuery] = useState('');
   const insets = useSafeAreaInsets();
@@ -19,7 +21,7 @@ export function CityField({ value, onChange, label = 'Votre ville', disabled = f
   return <View style={styles.root}>
     <FixeoText variant="supporting" tone="secondary">{label}</FixeoText>
     <View style={styles.inputRow}>
-      <ShellControl accessibilityLabel={label} style={[clientStyles.input, styles.input]}
+      <ShellControl ref={control} accessibilityLabel={label} style={[clientStyles.input, styles.input]}
         accessibilityState={{ expanded }} disabled={disabled} onPress={() => { setQuery(''); setExpanded(!expanded); }}>
         <FixeoText>{canonicalCity(value) || value || 'Choisir une ville'}</FixeoText>
       </ShellControl>

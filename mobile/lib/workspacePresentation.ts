@@ -1,7 +1,7 @@
 export function isTechnicalDisplayName(value: string | null | undefined) {
   const name = String(value || '').trim();
   if (!name) return true;
-  return /synthetic|staging|mobile[_\s-]?(client|artisan)|fixture|test[_\s-]?user/i.test(name)
+  return /^(utilisateur|user|client|artisan|unknown|inconnu|test)$/i.test(name) || /synthetic|staging|mobile[_\s-]?(client|artisan)|fixture|test[_\s-]?user/i.test(name)
     || (name.includes('_') && name === name.toUpperCase());
 }
 
@@ -18,7 +18,7 @@ export function clientProfileTitle(value: string | null | undefined) {
 
 export function formatWorkspaceDate(value: string | null | undefined) {
   if (!value) return '';
-  const date = new Date(value);
+  const date = new Date(/^\d{4}-\d{2}-\d{2}$/.test(value) ? value + 'T12:00:00' : value);
   if (Number.isNaN(date.getTime())) return '';
   return date.toLocaleDateString('fr-FR', {
     day: '2-digit',

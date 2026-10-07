@@ -1,3 +1,4 @@
+import { formatWorkspaceDate } from '@/lib/workspacePresentation';
 import { CityField } from '@/components/CityField';
 import { useCallback, useEffect, useState } from "react";
 import { Linking, View } from "react-native";
@@ -248,7 +249,7 @@ export default function ClientDetail() {
                     {money(x.amount)}
                   </FixeoText>
                   <FixeoText tone="secondary">
-                    {x.occurred_on} · {x.note || "Mouvement renseigné"}
+                    {formatWorkspaceDate(x.occurred_on)} · {x.note || "Mouvement renseigné"}
                   </FixeoText>
                 </View>
               ))}

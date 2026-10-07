@@ -1,3 +1,5 @@
+import { validateQuote } from '@/lib/quoteValidation';
+import { formatWorkspaceDate } from '@/lib/workspacePresentation';
 import { QuoteBreakdown } from '@/components/QuoteBreakdown';
 import { DateField } from '@/components/DateField';
 import { useEffect, useRef, useState } from "react";
@@ -14,7 +16,6 @@ import {
 } from "@/lib/artisanOS";
 import {
   businessStatus,
-  calculateQuote,
   money,
   type QuoteLine,
 } from "@/lib/artisanExperience";
@@ -105,26 +106,22 @@ export default function QuoteStudio() {
     }
   }, [saved]);
   const number = (s: string) => (s.trim() ? Number(s.replace(",", ".")) : NaN);
-  let calculated: ReturnType<typeof calculateQuote> | null = null;
-  try {
-    calculated = calculateQuote(
-      lines.map((l) => ({
-        type: l.type,
-        label: l.label,
-        quantity: number(l.quantity),
-        unit_price: number(l.price),
-      })),
-      origin === "personal" ? number(discount || "0") : 0,
-    );
-  } catch {}
+  const gate = validateQuote({ origin, title, clientId, requestId, clients: q.data?.clients || [], offers: q.data?.offers || [],
+    items: lines.map(line => ({ type: line.type, label: line.label, quantity: number(line.quantity), unit_price: number(line.price) })), discount: number(discount || '0') });
+  const calculated = gate.calculated;
+  const visibleSection = gate.canEnterLines ? gate.canEnterConditions ? section : Math.min(section, 1) : 0;
+  const showPreview = preview && (gate.canPreview || (!fresh && saved?.source === 'personal' && !editable));
+  function goToSection(next: number) {
+    if ((next >= 1 && !gate.canEnterLines) || (next >= 2 && !gate.canEnterConditions)) { a.setMessage(gate.message); return; }
+    setSection(next); setPreview(false); a.setMessage('');
+  }
+  function openPreview() { if (!gate.canPreview) { a.setMessage(gate.message); return; } setPreview(true); }
   function patch(index: number, next: Partial<Line>) {
     setLines((old) => old.map((l, i) => (i === index ? { ...l, ...next } : l)));
   }
   async function save() {
-    if (!calculated || !title.trim() || (origin === "fixeo" && !requestId)) {
-      a.setMessage(
-        "Complétez le titre et chaque ligne avec vos quantités et prix.",
-      );
+    if (!gate.canSave) {
+      a.setMessage(gate.message);
       return;
     }
     if (origin === "fixeo") {
@@ -168,8 +165,9 @@ export default function QuoteStudio() {
         label: "Ligne",
         icon: "add-outline",
         accessibilityLabel: "Ajouter une ligne au devis",
-        disabled: lines.length >= 50,
+        disabled: !gate.canEnterLines || lines.length >= 50,
         action: () => {
+          if (!gate.canEnterLines) { a.setMessage(gate.message); return; }
           setPreview(false);
           setSection(1);
           setLines((v) => [...v, blank()]);
@@ -182,7 +180,8 @@ export default function QuoteStudio() {
         accessibilityLabel: preview
           ? "Modifier les lignes"
           : "Afficher l’aperçu du devis",
-        action: () => setPreview((v) => !v),
+        disabled: !showPreview && !gate.canPreview,
+        action: () => showPreview ? setPreview(false) : openPreview(),
       },
       {
         key: "save",
@@ -192,7 +191,7 @@ export default function QuoteStudio() {
           origin === "fixeo"
             ? "Confirmer la transmission à FIXEO"
             : "Enregistrer le brouillon",
-        disabled: a.busy,
+        disabled: a.busy || !gate.canSave,
         action: () => void save(),
       },
     ],
@@ -200,7 +199,7 @@ export default function QuoteStudio() {
   return (
     <ArtisanPage
       rafi={a.rafi}
-      title={preview ? "Votre proposition." : "Chaque détail compte."}
+      title={showPreview ? "Votre proposition." : "Chaque détail compte."}
       eyebrow="DEVIS STUDIO"
       activeKey="quotes"
       loading={q.loading}
@@ -212,7 +211,7 @@ export default function QuoteStudio() {
       />
       {q.data && (fresh || saved) ? (
         <>
-          {preview ? (
+          {showPreview ? (
             <>
               <ArtisanSection
                 label={
@@ -228,7 +227,7 @@ export default function QuoteStudio() {
                   {origin === "personal"
                     ? q.data.clients.find((c) => c.id === clientId)
                         ?.full_name || "Client personnel non renseigné"
-                    : "Lié à une opportunité FIXEO"}
+                    : gate.sourceValid ? "Lié à une opportunité FIXEO" : "Source FIXEO à confirmer"}
                 </FixeoText>
                 {saved && (
                   <FixeoText>
@@ -268,7 +267,7 @@ export default function QuoteStudio() {
                 )}
                 {validity && origin === "personal" && (
                   <FixeoText tone="secondary">
-                    Valable jusqu’au {validity}
+                    Valable jusqu’au {formatWorkspaceDate(validity)}
                   </FixeoText>
                 )}
                 {duration && (
@@ -311,14 +310,14 @@ export default function QuoteStudio() {
             </>
           ) : (
             <>
-              <FixeoText variant="caption" tone="secondary">Étape {section + 1} sur 3 · {['Client et intervention', 'Prestations et fournitures', 'Conditions et résumé'][section]}</FixeoText>
-              <ArtisanChoices label="Étapes du devis" value={String(section)} onChange={value => setSection(Number(value))} options={[{value:'0',label:'Client'},{value:'1',label:'Lignes'},{value:'2',label:'Conditions'}]} />
-              {section === 0 && <>
+              <FixeoText variant="caption" tone="secondary">Étape {visibleSection + 1} sur 3 · {['Client et intervention', 'Prestations et fournitures', 'Conditions et résumé'][visibleSection]}</FixeoText>
+              <ArtisanChoices label="Étapes du devis" value={String(visibleSection)} onChange={value => goToSection(Number(value))} options={[{value:'0',label:'Client'},{value:'1',label:'Lignes',disabled:!gate.canEnterLines},{value:'2',label:'Conditions',disabled:!gate.canEnterConditions}]} />
+              {visibleSection === 0 && <>
               {fresh && !params.requestId && !params.clientId && (
                 <ArtisanChoices
                   label="Origine du devis"
                   value={origin}
-                  onChange={setOrigin}
+                  onChange={value => { setOrigin(value); setRequestId(''); setSection(0); setPreview(false); }}
                   options={[
                     { value: "personal", label: "Client personnel" },
                     { value: "fixeo", label: "Opportunité FIXEO" },
@@ -360,9 +359,10 @@ export default function QuoteStudio() {
                 value={title}
                 onChangeText={setTitle}
               />
-              <FixeoAction label="Continuer vers les lignes" onPress={() => { if (!title.trim()) a.setMessage('Donnez un titre à votre devis.'); else setSection(1); }} />
+              {gate.identityError && <FixeoText accessibilityLiveRegion="polite" tone="secondary">{gate.identityError}</FixeoText>}
+              <FixeoAction label="Continuer vers les lignes" disabled={!gate.canEnterLines} onPress={() => goToSection(1)} />
               </>}
-              {section === 1 && <>
+              {visibleSection === 1 && <>
               <ArtisanCue
                 title="RAFI · Structurer votre devis"
                 text="Décrivez chaque prestation, puis les fournitures et la main-d’œuvre. Renseignez vos propres prix et ce que le devis comprend."
@@ -413,9 +413,10 @@ export default function QuoteStudio() {
                 disabled={lines.length >= 50}
                 onPress={() => setLines((v) => [...v, blank()])}
               />
-              <FixeoAction label="Continuer vers les conditions" onPress={() => { if (!calculated) a.setMessage('Complétez la désignation, la quantité et le prix de chaque ligne.'); else setSection(2); }} />
+              {gate.lineError && <FixeoText accessibilityLiveRegion="polite" tone="secondary">{gate.lineError}</FixeoText>}
+              <FixeoAction label="Continuer vers les conditions" disabled={!gate.canEnterConditions} onPress={() => goToSection(2)} />
               </>}
-              {section === 2 && <>
+              {visibleSection === 2 && <>
               {origin === "personal" && (
                 <>
                   <ArtisanField
@@ -445,7 +446,8 @@ export default function QuoteStudio() {
                 <FixeoAction
                   label="Voir l’aperçu"
                   variant="secondary"
-                  onPress={() => setPreview(true)}
+                  disabled={!gate.canPreview}
+                  onPress={openPreview}
                 />
                 <FixeoAction
                   label={
@@ -454,6 +456,7 @@ export default function QuoteStudio() {
                       : "Enregistrer le brouillon"
                   }
                   busy={a.busy}
+                  disabled={!gate.canSave}
                   onPress={() => void save()}
                 />
               </ArtisanSection>
@@ -476,13 +479,15 @@ export default function QuoteStudio() {
               </FixeoText>
               <FixeoAction
                 label="Confirmer"
+                disabled={confirmation === "marketplace" && !gate.canSave}
                 busy={a.busy}
                 onPress={() =>
                   void a.run(async () => {
                     if (confirmation === "marketplace") {
-                      if (!calculated) throw new Error("QUOTE_INVALID");
+                      if (!gate.canSave || !calculated) throw new Error("QUOTE_INVALID");
                       const result = await submitMarketplaceQuote({
                         requestId,
+                        title,
                         items: calculated.items,
                         message: notes,
                         duration,

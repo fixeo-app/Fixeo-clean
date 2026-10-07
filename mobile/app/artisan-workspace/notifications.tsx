@@ -8,6 +8,7 @@ import {
 import { when } from "@/lib/artisanExperience";
 import {
   ArtisanPage,
+  ArtisanCue,
   ArtisanEmpty,
   ArtisanMessage,
   useArtisanQuery,
@@ -35,6 +36,7 @@ export default function Notifications() {
       loading={q.loading}
       onRefresh={() => void q.reload()}
     >
+      <ArtisanCue title={!q.loading && !q.error && q.data?.notifications.length === 0 ? "RAFI · Votre activité est à jour." : "RAFI · Votre activité"} text="Les nouvelles informations de votre activité apparaissent ici." />
       <ArtisanMessage
         message={q.error || a.message}
         retry={q.error ? () => void q.reload() : undefined}

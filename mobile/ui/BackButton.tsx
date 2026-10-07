@@ -6,8 +6,8 @@ import { ShellControl, ShellIcon } from './ShellControl';
 import { FixeoText } from './FixeoText';
 import { space } from './tokens';
 
-export function BackButton({ destination, onPress, label = 'Retour', system = true, disabled = false }: {
-  destination?: BackDestination; onPress?: () => void; label?: string; system?: boolean; disabled?: boolean;
+export function BackButton({ destination, onPress, label = 'Retour', system = true, disabled = false, iconOnly = false }: {
+  destination?: BackDestination; onPress?: () => void; label?: string; system?: boolean; disabled?: boolean; iconOnly?: boolean;
 }) {
   const path = usePathname();
   const params = useLocalSearchParams();
@@ -23,7 +23,7 @@ export function BackButton({ destination, onPress, label = 'Retour', system = tr
     return () => listener.remove();
   }, [go, system]));
   return <ShellControl accessibilityLabel={label} onPress={go} disabled={disabled} style={styles.back}>
-    <ShellIcon name="chevron-back-outline" /><FixeoText variant="supporting">{label}</FixeoText>
+    <ShellIcon name="chevron-back-outline" />{!iconOnly && <FixeoText variant="supporting">{label}</FixeoText>}
   </ShellControl>;
 }
 const styles = StyleSheet.create({ back: { alignSelf: 'flex-start', flexDirection: 'row', gap: space.xxs,

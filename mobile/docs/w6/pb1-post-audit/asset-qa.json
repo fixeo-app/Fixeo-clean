@@ -1,0 +1,58 @@
+{
+  "master_source_sha256": "248147026d95a171ebafc650d1f476c46cde7013d8d90997d9ffb16013b1ea2a",
+  "variants": {
+    "hero": {
+      "frames": 217,
+      "duration_ms": 9042,
+      "sha256": "4a1ab6dbec891012913e8caaa55f49e7ff81da83eadfd9862b68c25c83fd30e6",
+      "alpha_pass": true
+    },
+    "medium": {
+      "frames": 217,
+      "duration_ms": 9042,
+      "sha256": "2c314c4d8bf03b15e2da8935c79ca99cd3c95e62e8146aecf976d7b13c5f864a",
+      "alpha_pass": true
+    },
+    "mini": {
+      "frames": 217,
+      "duration_ms": 9042,
+      "sha256": "e4ee51df3fd11360b8dfc82975ccd50854cf61ec3ab19cbade91f88fdc4ce557",
+      "alpha_pass": true
+    }
+  },
+  "proof": "decoded shipped pixels and durations; physical performance deferred",
+  "launcher": {
+    "source_sha256": "c48c5df15ed1a2c6eb912f5d19b35cf9fe32f1a6ae603d1acd423cf12a337152",
+    "material_changed": false,
+    "target_visible_width_ratio": 0.62,
+    "variants": {
+      "android": {
+        "sphere_visible_width_ratio": 0.6196,
+        "core_bounds": [
+          300,
+          306,
+          723,
+          718
+        ],
+        "core_center_error_px": [
+          -0.5,
+          0.0
+        ]
+      },
+      "ios": {
+        "sphere_visible_width_ratio": 0.6201,
+        "core_bounds": [
+          195,
+          203,
+          830,
+          821
+        ],
+        "core_center_error_px": [
+          0.5,
+          0.0
+        ]
+      }
+    },
+    "android_independent_ratio": 0.61962890625
+  }
+}

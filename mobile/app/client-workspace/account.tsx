@@ -1,8 +1,10 @@
+import { RafiOrb } from '@/ui/RafiOrb';
+import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
 import { CityField } from '@/components/CityField';
 import { BackButton } from '@/ui/BackButton';
 import { useWorkspaceDock } from '@/components/useWorkspaceDock';
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import {
   getClientProfile,
   updateClientProfile,
@@ -86,6 +88,7 @@ export default function ClientAccount() {
       >
 
         <BackButton destination="/client-workspace" disabled={saving} onPress={editing ? () => setEditing(false) : undefined} />
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}><RafiOrb size={48} /><FixeoText variant="supporting" tone="secondary" style={{ flex: 1 }}>RAFI · Vos informations, en confiance.</FixeoText></View>
         <ClientPageIntro eyebrow="MON COMPTE" title={clientProfileTitle(profile?.full_name)} detail="Vos coordonnées, simplement." />
         {!!profile?.email && <FixeoText variant="supporting" tone="secondary">{profile.email}</FixeoText>}
         {profile ? <ClientSection label="Pour vos interventions">

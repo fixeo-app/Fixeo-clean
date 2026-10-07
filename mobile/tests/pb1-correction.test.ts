@@ -82,6 +82,7 @@ test('PB1 real Auth owner preserves screen identity during foreground, blocks ac
   let failure: unknown = null, release: (() => void) | undefined;
   const session = { user: { id: 'fixture-client' } };
   const owner = load('lib/authSession.ts', {
+    './clientDrafts': { clearClientDrafts: () => {} },
     './authContract': { createAuthState, authIssue }, './mobileResilience': { withMobileDeadline: (p: unknown) => p },
     './auth': { resolveRole: async () => 'client' }, './notificationIntent': { clearPrivateNotificationState: async () => {} },
     './supabase': { supabase: { auth: {

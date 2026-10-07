@@ -1,3 +1,4 @@
+import { ArtisanProfileChecklist } from '@/components/ArtisanProfileChecklist';
 import { CityZonesField } from '@/components/CityField';
 import { ServiceField } from '@/components/ServiceField';
 import { canonicalCity } from '@/lib/clientLocation';
@@ -67,6 +68,7 @@ export default function Profile() {
       />
       {p && (
         <>
+          <ArtisanProfileChecklist profile={p} />
           <ArtisanSection label="VOTRE PRÉSENCE FIXEO">
             <FixeoText variant="title">{p.name || "Artisan FIXEO"}</FixeoText>
             <FixeoText tone="secondary">

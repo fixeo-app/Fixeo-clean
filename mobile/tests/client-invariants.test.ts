@@ -45,7 +45,7 @@ test('W4 request contract remains four arguments including normalized city and n
   assert.match(home, /const normalizedCity = city\.trim\(\)/);
   assert.match(home, /createRequest\(\s*need\.serviceCategory,\s*normalizedCity,\s*need\.description,\s*idempotencyKeyRef\.current,\s*\)/);
   assert.doesNotMatch(home, /latitude|longitude|requestForegroundPermissions/);
-  assert.match(home, /<ClientLocationField city=\{city\} onChangeCity=\{setCity\}/);
+  assert.match(home, /<ClientLocationField city=\{city\} error=\{cityError[\s\S]*?onChangeCity=\{value => \{ setCity\(value\); setCityError\(false\); \}\}/);
   assert.match(home, /code === 'CITY_NOT_SUPPORTED'/);
 });
 

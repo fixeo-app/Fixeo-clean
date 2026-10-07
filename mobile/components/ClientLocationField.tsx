@@ -5,7 +5,7 @@ import { CityField } from './CityField';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoText } from '@/ui/FixeoText';
 import { ShellControl, ShellIcon } from '@/ui/ShellControl';
-import { space } from '@/ui/tokens';
+import { space, semanticColors } from '@/ui/tokens';
 import type { RafiPresenceState } from '@/ui/rafiPresence';
 
 const MESSAGES = {
@@ -18,7 +18,8 @@ const MESSAGES = {
   cancelled: 'Choisissez votre ville pour continuer.',
 };
 
-export function ClientLocationField({ city, onChangeCity, disabled = false, onPresenceChange }: {
+export function ClientLocationField({ city, onChangeCity, disabled = false, onPresenceChange, error, focusRequest }: {
+  error?: string; focusRequest?: number;
   city: string; onChangeCity: (city: string) => void; disabled?: boolean;
   onPresenceChange?: (state: RafiPresenceState | null) => void;
 }) {
@@ -53,7 +54,7 @@ export function ClientLocationField({ city, onChangeCity, disabled = false, onPr
       if (generation.current === attempt) { locating.current = false; setBusy(false); }
     }
   }
-  return <View testID="client-location" style={styles.root}>
+  return <View testID="client-location" style={[styles.root, error && styles.invalid]}>
     <FixeoText variant="caption" tone="secondary">Lieu d’intervention</FixeoText>
     <ShellControl accessibilityLabel="Utiliser ma position" disabled={disabled || busy}
       accessibilityState={{ busy, disabled: disabled || busy }} onPress={() => void locate()} style={styles.locate}>
@@ -65,12 +66,14 @@ export function ClientLocationField({ city, onChangeCity, disabled = false, onPr
       <FixeoText variant="heading">{city}</FixeoText>
       <FixeoAction label="Confirmer cette ville" variant="ghost" onPress={() => { setDetected(false); setMessage('Lieu confirmé. Vous pouvez encore le modifier.'); onPresenceChange?.('success'); }} />
     </View>}
-    <CityField label="Votre ville" value={city} onChange={change} disabled={disabled} />
+    {error && <FixeoText accessibilityRole="alert" accessibilityLiveRegion="assertive">ⓘ {error}</FixeoText>}
+    <CityField focusRequest={focusRequest} label="Votre ville" value={city} onChange={change} disabled={disabled} />
   </View>;
 }
 
 const styles = StyleSheet.create({
   root: { gap: space.xs },
+  invalid: { borderWidth: 2, borderColor: semanticColors.text.secondary, borderRadius: 14, padding: space.sm, backgroundColor: semanticColors.background.surface },
   locate: { flexDirection: 'row', gap: space.xs, alignSelf: 'flex-start', paddingHorizontal: space.xs },
   label: { flexShrink: 1 },
   detected: { gap: space.xxs },

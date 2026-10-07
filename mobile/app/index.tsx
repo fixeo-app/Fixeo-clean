@@ -1,3 +1,4 @@
+import { ClientDraftRecovery } from '@/components/ClientDraftRecovery';
 import { useCallback, useRef, useState } from 'react';
 import { RefreshControl, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
@@ -45,6 +46,7 @@ export default function Home() {
   const mode = journey === 'matching' ? 'matching' : journey === 'in_progress' ? 'intervention' : journey === 'completed' ? 'attention' : 'idle';
   return <FixeoScreen padded={false} contextDock={dock} header={<MobileShell universe="client" activeKey="rafi" rightDestination="/client-workspace" rightNavigation="detail" />}>
     <RafiScrollView contentContainerStyle={clientStyles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
+      <ClientDraftRecovery />
       <ClientHero {...clientHomeCopy(journey, mode, false)} mode={mode} compact />
       {!!error && <ClientSection><FixeoText accessibilityRole="alert">{error}</FixeoText><FixeoAction label="Actualiser le suivi" variant="secondary" onPress={() => void load()} /></ClientSection>}
       {requests === null && !error && <FixeoText accessibilityLiveRegion="polite">Ouverture de vos demandes…</FixeoText>}

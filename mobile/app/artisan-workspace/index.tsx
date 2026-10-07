@@ -1,3 +1,4 @@
+import { ArtisanProfileChecklist } from '@/components/ArtisanProfileChecklist';
 import { useEffect, useState } from 'react';
 import { router } from "expo-router";
 import { loadArtisanProfile } from "@/lib/artisanOS";
@@ -38,6 +39,7 @@ export default function Availability() {
       />
       {q.data && (
         <>
+          <ArtisanProfileChecklist profile={q.data} />
           <ArtisanSection label="VOTRE STATUT ACTUEL" dark>
             <FixeoText variant="title" tone="inverse">
               {availabilityLabels[currentStatus || ''] || "À définir"}
@@ -49,7 +51,7 @@ export default function Availability() {
               key={value}
               label={label}
               variant={value === currentStatus ? "primary" : "secondary"}
-              disabled={a.busy || value === currentStatus}
+              disabled={a.busy || value === currentStatus || (value !== 'unavailable' && !q.data?.profile_gate?.complete)}
               busy={a.busy && value !== currentStatus} busyLabel="Enregistrement…"
               accessibilityState={{ selected: value === currentStatus }}
               onPress={() =>
@@ -64,7 +66,7 @@ export default function Availability() {
           ))}
           <ArtisanMessage message={a.message} />
           <FixeoText tone="secondary">
-            Votre prochain créneau n’est pas encore renseigné par le système.
+            Ajoutez vos prochains rendez-vous dans votre agenda.
           </FixeoText>
           <FixeoAction
             label="Ouvrir mon profil"

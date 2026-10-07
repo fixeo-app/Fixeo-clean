@@ -1,3 +1,4 @@
+import { profileMissingMessage } from './artisanProfileGate';
 import { moneyMinor, lineTotalMinor } from './moneyContract';
 export type QuoteLine = {
   type: "service" | "supply" | "labor";
@@ -151,7 +152,7 @@ export function artisanError(error: unknown) {
   if (/AVAILABILITY_CONFIRMATION_PENDING/.test(message))
     return "Le statut n’a pas pu être confirmé. Actualisez avant de réessayer.";
   if (/onboarding_required|profile_incomplete/i.test(message))
-    return "Complétez votre profil Artisan avant de vous rendre disponible.";
+    return profileMissingMessage((error as { missingFields?: string[] })?.missingFields);
   if (/not_approved/i.test(message))
     return "Votre profil doit être approuvé par FIXEO avant cette action.";
   if (/invalid_phone/i.test(message))

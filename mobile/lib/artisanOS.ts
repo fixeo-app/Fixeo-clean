@@ -54,7 +54,9 @@ export type LedgerEntry = {
   job_id: string | null;
   source: "personal" | "fixeo";
 };
+export type ArtisanProfileGate = { complete: boolean; missing_fields: string[]; checks: Record<string, boolean> };
 export type ArtisanProfile = {
+  profile_gate?: ArtisanProfileGate;
   id: string;
   owner_user_id: string;
   name: string;
@@ -193,7 +195,11 @@ export async function loadArtisanProfile(
     .maybeSingle()
     .retry(automaticRetry);
   if (error) throw error;
-  return data ? withCanonicalCity(data) : null;
+  if (!data) return null;
+  const gate = await supabase.rpc('get_my_artisan_profile_gate_v1');
+  if (gate.error) throw gate.error;
+  if (!gate.data?.ok || typeof gate.data.complete !== 'boolean' || !Array.isArray(gate.data.missing_fields)) throw new Error('PROFILE_GATE_UNAVAILABLE');
+  return { ...withCanonicalCity(data), profile_gate: gate.data };
 }
 export function artisanProfileCities(profile: ArtisanProfile | null): string[] {
   if (!profile) return [];
@@ -385,27 +391,21 @@ export async function recordQuoteDecision(
 }
 export async function submitMarketplaceQuote(input: {
   requestId: string;
+  title: string;
   items: Omit<QuoteLine, "total">[];
   message: string;
   duration: string;
 }) {
   await artisanAccess();
+  const offers = await getDispatchOffers();
+  if (!input.title.trim() || !offers.some(offer => offer.request_id === input.requestId)) throw new Error("QUOTE_SOURCE_REQUIRED");
   const amounts = calculateQuote(input.items);
-  const line = (x: QuoteLine) =>
-    `${x.label} · ${x.quantity} × ${x.unit_price} MAD = ${x.total} MAD`;
-  const { data, error } = await supabase.rpc("submit_artisan_quote_v2", {
+  if (amounts.total <= 0 || !amounts.items.some(item => item.type !== 'supply')) throw new Error("QUOTE_INVALID");
+  const { data, error } = await supabase.rpc("submit_my_mobile_quote_v1", {
     p_request_id: input.requestId,
-    p_proposed_price: amounts.total,
-    p_service_description: amounts.items
-      .filter((x) => x.type !== "supply")
-      .map(line)
-      .join("\n"),
-    p_supplies_description:
-      amounts.items
-        .filter((x) => x.type === "supply")
-        .map(line)
-        .join("\n") || null,
-    p_estimated_duration: input.duration || null,
+    p_title: input.title.trim(),
+    p_items: amounts.items.map(({ type, label, quantity, unit_price }) => ({ type, label, quantity, unit_price })),
+    p_duration: input.duration || null,
     p_message: input.message || null,
   });
   if (error) throw error;

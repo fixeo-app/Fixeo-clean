@@ -24,7 +24,6 @@
     "lib/rafiGateway.ts": "7722bc978d1050a150f7e10b84b9b02941840e66bd7e560b3209f225d7a16859",
     "lib/rafiTerrain.ts": "62b1db7ff94219d2b0e709cc36bddee1d3d1333b694864d39fc5820d0f49c002",
     "lib/useForegroundRefresh.ts": "2f661a027fbdac12dfcedaddc35efbda16a41b1c26a50402dd304bf4d9d5c9e6",
-    "lib/workspacePresentation.ts": "ce5e934cefc57913f17491aa490937bbfcb47549c0e7cd831f17f0871978b17d",
     "ui/FixeoAction.tsx": "f19bc08b3ff33324f91d44b16e8cb6c85dc8d50b324f9a338a3ca8e60ec7ec92",
     "ui/FixeoCard.tsx": "42d36eb76e6dce6a0414c800c20f5e6b09a6271fea2b09ccf185140d830c16a0",
     "ui/FixeoContextDock.tsx": "492c604ccc84af30ff5fae9381a11c7cadc163b995df46b11530ab305a954040",
@@ -40,10 +39,6 @@
     "ui/useReducedMotion.ts": "6d32dcbaea47c7af8fec16a442521ad0666b9cf5c381f2a1e86ef3d64ec97b25"
   },
   "callbacks": {
-    "app/client-workspace/index.tsx": {
-      "hook-0": "5d2fdead40e4f280fa8eccef9fa672d90a67854434007543b162781d202b84a8",
-      "hook-1": "61aff2a1c32faf39a23cb35d177f5a3fe0c0a5d1dd972215609994cc7bdb288a"
-    },
     "app/client-workspace/history.tsx": {
       "hook-0": "f41a09c25471df31dd22b8b0c3dc10b867cba86d911a7ca49f7c13de520a50f5"
     },
@@ -190,5 +185,17 @@
       "open": "e78b8864f1003e83eb1619345dc744f0ae1d9a39bb6003f9be1dc900289ba19a"
     }
   },
-  "pb1FinalContractReason": "PB1 final master + multi-request addendum replace singleton home/watch, history focus refresh, request routing, push restoration, safe-area shell and entry centering; behavioral coverage in pb1-product-flows.test.ts and pb1-multi-request.test.cjs. Alertes: open canonical request/mission including s1b request IDs and mobile_m4 mission metadata; no read-only dead tap."
+  "pb1FinalContractReason": "PB1 final master + multi-request addendum replace singleton home/watch, history focus refresh, request routing, push restoration, safe-area shell and entry centering; behavioral coverage in pb1-product-flows.test.ts and pb1-multi-request.test.cjs. Alertes: open canonical request/mission including s1b request IDs and mobile_m4 mission metadata; no read-only dead tap.",
+  "pb1PostAuditReplacements": {
+    "reason": "Consolidated physical-audit mandate: generic identity filtering, localized dates and Mon espace multi-request focus refresh. Behavioral coverage: pb1-post-audit.test.ts.",
+    "protectedFiles": {
+      "lib/workspacePresentation.ts": "ce5e934cefc57913f17491aa490937bbfcb47549c0e7cd831f17f0871978b17d"
+    },
+    "callbacks": {
+      "app/client-workspace/index.tsx": {
+        "hook-0": "5d2fdead40e4f280fa8eccef9fa672d90a67854434007543b162781d202b84a8",
+        "hook-1": "61aff2a1c32faf39a23cb35d177f5a3fe0c0a5d1dd972215609994cc7bdb288a"
+      }
+    }
+  }
 }

@@ -1,3 +1,4 @@
+import { clearClientDrafts } from './clientDrafts';
 import { AppState } from 'react-native';
 import { useSyncExternalStore } from 'react';
 import { supabase, startSupabaseAuthLifecycle } from './supabase';
@@ -24,6 +25,7 @@ export function clearAuthPresentation(issue: AuthIssue | null = null) {
   recovery = false;
   expectedId = null;
   authState.invalidate('signed_out', issue);
+  clearClientDrafts();
   void clearPrivateNotificationState().catch(() => undefined);
 }
 export function enterPasswordRecovery() {
