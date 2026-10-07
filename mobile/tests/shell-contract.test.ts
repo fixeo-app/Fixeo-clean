@@ -55,7 +55,7 @@ test('W2 floating reservation and enlarged text: safe area + height + gaps count
   for (const fontScale of [1, 1.5, 2, 3]) {
     const height = Math.max(dockMinimumHeight(fontScale), 160);
     const metrics = getScreenMetrics({ top: 44, left: 0, right: 0, bottom: 34 }, { floatingHeight: height });
-    assert.equal(metrics.paddingBottom - metrics.floatingBottom - height, layout.floating.gap);
+    assert.equal(metrics.paddingBottom - metrics.floatingBottom - height, 24);
     assert.ok(metrics.floatingBottom >= 34);
   }
   const keyboard = getScreenMetrics({ top: 24, left: 44, right: 44, bottom: 34 }, { keyboardOverlap: 300 });

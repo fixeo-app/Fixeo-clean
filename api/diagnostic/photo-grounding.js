@@ -17,7 +17,8 @@ Use electricity for potential visible active sparking, an electrical shock event
 const descriptivePhotoInstructions = photoInstructions
   .replace('Describe only directly discernible home-service evidence', 'Describe directly discernible objects, surroundings and home-service evidence')
   .replace('an unrelated scene or whenever no relevant physical detail can be identified confidently', 'whenever no object or physical detail can be identified confidently')
-  + '\nA recognizable scene is informative even when no defect is visible. Describe an identifiable object (for example a laptop or office) without reading screens or private text. Do not invent a fault, trade, repair or danger. No visible defect is different from no visible object.';
+  + '\nA recognizable scene is informative even when no defect is visible. Describe an identifiable object (for example a laptop or office) without reading screens or private text. Do not invent a fault, trade, repair or danger. No visible defect is different from no visible object.'
+  + '\nAn unused wall socket with no cable or device plugged in is not a defect or electrical risk. Describe that visible state without inferring missing wiring, failure, danger or urgency. Only positive visible damage or an immediate threat supports a safety signal. The image cannot establish the internal condition or operation of a socket.';
 const photoSchema = {
   type: "object",
   additionalProperties: false,

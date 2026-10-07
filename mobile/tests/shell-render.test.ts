@@ -12,7 +12,7 @@ test('W2 real Drawer/Dock/controls render accessible states with React Native We
   const outfile = path.join(directory, 'render.cjs');
   try {
     buildSync({ entryPoints: ['tests/fixtures/render-shell.tsx'], outfile, bundle: true, platform: 'node',
-      jsx: 'automatic', loader: { '.js': 'jsx', '.ttf': 'dataurl', '.png': 'dataurl' },
+      jsx: 'automatic', loader: { '.js': 'jsx', '.ttf': 'dataurl', '.png': 'dataurl', '.webp': 'dataurl' },
       resolveExtensions: ['.web.tsx', '.web.ts', '.web.js', '.tsx', '.ts', '.js', '.json'],
       alias: { 'react-native': 'react-native-web', 'expo-gl': path.resolve('tests/fixtures/gl-no-context.tsx') },
       external: ['react', 'react-dom', 'react-dom/server', 'react-native-web'],

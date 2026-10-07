@@ -17,10 +17,8 @@ function fixture(patch: Partial<CityLocationAdapter> = {}) {
   return { adapter, calls };
 }
 
-test('W4 cities are a verbatim projection of the existing canonical public catalogue', () => {
-  const context = { window: {} as { FIXEO_CITIES_MAP?: unknown } };
-  vm.runInNewContext(readFileSync('../js/fixeo-cities.js', 'utf8'), context);
-  assert.deepEqual(JSON.parse(readFileSync('lib/clientCities.generated.json', 'utf8')), JSON.parse(JSON.stringify(context.window.FIXEO_CITIES_MAP)));
+test('PB1 cities are a verbatim projection of the canonical Mobile/backend registry', () => {
+  assert.deepEqual(JSON.parse(readFileSync('lib/clientCities.generated.json', 'utf8')), JSON.parse(readFileSync('../api/diagnostic/cities.json', 'utf8')));
   assert.equal(canonicalCity(' Fez '), 'Fès');
   assert.equal(canonicalCity('Nouvelle ville'), undefined);
   assert.equal(citySuggestions('mek')[0].value, 'Meknès');

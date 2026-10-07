@@ -5,3 +5,7 @@ supabase/.temp/
 
 # Also ignore dependency symlinks in isolated worktrees.
 **/node_modules
+
+# Local Expo state and software export gates are not source artifacts.
+mobile/.expo/
+mobile/dist*/

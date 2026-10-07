@@ -8,7 +8,7 @@ on:
       - 'api/mobile-rafi-voice-fn/**'
       - 'api/mobile-rafi-common.js'
       - 'supabase/functions/mobile-rafi-preview-proxy/**'
-      - 'api/diagnostic/engine.js'
+      - 'api/diagnostic/**'
       - 'api/estimator-v1/index.js'
       - 'api/estimator-v1/fixeo-vap-offers-v1.js'
       - 'vercel.ts'
@@ -17,6 +17,7 @@ on:
       - 'tests/mobile-artisan/**'
       - 'supabase/functions/mobile-mission-evidence/**'
       - 'supabase/migrations/*mobile_intelligence*'
+      - 'supabase/migrations/*pb1_mobile*'
       - '.github/workflows/mobile-intelligence.yml'
 jobs:
   contracts:

@@ -93,8 +93,9 @@ test('presence engine has no backend or per-frame React side effects; visual mat
   const engine = readFileSync('ui/rafiPresence.ts', 'utf8');
   assert.doesNotMatch(renderer + engine, /fetch\(|supabase|triggerFixeoFeedback|setInterval\(|requestAnimationFrame\(/);
   assert.doesNotMatch(renderer, /#[0-9a-fA-F]{3,8}\b|rgba?\(/);
-  assert.match(renderer, /RafiLivingMaterial/);
-  assert.match(renderer, /active=\{focused && viewport.visible\}/);
+  assert.match(renderer, /RafiMasterLoop/);
+  assert.doesNotMatch(renderer, /RafiLivingMaterial|RafiCoreMaterial/);
+  assert.match(renderer, /active=\{focused\s*&&\s*viewport.visible\}/);
   assert.match(renderer, /reduced=\{reduced\}/);
   // PB1 V2 scheduler lifecycle and actual changing material values are exercised in pb1-v2.test.ts.
 });

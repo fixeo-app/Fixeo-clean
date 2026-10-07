@@ -1,8 +1,8 @@
 import { useRef, useEffect, useState } from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
-import { understandArtisanCommand, type CopilotCommand } from '@/lib/artisanCopilot';
-import { loadBusinessClients, loadBusinessQuotes } from '@/lib/artisanOS';
+import { understandArtisanCommand, copilotReads, type CopilotCommand } from '@/lib/artisanCopilot';
+import { loadBusinessClients, loadBusinessQuotes, loadBusinessJobs, loadLedger } from '@/lib/artisanOS';
 import { setArtisanAvailability } from '@/lib/artisanWorkspace';
 import { RafiPhotoPreview } from '@/components/RafiPhotoPreview';
 import { useArtisanHome } from "@/lib/useArtisanHome";
@@ -36,11 +36,21 @@ export default function RafiArtisan() {
   const [proposal, setProposal] = useState<CopilotCommand | null>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<{uri:string;mimeType:string} | null>(null);
   const alive = useRef(true);
-  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  const commandVersion = useRef(0);
+  const consumed = useRef<CopilotCommand | null>(null);
+  function consumeCommand() { consumed.current=proposal; ++commandVersion.current; setProposal(null); setText(''); setWrite(false); }
+  useEffect(() => { const version=commandVersion; alive.current = true; return () => { alive.current = false; ++version.current; }; }, []);
   const d = q.data;
   async function understand(value: string) {
-    const [clients,quotes] = /client|devis/i.test(value) ? await Promise.all([loadBusinessClients(),loadBusinessQuotes()]) : [[],[]];
-    if (alive.current) setProposal(understandArtisanCommand(value, {clients, quotes}));
+    const version=++commandVersion.current;
+    const reads=copilotReads(value);
+    const [clients,quotes,jobs,ledger] = await Promise.all([
+      reads.clients ? loadBusinessClients().catch(() => null) : Promise.resolve(null),
+      reads.quotes ? loadBusinessQuotes().catch(() => null) : Promise.resolve(null),
+      reads.jobs ? loadBusinessJobs().catch(() => null) : Promise.resolve(null),
+      reads.ledger ? loadLedger().catch(() => null) : Promise.resolve(null),
+    ]);
+    if (alive.current && version===commandVersion.current) setProposal(understandArtisanCommand(value, {clients, quotes, jobs, ledger}));
   }
   function choosePhoto(uri: string, mimeType = 'image/jpeg') {
     setSelectedPhoto({uri,mimeType}); setPhoto(null);
@@ -104,11 +114,11 @@ export default function RafiArtisan() {
               label="Votre note pour RAFI"
               value={text}
               editable={!a.busy}
-              onChangeText={value => { setText(value); setProposal(null); setPhoto(null); }}
+              onChangeText={value => { ++commandVersion.current; setText(value); setProposal(null); setPhoto(null); }}
               multiline
             />
           )}
-          {text && (
+          {text && !(proposal?.kind === 'navigate' && proposal.readOnly) && (
             <ArtisanSection label="VOTRE NOTE · À CONFIRMER">
               <FixeoText>{text}</FixeoText>
               <FixeoAction label="Comprendre ma commande" disabled={a.busy || !text.trim()} onPress={() => void a.run(() => understand(text), 'Proposition prête.')} />
@@ -117,15 +127,16 @@ export default function RafiArtisan() {
               </FixeoText>
             </ArtisanSection>
           )}
-          {proposal && <ArtisanSection label="PROPOSITION RAFI">
+          {proposal && <ArtisanSection label={proposal.kind === 'navigate' && proposal.readOnly ? "RÉPONSE RAFI" : "PROPOSITION RAFI"}>
             <FixeoText>{proposal.message}</FixeoText>
-            {proposal.kind !== 'unsupported' && <FixeoAction label={proposal.kind === 'availability' ? 'Confirmer le changement de statut' : 'Ouvrir'} busy={a.busy}
+            {proposal.kind !== 'unsupported' && <FixeoAction label={proposal.kind === 'availability' ? 'Confirmer le changement de statut' : proposal.kind === 'navigate' ? proposal.actionLabel || 'Ouvrir' : 'Ouvrir'} busy={a.busy}
               onPress={() => {
+                if (consumed.current === proposal) return;
                 const command = proposal;
-                if (command.kind === 'navigate') { setProposal(null); router.push({pathname:command.path,params:command.params} as any); }
-                else if(command.kind === 'availability') void a.run(async () => { const status=await setArtisanAvailability(command.status); setProposal(null); await q.retry('profile'); return status; }, 'Disponibilité confirmée.');
+                if (command.kind === 'navigate') { consumeCommand(); router.push({pathname:command.path,params:command.params} as any); }
+                else if(command.kind === 'availability') void a.run(async () => { const status=await setArtisanAvailability(command.status); consumeCommand(); await q.retry('profile'); return status; }, 'Disponibilité confirmée.');
               }} />}
-            <FixeoAction label="Annuler la proposition" variant="ghost" disabled={a.busy} onPress={() => setProposal(null)} />
+            <FixeoAction label="Annuler la proposition" variant="ghost" disabled={a.busy} onPress={consumeCommand} />
           </ArtisanSection>}
           {selectedPhoto && <ArtisanSection label="PHOTO PRIVÉE">
             <RafiPhotoPreview uri={selectedPhoto.uri} busy={a.busy} onChange={choosePhoto}

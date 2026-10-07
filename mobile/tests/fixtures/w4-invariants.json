@@ -28,7 +28,7 @@
     "lib/rafiTerrain.ts": "62b1db7ff94219d2b0e709cc36bddee1d3d1333b694864d39fc5820d0f49c002",
     "lib/useForegroundRefresh.ts": "2f661a027fbdac12dfcedaddc35efbda16a41b1c26a50402dd304bf4d9d5c9e6",
     "lib/workspacePresentation.ts": "ce5e934cefc57913f17491aa490937bbfcb47549c0e7cd831f17f0871978b17d",
-    "ui/FixeoAction.tsx": "be4ccf9026af986ba318288e4484bca6f415ee58aa466a4883a470564e0c21be",
+    "ui/FixeoAction.tsx": "f19bc08b3ff33324f91d44b16e8cb6c85dc8d50b324f9a338a3ca8e60ec7ec92",
     "ui/FixeoCard.tsx": "42d36eb76e6dce6a0414c800c20f5e6b09a6271fea2b09ccf185140d830c16a0",
     "ui/FixeoContextDock.tsx": "492c604ccc84af30ff5fae9381a11c7cadc163b995df46b11530ab305a954040",
     "ui/FixeoScreen.tsx": "cebe71fa3a6e194003e57b7f6df28443ae05ec9ee73366cfa8609bbd8d2da6c1",
@@ -39,7 +39,7 @@
     "ui/interactionContract.ts": "4fd34848213d83dee13b8fd9b5a7221c8d58278b696fd10bba51ae0383604184",
     "ui/motionContract.ts": "ee8e82713e9f69986d6cc0e44c312b3c0a02f473ec14df7fba4922c4832f7a5e",
     "ui/motionEasing.ts": "3cd16502cc7f92fe50c3a7581b5364190c64ac1776b448bb8233f2e738f93d31",
-    "ui/screenMetrics.ts": "29bba5d4003145edc6332139eb3c3aa6bb40715b615f8b60d0c751ea2b496eea",
+    "ui/screenMetrics.ts": "772b777f5e30606758057fd78d31f264f39854a4fb93d90820afee96b1270d3b",
     "ui/useRafiActivity.ts": "d79dbe7f543958009d6ad45d389965a98c80d19227f4e51e0e27b53494c45b68",
     "ui/useReducedMotion.ts": "6d32dcbaea47c7af8fec16a442521ad0666b9cf5c381f2a1e86ef3d64ec97b25"
   },
@@ -169,5 +169,15 @@
   "pb1V2ReadAndTransportReplacements": {
     "scope": "Canonical city read projection and bounded photo HTTP only; RPC mutations/Auth/result schema preserved",
     "evidence": "fixtures/pb1-v2-read-boundaries.json"
+  },
+  "pb1FinalCorrectionAuthorized": {
+    "ui/FixeoAction.tsx": {
+      "previous_sha256": "be4ccf9026af986ba318288e4484bca6f415ee58aa466a4883a470564e0c21be",
+      "reason": "PB1 physical correction: canonical CTA affordance and measured dock clearance, explicitly authorized."
+    },
+    "ui/screenMetrics.ts": {
+      "previous_sha256": "29bba5d4003145edc6332139eb3c3aa6bb40715b615f8b60d0c751ea2b496eea",
+      "reason": "PB1 physical correction: canonical CTA affordance and measured dock clearance, explicitly authorized."
+    }
   }
 }

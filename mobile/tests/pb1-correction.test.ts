@@ -55,7 +55,7 @@ test('PB1 fetch deadline covers a stalled body and clears completed timers', asy
 });
 
 test('PB1 canonical city selection works empty, exact, partial and without accents', () => {
-  assert.equal(citySuggestions('').length, 20);
+  assert.equal(citySuggestions('').length, 21);
   assert.equal(citySuggestions('Fes')[0].value, 'Fès');
   assert.equal(citySuggestions('ken')[0].value, 'Kénitra');
   assert.equal(requireCanonicalCity(' Fez '), 'Fès');

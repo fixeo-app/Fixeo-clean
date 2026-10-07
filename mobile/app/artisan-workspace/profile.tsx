@@ -163,7 +163,7 @@ export default function Profile() {
             ].map(([label, value]) => (
               <View key={String(label)} style={art.row}>
                 <FixeoText>{label}</FixeoText>
-                <FixeoText variant="heading">
+                <FixeoText variant={value == null ? "supporting" : "heading"} tone={value == null ? "secondary" : "primary"} style={value == null ? { fontWeight: "400" } : undefined}>
                   {value == null ? "En cours de calcul" : String(value)}
                 </FixeoText>
               </View>

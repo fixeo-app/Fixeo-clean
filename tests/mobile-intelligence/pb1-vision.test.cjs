@@ -43,3 +43,36 @@ test('PB1 live proof gate rejects generic fallback, declarations used as observa
  const retained=structuredClone(body);retained.privacy.persisted=true;
  assert.throws(()=>verifyResult(retained),/EPHEMERAL_PRIVACY/);
 });
+
+test('PB1 calibrated image-to-result: an unused socket keeps OBSERVED/DECLARED/HYPOTHESIS/UNCERTAINTY without invented electrical urgency',async()=>{
+ const raw=fs.readFileSync(path.join(__dirname,'../../img/blog/plomberie-blog.webp'));
+ const safe=await sanitizePhoto(raw,'image/webp',raw.length);
+ let calls=0;
+ const provider=createOpenAIAdapter({env:{OPENAI_API_KEY:'fixture-only',FIXEO_DIAGNOSTIC_MODEL:'fixture'},photoPolicy:'descriptive',fetchImpl:async(_url,init)=>{
+  const body=JSON.parse(init.body);calls++;
+  if(body.text.format.name==='fixeo_photo_evidence_v1'){
+   assert.match(body.instructions,/unused wall socket/);
+   const image=body.input[0].content.find(c=>c.type==='input_image');assert.equal(hash(Buffer.from(image.image_url.split(',')[1],'base64')),safe.sha256);
+   // Provider boundary fixture, not a claim that this photograph depicts a socket.
+   return respond({photos:[{media_id:id,status:'informative',observations:[{text:'Une prise murale sans câble branché.',location:'au centre'}],safety_signals:[]}]});
+  }
+  assert.match(body.instructions,/Absence of information is never a technical defect/);
+  return respond({trade:'electricite',problem:'Risque électrique potentiel.',observations:[],hypotheses:['La prise non utilisée pourrait présenter un risque électrique.'],urgency:'high',urgency_reason:'Risque potentiel.',checks:[],possible_parts:[],question_ids:[],safety_signals:['electrical_risk']});
+ }});
+ const output=await analyze({input:{description:'',answers:{},safety_signals:[]},media:[{id,path:'memory:'+id,sha256:safe.sha256}]},{provider,mediaStore:{download:async()=>safe.bytes}});
+ const r=output.result;assert.equal(calls,2);
+ assert.equal(r.facts.find(f=>f.provenance==='observed').value,'Une prise murale sans câble branché. (au centre)');
+ assert.equal(r.facts.find(f=>f.provenance==='user_declared').value,'');
+ assert.ok(r.hypotheses.every(h=>h.provenance==='ai_inferred'));assert.match(r.hypotheses[0].value,/indéterminé/);
+ assert.match(r.checks.join(' '),/ne permet pas de conclure/);assert.equal(r.urgency.value,'low');assert.equal(r.safety.stop,false);assert.deepEqual(r.safety.signals,[]);
+ assert.doesNotMatch(JSON.stringify(r),/risque électrique potentiel|aucune observation photo claire disponible/i);
+});
+test('PB1 socket calibration never removes declared symptoms, damaged equipment or isolated hazards',()=>{
+ const {calibrateDescriptiveSynthesis}=require('../../api/diagnostic/mobile-calibration');
+ const result={safety_signals:['electricity'],urgency:'critical'};
+ const photos=[{status:'informative',observations:[{text:'Une prise murale sans câble branché.'}],safety_signals:[]}];
+ assert.equal(calibrateDescriptiveSynthesis(result,photos,{description:'Une odeur de brûlé.',answers:{}}),result);
+ assert.equal(calibrateDescriptiveSynthesis(result,photos,{description:'',answers:{smoke_sparks:'yes'}}),result);
+ for(const hazard of ['electricity','electrical_risk','fire','gas','flood','structure'])assert.equal(calibrateDescriptiveSynthesis(result,[{...photos[0],safety_signals:[hazard]}],{}),result);
+ assert.equal(calibrateDescriptiveSynthesis(result,[{...photos[0],observations:[{text:'Une prise cassée sans câble branché.'}]}],{}),result);
+});

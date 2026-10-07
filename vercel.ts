@@ -9,7 +9,7 @@ const isolated = process.env.VERCEL_GIT_COMMIT_REF === branch ||
 // Other branches retain the exact W4 configuration until integration review.
 const w6Branch = 'feat/fixeo-mobile-w6-entry-auth-trust';
 const w6 = process.env.VERCEL_GIT_COMMIT_REF === w6Branch;
-export const config = w6 ? {
+const runtimeConfig = w6 ? {
   version: 2,
   builds: [{ src: 'mobile/package.json', use: '@vercel/static-build', config: { distDir: 'dist' } }],
   routes: [
@@ -36,3 +36,6 @@ export const config = w6 ? {
   ],
   git: {deploymentEnabled: {[branch]: true}},
 } : legacy;
+
+// Git webhook evaluation may not expose VERCEL_GIT_COMMIT_REF. The branch deny rule must be unconditional.
+export const config = { ...runtimeConfig, git: { ...runtimeConfig.git, deploymentEnabled: { ...runtimeConfig.git?.deploymentEnabled, [w6Branch]: false } } };

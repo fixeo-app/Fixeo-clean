@@ -26,7 +26,7 @@ export function CityField({ value, onChange, label = 'Votre ville', disabled = f
       </ShellControl>
     </View>
     {expanded && !disabled && <View style={styles.options}>
-      <TextInput accessibilityLabel="Rechercher une ville" placeholder="Rechercher une ville : Fes, Rabat…"
+      <TextInput accessibilityLabel="Rechercher une ville" placeholder="Rechercher une ville : Fès, Rabat…"
         value={query} autoCorrect={false} autoCapitalize="none" onChangeText={setQuery}
         onSubmitEditing={() => { const city = canonicalCity(query); if(city) { onChange(city); setExpanded(false); } }}
         style={clientStyles.input} />

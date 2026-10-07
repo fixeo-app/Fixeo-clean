@@ -19,7 +19,7 @@ export function getScreenMetrics(insets: Insets, { padded = true, floatingHeight
   const floatingBottom = Math.max(bottomSafe, keyboard) + layout.floating.gap;
   return {
     paddingTop: Math.max(nonNegative(insets.top), layout.screen.edge),
-    paddingBottom: floating ? floatingBottom + floating + layout.floating.gap : Math.max(bottomSafe, keyboard),
+    paddingBottom: floating ? floatingBottom + floating + Math.max(24, layout.floating.gap) : Math.max(bottomSafe, keyboard),
     paddingLeft: Math.max(nonNegative(insets.left), padded ? spacing.lg : 0),
     paddingRight: Math.max(nonNegative(insets.right), padded ? spacing.lg : 0),
     floatingBottom,

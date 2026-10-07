@@ -55,7 +55,7 @@ test('screen metrics preserve portrait padding, protect side cutouts and reserve
   assert.equal(getScreenMetrics({ ...portrait, left: 44 }, { padded: false }).paddingLeft, 44);
   const floating = getScreenMetrics(portrait, { floatingHeight: 80, keyboardOverlap: 300 });
   assert.equal(floating.floatingBottom, 312);
-  assert.equal(floating.paddingBottom, 404);
+  assert.equal(floating.paddingBottom, 416);
   assert.equal(getScreenMetrics(portrait, { keyboardOverlap: 300 }).paddingBottom, 300);
   assert.equal(getScreenMetrics(portrait, { floatingHeight: -1, keyboardOverlap: NaN }).paddingBottom, 34);
 });

@@ -1,3 +1,4 @@
+import { pageLayout } from '@/ui/pageLayout';
 import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
 import { useCallback, useEffect, useRef, useState, type PropsWithChildren } from "react";
 import { RafiSignalContext } from '@/ui/RafiSignal';
@@ -18,9 +19,7 @@ import { RafiOrb } from "@/ui/RafiOrb";
 import { MobileShell } from "./MobileShell";
 import { useWorkspaceDock } from './useWorkspaceDock';
 import {
-  layout,
   radii,
-  rafiVisualTokens,
   semanticColors,
   space,
   typography,
@@ -324,21 +323,9 @@ export function ArtisanChoices({
   );
 }
 export const art = StyleSheet.create({
-  content: {
-    paddingHorizontal: space.lg,
-    paddingBottom: space.xl,
-    gap: space.xl,
-    width: "100%",
-    maxWidth: layout.screen.maxContentWidth,
-    alignSelf: "center",
-  },
-  intro: { paddingTop: space.sm, gap: space.sm },
-  signature: {
-    width: 40,
-    height: 2,
-    backgroundColor: rafiVisualTokens.champagne,
-    marginBottom: space.sm,
-  },
+  content: pageLayout.content,
+  intro: pageLayout.intro,
+  signature: pageLayout.signature,
   section: {
     padding: space.lg,
     gap: space.md,

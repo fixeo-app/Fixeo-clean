@@ -79,8 +79,11 @@ test('W6 deployment maps Expo root URLs to nested build output without changing 
     vm.runInNewContext(source, { exports, process: { env: { VERCEL_GIT_COMMIT_REF: branch } }, require: () => legacy });
     return exports.config;
   }
-  assert.deepEqual(config('main'), legacy);
-  assert.deepEqual(config('unrelated-branch'), legacy);
+  for (const branch of ['main','unrelated-branch','']) {
+    const actual=config(branch);
+    assert.deepEqual(JSON.parse(JSON.stringify({...actual,git:legacy.git})), legacy);
+    assert.equal(actual.git.deploymentEnabled['feat/fixeo-mobile-w6-entry-auth-trust'],false);
+  }
   const w6 = config('feat/fixeo-mobile-w6-entry-auth-trust');
   function target(path: string) {
     const route = w6.routes.find((r: { src?: string; dest?: string }) => r.dest && new RegExp('^' + r.src + '$').test(path));

@@ -3,5 +3,5 @@
   "framework": null,
   "buildCommand": "node build.mjs",
   "installCommand": "",
-  "git": { "deploymentEnabled": { "**": false, "feat/fixeo-mobile-w6-entry-auth-trust": true } }
+  "git": { "deploymentEnabled": { "**": false, "feat/fixeo-mobile-w6-entry-auth-trust": false } }
 }
