@@ -1,3 +1,4 @@
+import { DateField } from '@/components/DateField';
 import { useLocalSearchParams } from 'expo-router';
 import { ledgerDetailLabel, ledgerTypeLabel, ledgerJobLabel } from '@/lib/ledgerPresentation';
 import { useState } from "react";
@@ -123,11 +124,7 @@ export default function Finance() {
             onChangeText={setAmount}
             keyboardType="decimal-pad"
           />
-          <ArtisanField
-            label="Date du mouvement — AAAA-MM-JJ"
-            value={date}
-            onChangeText={setDate}
-          />
+          <DateField label="Date du mouvement" value={date} onChange={setDate} />
           <ArtisanChoices
             label="Client lié au mouvement"
             value={clientId}
@@ -146,7 +143,7 @@ export default function Finance() {
           <ArtisanChoices
             label="Intervention liée"
             value={jobId}
-            onChange={setJobId}
+            onChange={value => { setJobId(value); if (value) setClientId(q.data?.jobs.find(job => job.id === value)?.client_id || ""); }}
             options={[
               { value: "", label: "Aucune" },
               ...q.data.jobs

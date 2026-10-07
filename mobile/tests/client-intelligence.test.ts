@@ -39,14 +39,14 @@ test('all canonical outcomes render literal server amounts, quote and diagnostic
   for(const outcome of Object.values(estimator.outcomes)) assert.equal(clientEstimatorPresentation(outcome).canCreateRequest,false);
 });
 test('mobile consumes no pricing engine, legacy import or estimator secret; source guard precedes request', () => {
-  for(const file of ['app/index.tsx','components/ClientFixeoResult.tsx','lib/clientEstimatorPresentation.ts','components/ClientDiagnostic.tsx','lib/clientDiagnostic.ts']) {
+  for(const file of ['app/index.tsx','components/ClientRequestComposer.tsx','components/ClientFixeoResult.tsx','lib/clientEstimatorPresentation.ts','components/ClientDiagnostic.tsx','lib/clientDiagnostic.ts']) {
     const source=readFileSync(file,'utf8');
     assert.doesNotMatch(source,/FIXEO_ESTIMATOR_SECRET|pricing-engine|fixeo-pricing|data\/pricing|PRICE_MAP|amount\s*[*+\/-]/);
   }
-  const home=readFileSync('app/index.tsx','utf8');
-  assert.match(home,/if \(!intakeReady\) return;[\s\S]*setConfirmDirect\(true\)/);
+  const home=readFileSync('components/ClientRequestComposer.tsx','utf8');
+  assert.match(home,/if \(!intakeReady\) \{[^}]*return; \}[\s\S]*setConfirmDirect\(true\)/);
   assert.match(home,/label="Confirmer et chercher un artisan"[\s\S]*void send\(\)/);
-  assert.match(home,/onPress=\{sendQualifiedIntake\}/);
+  assert.match(home,/onPress=\{idempotencyKeyRef\.current && loop\.state === \'error\' \? \(\) => void send\(\) : sendQualifiedIntake\}/);
   assert.doesNotMatch(home,/onPress=\{\(\) => void send\(\)/);
   const result=readFileSync('components/ClientFixeoResult.tsx','utf8');
   assert.doesNotMatch(result,/createRequest|confirm_request|fetch\(/);

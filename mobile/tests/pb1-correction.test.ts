@@ -159,7 +159,7 @@ test('PB1 business writes retain the same draft, CRM links and independent expen
           upsert(payload: unknown) { write.action = 'upsert'; write.payload = payload; return query; },
           eq(key: string, value: unknown) { write.filters[key] = value; return query; },
           select() { return query; },
-          async single() { writes.push(write); return { data: { ...write.payload, status: write.payload.status || 'draft', sent_at: null, sent_via: null } }; },
+          async single() { if (!write.action) return { data: { id: 'pb1-job', client_id: 'pb1-client', source: 'personal' } }; writes.push(write); return { data: { ...write.payload, status: write.payload.status || 'draft', sent_at: null, sent_via: null } }; },
         }; return query;
       },
     } },

@@ -1,7 +1,7 @@
 import { useWorkspaceDock } from '@/components/useWorkspaceDock';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import {
   listClientRequestHistory,
   type ClientRequestHistory,
@@ -39,9 +39,7 @@ export default function ClientHistory() {
     }
   }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useFocusEffect(useCallback(() => { void load(); }, [load]));
 
   useForegroundRefresh(load);
 
@@ -65,6 +63,7 @@ export default function ClientHistory() {
         ListHeaderComponent={<View style={styles.header}>
           <ClientPageIntro eyebrow="MES INTERVENTIONS" title="Votre histoire
 avec FIXEO." detail="Vos demandes, de la première étape à la dernière." />
+          <FixeoAction label="+ Nouvelle demande" onPress={() => router.push('/new-request' as any)} />
           {!!error && <FixeoText accessibilityRole="alert" style={clientStyles.error}>{error}</FixeoText>}
         </View>}
         ListEmptyComponent={<ClientSection>
@@ -79,9 +78,9 @@ avec FIXEO." detail="Vos demandes, de la première étape à la dernière." />
             {!!item.description && <FixeoText variant="supporting" numberOfLines={2}>{item.description}</FixeoText>}
             <View style={styles.footer}>
               <FixeoText variant="supporting" style={styles.status}>{CLIENT_STATUS[item.status] || 'Suivi FIXEO'}</FixeoText>
-              {['new', 'assigned', 'in_progress', 'completed'].includes(item.status) && <FixeoAction
+              {<FixeoAction
                 label={item.status === 'completed' ? 'Vérifier' : 'Voir le suivi'} variant="ghost"
-                style={styles.action} onPress={() => router.replace('/')} />}
+                style={styles.action} onPress={() => router.push({ pathname: '/client-request/[id]' as any, params: { id: item.id } })} />}
             </View>
           </View>
         )}

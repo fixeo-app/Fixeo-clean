@@ -1,4 +1,5 @@
 import { CityZonesField } from '@/components/CityField';
+import { ServiceField } from '@/components/ServiceField';
 import { canonicalCity } from '@/lib/clientLocation';
 import { useEffect, useState } from "react";
 import { Image, View } from "react-native";
@@ -35,6 +36,7 @@ export default function Profile() {
     [bio, setBio] = useState(""),
     [savedBio, setSavedBio] = useState("");
   const p = q.data?.profile;
+  const profileCities = q.data?.cities;
   useEffect(() => {
     if (p) {
       setPhone(p.phone_public || "");
@@ -42,10 +44,10 @@ export default function Profile() {
         p.services?.length ? p.services.join(", ") : p.service_category || "",
       );
       setCities(
-        (q.data!.cities.length ? q.data!.cities : p.city ? [p.city] : []).map(value => canonicalCity(value) || value),
+        (profileCities?.length ? profileCities : p.city ? [p.city] : []).map(value => canonicalCity(value) || value),
       );
     }
-  }, [p, q.data?.cities]);
+  }, [p, profileCities]);
   useEffect(() => {
     setBio(p?.description || "");
     setSavedBio(p?.description || "");
@@ -79,11 +81,7 @@ export default function Profile() {
             onChangeText={setPhone}
             keyboardType="phone-pad"
           />
-          <ArtisanField
-            label="Métiers — séparés par des virgules"
-            value={services}
-            onChangeText={setServices}
-          />
+          <ServiceField multiple values={services.split(',').map(value => value.trim()).filter(Boolean)} onChange={values => setServices(values.join(', '))} disabled={a.busy} />
           <CityZonesField values={cities} onChange={setCities} disabled={a.busy} />
           <FixeoAction
             label="Enregistrer mon profil"

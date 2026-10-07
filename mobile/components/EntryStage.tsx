@@ -41,6 +41,8 @@ export function EntryStage({
 
 const styles = StyleSheet.create({
   root: {
+    width: '100%',
+    alignSelf: 'center',
     alignItems: 'center',
     gap: spacing.sm,
   },

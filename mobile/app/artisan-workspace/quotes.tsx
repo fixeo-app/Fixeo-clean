@@ -1,3 +1,4 @@
+import { QuoteBreakdown } from '@/components/QuoteBreakdown';
 import { View } from "react-native";
 import { router } from "expo-router";
 import { loadBusinessQuotes, loadMarketplaceQuotes } from "@/lib/artisanOS";
@@ -71,9 +72,7 @@ export default function Quotes() {
             {q.data.marketplace.length ? (
               q.data.marketplace.map((x) => (
                 <View style={art.row} key={x.id}>
-                  <FixeoText variant="heading">
-                    {money(x.proposed_price)}
-                  </FixeoText>
+                  <QuoteBreakdown total={x.proposed_price} source="fixeo" />
                   <FixeoText>{x.service_description}</FixeoText>
                   <FixeoText tone="secondary">
                     {businessStatus[x.review_status] || x.review_status} ·

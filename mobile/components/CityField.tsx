@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { FlatList, Keyboard, KeyboardAvoidingView, Modal, Platform, StyleSheet, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { canonicalCity, citySuggestions } from '@/lib/clientLocation';
 import { FixeoText } from '@/ui/FixeoText';
 import { ShellControl, ShellIcon } from '@/ui/ShellControl';
@@ -12,6 +13,8 @@ export function CityField({ value, onChange, label = 'Votre ville', disabled = f
 }) {
   const [expanded, setExpanded] = useState(false);
   const [query, setQuery] = useState('');
+  const insets = useSafeAreaInsets();
+  const close = () => { Keyboard.dismiss(); setExpanded(false); };
   const options = citySuggestions(query);
   return <View style={styles.root}>
     <FixeoText variant="supporting" tone="secondary">{label}</FixeoText>
@@ -25,21 +28,23 @@ export function CityField({ value, onChange, label = 'Votre ville', disabled = f
         <ShellIcon name={expanded ? 'chevron-up-outline' : 'chevron-down-outline'} />
       </ShellControl>
     </View>
-    {expanded && !disabled && <View style={styles.options}>
+    <Modal visible={expanded && !disabled} animationType="slide" onRequestClose={close} presentationStyle="pageSheet">
+    <KeyboardAvoidingView style={[styles.sheet, { paddingTop: Math.max(insets.top, 20), paddingBottom: Math.max(insets.bottom, 16) }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <View style={styles.heading}><FixeoText variant="heading">{label}</FixeoText>
+        <ShellControl accessibilityLabel="Fermer la liste des villes" onPress={close}><ShellIcon name="close-outline" /></ShellControl>
+      </View>
       <TextInput accessibilityLabel="Rechercher une ville" placeholder="Rechercher une ville : Fès, Rabat…"
         value={query} autoCorrect={false} autoCapitalize="none" onChangeText={setQuery}
-        onSubmitEditing={() => { const city = canonicalCity(query); if(city) { onChange(city); setExpanded(false); } }}
+        returnKeyType="search" onSubmitEditing={() => { const city = canonicalCity(query); if(city) { onChange(city); close(); } }}
         style={clientStyles.input} />
-      <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="always" style={styles.list}>
-        {options.map(item => <ShellControl key={item.value} accessibilityLabel={`Choisir ${item.label}`}
+      <FlatList data={options} keyExtractor={item => item.value} keyboardShouldPersistTaps="handled" style={styles.list}
+        renderItem={({ item }) => <ShellControl accessibilityLabel={`Choisir ${item.label}`}
           accessibilityState={{ selected: canonicalCity(value) === item.value }}
-          style={styles.option} onPress={() => { onChange(item.value); setExpanded(false); }}>
+          style={styles.option} onPress={() => { onChange(item.value); close(); }}>
           <FixeoText>{item.label}</FixeoText>
           {canonicalCity(value) === item.value && <ShellIcon name="checkmark-outline" />}
-        </ShellControl>)}
-        {!options.length && <FixeoText style={styles.empty} tone="secondary">Aucune ville trouvée. Essayez un autre nom.</FixeoText>}
-      </ScrollView>
-    </View>}
+        </ShellControl>} ListEmptyComponent={<View><FixeoText style={styles.empty} tone="secondary">Aucune ville trouvée. Essayez un autre nom.</FixeoText><ShellControl accessibilityLabel="Effacer la recherche" onPress={() => setQuery('')}><FixeoText>Effacer la recherche</FixeoText></ShellControl></View>} />
+    </KeyboardAvoidingView></Modal>
   </View>;
 }
 
@@ -65,7 +70,9 @@ export function CityZonesField({ values, onChange, disabled = false }: {
 }
 const styles = StyleSheet.create({
   root: { gap: space.xs }, inputRow: { flexDirection: 'row', alignItems: 'center', gap: space.xxs },
-  input: { flex: 1, minWidth: 0 }, list: { maxHeight: 240 },
+  input: { flex: 1, minWidth: 0 }, list: { flex: 1 },
+  sheet: { flex: 1, paddingHorizontal: space.lg, gap: space.md, backgroundColor: semanticColors.background.canvas },
+  heading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: space.sm },
   options: { backgroundColor: semanticColors.background.surface, borderWidth: 1, borderColor: semanticColors.border.subtle, borderRadius: radii.control, overflow: 'hidden' },
   option: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: space.md, paddingVertical: space.sm },
   empty: { padding: space.md }, zone: { flexDirection: 'row', alignItems: 'center', gap: space.xs },

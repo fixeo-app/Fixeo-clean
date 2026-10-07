@@ -1,7 +1,7 @@
 import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
 import { useState, type PropsWithChildren } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
-import { router } from 'expo-router';
+import { BackButton } from '@/ui/BackButton';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { RafiOrb } from '@/ui/RafiOrb';
@@ -12,9 +12,9 @@ export function AuthFrame({ title, detail, children, back = '/entry', hero = fal
   return <FixeoScreen padded={false}><KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={s.scroll}>
       <View style={s.canvas}>
-        <View style={s.brandRow}><Text style={s.brand}>FIXEO</Text>{back && <FixeoAction label="Retour" variant="ghost" onPress={() => router.replace(back as any)} />}</View>
+        <View style={s.brandRow}><Text style={s.brand}>FIXEO</Text>{back && <BackButton destination={back} />}</View>
         <View style={hero ? s.hero : s.intro}>
-          <RafiOrb size={hero ? 156 : 64} mode="idle" subtle />
+          <View style={{ width: '100%', alignItems: 'center' }}><RafiOrb size={hero ? 156 : 64} mode="idle" subtle /></View>
           <Text style={s.kicker}>RAFI · À VOS CÔTÉS</Text>
           <Text accessibilityRole="header" style={[s.title, hero && s.heroTitle]}>{title}</Text>
           <Text style={s.detail}>{detail}</Text>

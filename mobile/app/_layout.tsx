@@ -9,7 +9,7 @@ import { normalizeNotificationIntent } from '@/lib/notificationRouting';
 import { authState, startAuthOwner, useAuthState } from '@/lib/authSession';
 
 configureForegroundNotifications();
-const clientScreens = ['index', 'client-mission/[id]', 'client-workspace/index', 'client-workspace/account', 'client-workspace/history', 'client-workspace/notifications'];
+const clientScreens = ['index', 'new-request', 'client-request/[id]', 'client-mission/[id]', 'client-workspace/index', 'client-workspace/account', 'client-workspace/history', 'client-workspace/notifications'];
 const artisanScreens = ['artisan', 'mission/[id]', 'artisan-workspace/index', 'artisan-workspace/agenda', 'artisan-workspace/clients', 'artisan-workspace/client/[id]', 'artisan-workspace/evidence/[id]', 'artisan-workspace/finance', 'artisan-workspace/missions', 'artisan-workspace/notifications', 'artisan-workspace/opportunities', 'artisan-workspace/opportunity/[id]', 'artisan-workspace/profile', 'artisan-workspace/quote/[id]', 'artisan-workspace/quotes', 'artisan-workspace/rafi'];
 
 async function routeNotificationResponse(response: Notifications.NotificationResponse) {

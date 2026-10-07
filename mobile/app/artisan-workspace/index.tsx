@@ -69,7 +69,7 @@ export default function Availability() {
           <FixeoAction
             label="Ouvrir mon profil"
             variant="ghost"
-            onPress={() => router.push("/artisan-workspace/profile" as any)}
+            onPress={() => router.push({ pathname: "/artisan-workspace/profile", params: { from: "availability" } })}
           />
         </>
       )}

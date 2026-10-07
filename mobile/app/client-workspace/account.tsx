@@ -1,4 +1,5 @@
 import { CityField } from '@/components/CityField';
+import { BackButton } from '@/ui/BackButton';
 import { useWorkspaceDock } from '@/components/useWorkspaceDock';
 import { useCallback, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
@@ -68,7 +69,7 @@ export default function ClientAccount() {
 
   const contextDock = useWorkspaceDock('client');
   return (
-    <FixeoScreen padded={false} contextDock={{ ...contextDock, hidden: editing }} header={
+    <FixeoScreen padded={false} contextDock={contextDock} header={
         <MobileShell
           universe="client"
           activeKey="account"
@@ -84,6 +85,7 @@ export default function ClientAccount() {
         showsVerticalScrollIndicator={false}
       >
 
+        <BackButton destination="/client-workspace" disabled={saving} onPress={editing ? () => setEditing(false) : undefined} />
         <ClientPageIntro eyebrow="MON COMPTE" title={clientProfileTitle(profile?.full_name)} detail="Vos coordonnées, simplement." />
         {!!profile?.email && <FixeoText variant="supporting" tone="secondary">{profile.email}</FixeoText>}
         {profile ? <ClientSection label="Pour vos interventions">

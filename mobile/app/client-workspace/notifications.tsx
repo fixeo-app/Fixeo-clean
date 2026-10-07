@@ -1,5 +1,7 @@
 import { useWorkspaceDock } from '@/components/useWorkspaceDock';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { clientNotificationTarget } from '@/lib/clientNotificationTarget';
 import { SectionList, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
 import {
   listClientNotifications,
@@ -38,19 +40,19 @@ export default function ClientNotifications() {
     }
   }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useFocusEffect(useCallback(() => { void load(); }, [load]));
 
   useForegroundRefresh(load);
 
   async function open(item: ClientNotification) {
+    const destination = clientNotificationTarget(item);
+    if (destination) router.push(destination as any);
     if (!item.read) {
       try {
         await withMobileDeadline(markClientNotificationRead(item.id));
         setItems(current => current.map(row => row.id === item.id ? { ...row, read: true } : row));
       } catch {
-        // Reading the message is still allowed if the acknowledgement fails.
+        setError('Le message reste accessible. Son statut lu n’a pas pu être enregistré.');
       }
     }
   }
@@ -83,8 +85,9 @@ au bon moment." detail="Les événements de vos interventions." />
           {!loading && !error && <FixeoText tone="secondary">Les nouvelles étapes de vos interventions apparaîtront ici.</FixeoText>}
         </ClientSection>}
         renderSectionHeader={({ section }) => <FixeoText accessibilityRole="header" variant="eyebrow" tone="secondary" style={styles.sectionTitle}>{section.title}</FixeoText>}
-        renderItem={({ item }) => <Pressable accessibilityRole="button"
-          accessibilityLabel={`${cleanNotificationCopy(item.title)}. ${item.read ? 'Déjà lu' : 'Marquer comme lu'}`}
+        renderItem={({ item }) => <Pressable accessibilityRole={item.read && !clientNotificationTarget(item) ? 'text' : 'button'}
+          disabled={item.read && !clientNotificationTarget(item)}
+          accessibilityLabel={`${cleanNotificationCopy(item.title)}. ${clientNotificationTarget(item) ? 'Ouvrir le suivi' : item.read ? 'Déjà lu' : 'Marquer comme lu'}`}
           onPress={() => void open(item)} style={({ pressed }) => [clientStyles.row, pressed && styles.pressed]}>
           <View style={styles.titleRow}>
             <FixeoText variant={item.read ? 'body' : 'heading'} tone={item.read ? 'secondary' : 'primary'} style={styles.title}>{cleanNotificationCopy(item.title)}</FixeoText>

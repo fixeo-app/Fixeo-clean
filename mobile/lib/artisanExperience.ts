@@ -1,3 +1,4 @@
+import { moneyMinor, lineTotalMinor } from './moneyContract';
 export type QuoteLine = {
   type: "service" | "supply" | "labor";
   label: string;
@@ -12,9 +13,9 @@ export const availabilityLabels: Record<string, string> = {
 };
 export const businessStatus: Record<string, string> = {
   draft: "Brouillon",
-  sent: "Envoyé",
-  accepted: "Accepté",
-  rejected: "Refusé",
+  sent: "Envoi déclaré",
+  accepted: "Accord déclaré",
+  rejected: "Refus déclaré",
   expired: "Expiré",
   cancelled: "Annulé",
   planned: "Planifiée",
@@ -87,18 +88,18 @@ export function calculateQuote(
     return {
       ...line,
       label: line.label.trim(),
-      total: Math.round(line.quantity * line.unit_price * 100) / 100,
+      total: lineTotalMinor(line.quantity, line.unit_price) / 100,
     };
   });
   const subtotal =
-    Math.round(items.reduce((sum, l) => sum + l.total, 0) * 100) / 100;
+    items.reduce((sum, l) => sum + moneyMinor(l.total), 0) / 100;
   if (discount > subtotal || subtotal > 500000)
     throw new Error("QUOTE_AMOUNT_INVALID");
   return {
     items,
     subtotal,
-    discount,
-    total: Math.round((subtotal - discount) * 100) / 100,
+    discount: moneyMinor(discount) / 100,
+    total: (moneyMinor(subtotal) - moneyMinor(discount)) / 100,
   };
 }
 export function ledgerTotals(
@@ -165,6 +166,9 @@ export function artisanError(error: unknown) {
     )
   )
     return "Cette demande suit un autre parcours de prix. Aucun devis n’a été transmis.";
+  if (/LEDGER_CLIENT_MISMATCH/.test(message)) return "Le client doit correspondre à l’intervention sélectionnée.";
+  if (/LEDGER_|JOB_INVALID/.test(message)) return "Vérifiez le montant, la date et l’intervention sélectionnée.";
+  if (/QUOTE_STATE_CHANGED/.test(message)) return "Le statut de ce devis a changé. Actualisez-le avant de continuer.";
   if (/QUOTE_|INVALID_PRICE|INVALID_SCOPE/i.test(message))
     return "Vérifiez les lignes, les montants et la validité du devis.";
   return "Le service est momentanément indisponible. Vérifiez votre connexion puis réessayez.";

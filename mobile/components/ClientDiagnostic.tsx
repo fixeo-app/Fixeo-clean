@@ -6,14 +6,15 @@ import { ClientHero, ClientSection, clientStyles } from './ClientEditorial';
 import { FixeoText } from '@/ui/FixeoText';
 import { FixeoAction } from '@/ui/FixeoAction';
 
-export function ClientDiagnostic({ result, confirmed, onConfirm, onExit }: {
-  result: MobileDiagnosticResult; confirmed: boolean; onConfirm: (description: string) => void; onExit?: () => void;
+export function ClientDiagnostic({ result, confirmed, onConfirm, onExit, onClarify }: {
+  result: MobileDiagnosticResult; confirmed: boolean; onConfirm: (description: string) => void; onExit?: () => void; onClarify?: () => void;
 }) {
   const [answers, setAnswers] = useState<string[]>([]);
   const [answer, setAnswer] = useState('');
   const [details, setDetails] = useState(false);
   const questions = diagnosticQuestions(result);
   const next = questions[answers.length];
+  const neutral = /aucun.*(probl[eè]me|d[eé]faut|dommage)|pas de.*(probl[eè]me|d[eé]faut)/i.test(result.problem.value || '');
   if (result.safety.stop) return <ClientSection testID="client-diagnostic-safety">
     <View accessibilityRole="alert"><ClientHero eyebrow="RAFI · SÉCURITÉ" title="Cette situation peut présenter un risque." detail={diagnosticSafetyMessage(result)} mode="attention" compact /></View>
     {onExit && <FixeoAction label="Revenir à mon espace" variant="secondary" onPress={onExit} />}
@@ -30,7 +31,7 @@ export function ClientDiagnostic({ result, confirmed, onConfirm, onExit }: {
     <FixeoText>{result.hypotheses.map(item => item.value).join('\n') || 'Aucune hypothèse établie.'}</FixeoText>
     <FixeoText variant="caption" tone="secondary">INCERTITUDE</FixeoText>
     <FixeoText>Une photo ne permet pas de confirmer une cause ou un défaut caché. Les hypothèses restent à vérifier sur place.</FixeoText>
-    {confirmed ? <FixeoText accessibilityLiveRegion="polite">CONFIRMÉ PAR VOUS · La description reste modifiable avant envoi.</FixeoText> : next ? <View style={{ gap: 12 }} testID="client-diagnostic-question">
+    {neutral && onClarify ? <FixeoAction label="Décrire le problème constaté" onPress={onClarify} /> : confirmed ? <FixeoText accessibilityLiveRegion="polite">CONFIRMÉ PAR VOUS · La description reste modifiable avant envoi.</FixeoText> : next ? <View style={{ gap: 12 }} testID="client-diagnostic-question">
       <FixeoText variant="heading">{next.label}</FixeoText>
       <TextInput accessibilityLabel={next.label} value={answer} onChangeText={setAnswer} multiline style={clientStyles.input} placeholder="Votre réponse, ou ce que vous ignorez" />
       <FixeoAction label="Confirmer cette précision" disabled={!answer.trim()} onPress={() => { setAnswers([answer.trim()]); setAnswer(''); }} />

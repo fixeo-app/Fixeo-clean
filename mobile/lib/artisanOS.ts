@@ -349,13 +349,22 @@ export async function recordQuoteDecision(
   decision: "sent" | "accepted" | "rejected",
 ) {
   const actor = await artisanAccess();
+  const previous = await supabase.from("artisan_business_quotes").select("id,status")
+    .eq("id", id).eq("owner_user_id", actor.user_id).eq("source", "personal").single();
+  if (previous.error || !previous.data) throw previous.error || new Error("QUOTE_NOT_FOUND");
+  if (previous.data.status === decision) return previous.data; // Reconcile a response lost after commit.
+  if (previous.data.status !== (decision === "sent" ? "draft" : "sent")) throw new Error("QUOTE_STATE_CHANGED");
   if (decision === "accepted") {
     const { data, error } = await supabase.rpc(
       "artisan_business_accept_quote",
       { p_quote_id: id },
     );
     if (error) throw error;
-    return data;
+    if (!data) throw new Error("QUOTE_DECISION_UNCONFIRMED");
+    const readback = await supabase.from("artisan_business_quotes").select("id,status")
+      .eq("id", id).eq("owner_user_id", actor.user_id).single();
+    if (readback.error || readback.data?.status !== "accepted") throw new Error("QUOTE_DECISION_UNCONFIRMED");
+    return readback.data;
   }
   const at = new Date().toISOString();
   const patch =
@@ -451,11 +460,20 @@ export async function saveLedgerEntry(input: {
     input.amount > 500000
   )
     throw new Error("LEDGER_INVALID");
+  let linkedClient = input.client_id;
+  if (input.job_id) {
+    const job = await supabase.from("artisan_business_jobs").select("id,client_id,source")
+      .eq("id", input.job_id).eq("owner_user_id", actor.user_id).single();
+    if (job.error || !job.data || job.data.source !== "personal") throw new Error("LEDGER_JOB_INVALID");
+    if (linkedClient && linkedClient !== job.data.client_id) throw new Error("LEDGER_CLIENT_MISMATCH");
+    linkedClient = job.data.client_id;
+  }
   const { data, error } = await supabase
     .from("artisan_business_ledger")
     .upsert(
       {
         ...input,
+        client_id: linkedClient,
         owner_user_id: actor.user_id,
         source: "personal",
         category: "other",

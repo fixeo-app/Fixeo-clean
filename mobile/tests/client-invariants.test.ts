@@ -41,7 +41,7 @@ test('W4 keeps original request, auth, watch, load, evidence, validation and adj
 });
 
 test('W4 request contract remains four arguments including normalized city and no GPS', () => {
-  const home = readFileSync('app/index.tsx', 'utf8');
+  const home = readFileSync('components/ClientRequestComposer.tsx', 'utf8');
   assert.match(home, /const normalizedCity = city\.trim\(\)/);
   assert.match(home, /createRequest\(\s*need\.serviceCategory,\s*normalizedCity,\s*need\.description,\s*idempotencyKeyRef\.current,\s*\)/);
   assert.doesNotMatch(home, /latitude|longitude|requestForegroundPermissions/);

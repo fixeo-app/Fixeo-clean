@@ -2,13 +2,12 @@ import { CityField } from '@/components/CityField';
 import { canonicalCity } from '@/lib/clientLocation';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
-import { authStyles } from '@/components/AuthFrame';
-import { AuthFrame, AuthField, AuthError } from '@/components/AuthFrame';
+import { authStyles, AuthFrame, AuthField, AuthError } from '@/components/AuthFrame';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { finishArtisan } from '@/lib/authFlows';
 import { signOut } from '@/lib/auth';
 import { authIssue, type AuthIssue } from '@/lib/authContract';
-const trades = ['Plomberie', 'Électricité', 'Climatisation', 'Peinture', 'Menuiserie', 'Maçonnerie', 'Carrelage', 'Nettoyage', 'Toiture', 'Jardinage', 'Bricolage', 'Déménagement', 'Serrurerie'];
+import { SERVICE_CATALOG as trades } from '@/lib/serviceCatalog';
 export default function CompleteProfile() {
   const [name, setName] = useState(''), [phone, setPhone] = useState(''), [services, setServices] = useState<string[]>([]), [city, setCity] = useState('');
   const [busy, setBusy] = useState(false), [error, setError] = useState<AuthIssue | null>(null);

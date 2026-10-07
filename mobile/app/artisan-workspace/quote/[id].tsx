@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
-import { View } from "react-native";
+import { QuoteBreakdown } from '@/components/QuoteBreakdown';
+import { DateField } from '@/components/DateField';
+import { useEffect, useRef, useState } from "react";
+import { Modal, ScrollView, View } from "react-native";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { getDispatchOffers } from "@/lib/magicLoop";
@@ -60,6 +62,7 @@ export default function QuoteStudio() {
   const fresh = params.id === "new",
     q = useArtisanQuery(load),
     a = useArtisanAction();
+  const [section, setSection] = useState(0);
   const [newId] = useState(() => Crypto.randomUUID());
   const [origin, setOrigin] = useState(
       params.origin === "fixeo" ? "fixeo" : "personal",
@@ -78,8 +81,10 @@ export default function QuoteStudio() {
     >(null);
   const saved = q.data?.quotes.find((x) => x.id === params.id),
     editable = fresh || saved?.status === "draft";
+  const hydratedId = useRef<string | null>(null);
   useEffect(() => {
-    if (saved) {
+    if (saved && hydratedId.current !== saved.id) {
+      hydratedId.current = saved.id;
       setTitle(saved.title);
       setClientId(saved.client_id || "");
       setOrigin(saved.source);
@@ -147,7 +152,7 @@ export default function QuoteStudio() {
       );
       router.replace({
         pathname: "/artisan-workspace/quote/[id]" as any,
-        params: { id: result.id },
+        params: { id: result.id, ...(params.clientId ? { clientId: params.clientId } : {}) },
       });
       setPreview(true);
       await q.reload();
@@ -166,6 +171,7 @@ export default function QuoteStudio() {
         disabled: lines.length >= 50,
         action: () => {
           setPreview(false);
+          setSection(1);
           setLines((v) => [...v, blank()]);
         },
       },
@@ -257,9 +263,7 @@ export default function QuoteStudio() {
                         Remise · {money(calculated.discount)}
                       </FixeoText>
                     )}
-                    <FixeoText variant="title">
-                      {money(calculated.total)}
-                    </FixeoText>
+                    <QuoteBreakdown total={calculated.total} source={origin} />
                   </>
                 )}
                 {validity && origin === "personal" && (
@@ -284,7 +288,7 @@ export default function QuoteStudio() {
                         onPress={() => setPreview(false)}
                       />
                       <FixeoAction
-                        label="Enregistrer l’envoi au client"
+                        label="Déclarer le devis transmis"
                         onPress={() => setConfirmation("sent")}
                       />
                     </>
@@ -292,11 +296,11 @@ export default function QuoteStudio() {
                   {saved.status === "sent" && (
                     <>
                       <FixeoAction
-                        label="Enregistrer l’accord client"
+                        label="Enregistrer un accord reçu hors FIXEO"
                         onPress={() => setConfirmation("accepted")}
                       />
                       <FixeoAction
-                        label="Enregistrer le refus client"
+                        label="Enregistrer un refus reçu hors FIXEO"
                         variant="secondary"
                         onPress={() => setConfirmation("rejected")}
                       />
@@ -307,7 +311,10 @@ export default function QuoteStudio() {
             </>
           ) : (
             <>
-              {fresh && (
+              <FixeoText variant="caption" tone="secondary">Étape {section + 1} sur 3 · {['Client et intervention', 'Prestations et fournitures', 'Conditions et résumé'][section]}</FixeoText>
+              <ArtisanChoices label="Étapes du devis" value={String(section)} onChange={value => setSection(Number(value))} options={[{value:'0',label:'Client'},{value:'1',label:'Lignes'},{value:'2',label:'Conditions'}]} />
+              {section === 0 && <>
+              {fresh && !params.requestId && !params.clientId && (
                 <ArtisanChoices
                   label="Origine du devis"
                   value={origin}
@@ -353,6 +360,9 @@ export default function QuoteStudio() {
                 value={title}
                 onChangeText={setTitle}
               />
+              <FixeoAction label="Continuer vers les lignes" onPress={() => { if (!title.trim()) a.setMessage('Donnez un titre à votre devis.'); else setSection(1); }} />
+              </>}
+              {section === 1 && <>
               <ArtisanCue
                 title="RAFI · Structurer votre devis"
                 text="Décrivez chaque prestation, puis les fournitures et la main-d’œuvre. Renseignez vos propres prix et ce que le devis comprend."
@@ -403,6 +413,9 @@ export default function QuoteStudio() {
                 disabled={lines.length >= 50}
                 onPress={() => setLines((v) => [...v, blank()])}
               />
+              <FixeoAction label="Continuer vers les conditions" onPress={() => { if (!calculated) a.setMessage('Complétez la désignation, la quantité et le prix de chaque ligne.'); else setSection(2); }} />
+              </>}
+              {section === 2 && <>
               {origin === "personal" && (
                 <>
                   <ArtisanField
@@ -411,11 +424,7 @@ export default function QuoteStudio() {
                     keyboardType="decimal-pad"
                     onChangeText={setDiscount}
                   />
-                  <ArtisanField
-                    label="Validité — AAAA-MM-JJ"
-                    value={validity}
-                    onChangeText={setValidity}
-                  />
+                  <DateField label="Valable jusqu’au" value={validity} onChange={setValidity} />
                 </>
               )}
               <ArtisanField
@@ -448,18 +457,22 @@ export default function QuoteStudio() {
                   onPress={() => void save()}
                 />
               </ArtisanSection>
+              </>}
             </>
           )}
           {confirmation && (
-            <ArtisanSection label="CONFIRMER CETTE ACTION">
+            <Modal visible transparent animationType="slide" onRequestClose={() => { if (!a.busy) setConfirmation(null); }}>
+            <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)', padding: 20, paddingBottom: 40 }}>
+            <ScrollView style={{ maxHeight: '85%' }} keyboardShouldPersistTaps="handled"><ArtisanSection label="CONFIRMER CETTE ACTION">
+              <ArtisanMessage message={a.message} />
               <FixeoText>
                 {confirmation === "marketplace"
                   ? "Votre proposition sera transmise à FIXEO pour vérification avant présentation au client."
                   : confirmation === "sent"
                     ? "Confirmez que vous avez déjà envoyé ce devis au client. Cette action enregistre votre déclaration."
                     : confirmation === "accepted"
-                      ? "Confirmez que le client a donné son accord. Une intervention personnelle sera créée."
-                      : "Confirmez que le client a refusé ce devis."}
+                      ? "Vous déclarez un accord reçu hors FIXEO. Une intervention personnelle sera créée, sans commission marketplace."
+                      : "Vous déclarez un refus reçu hors FIXEO. Le devis sera clôturé."}
               </FixeoText>
               <FixeoAction
                 label="Confirmer"
@@ -494,7 +507,7 @@ export default function QuoteStudio() {
                 disabled={a.busy}
                 onPress={() => setConfirmation(null)}
               />
-            </ArtisanSection>
+            </ArtisanSection></ScrollView></View></Modal>
           )}
         </>
       ) : (

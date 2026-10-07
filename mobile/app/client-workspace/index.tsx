@@ -106,7 +106,8 @@ export default function ClientWorkspaceHome() {
       contextualCockpit.action === 'client_follow' ||
       contextualCockpit.action === 'client_rafi'
     ) {
-      router.replace('/');
+      if (activeRequest) router.push({ pathname: '/client-request/[id]' as any, params: { id: activeRequest.id } });
+      else router.push('/new-request' as any);
     }
   }
 
@@ -129,6 +130,7 @@ export default function ClientWorkspaceHome() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
+        <FixeoAction label="+ Nouvelle demande" onPress={() => router.push('/new-request' as any)} />
         <ClientPageIntro eyebrow="MON ESPACE" title={greetingName ? `Bonjour ${greetingName}.` : 'Bonjour.'}
           detail="Tout ce qui mérite votre attention." />
 

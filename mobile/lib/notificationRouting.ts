@@ -67,6 +67,7 @@ export function notificationDestinationForRole(
     };
   }
 
+  if (data.request_id && /^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(data.request_id)) return { pathname: '/client-request/[id]', params: { id: data.request_id } };
   if (screen === 'client-workspace') return { pathname: '/client-workspace' };
   if (screen === 'client-alerts' || screen === 'alerts') {
     return { pathname: '/client-workspace/notifications' };

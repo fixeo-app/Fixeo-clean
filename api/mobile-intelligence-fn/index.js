@@ -38,7 +38,7 @@ function createHandler(dependencies = {}) {
         security.fail('DIAGNOSTIC_SAFETY_STOP',409);
       if (body.pricing_context_token) body.pricing_context_token = security.unwrap(body.pricing_context_token, 'pricing', auth.userId, env);
       if (['answer','select_service'].includes(body.action)) {
-        if (clarificationCount >= 1) security.fail('ESTIMATOR_QUALIFICATION_LIMIT',409);
+        if (clarificationCount >= 64) security.fail('ESTIMATOR_QUALIFICATION_LIMIT',409);
       }
       const canonical = dependencies.canonical || require('../estimator-v1');
       const trusted = security.trustedRequest(req, auth.token, body, env);
@@ -62,13 +62,8 @@ function createHandler(dependencies = {}) {
         const safety=require('../diagnostic/safety').evaluateSafety({description:body.entry_context.description||body.entry_context.free_text||'',answers:{},safety_signals:[]},null,[]);
         if(safety.stop)result=canonical.mobileFallback(result.body.session.session_token,env.FIXEO_ESTIMATOR_SECRET,safety);
       }
-      // One useful trade clarification at most. Incomplete pricing stays canonical;
-      // the existing direct unpriced request remains available for W4 integration.
-      if (result.body?.session?.session_token && result.body.next_step?.type==='QUESTION') {
-        if(clarificationCount>=1 || result.body.next_step.priority==='SAFETY' || /safety|danger|gas_smell|active_sparks/i.test(result.body.next_step.input_id||'')) {
-          result=canonical.mobileFallback(result.body.session.session_token,env.FIXEO_ESTIMATOR_SECRET);
-        }
-      }
+      // PB1: follow every canonical branch, including safety questions. The
+      // signed count bounds abuse without truncating the native questionnaire.
       if (body.action === 'verify_pricing_context') {
         if (result.body.valid !== true) security.fail('PRICING_CONTEXT_INVALID', 422);
         result.body.ok = true;

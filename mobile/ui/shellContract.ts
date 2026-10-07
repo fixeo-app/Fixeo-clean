@@ -77,7 +77,8 @@ export function dockBadgeLabel(badge?: number) {
 /** Every top-level screen shares its universe's navigation. */
 export function workspaceDockDestinations(universe: ShellUniverse, pathname: string) {
   const current = normalizeShellPath(pathname);
-  if (!getShellDestinations(universe).some(item => item.path === current)) return [];
+  const belongs = universe === 'client' ? current === '/' || current === '/new-request' || current.startsWith('/client-') : current === '/artisan' || current.startsWith('/artisan-workspace') || current.startsWith('/mission/');
+  if (!belongs) return [];
   const keys = universe === 'client' ? ['rafi', 'history', 'alerts'] : ['opportunities', 'rafi', 'agenda'];
   return keys.map(key => getShellDestinations(universe).find(item => item.key === key)!);
 }

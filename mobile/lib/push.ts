@@ -55,7 +55,7 @@ function getEasProjectId() {
   );
 }
 
-export async function registerCurrentDeviceForPush(): Promise<PushRegistrationResult> {
+export async function registerCurrentDeviceForPush(requestPermission = true): Promise<PushRegistrationResult> {
   const generation = privateSessionGeneration();
   if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
     return { ok: false, reason: 'unsupported_platform' };
@@ -73,7 +73,7 @@ export async function registerCurrentDeviceForPush(): Promise<PushRegistrationRe
 
   const current = await Notifications.getPermissionsAsync();
   let status = current.status;
-  if (status !== 'granted') {
+  if (status !== 'granted' && requestPermission) {
     status = (await Notifications.requestPermissionsAsync()).status;
   }
   if (status !== 'granted') {
@@ -132,8 +132,6 @@ export async function registerCurrentDeviceForPush(): Promise<PushRegistrationRe
 
 export async function isCurrentDevicePushEnabled() {
   if (Platform.OS === 'web') return false;
-  const stored = await SecureStore.getItemAsync(PUSH_ENABLED_KEY);
-  if (stored !== '1') return false;
   try {
     const permission = await Notifications.getPermissionsAsync();
     return permission.status === 'granted';

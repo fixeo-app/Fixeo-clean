@@ -1,3 +1,4 @@
+import { BackButton } from '@/ui/BackButton';
 import { pageLayout } from '@/ui/pageLayout';
 import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
 import { useCallback, useEffect, useRef, useState, type PropsWithChildren } from "react";
@@ -112,7 +113,7 @@ export function ArtisanPage({
   loading = false,
   onRefresh,
   dock,
-  transactional = false,
+  transactional: _transactional = false,
   rafi,
   back = true,
 }: PropsWithChildren<{
@@ -128,8 +129,7 @@ export function ArtisanPage({
   back?: boolean;
 }>) {
   const workspaceDock = useWorkspaceDock('artisan');
-  const activeDock = workspaceDock.items.length ? workspaceDock : dock;
-  const accessibleDock = activeDock && { ...activeDock, hidden: transactional || activeDock.hidden };
+  const accessibleDock = workspaceDock; // Global navigation is independent of contextual actions.
   return (
     <RafiSignalContext.Provider value={rafi || null}><FixeoScreen
       padded={false}
@@ -157,16 +157,7 @@ export function ArtisanPage({
           ) : undefined
         }
       >
-        {back && (
-          <FixeoAction
-            label="Retour"
-            variant="ghost"
-            onPress={() =>
-              router.canGoBack() ? router.back() : router.replace("/artisan")
-            }
-            style={art.back}
-          />
-        )}
+        {back && <BackButton />}
         <View style={art.intro}>
           <View style={art.signature} />
           <FixeoText variant="eyebrow" tone="secondary">
@@ -187,6 +178,11 @@ export function ArtisanPage({
         )}
         {children}
       </ScrollView>
+        {dock && !dock.hidden && <View accessibilityLabel="Actions de cette page" style={art.contextActions}>
+          {dock.items.map(item => <FixeoAction key={item.key} label={item.label} variant="secondary"
+            accessibilityLabel={item.accessibilityLabel} disabled={item.disabled} onPress={item.action} style={art.choice} />)}
+        </View>}
+
     </FixeoScreen></RafiSignalContext.Provider>
   );
 }
@@ -365,6 +361,7 @@ export const art = StyleSheet.create({
     borderColor: semanticColors.border.subtle,
   },
   actions: { gap: space.sm },
+  contextActions: { flexDirection: "row", flexWrap: "wrap", gap: space.sm, paddingVertical: space.md },
   inline: { flexDirection: "row", flexWrap: "wrap", gap: space.sm },
   back: { alignSelf: "flex-start", minWidth: 80 },
   choice: { flexGrow: 1 },

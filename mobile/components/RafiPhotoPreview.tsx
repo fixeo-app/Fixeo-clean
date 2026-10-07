@@ -9,6 +9,7 @@ export function RafiPhotoPreview({ uri, busy = false, readOnly = false, onChange
   uri: string; busy?: boolean; readOnly?: boolean; onChange: (uri: string, mimeType: string) => void; onRemove: () => void; onClarify: () => void;
 }) {
   const [open, setOpen] = useState(false), [message, setMessage] = useState(''), [capturing, setCapturing] = useState(false);
+  const [managing, setManaging] = useState(false);
   const alive = useRef(true), locked = useRef(false);
   useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   async function replace(source: 'camera' | 'photos') {
@@ -23,6 +24,8 @@ export function RafiPhotoPreview({ uri, busy = false, readOnly = false, onChange
     <FixeoText variant="caption" tone="secondary">{busy ? 'RAFI analyse cette photo.' : 'C’est cette photo que vous choisissez de partager avec RAFI.'}</FixeoText>
     <FixeoAction label="Voir la photo" variant="ghost" onPress={() => setOpen(true)} />
     {!readOnly && <>
+    <FixeoAction label={managing ? 'Fermer les options photo' : 'Gérer la photo'} variant="ghost" accessibilityState={{ expanded: managing }} onPress={() => setManaging(value => !value)} />
+    {managing && <>
     <View style={styles.actions}>
       <FixeoAction label="Reprendre" variant="secondary" disabled={busy || capturing} onPress={() => void replace('camera')} />
       <FixeoAction label="Changer" variant="secondary" disabled={busy || capturing} onPress={() => void replace('photos')} />
@@ -30,6 +33,7 @@ export function RafiPhotoPreview({ uri, busy = false, readOnly = false, onChange
     </View>
     <FixeoAction label="Ajouter une précision" variant="ghost" disabled={busy || capturing} onPress={onClarify} />
     <FixeoAction label="Continuer sans photo" variant="ghost" disabled={busy || capturing} onPress={onRemove} />
+    </>}
     </>}
     {!!message && <FixeoText accessibilityLiveRegion="polite">{message}</FixeoText>}
     <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>

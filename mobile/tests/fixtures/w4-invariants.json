@@ -4,9 +4,7 @@
     "assets/rafi/rafi-master-core-v1.png": "b08ce64b07953205c03317e08737ce9dbfef7aeec79179792d8820833c3311d6",
     "components/ContextualCockpitCard.tsx": "2f5df76813dd645e6c7a9754ce9e74c452d5e42f9173da52dc29084aa4a316ac",
     "components/DecisionCueCard.tsx": "eb3816f6059529ddbd9ace156c6d328d98674b3f4974345210e36a3b49a8add1",
-    "components/EntryStage.tsx": "19fa91e488f7fc5f45d947e0c4b47f1f530c3bd434c40b4af7936ebefd50c56f",
     "components/MotionReveal.tsx": "6a0985978e80808e47304b0f5394e9c1849d6b73f686a3646d7af5fa0d0b08d8",
-    "components/PushOptIn.tsx": "85e12e2d6772e0c3b80224dba165a83a2b6e81721e8a5cdfadb09f020c2248f1",
     "components/RafiComposer.tsx": "49495dac554071da121520c43c4d12f6024a6a2983d34c1de74c6705ed756988",
     "components/RafiContextCard.tsx": "59a18aba473e4bbad89a52037f7ec19253ddd85e366bcb7eed21d77eb02278a7",
     "components/WorkspaceShortcutGrid.tsx": "04a8b7858b57e05ae67b251bfd3fec19c2f74ecefc62c51cc3a31c422390b429",
@@ -21,7 +19,6 @@
     "lib/magicLoopState.ts": "99b7e9380478f6fef1b4dc8ba125abbda962a895eaba5dc308c9fe206d9bb53e",
     "lib/missionChange.ts": "eab63777cea1aabe1b663912f1ae4382f4b00b3e95f077b8aa553db841b1a239",
     "lib/missionEvidence.ts": "ad3ea58ee0c382861badd293c82bbec17abb4476ab9bd9ee7f7884187bfc9bac",
-    "lib/notificationRouting.ts": "11e0d2e3b70e868352eb7d7f56d90b06551a95b428c3afc9e45df2bf09dbf62c",
     "lib/rafi.ts": "7fb1c9a24fe818c43633c3b9c95a82806c71ee39357ff108985c0a9cc0359c71",
     "lib/rafiContext.ts": "398544396f3466ad490e39cbf4bcf9efe3c2679b9ca5f89f2fe55a3ec2c0bafa",
     "lib/rafiGateway.ts": "7722bc978d1050a150f7e10b84b9b02941840e66bd7e560b3209f225d7a16859",
@@ -31,7 +28,6 @@
     "ui/FixeoAction.tsx": "f19bc08b3ff33324f91d44b16e8cb6c85dc8d50b324f9a338a3ca8e60ec7ec92",
     "ui/FixeoCard.tsx": "42d36eb76e6dce6a0414c800c20f5e6b09a6271fea2b09ccf185140d830c16a0",
     "ui/FixeoContextDock.tsx": "492c604ccc84af30ff5fae9381a11c7cadc163b995df46b11530ab305a954040",
-    "ui/FixeoScreen.tsx": "cebe71fa3a6e194003e57b7f6df28443ae05ec9ee73366cfa8609bbd8d2da6c1",
     "ui/FixeoSurface.tsx": "4ff09803afbf5132f6995f55781206faf07b8300901a58e7eff8c1f52ba6a6ac",
     "ui/FixeoText.tsx": "f2d6d8984c1c9df326c5d5f4876d16374db147336dda4f37c63882b229044bd5",
     "ui/RafiCoreMaterial.tsx": "0a83af51a461a169c20d84bd57fe0cd91e626c3b77316b5afe259352b6786544",
@@ -44,29 +40,15 @@
     "ui/useReducedMotion.ts": "6d32dcbaea47c7af8fec16a442521ad0666b9cf5c381f2a1e86ef3d64ec97b25"
   },
   "callbacks": {
-    "app/index.tsx": {
-      "syncDecision": "a5f0c2d29771a0378ada0aa6aeb0f8f6ba260a32e6a5d9fa1cc01f3fcf1e2be8",
-      "actOnDecision": "191b371c451dd9cf93461a5c7eb93fc5f172a483f86803629910e0b3f51dc377",
-      "syncCurrentMission": "a16640e815f15104c13399db7b604437702f960f8c28f4c0d52454c1200ee6c5",
-      "syncJourney": "538e2aa0f9333b85a9fc86040e25a5e7a18f5682931d91e9d3a140c07a38c7e5",
-      "hook-1": "9d47dee4dbeb4382ff721249970b48127f2ce5cfda7950c71b456ea1d104cf43",
-      "hook-2": "c24f2d6e2729b0eff695a1cc1ecf97f6072c62175d582ef503b7967b63f66402",
-      "confirmPhotoDiagnostic": "4681541cb6f9ff26705bbecdfd8b7bb8aeb6af53a92c0d3ae7ccce8bb721c778",
-      "send": "c281176ab41fba16e5ec4abb1b212d471cdb85700366efc94cada301dae8e8cd"
-    },
     "app/client-workspace/index.tsx": {
       "hook-0": "5d2fdead40e4f280fa8eccef9fa672d90a67854434007543b162781d202b84a8",
-      "hook-1": "61aff2a1c32faf39a23cb35d177f5a3fe0c0a5d1dd972215609994cc7bdb288a",
-      "actOnContextualCockpit": "5e65078e2d30d9758f5658260db952b4c113f25c62275785ef2abd4fcd5ba913"
-    },
-    "app/client-workspace/history.tsx": {
-      "hook-0": "f41a09c25471df31dd22b8b0c3dc10b867cba86d911a7ca49f7c13de520a50f5",
       "hook-1": "61aff2a1c32faf39a23cb35d177f5a3fe0c0a5d1dd972215609994cc7bdb288a"
     },
+    "app/client-workspace/history.tsx": {
+      "hook-0": "f41a09c25471df31dd22b8b0c3dc10b867cba86d911a7ca49f7c13de520a50f5"
+    },
     "app/client-workspace/notifications.tsx": {
-      "hook-0": "5e46234eb44619fd36cae64835d7717c67323d5eab0723c9f4773ea56d864c40",
-      "hook-1": "61aff2a1c32faf39a23cb35d177f5a3fe0c0a5d1dd972215609994cc7bdb288a",
-      "open": "e78b8864f1003e83eb1619345dc744f0ae1d9a39bb6003f9be1dc900289ba19a"
+      "hook-0": "5e46234eb44619fd36cae64835d7717c67323d5eab0723c9f4773ea56d864c40"
     },
     "app/client-workspace/account.tsx": {
       "hook-0": "4539b49a90ae173ac4672b4f114fb7b21e5e6353e61762c36a3de24b5219b2e8",
@@ -179,5 +161,34 @@
       "previous_sha256": "29bba5d4003145edc6332139eb3c3aa6bb40715b615f8b60d0c751ea2b496eea",
       "reason": "PB1 physical correction: canonical CTA affordance and measured dock clearance, explicitly authorized."
     }
-  }
+  },
+  "pb1FinalReplacedFiles": {
+    "components/EntryStage.tsx": "19fa91e488f7fc5f45d947e0c4b47f1f530c3bd434c40b4af7936ebefd50c56f",
+    "components/PushOptIn.tsx": "85e12e2d6772e0c3b80224dba165a83a2b6e81721e8a5cdfadb09f020c2248f1",
+    "lib/notificationRouting.ts": "11e0d2e3b70e868352eb7d7f56d90b06551a95b428c3afc9e45df2bf09dbf62c",
+    "ui/FixeoScreen.tsx": "cebe71fa3a6e194003e57b7f6df28443ae05ec9ee73366cfa8609bbd8d2da6c1"
+  },
+  "pb1FinalReplacedCallbacks": {
+    "app/index.tsx": {
+      "syncDecision": "a5f0c2d29771a0378ada0aa6aeb0f8f6ba260a32e6a5d9fa1cc01f3fcf1e2be8",
+      "actOnDecision": "191b371c451dd9cf93461a5c7eb93fc5f172a483f86803629910e0b3f51dc377",
+      "syncCurrentMission": "a16640e815f15104c13399db7b604437702f960f8c28f4c0d52454c1200ee6c5",
+      "syncJourney": "538e2aa0f9333b85a9fc86040e25a5e7a18f5682931d91e9d3a140c07a38c7e5",
+      "hook-1": "9d47dee4dbeb4382ff721249970b48127f2ce5cfda7950c71b456ea1d104cf43",
+      "hook-2": "c24f2d6e2729b0eff695a1cc1ecf97f6072c62175d582ef503b7967b63f66402",
+      "confirmPhotoDiagnostic": "4681541cb6f9ff26705bbecdfd8b7bb8aeb6af53a92c0d3ae7ccce8bb721c778",
+      "send": "c281176ab41fba16e5ec4abb1b212d471cdb85700366efc94cada301dae8e8cd"
+    },
+    "app/client-workspace/index.tsx": {
+      "actOnContextualCockpit": "5e65078e2d30d9758f5658260db952b4c113f25c62275785ef2abd4fcd5ba913"
+    },
+    "app/client-workspace/history.tsx": {
+      "hook-1": "61aff2a1c32faf39a23cb35d177f5a3fe0c0a5d1dd972215609994cc7bdb288a"
+    },
+    "app/client-workspace/notifications.tsx": {
+      "hook-1": "61aff2a1c32faf39a23cb35d177f5a3fe0c0a5d1dd972215609994cc7bdb288a",
+      "open": "e78b8864f1003e83eb1619345dc744f0ae1d9a39bb6003f9be1dc900289ba19a"
+    }
+  },
+  "pb1FinalContractReason": "PB1 final master + multi-request addendum replace singleton home/watch, history focus refresh, request routing, push restoration, safe-area shell and entry centering; behavioral coverage in pb1-product-flows.test.ts and pb1-multi-request.test.cjs. Alertes: open canonical request/mission including s1b request IDs and mobile_m4 mission metadata; no read-only dead tap."
 }

@@ -36,14 +36,14 @@ test('PB1 canonical CTA variants remain visible buttons and block duplicate busy
 
 test('PB1 actual city selector renders the entire supported registry and selects canonical accented values',async()=>{
  const cities=await import('../lib/clientLocation'),tokens=await import('../ui/tokens');
- const {CityField}=load('components/CityField.tsx',{'react-native':{View:'view',ScrollView:'scroll',TextInput:'input',StyleSheet:{create:(v:any)=>v}},
-  '@/lib/clientLocation':cities,'@/ui/FixeoText':{FixeoText:component('text')},'@/ui/ShellControl':{ShellControl:component('control'),ShellIcon:component('icon')},
+ const {CityField}=load('components/CityField.tsx',{'react-native':{View:'view',Modal:component('modal'),KeyboardAvoidingView:component('keyboard-view'),Keyboard:{dismiss(){}},Platform:{OS:'android'},FlatList:(p:any)=>React.createElement('list',p,p.data.map((item:any)=>p.renderItem({item}))),TextInput:'input',StyleSheet:{create:(v:any)=>v}},
+  'react-native-safe-area-context':{useSafeAreaInsets:()=>({top:24,bottom:24,left:0,right:0})},'@/lib/clientLocation':cities,'@/ui/FixeoText':{FixeoText:component('text')},'@/ui/ShellControl':{ShellControl:component('control'),ShellIcon:component('icon')},
   '@/ui/tokens':tokens,'./ClientEditorial':{clientStyles:{input:{}}}});
  let selected='',tree:any;await renderer.act(async()=>{tree=renderer.create(React.createElement(CityField,{value:'',onChange:(v:string)=>selected=v}))});
  const controls=()=>tree.root.findAllByType('control');
  await renderer.act(async()=>controls().find((n:any)=>n.props.accessibilityLabel==='Afficher les villes').props.onPress());
  assert.equal(controls().filter((n:any)=>n.props.accessibilityLabel.startsWith('Choisir ')).length,21);
- assert.equal(tree.root.findByType('scroll').props.nestedScrollEnabled,true);
+ assert.equal(tree.root.findByType('modal').props.visible,true); assert.equal(tree.root.findByType('list').props.keyboardShouldPersistTaps,'handled');
  assert.match(tree.root.findByType('input').props.placeholder,/Fès, Rabat/);
  await renderer.act(async()=>tree.root.findByType('input').props.onChangeText('Tetouan'));
  await renderer.act(async()=>controls().find((n:any)=>n.props.accessibilityLabel==='Choisir Tétouan').props.onPress());
@@ -96,6 +96,7 @@ test('PB1 V2 actual photo preview renders selected URI, viewing and correction c
  assert.equal(tree.root.findAllByType('Image')[0].props.source.uri,props.uri);assert.equal(captures,0);
  const action=(label:string)=>tree.root.findAllByType('action').find((node:any)=>node.props.label===label).props;
  await renderer.act(async()=>action('Voir la photo').onPress());assert.equal(tree.root.findByType('Modal').props.visible,true);
+ await renderer.act(async()=>action('Gérer la photo').onPress());
  await renderer.act(async()=>action('Reprendre').onPress());assert.equal(changed,'file:///replacement.jpg');
  await renderer.act(async()=>action('Ajouter une précision').onPress());assert.equal(clarifications,1);
  await renderer.act(async()=>action('Continuer sans photo').onPress());assert.equal(removed,1);
