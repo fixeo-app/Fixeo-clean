@@ -152,7 +152,8 @@ export default function ClientWorkspaceHome() {
             label={activeRequests.length > 1 && contextualCockpit.action === 'client_follow' ? 'Choisir une demande à suivre' : contextualCockpit.actionLabel} onPress={actOnContextualCockpit} style={styles.action} /> : null}
           <FixeoText tone="secondary">{contextualCockpit.detail}</FixeoText>
         </ClientSection> : null}
-        {activeRequests.length > 1 && activeRequests.map(item => <ClientSection key={item.id} surface>
+        {activeRequests.length > 3 && <FixeoAction label="Voir toutes mes demandes" variant="ghost" onPress={() => router.push('/client-workspace/history')} />}
+        {activeRequests.length > 1 && activeRequests.slice(0, 3).map(item => <ClientSection key={item.id} surface>
           <FixeoText variant="caption" tone="secondary">{CLIENT_STATUS[item.status]}</FixeoText>
           <FixeoText variant="heading">{item.description || item.service_category}</FixeoText>
           <FixeoText tone="secondary">{item.city} · {item.service_category}</FixeoText>

@@ -5,7 +5,7 @@
     "components/ContextualCockpitCard.tsx": "2f5df76813dd645e6c7a9754ce9e74c452d5e42f9173da52dc29084aa4a316ac",
     "components/DecisionCueCard.tsx": "eb3816f6059529ddbd9ace156c6d328d98674b3f4974345210e36a3b49a8add1",
     "components/MotionReveal.tsx": "6a0985978e80808e47304b0f5394e9c1849d6b73f686a3646d7af5fa0d0b08d8",
-    "components/RafiComposer.tsx": "49495dac554071da121520c43c4d12f6024a6a2983d34c1de74c6705ed756988",
+    "components/RafiComposer.tsx": "de898d51c5ef23af75ea5acfe1a9c10c12e858146db28cae72366af9d77e918d",
     "components/RafiContextCard.tsx": "59a18aba473e4bbad89a52037f7ec19253ddd85e366bcb7eed21d77eb02278a7",
     "components/WorkspaceShortcutGrid.tsx": "04a8b7858b57e05ae67b251bfd3fec19c2f74ecefc62c51cc3a31c422390b429",
     "lib/artisanActivityLoad.ts": "9712101475399176fcb66cfe6501faf8c7d0e9149e1c957eca82ae553a5fb963",
@@ -212,6 +212,12 @@
       "before": "492c604ccc84af30ff5fae9381a11c7cadc163b995df46b11530ab305a954040",
       "after": "eb761adb62580d338ad95117879efbe3459817409549def48ed85fac30ebb3fa",
       "authorization": "PB1.1 master 2026-10-08: four-entry dock"
+    }
+  },
+  "pbFinalAuthorizedPresentation": {
+    "components/RafiComposer.tsx": {
+      "previous": "49495dac554071da121520c43c4d12f6024a6a2983d34c1de74c6705ed756988",
+      "reason": "B2 mandate: compact composer removes redundant Write entry, capture handlers unchanged"
     }
   }
 }

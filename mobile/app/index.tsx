@@ -46,19 +46,22 @@ export default function Home() {
   const mode = journey === 'matching' ? 'matching' : journey === 'in_progress' ? 'intervention' : journey === 'completed' ? 'attention' : 'idle';
   return <FixeoScreen padded={false} contextDock={dock} header={<MobileShell universe="client" activeKey="rafi" rightDestination="/client-workspace" rightNavigation="detail" />}>
     <RafiScrollView contentContainerStyle={clientStyles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
-      <ClientDraftRecovery />
-      <ClientHero {...clientHomeCopy(journey, mode, false)} mode={mode} compact />
+
+      <ClientHero {...clientHomeCopy(journey, mode, false)} mode={mode} family="home" />
       {!!error && <ClientSection><FixeoText accessibilityRole="alert">{error}</FixeoText><FixeoAction label="Actualiser le suivi" variant="secondary" onPress={() => void load()} /></ClientSection>}
       {requests === null && !error && <FixeoText accessibilityLiveRegion="polite">Ouverture de vos demandes…</FixeoText>}
-      {active.map(item => <ClientSection key={item.id} surface testID={`active-request-${item.id}`}>
+      <View style={{ gap: 12 }}><FixeoAction label="+ Nouvelle demande" onPress={() => router.push('/new-request' as any)} />
+        <FixeoText variant="supporting" tone="secondary">Un autre besoin ? Lancez une nouvelle demande sans interrompre celles en cours.</FixeoText></View>
+      {active.slice(0, 3).map(item => <ClientSection key={item.id} surface testID={`active-request-${item.id}`}>
         <FixeoText variant="eyebrow" tone="secondary">{CLIENT_STATUS[item.status]}</FixeoText>
         <FixeoText variant="heading">{item.description || item.service_category}</FixeoText>
         <FixeoText tone="secondary">{[item.service_category, item.city].filter(Boolean).join(' · ')}</FixeoText>
         <FixeoAction label={item.status === 'completed' ? 'Vérifier et valider' : 'Voir le suivi'} variant="secondary"
           onPress={() => router.push({ pathname: '/client-request/[id]' as any, params: { id: item.id } })} />
       </ClientSection>)}
-      <View style={{ gap: 12 }}><FixeoAction label="+ Nouvelle demande" onPress={() => router.push('/new-request' as any)} />
-        <FixeoText variant="supporting" tone="secondary">Un autre besoin ? Lancez une nouvelle demande sans interrompre celles en cours.</FixeoText></View>
+
+      {active.length > 3 && <FixeoAction label="Voir toutes mes demandes" variant="ghost" onPress={() => router.push('/client-workspace/history')} />}
+      <ClientDraftRecovery />
     </RafiScrollView>
   </FixeoScreen>;
 }

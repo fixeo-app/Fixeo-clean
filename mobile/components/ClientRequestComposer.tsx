@@ -1,3 +1,4 @@
+import { cityProposal, needFacts, confirmedMetierHint } from '@/lib/clientNeedFacts';
 import { KeyboardInput } from '@/ui/KeyboardInput';
 import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
 import { ClientDraftRecovery } from './ClientDraftRecovery';
@@ -6,7 +7,7 @@ import { onSessionRejected, privateSessionGeneration } from '@/lib/authEvents';
 import { applyVoiceProposal, type PreviousDescription, type VoiceCommitMode } from '@/lib/voiceDraft';
 import { useWorkspaceDock } from '@/components/useWorkspaceDock';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, StyleSheet, Text, TextInput, View } from 'react-native';
+import { AppState, Keyboard, StyleSheet, TextInput, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import * as Crypto from 'expo-crypto';
 import { BackButton } from '@/ui/BackButton';
@@ -21,7 +22,7 @@ import {
 import { analyzePersistedMobilePhoto } from '@/lib/mobileDiagnosticReference';
 import { ClientIntelligence } from '@/components/ClientIntelligence';
 import { canonicalCity } from '@/lib/clientLocation';
-import { wantsEstimate, type ClientIntelligenceContext } from '@/lib/clientIntelligence';
+import { type ClientIntelligenceContext } from '@/lib/clientIntelligence';
 import { MagicLoopModel, transition } from '@/lib/magicLoopState';
 import { RafiPhotoPreview } from '@/components/RafiPhotoPreview';
 import { RafiInputRail } from '@/components/RafiInputRail';
@@ -33,7 +34,7 @@ import { MobileShell } from '@/components/MobileShell';
 import { EntryStage } from '@/components/EntryStage';
 import { withMobileDeadline } from '@/lib/mobileResilience';
 import { getStableSession, resolveRole } from '@/lib/auth';
-import { buildDeclaredContext, RAFI_PROVENANCE_LABELS } from '@/lib/rafiContext';
+import { RAFI_PROVENANCE_LABELS } from '@/lib/rafiContext';
 import { ClientHero, ClientSection, clientStyles } from '@/components/ClientEditorial';
 import { clientHomeCopy } from '@/lib/clientExperience';
 import { FixeoText } from '@/ui/FixeoText';
@@ -41,7 +42,7 @@ import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import type { RafiOrbMode } from '@/ui/rafiOrbMotion';
 import { getClientRafiPresence } from '@/ui/rafiPresence';
-import { colors, semanticColors, space, typography, spacing } from '@/ui/tokens';
+import { semanticColors, space, typography, spacing } from '@/ui/tokens';
 
 
 type JourneyStatus = 'idle' | 'matching' | 'assigned' | 'in_progress' | 'completed';
@@ -81,7 +82,10 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
   const mounted = useRef(true);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const [writing, setWriting] = useState(false);
-  const [showContext, setShowContext] = useState(false);
+  const [stage, setStage] = useState<'NEED' | 'UNDERSTANDING' | 'SUMMARY'>('NEED');
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const [cityChosen, setCityChosen] = useState(false);
+  const [revision, setRevision] = useState(0);
   const [problem, setProblem] = useState('');
   const [declaredService, setDeclaredService] = useState('');
   const [problemConfirmedFromRafi, setProblemConfirmedFromRafi] = useState(false);
@@ -129,16 +133,27 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
     const inferred = understandLocally({ mode: 'text', text: problem });
     return declaredService ? { ...inferred, serviceCategory: declaredService, needsConfirmation: problem.trim().length < 8 } : inferred;
   }, [problem, declaredService]);
-  const rafiContext = useMemo(
-    () => buildDeclaredContext({
-      description: problem,
-      descriptionProvenance: problemConfirmedFromRafi ? 'user_confirmed' : 'user_declared',
-      city,
-      serviceCategory: need.serviceCategory,
-      serviceConfidence: need.confidence,
-    }),
-    [problem, problemConfirmedFromRafi, city, need.serviceCategory, need.confidence],
-  );
+  const proposal = cityProposal(problem, city, cityChosen);
+  const facts = needFacts({ revision, description: problem, descriptionConfirmed: problemConfirmedFromRafi,
+    city, cityConfirmed: cityChosen, cityProposed: proposal.suggested === city, service: need.serviceCategory, serviceConfirmed: !!declaredService, media: photoUri || undefined });
+  const chooseCity = (value: string) => {
+    if (idempotencyKeyRef.current || photoLock.current || safetyStopped) return;
+    if (value !== city) { setDiagnosticReference(undefined); setPhotoDiagnostic(null); setReviewedDiagnostic(null); setEstimateContext(null); setEstimatorDraft(null); }
+    setCity(value); setCityChosen(true); setCityError(false); setRevision(v => v + 1);
+  };
+  function understand() {
+    Keyboard.dismiss();
+    if (idempotencyKeyRef.current || safetyStopped || voiceBusy || voiceProposal || voiceListening) return;
+    const location = cityProposal(problem, city, cityChosen);
+    if (!cityChosen && location.value) setCity(location.value);
+    setStage('UNDERSTANDING'); setOptionsOpen(false);
+  }
+  function confirmUnderstanding() {
+    if (!canonicalCity(city)) { needCity(); return; }
+    if (need.needsConfirmation) { setStage('NEED'); setWriting(true); setRafiMessage('Précisez votre problème ou choisissez le métier.'); return; }
+    setCityChosen(true); setDeclaredService(need.serviceCategory); setProblemConfirmedFromRafi(true);
+    setRevision(v => v + 1); setStage('SUMMARY'); setOptionsOpen(false);
+  }
 
   useEffect(() => {
     let active = true;
@@ -158,6 +173,7 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
         const saved = resumeDraftId && drafts.find(item => item.id === resumeDraftId);
         if (saved) {
           setProblem(saved.problem); setCity(saved.city); setDeclaredService(saved.declaredService);
+          setCityChosen(saved.cityChosen ?? !!saved.city); setRevision(saved.revision || 0); setStage(saved.uiStage || 'NEED');
           setProblemConfirmedFromRafi(saved.problemConfirmedFromRafi); setWriting(true);
           setPreviousDescription(saved.previousDescription || null);
           setPhotoUri(saved.photoUri); setPhotoMimeType(saved.photoMimeType);
@@ -179,9 +195,9 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
   useEffect(() => {
     if (!draftLoaded || draftFinished.current || draftGeneration.current !== privateSessionGeneration() || draftStorageEpoch.current !== draftStorageGeneration()) return;
     saveClientDraft(draftOwner.current, { id: draftId, updatedAt: Date.now(), problem, city, declaredService,
-      problemConfirmedFromRafi, previousDescription, photoUri, photoMimeType, photoDiagnostic, photoReviewed: !!photoDiagnostic && reviewedDiagnostic === photoDiagnostic,
+      problemConfirmedFromRafi, previousDescription, cityChosen, revision, uiStage: stage, photoUri, photoMimeType, photoDiagnostic, photoReviewed: !!photoDiagnostic && reviewedDiagnostic === photoDiagnostic,
       diagnosticReference, diagnosticCity, persistPhoto, safetyStopped, safetyMessage, estimateContext, estimateOpen, estimator: estimatorDraft, submissionKey: idempotencyKeyRef.current });
-  }, [draftLoaded, draftId, problem, city, declaredService, problemConfirmedFromRafi, previousDescription, photoUri, photoMimeType, photoDiagnostic, reviewedDiagnostic, diagnosticReference, diagnosticCity, persistPhoto, safetyStopped, safetyMessage, estimateContext, estimateOpen, estimatorDraft, loop.state]);
+  }, [draftLoaded, draftId, problem, city, declaredService, problemConfirmedFromRafi, previousDescription, photoUri, photoMimeType, photoDiagnostic, reviewedDiagnostic, diagnosticReference, diagnosticCity, persistPhoto, safetyStopped, safetyMessage, estimateContext, estimateOpen, estimatorDraft, loop.state, cityChosen, revision, stage]);
   function openCreatedRequest(requestId: string) {
     if (draftGeneration.current !== privateSessionGeneration() || draftStorageEpoch.current !== draftStorageGeneration()) return;
     draftFinished.current = true; removeClientDraft(draftOwner.current, draftId);
@@ -218,7 +234,7 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
   }
 
   function changeDescription(value: string, confirmed = false) {
-    discardVoice(); setProblem(value); setProblemConfirmedFromRafi(confirmed);
+    discardVoice(); setRevision(v => v + 1); setStage('NEED'); setProblem(value); setProblemConfirmedFromRafi(confirmed);
     setDeclaredService(''); setReviewedDiagnostic(null); setConfirmDirect(false);
     setDiagnosticReference(undefined); setEstimateContext(null); setEstimatorDraft(null); setEstimateOpen(false);
     photoEpoch.current++; setPhotoDiagnostic(null);
@@ -228,6 +244,9 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
     const next = applyVoiceProposal(problem, voiceProposal, voiceMode);
     setPreviousDescription({ problem, declaredService, problemConfirmedFromRafi });
     changeDescription(next, true);
+    const location = cityProposal(next, city, cityChosen);
+    if (!cityChosen && location.value) setCity(location.value);
+    setStage('UNDERSTANDING');
     setRafiMessage('Transcription acceptée. Vous pouvez restaurer le texte précédent.');
   }
 
@@ -238,6 +257,7 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
     setPhotoUri(uri);
     setPhotoMimeType(mimeType);
     setPhotoDiagnostic(null);
+    setConfirmDirect(false); setEstimateOpen(false); setStage('UNDERSTANDING');
     setRafiMessage('Photo prête. Vous décidez quand RAFI peut l’analyser.');
   }
 
@@ -245,6 +265,7 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
     if (photoLock.current || safetyStopped || idempotencyKeyRef.current) return;
     photoEpoch.current++; setPhotoUri(null); setPhotoDiagnostic(null); setReviewedDiagnostic(null);
     setDiagnosticReference(undefined); setPersistPhoto(false); setEstimateContext(null); setEstimatorDraft(null);
+    setStage(problem.trim().length >= 8 ? 'UNDERSTANDING' : 'NEED');
     setRafiMessage('Photo retirée. Votre description est conservée.');
   }
 
@@ -305,7 +326,7 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
   }
 
   async function send() {
-    if (voiceProposal || voiceBusy || voiceListening || submitLockRef.current || loop.state === 'matching' || loop.state === 'found') return;
+    if (safetyStopped || photoDiagnostic?.safety.stop || voiceProposal || voiceBusy || voiceListening || submitLockRef.current || loop.state === 'matching' || loop.state === 'found') return;
     submitLockRef.current = true;
     try {
       const normalizedCity = city.trim();
@@ -358,6 +379,14 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
   }
 
   const intakeReady = !voiceProposal && !voiceBusy && !voiceListening && !safetyStopped && canSendClientIntake({ busy: photoDiagnosticBusy, diagnostic: photoDiagnostic, reviewed: reviewedDiagnostic === photoDiagnostic });
+  function confirmExplicit() {
+    if (!confirmDirect || !intakeReady || idempotencyKeyRef.current) return;
+    void send();
+  }
+  function retryPending() {
+    if (!idempotencyKeyRef.current || loop.state !== 'error') return;
+    void send();
+  }
   function sendQualifiedIntake() {
     if (!intakeReady) { setRafiMessage('Vérifiez l’analyse avant de poursuivre.'); return; }
     if (!canonicalCity(city)) { needCity(); return; }
@@ -374,9 +403,10 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
     }
     const citySlug = normalized.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, '-');
     setEstimateOpen(true);
-    if (estimateContext?.city === citySlug && estimateContext.description === problem.trim() && estimateContext.diagnosticReference === diagnosticReference) return;
+    if (estimateContext?.city === citySlug && estimateContext.description === problem.trim() && estimateContext.diagnosticReference === diagnosticReference && estimateContext.metierHint === confirmedMetierHint(declaredService)) return;
     setEstimatorDraft(null);
-    setEstimateContext({ city: citySlug, description: problem.trim(), diagnosticReference });
+    setEstimateContext({ city: citySlug, description: problem.trim(), diagnosticReference,
+      ...(declaredService ? { metierHint: confirmedMetierHint(declaredService), metierProvenance: 'user_confirmed' as const } : {}) });
   }
   function intelligenceCreated(requestId: string) {
     reportRafiPresence('success');
@@ -394,7 +424,7 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
   });
 
   const hero = clientHomeCopy(journeyStatus, effectiveOrbMode, loop.state === 'creating');
-  const inputExpanded = writing || !!problem || !!photoUri || !!rafiMessage;
+  const uiStage = safetyStopped || photoDiagnostic?.safety.stop ? 'SAFETY_STOP' : idempotencyKeyRef.current ? 'CONFIRMATION_PENDING' : estimateOpen ? 'ESTIMATE' : confirmDirect ? 'EXPLICIT_CONFIRM' : voiceProposal ? 'VOICE_REVIEW' : voiceBusy ? 'VOICE_PROCESSING' : photoUri && (!photoDiagnostic || reviewedDiagnostic !== photoDiagnostic) ? 'PHOTO_REVIEW' : stage;
   const previousLoopState = useRef(loop.state);
   useEffect(() => {
     if (writing) problemInputRef.current?.focus();
@@ -449,163 +479,91 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <ClientDraftRecovery excludeId={draftId} />
-        {back && !estimateOpen && <BackButton disabled={loop.state === 'creating'} onPress={confirmDirect ? () => setConfirmDirect(false) : undefined} />}
-        {(isActiveJourney || !safetyStopped) && <ClientHero {...hero} family="request" compact mode={effectiveOrbMode} eventKey={`${loop.missionId || loop.requestId || 'need'}:${rafiCompletion}`} />}
-
-        {!isActiveJourney && safetyStopped && !photoDiagnostic?.safety.stop && <ClientSection testID="client-safety-stop">
-          <ClientHero eyebrow="RAFI · SÉCURITÉ" title="La sécurité d’abord." detail={safetyMessage} mode="attention" compact />
-          <FixeoAction label="Revenir à mon espace" variant="secondary" onPress={() => router.push('/client-workspace')} />
-        </ClientSection>}
-        {!isActiveJourney && photoDiagnostic?.safety.stop && <>
-          {!!photoUri && <RafiPhotoPreview uri={photoUri} readOnly onChange={() => {}} onRemove={() => {}} onClarify={() => {}} />}
-          <ClientDiagnostic result={photoDiagnostic} confirmed={false} onConfirm={() => {}} onExit={() => router.push('/client-workspace')} />
-        </>}
-        {!isActiveJourney && !safetyStopped && (
-          <View style={styles.inputStack}>
-            {!estimateOpen && !confirmDirect && !photoDiagnosticBusy && !idempotencyKeyRef.current && !voiceProposal && !voiceBusy && <RafiInputRail
-              onWrite={() => { setWriting(true); problemInputRef.current?.focus(); }}
-              onVoiceReady={(uri) => void handleVoice(uri)}
-              onPhotoReady={(uri, mimeType) => handlePhoto(uri, mimeType)}
-              onListeningChange={(listening) => {
-                setVoiceListening(listening);
-                setRafiOrbOverride(listening ? 'listening' : null);
-              }}
-            />}
-
-            {voiceProposal && <ClientSection testID="voice-proposal" label="TRANSCRIPTION À VÉRIFIER">
-              <FixeoText>{voiceProposal}</FixeoText>
-              <FixeoText variant="supporting" tone="secondary">Votre texte actuel est conservé. Choisissez comment utiliser cette transcription.</FixeoText>
-              {!!problem.trim() && <View style={styles.inputStack}>
-                <FixeoAction label="Remplacer le texte" variant="secondary" selected={voiceMode === 'replace'} onPress={() => setVoiceMode('replace')} />
-                <FixeoAction label="Compléter le texte" variant="secondary" selected={voiceMode === 'append'} onPress={() => setVoiceMode('append')} />
-              </View>}
-              <FixeoAction label="Utiliser cette transcription" onPress={acceptVoice} />
-              <FixeoAction label="Réessayer" variant="secondary" onPress={() => { discardVoice(); setRafiMessage('Texte conservé. Touchez le micro pour réessayer.'); }} />
-              <FixeoAction label="Ignorer et conserver mon texte" variant="ghost" onPress={() => { discardVoice(); setRafiMessage('Transcription ignorée. Votre texte est conservé.'); }} />
-            </ClientSection>}
-
-            {!inputExpanded && <FixeoText variant="caption" tone="tertiary" style={styles.center}>
-              Une demande commence avec vous.
-            </FixeoText>}
-            {estimateContext && <View style={!estimateOpen ? { display: 'none' } : undefined}><ClientIntelligence key={`${estimateContext.city}:${estimateContext.description}`} visible={estimateOpen} context={estimateContext} initialDraft={estimatorDraft} onDraftChange={setEstimatorDraft} onPresenceChange={reportRafiPresence} onCreated={intelligenceCreated} onStop={message => { if (message) setSafetyMessage(message); setSafetyStopped(true); }} onClose={() => { setEstimateOpen(false); reportRafiPresence(null); }} /></View>}
-            {confirmDirect && <ClientSection testID="client-direct-confirmation" label="Votre demande">
-              <FixeoText variant="heading">{problem}</FixeoText>
-              <FixeoText tone="secondary">{city} · {need.serviceCategory}</FixeoText>
-              <FixeoText variant="supporting">FIXEO recherche un artisan. Le prix sera annoncé avant intervention.</FixeoText>
-              <FixeoAction label="Confirmer et chercher un artisan" disabled={requestLocked} onPress={() => { setConfirmDirect(false); void send(); }} />
-              <FixeoAction label="Modifier ma demande" variant="ghost" onPress={() => setConfirmDirect(false)} />
-            </ClientSection>}
-            {inputExpanded && !estimateOpen && !confirmDirect && <View testID="client-request-fields" style={styles.inputStack}>
-            <KeyboardInput
-              ref={problemInputRef}
-              accessibilityLabel="Décrivez le problème"
-              value={problem}
-              onChangeText={(value) => {
-                setPreviousDescription(null); changeDescription(value);
-              }}
-              editable={!requestLocked && !photoDiagnosticBusy && !(loop.state === 'error' && !!idempotencyKeyRef.current)}
-              multiline
-              placeholder="Décrivez simplement ce qui se passe"
-              placeholderTextColor={colors.textMuted}
-              style={clientStyles.input}
-            />
-            {previousDescription && !voiceProposal && !requestLocked && !idempotencyKeyRef.current && <FixeoAction label="Restaurer le texte précédent" variant="ghost" onPress={() => {
-              const prior = previousDescription; changeDescription(prior.problem, prior.problemConfirmedFromRafi); setDeclaredService(prior.declaredService); setPreviousDescription(null);
-              setRafiMessage('Le texte précédent a été restauré.');
-            }} />}
-            {(!!problem.trim() || !!photoUri) && <View ref={cityAnchor} collapsable={false}><ClientLocationField city={city} error={cityError ? 'Choisissez votre ville pour continuer.' : undefined} focusRequest={cityFocus} onChangeCity={value => { setCity(value); setCityError(false); }} onPresenceChange={reportRafiPresence} disabled={requestLocked || photoDiagnosticBusy || (loop.state === 'error' && !!idempotencyKeyRef.current)} /></View>}
-            {problem.trim().length >= 8 && <ServiceField values={declaredService ? [declaredService] : []} suggestion={need.confidence === 'high' ? need.serviceCategory : undefined} onChange={values => setDeclaredService(values[0] || '')} disabled={requestLocked || photoDiagnosticBusy || !!idempotencyKeyRef.current} />}
-
-            {!!rafiMessage && (
-              <ClientSection>
-                <Text style={styles.rafiLabel}>RAFI</Text>
-                <Text style={styles.rafiMessage} accessibilityLiveRegion="polite">{rafiMessage}</Text>
-              </ClientSection>
-            )}
-
-            {!!photoUri && (
-              <ClientSection surface>
-                <Text style={styles.rafiLabel}>PHOTO PRIVÉE</Text>
-                <RafiPhotoPreview uri={photoUri} busy={photoDiagnosticBusy || requestLocked} replacePrimary={!!photoDiagnostic && photoRelevance(photoDiagnostic, problem) === 'unrelated'}
-                  onChange={handlePhoto} onClarify={() => { setWriting(true); problemInputRef.current?.focus(); }}
-                  onRemove={removePhoto} />
-                <Text style={styles.rafiMessage}>
-                  La photo n’est pas une demande. Elle est analysée uniquement si vous le choisissez.
-                </Text>
-                {!photoDiagnostic && <FixeoAction label={persistPhoto ? '✓ Conserver l’analyse pour la suite' : 'Conserver l’analyse pour la suite'} variant="ghost" disabled={photoDiagnosticBusy} accessibilityRole="checkbox" accessibilityState={{ checked: persistPhoto }} onPress={() => setPersistPhoto(value => !value)} />}
-                {!photoDiagnostic && persistPhoto && <FixeoText variant="caption" tone="secondary">J’accepte la conservation privée de la photo nettoyée et de l’analyse pour poursuivre ce besoin. La photo originale n’est pas conservée.</FixeoText>}
-                {!photoDiagnostic && (
-                  <FixeoAction
-                    label={photoDiagnosticBusy ? 'RAFI analyse…' : !city.trim() ? 'Choisir la ville pour analyser' : 'Analyser la photo avec RAFI'}
-                    variant="primary"
-                    disabled={photoDiagnosticBusy}
-                    onPress={() => void analyzePhoto()}
-                  />
-                )}
-              </ClientSection>
-            )}
-
-            {photoDiagnostic && !photoDiagnostic.safety.stop && <ClientDiagnostic
-              key={photoUri}
-              result={photoDiagnostic}
-              description={problem}
-              onContinueText={removePhoto}
-              onClarify={() => { setWriting(true); problemInputRef.current?.focus(); setRafiMessage('Quel problème avez-vous constaté ? La photo et votre ville sont conservées.'); }}
-              confirmed={reviewedDiagnostic === photoDiagnostic}
-              onConfirm={(description) => {
-                if (confirmPhotoDiagnostic(description)) setReviewedDiagnostic(photoDiagnostic);
-              }}
-            />}
-
-            {problem.length > 3 && (
-              <>
-                <View style={styles.understoodRow}>
-                  <Text style={styles.understoodDot}>●</Text>
-                  <Text style={styles.understood}>
-                    {declaredService ? `${declaredService} · choisi par vous` : need.confidence === 'low' ? 'Précisez votre besoin ou choisissez un métier' : `${need.serviceCategory} · suggéré par RAFI`}
-                  </Text>
-                </View>
-                <FixeoAction label={showContext ? 'Masquer le récapitulatif' : 'Ce que RAFI a compris'}
-                  variant="ghost" accessibilityState={{ expanded: showContext }} onPress={() => setShowContext(value => !value)} />
-                {showContext && <ClientSection label="Votre récapitulatif">
-                  {rafiContext.facts.map((fact, index) => <View key={fact.label + index} style={styles.fact}>
-                    <FixeoText variant="caption" tone="secondary">{fact.label} · {RAFI_PROVENANCE_LABELS[fact.provenance]}</FixeoText>
-                    <FixeoText>{fact.value}</FixeoText>
-                  </View>)}
-                </ClientSection>}
-              </>
-            )}
-
-            {problem.trim().length >= 8 && <FixeoAction label={wantsEstimate(problem) ? 'Obtenir mon estimation avec RAFI' : 'Voir aussi une estimation'} variant={wantsEstimate(problem) && (!photoUri || !!reviewedDiagnostic) ? 'primary' : 'ghost'} disabled={requestLocked || !intakeReady || !!idempotencyKeyRef.current} onPress={openEstimate} />}
-            <FixeoAction
-              label={
-                loop.state === 'creating'
-                  ? 'RAFI prépare votre demande…'
-                  : idempotencyKeyRef.current && loop.state === 'error' ? 'Vérifier et réessayer la demande' : need.needsConfirmation
-                    ? 'Préciser le problème'
-                    : 'Confier le problème à FIXEO'
-              }
-              variant={!intakeReady || wantsEstimate(problem) || (!!photoUri && !reviewedDiagnostic) ? 'secondary' : 'primary'}
-              onPress={idempotencyKeyRef.current && loop.state === 'error' ? () => void send() : sendQualifiedIntake}
-              disabled={!problem || requestLocked || !intakeReady}
-            />
-
-            {loop.state === 'error' && (
-              <Text accessibilityRole="alert" style={styles.error}>{loop.message}</Text>
-            )}
+        {back && uiStage !== 'ESTIMATE' && <BackButton disabled={requestLocked} onPress={uiStage === 'EXPLICIT_CONFIRM' ? () => setConfirmDirect(false) : uiStage === 'SUMMARY' ? () => setStage('UNDERSTANDING') : uiStage === 'UNDERSTANDING' ? () => setStage('NEED') : undefined} />}
+        <ClientHero {...hero} family="request" compact mode={effectiveOrbMode} eventKey={`${loop.requestId || 'need'}:${rafiCompletion}`} />
+        <View testID={`client-stage-${uiStage}`} accessibilityElementsHidden={optionsOpen} importantForAccessibility={optionsOpen ? 'no-hide-descendants' : 'auto'} style={[styles.inputStack, optionsOpen && { display: 'none' }]}>
+          {uiStage === 'SAFETY_STOP' && <ClientSection testID="client-safety-stop">
+            <FixeoText accessibilityRole="alert">{safetyMessage}</FixeoText>
+            {photoDiagnostic?.safety.stop && <ClientDiagnostic result={photoDiagnostic} confirmed={false} onConfirm={() => {}} />}
+            <FixeoAction label="Revenir à mon espace" variant="secondary" onPress={() => router.push('/client-workspace')} />
+          </ClientSection>}
+          {uiStage === 'NEED' && <ClientSection testID="client-request-fields" surface>
+            <KeyboardInput ref={problemInputRef} accessibilityLabel="Décrivez le problème" value={problem}
+              onChangeText={value => { setPreviousDescription(null); changeDescription(value); }}
+              multiline editable={!voiceListening} placeholder="Décrivez simplement ce qui se passe" style={clientStyles.input} />
+            <RafiInputRail compact onWrite={() => { setWriting(true); problemInputRef.current?.focus(); }}
+              onVoiceReady={uri => void handleVoice(uri)} onPhotoReady={handlePhoto}
+              onListeningChange={listening => { setVoiceListening(listening); setRafiOrbOverride(listening ? 'listening' : null); }} />
+            {!voiceListening && <FixeoAction label="Continuer" disabled={problem.trim().length < 8} onPress={understand} />}
+          </ClientSection>}
+          {uiStage === 'VOICE_PROCESSING' && <FixeoText accessibilityLiveRegion="polite">RAFI transcrit votre message… Votre texte reste conservé.</FixeoText>}
+          {uiStage === 'VOICE_REVIEW' && <ClientSection testID="voice-proposal" label="TRANSCRIPTION À VÉRIFIER">
+            <FixeoText>{voiceProposal}</FixeoText>
+            <FixeoText variant="supporting" tone="secondary">Votre texte reste intact jusqu’à votre choix.</FixeoText>
+            {!!problem.trim() && <View style={styles.inputStack}>
+              <FixeoAction label="Remplacer le texte" variant="ghost" selected={voiceMode === 'replace'} onPress={() => setVoiceMode('replace')} />
+              <FixeoAction label="Compléter le texte" variant="ghost" selected={voiceMode === 'append'} onPress={() => setVoiceMode('append')} />
             </View>}
-          </View>
-        )}
-
-        {(!!problem.trim() || !!photoUri) && !requestLocked && !idempotencyKeyRef.current && !estimatorDraft?.pendingConfirmation && <View style={styles.inputStack}>
-          <FixeoAction label="Commencer une nouvelle demande" variant="secondary" onPress={() => router.push({ pathname: '/new-request', params: { draftId: Crypto.randomUUID() } } as any)} />
-          <FixeoText variant="supporting" tone="secondary">Ce brouillon reste disponible dans RAFI.</FixeoText>
-          <FixeoAction label="Abandonner ce brouillon" variant="ghost" onPress={() => setDiscardPrompt(true)} />
-          {discardPrompt && <ClientSection label="ABANDONNER CE BROUILLON ?"><FixeoText>Votre besoin et ses réponses seront effacés. Vos demandes confirmées restent intactes.</FixeoText>
-            <FixeoAction label="Confirmer l’abandon" onPress={() => { draftFinished.current = true; removeClientDraft(draftOwner.current, draftId); router.replace({ pathname: '/new-request', params: { draftId: Crypto.randomUUID() } } as any); }} />
-            <FixeoAction label="Garder mon brouillon" variant="secondary" onPress={() => setDiscardPrompt(false)} /></ClientSection>}
+            <FixeoAction label="Utiliser cette transcription" onPress={acceptVoice} />
+            <FixeoAction label="Ignorer et conserver mon texte" variant="ghost" onPress={() => { discardVoice(); setStage('NEED'); }} />
+          </ClientSection>}
+          {uiStage === 'UNDERSTANDING' && <ClientSection testID="client-understanding" label="VOICI CE QUE RAFI A COMPRIS">
+            <FixeoText>{problem}</FixeoText>
+            <FixeoText variant="caption" tone="secondary">{RAFI_PROVENANCE_LABELS[facts.description.provenance]}</FixeoText>
+            {proposal.suggested && <FixeoText accessibilityLiveRegion="polite">{proposal.conflict && cityChosen ? `${proposal.suggested} est mentionnée, mais votre choix ${city} est conservé. Modifiez-le uniquement si nécessaire.` : `Ville proposée : ${proposal.suggested} · à confirmer`}</FixeoText>}
+            <View ref={cityAnchor} collapsable={false}><ClientLocationField city={city} error={cityError ? 'Choisissez votre ville pour continuer.' : undefined} focusRequest={cityFocus} onChangeCity={chooseCity} onPresenceChange={reportRafiPresence} /></View>
+            <ServiceField values={declaredService ? [declaredService] : []} suggestion={need.confidence === 'high' ? need.serviceCategory : undefined} onChange={values => { setDeclaredService(values[0] || ''); setRevision(v => v + 1); }} />
+            <FixeoText variant="supporting" tone="secondary">{declaredService ? `${declaredService} · choisi par vous` : `${need.serviceCategory} · proposition RAFI à confirmer`}</FixeoText>
+            <FixeoAction label={city && !cityChosen ? `Confirmer ${city} et mon besoin` : 'Confirmer mon besoin'} onPress={confirmUnderstanding} />
+            <FixeoAction label="Modifier mon texte" variant="ghost" onPress={() => setStage('NEED')} />
+          </ClientSection>}
+          {uiStage === 'PHOTO_REVIEW' && <ClientSection testID="client-photo-step" surface>
+            {!!photoUri && <RafiPhotoPreview uri={photoUri} busy={photoDiagnosticBusy} onChange={handlePhoto} onRemove={removePhoto} onClarify={() => { removePhoto(); setStage('NEED'); }} />}
+            {!photoDiagnostic && <>
+              <View ref={cityAnchor} collapsable={false}><ClientLocationField city={city} error={cityError ? 'Choisissez votre ville pour analyser.' : undefined} focusRequest={cityFocus} onChangeCity={chooseCity} disabled={photoDiagnosticBusy} /></View>
+              <FixeoText variant="supporting">L’analyse ne crée aucune demande. La conservation est un choix distinct.</FixeoText>
+              <FixeoAction label={persistPhoto ? '✓ Conserver l’analyse pour la suite' : 'Conserver l’analyse pour la suite'} variant="ghost" disabled={photoDiagnosticBusy} accessibilityRole="checkbox" accessibilityState={{ checked: persistPhoto }} onPress={() => setPersistPhoto(value => !value)} />
+              {persistPhoto && <FixeoText variant="caption">J’accepte la conservation privée de la photo nettoyée et de l’analyse. La photo originale n’est pas conservée.</FixeoText>}
+              <FixeoAction label={photoDiagnosticBusy ? 'RAFI analyse…' : 'Analyser la photo avec RAFI'} disabled={photoDiagnosticBusy} onPress={() => void analyzePhoto()} />
+            </>}
+            {photoDiagnostic && <ClientDiagnostic key={photoUri} result={photoDiagnostic} description={problem} confirmed={false}
+              onContinueText={removePhoto} onClarify={() => { removePhoto(); setStage('NEED'); }}
+              onConfirm={description => { if (confirmPhotoDiagnostic(description)) { setReviewedDiagnostic(photoDiagnostic); setStage('UNDERSTANDING'); } }} />}
+          </ClientSection>}
+          {uiStage === 'SUMMARY' && <ClientSection testID="client-summary" label="VOTRE DEMANDE">
+            <FixeoText variant="heading">{problem}</FixeoText><FixeoText>{city} · {need.serviceCategory}</FixeoText>
+            <FixeoText variant="supporting">Le prix sera annoncé avant intervention. Vous pouvez d’abord consulter une estimation.</FixeoText>
+            <FixeoAction label="Préparer ma demande" disabled={!intakeReady} onPress={sendQualifiedIntake} />
+            <FixeoAction label="Voir une estimation" variant="ghost" disabled={!intakeReady} onPress={openEstimate} />
+          </ClientSection>}
+          {uiStage === 'EXPLICIT_CONFIRM' && <ClientSection testID="client-direct-confirmation" label="CONFIRMATION">
+            <FixeoText variant="heading">{problem}</FixeoText><FixeoText>{city} · {need.serviceCategory}</FixeoText>
+            <FixeoText>En confirmant, vous autorisez FIXEO à rechercher un artisan. Aucun prix définitif n’est confirmé.</FixeoText>
+            <FixeoAction label="Confirmer et chercher un artisan" disabled={requestLocked || !intakeReady} onPress={confirmExplicit} />
+            <FixeoAction label="Modifier ma demande" variant="ghost" onPress={() => { setConfirmDirect(false); setStage('UNDERSTANDING'); }} />
+          </ClientSection>}
+          {uiStage === 'CONFIRMATION_PENDING' && <ClientSection testID="client-confirmation-pending">
+            <FixeoText accessibilityLiveRegion="polite">{loop.state === 'creating' ? 'FIXEO prépare votre demande…' : loop.message || 'Votre confirmation reste à vérifier.'}</FixeoText>
+            {loop.state === 'error' && <><FixeoAction label="Vérifier et réessayer la demande" onPress={retryPending} /><FixeoAction label="Vérifier mes demandes" variant="ghost" onPress={() => router.push('/client-workspace/history')} /></>}
+          </ClientSection>}
+        </View>
+        {estimateContext && <View accessibilityElementsHidden={!estimateOpen} importantForAccessibility={estimateOpen ? 'auto' : 'no-hide-descendants'} style={!estimateOpen ? { display: 'none' } : undefined}>
+          <ClientIntelligence key={`${estimateContext.city}:${estimateContext.description}`} visible={estimateOpen} context={estimateContext} initialDraft={estimatorDraft} onDraftChange={setEstimatorDraft} onPresenceChange={reportRafiPresence} onCreated={intelligenceCreated}
+            onStop={message => { if (message) setSafetyMessage(message); setSafetyStopped(true); }} onClose={() => { setEstimateOpen(false); setStage('SUMMARY'); reportRafiPresence(null); }} />
         </View>}
+        {!!rafiMessage && !['SAFETY_STOP', 'VOICE_PROCESSING'].includes(uiStage) && <FixeoText variant="supporting" accessibilityLiveRegion="polite">{rafiMessage}</FixeoText>}
+        {!requestLocked && !idempotencyKeyRef.current && !estimatorDraft?.pendingConfirmation && !['SAFETY_STOP','ESTIMATE','VOICE_PROCESSING'].includes(uiStage) && <>
+          <FixeoAction label={optionsOpen ? 'Fermer les options' : 'Plus'} variant="ghost" accessibilityState={{ expanded: optionsOpen }} onPress={() => setOptionsOpen(v => !v)} />
+          {optionsOpen && <ClientSection label="OPTIONS">
+            {previousDescription && <FixeoAction label="Restaurer le texte précédent" variant="ghost" onPress={() => { const prior = previousDescription; changeDescription(prior.problem, prior.problemConfirmedFromRafi); setDeclaredService(prior.declaredService); setPreviousDescription(null); setOptionsOpen(false); }} />}
+            {uiStage === 'VOICE_REVIEW' && <FixeoAction label="Réessayer" variant="ghost" onPress={() => { discardVoice(); setStage('NEED'); setOptionsOpen(false); }} />}
+            <ClientDraftRecovery excludeId={draftId} />
+            <FixeoAction label="Abandonner ce brouillon" variant="ghost" onPress={() => setDiscardPrompt(true)} />
+            {discardPrompt && <ClientSection label="ABANDONNER CE BROUILLON ?"><FixeoText>Vos demandes confirmées restent intactes.</FixeoText>
+              <FixeoAction label="Confirmer l’abandon" onPress={() => { draftFinished.current = true; removeClientDraft(draftOwner.current, draftId); router.replace('/' as any); }} />
+              <FixeoAction label="Garder mon brouillon" variant="secondary" onPress={() => setDiscardPrompt(false)} /></ClientSection>}
+          </ClientSection>}
+        </>}
       </ScrollView>
     </FixeoScreen>
   );

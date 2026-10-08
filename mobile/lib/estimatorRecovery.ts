@@ -12,7 +12,7 @@ const signature = (result: MobileEstimatorResponse) => JSON.stringify({
 /** Replays declared answers against NEW server questions. Never sends cached authority or confirms a request. */
 export async function recoverEstimator(draft: EstimatorDraft, context: ClientIntelligenceContext,
   request: (action: MobileEstimatorRequest) => Promise<MobileEstimatorResponse>, valid: () => boolean = () => true) {
-  const metier = draft.result?.session?.metier || undefined;
+  const metier = draft.result?.session?.metier || (context.metierProvenance === 'user_confirmed' ? context.metierHint : undefined);
   let result = await request({ action: 'start', entry_context: { city_slug: context.city, description: context.description,
     ...(metier ? { metier_hint: metier } : {}), ...(context.diagnosticReference ? { diagnostic_token: context.diagnosticReference } : {}) } });
   const history: EstimatorDraft['history'] = [];

@@ -15,6 +15,7 @@ export type EstimatorDraft = {
   directKey: string | null; error: { kind: string; message: string } | null;
 };
 export type ClientDraft = {
+  cityChosen?: boolean; revision?: number; uiStage?: 'NEED' | 'UNDERSTANDING' | 'SUMMARY';
   previousDescription?: PreviousDescription | null;
   id: string; updatedAt: number; problem: string; city: string; declaredService: string;
   problemConfirmedFromRafi: boolean; photoUri: string | null; photoMimeType: string;

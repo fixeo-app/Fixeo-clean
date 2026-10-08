@@ -45,8 +45,11 @@ test('mobile consumes no pricing engine, legacy import or estimator secret; sour
   }
   const home=readFileSync('components/ClientRequestComposer.tsx','utf8');
   assert.match(home,/if \(!intakeReady\) \{[^}]*return; \}[\s\S]*setConfirmDirect\(true\)/);
-  assert.match(home,/label="Confirmer et chercher un artisan"[\s\S]*void send\(\)/);
-  assert.match(home,/onPress=\{idempotencyKeyRef\.current && loop\.state === \'error\' \? \(\) => void send\(\) : sendQualifiedIntake\}/);
+  assert.match(home,/label="Confirmer et chercher un artisan"[\s\S]*onPress=\{confirmExplicit\}/);
+  assert.match(home,/function confirmExplicit\(\) \{[\s\S]*if \(!confirmDirect \|\| !intakeReady \|\| idempotencyKeyRef.current\) return;[\s\S]*void send\(\)/);
+  assert.match(home,/label="Préparer ma demande" disabled=\{!intakeReady\} onPress=\{sendQualifiedIntake\}/);
+  assert.match(home,/uiStage === 'CONFIRMATION_PENDING'/);
+  assert.match(home,/label="Vérifier et réessayer la demande" onPress=\{retryPending\}/);
   assert.doesNotMatch(home,/onPress=\{\(\) => void send\(\)/);
   const result=readFileSync('components/ClientFixeoResult.tsx','utf8');
   assert.doesNotMatch(result,/createRequest|confirm_request|fetch\(/);

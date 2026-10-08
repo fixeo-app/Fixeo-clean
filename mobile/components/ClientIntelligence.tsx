@@ -1,3 +1,4 @@
+import { ChoicePicker } from '@/ui/ChoicePicker';
 import { KeyboardInput } from '@/ui/KeyboardInput';
 import type { EstimatorDraft } from '@/lib/clientDrafts';
 import { recoverEstimator } from '@/lib/estimatorRecovery';
@@ -85,7 +86,7 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
       if (view.kind === 'safety') { stopped.current = true; onStop(); }
     } finally { lock.current = false; if (active.current) setBusy(false); }
   }
-  function start(metier?: string) {
+  function start(metier = initial.metierProvenance === 'user_confirmed' ? initial.metierHint : undefined) {
     setStarted(true);
     void run({ action: 'start', entry_context: { city_slug: initial.city, description: initial.description, ...(metier ? { metier_hint: metier } : {}),
       ...(initial.diagnosticReference ? { diagnostic_token: initial.diagnosticReference } : {}) } });
@@ -143,9 +144,14 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
     if (confirming) { setConfirming(false); return; }
     const prior = history[history.length - 1];
     if (prior) { setResult(prior.result); setAnswer(prior.answer); setHistory(items => items.slice(0, -1)); }
-    else if (started) { setStarted(false); setResult(null); setAnswer(''); }
+    else if (started) onClose();
     else onClose();
   }
+  const autoStarted = useRef(false);
+  useEffect(() => {
+    if (!visible || started || autoStarted.current || stopped.current || initialDraft?.pendingConfirmation) return;
+    autoStarted.current = true; start();
+  });
   const selections = step?.type === 'SERVICE_SELECTION' ? (step.candidate_services || []).map(service => ({ value: service.service_code, label: service.label_fr || 'Choisir cette intervention' })) : options;
   function continueStep() {
     Keyboard.dismiss();
@@ -164,9 +170,6 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
       <FixeoAction label="Actualiser avec mes réponses" disabled={busy} onPress={() => void recalculate()} />
       {!!initial.diagnosticReference && error?.kind === 'expired' && <FixeoAction label="Actualiser avec ma description, sans photo" variant="secondary" disabled={busy} onPress={() => void recalculate(true)} />}
     </ClientSection>}
-    {!started && <ClientSection surface><FixeoText variant="heading">{initial.description}</FixeoText><FixeoText tone="secondary">{initial.city}</FixeoText>
-      <FixeoText>Quelques précisions pour une estimation adaptée à votre intervention.</FixeoText>
-      <FixeoAction label="Commencer l’estimation" onPress={() => start()} /></ClientSection>}
     {busy && <FixeoText accessibilityLiveRegion="polite">{confirming ? 'FIXEO prépare votre demande…' : 'RAFI prépare la suite…'}</FixeoText>}
     {error && <View style={{ gap: 12 }}>
       <FixeoText accessibilityRole="alert">{error.message}</FixeoText>
@@ -180,10 +183,7 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
     {outcome && <ClientFixeoResult outcome={outcome} />}
     {!outcome && ['QUESTION', 'SERVICE_SELECTION'].includes(step?.type || '') && <ClientSection testID="client-estimator-question">
       <FixeoText variant="heading">{step?.prompt_fr || 'Quelle intervention correspond à votre besoin ?'}</FixeoText>
-      {selections.length ? selections.map((option, i) => <FixeoAction key={i}
-        label={(optionLabels as Record<string, string>)[String(option.value)] || option.label}
-        variant="secondary" selected={answer === option.value} disabled={blocked}
-        onPress={() => { setAnswer(option.value); setError(null); }} />) :
+      {selections.length ? <ChoicePicker label="Choisissez une réponse" options={selections.map(option => ({ ...option, label: (optionLabels as Record<string, string>)[String(option.value)] || option.label }))} value={answer} disabled={blocked} onChange={value => { setAnswer(value); setError(null); }} /> :
         <KeyboardInput accessibilityLabel="Votre précision" style={clientStyles.input} value={String(answer)} onChangeText={value => { setAnswer(value); setError(null); }} editable={!busy}
           keyboardType={step?.answer_type === 'number' ? 'decimal-pad' : 'default'} returnKeyType="done" />}
       <FixeoAction label="Continuer" disabled={blocked || String(answer).trim() === ''} onPress={continueStep} />
@@ -196,7 +196,8 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
     </ClientSection>}
     {!outcome && step?.type === 'METIER_SELECTION' && <ClientSection label="Précisons votre besoin">
       <FixeoText>Quel métier correspond à votre besoin ?</FixeoText>
-      {step.candidate_metiers?.map(metier => <FixeoAction key={metier} label={metierLabels[metier] || metier} variant="secondary" disabled={blocked} onPress={() => start(metier)} />)}
+      {initial.metierHint && <FixeoText variant="supporting">Le moteur a besoin de préciser le métier malgré votre choix précédent.</FixeoText>}
+      <ChoicePicker label="Métier de l’intervention" options={(step.candidate_metiers || []).map(metier => ({ value: metier, label: metierLabels[metier] || metier }))} value="" disabled={blocked} onChange={value => start(String(value))} />
     </ClientSection>}
     {canConfirm && !confirming && <FixeoAction label={outcome?.outcome_type === 'QUOTE_REQUIRED' ? 'Préparer ma demande de devis' : 'Continuer avec cette estimation'} disabled={blocked} onPress={() => setConfirming(true)} />}
     {confirming && <ClientSection testID="client-estimator-confirmation" label="Votre confirmation">
@@ -205,6 +206,5 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
       <FixeoText variant="supporting">{outcome?.outcome_type === 'QUOTE_REQUIRED' ? 'Aucun prix n’est confirmé. Un devis est nécessaire avant intervention.' : 'En confirmant, vous autorisez FIXEO à rechercher un artisan pour cette intervention.'}</FixeoText>
       <FixeoAction label="Confirmer et chercher un artisan" disabled={blocked || (phoneRequired && !phoneValid)} onPress={() => void confirm()} />
     </ClientSection>}
-    {!stopped.current && !pendingConfirmation.current && started && <FixeoAction label="Revenir à mon besoin" variant="ghost" disabled={busy} onPress={onClose} />}
   </ClientSection>;
 }

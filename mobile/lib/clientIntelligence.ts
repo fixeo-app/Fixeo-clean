@@ -1,6 +1,6 @@
 import type { MobileEstimatorResponse, MobileEstimatorRequest } from './mobileEstimatorContract';
 
-export type ClientIntelligenceContext = { city: string; description: string; diagnosticReference?: string };
+export type ClientIntelligenceContext = { city: string; description: string; diagnosticReference?: string; metierHint?: string; metierProvenance?: 'user_confirmed' };
 export function wantsEstimate(description: string) {
   return /estim|combien|co[uû]t|tarif|prix|budget/i.test(description);
 }

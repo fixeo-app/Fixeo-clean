@@ -13,6 +13,7 @@ import { explainPermission, permissionRefused } from '@/lib/permissionPrompt';
 import { RafiComposer } from './RafiComposer';
 
 type Props = {
+  compact?: boolean;
   onVoiceReady: (uri: string) => void;
   onPhotoReady: (uri: string, mimeType?: string) => void;
   onWrite?: () => void;
@@ -20,6 +21,7 @@ type Props = {
 };
 
 export function RafiInputRail({
+  compact = false,
   onVoiceReady,
   onPhotoReady,
   onWrite,
@@ -123,6 +125,6 @@ export function RafiInputRail({
     finally { captureLock.current = false; }
   }
 
-  return <RafiComposer recording={recorderState.isRecording} voiceBusy={voiceBusy} message={message}
+  return <RafiComposer compact={compact} recording={recorderState.isRecording} voiceBusy={voiceBusy} message={message}
     onVoice={() => void toggleVoice()} onPhoto={() => void takePhoto()} onWrite={onWrite} />;
 }
