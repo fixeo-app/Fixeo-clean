@@ -99,7 +99,7 @@ test('PB1 V2 actual photo preview renders selected URI, viewing and correction c
  await renderer.act(async()=>action('Gérer la photo').onPress());
  await renderer.act(async()=>action('Reprendre').onPress());assert.equal(changed,'file:///replacement.jpg');
  await renderer.act(async()=>action('Ajouter une précision').onPress());assert.equal(clarifications,1);
- await renderer.act(async()=>action('Continuer sans photo').onPress());assert.equal(removed,1);
+ await renderer.act(async()=>action('Supprimer').onPress());assert.equal(removed,1);
  await renderer.act(async()=>tree.update(React.createElement(RafiPhotoPreview,{...props,busy:true})));
  assert.equal(action('Changer').disabled,true);assert.equal(action('Supprimer').disabled,true);
  await renderer.act(async()=>tree.update(React.createElement(RafiPhotoPreview,{...props,readOnly:true})));

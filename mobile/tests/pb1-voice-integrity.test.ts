@@ -75,4 +75,32 @@ test('Post-audit P0 actual composer: proposal, ignore/replace/append/undo, paras
  assert.equal(tree.root.findAllByType('input').length,0,'unknown confirmation cannot be edited');
  await tap('Vérifier et réessayer la demande');assert.equal(calls.length,2);assert.equal(rows.length,1);assert.deepEqual(calls[0],calls[1],'unknown result retries an immutable payload/key');
  await renderer.act(async()=>tree.unmount());
+ // B3: actual central photo state; no automatic analysis, separate retention and persistent STOP.
+ let analyses=0, retained=0, stop=false;
+ const result=()=>({version:'fixture',problem:{value:'Fuite sous évier',provenance:'ai_inferred'},trade:{value:'Plomberie',provenance:'ai_inferred'},facts:[],hypotheses:[],possible_parts:[],checks:[],questions:[],urgency:{value:'normal',provenance:'ai_inferred'},safety:{stop},photo_relevance:{value:'related'}});
+ deps['@/components/RafiPhotoPreview']={RafiPhotoPreview:component('photo')};
+ deps['@/components/ClientDiagnostic']={ClientDiagnostic:component('diagnostic')};
+ deps['@/lib/mobileDiagnostic']={analyzeMobileDiagnosticPhoto:async()=>{analyses++;return result()}};
+ deps['@/lib/mobileDiagnosticReference']={analyzePersistedMobilePhoto:async()=>{retained++;return {result:result(),diagnostic_reference:'fixture'}}};
+ const PhotoComposer=load('components/ClientRequestComposer.tsx',deps).default;
+ await renderer.act(async()=>{tree=renderer.create(React.createElement(PhotoComposer))});
+ await type(A);await renderer.act(async()=>tree.root.findByType('rail').props.onPhotoReady('fixture:photo1','image/jpeg'));
+ assert.equal(analyses,0);assert.equal(retained,0);assert.equal(actions().find((x:any)=>x.props.label==='Analyser la photo avec RAFI').props.disabled,true);
+ await renderer.act(async()=>actions().find((x:any)=>x.props.label==='Analyser la photo avec RAFI').props.onPress());assert.equal(analyses,0,'handler enforces consent as well as UI');
+ await renderer.act(async()=>tree.root.findByType('photo').props.onClarify());await renderer.act(async()=>tree.root.findByType('input').props.onChangeText('Fuite importante sous mon évier'));
+ assert.equal(tree.root.findByType('photo').props.uri,'fixture:photo1','clarification never discards photo');await tap('Garder cette précision');
+ await tap('J’autorise RAFI à analyser cette photo');assert.equal(analyses,0);await tap('Analyser la photo avec RAFI');assert.equal(analyses,1);assert.equal(retained,0);
+ await renderer.act(async()=>tree.root.findByType('photo').props.onChange('fixture:photo2','image/jpeg'));
+ assert.equal(tree.root.findAllByType('diagnostic').length,0);assert.equal(actions().find((x:any)=>x.props.label==='Analyser la photo avec RAFI').props.disabled,true);
+ await renderer.act(async()=>tree.root.findByType('photo').props.onRemove());assert.equal(tree.root.findAllByType('photo').length,0);assert.equal(drafts.clientDrafts(uuidA).find((x:any)=>x.problem==='Fuite importante sous mon évier').photoUri,null);
+ await tap('Modifier mon texte');await renderer.act(async()=>tree.root.findByType('rail').props.onPhotoReady('fixture:photo3','image/jpeg'));
+ await tap('J’autorise RAFI à analyser cette photo');await tap('Conserver l’analyse pour la suite');stop=true;
+ await tap('Analyser la photo avec RAFI');assert.equal(retained,1);assert.equal(analyses,1);
+ assert.equal(tree.root.findAllByType('section').some((x:any)=>x.props.testID==='client-safety-stop'),true);
+ assert.equal(actions().some((x:any)=>/Analyser|Préparer|Confirmer et chercher/.test(x.props.label)),false);
+ const stoppedId=drafts.clientDrafts(uuidA).find((x:any)=>x.safetyStopped).id;
+ await renderer.act(async()=>tree.unmount());await renderer.act(async()=>{tree=renderer.create(React.createElement(PhotoComposer,{resumeDraftId:stoppedId}))});
+ assert.equal(tree.root.findAllByType('section').some((x:any)=>x.props.testID==='client-safety-stop'),true,'restart cannot clear STOP');
+ assert.equal(rows.length,1);await renderer.act(async()=>tree.unmount());
+
 });

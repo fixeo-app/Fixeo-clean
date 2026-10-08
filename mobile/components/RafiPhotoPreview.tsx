@@ -26,7 +26,7 @@ export function RafiPhotoPreview({ uri, busy = false, readOnly = false, replaceP
     <FixeoText variant="caption" tone="secondary">{busy ? 'RAFI analyse cette photo.' : 'C’est cette photo que vous choisissez de partager avec RAFI.'}</FixeoText>
     {!readOnly && <>
     {replacePrimary && <FixeoAction label="Remplacer la photo" disabled={busy || capturing} onPress={() => setManaging(true)} />}
-    <FixeoAction label="Continuer sans photo" variant="secondary" disabled={busy || capturing} onPress={onRemove} />
+    {!managing && <FixeoAction label="Continuer sans photo" variant="ghost" disabled={busy || capturing} onPress={onRemove} />}
     <FixeoAction label={managing ? 'Fermer les options photo' : 'Gérer la photo'} variant="ghost" accessibilityState={{ expanded: managing }} onPress={() => setManaging(value => !value)} />
     {managing && <>
     <View style={styles.actions}>
@@ -44,6 +44,6 @@ export function RafiPhotoPreview({ uri, busy = false, readOnly = false, replaceP
     </Modal>
   </View>;
 }
-const styles = StyleSheet.create({ root: { gap: space.sm }, photo: { width: '100%', height: 210, borderRadius: 16 },
+const styles = StyleSheet.create({ root: { gap: space.sm }, photo: { width: 88, height: 88, borderRadius: 12 },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
   modal: { flex: 1, backgroundColor: semanticColors.background.surface, padding: 28, paddingVertical: 60 }, full: { flex: 1, width: '100%' } });

@@ -74,6 +74,8 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
   const [diagnosticReference, setDiagnosticReference] = useState<string | undefined>();
   const [diagnosticCity, setDiagnosticCity] = useState('');
   const [persistPhoto, setPersistPhoto] = useState(false);
+  const [analysisConsent, setAnalysisConsent] = useState(false);
+  const [photoEditing, setPhotoEditing] = useState(false);
   const [safetyMessage, setSafetyMessage] = useState('Ne poursuivez pas cette intervention. Faites vérifier la situation par un professionnel.');
   const [safetyStopped, setSafetyStopped] = useState(false);
   const [confirmDirect, setConfirmDirect] = useState(false);
@@ -252,7 +254,7 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
 
   function handlePhoto(uri: string, mimeType = 'image/jpeg') {
     if (safetyStopped || photoLock.current || idempotencyKeyRef.current) return;
-    setDiagnosticReference(undefined); setPersistPhoto(false); setReviewedDiagnostic(null);
+    setDiagnosticReference(undefined); setPersistPhoto(false); setAnalysisConsent(false); setPhotoEditing(false); setReviewedDiagnostic(null);
     photoEpoch.current++; setEstimateContext(null); setEstimatorDraft(null);
     setPhotoUri(uri);
     setPhotoMimeType(mimeType);
@@ -264,13 +266,13 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
   function removePhoto() {
     if (photoLock.current || safetyStopped || idempotencyKeyRef.current) return;
     photoEpoch.current++; setPhotoUri(null); setPhotoDiagnostic(null); setReviewedDiagnostic(null);
-    setDiagnosticReference(undefined); setPersistPhoto(false); setEstimateContext(null); setEstimatorDraft(null);
+    setDiagnosticReference(undefined); setPersistPhoto(false); setAnalysisConsent(false); setPhotoEditing(false); setEstimateContext(null); setEstimatorDraft(null);
     setStage(problem.trim().length >= 8 ? 'UNDERSTANDING' : 'NEED');
     setRafiMessage('Photo retirée. Votre description est conservée.');
   }
 
   async function analyzePhoto() {
-    if (!photoUri || photoLock.current || safetyStopped) return;
+    if (!photoUri || !analysisConsent || photoEditing || photoLock.current || safetyStopped || idempotencyKeyRef.current || !focused.current || draftGeneration.current !== privateSessionGeneration()) return;
     if (!city.trim()) {
       needCity();
       return;
@@ -301,6 +303,7 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
           : 'Analyse prête. Confirmez uniquement ce qui correspond à votre situation.',
       );
     } catch (error: any) {
+      if (!mounted.current || epoch !== photoEpoch.current || generation !== privateSessionGeneration()) return;
       reportRafiPresence('attention');
       const code = String(error?.message || '');
       setRafiMessage(
@@ -312,7 +315,7 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
       );
     } finally {
       photoLock.current = false;
-      setPhotoDiagnosticBusy(false);
+      if (mounted.current) setPhotoDiagnosticBusy(false);
     }
   }
 
@@ -518,16 +521,20 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
             <FixeoAction label="Modifier mon texte" variant="ghost" onPress={() => setStage('NEED')} />
           </ClientSection>}
           {uiStage === 'PHOTO_REVIEW' && <ClientSection testID="client-photo-step" surface>
-            {!!photoUri && <RafiPhotoPreview uri={photoUri} busy={photoDiagnosticBusy} onChange={handlePhoto} onRemove={removePhoto} onClarify={() => { removePhoto(); setStage('NEED'); }} />}
-            {!photoDiagnostic && <>
+            {!!photoUri && <RafiPhotoPreview uri={photoUri} busy={photoDiagnosticBusy} onChange={handlePhoto} onRemove={removePhoto} onClarify={() => setPhotoEditing(true)} />}
+            {photoEditing ? <>
+              <KeyboardInput accessibilityLabel="Préciser le problème sur la photo" value={problem} multiline style={clientStyles.input} onChangeText={value => { changeDescription(value); setAnalysisConsent(false); }} />
+              <FixeoAction label="Garder cette précision" onPress={() => setPhotoEditing(false)} />
+            </> : !photoDiagnostic && <>
               <View ref={cityAnchor} collapsable={false}><ClientLocationField city={city} error={cityError ? 'Choisissez votre ville pour analyser.' : undefined} focusRequest={cityFocus} onChangeCity={chooseCity} disabled={photoDiagnosticBusy} /></View>
               <FixeoText variant="supporting">L’analyse ne crée aucune demande. La conservation est un choix distinct.</FixeoText>
+              <FixeoAction label="J’autorise RAFI à analyser cette photo" variant="ghost" disabled={photoDiagnosticBusy} accessibilityRole="checkbox" accessibilityState={{ checked: analysisConsent }} onPress={() => setAnalysisConsent(value => !value)} />
               <FixeoAction label={persistPhoto ? '✓ Conserver l’analyse pour la suite' : 'Conserver l’analyse pour la suite'} variant="ghost" disabled={photoDiagnosticBusy} accessibilityRole="checkbox" accessibilityState={{ checked: persistPhoto }} onPress={() => setPersistPhoto(value => !value)} />
               {persistPhoto && <FixeoText variant="caption">J’accepte la conservation privée de la photo nettoyée et de l’analyse. La photo originale n’est pas conservée.</FixeoText>}
-              <FixeoAction label={photoDiagnosticBusy ? 'RAFI analyse…' : 'Analyser la photo avec RAFI'} disabled={photoDiagnosticBusy} onPress={() => void analyzePhoto()} />
+              <FixeoAction label={photoDiagnosticBusy ? 'RAFI analyse…' : 'Analyser la photo avec RAFI'} disabled={photoDiagnosticBusy || !analysisConsent} onPress={() => void analyzePhoto()} />
             </>}
-            {photoDiagnostic && <ClientDiagnostic key={photoUri} result={photoDiagnostic} description={problem} confirmed={false}
-              onContinueText={removePhoto} onClarify={() => { removePhoto(); setStage('NEED'); }}
+            {!photoEditing && photoDiagnostic && <ClientDiagnostic key={photoUri} result={photoDiagnostic} description={problem} confirmed={false}
+              onContinueText={removePhoto} onClarify={() => setPhotoEditing(true)}
               onConfirm={description => { if (confirmPhotoDiagnostic(description)) { setReviewedDiagnostic(photoDiagnostic); setStage('UNDERSTANDING'); } }} />}
           </ClientSection>}
           {uiStage === 'SUMMARY' && <ClientSection testID="client-summary" label="VOTRE DEMANDE">

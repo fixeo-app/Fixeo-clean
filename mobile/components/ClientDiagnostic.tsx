@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import type { MobileDiagnosticResult } from '@/lib/mobileDiagnostic';
 import { confirmedDiagnosticDescription, diagnosticFactText, diagnosticProvenance, diagnosticQuestions, diagnosticSafetyMessage, photoRelevance } from '@/lib/clientDiagnostic';
-import { ClientHero, ClientSection, clientStyles } from './ClientEditorial';
+import { ClientSection, clientStyles } from './ClientEditorial';
 import { FixeoText } from '@/ui/FixeoText';
 import { FixeoAction } from '@/ui/FixeoAction';
 
@@ -18,7 +18,7 @@ export function ClientDiagnostic({ result, confirmed, onConfirm, onExit, onClari
   const neutral = /aucun.*(probl[eè]me|d[eé]faut|dommage)|pas de.*(probl[eè]me|d[eé]faut)/i.test(result.problem.value || '');
   const relevance = photoRelevance(result, description);
   if (result.safety.stop) return <ClientSection testID="client-diagnostic-safety">
-    <View accessibilityRole="alert"><ClientHero eyebrow="RAFI · SÉCURITÉ" title="Cette situation peut présenter un risque." detail={diagnosticSafetyMessage(result)} mode="attention" compact /></View>
+    <View accessibilityRole="alert"><FixeoText variant="heading">Cette situation peut présenter un risque.</FixeoText><FixeoText>{diagnosticSafetyMessage(result)}</FixeoText></View>
     {onExit && <FixeoAction label="Revenir à mon espace" variant="secondary" onPress={onExit} />}
   </ClientSection>;
   return <ClientSection testID="client-diagnostic" label="RAFI · AVEC VOUS">
