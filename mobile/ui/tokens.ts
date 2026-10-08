@@ -67,7 +67,7 @@ export const semanticColors = {
     subtle: colors.line,
     hairline: '#EBEBE7',
     strong: '#79797F',
-    focus: '#365AC7',
+    focus: '#806D4E',
     inverse: '#56565D',
   },
   status: {
@@ -80,8 +80,8 @@ export const semanticColors = {
     transparent: 'transparent',
     pressed: '#E8E8E4',
     disabled: '#E5E5E1',
-    selected: '#E9EEF9',
-    selectedText: '#284D9C',
+    selected: '#EDE4D4',
+    selectedText: '#302A20',
   },
 } as const;
 

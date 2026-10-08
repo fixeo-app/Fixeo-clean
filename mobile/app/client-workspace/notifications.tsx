@@ -1,6 +1,6 @@
 import { useWorkspaceDock } from '@/components/useWorkspaceDock';
 import { useCallback, useState } from 'react';
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { clientNotificationTarget } from '@/lib/clientNotificationTarget';
 import { SectionList, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
 import {
@@ -20,6 +20,7 @@ import { isMobileUiTimeout, withMobileDeadline } from '@/lib/mobileResilience';
 import { useForegroundRefresh } from '@/lib/useForegroundRefresh';
 
 export default function ClientNotifications() {
+  const { unavailable } = useLocalSearchParams<{ unavailable?: string }>();
   const [items, setItems] = useState<ClientNotification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -78,6 +79,7 @@ export default function ClientNotifications() {
         ListHeaderComponent={<View style={styles.header}>
           <ClientPageIntro eyebrow="ALERTES" title="L’essentiel,
 au bon moment." detail="Les événements de vos interventions." />
+          {unavailable === '1' && <FixeoText accessibilityRole="alert">L’élément demandé est indisponible ou ne correspond pas à votre espace. Vos alertes restent accessibles ici.</FixeoText>}
           {!!error && <FixeoText accessibilityRole="alert" style={clientStyles.error}>{error}</FixeoText>}
         </View>}
         ListEmptyComponent={<ClientSection>
@@ -94,6 +96,7 @@ au bon moment." detail="Les événements de vos interventions." />
             {!item.read && <View style={styles.unreadDot} />}
           </View>
           <FixeoText variant="supporting" tone="secondary">{cleanNotificationCopy(item.message)}</FixeoText>
+          {!clientNotificationTarget(item) && <FixeoText tone="secondary">Cet élément n’a plus de destination accessible. Son message reste consultable ici.</FixeoText>}
           <FixeoText variant="caption" tone="tertiary">{formatWorkspaceDate(item.created_at)} · {item.read ? 'Lu' : 'Non lu'}</FixeoText>
         </Pressable>}
         ListFooterComponent={<View style={styles.push}><PushOptIn compact /></View>}

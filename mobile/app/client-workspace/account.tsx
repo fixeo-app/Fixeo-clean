@@ -1,3 +1,4 @@
+import { KeyboardInput } from '@/ui/KeyboardInput';
 import { clientProfileErrors } from '@/lib/clientProfileValidation';
 import { RafiOrb } from '@/ui/RafiOrb';
 import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
@@ -79,7 +80,7 @@ export default function ClientAccount() {
 
   const contextDock = useWorkspaceDock('client');
   return (
-    <FixeoScreen padded={false} contextDock={contextDock} header={
+    <FixeoScreen transactional={editing} padded={false} contextDock={contextDock} header={
         <MobileShell
           universe="client"
           activeKey="account"
@@ -102,7 +103,7 @@ export default function ClientAccount() {
         {profile ? <ClientSection label="Pour vos interventions">
           {editing ? <View style={styles.form}>
             <FixeoText variant="supporting" tone="secondary">Téléphone · obligatoire</FixeoText>
-            <TextInput ref={phoneRef} accessibilityLabel="Votre téléphone obligatoire" value={phone} onChangeText={value => { setPhone(value); setErrors(old => ({...old,phone:''})); }} keyboardType="phone-pad"
+            <KeyboardInput ref={phoneRef} accessibilityLabel="Votre téléphone obligatoire" value={phone} onChangeText={value => { setPhone(value); setErrors(old => ({...old,phone:''})); }} keyboardType="phone-pad"
               placeholder="Votre numéro" placeholderTextColor={semanticColors.text.tertiary} editable={!saving} style={clientStyles.input} />
             {!!errors.phone && <FixeoText accessibilityRole="alert">{errors.phone}</FixeoText>}
             <FixeoText tone="secondary">Ville du profil · obligatoire. La ville de chaque intervention reste indépendante.</FixeoText>

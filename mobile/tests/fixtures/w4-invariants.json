@@ -7,7 +7,7 @@
     "components/MotionReveal.tsx": "6a0985978e80808e47304b0f5394e9c1849d6b73f686a3646d7af5fa0d0b08d8",
     "components/RafiComposer.tsx": "de898d51c5ef23af75ea5acfe1a9c10c12e858146db28cae72366af9d77e918d",
     "components/RafiContextCard.tsx": "59a18aba473e4bbad89a52037f7ec19253ddd85e366bcb7eed21d77eb02278a7",
-    "components/WorkspaceShortcutGrid.tsx": "04a8b7858b57e05ae67b251bfd3fec19c2f74ecefc62c51cc3a31c422390b429",
+    "components/WorkspaceShortcutGrid.tsx": "642fcc0befad872ae428b29210e4373478e23b983c8bdc69badf6dceba40211e",
     "lib/artisanActivityLoad.ts": "9712101475399176fcb66cfe6501faf8c7d0e9149e1c957eca82ae553a5fb963",
     "lib/authEntry.ts": "dc258832236fd55457c6df6ae5c2993653bfcc8565d45d803fc117c9d7402bca",
     "lib/clientWatch.ts": "d0fb88a448851112f287f4e8cc15eaae8540a252f0106dbb350c2f427c066302",
@@ -29,7 +29,7 @@
     "ui/FixeoSurface.tsx": "4ff09803afbf5132f6995f55781206faf07b8300901a58e7eff8c1f52ba6a6ac",
     "ui/FixeoText.tsx": "f2d6d8984c1c9df326c5d5f4876d16374db147336dda4f37c63882b229044bd5",
     "ui/RafiCoreMaterial.tsx": "0a83af51a461a169c20d84bd57fe0cd91e626c3b77316b5afe259352b6786544",
-    "ui/ShellControl.tsx": "d1416c90855251875564e9663eefe214793d291b4ee195a9e0e3e79603faeb25",
+    "ui/ShellControl.tsx": "2d27cefd1a284ecfac4bfc43dd1d06d8423b00919ebb767fd78016fef5ce088f",
     "ui/interactionContract.ts": "4fd34848213d83dee13b8fd9b5a7221c8d58278b696fd10bba51ae0383604184",
     "ui/motionContract.ts": "ee8e82713e9f69986d6cc0e44c312b3c0a02f473ec14df7fba4922c4832f7a5e",
     "ui/motionEasing.ts": "3cd16502cc7f92fe50c3a7581b5364190c64ac1776b448bb8233f2e738f93d31",
@@ -218,6 +218,16 @@
     "components/RafiComposer.tsx": {
       "previous": "49495dac554071da121520c43c4d12f6024a6a2983d34c1de74c6705ed756988",
       "reason": "B2 mandate: compact composer removes redundant Write entry, capture handlers unchanged"
+    }
+  },
+  "pbFinalAuthorizedPresentationChanges": {
+    "components/WorkspaceShortcutGrid.tsx": {
+      "previousSha256": "04a8b7858b57e05ae67b251bfd3fec19c2f74ecefc62c51cc3a31c422390b429",
+      "reason": "B7 / F12-F13 / R30: remove essential label truncation at 200% font, moderate font weight; preserve destinations, callbacks and touch sizes."
+    },
+    "ui/ShellControl.tsx": {
+      "previousSha256": "d1416c90855251875564e9663eefe214793d291b4ee195a9e0e3e79603faeb25",
+      "reason": "B7 / R30: preserve explicitly requested checkbox/radio accessibility role instead of overriding with button. Touch/action guards unchanged."
     }
   }
 }

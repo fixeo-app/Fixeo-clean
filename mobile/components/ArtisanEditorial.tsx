@@ -8,6 +8,7 @@ import { RafiSignalContext } from '@/ui/RafiSignal';
 import { rafiActionState, type RafiSignal } from '@/ui/rafiPresence';
 import {
   ActivityIndicator,
+  useWindowDimensions,
   FlatList,
   type ListRenderItem,
   RefreshControl,
@@ -146,6 +147,8 @@ export function ArtisanPage<T,>({
   backAction?: () => void;
   list?: { data: readonly T[]; renderItem: ListRenderItem<T>; keyExtractor: (item: T, index: number) => string };
 }>) {
+  const { width } = useWindowDimensions();
+  const contentStyle = [art.content, { paddingHorizontal: width < 360 ? 16 : 20 }];
   const workspaceDock = useWorkspaceDock('artisan');
   const contextualItems = dock?.items.filter(item => !workspaceDock?.items.some(global => global.label === item.label)) || [];
   const accessibleDock = workspaceDock; // Global navigation is independent of contextual actions.
@@ -157,7 +160,7 @@ export function ArtisanPage<T,>({
           <FixeoText variant="eyebrow" tone="secondary">
             {eyebrow}
           </FixeoText>
-          <FixeoText variant="title" accessibilityRole="header" style={hero ? { textAlign: 'center' } : undefined}>
+          <FixeoText variant="title" accessibilityRole="header" style={[{ fontSize: 28, lineHeight: 34 }, hero ? { textAlign: 'center' } : undefined]}>
             {title}
           </FixeoText>
           {detail && <FixeoText tone="secondary" style={hero ? { textAlign: 'center' } : undefined}>{detail}</FixeoText>}
@@ -197,11 +200,11 @@ export function ArtisanPage<T,>({
       }
     >
       {list ? <FlatList data={list.data} renderItem={list.renderItem} keyExtractor={list.keyExtractor}
-        ListHeaderComponent={header} contentContainerStyle={art.content} initialNumToRender={6} windowSize={7}
+        ListHeaderComponent={header} contentContainerStyle={contentStyle} initialNumToRender={6} windowSize={7}
         keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag"
         renderScrollComponent={props => <ScrollView {...props} />}
         refreshControl={onRefresh ? <RefreshControl refreshing={loading} onRefresh={onRefresh} /> : undefined} />
-        : <ScrollView style={{ flex: 1, minHeight: 0 }} contentContainerStyle={art.content}
+        : <ScrollView style={{ flex: 1, minHeight: 0 }} contentContainerStyle={contentStyle}
           keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag"
           refreshControl={onRefresh ? <RefreshControl refreshing={loading} onRefresh={onRefresh} /> : undefined}>{header}</ScrollView>}
 

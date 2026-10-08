@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { loadArtisanNotifications, markArtisanNotification, loadArtisanMissions } from '@/lib/artisanOS';
 import { getDispatchOffers } from '@/lib/magicLoop';
 import { artisanNotificationTarget } from '@/lib/artisanNotificationTarget';
@@ -12,6 +12,7 @@ const load = async () => {
   return { notifications, missions, offers };
 };
 export default function Notifications() {
+  const { unavailable } = useLocalSearchParams<{ unavailable?: string }>();
   const q = useArtisanQuery(load), a = useArtisanAction();
   return <ArtisanPage title="Notifications" eyebrow="VOTRE ACTIVITÉ" activeKey="alerts" rafi={a.rafi}
     loading={q.loading} onRefresh={() => void q.reload()}
@@ -27,6 +28,7 @@ export default function Notifications() {
         }, 'Lecture enregistrée.')} />}
       </View>;
     } }}>
+    <ArtisanMessage message={unavailable === '1' ? 'L’élément demandé est indisponible ou ne correspond pas à votre espace. Vos notifications restent accessibles ici.' : ''} />
     <ArtisanMessage message={q.error || a.message} retry={q.error ? () => void q.reload() : undefined} />
     {q.data?.notifications.length === 0 && <ArtisanEmpty title="Tout est à jour." detail="Vos prochaines notifications FIXEO apparaîtront ici." />}
   </ArtisanPage>;

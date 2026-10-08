@@ -131,3 +131,13 @@ test('B6 pending form loads only the canonical owner payload, freezes editing an
  stored=null;await renderer.act(async()=>state.settle());assert.equal(state.frozen,false);
  await renderer.act(async()=>rejected('revoked'));assert.equal(state.ready,false);assert.equal(state.frozen,true);await renderer.act(async()=>tree.unmount());
 });
+
+
+test('B7 actual shell preserves radio/checkbox semantics, checked state, disabled guards and 48dp targets',async()=>{
+ const {ShellControl}=load('ui/ShellControl.tsx',{'react-native':{Pressable:'pressable',StyleSheet:{create:(v:any)=>v}},'./useReducedMotion':{useReducedMotion:()=>true},'./tokens':await import('../ui/tokens'),'./interactionContract':await import('../ui/interactionContract')});
+ let tree:any,calls=0;
+ for(const role of ['radio','checkbox']){
+  await renderer.act(async()=>{tree=renderer.create(React.createElement(ShellControl,{accessibilityRole:role,accessibilityState:{checked:true},disabled:true,onPress:()=>calls++},'Plomberie'))});
+  const p=tree.root.findByType('pressable').props;assert.equal(p.accessibilityRole,role);assert.equal(p.accessibilityState.checked,true);p.onPress({});assert.equal(calls,0);const min=p.style({pressed:true}).at(-1);assert.equal(min.minHeight,48);assert.equal(min.minWidth,48);await renderer.act(async()=>tree.unmount());
+ }
+});

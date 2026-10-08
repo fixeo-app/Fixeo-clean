@@ -1,16 +1,17 @@
 import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
 import { useState, type PropsWithChildren } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View, useWindowDimensions, type TextInputProps } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text,  View, useWindowDimensions, type TextInputProps } from 'react-native';
+import { KeyboardInput } from '@/ui/KeyboardInput';
 import { BackButton } from '@/ui/BackButton';
 import { FixeoScreen } from '@/ui/FixeoScreen';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { RafiOrb } from '@/ui/RafiOrb';
-import { colors, typography } from '@/ui/tokens';
+import { colors, typography, semanticColors } from '@/ui/tokens';
 import { authCopy, type AuthIssue } from '@/lib/authContract';
 
 export function AuthFrame({ title, detail, children, back = '/entry', hero = false }: PropsWithChildren<{ title: string; detail: string; back?: string | false; hero?: boolean }>) {
-  const { width, height } = useWindowDimensions();
-  const compact = height < 760;
+  const { width } = useWindowDimensions();
+  const compact = width < 380;
   const orbSize = hero ? Math.min(compact ? 108 : 140, (width - 48) * 0.38) : compact ? 84 : 108;
   return <FixeoScreen padded={false}><KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={s.scroll}>
@@ -32,8 +33,8 @@ export function AuthField({ label, secret = false, ...props }: TextInputProps & 
   const [show, setShow] = useState(false); const [focus, setFocus] = useState(false);
   return <View style={s.field}><Text style={s.label}>{label}</Text>
     <View style={s.inputRow}>
-    <TextInput {...props} accessibilityLabel={label} autoCapitalize={props.autoCapitalize || 'none'} autoCorrect={false}
-      secureTextEntry={secret && !show} onFocus={() => setFocus(true)} onBlur={() => setFocus(false)}
+    <KeyboardInput containerStyle={{ flex: 1, minWidth: 0 }} {...props} accessibilityLabel={label} autoCapitalize={props.autoCapitalize || 'none'} autoCorrect={false}
+      secureTextEntry={secret && !show} onFocus={event => { setFocus(true); props.onFocus?.(event); }} onBlur={event => { setFocus(false); props.onBlur?.(event); }}
       placeholderTextColor={colors.textMuted} style={[s.input, { flex: 1, minWidth: 0 }, focus && s.focus, props.style]} />
     {secret && <FixeoAction label={show ? 'Masquer' : 'Afficher'} accessibilityLabel={show ? 'Masquer le mot de passe' : 'Afficher le mot de passe'} variant="ghost" onPress={() => setShow(!show)} accessibilityState={{ expanded: show }} />}
     </View>
@@ -52,7 +53,7 @@ const s = StyleSheet.create({
   title: { ...typography.title, color: colors.ink, textAlign: 'center' }, heroTitle: { ...typography.display }, detail: { ...typography.body, color: '#55555B', textAlign: 'center' },
   form: { gap: 16 }, field: { gap: 4 }, inputRow: { flexDirection: 'row', alignItems: 'center', gap: 4 }, label: { ...typography.supporting, color: colors.ink, fontWeight: '600' },
   input: { minHeight: 48, borderWidth: 2, borderColor: colors.line, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10, fontSize: 16, color: colors.ink, backgroundColor: '#FFFFFF' },
-  focus: { borderColor: '#365AC7' }, error: { borderLeftWidth: 3, borderLeftColor: colors.danger, padding: 14, gap: 6, backgroundColor: '#FCEFED' },
+  focus: { borderColor: semanticColors.border.focus }, error: { borderLeftWidth: 3, borderLeftColor: colors.danger, padding: 14, gap: 6, backgroundColor: '#FCEFED' },
   errorTitle: { ...typography.body, fontWeight: '600', color: colors.danger }, foot: { ...typography.supporting, color: '#68686D', marginTop: 32, marginBottom: 12 },
 });
 export const authStyles = s;
