@@ -1,3 +1,4 @@
+import { requestProgress } from '@/lib/requestProgress';
 import { useCallback, useState } from 'react';
 import { RefreshControl } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
@@ -41,6 +42,9 @@ export default function ClientRequest() {
         <FixeoText variant="eyebrow">{CLIENT_STATUS[request.status] || 'Suivi FIXEO'}</FixeoText>
         <FixeoText variant="heading">{request.description}</FixeoText>
         <FixeoText tone="secondary">{request.service_category} · {request.city}</FixeoText>
+        <ClientSection label="ÉTAPES CONFIRMÉES">
+          {requestProgress(request.status, request.mission_id).map((label, index) => <FixeoText key={label} tone={index === 0 ? 'secondary' : 'primary'}>{index + 1}. {label}</FixeoText>)}
+        </ClientSection>
         {request.mission_id && <FixeoAction label={request.status === 'completed' ? 'Vérifier et valider l’intervention' : 'Suivre l’intervention'}
           onPress={() => router.push({ pathname: '/client-mission/[id]', params: { id: request.mission_id! } })} />}
         {request.status === 'new' && <FixeoText variant="supporting">Cette recherche continue. FIXEO vous informe lorsqu’un artisan est affecté.</FixeoText>}

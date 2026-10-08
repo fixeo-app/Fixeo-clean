@@ -3,8 +3,11 @@ import { onSessionRejected, privateSessionGeneration } from './authEvents';
 import type { ClientIntelligenceContext } from './clientIntelligence';
 import type { MobileDiagnosticResult } from './mobileDiagnostic';
 import type { MobileEstimatorRequest, MobileEstimatorResponse } from './mobileEstimatorContract';
+import type { PreviousDescription } from './voiceDraft';
 
 export type EstimatorDraft = {
+  needsRevalidation?: boolean;
+  textOnly?: boolean;
   result: MobileEstimatorResponse | null; answer: string | number | boolean;
   started: boolean; history: { result: MobileEstimatorResponse; label: string; answer: string | number | boolean }[];
   phone: string; confirming: boolean; stopped: boolean;
@@ -12,6 +15,7 @@ export type EstimatorDraft = {
   directKey: string | null; error: { kind: string; message: string } | null;
 };
 export type ClientDraft = {
+  previousDescription?: PreviousDescription | null;
   id: string; updatedAt: number; problem: string; city: string; declaredService: string;
   problemConfirmedFromRafi: boolean; photoUri: string | null; photoMimeType: string;
   photoDiagnostic: MobileDiagnosticResult | null; photoReviewed: boolean;
@@ -69,4 +73,8 @@ export function clearClientDrafts() {
   });
   void writes.catch(() => undefined);
 }
-onSessionRejected(clearClientDrafts);
+/** Re-authentication closes memory access; the same owner can recover their draft. */
+export function suspendClientDrafts() {
+  epoch++; cache.clear(); pending.clear(); removed.clear(); notify();
+}
+onSessionRejected(reason => reason === 'logout' ? clearClientDrafts() : suspendClientDrafts());

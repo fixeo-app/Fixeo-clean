@@ -62,7 +62,9 @@ test('PB1 V2 changes availability only within the former protected workspace ser
 test('PB1 V2 city projections and photo timeout preserve all other mission/auth/result statements', () => {
   const fixture: Record<string, {authorized_functions:string[];unchanged_statements:string[]}> = JSON.parse(readFileSync('tests/fixtures/pb1-v2-read-boundaries.json','utf8'));
   for(const [file,expected] of Object.entries(fixture)) {
-    const source=ts.createSourceFile(file,readFileSync(file,'utf8'),ts.ScriptTarget.Latest,true);
+    // PB1 explicitly adds only optional photo relevance metadata; all former fields/statements retain their hashes.
+    const text=readFileSync(file,'utf8').replace(/^  photo_relevance\?: \{ value: 'related' \| 'unrelated' \| 'uncertain'; provenance: string \};\n/m, '');
+    const source=ts.createSourceFile(file,text,ts.ScriptTarget.Latest,true);
     const actual=source.statements.filter(node=>!ts.isImportDeclaration(node)&&!(ts.isFunctionDeclaration(node)&&expected.authorized_functions.includes(node.name?.text || '')))
       .map(node=>sha(printer.printNode(ts.EmitHint.Unspecified,node,source)));
     assert.deepEqual(actual,expected.unchanged_statements,file);

@@ -95,6 +95,7 @@ export default function Agenda() {
       />
       <FixeoAction
         label={open ? "Annuler la planification" : "Planifier une intervention"}
+        variant={open ? "ghost" : "primary"}
         onPress={() => setOpen((v) => !v)}
       />
       {open && q.data && (

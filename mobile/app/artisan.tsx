@@ -32,25 +32,20 @@ export default function ArtisanHome() {
   const awaitingClient = mission?.request_status === "completed";
   const today = d?.jobs;
   const draft = d?.quotes?.find((x) => x.status === "draft");
-  const { width } = useWindowDimensions();
-  const heroSize = Math.min(144, Math.max(84, (width - 48) * 0.30));
+  const { width, height } = useWindowDimensions();
+  const heroSize = Math.min(height < 650 ? 132 : 180, Math.max(112, (width - 48) * 0.48));
   const totals = d?.ledger ? ledgerTotals(d.ledger, localDay()) : null;
   return (
     <ArtisanPage
-      title="Votre journée, en confiance."
+      title={d?.profile?.name ? `Bonjour ${d.profile.name.split(' ')[0]}.` : "Votre journée, en confiance."}
       eyebrow="RAFI · À VOS CÔTÉS"
-      detail="L’essentiel pour décider. L’espace pour bien travailler."
+      detail={mission ? "Votre mission et sa prochaine étape." : offers?.length ? "Une opportunité attend votre décision." : "Votre agenda, vos clients et vos priorités."}
       activeKey="cockpit"
       back={false}
       loading={false}
       onRefresh={() => void q.reload()}
       hero={<View testID="home-rafi" style={{ alignItems: "center", paddingTop: 4 }}><RafiOrb size={heroSize} mode={mission ? "working" : "idle"} /></View>}
     >
-      <View testID="home-identity">
-        <FixeoText variant="heading">
-          {d?.profile?.name || "Votre espace Artisan"}
-        </FixeoText>
-      </View>
       {q.authority.status === "loading" && (
         <FixeoText tone="secondary">
           Vérification de votre accès sécurisé…

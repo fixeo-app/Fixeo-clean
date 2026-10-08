@@ -40,6 +40,10 @@ const apiSchema = (schema) =>
   );
 const responseSchema = apiSchema(providerSchema);
 responseSchema.properties.observations.maxItems = 0;
+const mobileResponseSchema = JSON.parse(JSON.stringify(responseSchema));
+mobileResponseSchema.properties.photo_relevance = { type: 'string', enum: ['related', 'unrelated', 'uncertain'] };
+mobileResponseSchema.required.push('photo_relevance');
+const relevanceInstructions = `Compare the isolated photo_evidence with the customer's declared need. Return photo_relevance: related only when the visible subject corresponds to the declared equipment or area; unrelated when the visible scene clearly concerns a different subject; uncertain when this cannot be established or no need is declared. A computer/monitor scene does not illustrate a toilet flush fault. Related NEVER means a hidden fault is visually confirmed. If unrelated, explicitly state in French that this photo does not seem to show the described problem. Base service hypotheses on the declaration only, prefix them with Selon votre description, and do not treat unrelated observations as supporting a plumbing or other hidden defect. Never remove safety evidence from either source.`;
 
 function createOpenAIAdapter({
   env = process.env,
@@ -161,12 +165,13 @@ function createOpenAIAdapter({
             }),
           },
         ],
-        photoPolicy === "descriptive" ? instructions + '\n' + calibrationInstructions + '\nRecognizable objects do not establish a fault. If no defect is identifiable, state: Aucun défaut identifiable uniquement à partir de cette image. Never say no clear photo observation when photo_evidence contains observations. Do not turn scene recognition into a request or an asserted fault.' : instructions,
-        responseSchema,
+        photoPolicy === "descriptive" ? instructions + '\n' + calibrationInstructions + '\n' + relevanceInstructions + '\nRecognizable objects do not establish a fault. If no defect is identifiable, state: Aucun défaut identifiable uniquement à partir de cette image. Never say no clear photo observation when photo_evidence contains observations. Do not turn scene recognition into a request or an asserted fault.' : instructions,
+        photoPolicy === 'descriptive' ? mobileResponseSchema : responseSchema,
         "fixeo_diagnostic_v1",
         2048,
       );
-      const synthesis = photoPolicy === "descriptive" ? calibrateDescriptiveSynthesis(rawSynthesis, photos, input) : rawSynthesis;
+      const { photo_relevance: relevance, ...diagnosticSynthesis } = rawSynthesis;
+      const synthesis = photoPolicy === "descriptive" ? calibrateDescriptiveSynthesis(diagnosticSynthesis, photos, input) : rawSynthesis;
       const { result, normalizedFields } = groundTextSynthesis(
         synthesis,
         photos,
@@ -191,6 +196,7 @@ function createOpenAIAdapter({
       return {
         result: grounded,
         photoEvidence: photos,
+        ...(photoPolicy === 'descriptive' ? { photoRelevance: ['related', 'unrelated', 'uncertain'].includes(relevance) ? relevance : 'uncertain' } : {}),
         usage: {
           ...usage,
           photo_grounding: "isolated-vision-v1",

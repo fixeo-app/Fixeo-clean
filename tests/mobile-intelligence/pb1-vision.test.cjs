@@ -7,6 +7,23 @@ const {hash}=require('../../api/diagnostic/auth');
 const {photoInstructions,descriptivePhotoInstructions}=require('../../api/diagnostic/photo-grounding');
 const id='dc986e10-b315-4000-8000-2d458b457704';
 const respond=value=>Response.json({status:'completed',output:[{content:[{type:'output_text',text:JSON.stringify(value)}]}],usage:{}});
+test('PB1 toilet declaration and computer photo remain separate, explicit mismatch never becomes visual plumbing evidence',async()=>{
+ // Controlled provider response; the input fixture verifies transport, not live computer recognition.
+ const bytes=fs.readFileSync(path.join(__dirname,'../../img/blog/plomberie-blog.webp'));
+ const provider=createOpenAIAdapter({env:{OPENAI_API_KEY:'fixture-only',FIXEO_DIAGNOSTIC_MODEL:'fixture'},photoPolicy:'descriptive',fetchImpl:async(_url,init)=>{
+  const body=JSON.parse(init.body);
+  if(body.text.format.name==='fixeo_photo_evidence_v1') return respond({photos:[{media_id:id,status:'informative',observations:[{text:'Un ordinateur et deux écrans.',location:'au centre'}],safety_signals:[]}]});
+  assert.ok(body.text.format.schema.required.includes('photo_relevance'));
+  assert.deepEqual(body.text.format.schema.properties.photo_relevance.enum,['related','unrelated','uncertain']);
+  assert.match(body.instructions,/Related NEVER means a hidden fault/);
+  return respond({photo_relevance:'unrelated',trade:'plomberie',problem:'Selon votre description, une chasse d’eau fuit.',observations:[],hypotheses:['Selon votre description, le mécanisme reste à vérifier.'],urgency:'low',urgency_reason:'Écoulement déclaré.',checks:['Cette photo ne semble pas montrer le problème décrit.'],possible_parts:[],question_ids:[],safety_signals:[]});
+ }});
+ const output=await analyze({input:{description:'Ma chasse d’eau coule sans arrêt.',answers:{},safety_signals:[]},media:[{id,path:'memory:'+id,sha256:hash(bytes)}]}, {provider,mediaStore:{download:async()=>bytes}});
+ assert.deepEqual(output.result.photo_relevance,{value:'unrelated',provenance:'ai_inferred'});
+ assert.ok(output.result.facts.filter(f=>f.provenance==='observed').every(f=>!/chasse|fuit|mécanisme/i.test(f.value)));
+ assert.equal(output.result.facts.find(f=>f.provenance==='user_declared').value,'Ma chasse d’eau coule sans arrêt.');
+ assert.ok(output.result.hypotheses.every(h=>h.provenance==='ai_inferred'));
+});
 test('PB1 image: actual repository photograph survives sanitization and arrives byte-identical at vision boundary',async()=>{
  const raw=fs.readFileSync(path.join(__dirname,'../../img/blog/plomberie-blog.webp'));
  const safe=await sanitizePhoto(raw,'image/webp',raw.length);let vision=0,synthesis=0;

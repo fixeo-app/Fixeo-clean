@@ -5,6 +5,24 @@ import safetyQuestionIds from './diagnosticSafetyQuestions.generated.json';
 type DiagnosticQuestion = MobileDiagnosticResult['questions'][number] & { hazard?: string; optional?: boolean };
 const safetyIds = new Set(safetyQuestionIds);
 
+const fold = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+/** Conservative fallback for older results: observations alone, never the inferred trade. */
+export function photoRelevance(result: MobileDiagnosticResult, description = ''): 'related' | 'unrelated' | 'uncertain' {
+  const observed = fold(result.facts.filter(fact => fact.provenance === 'observed').map(fact => fact.value).join(' '));
+  const declared = fold(description || result.facts.find(fact => fact.key === 'user_description')?.value || '');
+  if (/chasse d['’ ]?eau|\bwc\b|toilett/.test(declared) && /ordinateur|ecran|informatique|clavier|moniteur/.test(observed)
+      && !/chasse d['’ ]?eau|\bwc\b|toilett|cuvette|reservoir|sanitaire/.test(observed)) return 'unrelated';
+  return result.photo_relevance?.value || 'uncertain';
+}
+const friendlyFacts: Record<string, string> = { onset: 'Début du problème', occurrence: 'Moment d’apparition', water_spreading: 'Propagation de l’eau', affected_area: 'Zone concernée' };
+export function diagnosticFactText(fact: MobileDiagnosticResult['facts'][number]) {
+  const value = String(fact.value || '').trim();
+  const friendly = friendlyFacts[value];
+  if (friendly) return friendly;
+  if (/^[a-z]+(?:_[a-z]+)+$/.test(value)) return 'Précision enregistrée, à vérifier avec vous.';
+  return value;
+}
+
 export const diagnosticProvenance = (value: string) => ({
   observed: 'OBSERVÉ', user_declared: 'DÉCLARÉ', ai_inferred: 'HYPOTHÈSE', user_confirmed: 'CONFIRMÉ',
 }[value] || 'À CONFIRMER');

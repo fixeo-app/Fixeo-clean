@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Image, Modal, StyleSheet, View } from 'react-native';
+import { Image, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { captureRafiPhoto } from '@/lib/rafiPhotoCapture';
 import { FixeoText } from '@/ui/FixeoText';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { semanticColors, space } from '@/ui/tokens';
 
-export function RafiPhotoPreview({ uri, busy = false, readOnly = false, onChange, onRemove, onClarify }: {
-  uri: string; busy?: boolean; readOnly?: boolean; onChange: (uri: string, mimeType: string) => void; onRemove: () => void; onClarify: () => void;
+export function RafiPhotoPreview({ uri, busy = false, readOnly = false, replacePrimary = false, onChange, onRemove, onClarify }: {
+  uri: string; busy?: boolean; readOnly?: boolean; replacePrimary?: boolean; onChange: (uri: string, mimeType: string) => void; onRemove: () => void; onClarify: () => void;
 }) {
   const [open, setOpen] = useState(false), [message, setMessage] = useState(''), [capturing, setCapturing] = useState(false);
   const [managing, setManaging] = useState(false);
@@ -20,10 +20,13 @@ export function RafiPhotoPreview({ uri, busy = false, readOnly = false, onChange
     finally { locked.current = false; if (alive.current) setCapturing(false); }
   }
   return <View testID="rafi-photo-preview" style={styles.root}>
-    <Image source={{ uri }} resizeMode="contain" style={styles.photo} accessibilityLabel="Photo sélectionnée pour RAFI" />
+    <Pressable accessibilityRole="button" accessibilityLabel="Voir la photo" onPress={() => setOpen(true)}>
+      <Image source={{ uri }} resizeMode="contain" style={styles.photo} accessibilityLabel="Photo sélectionnée pour RAFI" />
+    </Pressable>
     <FixeoText variant="caption" tone="secondary">{busy ? 'RAFI analyse cette photo.' : 'C’est cette photo que vous choisissez de partager avec RAFI.'}</FixeoText>
-    <FixeoAction label="Voir la photo" variant="ghost" onPress={() => setOpen(true)} />
     {!readOnly && <>
+    {replacePrimary && <FixeoAction label="Remplacer la photo" disabled={busy || capturing} onPress={() => setManaging(true)} />}
+    <FixeoAction label="Continuer sans photo" variant="secondary" disabled={busy || capturing} onPress={onRemove} />
     <FixeoAction label={managing ? 'Fermer les options photo' : 'Gérer la photo'} variant="ghost" accessibilityState={{ expanded: managing }} onPress={() => setManaging(value => !value)} />
     {managing && <>
     <View style={styles.actions}>
@@ -32,7 +35,6 @@ export function RafiPhotoPreview({ uri, busy = false, readOnly = false, onChange
       <FixeoAction label="Supprimer" variant="ghost" disabled={busy || capturing} onPress={onRemove} />
     </View>
     <FixeoAction label="Ajouter une précision" variant="ghost" disabled={busy || capturing} onPress={onClarify} />
-    <FixeoAction label="Continuer sans photo" variant="ghost" disabled={busy || capturing} onPress={onRemove} />
     </>}
     </>}
     {!!message && <FixeoText accessibilityLiveRegion="polite">{message}</FixeoText>}

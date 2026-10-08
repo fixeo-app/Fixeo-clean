@@ -4,6 +4,7 @@ import { fetchMobileJson } from './mobileResilience';
 const baseUrl = String(process.env.EXPO_PUBLIC_FIXEO_API_BASE_URL || '').replace(/\/$/, '');
 
 export type MobileDiagnosticResult = {
+  photo_relevance?: { value: 'related' | 'unrelated' | 'uncertain'; provenance: string };
   version: string;
   indicative: string;
   trade: { value: string; provenance: 'ai_inferred' | string };

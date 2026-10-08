@@ -1,4 +1,5 @@
 import type { EstimatorDraft } from '@/lib/clientDrafts';
+import { recoverEstimator } from '@/lib/estimatorRecovery';
 import { BackButton } from '@/ui/BackButton';
 import { useEffect, useRef, useState } from 'react';
 import { Keyboard, TextInput, View } from 'react-native';
@@ -32,19 +33,23 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
   const [history, setHistory] = useState<{ result: MobileEstimatorResponse; label: string; answer: string | number | boolean }[]>(initialDraft?.history || []);
   const [phone, setPhone] = useState(initialDraft?.phone || '');
   const [confirming, setConfirming] = useState(initialDraft?.confirming || false);
+  const [needsRevalidation, setNeedsRevalidation] = useState(!!initialDraft?.needsRevalidation);
+  const [textOnly, setTextOnly] = useState(!!initialDraft?.textOnly);
   const lock = useRef(false);
   const active = useRef(true);
   const stopped = useRef(initialDraft?.stopped || false);
   const lastAction = useRef<MobileEstimatorRequest | null>(initialDraft?.lastAction || null);
   // After an ambiguous confirmation only the identical payload may be retried.
   const pendingConfirmation = useRef<MobileEstimatorRequest | 'direct' | null>(initialDraft?.pendingConfirmation || null);
+  const ambiguousConfirmation = useRef(!!initialDraft?.pendingConfirmation);
   const directKey = useRef<string | null>(initialDraft?.directKey || null);
-  const initial = useRef(context).current;
+  const initialContext = useRef(context).current;
+  const initial = textOnly ? { ...initialContext, diagnosticReference: undefined } : initialContext;
   const outcome = estimatorOutcome(result);
   useEffect(() => {
-    onDraftChange?.({ result, answer, started, history, phone, confirming, error, stopped: stopped.current,
+    onDraftChange?.({ result, answer, started, history, phone, confirming, error, needsRevalidation, textOnly, stopped: stopped.current,
       lastAction: lastAction.current, pendingConfirmation: pendingConfirmation.current, directKey: directKey.current });
-  }, [result, answer, started, history, phone, confirming, error, busy, onDraftChange]);
+  }, [result, answer, started, history, phone, confirming, error, busy, needsRevalidation, textOnly, onDraftChange]);
   useEffect(() => {
     if (!visible) return;
     onPresenceChange?.(busy ? 'thinking' : error ? 'attention' : result ? 'success' : 'idle');
@@ -67,8 +72,15 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
       }
     } catch (failure) {
       if (!active.current) return;
-      const view = intelligenceFailure(failure); setError(view);
-      if (['phone', 'expired', 'quota', 'city'].includes(view.kind)) pendingConfirmation.current = null;
+      const view = intelligenceFailure(failure);
+      if (pendingConfirmation.current && ambiguousConfirmation.current && view.kind === 'expired') {
+        setError({ kind: 'conflict', message: 'La confirmation précédente reste à vérifier dans vos demandes. Votre brouillon est conservé.' });
+      } else {
+        setError(view);
+        if (['phone', 'expired', 'quota', 'city'].includes(view.kind)) pendingConfirmation.current = null;
+        if (view.kind === 'expired') { setNeedsRevalidation(true); setConfirming(false); }
+      }
+      if (pendingConfirmation.current && view.kind === 'retry') ambiguousConfirmation.current = true;
       if (view.kind === 'safety') { stopped.current = true; onStop(); }
     } finally { lock.current = false; if (active.current) setBusy(false); }
   }
@@ -84,7 +96,7 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
   }, []);
 
   async function confirm() {
-    if (lock.current || stopped.current || !result) return;
+    if (lock.current || stopped.current || needsRevalidation || !result) return;
     const request = pendingConfirmation.current || estimatorConfirmation(result, initial, phone.trim());
     if (request && request !== 'direct') { pendingConfirmation.current = request; await run(request); return; }
     if (outcome?.outcome_type !== 'QUOTE_REQUIRED' || initial.diagnosticReference || !result.session?.metier) return;
@@ -107,10 +119,25 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
     (outcome?.outcome_type === 'QUOTE_REQUIRED' && !initial.diagnosticReference && !!result.session?.metier));
   const phoneRequired = outcome?.outcome_type !== 'QUOTE_REQUIRED' || !!initial.diagnosticReference;
   const phoneValid = /^(\+212|0)[5-7][0-9]{8}$/.test(phone.replace(/[\s().-]+/g, ''));
-  const blocked = busy || (!!error && error.kind !== 'input' && error.kind !== 'phone') || stopped.current;
+  const blocked = busy || needsRevalidation || (!!error && error.kind !== 'input' && error.kind !== 'phone') || stopped.current;
+  async function recalculate(withoutPhoto = false) {
+    if (lock.current || pendingConfirmation.current || stopped.current) return;
+    lock.current = true; setBusy(true); setError(null); setConfirming(false);
+    if (withoutPhoto) setTextOnly(true);
+    try {
+      const recovered = await recoverEstimator({ result, history, answer, started, phone, confirming: false, stopped: false,
+        lastAction: lastAction.current, pendingConfirmation: null, directKey: null, error: null },
+        withoutPhoto ? { ...initial, diagnosticReference: undefined } : initial, mobileEstimator, () => active.current);
+      if (!active.current) return;
+      if (estimatorStopped(recovered.result)) { stopped.current = true; onStop(estimatorOutcome(recovered.result)?.scope_summary[0]); }
+      setResult(recovered.result); setHistory(recovered.history); setAnswer(recovered.answer); setStarted(true); setNeedsRevalidation(false);
+      lastAction.current = null;
+    } catch (failure) { if (active.current) { setError(intelligenceFailure(failure)); setNeedsRevalidation(true); } }
+    finally { lock.current = false; if (active.current) setBusy(false); }
+  }
   function previous() {
     Keyboard.dismiss();
-    if (busy || pendingConfirmation.current || stopped.current) return;
+    if (busy || pendingConfirmation.current || stopped.current || needsRevalidation) return;
     setError(null);
     if (confirming) { setConfirming(false); return; }
     const prior = history[history.length - 1];
@@ -131,6 +158,11 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
   return <ClientSection testID="client-intelligence" label="RAFI · LA SUITE POUR VOUS">
     <BackButton system={visible} label={history.length || started ? 'Précédent' : 'Retour au besoin'} onPress={previous} disabled={busy || !!pendingConfirmation.current || stopped.current} />
     <FixeoText variant="caption" tone="secondary">{!started ? 'Votre besoin' : outcome ? 'Votre estimation' : step?.type === 'READY' ? 'Récapitulatif' : `Étape ${history.filter(item => item.label).length + 1} · Précisons votre besoin`}</FixeoText>
+    {needsRevalidation && !pendingConfirmation.current && <ClientSection label="VOS RÉPONSES SONT CONSERVÉES">
+      <FixeoText>Le résultat affiché est indicatif. RAFI va vérifier les réponses encore valides et recalculer avant toute confirmation.</FixeoText>
+      <FixeoAction label="Actualiser avec mes réponses" disabled={busy} onPress={() => void recalculate()} />
+      {!!initial.diagnosticReference && error?.kind === 'expired' && <FixeoAction label="Actualiser avec ma description, sans photo" variant="secondary" disabled={busy} onPress={() => void recalculate(true)} />}
+    </ClientSection>}
     {!started && <ClientSection surface><FixeoText variant="heading">{initial.description}</FixeoText><FixeoText tone="secondary">{initial.city}</FixeoText>
       <FixeoText>Quelques précisions pour une estimation adaptée à votre intervention.</FixeoText>
       <FixeoAction label="Commencer l’estimation" onPress={() => start()} /></ClientSection>}
@@ -138,11 +170,11 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
     {error && <View style={{ gap: 12 }}>
       <FixeoText accessibilityRole="alert">{error.message}</FixeoText>
       {error.kind === 'auth' ? <FixeoAction label="Me reconnecter" onPress={() => router.replace('/sign-in')} /> :
-        error.kind === 'retry' && <FixeoAction label={pendingConfirmation.current ? 'Vérifier et réessayer la confirmation' : 'Réessayer avec RAFI'} disabled={busy}
+        error.kind === 'retry' && !needsRevalidation && <FixeoAction label={pendingConfirmation.current ? 'Vérifier et réessayer la confirmation' : 'Réessayer avec RAFI'} disabled={busy}
           onPress={() => pendingConfirmation.current ? void confirm() : lastAction.current && void run(lastAction.current)} />}
       {!pendingConfirmation.current && !stopped.current && ['retry', 'quota'].includes(error.kind) && <FixeoAction label="Continuer sans estimation" variant="secondary" disabled={busy} onPress={onClose} />}
       {pendingConfirmation.current && <FixeoText variant="supporting">Votre confirmation est conservée. Cette vérification ne crée pas une seconde demande.</FixeoText>}
-      {error.kind === 'expired' && <FixeoAction label="Recommencer l’estimation" disabled={busy} onPress={() => { setResult(null); setHistory([]); setAnswer(''); setStarted(false); setConfirming(false); setError(null); }} />}
+      {error.kind === 'conflict' && <FixeoAction label="Vérifier mes demandes" variant="secondary" onPress={() => router.push('/client-workspace/history')} />}
     </View>}
     {outcome && <ClientFixeoResult outcome={outcome} />}
     {!outcome && ['QUESTION', 'SERVICE_SELECTION'].includes(step?.type || '') && <ClientSection testID="client-estimator-question">

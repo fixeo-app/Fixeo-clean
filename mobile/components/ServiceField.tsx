@@ -7,8 +7,8 @@ import { FixeoText } from '@/ui/FixeoText';
 import { semanticColors, space } from '@/ui/tokens';
 import { clientStyles } from './ClientEditorial';
 
-export function ServiceField({ values, onChange, multiple = false, disabled = false }: {
-  values: string[]; onChange: (values: string[]) => void; multiple?: boolean; disabled?: boolean;
+export function ServiceField({ values, onChange, multiple = false, disabled = false, suggestion }: {
+  values: string[]; onChange: (values: string[]) => void; multiple?: boolean; disabled?: boolean; suggestion?: string;
 }) {
   const [open, setOpen] = useState(false), [query, setQuery] = useState('');
   const insets = useSafeAreaInsets();
@@ -16,10 +16,10 @@ export function ServiceField({ values, onChange, multiple = false, disabled = fa
   const options = [...new Set([...SERVICE_CATALOG, ...values, ...(!multiple ? ['Autre'] : [])])].filter(value => normalize(value).includes(normalize(query)));
   const close = () => { Keyboard.dismiss(); setOpen(false); };
   return <View style={{ gap: space.xs }}>
-    <FixeoText variant="caption" tone="secondary">{multiple ? 'Vos métiers' : 'Métier choisi par vous'}</FixeoText>
+    <FixeoText variant="caption" tone="secondary">{multiple ? 'Vos métiers' : values.length ? 'Métier choisi par vous' : suggestion ? 'Métier suggéré par RAFI' : 'Métier à préciser'}</FixeoText>
     <ShellControl disabled={disabled} accessibilityLabel={multiple ? 'Choisir mes métiers' : 'Choisir le métier'}
       onPress={() => { setQuery(''); setOpen(true); }} style={clientStyles.input}>
-      <FixeoText>{values.join(' · ') || 'Choisir le métier'}</FixeoText>
+      <FixeoText>{values.join(' · ') || (suggestion ? `${suggestion} · Modifier` : 'Choisir le métier')}</FixeoText>
     </ShellControl>
     <Modal visible={open && !disabled} animationType="slide" presentationStyle="pageSheet" onRequestClose={close}>
       <View style={{ flex: 1, backgroundColor: semanticColors.background.canvas, paddingHorizontal: space.lg, paddingTop: Math.max(insets.top, 20), paddingBottom: Math.max(insets.bottom, 16), gap: space.md }}>

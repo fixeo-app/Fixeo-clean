@@ -56,7 +56,7 @@ test('PB1 V2 actual microphone component survives permission-return rerender, tr
  const recorder={uri:'file:///synthetic-recording.m4a',prepareToRecordAsync:async()=>{},record:()=>{recording=true},stop:async()=>{stops++;recording=false}};
  const audio={AudioModule:{getRecordingPermissionsAsync:async()=>({granted:true}),requestRecordingPermissionsAsync:async()=>{requests++;return {granted:true}}},
    RecordingPresets:{HIGH_QUALITY:{}},setAudioModeAsync:async()=>{},useAudioRecorder:()=>recorder,useAudioRecorderState:()=>({isRecording:recording})};
- const {RafiInputRail}=load('components/RafiInputRail.tsx',{'expo-audio':audio,'react-native':{AppState:{addEventListener:(_event:string,fn:any)=>{nativeListeners.add(fn);return {remove:()=>nativeListeners.delete(fn)}}}},
+ const {RafiInputRail}=load('components/RafiInputRail.tsx',{'expo-router':{useFocusEffect:(fn:any)=>React.useEffect(fn,[fn])},'expo-audio':audio,'react-native':{AppState:{addEventListener:(_event:string,fn:any)=>{nativeListeners.add(fn);return {remove:()=>nativeListeners.delete(fn)}}}},
    '@/lib/permissionPrompt':{explainPermission:async()=>true},'./RafiComposer':{RafiComposer:component('composer')}});
  const props=()=>({onVoiceReady:(uri:string)=>delivered.push(uri),onPhotoReady:()=>{},onListeningChange:(value:boolean)=>listening.push(value)});
  let tree:any;await renderer.act(async()=>{tree=renderer.create(React.createElement(RafiInputRail,props()))});
@@ -87,7 +87,7 @@ test('PB1 V2 actual capture normalizes the selected bytes source and handles can
 
 test('PB1 V2 actual photo preview renders selected URI, viewing and correction controls without analysis',async()=>{
  let changed='',removed=0,clarifications=0,captures=0;
- const native={Image:'Image',Modal:'Modal',View:'View',StyleSheet:{create:(s:any)=>s}};
+ const native={Image:'Image',Modal:'Modal',Pressable:'Pressable',View:'View',StyleSheet:{create:(s:any)=>s}};
  const {RafiPhotoPreview}=load('components/RafiPhotoPreview.tsx',{'react-native':native,
    '@/lib/rafiPhotoCapture':{captureRafiPhoto:async()=>{captures++;return {uri:'file:///replacement.jpg',mimeType:'image/jpeg'}}},
    '@/ui/FixeoText':{FixeoText:component('text')},'@/ui/FixeoAction':{FixeoAction:component('action')},'@/ui/tokens':{semanticColors:{background:{surface:'#fff'}},space:{sm:8}}});
@@ -95,7 +95,7 @@ test('PB1 V2 actual photo preview renders selected URI, viewing and correction c
  await renderer.act(async()=>{tree=renderer.create(React.createElement(RafiPhotoPreview,props))});
  assert.equal(tree.root.findAllByType('Image')[0].props.source.uri,props.uri);assert.equal(captures,0);
  const action=(label:string)=>tree.root.findAllByType('action').find((node:any)=>node.props.label===label).props;
- await renderer.act(async()=>action('Voir la photo').onPress());assert.equal(tree.root.findByType('Modal').props.visible,true);
+ await renderer.act(async()=>tree.root.findByType('Pressable').props.onPress());assert.equal(tree.root.findByType('Modal').props.visible,true);
  await renderer.act(async()=>action('Gérer la photo').onPress());
  await renderer.act(async()=>action('Reprendre').onPress());assert.equal(changed,'file:///replacement.jpg');
  await renderer.act(async()=>action('Ajouter une précision').onPress());assert.equal(clarifications,1);

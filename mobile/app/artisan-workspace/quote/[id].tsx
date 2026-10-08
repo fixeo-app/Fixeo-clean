@@ -32,7 +32,6 @@ import {
 } from "@/components/ArtisanEditorial";
 import { FixeoText } from "@/ui/FixeoText";
 import { FixeoAction } from "@/ui/FixeoAction";
-import type { ContextDockSpec } from "@/ui/shellContract";
 type Line = {
   type: QuoteLine["type"];
   label: string;
@@ -109,6 +108,7 @@ export default function QuoteStudio() {
   const gate = validateQuote({ origin, title, clientId, requestId, clients: q.data?.clients || [], offers: q.data?.offers || [],
     items: lines.map(line => ({ type: line.type, label: line.label, quantity: number(line.quantity), unit_price: number(line.price) })), discount: number(discount || '0') });
   const calculated = gate.calculated;
+  const unsaved = !!saved && (title !== saved.title || clientId !== (saved.client_id || '') || notes !== (saved.notes || '') || validity !== (saved.validity_date || '') || duration !== (saved.estimated_duration || '') || Number(discount || 0) !== Number(saved.discount) || JSON.stringify(calculated?.items.map(({type,label,quantity,unit_price}) => [type,label,Number(quantity),Number(unit_price)])) !== JSON.stringify(saved.items?.map(({type,label,quantity,unit_price}) => [type,label,Number(quantity),Number(unit_price)])));
   const visibleSection = gate.canEnterLines ? gate.canEnterConditions ? section : Math.min(section, 1) : 0;
   const showPreview = preview && (gate.canPreview || (!fresh && saved?.source === 'personal' && !editable));
   function goToSection(next: number) {
@@ -156,46 +156,6 @@ export default function QuoteStudio() {
       return result;
     }, "Brouillon enregistré.");
   }
-  const dock: ContextDockSpec = {
-    universe: "artisan",
-    hidden: !editable || !!confirmation,
-    items: [
-      {
-        key: "line",
-        label: "Ligne",
-        icon: "add-outline",
-        accessibilityLabel: "Ajouter une ligne au devis",
-        disabled: !gate.canEnterLines || lines.length >= 50,
-        action: () => {
-          if (!gate.canEnterLines) { a.setMessage(gate.message); return; }
-          setPreview(false);
-          setSection(1);
-          setLines((v) => [...v, blank()]);
-        },
-      },
-      {
-        key: "preview",
-        label: preview ? "Modifier" : "Aperçu",
-        icon: "eye-outline",
-        accessibilityLabel: preview
-          ? "Modifier les lignes"
-          : "Afficher l’aperçu du devis",
-        disabled: !showPreview && !gate.canPreview,
-        action: () => showPreview ? setPreview(false) : openPreview(),
-      },
-      {
-        key: "save",
-        label: origin === "fixeo" ? "Transmettre" : "Enregistrer",
-        icon: "checkmark-outline",
-        accessibilityLabel:
-          origin === "fixeo"
-            ? "Confirmer la transmission à FIXEO"
-            : "Enregistrer le brouillon",
-        disabled: a.busy || !gate.canSave,
-        action: () => void save(),
-      },
-    ],
-  };
   return (
     <ArtisanPage
       rafi={a.rafi}
@@ -203,7 +163,6 @@ export default function QuoteStudio() {
       eyebrow="DEVIS STUDIO"
       activeKey="quotes"
       loading={q.loading}
-      dock={dock}
     >
       <ArtisanMessage
         message={q.error || a.message}
@@ -277,17 +236,19 @@ export default function QuoteStudio() {
                 )}
                 {notes && <FixeoText>{notes}</FixeoText>}
               </ArtisanSection>
+              {editable && <View style={art.actions}>
+                <FixeoAction label={origin === 'fixeo' ? 'Transmettre à FIXEO' : fresh ? 'Enregistrer le brouillon' : 'Enregistrer les modifications'} disabled={!gate.canSave} busy={a.busy} onPress={() => void save()} />
+                <FixeoAction label="Modifier les détails" variant="secondary" onPress={() => setPreview(false)} />
+              </View>}
               {!fresh && saved?.source === "personal" && (
                 <View style={art.actions}>
                   {saved.status === "draft" && (
                     <>
-                      <FixeoAction
-                        label="Modifier le brouillon"
-                        variant="secondary"
-                        onPress={() => setPreview(false)}
-                      />
+                      {unsaved && <FixeoText tone="secondary">Enregistrez vos modifications avant de déclarer la transmission.</FixeoText>}
                       <FixeoAction
                         label="Déclarer le devis transmis"
+                        disabled={unsaved || a.busy}
+                        variant="secondary"
                         onPress={() => setConfirmation("sent")}
                       />
                     </>

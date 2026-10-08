@@ -13,6 +13,24 @@ const component=(name:string)=>function Component(props:any){return React.create
 function load(file:string,deps:Record<string,unknown>){const exports:Record<string,any>={};vm.runInNewContext(ts.transpileModule(readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText,{exports,require:(name:string)=>name==='react'||name==='react/jsx-runtime'?require(name):deps[name]||{},setTimeout,clearTimeout,Promise});return exports;}
 const flush=()=>new Promise(resolve=>setTimeout(resolve,0));
 
+test('PB1 account validates required coordinates, retains edits on foreground and cancels without a write',async()=>{
+ let refresh:any,writes=0;const profile={id:'client',full_name:'Client',phone:'0612345678',city:'Fès',email:'fixture@example.invalid'};
+ const deps:any={'react-native':{View:'view',TextInput:'input',StyleSheet:{create:(x:any)=>x}},'@/lib/clientProfileValidation':await import('../lib/clientProfileValidation'),'@/lib/clientWorkspace':{getClientProfile:async()=>profile,updateClientProfile:async(input:any)=>{writes++;Object.assign(profile,input);return {...profile}}},'@/lib/mobileResilience':{withMobileDeadline:(p:any)=>p,isMobileUiTimeout:()=>false},'@/lib/useForegroundRefresh':{useForegroundRefresh:(fn:any)=>{refresh=fn}},'@/lib/workspacePresentation':await import('../lib/workspacePresentation'),'@/ui/tokens':await import('../ui/tokens'),'@/components/useWorkspaceDock':{useWorkspaceDock:()=>({items:[]})},'@/components/ClientEditorial':{ClientPageIntro:component('intro'),ClientSection:component('section'),clientStyles:{}}};
+ for(const [module,name] of Object.entries({'@/ui/RafiOrb':'RafiOrb','@/ui/RafiScrollView':'RafiScrollView','@/components/CityField':'CityField','@/ui/BackButton':'BackButton','@/ui/FixeoAction':'FixeoAction','@/ui/FixeoText':'FixeoText','@/ui/FixeoScreen':'FixeoScreen','@/components/MobileShell':'MobileShell'}))deps[module]={[name]:component(name)};
+ const {default:Account}=load('app/client-workspace/account.tsx',deps);let tree:any;await renderer.act(async()=>{tree=renderer.create(React.createElement(Account))});
+ const action=(label:string)=>tree.root.findAllByType('FixeoAction').find((x:any)=>x.props.label===label);
+ await renderer.act(async()=>action('Modifier mes coordonnées').props.onPress());
+ await renderer.act(async()=>tree.root.findByType('input').props.onChangeText('bad'));
+ await renderer.act(async()=>refresh());assert.equal(tree.root.findByType('input').props.value,'bad');
+ await renderer.act(async()=>action('Enregistrer les coordonnées').props.onPress());assert.equal(writes,0);assert.ok(tree.root.findAllByType('FixeoText').some((x:any)=>String(x.props.children).includes('numéro marocain valide')));
+ await renderer.act(async()=>tree.root.findByType('BackButton').props.onPress());
+ await renderer.act(async()=>action('Modifier mes coordonnées').props.onPress());assert.equal(tree.root.findByType('input').props.value,profile.phone);
+ await renderer.act(async()=>tree.root.findByType('CityField').props.onChange(''));
+ await renderer.act(async()=>action('Enregistrer les coordonnées').props.onPress());assert.equal(writes,0);assert.ok(tree.root.findAllByType('FixeoText').some((x:any)=>String(x.props.children).includes('Choisissez votre ville')));
+ await renderer.act(async()=>tree.root.findByType('CityField').props.onChange('Rabat'));
+ await renderer.act(async()=>action('Enregistrer les coordonnées').props.onPress());assert.equal(writes,1);assert.equal(profile.city,'Rabat');assert.equal(tree.root.findAllByType('input').length,0);await renderer.act(async()=>tree.unmount());
+});
+
 test('PB1 drafts survive a cold reload, stay owner-scoped, and cannot return after removal or session invalidation',async()=>{
  const memory=new Map<string,string>();let generation=0;const rejected:Function[]=[];
  const storage={getItem:async(k:string)=>memory.get(k)||null,setItem:async(k:string,v:string)=>{memory.set(k,v)},getAllKeys:async()=>[...memory.keys()],multiRemove:async(keys:string[])=>keys.forEach(k=>memory.delete(k))};
@@ -27,7 +45,13 @@ test('PB1 drafts survive a cold reload, stay owner-scoped, and cannot return aft
  let finish:(v:string)=>void=()=>{};
  const late=load('lib/clientDrafts.ts',{...deps,'@react-native-async-storage/async-storage':{default:{...storage,getItem:()=>new Promise<string>(resolve=>{finish=resolve})}}});
  const read=late.loadClientDrafts('client-a');generation++;rejected.forEach(fn=>fn());finish(JSON.stringify([draft]));await read;await flush();
- assert.equal(late.clientDrafts('client-a').length,0);assert.equal(memory.size,0);
+ assert.equal(late.clientDrafts('client-a').length,0);
+ const session=load('lib/clientDrafts.ts',deps);await session.loadClientDrafts('client-a');session.saveClientDraft('client-a',draft);await flush();
+ generation++;rejected.forEach(fn=>fn('revoked'));await flush();
+ assert.equal(session.clientDrafts('client-a').length,0,'rejected session closes in-memory access');
+ const recovered=load('lib/clientDrafts.ts',deps);assert.equal((await recovered.loadClientDrafts('client-b')).length,0);
+ assert.equal((await recovered.loadClientDrafts('client-a'))[0].problem,draft.problem,'same owner recovers after reauthentication');
+ generation++;rejected.forEach(fn=>fn('logout'));await flush();assert.equal(memory.size,0,'explicit logout purges persisted drafts');
 });
 
 test('PB1 estimator restores question answers and offers an exit after failure without creating a request',async()=>{
@@ -51,7 +75,7 @@ test('PB1 real Devis tabs, preview and confirmation reject forged sources and re
  const tabs=()=>tree.root.findAllByType('choices').find((x:any)=>x.props.label==='Étapes du devis');
  const action=(label:string)=>tree.root.findAllByType('action').find((x:any)=>x.props.label===label);
  await renderer.act(async()=>tabs().props.onChange('2'));assert.equal(tabs().props.value,'0');assert.ok(action('Continuer vers les lignes').props.disabled);
- await renderer.act(async()=>tree.root.findByType('page').props.dock.items.find((x:any)=>x.key==='preview').action());assert.doesNotMatch(JSON.stringify(tree.toJSON()),/Lié à une opportunité FIXEO/);
+ assert.equal(tree.root.findByType('page').props.dock,undefined,'no secondary navigation bar');assert.doesNotMatch(JSON.stringify(tree.toJSON()),/Lié à une opportunité FIXEO/);
  offers=[{request_id:'forged'}];await renderer.act(async()=>refresh());assert.equal(tabs().props.value,'0');
  const title=tree.root.findAllByType('field').find((x:any)=>x.props.label.toLowerCase().includes('titre'));await renderer.act(async()=>title.props.onChangeText('Réparation chauffe-eau'));
  await renderer.act(async()=>tabs().props.onChange('2'));assert.equal(tabs().props.value,'0','empty lines cannot reach conditions');await renderer.act(async()=>tabs().props.onChange('1'));assert.equal(tabs().props.value,'1');

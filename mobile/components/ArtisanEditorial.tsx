@@ -315,7 +315,8 @@ export function ArtisanChoices({
           <FixeoAction
             key={o.value}
             label={o.label}
-            variant={value === o.value ? "primary" : "secondary"}
+            variant="secondary"
+            selected={value === o.value}
             disabled={o.disabled}
             accessibilityState={{ selected: value === o.value, disabled: !!o.disabled }}
             onPress={() => onChange(o.value)}
@@ -369,7 +370,7 @@ export const art = StyleSheet.create({
     borderColor: semanticColors.border.subtle,
   },
   actions: { gap: space.sm },
-  contextActions: { flexDirection: "row", flexWrap: "wrap", gap: space.sm, paddingVertical: space.md },
+  contextActions: { gap: space.sm, paddingVertical: space.md },
   inline: { flexDirection: "row", flexWrap: "wrap", gap: space.sm },
   back: { alignSelf: "flex-start", minWidth: 80 },
   choice: { flexGrow: 1 },

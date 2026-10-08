@@ -92,10 +92,11 @@ export default function Finance() {
             Dépenses · {money(totals.expense)}
           </FixeoText>
           <FixeoText variant="supporting" tone="inverseSecondary">
-            Vos mouvements récents, pour suivre votre activité.
+            {period === 'today' ? 'Aujourd’hui' : period === 'month' ? 'Ce mois' : 'Historique disponible'} · {rows?.length || 0} mouvements
           </FixeoText>
         </ArtisanSection>
       )}
+      {(q.data?.ledger.length || 0) >= 200 && <FixeoText tone="secondary">Synthèse limitée aux 200 derniers mouvements disponibles.</FixeoText>}
       <ArtisanCue
         title="RAFI · Lire votre activité"
         text={
@@ -106,6 +107,7 @@ export default function Finance() {
       />
       <FixeoAction
         label={open ? "Fermer la saisie" : "Ajouter un mouvement"}
+        variant={open ? "ghost" : "primary"}
         onPress={() => setOpen((v) => !v)}
       />
       {open && q.data && (

@@ -131,10 +131,10 @@ export default function ClientWorkspaceHome() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <FixeoAction label="+ Nouvelle demande" onPress={() => router.push('/new-request' as any)} />
-        <ClientDraftRecovery />
         <ClientPageIntro eyebrow="MON ESPACE" title={greetingName ? `Bonjour ${greetingName}.` : 'Bonjour.'}
           detail="Tout ce qui mérite votre attention." />
+        <FixeoAction label="+ Nouvelle demande" variant={activeRequest ? 'secondary' : 'primary'} onPress={() => router.push('/new-request' as any)} />
+        <ClientDraftRecovery />
 
         {!!error && <FixeoText accessibilityRole="alert" style={clientStyles.error}>{error}</FixeoText>}
         {loading && !history.length && !profile ? <ClientSection>
@@ -148,6 +148,7 @@ export default function ClientWorkspaceHome() {
           <FixeoText accessibilityRole="header" variant="title">{contextualCockpit.title}</FixeoText>
           {!!contextualCockpit.context && <FixeoText>{contextualCockpit.context}</FixeoText>}
           {contextualCockpit.actionLabel ? <FixeoAction testID="client-primary-action"
+            variant={activeRequest ? 'primary' : 'secondary'}
             label={activeRequests.length > 1 && contextualCockpit.action === 'client_follow' ? 'Choisir une demande à suivre' : contextualCockpit.actionLabel} onPress={actOnContextualCockpit} style={styles.action} /> : null}
           <FixeoText tone="secondary">{contextualCockpit.detail}</FixeoText>
         </ClientSection> : null}

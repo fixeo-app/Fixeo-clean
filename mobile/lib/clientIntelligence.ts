@@ -27,7 +27,8 @@ export function intelligenceFailure(error: unknown) {
   const code = String((error as { message?: string })?.message || '');
   if (/AUTH_|UNAUTHENTICATED|ROLE_FORBIDDEN/.test(code)) return { kind: 'auth', message: 'Votre session doit être renouvelée. Reconnectez-vous pour continuer.' };
   if (/SAFETY_STOP/.test(code)) return { kind: 'safety', message: 'Ne poursuivez pas cette intervention. Faites vérifier la situation par un professionnel.' };
-  if (/EXPIRED|PRICING_CONTEXT_|DIAGNOSTIC_LINK|MOBILE_IDEMPOTENCY_CONFLICT/.test(code)) return { kind: 'expired', message: 'Ce résultat ne peut plus être confirmé. Reprenez l’analyse de votre besoin.' };
+  if (/MOBILE_IDEMPOTENCY_CONFLICT/.test(code)) return { kind: 'conflict', message: 'Une confirmation existe déjà pour ce besoin. Vérifiez vos demandes en cours avant de poursuivre.' };
+  if (/EXPIRED|PRICING_CONTEXT_|DIAGNOSTIC_LINK|ESTIMATOR_SESSION_INVALID|SESSION_TOKEN_INVALID/.test(code)) return { kind: 'expired', message: 'Cette estimation doit être actualisée. Vos réponses sont conservées.' };
   if (/QUOTA/.test(code)) return { kind: 'quota', message: 'RAFI a atteint sa limite d’analyse pour le moment. Votre demande simple reste possible.' };
   if (/CITY_NOT_SUPPORTED/.test(code)) return { kind: 'city', message: 'Choisissez une ville FIXEO prise en charge.' };
   if (/INVALID_PHONE/.test(code)) return { kind: 'phone', message: 'Vérifiez votre numéro de téléphone marocain.' };

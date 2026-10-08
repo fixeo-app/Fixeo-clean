@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { AppState } from 'react-native';
 import { captureRafiPhoto } from '@/lib/rafiPhotoCapture';
 import {
@@ -30,13 +31,23 @@ export function RafiInputRail({
   const [voiceBusy, setVoiceBusy] = useState(false);
   const active = useRef(true);
   const captureLock = useRef(false), recording = useRef(false);
+  const epoch = useRef(0), focused = useRef(true);
   const listeningChanged = useRef(onListeningChange);
   listeningChanged.current = onListeningChange;
+  useFocusEffect(useCallback(() => {
+    focused.current = true;
+    return () => {
+      focused.current = false; epoch.current++; recording.current = false;
+      void recorder.stop().catch(() => undefined).finally(() => setAudioModeAsync({ allowsRecording: false }).catch(() => undefined));
+      listeningChanged.current?.(false);
+    };
+  }, [recorder]));
   useEffect(() => {
     active.current = true;
     const stop = () => { recording.current = false; void recorder.stop().catch(() => undefined).finally(() => setAudioModeAsync({ allowsRecording: false }).catch(() => undefined)); };
     const subscription = AppState.addEventListener('change', state => {
-      if (state === 'active' || !recording.current) return;
+      if (state === 'active' || (state !== 'background' && !recording.current)) return;
+      epoch.current++;
       stop(); listeningChanged.current?.(false);
       setMessage('Enregistrement interrompu. Touchez le micro pour recommencer.');
     });
@@ -44,16 +55,18 @@ export function RafiInputRail({
   }, [recorder]);
 
   async function toggleVoice() {
-    if (captureLock.current) return;
+    if (captureLock.current || !focused.current) return;
     captureLock.current = true;
     setVoiceBusy(true);
+    const started = epoch.current;
+    const current = () => active.current && focused.current && epoch.current === started;
 
     try {
-      if (recorderState.isRecording) {
+      if (recording.current) {
         recording.current = false;
         await recorder.stop();
         await setAudioModeAsync({ allowsRecording: false }).catch(() => undefined);
-        if (!active.current) return;
+        if (!current()) return;
 
         onListeningChange?.(false);
 
@@ -66,10 +79,10 @@ export function RafiInputRail({
         return;
       }
 
-      if (!(await explainPermission('microphone')) || !active.current) return;
+      if (!(await explainPermission('microphone')) || !current()) return;
       const existing = await AudioModule.getRecordingPermissionsAsync();
       const permission = existing.granted ? existing : await AudioModule.requestRecordingPermissionsAsync();
-      if (!active.current) return;
+      if (!current()) return;
       if (!permission.granted) {
         setMessage(permissionRefused('microphone', permission.canAskAgain !== false));
         return;
@@ -80,7 +93,7 @@ export function RafiInputRail({
         allowsRecording: true,
       });
       await recorder.prepareToRecordAsync();
-      if (!active.current) return;
+      if (!current()) { await setAudioModeAsync({ allowsRecording: false }).catch(() => undefined); return; }
       recorder.record();
       recording.current = true;
       onListeningChange?.(true);
