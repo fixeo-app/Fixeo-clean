@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { onSessionRejected, privateSessionGeneration } from './authEvents';
 export type QuoteDraft = {
-  id: string; baseline?: string; origin: string; clientId: string; requestId: string; title: string;
+  id: string; baseline?: string; pending?: boolean; origin: string; clientId: string; requestId: string; title: string;
   lines: { type: 'service' | 'labor' | 'supply'; label: string; quantity: string; price: string }[];
   discount: string; notes: string; validity: string; duration: string; section: number;
 };
@@ -18,6 +18,7 @@ export async function loadQuoteDraft(owner: string, scope: string): Promise<Quot
     if (!d || !['personal', 'fixeo'].includes(d.origin) || !Number.isInteger(d.section) || d.section < 0 || d.section > 2 || !Array.isArray(d.lines) || d.lines.length < 1 || d.lines.length > 50) throw new Error('DRAFT_INVALID');
     for (const field of ['id','clientId','requestId','title','discount','notes','validity','duration']) if (typeof d[field] !== 'string') throw new Error('DRAFT_INVALID');
     if (!d.lines.every((line: QuoteDraft['lines'][number]) => line && ['service','labor','supply'].includes(line.type) && ['label','quantity','price'].every(field => typeof (line as any)[field] === 'string'))) throw new Error('DRAFT_INVALID');
+    if (d.pending !== undefined && typeof d.pending !== 'boolean') throw new Error('DRAFT_INVALID');
     return d;
   } catch { throw new Error('DRAFT_INVALID'); }
 }

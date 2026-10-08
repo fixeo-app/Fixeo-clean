@@ -1,3 +1,5 @@
+import { guardedBusinessWrite } from './pendingBusinessWrite';
+import { privateSessionGeneration } from './authEvents';
 import { sameQuoteContent } from './quoteVersion';
 import { canonicalCities, canonicalCity, requireCanonicalCity, withCanonicalCity } from './clientLocation';
 import { validISODate } from './dateValidation';
@@ -125,7 +127,9 @@ async function artisanReadScope(): Promise<string> {
 }
 const pendingAccess = new Map<string, Promise<ArtisanActor>>();
 export async function artisanAccess(): Promise<ArtisanActor> {
+  const generation = privateSessionGeneration();
   const key = await artisanReadScope();
+  if (generation !== privateSessionGeneration()) throw new Error("SESSION_REVOKED");
   if (!pendingAccess.has(key))
     pendingAccess.set(
       key,
@@ -133,7 +137,9 @@ export async function artisanAccess(): Promise<ArtisanActor> {
         pendingAccess.delete(key);
       }),
     );
-  return pendingAccess.get(key)!;
+  const actor = await pendingAccess.get(key)!;
+  if (generation !== privateSessionGeneration()) throw new Error("SESSION_REVOKED");
+  return actor;
 }
 async function readArtisanAccess(): Promise<ArtisanActor> {
   const { data, error } = await supabase.rpc("get_my_mobile_artisan_access_v1");
@@ -276,8 +282,10 @@ export async function saveBusinessClient(
     notes: string;
   },
   exists = false,
+  expectedUpdatedAt?: string,
 ): Promise<BusinessClient> {
   const actor = await artisanAccess();
+  if (exists && !expectedUpdatedAt) throw new Error("CLIENT_VERSION_CONFLICT");
   if (!input.full_name.trim()) throw new Error("CLIENT_NAME_REQUIRED");
   const payload = {
     ...input,
@@ -286,18 +294,13 @@ export async function saveBusinessClient(
     owner_user_id: actor.user_id,
     updated_at: new Date().toISOString(),
   };
-  const q = exists
-    ? supabase
-        .from("artisan_business_clients")
-        .update(payload)
-        .eq("id", input.id)
-        .eq("owner_user_id", actor.user_id)
-    : supabase
-        .from("artisan_business_clients")
-        .upsert(payload, { onConflict: "id" });
-  const { data, error } = await q.select().single();
-  if (error) throw error;
-  return data;
+  return guardedBusinessWrite(actor.user_id,exists ? `client:${input.id}` : 'client-new',{...input,expectedUpdatedAt:expectedUpdatedAt || null},async()=>{
+    if(!exists)return insertBusinessIntent<BusinessClient>('artisan_business_clients',payload,['full_name','phone','city','address','notes']);
+    const result=await supabase.from('artisan_business_clients').update(payload).eq('id',input.id).eq('owner_user_id',actor.user_id).eq('updated_at',expectedUpdatedAt!).select().single();
+    if(result.error?.code==='PGRST116')throw Error('CLIENT_VERSION_CONFLICT');
+    if(result.error)throw result.error;
+    return result.data;
+  });
 }
 export async function saveBusinessQuote(
   input: {
@@ -429,6 +432,17 @@ export async function submitMarketplaceQuote(input: {
   if (error) throw error;
   return data as MarketplaceQuote;
 }
+/** Reconcile a stable creation ID without resetting a later status or editing historical amounts. */
+async function insertBusinessIntent<T>(table:string,payload:Record<string,unknown>,keys:string[]):Promise<T> {
+  const read=()=>supabase.from(table).select('*').eq('id',payload.id).eq('owner_user_id',payload.owner_user_id).maybeSingle();
+  const matches=(row:Record<string,unknown>)=>keys.every(key=>key==='scheduled_at' ? Date.parse(String(row[key]))===Date.parse(String(payload[key])) : key==='amount' ? Number(row[key])===Number(payload[key]) : String(row[key]??'')===String(payload[key]??''));
+  const before=await read();if(before.error)throw before.error;
+  if(before.data){if(!matches(before.data))throw Error('BUSINESS_PENDING_CONFLICT');return before.data as T;}
+  const result=await supabase.from(table).insert(payload).select().single();
+  if(!result.error && result.data)return result.data as T;
+  if(result.error?.code==='23505'){const after=await read();if(!after.error && after.data && matches(after.data))return after.data as T;}
+  throw result.error || Error('BUSINESS_CONFIRMATION_PENDING');
+}
 export async function saveBusinessJob(
   input: {
     id: string;
@@ -438,6 +452,7 @@ export async function saveBusinessJob(
     notes: string;
   },
   exists = false,
+  expectedUpdatedAt?: string,
 ): Promise<BusinessJob> {
   const actor = await artisanAccess();
   if (!input.title.trim() || !Number.isFinite(Date.parse(input.scheduled_at)))
@@ -448,19 +463,14 @@ export async function saveBusinessJob(
     source: "personal",
     updated_at: new Date().toISOString(),
   };
-  const q = exists
-    ? supabase
-        .from("artisan_business_jobs")
-        .update(payload)
-        .eq("id", input.id)
-        .eq("owner_user_id", actor.user_id)
-        .eq("source", "personal")
-    : supabase
-        .from("artisan_business_jobs")
-        .upsert({ ...payload, status: "planned" }, { onConflict: "id" });
-  const { data, error } = await q.select().single();
-  if (error) throw error;
-  return data;
+  return guardedBusinessWrite(actor.user_id,"agenda",input,async () => {
+  if (!exists) return insertBusinessIntent<BusinessJob>('artisan_business_jobs',{...payload,status:'planned'},['title','client_id','scheduled_at','notes','source']);
+  if(!expectedUpdatedAt)throw Error('JOB_EDIT_VERSION_REQUIRED');
+  const result=await supabase.from('artisan_business_jobs').update(payload).eq('id',input.id).eq('owner_user_id',actor.user_id).eq('source','personal').eq('updated_at',expectedUpdatedAt).select().single();
+  if(result.error || !result.data)throw result.error || Error('JOB_VERSION_CONFLICT');
+  return result.data;
+
+  });
 }
 export async function saveLedgerEntry(input: {
   id: string;
@@ -488,23 +498,12 @@ export async function saveLedgerEntry(input: {
     if (linkedClient && linkedClient !== job.data.client_id) throw new Error("LEDGER_CLIENT_MISMATCH");
     linkedClient = job.data.client_id;
   }
-  const { data, error } = await supabase
-    .from("artisan_business_ledger")
-    .upsert(
-      {
-        ...input,
-        amount: moneyMinor(input.amount) / 100,
-        client_id: linkedClient,
-        owner_user_id: actor.user_id,
-        source: "personal",
-        category: "other",
-      },
-      { onConflict: "id" },
-    )
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
+  return guardedBusinessWrite(actor.user_id,"finance",input,async () => {
+  return insertBusinessIntent<LedgerEntry>('artisan_business_ledger',{
+    ...input,amount:moneyMinor(input.amount)/100,client_id:linkedClient,owner_user_id:actor.user_id,source:'personal',category:'other',
+  },['entry_type','amount','occurred_on','note','client_id','job_id','source']);
+
+  });
 }
 type ProfileEdit = {
   phone: string;

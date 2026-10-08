@@ -1,0 +1,1304 @@
+TAP version 13
+# Subtest: artisan activity does not show a blocking load error when offers load
+ok 1 - artisan activity does not show a blocking load error when offers load
+  ---
+  duration_ms: 1.088189
+  type: 'test'
+  ...
+# Subtest: artisan activity does not show a blocking load error when current mission loads
+ok 2 - artisan activity does not show a blocking load error when current mission loads
+  ---
+  duration_ms: 0.174573
+  type: 'test'
+  ...
+# Subtest: artisan activity shows a load error only when both primary activity sources fail
+ok 3 - artisan activity shows a load error only when both primary activity sources fail
+  ---
+  duration_ms: 0.280924
+  type: 'test'
+  ...
+# Subtest: W5 personal quote arithmetic preserves explicit prices, rounding and discount
+ok 4 - W5 personal quote arithmetic preserves explicit prices, rounding and discount
+  ---
+  duration_ms: 1.854753
+  type: 'test'
+  ...
+# Subtest: W5 incomplete or non-finite quote inputs cannot produce a valid amount
+ok 5 - W5 incomplete or non-finite quote inputs cannot produce a valid amount
+  ---
+  duration_ms: 0.435666
+  type: 'test'
+  ...
+# Subtest: W5 ledger states income and expense separately and never substitutes missing money
+ok 6 - W5 ledger states income and expense separately and never substitutes missing money
+  ---
+  duration_ms: 16.346849
+  type: 'test'
+  ...
+# Subtest: W5 agenda only flags coincident active starts, without inferring duration
+ok 7 - W5 agenda only flags coincident active starts, without inferring duration
+  ---
+  duration_ms: 6.075109
+  type: 'test'
+  ...
+# Subtest: W5 auth and ownership failures are actionable without exposing server internals
+ok 8 - W5 auth and ownership failures are actionable without exposing server internals
+  ---
+  duration_ms: 0.891042
+  type: 'test'
+  ...
+# Subtest: W5 Bio separates size rejection from a write whose readback is unconfirmed
+ok 9 - W5 Bio separates size rejection from a write whose readback is unconfirmed
+  ---
+  duration_ms: 0.25855
+  type: 'test'
+  ...
+# Subtest: Home publishes canonical authority and mission while finances are still pending; no duplicate reads
+ok 10 - Home publishes canonical authority and mission while finances are still pending; no duplicate reads
+  ---
+  duration_ms: 8.59883
+  type: 'test'
+  ...
+# Subtest: One unavailable module does not block other modules; retry checks authority and only retries that module
+ok 11 - One unavailable module does not block other modules; retry checks authority and only retries that module
+  ---
+  duration_ms: 4.539487
+  type: 'test'
+  ...
+# Subtest: Denied or revoked authority hides every private result including previously ready modules
+ok 12 - Denied or revoked authority hides every private result including previously ready modules
+  ---
+  duration_ms: 2.607267
+  type: 'test'
+  ...
+# Subtest: Per-module deadline is a last resort; late responses do not overwrite an explicit retry
+ok 13 - Per-module deadline is a last resort; late responses do not overwrite an explicit retry
+  ---
+  duration_ms: 17.813723
+  type: 'test'
+  ...
+# Subtest: Overlapping Home and RAFI reads share the request, but a later visit fetches afresh
+ok 14 - Overlapping Home and RAFI reads share the request, but a later visit fetches afresh
+  ---
+  duration_ms: 0.822539
+  type: 'test'
+  ...
+# Subtest: In-flight reads cannot cross an Auth session boundary
+ok 15 - In-flight reads cannot cross an Auth session boundary
+  ---
+  duration_ms: 0.711491
+  type: 'test'
+  ...
+# Subtest: mobile auth entry resolves only supported mobile universes
+ok 16 - mobile auth entry resolves only supported mobile universes
+  ---
+  duration_ms: 1.424786
+  type: 'test'
+  ...
+# Subtest: mobile auth entry hides technical credential and network errors
+ok 17 - mobile auth entry hides technical credential and network errors
+  ---
+  duration_ms: 0.362626
+  type: 'test'
+  ...
+# Subtest: callback configuration accepts only the exact certified staging URL
+ok 18 - callback configuration accepts only the exact certified staging URL
+  ---
+  duration_ms: 1.470224
+  type: 'test'
+  ...
+# Subtest: unapproved callback blocks both signup and recovery before any Auth request
+ok 19 - unapproved callback blocks both signup and recovery before any Auth request
+  ---
+  duration_ms: 118.884556
+  type: 'test'
+  ...
+# Subtest: export activates the exact callback only for the W6 Preview branch
+ok 20 - export activates the exact callback only for the W6 Preview branch
+  ---
+  duration_ms: 11.370494
+  type: 'test'
+  ...
+# Subtest: callback binds web origin, rejects bearer fragments and accepts only authorization codes
+ok 21 - callback binds web origin, rejects bearer fragments and accepts only authorization codes
+  ---
+  duration_ms: 0.850941
+  type: 'test'
+  ...
+# Subtest: W6 deployment maps Expo root URLs to nested build output without changing other branches
+ok 22 - W6 deployment maps Expo root URLs to nested build output without changing other branches
+  ---
+  duration_ms: 27.7157
+  type: 'test'
+  ...
+# Subtest: pre-router callback scrubs the URL and discards legacy tokens before any SDK
+ok 23 - pre-router callback scrubs the URL and discards legacy tokens before any SDK
+  ---
+  duration_ms: 2.209337
+  type: 'test'
+  ...
+# Subtest: late Artisan bootstrap cannot publish after logout or replace a Client identity
+ok 24 - late Artisan bootstrap cannot publish after logout or replace a Client identity
+  ---
+  duration_ms: 3.612922
+  type: 'test'
+  ...
+# Subtest: unknown, resolving, offline, recovery and invalid-role states mount no private universe
+ok 25 - unknown, resolving, offline, recovery and invalid-role states mount no private universe
+  ---
+  duration_ms: 0.35199
+  type: 'test'
+  ...
+# Subtest: Auth failure categories remain actionable without exposing backend messages
+ok 26 - Auth failure categories remain actionable without exposing backend messages
+  ---
+  duration_ms: 0.893065
+  type: 'test'
+  ...
+# Subtest: W4 Client priorities put validation before intervention, assignment, matching and alerts
+ok 27 - W4 Client priorities put validation before intervention, assignment, matching and alerts
+  ---
+  duration_ms: 1.412578
+  type: 'test'
+  ...
+# Subtest: W4 creation and understanding cannot masquerade as an active artisan search
+ok 28 - W4 creation and understanding cannot masquerade as an active artisan search
+  ---
+  duration_ms: 0.229606
+  type: 'test'
+  ...
+# Subtest: W4 larger RAFI fits both small and standard canvases without changing W3 geometry
+ok 29 - W4 larger RAFI fits both small and standard canvases without changing W3 geometry
+  ---
+  duration_ms: 0.679263
+  type: 'test'
+  ...
+# Subtest: W4 mission presentation never invents assignment or arrival while loading or unknown
+ok 30 - W4 mission presentation never invents assignment or arrival while loading or unknown
+  ---
+  duration_ms: 0.506964
+  type: 'test'
+  ...
+# Subtest: W4 notification grouping uses existing event types, read state, and known supersession only
+ok 31 - W4 notification grouping uses existing event types, read state, and known supersession only
+  ---
+  duration_ms: 0.438991
+  type: 'test'
+  ...
+# Subtest: B1 request RAFI stays 96 dp through IME resize; tracking uses 64 dp
+ok 32 - B1 request RAFI stays 96 dp through IME resize; tracking uses 64 dp
+  ---
+  duration_ms: 0.130908
+  type: 'test'
+  ...
+# Subtest: an explicit estimate intent is optional; ordinary requests do not select it
+ok 33 - an explicit estimate intent is optional; ordinary requests do not select it
+  ---
+  duration_ms: 1.402412
+  type: 'test'
+  ...
+# Subtest: confirmation preserves opaque server scope and never supplies a local amount or identity
+ok 34 - confirmation preserves opaque server scope and never supplies a local amount or identity
+  ---
+  duration_ms: 1.108169
+  type: 'test'
+  ...
+# Subtest: quote bridge requires persisted diagnostic; direct unpriced quote stays distinct
+ok 35 - quote bridge requires persisted diagnostic; direct unpriced quote stays distinct
+  ---
+  duration_ms: 0.210727
+  type: 'test'
+  ...
+# Subtest: server STOP denies confirmation even when accompanied by a pricing token
+ok 36 - server STOP denies confirmation even when accompanied by a pricing token
+  ---
+  duration_ms: 0.32524
+  type: 'test'
+  ...
+# Subtest: only recognized server outcomes permit handoff
+ok 37 - only recognized server outcomes permit handoff
+  ---
+  duration_ms: 0.243427
+  type: 'test'
+  ...
+# Subtest: error copy contains no server internals and separates auth, expiry, safety and recoverable failures
+ok 38 - error copy contains no server internals and separates auth, expiry, safety and recoverable failures
+  ---
+  duration_ms: 0.593634
+  type: 'test'
+  ...
+# Subtest: malformed server output fails closed, canonical quote id is accepted
+ok 39 - malformed server output fails closed, canonical quote id is accepted
+  ---
+  duration_ms: 0.751361
+  type: 'test'
+  ...
+# Subtest: unclassified canonical safety outcome remains blocking without a service code
+ok 40 - unclassified canonical safety outcome remains blocking without a service code
+  ---
+  duration_ms: 0.22554
+  type: 'test'
+  ...
+# Subtest: diagnostic provenance survives confirmation and unknown provenance stays unconfirmed
+ok 41 - diagnostic provenance survives confirmation and unknown provenance stays unconfirmed
+  ---
+  duration_ms: 1.116502
+  type: 'test'
+  ...
+# Subtest: safety and pending analysis or confirmation always block intake
+ok 42 - safety and pending analysis or confirmation always block intake
+  ---
+  duration_ms: 0.24536
+  type: 'test'
+  ...
+# Subtest: all canonical outcomes render literal server amounts, quote and diagnostic are valid outcomes
+ok 43 - all canonical outcomes render literal server amounts, quote and diagnostic are valid outcomes
+  ---
+  duration_ms: 0.380333
+  type: 'test'
+  ...
+# Subtest: mobile consumes no pricing engine, legacy import or estimator secret; source guard precedes request
+ok 44 - mobile consumes no pricing engine, legacy import or estimator secret; source guard precedes request
+  ---
+  duration_ms: 1.240949
+  type: 'test'
+  ...
+# Subtest: preventive safety questions are hidden using the real canonical question metadata
+ok 45 - preventive safety questions are hidden using the real canonical question metadata
+  ---
+  duration_ms: 8.389625
+  type: 'test'
+  ...
+# Subtest: mild uncertainty has at most one useful qualification, no safety loop or invented answers
+ok 46 - mild uncertainty has at most one useful qualification, no safety loop or invented answers
+  ---
+  duration_ms: 0.248174
+  type: 'test'
+  ...
+# Subtest: a real STOP is never locally cleared, including after confirmation or exit
+ok 47 - a real STOP is never locally cleared, including after confirmation or exit
+  ---
+  duration_ms: 0.388254
+  type: 'test'
+  ...
+# Subtest: W6 preserves W4/W5 business services, mission engine and unchanged W2/W3 components byte-for-byte
+ok 48 - W6 preserves W4/W5 business services, mission engine and unchanged W2/W3 components byte-for-byte
+  ---
+  duration_ms: 2.87486
+  type: 'test'
+  ...
+# Subtest: W4 keeps original request, auth, watch, load, evidence, validation and adjustment callbacks
+ok 49 - W4 keeps original request, auth, watch, load, evidence, validation and adjustment callbacks
+  ---
+  duration_ms: 87.280115
+  type: 'test'
+  ...
+# Subtest: W4 request contract remains four arguments including normalized city and no GPS
+ok 50 - W4 request contract remains four arguments including normalized city and no GPS
+  ---
+  duration_ms: 1.110372
+  type: 'test'
+  ...
+# Subtest: PB1 V2 changes availability only within the former protected workspace service
+ok 51 - PB1 V2 changes availability only within the former protected workspace service
+  ---
+  duration_ms: 0.316667
+  type: 'test'
+  ...
+# Subtest: PB1 V2 city projections and photo timeout preserve all other mission/auth/result statements
+ok 52 - PB1 V2 city projections and photo timeout preserve all other mission/auth/result statements
+  ---
+  duration_ms: 17.681128
+  type: 'test'
+  ...
+# Subtest: PB1 cities are a verbatim projection of the canonical Mobile/backend registry
+ok 53 - PB1 cities are a verbatim projection of the canonical Mobile/backend registry
+  ---
+  duration_ms: 2.528508
+  type: 'test'
+  ...
+# Subtest: W4 foreground success returns only a city and never returns GPS coordinates
+ok 54 - W4 foreground success returns only a city and never returns GPS coordinates
+  ---
+  duration_ms: 0.694486
+  type: 'test'
+  ...
+# Subtest: W4 denied and permanently denied permissions never reach the location provider
+ok 55 - W4 denied and permanently denied permissions never reach the location provider
+  ---
+  duration_ms: 0.376296
+  type: 'test'
+  ...
+# Subtest: W4 disabled GPS, native errors and unsupported web all retain a manual fallback result
+ok 56 - W4 disabled GPS, native errors and unsupported web all retain a manual fallback result
+  ---
+  duration_ms: 0.389988
+  type: 'test'
+  ...
+# Subtest: W4 geocoding uses cities, known city aliases only for subregions, never guesses a province
+ok 57 - W4 geocoding uses cities, known city aliases only for subregions, never guesses a province
+  ---
+  duration_ms: 0.443548
+  type: 'test'
+  ...
+# Subtest: W4 timeout discards late fixes before geocoding and never requests GPS after a late permission
+ok 58 - W4 timeout discards late fixes before geocoding and never requests GPS after a late permission
+  ---
+  duration_ms: 34.673549
+  type: 'test'
+  ...
+# Subtest: W4 cancelled or backgrounded requests do no further location work
+ok 59 - W4 cancelled or backgrounded requests do no further location work
+  ---
+  duration_ms: 0.535346
+  type: 'test'
+  ...
+# Subtest: W4 native configuration is foreground only and SDK-compatible
+ok 60 - W4 native configuration is foreground only and SDK-compatible
+  ---
+  duration_ms: 1.006867
+  type: 'test'
+  ...
+# Subtest: Client cockpit always prioritizes an active intervention over alerts
+ok 61 - Client cockpit always prioritizes an active intervention over alerts
+  ---
+  duration_ms: 1.017262
+  type: 'test'
+  ...
+# Subtest: Artisan cockpit prioritizes mission, then offers, then availability and private activity
+ok 62 - Artisan cockpit prioritizes mission, then offers, then availability and private activity
+  ---
+  duration_ms: 0.624461
+  type: 'test'
+  ...
+# Subtest: DS2 real primitives render their accessible states with the installed React Native Web adapter
+ok 63 - DS2 real primitives render their accessible states with the installed React Native Web adapter
+  ---
+  duration_ms: 627.912296
+  type: 'test'
+  ...
+# Subtest: DS2 retains every P1–P7 token value while new screens opt into semantic roles
+ok 64 - DS2 retains every P1–P7 token value while new screens opt into semantic roles
+  ---
+  duration_ms: 1.898539
+  type: 'test'
+  ...
+# Subtest: DS2 supported foreground/surface pairings preserve readable contrast
+ok 65 - DS2 supported foreground/surface pairings preserve readable contrast
+  ---
+  duration_ms: 0.578642
+  type: 'test'
+  ...
+# Subtest: DS2 typography reserves readable line height and moderate emphasis
+ok 66 - DS2 typography reserves readable line height and moderate emphasis
+  ---
+  duration_ms: 0.167832
+  type: 'test'
+  ...
+# Subtest: screen metrics preserve portrait padding, protect side cutouts and reserve floating controls once
+ok 67 - screen metrics preserve portrait padding, protect side cutouts and reserve floating controls once
+  ---
+  duration_ms: 0.275374
+  type: 'test'
+  ...
+# Subtest: busy and disabled states cannot be weakened by accessibility overrides
+ok 68 - busy and disabled states cannot be weakened by accessibility overrides
+  ---
+  duration_ms: 0.231939
+  type: 'test'
+  ...
+# Subtest: reduced motion retains press feedback without spatial transform; disabled never presses
+ok 69 - reduced motion retains press feedback without spatial transform; disabled never presses
+  ---
+  duration_ms: 0.207663
+  type: 'test'
+  ...
+# Subtest: all motion presets remove both duration and orchestration delay under Reduced Motion
+ok 70 - all motion presets remove both duration and orchestration delay under Reduced Motion
+  ---
+  duration_ms: 0.208945
+  type: 'test'
+  ...
+# Subtest: motion preference shares one native subscription, defaults static and releases it
+ok 71 - motion preference shares one native subscription, defaults static and releases it
+  ---
+  duration_ms: 0.29863
+  type: 'test'
+  ...
+# Subtest: late preference read cannot override a newer native event or an unmounted generation
+ok 72 - late preference read cannot override a newer native event or an unmounted generation
+  ---
+  duration_ms: 0.254293
+  type: 'test'
+  ...
+# Subtest: preference read failures leave content static and visible
+ok 73 - preference read failures leave content static and visible
+  ---
+  duration_ms: 0.31892
+  type: 'test'
+  ...
+# Subtest: Agenda inputs format naturally without technical ISO syntax
+ok 74 - Agenda inputs format naturally without technical ISO syntax
+  ---
+  duration_ms: 2.594718
+  type: 'test'
+  ...
+# Subtest: Agenda rejects impossible dates and invalid times
+ok 75 - Agenda rejects impossible dates and invalid times
+  ---
+  duration_ms: 16.344054
+  type: 'test'
+  ...
+# Subtest: Mobile UI deadline resolves fast work and bounds stalled work
+ok 76 - Mobile UI deadline resolves fast work and bounds stalled work
+  ---
+  duration_ms: 15.644381
+  type: 'test'
+  ...
+# Subtest: dispatch feed accepts only canonical active queue offers
+ok 77 - dispatch feed accepts only canonical active queue offers
+  ---
+  duration_ms: 1.49404
+  type: 'test'
+  ...
+# Subtest: dispatch feed fails closed on malformed RPC payload
+ok 78 - dispatch feed fails closed on malformed RPC payload
+  ---
+  duration_ms: 0.157998
+  type: 'test'
+  ...
+# Subtest: W2 Drawer capture accepts final geometry and the 390px width cap
+ok 79 - W2 Drawer capture accepts final geometry and the 390px width cap
+  ---
+  duration_ms: 1.678858
+  type: 'test'
+  ...
+# Subtest: W2 Drawer capture rejects mounted controls while the panel is off-screen or moving
+ok 80 - W2 Drawer capture rejects mounted controls while the panel is off-screen or moving
+  ---
+  duration_ms: 3.95765
+  type: 'test'
+  ...
+# Subtest: W2 Drawer capture rejects wrong width, hidden critical controls and overflow
+ok 81 - W2 Drawer capture rejects wrong width, hidden critical controls and overflow
+  ---
+  duration_ms: 0.943181
+  type: 'test'
+  ...
+# Subtest: Vercel routes M5 native RAFI endpoints to isolated preview functions
+ok 82 - Vercel routes M5 native RAFI endpoints to isolated preview functions
+  ---
+  duration_ms: 1.167939
+  type: 'test'
+  ...
+# Subtest: mobile bundle never embeds privileged provider or Supabase server credentials
+ok 83 - mobile bundle never embeds privileged provider or Supabase server credentials
+  ---
+  duration_ms: 0.35845
+  type: 'test'
+  ...
+# Subtest: native RAFI gateways require the authenticated Supabase session token
+ok 84 - native RAFI gateways require the authenticated Supabase session token
+  ---
+  duration_ms: 0.216326
+  type: 'test'
+  ...
+# Subtest: server-side native RAFI functions are preview-only and staging-pinned
+ok 85 - server-side native RAFI functions are preview-only and staging-pinned
+  ---
+  duration_ms: 0.237758
+  type: 'test'
+  ...
+# Subtest: Magic Loop retains canonical request id across matching to found
+ok 86 - Magic Loop retains canonical request id across matching to found
+  ---
+  duration_ms: 0.800475
+  type: 'test'
+  ...
+# Subtest: mobile gateway response preserves diagnostic and labour semantics without calculating or decoding
+ok 87 - mobile gateway response preserves diagnostic and labour semantics without calculating or decoding
+  ---
+  duration_ms: 3.433781
+  type: 'test'
+  ...
+# Subtest: notification routing opens the exact mission for the matching universe
+ok 88 - notification routing opens the exact mission for the matching universe
+  ---
+  duration_ms: 1.486349
+  type: 'test'
+  ...
+# Subtest: notification routing never crosses Client and Artisan universes
+ok 89 - notification routing never crosses Client and Artisan universes
+  ---
+  duration_ms: 0.185209
+  type: 'test'
+  ...
+# Subtest: notification routing supports useful workspace destinations and safe fallback
+ok 90 - notification routing supports useful workspace destinations and safe fallback
+  ---
+  duration_ms: 0.382737
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: B4 notification targets are owner-read objects of the correct type; missing and cross-role never fall home
+ok 91 - B4 notification targets are owner-read objects of the correct type; missing and cross-role never fall home
+  ---
+  duration_ms: 1.629574
+  type: 'test'
+  ...
+# Subtest: B4 Home keeps dated module data after network failure only while fresh canonical authority succeeds
+ok 92 - B4 Home keeps dated module data after network failure only while fresh canonical authority succeeds
+  ---
+  duration_ms: 3.370587
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: B4 actual shared query keeps dated data on failed refresh and immediately purges revoked identity; failed action never reports success
+ok 93 - B4 actual shared query keeps dated data on failed refresh and immediately purges revoked identity; failed action never reports success
+  ---
+  duration_ms: 217.320688
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: B4 actual Clients retains all 50 owner rows, searchable without resetting on rerender, with a virtualized page contract
+ok 94 - B4 actual Clients retains all 50 owner rows, searchable without resetting on rerender, with a virtualized page contract
+  ---
+  duration_ms: 18.498439
+  type: 'test'
+  ...
+# Subtest: B5 quote writes compare owner, draft status and version atomically; stale conflict and lost-response retry never overwrite twice
+ok 95 - B5 quote writes compare owner, draft status and version atomically; stale conflict and lost-response retry never overwrite twice
+  ---
+  duration_ms: 62.355528
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: B6 actual profile preserves dirty phone/zones across refresh and bio save; remote conflicts require an explicit choice and section-only writes
+ok 96 - B6 actual profile preserves dirty phone/zones across refresh and bio save; remote conflicts require an explicit choice and section-only writes
+  ---
+  duration_ms: 94.834016
+  type: 'test'
+  ...
+# Subtest: B6 durable pending intent survives cold reload, rejects changed payload and disk failure before mutation, and stays owner isolated
+ok 97 - B6 durable pending intent survives cold reload, rejects changed payload and disk failure before mutation, and stays owner isolated
+  ---
+  duration_ms: 28.175964
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: B6 native navigation guard keeps edits on Cancel, supports durable exit, and never blocks revocation
+ok 98 - B6 native navigation guard keeps edits on Cancel, supports durable exit, and never blocks revocation
+  ---
+  duration_ms: 13.204326
+  type: 'test'
+  ...
+# Subtest: B6 actual Agenda API retries an existing stable ID without resetting its later completed status
+ok 99 - B6 actual Agenda API retries an existing stable ID without resetting its later completed status
+  ---
+  duration_ms: 44.884167
+  type: 'test'
+  ...
+# Subtest: B6 pending form loads only the canonical owner payload, freezes editing and releases after canonical settlement
+ok 100 - B6 pending form loads only the canonical owner payload, freezes editing and releases after canonical settlement
+  ---
+  duration_ms: 25.620384
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: B2 city proposal is canonical, bounded by words, ambiguous-safe and subordinate to explicit selection
+ok 101 - B2 city proposal is canonical, bounded by words, ambiguous-safe and subordinate to explicit selection
+  ---
+  duration_ms: 3.841616
+  type: 'test'
+  ...
+# Subtest: B2 versioned facts preserve provenance and dependency boundaries
+ok 102 - B2 versioned facts preserve provenance and dependency boundaries
+  ---
+  duration_ms: 0.35212
+  type: 'test'
+  ...
+# Subtest: B2 expired estimator transports the confirmed trade hint, without replaying incompatible answers or confirming
+ok 103 - B2 expired estimator transports the confirmed trade hint, without replaying incompatible answers or confirming
+  ---
+  duration_ms: 0.602077
+  type: 'test'
+  ...
+# Subtest: B2 actual 35-option picker retains the complete catalogue and searches accents without creating values
+ok 104 - B2 actual 35-option picker retains the complete catalogue and searches accents without creating values
+  ---
+  duration_ms: 1086.840278
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Each child in a list should have a unique "key" prop.
+# Check the render method of `FlatList`. See https://react.dev/link/warning-keys for more information.
+# Subtest: PB1 canonical CTA variants remain visible buttons and block duplicate busy actions
+ok 105 - PB1 canonical CTA variants remain visible buttons and block duplicate busy actions
+  ---
+  duration_ms: 130.395718
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 actual city selector renders the entire supported registry and selects canonical accented values
+ok 106 - PB1 actual city selector renders the entire supported registry and selects canonical accented values
+  ---
+  duration_ms: 69.34215
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 V2 actual microphone component survives permission-return rerender, transmits only on Stop, cleans background and unmount
+ok 107 - PB1 V2 actual microphone component survives permission-return rerender, transmits only on Stop, cleans background and unmount
+  ---
+  duration_ms: 30.400213
+  type: 'test'
+  ...
+# Subtest: PB1 V2 actual capture normalizes the selected bytes source and handles cancellation and late completion
+ok 108 - PB1 V2 actual capture normalizes the selected bytes source and handles cancellation and late completion
+  ---
+  duration_ms: 13.079819
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 V2 actual photo preview renders selected URI, viewing and correction controls without analysis
+ok 109 - PB1 V2 actual photo preview renders selected URI, viewing and correction controls without analysis
+  ---
+  duration_ms: 40.027332
+  type: 'test'
+  ...
+# Subtest: PB1 V2 microphone explanation is accepted once per installation across roles; native permission remains independent
+ok 110 - PB1 V2 microphone explanation is accepted once per installation across roles; native permission remains independent
+  ---
+  duration_ms: 12.832912
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 final real canonical loop component selects native alpha sources and never decodes an unseen MINI
+ok 111 - PB1 final real canonical loop component selects native alpha sources and never decodes an unseen MINI
+  ---
+  duration_ms: 28.155803
+  type: 'test'
+  ...
+# Subtest: PB1 final real Artisan Copilot answers before navigation and consumes execution/cancellation
+ok 112 - PB1 final real Artisan Copilot answers before navigation and consumes execution/cancellation
+  ---
+  duration_ms: 82.354627
+  type: 'test'
+  ...
+# Subtest: PB1 native RAFI regression: RN AbortSignal has no timeout; corrected estimator reaches HTTP
+ok 113 - PB1 native RAFI regression: RN AbortSignal has no timeout; corrected estimator reaches HTTP
+  ---
+  duration_ms: 104.369086
+  type: 'test'
+  ...
+# Subtest: PB1 fetch deadline covers a stalled body and clears completed timers
+ok 114 - PB1 fetch deadline covers a stalled body and clears completed timers
+  ---
+  duration_ms: 49.308344
+  type: 'test'
+  ...
+# Subtest: PB1 canonical city selection works empty, exact, partial and without accents
+ok 115 - PB1 canonical city selection works empty, exact, partial and without accents
+  ---
+  duration_ms: 11.449373
+  type: 'test'
+  ...
+# Subtest: PB1 city write boundaries preserve request idempotency and profile ownership
+ok 116 - PB1 city write boundaries preserve request idempotency and profile ownership
+  ---
+  duration_ms: 21.791709
+  type: 'test'
+  ...
+# Subtest: PB1 real Auth owner preserves screen identity during foreground, blocks access, and handles offline retry
+ok 117 - PB1 real Auth owner preserves screen identity during foreground, blocks access, and handles offline retry
+  ---
+  duration_ms: 43.880415
+  type: 'test'
+  ...
+# Subtest: PB1 revalidation cannot restore a revoked or switched identity
+ok 118 - PB1 revalidation cannot restore a revoked or switched identity
+  ---
+  duration_ms: 0.226552
+  type: 'test'
+  ...
+# Subtest: PB1 date/time picker preserves native wall components and stores Casablanca time independently of device
+ok 119 - PB1 date/time picker preserves native wall components and stores Casablanca time independently of device
+  ---
+  duration_ms: 18.979283
+  type: 'test'
+  ...
+# Subtest: PB1 finance labels never expose raw enums and preserve linked/independent movements
+ok 120 - PB1 finance labels never expose raw enums and preserve linked/independent movements
+  ---
+  duration_ms: 0.311179
+  type: 'test'
+  ...
+# Subtest: PB1 business writes retain the same draft, CRM links and independent expense
+ok 121 - PB1 business writes retain the same draft, CRM links and independent expense
+  ---
+  duration_ms: 87.408228
+  type: 'test'
+  ...
+# Subtest: PB1 Arabic Darija, Arabizi, French and code switching share agenda/today with direct owned-data answers
+ok 122 - PB1 Arabic Darija, Arabizi, French and code switching share agenda/today with direct owned-data answers
+  ---
+  duration_ms: 29.166725
+  type: 'test'
+  ...
+# Subtest: PB1 agenda distinguishes unavailable, zero and cancelled appointments and uses Morocco date boundary
+ok 123 - PB1 agenda distinguishes unavailable, zero and cancelled appointments and uses Morocco date boundary
+  ---
+  duration_ms: 1.614181
+  type: 'test'
+  ...
+# Subtest: PB1 canonical registry has no duplicate and preserves supported cities with tolerant accents
+ok 124 - PB1 canonical registry has no duplicate and preserves supported cities with tolerant accents
+  ---
+  duration_ms: 2.234225
+  type: 'test'
+  ...
+# Subtest: PB1 certified source hash, all frames and temporal invariants are recorded for each native alpha derivative
+ok 125 - PB1 certified source hash, all frames and temporal invariants are recorded for each native alpha derivative
+  ---
+  duration_ms: 9.010069
+  type: 'test'
+  ...
+# Subtest: PB1 native loop pauses for background/viewport/Reduce Motion; late load and unmount cannot restart decoding
+ok 126 - PB1 native loop pauses for background/viewport/Reduce Motion; late load and unmount cannot restart decoding
+  ---
+  duration_ms: 7.214555
+  type: 'test'
+  ...
+# Subtest: PB1 shared page rhythm and dock clearance fit small Android and enlarged content
+ok 127 - PB1 shared page rhythm and dock clearance fit small Android and enlarged content
+  ---
+  duration_ms: 0.489026
+  type: 'test'
+  ...
+# Subtest: PB1 informative finance and quote questions answer business data without proposing a write
+ok 128 - PB1 informative finance and quote questions answer business data without proposing a write
+  ---
+  duration_ms: 7.43634
+  type: 'test'
+  ...
+# Subtest: PB1 agenda does not answer today for a different period or turn an availability question into a change
+ok 129 - PB1 agenda does not answer today for a different period or turn an availability question into a change
+  ---
+  duration_ms: 0.61802
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 account validates required coordinates, retains edits on foreground and cancels without a write
+ok 130 - PB1 account validates required coordinates, retains edits on foreground and cancels without a write
+  ---
+  duration_ms: 185.957349
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 drafts survive a cold reload, stay owner-scoped, and cannot return after removal or session invalidation
+ok 131 - PB1 drafts survive a cold reload, stay owner-scoped, and cannot return after removal or session invalidation
+  ---
+  duration_ms: 197.975675
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 estimator restores question answers and offers an exit after failure without creating a request
+ok 132 - PB1 estimator restores question answers and offers an exit after failure without creating a request
+  ---
+  duration_ms: 109.075559
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 real Devis tabs, preview and confirmation reject forged sources and require each preceding stage
+ok 133 - PB1 real Devis tabs, preview and confirmation reject forged sources and require each preceding stage
+  ---
+  duration_ms: 170.669796
+  type: 'test'
+  ...
+# Subtest: PB1 generic names are omitted and dates remain local calendar dates
+ok 134 - PB1 generic names are omitted and dates remain local calendar dates
+  ---
+  duration_ms: 5.048593
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 Mon espace shows every active request and resolves a multi-request follow action explicitly
+ok 135 - PB1 Mon espace shows every active request and resolves a multi-request follow action explicitly
+  ---
+  duration_ms: 31.401731
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 Agenda identifies each invalid field, focuses it and creates only after complete input
+ok 136 - PB1 Agenda identifies each invalid field, focuses it and creates only after complete input
+  ---
+  duration_ms: 45.51672
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 native page structure keeps one dock, contextual CTA inside scroll and compact Auth hierarchy
+ok 137 - PB1 native page structure keeps one dock, contextual CTA inside scroll and compact Auth hierarchy
+  ---
+  duration_ms: 57.654934
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 money: canonical cents, discounts, large and zero totals, commission included only for FIXEO, no fiscal inference
+ok 138 - PB1 money: canonical cents, discounts, large and zero totals, commission included only for FIXEO, no fiscal inference
+  ---
+  duration_ms: 3.041
+  type: 'test'
+  ...
+# Subtest: PB1 deterministic parents preserve CRM context and availability; no cross-universe incidental back
+ok 139 - PB1 deterministic parents preserve CRM context and availability; no cross-universe incidental back
+  ---
+  duration_ms: 0.488526
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 actual Client home: A+B separate, correct follow targets, independent new intent, refresh and status priority
+ok 140 - PB1 actual Client home: A+B separate, correct follow targets, independent new intent, refresh and status priority
+  ---
+  duration_ms: 152.501194
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 quote acceptance/refusal buttons open a visible confirmation and invoke the chosen decision
+ok 141 - PB1 quote acceptance/refusal buttons open a visible confirmation and invoke the chosen decision
+  ---
+  duration_ms: 279.228774
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 actual composer isolates drafts A/B and abandoned C; ambiguous retry keeps the identical key
+ok 142 - PB1 actual composer isolates drafts A/B and abandoned C; ambiguous retry keeps the identical key
+  ---
+  duration_ms: 259.005757
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 actual estimator steps, restored answer, recap, result, confirmation and identical retry
+ok 143 - PB1 actual estimator steps, restored answer, recap, result, confirmation and identical retry
+  ---
+  duration_ms: 61.668208
+  type: 'test'
+  ...
+# Subtest: PB1 push permission rehydrates across logins and registers without another OS prompt
+ok 144 - PB1 push permission rehydrates across logins and registers without another OS prompt
+  ---
+  duration_ms: 15.631832
+  type: 'test'
+  ...
+# Subtest: PB1 notification destinations respect s1b request identities, M4 mission metadata and absent targets
+ok 145 - PB1 notification destinations respect s1b request identities, M4 mission metadata and absent targets
+  ---
+  duration_ms: 2.51657
+  type: 'test'
+  ...
+# Subtest: Client progress cannot invent assignment or advance a search based on elapsed time
+ok 146 - Client progress cannot invent assignment or advance a search based on elapsed time
+  ---
+  duration_ms: 1.635183
+  type: 'test'
+  ...
+# Subtest: Expired estimator reuses matching answers with fresh authority and never confirms a request
+ok 147 - Expired estimator reuses matching answers with fresh authority and never confirms a request
+  ---
+  duration_ms: 0.897301
+  type: 'test'
+  ...
+# Subtest: Changed question, option or safety stop is never replayed blindly
+ok 148 - Changed question, option or safety stop is never replayed blindly
+  ---
+  duration_ms: 0.401965
+  type: 'test'
+  ...
+# Subtest: Audited television text cannot be misclassified from the substring entreprises
+ok 149 - Audited television text cannot be misclassified from the substring entreprises
+  ---
+  duration_ms: 0.815438
+  type: 'test'
+  ...
+# Subtest: Vision compares only observations with declared need and keeps raw keys out of client prose
+ok 150 - Vision compares only observations with declared need and keeps raw keys out of client prose
+  ---
+  duration_ms: 0.645152
+  type: 'test'
+  ...
+# Subtest: PB1 V2 material: running frames change breath and independent internal flow without React
+ok 151 - PB1 V2 material: running frames change breath and independent internal flow without React
+  ---
+  duration_ms: 12.905846
+  type: 'test'
+  ...
+# Subtest: PB1 V2 material: local touch, immediate response, peak and viscous relaxation
+ok 152 - PB1 V2 material: local touch, immediate response, peak and viscous relaxation
+  ---
+  duration_ms: 0.830581
+  type: 'test'
+  ...
+# Subtest: PB1 V2 material: background/viewport pause, no catch-up jump, Reduce Motion and cleanup
+ok 153 - PB1 V2 material: background/viewport pause, no catch-up jump, Reduce Motion and cleanup
+  ---
+  duration_ms: 1.087638
+  type: 'test'
+  ...
+# Subtest: PB1 V2 material: mode transitions preserve phase and compact reduces amplitude
+ok 154 - PB1 V2 material: mode transitions preserve phase and compact reduces amplitude
+  ---
+  duration_ms: 0.764652
+  type: 'test'
+  ...
+# Subtest: PB1 V2 permission-return refresh keeps the Artisan capture mounted, failed authority clears private data
+ok 155 - PB1 V2 permission-return refresh keeps the Artisan capture mounted, failed authority clears private data
+  ---
+  duration_ms: 4.334073
+  type: 'test'
+  ...
+# Subtest: PB1 V2 city: old spelling is projected canonically without mutation and search supports accents/case
+ok 156 - PB1 V2 city: old spelling is projected canonically without mutation and search supports accents/case
+  ---
+  duration_ms: 1.164204
+  type: 'test'
+  ...
+# Subtest: PB1 V2 geo: recent native cache bypasses cold GPS; missing cache falls back to live fix
+ok 157 - PB1 V2 geo: recent native cache bypasses cold GPS; missing cache falls back to live fix
+  ---
+  duration_ms: 0.7833
+  type: 'test'
+  ...
+# Subtest: PB1 V2 geo: timeout and cancelled attempt cannot overwrite context or reverse-geocode a late fix
+ok 158 - PB1 V2 geo: timeout and cancelled attempt cannot overwrite context or reverse-geocode a late fix
+  ---
+  duration_ms: 10.593744
+  type: 'test'
+  ...
+# Subtest: PB1 V2 availability: write plus authority read; refusal/mismatch never returns a false success
+ok 159 - PB1 V2 availability: write plus authority read; refusal/mismatch never returns a false success
+  ---
+  duration_ms: 142.490808
+  type: 'test'
+  ...
+# Subtest: PB1 V2 copilot: navigation, exact owned quote/client, explicit unsupported, write proposals only
+ok 160 - PB1 V2 copilot: navigation, exact owned quote/client, explicit unsupported, write proposals only
+  ---
+  duration_ms: 2.432934
+  type: 'test'
+  ...
+# Subtest: PB1 V2 multipart uses the selected local photo bytes source and never starts until called
+ok 161 - PB1 V2 multipart uses the selected local photo bytes source and never starts until called
+  ---
+  duration_ms: 35.178925
+  type: 'test'
+  ...
+# Subtest: PB1 V2 city projection covers both mission details and the current request without changing RPC authority
+ok 162 - PB1 V2 city projection covers both mission details and the current request without changing RPC authority
+  ---
+  duration_ms: 21.24783
+  type: 'test'
+  ...
+# Subtest: PB1 V2 stalled native location cache still leaves time for a fresh fix
+ok 163 - PB1 V2 stalled native location cache still leaves time for a fresh fix
+  ---
+  duration_ms: 20.661927
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: Post-audit P0 actual composer: proposal, ignore/replace/append/undo, parasite, double tap, network, blur, session loss and restart
+ok 164 - Post-audit P0 actual composer: proposal, ignore/replace/append/undo, parasite, double tap, network, blur, session loss and restart
+  ---
+  duration_ms: 510.77172
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1.1 instrumented native scroll: small Android resize/overlay, last and multiline fields, focus changes and cleanup
+ok 165 - PB1.1 instrumented native scroll: small Android resize/overlay, last and multiline fields, focus changes and cleanup
+  ---
+  duration_ms: 1033.082918
+  type: 'test'
+  ...
+# Subtest: PB1.1 Casablanca 09/10/2026 14:00 survives device TZ changes; real dates and money precision
+ok 166 - PB1.1 Casablanca 09/10/2026 14:00 survives device TZ changes; real dates and money precision
+  ---
+  duration_ms: 17.726662
+  type: 'test'
+  ...
+# Subtest: PB1.1 PDF model uses exact editor totals, escaped content, accents and honest personal provenance
+ok 167 - PB1.1 PDF model uses exact editor totals, escaped content, accents and honest personal provenance
+  ---
+  duration_ms: 6.239166
+  type: 'test'
+  ...
+# Subtest: PB1.1 PDF export refuses invalid bytes and never declares sending when share closes
+ok 168 - PB1.1 PDF export refuses invalid bytes and never declares sending when share closes
+  ---
+  duration_ms: 10.991233
+  type: 'test'
+  ...
+# Subtest: PB1.1 quote drafts survive cold reload, isolate owners and scopes, and purge on explicit logout
+ok 169 - PB1.1 quote drafts survive cold reload, isolate owners and scopes, and purge on explicit logout
+  ---
+  duration_ms: 17.722736
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1.1 actual Devis 250: wizard, cold remount, preview, idempotent draft, reopen, edit and CRM association
+ok 170 - PB1.1 actual Devis 250: wizard, cold remount, preview, idempotent draft, reopen, edit and CRM association
+  ---
+  duration_ms: 147.824696
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1.1 actual CRM cancel restores values, survives foreground refresh and performs zero writes
+ok 171 - PB1.1 actual CRM cancel restores values, survives foreground refresh and performs zero writes
+  ---
+  duration_ms: 23.157084
+  type: 'test'
+  ...
+# Subtest: PB1.1 actual Finance close writes nothing; client changes clear incompatible job and preserve 500/120
+ok 172 - PB1.1 actual Finance close writes nothing; client changes clear incompatible job and preserve 500/120
+  ---
+  duration_ms: 22.390419
+  type: 'test'
+  ...
+# Subtest: RAFI local rules classify common FIXEO needs without AI cost
+ok 173 - RAFI local rules classify common FIXEO needs without AI cost
+  ---
+  duration_ms: 1.300659
+  type: 'test'
+  ...
+# Subtest: RAFI does not invent a trade for an unknown short need
+ok 174 - RAFI does not invent a trade for an unknown short need
+  ---
+  duration_ms: 0.174383
+  type: 'test'
+  ...
+# Subtest: RAFI keeps ambiguous room-level requests unclassified until the user adds a concrete problem
+ok 175 - RAFI keeps ambiguous room-level requests unclassified until the user adds a concrete problem
+  ---
+  duration_ms: 0.186521
+  type: 'test'
+  ...
+# Subtest: Living Sphere uses six canonical states, with legacy aliases and real action outcomes
+ok 176 - Living Sphere uses six canonical states, with legacy aliases and real action outcomes
+  ---
+  duration_ms: 2.05162
+  type: 'test'
+  ...
+# Subtest: Living Sphere keeps compact calm, attention quieter, and reduced motion light-only
+ok 177 - Living Sphere keeps compact calm, attention quieter, and reduced motion light-only
+  ---
+  duration_ms: 0.935859
+  type: 'test'
+  ...
+# Subtest: Living Sphere visibility excludes clipped/offscreen content and invalid measurements
+ok 178 - Living Sphere visibility excludes clipped/offscreen content and invalid measurements
+  ---
+  duration_ms: 0.238869
+  type: 'test'
+  ...
+# Subtest: Living Sphere preserves exact master pixels and static material renderer
+ok 179 - Living Sphere preserves exact master pixels and static material renderer
+  ---
+  duration_ms: 1.812089
+  type: 'test'
+  ...
+# Subtest: PB1 canonical and legacy semantic states and French labels are exhaustive; legacy calls retain identity
+ok 180 - PB1 canonical and legacy semantic states and French labels are exhaustive; legacy calls retain identity
+  ---
+  duration_ms: 3.929848
+  type: 'test'
+  ...
+# Subtest: W3 client maps only known facts, keeps creation distinct from matching and validation from success
+ok 181 - W3 client maps only known facts, keeps creation distinct from matching and validation from success
+  ---
+  duration_ms: 0.312711
+  type: 'test'
+  ...
+# Subtest: W3 artisan derives priorities from the actual mission, offers, acceptance and load-error inputs
+ok 182 - W3 artisan derives priorities from the actual mission, offers, acceptance and load-error inputs
+  ---
+  duration_ms: 0.260853
+  type: 'test'
+  ...
+# Subtest: success is consumed once, never replayed by polling, focus, or Reduced Motion changes
+ok 183 - success is consumed once, never replayed by polling, focus, or Reduced Motion changes
+  ---
+  duration_ms: 0.303226
+  type: 'test'
+  ...
+# Subtest: all sizes and motion peaks stay within frame; compact fits unchanged W2 56px host
+ok 184 - all sizes and motion peaks stay within frame; compact fits unchanged W2 56px host
+  ---
+  duration_ms: 1.140968
+  type: 'test'
+  ...
+# Subtest: activity shares one native listener and cleans up the last subscriber
+ok 185 - activity shares one native listener and cleans up the last subscriber
+  ---
+  duration_ms: 0.413302
+  type: 'test'
+  ...
+# Subtest: presence engine has no backend or per-frame React side effects; visual material is centralized
+ok 186 - presence engine has no backend or per-frame React side effects; visual material is centralized
+  ---
+  duration_ms: 0.620454
+  type: 'test'
+  ...
+# Subtest: W6 permission explanation preserves the Evidence upload contract
+ok 187 - W6 permission explanation preserves the Evidence upload contract
+  ---
+  duration_ms: 0.263036
+  type: 'test'
+  ...
+# Subtest: RAFI keeps manual problem and city as user-declared facts
+ok 188 - RAFI keeps manual problem and city as user-declared facts
+  ---
+  duration_ms: 1.54734
+  type: 'test'
+  ...
+# Subtest: RAFI preserves explicit user confirmation of an AI-assisted description
+ok 189 - RAFI preserves explicit user confirmation of an AI-assisted description
+  ---
+  duration_ms: 0.217768
+  type: 'test'
+  ...
+# Subtest: RAFI context omits empty facts
+ok 190 - RAFI context omits empty facts
+  ---
+  duration_ms: 0.239922
+  type: 'test'
+  ...
+# Subtest: Shell subpages do not render legacy duplicate back rows
+ok 191 - Shell subpages do not render legacy duplicate back rows
+  ---
+  duration_ms: 7.112852
+  type: 'test'
+  ...
+# Subtest: Client workspace detail pages use bounded loading and foreground refresh
+ok 192 - Client workspace detail pages use bounded loading and foreground refresh
+  ---
+  duration_ms: 2.962472
+  type: 'test'
+  ...
+# Subtest: W2 client: real Drawer routes and active state
+ok 193 - W2 client: real Drawer routes and active state
+  ---
+  duration_ms: 1.688163
+  type: 'test'
+  ...
+# Subtest: W2 artisan: real Drawer routes and active state
+ok 194 - W2 artisan: real Drawer routes and active state
+  ---
+  duration_ms: 0.414864
+  type: 'test'
+  ...
+# Subtest: PB1 dock persists on every canonical top-level route, includes owned details, excludes auth/cross-role
+ok 195 - PB1 dock persists on every canonical top-level route, includes owned details, excludes auth/cross-role
+  ---
+  duration_ms: 1.48044
+  type: 'test'
+  ...
+# Subtest: W2 Dock limits, duplicate guard, visibility and badges
+ok 196 - W2 Dock limits, duplicate guard, visibility and badges
+  ---
+  duration_ms: 0.681857
+  type: 'test'
+  ...
+# Subtest: W2 floating reservation and enlarged text: safe area + height + gaps counted once
+ok 197 - W2 floating reservation and enlarged text: safe area + height + gaps counted once
+  ---
+  duration_ms: 0.415075
+  type: 'test'
+  ...
+# Subtest: W2 targets and Reduced Motion: DS2, no pressed transform, no delayed close
+ok 198 - W2 targets and Reduced Motion: DS2, no pressed transform, no delayed close
+  ---
+  duration_ms: 0.231879
+  type: 'test'
+  ...
+# Subtest: W2 installed StackRouter: no duplicate roots, detail preserves return history
+ok 199 - W2 installed StackRouter: no duplicate roots, detail preserves return history
+  ---
+  duration_ms: 4.490393
+  type: 'test'
+  ...
+# Subtest: W2 actual JSX: one stable Shell per screen, including the shared W5 Artisan frame
+ok 200 - W2 actual JSX: one stable Shell per screen, including the shared W5 Artisan frame
+  ---
+  duration_ms: 144.016131
+  type: 'test'
+  ...
+# Subtest: W2 Dock yields space to content when enlarged header/toolbar or landscape leaves insufficient room
+ok 201 - W2 Dock yields space to content when enlarged header/toolbar or landscape leaves insufficient room
+  ---
+  duration_ms: 0.354303
+  type: 'test'
+  ...
+# Subtest: W2 root right-actions preserve their parent context; subpage right-actions return to an existing root
+ok 202 - W2 root right-actions preserve their parent context; subpage right-actions return to an existing root
+  ---
+  duration_ms: 9.043249
+  type: 'test'
+  ...
+# "shadow*" style props are deprecated. Use "boxShadow".
+# props.pointerEvents is deprecated. Use style.pointerEvents
+# Subtest: W2 real Drawer/Dock/controls render accessible states with React Native Web
+ok 203 - W2 real Drawer/Dock/controls render accessible states with React Native Web
+  ---
+  duration_ms: 944.689426
+  type: 'test'
+  ...
+1..203
+# tests 203
+# suites 0
+# pass 203
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3711.246405

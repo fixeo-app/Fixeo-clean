@@ -157,6 +157,10 @@ export function artisanError(error: unknown) {
     return "Votre profil doit être approuvé par FIXEO avant cette action.";
   if (/invalid_phone/i.test(message))
     return "Renseignez un numéro de téléphone marocain valide.";
+  if (/PENDING_WRITE|BUSINESS_PENDING_CONFLICT/.test(message)) return "Une opération reste à vérifier. Reprenez ses informations conservées avant une nouvelle saisie.";
+  if (/CLIENT_VERSION_CONFLICT/.test(message)) return "Cette fiche a changé sur le serveur. Votre saisie est conservée ; comparez les versions.";
+  if (/DRAFT_PERSIST_FAILED/.test(message)) return "La copie locale n’a pas pu être enregistrée. Aucune nouvelle écriture serveur n’a été lancée.";
+  if (/PROFILE_VERSION_CONFLICT/.test(message)) return "Cette section a changé sur le serveur. Comparez les informations avant d’enregistrer.";
   if (/BIO_TOO_LONG/.test(message))
     return "Votre présentation doit contenir au maximum 4 000 caractères.";
   if (/BIO_CONFIRMATION_PENDING/.test(message))

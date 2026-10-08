@@ -146,6 +146,7 @@ test('PB1 finance labels never expose raw enums and preserve linked/independent 
 test('PB1 business writes retain the same draft, CRM links and independent expense', async () => {
   const writes: Array<{ table: string; action: string; payload: any; filters: Record<string, unknown> }> = [];
   const api = load('lib/artisanOS.ts', {
+    './authEvents': {privateSessionGeneration:()=>0}, './pendingBusinessWrite':{guardedBusinessWrite:(_o:any,_s:any,_p:any,fn:any)=>fn()},
     './quoteVersion': await import('../lib/quoteVersion'), './dateValidation': await import('../lib/dateValidation'), './moneyContract': await import('../lib/moneyContract'),
     './artisanProgressive': { inFlightRead: (fn: unknown) => fn },
     './artisanExperience': { calculateQuote }, './supabase': { supabase: {
@@ -158,6 +159,8 @@ test('PB1 business writes retain the same draft, CRM links and independent expen
         const write = { table, action: '', payload: null as any, filters: {} as Record<string, unknown> };
         const query = {
           update(payload: unknown) { write.action = 'update'; write.payload = payload; return query; },
+          insert(payload: unknown) { write.action = 'insert'; write.payload = payload; return query; },
+          async maybeSingle() { return {data:null}; },
           upsert(payload: unknown) { write.action = 'upsert'; write.payload = payload; return query; },
           eq(key: string, value: unknown) { write.filters[key] = value; return query; },
           select() { return query; },

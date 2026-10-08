@@ -1,0 +1,15 @@
+# B6 — Section drafts, guarded exit and unknown outcomes
+
+2026-10-08. PASS SOFTWARE: TypeScript, lint, 203 Mobile tests; evidence b6-*. No native or authenticated live claim.
+
+Profile now has Coordinates / Trades and zones / Presentation / Reputation and gallery. Each section tracks owner/profile scope, original baseline, edited value and remote value. Refresh/background and bio save hydrate clean sections only. Dirty values remain unchanged; divergent remote values require accept-remote or explicit reapply. Before save, the relevant current canonical section is reread and compared; only its RPC is called. No whole-profile replacement. Tests preserve PB1 Artisan Test, Électricité + Plomberie, Fès/Rabat and extra unsaved zone when another section saves. Original verification/eligibility distinctions and honest unavailable metrics remain.
+
+Native navigation removal guard offers continue editing or explicit abandon; durable copies permit leaving with recovery. Session revocation disables this guard immediately so it never traps the user in a private screen. CRM updates include expected updated_at; Cancel restores without writing. Profile uses a section-content preflight, not a new atomic server version RPC: concurrent edits between preflight and the existing RPC remain subject to the canonical existing server contract; no cross-section payload is submitted.
+
+Before Agenda/Finance/CRM mutations, a versioned owner-scoped immutable intent is saved locally. Storage failure prevents mutation. Unknown network/auth/timeout outcomes retain it; cold reopening loads the same ID and payload. Different payloads are blocked, duplicate in-flight calls refused. Stable creation retries read/reconcile first, never upsert over a later completed job or historical ledger amount. Definitive contract rejections allow correction. Pending intents remain privately owner-scoped until settled, including after logout; another owner cannot read or submit them. They are not ordinary draft copies and are never automatically resubmitted.
+
+Quote pending state is durable in the owner/document draft and freezes the editor; cold restart retains it and retry reuses exactly the same fields, ID and expected version. Local durable intent must succeed before server save. Exact owner/status/version update and canonical reconciliation remain from B5. No automatic retry.
+
+Tests cover disk failure before mutation, cold reload, owner isolation, revocation, changed-payload rejection, 500/120 witnesses, completed-job retry with zero mutation, profile refresh/bio-save/conflict, navigation guard and quote response lost after commit. Native kill/restart, actual storage pressure, keyboard and Auth switching on Android remain PHYSICALLY-DEFERRED.
+
+No backend schema/RLS/Auth change, business fixture write, build or deployment. Rollback: revert B6 code commit; pending-record v1 is additive local storage and old versions ignore it. Preserve unresolved records when rolling back; reconcile their IDs first.

@@ -1,3 +1,5 @@
+import { usePendingBusinessForm } from '@/lib/usePendingBusinessForm';
+import { useUnsavedChanges } from '@/lib/useUnsavedChanges';
 import { AgendaDateTimeField } from '@/components/AgendaDateTimeField';
 import { useRef, useState } from "react";
 import { View, TextInput } from "react-native";
@@ -52,6 +54,8 @@ export default function Agenda() {
     [date, setDate] = useState(() => { if (params.day !== "tomorrow") return ""; const day = new Date(`${localDay()}T12:00:00Z`); day.setUTCDate(day.getUTCDate() + 1); return moroccoDateParts(day).date; }),
     [time, setTime] = useState(""),
     [notes, setNotes] = useState("");
+  const pending=usePendingBusinessForm('agenda',p=>{setId(String(p.id));setTitle(String(p.title));setClientId(String(p.client_id||''));const parts=moroccoDateParts(new Date(String(p.scheduled_at)));setDate(parts.date);setTime(parts.time);setNotes(String(p.notes||''));setOpen(true);});
+  useUnsavedChanges(!!title.trim()||!!notes.trim(),pending.frozen);
   const titleRef = useRef<TextInput>(null), dateRef = useRef<TextInput>(null), timeRef = useRef<TextInput>(null);
   const [attempted, setAttempted] = useState(false);
   const errors = {
@@ -107,6 +111,8 @@ export default function Agenda() {
         </View>
       ) }}
     >
+      <ArtisanMessage message={pending.error} retry={()=>void pending.refresh()} />
+      {pending.frozen && <FixeoText accessibilityRole="alert">Résultat à vérifier. Les mêmes informations et le même identifiant seront réutilisés.</FixeoText>}
       <ArtisanMessage
         message={q.error || a.message}
         retry={q.error ? () => void q.reload() : undefined}
@@ -118,6 +124,7 @@ export default function Agenda() {
       />
       {open && q.data && (
         <ArtisanSection label="INTERVENTION PERSONNELLE">
+          <View pointerEvents={pending.frozen || a.busy ? 'none' : 'auto'}>
           <ArtisanField
             inputRef={titleRef}
             error={attempted ? errors.title : undefined}
@@ -147,8 +154,10 @@ export default function Agenda() {
             onChangeText={setNotes}
             multiline
           />
+          </View>
           <FixeoAction
-            label="Enregistrer l’intervention"
+            disabled={!pending.ready}
+            label={pending.frozen ? "Vérifier et réessayer l’intervention" : "Enregistrer l’intervention"}
             busy={a.busy}
             onPress={() => {
               setAttempted(true);
@@ -158,6 +167,7 @@ export default function Agenda() {
                 (errors.title ? titleRef : errors.date ? dateRef : timeRef).current?.focus();
                 return;
               }
+              pending.lock();
               void a.run(async () => {
                 const result = await saveBusinessJob({
                   id,
@@ -171,9 +181,9 @@ export default function Agenda() {
                 setTitle("");
                 setNotes("");
                 setId(Crypto.randomUUID());
-                await q.reload();
+                await q.reload(); await pending.settle();
                 return result;
-              }, "Intervention planifiée.");
+              }, "Intervention planifiée.").finally(()=>void pending.settle());
             }}
           />
         </ArtisanSection>

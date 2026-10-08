@@ -1,3 +1,5 @@
+import { usePendingBusinessForm } from '@/lib/usePendingBusinessForm';
+import { useUnsavedChanges } from '@/lib/useUnsavedChanges';
 import { formatWorkspaceDate } from '@/lib/workspacePresentation';
 import { validISODate } from '@/lib/dateValidation';
 import { DateField } from '@/components/DateField';
@@ -48,6 +50,8 @@ export default function Finance() {
     [clientId, setClientId] = useState(""),
     [jobId, setJobId] = useState(""),
     [id, setId] = useState(() => Crypto.randomUUID());
+  const pending=usePendingBusinessForm('finance',p=>{setId(String(p.id));setKind(String(p.entry_type));setAmount(String(p.amount));setDate(String(p.occurred_on));setNote(String(p.note||''));setClientId(String(p.client_id||''));setJobId(String(p.job_id||''));setOpen(true);});
+  useUnsavedChanges(!!amount.trim()||!!note.trim(),pending.frozen);
   const [attempted, setAttempted] = useState(false);
   const amountError = !/^\d{1,6}(?:[.,]\d{1,2})?$/.test(amount.trim()) || Number(amount.replace(',', '.')) <= 0 || Number(amount.replace(',', '.')) > 500000 ? 'Montant positif, au plus 500 000 MAD et deux décimales.' : '';
   const rows = q.data?.ledger.filter(
@@ -87,6 +91,8 @@ export default function Finance() {
         </View>
       ) }}
     >
+      <ArtisanMessage message={pending.error} retry={()=>void pending.refresh()} />
+      {pending.frozen && <FixeoText accessibilityRole="alert">Résultat à vérifier. Les mêmes informations et le même identifiant seront réutilisés.</FixeoText>}
       <ArtisanMessage
         message={q.error || a.message}
         retry={q.error ? () => void q.reload() : undefined}
@@ -135,6 +141,7 @@ export default function Finance() {
       />
       {open && q.data && (
         <ArtisanSection label="MOUVEMENT PERSONNEL">
+          <View pointerEvents={pending.frozen || a.busy ? 'none' : 'auto'}>
           <ArtisanChoices
             label="Type de mouvement"
             value={kind}
@@ -189,8 +196,10 @@ export default function Finance() {
             onChangeText={setNote}
             multiline
           />
+          </View>
           <FixeoAction
-            label="Confirmer le mouvement"
+            disabled={!pending.ready}
+            label={pending.frozen ? "Vérifier et réessayer le mouvement" : "Confirmer le mouvement"}
             busy={a.busy}
             onPress={() => {
               setAttempted(true);
@@ -205,6 +214,7 @@ export default function Finance() {
                 );
                 return;
               }
+              pending.lock();
               void a.run(async () => {
                 const r = await saveLedgerEntry({
                   id,
@@ -219,9 +229,9 @@ export default function Finance() {
                 setAmount("");
                 setNote("");
                 setId(Crypto.randomUUID());
-                await q.reload();
+                await q.reload(); await pending.settle();
                 return r;
-              }, "Mouvement enregistré.");
+              }, "Mouvement enregistré.").finally(()=>void pending.settle());
             }}
           />
         </ArtisanSection>

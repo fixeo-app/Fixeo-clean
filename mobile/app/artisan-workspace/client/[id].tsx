@@ -1,3 +1,5 @@
+import { usePendingBusinessForm } from '@/lib/usePendingBusinessForm';
+import { useUnsavedChanges } from '@/lib/useUnsavedChanges';
 import { formatWorkspaceDate } from '@/lib/workspacePresentation';
 import { CityField } from '@/components/CityField';
 import { useCallback, useEffect, useState } from "react";
@@ -28,7 +30,7 @@ import type { ContextDockSpec } from "@/ui/shellContract";
 export default function ClientDetail() {
   const { id } = useLocalSearchParams<{ id: string }>(),
     fresh = id === "new";
-  const [newId] = useState(() => Crypto.randomUUID());
+  const [newId,setNewId] = useState(() => Crypto.randomUUID());
   const q = useArtisanQuery(
     useCallback(async () => {
       const [clients, jobs, quotes, ledger] = await Promise.all([
@@ -63,8 +65,13 @@ export default function ClientDetail() {
     }
   }, [q.data?.client, edit]);
   const client = q.data?.client;
+  const [baseline,setBaseline]=useState<string | undefined>();
+  const pending=usePendingBusinessForm(fresh?'client-new':`client:${id}`,p=>{setNewId(String(p.id));setName(String(p.full_name));setPhone(String(p.phone||''));setCity(String(p.city||''));setAddress(String(p.address||''));setNotes(String(p.notes||''));setBaseline(p.expectedUpdatedAt?String(p.expectedUpdatedAt):undefined);setEdit(true);});
+  const conflict=edit && !fresh && !!client && !!baseline && client.updated_at!==baseline;
+  useUnsavedChanges(edit && (name !== (client?.full_name || '') || phone !== (client?.phone || '') || city !== (client?.city || '') || address !== (client?.address || '') || notes !== (client?.notes || '')),pending.frozen);
   const restoreClient = () => {
     if (!client) return;
+    setBaseline(client.updated_at);
     setName(client.full_name); setPhone(client.phone || ''); setCity(client.city || '');
     setAddress(client.address || ''); setNotes(client.notes || ''); a.setMessage('');
   };
@@ -139,9 +146,16 @@ export default function ClientDetail() {
         message={q.error || a.message}
         retry={q.error ? () => void q.reload() : undefined}
       />
+      <ArtisanMessage message={pending.error} retry={()=>void pending.refresh()} />
+      {pending.frozen && <FixeoText accessibilityRole="alert">Résultat à vérifier. Les informations de cette fiche sont figées.</FixeoText>}
+      {conflict && <ArtisanSection label="FICHE MODIFIÉE SUR LE SERVEUR"><FixeoText>Votre saisie est conservée. Choisissez avant de sauvegarder.</FixeoText>
+        <FixeoAction label="Reprendre la fiche serveur" variant="secondary" onPress={restoreClient} />
+        <FixeoAction label="Réappliquer ma saisie à cette version" variant="ghost" onPress={()=>setBaseline(client?.updated_at)} />
+      </ArtisanSection>}
       {q.data && (fresh || client) ? (
         edit ? (
           <>
+            <View pointerEvents={pending.frozen || a.busy ? 'none' : 'auto'}>
             <ArtisanField
               label="Nom du client"
               value={name}
@@ -165,11 +179,13 @@ export default function ClientDetail() {
               onChangeText={setNotes}
               multiline
             />
+            </View>
             <FixeoAction
-              label={fresh ? "Enregistrer le client" : "Enregistrer les modifications"}
+              label={pending.frozen ? "Vérifier et réessayer la fiche" : fresh ? "Enregistrer le client" : "Enregistrer les modifications"}
               busy={a.busy}
-              disabled={!name.trim()}
-              onPress={() =>
+              disabled={!name.trim() || conflict || !pending.ready}
+              onPress={() => {
+                pending.lock();
                 void a.run(async () => {
                   const c = await saveBusinessClient(
                     {
@@ -181,7 +197,8 @@ export default function ClientDetail() {
                       notes,
                     },
                     !fresh,
-                  );
+                    baseline,
+                  ).catch(async error=>{if(/CLIENT_VERSION/.test(String(error?.message || '')))await q.reload();throw error;});
                   if (fresh)
                     router.replace({
                       pathname: "/artisan-workspace/client/[id]" as any,
@@ -191,11 +208,11 @@ export default function ClientDetail() {
                     setEdit(false);
                     await q.reload();
                   }
-                  return c;
-                }, "Fiche enregistrée.")
-              }
+                  await pending.settle(); return c;
+                }, "Fiche enregistrée.").finally(()=>void pending.settle());
+              }}
             />
-            {!fresh && (
+            {!fresh && !pending.frozen && (
               <FixeoAction
                 label="Annuler la modification"
                 variant="ghost"

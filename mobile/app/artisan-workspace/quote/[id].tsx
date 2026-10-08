@@ -1,3 +1,4 @@
+import { useUnsavedChanges } from '@/lib/useUnsavedChanges';
 import { QuoteProposal } from '@/components/QuoteProposal';
 import { validISODate } from '@/lib/dateValidation';
 import type { QuoteDocument } from '@/lib/quoteDocument';
@@ -7,7 +8,7 @@ import { formatWorkspaceDate } from '@/lib/workspacePresentation';
 import { QuoteBreakdown } from '@/components/QuoteBreakdown';
 import { DateField } from '@/components/DateField';
 import { useEffect, useRef, useState } from "react";
-import { Modal, ScrollView, View } from "react-native";
+import { Keyboard, Modal, ScrollView, View } from "react-native";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import { getDispatchOffers } from "@/lib/magicLoop";
@@ -69,6 +70,7 @@ export default function QuoteStudio() {
     q = useArtisanQuery(load),
     a = useArtisanAction();
   const [section, setSection] = useState(0);
+  const [pendingQuote,setPendingQuote] = useState(false);
   const [newId, setNewId] = useState(() => Crypto.randomUUID());
   const [origin, setOrigin] = useState(
       params.origin === "fixeo" ? "fixeo" : "personal",
@@ -99,7 +101,7 @@ export default function QuoteStudio() {
   const savedRef = useRef(saved); savedRef.current = saved;
   function applyDraft(d: QuoteDraft) {
     setNewId(d.id); setOrigin(d.origin); setClientId(d.clientId); setRequestId(d.requestId); setTitle(d.title);
-    setLines(d.lines); setDiscount(d.discount); setNotes(d.notes); setValidity(d.validity); setDuration(d.duration); setSection(d.section); setBaseline(d.baseline);
+    setLines(d.lines); setDiscount(d.discount); setNotes(d.notes); setValidity(d.validity); setDuration(d.duration); setSection(d.section); setBaseline(d.baseline); setPendingQuote(!!d.pending);
   }
   function applyServer() {
     const row=savedRef.current; if (!row) return;
@@ -125,11 +127,11 @@ export default function QuoteStudio() {
   useEffect(() => {
     if (!owner || draftReady !== identity || !editable || draftClosed.current) return;
     const epoch=++writeEpoch.current; let alive=true; setStorageState('saving');
-    void saveQuoteDraft(owner,draftScope,{id:newId,baseline,origin,clientId,requestId,title,lines,discount,notes,validity,duration,section})
+    void saveQuoteDraft(owner,draftScope,{id:newId,baseline,pending:pendingQuote,origin,clientId,requestId,title,lines,discount,notes,validity,duration,section})
       .then(()=>{if(alive && epoch===writeEpoch.current)setStorageState('saved');})
       .catch(()=>{if(alive && epoch===writeEpoch.current)setStorageState('error');});
     return ()=>{alive=false;};
-  },[owner,draftScope,identity,draftReady,editable,newId,baseline,origin,clientId,requestId,title,lines,discount,notes,validity,duration,section]);
+  },[owner,draftScope,identity,draftReady,editable,newId,baseline,pendingQuote,origin,clientId,requestId,title,lines,discount,notes,validity,duration,section]);
   const conflict = !fresh && !!saved && draftReady === identity && saved.updated_at !== baseline;
   const number = (s: string) => (s.trim() ? Number(s.replace(",", ".")) : NaN);
   const gate = validateQuote({ origin, title, clientId, requestId, clients: q.data?.clients || [], offers: q.data?.offers || [],
@@ -141,6 +143,7 @@ export default function QuoteStudio() {
     client: q.data?.clients.find(c => c.id === clientId), ...calculated, validity, duration, notes,
   } : null;
   const unsaved = !!saved && (title !== saved.title || clientId !== (saved.client_id || '') || notes !== (saved.notes || '') || validity !== (saved.validity_date || '') || duration !== (saved.estimated_duration || '') || Number(discount || 0) !== Number(saved.discount) || JSON.stringify(calculated?.items.map(({type,label,quantity,unit_price}) => [type,label,Number(quantity),Number(unit_price)])) !== JSON.stringify(saved.items?.map(({type,label,quantity,unit_price}) => [type,label,Number(quantity),Number(unit_price)])));
+  useUnsavedChanges(editable && (fresh ? !!title.trim() || lines.some(line=>!!line.label.trim()) : unsaved), storageState === 'saved');
   const visibleSection = gate.canEnterLines ? gate.canEnterConditions ? section : Math.min(section, 1) : 0;
   const showPreview = preview && (gate.canPreview || (!fresh && saved?.source === 'personal' && !editable));
   function goToSection(next: number) {
@@ -154,7 +157,7 @@ export default function QuoteStudio() {
     setLines((old) => old.map((l, i) => (i === index ? { ...l, ...next } : l)));
   }
   async function save() {
-    if (conflict || (owner && draftReady !== identity)) { a.setMessage('Comparez la version serveur ou restaurez le brouillon avant de continuer.'); return; }
+    if ((conflict && !pendingQuote) || (owner && draftReady !== identity)) { a.setMessage('Comparez la version serveur ou restaurez le brouillon avant de continuer.'); return; }
     if (!gate.canSave) {
       a.setMessage(gate.message);
       return;
@@ -168,7 +171,12 @@ export default function QuoteStudio() {
       a.setMessage("Choisissez une date de validité réelle.");
       return;
     }
+    Keyboard.dismiss(); setPendingQuote(true);
     await a.run(async () => {
+      if (owner) {
+        try { await saveQuoteDraft(owner,draftScope,{id:newId,baseline,pending:true,origin,clientId,requestId,title,lines,discount,notes,validity,duration,section}); }
+        catch { setPendingQuote(false);setStorageState('error');throw Error('DRAFT_PERSIST_FAILED'); }
+      }
       const result = await saveBusinessQuote(
         {
           id: fresh ? newId : params.id,
@@ -182,8 +190,8 @@ export default function QuoteStudio() {
         },
         !fresh,
         baseline,
-      ).catch(async error => { if (/QUOTE_VERSION/.test(String(error?.message || ''))) await q.reload(); throw error; });
-      setBaseline(result.updated_at);
+      ).catch(async error => { if (/QUOTE_VERSION|BUSINESS_|23514|23503/.test(String(error?.message || '')+String(error?.code || ''))) { setPendingQuote(false); await q.reload(); } throw error; });
+      setPendingQuote(false); setBaseline(result.updated_at);
       draftClosed.current = true; setStorageState('server');
       if (owner) await removeQuoteDraft(owner, draftScope).catch(() => undefined);
       router.replace({
@@ -211,7 +219,7 @@ export default function QuoteStudio() {
       />
       {editable && owner && <FixeoText variant="supporting" accessibilityLiveRegion="polite">{readError ? 'Impossible de restaurer le brouillon local. Aucune copie existante n’a été remplacée.' : storageState === 'server' ? 'Version enregistrée sur le serveur.' : storageState === 'saved' ? 'Brouillon enregistré sur cet appareil.' : storageState === 'saving' ? 'Enregistrement local…' : storageState === 'error' ? 'Copie locale non enregistrée. Gardez cet écran ouvert ou enregistrez sur le serveur.' : 'Restauration du brouillon…'}</FixeoText>}
       {readError && <FixeoAction label="Réessayer la restauration" variant="secondary" onPress={()=>setReadRetry(v=>v+1)} />}
-      {conflict && <ArtisanSection label="VERSION SERVEUR MODIFIÉE">
+      {conflict && !pendingQuote && <ArtisanSection label="VERSION SERVEUR MODIFIÉE">
         <FixeoText accessibilityRole="alert">Vos modifications sont conservées. Comparez les versions avant toute nouvelle sauvegarde.</FixeoText>
         <FixeoAction label="Voir la version serveur" variant="secondary" onPress={()=>setServerPreview(true)} />
         {saved?.status === 'draft' && <FixeoAction label="Réappliquer explicitement mes modifications" variant="ghost" onPress={()=>{setBaseline(saved.updated_at);a.setMessage('Modifications réappliquées à la version relue. Vérifiez puis enregistrez.');}} />}
@@ -223,7 +231,10 @@ export default function QuoteStudio() {
           issuer:{name:q.data?.profile?.name,city:q.data?.profile?.city,phone:q.data?.profile?.phone_public},client:q.data?.clients.find(c=>c.id===saved.client_id),
           items:saved.items,subtotal:saved.subtotal,discount:saved.discount,total:saved.total,validity:saved.validity_date || '',duration:saved.estimated_duration || '',notes:saved.notes || ''}} />
       </ScrollView></Modal>}
-      {q.data && (fresh || saved) ? (
+      {pendingQuote ? <ArtisanSection label="SAUVEGARDE À VÉRIFIER"><FixeoText accessibilityRole="alert">Les informations et l’identifiant du devis sont figés jusqu’à confirmation du résultat.</FixeoText>
+        <FixeoText>{title}</FixeoText><FixeoText>{calculated ? money(calculated.total) : 'Montant à vérifier'}</FixeoText>
+        <FixeoAction label="Vérifier et réessayer le devis" busy={a.busy} onPress={()=>void save()} />
+      </ArtisanSection> : q.data && (fresh || saved) ? (
         <>
           {showPreview ? (
             <>
