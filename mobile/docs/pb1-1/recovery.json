@@ -1,0 +1,21 @@
+{
+  "started_at": "2026-10-08T14:46:11.272842+00:00",
+  "source_sha": "8d5555ac0bbe1d61eece3c5fe23914c9562c2ff5",
+  "source_tree": "4f6c92b6bef42625e5ec96c4763f5e8250ca8430",
+  "branch": "feat/fixeo-mobile-w6-entry-auth-trust",
+  "pr": 150,
+  "pr_state": "OPEN / DRAFT / UNMERGED",
+  "base": "feat/fixeo-mobile-m4-terrain",
+  "base_sha": "7256eeda9898639debe7c5a4e574a463d6fb2234",
+  "main_sha": "f8e59d5ad7294dd5493bf7b0219740248d2a8d64",
+  "production_deployment": "dpl_63jTTiFwLrBD3D4Tc3Gxi7KVNjvR",
+  "staging_project": "kqyhusnbybsukbcaoqtu",
+  "installed_build": "712d2e3e-09a2-44e3-ab95-6fd9b08a3df2",
+  "installed_version": "0.3.1 (10)",
+  "fingerprint": "0c7bcdea51c494c8b34982987c978710f600db93",
+  "eas_credit_used": 7,
+  "eas_credit_total": 45,
+  "concurrency": "Prior conversation STOP confirmed; no visible process in recovered worktrees. No global cross-conversation ownership API. Remote SHA rechecked before publish.",
+  "preservation": "43 historic recovery files match previous checkpoint hashes; older dirty worktrees left untouched. New detached worktree from current remote HEAD.",
+  "rollback": "Do not reset or force-push. Revert PB1.1 commits on the isolated branch if necessary; restore staging guard from reviewed rollback SQL only. APK 0.3.1(10) remains prior reference."
+}

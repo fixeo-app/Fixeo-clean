@@ -1,0 +1,43 @@
+{
+  "checked_at": "2026-10-08T15:21:24.659Z",
+  "main": "f8e59d5ad7294dd5493bf7b0219740248d2a8d64",
+  "aliases": [
+    {
+      "alias": "fixeo.ma",
+      "deploymentId": "dpl_63jTTiFwLrBD3D4Tc3Gxi7KVNjvR",
+      "updatedAt": 1790966183387
+    },
+    {
+      "alias": "www.fixeo.ma",
+      "deploymentId": "dpl_63jTTiFwLrBD3D4Tc3Gxi7KVNjvR",
+      "updatedAt": 1790966183421
+    },
+    {
+      "alias": "fixeo-clean.vercel.app",
+      "deploymentId": "dpl_63jTTiFwLrBD3D4Tc3Gxi7KVNjvR",
+      "updatedAt": 1790966183368
+    },
+    {
+      "alias": "fixeo-clean-git-main-elalaouibiz-3410s-projects.vercel.app",
+      "deploymentId": "dpl_63jTTiFwLrBD3D4Tc3Gxi7KVNjvR",
+      "updatedAt": 1790966183365
+    },
+    {
+      "alias": "fixeo-clean-elalaouibiz-3410s-projects.vercel.app",
+      "deploymentId": "dpl_63jTTiFwLrBD3D4Tc3Gxi7KVNjvR",
+      "updatedAt": 1791309441623
+    }
+  ],
+  "project": {
+    "id": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+    "updatedAt": 1791206683553,
+    "domains": [
+      "www.fixeo.ma",
+      "fixeo-clean.vercel.app",
+      "fixeo.ma",
+      "fixeo-clean-elalaouibiz-3410s-projects.vercel.app",
+      "fixeo-clean-git-main-elalaouibiz-3410s-projects.vercel.app"
+    ]
+  },
+  "mutations": 0
+}

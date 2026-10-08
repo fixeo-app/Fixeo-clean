@@ -1,0 +1,114 @@
+{
+  "project": "kqyhusnbybsukbcaoqtu",
+  "captured_at": "2026-10-08T15:21:24.659Z",
+  "migration": [
+    {
+      "version": "20261008150316",
+      "name": "pb1_1_business_link_integrity"
+    }
+  ],
+  "verification": {
+    "pb1": {
+      "jobs": 2,
+      "income": 500,
+      "quotes": 2,
+      "clients": 1,
+      "expense": 120,
+      "linked_ledger": 1
+    },
+    "tables": [
+      {
+        "rls": true,
+        "name": "artisan_business_clients"
+      },
+      {
+        "rls": true,
+        "name": "artisan_business_quotes"
+      },
+      {
+        "rls": true,
+        "name": "artisan_business_jobs"
+      },
+      {
+        "rls": true,
+        "name": "artisan_business_ledger"
+      }
+    ],
+    "function": {
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "grants": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "definition_md5": "4f56a9587cea155c0afc2604621a3257",
+      "security_definer": false
+    }
+  },
+  "before": {
+    "jobs": "80921bcd5a322cc53d159cde4b2e2f22",
+    "ledger": "7d5dc2b448a28565a6d89c6ec98c2b2e",
+    "quotes": "d6cd986fa387ac7db7b197e49b22e317",
+    "clients": "741473185408ab0055a04d07ecf82718"
+  },
+  "after": {
+    "jobs": "80921bcd5a322cc53d159cde4b2e2f22",
+    "ledger": "7d5dc2b448a28565a6d89c6ec98c2b2e",
+    "quotes": "d6cd986fa387ac7db7b197e49b22e317",
+    "clients": "741473185408ab0055a04d07ecf82718"
+  },
+  "transactional_test": {
+    "status": "PASS",
+    "scope": "Database transaction under authenticated role + existing synthetic owner session context. Not HTTP JWT authentication.",
+    "cases": [
+      "canonical actor resolves",
+      "valid same-owner client/quote/job/ledger",
+      "cross-client ledger rejected",
+      "reverse linked-job client edit rejected",
+      "cross-owner client insert rejected"
+    ],
+    "cleanup": "ROLLBACK, all transient fixture writes discarded",
+    "accounts_created": 0,
+    "sessions_created": 0,
+    "dispatch": 0,
+    "real_sends": 0
+  },
+  "security_advisors": {
+    "unchanged": true,
+    "counts": [
+      {
+        "name": "rls_enabled_no_policy",
+        "count": 36,
+        "level": "INFO",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+      },
+      {
+        "name": "function_search_path_mutable",
+        "count": 4,
+        "level": "WARN",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0011_function_search_path_mutable"
+      },
+      {
+        "name": "anon_security_definer_function_executable",
+        "count": 4,
+        "level": "WARN",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable"
+      },
+      {
+        "name": "authenticated_security_definer_function_executable",
+        "count": 157,
+        "level": "WARN",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable"
+      },
+      {
+        "name": "auth_leaked_password_protection",
+        "count": 1,
+        "level": "WARN",
+        "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+      }
+    ]
+  },
+  "live_authenticated_proof": "DEFERRED"
+}
