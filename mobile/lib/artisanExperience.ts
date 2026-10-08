@@ -171,6 +171,7 @@ export function artisanError(error: unknown) {
   if (/PDF_INVALID/.test(message)) return 'Le document n’a pas pu être généré. Réessayez.';
   if (/LEDGER_CLIENT_MISMATCH/.test(message)) return "Le client doit correspondre à l’intervention sélectionnée.";
   if (/LEDGER_|JOB_INVALID/.test(message)) return "Vérifiez le montant, la date et l’intervention sélectionnée.";
+  if (/QUOTE_VERSION_CONFLICT|QUOTE_VERSION_REQUIRED/.test(message)) return "Une autre version de ce devis existe. Vos modifications sont conservées ; comparez les versions avant de continuer.";
   if (/QUOTE_STATE_CHANGED/.test(message)) return "Le statut de ce devis a changé. Actualisez-le avant de continuer.";
   if (/QUOTE_|INVALID_PRICE|INVALID_SCOPE/i.test(message))
     return "Vérifiez les lignes, les montants et la validité du devis.";

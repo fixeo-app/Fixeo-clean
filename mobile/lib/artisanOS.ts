@@ -1,3 +1,4 @@
+import { sameQuoteContent } from './quoteVersion';
 import { canonicalCities, canonicalCity, requireCanonicalCity, withCanonicalCity } from './clientLocation';
 import { validISODate } from './dateValidation';
 import { moneyMinor } from './moneyContract';
@@ -310,8 +311,10 @@ export async function saveBusinessQuote(
     estimated_duration: string;
   },
   exists = false,
+  expectedUpdatedAt?: string,
 ): Promise<BusinessQuote> {
   const actor = await artisanAccess();
+  if (exists && (!expectedUpdatedAt || !Number.isFinite(Date.parse(expectedUpdatedAt)))) throw new Error("QUOTE_VERSION_REQUIRED");
   if (!input.title.trim()) throw new Error("QUOTE_TITLE_REQUIRED");
   if (input.validity_date && !validISODate(input.validity_date)) throw new Error('QUOTE_DATE_INVALID');
   const amounts = calculateQuote(input.items, input.discount);
@@ -320,8 +323,8 @@ export async function saveBusinessQuote(
     ...amounts,
     title: input.title.trim(),
     owner_user_id: actor.user_id,
-    source: "personal",
-    updated_at: new Date().toISOString(),
+    source: "personal" as const,
+    updated_at: new Date(Math.max(Date.now(), (Date.parse(expectedUpdatedAt || "") || 0) + 1)).toISOString(),
   };
   if (exists) {
     const { data, error } = await supabase
@@ -331,9 +334,16 @@ export async function saveBusinessQuote(
       .eq("owner_user_id", actor.user_id)
       .eq("source", "personal")
       .eq("status", "draft")
+      .eq("updated_at", expectedUpdatedAt!)
       .select()
       .single();
-    if (error) throw error;
+    if (error || !data) {
+      // Read-only reconciliation: a timeout retry may encounter our already-committed payload.
+      if (error && error.code !== 'PGRST116') throw error;
+      const current = await supabase.from('artisan_business_quotes').select('*').eq('id',input.id).eq('owner_user_id',actor.user_id).eq('source','personal').single();
+      if (!current.error && current.data?.status === 'draft' && sameQuoteContent(current.data, payload)) return current.data;
+      throw new Error('QUOTE_VERSION_CONFLICT');
+    }
     return data;
   }
   // Stable UUID permits reconciliation after a response timeout; no blind second insert.
@@ -344,7 +354,10 @@ export async function saveBusinessQuote(
     .eq("owner_user_id", actor.user_id)
     .maybeSingle();
   if (previous.error) throw previous.error;
-  if (previous.data) return previous.data;
+  if (previous.data) {
+    if (previous.data.source === 'personal' && previous.data.status === 'draft' && sameQuoteContent(previous.data, payload)) return previous.data;
+    throw new Error('QUOTE_VERSION_CONFLICT');
+  }
   const numbered = await supabase.rpc("artisan_business_next_quote_number");
   if (numbered.error) throw numbered.error;
   const { data, error } = await supabase

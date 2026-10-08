@@ -146,7 +146,7 @@ test('PB1 finance labels never expose raw enums and preserve linked/independent 
 test('PB1 business writes retain the same draft, CRM links and independent expense', async () => {
   const writes: Array<{ table: string; action: string; payload: any; filters: Record<string, unknown> }> = [];
   const api = load('lib/artisanOS.ts', {
-    './dateValidation': await import('../lib/dateValidation'), './moneyContract': await import('../lib/moneyContract'),
+    './quoteVersion': await import('../lib/quoteVersion'), './dateValidation': await import('../lib/dateValidation'), './moneyContract': await import('../lib/moneyContract'),
     './artisanProgressive': { inFlightRead: (fn: unknown) => fn },
     './artisanExperience': { calculateQuote }, './supabase': { supabase: {
       auth: { getSession: async () => ({ data: { session: { access_token: 'synthetic-only' } } }) },
@@ -168,11 +168,11 @@ test('PB1 business writes retain the same draft, CRM links and independent expen
   });
   const quote = await api.saveBusinessQuote({ id: 'existing-quote', title: 'PB1 Devis Test', client_id: 'pb1-client',
     items: [{ type: 'service', label: 'Réparation fuite sous évier', quantity: 2, unit_price: 250 }],
-    discount: 0, notes: '', validity_date: null, estimated_duration: '' }, true);
+    discount: 0, notes: '', validity_date: null, estimated_duration: '' }, true, '2026-10-08T14:00:00Z');
   assert.equal(quote.id, 'existing-quote'); assert.equal(quote.total, 500); assert.equal(quote.client_id, 'pb1-client');
   assert.equal(quote.sent_at, null); assert.equal(quote.sent_via, null);
   assert.equal(writes[0].action, 'update');
-  assert.deepEqual(writes[0].filters, { id: 'existing-quote', owner_user_id: 'artisan', source: 'personal', status: 'draft' });
+  assert.deepEqual(writes[0].filters, { id: 'existing-quote', owner_user_id: 'artisan', source: 'personal', status: 'draft', updated_at: '2026-10-08T14:00:00Z' });
   assert.equal('sent_at' in writes[0].payload, false); assert.equal('sent_via' in writes[0].payload, false);
   const job = await api.saveBusinessJob({ id: 'pb1-job', title: 'PB1 intervention Test', client_id: 'pb1-client',
     scheduled_at: '2026-10-06T10:30:00.000Z', notes: '' });

@@ -58,10 +58,13 @@ test('PB1.1 PDF model uses exact editor totals, escaped content, accents and hon
 });
 
 test('PB1.1 PDF export refuses invalid bytes and never declares sending when share closes',async()=>{
- let shared=0,deleted=0,valid=true;
- const module=load('lib/quotePdf.ts',{'expo-print':{printToFileAsync:async()=>({uri:'file:///cache/test.pdf',numberOfPages:1})},'expo-sharing':{isAvailableAsync:async()=>true,shareAsync:async()=>{shared++}},'expo-file-system':{File:class{exists=true;async bytes(){return new TextEncoder().encode((valid?'%PDF-':'wrong')+' '.repeat(100))}delete(){deleted++}}},'./quoteDocument':{quoteDocumentHtml}});
+ let shared=0,deleted=0,valid=true;const printOptions:any[]=[];
+ const module=load('lib/quotePdf.ts',{'expo-print':{printToFileAsync:async(options:any)=>{printOptions.push(options);return {uri:'file:///cache/test.pdf',numberOfPages:1}}},'expo-sharing':{isAvailableAsync:async()=>true,shareAsync:async()=>{shared++}},'expo-file-system':{File:class{exists=true;async bytes(){return new TextEncoder().encode((valid?'%PDF-':'wrong')+' '.repeat(100))}delete(){deleted++}}},'./quoteDocument':{quoteDocumentHtml}});
  const result=await module.shareQuotePdf(sampleQuote);assert.equal(result.pages,1);assert.equal(shared,1);assert.equal(deleted,0);
- valid=false;await assert.rejects(module.shareQuotePdf(sampleQuote),/PDF_INVALID/);assert.equal(shared,1);assert.equal(deleted,1);
+ const fifty={...sampleQuote,...calculateQuote(Array.from({length:50},(_,i)=>({type:'service' as const,label:`Ligne ${i+1} — Réparation à Fès, étanchéité et fournitures`,quantity:1,unit_price:250})))};
+ await module.shareQuotePdf(fifty);assert.equal(fifty.total,12500);assert.equal(printOptions[1].width,595);assert.equal(printOptions[1].height,842);
+ assert.equal((printOptions[1].html.match(/<tr><td>/g)||[]).length,50);assert.match(printOptions[1].html,/Ligne 50 — Réparation à Fès/);assert.match(printOptions[1].html,/table-header-group/);assert.match(printOptions[1].html,/break-inside: avoid/);
+ valid=false;await assert.rejects(module.shareQuotePdf(sampleQuote),/PDF_INVALID/);assert.equal(shared,2);assert.equal(deleted,1);
 });
 
 test('PB1.1 quote drafts survive cold reload, isolate owners and scopes, and purge on explicit logout',async()=>{
@@ -76,17 +79,17 @@ test('PB1.1 quote drafts survive cold reload, isolate owners and scopes, and pur
  await cold.removeQuoteDraft('owner-a','new:personal:client-a');assert.equal(await cold.loadQuoteDraft('owner-a','new:personal:client-a'),null);
  await cold.saveQuoteDraft('owner-a','new',draft);generation++;rejected.forEach(fn=>fn('revoked'));
  assert.equal((await cold.loadQuoteDraft('owner-a','new')).id,'stable-id');
- const pending=cold.saveQuoteDraft('owner-a','new',{...draft,title:'stale'});generation++;rejected.forEach(fn=>fn('logout'));await pending;
+ const pending=cold.saveQuoteDraft('owner-a','new',{...draft,title:'stale'});generation++;rejected.forEach(fn=>fn('logout'));await assert.rejects(pending,/DRAFT_SESSION_CHANGED/);
  assert.equal(await cold.loadQuoteDraft('owner-a','new'),null);
 });
 
 test('PB1.1 actual Devis 250: wizard, cold remount, preview, idempotent draft, reopen, edit and CRM association',async()=>{
  const {validateQuote}=await import('../lib/quoteValidation');const experience=await import('../lib/artisanExperience'),presentation=await import('../lib/workspacePresentation');
- const memory=new Map<string,string>();const drafts=load('lib/quoteDrafts.ts',{'@react-native-async-storage/async-storage':{default:{getItem:async(k:string)=>memory.get(k)||null,setItem:async(k:string,v:string)=>{memory.set(k,v)},removeItem:async(k:string)=>{memory.delete(k)},getAllKeys:async()=>[...memory.keys()],multiRemove:async(keys:string[])=>keys.forEach(k=>memory.delete(k))}},'./authEvents':{privateSessionGeneration:()=>0,onSessionRejected:()=>{}}});
+ let diskFull=false;const memory=new Map<string,string>();const drafts=load('lib/quoteDrafts.ts',{'@react-native-async-storage/async-storage':{default:{getItem:async(k:string)=>memory.get(k)||null,setItem:async(k:string,v:string)=>{if(diskFull)throw Error('DISK_FULL');memory.set(k,v)},removeItem:async(k:string)=>{memory.delete(k)},getAllKeys:async()=>[...memory.keys()],multiRemove:async(keys:string[])=>keys.forEach(k=>memory.delete(k))}},'./authEvents':{privateSessionGeneration:()=>0,onSessionRejected:()=>{}}});
  const clients=[{id:'client-a',full_name:'PB1 Client Test',city:'Fès'}],quotes:any[]=[],calls:any[]=[];let params:any={id:'new',clientId:'client-a'},tree:any,seq=0;
  const data=()=>({clients,quotes:[...quotes],offers:[],profile:{owner_user_id:'owner-a',name:'PB1 Artisan Test',city:'Fès'}});
  const deps:any={'react-native':{View:'view',Modal:component('modal'),ScrollView:component('scroll')},'expo-crypto':{randomUUID:()=>`new-id-${++seq}`},'expo-router':{router:{replace:(p:any)=>{params=p.params}},useLocalSearchParams:()=>params},'@/lib/magicLoop':{},'@/lib/quoteDrafts':drafts,'@/lib/dateValidation':{validISODate},'@/lib/quoteValidation':{validateQuote},'@/lib/workspacePresentation':presentation,'@/lib/artisanExperience':experience,
- '@/lib/artisanOS':{saveBusinessQuote:async(input:any,edit:boolean)=>{calls.push({input,edit});const row={...input,status:'draft',source:'personal',quote_number:'DEV-2026-0002',updated_at:`2026-10-08T14:00:0${calls.length}Z`,...calculateQuote(input.items,input.discount)};const index=quotes.findIndex(x=>x.id===input.id);if(index<0)quotes.push(row);else quotes[index]=row;return row}},
+ '@/lib/artisanOS':{saveBusinessQuote:async(input:any,edit:boolean,expectedUpdatedAt?:string)=>{calls.push({input,edit,expectedUpdatedAt});const row={...input,status:'draft',source:'personal',quote_number:'DEV-2026-0002',updated_at:`2026-10-08T14:00:0${calls.length}Z`,...calculateQuote(input.items,input.discount)};const index=quotes.findIndex(x=>x.id===input.id);if(index<0)quotes.push(row);else quotes[index]=row;return row}},
  '@/components/ArtisanEditorial':{ArtisanPage:component('page'),ArtisanSection:component('section'),ArtisanCue:component('cue'),ArtisanMessage:component('message'),ArtisanField:component('field'),ArtisanChoices:component('choices'),art:{},useArtisanQuery:()=>{const [value,set]=React.useState(data);return {data:value,loading:false,reload:async()=>set(data())}},useArtisanAction:()=>({busy:false,rafi:{},run:async(fn:any)=>fn(),setMessage(){}})},'@/ui/FixeoText':{FixeoText:component('text')},'@/ui/FixeoAction':{FixeoAction:component('action')},'@/components/QuoteProposal':{QuoteProposal:component('proposal')},'@/components/QuoteBreakdown':{QuoteBreakdown:component('breakdown')},'@/components/DateField':{DateField:component('date')}};
  const {default:Quote}=load('app/artisan-workspace/quote/[id].tsx',deps);
  const mount=async()=>{await renderer.act(async()=>{tree=renderer.create(React.createElement(Quote))})};
@@ -99,7 +102,20 @@ test('PB1.1 actual Devis 250: wizard, cold remount, preview, idempotent draft, r
  await renderer.act(async()=>tree.unmount());await mount();assert.equal(tree.root.findByType('proposal').props.document.total,250);await tap('Modifier les détails');
  await renderer.act(async()=>tree.root.findAllByType('choices').find((x:any)=>x.props.label==='Étapes du devis').props.onChange('0'));await type('Titre du devis','Devis test PB1 - Plomberie corrigé');
  await renderer.act(async()=>tree.root.findAllByType('choices').find((x:any)=>x.props.label==='Étapes du devis').props.onChange('2'));await tap('Voir l’aperçu');await tap('Enregistrer les modifications');
- assert.equal(quotes.length,1);assert.equal(calls[1].edit,true);assert.equal(quotes[0].total,250);assert.equal(quotes[0].status,'draft');assert.match(quotes[0].title,/corrigé/);assert.equal(quotes.filter(x=>x.client_id==='client-a').length,1);await renderer.act(async()=>tree.unmount());
+ assert.equal(quotes.length,1);assert.equal(calls[1].edit,true);assert.equal(quotes[0].total,250);assert.equal(quotes[0].status,'draft');assert.match(quotes[0].title,/corrigé/);assert.equal(quotes.filter(x=>x.client_id==='client-a').length,1);
+ assert.equal(calls[1].expectedUpdatedAt,'2026-10-08T14:00:01Z');
+ await tap('Modifier les détails');await renderer.act(async()=>tree.root.findAllByType('choices').find((x:any)=>x.props.label==='Étapes du devis').props.onChange('0'));
+ diskFull=true;await type('Titre du devis','Modification locale conservée');
+ assert.match(JSON.stringify(tree.toJSON()),/Copie locale non enregistrée/);assert.doesNotMatch(JSON.stringify(tree.toJSON()),/Brouillon enregistré sur cet appareil/);
+ quotes[0]={...quotes[0],title:'Nouvelle version distante',updated_at:'2026-10-08T15:00:00Z'};
+ await renderer.act(async()=>tree.root.findByType('page').props.onRefresh());
+ assert.equal(tree.root.findAllByType('field').find((x:any)=>x.props.label==='Titre du devis').props.value,'Modification locale conservée');
+ assert.match(JSON.stringify(tree.toJSON()),/VERSION SERVEUR MODIFIÉE/);assert.equal(calls.length,2);
+ await tap('Voir la version serveur');assert.equal(tree.root.findByType('proposal').props.document.title,'Nouvelle version distante');await tap('Fermer la version serveur');
+ await tap('Réappliquer explicitement mes modifications');diskFull=false;
+ await renderer.act(async()=>tree.root.findAllByType('choices').find((x:any)=>x.props.label==='Étapes du devis').props.onChange('2'));await tap('Voir l’aperçu');await tap('Enregistrer les modifications');
+ assert.equal(calls[2].expectedUpdatedAt,'2026-10-08T15:00:00Z');assert.equal(quotes.length,1);assert.equal(quotes[0].title,'Modification locale conservée');
+ await renderer.act(async()=>tree.unmount());
 });
 
 test('PB1.1 actual CRM cancel restores values, survives foreground refresh and performs zero writes',async()=>{

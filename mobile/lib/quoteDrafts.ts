@@ -15,16 +15,18 @@ export async function loadQuoteDraft(owner: string, scope: string): Promise<Quot
   if (!raw || generation !== privateSessionGeneration()) return null;
   try {
     const d = JSON.parse(raw);
-    if (!d || !['personal', 'fixeo'].includes(d.origin) || !Number.isInteger(d.section) || d.section < 0 || d.section > 2 || !Array.isArray(d.lines) || d.lines.length < 1 || d.lines.length > 50) return null;
-    for (const field of ['id','clientId','requestId','title','discount','notes','validity','duration']) if (typeof d[field] !== 'string') return null;
-    if (!d.lines.every((line: QuoteDraft['lines'][number]) => line && ['service','labor','supply'].includes(line.type) && ['label','quantity','price'].every(field => typeof (line as any)[field] === 'string'))) return null;
+    if (!d || !['personal', 'fixeo'].includes(d.origin) || !Number.isInteger(d.section) || d.section < 0 || d.section > 2 || !Array.isArray(d.lines) || d.lines.length < 1 || d.lines.length > 50) throw new Error('DRAFT_INVALID');
+    for (const field of ['id','clientId','requestId','title','discount','notes','validity','duration']) if (typeof d[field] !== 'string') throw new Error('DRAFT_INVALID');
+    if (!d.lines.every((line: QuoteDraft['lines'][number]) => line && ['service','labor','supply'].includes(line.type) && ['label','quantity','price'].every(field => typeof (line as any)[field] === 'string'))) throw new Error('DRAFT_INVALID');
     return d;
-  } catch { return null; }
+  } catch { throw new Error('DRAFT_INVALID'); }
 }
 export function saveQuoteDraft(owner: string, scope: string, draft: QuoteDraft) {
   const generation = privateSessionGeneration(), value = JSON.stringify(draft);
   writes = writes.catch(() => undefined).then(async () => {
-    if (generation === privateSessionGeneration()) await AsyncStorage.setItem(key(owner, scope), value);
+    if (generation !== privateSessionGeneration()) throw new Error('DRAFT_SESSION_CHANGED');
+    await AsyncStorage.setItem(key(owner, scope), value);
+    if (generation !== privateSessionGeneration()) throw new Error('DRAFT_SESSION_CHANGED');
   });
   return writes;
 }

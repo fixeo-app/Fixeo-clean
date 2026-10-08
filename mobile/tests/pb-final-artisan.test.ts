@@ -50,3 +50,22 @@ test('B4 actual Clients retains all 50 owner rows, searchable without resetting 
  const shell=readFileSync('components/ArtisanEditorial.tsx','utf8');assert.match(shell,/<FlatList data=\{list.data\}/);assert.match(shell,/renderScrollComponent=\{props => <ScrollView/);
  await renderer.act(async()=>tree.unmount());
 });
+
+test('B5 quote writes compare owner, draft status and version atomically; stale conflict and lost-response retry never overwrite twice',async()=>{
+ const {calculateQuote}=await import('../lib/artisanExperience');const {sameQuoteContent}=await import('../lib/quoteVersion');
+ const input={id:idA,title:'Réparation 250',client_id:idB,items:[{type:'service',label:'Réparation',quantity:1,unit_price:250}],discount:0,notes:'',validity_date:null,estimated_duration:''};
+ let row:any={...input,...calculateQuote(input.items as any,0),owner_user_id:'owner-a',source:'personal',status:'draft',updated_at:'2026-10-08T14:00:00Z'},writes=0,actor='owner-a';const predicates:any[]=[];
+ const api=load('lib/artisanOS.ts',{'./quoteVersion':{sameQuoteContent},'./artisanProgressive':{inFlightRead:(fn:any)=>fn},'./dateValidation':await import('../lib/dateValidation'),'./moneyContract':await import('../lib/moneyContract'),'./artisanExperience':{calculateQuote},'./supabase':{supabase:{auth:{getSession:async()=>({data:{session:{access_token:'synthetic-only'}}})},rpc:async()=>({data:{ok:true,user_id:actor}}),from:()=>{
+  const filters:any={},q:any={eq:(k:string,v:any)=>{filters[k]=v;return q},select:()=>q,update:(payload:any)=>{q.payload=payload;return q},single:async()=>{
+    const match=Object.entries(filters).every(([k,v])=>row[k]===v);
+    if(q.payload){predicates.push({...filters});if(!match)return {data:null,error:{code:'PGRST116'}};row={...row,...q.payload};writes++;}
+    return match?{data:{...row}}:{data:null,error:{code:'PGRST116'}};
+  }};return q;
+ }}}});
+ const baseline=row.updated_at;await assert.rejects(api.saveBusinessQuote(input,true),/QUOTE_VERSION_REQUIRED/);assert.equal(writes,0);
+ await api.saveBusinessQuote({...input,title:'Ma modification'},true,baseline);assert.equal(writes,1);assert.equal(row.total,250);
+ assert.deepEqual(predicates[0],{id:idA,owner_user_id:'owner-a',source:'personal',status:'draft',updated_at:baseline});
+ await assert.rejects(api.saveBusinessQuote({...input,title:'Écrasement obsolète'},true,baseline),/QUOTE_VERSION_CONFLICT/);assert.equal(writes,1);assert.equal(row.title,'Ma modification');
+ const reconciled=await api.saveBusinessQuote({...input,title:'Ma modification'},true,baseline);assert.equal(reconciled.title,'Ma modification');assert.equal(writes,1);
+ actor='owner-b';await assert.rejects(api.saveBusinessQuote(input,true,row.updated_at),/QUOTE_VERSION_CONFLICT/);assert.equal(writes,1);
+});
