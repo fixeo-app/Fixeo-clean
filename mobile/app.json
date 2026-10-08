@@ -3,7 +3,7 @@
     "name": "FIXEO",
     "slug": "fixeo-mobile",
     "scheme": "fixeo",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "ios": {
@@ -14,7 +14,7 @@
     "android": {
       "package": "ma.fixeo.app",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 11,
+      "versionCode": 12,
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ],

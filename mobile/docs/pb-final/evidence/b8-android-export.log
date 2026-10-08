@@ -1,0 +1,48 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+Starting Metro Bundler
+| (node:42) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:43) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:41) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:49) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:55) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:61) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Android ../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓░░░░░░░░ 51.6% (441/614)
+Android ../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 93.5% (1237/1279)
+Android ../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (1417/1417)
+Android Bundled 11042ms ../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/expo-router/entry.js (1417 modules)
+Android ../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (1417/1417)
+
+› Assets (31):
+../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf (390 kB)
+../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/@react-navigation/elements/lib/module/assets/back-icon-mask.png (653 B)
+../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/@react-navigation/elements/lib/module/assets/back-icon.png (4 variations | 152 B)
+../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/@react-navigation/elements/lib/module/assets/clear-icon.png (4 variations | 425 B)
+../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/@react-navigation/elements/lib/module/assets/close-icon.png (4 variations | 235 B)
+../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/@react-navigation/elements/lib/module/assets/search-icon.png (4 variations | 599 B)
+../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/expo-router/assets/arrow_down.png (9.46 kB)
+../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/expo-router/assets/error.png (469 B)
+../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/expo-router/assets/file.png (138 B)
+../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/expo-router/assets/forward.png (188 B)
+../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/expo-router/assets/pkg.png (364 B)
+../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/expo-router/assets/sitemap.png (465 B)
+../../../fb7f1b129e2c/Fixeo-clean/mobile/node_modules/expo-router/assets/unmatched.png (4.75 kB)
+assets/rafi/master-loop-v1/rafi-hero-poster.png (200 kB)
+assets/rafi/master-loop-v1/rafi-hero.webp (9.35 MB)
+assets/rafi/master-loop-v1/rafi-medium-poster.png (74.3 kB)
+assets/rafi/master-loop-v1/rafi-medium.webp (4.01 MB)
+assets/rafi/master-loop-v1/rafi-mini-poster.png (22.2 kB)
+assets/rafi/master-loop-v1/rafi-mini.webp (1.46 MB)
+
+› android bundles (1):
+_expo/static/js/android/entry-e80fe49f7ff26efe0ae1946063b86cea.hbc (4.28 MB)
+
+› Files (1):
+metadata.json (2.23 kB)
+
+Exported: /tmp/fixeo-b8-hermes

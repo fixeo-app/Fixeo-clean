@@ -1,0 +1,6 @@
+{
+  "hash": "c4b26236d14adf7ee6a7db078a8f541c7c4e2649",
+  "platform": "android",
+  "source": "local @expo/fingerprint 0.15.5",
+  "limit": "EAS fingerprint may differ with builder environment; not a source SHA or signature"
+}

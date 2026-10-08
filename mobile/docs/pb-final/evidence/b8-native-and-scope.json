@@ -1,0 +1,18 @@
+{
+  "checkedAtUtc": "2026-10-08T21:27:53.991655+00:00",
+  "version": "0.3.3",
+  "versionCode": 12,
+  "package": "ma.fixeo.app",
+  "nativeKeyboard": "adjustResize",
+  "newPermissions": [],
+  "pluginsUnchanged": true,
+  "EAS": "internal staging APK / existing credentials / local version / no autosubmit",
+  "sourceChangesOutsideMobile": [],
+  "secretPatternMatchesInAddedLines": 0,
+  "secretScanLimit": "targeted patterns plus human diff review, not an exhaustive security audit",
+  "migrationChanged": false,
+  "productionWrites": 0,
+  "stagingWrites": 0,
+  "quotaObserved": "Starter 7/45 USD used, 38 left, one concurrency; re-read EAS Billing before freeze",
+  "physical": "DEFERRED"
+}

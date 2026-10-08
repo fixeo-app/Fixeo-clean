@@ -1,0 +1,73 @@
+{
+  "source_sha256": "248147026d95a171ebafc650d1f476c46cde7013d8d90997d9ffb16013b1ea2a",
+  "frames": 217,
+  "source_fps": 24,
+  "source_seconds": 9.041666666666666,
+  "device_performance": "PHYSICAL RE-CERTIFICATION REQUIRED",
+  "variants": {
+    "hero": {
+      "resolution": [
+        448,
+        448
+      ],
+      "frames": 217,
+      "duration_ms": 9042,
+      "alpha": true,
+      "opaque_core": true,
+      "transparent_border": true,
+      "max_core_rgb_mae_255": 1.4125940662572443,
+      "motion_delta_correlation": 0.9957866716201023,
+      "matte_center_range_pixels": 2.576525777578382,
+      "boundary_delta_source_runtime": [
+        4.849775105959692,
+        5.032998875529798
+      ],
+      "file_bytes": 9349814,
+      "one_rgba_frame_bytes": 802816,
+      "all_frames_uncompressed_bytes_for_comparison_only": 174211072
+    },
+    "medium": {
+      "resolution": [
+        256,
+        256
+      ],
+      "frames": 217,
+      "duration_ms": 9042,
+      "alpha": true,
+      "opaque_core": true,
+      "transparent_border": true,
+      "max_core_rgb_mae_255": 1.7595487261005873,
+      "motion_delta_correlation": 0.9906504051531719,
+      "matte_center_range_pixels": 1.5399704534524208,
+      "boundary_delta_source_runtime": [
+        4.2612266525367595,
+        4.665209520024727
+      ],
+      "file_bytes": 4008410,
+      "one_rgba_frame_bytes": 262144,
+      "all_frames_uncompressed_bytes_for_comparison_only": 56885248
+    },
+    "mini": {
+      "resolution": [
+        128,
+        128
+      ],
+      "frames": 217,
+      "duration_ms": 9042,
+      "alpha": true,
+      "opaque_core": true,
+      "transparent_border": true,
+      "max_core_rgb_mae_255": 2.3777188797596964,
+      "motion_delta_correlation": 0.9611076985135347,
+      "matte_center_range_pixels": 0.8363869247391659,
+      "boundary_delta_source_runtime": [
+        3.5741425921017758,
+        4.179697853167241
+      ],
+      "file_bytes": 1462898,
+      "one_rgba_frame_bytes": 65536,
+      "all_frames_uncompressed_bytes_for_comparison_only": 14221312
+    }
+  },
+  "host_decode_seconds_not_android_fps": 12.293305727998813
+}
