@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { FlatList, Keyboard, KeyboardAvoidingView, Modal, Platform, StyleSheet, TextInput, View } from 'react-native';
+import { Alert, FlatList, Keyboard, KeyboardAvoidingView, Modal, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { canonicalCity, citySuggestions } from '@/lib/clientLocation';
 import { FixeoText } from '@/ui/FixeoText';
@@ -58,7 +58,9 @@ export function CityZonesField({ values, onChange, disabled = false }: {
     {values.map((city, index) => <View key={city} style={styles.zone}>
       <View style={styles.input}><FixeoText>{canonicalCity(city) || city}</FixeoText>
         <FixeoText variant="caption" tone="secondary">{index === 0 ? 'Ville principale' : 'Zone de travail'}</FixeoText></View>
-      <ShellControl accessibilityLabel={`Retirer ${city}`} disabled={disabled} onPress={() => onChange(values.filter((_, i) => i !== index))}>
+      <ShellControl accessibilityLabel={`Retirer ${city}`} disabled={disabled} onPress={() => Alert.alert(`Retirer ${city} ?`, index === 0 ? 'Choisissez ensuite votre ville principale avant d’enregistrer.' : 'Cette zone sera retirée à l’enregistrement du profil.', [
+        { text: 'Conserver', style: 'cancel' }, { text: 'Retirer', onPress: () => onChange(values.filter((_, i) => i !== index)) },
+      ])}>
         <ShellIcon name="close-outline" />
       </ShellControl>
     </View>)}

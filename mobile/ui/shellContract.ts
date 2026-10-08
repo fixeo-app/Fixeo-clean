@@ -79,7 +79,7 @@ export function workspaceDockDestinations(universe: ShellUniverse, pathname: str
   const current = normalizeShellPath(pathname);
   const belongs = universe === 'client' ? current === '/' || current === '/new-request' || current.startsWith('/client-') : current === '/artisan' || current.startsWith('/artisan-workspace') || current.startsWith('/mission/');
   if (!belongs) return [];
-  const keys = universe === 'client' ? ['rafi', 'history', 'alerts'] : ['opportunities', 'rafi', 'agenda'];
+  const keys = universe === 'client' ? ['rafi', 'history', 'alerts'] : ['opportunities', 'rafi', 'agenda', 'workspace'];
   return keys.map(key => getShellDestinations(universe).find(item => item.key === key)!);
 }
 /** Conservative first-layout reservation. Actual height replaces it on layout. */

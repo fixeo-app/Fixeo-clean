@@ -54,15 +54,20 @@ export default function ClientDetail() {
     [notes, setNotes] = useState("");
   useEffect(() => {
     const c = q.data?.client;
-    if (c) {
+    if (c && !edit) {
       setName(c.full_name);
       setPhone(c.phone || "");
       setCity(c.city || "");
       setAddress(c.address || "");
       setNotes(c.notes || "");
     }
-  }, [q.data?.client]);
+  }, [q.data?.client, edit]);
   const client = q.data?.client;
+  const restoreClient = () => {
+    if (!client) return;
+    setName(client.full_name); setPhone(client.phone || ''); setCity(client.city || '');
+    setAddress(client.address || ''); setNotes(client.notes || ''); a.setMessage('');
+  };
   const call = () => {
     if (client?.phone)
       void Linking.openURL("tel:" + client.phone.replace(/[^+\d]/g, "")).catch(
@@ -149,7 +154,7 @@ export default function ClientDetail() {
               multiline
             />
             <FixeoAction
-              label="Enregistrer le client"
+              label={fresh ? "Enregistrer le client" : "Enregistrer les modifications"}
               busy={a.busy}
               disabled={!name.trim()}
               onPress={() =>
@@ -182,7 +187,7 @@ export default function ClientDetail() {
               <FixeoAction
                 label="Annuler la modification"
                 variant="ghost"
-                onPress={() => setEdit(false)}
+                onPress={() => { restoreClient(); setEdit(false); }}
               />
             )}
           </>
@@ -199,7 +204,7 @@ export default function ClientDetail() {
               <FixeoAction
                 label="Modifier la fiche"
                 variant="secondary"
-                onPress={() => setEdit(true)}
+                onPress={() => { restoreClient(); setEdit(true); }}
               />
             </ArtisanSection>
             <ArtisanCue
@@ -221,6 +226,7 @@ export default function ClientDetail() {
                   <FixeoText tone="secondary">
                     {businessStatus[x.status] || x.status} · {money(x.total)}
                   </FixeoText>
+                  <FixeoText variant="supporting" tone="secondary">Mis à jour le {formatWorkspaceDate(x.updated_at)}</FixeoText>
                   <FixeoAction
                     label="Ouvrir le devis"
                     variant="ghost"

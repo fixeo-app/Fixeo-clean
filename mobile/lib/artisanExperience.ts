@@ -111,10 +111,10 @@ export function ledgerTotals(
   return {
     income: selected
       .filter((r) => r.entry_type === "income")
-      .reduce((s, r) => s + r.amount, 0),
+      .reduce((s, r) => s + moneyMinor(r.amount), 0) / 100,
     expense: selected
       .filter((r) => r.entry_type === "expense")
-      .reduce((s, r) => s + r.amount, 0),
+      .reduce((s, r) => s + moneyMinor(r.amount), 0) / 100,
   };
 }
 /** Identical starts only: no invented appointment duration. */
@@ -167,6 +167,8 @@ export function artisanError(error: unknown) {
     )
   )
     return "Cette demande suit un autre parcours de prix. Aucun devis n’a été transmis.";
+  if (/PDF_SHARING_UNAVAILABLE/.test(message)) return 'Le partage de fichiers est indisponible sur cet appareil.';
+  if (/PDF_INVALID/.test(message)) return 'Le document n’a pas pu être généré. Réessayez.';
   if (/LEDGER_CLIENT_MISMATCH/.test(message)) return "Le client doit correspondre à l’intervention sélectionnée.";
   if (/LEDGER_|JOB_INVALID/.test(message)) return "Vérifiez le montant, la date et l’intervention sélectionnée.";
   if (/QUOTE_STATE_CHANGED/.test(message)) return "Le statut de ce devis a changé. Actualisez-le avant de continuer.";

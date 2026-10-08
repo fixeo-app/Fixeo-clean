@@ -76,7 +76,7 @@ export default function Profile() {
             </FixeoText>
             {p.verified && <FixeoText>Profil vérifié par FIXEO</FixeoText>}
           </ArtisanSection>
-          <ArtisanCue text="Présentez votre expérience, vos métiers et vos zones avec précision. Vos informations alimentent votre profil professionnel FIXEO." />
+          <ArtisanCue text={!p.description?.trim() ? 'Ajoutez une présentation de votre expérience et de votre façon de travailler.' : !p.phone_public ? 'Ajoutez un téléphone professionnel pour compléter vos coordonnées.' : !p.services?.length ? 'Précisez les métiers que vous exercez.' : 'Votre présentation et vos coordonnées sont renseignées. Vérifiez vos zones et votre disponibilité avant vos prochains rendez-vous.'} />
           <ArtisanField
             label="Téléphone professionnel"
             value={phone}
@@ -130,12 +130,10 @@ export default function Profile() {
               }}
               multiline
               maxLength={4000}
+              hint={`${Array.from(bio).length} / 4 000 caractères`}
               editable={!bioAction.busy}
               placeholder="Votre expérience, votre savoir-faire et votre façon de travailler."
             />
-            <FixeoText variant="supporting" tone="secondary">
-              {Array.from(bio).length} / 4 000 caractères
-            </FixeoText>
             <FixeoAction
               label="Enregistrer ma présentation"
               busyLabel="Enregistrement…"
@@ -164,7 +162,7 @@ export default function Profile() {
               <View key={String(label)} style={art.row}>
                 <FixeoText>{label}</FixeoText>
                 <FixeoText variant={value == null ? "supporting" : "heading"} tone={value == null ? "secondary" : "primary"} style={value == null ? { fontWeight: "400" } : undefined}>
-                  {value == null ? "En cours de calcul" : String(value)}
+                  {value == null ? "Données non disponibles" : String(value)}
                 </FixeoText>
               </View>
             ))}

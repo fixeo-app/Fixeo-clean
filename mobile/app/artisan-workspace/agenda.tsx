@@ -16,7 +16,7 @@ import {
   when,
 } from "@/lib/artisanExperience";
 import {
-  parseAgendaDateTime, pickerDateParts,
+  parseAgendaDateTime, moroccoDateParts,
 } from "@/lib/agendaDate";
 import {
   ArtisanPage,
@@ -49,7 +49,7 @@ export default function Agenda() {
     [id, setId] = useState(() => Crypto.randomUUID()),
     [title, setTitle] = useState(""),
     [clientId, setClientId] = useState(params.clientId || ""),
-    [date, setDate] = useState(() => { if (params.day !== "tomorrow") return ""; const day=new Date(); day.setDate(day.getDate()+1); return pickerDateParts(day).date; }),
+    [date, setDate] = useState(() => { if (params.day !== "tomorrow") return ""; const day = new Date(`${localDay()}T12:00:00Z`); day.setUTCDate(day.getUTCDate() + 1); return moroccoDateParts(day).date; }),
     [time, setTime] = useState(""),
     [notes, setNotes] = useState("");
   const titleRef = useRef<TextInput>(null), dateRef = useRef<TextInput>(null), timeRef = useRef<TextInput>(null);
@@ -60,8 +60,8 @@ export default function Agenda() {
     time: !time.trim() ? 'Choisissez une heure.' : !parseAgendaDateTime('01/01/2026', time) ? 'Vérifiez l’heure de l’intervention.' : '',
   };
   const day = localDay(),
-    weekEnd = new Date();
-  weekEnd.setDate(weekEnd.getDate() + 7);
+    weekEnd = new Date(`${day}T12:00:00Z`);
+  weekEnd.setUTCDate(weekEnd.getUTCDate() + 7);
   const jobs = q.data?.jobs
     .filter(
       (j) =>
@@ -105,7 +105,7 @@ export default function Agenda() {
             error={attempted ? errors.title : undefined}
             label="Titre de l’intervention"
             value={title}
-            onChangeText={setTitle}
+            onChangeText={value => { setTitle(value); a.setMessage(''); }}
           />
           <ArtisanChoices
             label="Client concerné"
@@ -119,9 +119,9 @@ export default function Agenda() {
               })),
             ]}
           />
-          <AgendaDateTimeField errors={attempted ? errors : undefined} dateRef={dateRef} timeRef={timeRef} date={date} time={time} onDate={setDate} onTime={setTime} />
+          <AgendaDateTimeField errors={attempted ? errors : undefined} dateRef={dateRef} timeRef={timeRef} date={date} time={time} onDate={value => { setDate(value); a.setMessage(''); }} onTime={value => { setTime(value); a.setMessage(''); }} />
           <FixeoText variant="supporting" tone="secondary">
-            Saisie dans le fuseau horaire de votre appareil.
+            Heure du Maroc · format 24 heures.
           </FixeoText>
           <ArtisanField
             label="Notes de l’intervention"
@@ -136,7 +136,7 @@ export default function Agenda() {
               setAttempted(true);
               const at = parseAgendaDateTime(date, time);
               if (!at || !title.trim()) {
-                a.setMessage(errors.title || errors.date || errors.time);
+                a.setMessage(errors.title || errors.date || errors.time || 'Cette heure est ambiguë ou indisponible au Maroc. Choisissez un autre créneau.');
                 (errors.title ? titleRef : errors.date ? dateRef : timeRef).current?.focus();
                 return;
               }
@@ -200,8 +200,8 @@ export default function Agenda() {
       ))}
       {jobs?.length === 0 && (
         <ArtisanEmpty
-          title="Votre agenda est libre."
-          detail="Planifiez une intervention ou préparez vos prochains rendez-vous."
+          title={period === 'today' ? 'Agenda libre aujourd’hui.' : period === 'week' ? 'Aucune intervention sur ces 7 jours.' : 'Aucune intervention personnelle.'}
+          detail={period === 'today' ? 'Consultez les 7 prochains jours pour vos autres rendez-vous.' : 'Planifiez une intervention ou préparez vos prochains rendez-vous.'}
         />
       )}
       {q.data && (

@@ -7,7 +7,8 @@ export function useWorkspaceDock(universe: ShellUniverse, counts: Readonly<Recor
   const pathname = usePathname();
   const navigating = useRef(false);
   useFocusEffect(useCallback(() => { navigating.current = false; }, []));
-  return { universe, items: workspaceDockDestinations(universe, pathname).map(item => ({
+  return { universe, fourActionReason: universe === 'artisan' ? 'PB1.1 : accès permanent approuvé au statut de disponibilité canonique.' : undefined,
+    items: workspaceDockDestinations(universe, pathname).map(item => ({
     key: item.key, label: item.label, icon: item.icon, accessibilityLabel: `Ouvrir ${item.label}`,
     badge: counts[item.key],
     selected: normalizeShellPath(pathname) === item.path,

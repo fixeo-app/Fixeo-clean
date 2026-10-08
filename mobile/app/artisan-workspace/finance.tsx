@@ -1,4 +1,5 @@
 import { formatWorkspaceDate } from '@/lib/workspacePresentation';
+import { validISODate } from '@/lib/dateValidation';
 import { DateField } from '@/components/DateField';
 import { useLocalSearchParams } from 'expo-router';
 import { ledgerDetailLabel, ledgerTypeLabel, ledgerJobLabel } from '@/lib/ledgerPresentation';
@@ -172,7 +173,7 @@ export default function Finance() {
               if (
                 !Number.isFinite(n) ||
                 n <= 0 ||
-                !/^\d{4}-\d{2}-\d{2}$/.test(date)
+                n > 500000 || !validISODate(date)
               ) {
                 a.setMessage(
                   "Renseignez un montant positif et une date valide.",

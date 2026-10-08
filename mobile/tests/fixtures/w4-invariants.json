@@ -25,7 +25,7 @@
     "lib/useForegroundRefresh.ts": "2f661a027fbdac12dfcedaddc35efbda16a41b1c26a50402dd304bf4d9d5c9e6",
     "ui/FixeoAction.tsx": "f19bc08b3ff33324f91d44b16e8cb6c85dc8d50b324f9a338a3ca8e60ec7ec92",
     "ui/FixeoCard.tsx": "42d36eb76e6dce6a0414c800c20f5e6b09a6271fea2b09ccf185140d830c16a0",
-    "ui/FixeoContextDock.tsx": "492c604ccc84af30ff5fae9381a11c7cadc163b995df46b11530ab305a954040",
+    "ui/FixeoContextDock.tsx": "eb761adb62580d338ad95117879efbe3459817409549def48ed85fac30ebb3fa",
     "ui/FixeoSurface.tsx": "4ff09803afbf5132f6995f55781206faf07b8300901a58e7eff8c1f52ba6a6ac",
     "ui/FixeoText.tsx": "f2d6d8984c1c9df326c5d5f4876d16374db147336dda4f37c63882b229044bd5",
     "ui/RafiCoreMaterial.tsx": "0a83af51a461a169c20d84bd57fe0cd91e626c3b77316b5afe259352b6786544",
@@ -205,6 +205,13 @@
         "hook-0": "4539b49a90ae173ac4672b4f114fb7b21e5e6353e61762c36a3de24b5219b2e8",
         "save": "1e5878235880b760c1affc464db450f44bc91114c2f3d979363982431fd730c5"
       }
+    }
+  },
+  "pb11AuthorizedChanges": {
+    "ui/FixeoContextDock.tsx": {
+      "before": "492c604ccc84af30ff5fae9381a11c7cadc163b995df46b11530ab305a954040",
+      "after": "eb761adb62580d338ad95117879efbe3459817409549def48ed85fac30ebb3fa",
+      "authorization": "PB1.1 master 2026-10-08: four-entry dock"
     }
   }
 }

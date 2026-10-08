@@ -117,7 +117,7 @@ test('PB1 revalidation cannot restore a revoked or switched identity', () => {
   assert.equal(routeAllowed('/', state.snapshot()), false);
 });
 
-test('PB1 date/time picker preserves manual masks and device-local time', () => {
+test('PB1 date/time picker preserves native wall components and stores Casablanca time independently of device', () => {
   assert.equal(formatAgendaDateInput('06102026'), '06/10/2026');
   assert.equal(formatAgendaTimeInput('1130'), '11:30');
   for (const zone of ['Africa/Casablanca', 'UTC', 'America/New_York']) {
@@ -125,7 +125,7 @@ test('PB1 date/time picker preserves manual masks and device-local time', () => 
     try {
       const date = agendaPickerValue('06/10/2026', '11:30');
       assert.deepEqual(pickerDateParts(date), { date: '06/10/2026', time: '11:30' });
-      assert.equal(date.toISOString(), parseAgendaDateTime('06/10/2026', '11:30'));
+      assert.equal(parseAgendaDateTime('06/10/2026', '11:30'), '2026-10-06T10:30:00.000Z');
       assert.equal(parseAgendaDateTime('31/02/2026', '11:30'), null);
       assert.equal(parseAgendaDateTime('06/10/2026', '25:30'), null);
     } finally { if (before === undefined) delete process.env.TZ; else process.env.TZ = before; }
@@ -146,6 +146,7 @@ test('PB1 finance labels never expose raw enums and preserve linked/independent 
 test('PB1 business writes retain the same draft, CRM links and independent expense', async () => {
   const writes: Array<{ table: string; action: string; payload: any; filters: Record<string, unknown> }> = [];
   const api = load('lib/artisanOS.ts', {
+    './dateValidation': await import('../lib/dateValidation'), './moneyContract': await import('../lib/moneyContract'),
     './artisanProgressive': { inFlightRead: (fn: unknown) => fn },
     './artisanExperience': { calculateQuote }, './supabase': { supabase: {
       auth: { getSession: async () => ({ data: { session: { access_token: 'synthetic-only' } } }) },

@@ -1,6 +1,6 @@
 import { BackButton } from '@/ui/BackButton';
 import { pageLayout } from '@/ui/pageLayout';
-import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
+import { RafiScrollView as ScrollView, useKeyboardField } from '@/ui/RafiScrollView';
 import { useCallback, useEffect, useRef, useState, type PropsWithChildren, type ReactNode, type Ref } from "react";
 import { RafiSignalContext } from '@/ui/RafiSignal';
 import { rafiActionState, type RafiSignal } from '@/ui/rafiPresence';
@@ -274,24 +274,30 @@ export function ArtisanMessage({
   );
 }
 export function ArtisanField({
-  label, error, inputRef,
+  label, error, inputRef, hint,
   ...props
-}: TextInputProps & { label: string; error?: string; inputRef?: Ref<TextInput> }) {
+}: TextInputProps & { label: string; error?: string; hint?: string; inputRef?: Ref<TextInput> }) {
+  const field = useRef<View>(null);
+  const keyboard = useKeyboardField();
   return (
-    <View style={art.field}>
+    <View ref={field} collapsable={false} style={art.field}>
       <FixeoText variant="supporting">{label}</FixeoText>
       <TextInput
         ref={inputRef}
         accessibilityLabel={label}
         placeholderTextColor={semanticColors.text.secondary}
         {...props}
+        onFocus={event => { keyboard?.focus(field); props.onFocus?.(event); }}
+        onBlur={event => { keyboard?.blur(field); props.onBlur?.(event); }}
+        onContentSizeChange={event => { keyboard?.reveal(); props.onContentSizeChange?.(event); }}
         style={[
           art.input,
           error && { borderWidth: 2, borderColor: semanticColors.text.secondary },
-          props.multiline && { minHeight: 100, textAlignVertical: "top" },
+          props.multiline && { minHeight: 100, maxHeight: 180, textAlignVertical: "top" },
           props.style,
         ]}
       />
+      {!!hint && <FixeoText variant="supporting" tone="secondary">{hint}</FixeoText>}
       {error && <FixeoText accessibilityRole="alert" accessibilityLiveRegion="polite">ⓘ {error}</FixeoText>}
     </View>
   );

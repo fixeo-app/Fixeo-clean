@@ -1,4 +1,6 @@
 import { canonicalCities, canonicalCity, requireCanonicalCity, withCanonicalCity } from './clientLocation';
+import { validISODate } from './dateValidation';
+import { moneyMinor } from './moneyContract';
 import { inFlightRead } from "./artisanProgressive";
 import { supabase } from "./supabase";
 import { calculateQuote, localDay, type QuoteLine } from "./artisanExperience";
@@ -309,6 +311,7 @@ export async function saveBusinessQuote(
 ): Promise<BusinessQuote> {
   const actor = await artisanAccess();
   if (!input.title.trim()) throw new Error("QUOTE_TITLE_REQUIRED");
+  if (input.validity_date && !validISODate(input.validity_date)) throw new Error('QUOTE_DATE_INVALID');
   const amounts = calculateQuote(input.items, input.discount);
   const payload = {
     ...input,
@@ -457,7 +460,9 @@ export async function saveLedgerEntry(input: {
   if (
     !Number.isFinite(input.amount) ||
     input.amount <= 0 ||
-    input.amount > 500000
+    input.amount > 500000 ||
+    !validISODate(input.occurred_on) ||
+    !['income', 'expense'].includes(input.entry_type)
   )
     throw new Error("LEDGER_INVALID");
   let linkedClient = input.client_id;
@@ -473,6 +478,7 @@ export async function saveLedgerEntry(input: {
     .upsert(
       {
         ...input,
+        amount: moneyMinor(input.amount) / 100,
         client_id: linkedClient,
         owner_user_id: actor.user_id,
         source: "personal",

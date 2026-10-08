@@ -1,3 +1,7 @@
+import { QuoteProposal } from '@/components/QuoteProposal';
+import { validISODate } from '@/lib/dateValidation';
+import type { QuoteDocument } from '@/lib/quoteDocument';
+import { loadQuoteDraft, saveQuoteDraft, removeQuoteDraft } from '@/lib/quoteDrafts';
 import { validateQuote } from '@/lib/quoteValidation';
 import { formatWorkspaceDate } from '@/lib/workspacePresentation';
 import { QuoteBreakdown } from '@/components/QuoteBreakdown';
@@ -9,6 +13,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { getDispatchOffers } from "@/lib/magicLoop";
 import {
   loadBusinessClients,
+  loadArtisanProfile,
   loadBusinessQuotes,
   recordQuoteDecision,
   saveBusinessQuote,
@@ -45,12 +50,13 @@ const blank = (): Line => ({
   price: "",
 });
 const load = async () => {
-  const [clients, quotes, offers] = await Promise.all([
+  const [clients, quotes, offers, profile] = await Promise.all([
     loadBusinessClients(),
     loadBusinessQuotes(),
     getDispatchOffers(),
+    loadArtisanProfile(),
   ]);
-  return { clients, quotes, offers };
+  return { clients, quotes, offers, profile };
 };
 export default function QuoteStudio() {
   const params = useLocalSearchParams<{
@@ -63,7 +69,7 @@ export default function QuoteStudio() {
     q = useArtisanQuery(load),
     a = useArtisanAction();
   const [section, setSection] = useState(0);
-  const [newId] = useState(() => Crypto.randomUUID());
+  const [newId, setNewId] = useState(() => Crypto.randomUUID());
   const [origin, setOrigin] = useState(
       params.origin === "fixeo" ? "fixeo" : "personal",
     ),
@@ -104,10 +110,37 @@ export default function QuoteStudio() {
       );
     }
   }, [saved]);
+  const owner = q.data?.profile?.owner_user_id || '';
+  const draftScope = fresh ? `new:${params.origin || ''}:${params.clientId || ''}:${params.requestId || ''}` : params.id;
+  const [draftReady, setDraftReady] = useState('');
+  const draftClosed = useRef(false);
+  const baseline = saved?.updated_at;
+  useEffect(() => {
+    if (!owner || !draftScope || !editable) return;
+    let alive = true; draftClosed.current = false; setDraftReady('');
+    void loadQuoteDraft(owner, draftScope).then(d => {
+      if (!alive) return;
+      if (d && d.baseline === baseline) {
+        setNewId(d.id); setOrigin(d.origin); setClientId(d.clientId); setRequestId(d.requestId); setTitle(d.title);
+        setLines(d.lines); setDiscount(d.discount); setNotes(d.notes); setValidity(d.validity); setDuration(d.duration); setSection(d.section);
+      }
+      setDraftReady(`${owner}:${draftScope}`);
+    }).catch(() => { if (alive) setDraftReady(`${owner}:${draftScope}`); });
+    return () => { alive = false; };
+  }, [owner, draftScope, editable, baseline]);
+  useEffect(() => {
+    if (!owner || draftReady !== `${owner}:${draftScope}` || !editable || draftClosed.current) return;
+    void saveQuoteDraft(owner, draftScope, { id: newId, baseline, origin, clientId, requestId, title, lines, discount, notes, validity, duration, section }).catch(() => undefined);
+  }, [owner, draftScope, draftReady, editable, newId, baseline, origin, clientId, requestId, title, lines, discount, notes, validity, duration, section]);
   const number = (s: string) => (s.trim() ? Number(s.replace(",", ".")) : NaN);
   const gate = validateQuote({ origin, title, clientId, requestId, clients: q.data?.clients || [], offers: q.data?.offers || [],
     items: lines.map(line => ({ type: line.type, label: line.label, quantity: number(line.quantity), unit_price: number(line.price) })), discount: number(discount || '0') });
   const calculated = gate.calculated;
+  const document: QuoteDocument | null = origin === 'personal' && calculated ? {
+    number: saved?.quote_number || 'APERÇU · NON ENREGISTRÉ', status: saved ? businessStatus[saved.status] || saved.status : 'Brouillon',
+    title, updatedAt: saved?.updated_at, issuer: { name: q.data?.profile?.name, city: q.data?.profile?.city, phone: q.data?.profile?.phone_public },
+    client: q.data?.clients.find(c => c.id === clientId), ...calculated, validity, duration, notes,
+  } : null;
   const unsaved = !!saved && (title !== saved.title || clientId !== (saved.client_id || '') || notes !== (saved.notes || '') || validity !== (saved.validity_date || '') || duration !== (saved.estimated_duration || '') || Number(discount || 0) !== Number(saved.discount) || JSON.stringify(calculated?.items.map(({type,label,quantity,unit_price}) => [type,label,Number(quantity),Number(unit_price)])) !== JSON.stringify(saved.items?.map(({type,label,quantity,unit_price}) => [type,label,Number(quantity),Number(unit_price)])));
   const visibleSection = gate.canEnterLines ? gate.canEnterConditions ? section : Math.min(section, 1) : 0;
   const showPreview = preview && (gate.canPreview || (!fresh && saved?.source === 'personal' && !editable));
@@ -117,6 +150,7 @@ export default function QuoteStudio() {
   }
   function openPreview() { if (!gate.canPreview) { a.setMessage(gate.message); return; } setPreview(true); }
   function patch(index: number, next: Partial<Line>) {
+    a.setMessage('');
     setLines((old) => old.map((l, i) => (i === index ? { ...l, ...next } : l)));
   }
   async function save() {
@@ -129,8 +163,8 @@ export default function QuoteStudio() {
       setConfirmation("marketplace");
       return;
     }
-    if (validity && !/^\d{4}-\d{2}-\d{2}$/.test(validity)) {
-      a.setMessage("Indiquez la validité au format AAAA-MM-JJ.");
+    if (validity && !validISODate(validity)) {
+      a.setMessage("Choisissez une date de validité réelle.");
       return;
     }
     await a.run(async () => {
@@ -147,6 +181,8 @@ export default function QuoteStudio() {
         },
         !fresh,
       );
+      draftClosed.current = true;
+      if (owner) await removeQuoteDraft(owner, draftScope).catch(() => undefined);
       router.replace({
         pathname: "/artisan-workspace/quote/[id]" as any,
         params: { id: result.id, ...(params.clientId ? { clientId: params.clientId } : {}) },
@@ -172,6 +208,7 @@ export default function QuoteStudio() {
         <>
           {showPreview ? (
             <>
+              {document ? <QuoteProposal document={document} /> : <>
               <ArtisanSection
                 label={
                   origin === "fixeo"
@@ -236,9 +273,20 @@ export default function QuoteStudio() {
                 )}
                 {notes && <FixeoText>{notes}</FixeoText>}
               </ArtisanSection>
+              </>}
               {editable && <View style={art.actions}>
                 <FixeoAction label={origin === 'fixeo' ? 'Transmettre à FIXEO' : fresh ? 'Enregistrer le brouillon' : 'Enregistrer les modifications'} disabled={!gate.canSave} busy={a.busy} onPress={() => void save()} />
                 <FixeoAction label="Modifier les détails" variant="secondary" onPress={() => setPreview(false)} />
+              </View>}
+              {document && <View style={art.actions}>
+                <FixeoAction label="Exporter / partager le PDF" variant="secondary" busy={a.busy}
+                  disabled={fresh || unsaved || !q.data.profile?.name}
+                  onPress={() => void a.run(async () => {
+                    const { shareQuotePdf } = await import('@/lib/quotePdf');
+                    return shareQuotePdf(document);
+                  }, 'Feuille de partage refermée. Le statut du devis reste inchangé.')} />
+                {(fresh || unsaved) && <FixeoText variant="supporting" tone="secondary">Enregistrez le brouillon pour exporter sa version exacte.</FixeoText>}
+                {!q.data.profile?.name && <FixeoText variant="supporting" tone="secondary">Renseignez votre identité professionnelle pour émettre ce devis.</FixeoText>}
               </View>}
               {!fresh && saved?.source === "personal" && (
                 <View style={art.actions}>
@@ -289,7 +337,7 @@ export default function QuoteStudio() {
                 <ArtisanChoices
                   label="Client du devis"
                   value={clientId}
-                  onChange={setClientId}
+                  onChange={value => { setClientId(value); a.setMessage(''); }}
                   options={[
                     { value: "", label: "À renseigner" },
                     ...q.data.clients.map((c) => ({
@@ -302,7 +350,7 @@ export default function QuoteStudio() {
                 <ArtisanChoices
                   label="Opportunité concernée"
                   value={requestId}
-                  onChange={setRequestId}
+                  onChange={value => { setRequestId(value); a.setMessage(''); }}
                   options={q.data.offers.map((o) => ({
                     value: o.request_id,
                     label: `${o.service_category || "Demande"} · ${o.city || ""}`,
@@ -318,7 +366,7 @@ export default function QuoteStudio() {
               <ArtisanField
                 label="Titre du devis"
                 value={title}
-                onChangeText={setTitle}
+                onChangeText={value => { setTitle(value); a.setMessage(''); }}
               />
               {gate.identityError && <FixeoText accessibilityLiveRegion="polite" tone="secondary">{gate.identityError}</FixeoText>}
               <FixeoAction label="Continuer vers les lignes" disabled={!gate.canEnterLines} onPress={() => goToSection(1)} />
@@ -386,7 +434,7 @@ export default function QuoteStudio() {
                     keyboardType="decimal-pad"
                     onChangeText={setDiscount}
                   />
-                  <DateField label="Valable jusqu’au" value={validity} onChange={setValidity} />
+                  <DateField label="Valable jusqu’au" value={validity} onChange={value => { setValidity(value); a.setMessage(''); }} />
                 </>
               )}
               <ArtisanField
@@ -414,7 +462,7 @@ export default function QuoteStudio() {
                   label={
                     origin === "fixeo"
                       ? "Transmettre à FIXEO"
-                      : "Enregistrer le brouillon"
+                      : fresh ? "Enregistrer le brouillon" : "Enregistrer les modifications"
                   }
                   busy={a.busy}
                   disabled={!gate.canSave}

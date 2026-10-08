@@ -11,6 +11,7 @@ export function AgendaDateTimeField({ date, time, onDate, onTime, errors, dateRe
   date: string; time: string; onDate: (value: string) => void; onTime: (value: string) => void;
 }) {
   const mounted = useRef(true), opening = useRef(false);
+  const [manual, setManual] = useState(Platform.OS === 'web');
   const [error, setError] = useState('');
   const [iosMode, setIosMode] = useState<'date' | 'time' | null>(null);
   const [iosValue, setIosValue] = useState(() => agendaPickerValue(date, time));
@@ -30,15 +31,24 @@ export function AgendaDateTimeField({ date, time, onDate, onTime, errors, dateRe
           const parts = pickerDateParts(selected);
           if (mode === 'date') onDate(parts.date); else onTime(parts.time);
         },
-        onError: () => { opening.current = false; if (mounted.current) setError('Le sélecteur est indisponible. La saisie manuelle reste disponible.'); },
+        onError: () => { opening.current = false; if (mounted.current) { setManual(true); setError('Le sélecteur est indisponible. La saisie manuelle reste disponible.'); } },
       });
-    } catch { opening.current = false; if (mounted.current) setError('La saisie manuelle reste disponible.'); }
+    } catch { opening.current = false; if (mounted.current) { setManual(true); setError('La saisie manuelle reste disponible.'); } }
   }
   return <View style={{ gap: 12 }}>
-    <ArtisanField error={errors?.date} inputRef={dateRef} label="Date — JJ/MM/AAAA" value={date} keyboardType="number-pad" onChangeText={value => onDate(formatAgendaDateInput(value))} />
-    {(Platform.OS === 'android' || Platform.OS === 'ios') && <FixeoAction label="Choisir la date" variant="secondary" onPress={() => void open('date')} />}
-    <ArtisanField error={errors?.time} inputRef={timeRef} label="Heure — HH:MM" value={time} keyboardType="number-pad" onChangeText={value => onTime(formatAgendaTimeInput(value))} />
-    {(Platform.OS === 'android' || Platform.OS === 'ios') && <FixeoAction label="Choisir l’heure" variant="secondary" onPress={() => void open('time')} />}
+    {manual ? <>
+      <ArtisanField error={errors?.date} inputRef={dateRef} label="Date — JJ/MM/AAAA" value={date} keyboardType="number-pad" onChangeText={value => onDate(formatAgendaDateInput(value))} />
+      <ArtisanField error={errors?.time} inputRef={timeRef} label="Heure — HH:MM (24 h)" value={time} keyboardType="number-pad" onChangeText={value => onTime(formatAgendaTimeInput(value))} />
+    </> : <>
+      <FixeoText variant="supporting">Date et heure de l’intervention</FixeoText>
+      <View style={{ flexDirection: 'row', gap: 8 }}>
+        <FixeoAction style={{ flex: 1 }} label={date || 'Choisir la date'} accessibilityLabel="Choisir la date de l’intervention" variant="secondary" onPress={() => void open('date')} />
+        <FixeoAction style={{ flex: 1 }} label={time ? `${time} · 24 h` : 'Choisir l’heure'} accessibilityLabel="Choisir l’heure de l’intervention en format 24 heures" variant="secondary" onPress={() => void open('time')} />
+      </View>
+      {!!errors?.date && <FixeoText accessibilityRole="alert">{errors.date}</FixeoText>}
+      {!!errors?.time && <FixeoText accessibilityRole="alert">{errors.time}</FixeoText>}
+    </>}
+    {Platform.OS !== 'web' && <FixeoAction label={manual ? 'Utiliser les sélecteurs' : 'Saisir la date et l’heure au clavier'} variant="ghost" onPress={() => setManual(value => !value)} />}
     {iosMode && <Modal visible transparent animationType="slide" onRequestClose={() => setIosMode(null)}>
       <View style={{ flex: 1, justifyContent: 'center', padding: 24, backgroundColor: 'rgba(0,0,0,0.4)' }}>
         <View style={{ backgroundColor: '#FAF8F4', borderRadius: 24, padding: 20, gap: 12 }}>

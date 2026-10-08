@@ -3,10 +3,11 @@ import { Keyboard, Platform, View } from 'react-native';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoText } from '@/ui/FixeoText';
 import { ArtisanField } from './ArtisanEditorial';
+import { validISODate } from '@/lib/dateValidation';
 export function DateField({ label, value, onChange }: { label: string; value: string; onChange: (date: string) => void }) {
   const [manual, setManual] = useState(Platform.OS !== 'android');
   const opening = useRef(false);
-  const validDate = /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(new Date(value + 'T12:00:00').getTime());
+  const validDate = validISODate(value);
   const display = validDate ? value.split('-').reverse().join('/') : value;
   async function choose() {
     if (opening.current) return;

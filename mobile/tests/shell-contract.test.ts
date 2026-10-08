@@ -25,7 +25,7 @@ for (const universe of ['client', 'artisan'] as const) {
 }
 test('PB1 dock persists on every canonical top-level route, includes owned details, excludes auth/cross-role', () => {
   for (const universe of ['client', 'artisan'] as const) {
-    const expected = universe === 'client' ? ['rafi', 'history', 'alerts'] : ['opportunities', 'rafi', 'agenda'];
+    const expected = universe === 'client' ? ['rafi', 'history', 'alerts'] : ['opportunities', 'rafi', 'agenda', 'workspace'];
     for (const destination of getShellDestinations(universe)) {
       assert.deepEqual(workspaceDockDestinations(universe, destination.path).map(item => item.key), expected);
       assert.deepEqual(workspaceDockDestinations(universe, destination.path + '/?test=1').map(item => item.key), expected);
@@ -33,7 +33,7 @@ test('PB1 dock persists on every canonical top-level route, includes owned detai
     for (const route of ['/sign-in', '/complete-profile', '/unknown'])
       assert.deepEqual(workspaceDockDestinations(universe, route), []);
   }
-  for (const route of ['/mission/123', '/artisan-workspace/quote/new', '/artisan-workspace/client/123']) assert.equal(workspaceDockDestinations('artisan', route).length, 3);
+  for (const route of ['/mission/123', '/artisan-workspace/quote/new', '/artisan-workspace/client/123']) assert.equal(workspaceDockDestinations('artisan', route).length, 4);
   for (const route of ['/client-mission/123', '/client-request/123', '/new-request']) assert.equal(workspaceDockDestinations('client', route).length, 3);
   assert.deepEqual(workspaceDockDestinations('artisan', '/client-workspace'), []);
   assert.deepEqual(workspaceDockDestinations('client', '/artisan-workspace'), []);
