@@ -112,6 +112,11 @@ export default function ClientDetail() {
       },
     ],
   };
+  const history = q.data ? [
+    ...q.data.quotes.map(x => ({ key: 'quote:'+x.id, at:x.updated_at, title:`${x.quote_number} · ${x.title}`, detail:`${businessStatus[x.status] || x.status} · ${money(x.total)}`, quoteId:x.id })),
+    ...q.data.jobs.map(x => ({ key:'job:'+x.id, at:x.scheduled_at || '', title:x.title, detail:`${when(x.scheduled_at)} · ${businessStatus[x.status] || x.status}`, quoteId:'' })),
+    ...q.data.ledger.map(x => ({ key:'ledger:'+x.id, at:x.occurred_on, title:`${x.entry_type === 'income' ? 'Encaissement' : 'Dépense'} · ${money(x.amount)}`, detail:x.note || 'Mouvement renseigné', quoteId:'' })),
+  ].sort((a,b)=>(Date.parse(b.at)||0)-(Date.parse(a.at)||0)) : [];
   return (
     <ArtisanPage
       rafi={a.rafi}
@@ -122,6 +127,13 @@ export default function ClientDetail() {
       activeKey="clients"
       loading={q.loading}
       dock={dock}
+      transactional={edit}
+      onRefresh={() => void q.reload()}
+      list={edit ? undefined : { data:history,keyExtractor:x=>x.key,renderItem:({item:x})=><View style={art.row}>
+        <FixeoText variant="supporting" tone="secondary">{formatWorkspaceDate(x.at)}</FixeoText>
+        <FixeoText variant="heading">{x.title}</FixeoText><FixeoText tone="secondary">{x.detail}</FixeoText>
+        {!!x.quoteId && <FixeoAction label="Ouvrir le devis" variant="ghost" onPress={()=>router.push({pathname:'/artisan-workspace/quote/[id]',params:{id:x.quoteId}})} />}
+      </View> }}
     >
       <ArtisanMessage
         message={q.error || a.message}
@@ -218,47 +230,6 @@ export default function ClientDetail() {
             )}
             <View>
               <FixeoText variant="heading">Historique</FixeoText>
-              {q.data.quotes.map((x) => (
-                <View style={art.row} key={x.id}>
-                  <FixeoText>
-                    {x.quote_number} · {x.title}
-                  </FixeoText>
-                  <FixeoText tone="secondary">
-                    {businessStatus[x.status] || x.status} · {money(x.total)}
-                  </FixeoText>
-                  <FixeoText variant="supporting" tone="secondary">Mis à jour le {formatWorkspaceDate(x.updated_at)}</FixeoText>
-                  <FixeoAction
-                    label="Ouvrir le devis"
-                    variant="ghost"
-                    onPress={() =>
-                      router.push({
-                        pathname: "/artisan-workspace/quote/[id]" as any,
-                        params: { id: x.id },
-                      })
-                    }
-                  />
-                </View>
-              ))}
-              {q.data.jobs.map((x) => (
-                <View style={art.row} key={x.id}>
-                  <FixeoText>{x.title}</FixeoText>
-                  <FixeoText tone="secondary">
-                    {when(x.scheduled_at)} ·{" "}
-                    {businessStatus[x.status] || x.status}
-                  </FixeoText>
-                </View>
-              ))}
-              {q.data.ledger.map((x) => (
-                <View style={art.row} key={x.id}>
-                  <FixeoText>
-                    {x.entry_type === "income" ? "Encaissement" : "Dépense"} ·{" "}
-                    {money(x.amount)}
-                  </FixeoText>
-                  <FixeoText tone="secondary">
-                    {formatWorkspaceDate(x.occurred_on)} · {x.note || "Mouvement renseigné"}
-                  </FixeoText>
-                </View>
-              ))}
               {!q.data.jobs.length &&
                 !q.data.quotes.length &&
                 !q.data.ledger.length && (

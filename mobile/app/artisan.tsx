@@ -1,4 +1,4 @@
-import { View, useWindowDimensions } from "react-native";
+import { View } from "react-native";
 import { router } from "expo-router";
 import { useArtisanHome } from "@/lib/useArtisanHome";
 import {
@@ -21,7 +21,7 @@ import {
 } from "@/components/ArtisanEditorial";
 import { FixeoText } from "@/ui/FixeoText";
 import { FixeoAction } from "@/ui/FixeoAction";
-import { RafiOrb } from "@/ui/RafiOrb";
+
 
 
 export default function ArtisanHome() {
@@ -32,8 +32,6 @@ export default function ArtisanHome() {
   const awaitingClient = mission?.request_status === "completed";
   const today = d?.jobs;
   const draft = d?.quotes?.find((x) => x.status === "draft");
-  const { width, height } = useWindowDimensions();
-  const heroSize = Math.min(height < 650 ? 132 : 180, Math.max(112, (width - 48) * 0.48));
   const totals = d?.ledger ? ledgerTotals(d.ledger, localDay()) : null;
   return (
     <ArtisanPage
@@ -44,7 +42,6 @@ export default function ArtisanHome() {
       back={false}
       loading={false}
       onRefresh={() => void q.reload()}
-      hero={<View testID="home-rafi" style={{ alignItems: "center", paddingTop: 4 }}><RafiOrb size={heroSize} mode={mission ? "working" : "idle"} /></View>}
     >
       {q.authority.status === "loading" && (
         <FixeoText tone="secondary">
@@ -171,7 +168,7 @@ export default function ArtisanHome() {
             testID="home-jobs"
           />
           {today?.length
-            ? today.slice(0, 2).map((j) => (
+            ? today.slice(0, 3).map((j) => (
                 <View key={j.id} style={art.row}>
                   <FixeoText variant="bodyLarge">{j.title}</FixeoText>
                   <FixeoText tone="secondary">{when(j.scheduled_at)}</FixeoText>

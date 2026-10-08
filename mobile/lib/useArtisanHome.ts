@@ -30,7 +30,7 @@ export function useArtisanHome() {
   const m = c.state.modules;
   const allowed = c.state.authority.status === "ready";
   const value = <K extends keyof typeof m>(key: K) =>
-    allowed && m[key].status === "ready" ? m[key].data : null;
+    allowed ? m[key].data : null;
   return {
     authority: c.state.authority,
     modules: m,

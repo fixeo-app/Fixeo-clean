@@ -258,9 +258,11 @@ export async function markArtisanNotification(id: string) {
     .update({ read: true })
     .eq("id", id)
     .eq("recipient_user_id", actor.user_id)
+    .eq("recipient_role", "artisan")
     .select("id")
     .single();
   if (error) throw error;
+  if (!data?.id) throw new Error("NOTIFICATION_NOT_UPDATED");
   return data;
 }
 export async function saveBusinessClient(

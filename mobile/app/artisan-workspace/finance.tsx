@@ -48,6 +48,8 @@ export default function Finance() {
     [clientId, setClientId] = useState(""),
     [jobId, setJobId] = useState(""),
     [id, setId] = useState(() => Crypto.randomUUID());
+  const [attempted, setAttempted] = useState(false);
+  const amountError = !/^\d{1,6}(?:[.,]\d{1,2})?$/.test(amount.trim()) || Number(amount.replace(',', '.')) <= 0 || Number(amount.replace(',', '.')) > 500000 ? 'Montant positif, au plus 500 000 MAD et deux décimales.' : '';
   const rows = q.data?.ledger.filter(
     (r) =>
       period === "all" ||
@@ -66,11 +68,30 @@ export default function Finance() {
       transactional={open}
       loading={q.loading}
       onRefresh={() => void q.reload()}
+      list={open ? undefined : { data: rows || [], keyExtractor: r => r.id, renderItem: ({ item: r }) => (
+        <View style={art.row} key={r.id}>
+          <FixeoText variant="eyebrow" tone="secondary">
+            {formatWorkspaceDate(r.occurred_on)} · {ledgerTypeLabel(r)}
+          </FixeoText>
+          <FixeoText variant="heading">
+            {r.entry_type === "income" ? "+" : "−"} {money(r.amount)}
+          </FixeoText>
+          {ledgerDetailLabel(r) !== ledgerTypeLabel(r) && <FixeoText>{ledgerDetailLabel(r)}</FixeoText>}
+          {r.client_id && (
+            <FixeoText tone="secondary">
+              {q.data?.clients.find((c) => c.id === r.client_id)?.full_name ||
+                "Client lié"}
+            </FixeoText>
+          )}
+          {!!r.job_id && <FixeoText variant="supporting" tone="secondary">Intervention · {ledgerJobLabel(r, q.data?.jobs || [])}</FixeoText>}
+        </View>
+      ) }}
     >
       <ArtisanMessage
         message={q.error || a.message}
         retry={q.error ? () => void q.reload() : undefined}
       />
+      {!open && <>
       <ArtisanChoices
         label="Période financière"
         value={period}
@@ -106,6 +127,7 @@ export default function Finance() {
             : "Vos prochains encaissements et dépenses apparaîtront ici après enregistrement."
         }
       />
+      </>}
       <FixeoAction
         label={open ? "Fermer la saisie" : "Ajouter un mouvement"}
         variant={open ? "ghost" : "primary"}
@@ -125,10 +147,12 @@ export default function Finance() {
           <ArtisanField
             label="Montant en MAD"
             value={amount}
-            onChangeText={setAmount}
+            onChangeText={value => { setAmount(value); a.setMessage(''); }}
+            error={attempted ? amountError : undefined}
             keyboardType="decimal-pad"
           />
-          <DateField label="Date du mouvement" value={date} onChange={setDate} />
+          <DateField label="Date du mouvement" value={date} onChange={value => { setDate(value); a.setMessage(''); }} />
+          {attempted && !validISODate(date) && <FixeoText accessibilityRole="alert">Choisissez une date réelle.</FixeoText>}
           <ArtisanChoices
             label="Client lié au mouvement"
             value={clientId}
@@ -169,9 +193,10 @@ export default function Finance() {
             label="Confirmer le mouvement"
             busy={a.busy}
             onPress={() => {
+              setAttempted(true);
               const n = Number(amount.replace(",", "."));
               if (
-                !Number.isFinite(n) ||
+                !!amountError || !Number.isFinite(n) ||
                 n <= 0 ||
                 n > 500000 || !validISODate(date)
               ) {
@@ -190,7 +215,7 @@ export default function Finance() {
                   client_id: clientId || null,
                   job_id: jobId || null,
                 });
-                setOpen(false);
+                setAttempted(false); setOpen(false);
                 setAmount("");
                 setNote("");
                 setId(Crypto.randomUUID());
@@ -201,25 +226,8 @@ export default function Finance() {
           />
         </ArtisanSection>
       )}
-      {rows?.map((r) => (
-        <View style={art.row} key={r.id}>
-          <FixeoText variant="eyebrow" tone="secondary">
-            {formatWorkspaceDate(r.occurred_on)} · {ledgerTypeLabel(r)}
-          </FixeoText>
-          <FixeoText variant="heading">
-            {r.entry_type === "income" ? "+" : "−"} {money(r.amount)}
-          </FixeoText>
-          {ledgerDetailLabel(r) !== ledgerTypeLabel(r) && <FixeoText>{ledgerDetailLabel(r)}</FixeoText>}
-          {r.client_id && (
-            <FixeoText tone="secondary">
-              {q.data?.clients.find((c) => c.id === r.client_id)?.full_name ||
-                "Client lié"}
-            </FixeoText>
-          )}
-          {!!r.job_id && <FixeoText variant="supporting" tone="secondary">Intervention · {ledgerJobLabel(r, q.data?.jobs || [])}</FixeoText>}
-        </View>
-      ))}
-      {rows?.length === 0 && (
+
+      {!open && rows?.length === 0 && (
         <ArtisanEmpty
           title="Vos mouvements commenceront ici."
           detail="Enregistrez un encaissement reçu ou une dépense réelle."

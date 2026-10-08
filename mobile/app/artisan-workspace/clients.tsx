@@ -29,19 +29,7 @@ export default function Clients() {
       activeKey="clients"
       loading={q.loading}
       onRefresh={() => void q.reload()}
-    >
-      <ArtisanMessage message={q.error} retry={() => void q.reload()} />
-      <FixeoAction
-        label="Ajouter un client"
-        onPress={() => router.push("/artisan-workspace/client/new" as any)}
-      />
-      <ArtisanField
-        label="Rechercher un client"
-        value={search}
-        onChangeText={setSearch}
-      />
-      <ArtisanCue text="Ouvrez une fiche pour retrouver l’historique personnel renseigné et préparer la prochaine intervention." />
-      {rows?.map((c) => (
+      list={{ data: rows || [], keyExtractor: c => c.id, renderItem: ({ item: c }) => (
         <View key={c.id} style={art.row}>
           <FixeoText variant="heading">{c.full_name}</FixeoText>
           <FixeoText tone="secondary">
@@ -59,7 +47,20 @@ export default function Clients() {
             }
           />
         </View>
-      ))}
+      ) }}
+    >
+      <ArtisanMessage message={q.error} retry={() => void q.reload()} />
+      <FixeoAction
+        label="Ajouter un client"
+        onPress={() => router.push("/artisan-workspace/client/new" as any)}
+      />
+      <ArtisanField
+        label="Rechercher un client"
+        value={search}
+        onChangeText={setSearch}
+      />
+      <ArtisanCue text="Ouvrez une fiche pour retrouver l’historique personnel renseigné et préparer la prochaine intervention." />
+
       {rows?.length === 0 && (
         <ArtisanEmpty
           title={search ? "Aucun résultat." : "Votre carnet commence ici."}

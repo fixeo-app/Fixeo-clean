@@ -39,12 +39,12 @@ export default function Availability() {
       />
       {q.data && (
         <>
-          <ArtisanProfileChecklist profile={q.data} />
           <ArtisanSection label="VOTRE STATUT ACTUEL" dark>
             <FixeoText variant="title" tone="inverse">
               {availabilityLabels[currentStatus || ''] || "À définir"}
             </FixeoText>
           </ArtisanSection>
+          <ArtisanProfileChecklist profile={q.data} />
           <ArtisanCue text="Choisissez le statut qui correspond à votre situation. FIXEO garde la décision d’attribution de chaque mission." />
           {Object.entries(availabilityLabels).map(([value, label]) => (
             <FixeoAction

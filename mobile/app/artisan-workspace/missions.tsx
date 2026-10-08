@@ -21,10 +21,7 @@ export default function Missions() {
       activeKey="missions"
       loading={q.loading}
       onRefresh={() => void q.reload()}
-    >
-      <ArtisanCue title="RAFI · Suivre votre mission" text="Retrouvez chaque mission et sa prochaine étape, de l’acceptation à la validation." />
-      <ArtisanMessage message={q.error} retry={() => void q.reload()} />
-      {q.data?.map((m) => (
+      list={{ data: q.data || [], keyExtractor: m => m.mission_id, renderItem: ({ item: m }) => (
         <View style={art.row} key={m.mission_id}>
           <FixeoText variant="eyebrow" tone="secondary">
             {businessStatus[m.request_status] || m.request_status}
@@ -36,7 +33,7 @@ export default function Missions() {
             {m.city} · {when(m.accepted_at)}
           </FixeoText>
           <FixeoAction
-            label="Ouvrir cette mission"
+            label="Ouvrir cette mission" variant="ghost"
             onPress={() =>
               router.push({
                 pathname: "/mission/[id]",
@@ -45,7 +42,11 @@ export default function Missions() {
             }
           />
         </View>
-      ))}
+      ) }}
+    >
+      <ArtisanCue title="RAFI · Suivre votre mission" text="Retrouvez chaque mission et sa prochaine étape, de l’acceptation à la validation." />
+      <ArtisanMessage message={q.error} retry={() => void q.reload()} />
+
       {q.data?.length === 0 && (
         <ArtisanEmpty
           title="Votre journée est libre."

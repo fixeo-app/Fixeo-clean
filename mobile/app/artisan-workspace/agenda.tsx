@@ -88,6 +88,24 @@ export default function Agenda() {
       transactional={open}
       loading={q.loading}
       onRefresh={() => void q.reload()}
+      list={open ? undefined : { data: jobs || [], keyExtractor: j => j.id, renderItem: ({ item: j }) => (
+        <View style={art.row} key={j.id}>
+          <FixeoText variant="eyebrow" tone="secondary">
+            {when(j.scheduled_at)}
+          </FixeoText>
+          <FixeoText variant="heading">{j.title}</FixeoText>
+          <FixeoText tone="secondary">
+            {q.data?.clients.find((c) => c.id === j.client_id)?.full_name ||
+              "Client non renseigné"}{" "}
+            · {businessStatus[j.status] || j.status}
+          </FixeoText>
+          {j.scheduled_at &&
+            conflicts.has(new Date(j.scheduled_at).toISOString()) && (
+              <FixeoText>Créneau à vérifier : début simultané.</FixeoText>
+            )}
+          {j.notes && <FixeoText>{j.notes}</FixeoText>}
+        </View>
+      ) }}
     >
       <ArtisanMessage
         message={q.error || a.message}
@@ -160,6 +178,7 @@ export default function Agenda() {
           />
         </ArtisanSection>
       )}
+      {!open && <>
       <ArtisanChoices
         label="Période"
         value={period}
@@ -180,24 +199,7 @@ export default function Agenda() {
               : "Aucune intervention personnelle à cet horizon. Gardez votre disponibilité à jour."
         }
       />
-      {jobs?.map((j) => (
-        <View style={art.row} key={j.id}>
-          <FixeoText variant="eyebrow" tone="secondary">
-            {when(j.scheduled_at)}
-          </FixeoText>
-          <FixeoText variant="heading">{j.title}</FixeoText>
-          <FixeoText tone="secondary">
-            {q.data?.clients.find((c) => c.id === j.client_id)?.full_name ||
-              "Client non renseigné"}{" "}
-            · {businessStatus[j.status] || j.status}
-          </FixeoText>
-          {j.scheduled_at &&
-            conflicts.has(new Date(j.scheduled_at).toISOString()) && (
-              <FixeoText>Créneau à vérifier : début simultané.</FixeoText>
-            )}
-          {j.notes && <FixeoText>{j.notes}</FixeoText>}
-        </View>
-      ))}
+
       {jobs?.length === 0 && (
         <ArtisanEmpty
           title={period === 'today' ? 'Agenda libre aujourd’hui.' : period === 'week' ? 'Aucune intervention sur ces 7 jours.' : 'Aucune intervention personnelle.'}
@@ -206,10 +208,12 @@ export default function Agenda() {
       )}
       {q.data && (
         <ArtisanSection label="MISSIONS FIXEO EN COURS">
+          <FixeoAction label="Toutes les missions" variant="ghost" onPress={() => router.push('/artisan-workspace/missions')} />
           {q.data.missions
             .filter(
               (m) => !["validated", "cancelled"].includes(m.request_status),
             )
+            .slice(0, 3)
             .map((m) => (
               <View key={m.mission_id} style={art.row}>
                 <FixeoText variant="heading">
@@ -241,6 +245,7 @@ export default function Agenda() {
           )}
         </ArtisanSection>
       )}
+      </>}
     </ArtisanPage>
   );
 }
