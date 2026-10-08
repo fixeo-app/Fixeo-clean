@@ -1,3 +1,9 @@
+import { guardedBusinessWrite } from './pendingBusinessWrite';
+import { privateSessionGeneration } from './authEvents';
+import { sameQuoteContent } from './quoteVersion';
+import { canonicalCities, canonicalCity, requireCanonicalCity, withCanonicalCity } from './clientLocation';
+import { validISODate } from './dateValidation';
+import { moneyMinor } from './moneyContract';
 import { inFlightRead } from "./artisanProgressive";
 import { supabase } from "./supabase";
 import { calculateQuote, localDay, type QuoteLine } from "./artisanExperience";
@@ -53,7 +59,9 @@ export type LedgerEntry = {
   job_id: string | null;
   source: "personal" | "fixeo";
 };
+export type ArtisanProfileGate = { complete: boolean; missing_fields: string[]; checks: Record<string, boolean> };
 export type ArtisanProfile = {
+  profile_gate?: ArtisanProfileGate;
   id: string;
   owner_user_id: string;
   name: string;
@@ -119,7 +127,9 @@ async function artisanReadScope(): Promise<string> {
 }
 const pendingAccess = new Map<string, Promise<ArtisanActor>>();
 export async function artisanAccess(): Promise<ArtisanActor> {
+  const generation = privateSessionGeneration();
   const key = await artisanReadScope();
+  if (generation !== privateSessionGeneration()) throw new Error("SESSION_REVOKED");
   if (!pendingAccess.has(key))
     pendingAccess.set(
       key,
@@ -127,7 +137,9 @@ export async function artisanAccess(): Promise<ArtisanActor> {
         pendingAccess.delete(key);
       }),
     );
-  return pendingAccess.get(key)!;
+  const actor = await pendingAccess.get(key)!;
+  if (generation !== privateSessionGeneration()) throw new Error("SESSION_REVOKED");
+  return actor;
 }
 async function readArtisanAccess(): Promise<ArtisanActor> {
   const { data, error } = await supabase.rpc("get_my_mobile_artisan_access_v1");
@@ -149,7 +161,7 @@ async function owned<T>(
     .order(order, { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data || []) as T[];
+  return (data || []).map((row: any) => withCanonicalCity(row)) as T[];
 }
 export const loadBusinessClients = () =>
   owned<BusinessClient>(
@@ -192,7 +204,11 @@ export async function loadArtisanProfile(
     .maybeSingle()
     .retry(automaticRetry);
   if (error) throw error;
-  return data;
+  if (!data) return null;
+  const gate = await supabase.rpc('get_my_artisan_profile_gate_v1');
+  if (gate.error) throw gate.error;
+  if (!gate.data?.ok || typeof gate.data.complete !== 'boolean' || !Array.isArray(gate.data.missing_fields)) throw new Error('PROFILE_GATE_UNAVAILABLE');
+  return { ...withCanonicalCity(data), profile_gate: gate.data };
 }
 export function artisanProfileCities(profile: ArtisanProfile | null): string[] {
   if (!profile) return [];
@@ -200,7 +216,7 @@ export function artisanProfileCities(profile: ArtisanProfile | null): string[] {
   // Association tables are intentionally not exposed to authenticated clients.
   const cities = (profile.work_zone || "")
     .split(",")
-    .map((v) => v.trim())
+    .map((v) => canonicalCity(v) || v.trim())
     .filter(Boolean);
   return cities.length ? cities : profile.city ? [profile.city] : [];
 }
@@ -249,9 +265,11 @@ export async function markArtisanNotification(id: string) {
     .update({ read: true })
     .eq("id", id)
     .eq("recipient_user_id", actor.user_id)
+    .eq("recipient_role", "artisan")
     .select("id")
     .single();
   if (error) throw error;
+  if (!data?.id) throw new Error("NOTIFICATION_NOT_UPDATED");
   return data;
 }
 export async function saveBusinessClient(
@@ -264,27 +282,25 @@ export async function saveBusinessClient(
     notes: string;
   },
   exists = false,
+  expectedUpdatedAt?: string,
 ): Promise<BusinessClient> {
   const actor = await artisanAccess();
+  if (exists && !expectedUpdatedAt) throw new Error("CLIENT_VERSION_CONFLICT");
   if (!input.full_name.trim()) throw new Error("CLIENT_NAME_REQUIRED");
   const payload = {
     ...input,
     full_name: input.full_name.trim(),
+    city: input.city.trim() ? requireCanonicalCity(input.city) : null,
     owner_user_id: actor.user_id,
     updated_at: new Date().toISOString(),
   };
-  const q = exists
-    ? supabase
-        .from("artisan_business_clients")
-        .update(payload)
-        .eq("id", input.id)
-        .eq("owner_user_id", actor.user_id)
-    : supabase
-        .from("artisan_business_clients")
-        .upsert(payload, { onConflict: "id" });
-  const { data, error } = await q.select().single();
-  if (error) throw error;
-  return data;
+  return guardedBusinessWrite(actor.user_id,exists ? `client:${input.id}` : 'client-new',{...input,expectedUpdatedAt:expectedUpdatedAt || null},async()=>{
+    if(!exists)return insertBusinessIntent<BusinessClient>('artisan_business_clients',payload,['full_name','phone','city','address','notes']);
+    const result=await supabase.from('artisan_business_clients').update(payload).eq('id',input.id).eq('owner_user_id',actor.user_id).eq('updated_at',expectedUpdatedAt!).select().single();
+    if(result.error?.code==='PGRST116')throw Error('CLIENT_VERSION_CONFLICT');
+    if(result.error)throw result.error;
+    return result.data;
+  });
 }
 export async function saveBusinessQuote(
   input: {
@@ -298,17 +314,20 @@ export async function saveBusinessQuote(
     estimated_duration: string;
   },
   exists = false,
+  expectedUpdatedAt?: string,
 ): Promise<BusinessQuote> {
   const actor = await artisanAccess();
+  if (exists && (!expectedUpdatedAt || !Number.isFinite(Date.parse(expectedUpdatedAt)))) throw new Error("QUOTE_VERSION_REQUIRED");
   if (!input.title.trim()) throw new Error("QUOTE_TITLE_REQUIRED");
+  if (input.validity_date && !validISODate(input.validity_date)) throw new Error('QUOTE_DATE_INVALID');
   const amounts = calculateQuote(input.items, input.discount);
   const payload = {
     ...input,
     ...amounts,
     title: input.title.trim(),
     owner_user_id: actor.user_id,
-    source: "personal",
-    updated_at: new Date().toISOString(),
+    source: "personal" as const,
+    updated_at: new Date(Math.max(Date.now(), (Date.parse(expectedUpdatedAt || "") || 0) + 1)).toISOString(),
   };
   if (exists) {
     const { data, error } = await supabase
@@ -318,9 +337,16 @@ export async function saveBusinessQuote(
       .eq("owner_user_id", actor.user_id)
       .eq("source", "personal")
       .eq("status", "draft")
+      .eq("updated_at", expectedUpdatedAt!)
       .select()
       .single();
-    if (error) throw error;
+    if (error || !data) {
+      // Read-only reconciliation: a timeout retry may encounter our already-committed payload.
+      if (error && error.code !== 'PGRST116') throw error;
+      const current = await supabase.from('artisan_business_quotes').select('*').eq('id',input.id).eq('owner_user_id',actor.user_id).eq('source','personal').single();
+      if (!current.error && current.data?.status === 'draft' && sameQuoteContent(current.data, payload)) return current.data;
+      throw new Error('QUOTE_VERSION_CONFLICT');
+    }
     return data;
   }
   // Stable UUID permits reconciliation after a response timeout; no blind second insert.
@@ -331,7 +357,10 @@ export async function saveBusinessQuote(
     .eq("owner_user_id", actor.user_id)
     .maybeSingle();
   if (previous.error) throw previous.error;
-  if (previous.data) return previous.data;
+  if (previous.data) {
+    if (previous.data.source === 'personal' && previous.data.status === 'draft' && sameQuoteContent(previous.data, payload)) return previous.data;
+    throw new Error('QUOTE_VERSION_CONFLICT');
+  }
   const numbered = await supabase.rpc("artisan_business_next_quote_number");
   if (numbered.error) throw numbered.error;
   const { data, error } = await supabase
@@ -347,13 +376,22 @@ export async function recordQuoteDecision(
   decision: "sent" | "accepted" | "rejected",
 ) {
   const actor = await artisanAccess();
+  const previous = await supabase.from("artisan_business_quotes").select("id,status")
+    .eq("id", id).eq("owner_user_id", actor.user_id).eq("source", "personal").single();
+  if (previous.error || !previous.data) throw previous.error || new Error("QUOTE_NOT_FOUND");
+  if (previous.data.status === decision) return previous.data; // Reconcile a response lost after commit.
+  if (previous.data.status !== (decision === "sent" ? "draft" : "sent")) throw new Error("QUOTE_STATE_CHANGED");
   if (decision === "accepted") {
     const { data, error } = await supabase.rpc(
       "artisan_business_accept_quote",
       { p_quote_id: id },
     );
     if (error) throw error;
-    return data;
+    if (!data) throw new Error("QUOTE_DECISION_UNCONFIRMED");
+    const readback = await supabase.from("artisan_business_quotes").select("id,status")
+      .eq("id", id).eq("owner_user_id", actor.user_id).single();
+    if (readback.error || readback.data?.status !== "accepted") throw new Error("QUOTE_DECISION_UNCONFIRMED");
+    return readback.data;
   }
   const at = new Date().toISOString();
   const patch =
@@ -374,31 +412,36 @@ export async function recordQuoteDecision(
 }
 export async function submitMarketplaceQuote(input: {
   requestId: string;
+  title: string;
   items: Omit<QuoteLine, "total">[];
   message: string;
   duration: string;
 }) {
   await artisanAccess();
+  const offers = await getDispatchOffers();
+  if (!input.title.trim() || !offers.some(offer => offer.request_id === input.requestId)) throw new Error("QUOTE_SOURCE_REQUIRED");
   const amounts = calculateQuote(input.items);
-  const line = (x: QuoteLine) =>
-    `${x.label} · ${x.quantity} × ${x.unit_price} MAD = ${x.total} MAD`;
-  const { data, error } = await supabase.rpc("submit_artisan_quote_v2", {
+  if (amounts.total <= 0 || !amounts.items.some(item => item.type !== 'supply')) throw new Error("QUOTE_INVALID");
+  const { data, error } = await supabase.rpc("submit_my_mobile_quote_v1", {
     p_request_id: input.requestId,
-    p_proposed_price: amounts.total,
-    p_service_description: amounts.items
-      .filter((x) => x.type !== "supply")
-      .map(line)
-      .join("\n"),
-    p_supplies_description:
-      amounts.items
-        .filter((x) => x.type === "supply")
-        .map(line)
-        .join("\n") || null,
-    p_estimated_duration: input.duration || null,
+    p_title: input.title.trim(),
+    p_items: amounts.items.map(({ type, label, quantity, unit_price }) => ({ type, label, quantity, unit_price })),
+    p_duration: input.duration || null,
     p_message: input.message || null,
   });
   if (error) throw error;
   return data as MarketplaceQuote;
+}
+/** Reconcile a stable creation ID without resetting a later status or editing historical amounts. */
+async function insertBusinessIntent<T>(table:string,payload:Record<string,unknown>,keys:string[]):Promise<T> {
+  const read=()=>supabase.from(table).select('*').eq('id',payload.id).eq('owner_user_id',payload.owner_user_id).maybeSingle();
+  const matches=(row:Record<string,unknown>)=>keys.every(key=>key==='scheduled_at' ? Date.parse(String(row[key]))===Date.parse(String(payload[key])) : key==='amount' ? Number(row[key])===Number(payload[key]) : String(row[key]??'')===String(payload[key]??''));
+  const before=await read();if(before.error)throw before.error;
+  if(before.data){if(!matches(before.data))throw Error('BUSINESS_PENDING_CONFLICT');return before.data as T;}
+  const result=await supabase.from(table).insert(payload).select().single();
+  if(!result.error && result.data)return result.data as T;
+  if(result.error?.code==='23505'){const after=await read();if(!after.error && after.data && matches(after.data))return after.data as T;}
+  throw result.error || Error('BUSINESS_CONFIRMATION_PENDING');
 }
 export async function saveBusinessJob(
   input: {
@@ -409,6 +452,7 @@ export async function saveBusinessJob(
     notes: string;
   },
   exists = false,
+  expectedUpdatedAt?: string,
 ): Promise<BusinessJob> {
   const actor = await artisanAccess();
   if (!input.title.trim() || !Number.isFinite(Date.parse(input.scheduled_at)))
@@ -419,19 +463,14 @@ export async function saveBusinessJob(
     source: "personal",
     updated_at: new Date().toISOString(),
   };
-  const q = exists
-    ? supabase
-        .from("artisan_business_jobs")
-        .update(payload)
-        .eq("id", input.id)
-        .eq("owner_user_id", actor.user_id)
-        .eq("source", "personal")
-    : supabase
-        .from("artisan_business_jobs")
-        .upsert({ ...payload, status: "planned" }, { onConflict: "id" });
-  const { data, error } = await q.select().single();
-  if (error) throw error;
-  return data;
+  return guardedBusinessWrite(actor.user_id,"agenda",input,async () => {
+  if (!exists) return insertBusinessIntent<BusinessJob>('artisan_business_jobs',{...payload,status:'planned'},['title','client_id','scheduled_at','notes','source']);
+  if(!expectedUpdatedAt)throw Error('JOB_EDIT_VERSION_REQUIRED');
+  const result=await supabase.from('artisan_business_jobs').update(payload).eq('id',input.id).eq('owner_user_id',actor.user_id).eq('source','personal').eq('updated_at',expectedUpdatedAt).select().single();
+  if(result.error || !result.data)throw result.error || Error('JOB_VERSION_CONFLICT');
+  return result.data;
+
+  });
 }
 export async function saveLedgerEntry(input: {
   id: string;
@@ -446,24 +485,25 @@ export async function saveLedgerEntry(input: {
   if (
     !Number.isFinite(input.amount) ||
     input.amount <= 0 ||
-    input.amount > 500000
+    input.amount > 500000 ||
+    !validISODate(input.occurred_on) ||
+    !['income', 'expense'].includes(input.entry_type)
   )
     throw new Error("LEDGER_INVALID");
-  const { data, error } = await supabase
-    .from("artisan_business_ledger")
-    .upsert(
-      {
-        ...input,
-        owner_user_id: actor.user_id,
-        source: "personal",
-        category: "other",
-      },
-      { onConflict: "id" },
-    )
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
+  let linkedClient = input.client_id;
+  if (input.job_id) {
+    const job = await supabase.from("artisan_business_jobs").select("id,client_id,source")
+      .eq("id", input.job_id).eq("owner_user_id", actor.user_id).single();
+    if (job.error || !job.data || job.data.source !== "personal") throw new Error("LEDGER_JOB_INVALID");
+    if (linkedClient && linkedClient !== job.data.client_id) throw new Error("LEDGER_CLIENT_MISMATCH");
+    linkedClient = job.data.client_id;
+  }
+  return guardedBusinessWrite(actor.user_id,"finance",input,async () => {
+  return insertBusinessIntent<LedgerEntry>('artisan_business_ledger',{
+    ...input,amount:moneyMinor(input.amount)/100,client_id:linkedClient,owner_user_id:actor.user_id,source:'personal',category:'other',
+  },['entry_type','amount','occurred_on','note','client_id','job_id','source']);
+
+  });
 }
 type ProfileEdit = {
   phone: string;
@@ -503,13 +543,13 @@ export async function saveArtisanProfile(
 ) {
   await artisanAccess();
   const sameValues = (a: string[], b: string[]) =>
-    JSON.stringify([...new Set(a.map((v) => v.trim()))].sort()) ===
-    JSON.stringify([...new Set(b.map((v) => v.trim()))].sort());
+    JSON.stringify([...new Set(a.map((v) => canonicalCity(v) || v.trim()))].sort()) ===
+    JSON.stringify([...new Set(b.map((v) => canonicalCity(v) || v.trim()))].sort());
   for (const [name, args] of [
     ["update_my_artisan_contact_v1", { p_phone: input.phone }],
     [
       "w5_update_my_artisan_activity_v1",
-      { p_services: input.services, p_cities: input.cities },
+      { p_services: input.services, p_cities: canonicalCities(input.cities) },
     ],
   ] as const) {
     // The loaded form snapshot only avoids redundant writes; server guards

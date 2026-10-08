@@ -1,5 +1,8 @@
-import { useState } from "react";
-import { View } from "react-native";
+import { usePendingBusinessForm } from '@/lib/usePendingBusinessForm';
+import { useUnsavedChanges } from '@/lib/useUnsavedChanges';
+import { AgendaDateTimeField } from '@/components/AgendaDateTimeField';
+import { useRef, useState } from "react";
+import { View, TextInput } from "react-native";
 import * as Crypto from "expo-crypto";
 import { router, useLocalSearchParams } from "expo-router";
 import {
@@ -15,9 +18,7 @@ import {
   when,
 } from "@/lib/artisanExperience";
 import {
-  formatAgendaDateInput,
-  formatAgendaTimeInput,
-  parseAgendaDateTime,
+  parseAgendaDateTime, moroccoDateParts,
 } from "@/lib/agendaDate";
 import {
   ArtisanPage,
@@ -42,7 +43,7 @@ const load = async () => {
   return { jobs, clients, missions };
 };
 export default function Agenda() {
-  const params = useLocalSearchParams<{ clientId?: string; new?: string }>(),
+  const params = useLocalSearchParams<{ clientId?: string; new?: string; day?: string }>(),
     q = useArtisanQuery(load),
     a = useArtisanAction();
   const [open, setOpen] = useState(params.new === "1"),
@@ -50,12 +51,21 @@ export default function Agenda() {
     [id, setId] = useState(() => Crypto.randomUUID()),
     [title, setTitle] = useState(""),
     [clientId, setClientId] = useState(params.clientId || ""),
-    [date, setDate] = useState(""),
+    [date, setDate] = useState(() => { if (params.day !== "tomorrow") return ""; const day = new Date(`${localDay()}T12:00:00Z`); day.setUTCDate(day.getUTCDate() + 1); return moroccoDateParts(day).date; }),
     [time, setTime] = useState(""),
     [notes, setNotes] = useState("");
+  const pending=usePendingBusinessForm('agenda',p=>{setId(String(p.id));setTitle(String(p.title));setClientId(String(p.client_id||''));const parts=moroccoDateParts(new Date(String(p.scheduled_at)));setDate(parts.date);setTime(parts.time);setNotes(String(p.notes||''));setOpen(true);});
+  useUnsavedChanges(!!title.trim()||!!notes.trim(),pending.frozen);
+  const titleRef = useRef<TextInput>(null), dateRef = useRef<TextInput>(null), timeRef = useRef<TextInput>(null);
+  const [attempted, setAttempted] = useState(false);
+  const errors = {
+    title: !title.trim() ? 'Renseignez le titre de l’intervention.' : '',
+    date: !date.trim() ? 'Choisissez une date.' : !parseAgendaDateTime(date, '12:00') ? 'Vérifiez la date de l’intervention.' : '',
+    time: !time.trim() ? 'Choisissez une heure.' : !parseAgendaDateTime('01/01/2026', time) ? 'Vérifiez l’heure de l’intervention.' : '',
+  };
   const day = localDay(),
-    weekEnd = new Date();
-  weekEnd.setDate(weekEnd.getDate() + 7);
+    weekEnd = new Date(`${day}T12:00:00Z`);
+  weekEnd.setUTCDate(weekEnd.getUTCDate() + 7);
   const jobs = q.data?.jobs
     .filter(
       (j) =>
@@ -74,27 +84,53 @@ export default function Agenda() {
   const conflicts = agendaConflicts(q.data?.jobs || []);
   return (
     <ArtisanPage
+      rafi={a.rafi}
       title="Une journée bien menée."
       eyebrow="VOTRE AGENDA"
       detail="Vos interventions personnelles et missions FIXEO."
       activeKey="agenda"
+      transactional={open}
       loading={q.loading}
       onRefresh={() => void q.reload()}
+      list={open ? undefined : { data: jobs || [], keyExtractor: j => j.id, renderItem: ({ item: j }) => (
+        <View style={art.row} key={j.id}>
+          <FixeoText variant="eyebrow" tone="secondary">
+            {when(j.scheduled_at)}
+          </FixeoText>
+          <FixeoText variant="heading">{j.title}</FixeoText>
+          <FixeoText tone="secondary">
+            {q.data?.clients.find((c) => c.id === j.client_id)?.full_name ||
+              "Client non renseigné"}{" "}
+            · {businessStatus[j.status] || j.status}
+          </FixeoText>
+          {j.scheduled_at &&
+            conflicts.has(new Date(j.scheduled_at).toISOString()) && (
+              <FixeoText>Créneau à vérifier : début simultané.</FixeoText>
+            )}
+          {j.notes && <FixeoText>{j.notes}</FixeoText>}
+        </View>
+      ) }}
     >
+      <ArtisanMessage message={pending.error} retry={()=>void pending.refresh()} />
+      {pending.frozen && <FixeoText accessibilityRole="alert">Résultat à vérifier. Les mêmes informations et le même identifiant seront réutilisés.</FixeoText>}
       <ArtisanMessage
         message={q.error || a.message}
         retry={q.error ? () => void q.reload() : undefined}
       />
       <FixeoAction
-        label={open ? "Fermer la planification" : "Planifier une intervention"}
+        label={open ? "Annuler la planification" : "Planifier une intervention"}
+        variant={open ? "ghost" : "primary"}
         onPress={() => setOpen((v) => !v)}
       />
       {open && q.data && (
         <ArtisanSection label="INTERVENTION PERSONNELLE">
+          <View pointerEvents={pending.frozen || a.busy ? 'none' : 'auto'}>
           <ArtisanField
+            inputRef={titleRef}
+            error={attempted ? errors.title : undefined}
             label="Titre de l’intervention"
             value={title}
-            onChangeText={setTitle}
+            onChangeText={value => { setTitle(value); a.setMessage(''); }}
           />
           <ArtisanChoices
             label="Client concerné"
@@ -108,20 +144,9 @@ export default function Agenda() {
               })),
             ]}
           />
-          <ArtisanField
-            label="Date — JJ/MM/AAAA"
-            value={date}
-            keyboardType="number-pad"
-            onChangeText={(v) => setDate(formatAgendaDateInput(v))}
-          />
-          <ArtisanField
-            label="Heure — HH:MM"
-            value={time}
-            keyboardType="number-pad"
-            onChangeText={(v) => setTime(formatAgendaTimeInput(v))}
-          />
+          <AgendaDateTimeField errors={attempted ? errors : undefined} dateRef={dateRef} timeRef={timeRef} date={date} time={time} onDate={value => { setDate(value); a.setMessage(''); }} onTime={value => { setTime(value); a.setMessage(''); }} />
           <FixeoText variant="supporting" tone="secondary">
-            Saisie dans le fuseau horaire de votre appareil.
+            Heure du Maroc · format 24 heures.
           </FixeoText>
           <ArtisanField
             label="Notes de l’intervention"
@@ -129,17 +154,20 @@ export default function Agenda() {
             onChangeText={setNotes}
             multiline
           />
+          </View>
           <FixeoAction
-            label="Enregistrer l’intervention"
+            disabled={!pending.ready}
+            label={pending.frozen ? "Vérifier et réessayer l’intervention" : "Enregistrer l’intervention"}
             busy={a.busy}
             onPress={() => {
+              setAttempted(true);
               const at = parseAgendaDateTime(date, time);
               if (!at || !title.trim()) {
-                a.setMessage(
-                  "Renseignez le titre, une date et une heure valides.",
-                );
+                a.setMessage(errors.title || errors.date || errors.time || 'Cette heure est ambiguë ou indisponible au Maroc. Choisissez un autre créneau.');
+                (errors.title ? titleRef : errors.date ? dateRef : timeRef).current?.focus();
                 return;
               }
+              pending.lock();
               void a.run(async () => {
                 const result = await saveBusinessJob({
                   id,
@@ -148,17 +176,19 @@ export default function Agenda() {
                   scheduled_at: at,
                   notes,
                 });
+                setAttempted(false);
                 setOpen(false);
                 setTitle("");
                 setNotes("");
                 setId(Crypto.randomUUID());
-                await q.reload();
+                await q.reload(); await pending.settle();
                 return result;
-              }, "Intervention planifiée.");
+              }, "Intervention planifiée.").finally(()=>void pending.settle());
             }}
           />
         </ArtisanSection>
       )}
+      {!open && <>
       <ArtisanChoices
         label="Période"
         value={period}
@@ -179,36 +209,21 @@ export default function Agenda() {
               : "Aucune intervention personnelle à cet horizon. Gardez votre disponibilité à jour."
         }
       />
-      {jobs?.map((j) => (
-        <View style={art.row} key={j.id}>
-          <FixeoText variant="eyebrow" tone="secondary">
-            {when(j.scheduled_at)}
-          </FixeoText>
-          <FixeoText variant="heading">{j.title}</FixeoText>
-          <FixeoText tone="secondary">
-            {q.data?.clients.find((c) => c.id === j.client_id)?.full_name ||
-              "Client non renseigné"}{" "}
-            · {businessStatus[j.status] || j.status}
-          </FixeoText>
-          {j.scheduled_at &&
-            conflicts.has(new Date(j.scheduled_at).toISOString()) && (
-              <FixeoText>Créneau à vérifier : début simultané.</FixeoText>
-            )}
-          {j.notes && <FixeoText>{j.notes}</FixeoText>}
-        </View>
-      ))}
+
       {jobs?.length === 0 && (
         <ArtisanEmpty
-          title="Votre agenda est libre."
-          detail="Planifiez une intervention ou préparez vos prochains rendez-vous."
+          title={period === 'today' ? 'Agenda libre aujourd’hui.' : period === 'week' ? 'Aucune intervention sur ces 7 jours.' : 'Aucune intervention personnelle.'}
+          detail={period === 'today' ? 'Consultez les 7 prochains jours pour vos autres rendez-vous.' : 'Planifiez une intervention ou préparez vos prochains rendez-vous.'}
         />
       )}
       {q.data && (
         <ArtisanSection label="MISSIONS FIXEO EN COURS">
+          <FixeoAction label="Toutes les missions" variant="ghost" onPress={() => router.push('/artisan-workspace/missions')} />
           {q.data.missions
             .filter(
               (m) => !["validated", "cancelled"].includes(m.request_status),
             )
+            .slice(0, 3)
             .map((m) => (
               <View key={m.mission_id} style={art.row}>
                 <FixeoText variant="heading">
@@ -240,6 +255,7 @@ export default function Agenda() {
           )}
         </ArtisanSection>
       )}
+      </>}
     </ArtisanPage>
   );
 }

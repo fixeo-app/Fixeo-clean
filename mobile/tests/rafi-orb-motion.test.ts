@@ -6,9 +6,9 @@ import { RAFI_STATES, RAFI_LABELS, fromLegacyRafiMode, getRafiGeometry,
 import { readFileSync } from 'node:fs';
 import { rafiMotionTokens } from '../ui/tokens';
 
-test('W3 eight semantic states and French labels are exhaustive; legacy calls retain identity', () => {
-  assert.deepEqual(RAFI_STATES, ['idle', 'listening', 'understanding', 'working', 'matching', 'intervention', 'success', 'attention']);
-  assert.deepEqual(Object.values(RAFI_LABELS), ['RAFI est prêt', 'RAFI écoute', 'RAFI comprend votre demande', 'RAFI travaille', 'FIXEO recherche un artisan', 'Intervention en cours', 'RAFI a terminé cette étape', 'Une action demande votre attention']);
+test('PB1 canonical and legacy semantic states and French labels are exhaustive; legacy calls retain identity', () => {
+  assert.deepEqual(RAFI_STATES, ['idle', 'listening', 'thinking', 'speaking', 'understanding', 'working', 'matching', 'intervention', 'success', 'attention']);
+  assert.deepEqual(Object.values(RAFI_LABELS), ['RAFI est prêt', 'RAFI écoute', 'RAFI comprend votre demande', 'RAFI travaille', 'FIXEO recherche un artisan', 'Intervention en cours', 'RAFI a terminé cette étape', 'Une action demande votre attention', 'RAFI réfléchit', 'RAFI parle']);
   for (const state of RAFI_STATES) {
     assert.equal(getRafiOrbAccessibilityLabel(state), RAFI_LABELS[state]);
     const motion = getRafiOrbMotion(state);
@@ -16,10 +16,10 @@ test('W3 eight semantic states and French labels are exhaustive; legacy calls re
       assert.ok(pair.every(value => Number.isFinite(value) && value > 0));
     }
     assert.ok(motion.haloOpacity.every(value => value <= 1));
-    assert.equal(motion.orbitDuration > 0, state === 'matching');
+    assert.equal(motion.orbitDuration, 0);
   }
   for (const mode of ['idle', 'listening', 'working', 'success'] as const) assert.equal(fromLegacyRafiMode(mode), mode);
-  assert.ok(getRafiOrbMotion('working').breathDuration < getRafiOrbMotion('listening').breathDuration);
+  assert.ok(getRafiOrbMotion('working').breathDuration > getRafiOrbMotion('listening').breathDuration);
   assert.ok(getRafiOrbMotion('listening').breathDuration < getRafiOrbMotion('idle').breathDuration);
   assert.equal(rafiMotionTokens.completion.delay, 0);
 });
@@ -93,17 +93,16 @@ test('presence engine has no backend or per-frame React side effects; visual mat
   const engine = readFileSync('ui/rafiPresence.ts', 'utf8');
   assert.doesNotMatch(renderer + engine, /fetch\(|supabase|triggerFixeoFeedback|setInterval\(|requestAnimationFrame\(/);
   assert.doesNotMatch(renderer, /#[0-9a-fA-F]{3,8}\b|rgba?\(/);
-  assert.match(renderer, /useNativeDriver: true/);
-  assert.match(renderer, /isInteraction: false/);
-  assert.match(renderer, /animation\.stop\(\)/);
+  assert.match(renderer, /RafiMasterLoop/);
+  assert.doesNotMatch(renderer, /RafiLivingMaterial|RafiCoreMaterial/);
+  assert.match(renderer, /active=\{focused\s*&&\s*viewport.visible\}/);
+  assert.match(renderer, /reduced=\{reduced\}/);
+  // PB1 V2 scheduler lifecycle and actual changing material values are exercised in pb1-v2.test.ts.
 });
 
-test('W3 keeps the certified Evidence capture engine byte-identical through W5', async () => {
-  const { createHash } = await import('node:crypto');
-  const protectedFiles = {
-    // W4 owns Client presentation. Its workflow callbacks and all services are
-    // separately frozen against the W3 base in client-invariants.test.ts.
-    'components/MissionEvidenceCapture.tsx': '604b4489f5ae71c576277bebd4f2368a1c70b9a4872e27167b907303f3fdd2dd',
-  };
-  for (const [file, digest] of Object.entries(protectedFiles)) assert.equal(createHash('sha256').update(readFileSync(file)).digest('hex'), digest, file);
+test('W6 permission explanation preserves the Evidence upload contract', () => {
+  const capture = readFileSync('components/MissionEvidenceCapture.tsx', 'utf8');
+  assert.match(capture, /uploadMissionEvidence\(\s*missionId,\s*kind,\s*asset.uri,\s*asset.mimeType \|\| 'image\/jpeg'/);
+  assert.match(capture, /if \(result.canceled \|\| !result.assets\[0\]\?\.uri\) return/);
+  assert.match(capture, /explainPermission\('camera'\)/);
 });

@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "version": "0.3.2",
+  "versionCode": 11,
+  "package": "ma.fixeo.app",
+  "softwareKeyboardLayoutMode": "adjustResize",
+  "added_permissions_vs_PB1": [],
+  "native_autolinking": "expo-print 15.0.8 / expo-sharing 14.0.8 / expo-file-system 19.0.24",
+  "credentials": "existing EAS JKS default observed; no regeneration",
+  "environment": "STAGING, EAS preview, internal APK, no autosubmit",
+  "limit": "prebuild configuration only, not an APK build"
+}

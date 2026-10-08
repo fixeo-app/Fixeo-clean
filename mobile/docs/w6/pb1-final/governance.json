@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-10-06T18:16:46.536Z",
+  "staging": {
+    "id": "dpl_GvBr5g3LSnsmtSYvSibMorN4R7ns",
+    "aliases": [
+      "fixeo-clean-git-feat-fixeo-mo-1c9012-elalaouibiz-3410s-projects.vercel.app"
+    ]
+  },
+  "production": {
+    "id": "dpl_63jTTiFwLrBD3D4Tc3Gxi7KVNjvR",
+    "aliases": [
+      "www.fixeo.ma",
+      "fixeo.ma",
+      "fixeo-clean.vercel.app",
+      "fixeo-clean-git-main-elalaouibiz-3410s-projects.vercel.app",
+      "fixeo-clean-elalaouibiz-3410s-projects.vercel.app"
+    ]
+  },
+  "main_sha": "f8e59d5ad7294dd5493bf7b0219740248d2a8d64",
+  "staging_source_sha": "23a3923ef60b01ea0e4e735831dcdc60c5f9f362",
+  "staging_state": "READY",
+  "staging_target": "staging",
+  "production_source_sha": "f8e59d5ad7294dd5493bf7b0219740248d2a8d64",
+  "production_state": "READY",
+  "production_target": "production",
+  "fixture_readonly": {
+    "client_preserved": true,
+    "quote_preserved": true,
+    "job_preserved": true,
+    "income_preserved": true,
+    "expense_preserved": true,
+    "artisan_onboarding_completed": false,
+    "artisan_availability": "unavailable"
+  },
+  "auth_or_business_mutations": 0,
+  "vercel_mutations_after_restoration": 0
+}

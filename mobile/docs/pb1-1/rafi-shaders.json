@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "scope": "offscreen GLES shader execution; not Android physical certification",
+  "resolution": [
+    256,
+    256
+  ],
+  "shader_compile_link": true,
+  "flow_changed_interior_pixels": 12223,
+  "flow_alpha_unchanged": true,
+  "breath_deformed_outline_pixels": 1711,
+  "touch_local_difference": 3.635,
+  "touch_remote_difference": 0.056,
+  "equilibrium_restored": true,
+  "compact_motion": true,
+  "context_cleanup": true
+}

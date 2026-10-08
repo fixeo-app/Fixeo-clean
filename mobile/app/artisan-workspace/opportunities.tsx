@@ -22,10 +22,7 @@ export default function Opportunities() {
       activeKey="opportunities"
       loading={q.loading}
       onRefresh={() => void q.reload()}
-    >
-      <ArtisanMessage message={q.error} retry={() => void q.reload()} />
-      <ArtisanCue text="Le premier artisan éligible qui accepte remporte la mission. Vérifiez votre disponibilité avant de vous engager." />
-      {q.data?.map((o) => (
+      list={{ data: q.data || [], keyExtractor: o => o.request_id, renderItem: ({ item: o }) => (
         <View style={art.row} key={o.request_id}>
           <FixeoText variant="eyebrow" tone="secondary">
             {o.queue_status === "CONTACTED"
@@ -40,7 +37,7 @@ export default function Opportunities() {
             {o.urgency ? ` · Urgence déclarée : ${o.urgency}` : ""}
           </FixeoText>
           <FixeoAction
-            label="Lire l’opportunité"
+            label="Lire l’opportunité" variant="ghost"
             onPress={() =>
               router.push({
                 pathname: "/artisan-workspace/opportunity/[id]" as any,
@@ -49,7 +46,11 @@ export default function Opportunities() {
             }
           />
         </View>
-      ))}
+      ) }}
+    >
+      <ArtisanMessage message={q.error} retry={() => void q.reload()} />
+      <ArtisanCue text="Le premier artisan éligible qui accepte remporte la mission. Vérifiez votre disponibilité avant de vous engager." />
+
       {q.data?.length === 0 && (
         <ArtisanEmpty
           title="Vous êtes en veille."

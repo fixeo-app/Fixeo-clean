@@ -1,0 +1,43 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+Starting Metro Bundler
+| (node:138) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:139) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:157) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:152) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:146) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:145) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Android node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 43.6% (397/601)
+Android node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 94.5% (1218/1295)
+Android node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (1313/1313)
+Android Bundled 11344ms node_modules/expo-router/entry.js (1313 modules)
+Android node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (1313/1313)
+
+› Assets (26):
+assets/rafi/rafi-master-core-v1.png (1.11 MB)
+node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf (390 kB)
+node_modules/@react-navigation/elements/lib/module/assets/back-icon-mask.png (653 B)
+node_modules/@react-navigation/elements/lib/module/assets/back-icon.png (4 variations | 152 B)
+node_modules/@react-navigation/elements/lib/module/assets/clear-icon.png (4 variations | 425 B)
+node_modules/@react-navigation/elements/lib/module/assets/close-icon.png (4 variations | 235 B)
+node_modules/@react-navigation/elements/lib/module/assets/search-icon.png (4 variations | 599 B)
+node_modules/expo-router/assets/arrow_down.png (9.46 kB)
+node_modules/expo-router/assets/error.png (469 B)
+node_modules/expo-router/assets/file.png (138 B)
+node_modules/expo-router/assets/forward.png (188 B)
+node_modules/expo-router/assets/pkg.png (364 B)
+node_modules/expo-router/assets/sitemap.png (465 B)
+node_modules/expo-router/assets/unmatched.png (4.75 kB)
+
+› android bundles (1):
+_expo/static/js/android/entry-72928549f6954fcaca89c988ef59510d.hbc (3.92 MB)
+
+› Files (1):
+metadata.json (1.91 kB)
+
+Exported: /workspace/scratch/bfa921cde99a/pb1-evidence/android-export

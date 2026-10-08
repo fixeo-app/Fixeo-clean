@@ -1,0 +1,37 @@
+Starting Metro Bundler
+| (node:29) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:21) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:22) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:35) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:41) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:28) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Android ../../../393a8308383c/Fixeo-clean/mobile/node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (956/956)
+Android Bundled 3964ms ../../../393a8308383c/Fixeo-clean/mobile/node_modules/expo-router/entry.js (956 modules)
+
+› Assets (24):
+../../../393a8308383c/Fixeo-clean/mobile/node_modules/@react-navigation/elements/lib/module/assets/back-icon-mask.png (653 B)
+../../../393a8308383c/Fixeo-clean/mobile/node_modules/@react-navigation/elements/lib/module/assets/back-icon.png (4 variations | 152 B)
+../../../393a8308383c/Fixeo-clean/mobile/node_modules/@react-navigation/elements/lib/module/assets/clear-icon.png (4 variations | 425 B)
+../../../393a8308383c/Fixeo-clean/mobile/node_modules/@react-navigation/elements/lib/module/assets/close-icon.png (4 variations | 235 B)
+../../../393a8308383c/Fixeo-clean/mobile/node_modules/@react-navigation/elements/lib/module/assets/search-icon.png (4 variations | 599 B)
+../../../393a8308383c/Fixeo-clean/mobile/node_modules/expo-router/assets/arrow_down.png (9.46 kB)
+../../../393a8308383c/Fixeo-clean/mobile/node_modules/expo-router/assets/error.png (469 B)
+../../../393a8308383c/Fixeo-clean/mobile/node_modules/expo-router/assets/file.png (138 B)
+../../../393a8308383c/Fixeo-clean/mobile/node_modules/expo-router/assets/forward.png (188 B)
+../../../393a8308383c/Fixeo-clean/mobile/node_modules/expo-router/assets/pkg.png (364 B)
+../../../393a8308383c/Fixeo-clean/mobile/node_modules/expo-router/assets/sitemap.png (465 B)
+../../../393a8308383c/Fixeo-clean/mobile/node_modules/expo-router/assets/unmatched.png (4.75 kB)
+
+› android bundles (1):
+_expo/static/js/android/entry-170791205c4035f4ed9c6903b96e7c11.hbc (2.5 MB)
+
+› Files (1):
+metadata.json (1.79 kB)
+
+Exported: ../../recovery/android-export

@@ -5,6 +5,7 @@ import * as Notifications from 'expo-notifications';
 import * as SecureStore from 'expo-secure-store';
 import * as Crypto from 'expo-crypto';
 import { supabase } from './supabase';
+import { privateSessionGeneration } from './authEvents';
 
 const INSTALLATION_KEY = 'fixeo_mobile_installation_id_v1';
 const PUSH_ENABLED_KEY = 'fixeo_mobile_push_enabled_v1';
@@ -54,7 +55,8 @@ function getEasProjectId() {
   );
 }
 
-export async function registerCurrentDeviceForPush(): Promise<PushRegistrationResult> {
+export async function registerCurrentDeviceForPush(requestPermission = true): Promise<PushRegistrationResult> {
+  const generation = privateSessionGeneration();
   if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
     return { ok: false, reason: 'unsupported_platform' };
   }
@@ -71,7 +73,7 @@ export async function registerCurrentDeviceForPush(): Promise<PushRegistrationRe
 
   const current = await Notifications.getPermissionsAsync();
   let status = current.status;
-  if (status !== 'granted') {
+  if (status !== 'granted' && requestPermission) {
     status = (await Notifications.requestPermissionsAsync()).status;
   }
   if (status !== 'granted') {
@@ -98,6 +100,7 @@ export async function registerCurrentDeviceForPush(): Promise<PushRegistrationRe
   if (!token) return { ok: false, reason: 'token_unavailable' };
 
   const installationId = await getInstallationId();
+  if (generation !== privateSessionGeneration()) return { ok: false, reason: 'registry_failed' };
   let registry: any;
   try {
     registry = await withTimeout(
@@ -122,13 +125,13 @@ export async function registerCurrentDeviceForPush(): Promise<PushRegistrationRe
     return { ok: false, reason: 'registry_failed' };
   }
 
+  if (generation !== privateSessionGeneration()) return { ok: false, reason: 'registry_failed' };
   await SecureStore.setItemAsync(PUSH_ENABLED_KEY, '1').catch(() => undefined);
   return { ok: true, token };
 }
 
 export async function isCurrentDevicePushEnabled() {
-  const stored = await SecureStore.getItemAsync(PUSH_ENABLED_KEY);
-  if (stored !== '1') return false;
+  if (Platform.OS === 'web') return false;
   try {
     const permission = await Notifications.getPermissionsAsync();
     return permission.status === 'granted';
@@ -138,6 +141,7 @@ export async function isCurrentDevicePushEnabled() {
 }
 
 export async function disableCurrentDevice() {
+  if (Platform.OS === 'web') return;
   const installationId = await SecureStore.getItemAsync(INSTALLATION_KEY);
   await SecureStore.deleteItemAsync(PUSH_ENABLED_KEY).catch(() => undefined);
   if (!installationId) return;

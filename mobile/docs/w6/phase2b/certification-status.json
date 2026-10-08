@@ -1,0 +1,120 @@
+{
+  "timestamp": "2026-10-05T17:28:15.152Z",
+  "candidateSha": "ca97f43c39fe5fed269a868446f0b5d9c5eb148c",
+  "deploymentId": "dpl_5LcSSPZdX6RotGTn3XssRJ5zKRP4",
+  "deploymentUrl": "https://fixeo-clean-lgkhkyceu-elalaouibiz-3410s-projects.vercel.app",
+  "vercel": "READY",
+  "workflows": [
+    {
+      "id": 37347588788,
+      "name": "Client OS C4 closure certification",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/fixeo-app/Fixeo-clean/actions/runs/37347588788"
+    },
+    {
+      "id": 37347588892,
+      "name": "Mobile Intelligence Contracts",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/fixeo-app/Fixeo-clean/actions/runs/37347588892"
+    },
+    {
+      "id": 37347588486,
+      "name": "Supply Engine certification",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/fixeo-app/Fixeo-clean/actions/runs/37347588486"
+    },
+    {
+      "id": 37347588458,
+      "name": "Mobile Gate A",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/fixeo-app/Fixeo-clean/actions/runs/37347588458"
+    },
+    {
+      "id": 37347588432,
+      "name": "Control contract isolated certification",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/fixeo-app/Fixeo-clean/actions/runs/37347588432"
+    }
+  ],
+  "local": {
+    "typescript": "PASS",
+    "mobile": 114,
+    "server": 201,
+    "clientC4": 14,
+    "expoDoctor": "18/18",
+    "gateA": "PASS",
+    "diffCheck": "PASS",
+    "relayContracts": 17
+  },
+  "fixeoClean": {
+    "id": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+    "updatedAt": 1791206683553,
+    "ssoProtection": {
+      "enabled": true,
+      "deploymentType": "all_except_custom_domains"
+    },
+    "unchanged": true
+  },
+  "auth": {
+    "clientRecoveryRequests": 0,
+    "artisanRecoveryRequests": 0,
+    "signups": 0,
+    "newSessionsCreatedByThisRun": 0,
+    "quotaStatus": "Historical 429; not retried or re-observed in Phase 2B",
+    "pkceWeb": "NOT TESTED — secure in-memory relay-to-Preview handoff unavailable in the controlled-browser APIs",
+    "nativeDeepLink": "DEFERRED TO PHYSICAL BUILD CERTIFICATION",
+    "cleanup": "No real Auth operation or session created in Phase 2B; no global session-count claim"
+  },
+  "nonRegression": {
+    "serverAndMobileContracts": "PASS, W4/W4.1/W5/role authority/mission/evidence/RAFI Voice/ephemeral photo/Safety/Reduced Motion contracts",
+    "browserPublic": "Entry, Login, forgot-password screens and Email-to-password Tab focus observed on exact deployed candidate; no form submission",
+    "viewport320": "Not replayed on Phase 2B candidate",
+    "text200": "Not replayed on Phase 2B candidate",
+    "liveAccounts": "Not tested"
+  },
+  "relayBrowserBearerCases": [
+    {
+      "key": "access_token",
+      "location": "query",
+      "syntheticOnly": true,
+      "cleanUrl": true,
+      "forwardButtonCount": 0
+    },
+    {
+      "key": "refresh_token",
+      "location": "fragment",
+      "syntheticOnly": true,
+      "cleanUrl": true,
+      "forwardButtonCount": 0
+    },
+    {
+      "key": "provider_token",
+      "location": "query",
+      "syntheticOnly": true,
+      "cleanUrl": true,
+      "forwardButtonCount": 0
+    },
+    {
+      "key": "provider_refresh_token",
+      "location": "fragment",
+      "syntheticOnly": true,
+      "cleanUrl": true,
+      "forwardButtonCount": 0
+    }
+  ],
+  "forbiddenChanges": {
+    "supabaseConfig": 0,
+    "dns": 0,
+    "vercelSettings": 0,
+    "relaySource": 0,
+    "production": 0,
+    "main": 0,
+    "merge": 0,
+    "physicalBuild": 0
+  }
+}

@@ -126,6 +126,7 @@ async function inspect(req, res) {
         ...providerEnv,
         FIXEO_DIAGNOSTIC_MODEL: diagnosticModel,
       },
+      photoPolicy: 'descriptive',
       timeout: 25000,
       deadline: started + 28000,
     });

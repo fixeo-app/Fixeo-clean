@@ -1,12 +1,20 @@
-import { useCallback, useRef, useState, type PropsWithChildren } from "react";
+import { ChoicePicker } from '@/ui/ChoicePicker';
+import { onSessionRejected, privateSessionGeneration } from '@/lib/authEvents';
+import { BackButton } from '@/ui/BackButton';
+import { pageLayout } from '@/ui/pageLayout';
+import { RafiScrollView as ScrollView, useKeyboardField } from '@/ui/RafiScrollView';
+import { useCallback, useEffect, useRef, useState, type PropsWithChildren, type ReactNode, type Ref } from "react";
+import { RafiSignalContext } from '@/ui/RafiSignal';
+import { rafiActionState, type RafiSignal } from '@/ui/rafiPresence';
 import {
   ActivityIndicator,
+  useWindowDimensions,
+  FlatList,
+  type ListRenderItem,
   RefreshControl,
-  ScrollView,
   StyleSheet,
   TextInput,
   View,
-  useWindowDimensions,
   type TextInputProps,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
@@ -15,10 +23,9 @@ import { FixeoAction } from "@/ui/FixeoAction";
 import { FixeoScreen } from "@/ui/FixeoScreen";
 import { RafiOrb } from "@/ui/RafiOrb";
 import { MobileShell } from "./MobileShell";
+import { useWorkspaceDock } from './useWorkspaceDock';
 import {
-  layout,
   radii,
-  rafiVisualTokens,
   semanticColors,
   space,
   typography,
@@ -32,28 +39,35 @@ export function useArtisanQuery<T>(fetcher: () => Promise<T>) {
   const [data, setData] = useState<T | null>(null),
     [loading, setLoading] = useState(true),
     [error, setError] = useState("");
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
+  const lastSuccess = useRef<string | null>(null);
+  const querySource = useRef(fetcher);
   const generation = useRef(0),
     pending = useRef(false),
     mounted = useRef(true);
   const load = useCallback(async () => {
     if (pending.current) return;
     pending.current = true;
-    const version = ++generation.current;
+    if (querySource.current !== fetcher) { querySource.current = fetcher; setData(null); lastSuccess.current = null; setLastUpdatedAt(null); }
+    const version = ++generation.current, session = privateSessionGeneration();
     setLoading(true);
     try {
       const value = await withMobileDeadline(fetcher(), 30000);
-      if (mounted.current && generation.current === version) {
+      if (mounted.current && generation.current === version && session === privateSessionGeneration()) {
         setData(value);
+        lastSuccess.current = new Date().toISOString(); setLastUpdatedAt(lastSuccess.current);
         setError("");
       }
     } catch (e) {
-      if (mounted.current && generation.current === version) {
-        setData(null);
-        setError(artisanError(e));
+      if (mounted.current && generation.current === version && session === privateSessionGeneration()) {
+        if (/AUTH_REQUIRED|SESSION_REVOKED|UNAUTHENTICATED|JWT|ARTISAN_REQUIRED|artisan_role_required|42501|permission denied/i.test(String((e as { message?: string; code?: string })?.message || '') + String((e as { code?: string })?.code || ''))) {
+          setData(null); lastSuccess.current = null; setLastUpdatedAt(null);
+        }
+        setError(artisanError(e) + (lastSuccess.current ? ` Dernières données reçues le ${new Date(lastSuccess.current).toLocaleString('fr-FR', { timeZone: 'Africa/Casablanca' })} (Maroc).` : ''));
       }
     } finally {
       pending.current = false;
-      if (mounted.current && generation.current === version) setLoading(false);
+      if (mounted.current && generation.current === version && session === privateSessionGeneration()) setLoading(false);
     }
   }, [fetcher]);
   useFocusEffect(
@@ -67,36 +81,43 @@ export function useArtisanQuery<T>(fetcher: () => Promise<T>) {
       };
     }, [load]),
   );
+  useEffect(() => onSessionRejected(() => { ++generation.current; pending.current = false; lastSuccess.current = null; setData(null); setLastUpdatedAt(null); setError('Votre session a expiré.'); }), []);
   useForegroundRefresh(load);
-  return { data, loading, error, reload: load };
+  return { data, loading, error, lastUpdatedAt, reload: load };
 }
 export function useArtisanAction() {
   const [busy, setBusy] = useState(false),
     [message, setMessage] = useState("");
   const locked = useRef(false);
+  const alive = useRef(true);
+  const [completion, setCompletion] = useState(0), [failed, setFailed] = useState(false);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   const run = async <T,>(
     action: () => Promise<T>,
     success: string,
+    timeoutMs = 20000,
   ): Promise<T | undefined> => {
     if (locked.current) return;
     locked.current = true;
     setBusy(true);
+    setFailed(false);
     setMessage("");
     try {
-      const value = await withMobileDeadline(action(), 20000);
-      setMessage(success);
+      const value = await withMobileDeadline(action(), timeoutMs);
+      if (alive.current) { setMessage(success); setCompletion(value => Math.max(Date.now(), value + 1)); }
       return value;
     } catch (e) {
-      setMessage(artisanError(e));
+      if (alive.current) { setMessage(artisanError(e)); setFailed(true); }
       return undefined;
     } finally {
       locked.current = false;
-      setBusy(false);
+      if (alive.current) setBusy(false);
     }
   };
-  return { busy, message, setMessage, run };
+  const rafi: RafiSignal = { mode: rafiActionState(busy, failed, completion), eventKey: String(completion) };
+  return { busy, message, setMessage, run, rafi };
 }
-export function ArtisanPage({
+export function ArtisanPage<T,>({
   title,
   eyebrow = "ARTISAN OS",
   detail,
@@ -105,7 +126,12 @@ export function ArtisanPage({
   loading = false,
   onRefresh,
   dock,
+  transactional = false,
+  rafi,
   back = true,
+  hero,
+  list,
+  backAction,
 }: PropsWithChildren<{
   title: string;
   eyebrow?: string;
@@ -114,18 +140,52 @@ export function ArtisanPage({
   loading?: boolean;
   onRefresh?: () => void;
   dock?: ContextDockSpec;
+  transactional?: boolean;
+  rafi?: RafiSignal;
   back?: boolean;
+  hero?: ReactNode;
+  backAction?: () => void;
+  list?: { data: readonly T[]; renderItem: ListRenderItem<T>; keyExtractor: (item: T, index: number) => string };
 }>) {
-  const { width, fontScale } = useWindowDimensions();
-  // The drawer keeps every destination available when enlarged text needs the space.
-  const accessibleDock = dock && {
-    ...dock,
-    hidden: dock.hidden || (width <= 360 && fontScale >= 1.7),
-  };
+  const { width } = useWindowDimensions();
+  const contentStyle = [art.content, { paddingHorizontal: width < 360 ? 16 : 20 }];
+  const workspaceDock = useWorkspaceDock('artisan');
+  const contextualItems = dock?.items.filter(item => !workspaceDock?.items.some(global => global.label === item.label)) || [];
+  const accessibleDock = workspaceDock; // Global navigation is independent of contextual actions.
+  const header = <>
+        {back && <BackButton onPress={backAction} />}
+        {hero}
+        <View style={[art.intro, hero ? { alignItems: 'center', marginBottom: 8 } : undefined]}>
+          {!hero && <View style={art.signature} />}
+          <FixeoText variant="eyebrow" tone="secondary">
+            {eyebrow}
+          </FixeoText>
+          <FixeoText variant="title" accessibilityRole="header" style={[{ fontSize: 28, lineHeight: 34 }, hero ? { textAlign: 'center' } : undefined]}>
+            {title}
+          </FixeoText>
+          {detail && <FixeoText tone="secondary" style={hero ? { textAlign: 'center' } : undefined}>{detail}</FixeoText>}
+        </View>
+        {loading && (
+          <View style={art.loading}>
+            <ActivityIndicator color={semanticColors.text.primary} />
+            <FixeoText variant="supporting" accessibilityLiveRegion="polite">
+              Actualisation de votre activité…
+            </FixeoText>
+          </View>
+        )}
+        {dock && !dock.hidden && <View accessibilityLabel="Actions de cette page" style={art.contextActions}>
+          {contextualItems.map(item => <FixeoAction key={item.key} label={item.label} variant="secondary"
+            accessibilityLabel={item.accessibilityLabel} disabled={item.disabled} onPress={item.action} style={art.choice} />)}
+        </View>}
+        {children}
+
+
+  </>;
   return (
-    <FixeoScreen
+    <RafiSignalContext.Provider value={rafi || null}><FixeoScreen
       padded={false}
       contextDock={accessibleDock}
+      transactional={transactional}
       header={
         <MobileShell
           universe="artisan"
@@ -139,47 +199,16 @@ export function ArtisanPage({
         />
       }
     >
-      <ScrollView
-        contentContainerStyle={art.content}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
-        refreshControl={
-          onRefresh ? (
-            <RefreshControl refreshing={loading} onRefresh={onRefresh} />
-          ) : undefined
-        }
-      >
-        {back && (
-          <FixeoAction
-            label="Retour"
-            variant="ghost"
-            onPress={() =>
-              router.canGoBack() ? router.back() : router.replace("/artisan")
-            }
-            style={art.back}
-          />
-        )}
-        <View style={art.intro}>
-          <View style={art.signature} />
-          <FixeoText variant="eyebrow" tone="secondary">
-            {eyebrow}
-          </FixeoText>
-          <FixeoText variant="hero" accessibilityRole="header">
-            {title}
-          </FixeoText>
-          {detail && <FixeoText tone="secondary">{detail}</FixeoText>}
-        </View>
-        {loading && (
-          <View style={art.loading}>
-            <ActivityIndicator color={semanticColors.text.primary} />
-            <FixeoText variant="supporting" accessibilityLiveRegion="polite">
-              Actualisation de votre activité…
-            </FixeoText>
-          </View>
-        )}
-        {children}
-      </ScrollView>
-    </FixeoScreen>
+      {list ? <FlatList data={list.data} renderItem={list.renderItem} keyExtractor={list.keyExtractor}
+        ListHeaderComponent={header} contentContainerStyle={contentStyle} initialNumToRender={6} windowSize={7}
+        keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag"
+        renderScrollComponent={props => <ScrollView {...props} />}
+        refreshControl={onRefresh ? <RefreshControl refreshing={loading} onRefresh={onRefresh} /> : undefined} />
+        : <ScrollView style={{ flex: 1, minHeight: 0 }} contentContainerStyle={contentStyle}
+          keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag"
+          refreshControl={onRefresh ? <RefreshControl refreshing={loading} onRefresh={onRefresh} /> : undefined}>{header}</ScrollView>}
+
+    </FixeoScreen></RafiSignalContext.Provider>
   );
 }
 export function ArtisanSection({
@@ -211,7 +240,7 @@ export function ArtisanCue({
 }) {
   return (
     <View style={art.cue}>
-      <RafiOrb mode="idle" size={44} />
+      <RafiOrb size={32} />
       <View style={art.flex}>
         <FixeoText variant="eyebrow">{title}</FixeoText>
         <FixeoText tone="secondary">{text}</FixeoText>
@@ -266,22 +295,33 @@ export function ArtisanMessage({
   );
 }
 export function ArtisanField({
-  label,
+  label, error, inputRef, hint,
   ...props
-}: TextInputProps & { label: string }) {
+}: TextInputProps & { label: string; error?: string; hint?: string; inputRef?: Ref<TextInput> }) {
+  const field = useRef<View>(null);
+  const keyboard = useKeyboardField();
   return (
-    <View style={art.field}>
+    <View ref={field} collapsable={false} style={art.field}>
       <FixeoText variant="supporting">{label}</FixeoText>
       <TextInput
+        ref={inputRef}
         accessibilityLabel={label}
         placeholderTextColor={semanticColors.text.secondary}
         {...props}
+        onFocus={event => { keyboard?.focus(field); props.onFocus?.(event); }}
+        onBlur={event => { keyboard?.blur(field); props.onBlur?.(event); }}
+        onContentSizeChange={event => { keyboard?.reveal(); props.onContentSizeChange?.(event); }}
+        onSelectionChange={event => { keyboard?.reveal(); props.onSelectionChange?.(event); }}
+        onLayout={event => { keyboard?.reveal(); props.onLayout?.(event); }}
         style={[
           art.input,
-          props.multiline && { minHeight: 100, textAlignVertical: "top" },
+          error && { borderWidth: 2, borderColor: semanticColors.text.secondary },
           props.style,
+          props.multiline && { minHeight: 56, maxHeight: 144, textAlignVertical: "top" },
         ]}
       />
+      {!!hint && <FixeoText variant="supporting" tone="secondary">{hint}</FixeoText>}
+      {error && <FixeoText accessibilityRole="alert" accessibilityLiveRegion="polite">ⓘ {error}</FixeoText>}
     </View>
   );
 }
@@ -292,44 +332,16 @@ export function ArtisanChoices({
   onChange,
 }: {
   label: string;
-  options: { value: string; label: string }[];
+  options: { value: string; label: string; disabled?: boolean }[];
   value: string;
   onChange: (v: string) => void;
 }) {
-  return (
-    <View style={art.field}>
-      <FixeoText variant="supporting">{label}</FixeoText>
-      <View style={art.inline}>
-        {options.map((o) => (
-          <FixeoAction
-            key={o.value}
-            label={o.label}
-            variant={value === o.value ? "primary" : "secondary"}
-            accessibilityState={{ selected: value === o.value }}
-            onPress={() => onChange(o.value)}
-            style={art.choice}
-          />
-        ))}
-      </View>
-    </View>
-  );
+  return <ChoicePicker label={label} options={options} value={value} onChange={v => onChange(String(v))} />;
 }
 export const art = StyleSheet.create({
-  content: {
-    paddingHorizontal: space.lg,
-    paddingBottom: space.xl,
-    gap: space.xl,
-    width: "100%",
-    maxWidth: layout.screen.maxContentWidth,
-    alignSelf: "center",
-  },
-  intro: { paddingTop: space.sm, gap: space.sm },
-  signature: {
-    width: 40,
-    height: 2,
-    backgroundColor: rafiVisualTokens.champagne,
-    marginBottom: space.sm,
-  },
+  content: pageLayout.content,
+  intro: pageLayout.intro,
+  signature: pageLayout.signature,
   section: {
     padding: space.lg,
     gap: space.md,
@@ -369,6 +381,7 @@ export const art = StyleSheet.create({
     borderColor: semanticColors.border.subtle,
   },
   actions: { gap: space.sm },
+  contextActions: { gap: space.sm, paddingVertical: space.md },
   inline: { flexDirection: "row", flexWrap: "wrap", gap: space.sm },
   back: { alignSelf: "flex-start", minWidth: 80 },
   choice: { flexGrow: 1 },
@@ -385,7 +398,7 @@ export function ArtisanModuleStatus({
   testID,
 }: {
   label: string;
-  state: { status: "loading" | "ready" | "unavailable"; error: unknown };
+  state: { status: "loading" | "ready" | "unavailable"; error: unknown; lastUpdatedAt?: string };
   retry: () => void;
   testID?: string;
 }) {
@@ -410,6 +423,7 @@ export function ArtisanModuleStatus({
         <View style={art.actions}>
           <FixeoText tone="secondary">
             {label} indisponible pour le moment. {artisanError(state.error)}
+            {state.lastUpdatedAt ? ` Dernier état reçu le ${new Date(state.lastUpdatedAt).toLocaleString('fr-FR', { timeZone: 'Africa/Casablanca' })} (Maroc).` : ''}
           </FixeoText>
           <FixeoAction
             label={`Réessayer · ${label}`}

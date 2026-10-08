@@ -1,19 +1,26 @@
-import type { PropsWithChildren } from 'react';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { pageLayout } from '@/ui/pageLayout';
+import { useEffect, useState, type PropsWithChildren } from 'react';
+import { Keyboard, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { FixeoText } from '@/ui/FixeoText';
 import { RafiOrb } from '@/ui/RafiOrb';
 import type { RafiPresenceState } from '@/ui/rafiPresence';
-import { layout, radii, rafiVisualTokens, semanticColors, space, typography } from '@/ui/tokens';
+import { radii, semanticColors, space, typography } from '@/ui/tokens';
 import { clientHeroSize } from '@/lib/clientExperience';
 
-/** Client-only composition. W2 shell and W3 material/motion are used unchanged. */
-export function ClientHero({ eyebrow, title, detail, mode, eventKey, compact = false }: {
-  eyebrow: string; title: string; detail: string; mode: RafiPresenceState; eventKey?: string; compact?: boolean;
+/** Client composition shares the canonical page rhythm and certified RAFI loop. */
+export function ClientHero({ eyebrow, title, detail, mode, eventKey, compact = false, family = 'home' }: {
+  eyebrow: string; title: string; detail: string; mode: RafiPresenceState; eventKey?: string; compact?: boolean; family?: 'home' | 'request' | 'tracking';
 }) {
   const { width, height, fontScale } = useWindowDimensions();
-  const small = width <= 340 || height <= 640;
-  return <View testID="client-hero" style={[styles.hero, small && styles.heroSmall]}>
-    <RafiOrb size={clientHeroSize(width, height, compact)} mode={mode} eventKey={eventKey} />
+  const small = width <= 340;
+  const [keyboardVisible, setKeyboardVisible] = useState(() => Keyboard.isVisible());
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
+    const hide = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
+    return () => { show.remove(); hide.remove(); };
+  }, []);
+  return <View testID="client-hero" style={[styles.hero, small && styles.heroSmall, family === 'request' && keyboardVisible && { display: 'none' }]}>
+    <RafiOrb size={clientHeroSize(width, height, compact, family)} mode={mode} eventKey={eventKey} />
     <View style={styles.heroCopy}>
       <FixeoText variant="eyebrow" tone="secondary" style={styles.center}>{eyebrow}</FixeoText>
       <FixeoText accessibilityRole="header" variant={fontScale > 1.4 ? 'heading' : compact || small ? 'title' : 'hero'} style={styles.center}>{title}</FixeoText>
@@ -39,7 +46,7 @@ export function ClientSection({ label, children, surface = false, testID }: Prop
 }
 
 export const clientStyles = StyleSheet.create({
-  content: { paddingHorizontal: space.lg, paddingBottom: space.xl, gap: space.xl, width: '100%', maxWidth: layout.screen.maxContentWidth, alignSelf: 'center' },
+  content: pageLayout.content,
   row: { paddingVertical: space.lg, gap: space.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: semanticColors.border.subtle },
   input: { ...typography.body, color: semanticColors.text.primary, minHeight: 56, padding: space.md,
     backgroundColor: semanticColors.background.surface, borderRadius: radii.control, borderWidth: 1, borderColor: semanticColors.border.subtle },
@@ -52,8 +59,8 @@ const styles = StyleSheet.create({
   heroSmall: { paddingTop: 0, gap: space.xxs },
   heroCopy: { gap: space.sm, width: '100%', alignItems: 'center' },
   center: { textAlign: 'center', maxWidth: 380, width: '100%' },
-  intro: { paddingTop: space.lg, gap: space.sm },
-  signature: { width: space.xl, height: 2, backgroundColor: rafiVisualTokens.champagne, marginBottom: space.xs },
+  intro: pageLayout.intro,
+  signature: pageLayout.signature,
   section: { gap: space.sm },
   surface: { backgroundColor: semanticColors.background.surface, borderRadius: radii.card, padding: space.lg },
 });

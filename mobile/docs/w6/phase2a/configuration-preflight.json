@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-05T16:34:25.999Z",
+  "scope": "W6 Phase 2A additive redirect allowlist only",
+  "project": {
+    "name": "fixeo-diagnostic-staging",
+    "ref": "kqyhusnbybsukbcaoqtu",
+    "status": "ACTIVE_HEALTHY",
+    "identityVerifiedBy": "Supabase get_project"
+  },
+  "requestedExactRedirect": "https://w6-auth-staging.fixeo.ma/auth-callback",
+  "requestedDashboardPath": "/dashboard/project/kqyhusnbybsukbcaoqtu/auth/url-configuration",
+  "observedDashboardPath": "/dashboard/sign-in",
+  "dashboardConfigurationAccessible": false,
+  "before": {
+    "siteUrl": null,
+    "redirectUrls": null,
+    "exactRedirectOccurrenceCount": null,
+    "status": "NOT OBSERVED - dashboard authentication required"
+  },
+  "mutation": {
+    "performed": false,
+    "authWritesByAgent": 0,
+    "reason": "Required preflight baseline unavailable"
+  },
+  "after": {
+    "siteUrl": null,
+    "redirectUrls": null,
+    "exactRedirectOccurrenceCount": null,
+    "status": "NOT CERTIFIED - no write attempted"
+  },
+  "secureSignInOutcome": "Manual takeover reported; subsequent target-page navigation still returned to sign-in. No authenticated configuration page observed.",
+  "otherAuthConfigurationWritesByAgent": 0,
+  "applicationApprovedFlagChanged": false,
+  "authEmailsSent": 0,
+  "syntheticSessionsCreated": 0,
+  "realPKCETested": false,
+  "dnsWrites": 0,
+  "vercelConfigurationWrites": 0,
+  "productionImpact": "NONE",
+  "rollback": "No Phase 2A write to undo. If an addition is later performed, remove only the exact requested redirect; preserve all existing settings.",
+  "verdict": "STOP \u2014 W6 PHASE 2A NOT CERTIFIED"
+}

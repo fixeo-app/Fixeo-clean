@@ -25,7 +25,7 @@ test('W4 creation and understanding cannot masquerade as an active artisan searc
 
 test('W4 larger RAFI fits both small and standard canvases without changing W3 geometry', () => {
   assert.equal(clientHeroSize(320, 568), 120);
-  assert.equal(clientHeroSize(390, 844), 160);
+  assert.equal(clientHeroSize(390, 844), 120);
   assert.ok(clientHeroSize(320, 568) * 1.5 < 320 - 48);
   assert.ok(clientHeroSize(390, 844) * 1.5 < 390 - 48);
 });
@@ -50,3 +50,7 @@ test('W4 notification grouping uses existing event types, read state, and known 
   assert.deepEqual(clientNotificationSections(items).map(section => section.data.map(item => item.id)), [['1'], ['2'], ['3']]);
   assert.equal(clientNotificationSections([...items, event('4', 'c_mission_validated', false, '2026-10-04T11:00:00Z')])[0].title, 'Informations');
 });
+
+ test('B1 request RAFI stays 96 dp through IME resize; tracking uses 64 dp', () => {
+ for(const height of [240,320,640,844]) { assert.equal(clientHeroSize(360,height,false,'request'),96); assert.equal(clientHeroSize(360,height,true,'request'),96); assert.equal(clientHeroSize(360,height,true,'tracking'),64); }
+ });

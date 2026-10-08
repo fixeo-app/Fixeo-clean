@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "checks": [
+    "desktop_cube_real_API_SQL_and_orphan_unattributed",
+    "exact_population_to_acquired_dossier_and_operations",
+    "activation_to_real_Trust_preview_confirmation_cancel",
+    "bounded_canonical_coverage_read_no_dispatch",
+    "cohorts_horizon_denominators_delays_uncertainty",
+    "cohort_error_preserves_other_sources",
+    "partial_network_not_zero_and_recovery",
+    "RAFI_to_normalized_intelligence_context",
+    "mobile_390_cube_and_cohorts_no_overflow",
+    "no_runtime_SQL_error_or_business_execution"
+  ],
+  "executions": 0,
+  "environment": "isolated synthetic SQL, real UI and handler; no Production account or fixture"
+}

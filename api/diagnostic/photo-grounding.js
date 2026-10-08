@@ -13,6 +13,12 @@ When uncertain, omit the observation. Never fill missing evidence. Never certify
 Use electrical_risk for a visibly broken socket/switch, missing electrical cover, deteriorated electrical equipment or exposed wiring alone. These defects require prompt professional attention but do not alone prove an immediate danger or live voltage.
 Use technical_urgency for significant visible technical deterioration requiring prompt professional attention without visible immediate threat, in ANY trade. Ordinary equipment damage, a pipe, a gas appliance, an HVAC unit or a simple crack alone must not become a critical safety signal. Do not infer smells, live voltage, water flow, stability or absence of danger from an image. Escalate visible immediate threats regardless of trade.
 Use electricity for potential visible active sparking, an electrical shock event or water touching an electrical installation; fire for visible flames/smoke; immediate_danger for another immediate threat. Retain gas, flooding, major leak and structural danger conservatively. If both technical damage and a critical sign are present, retain BOTH signals. Never use electrical_risk to replace a critical signal. No repair instructions, prices or durations.`;
+// Mobile PB1 opt-in: scene recognition is distinct from diagnosis. Web policy is unchanged.
+const descriptivePhotoInstructions = photoInstructions
+  .replace('Describe only directly discernible home-service evidence', 'Describe directly discernible objects, surroundings and home-service evidence')
+  .replace('an unrelated scene or whenever no relevant physical detail can be identified confidently', 'whenever no object or physical detail can be identified confidently')
+  + '\nA recognizable scene is informative even when no defect is visible. Describe an identifiable object (for example a laptop or office) without reading screens or private text. Do not invent a fault, trade, repair or danger. No visible defect is different from no visible object.'
+  + '\nAn unused wall socket with no cable or device plugged in is not a defect or electrical risk. Describe that visible state without inferring missing wiring, failure, danger or urgency. Only positive visible damage or an immediate threat supports a safety signal. The image cannot establish the internal condition or operation of a socket.';
 const photoSchema = {
   type: "object",
   additionalProperties: false,
@@ -273,6 +279,7 @@ function assertPhotoObservations(observations, photos) {
 }
 
 module.exports = {
+  descriptivePhotoInstructions,
   photoInstructions,
   photoSchema,
   validatePhotoEvidence,

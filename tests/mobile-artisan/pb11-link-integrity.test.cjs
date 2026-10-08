@@ -1,0 +1,50 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const {PGlite}=require('@electric-sql/pglite');
+const old=fs.readFileSync('mobile/docs/pb1-1/rollback-business-link-integrity.sql','utf8');
+const migration=fs.readFileSync('supabase/migrations/'+fs.readdirSync('supabase/migrations').find(p=>p.endsWith('_pb1_1_business_link_integrity.sql')),'utf8');
+const owner='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',other='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+test('PB1.1 PostgreSQL: exact migration rejects inconsistent client/job/quote/source and preserves valid links, RLS and rollback',async()=>{
+ const db=new PGlite();try{
+ await db.exec(`CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role; CREATE SCHEMA auth;
+ CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
+ CREATE TABLE artisan_business_clients(id uuid PRIMARY KEY,owner_user_id uuid,full_name text);
+ CREATE TABLE artisan_business_quotes(id uuid PRIMARY KEY,owner_user_id uuid,client_id uuid,source text);
+ CREATE TABLE artisan_business_jobs(id uuid PRIMARY KEY,owner_user_id uuid,client_id uuid,quote_id uuid,source text);
+ CREATE TABLE artisan_business_ledger(id uuid PRIMARY KEY,owner_user_id uuid,client_id uuid,job_id uuid,quote_id uuid,source text,amount numeric CHECK(amount>0));
+ GRANT USAGE ON SCHEMA auth TO authenticated; GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;
+ ALTER TABLE artisan_business_clients ENABLE ROW LEVEL SECURITY; ALTER TABLE artisan_business_quotes ENABLE ROW LEVEL SECURITY;
+ ALTER TABLE artisan_business_jobs ENABLE ROW LEVEL SECURITY; ALTER TABLE artisan_business_ledger ENABLE ROW LEVEL SECURITY;
+ CREATE POLICY owned ON artisan_business_clients TO authenticated USING(owner_user_id=auth.uid()) WITH CHECK(owner_user_id=auth.uid());
+ CREATE POLICY owned ON artisan_business_quotes TO authenticated USING(owner_user_id=auth.uid()) WITH CHECK(owner_user_id=auth.uid());
+ CREATE POLICY owned ON artisan_business_jobs TO authenticated USING(owner_user_id=auth.uid()) WITH CHECK(owner_user_id=auth.uid());
+ CREATE POLICY owned ON artisan_business_ledger TO authenticated USING(owner_user_id=auth.uid()) WITH CHECK(owner_user_id=auth.uid());`);
+ await db.exec(old);
+ const aclBefore=await db.query("select proacl::text from pg_proc where oid='public.artisan_business_validate_links()'::regprocedure");
+ await db.exec(migration);
+ assert.deepEqual((await db.query("select proacl::text from pg_proc where oid='public.artisan_business_validate_links()'::regprocedure")).rows,aclBefore.rows);
+ const id=n=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
+ for(const [n,u] of [[1,owner],[2,owner],[3,other]])await db.query('insert into artisan_business_clients values($1,$2,$3)',[id(n),u,'Synthetic']);
+ await db.query('insert into artisan_business_quotes values($1,$2,$3,$4)',[id(4),owner,id(1),'personal']);
+ await db.query('insert into artisan_business_jobs values($1,$2,$3,$4,$5)',[id(5),owner,id(1),id(4),'personal']);
+ const insert=(n,client=id(1),job=id(5),quote=id(4),source='personal',u=owner)=>db.query('insert into artisan_business_ledger values($1,$2,$3,$4,$5,$6,250)',[id(n),u,client,job,quote,source]);
+ await insert(6);
+ await assert.rejects(insert(7,id(2),id(5),null),/LEDGER_CLIENT_MISMATCH/);
+ await assert.rejects(insert(8,id(3),id(5),null),/BUSINESS_CLIENT_NOT_OWNED/);
+ await assert.rejects(insert(9,null,id(5),null),/LEDGER_CLIENT_MISMATCH/);
+ await assert.rejects(insert(10,id(1),id(5),null,'fixeo'),/LEDGER_CLIENT_MISMATCH/);
+ await assert.rejects(db.query('update artisan_business_jobs set client_id=$1,quote_id=null where id=$2',[id(2),id(5)]),/JOB_LINKS_ALREADY_RECORDED/);
+ await assert.rejects(db.query('update artisan_business_quotes set client_id=$1 where id=$2',[id(2),id(4)]),/QUOTE_LINKS_ALREADY_RECORDED/);
+ await assert.rejects(db.query("update artisan_business_ledger set source='fixeo' where id=$1",[id(6)]),/MISMATCH/);
+ await db.exec(`SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','${other}',false);`);
+ assert.equal((await db.query('select * from artisan_business_ledger')).rows.length,0);
+ await assert.rejects(insert(11),/row-level security|NOT_OWNED/);
+ await db.exec(`SELECT set_config('request.jwt.claim.sub','${owner}',false);`);
+ assert.equal((await db.query('select * from artisan_business_ledger')).rows.length,1);
+ await insert(12,id(1),null,null); // Optional job remains valid.
+ await db.exec('RESET ROLE');
+ await db.exec(old);
+ assert.equal((await db.query('select count(*)::int n from artisan_business_ledger')).rows[0].n,2);
+ }finally{await db.close();}
+});

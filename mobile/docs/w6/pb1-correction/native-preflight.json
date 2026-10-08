@@ -1,0 +1,23 @@
+{
+  "scope": "Disposable Expo prebuild, NOT compiled APK or physical certification",
+  "checks": [
+    "package ma.fixeo.app",
+    "Android 0.3.0 (5)",
+    "preview APK only",
+    "staging Supabase only",
+    "canonical callback unchanged",
+    "foreground location declared",
+    "background location blocked",
+    "location foreground service blocked",
+    "microphone declared",
+    "native callback scheme",
+    "keyboard resize",
+    "dark system bar foreground",
+    "ivory status bar",
+    "SDK 54 native picker pinned",
+    "SDK 54 system UI present",
+    "SDK 54 inbox intent present",
+    "FIXEO launcher resource"
+  ],
+  "result": "PASS"
+}

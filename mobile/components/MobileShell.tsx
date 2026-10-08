@@ -110,6 +110,7 @@ export function MobileShell({ universe, activeKey, statusLabel, rightActionLabel
     logoutBusy.current = true;
     setSigningOut(true);
     try { await signOut(); }
+    catch { /* Auth owner has already closed local access; reconnection stays explicit. */ }
     finally {
       logoutBusy.current = false;
       setSigningOut(false);
@@ -177,5 +178,5 @@ const styles = StyleSheet.create({
   actionLabel: { textAlign: 'center', width: '100%' },
   modalRoot: { flex: 1, flexDirection: 'row' },
   backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.42)' },
-  drawer: { height: '100%', backgroundColor: semanticColors.background.inverse },
+  drawer: { height: '100%', backgroundColor: semanticColors.background.canvas },
 });

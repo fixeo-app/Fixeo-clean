@@ -1,0 +1,40 @@
+{
+  "scope": "local prebuild + Android export, not an APK and not physical certification",
+  "checks": {
+    "self_contained_internal_apk": true,
+    "environment_exact_staging": true,
+    "supabase_staging_exact": true,
+    "supabase_key_publishable_only": true,
+    "callback_exact": true,
+    "callback_approved": true,
+    "native_scheme_in_generated_manifest": true,
+    "auth_callback_route": true,
+    "microphone_generated_permission": true,
+    "foreground_location_generated_permissions": true,
+    "background_location_removed": true,
+    "camera_library_manifest": true,
+    "notifications_library_manifest": true,
+    "securestore_backup_exclusions": true,
+    "native_securestore_adapter": true,
+    "android_bundle_callback_literal": true,
+    "android_bundle_supabase_literal": true,
+    "no_secret_key_literal_in_bundle": true,
+    "no_service_role_jwt_in_bundle": true,
+    "no_production_profile": true
+  },
+  "androidPackage": "ma.fixeo.app",
+  "version": "0.3.0",
+  "versionCode": 4,
+  "schemes": [
+    "fixeo",
+    "exp+fixeo-mobile"
+  ],
+  "manifestSha256": "2263ea653ac6fa643bd54a9ce7bd738c4b48990408ccf2a22c8a22e5e7f3c7a5",
+  "bundleSha256": "cd3a464efc5abb9c379c2b6f3a3ce397118e9a27b3fa21ecc83192ca73d2c39c",
+  "bundleBytes": 3915365,
+  "remoteEnvironmentReview": "PENDING_EXPO_AUTHENTICATION",
+  "physicalDeepLink": "NOT_TESTED",
+  "realPkce": "NOT_TESTED",
+  "secretScanMethod": "Hermes decoded individual strings; raw-byte match crossed concatenated string boundaries. Only the Supabase SDK literal sb_secret_ is present, no secret key.",
+  "decodedStringCount": 7712
+}

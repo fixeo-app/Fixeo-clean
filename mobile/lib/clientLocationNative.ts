@@ -8,8 +8,12 @@ export async function detectInterventionCity(isCurrent: () => boolean): Promise<
   const Location = await import('expo-location');
   return locateInterventionCity({
     supported: true,
-    requestPermission: () => Location.requestForegroundPermissionsAsync(),
+    requestPermission: async () => {
+      const current = await Location.getForegroundPermissionsAsync();
+      return current.granted ? current : Location.requestForegroundPermissionsAsync();
+    },
     servicesEnabled: () => Location.hasServicesEnabledAsync(),
+    lastPosition: () => Location.getLastKnownPositionAsync({ maxAge: 60000, requiredAccuracy: 1500 }),
     currentPosition: () => Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced, mayShowUserSettingsDialog: false }),
     reverseGeocode: coordinates => Location.reverseGeocodeAsync(coordinates),
   }, () => isCurrent() && AppState.currentState === 'active');

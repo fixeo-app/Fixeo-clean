@@ -1,0 +1,32 @@
+{
+  "checkedAt": "2026-10-05T15:10:45.655542+00:00",
+  "dns": {
+    "CNAME": {
+      "status": 3,
+      "answers": []
+    },
+    "A": {
+      "status": 3,
+      "answers": []
+    },
+    "AAAA": {
+      "status": 3,
+      "answers": []
+    }
+  },
+  "deployedArtifact": {
+    "status": 200,
+    "sha256": "1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2",
+    "localSha256": "1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2",
+    "exactMatch": true,
+    "tlsValidation": true,
+    "headers": {
+      "Cache-Control": "no-store",
+      "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+      "Referrer-Policy": "no-referrer",
+      "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+      "X-Content-Type-Options": "nosniff",
+      "X-Fixeo-Relay": "w6-phase-1"
+    }
+  }
+}

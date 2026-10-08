@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-10-05T17:25:59.117Z",
+  "source": "Vercel Dashboard Output download, actual deployed artifact",
+  "deploymentId": "dpl_5LcSSPZdX6RotGTn3XssRJ5zKRP4",
+  "commit": "ca97f43c39fe5fed269a868446f0b5d9c5eb148c",
+  "bundle": "entry-8a2b6bfc438f3a81c667020d9c9efcea.js",
+  "sha256": "16efee0fa9e643663cc670b9f2ec996b6de35cee96c8bb7f73f38e0dff91dfb3",
+  "bytes": 1918457,
+  "canonicalCallback": "https://w6-auth-staging.fixeo.ma/auth-callback",
+  "approvalGuard": "Compiled to pass-through; both signup and recovery reach stub SDK",
+  "approvedEffective": true,
+  "calls": [
+    {
+      "operation": "recovery",
+      "redirectTo": "https://w6-auth-staging.fixeo.ma/auth-callback"
+    },
+    {
+      "operation": "signup",
+      "emailRedirectTo": "https://w6-auth-staging.fixeo.ma/auth-callback"
+    }
+  ],
+  "realNetworkCalls": 0,
+  "scope": "Compiled artifact contract with stub SDK; not real Auth"
+}

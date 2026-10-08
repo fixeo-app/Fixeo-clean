@@ -1,3 +1,5 @@
+import { profileMissingMessage } from './artisanProfileGate';
+import { moneyMinor, lineTotalMinor } from './moneyContract';
 export type QuoteLine = {
   type: "service" | "supply" | "labor";
   label: string;
@@ -12,9 +14,9 @@ export const availabilityLabels: Record<string, string> = {
 };
 export const businessStatus: Record<string, string> = {
   draft: "Brouillon",
-  sent: "Envoyé",
-  accepted: "Accepté",
-  rejected: "Refusé",
+  sent: "Envoi déclaré",
+  accepted: "Accord déclaré",
+  rejected: "Refus déclaré",
   expired: "Expiré",
   cancelled: "Annulé",
   planned: "Planifiée",
@@ -87,18 +89,18 @@ export function calculateQuote(
     return {
       ...line,
       label: line.label.trim(),
-      total: Math.round(line.quantity * line.unit_price * 100) / 100,
+      total: lineTotalMinor(line.quantity, line.unit_price) / 100,
     };
   });
   const subtotal =
-    Math.round(items.reduce((sum, l) => sum + l.total, 0) * 100) / 100;
+    items.reduce((sum, l) => sum + moneyMinor(l.total), 0) / 100;
   if (discount > subtotal || subtotal > 500000)
     throw new Error("QUOTE_AMOUNT_INVALID");
   return {
     items,
     subtotal,
-    discount,
-    total: Math.round((subtotal - discount) * 100) / 100,
+    discount: moneyMinor(discount) / 100,
+    total: (moneyMinor(subtotal) - moneyMinor(discount)) / 100,
   };
 }
 export function ledgerTotals(
@@ -109,10 +111,10 @@ export function ledgerTotals(
   return {
     income: selected
       .filter((r) => r.entry_type === "income")
-      .reduce((s, r) => s + r.amount, 0),
+      .reduce((s, r) => s + moneyMinor(r.amount), 0) / 100,
     expense: selected
       .filter((r) => r.entry_type === "expense")
-      .reduce((s, r) => s + r.amount, 0),
+      .reduce((s, r) => s + moneyMinor(r.amount), 0) / 100,
   };
 }
 /** Identical starts only: no invented appointment duration. */
@@ -147,12 +149,18 @@ export function artisanError(error: unknown) {
     return "Le réseau met trop de temps. Vérifiez l’état puis réessayez.";
   if (/already_claimed|offer_not_active|offer_not_found/i.test(message))
     return "Cette opportunité n’est plus disponible. Actualisez la liste.";
+  if (/AVAILABILITY_CONFIRMATION_PENDING/.test(message))
+    return "Le statut n’a pas pu être confirmé. Actualisez avant de réessayer.";
   if (/onboarding_required|profile_incomplete/i.test(message))
-    return "Complétez votre profil Artisan avant de vous rendre disponible.";
+    return profileMissingMessage((error as { missingFields?: string[] })?.missingFields);
   if (/not_approved/i.test(message))
     return "Votre profil doit être approuvé par FIXEO avant cette action.";
   if (/invalid_phone/i.test(message))
     return "Renseignez un numéro de téléphone marocain valide.";
+  if (/PENDING_WRITE|BUSINESS_PENDING_CONFLICT/.test(message)) return "Une opération reste à vérifier. Reprenez ses informations conservées avant une nouvelle saisie.";
+  if (/CLIENT_VERSION_CONFLICT/.test(message)) return "Cette fiche a changé sur le serveur. Votre saisie est conservée ; comparez les versions.";
+  if (/DRAFT_PERSIST_FAILED/.test(message)) return "La copie locale n’a pas pu être enregistrée. Aucune nouvelle écriture serveur n’a été lancée.";
+  if (/PROFILE_VERSION_CONFLICT/.test(message)) return "Cette section a changé sur le serveur. Comparez les informations avant d’enregistrer.";
   if (/BIO_TOO_LONG/.test(message))
     return "Votre présentation doit contenir au maximum 4 000 caractères.";
   if (/BIO_CONFIRMATION_PENDING/.test(message))
@@ -163,6 +171,12 @@ export function artisanError(error: unknown) {
     )
   )
     return "Cette demande suit un autre parcours de prix. Aucun devis n’a été transmis.";
+  if (/PDF_SHARING_UNAVAILABLE/.test(message)) return 'Le partage de fichiers est indisponible sur cet appareil.';
+  if (/PDF_INVALID/.test(message)) return 'Le document n’a pas pu être généré. Réessayez.';
+  if (/LEDGER_CLIENT_MISMATCH/.test(message)) return "Le client doit correspondre à l’intervention sélectionnée.";
+  if (/LEDGER_|JOB_INVALID/.test(message)) return "Vérifiez le montant, la date et l’intervention sélectionnée.";
+  if (/QUOTE_VERSION_CONFLICT|QUOTE_VERSION_REQUIRED/.test(message)) return "Une autre version de ce devis existe. Vos modifications sont conservées ; comparez les versions avant de continuer.";
+  if (/QUOTE_STATE_CHANGED/.test(message)) return "Le statut de ce devis a changé. Actualisez-le avant de continuer.";
   if (/QUOTE_|INVALID_PRICE|INVALID_SCOPE/i.test(message))
     return "Vérifiez les lignes, les montants et la validité du devis.";
   return "Le service est momentanément indisponible. Vérifiez votre connexion puis réessayez.";

@@ -1,0 +1,180 @@
+{
+  "initialObservation": {
+    "at": "2026-10-05T15:50:13.788931+00:00",
+    "hostname": "w6-auth-staging.fixeo.ma",
+    "dns": {
+      "CNAME": {
+        "status": 2,
+        "answers": []
+      },
+      "A": {
+        "status": 0,
+        "answers": [
+          {
+            "name": "w6-auth-staging.fixeo.ma.",
+            "type": 5,
+            "TTL": 14400,
+            "data": "cname.vercel-dns.com."
+          },
+          {
+            "name": "cname.vercel-dns.com.",
+            "type": 1,
+            "TTL": 300,
+            "data": "66.33.60.35"
+          },
+          {
+            "name": "cname.vercel-dns.com.",
+            "type": 1,
+            "TTL": 300,
+            "data": "76.76.21.123"
+          }
+        ]
+      },
+      "AAAA": {
+        "status": 0,
+        "answers": [
+          {
+            "name": "w6-auth-staging.fixeo.ma.",
+            "type": 5,
+            "TTL": 14400,
+            "data": "cname.vercel-dns.com."
+          }
+        ]
+      }
+    },
+    "tls": {
+      "validated": false,
+      "error": "[Errno -3] Temporary failure in name resolution"
+    },
+    "http": {
+      "status": 200,
+      "finalUrl": "https://w6-auth-staging.fixeo.ma/auth-callback",
+      "headers": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Origin": "*",
+        "Age": "0",
+        "Cache-Control": "no-store",
+        "Cdn-Cache-Control": "no-store",
+        "Content-Disposition": "inline; filename=\"callback.html\"",
+        "Content-Length": "4957",
+        "Content-Security-Policy": "default-src 'none'; script-src 'sha256-O9eXJxo6J56eNudDQCYT5r9pqwJsT+HYMzkHIcJRgK0='; style-src 'sha256-edqCJAQcKVJKRJu/DXTSSXCsD6sGOpbW6zhL5JdccQU='; connect-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+        "Content-Type": "text/html; charset=utf-8",
+        "Date": "Mon, 05 Oct 2026 15:50:53 GMT",
+        "Etag": "\"ac2ee725b67df610c2b66a827145820e\"",
+        "Last-Modified": "Mon, 05 Oct 2026 15:50:53 GMT",
+        "Referrer-Policy": "no-referrer",
+        "Server": "Vercel",
+        "Strict-Transport-Security": "max-age=63072000",
+        "X-Content-Type-Options": "nosniff",
+        "X-Fixeo-Relay": "w6-phase-1",
+        "X-Frame-Options": "DENY",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+        "X-Vercel-Cache": "MISS",
+        "X-Vercel-Id": "cle1::dskp9-1791215453850-bf277fa24983",
+        "Connection": "close"
+      },
+      "bytes": 4957,
+      "hasRelayMarker": true
+    }
+  },
+  "finalObservation": {
+    "at": "2026-10-05T15:56:33.880808+00:00",
+    "dns": [
+      {
+        "provider": "Google",
+        "status": 0,
+        "answers": [
+          {
+            "name": "w6-auth-staging.fixeo.ma.",
+            "type": 5,
+            "TTL": 14400,
+            "data": "cname.vercel-dns.com."
+          }
+        ]
+      },
+      {
+        "provider": "Cloudflare",
+        "status": 0,
+        "answers": [
+          {
+            "name": "w6-auth-staging.fixeo.ma",
+            "type": 5,
+            "TTL": 14400,
+            "data": "cname.vercel-dns.com."
+          }
+        ]
+      }
+    ],
+    "httpsValidated": true,
+    "certificate": {
+      "subject": [
+        [
+          [
+            "commonName",
+            "w6-auth-staging.fixeo.ma"
+          ]
+        ]
+      ],
+      "issuer": [
+        [
+          [
+            "countryName",
+            "US"
+          ]
+        ],
+        [
+          [
+            "stateOrProvinceName",
+            "California"
+          ]
+        ],
+        [
+          [
+            "localityName",
+            "San Francisco"
+          ]
+        ],
+        [
+          [
+            "organizationName",
+            "OpenAI, LLC"
+          ]
+        ],
+        [
+          [
+            "commonName",
+            "openai.com"
+          ]
+        ]
+      ],
+      "version": 3,
+      "serialNumber": "14B5FA6C38580481105E75AC443FEE998CFC6CCE",
+      "notBefore": "Oct  3 15:50:53 2026 GMT",
+      "notAfter": "Apr 20 15:50:53 2027 GMT",
+      "subjectAltName": [
+        [
+          "DNS",
+          "w6-auth-staging.fixeo.ma"
+        ]
+      ]
+    },
+    "browser": "Canonical HTTPS page also opened successfully without certificate interstitial",
+    "cnameActuallyCreatedByUser": {
+      "type": "CNAME",
+      "name": "w6-auth-staging",
+      "fqdn": "w6-auth-staging.fixeo.ma",
+      "value": "cname.vercel-dns.com"
+    },
+    "vercelDashboard": "DNS Change Recommended; legacy cname.vercel-dns.com explicitly remains supported",
+    "transportCertificateNote": "The Python environment uses an outbound TLS proxy; its OpenAI-issued certificate is transport evidence, not the Vercel origin certificate. Origin provisioning is independently confirmed by Vercel list_certs and browser HTTPS without an interstitial.",
+    "vercelCertificate": {
+      "id": "cert_DCGrkPkxezoMXGPRywyufWHZ",
+      "createdAt": 1791215157029,
+      "expiresAt": 1798987644000,
+      "autoRenew": true,
+      "cns": [
+        "w6-auth-staging.fixeo.ma"
+      ]
+    }
+  }
+}

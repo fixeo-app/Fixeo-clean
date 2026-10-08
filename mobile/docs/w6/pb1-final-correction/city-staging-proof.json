@@ -1,0 +1,106 @@
+{
+  "project": "kqyhusnbybsukbcaoqtu",
+  "environment": "fixeo-diagnostic-staging",
+  "migration": "20261007010203_pb1_mobile_city_registry.sql",
+  "before": [
+    {
+      "proname": "confirm_estimator_request_v1",
+      "signature": "confirm_estimator_request_v1(text,text,text,text,integer,text,text,text,text,text)",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "prosecdef": true,
+      "proconfig": [
+        "search_path=\"\""
+      ],
+      "definition_md5": "12cc70c9494272218bd50b252dbcb970"
+    },
+    {
+      "proname": "confirm_estimator_request_vap_v1",
+      "signature": "confirm_estimator_request_vap_v1(text,text,text,text,numeric,text,text,text,text,text,uuid)",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "prosecdef": true,
+      "proconfig": [
+        "search_path=\"\""
+      ],
+      "definition_md5": "8c6d4e1b6069d8982c55d9e64022a6d8"
+    },
+    {
+      "proname": "create_diagnostic_critical_request_v1",
+      "signature": "create_diagnostic_critical_request_v1(jsonb,text,text,text,text)",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "prosecdef": true,
+      "proconfig": [
+        "search_path=\"\""
+      ],
+      "definition_md5": "d9d442ea900549e3d11d1f37f04e570f"
+    },
+    {
+      "proname": "create_diagnostic_quote_request_v1",
+      "signature": "create_diagnostic_quote_request_v1(jsonb,text,text,text,text,text,text)",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "prosecdef": true,
+      "proconfig": [
+        "search_path=\"\""
+      ],
+      "definition_md5": "0541c0f7cc266a36708e042a633c58cd"
+    }
+  ],
+  "after": [
+    {
+      "proof": {
+        "functions": [
+          {
+            "acl": "{postgres=X/postgres,service_role=X/postgres}",
+            "name": "confirm_estimator_request_v1",
+            "martil": true,
+            "settings": [
+              "search_path=\"\""
+            ],
+            "security_definer": true,
+            "unchanged_except_city_md5": "12cc70c9494272218bd50b252dbcb970"
+          },
+          {
+            "acl": "{postgres=X/postgres,service_role=X/postgres}",
+            "name": "confirm_estimator_request_vap_v1",
+            "martil": true,
+            "settings": [
+              "search_path=\"\""
+            ],
+            "security_definer": true,
+            "unchanged_except_city_md5": "8c6d4e1b6069d8982c55d9e64022a6d8"
+          },
+          {
+            "acl": "{postgres=X/postgres,service_role=X/postgres}",
+            "name": "create_diagnostic_critical_request_v1",
+            "martil": true,
+            "settings": [
+              "search_path=\"\""
+            ],
+            "security_definer": true,
+            "unchanged_except_city_md5": "d9d442ea900549e3d11d1f37f04e570f"
+          },
+          {
+            "acl": "{postgres=X/postgres,service_role=X/postgres}",
+            "name": "create_diagnostic_quote_request_v1",
+            "martil": true,
+            "settings": [
+              "search_path=\"\""
+            ],
+            "security_definer": true,
+            "unchanged_except_city_md5": "0541c0f7cc266a36708e042a633c58cd"
+          }
+        ],
+        "martil_guard": {
+          "ok": false,
+          "reason": "invalid_client_phone"
+        },
+        "constraint_validated": true
+      }
+    }
+  ],
+  "securityAdvisorsDelta": {
+    "new": [],
+    "removed": [],
+    "before": 201,
+    "after": 201
+  }
+}

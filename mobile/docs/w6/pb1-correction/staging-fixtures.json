@@ -1,0 +1,71 @@
+{
+  "project": "kqyhusnbybsukbcaoqtu",
+  "observedAtUtc": "2026-10-06T12:45:59.557Z",
+  "scope": "Read-only staging DB snapshot. No authentication, user session or full live product flow certified.",
+  "mutations": 0,
+  "fixtures": {
+    "job": {
+      "id": "3cd605ac-0962-4f8a-bf4b-004cc09064c5",
+      "title": "PB1 intervention Test",
+      "source": "personal",
+      "status": "planned",
+      "client_id": "cb491edb-61de-4c10-ae5e-95672fb6aae2",
+      "scheduled_at": "2026-10-06T10:30:00+00:00"
+    },
+    "quote": {
+      "id": "401fc587-fa60-4513-a731-cf9ddc4147a4",
+      "items": [
+        {
+          "type": "service",
+          "label": "Réparation fuite sous évier",
+          "total": 500,
+          "quantity": 2,
+          "unit_price": 250
+        }
+      ],
+      "title": "PB1 Devis Test",
+      "total": 500,
+      "status": "draft",
+      "sent_at": null,
+      "sent_via": null,
+      "client_id": "cb491edb-61de-4c10-ae5e-95672fb6aae2",
+      "quote_number": "DEV-2026-0001"
+    },
+    "roles": [
+      {
+        "id": "0893b0d3-27ac-4acb-8165-394b8867221d",
+        "role": "client"
+      },
+      {
+        "id": "f758898e-f90d-4161-9cbc-53b76f72a700",
+        "role": "artisan"
+      }
+    ],
+    "client": {
+      "id": "cb491edb-61de-4c10-ae5e-95672fb6aae2",
+      "city": "Fes",
+      "phone": "0600000001",
+      "full_name": "PB1 Client Test"
+    },
+    "ledger": [
+      {
+        "id": "c580c463-d71a-40a4-8e20-44ccf54d8393",
+        "amount": 500,
+        "job_id": "3cd605ac-0962-4f8a-bf4b-004cc09064c5",
+        "source": "personal",
+        "category": "other",
+        "client_id": "cb491edb-61de-4c10-ae5e-95672fb6aae2",
+        "entry_type": "income"
+      },
+      {
+        "id": "c8dadf0b-ff3d-40d6-a2bf-2b6d8a030e0d",
+        "amount": 120,
+        "job_id": null,
+        "source": "personal",
+        "category": "other",
+        "client_id": null,
+        "entry_type": "expense"
+      }
+    ]
+  }
+}

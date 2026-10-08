@@ -44,15 +44,25 @@ test('real canonical fixed scope → evaluate → verify → authenticated confi
  assert.equal((await api({action:'verify_pricing_context',pricing_context_token:c.pricing_context_token})).body.valid,true);
  const done=await api(c);assert.equal(done.status,200);assert.equal(done.body.guest_token,undefined);
 });
-test('one useful clarification; no Safety questionnaire, real STOP cannot continue',async()=>{
- const r=await api({...start,entry_context:{...start.entry_context,service_hint:'plomberie.fuite_simple'}});
- assert.equal(r.body.next_step.type,'QUESTION');const q=r.body.next_step;
+test('PB1 native estimator follows the full canonical plumbing branch, back tokens and genuine Safety STOP',async()=>{
+ let r=await api({...start,entry_context:{city_slug:'fes',description:'J’ai une fuite sous l’évier',service_hint:'plomberie.fuite_simple'}});
  const answers=require('../../data/pricing/engine/plumbing-pilot-v1').services['plomberie.fuite_simple'].inputs;
- const a=await api({action:'answer',session_token:r.body.session.session_token,question_id:q.question_id,answer:answers[q.input_id]});
- assert.equal(a.status,200);assert.equal(a.body.outcome.outcome_type,'QUOTE_REQUIRED');assert.equal(a.body.next_step,null);
- assert.equal((await api({action:'answer',session_token:a.body.session.session_token,question_id:q.question_id,answer:answers[q.input_id]})).status,409);
+ let count=0; const snapshots=[];
+ while(r.body.next_step?.type==='QUESTION') {
+  assert.ok(count++<32,'finite canonical branch'); snapshots.push(r);
+  const q=r.body.next_step;
+  r=await api({action:'answer',session_token:r.body.session.session_token,question_id:q.question_id,answer:answers[q.input_id]});
+  assert.equal(r.status,200); assert.notEqual(r.body.qualification_limit_reached,true);
+ }
+ assert.ok(count>1,'more than a single question');assert.equal(r.body.next_step.type,'READY');
+ const evaluated=await api({action:'evaluate',session_token:r.body.session.session_token});
+ assert.equal(evaluated.status,200);assert.equal(evaluated.body.outcome.outcome_type,'PRICE_READY');
+ // Returning to a previous signed token reopens its branch; a later answer is not silently retained.
+ const previous=snapshots[0],q=previous.body.next_step;
+ const replay=await api({action:'answer',session_token:previous.body.session.session_token,question_id:q.question_id,answer:answers[q.input_id]});
+ assert.equal(replay.status,200);assert.equal(replay.body.next_step.type,'QUESTION');
  const lock=await api({...start,entry_context:{...start.entry_context,service_hint:'serrurerie.diagnostic'}});
- assert.equal(lock.status,200);assert.equal(lock.body.next_step,null);assert.equal(lock.body.outcome.outcome_type,'QUOTE_REQUIRED');
+ assert.equal(lock.status,200);assert.equal(lock.body.next_step.type,'QUESTION');
  const stop=await api({...start,entry_context:{...start.entry_context,description:'Une forte odeur de gaz'}});
  assert.equal(stop.body.outcome.outcome_type,'SAFETY_STOP');assert.equal(stop.body.pricing_context_token,null);
  assert.equal((await api({action:'select_service',session_token:stop.body.session.session_token,service_code:'nettoyage.visite_minimum'})).status,409);

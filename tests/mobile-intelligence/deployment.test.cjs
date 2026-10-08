@@ -11,6 +11,15 @@ test('W41 builds only three JWT mobile endpoints; legacy routing preserved for o
  assert.deepEqual(config.builds.map(x=>x.src),['api/mobile-intelligence-fn/index.js','api/mobile-rafi-photo-fn/index.js','api/mobile-rafi-voice-fn/index.js']);
  assert.equal(config.crons,undefined);
  assert.equal(config.routes.at(-1).status,404);
- assert.deepEqual(build({env:{VERCEL_GIT_COMMIT_REF:'feat/fixeo-mobile-w4-client-os-wow'}},legacy),legacy);
+ const other=build({env:{VERCEL_GIT_COMMIT_REF:'feat/fixeo-mobile-w4-client-os-wow'}},legacy);
+ assert.deepEqual({...other,git:legacy.git},legacy);
+ assert.equal(other.git.deploymentEnabled['feat/fixeo-mobile-w6-entry-auth-trust'],false);
+ assert.equal(build({env:{}},legacy).git.deploymentEnabled['feat/fixeo-mobile-w6-entry-auth-trust'],false);
  assert.deepEqual(build({env:{FIXEO_STAGING_PROJECT_REF:'kqyhusnbybsukbcaoqtu'}},legacy).builds,config.builds);
+});
+
+test('PB1 Git deployment exclusions are literal static properties before runtime evaluation',()=>{
+ const configExport=source.slice(source.indexOf('const config ='));
+ assert.match(configExport,/git: \{ deploymentEnabled: \{\s*'feat\/diagnostic-v1': false,\s*'feat\/fixeo-mobile-w6-entry-auth-trust': false,/);
+ assert.doesNotMatch(configExport,/\.\.\.runtimeConfig\.git|\[w6Branch\]/);
 });

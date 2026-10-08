@@ -65,9 +65,9 @@ const frames = (page, count = 8) => page.evaluate(n => new Promise(resolve => { 
    assert.deepEqual(await page.evaluate(() => __w4.locationCalls), []);
    const composer = await page.getByTestId('rafi-composer').boundingBox();
    assert.ok(composer.y + composer.height <= (width === 320 ? 568 - 16 : 844 - 34), JSON.stringify(composer));
-   assert.equal((await page.getByTestId('client-hero').getByTestId('rafi-core').boundingBox()).width, width === 320 ? 120 : 160);
+   assert.equal((await page.getByTestId('client-hero').getByTestId('rafi-core').boundingBox()).width, 120);
    await capture(`client-home-idle-${width}`);
-   results.push({ scene: 'idle', width, primaryVisible: true, heroDiameter: width === 320 ? 120 : 160 });
+   results.push({ scene: 'idle', width, primaryVisible: true, heroDiameter: 120 });
   }
   for (const scene of ['matching', 'assigned', 'intervention', 'validation']) {
    await open(scene);

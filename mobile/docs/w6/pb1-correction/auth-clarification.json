@@ -1,0 +1,31 @@
+{
+  "project": "kqyhusnbybsukbcaoqtu",
+  "mode": "read_only_no_auth_mutation",
+  "client": {
+    "id": "0893b0d3-27ac-4acb-8165-394b8867221d",
+    "email": "contact+w6-client@fixeo.ma",
+    "role": "client",
+    "email_confirmed": true,
+    "password_configured": true,
+    "banned": false,
+    "deleted": false,
+    "last_sign_in_at": "2026-10-05T12:36:31.913484Z"
+  },
+  "artisan": {
+    "id": "f758898e-f90d-4161-9cbc-53b76f72a700",
+    "email": "contact+pb1-audit-artisan@fixeo.ma",
+    "role": "artisan",
+    "email_confirmed": true,
+    "password_configured": true,
+    "banned": false,
+    "deleted": false
+  },
+  "auth_log_window": [
+    "2026-10-06T12:55:00Z",
+    "2026-10-06T13:45:00Z"
+  ],
+  "token_endpoint_error": "invalid_credentials",
+  "http_status": 400,
+  "log_records": 2,
+  "conclusion": "The staging Auth service rejected supplied credentials. Correct Client identity exists and is not blocked. No authenticated Client session established by this execution. No password value or hash retrieved. No recovery, signup, user/role mutation or reset performed."
+}

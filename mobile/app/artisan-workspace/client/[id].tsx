@@ -1,3 +1,7 @@
+import { usePendingBusinessForm } from '@/lib/usePendingBusinessForm';
+import { useUnsavedChanges } from '@/lib/useUnsavedChanges';
+import { formatWorkspaceDate } from '@/lib/workspacePresentation';
+import { CityField } from '@/components/CityField';
 import { useCallback, useEffect, useState } from "react";
 import { Linking, View } from "react-native";
 import * as Crypto from "expo-crypto";
@@ -26,7 +30,7 @@ import type { ContextDockSpec } from "@/ui/shellContract";
 export default function ClientDetail() {
   const { id } = useLocalSearchParams<{ id: string }>(),
     fresh = id === "new";
-  const [newId] = useState(() => Crypto.randomUUID());
+  const [newId,setNewId] = useState(() => Crypto.randomUUID());
   const q = useArtisanQuery(
     useCallback(async () => {
       const [clients, jobs, quotes, ledger] = await Promise.all([
@@ -52,15 +56,25 @@ export default function ClientDetail() {
     [notes, setNotes] = useState("");
   useEffect(() => {
     const c = q.data?.client;
-    if (c) {
+    if (c && !edit) {
       setName(c.full_name);
       setPhone(c.phone || "");
       setCity(c.city || "");
       setAddress(c.address || "");
       setNotes(c.notes || "");
     }
-  }, [q.data?.client]);
+  }, [q.data?.client, edit]);
   const client = q.data?.client;
+  const [baseline,setBaseline]=useState<string | undefined>();
+  const pending=usePendingBusinessForm(fresh?'client-new':`client:${id}`,p=>{setNewId(String(p.id));setName(String(p.full_name));setPhone(String(p.phone||''));setCity(String(p.city||''));setAddress(String(p.address||''));setNotes(String(p.notes||''));setBaseline(p.expectedUpdatedAt?String(p.expectedUpdatedAt):undefined);setEdit(true);});
+  const conflict=edit && !fresh && !!client && !!baseline && client.updated_at!==baseline;
+  useUnsavedChanges(edit && (name !== (client?.full_name || '') || phone !== (client?.phone || '') || city !== (client?.city || '') || address !== (client?.address || '') || notes !== (client?.notes || '')),pending.frozen);
+  const restoreClient = () => {
+    if (!client) return;
+    setBaseline(client.updated_at);
+    setName(client.full_name); setPhone(client.phone || ''); setCity(client.city || '');
+    setAddress(client.address || ''); setNotes(client.notes || ''); a.setMessage('');
+  };
   const call = () => {
     if (client?.phone)
       void Linking.openURL("tel:" + client.phone.replace(/[^+\d]/g, "")).catch(
@@ -105,8 +119,14 @@ export default function ClientDetail() {
       },
     ],
   };
+  const history = q.data ? [
+    ...q.data.quotes.map(x => ({ key: 'quote:'+x.id, at:x.updated_at, title:`${x.quote_number} · ${x.title}`, detail:`${businessStatus[x.status] || x.status} · ${money(x.total)}`, quoteId:x.id })),
+    ...q.data.jobs.map(x => ({ key:'job:'+x.id, at:x.scheduled_at || '', title:x.title, detail:`${when(x.scheduled_at)} · ${businessStatus[x.status] || x.status}`, quoteId:'' })),
+    ...q.data.ledger.map(x => ({ key:'ledger:'+x.id, at:x.occurred_on, title:`${x.entry_type === 'income' ? 'Encaissement' : 'Dépense'} · ${money(x.amount)}`, detail:x.note || 'Mouvement renseigné', quoteId:'' })),
+  ].sort((a,b)=>(Date.parse(b.at)||0)-(Date.parse(a.at)||0)) : [];
   return (
     <ArtisanPage
+      rafi={a.rafi}
       title={
         fresh ? "Une nouvelle relation." : client?.full_name || "Fiche client."
       }
@@ -114,14 +134,28 @@ export default function ClientDetail() {
       activeKey="clients"
       loading={q.loading}
       dock={dock}
+      transactional={edit}
+      onRefresh={() => void q.reload()}
+      list={edit ? undefined : { data:history,keyExtractor:x=>x.key,renderItem:({item:x})=><View style={art.row}>
+        <FixeoText variant="supporting" tone="secondary">{formatWorkspaceDate(x.at)}</FixeoText>
+        <FixeoText variant="heading">{x.title}</FixeoText><FixeoText tone="secondary">{x.detail}</FixeoText>
+        {!!x.quoteId && <FixeoAction label="Ouvrir le devis" variant="ghost" onPress={()=>router.push({pathname:'/artisan-workspace/quote/[id]',params:{id:x.quoteId}})} />}
+      </View> }}
     >
       <ArtisanMessage
         message={q.error || a.message}
         retry={q.error ? () => void q.reload() : undefined}
       />
+      <ArtisanMessage message={pending.error} retry={()=>void pending.refresh()} />
+      {pending.frozen && <FixeoText accessibilityRole="alert">Résultat à vérifier. Les informations de cette fiche sont figées.</FixeoText>}
+      {conflict && <ArtisanSection label="FICHE MODIFIÉE SUR LE SERVEUR"><FixeoText>Votre saisie est conservée. Choisissez avant de sauvegarder.</FixeoText>
+        <FixeoAction label="Reprendre la fiche serveur" variant="secondary" onPress={restoreClient} />
+        <FixeoAction label="Réappliquer ma saisie à cette version" variant="ghost" onPress={()=>setBaseline(client?.updated_at)} />
+      </ArtisanSection>}
       {q.data && (fresh || client) ? (
         edit ? (
           <>
+            <View pointerEvents={pending.frozen || a.busy ? 'none' : 'auto'}>
             <ArtisanField
               label="Nom du client"
               value={name}
@@ -133,7 +167,7 @@ export default function ClientDetail() {
               onChangeText={setPhone}
               keyboardType="phone-pad"
             />
-            <ArtisanField label="Ville" value={city} onChangeText={setCity} />
+            <CityField label="Ville" value={city} onChange={setCity} />
             <ArtisanField
               label="Adresse"
               value={address}
@@ -145,11 +179,13 @@ export default function ClientDetail() {
               onChangeText={setNotes}
               multiline
             />
+            </View>
             <FixeoAction
-              label="Enregistrer le client"
+              label={pending.frozen ? "Vérifier et réessayer la fiche" : fresh ? "Enregistrer le client" : "Enregistrer les modifications"}
               busy={a.busy}
-              disabled={!name.trim()}
-              onPress={() =>
+              disabled={!name.trim() || conflict || !pending.ready}
+              onPress={() => {
+                pending.lock();
                 void a.run(async () => {
                   const c = await saveBusinessClient(
                     {
@@ -161,7 +197,8 @@ export default function ClientDetail() {
                       notes,
                     },
                     !fresh,
-                  );
+                    baseline,
+                  ).catch(async error=>{if(/CLIENT_VERSION/.test(String(error?.message || '')))await q.reload();throw error;});
                   if (fresh)
                     router.replace({
                       pathname: "/artisan-workspace/client/[id]" as any,
@@ -171,15 +208,15 @@ export default function ClientDetail() {
                     setEdit(false);
                     await q.reload();
                   }
-                  return c;
-                }, "Fiche enregistrée.")
-              }
+                  await pending.settle(); return c;
+                }, "Fiche enregistrée.").finally(()=>void pending.settle());
+              }}
             />
-            {!fresh && (
+            {!fresh && !pending.frozen && (
               <FixeoAction
                 label="Annuler la modification"
                 variant="ghost"
-                onPress={() => setEdit(false)}
+                onPress={() => { restoreClient(); setEdit(false); }}
               />
             )}
           </>
@@ -196,7 +233,7 @@ export default function ClientDetail() {
               <FixeoAction
                 label="Modifier la fiche"
                 variant="secondary"
-                onPress={() => setEdit(true)}
+                onPress={() => { restoreClient(); setEdit(true); }}
               />
             </ArtisanSection>
             <ArtisanCue
@@ -210,46 +247,6 @@ export default function ClientDetail() {
             )}
             <View>
               <FixeoText variant="heading">Historique</FixeoText>
-              {q.data.quotes.map((x) => (
-                <View style={art.row} key={x.id}>
-                  <FixeoText>
-                    {x.quote_number} · {x.title}
-                  </FixeoText>
-                  <FixeoText tone="secondary">
-                    {businessStatus[x.status] || x.status} · {money(x.total)}
-                  </FixeoText>
-                  <FixeoAction
-                    label="Ouvrir le devis"
-                    variant="ghost"
-                    onPress={() =>
-                      router.push({
-                        pathname: "/artisan-workspace/quote/[id]" as any,
-                        params: { id: x.id },
-                      })
-                    }
-                  />
-                </View>
-              ))}
-              {q.data.jobs.map((x) => (
-                <View style={art.row} key={x.id}>
-                  <FixeoText>{x.title}</FixeoText>
-                  <FixeoText tone="secondary">
-                    {when(x.scheduled_at)} ·{" "}
-                    {businessStatus[x.status] || x.status}
-                  </FixeoText>
-                </View>
-              ))}
-              {q.data.ledger.map((x) => (
-                <View style={art.row} key={x.id}>
-                  <FixeoText>
-                    {x.entry_type === "income" ? "Encaissement" : "Dépense"} ·{" "}
-                    {money(x.amount)}
-                  </FixeoText>
-                  <FixeoText tone="secondary">
-                    {x.occurred_on} · {x.note || "Mouvement renseigné"}
-                  </FixeoText>
-                </View>
-              ))}
               {!q.data.jobs.length &&
                 !q.data.quotes.length &&
                 !q.data.ledger.length && (

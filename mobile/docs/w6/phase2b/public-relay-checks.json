@@ -1,0 +1,121 @@
+{
+  "timestamp": "2026-10-05T17:16:58.985134+00:00",
+  "anonymous": true,
+  "tlsVerification": true,
+  "relay": [
+    {
+      "path": "/auth-callback",
+      "status": 200,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "bodySha256": "1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2"
+    },
+    {
+      "path": "/",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "bodySha256": "01270aeeb82e5bcb43af9e03d726b8007363a9bc6608044062f19b0d97e087d9"
+    },
+    {
+      "path": "/entry",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "bodySha256": "1b909e8122d0efd2ea12012dbdb0c32b8547f585054f2b14dad9d10edfd258ef"
+    },
+    {
+      "path": "/sign-in",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "bodySha256": "a64aa74938dd8a507619fd8fe9545725af6c17e435a3c2650a7e08754f4e9f62"
+    },
+    {
+      "path": "/artisan",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "bodySha256": "62e4e361e38d737efc840e8461ed233df4207447d794b982311eb83422525cf9"
+    },
+    {
+      "path": "/client",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "bodySha256": "aa3958bd4b661099363ae41bdba601fb58b6ecfecf1b328d6eb732e714cd4de1"
+    },
+    {
+      "path": "/random-test",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "bodySha256": "6b92fadbbc622631b9b4bed6df7e5ed06380d64657b1364da4974b23a8193e58"
+    },
+    {
+      "path": "/api/test",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "bodySha256": "17fcc4f93272526c977f4d02f205f5b36d84620b160f2503dd70ffa7a3945c38"
+    },
+    {
+      "path": "/callback.html",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "bodySha256": "1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2"
+    },
+    {
+      "path": "/auth-callback/",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "bodySha256": "e97ebca16a466b5ea9801cc43327e2ffad15f02ef2c9c4ec22a00a1a755ed0d1"
+    },
+    {
+      "path": "/AUTH-CALLBACK",
+      "status": 404,
+      "headers": {
+        "Cache-Control": "no-store",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "bodySha256": "86b50709901b137ae0eb53121cc765d9c0a6b54ac5b559ed4d711864ef3db227"
+    }
+  ],
+  "preview": {
+    "status": 302,
+    "requiresVercelSSO": true
+  }
+}

@@ -42,7 +42,7 @@ async function persistPhoto(req, sanitized, description, city, dependencies = {}
     running = true;
     const started = Date.now();
     const output = await analyze(data.run.input_snapshot, {
-      provider: dependencies.provider || createOpenAIAdapter({ env, timeout: 25000, deadline: Date.now() + 28000 }),
+      provider: dependencies.provider || createOpenAIAdapter({ env, photoPolicy: 'descriptive', timeout: 25000, deadline: Date.now() + 28000 }),
       mediaStore: media, qualificationMode: 'estimator',
     });
     data = await call('run_finish', { run_id: runId, result: output.result, usage: { ...output.usage, provider_called: output.providerCalled }, latency_ms: Date.now() - started });

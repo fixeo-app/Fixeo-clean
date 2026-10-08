@@ -1,0 +1,22 @@
+[
+  {
+    "file": "devis-250-mad.pdf",
+    "pages": 1,
+    "bytes": 11516,
+    "renderer": "WeasyPrint 66.0; native Android renderer remains physical check",
+    "A4": "PASS",
+    "text_bounds": "PASS",
+    "accents": "PASS",
+    "totals": "PASS"
+  },
+  {
+    "file": "devis-multipage.pdf",
+    "pages": 10,
+    "bytes": 23793,
+    "renderer": "WeasyPrint 66.0; native Android renderer remains physical check",
+    "A4": "PASS",
+    "text_bounds": "PASS",
+    "accents": "PASS",
+    "totals": "PASS"
+  }
+]

@@ -4,6 +4,25 @@
     "appVersionSource": "local"
   },
   "build": {
+    "w6-physical-certification": {
+      "distribution": "internal",
+      "environment": "preview",
+      "developmentClient": false,
+      "env": {
+        "EXPO_PUBLIC_APP_ENV": "staging",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://kqyhusnbybsukbcaoqtu.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_sV-PYAY5zgir1UTJ6LNl6Q_ObK78uMo",
+        "EXPO_PUBLIC_EAS_PROJECT_ID": "bb76a67f-4304-48a6-ad29-ca7382d28a7a",
+        "EXPO_PUBLIC_FIXEO_API_BASE_URL": "https://kqyhusnbybsukbcaoqtu.supabase.co/functions/v1/mobile-rafi-preview-proxy",
+        "EXPO_PUBLIC_AUTH_CALLBACK_URL": "https://w6-auth-staging.fixeo.ma/auth-callback",
+        "EXPO_PUBLIC_AUTH_CALLBACK_APPROVED": "true"
+      },
+      "android": {
+        "image": "ubuntu-24.04-jdk-17-ndk-r27b",
+        "buildType": "apk",
+        "autoIncrement": false
+      }
+    },
     "development": {
       "developmentClient": true,
       "distribution": "internal",

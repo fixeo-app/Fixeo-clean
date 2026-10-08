@@ -1,98 +1,49 @@
 import { useEffect } from 'react';
-import { Stack, router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { SessionRevalidation } from '@/components/SessionRevalidation';
+import { Stack, router, usePathname, useRootNavigationState } from 'expo-router';
 import * as Notifications from 'expo-notifications';
 import { configureForegroundNotifications } from '@/lib/push';
-import { getStableSession, resolveRole } from '@/lib/auth';
-import {
-  consumePendingNotificationIntent,
-  notificationDestinationForRole,
-  persistPendingNotificationIntent,
-  shouldHandleNotificationResponse,
-} from '@/lib/notificationIntent';
-import { triggerFixeoFeedback } from '@/lib/feedback';
-import { startSupabaseAuthLifecycle, supabase } from '@/lib/supabase';
+import { notificationDestinationForRole, shouldHandleNotificationResponse } from '@/lib/notificationIntent';
+import { normalizeNotificationIntent } from '@/lib/notificationRouting';
+import { authState, startAuthOwner, useAuthState } from '@/lib/authSession';
 
 configureForegroundNotifications();
+const clientScreens = ['index', 'new-request', 'client-request/[id]', 'client-mission/[id]', 'client-workspace/index', 'client-workspace/account', 'client-workspace/history', 'client-workspace/notifications'];
+const artisanScreens = ['artisan', 'mission/[id]', 'artisan-workspace/index', 'artisan-workspace/agenda', 'artisan-workspace/clients', 'artisan-workspace/client/[id]', 'artisan-workspace/evidence/[id]', 'artisan-workspace/finance', 'artisan-workspace/missions', 'artisan-workspace/notifications', 'artisan-workspace/opportunities', 'artisan-workspace/opportunity/[id]', 'artisan-workspace/profile', 'artisan-workspace/quote/[id]', 'artisan-workspace/quotes', 'artisan-workspace/rafi'];
 
 async function routeNotificationResponse(response: Notifications.NotificationResponse) {
-  const identifier = String(response.notification.request.identifier || '');
-  if (!(await shouldHandleNotificationResponse(identifier))) return;
-
-  const data = (response.notification.request.content.data || {}) as Record<string, unknown>;
-  await persistPendingNotificationIntent(data).catch(() => undefined);
-
-  try {
-    const session = await getStableSession();
-    if (!session) {
-      router.replace('/sign-in');
-      return;
-    }
-
-    const role = await resolveRole(session.user.id);
-    const intent = await consumePendingNotificationIntent();
-    if (!intent) return;
-
-    const destination = notificationDestinationForRole(intent, role);
-    if (!destination) return;
-
-    triggerFixeoFeedback('impact');
-    router.push({
-      pathname: destination.pathname,
-      params: destination.params,
-    } as any);
-  } catch {
-    // Keep the pending intent. Auth/session recovery can consume it after sign-in.
-  }
+  const before = authState.snapshot();
+  // A notification has no authority to open an account or survive an account switch.
+  if (before.phase !== 'ready' || before.revalidating || before.issue || !before.role) return;
+  if (!(await shouldHandleNotificationResponse(String(response.notification.request.identifier || '')))) return;
+  if (!authState.isCurrent(before.epoch)) return;
+  const destination = notificationDestinationForRole(normalizeNotificationIntent(response.notification.request.content.data), before.role);
+  if (destination) router.push(destination as any);
 }
-
 export default function Layout() {
+  const state = useAuthState(); const path = usePathname();
+  const navigation = useRootNavigationState();
+  useEffect(startAuthOwner, []);
   useEffect(() => {
-    const stopAuthLifecycle = startSupabaseAuthLifecycle();
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT' && !session) {
-        router.replace('/sign-in');
-      }
-    });
-
-    const last = Notifications.getLastNotificationResponse();
-    if (last?.notification) {
-      void routeNotificationResponse(last);
-    }
-
-    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-      void routeNotificationResponse(response);
-    });
-
-    return () => {
-      subscription.remove();
-      authListener.subscription.unsubscribe();
-      stopAuthLifecycle();
-    };
+    if (!navigation?.key || path === '/auth-callback') return;
+    if (state.phase === 'recovery' && path !== '/reset-password') router.replace('/reset-password');
+    else if (state.phase === 'onboarding' && path !== '/complete-profile') router.replace('/complete-profile');
+    else if (state.phase === 'blocked' && path !== '/auth-status') router.replace('/auth-status');
+    else if (state.phase === 'ready' && ['/entry', '/sign-in', '/sign-up', '/auth-status', '/complete-profile'].includes(path)) router.replace(state.role === 'artisan' ? '/artisan' : '/');
+    else if (state.phase === 'signed_out' && (path === '/auth-status' || (state.issue && path === '/entry'))) router.replace(state.issue ? '/sign-in' : '/entry');
+  }, [state.phase, state.role, state.issue, path, navigation?.key]);
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => void routeNotificationResponse(response));
+    return () => subscription.remove();
   }, []);
-
-  return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: '#F7F7F5' },
-        animation: 'fade',
-      }}
-    >
-      <Stack.Screen
-        name="sign-in"
-        options={{
-          animation: 'fade',
-          gestureEnabled: false,
-        }}
-      />
-      <Stack.Screen
-        name="mission/[id]"
-        options={{ animation: 'slide_from_right' }}
-      />
-      <Stack.Screen
-        name="client-mission/[id]"
-        options={{ animation: 'slide_from_right' }}
-      />
-    </Stack>
-  );
+  return <><StatusBar style="dark" /><Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#F7F7F5' }, animation: 'fade' }}>
+    <Stack.Screen name="entry" />
+    <Stack.Screen name="sign-in" options={{ gestureEnabled: false }} />
+    <Stack.Screen name="sign-up" /><Stack.Screen name="forgot-password" /><Stack.Screen name="auth-callback" /><Stack.Screen name="auth-status" />
+    <Stack.Protected guard={state.phase === 'recovery'}><Stack.Screen name="reset-password" /></Stack.Protected>
+    <Stack.Protected guard={state.phase === 'onboarding' && state.role === 'artisan'}><Stack.Screen name="complete-profile" /></Stack.Protected>
+    <Stack.Protected guard={state.phase === 'ready' && state.role === 'client'}>{clientScreens.map(name => <Stack.Screen key={name} name={name} />)}</Stack.Protected>
+    <Stack.Protected guard={state.phase === 'ready' && state.role === 'artisan'}>{artisanScreens.map(name => <Stack.Screen key={name} name={name} />)}</Stack.Protected>
+  </Stack><SessionRevalidation /></>;
 }

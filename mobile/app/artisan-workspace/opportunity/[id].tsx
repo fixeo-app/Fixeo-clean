@@ -27,6 +27,7 @@ export default function Opportunity() {
   const o = q.data;
   return (
     <ArtisanPage
+      rafi={a.rafi}
       title={o?.service_category || "Votre opportunité."}
       eyebrow="PROPOSITION FIXEO"
       activeKey="opportunities"

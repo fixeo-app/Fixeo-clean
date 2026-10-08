@@ -26,14 +26,14 @@ export function FixeoContextDock({ universe, items, hidden, fourActionReason, on
           <ShellIcon name={item.icon} color={foreground} />
           {!!badge && <View style={styles.badge}><FixeoText variant="caption" tone="inverse">{badge}</FixeoText></View>}
         </View>
-        <FixeoText variant="caption" style={[styles.label, { color: foreground }]}>{item.label}</FixeoText>
+        <FixeoText variant="caption" style={[styles.label, items.length === 4 && { fontSize: 11 }, { color: foreground }]}>{item.label}</FixeoText>
       </ShellControl>;
     })}
   </FixeoSurface>;
 }
 const styles = StyleSheet.create({
   dock: { flexDirection: 'row', padding: space.xxs, gap: space.xxs, alignItems: 'stretch' },
-  action: { flex: 1, paddingVertical: space.xs, paddingHorizontal: space.xxs, gap: space.xxs, borderRadius: radii.control },
+  action: { flex: 1, minWidth: 0, paddingVertical: space.xs, paddingHorizontal: space.xxs, gap: space.xxs, borderRadius: radii.control },
   selected: { backgroundColor: semanticColors.background.focus },
   symbol: { minHeight: 28, justifyContent: 'center', alignItems: 'center' },
   label: { textAlign: 'center', alignSelf: 'stretch', width: '100%' },

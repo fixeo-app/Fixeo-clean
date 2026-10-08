@@ -26,8 +26,8 @@ export function WorkspaceShortcutGrid({ items }: Props) {
           }}
           style={({ pressed }) => [styles.item, pressed && styles.pressed]}
         >
-          <Text numberOfLines={2} style={styles.label}>{item.label}</Text>
-          <Text numberOfLines={2} style={styles.meta}>{item.meta}</Text>
+          <Text style={styles.label}>{item.label}</Text>
+          <Text style={styles.meta}>{item.meta}</Text>
           <Text style={styles.arrow}>→</Text>
         </Pressable>
       ))}
@@ -60,18 +60,18 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 17,
-    fontWeight: '900',
+    fontWeight: '600',
     color: colors.text,
   },
   meta: {
     color: colors.textMuted,
-    fontSize: 13,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '400',
   },
   arrow: {
     alignSelf: 'flex-end',
     color: colors.text,
     fontSize: 20,
-    fontWeight: '900',
+    fontWeight: '600',
   },
 });

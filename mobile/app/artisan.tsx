@@ -21,8 +21,8 @@ import {
 } from "@/components/ArtisanEditorial";
 import { FixeoText } from "@/ui/FixeoText";
 import { FixeoAction } from "@/ui/FixeoAction";
-import { RafiOrb } from "@/ui/RafiOrb";
-import type { ContextDockSpec } from "@/ui/shellContract";
+
+
 
 export default function ArtisanHome() {
   const q = useArtisanHome(),
@@ -32,59 +32,17 @@ export default function ArtisanHome() {
   const awaitingClient = mission?.request_status === "completed";
   const today = d?.jobs;
   const draft = d?.quotes?.find((x) => x.status === "draft");
-  const next = awaitingClient
-    ? "Le relais est au client."
-    : mission
-      ? "Votre mission vous attend."
-      : offers?.length
-        ? "Une opportunité pour vous."
-        : today?.length
-          ? "Votre prochaine intervention."
-          : "Votre journée, en confiance.";
-  const dock: ContextDockSpec = {
-    universe: "artisan",
-    items: [
-      {
-        key: "offers",
-        label: "Opportunités",
-        icon: "flash-outline",
-        accessibilityLabel: "Voir les opportunités",
-        badge: offers?.length,
-        action: () => router.push("/artisan-workspace/opportunities" as any),
-      },
-      {
-        key: "rafi",
-        label: "RAFI",
-        icon: "sparkles-outline",
-        accessibilityLabel: "Ouvrir RAFI Artisan",
-        action: () => router.push("/artisan-workspace/rafi" as any),
-      },
-      {
-        key: "agenda",
-        label: "Agenda",
-        icon: "calendar-outline",
-        accessibilityLabel: "Ouvrir mon agenda",
-        action: () => router.push("/artisan-workspace/agenda"),
-      },
-    ],
-  };
   const totals = d?.ledger ? ledgerTotals(d.ledger, localDay()) : null;
   return (
     <ArtisanPage
-      title={next}
-      eyebrow="FIXEO · VOTRE QUOTIDIEN PRO"
-      detail="L’essentiel pour décider. L’espace pour bien travailler."
+      title={d?.profile?.name ? `Bonjour ${d.profile.name.split(' ')[0]}.` : "Votre journée, en confiance."}
+      eyebrow="RAFI · À VOS CÔTÉS"
+      detail={mission ? "Votre mission et sa prochaine étape." : offers?.length ? "Une opportunité attend votre décision." : "Votre agenda, vos clients et vos priorités."}
       activeKey="cockpit"
       back={false}
       loading={false}
       onRefresh={() => void q.reload()}
-      dock={dock}
     >
-      <View testID="home-identity">
-        <FixeoText variant="heading">
-          {d?.profile?.name || "Votre espace Artisan"}
-        </FixeoText>
-      </View>
       {q.authority.status === "loading" && (
         <FixeoText tone="secondary">
           Vérification de votre accès sécurisé…
@@ -97,33 +55,6 @@ export default function ArtisanHome() {
         />
       )}
       <>
-        <View
-          testID="home-rafi"
-          style={{ flexDirection: "row", alignItems: "center", gap: 16 }}
-        >
-          <RafiOrb mode={mission ? "working" : "idle"} size={76} />
-          <View style={art.flex}>
-            <FixeoText variant="eyebrow">RAFI EST À VOS CÔTÉS</FixeoText>
-            <FixeoText tone="secondary">
-              {awaitingClient
-                ? "Votre travail est terminé. Suivez la validation du client."
-                : mission
-                  ? "Gardez le cap sur votre intervention."
-                  : offers?.length
-                    ? "Une demande vous a été proposée par FIXEO."
-                    : today?.length
-                      ? `Votre prochaine intervention : ${when(today[0].scheduled_at)}.`
-                      : "Préparez votre activité et votre prochaine intervention."}
-            </FixeoText>
-            {d && (
-              <FixeoAction
-                label="Parler avec RAFI"
-                variant="ghost"
-                onPress={() => router.push("/artisan-workspace/rafi" as any)}
-              />
-            )}
-          </View>
-        </View>
         <ArtisanSection
           label={
             awaitingClient
@@ -237,7 +168,7 @@ export default function ArtisanHome() {
             testID="home-jobs"
           />
           {today?.length
-            ? today.slice(0, 2).map((j) => (
+            ? today.slice(0, 3).map((j) => (
                 <View key={j.id} style={art.row}>
                   <FixeoText variant="bodyLarge">{j.title}</FixeoText>
                   <FixeoText tone="secondary">{when(j.scheduled_at)}</FixeoText>

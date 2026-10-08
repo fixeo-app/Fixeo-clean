@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { detectInterventionCity } from '@/lib/clientLocationNative';
-import { citySuggestions } from '@/lib/clientLocation';
+import { CityField } from './CityField';
 import { FixeoAction } from '@/ui/FixeoAction';
 import { FixeoText } from '@/ui/FixeoText';
 import { ShellControl, ShellIcon } from '@/ui/ShellControl';
-import { semanticColors, space } from '@/ui/tokens';
-import { clientStyles } from './ClientEditorial';
+import { space, semanticColors } from '@/ui/tokens';
+import type { RafiPresenceState } from '@/ui/rafiPresence';
 
 const MESSAGES = {
   unsupported: 'Sur cet appareil, saisissez votre ville ci-dessous.',
@@ -18,19 +18,20 @@ const MESSAGES = {
   cancelled: 'Choisissez votre ville pour continuer.',
 };
 
-export function ClientLocationField({ city, onChangeCity, disabled = false }: {
+export function ClientLocationField({ city, onChangeCity, disabled = false, onPresenceChange, error, focusRequest }: {
+  error?: string; focusRequest?: number;
   city: string; onChangeCity: (city: string) => void; disabled?: boolean;
+  onPresenceChange?: (state: RafiPresenceState | null) => void;
 }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [detected, setDetected] = useState(false);
-  const [suggesting, setSuggesting] = useState(false);
   const generation = useRef(0);
   const locating = useRef(false);
-  const input = useRef<TextInput>(null);
   useEffect(() => () => { generation.current++; }, []);
 
   function change(value: string) {
+    onPresenceChange?.(null);
     generation.current++; locating.current = false; setBusy(false);
     setDetected(false); setMessage(''); onChangeCity(value);
   }
@@ -39,20 +40,21 @@ export function ClientLocationField({ city, onChangeCity, disabled = false }: {
     locating.current = true;
     const attempt = ++generation.current;
     setBusy(true); setDetected(false); setMessage('Recherche de votre ville…');
+    onPresenceChange?.('thinking');
     try {
       const result = await detectInterventionCity(() => generation.current === attempt);
       if (generation.current !== attempt) return;
       if (result.ok) {
-        onChangeCity(result.city); setDetected(true); setSuggesting(false); setMessage('Position détectée');
-      } else setMessage(MESSAGES[result.reason]);
+        onChangeCity(result.city); setDetected(true); setMessage('Position détectée');
+        onPresenceChange?.('success');
+      } else { setMessage(MESSAGES[result.reason]); onPresenceChange?.('attention'); }
     } catch {
-      if (generation.current === attempt) setMessage(MESSAGES.unavailable);
+      if (generation.current === attempt) { setMessage(MESSAGES.unavailable); onPresenceChange?.('attention'); }
     } finally {
       if (generation.current === attempt) { locating.current = false; setBusy(false); }
     }
   }
-  const suggestions = suggesting ? citySuggestions(city) : [];
-  return <View testID="client-location" style={styles.root}>
+  return <View testID="client-location" style={[styles.root, error && styles.invalid]}>
     <FixeoText variant="caption" tone="secondary">Lieu d’intervention</FixeoText>
     <ShellControl accessibilityLabel="Utiliser ma position" disabled={disabled || busy}
       accessibilityState={{ busy, disabled: disabled || busy }} onPress={() => void locate()} style={styles.locate}>
@@ -62,20 +64,16 @@ export function ClientLocationField({ city, onChangeCity, disabled = false }: {
     {!!message && <FixeoText accessibilityLiveRegion="polite" variant="supporting" tone="secondary">{message}</FixeoText>}
     {detected && <View style={styles.detected}>
       <FixeoText variant="heading">{city}</FixeoText>
-      <FixeoAction label="Confirmer cette ville" variant="ghost" onPress={() => { setDetected(false); setMessage('Lieu confirmé. Vous pouvez encore le modifier.'); }} />
+      <FixeoAction label="Confirmer cette ville" variant="ghost" onPress={() => { setDetected(false); setMessage('Lieu confirmé. Vous pouvez encore le modifier.'); onPresenceChange?.('success'); }} />
     </View>}
-    <TextInput ref={input} accessibilityLabel="Votre ville" value={city}
-      onChangeText={value => { change(value); setSuggesting(true); }} onFocus={() => setSuggesting(true)}
-      editable={!disabled} placeholder="Choisir / saisir ma ville" placeholderTextColor={semanticColors.text.tertiary}
-      autoCapitalize="words" style={clientStyles.input} />
-    {detected && <FixeoAction label="Changer de ville" variant="ghost" onPress={() => { change(city); input.current?.focus(); }} />}
-    {suggestions.map(item => <FixeoAction key={item.value} label={item.label} variant="ghost"
-      accessibilityLabel={`Choisir ${item.label}`} onPress={() => { change(item.value); setSuggesting(false); input.current?.blur(); }} />)}
+    {error && <FixeoText accessibilityRole="alert" accessibilityLiveRegion="assertive">ⓘ {error}</FixeoText>}
+    <CityField focusRequest={focusRequest} label="Votre ville" value={city} onChange={change} disabled={disabled} />
   </View>;
 }
 
 const styles = StyleSheet.create({
   root: { gap: space.xs },
+  invalid: { borderWidth: 2, borderColor: semanticColors.text.secondary, borderRadius: 14, padding: space.sm, backgroundColor: semanticColors.background.surface },
   locate: { flexDirection: 'row', gap: space.xs, alignSelf: 'flex-start', paddingHorizontal: space.xs },
   label: { flexShrink: 1 },
   detected: { gap: space.xxs },

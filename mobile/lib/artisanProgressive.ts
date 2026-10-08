@@ -1,9 +1,9 @@
 import { withMobileDeadline } from "./mobileResilience";
 
 export type ModuleState<T> =
-  | { status: "loading"; data: null; error: null }
-  | { status: "ready"; data: T; error: null }
-  | { status: "unavailable"; data: null; error: unknown };
+  | { status: "loading"; data: T | null; error: null; lastUpdatedAt?: string }
+  | { status: "ready"; data: T; error: null; lastUpdatedAt?: string }
+  | { status: "unavailable"; data: T | null; error: unknown; lastUpdatedAt?: string };
 export type Readers = Record<string, () => Promise<unknown>>;
 export type ProgressiveState<R extends Readers> = {
   authority: ModuleState<unknown>;
@@ -64,7 +64,8 @@ export function createArtisanProgressive<R extends Readers>(
   };
   function run(key: keyof R, check: Promise<unknown>) {
     if (pending.has(String(key))) return pending.get(String(key))!;
-    state.modules[key] = loading();
+    const previous = state.modules[key];
+    state.modules[key] = { status: "loading", data: previous.data, error: null, lastUpdatedAt: previous.lastUpdatedAt };
     emit();
     // Readers with table access share the in-flight canonical access request;
     // mission/offers RPCs enforce the same guard on the server themselves.
@@ -80,10 +81,11 @@ export function createArtisanProgressive<R extends Readers>(
               status: "ready",
               data,
               error: null,
+              lastUpdatedAt: new Date().toISOString(),
             } as ProgressiveState<R>["modules"][keyof R];
         },
         (error) => {
-          state.modules[key] = { status: "unavailable", data: null, error };
+          state.modules[key] = { status: "unavailable", data: state.authority.status === "ready" ? previous.data : null, error, lastUpdatedAt: state.authority.status === "ready" ? previous.lastUpdatedAt : undefined };
         },
       )
       .finally(() => {
@@ -97,9 +99,9 @@ export function createArtisanProgressive<R extends Readers>(
     get state() {
       return state;
     },
-    refresh() {
+    refresh(preserveReady = false) {
       if (pending.size) return Promise.all([...pending.values()]);
-      const check = access();
+      const check = access(preserveReady);
       return Promise.all(Object.keys(readers).map((k) => run(k, check)));
     },
     retry(key: keyof R) {

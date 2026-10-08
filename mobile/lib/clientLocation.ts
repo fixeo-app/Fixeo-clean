@@ -1,4 +1,5 @@
 import catalogue from './clientCities.generated.json';
+import { withMobileDeadline } from './mobileResilience';
 
 const fold = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
 export function canonicalCity(value: string) {
@@ -7,8 +8,21 @@ export function canonicalCity(value: string) {
 }
 export function citySuggestions(value: string) {
   const query = fold(value);
-  if (!query || canonicalCity(value)) return [];
-  return catalogue.filter(item => [item.value, item.label, ...item.aliases].some(alias => fold(alias).includes(query))).slice(0, 4);
+  return catalogue.filter(item => !query || [item.value, item.label, ...item.aliases].some(alias => fold(alias).includes(query)));
+}
+
+export function requireCanonicalCity(value: string) {
+  const city = canonicalCity(value);
+  if (!city) throw new Error('CITY_NOT_SUPPORTED');
+  return city;
+}
+export function canonicalCities(values: readonly string[]) {
+  return [...new Set(values.filter(value => value.trim()).map(requireCanonicalCity))];
+}
+
+/** Read projection only: legacy spelling never rewrites persisted fixtures. */
+export function withCanonicalCity<T extends { city?: string | null }>(value: T): T {
+  return value.city ? { ...value, city: canonicalCity(value.city) || value.city } : value;
 }
 
 type Address = { city?: string | null; subregion?: string | null; district?: string | null; isoCountryCode?: string | null };
@@ -33,6 +47,7 @@ export type CityLocationAdapter = {
   supported: boolean;
   requestPermission: () => Promise<{ granted: boolean; canAskAgain?: boolean }>;
   servicesEnabled: () => Promise<boolean>;
+  lastPosition?: () => Promise<{ coords: { latitude: number; longitude: number } } | null>;
   currentPosition: () => Promise<{ coords: { latitude: number; longitude: number } }>;
   reverseGeocode: (position: { latitude: number; longitude: number }) => Promise<Address[]>;
 };
@@ -51,7 +66,11 @@ export async function locateInterventionCity(adapter: CityLocationAdapter, isAct
     if (!permission.granted) return { ok: false, reason: permission.canAskAgain === false ? 'blocked' : 'denied' };
     if (!await adapter.servicesEnabled()) return { ok: false, reason: 'unavailable' };
     if (cancelled()) return { ok: false, reason: 'cancelled' };
-    const position = await adapter.currentPosition();
+    // A recent accurate cached fix avoids a cold GPS wait. Only native cache;
+    // coordinates are never persisted by FIXEO and remain subject to cancellation.
+    const cached = adapter.lastPosition ? await withMobileDeadline(adapter.lastPosition(), Math.min(1000, timeoutMs / 4)).catch(() => null) : null;
+    if (cancelled()) return { ok: false, reason: 'cancelled' };
+    const position = cached || await adapter.currentPosition();
     if (cancelled()) return { ok: false, reason: 'cancelled' };
     const addresses = await adapter.reverseGeocode({ latitude: position.coords.latitude, longitude: position.coords.longitude });
     if (cancelled()) return { ok: false, reason: 'cancelled' };

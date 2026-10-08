@@ -1,0 +1,124 @@
+{
+  "checkedAt": "2026-10-05T16:02:00Z",
+  "scope": "Phase 1 canonical DNS/TLS and public certification only",
+  "vercel": {
+    "name": "fixeo-w6-auth-relay",
+    "id": "prj_EMFXZ4PVcdKhnJxqCCC5LOm4WPzs",
+    "teamId": "team_KoJ7znqtpla8FkrqAznod5PD",
+    "creation": "Created empty as project-4i1cx, renamed immediately before any deployment",
+    "rootDirectory": "staging/w6-auth-relay",
+    "outsideRootDirectory": false,
+    "repo": "fixeo-app/Fixeo-clean",
+    "branch": "feat/fixeo-mobile-w6-entry-auth-trust",
+    "build": "node build.mjs",
+    "installCommand": "",
+    "node": "24.x",
+    "framework": "Other",
+    "deployment": {
+      "id": "dpl_GuPRN2Tq79Zxf7Wo1rQtHdP8LumZ",
+      "url": "https://fixeo-w6-auth-relay-c0blb6idu-elalaouibiz-3410s-projects.vercel.app",
+      "target": "Preview",
+      "state": "Ready",
+      "sha": "d006e9bffd604e3aef7c9d25856bd193c7ebb482",
+      "sourceUnchangedSince": "80600c8a96b8353cd61528d5d274684c23ea519d",
+      "canonicalDomainListed": true,
+      "durationSeconds": 6
+    },
+    "firstFailedDeployment": {
+      "id": "dpl_8NNaRufYgjZX4UqfGhvJPEzycau4",
+      "sha": "f31306e6e2ef3997584cc0d1a6c78d57f6551b82",
+      "reason": "vercel.json directoryListing schema rejection before build",
+      "note": "Creation control said Preview; initial failed deployment labeled Production by Vercel. No Production artifact built/promoted."
+    },
+    "configFix": "Removed directoryListing and public from relay vercel.json; callback artifact unchanged",
+    "public": true,
+    "toolbar": false,
+    "projectVariables": 0,
+    "sharedVariables": 0,
+    "analytics": false,
+    "speedInsights": false,
+    "domain": {
+      "name": "w6-auth-staging.fixeo.ma",
+      "attached": true,
+      "environment": "Preview",
+      "branch": "feat/fixeo-mobile-w6-entry-auth-trust",
+      "status": "DNS Change Recommended; legacy target explicitly supported"
+    },
+    "originalBefore": {
+      "id": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+      "name": "fixeo-clean",
+      "updatedAt": 1791206683553,
+      "ssoProtection": {
+        "enabled": true,
+        "deploymentType": "all_except_custom_domains"
+      },
+      "domains": [
+        "www.fixeo.ma",
+        "fixeo-clean.vercel.app",
+        "fixeo.ma",
+        "fixeo-clean-elalaouibiz-3410s-projects.vercel.app",
+        "fixeo-clean-git-main-elalaouibiz-3410s-projects.vercel.app"
+      ]
+    },
+    "originalAfter": {
+      "id": "prj_U909VA6lAGunWRVCoSQ37uEOcz5c",
+      "name": "fixeo-clean",
+      "updatedAt": 1791206683553,
+      "ssoProtection": {
+        "enabled": true,
+        "deploymentType": "all_except_custom_domains"
+      },
+      "domains": [
+        "www.fixeo.ma",
+        "fixeo-clean.vercel.app",
+        "fixeo.ma",
+        "fixeo-clean-elalaouibiz-3410s-projects.vercel.app",
+        "fixeo-clean-git-main-elalaouibiz-3410s-projects.vercel.app"
+      ]
+    },
+    "originalSettingsUnchanged": true,
+    "initialCertifiedPreview": {
+      "id": "dpl_7SFfLZVduxcTd9WngJn6AfaWCXbx",
+      "url": "https://fixeo-w6-auth-relay-nxjn0mx6p-elalaouibiz-3410s-projects.vercel.app",
+      "target": "Preview",
+      "state": "Ready",
+      "sha": "80600c8a96b8353cd61528d5d274684c23ea519d",
+      "durationSeconds": 6
+    }
+  },
+  "dns": {
+    "type": "CNAME",
+    "name": "w6-auth-staging",
+    "fqdn": "w6-auth-staging.fixeo.ma",
+    "value": "cname.vercel-dns.com",
+    "ttlObserved": 14400,
+    "source": "User manual Clouder addition, verified by Google and Cloudflare DNS",
+    "before": "NXDOMAIN",
+    "after": "CNAME resolves",
+    "agentWrites": 0,
+    "userWritesReported": 1,
+    "vercelRecommendedTarget": "06244978d8b6e6ea.vercel-dns-016.com.",
+    "legacyTargetSupported": true,
+    "tlsCanonical": "PASS",
+    "certificateId": "cert_DCGrkPkxezoMXGPRywyufWHZ"
+  },
+  "tests": {
+    "contracts": 17,
+    "localChromium": 12,
+    "liveVercelBrowser": 10,
+    "anonymousRoutes": "PASS on canonical domain; only GET /auth-callback returns 200",
+    "nativeDeepLink": "NOT EXECUTED",
+    "realAuth": "NOT EXECUTED",
+    "canonicalBrowser": 24,
+    "canonicalHttp": 14,
+    "htmlSha256": "1212b8fb6793836db29e75dbd09d135332e571a14f2997f88d4a8be4365ab8e2"
+  },
+  "supabaseCalls": 0,
+  "supabaseMutations": 0,
+  "authEmails": 0,
+  "callbackApproved": false,
+  "productionImpact": "NONE",
+  "mainChanged": false,
+  "merged": false,
+  "verdict": "PASS W6 RELAY PHASE 1 \u2014 READY FOR SUPABASE ALLOWLIST REVIEW"
+}

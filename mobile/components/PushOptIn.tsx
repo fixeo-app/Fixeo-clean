@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import {
   isCurrentDevicePushEnabled,
@@ -6,6 +7,7 @@ import {
   type PushRegistrationResult,
 } from '@/lib/push';
 import { triggerFixeoFeedback } from '@/lib/feedback';
+import { withMobileDeadline } from '@/lib/mobileResilience';
 import { colors, radius, spacing } from '@/ui/tokens';
 
 const MESSAGES: Record<string, string> = {
@@ -19,32 +21,41 @@ const MESSAGES: Record<string, string> = {
 };
 
 export function PushOptIn({ compact = false }: { compact?: boolean }) {
-  const [state, setState] = useState<'idle' | 'loading' | 'done'>('idle');
+  const [state, setState] = useState<'checking' | 'idle' | 'loading' | 'done' | 'reassociate'>('checking');
+  const locked = useRef(false);
+  const activeScreen = useRef(true);
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     let active = true;
-    void isCurrentDevicePushEnabled().then(enabled => {
-      if (!active || !enabled) return;
-      setState('done');
-      setMessage('✓ Alertes FIXEO activées');
-    });
-    return () => {
-      active = false;
-    };
-  }, []);
+    activeScreen.current = true;
+    void (async () => {
+      try {
+        const granted = await withMobileDeadline(isCurrentDevicePushEnabled());
+        if (!active) return;
+        if (!granted) { setState('idle'); setMessage(''); return; }
+        setState('checking');
+        setMessage('Notifications autorisées sur cet appareil. Connexion à FIXEO…');
+        const result = await withMobileDeadline(registerCurrentDeviceForPush(false));
+        if (!active) return;
+        setState(result.ok ? 'done' : 'reassociate');
+        setMessage(result.ok ? '✓ Alertes FIXEO activées pour ce compte' : 'Notifications autorisées. La connexion à FIXEO reste à rétablir.');
+      } catch { if (active) { setState('reassociate'); setMessage('Impossible de vérifier les alertes. Réessayez.'); } }
+    })();
+    return () => { active = false; activeScreen.current = false; };
+  }, []));
 
   async function enable() {
+    if (locked.current) return;
+    locked.current = true;
     setState('loading');
     setMessage('');
 
-    const result = await Promise.race<PushRegistrationResult>([
-      registerCurrentDeviceForPush(),
-      new Promise<PushRegistrationResult>(resolve => {
-        setTimeout(() => resolve({ ok: false, reason: 'timeout' }), 16_000);
-      }),
-    ]);
+    const result: PushRegistrationResult = await withMobileDeadline(registerCurrentDeviceForPush(), 16_000)
+      .catch(error => ({ ok: false as const, reason: String(error?.message) === 'MOBILE_UI_TIMEOUT' ? 'timeout' as const : 'registry_failed' as const }));
 
+    locked.current = false;
+    if (!activeScreen.current) return;
     if (result.ok) {
       triggerFixeoFeedback('success');
       setState('done');
@@ -59,7 +70,7 @@ export function PushOptIn({ compact = false }: { compact?: boolean }) {
 
   return (
     <View style={styles.wrap}>
-      {state !== 'done' && (
+      {state !== 'done' && state !== 'checking' && (
         <Pressable
           accessibilityRole="button"
           style={({ pressed }) => [
@@ -76,7 +87,7 @@ export function PushOptIn({ compact = false }: { compact?: boolean }) {
           </View>
           <View style={styles.copy}>
             <Text style={styles.title}>
-              {state === 'loading' ? 'Activation…' : 'Activer les alertes FIXEO'}
+              {state === 'loading' ? 'Connexion…' : state === 'reassociate' ? 'Reconnecter les alertes FIXEO' : 'Activer les alertes FIXEO'}
             </Text>
             <Text style={styles.subtitle}>
               Missions, arrivée et étapes importantes seulement.

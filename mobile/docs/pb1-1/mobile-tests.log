@@ -1,0 +1,259 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> fixeo-mobile@0.1.0 test:contracts
+> node --import tsx --test tests/*.test.ts
+
+✔ artisan activity does not show a blocking load error when offers load (0.964272ms)
+✔ artisan activity does not show a blocking load error when current mission loads (0.238339ms)
+✔ artisan activity shows a load error only when both primary activity sources fail (0.152199ms)
+✔ W5 personal quote arithmetic preserves explicit prices, rounding and discount (1.482471ms)
+✔ W5 incomplete or non-finite quote inputs cannot produce a valid amount (0.570348ms)
+✔ W5 ledger states income and expense separately and never substitutes missing money (20.923546ms)
+✔ W5 agenda only flags coincident active starts, without inferring duration (5.032715ms)
+✔ W5 auth and ownership failures are actionable without exposing server internals (0.650339ms)
+✔ W5 Bio separates size rejection from a write whose readback is unconfirmed (0.265539ms)
+✔ Home publishes canonical authority and mission while finances are still pending; no duplicate reads (7.644747ms)
+✔ One unavailable module does not block other modules; retry checks authority and only retries that module (1.005283ms)
+✔ Denied or revoked authority hides every private result including previously ready modules (0.949759ms)
+✔ Per-module deadline is a last resort; late responses do not overwrite an explicit retry (15.94669ms)
+✔ Overlapping Home and RAFI reads share the request, but a later visit fetches afresh (0.681897ms)
+✔ In-flight reads cannot cross an Auth session boundary (0.811722ms)
+✔ mobile auth entry resolves only supported mobile universes (0.94274ms)
+✔ mobile auth entry hides technical credential and network errors (0.244759ms)
+✔ callback configuration accepts only the exact certified staging URL (1.497654ms)
+✔ unapproved callback blocks both signup and recovery before any Auth request (174.152038ms)
+✔ export activates the exact callback only for the W6 Preview branch (9.973213ms)
+✔ callback binds web origin, rejects bearer fragments and accepts only authorization codes (0.68374ms)
+✔ W6 deployment maps Expo root URLs to nested build output without changing other branches (23.673246ms)
+✔ pre-router callback scrubs the URL and discards legacy tokens before any SDK (1.424324ms)
+✔ late Artisan bootstrap cannot publish after logout or replace a Client identity (0.500874ms)
+✔ unknown, resolving, offline, recovery and invalid-role states mount no private universe (0.206842ms)
+✔ Auth failure categories remain actionable without exposing backend messages (0.899584ms)
+✔ W4 Client priorities put validation before intervention, assignment, matching and alerts (1.931697ms)
+✔ W4 creation and understanding cannot masquerade as an active artisan search (0.198399ms)
+✔ W4 larger RAFI fits both small and standard canvases without changing W3 geometry (0.331228ms)
+✔ W4 mission presentation never invents assignment or arrival while loading or unknown (0.341414ms)
+✔ W4 notification grouping uses existing event types, read state, and known supersession only (0.290788ms)
+✔ an explicit estimate intent is optional; ordinary requests do not select it (1.247258ms)
+✔ confirmation preserves opaque server scope and never supplies a local amount or identity (1.085655ms)
+✔ quote bridge requires persisted diagnostic; direct unpriced quote stays distinct (0.214323ms)
+✔ server STOP denies confirmation even when accompanied by a pricing token (0.196957ms)
+✔ only recognized server outcomes permit handoff (0.242014ms)
+✔ error copy contains no server internals and separates auth, expiry, safety and recoverable failures (0.513764ms)
+✔ malformed server output fails closed, canonical quote id is accepted (0.754556ms)
+✔ unclassified canonical safety outcome remains blocking without a service code (0.214593ms)
+✔ diagnostic provenance survives confirmation and unknown provenance stays unconfirmed (1.486418ms)
+✔ safety and pending analysis or confirmation always block intake (0.254413ms)
+✔ all canonical outcomes render literal server amounts, quote and diagnostic are valid outcomes (0.43813ms)
+✔ mobile consumes no pricing engine, legacy import or estimator secret; source guard precedes request (1.342591ms)
+✔ preventive safety questions are hidden using the real canonical question metadata (5.990968ms)
+✔ mild uncertainty has at most one useful qualification, no safety loop or invented answers (0.331429ms)
+✔ a real STOP is never locally cleared, including after confirmation or exit (0.286211ms)
+✔ W6 preserves W4/W5 business services, mission engine and unchanged W2/W3 components byte-for-byte (2.661796ms)
+✔ W4 keeps original request, auth, watch, load, evidence, validation and adjustment callbacks (77.900855ms)
+✔ W4 request contract remains four arguments including normalized city and no GPS (0.78424ms)
+✔ PB1 V2 changes availability only within the former protected workspace service (0.432271ms)
+✔ PB1 V2 city projections and photo timeout preserve all other mission/auth/result statements (20.345992ms)
+✔ PB1 cities are a verbatim projection of the canonical Mobile/backend registry (2.46439ms)
+✔ W4 foreground success returns only a city and never returns GPS coordinates (0.735397ms)
+✔ W4 denied and permanently denied permissions never reach the location provider (0.423938ms)
+✔ W4 disabled GPS, native errors and unsupported web all retain a manual fallback result (0.434524ms)
+✔ W4 geocoding uses cities, known city aliases only for subregions, never guesses a province (0.508466ms)
+✔ W4 timeout discards late fixes before geocoding and never requests GPS after a late permission (32.903881ms)
+✔ W4 cancelled or backgrounded requests do no further location work (0.457749ms)
+✔ W4 native configuration is foreground only and SDK-compatible (0.972123ms)
+✔ Client cockpit always prioritizes an active intervention over alerts (0.888868ms)
+✔ Artisan cockpit prioritizes mission, then offers, then availability and private activity (0.404249ms)
+✔ DS2 real primitives render their accessible states with the installed React Native Web adapter (703.801442ms)
+✔ DS2 retains every P1–P7 token value while new screens opt into semantic roles (1.476453ms)
+✔ DS2 supported foreground/surface pairings preserve readable contrast (0.510008ms)
+✔ DS2 typography reserves readable line height and moderate emphasis (0.174463ms)
+✔ screen metrics preserve portrait padding, protect side cutouts and reserve floating controls once (0.275925ms)
+✔ busy and disabled states cannot be weakened by accessibility overrides (0.23288ms)
+✔ reduced motion retains press feedback without spatial transform; disabled never presses (0.209725ms)
+✔ all motion presets remove both duration and orchestration delay under Reduced Motion (0.205159ms)
+✔ motion preference shares one native subscription, defaults static and releases it (0.316596ms)
+✔ late preference read cannot override a newer native event or an unmounted generation (0.304579ms)
+✔ preference read failures leave content static and visible (0.443057ms)
+✔ Agenda inputs format naturally without technical ISO syntax (0.95675ms)
+✔ Agenda rejects impossible dates and invalid times (15.913555ms)
+✔ Mobile UI deadline resolves fast work and bounds stalled work (17.533664ms)
+✔ dispatch feed accepts only canonical active queue offers (1.51447ms)
+✔ dispatch feed fails closed on malformed RPC payload (0.207712ms)
+✔ W2 Drawer capture accepts final geometry and the 390px width cap (2.292621ms)
+✔ W2 Drawer capture rejects mounted controls while the panel is off-screen or moving (3.642934ms)
+✔ W2 Drawer capture rejects wrong width, hidden critical controls and overflow (1.453899ms)
+✔ Vercel routes M5 native RAFI endpoints to isolated preview functions (1.292516ms)
+✔ mobile bundle never embeds privileged provider or Supabase server credentials (0.498341ms)
+✔ native RAFI gateways require the authenticated Supabase session token (0.3126ms)
+✔ server-side native RAFI functions are preview-only and staging-pinned (0.273151ms)
+✔ Magic Loop retains canonical request id across matching to found (0.951933ms)
+✔ mobile gateway response preserves diagnostic and labour semantics without calculating or decoding (1.916736ms)
+✔ notification routing opens the exact mission for the matching universe (2.035544ms)
+✔ notification routing never crosses Client and Artisan universes (0.240672ms)
+✔ notification routing supports useful workspace destinations and safe fallback (0.233481ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `FlatList`. See https://react.dev/link/warning-keys for more information.
+✔ PB1 canonical CTA variants remain visible buttons and block duplicate busy actions (111.53773ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 actual city selector renders the entire supported registry and selects canonical accented values (70.909912ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 V2 actual microphone component survives permission-return rerender, transmits only on Stop, cleans background and unmount (25.630272ms)
+✔ PB1 V2 actual capture normalizes the selected bytes source and handles cancellation and late completion (14.049288ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 V2 actual photo preview renders selected URI, viewing and correction controls without analysis (31.419627ms)
+✔ PB1 V2 microphone explanation is accepted once per installation across roles; native permission remains independent (14.310963ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 final real canonical loop component selects native alpha sources and never decodes an unseen MINI (22.408266ms)
+✔ PB1 final real Artisan Copilot answers before navigation and consumes execution/cancellation (83.289186ms)
+✔ PB1 native RAFI regression: RN AbortSignal has no timeout; corrected estimator reaches HTTP (107.370036ms)
+✔ PB1 fetch deadline covers a stalled body and clears completed timers (35.345276ms)
+✔ PB1 canonical city selection works empty, exact, partial and without accents (1.824076ms)
+✔ PB1 city write boundaries preserve request idempotency and profile ownership (25.481768ms)
+✔ PB1 real Auth owner preserves screen identity during foreground, blocks access, and handles offline retry (40.441677ms)
+✔ PB1 revalidation cannot restore a revoked or switched identity (0.176816ms)
+✔ PB1 date/time picker preserves native wall components and stores Casablanca time independently of device (21.196378ms)
+✔ PB1 finance labels never expose raw enums and preserve linked/independent movements (0.323777ms)
+✔ PB1 business writes retain the same draft, CRM links and independent expense (64.201368ms)
+✔ PB1 Arabic Darija, Arabizi, French and code switching share agenda/today with direct owned-data answers (42.950734ms)
+✔ PB1 agenda distinguishes unavailable, zero and cancelled appointments and uses Morocco date boundary (2.11938ms)
+✔ PB1 canonical registry has no duplicate and preserves supported cities with tolerant accents (2.641075ms)
+✔ PB1 certified source hash, all frames and temporal invariants are recorded for each native alpha derivative (10.323259ms)
+✔ PB1 native loop pauses for background/viewport/Reduce Motion; late load and unmount cannot restart decoding (5.881934ms)
+✔ PB1 shared page rhythm and dock clearance fit small Android and enlarged content (0.39181ms)
+✔ PB1 informative finance and quote questions answer business data without proposing a write (8.822671ms)
+✔ PB1 agenda does not answer today for a different period or turn an availability question into a change (1.099675ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 account validates required coordinates, retains edits on foreground and cancels without a write (221.737034ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 drafts survive a cold reload, stay owner-scoped, and cannot return after removal or session invalidation (167.733041ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 estimator restores question answers and offers an exit after failure without creating a request (99.67716ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 real Devis tabs, preview and confirmation reject forged sources and require each preceding stage (118.624843ms)
+✔ PB1 generic names are omitted and dates remain local calendar dates (5.470525ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 Mon espace shows every active request and resolves a multi-request follow action explicitly (31.636608ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 Agenda identifies each invalid field, focuses it and creates only after complete input (78.511648ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 native page structure keeps one dock, contextual CTA inside scroll and compact Auth hierarchy (95.666833ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 money: canonical cents, discounts, large and zero totals, commission included only for FIXEO, no fiscal inference (2.341365ms)
+✔ PB1 deterministic parents preserve CRM context and availability; no cross-universe incidental back (0.333913ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 actual Client home: A+B separate, correct follow targets, independent new intent, refresh and status priority (175.408265ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 quote acceptance/refusal buttons open a visible confirmation and invoke the chosen decision (304.607089ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 actual composer isolates drafts A/B and abandoned C; ambiguous retry keeps the identical key (254.562169ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 actual estimator steps, restored answer, recap, result, confirmation and identical retry (60.709663ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1 push permission rehydrates across logins and registers without another OS prompt (30.702463ms)
+✔ PB1 notification destinations respect s1b request identities, M4 mission metadata and absent targets (2.686905ms)
+✔ Client progress cannot invent assignment or advance a search based on elapsed time (1.674591ms)
+✔ Expired estimator reuses matching answers with fresh authority and never confirms a request (0.951652ms)
+✔ Changed question, option or safety stop is never replayed blindly (0.448035ms)
+✔ Audited television text cannot be misclassified from the substring entreprises (0.69098ms)
+✔ Vision compares only observations with declared need and keeps raw keys out of client prose (0.594184ms)
+✔ PB1 V2 material: running frames change breath and independent internal flow without React (1.848573ms)
+✔ PB1 V2 material: local touch, immediate response, peak and viscous relaxation (3.043186ms)
+✔ PB1 V2 material: background/viewport pause, no catch-up jump, Reduce Motion and cleanup (1.024532ms)
+✔ PB1 V2 material: mode transitions preserve phase and compact reduces amplitude (0.663599ms)
+✔ PB1 V2 permission-return refresh keeps the Artisan capture mounted, failed authority clears private data (6.817117ms)
+✔ PB1 V2 city: old spelling is projected canonically without mutation and search supports accents/case (0.860185ms)
+✔ PB1 V2 geo: recent native cache bypasses cold GPS; missing cache falls back to live fix (4.612368ms)
+✔ PB1 V2 geo: timeout and cancelled attempt cannot overwrite context or reverse-geocode a late fix (6.440991ms)
+✔ PB1 V2 availability: write plus authority read; refusal/mismatch never returns a false success (118.766601ms)
+✔ PB1 V2 copilot: navigation, exact owned quote/client, explicit unsupported, write proposals only (3.521672ms)
+✔ PB1 V2 multipart uses the selected local photo bytes source and never starts until called (41.759106ms)
+✔ PB1 V2 city projection covers both mission details and the current request without changing RPC authority (41.450666ms)
+✔ PB1 V2 stalled native location cache still leaves time for a fresh fix (21.293909ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ Post-audit P0 actual composer: proposal, ignore/replace/append/undo, parasite, double tap, network, blur, session loss and restart (556.674003ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1.1 instrumented native scroll: small Android resize/overlay, last and multiline fields, focus changes and cleanup (1039.335792ms)
+✔ PB1.1 Casablanca 09/10/2026 14:00 survives device TZ changes; real dates and money precision (19.335326ms)
+✔ PB1.1 PDF model uses exact editor totals, escaped content, accents and honest personal provenance (4.562407ms)
+✔ PB1.1 PDF export refuses invalid bytes and never declares sending when share closes (6.074474ms)
+✔ PB1.1 quote drafts survive cold reload, isolate owners and scopes, and purge on explicit logout (12.829923ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1.1 actual Devis 250: wizard, cold remount, preview, idempotent draft, reopen, edit and CRM association (76.592265ms)
+react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+✔ PB1.1 actual CRM cancel restores values, survives foreground refresh and performs zero writes (23.088376ms)
+✔ PB1.1 actual Finance close writes nothing; client changes clear incompatible job and preserve 500/120 (35.0561ms)
+✔ RAFI local rules classify common FIXEO needs without AI cost (1.987312ms)
+✔ RAFI does not invent a trade for an unknown short need (0.236285ms)
+✔ RAFI keeps ambiguous room-level requests unclassified until the user adds a concrete problem (0.230087ms)
+✔ Living Sphere uses six canonical states, with legacy aliases and real action outcomes (2.023766ms)
+✔ Living Sphere keeps compact calm, attention quieter, and reduced motion light-only (0.70416ms)
+✔ Living Sphere visibility excludes clipped/offscreen content and invalid measurements (0.196876ms)
+✔ Living Sphere preserves exact master pixels and static material renderer (1.68096ms)
+✔ PB1 canonical and legacy semantic states and French labels are exhaustive; legacy calls retain identity (2.720345ms)
+✔ W3 client maps only known facts, keeps creation distinct from matching and validation from success (0.269455ms)
+✔ W3 artisan derives priorities from the actual mission, offers, acceptance and load-error inputs (0.267883ms)
+✔ success is consumed once, never replayed by polling, focus, or Reduced Motion changes (0.261173ms)
+✔ all sizes and motion peaks stay within frame; compact fits unchanged W2 56px host (1.156331ms)
+✔ activity shares one native listener and cleans up the last subscriber (0.44509ms)
+✔ presence engine has no backend or per-frame React side effects; visual material is centralized (0.720885ms)
+✔ W6 permission explanation preserves the Evidence upload contract (0.299611ms)
+✔ RAFI keeps manual problem and city as user-declared facts (1.869715ms)
+✔ RAFI preserves explicit user confirmation of an AI-assisted description (0.168474ms)
+✔ RAFI context omits empty facts (0.1799ms)
+✔ Shell subpages do not render legacy duplicate back rows (23.904003ms)
+✔ Client workspace detail pages use bounded loading and foreground refresh (5.00221ms)
+✔ W2 client: real Drawer routes and active state (1.263813ms)
+✔ W2 artisan: real Drawer routes and active state (0.326181ms)
+✔ PB1 dock persists on every canonical top-level route, includes owned details, excludes auth/cross-role (1.034578ms)
+✔ W2 Dock limits, duplicate guard, visibility and badges (0.430287ms)
+✔ W2 floating reservation and enlarged text: safe area + height + gaps counted once (0.409917ms)
+✔ W2 targets and Reduced Motion: DS2, no pressed transform, no delayed close (0.227462ms)
+✔ W2 installed StackRouter: no duplicate roots, detail preserves return history (2.752654ms)
+✔ W2 actual JSX: one stable Shell per screen, including the shared W5 Artisan frame (124.044591ms)
+✔ W2 Dock yields space to content when enlarged header/toolbar or landscape leaves insufficient room (0.340512ms)
+✔ W2 root right-actions preserve their parent context; subpage right-actions return to an existing root (7.472178ms)
+"shadow*" style props are deprecated. Use "boxShadow".
+props.pointerEvents is deprecated. Use style.pointerEvents
+✔ W2 real Drawer/Dock/controls render accessible states with React Native Web (894.335318ms)
+ℹ tests 188
+ℹ suites 0
+ℹ pass 188
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3328.258702

@@ -1,3 +1,4 @@
+import { requireCanonicalCity, withCanonicalCity } from './clientLocation';
 import { supabase } from './supabase';
 
 export type ClientProfile = {
@@ -26,6 +27,7 @@ export type ClientNotification = {
   related_entity_type: string | null;
   related_entity_id: string | null;
   created_at: string;
+  metadata?: Record<string, unknown> | null;
 };
 
 async function currentUserId(): Promise<string> {
@@ -42,7 +44,7 @@ export async function getClientProfile(): Promise<ClientProfile> {
     .eq('id', userId)
     .single();
   if (error) throw error;
-  return data as ClientProfile;
+  return withCanonicalCity(data as ClientProfile);
 }
 
 export async function updateClientProfile(input: {
@@ -52,7 +54,7 @@ export async function updateClientProfile(input: {
   const userId = await currentUserId();
   const patch: Record<string, string | null> = {};
   if ('phone' in input) patch.phone = input.phone?.trim() || null;
-  if ('city' in input) patch.city = input.city?.trim() || null;
+  if ('city' in input) patch.city = input.city?.trim() ? requireCanonicalCity(input.city) : null;
 
   const { data, error } = await supabase
     .from('profiles')
@@ -61,7 +63,7 @@ export async function updateClientProfile(input: {
     .select('id,full_name,phone,city,email')
     .single();
   if (error) throw error;
-  return data as ClientProfile;
+  return withCanonicalCity(data as ClientProfile);
 }
 
 export async function listClientRequestHistory(limit = 50): Promise<ClientRequestHistory[]> {
@@ -73,14 +75,14 @@ export async function listClientRequestHistory(limit = 50): Promise<ClientReques
     .order('created_at', { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data || []) as ClientRequestHistory[];
+  return (data || []).map(withCanonicalCity) as ClientRequestHistory[];
 }
 
 export async function listClientNotifications(limit = 60): Promise<ClientNotification[]> {
   const userId = await currentUserId();
   const { data, error } = await supabase
     .from('notifications')
-    .select('id,type,title,message,read,related_entity_type,related_entity_id,created_at')
+    .select('id,type,title,message,read,related_entity_type,related_entity_id,created_at,metadata')
     .eq('recipient_user_id', userId)
     .order('created_at', { ascending: false })
     .limit(limit);
@@ -96,4 +98,18 @@ export async function markClientNotificationRead(id: string): Promise<void> {
     .eq('id', id)
     .eq('recipient_user_id', userId);
   if (error) throw error;
+}
+
+export type ClientRequestDetail = ClientRequestHistory & { mission_id: string | null };
+/** Exact owned request first; a global latest-mission lookup is never a detail authority. */
+export async function getClientRequestDetail(id: string): Promise<ClientRequestDetail> {
+  if (!/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(id)) throw new Error('REQUEST_INVALID');
+  const userId = await currentUserId();
+  const { data, error } = await supabase.from('service_requests')
+    .select('id,service_category,city,description,status,created_at').eq('id', id).eq('client_profile_id', userId).single();
+  if (error || !data) throw error || new Error('REQUEST_NOT_FOUND');
+  const missions = await supabase.from('missions').select('id').eq('request_id', id)
+    .in('status', ['pending', 'done', 'validated']).order('accepted_at', { ascending: false }).limit(1);
+  if (missions.error) throw missions.error;
+  return withCanonicalCity({ ...data, mission_id: missions.data?.[0]?.id || null }) as ClientRequestDetail;
 }

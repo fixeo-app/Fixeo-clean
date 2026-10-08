@@ -115,6 +115,7 @@ async function analyze(snapshot, { provider, mediaStore, qualificationMode = "di
     result: {
       version: VERSION,
       indicative,
+      ...(output.photoRelevance ? { photo_relevance: { value: output.photoRelevance, provenance: 'ai_inferred' } } : {}),
       trade: {
         value: electricalRisk ? "electricite" : model.trade,
         provenance: "ai_inferred",

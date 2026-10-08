@@ -17,7 +17,7 @@ export function ShellControl({ style, disabled, accessibilityState, onFocus, onB
   const [focused, setFocused] = useState(false);
   const reduceMotion = useReducedMotion();
   const state = resolveActionState(disabled ?? false, false, undefined, accessibilityState);
-  return <Pressable {...props} accessibilityRole="button" disabled={state.blocked}
+  return <Pressable {...props} accessibilityRole={props.accessibilityRole || 'button'} disabled={state.blocked}
     accessibilityState={state.accessibilityState}
     aria-busy={state.busy} aria-disabled={state.blocked} aria-selected={state.accessibilityState.selected}
     onFocus={event => { setFocused(true); onFocus?.(event); }}

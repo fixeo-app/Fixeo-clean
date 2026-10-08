@@ -20,16 +20,18 @@ export const CLIENT_STATUS: Readonly<Record<string, string>> = {
 export function clientHomeCopy(journey: string, presence: RafiPresenceState, creating: boolean) {
   if (creating) return { eyebrow: 'VOTRE DEMANDE', title: 'On prépare la suite.', detail: 'FIXEO enregistre votre demande. Un instant.' };
   if (presence === 'listening') return { eyebrow: 'RAFI VOUS ÉCOUTE', title: 'Dites-moi tout.', detail: 'Décrivez ce qui se passe, avec vos mots.' };
-  if (presence === 'understanding') return { eyebrow: 'RAFI COMPREND', title: 'Je regarde avec vous.', detail: 'Vous pourrez vérifier et confirmer avant de continuer.' };
+  if (presence === 'understanding' || presence === 'thinking') return { eyebrow: 'RAFI COMPREND', title: 'Je regarde avec vous.', detail: 'Vous pourrez vérifier et confirmer avant de continuer.' };
   if (journey === 'completed') return { eyebrow: 'À VOUS DE CONFIRMER', title: 'Une dernière\nvérification.', detail: 'Vérifiez l’intervention et les photos avant de valider.' };
   if (journey === 'in_progress') return { eyebrow: 'EN CE MOMENT', title: 'Votre intervention\navance.', detail: 'Retrouvez les étapes et les photos dans votre suivi.' };
   if (journey === 'assigned') return { eyebrow: 'ARTISAN TROUVÉ', title: 'Vous êtes\naccompagné.', detail: 'Votre artisan et la prochaine étape, au même endroit.' };
-  if (journey === 'matching') return { eyebrow: 'RECHERCHE EN COURS', title: 'FIXEO cherche\npour vous.', detail: 'Votre demande est active. Inutile de la renvoyer.' };
+  if (journey === 'matching') return { eyebrow: 'RECHERCHE EN COURS', title: 'FIXEO cherche\npour vous.', detail: 'Votre recherche continue. Un autre besoin peut avancer en parallèle.' };
   return { eyebrow: 'RAFI · VOTRE ASSISTANT', title: 'Un problème ?\nOn s’en occupe.', detail: 'Parlez, montrez ou écrivez.\nVous gardez le contrôle.' };
 }
 
-export function clientHeroSize(width: number, height: number, compact = false) {
-  return compact ? 88 : width <= 340 || height <= 640 ? 120 : 160;
+export function clientHeroSize(_width: number, _height: number, compact = false, family?: 'home' | 'request' | 'tracking') {
+  if (family === 'request') return 96;
+  if (family === 'tracking') return 64;
+  return compact ? 96 : 120;
 }
 
 export function clientMissionPresentation(status: string | undefined) {

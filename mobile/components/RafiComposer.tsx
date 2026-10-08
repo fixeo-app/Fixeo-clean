@@ -4,16 +4,17 @@ import { ShellControl, ShellIcon } from '@/ui/ShellControl';
 import { depth, radii, semanticColors, space } from '@/ui/tokens';
 
 type Props = {
+  compact?: boolean;
   recording: boolean; voiceBusy: boolean; message?: string;
   onVoice: () => void; onPhoto: () => void; onWrite?: () => void;
 };
 /** Presentation only: capture, permissions and values stay in RafiInputRail/Home. */
-export function RafiComposer({ recording, voiceBusy, message, onVoice, onPhoto, onWrite }: Props) {
+export function RafiComposer({ compact = false, recording, voiceBusy, message, onVoice, onPhoto, onWrite }: Props) {
   return <View testID="rafi-composer" style={styles.root}>
     <View style={styles.rail}>
-      <ShellControl accessibilityLabel="Écrire à RAFI" onPress={onWrite} disabled={!onWrite} style={styles.write}>
+      {!compact && <ShellControl accessibilityLabel="Écrire à RAFI" onPress={onWrite} disabled={!onWrite} style={styles.write}>
         <FixeoText variant="supporting" tone="secondary" style={styles.prompt}>Écrire à RAFI</FixeoText>
-      </ShellControl>
+      </ShellControl>}
       <ShellControl accessibilityLabel="Montrer une photo à RAFI" onPress={onPhoto}>
         <ShellIcon name="camera-outline" />
       </ShellControl>

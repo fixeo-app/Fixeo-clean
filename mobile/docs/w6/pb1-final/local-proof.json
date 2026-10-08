@@ -1,0 +1,58 @@
+{
+  "checked_at": "2026-10-06T18:20:10.382312+00:00",
+  "mobile": {
+    "pass": 146,
+    "fail": 0
+  },
+  "server": {
+    "pass": 204,
+    "fail": 0
+  },
+  "typecheck": "PASS",
+  "expo_doctor": {
+    "pass": 18,
+    "fail": 0
+  },
+  "hermes_export": {
+    "hermes_magic_verified": true,
+    "bytes": 4046605,
+    "sha256": "ba9813e35e585266feed3e8cbbbd9df4c5dbe7dd6748cb2e7dca47ae3b543132",
+    "staging_backend_present": true,
+    "apk_built": false,
+    "decoded_strings_scanned": 8135,
+    "embedded_jwt_literal": false,
+    "embedded_supabase_secret": false
+  },
+  "shader": {
+    "status": "PASS",
+    "scope": "offscreen GLES shader execution; not Android physical certification",
+    "resolution": [
+      256,
+      256
+    ],
+    "shader_compile_link": true,
+    "flow_changed_interior_pixels": 12223,
+    "flow_alpha_unchanged": true,
+    "breath_deformed_outline_pixels": 1711,
+    "touch_local_difference": 3.635,
+    "touch_remote_difference": 0.056,
+    "equilibrium_restored": true,
+    "compact_motion": true,
+    "context_cleanup": true
+  },
+  "live_vision": {
+    "schema": "pb1-vision-live-v1",
+    "started_at": "2026-10-06T18:15:05.983Z",
+    "status": "BLOCKED",
+    "endpoint": "https://kqyhusnbybsukbcaoqtu.supabase.co/functions/v1/mobile-rafi-preview-proxy/api/mobile-rafi-photo",
+    "backend_deployment": "dpl_GvBr5g3LSnsmtSYvSibMorN4R7ns",
+    "backend_source_sha": "23a3923ef60b01ea0e4e735831dcdc60c5f9f362",
+    "image_fixture": "img/blog/guides-blog.webp",
+    "physical_camera_certification": false,
+    "failure": "AUTH_FILE_REQUIRED",
+    "finished_at": "2026-10-06T18:15:05.984Z"
+  },
+  "freeze": false,
+  "new_android_builds": 0,
+  "physical_certification": false
+}

@@ -31,7 +31,7 @@ function wrap(token, kind, userId, env = process.env, qualificationCount = 0) {
 function qualificationCount(token, userId, env) {
   unwrap(token,'session',userId,env);
   const value=unsealToken(token,envelopeSecret(env)).qualificationCount;
-  if(!Number.isInteger(value)||value<0||value>1)fail('ESTIMATOR_SESSION_INVALID');
+  if(!Number.isInteger(value)||value<0||value>64)fail('ESTIMATOR_SESSION_INVALID');
   return value;
 }
 function unwrap(token, kind, userId, env = process.env) {

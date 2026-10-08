@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { explainPermission, permissionRefused } from '@/lib/permissionPrompt';
 import * as ImagePicker from 'expo-image-picker';
 import { uploadMissionEvidence } from '@/lib/missionEvidence';
 import { triggerFixeoFeedback } from '@/lib/feedback';
@@ -15,14 +16,20 @@ type Props = {
 export function MissionEvidenceCapture({ missionId, kind, label, onUploaded }: Props) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  const active = useRef(true);
+  useEffect(() => { active.current = true; return () => { active.current = false; }; }, []);
 
   async function capture() {
     if (busy) return;
 
+    if (!(await explainPermission('camera'))) return;
+    setBusy(true);
+    try {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!active.current) return;
     if (!permission.granted) {
       triggerFixeoFeedback('warning');
-      setMessage('Caméra non autorisée.');
+      setMessage(permissionRefused('camera', permission.canAskAgain !== false));
       return;
     }
 
@@ -31,10 +38,10 @@ export function MissionEvidenceCapture({ missionId, kind, label, onUploaded }: P
       allowsEditing: false,
     });
     if (result.canceled || !result.assets[0]?.uri) return;
+    if (!active.current) return;
 
     setBusy(true);
     setMessage('Envoi sécurisé à FIXEO…');
-    try {
       const asset = result.assets[0];
       await uploadMissionEvidence(
         missionId,

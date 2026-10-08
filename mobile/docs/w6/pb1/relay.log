@@ -1,0 +1,30 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> fixeo-w6-auth-relay@1.0.0 test
+> node --test test/*.test.mjs
+
+✔ valid code: clean before render, fixed handoff only on interaction, one use (3.58454ms)
+✔ missing and malformed codes fail closed (4.743678ms)
+✔ access_token: query, fragment, empty, case and encoded names always refuse (4.732171ms)
+✔ refresh_token: query, fragment, empty, case and encoded names always refuse (2.536426ms)
+✔ provider_token: query, fragment, empty, case and encoded names always refuse (5.662294ms)
+✔ provider_refresh_token: query, fragment, empty, case and encoded names always refuse (2.673726ms)
+✔ redirects and unexpected parameters refuse (10.710888ms)
+✔ duplicates, success/error ambiguity and query/fragment collisions refuse (3.463453ms)
+✔ errors map to a closed non-sensitive vocabulary (2.899597ms)
+✔ an error combined with a forbidden token never transfers even an error (0.900739ms)
+✔ unapproved origin refuses (0.731331ms)
+✔ sanitation failure renders nothing and never transfers (0.834152ms)
+✔ same-document fragment and history navigation are also scrubbed (2.726053ms)
+✔ only exact GET callback has a document; no filesystem or SPA fallback (1.135984ms)
+✔ privacy headers also cover refusals; CSP pins all inline executable content (0.651143ms)
+✔ output contains one static document and zero functions, SDKs or external assets (1.043528ms)
+✔ production, original project and unrelated branch builds are refused (199.747756ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 392.70784

@@ -1,5 +1,5 @@
 import { useEffect, useState, type PropsWithChildren, type ReactNode } from 'react';
-import { Keyboard, Platform, StyleSheet, View, useWindowDimensions, type StyleProp, type ViewStyle, type LayoutChangeEvent } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, View, useWindowDimensions, type StyleProp, type ViewStyle, type LayoutChangeEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { semanticColors, spacing, space, layout } from './tokens';
 import { getScreenMetrics } from './screenMetrics';
@@ -14,11 +14,12 @@ type Props = PropsWithChildren<{
   /** Shell lives outside the scroller; its safe area is owned here. */
   header?: ReactNode;
   contextDock?: ContextDockSpec;
+  transactional?: boolean;
 }>;
 
 export function FixeoScreen(props: Props) {
   // Legacy screens keep their original hierarchy and zero keyboard listeners.
-  return props.contextDock ? <DockScreen {...props} contextDock={props.contextDock} /> : <ScreenFrame {...props} />;
+  return props.contextDock && !props.transactional ? <DockScreen {...props} contextDock={props.contextDock} /> : <ScreenFrame {...props} />;
 }
 
 function DockScreen({ contextDock, ...props }: Props & { contextDock: ContextDockSpec }) {
@@ -48,7 +49,7 @@ function DockScreen({ contextDock, ...props }: Props & { contextDock: ContextDoc
 function ScreenFrame({ children, style, padded = true, floatingHeight = 0, keyboardOverlap = 0, header, floating, onHeaderLayout }: Props & { floating?: ReactNode; onHeaderLayout?: (event: LayoutChangeEvent) => void }) {
   const insets = useSafeAreaInsets();
   const metrics = getScreenMetrics(insets, { padded, floatingHeight, keyboardOverlap });
-  return <View style={[
+  return <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={[
     styles.root,
     {
       paddingTop: metrics.paddingTop,
@@ -66,7 +67,7 @@ function ScreenFrame({ children, style, padded = true, floatingHeight = 0, keybo
     }]}>
       <View style={styles.dockWidth}>{floating}</View>
     </View>}
-  </View>;
+  </KeyboardAvoidingView>;
 }
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: semanticColors.background.canvas },

@@ -3,7 +3,7 @@
     "name": "FIXEO",
     "slug": "fixeo-mobile",
     "scheme": "fixeo",
-    "version": "0.3.0",
+    "version": "0.3.3",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "ios": {
@@ -14,7 +14,7 @@
     "android": {
       "package": "ma.fixeo.app",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 4,
+      "versionCode": 12,
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ],
@@ -23,7 +23,11 @@
       "blockedPermissions": [
         "android.permission.ACCESS_BACKGROUND_LOCATION",
         "android.permission.FOREGROUND_SERVICE_LOCATION"
-      ]
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/rafi/launcher-pb1/adaptive-foreground.png",
+        "backgroundColor": "#F7F7F5"
+      }
     },
     "plugins": [
       "expo-router",
@@ -68,6 +72,15 @@
     "splash": {
       "backgroundColor": "#F7F7F5",
       "resizeMode": "contain"
-    }
+    },
+    "androidStatusBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#F7F7F5"
+    },
+    "androidNavigationBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#F7F7F5"
+    },
+    "icon": "./assets/rafi/launcher-pb1/icon.png"
   }
 }

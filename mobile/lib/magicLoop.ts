@@ -1,3 +1,4 @@
+import { requireCanonicalCity, withCanonicalCity } from './clientLocation';
 import { supabase } from './supabase';
 
 import { DispatchOffer, normalizeDispatchOffers } from './dispatchContract';
@@ -10,7 +11,7 @@ export async function createRequest(
 ) {
   const { data, error } = await supabase.rpc('create_my_service_request_v1', {
     p_service_category: service,
-    p_city: city,
+    p_city: requireCanonicalCity(city),
     p_description: description,
     p_idempotency_key: idempotencyKey,
   });
@@ -27,7 +28,7 @@ export async function createRequest(
 export async function getDispatchOffers(): Promise<DispatchOffer[]> {
   const { data, error } = await supabase.rpc('get_my_dispatch_offers_v1');
   if (error) throw error;
-  return normalizeDispatchOffers(data);
+  return normalizeDispatchOffers(data).map(withCanonicalCity);
 }
 
 export async function acceptDispatchOffer(requestId: string) {
@@ -61,7 +62,7 @@ export async function acceptDispatchOffer(requestId: string) {
 export async function getTargetedOffers() {
   const { data, error } = await supabase.rpc('get_my_mission_offers');
   if (error) throw error;
-  return Array.isArray(data?.offers) ? data.offers : [];
+  return Array.isArray(data?.offers) ? data.offers.map(withCanonicalCity) : [];
 }
 
 export async function claimTargetedMission(id: string) {
@@ -79,5 +80,5 @@ export async function declineTargetedMission(id: string) {
 export async function getMission(id: string) {
   const { data, error } = await supabase.rpc('get_accepted_mission_detail', { p_mission_id: id });
   if (error) throw error;
-  return data;
+  return data ? withCanonicalCity(data) : data;
 }

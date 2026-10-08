@@ -1,11 +1,13 @@
+import { BackButton } from '@/ui/BackButton';
+import { useWorkspaceDock } from '@/components/useWorkspaceDock';
+import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
 import { useCallback, useEffect, useState } from 'react';
 import {
   AppState,
-  ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import {
   confirmCompletedRequest,
   getClientMissionDetail,
@@ -28,6 +30,7 @@ import { FixeoScreen } from '@/ui/FixeoScreen';
 import { semanticColors, space } from '@/ui/tokens';
 
 export default function ClientMission() {
+  const contextDock = useWorkspaceDock('client');
   const params = useLocalSearchParams<{ id?: string }>();
   const missionId = String(params.id || '');
   const [mission, setMission] = useState<MissionSnapshot | null>(null);
@@ -111,12 +114,12 @@ export default function ClientMission() {
   const photos = <ClientMissionEvidence evidence={evidence} state={evidenceState} />;
 
   return (
-    <FixeoScreen padded={false} header={<View style={styles.topBar}>
-      <FixeoAction label="Retour à RAFI" variant="ghost" onPress={() => router.replace('/')} style={styles.back} />
+    <FixeoScreen padded={false} contextDock={contextDock} header={<View style={styles.topBar}>
+      <BackButton />
       <FixeoText variant="eyebrow">FIXEO</FixeoText>
     </View>}>
       <ScrollView contentContainerStyle={clientStyles.content} showsVerticalScrollIndicator={false}>
-        <ClientHero {...stateCopy} mode={stateCopy.orb} compact eventKey={missionId} />
+        <ClientHero family="tracking" {...stateCopy} mode={stateCopy.orb} compact eventKey={missionId} />
         {!!message && <FixeoText accessibilityLiveRegion="polite" variant="supporting" tone="secondary">{message}</FixeoText>}
 
         {validation && <>

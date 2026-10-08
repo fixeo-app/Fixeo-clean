@@ -25,5 +25,17 @@ jobs:
           retention-days: 1
       - run: npx expo-doctor@1.20.4
       - run: npm run test:contracts
+      - run: npm run lint
+      - name: Verify certified RAFI native alpha assets
+        run: |
+          python3 -m pip install 'Pillow==12.3.0' 'numpy==2.3.5' 'opencv-python-headless==5.0.0.93'
+          python3 scripts/rafi/verify_runtime.py
+      - name: Execute RAFI material shaders without a browser
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libegl1 libegl-mesa0 libgl1-mesa-dri
+          python3 tests/pb1-shader-gate.py
       - run: npm run typecheck
+      - name: Export Android Hermes without creating an APK
+        run: npx expo export --platform android --output-dir dist-hermes-gate
       - run: npx expo export --platform web --output-dir dist-gate-a

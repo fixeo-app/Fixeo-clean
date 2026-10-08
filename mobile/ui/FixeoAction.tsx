@@ -14,7 +14,7 @@ import { interaction, radii, semanticColors, spacing } from './tokens';
 
 type Props = PressableProps & {
   label: string;
-  variant?: 'primary' | 'secondary' | 'ghost' | 'destructive';
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'destructive';
   busy?: boolean;
   busyLabel?: string;
   selected?: boolean;
@@ -121,12 +121,12 @@ const styles = StyleSheet.create({
     backgroundColor: semanticColors.background.focus,
   },
   secondary: {
-    backgroundColor: semanticColors.background.surface,
+    backgroundColor: semanticColors.background.canvas,
+    borderWidth: 1,
     borderColor: semanticColors.border.strong,
   },
-  ghost: {
-    backgroundColor: semanticColors.interaction.transparent,
-  },
+  tertiary: { backgroundColor: semanticColors.background.canvas, borderColor: semanticColors.border.strong, borderWidth: 1 },
+  ghost: { backgroundColor: semanticColors.background.canvas, borderColor: semanticColors.border.strong, borderWidth: 1 },
   destructive: {
     backgroundColor: semanticColors.status.danger.text,
   },

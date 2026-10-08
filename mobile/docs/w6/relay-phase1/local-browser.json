@@ -1,0 +1,80 @@
+{
+  "scope": "LOCAL Chromium, intercepted HTTP response from exact build artifact; NOT deployed HTTPS/DNS/public certification; fake inputs only; no native app opened",
+  "cases": [
+    {
+      "name": "missing-code",
+      "pass": true,
+      "scrubbedBeforeRender": true,
+      "handoffButton": false
+    },
+    {
+      "name": "malformed-code",
+      "pass": true,
+      "scrubbedBeforeRender": true,
+      "handoffButton": false
+    },
+    {
+      "name": "valid-shaped-code",
+      "pass": true,
+      "scrubbedBeforeRender": true,
+      "handoffButton": true
+    },
+    {
+      "name": "access-query",
+      "pass": true,
+      "scrubbedBeforeRender": true,
+      "handoffButton": false
+    },
+    {
+      "name": "access-fragment",
+      "pass": true,
+      "scrubbedBeforeRender": true,
+      "handoffButton": false
+    },
+    {
+      "name": "refresh-query",
+      "pass": true,
+      "scrubbedBeforeRender": true,
+      "handoffButton": false
+    },
+    {
+      "name": "refresh-fragment",
+      "pass": true,
+      "scrubbedBeforeRender": true,
+      "handoffButton": false
+    },
+    {
+      "name": "provider-query",
+      "pass": true,
+      "scrubbedBeforeRender": true,
+      "handoffButton": false
+    },
+    {
+      "name": "provider-refresh-fragment",
+      "pass": true,
+      "scrubbedBeforeRender": true,
+      "handoffButton": false
+    },
+    {
+      "name": "redirect",
+      "pass": true,
+      "scrubbedBeforeRender": true,
+      "handoffButton": false
+    },
+    {
+      "name": "known-error",
+      "pass": true,
+      "scrubbedBeforeRender": true,
+      "handoffButton": true
+    },
+    {
+      "name": "unexpected",
+      "pass": true,
+      "scrubbedBeforeRender": true,
+      "handoffButton": false
+    }
+  ],
+  "applicationErrors": 0,
+  "nonDocumentRequests": 0,
+  "cookies": 0
+}

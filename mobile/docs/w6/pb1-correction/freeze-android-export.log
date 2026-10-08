@@ -1,0 +1,41 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+Starting Metro Bundler
+| (node:35) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:34) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:46) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:41) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:54) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:48) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Android node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (1341/1341)
+Android Bundled 4458ms node_modules/expo-router/entry.js (1341 modules)
+Android node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 99.9% (1341/1341)
+
+› Assets (26):
+assets/rafi/rafi-master-core-v1.png (1.11 MB)
+node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf (390 kB)
+node_modules/@react-navigation/elements/lib/module/assets/back-icon-mask.png (653 B)
+node_modules/@react-navigation/elements/lib/module/assets/back-icon.png (4 variations | 152 B)
+node_modules/@react-navigation/elements/lib/module/assets/clear-icon.png (4 variations | 425 B)
+node_modules/@react-navigation/elements/lib/module/assets/close-icon.png (4 variations | 235 B)
+node_modules/@react-navigation/elements/lib/module/assets/search-icon.png (4 variations | 599 B)
+node_modules/expo-router/assets/arrow_down.png (9.46 kB)
+node_modules/expo-router/assets/error.png (469 B)
+node_modules/expo-router/assets/file.png (138 B)
+node_modules/expo-router/assets/forward.png (188 B)
+node_modules/expo-router/assets/pkg.png (364 B)
+node_modules/expo-router/assets/sitemap.png (465 B)
+node_modules/expo-router/assets/unmatched.png (4.75 kB)
+
+› android bundles (1):
+_expo/static/js/android/entry-272d959c8058dfbf623e42e4b98b3a74.hbc (3.98 MB)
+
+› Files (1):
+metadata.json (1.91 kB)
+
+Exported: /workspace/scratch/21bf7eaa3d22/android-final-freeze
