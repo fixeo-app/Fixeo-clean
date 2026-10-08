@@ -14,11 +14,12 @@ type Props = PropsWithChildren<{
   /** Shell lives outside the scroller; its safe area is owned here. */
   header?: ReactNode;
   contextDock?: ContextDockSpec;
+  transactional?: boolean;
 }>;
 
 export function FixeoScreen(props: Props) {
   // Legacy screens keep their original hierarchy and zero keyboard listeners.
-  return props.contextDock ? <DockScreen {...props} contextDock={props.contextDock} /> : <ScreenFrame {...props} />;
+  return props.contextDock && !props.transactional ? <DockScreen {...props} contextDock={props.contextDock} /> : <ScreenFrame {...props} />;
 }
 
 function DockScreen({ contextDock, ...props }: Props & { contextDock: ContextDockSpec }) {

@@ -1,0 +1,249 @@
+TAP version 13
+# Subtest: W4 Client priorities put validation before intervention, assignment, matching and alerts
+ok 1 - W4 Client priorities put validation before intervention, assignment, matching and alerts
+  ---
+  duration_ms: 7.256183
+  type: 'test'
+  ...
+# Subtest: W4 creation and understanding cannot masquerade as an active artisan search
+ok 2 - W4 creation and understanding cannot masquerade as an active artisan search
+  ---
+  duration_ms: 0.392
+  type: 'test'
+  ...
+# Subtest: W4 larger RAFI fits both small and standard canvases without changing W3 geometry
+ok 3 - W4 larger RAFI fits both small and standard canvases without changing W3 geometry
+  ---
+  duration_ms: 0.310728
+  type: 'test'
+  ...
+# Subtest: W4 mission presentation never invents assignment or arrival while loading or unknown
+ok 4 - W4 mission presentation never invents assignment or arrival while loading or unknown
+  ---
+  duration_ms: 0.53439
+  type: 'test'
+  ...
+# Subtest: W4 notification grouping uses existing event types, read state, and known supersession only
+ok 5 - W4 notification grouping uses existing event types, read state, and known supersession only
+  ---
+  duration_ms: 0.367293
+  type: 'test'
+  ...
+# Subtest: B1 request RAFI stays 96 dp through IME resize; tracking uses 64 dp
+ok 6 - B1 request RAFI stays 96 dp through IME resize; tracking uses 64 dp
+  ---
+  duration_ms: 0.137326
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 account validates required coordinates, retains edits on foreground and cancels without a write
+ok 7 - PB1 account validates required coordinates, retains edits on foreground and cancels without a write
+  ---
+  duration_ms: 156.316844
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 drafts survive a cold reload, stay owner-scoped, and cannot return after removal or session invalidation
+ok 8 - PB1 drafts survive a cold reload, stay owner-scoped, and cannot return after removal or session invalidation
+  ---
+  duration_ms: 134.933082
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 estimator restores question answers and offers an exit after failure without creating a request
+ok 9 - PB1 estimator restores question answers and offers an exit after failure without creating a request
+  ---
+  duration_ms: 95.9594
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 real Devis tabs, preview and confirmation reject forged sources and require each preceding stage
+ok 10 - PB1 real Devis tabs, preview and confirmation reject forged sources and require each preceding stage
+  ---
+  duration_ms: 113.135992
+  type: 'test'
+  ...
+# Subtest: PB1 generic names are omitted and dates remain local calendar dates
+ok 11 - PB1 generic names are omitted and dates remain local calendar dates
+  ---
+  duration_ms: 4.349769
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 Mon espace shows every active request and resolves a multi-request follow action explicitly
+ok 12 - PB1 Mon espace shows every active request and resolves a multi-request follow action explicitly
+  ---
+  duration_ms: 34.371218
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 Agenda identifies each invalid field, focuses it and creates only after complete input
+ok 13 - PB1 Agenda identifies each invalid field, focuses it and creates only after complete input
+  ---
+  duration_ms: 50.840336
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1 native page structure keeps one dock, contextual CTA inside scroll and compact Auth hierarchy
+ok 14 - PB1 native page structure keeps one dock, contextual CTA inside scroll and compact Auth hierarchy
+  ---
+  duration_ms: 56.257071
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: Post-audit P0 actual composer: proposal, ignore/replace/append/undo, parasite, double tap, network, blur, session loss and restart
+ok 15 - Post-audit P0 actual composer: proposal, ignore/replace/append/undo, parasite, double tap, network, blur, session loss and restart
+  ---
+  duration_ms: 450.657898
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1.1 instrumented native scroll: small Android resize/overlay, last and multiline fields, focus changes and cleanup
+ok 16 - PB1.1 instrumented native scroll: small Android resize/overlay, last and multiline fields, focus changes and cleanup
+  ---
+  duration_ms: 1088.200502
+  type: 'test'
+  ...
+# Subtest: PB1.1 Casablanca 09/10/2026 14:00 survives device TZ changes; real dates and money precision
+ok 17 - PB1.1 Casablanca 09/10/2026 14:00 survives device TZ changes; real dates and money precision
+  ---
+  duration_ms: 16.02226
+  type: 'test'
+  ...
+# Subtest: PB1.1 PDF model uses exact editor totals, escaped content, accents and honest personal provenance
+ok 18 - PB1.1 PDF model uses exact editor totals, escaped content, accents and honest personal provenance
+  ---
+  duration_ms: 5.043422
+  type: 'test'
+  ...
+# Subtest: PB1.1 PDF export refuses invalid bytes and never declares sending when share closes
+ok 19 - PB1.1 PDF export refuses invalid bytes and never declares sending when share closes
+  ---
+  duration_ms: 6.762782
+  type: 'test'
+  ...
+# Subtest: PB1.1 quote drafts survive cold reload, isolate owners and scopes, and purge on explicit logout
+ok 20 - PB1.1 quote drafts survive cold reload, isolate owners and scopes, and purge on explicit logout
+  ---
+  duration_ms: 12.290587
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1.1 actual Devis 250: wizard, cold remount, preview, idempotent draft, reopen, edit and CRM association
+ok 21 - PB1.1 actual Devis 250: wizard, cold remount, preview, idempotent draft, reopen, edit and CRM association
+  ---
+  duration_ms: 72.879616
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: PB1.1 actual CRM cancel restores values, survives foreground refresh and performs zero writes
+ok 22 - PB1.1 actual CRM cancel restores values, survives foreground refresh and performs zero writes
+  ---
+  duration_ms: 21.140044
+  type: 'test'
+  ...
+# Subtest: PB1.1 actual Finance close writes nothing; client changes clear incompatible job and preserve 500/120
+ok 23 - PB1.1 actual Finance close writes nothing; client changes clear incompatible job and preserve 500/120
+  ---
+  duration_ms: 22.431509
+  type: 'test'
+  ...
+# Subtest: W2 client: real Drawer routes and active state
+ok 24 - W2 client: real Drawer routes and active state
+  ---
+  duration_ms: 1.636013
+  type: 'test'
+  ...
+# Subtest: W2 artisan: real Drawer routes and active state
+ok 25 - W2 artisan: real Drawer routes and active state
+  ---
+  duration_ms: 0.556708
+  type: 'test'
+  ...
+# Subtest: PB1 dock persists on every canonical top-level route, includes owned details, excludes auth/cross-role
+ok 26 - PB1 dock persists on every canonical top-level route, includes owned details, excludes auth/cross-role
+  ---
+  duration_ms: 1.368891
+  type: 'test'
+  ...
+# Subtest: W2 Dock limits, duplicate guard, visibility and badges
+ok 27 - W2 Dock limits, duplicate guard, visibility and badges
+  ---
+  duration_ms: 0.586433
+  type: 'test'
+  ...
+# Subtest: W2 floating reservation and enlarged text: safe area + height + gaps counted once
+ok 28 - W2 floating reservation and enlarged text: safe area + height + gaps counted once
+  ---
+  duration_ms: 0.589618
+  type: 'test'
+  ...
+# Subtest: W2 targets and Reduced Motion: DS2, no pressed transform, no delayed close
+ok 29 - W2 targets and Reduced Motion: DS2, no pressed transform, no delayed close
+  ---
+  duration_ms: 0.326982
+  type: 'test'
+  ...
+# Subtest: W2 installed StackRouter: no duplicate roots, detail preserves return history
+ok 30 - W2 installed StackRouter: no duplicate roots, detail preserves return history
+  ---
+  duration_ms: 1.553939
+  type: 'test'
+  ...
+# Subtest: W2 actual JSX: one stable Shell per screen, including the shared W5 Artisan frame
+ok 31 - W2 actual JSX: one stable Shell per screen, including the shared W5 Artisan frame
+  ---
+  duration_ms: 144.505513
+  type: 'test'
+  ...
+# Subtest: W2 Dock yields space to content when enlarged header/toolbar or landscape leaves insufficient room
+ok 32 - W2 Dock yields space to content when enlarged header/toolbar or landscape leaves insufficient room
+  ---
+  duration_ms: 1.252846
+  type: 'test'
+  ...
+# Subtest: W2 root right-actions preserve their parent context; subpage right-actions return to an existing root
+ok 33 - W2 root right-actions preserve their parent context; subpage right-actions return to an existing root
+  ---
+  duration_ms: 14.560089
+  type: 'test'
+  ...
+1..33
+# tests 33
+# suites 0
+# pass 33
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2293.871007

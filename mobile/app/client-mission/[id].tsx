@@ -119,7 +119,7 @@ export default function ClientMission() {
       <FixeoText variant="eyebrow">FIXEO</FixeoText>
     </View>}>
       <ScrollView contentContainerStyle={clientStyles.content} showsVerticalScrollIndicator={false}>
-        <ClientHero {...stateCopy} mode={stateCopy.orb} compact eventKey={missionId} />
+        <ClientHero family="tracking" {...stateCopy} mode={stateCopy.orb} compact eventKey={missionId} />
         {!!message && <FixeoText accessibilityLiveRegion="polite" variant="supporting" tone="secondary">{message}</FixeoText>}
 
         {validation && <>

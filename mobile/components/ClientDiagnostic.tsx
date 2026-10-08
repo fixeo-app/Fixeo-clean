@@ -1,5 +1,6 @@
+import { KeyboardInput } from '@/ui/KeyboardInput';
 import { useState } from 'react';
-import { TextInput, View } from 'react-native';
+import { View } from 'react-native';
 import type { MobileDiagnosticResult } from '@/lib/mobileDiagnostic';
 import { confirmedDiagnosticDescription, diagnosticFactText, diagnosticProvenance, diagnosticQuestions, diagnosticSafetyMessage, photoRelevance } from '@/lib/clientDiagnostic';
 import { ClientHero, ClientSection, clientStyles } from './ClientEditorial';
@@ -31,7 +32,7 @@ export function ClientDiagnostic({ result, confirmed, onConfirm, onExit, onClari
     {relevance !== 'related' && description && onContinueText ? <FixeoAction label="Continuer avec ma description" variant="secondary" onPress={onContinueText} /> : null}
     {relevance === 'unrelated' ? null : neutral && onClarify ? <FixeoAction label="Décrire le problème constaté" onPress={onClarify} /> : confirmed ? <FixeoText accessibilityLiveRegion="polite">CONFIRMÉ PAR VOUS · La description reste modifiable avant envoi.</FixeoText> : next ? <View style={{ gap: 12 }} testID="client-diagnostic-question">
       <FixeoText variant="heading">{next.label}</FixeoText>
-      <TextInput accessibilityLabel={next.label} value={answer} onChangeText={setAnswer} multiline style={clientStyles.input} placeholder="Votre réponse, ou ce que vous ignorez" />
+      <KeyboardInput accessibilityLabel={next.label} value={answer} onChangeText={setAnswer} multiline style={clientStyles.input} placeholder="Votre réponse, ou ce que vous ignorez" />
       <FixeoAction label="Confirmer cette précision" disabled={!answer.trim()} onPress={() => { setAnswers([answer.trim()]); setAnswer(''); }} />
       {next.optional && <FixeoAction label="Continuer sans cette précision" variant="ghost" onPress={() => onConfirm(confirmedDiagnosticDescription(result, []))} />}
     </View> : <FixeoAction label="Confirmer cette description" onPress={() => onConfirm(confirmedDiagnosticDescription(result, answers))} />}

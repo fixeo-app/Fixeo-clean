@@ -1,6 +1,6 @@
 import { pageLayout } from '@/ui/pageLayout';
-import type { PropsWithChildren } from 'react';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { useEffect, useState, type PropsWithChildren } from 'react';
+import { Keyboard, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { FixeoText } from '@/ui/FixeoText';
 import { RafiOrb } from '@/ui/RafiOrb';
 import type { RafiPresenceState } from '@/ui/rafiPresence';
@@ -8,13 +8,19 @@ import { radii, semanticColors, space, typography } from '@/ui/tokens';
 import { clientHeroSize } from '@/lib/clientExperience';
 
 /** Client composition shares the canonical page rhythm and certified RAFI loop. */
-export function ClientHero({ eyebrow, title, detail, mode, eventKey, compact = false }: {
-  eyebrow: string; title: string; detail: string; mode: RafiPresenceState; eventKey?: string; compact?: boolean;
+export function ClientHero({ eyebrow, title, detail, mode, eventKey, compact = false, family = 'home' }: {
+  eyebrow: string; title: string; detail: string; mode: RafiPresenceState; eventKey?: string; compact?: boolean; family?: 'home' | 'request' | 'tracking';
 }) {
   const { width, height, fontScale } = useWindowDimensions();
-  const small = width <= 340 || height <= 640;
-  return <View testID="client-hero" style={[styles.hero, small && styles.heroSmall]}>
-    <RafiOrb size={clientHeroSize(width, height, compact)} mode={mode} eventKey={eventKey} />
+  const small = width <= 340;
+  const [keyboardVisible, setKeyboardVisible] = useState(() => Keyboard.isVisible());
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
+    const hide = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
+    return () => { show.remove(); hide.remove(); };
+  }, []);
+  return <View testID="client-hero" style={[styles.hero, small && styles.heroSmall, family === 'request' && keyboardVisible && { display: 'none' }]}>
+    <RafiOrb size={clientHeroSize(width, height, compact, family)} mode={mode} eventKey={eventKey} />
     <View style={styles.heroCopy}>
       <FixeoText variant="eyebrow" tone="secondary" style={styles.center}>{eyebrow}</FixeoText>
       <FixeoText accessibilityRole="header" variant={fontScale > 1.4 ? 'heading' : compact || small ? 'title' : 'hero'} style={styles.center}>{title}</FixeoText>

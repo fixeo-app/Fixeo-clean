@@ -16,18 +16,22 @@ const component=(name:string)=>function Component(props:any){return React.create
 function load(file:string,deps:Record<string,unknown>,globals:Record<string,unknown>={}){const exports:Record<string,any>={};vm.runInNewContext(ts.transpileModule(readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText,{exports,require:(name:string)=>name==='react'||name==='react/jsx-runtime'?require(name):deps[name]||{},setTimeout,clearTimeout,Promise,...globals});return exports;}
 
 test('PB1.1 instrumented native scroll: small Android resize/overlay, last and multiline fields, focus changes and cleanup',async()=>{
- for(const label of ['Titre du devis','Désignation','Prix unitaire','Notes client','Note du mouvement','Notes de l’intervention','Présentation professionnelle']) {
+ for(const label of ['Décrivez le problème','Votre précision','Téléphone de contact','Réponse diagnostic','Titre du devis','Désignation','Prix unitaire','Notes client','Note du mouvement','Notes de l’intervention','Présentation professionnelle']) {
   for(const resized of [true,false]) {
    const listeners:Record<string,Function>={},frames=new Map<number,Function>();let seq=0,offset=0;
    const native:any={View:'view',TextInput:'input',ScrollView:'scroll',StyleSheet:{create:(v:any)=>v,flatten:(v:any)=>v},Dimensions:{get:()=>({height:640}),addEventListener:()=>({remove(){}})},Keyboard:{addListener:(name:string,fn:Function)=>{listeners[name]=fn;return {remove(){delete listeners[name]}}}}};
    const geometry={keyboardGeometry,focusedScrollDelta};
    const scrollModule=load('ui/RafiScrollView.tsx',{'react-native':native,'./keyboardGeometry':geometry,'./rafiPresence':{}},{requestAnimationFrame:(fn:Function)=>{frames.set(++seq,fn);return seq},cancelAnimationFrame:(n:number)=>frames.delete(n)});
    const fields=load('components/ArtisanEditorial.tsx',{'react-native':native,'@/ui/RafiScrollView':scrollModule,'@/ui/tokens':await import('../ui/tokens'),'@/ui/pageLayout':await import('../ui/pageLayout'),'@/ui/FixeoText':{FixeoText:component('text')}});
+   const clientFields=load('ui/KeyboardInput.tsx',{'react-native':native,'./RafiScrollView':scrollModule});
+   const inputComponent=['Décrivez le problème','Votre précision','Téléphone de contact','Réponse diagnostic'].includes(label) ? clientFields.KeyboardInput : fields.ArtisanField;
    let tree:any;
-   await renderer.act(async()=>{tree=renderer.create(React.createElement(scrollModule.RafiScrollView,{contentContainerStyle:{paddingBottom:16}},React.createElement(fields.ArtisanField,{label,value:'Valeur conservée',multiline:label.includes('Note')||label.includes('Présentation'),hint:'83 / 4 000 caractères'})),{createNodeMock:(el:any)=>el.type==='scroll'?{getNativeScrollRef:()=>({measureInWindow:(fn:Function)=>fn(0,80,360,resized?240:540)}),scrollTo:({y}:any)=>{offset=y;tree.root.findByType('scroll').props.onScroll({nativeEvent:{contentOffset:{y}}})}}:el.type==='view'?{measureInWindow:(fn:Function)=>fn(20,1100-offset,320,156)}:{}})});
+   await renderer.act(async()=>{tree=renderer.create(React.createElement(scrollModule.RafiScrollView,{contentContainerStyle:{paddingBottom:16}},React.createElement(inputComponent,{label,accessibilityLabel:label,value:'Valeur conservée',multiline:label.includes('Note')||label.includes('Présentation'),hint:'83 / 4 000 caractères'})),{createNodeMock:(el:any)=>el.type==='scroll'?{getNativeScrollRef:()=>({measureInWindow:(fn:Function)=>fn(0,80,360,resized?240:540)}),scrollTo:({y}:any)=>{offset=y;tree.root.findByType('scroll').props.onScroll({nativeEvent:{contentOffset:{y}}})}}:el.type==='view'?{measureInWindow:(fn:Function)=>fn(20,1100-offset,320,156)}:{}})});
    await renderer.act(async()=>{tree.root.findByType('input').props.onFocus({nativeEvent:{}});listeners.keyboardDidShow({endCoordinates:{screenY:320}});for(const [id,fn] of [...frames]){frames.delete(id);fn();}});
    assert.ok(1100-offset+156<=296,label);assert.ok(1100-offset>=104,label);
    assert.equal(tree.root.findByType('input').props.value,'Valeur conservée');
+   await renderer.act(async()=>{tree.root.findByType('input').props.onSelectionChange({nativeEvent:{selection:{start:0,end:0}}});for(const [id,fn] of [...frames]){frames.delete(id);fn();}});
+   assert.ok(1100-offset+156<=296,'selection change keeps the bounded native caret viewport exposed');
    const padding=tree.root.findByType('scroll').props.contentContainerStyle.at(-1).paddingBottom;
    assert.equal(padding,resized?40:340,'native resize is not counted twice');
    await renderer.act(async()=>{listeners.keyboardDidHide();});

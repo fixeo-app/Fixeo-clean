@@ -113,7 +113,7 @@ export function ArtisanPage({
   loading = false,
   onRefresh,
   dock,
-  transactional: _transactional = false,
+  transactional = false,
   rafi,
   back = true,
   hero,
@@ -137,6 +137,7 @@ export function ArtisanPage({
     <RafiSignalContext.Provider value={rafi || null}><FixeoScreen
       padded={false}
       contextDock={accessibleDock}
+      transactional={transactional}
       header={
         <MobileShell
           universe="artisan"
@@ -168,7 +169,7 @@ export function ArtisanPage({
           <FixeoText variant="eyebrow" tone="secondary">
             {eyebrow}
           </FixeoText>
-          <FixeoText variant="hero" accessibilityRole="header" style={hero ? { textAlign: 'center' } : undefined}>
+          <FixeoText variant={transactional ? 'title' : 'hero'} accessibilityRole="header" style={hero ? { textAlign: 'center' } : undefined}>
             {title}
           </FixeoText>
           {detail && <FixeoText tone="secondary" style={hero ? { textAlign: 'center' } : undefined}>{detail}</FixeoText>}
@@ -219,7 +220,7 @@ export function ArtisanCue({
 }) {
   return (
     <View style={art.cue}>
-      <RafiOrb size={44} />
+      <RafiOrb size={32} />
       <View style={art.flex}>
         <FixeoText variant="eyebrow">{title}</FixeoText>
         <FixeoText tone="secondary">{text}</FixeoText>
@@ -290,11 +291,13 @@ export function ArtisanField({
         onFocus={event => { keyboard?.focus(field); props.onFocus?.(event); }}
         onBlur={event => { keyboard?.blur(field); props.onBlur?.(event); }}
         onContentSizeChange={event => { keyboard?.reveal(); props.onContentSizeChange?.(event); }}
+        onSelectionChange={event => { keyboard?.reveal(); props.onSelectionChange?.(event); }}
+        onLayout={event => { keyboard?.reveal(); props.onLayout?.(event); }}
         style={[
           art.input,
           error && { borderWidth: 2, borderColor: semanticColors.text.secondary },
-          props.multiline && { minHeight: 100, maxHeight: 180, textAlignVertical: "top" },
           props.style,
+          props.multiline && { minHeight: 56, maxHeight: 144, textAlignVertical: "top" },
         ]}
       />
       {!!hint && <FixeoText variant="supporting" tone="secondary">{hint}</FixeoText>}

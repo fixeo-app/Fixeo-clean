@@ -36,7 +36,7 @@ export default function ClientRequest() {
   return <FixeoScreen padded={false} contextDock={dock} header={<MobileShell universe="client" activeKey="history" rightDestination="/client-workspace/notifications" />}>
     <RafiScrollView contentContainerStyle={clientStyles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}>
       <BackButton />
-      <ClientHero {...view} mode={view.orb} compact />
+      <ClientHero family="tracking" {...view} mode={view.orb} compact />
       {!!error && <ClientSection><FixeoText accessibilityRole="alert">{error}</FixeoText><FixeoAction label="Réessayer" onPress={() => void load()} /></ClientSection>}
       {request && <ClientSection surface>
         <FixeoText variant="eyebrow">{CLIENT_STATUS[request.status] || 'Suivi FIXEO'}</FixeoText>

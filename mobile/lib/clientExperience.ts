@@ -28,8 +28,10 @@ export function clientHomeCopy(journey: string, presence: RafiPresenceState, cre
   return { eyebrow: 'RAFI · VOTRE ASSISTANT', title: 'Un problème ?\nOn s’en occupe.', detail: 'Parlez, montrez ou écrivez.\nVous gardez le contrôle.' };
 }
 
-export function clientHeroSize(width: number, height: number, compact = false) {
-  return compact ? 88 : width <= 340 || height <= 640 ? 120 : 160;
+export function clientHeroSize(_width: number, _height: number, compact = false, family?: 'home' | 'request' | 'tracking') {
+  if (family === 'request') return 96;
+  if (family === 'tracking') return 64;
+  return compact ? 96 : 120;
 }
 
 export function clientMissionPresentation(status: string | undefined) {

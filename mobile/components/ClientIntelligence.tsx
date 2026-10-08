@@ -1,8 +1,9 @@
+import { KeyboardInput } from '@/ui/KeyboardInput';
 import type { EstimatorDraft } from '@/lib/clientDrafts';
 import { recoverEstimator } from '@/lib/estimatorRecovery';
 import { BackButton } from '@/ui/BackButton';
 import { useEffect, useRef, useState } from 'react';
-import { Keyboard, TextInput, View } from 'react-native';
+import { Keyboard, View } from 'react-native';
 import * as Crypto from 'expo-crypto';
 import { router } from 'expo-router';
 import { mobileEstimator } from '@/lib/mobileEstimator';
@@ -183,7 +184,7 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
         label={(optionLabels as Record<string, string>)[String(option.value)] || option.label}
         variant="secondary" selected={answer === option.value} disabled={blocked}
         onPress={() => { setAnswer(option.value); setError(null); }} />) :
-        <TextInput accessibilityLabel="Votre précision" style={clientStyles.input} value={String(answer)} onChangeText={value => { setAnswer(value); setError(null); }} editable={!busy}
+        <KeyboardInput accessibilityLabel="Votre précision" style={clientStyles.input} value={String(answer)} onChangeText={value => { setAnswer(value); setError(null); }} editable={!busy}
           keyboardType={step?.answer_type === 'number' ? 'decimal-pad' : 'default'} returnKeyType="done" />}
       <FixeoAction label="Continuer" disabled={blocked || String(answer).trim() === ''} onPress={continueStep} />
     </ClientSection>}
@@ -200,7 +201,7 @@ export function ClientIntelligence({ context, onCreated, onClose, onStop, onPres
     {canConfirm && !confirming && <FixeoAction label={outcome?.outcome_type === 'QUOTE_REQUIRED' ? 'Préparer ma demande de devis' : 'Continuer avec cette estimation'} disabled={blocked} onPress={() => setConfirming(true)} />}
     {confirming && <ClientSection testID="client-estimator-confirmation" label="Votre confirmation">
       <FixeoText>{initial.description}</FixeoText><FixeoText tone="secondary">{initial.city}</FixeoText>
-      {phoneRequired && <TextInput accessibilityLabel="Téléphone de contact" keyboardType="phone-pad" style={clientStyles.input} value={phone} onChangeText={value => { setPhone(value); if (error?.kind === 'phone') setError(null); }} editable={!busy && !pendingConfirmation.current} />}
+      {phoneRequired && <KeyboardInput accessibilityLabel="Téléphone de contact" keyboardType="phone-pad" style={clientStyles.input} value={phone} onChangeText={value => { setPhone(value); if (error?.kind === 'phone') setError(null); }} editable={!busy && !pendingConfirmation.current} />}
       <FixeoText variant="supporting">{outcome?.outcome_type === 'QUOTE_REQUIRED' ? 'Aucun prix n’est confirmé. Un devis est nécessaire avant intervention.' : 'En confirmant, vous autorisez FIXEO à rechercher un artisan pour cette intervention.'}</FixeoText>
       <FixeoAction label="Confirmer et chercher un artisan" disabled={blocked || (phoneRequired && !phoneValid)} onPress={() => void confirm()} />
     </ClientSection>}

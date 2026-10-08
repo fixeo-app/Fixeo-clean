@@ -1,3 +1,4 @@
+import { KeyboardInput } from '@/ui/KeyboardInput';
 import { RafiScrollView as ScrollView } from '@/ui/RafiScrollView';
 import { ClientDraftRecovery } from './ClientDraftRecovery';
 import { loadClientDrafts, saveClientDraft, removeClientDraft, draftStorageGeneration, type EstimatorDraft } from '@/lib/clientDrafts';
@@ -420,7 +421,7 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
   }
 
   return (
-    <FixeoScreen padded={false} contextDock={contextDock} header={
+    <FixeoScreen padded={false} contextDock={contextDock} transactional header={
         <MobileShell
           universe="client"
           activeKey="rafi"
@@ -450,7 +451,7 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
       >
         <ClientDraftRecovery excludeId={draftId} />
         {back && !estimateOpen && <BackButton disabled={loop.state === 'creating'} onPress={confirmDirect ? () => setConfirmDirect(false) : undefined} />}
-        {(isActiveJourney || !safetyStopped) && <ClientHero {...hero} compact={!!estimateOpen || confirmDirect || inputExpanded} mode={effectiveOrbMode} eventKey={`${loop.missionId || loop.requestId || 'need'}:${rafiCompletion}`} />}
+        {(isActiveJourney || !safetyStopped) && <ClientHero {...hero} family="request" compact mode={effectiveOrbMode} eventKey={`${loop.missionId || loop.requestId || 'need'}:${rafiCompletion}`} />}
 
         {!isActiveJourney && safetyStopped && !photoDiagnostic?.safety.stop && <ClientSection testID="client-safety-stop">
           <ClientHero eyebrow="RAFI · SÉCURITÉ" title="La sécurité d’abord." detail={safetyMessage} mode="attention" compact />
@@ -496,7 +497,7 @@ export default function ClientRequestComposer({ back = true, resumeDraftId }: { 
               <FixeoAction label="Modifier ma demande" variant="ghost" onPress={() => setConfirmDirect(false)} />
             </ClientSection>}
             {inputExpanded && !estimateOpen && !confirmDirect && <View testID="client-request-fields" style={styles.inputStack}>
-            <TextInput
+            <KeyboardInput
               ref={problemInputRef}
               accessibilityLabel="Décrivez le problème"
               value={problem}
