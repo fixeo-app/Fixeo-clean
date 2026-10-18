@@ -8,7 +8,7 @@ function operationId(value) {
 }
 function attest(operation,payload,userId,env,id=randomUUID(),now=Date.now()) {
   const issued=Math.floor(now/1000);
-  const p_envelope=JSON.stringify({v:1,kid:'w41-v1',aud:'fixeo-mobile-w41',environment:'staging',project_ref:REF,
+  const p_envelope=JSON.stringify({v:1,kid:'w41-v1',aud:'fixeo-mobile-w41',environment:'certification',project_ref:REF,
     branch:BRANCH,user_id:userId,operation,operation_id:id,issued_at:issued,expires_at:issued+60,payload});
   if(Buffer.byteLength(p_envelope)>65536) throw new DiagnosticError('MOBILE_PAYLOAD_INVALID',413);
   const p_mac=createHmac('sha256',env.FIXEO_W41_ATTESTATION_SECRET).update('fixeo-w41-attestation-v1:'+p_envelope).digest('hex');
@@ -54,3 +54,4 @@ function createClientTransport({auth,env,fetchImpl=fetch}) {
   };
 }
 module.exports={createClientTransport,attest,operationId};
+

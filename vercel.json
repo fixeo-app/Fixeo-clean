@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/mobile-rafi-photo-fn/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/mobile-rafi-voice-fn/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "^/api/mobile-rafi-photo-v2$",
+      "dest": "/api/mobile-rafi-photo-fn/index.js"
+    },
+    {
+      "src": "^/api/mobile-rafi-transcribe-v2$",
+      "dest": "/api/mobile-rafi-voice-fn/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "status": 404
+    }
+  ],
+  "git": {
+    "deploymentEnabled": false
+  }
+}

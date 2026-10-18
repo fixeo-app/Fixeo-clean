@@ -1,5 +1,0 @@
-{
-  "configuration_enabled": false,
-  "real_client_jwt_rejected_after_disable": true,
-  "production_mutated": false
-}

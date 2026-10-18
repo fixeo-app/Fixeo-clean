@@ -1,7 +1,9 @@
 'use strict';
+require('../certification-egress.cjs')();
 
 const { randomUUID } = require('node:crypto');
 const multer = require('multer');
+const { runtimeBoundary } = require('../mobile-media-privacy.cjs');
 const { CITIES } = require('../diagnostic/contract');
 const { sanitizePhoto } = require('../diagnostic/media');
 const { createOpenAIAdapter } = require('../diagnostic/providers/openai');
@@ -19,6 +21,7 @@ const {
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
+    files: 1, fields: 8, parts: 9, fieldSize: 4096,
     fileSize: 8 * 1024 * 1024,
   },
   fileFilter(req, file, cb) {
@@ -45,14 +48,14 @@ function normalizeCity(value) {
   return slug;
 }
 
-async function inspect(req, res) {
+async function inspect(req, res, privacy) {
   const started = Date.now();
 
   try {
     assertPreview(process.env);
 
-    const {runtime,BRANCH}=require('../mobile-intelligence-fn/runtime');
-    const providerEnv=process.env.VERCEL_GIT_COMMIT_REF===BRANCH?runtime(process.env):process.env;
+    const {runtime}=require('../mobile-intelligence-fn/runtime');
+    const providerEnv=runtime(process.env);
 
     const diagnosticModel =
       providerEnv.FIXEO_DIAGNOSTIC_MODEL || 'gpt-4.1-mini-2025-04-14';
@@ -68,6 +71,7 @@ async function inspect(req, res) {
       return send(res, 503, { ok: false, error: 'diagnostic_unavailable' });
     }
 
+    await privacy.approve(req.body);
     const token = bearer(req);
     await authenticate(token);
 
@@ -89,7 +93,7 @@ async function inspect(req, res) {
     );
 
     if (req.body?.persist === 'true') {
-      const persisted = await require('../mobile-intelligence-fn/diagnostic').persistPhoto(req, sanitized, description, city);
+      const persisted = await require('../mobile-intelligence-fn/diagnostic').persistPhoto(req, sanitized, description, city, { providerFetch: privacy.providerFetch });
       return send(res, 200, persisted);
     }
 
@@ -126,6 +130,7 @@ async function inspect(req, res) {
         ...providerEnv,
         FIXEO_DIAGNOSTIC_MODEL: diagnosticModel,
       },
+      fetchImpl: privacy.providerFetch,
       photoPolicy: 'descriptive',
       timeout: 25000,
       deadline: started + 28000,
@@ -156,6 +161,7 @@ async function inspect(req, res) {
       },
     });
   } catch (error) {
+    if (['AUTH_REQUIRED','FORBIDDEN','INVALID_INPUT','POLICY_VERSION_OUTDATED','CONTRACT_REQUIRED','FEATURE_UNAVAILABLE','RATE_LIMITED','DEPENDENCY_UNAVAILABLE'].includes(error?.code)) return send(res, error.status || 503, { ok:false,error:error.code });
     if (error instanceof MobileRafiError) {
       console.warn(
         JSON.stringify({
@@ -191,7 +197,7 @@ async function inspect(req, res) {
     console.warn(
       JSON.stringify({
         event: 'mobile_rafi_photo_failed',
-        code: code.slice(0, 100) || 'unknown',
+        code: 'UNEXPECTED_FAILURE',
         latency_ms: Date.now() - started,
       }),
     );
@@ -200,20 +206,18 @@ async function inspect(req, res) {
   }
 }
 
-module.exports = function handler(req, res) {
-  if (req.method !== 'POST') {
-    return send(res, 405, { ok: false, error: 'METHOD_NOT_ALLOWED' });
+module.exports = async function handler(req, res) {
+  let privacy;
+  try {
+    const env=require('../mobile-intelligence-fn/runtime').runtime(process.env);
+    if(!env.OPENAI_API_KEY) throw new MobileRafiError('FEATURE_UNAVAILABLE',503);
+    privacy=await runtimeBoundary().preflight(req,'photo_analysis');
   }
-
-  upload(req, res, function onUpload(error) {
-    if (error) {
-      const tooLarge = error.code === 'LIMIT_FILE_SIZE';
-      return send(res, tooLarge ? 413 : 415, {
-        ok: false,
-        error: tooLarge ? 'photo_too_large' : 'photo_upload_invalid',
-      });
-    }
-
-    return void inspect(req, res);
-  });
+  catch(error) { return send(res,error.status||503,{ok:false,error:error.code||'DEPENDENCY_UNAVAILABLE'}); }
+  return new Promise(resolve=>upload(req,res,async error=>{
+    try {
+      if(error) return send(res,error.code==='LIMIT_FILE_SIZE'?413:415,{ok:false,error:'media_upload_invalid'});
+      return await inspect(req,res,privacy);
+    } finally { if(req.file?.buffer)req.file.buffer.fill(0);resolve(); }
+  }));
 };

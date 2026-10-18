@@ -7,7 +7,8 @@ function integer(value, fallback, minimum, maximum) {
   return n;
 }
 function config(env = process.env) {
-  const origin = env.FIXEO_DIAGNOSTIC_ORIGIN || 'https://www.fixeo.ma';
+  const origin = env.FIXEO_DIAGNOSTIC_ORIGIN;
+  if (!origin) throw new Error('CERTIFICATION_ORIGIN_REQUIRED');
   const parsed = new URL(origin);
   const local =
     env.NODE_ENV === 'test' ||

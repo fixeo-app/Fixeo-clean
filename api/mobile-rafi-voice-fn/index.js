@@ -1,6 +1,8 @@
 'use strict';
+require('../certification-egress.cjs')();
 
 const multer = require('multer');
+const { runtimeBoundary } = require('../mobile-media-privacy.cjs');
 const {
   MobileRafiError,
   assertPreview,
@@ -13,6 +15,7 @@ const {
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
+    files: 1, fields: 8, parts: 9, fieldSize: 4096,
     fileSize: 4 * 1024 * 1024,
   },
   fileFilter(req, file, cb) {
@@ -31,7 +34,7 @@ const upload = multer({
   },
 }).single('audio');
 
-async function transcribe(req, res) {
+async function transcribe(req, res, privacy) {
   const started = Date.now();
   try {
     assertPreview(process.env);
@@ -50,6 +53,7 @@ async function transcribe(req, res) {
       return send(res, 503, { ok: false, error: 'transcription_unavailable' });
     }
 
+    await privacy.approve(req.body);
     const token = bearer(req);
     await authenticate(token);
 
@@ -90,7 +94,7 @@ async function transcribe(req, res) {
     const timeout = setTimeout(() => controller.abort(), 15000);
     let response;
     try {
-      response = await globalThis.fetch(
+      response = await privacy.providerFetch(
         'https://api.openai.com/v1/audio/transcriptions',
         {
           method: 'POST',
@@ -145,6 +149,7 @@ async function transcribe(req, res) {
     if (error?.name === 'AbortError') {
       return send(res, 504, { ok: false, error: 'transcription_timeout' });
     }
+    if (['AUTH_REQUIRED','FORBIDDEN','INVALID_INPUT','POLICY_VERSION_OUTDATED','CONTRACT_REQUIRED','FEATURE_UNAVAILABLE','RATE_LIMITED','DEPENDENCY_UNAVAILABLE'].includes(error?.code)) return send(res, error.status || 503, { ok:false,error:error.code });
     if (error instanceof MobileRafiError) {
       console.warn(
         JSON.stringify({
@@ -159,7 +164,7 @@ async function transcribe(req, res) {
     console.warn(
       JSON.stringify({
         event: 'mobile_rafi_voice_failed',
-        code: String(error?.message || 'unknown').slice(0, 80),
+        code: 'UNEXPECTED_FAILURE',
         latency_ms: Date.now() - started,
       }),
     );
@@ -167,19 +172,17 @@ async function transcribe(req, res) {
   }
 }
 
-module.exports = function handler(req, res) {
-  if (req.method !== 'POST') {
-    return send(res, 405, { ok: false, error: 'METHOD_NOT_ALLOWED' });
+module.exports = async function handler(req, res) {
+  let privacy;
+  try {
+    if(!process.env.OPENAI_API_KEY) throw new MobileRafiError('FEATURE_UNAVAILABLE',503);
+    privacy=await runtimeBoundary().preflight(req,'voice_transcription');
   }
-
-  upload(req, res, function onUpload(error) {
-    if (error) {
-      const tooLarge = error.code === 'LIMIT_FILE_SIZE';
-      return send(res, tooLarge ? 413 : 415, {
-        ok: false,
-        error: tooLarge ? 'audio_too_large' : 'audio_upload_invalid',
-      });
-    }
-    return void transcribe(req, res);
-  });
+  catch(error) { return send(res,error.status||503,{ok:false,error:error.code||'DEPENDENCY_UNAVAILABLE'}); }
+  return new Promise(resolve=>upload(req,res,async error=>{
+    try {
+      if(error) return send(res,error.code==='LIMIT_FILE_SIZE'?413:415,{ok:false,error:'media_upload_invalid'});
+      return await transcribe(req,res,privacy);
+    } finally { if(req.file?.buffer)req.file.buffer.fill(0);resolve(); }
+  }));
 };

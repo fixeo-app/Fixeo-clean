@@ -12,7 +12,7 @@ const {
 } = require("./photo-grounding");
 const indicative =
   "Diagnostic indicatif — à confirmer par l’artisan si nécessaire.";
-async function analyze(snapshot, { provider, mediaStore, qualificationMode = "diagnostic" }) {
+async function analyze(snapshot, { provider, mediaStore }) {
   const input = snapshot.input;
   const before = evaluateSafety(
     input,
@@ -104,18 +104,11 @@ async function analyze(snapshot, { provider, mediaStore, qualificationMode = "di
     ...photos.flatMap((photo) => photo.safety_signals),
   ]);
   const electricalRisk = safety.signals.includes("electrical_risk");
-  const proposedQuestions = qualificationQuestions(input, model, photos, safety);
-  // Server-only mobile policy: defer OPTIONAL prompts to the canonical Estimator.
-  // No fabricated answer, changed provenance or alteration of safety evaluation.
-  const deferredQuestions = qualificationMode === "estimator"
-    ? proposedQuestions.filter((question) => question.optional === true) : [];
-  const questions = qualificationMode === "estimator"
-    ? proposedQuestions.filter((question) => question.optional !== true) : proposedQuestions;
+  const questions = qualificationQuestions(input, model, photos, safety);
   return {
     result: {
       version: VERSION,
       indicative,
-      ...(output.photoRelevance ? { photo_relevance: { value: output.photoRelevance, provenance: 'ai_inferred' } } : {}),
       trade: {
         value: electricalRisk ? "electricite" : model.trade,
         provenance: "ai_inferred",
@@ -176,7 +169,7 @@ async function analyze(snapshot, { provider, mediaStore, qualificationMode = "di
           ? "questions"
           : "qualification",
     },
-    usage: { ...output.usage, ...(deferredQuestions.length ? { deferred_qualification: deferredQuestions } : {}) },
+    usage: output.usage,
     providerCalled: true,
   };
 }

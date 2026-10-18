@@ -12,14 +12,14 @@ async function client(req, fetchImpl = fetch) {
   const userId = await authenticate(token, fetchImpl);
   let response;
   try {
-    response = await fetchImpl(STAGING_URL + '/rest/v1/users?id=eq.' + encodeURIComponent(userId) + '&select=id,role', {
-      headers: { apikey: STAGING_PUBLIC_KEY, Authorization: 'Bearer ' + token },
-      signal: AbortSignal.timeout(8000), redirect: 'error',
+    response = await fetchImpl(STAGING_URL + '/rest/v1/rpc/rafi_certification_trust_v1', {
+      method:'POST',headers:{apikey:STAGING_PUBLIC_KEY,Authorization:'Bearer '+token,'Content-Type':'application/json'},
+      body:JSON.stringify({p_action:'profile_get',p_input:{}}),signal:AbortSignal.timeout(8000),redirect:'error',
     });
   } catch (_) { fail('AUTH_UNAVAILABLE', 503); }
-  const rows = await response.json().catch(() => null);
+  const actor = await response.json().catch(() => null);
   if (!response.ok) fail('AUTH_UNAVAILABLE', 503);
-  if (!Array.isArray(rows) || rows.length !== 1 || rows[0].id !== userId || rows[0].role !== 'client') fail('ROLE_FORBIDDEN', 403);
+  if (!actor || actor.id !== userId || actor.role !== 'client') fail('ROLE_FORBIDDEN', 403);
   return { token, userId };
 }
 function envelopeSecret(env) { return env.FIXEO_ESTIMATOR_SECRET + ':mobile-intelligence-v1'; }
@@ -64,3 +64,4 @@ async function quota(transport, kind='estimator') {
 }
 function city(value) { if (!CITIES.includes(value)) fail('CITY_NOT_SUPPORTED', 422); return value; }
 module.exports = { staging, client, wrap, unwrap, qualificationCount, trustedRequest, invoke, quota, city, fail };
+

@@ -1,7 +1,7 @@
 'use strict';
 
-const STAGING_URL = 'https://kqyhusnbybsukbcaoqtu.supabase.co';
-const STAGING_PUBLIC_KEY = 'sb_publishable_sV-PYAY5zgir1UTJ6LNl6Q_ObK78uMo';
+const STAGING_URL = 'https://akeyuruypurmendksusc.supabase.co';
+const STAGING_PUBLIC_KEY = 'sb_publishable_ZOYDfeWTD1HtUKQEcVp1gA_P1OrpTMq';
 
 class MobileRafiError extends Error {
   constructor(code, status = 400) {
@@ -122,3 +122,4 @@ module.exports = {
   consumeQuota,
   send,
 };
+

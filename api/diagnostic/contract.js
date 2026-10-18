@@ -23,7 +23,28 @@ const TRADES = Object.freeze([
   'carrelage',
   'autre',
 ]);
-const CITIES = Object.freeze(require('./cities.json').map(city => city.value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-')));
+const CITIES = Object.freeze([
+  'casablanca',
+  'rabat',
+  'marrakech',
+  'fes',
+  'tanger',
+  'agadir',
+  'meknes',
+  'oujda',
+  'kenitra',
+  'tetouan',
+  'sale',
+  'temara',
+  'el-jadida',
+  'beni-mellal',
+  'nador',
+  'khouribga',
+  'safi',
+  'taza',
+  'ouarzazate',
+  'mohammedia',
+]);
 const HAZARDS = Object.freeze([
   'electricity',
   'electrical_risk',
