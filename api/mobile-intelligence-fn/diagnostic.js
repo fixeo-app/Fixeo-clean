@@ -45,6 +45,10 @@ async function persistPhoto(req, sanitized, description, city, dependencies = {}
       provider: dependencies.provider || createOpenAIAdapter({ env, fetchImpl: dependencies.providerFetch, photoPolicy: 'descriptive', timeout: 25000, deadline: Date.now() + 28000 }),
       mediaStore: media, qualificationMode: 'estimator',
     });
+    // The certified persisted-diagnostic RPC accepts one qualification at a time.
+    // Current shared engine ignores qualificationMode; preserve its first ranked
+    // question without changing safety, observations or the ephemeral photo flow.
+    output.result.questions = output.result.questions.slice(0, 1);
     data = await call('run_finish', { run_id: runId, result: output.result, usage: { ...output.usage, provider_called: output.providerCalled }, latency_ms: Date.now() - started });
     running = false;
     let reference = null;
