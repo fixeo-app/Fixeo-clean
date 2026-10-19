@@ -19,15 +19,18 @@ module.exports = function install() {
       // Enterprise media never grants direct user-JWT Storage access. Revalidate
       // the exact DB-owned path first; the server credential stays on this origin.
       const match=url.pathname.match(/^\/storage\/v1\/object\/diagnostic-private-v1\/(safe\/[a-f0-9-]{36}\/[a-f0-9-]{36}\.webp)$/);
+      console.info(JSON.stringify({event:'enterprise_storage_guard',method:init.method,path_allowed:!!match}));
       if(!match || url.search || !['GET','POST'].includes(init.method))throw Object.assign(Error('FORBIDDEN'),{code:'FORBIDDEN',status:403});
       const gate=await send('https://akeyuruypurmendksusc.supabase.co/rest/v1/rpc/enterprise_rafi_media_gate_v1',{
         method:'POST',headers:{apikey:headers.get('apikey'),authorization:headers.get('authorization'),'content-type':'application/json','x-fixeo-enterprise-context':context},
         body:JSON.stringify({p_path:match[1],p_insert:init.method==='POST'}),redirect:'error',signal:AbortSignal.timeout(10000),
       });
       const permission=await gate.json();
+      console.info(JSON.stringify({event:'enterprise_storage_gate',status:gate.status,allowed:permission.allowed===true}));
       if(!gate.ok || permission.allowed!==true || permission.path!==match[1] || permission.insert!==(init.method==='POST'))throw Object.assign(Error('FORBIDDEN'),{code:'FORBIDDEN',status:403});
       const service=process.env.SUPABASE_SERVICE_ROLE_KEY;let claims;
       try{claims=JSON.parse(Buffer.from(service.split('.')[1],'base64url').toString());}catch{}
+      console.info(JSON.stringify({event:'enterprise_storage_credential',certification:claims?.role==='service_role'&&claims?.ref==='akeyuruypurmendksusc'}));
       if(claims?.role!=='service_role'||claims?.ref!=='akeyuruypurmendksusc')throw Object.assign(Error('FEATURE_UNAVAILABLE'),{code:'FEATURE_UNAVAILABLE',status:503});
       headers.set('apikey',service);headers.set('authorization','Bearer '+service);headers.delete('x-fixeo-enterprise-context');
     }
