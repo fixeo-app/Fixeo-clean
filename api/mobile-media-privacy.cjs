@@ -50,7 +50,7 @@ function createMediaBoundary({enabled=false,env=process.env,fetchImpl=globalThis
     }
     const actor=await live(); // canonical D5 session checked before receiving the upload
     let check=null;
-    return { actor, async approve(input) {
+    return { actor, async currentContext() { await live(); const raw=require('./enterprise-context.cjs').current(); return raw?JSON.parse(raw):null; }, async approve(input) {
       if(!input||input.trust_protocol!=='account-trust-v1'||!UUID.test(input.trust_context||'')||
           typeof input.trust_notice_version!=='string'||input.trust_notice_version.length<1||input.trust_notice_version.length>120||
           ['owner_id','user_id','role','session_id'].some(k=>Object.hasOwn(input,k)))fail('INVALID_INPUT',400);

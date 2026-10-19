@@ -94,7 +94,7 @@ async function inspect(req, res, privacy) {
 
     if (req.body?.persist === 'true') {
       const persisted = await require('../mobile-intelligence-fn/diagnostic').persistPhoto(req, sanitized, description, city, { providerFetch: privacy.providerFetch });
-      return send(res, 200, persisted);
+      return send(res, 200, { ...persisted, enterprise_context: await privacy.currentContext() });
     }
 
     await consumeQuota(token, 'photo', sanitized.bytes.length);
@@ -154,6 +154,7 @@ async function inspect(req, res, privacy) {
     return send(res, 200, {
       ok: true,
       result: output.result,
+      enterprise_context: await privacy.currentContext(),
       privacy: {
         persisted: false,
         raw_photo_retained: false,
@@ -206,7 +207,7 @@ async function inspect(req, res, privacy) {
   }
 }
 
-module.exports = async function handler(req, res) {
+async function handler(req, res) {
   let privacy;
   try {
     const env=require('../mobile-intelligence-fn/runtime').runtime(process.env);
@@ -220,4 +221,9 @@ module.exports = async function handler(req, res) {
       return await inspect(req,res,privacy);
     } finally { if(req.file?.buffer)req.file.buffer.fill(0);resolve(); }
   }));
+};
+
+module.exports = async (req,res)=>{
+ try{return await require('../enterprise-context.cjs').run(req,()=>handler(req,res));}
+ catch(error){return send(res,error.status||503,{ok:false,error:error.code||'DEPENDENCY_UNAVAILABLE'});}
 };

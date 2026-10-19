@@ -144,7 +144,7 @@ async function transcribe(req, res, privacy) {
       }),
     );
 
-    return send(res, 200, { ok: true, text });
+    return send(res, 200, { ok: true, text, enterprise_context: await privacy.currentContext() });
   } catch (error) {
     if (error?.name === 'AbortError') {
       return send(res, 504, { ok: false, error: 'transcription_timeout' });
@@ -172,7 +172,7 @@ async function transcribe(req, res, privacy) {
   }
 }
 
-module.exports = async function handler(req, res) {
+async function handler(req, res) {
   let privacy;
   try {
     if(!process.env.OPENAI_API_KEY) throw new MobileRafiError('FEATURE_UNAVAILABLE',503);
@@ -185,4 +185,9 @@ module.exports = async function handler(req, res) {
       return await transcribe(req,res,privacy);
     } finally { if(req.file?.buffer)req.file.buffer.fill(0);resolve(); }
   }));
+};
+
+module.exports = async (req,res)=>{
+ try{return await require('../enterprise-context.cjs').run(req,()=>handler(req,res));}
+ catch(error){return send(res,error.status||503,{ok:false,error:error.code||'DEPENDENCY_UNAVAILABLE'});}
 };

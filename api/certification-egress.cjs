@@ -11,7 +11,10 @@ module.exports = function install() {
     const provider=url.origin==='https://api.openai.com'&&['/v1/responses','/v1/audio/transcriptions'].includes(url.pathname);
     if(url.username||url.password||url.hash||(!backend&&!provider))throw Object.assign(Error('CERTIFICATION_EGRESS_REFUSED'),{code:'FORBIDDEN',status:403});
     if(provider)console.info(JSON.stringify({event:'rafi_certification_provider_call',path:url.pathname}));
-    return send(input,{...init,redirect:'error'});
+    const context=require('./enterprise-context.cjs').current();
+    const headers=new Headers(init.headers);
+    if(backend && context)headers.set('x-fixeo-enterprise-context',context);
+    return send(input,{...init,headers,redirect:'error'});
   };
   globalThis[marker]=true;
 };
